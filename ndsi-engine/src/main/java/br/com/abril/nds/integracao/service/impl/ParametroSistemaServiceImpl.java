@@ -90,6 +90,5 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 	@Transactional
 	public void salvar(Collection<ParametroSistema> parametrosSistema) {
 		parametroSistemaRepository.salvar(parametrosSistema);
-	}
-	
+	}	
 }

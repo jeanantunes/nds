@@ -8,17 +8,24 @@ $(function() {
 	$("#resumoExpedicaoGridBox").flexigrid({
 		preProcess:executarPreProcessamento,
 		dataType : 'json',
-		colModel : [ {
+		colModel : [ 
+		{
+			display : 'Data Lançamento',
+			name : 'dataLancamento',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
 			
 			display : 'Box',
 			name : 'codigoBox',
-			width : 60,
+			width : 100,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Nome do Box',
 			name : 'descricaoBox',
-			width : 430,
+			width : 240,
 			sortable : true,
 			align : 'left'
 		}, {
@@ -45,6 +52,12 @@ $(function() {
 			width : 90,
 			sortable : true,
 			align : 'right'
+		}, {
+			display : 'Ação',
+			name : 'acao',
+			width : 40,
+			sortable : false,
+			align : 'center'
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
@@ -54,6 +67,78 @@ $(function() {
 	});
 
 });
+
+
+$(function() {
+	
+	$("#venda-encalhe-grid").flexigrid({
+		
+		preProcess: executarPreProcessamentoDetalheResumoExpedicao,
+		
+		dataType : 'json',
+		
+		colModel : [{
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 60,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Produto',
+			name : 'descricaoProduto',
+			width : 330,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Edição',
+			name : 'edicaoProduto',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Preço Capa R$',
+			name : 'precoCapa',
+			width : 90,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Reparte',
+			name : 'reparte',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Diferença',
+			name : 'qntDiferenca',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Total R$',
+			name : 'valorFaturado',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Fornecedor',
+			name : 'nomeFornecedor',
+			width : 90,
+			sortable : true,
+			align : 'center'
+		}],
+		
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 150
+	});
+
+});
+
 
 $(function() {
 	$("#resumoExpedicaoGridProduto").flexigrid({
@@ -115,6 +200,65 @@ $(function() {
 });
 
 	/**
+	 * Executa o pré processamento detalhes resumo expedicao 
+	 */
+	function executarPreProcessamentoDetalheResumoExpedicao(resultado) {
+		
+		if (resultado.mensagens) {
+	
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+	
+			return resultado;
+		}
+		
+		return resultado;
+	}
+	
+	var _codigoBox = "";
+	var _dataLancamento = "";
+
+	function detalharResumoExpedicao(index){ 
+		
+		_codigoBox = $("#codigoBox" + index).val();
+		_dataLancamento = $("#dataLanc" + index).text();
+		
+		var originalCodigoBox = _codigoBox.split('-')[0];
+		
+		$("#venda-encalhe-grid").flexOptions({
+			
+			url: contextPath + '/expedicao/resumo/pesquisar/detalhe',
+			dataType : 'json',
+			
+			params:[{name:'codigoBox', value: originalCodigoBox},
+			        
+			        {name:'dataLancamento', value: _dataLancamento}]
+		
+		});
+		
+		$("#venda-encalhe-grid").flexReload();
+		
+		$( "#dialog-venda-encalhe" ).dialog({
+			
+			resizable: false,
+			
+			width:1000,
+			
+			modal: true,
+			
+			buttons: {
+				
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	}
+	
+
+	/**
 	 * Executa o pré processamento das informa��es retornadas da requisição de pesquisa.
 	 */
 	function executarPreProcessamento(resultado) {
@@ -141,6 +285,28 @@ $(function() {
 		mudarLegendaFielsSet('idFiledResultResumo','resumo');
 		
 		$("#dataLancamento").focus();
+		
+		$.each(resultado.tableModel.rows, function(index, row) {
+			
+			row.cell.codigoBox = "<input type='hidden' id='codigoBox"+ index +"' value='"+ row.cell.codigoBox +"'/>"+ row.cell.codigoBox;
+			
+			var dataLan = "";
+			
+			if (!row.cell.dataLancamento){
+				
+				dataLan = "";
+				
+			} else {
+				
+				dataLan = row.cell.dataLancamento;
+			}
+			
+			row.cell.dataLancamento = "<div id='dataLanc"+ index +"'>"+ dataLan +"</div>";
+			
+			row.cell.acao = "<div style='text-align: center;'>" +
+				"<a href='javascript:;' onclick='detalharResumoExpedicao("+ index +");'>"+
+				"<img border='0' alt='Detalhes' src='${pageContext.request.contextPath}/images/ico_detalhes.png'></a></div>";
+		});
 		
 		return resultado.tableModel;
 	}
@@ -265,6 +431,14 @@ $(function() {
 		window.location = 
 			contextPath + "/expedicao/resumo/exportar?tipoConsulta=" + tipoPesquisa + "&fileType=" + fileType;
 	}
+  	
+	function exportarDetalhes(fileType) {
+
+		var originalCodigoBox = _codigoBox.split('-')[0];
+		
+		window.location = contextPath + "/expedicao/resumo/exportarDetalhes?fileType=" + fileType + "&codigoBox=" + originalCodigoBox + "&dataLancamento=" + _dataLancamento;
+		
+	}
 </script>
 
 </head>
@@ -302,6 +476,7 @@ $(function() {
 </fieldset>
 
 <div class="linha_separa_fields">&nbsp;</div>
+
 
 <div id="grid" style="display:none;">
 
@@ -343,4 +518,41 @@ $(function() {
 	</fieldset>
  
  </div>
+ 
+ 
+ 
+<div id="dialog-venda-encalhe" style="display:none;">
+
+	<fieldset class="classFieldset">
+	    
+		<legend id="idFiledResultResumo">Resumo Expedição por Box</legend>
+	    
+		<table id="venda-encalhe-grid"></table>
+		
+		<table width="100%" border="0" cellspacing="1" cellpadding="1">
+			<tr>
+				<td></td>
+    			<td>
+    				<span class="bt_novos" title="Gerar Arquivo">
+    					<a href="javascript:;" onclick="exportarDetalhes('XLS');">
+    						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+    					</a>
+    				</span>
+    				<span class="bt_novos" title="Imprimir">
+    					<a href="javascript:;" onclick="exportarDetalhes('PDF');">
+    						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
+    					</a>
+    				</span>
+    			</td>
+    			<td>
+    				<strong>Total R$:</strong>
+    			</td>
+    			<td></td>
+  			</tr>
+		</table>
+	</fieldset>
+
+</div>
+ 
+ 
 </body>

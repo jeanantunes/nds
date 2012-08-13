@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -116,7 +117,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		for(RecebimentoFisicoDTO itemRecebimento : listaItemRecebimentoFisico) {
 			
-			BigDecimal qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+			BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 			
 			BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
 			
@@ -124,7 +125,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			if(qtdRepartePrevisto != null && precoCapa != null) {
 				
-				valorTotal = qtdRepartePrevisto.multiply(precoCapa);
+				valorTotal = precoCapa.multiply( BigDecimal.valueOf( qtdRepartePrevisto.longValue() ) );
 			
 			}
 			
@@ -632,7 +633,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
 		
-		BigDecimal calculoQdeDiferenca = recebimentoFisicoDTO.getQtdFisico().subtract(recebimentoFisicoDTO.getRepartePrevisto()) ;
+		BigInteger calculoQdeDiferenca = recebimentoFisicoDTO.getQtdFisico().subtract(recebimentoFisicoDTO.getRepartePrevisto()) ;
 
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());					
@@ -648,11 +649,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		diferenca.setProdutoEdicao(produtoEdicao);
 		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
 		
-		if( calculoQdeDiferenca.compareTo(new BigDecimal(0)) < 0 ){
+		if( calculoQdeDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
 		
 			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_DE);
 			
-		} else if(calculoQdeDiferenca.compareTo(new BigDecimal(0)) > 0){						
+		} else if(calculoQdeDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
 			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_DE);
 			
@@ -670,15 +671,15 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * 
 	 * @return boolean
 	 */
-	private boolean verificarDiferencaExistente(BigDecimal repartePrevisto, BigDecimal qtdFisico) {
+	private boolean verificarDiferencaExistente(BigInteger repartePrevisto, BigInteger qtdFisico) {
 		
-		BigDecimal calculoQdeDiferenca = qtdFisico.subtract(repartePrevisto); 
+		BigInteger calculoQdeDiferenca = qtdFisico.subtract(repartePrevisto); 
 		
-		if(calculoQdeDiferenca.compareTo(new BigDecimal(0)) < 0) {
+		if(calculoQdeDiferenca.compareTo(BigInteger.ZERO) < 0) {
 			
 			return true;
 			
-		} else if(calculoQdeDiferenca.compareTo(new BigDecimal(0)) > 0) {						
+		} else if(calculoQdeDiferenca.compareTo(BigInteger.ZERO) > 0) {						
 
 			return true;
 		}

@@ -363,6 +363,7 @@ public class MatrizLancamentoController {
 		}
 		
 		int numeroSemana = balanceamentoLancamento.getNumeroSemana();
+		Date dataLancamento = balanceamentoLancamento.getDataLancamento();
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
@@ -372,7 +373,7 @@ public class MatrizLancamentoController {
 		}
 		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataLancamento);
 		
 		boolean dataInicioSemanaMaior =
 			DateUtil.isDataInicialMaiorDataFinal(dataInicioSemana, novaData);

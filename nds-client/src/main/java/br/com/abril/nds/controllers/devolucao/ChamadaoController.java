@@ -1,7 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -420,7 +420,7 @@ public class ChamadaoController {
 		
 		Long qtdProdutosTotal = null;
 		
-		BigDecimal qtdExemplaresTotal = null;
+		BigInteger qtdExemplaresTotal = null;
 		
 		String valorTotalFormatado = null;
 		

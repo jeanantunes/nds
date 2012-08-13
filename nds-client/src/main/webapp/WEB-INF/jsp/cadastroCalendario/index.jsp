@@ -2,6 +2,18 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js"></script>
 
+	<script type="text/javascript">
+		
+		$(function() {
+			$("#dtFeriadoNovo").datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: 'dd/mm/yy',
+			});
+			$("#dtFeriadoNovo").mask("99/99/9999");	
+		});
+	</script>
 <style type="text/css">
 
 
@@ -17,16 +29,15 @@
 		width: 950px !important;
 	}
 	
-	.ui-datepicker-group {
-		margin-left: 4px;
-	}
-	
+
 	.ui-state-default {
 		font-size: 13px !important;
 	}
 	
 	.ui-datepicker-group {
-		margin: 0px !important;
+	    height: 220px;
+		margin-left: 4px;
+		margin: 0 !important;
 		padding: 5px !important;
 	}
 
@@ -276,7 +287,7 @@
 				
 				<table>
 					<tr>
-						<td><input type="text" id="anoVigenciaPesquisa"/></td>
+						<td><input type="text" id="anoVigenciaPesquisa" value="${anoCorrente}"/></td>
 						<td>
 							<span class="bt_pesquisar"><a href="javascript:;"
 							onclick="CadastroCalendario.recarregarPainelCalendarioFeriado();">Pesquisar</a>

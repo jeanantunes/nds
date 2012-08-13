@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,12 +77,12 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 		save(veja, quatroRodas);
 		
 		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
 		
 		veja1.setDesconto(BigDecimal.ZERO);
 
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKNOPQRSTU", 2L,
+				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKNOPQ", 2L,
 				quatroRodas, null, false);
 		quatroRoda2.setDesconto(BigDecimal.ZERO);
 
@@ -106,7 +107,7 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+						BigInteger.valueOf(50));
 		save(itemNotaFiscal1Veja);
 		
 		Date dataRecebimento = Fixture.criarData(22, Calendar.FEBRUARY, 2012);
@@ -116,7 +117,7 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 		save(recebimentoFisico1Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico1Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico1Veja);
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
@@ -131,7 +132,7 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.criarData(22, Calendar.FEBRUARY,2012), 
 				Fixture.criarData(22, Calendar.FEBRUARY,2012),
 				TipoLancamento.LANCAMENTO,
-				new BigDecimal(50));
+				BigInteger.valueOf(50));
 		
 		save(itemNotaFiscal2Veja);
 
@@ -141,7 +142,7 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 		save(recebimentoFisico2Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico2Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico2Veja);
 		
 		Lancamento lancamentoVeja = Fixture.lancamento(
@@ -151,12 +152,12 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				new Date(),
 				new Date(),
-				new BigDecimal(100),
+				BigInteger.valueOf(100),
 				StatusLancamento.BALANCEADO_RECOLHIMENTO, itemRecebimentoFisico1Veja, 1);
 		
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100),
+		Estudo estudo = Fixture.estudo(BigInteger.valueOf(100),
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
 
 		save(lancamentoVeja, estudo);
@@ -172,11 +173,11 @@ public class ChamadaEncalheRepositoryImplTest extends AbstractRepositoryImplTest
 		save(cotaManoel);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				veja1, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+				veja1, cotaManoel, BigInteger.TEN, BigInteger.ZERO);
 		save(estoqueProdutoCota);
 		
 		estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				quatroRoda2, cotaManoel, BigDecimal.TEN, BigDecimal.ZERO);
+				quatroRoda2, cotaManoel, BigInteger.TEN, BigInteger.ZERO);
 		save(estoqueProdutoCota);
 		
 		Usuario usuarioJoao = Fixture.usuarioJoao();

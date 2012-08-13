@@ -25,10 +25,7 @@ $(function() {
 });
 
 </script>
-<style type="text/css">
-	#dialog-box{display:none;}
-	#dialog-box fieldset{width:570px!important;}
-</style>
+
 </head>
 
 <body>
@@ -39,18 +36,18 @@ $(function() {
    	    		<legend> Pesquisar Tipo de Nota</legend>
         		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             		<tr>
-              			<td width="47">Operação:</td>
-                		<td width="114">
+              			<td width="55">Operação:</td>
+                		<td width="176">
                 			 <select name="operacao" id="operacaoID" style="width:150px;" class="campoDePesquisa">
-						      <option selected="selected">Selecione...</option>
+						      <option selected="selected" value="">Todos</option>
 						      <c:forEach var="operacao" items="${listaAtividades}">
 										<option value="${operacao.key}">${operacao.value}</option>
 							  </c:forEach>
 						    </select>
                 		</td>
-		                <td width="81">Tipo de Nota:</td>
-		                <td width="576"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;" class="campoDePesquisa" /></td>
-		              	<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();" class="botaoPesquisar" >Pesquisar</a></span></td>
+		                <td width="75">Tipo de Nota:</td>
+		                <td width="511"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;" class="campoDePesquisa" /></td>
+		              	<td width="107"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();" class="botaoPesquisar" >Pesquisar</a></span></td>
             		</tr>
           		</table>
       		</fieldset>
@@ -80,7 +77,7 @@ $(function() {
 					display : 'Processo',
 					name : 'processo',
 					width : 140,
-					sortable : true,
+					sortable : false,
 					align : 'left'
 				},{
 					display : 'Tipo de Nota',

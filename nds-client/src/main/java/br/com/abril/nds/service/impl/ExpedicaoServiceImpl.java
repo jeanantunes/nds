@@ -38,6 +38,24 @@ public class ExpedicaoServiceImpl implements ExpedicaoService {
 		
 		return expedicaoRepository.obterResumoExpedicaoPorBox(filtro);
 	}
+
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<ExpedicaoDTO> obterResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
+		
+		return expedicaoRepository.obterResumoExpedicaoProdutosDoBox(filtro);
+		
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Long obterQuantidadeResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
+		
+		return expedicaoRepository.obterQuantidadeResumoExpedicaoProdutosDoBox(filtro);
+		
+	}
+	
 	
 	@Transactional(readOnly = true)
 	@Override

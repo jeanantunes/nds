@@ -162,6 +162,7 @@ function carregarDialog(id) {
 		{ codigoProduto : $("#codigoProduto").val(), 
 		  idProdutoEdicao : id},
 		function(result) {
+			$("#tabSegmentacao").show();	
 			if (result) {
 				$("#idProdutoEdicao").val(result.id);
 				$("#codigoProdutoEdicao").val(result.codigoProduto);
@@ -202,8 +203,9 @@ function carregarDialog(id) {
 				$("#descricaoBrinde").val(result.descricaoBrinde).attr("readonly", false);
 				
 				if (result.origemInterface) {
-					$("#precoVenda").attr("readonly", false);				
+					$("#precoVenda").attr("readonly", false);	
 				} else {
+					$("#tabSegmentacao").hide();	
 					$("#codigoProdutoEdicao").attr("readonly", false);
 					$("#nomeComercialProduto").attr("readonly", false);
 					$("#numeroEdicao").attr("readonly", (result.numeroEdicao == 1));
@@ -240,11 +242,17 @@ function carregarDialog(id) {
 
 function popup(id) {
 	
-	if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
+	if ($("#pCodigoProduto").val() != $("#codigoProduto").val()){
+		$("#codigoProduto").val($("#pCodigoProduto").val());
+	}
+	
+	//if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
+	if ($("#codigoProduto").val() == "") {
 		exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
 		return;
 	}
 	
+	pesquisarEdicoes();
 	prepararTela(id);
 	carregarDialog(id);
 
@@ -288,7 +296,7 @@ function popup(id) {
 function carregarImagemCapa(idProdutoEdicao) {
 
 	var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
-		? "" : "<c:url value='/capa/' />" + idProdutoEdicao; 
+		? "" : "<c:url value='/capa/' />" + idProdutoEdicao + '?' + Math.random(); 
 	var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 	$("#div_imagem_capa").empty();
 	$("#div_imagem_capa").append(img);
@@ -418,12 +426,15 @@ function removerEdicao(id) {
 						function(result) {
 							$( "#dialog-excluir-capa" ).dialog( "close" );
 							
-							var mensagens = (result.mensagens) ? result.mensagens : result.result;
+							var mensagens = (result.mensagens) ? result.mensagens : result;
 							var tipoMensagem = mensagens.tipoMensagem;
 							var listaMensagens = mensagens.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
 								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+								if (tipoMensagem == "SUCCESS") { 
+									$("#div_imagem_capa").empty();
+								}
 							}
 						},
 						function(result) {
@@ -561,9 +572,9 @@ fieldset {
 	<form id="formUpload" name="formUpload" method="post" enctype="multipart/form-data" >
 		<div id="tabEdicoes">
 			<ul>
-				<li><a href="#tabEdicoes-1">Identifica&ccedil;&atilde;o</a></li>
-				<li><a href="#tabEdicoes-2">Caracter&iacute;sticas do Lan&ccedil;amento</a></li>
-				<li><a href="#tabEdicoes-3">Segmenta&ccedil;&atilde;o</a></li>
+				<li><a id="tabIdentificacao" href="#tabEdicoes-1">Identifica&ccedil;&atilde;o</a></li>
+				<li><a id="tabCaractLancto" href="#tabEdicoes-2">Caracter&iacute;sticas do Lan&ccedil;amento</a></li>
+				<li><a id="tabSegmentacao" href="#tabEdicoes-3">Segmenta&ccedil;&atilde;o</a></li>
 			</ul>
 			
 			<div id="tabEdicoes-1">

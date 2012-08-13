@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -224,7 +226,7 @@ public class ProdutoEdicaoController {
 			TipoLancamento tipoLancamento,
 			BigDecimal precoPrevisto, BigDecimal precoVenda,
 			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
-			BigDecimal repartePrevisto, BigDecimal repartePromocional,
+			BigInteger repartePrevisto, BigInteger repartePromocional,
 			String codigoDeBarras, String codigoDeBarrasCorporativo,
 			BigDecimal desconto, BigDecimal peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
@@ -283,7 +285,7 @@ public class ProdutoEdicaoController {
 			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
 		} finally {
 			
-			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
+			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
 		}
 	}
 	

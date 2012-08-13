@@ -83,11 +83,12 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			String sortorder, String sortname, int page, int rp) {
 		
 		String hql = "select produto.id as id, produto.codigo as codigo, produto.nome as produtoDescricao, ";
-		hql += " tipoProduto.descricao as tipoProdutoDescricao, editor.nome as nomeEditor, ";
+		hql += " tipoProduto.descricao as tipoProdutoDescricao, ";
+		hql += " case when editor.nome is null then '' else editor.nome end as nomeEditor, ";
 		hql += " juridica.razaoSocial as tipoContratoFornecedor, ";
 		hql += " fornecedor.situacaoCadastro as situacao, ";
 		hql += " produto.peb as peb ";
-
+		
 		try {
 			
 			Query query = 
@@ -135,28 +136,33 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		hql += " from Produto produto ";
 		hql += " join produto.fornecedores fornecedor ";
 		hql += " join fornecedor.juridica juridica ";
-		hql += " join produto.editor editor ";
 		hql += " join produto.tipoProduto tipoProduto ";
-		hql += " where 1 = 1 ";
+		hql += " left join produto.editor as editor ";
+		
+		String auxHql = " where ";
 		
 		if (codigo != null && !codigo.isEmpty()) {
-			hql += " and upper(produto.codigo) = :codigo ";
+			hql += auxHql+" upper(produto.codigo) = :codigo ";
+			auxHql = " and ";
 		}
 		
 		if (produto != null && !produto.isEmpty()) {
-			hql += " and produto.nome like :produto ";
+			hql += auxHql+" produto.nome like :produto ";
+			auxHql = " and ";
 		}
 		
 		if (fornecedor != null && !fornecedor.isEmpty()) {
-			hql += " and fornecedor.juridica.razaoSocial like :fornecedor ";
+			hql += auxHql+" fornecedor.juridica.razaoSocial like :fornecedor ";
+			auxHql = " and ";
 		}
 		
 		if (editor != null && !editor.isEmpty()) {
-			hql += " and editor.nome like :nomeEditor ";
+			hql += auxHql+" editor.nome like :nomeEditor ";
+			auxHql = " and ";
 		}
-		
+
 		if (codigoTipoProduto != null && codigoTipoProduto > 0) {
-			hql += " and tipoProduto.id = :codigoTipoProduto ";
+			hql += auxHql+" tipoProduto.id = :codigoTipoProduto ";
 		}
 
 		if (sortname != null && sortorder != null) {

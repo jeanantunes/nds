@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.PoliticaChamadao;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -82,10 +83,20 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setLimiteCEProximaSemana(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isPermiteRecolherDiasPosteriores()));
 		parametrosDistribuidor.setConferenciaCegaEncalhe(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaEncalhe()));
 		parametrosDistribuidor.setConferenciaCegaRecebimento(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaRecebimento()));
+		parametrosDistribuidor.setTipoContabilizacaoCE(distribuidor.getTipoContabilizacaoCE());
+		parametrosDistribuidor.setSupervisionaVendaNegativa(distribuidor.isSupervisionaVendaNegativa());		
 		
 		// Capacidade de Manuseio
 		parametrosDistribuidor.setCapacidadeManuseioHomemHoraLancamento(CurrencyUtil.formatarValorTruncado(distribuidor.getCapacidadeDistribuicao()));
 		parametrosDistribuidor.setCapacidadeManuseioHomemHoraRecolhimento(CurrencyUtil.formatarValorTruncado(distribuidor.getCapacidadeRecolhimento()));
+		
+		//Política chamadão
+		PoliticaChamadao politicaChamadao = distribuidor.getPoliticaChamadao();
+		if (politicaChamadao != null) {
+		    parametrosDistribuidor.setChamadaoDiasSuspensao(politicaChamadao.getDiasSuspenso());
+		    parametrosDistribuidor.setChamadaoValorConsignado(CurrencyUtil.formatarValor(politicaChamadao.getValorConsignado()));
+		}
+		
 		
 		// Reutilização de Código de Cota
 		parametrosDistribuidor.setReutilizacaoCodigoCotaInativa(CurrencyUtil.formatarValorTruncado(distribuidor.getQntDiasReutilizacaoCodigoCota()));
@@ -250,6 +261,18 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 		// Recolhimento
 		distribuidor.setAceitaJuramentado(verificaCheckBoolean(parametrosDistribuidor.getAceitaEncalheJuramentada()));
+		
+		distribuidor.setTipoContabilizacaoCE(parametrosDistribuidor.getTipoContabilizacaoCE());
+		distribuidor.setSupervisionaVendaNegativa(parametrosDistribuidor.isSupervisionaVendaNegativa());
+		PoliticaChamadao politicaChamadao = distribuidor.getPoliticaChamadao();
+		if(politicaChamadao == null) {
+		    politicaChamadao = new PoliticaChamadao();
+		    distribuidor.setPoliticaChamadao(politicaChamadao);
+		}
+		Integer chamadaoDiasSuspensao = parametrosDistribuidor.getChamadaoDiasSuspensao();
+		BigDecimal chamadaoConsignado = CurrencyUtil.converterValor(parametrosDistribuidor.getChamadaoValorConsignado());
+		politicaChamadao.setDiasSuspenso(chamadaoDiasSuspensao);
+		politicaChamadao.setValorConsignado(chamadaoConsignado);
 		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null)

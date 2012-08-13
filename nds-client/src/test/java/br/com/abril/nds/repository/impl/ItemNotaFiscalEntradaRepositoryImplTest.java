@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.List;
 
@@ -99,17 +100,17 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 		save(produtoCE, produtoCE_2, produtoCE_3);
 
 		produtoEdicaoCE = Fixture.produtoEdicao("1", 84L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoCE, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, produtoCE, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 		
 		produtoEdicaoCE_2 = Fixture.produtoEdicao("1", 85L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCE_2, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPA", 2L, produtoCE_2, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 		
 		produtoEdicaoCE_3 = Fixture.produtoEdicao("1", 86L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPQRS", 3L, produtoCE_3, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPB", 3L, produtoCE_3, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 		
@@ -262,7 +263,7 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
 						TipoLancamento.LANCAMENTO,                         
-						new BigDecimal(50), 
+						BigInteger.valueOf(50), 
 						NCMProduto, 
 						CFOPProduto, 
 						unidadeProduto, 
@@ -348,7 +349,7 @@ public class ItemNotaFiscalEntradaRepositoryImplTest extends AbstractRepositoryI
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
 						Fixture.criarData(22, Calendar.FEBRUARY,2012),     
 						TipoLancamento.LANCAMENTO,                         
-						new BigDecimal(50), 
+						BigInteger.valueOf(50), 
 						NCMProduto, 
 						CFOPProduto, 
 						unidadeProduto, 

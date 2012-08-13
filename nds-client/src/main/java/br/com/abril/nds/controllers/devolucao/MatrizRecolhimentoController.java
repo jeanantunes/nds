@@ -320,7 +320,7 @@ public class MatrizRecolhimentoController {
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData);
+		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData, filtro.getDataPesquisa());
 		
 		this.validarListaParaReprogramacao(listaProdutoRecolhimento);
 		
@@ -348,7 +348,7 @@ public class MatrizRecolhimentoController {
 		
 		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
 		
-		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData);
+		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData, filtro.getDataPesquisa());
 		
 		List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento = new ArrayList<ProdutoRecolhimentoFormatadoVO>();
 		
@@ -1004,8 +1004,9 @@ public class MatrizRecolhimentoController {
 	 * 
 	 * @param numeroSemana - número da semana
 	 * @param novaData - nova data de recolhimento
+	 * @param dataBalanceamento - data de balanceamento
 	 */
-	private void validarDataReprogramacao(Integer numeroSemana, Date novaData) {
+	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
 		
 		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
 		
@@ -1029,7 +1030,7 @@ public class MatrizRecolhimentoController {
 		}
 		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataBalanceamento);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -1080,10 +1081,9 @@ public class MatrizRecolhimentoController {
 		if (numeroSemana != null && listaIdsFornecedores != null) {
 
 			balanceamentoRecolhimento = 
-				this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
-																  listaIdsFornecedores,
-																  tipoBalanceamentoRecolhimento,
-																  forcarBalanceamento);
+				this.recolhimentoService.obterMatrizBalanceamento(
+					numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
+					forcarBalanceamento, dataBalanceamento);
 			
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 										  balanceamentoRecolhimento);

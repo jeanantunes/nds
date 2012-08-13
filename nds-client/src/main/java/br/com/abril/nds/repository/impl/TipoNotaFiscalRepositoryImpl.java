@@ -2,29 +2,20 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
-import br.com.abril.nds.util.StringUtil;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNotaFiscal, Long> 
 										  implements TipoNotaFiscalRepository {
 
-	private final static String CFOP = "cfop";
-	private final static String CODIGO_CFOP = ".codigo";
-	private final static String PORCENTAGEM = "%";
-	
 	public TipoNotaFiscalRepositoryImpl() {
 		super(TipoNotaFiscal.class);
 	}
@@ -33,7 +24,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	@SuppressWarnings("unchecked")
 	public List<TipoNotaFiscal> obterTiposNotasFiscais() {
 
-		String hql = " from TipoNotaFiscal tipoNotaFiscal ";
+		String hql = " from TipoNotaFiscal tipoNotaFiscal group by tipoNotaFiscal.id ";
 		
 		Query query = getSession().createQuery(hql);
 		
@@ -44,7 +35,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	@SuppressWarnings("unchecked")
 	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 
-		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoOperacao = :tipoOperacao  ";
+		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoOperacao = :tipoOperacao group by tipoNotaFiscal.id ";
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("tipoOperacao", tipoOperacao);
@@ -55,7 +46,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	@Override
 	public TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
 		
-		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal  ";
+		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal group by tipoNotaFiscal.id  ";
 		
 		Query query = getSession().createQuery(hql);
 		
@@ -64,48 +55,60 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		return (TipoNotaFiscal) query.uniqueResult();
 	}
 
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.TipoNotaFiscalRepository#obterTiposNotasFiscais(java.lang.String, java.lang.String, br.com.abril.nds.model.cadastro.TipoAtividade, java.lang.String, br.com.abril.nds.vo.PaginacaoVO.Ordenacao, int, int)
-	 */
-	@Override
 	@SuppressWarnings("unchecked")
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade, String orderBy, Ordenacao ordenacao, Integer initialResult, Integer maxResults) {
-
-		Criteria criteria = addRestrictions(cfop, tipoNota, tipoAtividade);
+	@Override
+	public List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
 		
-		if (!StringUtil.isEmpty(orderBy) && ordenacao != null) {
+		StringBuilder hql  = new StringBuilder();
+		
+		hql.append(getHqlConsulta(filtro, false));
+		
+		hql.append(getOrdenacaoConsulta(filtro));
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		if(filtro.getTipoAtividade()!= null){
+			query.setParameter("tipoAtividade", filtro.getTipoAtividade());
+		}
+		
+		if(filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty() ){
+			query.setParameter("tipoDescNota", filtro.getTipoNota() + "%");
+		}
+		
+		if (filtro.getPaginacao() != null) {
 
-			// Caso tenha que fazer ordenação pelo código do CFOP
-			if (orderBy.toLowerCase().startsWith(CFOP)) {
-				orderBy = orderBy + CODIGO_CFOP;
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
 
-			if(Ordenacao.ASC ==  ordenacao) {
-				criteria.addOrder(Order.asc(orderBy));
-			} else if(Ordenacao.DESC ==  ordenacao) {
-				criteria.addOrder(Order.desc(orderBy));
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao()
+						.getQtdResultadosPorPagina());
 			}
 		}
 		
-		if (maxResults != null)
-			criteria.setMaxResults(maxResults);
-		
-		if (initialResult != null)
-			criteria.setFirstResult(initialResult);
-		
-		return criteria.list();
-		
+		return query.list();
 	}
-
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.TipoNotaFiscalRepository#obterQuantidadeTiposNotasFiscais(java.lang.String, java.lang.String, br.com.abril.nds.model.cadastro.TipoAtividade)
-	 */
+	
 	@Override
-	public Long obterQuantidadeTiposNotasFiscais(String cfop, String tipoNota, TipoAtividade tipoAtividade) {
-		Criteria criteria = addRestrictions(cfop, tipoNota, tipoAtividade);
-		criteria.setProjection(Projections.rowCount());
-
-		return (Long)criteria.list().get(0);
+	@SuppressWarnings("unchecked")
+	public Integer obterQuantidadeTiposNotasFiscais(FiltroCadastroTipoNotaDTO filtro) {
+		
+		String hql  = getHqlConsulta(filtro, true);
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		if(filtro.getTipoAtividade()!= null){
+			query.setParameter("tipoAtividade", filtro.getTipoAtividade());
+		}
+		
+		if(filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty() ){
+			query.setParameter("tipoDescNota", filtro.getTipoNota() + "%");
+		}
+		
+		List<Long>list = query.list();
+		
+		return  (list!= null)? list.size():0 ;
 	}
 	
 	/* (non-Javadoc)
@@ -114,56 +117,97 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TipoNotaFiscal> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade) {
-		Criteria criteria =  addRestrictions(null, null, tipoAtividade);
 		
-		return criteria.list();
+		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoAtividade = :tipoAtividade group by tipoNotaFiscal.id ";
+		
+		Query query = getSession().createQuery(hql);
+		query.setParameter("tipoAtividade", tipoAtividade);
+		
+		return query.list();
 	}
 	
-	/**
-	 * Adiciona restrições
-	 * @param codigoBox
-	 * @param tipoNota
-	 * @param tipoAtividade
-	 * @return
-	 */
-	private Criteria addRestrictions(String cfop, String tipoNota, TipoAtividade tipoAtividade) {
-		Criteria criteria =  getSession().createCriteria(TipoNotaFiscal.class);	
-
-		// Relacionamentos com a tabela CFOP
-		criteria.createCriteria("cfopEstado", "cfopEstado", Criteria.LEFT_JOIN);
-		criteria.createCriteria("cfopOutrosEstados", "cfopOutrosEstados", Criteria.LEFT_JOIN);
-
-		if(!StringUtil.isEmpty(cfop)) {
-			// Busca apenas pelo código (sem o primeiro dígito de identificação dentro do estado e fora do estado) 
-			if (cfop.length() == 3) {
-				criteria.add(Restrictions.or(Restrictions.ilike("cfopEstado.codigo", PORCENTAGEM + cfop), Restrictions.ilike("cfopOutrosEstados.codigo", PORCENTAGEM + cfop)));
-			} else {
-				criteria.add(Restrictions.or(Restrictions.eq("cfopEstado.codigo", cfop), Restrictions.eq("cfopOutrosEstados.codigo", cfop)));
-			}
-		}
-		
-		if(!StringUtil.isEmpty(tipoNota)) {
-			criteria.add(Restrictions.ilike("nopDescricao", PORCENTAGEM + tipoNota.toLowerCase() + PORCENTAGEM));
-		}
-		
-		if (tipoAtividade != null) {
-			criteria.add(Restrictions.eq("tipoAtividade", tipoAtividade));
-		}
-		
-		return criteria;
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade) {
-
-		Criteria criteria =  getSession().createCriteria(TipoNotaFiscal.class);	
-
-		criteria.add(Restrictions.eq("tipoAtividade", tipoAtividade));
 		
-		return criteria.list();
+		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoAtividade = :tipoAtividade group by tipoNotaFiscal.id ";
+		
+		Query query = getSession().createQuery(hql);
+		query.setParameter("tipoAtividade", tipoAtividade);
+		
+		return query.list();
 	}
+	
+	private String getHqlConsulta(FiltroCadastroTipoNotaDTO filtro, boolean count){
+		
+		StringBuilder hql  = new StringBuilder();
+		
+		if(count){
+			
+			hql.append(" select tipoNota.id from TipoNotaFiscal tipoNota ");
+		}
+		else{
+			hql.append(" select tipoNota from TipoNotaFiscal tipoNota ");
+		}
+		
+		if((filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty()) 
+				|| filtro.getTipoAtividade()!= null){
+			
+			hql.append(" where ");
+		}
+		
+		if(filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty() ){
+			hql.append(" upper(tipoNota.descricao) like(:tipoDescNota) ");
+		}
+		
+		if(filtro.getTipoAtividade()!= null 
+				&& (filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty())){
+			hql.append(" AND ");
+		}
+		
+		if(filtro.getTipoAtividade()!= null){
+			hql.append("  tipoNota.tipoAtividade=:tipoAtividade ");
+		}
+		
+		hql.append(" group by tipoNota ");
+		
+		return hql.toString();
+	}
+	
+	private String getOrdenacaoConsulta(FiltroCadastroTipoNotaDTO filtro){
+		
+		if (filtro == null || filtro.getOrdenacaoColuna() == null) {
+			return "";
+		}
+
+		StringBuilder hql = new StringBuilder();
+
+		switch (filtro.getOrdenacaoColuna()) {
+			
+			case OPERACAO:
+				hql.append(" order by tipoNota.tipoAtividade  ");
+				break;
+			case DESCRICAO:
+				hql.append(" order by tipoNota.descricao  ");
+				break;
+			case CFOP_ESTADO :
+				hql.append(" order by tipoNota.cfopEstado  ");
+				break;
+			case CFOP_OUTROS_ESTADOS:
+				hql.append(" order by tipoNota.cfopOutrosEstados ");
+				break;
+			default:
+				hql.append(" order by  tipoNota.tipoAtividade ");
+		}
+
+		if (filtro.getPaginacao().getOrdenacao() != null) {
+			hql.append(filtro.getPaginacao().getOrdenacao().toString());
+		}
+
+		return hql.toString();
+	}
+
 }

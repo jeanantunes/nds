@@ -41,6 +41,20 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private String tributacaoFiscal;
 	
+	private String classeSocial;
+	
+	private String sexo;
+	
+	private String faixaEtaria;
+	
+	private String formatoProduto;
+	
+	private String tipoLancamento;
+	
+	private String temaPrincipal;
+	
+	private String temaSecundario;
+	
 	/**
 	 * 
 	 */
@@ -53,7 +67,10 @@ public class ProdutoCadastroVO implements Serializable {
 			Long codigoTipoProduto, String formaComercializacao, Integer peb,
 			Integer pacotePadrao, Long tipoDesconto, String periodicidade,
 			String grupoEditorial, String subGrupoEditorial,
-			String tributacaoFiscal) {
+			String tributacaoFiscal, String classeSocial, String sexo, 
+			String faixaEtaria, String formatoProduto, 
+			String tipoLancamento, String temaPrincipal, 
+			String temaSecundario) {
 		this.id = id;
 		this.codigo = codigo;
 		this.nome = nome;
@@ -69,6 +86,14 @@ public class ProdutoCadastroVO implements Serializable {
 		this.grupoEditorial = grupoEditorial;
 		this.subGrupoEditorial = subGrupoEditorial;
 		this.tributacaoFiscal = tributacaoFiscal;
+		this.classeSocial = classeSocial;
+		this.sexo = sexo;
+		this.faixaEtaria = faixaEtaria;
+		this.formatoProduto = formatoProduto;
+		this.tipoLancamento = tipoLancamento;
+		this.temaPrincipal = temaPrincipal;
+		this.temaSecundario = temaSecundario;
+		
 	}
 
 	/**
@@ -281,6 +306,104 @@ public class ProdutoCadastroVO implements Serializable {
 		this.tributacaoFiscal = tributacaoFiscal;
 	}
 
+	/**
+	 * @return the classeSocial
+	 */
+	public String getClasseSocial() {
+		return classeSocial;
+	}
+
+	/**
+	 * @param classeSocial the classeSocial to set
+	 */
+	public void setClasseSocial(String classeSocial) {
+		this.classeSocial = classeSocial;
+	}
+
+	/**
+	 * @return the sexo
+	 */
+	public String getSexo() {
+		return sexo;
+	}
+
+	/**
+	 * @param sexo the sexo to set
+	 */
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+
+	/**
+	 * @return the faixaEtaria
+	 */
+	public String getFaixaEtaria() {
+		return faixaEtaria;
+	}
+
+	/**
+	 * @param faixaEtaria the faixaEtaria to set
+	 */
+	public void setFaixaEtaria(String faixaEtaria) {
+		this.faixaEtaria = faixaEtaria;
+	}
+
+	/**
+	 * @return the formatoProduto
+	 */
+	public String getFormatoProduto() {
+		return formatoProduto;
+	}
+
+	/**
+	 * @param formatoProduto the formatoProduto to set
+	 */
+	public void setFormatoProduto(String formatoProduto) {
+		this.formatoProduto = formatoProduto;
+	}
+
+	/**
+	 * @return the tipoLancamento
+	 */
+	public String getTipoLancamento() {
+		return tipoLancamento;
+	}
+
+	/**
+	 * @param tipoLancamento the tipoLancamento to set
+	 */
+	public void setTipoLancamento(String tipoLancamento) {
+		this.tipoLancamento = tipoLancamento;
+	}
+
+	/**
+	 * @return the temaPrincipal
+	 */
+	public String getTemaPrincipal() {
+		return temaPrincipal;
+	}
+
+	/**
+	 * @param temaPrincipal the temaPrincipal to set
+	 */
+	public void setTemaPrincipal(String temaPrincipal) {
+		this.temaPrincipal = temaPrincipal;
+	}
+
+	/**
+	 * @return the temaSecundario
+	 */
+	public String getTemaSecundario() {
+		return temaSecundario;
+	}
+
+	/**
+	 * @param temaSecundario the temaSecundario to set
+	 */
+	public void setTemaSecundario(String temaSecundario) {
+		this.temaSecundario = temaSecundario;
+	}
+
 	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
 
 		if (produto == null) {
@@ -297,12 +420,23 @@ public class ProdutoCadastroVO implements Serializable {
 				produto.getDescontoLogistica().getTipoDesconto().longValue() : 0L;
 		
 		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
-			produto.getId(), produto.getCodigo(), produto.getNome(), 
-			produto.getFornecedor().getId(), produto.getEditor().getId(), 
-			produto.getSlogan(), produto.getTipoProduto().getId(), 
+			produto.getId(), 
+			produto.getCodigo(), 
+			produto.getNome(), 
+			produto.getFornecedor().getId(), 
+			produto.getEditor()!=null?produto.getEditor().getId():0, 
+			produto.getSlogan(), 
+			produto.getTipoProduto().getId(), 
 			formaComercializacao != null ? formaComercializacao.toString() : "", produto.getPeb(), 
 			produto.getPacotePadrao(), codigoTipoDesconto, periodicidade != null ? periodicidade.toString() : "", 
-			produto.getGrupoEditorial(), produto.getSubGrupoEditorial(), tributacaoFiscal != null ? tributacaoFiscal.toString() : "");
+			produto.getGrupoEditorial(), produto.getSubGrupoEditorial(), tributacaoFiscal != null ? tributacaoFiscal.toString() : "",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getClasseSocial()!=null?produto.getSegmentacao().getClasseSocial().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getSexo()!=null?produto.getSegmentacao().getSexo().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFaixaEtaria()!=null?produto.getSegmentacao().getFaixaEtaria().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormatoProduto()!=null?produto.getSegmentacao().getFormatoProduto().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTipoLancamento()!=null?produto.getSegmentacao().getTipoLancamento().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaPrincipal()!=null?produto.getSegmentacao().getTemaPrincipal().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaSecundario()!=null?produto.getSegmentacao().getTemaSecundario().name():""):"");
 		
 		return produtoCadastroVO;
 	}

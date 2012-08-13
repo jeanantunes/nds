@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -13,7 +14,7 @@ public class ItemNotaFiscal {
 	
 	private long idProdutoEdicao;
 	
-	private BigDecimal quantidade;
+	private BigInteger quantidade;
 	
 	private BigDecimal valorUnitario;
 	
@@ -24,7 +25,7 @@ public class ItemNotaFiscal {
 	public ItemNotaFiscal() {
 	}
 
-	public ItemNotaFiscal(long idProdutoEdicao, BigDecimal quantidade,
+	public ItemNotaFiscal(long idProdutoEdicao, BigInteger quantidade,
 			BigDecimal valorUnitario, String cstICMS) {
 		super();
 		this.idProdutoEdicao = idProdutoEdicao;
@@ -50,14 +51,14 @@ public class ItemNotaFiscal {
 	/**
 	 * @return the quantidade
 	 */
-	public BigDecimal getQuantidade() {
+	public BigInteger getQuantidade() {
 		return quantidade;
 	}
 
 	/**
 	 * @param quantidade the quantidade to set
 	 */
-	public void setQuantidade(BigDecimal quantidade) {
+	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}
 

@@ -3,19 +3,19 @@
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<artifactId>nds</artifactId>
 		<groupId>br.com.abril</groupId>
 		<version>1.0</version>
 	</parent>
-	
+
 	<artifactId>nds-server</artifactId>
 	<packaging>war</packaging>
 	<name>NDS - DServer</name>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -139,7 +139,7 @@
 			<version>1.0</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<testResources>
 			<testResource>
@@ -156,11 +156,29 @@
 				</excludes>
 			</resource>
 		</resources>
-		
-		
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>br.com.abril.nds.server.fixture.DataLoader</mainClass>
+					<classpathScope>test</classpathScope>
+				</configuration>
+			</plugin>
+		</plugins>
+
 		<finalName>nds-server</finalName>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>desenvolvimento</id>
@@ -301,24 +319,6 @@
 							<url>http://10.10.50.198:8080/manager/text</url>
 						</configuration>
 					</plugin>
-					
-					<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<mainClass>br.com.abril.nds.server.fixture.DataLoader</mainClass>
-					<classpathScope>test</classpathScope>
-					<!-- <commandlineArgs>cleanData</commandlineArgs> -->
-				</configuration>
-			</plugin>
 				</plugins>
 			</build>
 		</profile>

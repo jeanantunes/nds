@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -39,7 +40,7 @@ public class VendaEncalheDTO implements Serializable {
 	
 	private BigDecimal precoCapa;
 	
-	private Long qntProduto;
+	private BigInteger qntProduto;
 	
 	private BigDecimal precoDesconto;
 	
@@ -244,14 +245,14 @@ public class VendaEncalheDTO implements Serializable {
 	/**
 	 * @return the qntProduto
 	 */
-	public Long getQntProduto() {
+	public BigInteger getQntProduto() {
 		return qntProduto;
 	}
 
 	/**
 	 * @param qntProduto the qntProduto to set
 	 */
-	public void setQntProduto(Long qntProduto) {
+	public void setQntProduto(BigInteger qntProduto) {
 		this.qntProduto = qntProduto;
 	}
 

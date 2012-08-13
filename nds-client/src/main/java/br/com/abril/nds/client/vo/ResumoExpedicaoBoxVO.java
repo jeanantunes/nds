@@ -24,24 +24,25 @@ public class ResumoExpedicaoBoxVO implements Serializable {
 
 	private Integer id;
 	
-	private String dataLancamento;
-	
-	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 4)
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private String reparte;
 	
-	@Export(label = "Valor Faturado R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
+	@Export(label = "Valor Faturado R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
 	private String valorFaturado;
+
+	@Export(label = "Data Lançamento", exhibitionOrder = 1)
+	private String dataLancamento;
 	
-	@Export(label = "Box", exhibitionOrder = 1)
+	@Export(label = "Box", exhibitionOrder = 2)
 	private String codigoBox;
 	
-	@Export(label = "Nome do Box", exhibitionOrder = 2)
+	@Export(label = "Nome do Box", exhibitionOrder = 3)
 	private String descricaoBox;
 	
-	@Export(label = "Qtde Produto", alignment = Alignment.CENTER, exhibitionOrder = 3)
+	@Export(label = "Qtde Produto", alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private String qntProduto;
 	
-	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String qntDiferenca;
 
 	/**

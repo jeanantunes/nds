@@ -24,12 +24,11 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -38,8 +37,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -67,10 +64,7 @@ public class ParametroCobrancaController {
 	
 	@Autowired
 	private ParametroCobrancaCotaService parametroCobrancaCotaService;
-	
-	@Autowired
-	private Validator validator;	
-	
+		
     private Result result;
     
     private HttpSession httpSession;
@@ -112,11 +106,11 @@ public class ParametroCobrancaController {
     	
     	listaBancos = this.bancoService.getComboBancos();
     	listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
-    	listaFornecedores = this.fornecedorService.buscarComboFornecedores();
+    	listaFornecedores = this.fornecedorService.obterFornecedoresIdNome(null, null);
     	
 		result.include("listaBancos",listaBancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
-		result.include("listaFornecedores",listaFornecedores);
+		result.include("listaFornecedores",listaFornecedores);		
 		
 	}
     
@@ -154,39 +148,16 @@ public class ParametroCobrancaController {
 		}
 		
 		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
-
-		//BUSCA BANCOS
-		List<ParametroCobrancaVO> parametrosCobranca = this.politicaCobrancaService.obterDadosPoliticasCobranca(filtroAtual);	
-		
-		if ((parametrosCobranca==null)||(parametrosCobranca.size()<=0)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		} 
-		
 		int qtdRegistros = this.politicaCobrancaService.obterQuantidadePoliticasCobranca(filtroAtual);
 		
-		TableModel<CellModelKeyValue<ParametroCobrancaVO>> tableModel =
-				new TableModel<CellModelKeyValue<ParametroCobrancaVO>>();
-			
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(parametrosCobranca));
-		tableModel.setPage(page);
-		tableModel.setTotal(qtdRegistros);
+		
+		
+		if (qtdRegistros <=0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} 
+		List<ParametroCobrancaVO> parametrosCobranca = this.politicaCobrancaService.obterDadosPoliticasCobranca(filtroAtual);
 
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-	}
-	
-	
-	
-	/**
-	 * Verifica se existe uma politica de cobrança principal
-	 */
-	@Post
-	@Path("/existPrincipal")
-	public void existPrincipal(){
-		PoliticaCobranca politica = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
-		if (politica==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Defina ao menos um [Parâmetro de Cobrança] como [Principal].");
-		}
-		result.nothing();
+		result.use(FlexiGridJson.class).from(parametrosCobranca).page(page).total(qtdRegistros).serialize();
 	}
 	
 	
@@ -197,16 +168,12 @@ public class ParametroCobrancaController {
 	 */
 	@Post
 	@Path("/postarParametroCobranca")
-	public void postarParametroCobranca(ParametroCobrancaDTO parametros, String tipoFormaCobranca, List<Long> listaIdsFornecedores){
-
+	public void postarParametroCobranca(ParametroCobrancaDTO parametros){
+		PoliticaCobranca politica = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		if (politica==null && !parametros.isPrincipal()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Defina ao menos um [Parâmetro de Cobrança] como [Principal].");
+		}	
 		
-		if ((tipoFormaCobranca!=null)&&(!"".equals(tipoFormaCobranca))){
-			parametros.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
-		}
-        
-		if ((listaIdsFornecedores!=null)&&(listaIdsFornecedores.size()>0)){
-		    parametros.setFornecedoresId(listaIdsFornecedores);
-		}
 		
 		parametros = formatarParametros(parametros);
 		
@@ -226,9 +193,7 @@ public class ParametroCobrancaController {
 	@Post
 	@Path("/obterParametroCobranca")
 	public void obterParametroCobranca(Long idPolitica){
-		
-        validar();
-		
+				
 		if (idPolitica==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O código da política de cobrança informado náo é válido.");
 		} 
@@ -241,20 +206,6 @@ public class ParametroCobrancaController {
 		
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
-	
-	
-	
-	/**
-	 * Método de Pré-carregamento de fornecedores relacionados com a Cota.
-	 * @param idCota
-	 */
-	@Post
-	@Path("/obterFornecedores")
-	public void obterFornecedores(){
-		listaFornecedores = this.fornecedorService.buscarComboFornecedores();
-		result.use(Results.json()).from(listaFornecedores, "result").recursive().serialize();
-	}
-	
 	
 	
 	/**
@@ -297,8 +248,6 @@ public class ParametroCobrancaController {
 	@Path("/desativaParametroCobranca")
 	public void desativaParametroCobranca(Long idPolitica){
 		
-		validar();
-		
 		this.politicaCobrancaService.dasativarPoliticaCobranca(idPolitica);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetro de cobrança desativado com sucesso."),"result").recursive().serialize();
@@ -313,7 +262,7 @@ public class ParametroCobrancaController {
 	private ParametroCobrancaDTO formatarParametros(ParametroCobrancaDTO parametros){
 		
 		if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-			parametros.setDiaDoMes(null);
+			parametros.setDiasDoMes(null);
 		}
 		
 		if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
@@ -351,11 +300,7 @@ public class ParametroCobrancaController {
 	 * @param ParametroCobrancaDTO
 	 */
 	public void validarParametros(ParametroCobrancaDTO parametros){
-		
-		
-		validar();
-		
-		
+				
 		if(parametros.getTipoCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
 		}
@@ -380,11 +325,11 @@ public class ParametroCobrancaController {
 		
 		
 		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-			if (parametros.getDiaDoMes()==null){
+			if (parametros.getDiasDoMes()==null || parametros.getDiasDoMes().isEmpty() || parametros.getDiasDoMes().get(0)==null){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
 			}
 			else{
-				if ((parametros.getDiaDoMes()>31)||(parametros.getDiaDoMes()<1)){
+				if ((parametros.getDiasDoMes().get(0)>31)||(parametros.getDiasDoMes().get(0)<1)){
 					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
 				}
 			}
@@ -417,7 +362,7 @@ public class ParametroCobrancaController {
 		
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
 			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-				if (!this.politicaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), parametros.getDiaDoMes())){
+				if (!this.politicaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), parametros.getDiasDoMes().get(0))){
 					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
 				}
 			}
@@ -440,24 +385,4 @@ public class ParametroCobrancaController {
 		}	
 
 	}
-	
-	
-	
-	/**
-	 * Método responsável pela validação dos dados e rotinas.
-	 */
-	public void validar(){
-		
-		if (validator.hasErrors()) {
-			List<String> mensagens = new ArrayList<String>();
-			for (Message message : validator.getErrors()) {
-				mensagens.add(message.getMessage());
-			}
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
-			throw new ValidacaoException(validacao);
-		}
-		
-	}
-	
-	
 }

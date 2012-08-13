@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -479,26 +480,29 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					"Endereço principal do distribuidor não encontrada!");
 		}
 
-		Endereco endereco = enderecoDistribuidor.getEndereco();
-		enderecoRepository.detach(endereco);
-		endereco.setId(null);
-		endereco.setPessoa(null);
-		enderecoRepository.adicionar(endereco);
-		identificacaoEmitente.setEndereco(endereco);
-
+		try {
+			Endereco endereco = enderecoDistribuidor.getEndereco().clone();
+			enderecoRepository.detach(endereco);
+			endereco.setId(null);
+			endereco.setPessoa(null);
+			enderecoRepository.adicionar(endereco);
+			identificacaoEmitente.setEndereco(endereco);
+		} catch (Exception exception) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Erro ao adicionar o endereço do distribuidor!");
+		}
+		
 		TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository
 				.obterTelefonePrincipal();
 
-		if (telefoneDistribuidor == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Telefone principal do distribuidor não encontrada!");
+		if (telefoneDistribuidor != null) {
+			Telefone telefone = telefoneDistribuidor.getTelefone();
+			telefoneRepository.detach(telefone);
+			telefone.setId(null);
+			telefone.setPessoa(null);
+			telefoneRepository.adicionar(telefone);
+			identificacaoEmitente.setTelefone(telefone);
 		}
-		Telefone telefone = telefoneDistribuidor.getTelefone();
-		telefoneRepository.detach(telefone);
-		telefone.setId(null);
-		telefone.setPessoa(null);
-		telefoneRepository.adicionar(telefone);
-		identificacaoEmitente.setTelefone(telefone);
 		// TODO: Como definir o Regime Tributario
 		identificacaoEmitente
 				.setRegimeTributario(RegimeTributario.SIMPLES_NACIONAL);
@@ -550,17 +554,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		TelefoneCota telefoneCota = telefoneCotaRepository
 				.obterTelefonePrincipal(idCota);
-		if (telefoneCota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Telefone principal da cota " + idCota + " não encontrada!");
+		if (telefoneCota != null) {
+			Telefone telefone = telefoneCota.getTelefone();
+			
+			telefoneRepository.detach(telefone);
+			telefone.setId(null);
+			telefone.setPessoa(null);
+			telefoneRepository.adicionar(telefone);
+			destinatario.setTelefone(telefone);
 		}
-		Telefone telefone = telefoneCota.getTelefone();
-		
-		telefoneRepository.detach(telefone);
-		telefone.setId(null);
-		telefone.setPessoa(null);
-		telefoneRepository.adicionar(telefone);
-		destinatario.setTelefone(telefone);
 
 		return destinatario;
 	}
@@ -577,7 +579,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	private ProdutoServico carregaProdutoServico(long idProdutoEdicao,
-			BigDecimal quantidade, int cfop, TipoOperacao tipoOperacao,
+			BigInteger quantidade, int cfop, TipoOperacao tipoOperacao,
 			String ufOrigem, String ufDestino, int naturezaOperacao,
 			String codigoNaturezaOperacao, Date dataVigencia,
 			BigDecimal valorItem, String raizCNPJ, String cstICMS) {
@@ -601,7 +603,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 		produtoServico.setValorDesconto(produtoEdicao.getDesconto());
 		produtoServico.setCfop(cfop);
-		produtoServico.setValorTotalBruto(valorItem.multiply(quantidade));
+		produtoServico.setValorTotalBruto(valorItem.multiply(new BigDecimal(quantidade) ));
 
 		EncargoFinanceiroProduto encargoFinanceiroProduto = tributacaoService
 				.calcularTributoProduto(raizCNPJ, tipoOperacao, ufOrigem,
@@ -863,7 +865,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					if (itensNFeDevolucaoConsignado.contains(itemNFeEnvio)) {
 						ItemNotaFiscal itemNFeDevolucao = itensNFeDevolucaoConsignado.get(itensNFeDevolucaoConsignado.indexOf(itemNFeEnvio));
 											
-						BigDecimal quantidade = itemNFeEnvio.getQuantidade().add(itemNFeDevolucao.getQuantidade());
+						BigInteger quantidade = itemNFeEnvio.getQuantidade().add(itemNFeDevolucao.getQuantidade());
 					
 						itemNFeVenda.setQuantidade(quantidade);	
 					}
@@ -898,7 +900,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			
 			BigDecimal valorUnitario = produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto());
 			
-			BigDecimal quantidade = movimentoEstoqueCota.getQtde();
+			BigInteger quantidade = movimentoEstoqueCota.getQtde();
 			
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueItem = new ArrayList<MovimentoEstoqueCota>();
 			
@@ -946,9 +948,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listaItemNotaFiscal intes para nota fiscal
 	 * @return somatoria total da quantidade de itens
 	 */
-	private BigDecimal sumarizarTotalItensNota(List<ItemNotaFiscal> listaItemNotaFiscal) {
+	private BigInteger sumarizarTotalItensNota(List<ItemNotaFiscal> listaItemNotaFiscal) {
 		
-		BigDecimal quantidade = BigDecimal.ZERO;
+		BigInteger quantidade = BigInteger.ZERO;
 		
 		for (ItemNotaFiscal item : listaItemNotaFiscal) {
 			quantidade = quantidade.add(item.getQuantidade());

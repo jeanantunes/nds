@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -71,7 +72,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		produto.setEditor(abril);
 		save(produto);
 				
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		save(produtoEdicao);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("razaoSocial", "cnpj", "ie", "email", "99.999-9");
@@ -103,7 +104,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 						new Date(), 
 						new Date(),
 						TipoLancamento.LANCAMENTO,
-						BigDecimal.ONE);
+						BigInteger.ONE);
 		
 		save(itemNotaFiscal);
 		
@@ -116,37 +117,38 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(recebimentoFisico);
 		
 		ItemRecebimentoFisico itemRecebimentoFisico = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigDecimal.TEN);
+				Fixture.itemRecebimentoFisico(itemNotaFiscal, recebimentoFisico, BigInteger.TEN);
 		save(itemRecebimentoFisico);
 		
 		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoFaltaDe();
 		save(tipoMovimento);
 		
-		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, BigDecimal.TEN);
+		EstoqueProduto estoqueProduto = Fixture.estoqueProduto(produtoEdicao, BigInteger.TEN);
 		save(estoqueProduto);
 		
 		MovimentoEstoque movimentoEstoque = 
 			Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimento, usuario,
-				estoqueProduto, new Date(), new BigDecimal(1),
+				estoqueProduto, new Date(), BigInteger.valueOf(1),
 				StatusAprovacao.APROVADO, "Aprovado");
 				
 		save(movimentoEstoque);
 		
 		diferenca = 
-				Fixture.diferenca(BigDecimal.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
+				Fixture.diferenca(BigInteger.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
 		
 		save(diferenca);
 		
 		Cota cota = Fixture.cota(1, pessoaJuridica, SituacaoCadastro.ATIVO, box300Reparte);
 		save(cota);
 		
-		Estudo estudo = Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicao);
+		Estudo estudo = Fixture.estudo(BigInteger.TEN, new Date(), produtoEdicao);
 		save(estudo);
 		
-		EstudoCota estudoCota = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudo, cota);
+		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.TEN, BigInteger.TEN, estudo, cota);
 		save(estudoCota);
 		
-		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigDecimal.TEN, cota, diferenca, estudoCota, new Date());
+		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN, cota, diferenca, estudoCota, new Date());
+
 		save(rateioDiferenca);
 	}
 	

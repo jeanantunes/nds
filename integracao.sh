@@ -1,4 +1,4 @@
-ERVER
+#SERVER
 #PRODIM
 # Integra editor no couchdb DServer
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 112

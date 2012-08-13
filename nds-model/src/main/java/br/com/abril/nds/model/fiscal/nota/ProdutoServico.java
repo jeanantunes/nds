@@ -2,6 +2,7 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -102,7 +103,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="QUANTIDADE_COMERCIAL", precision=15, scale=2 , nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=12)})
-	private BigDecimal quantidade;
+	private BigInteger quantidade;
 	
 	/**
 	 * vUnCom
@@ -299,14 +300,14 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * @return the quantidade
 	 */
-	public BigDecimal getQuantidade() {
+	public BigInteger getQuantidade() {
 		return quantidade;
 	}
 
 	/**
 	 * @param quantidade the quantidade to set
 	 */
-	public void setQuantidade(BigDecimal quantidade) {
+	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}
 

@@ -3,7 +3,6 @@
 	<title>NDS - Novo Distrib</title>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 	
 <script>
 

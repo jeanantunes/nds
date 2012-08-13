@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -31,16 +32,16 @@ public class ContagemDevolucaoDTO implements Serializable {
 	private BigDecimal precoVenda;
 	
 	@Export(label="Exemplar Devolução")
-	private BigDecimal qtdDevolucao;
+	private BigInteger qtdDevolucao;
 	
 	@Export(label="Total R$")
 	private BigDecimal valorTotal;
 	
 	@Export(label="Exemplar Nota")
-	private BigDecimal qtdNota;
+	private BigInteger qtdNota;
 	
 	@Export(label="Diferença")
-	private BigDecimal diferenca;
+	private BigInteger diferenca;
 	
 	private Date dataMovimento;
 	
@@ -58,10 +59,10 @@ public class ContagemDevolucaoDTO implements Serializable {
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
-	public BigDecimal getDiferenca() {
+	public BigInteger getDiferenca() {
 		return diferenca;
 	}
-	public void setDiferenca(BigDecimal diferenca) {
+	public void setDiferenca(BigInteger diferenca) {
 		this.diferenca = diferenca;
 	}
 	public String getCodigoProduto() {
@@ -88,16 +89,16 @@ public class ContagemDevolucaoDTO implements Serializable {
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
 	}
-	public BigDecimal getQtdDevolucao() {
+	public BigInteger getQtdDevolucao() {
 		return qtdDevolucao;
 	}
-	public void setQtdDevolucao(BigDecimal qtdDevolucao) {
+	public void setQtdDevolucao(BigInteger qtdDevolucao) {
 		this.qtdDevolucao = qtdDevolucao;
 	}
-	public BigDecimal getQtdNota() {
+	public BigInteger getQtdNota() {
 		return qtdNota;
 	}
-	public void setQtdNota(BigDecimal qtdNota) {
+	public void setQtdNota(BigInteger qtdNota) {
 		this.qtdNota = qtdNota;
 	}
 	public BigDecimal getValorTotal() {

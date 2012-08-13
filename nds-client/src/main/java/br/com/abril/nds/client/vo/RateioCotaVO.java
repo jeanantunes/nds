@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * Value Object para rateio de cotas.
@@ -24,9 +25,9 @@ public class RateioCotaVO implements Serializable {
 	
 	private String nomeCota;
 	
-	private BigDecimal reparteCota;
+	private BigInteger reparteCota;
 	
-	private BigDecimal quantidade;
+	private BigInteger quantidade;
 	
 	/**
 	 * Construtor padrão.
@@ -94,28 +95,28 @@ public class RateioCotaVO implements Serializable {
 	/**
 	 * @return the reparteCota
 	 */
-	public BigDecimal getReparteCota() {
+	public BigInteger getReparteCota() {
 		return reparteCota;
 	}
 
 	/**
 	 * @param reparteCota the reparteCota to set
 	 */
-	public void setReparteCota(BigDecimal reparteCota) {
+	public void setReparteCota(BigInteger reparteCota) {
 		this.reparteCota = reparteCota;
 	}
 
 	/**
 	 * @return the quantidade
 	 */
-	public BigDecimal getQuantidade() {
+	public BigInteger getQuantidade() {
 		return quantidade;
 	}
 
 	/**
 	 * @param quantidade the quantidade to set
 	 */
-	public void setQuantidade(BigDecimal quantidade) {
+	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}
 

@@ -2,6 +2,7 @@
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>scripts/produto.js'></script>
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
@@ -476,9 +477,25 @@ validarEdicaoCallBack : function() {
 				dateFormat: "dd/mm/yy"
 			});
 			
+			$("#novoDataEmissao").datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
+			});
+			
+			$("#novoDataEntrada").datepicker({
+				showOn: "button",
+				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
+				buttonImageOnly: true,
+				dateFormat: "dd/mm/yy"
+			});
+			
 			$("#datepickerLancto").mask("99/99/9999");
 			$("#datepickerRecolhimento").mask("99/99/9999");
 			$("#dataEmissao").mask("99/99/9999");
+			$("#novoDataEmissao").mask("99/99/9999");
+			$("#novoDataEntrada").mask("99/99/9999");
 			
 			$("#valorBruto").maskMoney({
 				 thousands:'.', 
@@ -498,6 +515,35 @@ validarEdicaoCallBack : function() {
 				 precision:2
 			});
 			
+			$("#novoValorTotal").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			
+			$("#itensRecebimento.qtdNotaItem").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			
+			$("#itensRecebimento.qtdPacoteItem").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			
+			$("#itensRecebimento.qtdExemplaresItem").maskMoney({
+				 thousands:'.', 
+				 decimal:',', 
+				 precision:2
+			});
+			
+			$("#itensRecebimento.codigoItem").numeric();
+			$("#itensRecebimento.edicaoItem").numeric();
+			$("#novoNumeroNota").numeric();
+			$("#novoSerieNota").numeric();
+			
 			$("#produto").autocomplete({source: ""});
 	});
 	
@@ -516,8 +562,6 @@ validarEdicaoCallBack : function() {
 		}
 
 	};
-	
-	
 	
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
@@ -664,8 +708,6 @@ validarEdicaoCallBack : function() {
 			height : 180
 		});
 	}
-
-	
 	
     /**
      * FAZ A PESQUISA DOS ITENS REFERENTES A NOTA ENCONTRADA.
@@ -732,8 +774,6 @@ validarEdicaoCallBack : function() {
     	
 	}
 	
-    
-    
     /**
      * SALVA OS DADOS DOS ITENS DA NOTA EDITADOS.
      */
@@ -883,11 +923,13 @@ validarEdicaoCallBack : function() {
 			document.getElementById('botoesNormais').style.display="";			
 			document.getElementById('botoesOpacos').style.display="none";
 			document.getElementById('botaoNovoProdutoOpaco').style.display="none";
+			document.getElementById('botaoAdicionarOpaco').style.display="none";
 			document.getElementById('botaoNovoProduto').style.display="";
 		}else{
 			document.getElementById('botoesOpacos').style.display="";
 			document.getElementById('botoesNormais').style.display="none";
 			document.getElementById('botaoNovoProdutoOpaco').style.display="";
+			document.getElementById('botaoAdicionarOpaco').style.display="";
 			document.getElementById('botaoNovoProduto').style.display="none";
 		}
 		
@@ -934,6 +976,9 @@ validarEdicaoCallBack : function() {
 			document.getElementById('botaoNovoProdutoOpaco').style.display="none";
 			document.getElementById('botaoNovoProduto').style.display="";
 			
+			document.getElementById('botaoAdicionarOpaco').style.display="none";
+			document.getElementById('botaoAdicionar').style.display="";
+			
 			document.getElementById('botoesOpacos').style.display="none";
 		}else{
 			document.getElementById('botoesOpacos').style.display="";
@@ -942,21 +987,743 @@ validarEdicaoCallBack : function() {
 			document.getElementById('botaoNovoProdutoOpaco').style.display="";
 			document.getElementById('botaoNovoProduto').style.display="none";
 			
+			document.getElementById('botaoAdicionarOpaco').style.display="";
+			document.getElementById('botaoAdicionar').style.display="none";
+			
 		}	
 		
 		
 		return data;
 
 	}
+	
+	
+	
+	
+	
 
+	/*NOVO POPUP DE LANÇAMENTO DE NOTA*/
+	
+	$(function() {
+		$(".novoItemNotaGrid").flexigrid({
+			preProcess: getDataFromResultItem,
+			dataType : 'json',
+			colModel : [
+			{
+				display : 'Código',
+				name : 'codigo	',
+				width : 60,
+				sortable : false,
+				align : 'left',
+				resizable : false
+			}, {
+				display : 'Produto',
+				name : 'produto	',
+				width : 150,
+				sortable : false,
+				align : 'left',
+				resizable : false
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 40,
+				sortable : false,
+				align : 'left',
+				resizable : false
+			}, {
+				display : 'Preço Desc. R$',
+				name : 'precoDesconto',
+				width : 90,
+				sortable : false,
+				align : 'right',
+				resizable : false
+			}, {
+				display : 'Qtde Nota',
+				name : 'qtdeNota',
+				width : 80,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}, {
+				display : 'Qtde. Pcts',
+				name : 'qtdePcts',
+				width : 80,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}, {
+				display : 'Qtde. Exems',
+				name : 'qtdeExemplar',
+				width : 80,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}, {
+				display : 'Diferença',
+				name : 'diferenca',
+				width : 80,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 70,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}, {
+				display : 'Replicar',
+				name : 'replicar',
+				width : 40,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}],
+			width : 910,
+			height : 180
+		});
+	});
+	
+	function popup_adicionar() {
+	
+		montaGridItens();
+		
+		$( "#dialog-adicionar" ).dialog({
+			resizable: false,
+			height:530,
+			width:958,
+			modal: true,
+			buttons:[ 
+			          {
+				           id:"bt_confirmar",
+				           text:"Confirmar", 
+				           click: function() {
+				        	   incluirNota();
+				           }
+			           },
+			           {
+				           id:"bt_cancelar",
+				           text:"Cancelar", 
+				           click: function() {
+				        	   $( this ).dialog( "close" );   
+				           }
+			           }
+	        ],
+		    beforeClose: function() {
+			    clearMessageDialogTimeout();
+			    limparCamposNovaNota();
+	        }
+		});
+	};
+
+	function pesquisarFornecedorCnpj() {
+		
+		var pCnpj = $("#novoCnpj").val();	
+
+		if(pCnpj == "") {
+			$("#novoFornecedor").val("");
+			return;
+		}
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/buscaCnpj'/>", "cnpj=" + pCnpj, 
+		function(result) { 
+			$("#novoFornecedor").val(result.cnpj);
+		});	
+	}
+
+	function pesquisarCnpjFornecedor() {
+	
+		var idFornecedor = $("#novoFornecedor").val();
+		
+		if(idFornecedor == -1){
+			$("#novoCnpj").val("");
+			$("#novoCnpj").disabled(true);			
+		}else{
+			$.postJSON("<c:url value='/estoque/recebimentoFisico/obterCnpjFornecedor'/>", "idFornecedor=" + idFornecedor, 
+			function(result) {
+				$("#novoCnpj").val(result);
+				document.getElementById('novoCnpj').disabled=false;
+			},
+			null,
+			true);
+		}
+	}
+	
+	function obterDadosEdicao(index) {
+		
+		var codigo = $("#codigoItem"+index).val();
+		var edicao = $("#edicaoItem"+index).val();	
+
+		if((codigo == "")||(edicao == "")) {
+			$("#precoDescontoItem"+index).val("");
+			return;
+		}
+		
+		$.postJSON("<c:url value='/estoque/recebimentoFisico/obterDadosEdicao'/>", "codigo=" + codigo + "&edicao="+edicao, 
+			function(result) { 
+				$("#precoDescontoItem"+index).val(result.precoDesconto);
+			},
+			function(result) {
+				$("#precoDescontoItem"+index).val("");	   
+			},
+			true
+		);	
+	}
+	
+	function calcularDiferencaEValorItem(index){
+		
+		var preco = removeMascaraPriceFormat($("#precoDescontoItem"+index).val());
+		var quantidade = removeMascaraPriceFormat($("#qtdNotaItem"+index).val());
+		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplaresItem"+index).val());
+		
+		if((preco == "")||(quantidade == "")) {
+			$("#valorItem"+index).val("");
+			return;
+		}
+		
+		if((quantidade == "")||(quantidadeExemp == "")) {
+			$("#diferencaItem"+index).val("");
+		}
+		
+        var valor = intValue(preco) * intValue(quantidade);
+        
+        $("#valorItem"+index).val(valor);
+        
+        $("#valorItem"+index).priceFormat({
+			allowNegative: true,
+			centsSeparator: '.',
+		    thousandsSeparator: ''
+		});
+
+        var diferenca = 0;
+        if (quantidade > quantidadeExemp){
+        	diferenca = intValue(quantidade) - intValue(quantidadeExemp);
+        }
+        else{
+        	diferenca = intValue(quantidadeExemp) - intValue(quantidade);
+        }
+        
+		$("#diferencaItem"+index).val(diferenca);
+		
+	    $("#diferencaItem"+index).priceFormat({
+			allowNegative: true,
+			centsSeparator: '',
+		    thousandsSeparator: '.'
+		});
+	    
+	    obterValorTotalItens();
+	}
+	
+	function obterCabecalho() {
+
+		var dadosCabecalho = "";
+		
+		var fornecedor = $("#novoFornecedor").val();
+		var cnpj = $("#novoCnpj").val();
+		var numeroNota = $("#novoNumeroNota").val();
+        var serieNota = $("#novoSerieNota").val();
+        var checkNfe = $("#novoNfe").val();
+        var chaveAcesso = $("#novoChaveAcesso").val();
+        var dataEmissao = $("#novoDataEmissao").val();
+        var dataEntrada = $("#novoDataEntrada").val();
+        var valorTotal = $("#novoValorTotal").val();
+		
+		var cabecalho = 'nota.fornecedor=' + fornecedor + '&';
+
+		cabecalho += 'nota.cnpj=' + cnpj + '&';
+
+		cabecalho += 'nota.numero=' + numeroNota + '&';
+		
+		cabecalho += 'nota.serie=' + serieNota + '&';
+
+		cabecalho += 'nota.chaveAcesso=' + chaveAcesso + '&';
+
+		cabecalho += 'nota.dataEmissao=' + dataEmissao + '&';
+		
+		cabecalho += 'nota.dataEntrada=' + dataEntrada + '&';
+
+		cabecalho += 'nota.valorTotal=' + valorTotal + '&';
+
+		dadosCabecalho = (dadosCabecalho + cabecalho);
+
+		return dadosCabecalho;
+	}
+
+    function montaGridItens() {
+
+		$(".novoItemNotaGrid").flexOptions({url: "<c:url value='/estoque/recebimentoFisico/montaGridItemNota' />"});
+		$(".novoItemNotaGrid").flexReload();
+		$(".grids").show();
+	}	
+	
+	function getDataFromResultItem(resultado) {
+
+		if (resultado.mensagens) {
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			$(".grids").hide();
+			return resultado;
+		}
+		
+		$.each(resultado.rows, function(index, row) {
+
+			 var valueCodigo='';
+			 if (row.cell.codigoProduto!=null){
+				 valueCodigo = row.cell.codigoProduto;
+			 }
+			 
+			 var valueProduto='';
+			 if (row.cell.nomeProduto!=null){
+				 valueProduto = row.cell.nomeProduto;
+			 }
+			 
+			 var valueEdicao='';
+			 if (row.cell.edicao!=null){
+				 valueEdicao = row.cell.edicao;
+			 }
+			 
+			 var valuePrecoDesconto='';
+			 if (row.cell.precoDesconto!=null){
+				 valuePrecoDesconto = row.cell.precoDesconto;
+			 }
+			 
+			 var valueQtdNota='';
+			 if (row.cell.qtdFisico!=null){
+				 valueQtdNota = row.cell.qtdFisico;
+			 }
+			 
+			 var valueQtdPacote='';
+			 if (row.cell.qtdPacote!=null){
+				 valueQtdPacote = row.cell.qtdPacote;
+			 }
+			 
+			 var valueQtdExemplares='';
+			 if (row.cell.qtdExemplares!=null){
+				 valueQtdExemplares = row.cell.qtdExemplares;
+			 }
+			 
+			 var valueDiferenca='';
+			 if (row.cell.diferenca!=null){
+				 valueDiferenca = row.cell.diferenca;
+			 }
+			 
+			 var valueValor='';
+			 if (row.cell.valorTotal!=null){
+				 valueValor = row.cell.valorTotal;
+			 }
+
+        	 var codigo =       '<input maxlength="28" value="'+valueCodigo+'" type="number" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="produto.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
+	         			 					     
+	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="produto.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="produto.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
+				             
+			 var edicao =       '<input maxlength="18" value="'+valueEdicao+'" type="number" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="obterDadosEdicao('+index+');"></input>';         
+			
+			 var precoDesconto ='<input maxlength="17" value="'+valuePrecoDesconto+'" type="number" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
+			 
+			 var qtdNota =      '<input maxlength="17" value="'+valueQtdNota+'" type="number" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="replicarQuantidadeItem('+index+'); calcularDiferencaEValorItem('+index+');"></input>';
+			     
+	         var qtdPacote =    '<input maxlength="17" value="'+valueQtdPacote+'" type="number" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="calcularDiferencaEValorItem('+index+');"></input>';
+				             
+			 var qtdExemplares ='<input maxlength="17" value="'+valueQtdExemplares+'" type="number" name="itensRecebimento.qtdExemplaresItem" id="qtdExemplaresItem'+ index +'" style="width: 70px;" onchange="calcularDiferencaEValorItem('+index+');"></input>'; 
+				
+			 var diferenca =    '<input maxlength="17" value="'+valueDiferenca+'" type="number" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+				 
+			 var valor =        '<input maxlength="17" value="'+valueValor+'" type="number" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+						 
+			 var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +'"/>';
+
+		     row.cell[0] = codigo;
+		     row.cell[1] = produto;
+		     row.cell[2] = edicao;
+		     row.cell[3] = precoDesconto;
+		     row.cell[4] = qtdNota;
+		     row.cell[5] = qtdPacote;
+		     row.cell[6] = qtdExemplares;
+		     row.cell[7] = diferenca;
+		     row.cell[8] = valor;
+		     row.cell[9] = checkBox;
+         }
+	    
+		);
+
+		return resultado;
+	}
+	
+	function isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplares) {
+
+		if (!$.trim(codigo) 
+				&& !$.trim(produto)
+				&& !$.trim(edicao) 
+				&& !$.trim(precoDesconto)
+				&& !$.trim(qtdNota)
+				&& !$.trim(qtdPacote)
+				&& !$.trim(qtdExemplares)) {
+
+			return true;
+		}
+	}
+	
+	function obterListaItens() {
+
+		var linhasDaGrid = $(".novoItemNotaGrid tr");
+
+		var listaItens = "";
+
+		$.each(linhasDaGrid, function(index, value) {
+
+			var linha = $(value);
+			
+			var colunaCodigo = linha.find("td")[0];
+			var colunaProduto = linha.find("td")[1];
+			var colunaEdicao = linha.find("td")[2];
+			var colunaPrecoDesconto = linha.find("td")[3];
+			var colunaQtdNota = linha.find("td")[4];
+			var colunaQtdPacote = linha.find("td")[5];
+			var colunaQtdExemplares = linha.find("td")[6];
+			var colunaDiferenca = linha.find("td")[7];
+			var colunaValor = linha.find("td")[8];
+			var colunaCheck = linha.find("td")[9];
+			
+			var codigo = 
+				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val();
+			
+			var produto = 
+				$(colunaProduto).find("div").find('input[name="itensRecebimento.produtoItem"]').val();
+
+			var edicao = 
+				$(colunaEdicao).find("div").find('input[name="itensRecebimento.edicaoItem"]').val();
+
+			var precoDesconto =
+				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val();
+			
+			var qtdNota =
+				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
+			
+			var qtdPacote =
+				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val();
+			
+			var qtdExemplares =
+				$(colunaQtdExemplares).find("div").find('input[name="itensRecebimento.qtdExemplaresItem"]').val();
+			
+			var diferenca =
+				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val();
+			
+			var valor =
+				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val();
+
+			if (!isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplares)) {
+
+	            var dataLancamento = $("#novoDataEntrada").val();
+				
+			    var dataRecolhimento = $("#novoDataEmissao").val();
+	
+				var lancamento = 'itens[' + index + '].codigoProduto=' + codigo + '&';
+	
+				lancamento += 'itens[' + index + '].nomeProduto=' + produto + '&';
+	
+				lancamento += 'itens[' + index + '].edicao=' + edicao + '&';
+				
+				lancamento += 'itens[' + index + '].precoDesconto=' + precoDesconto + '&';
+				
+				lancamento += 'itens[' + index + '].repartePrevisto=' + qtdNota + '&';
+	
+				lancamento += 'itens[' + index + '].qtdFisico=' + qtdNota + '&';
+				
+				lancamento += 'itens[' + index + '].qtdPacote=' + qtdPacote + '&';
+				
+				lancamento += 'itens[' + index + '].qtdExemplares=' + qtdExemplares + '&';
+				
+				lancamento += 'itens[' + index + '].diferenca=' + diferenca + '&';
+				
+				lancamento += 'itens[' + index + '].valorTotal=' + valor + '&';
+	
+				lancamento += 'itens[' + index + '].dataLancamento=' + dataLancamento + '&';
+				
+				lancamento += 'itens[' + index + '].dataRecolhimento=' + dataRecolhimento + '&';
+				
+				listaItens = (listaItens + lancamento);
+			
+			}
+
+		});
+
+		return listaItens;
+	}
+
+	function obterValorTotalItens() {
+
+		var linhasDaGrid = $(".novoItemNotaGrid tr");
+
+		var listaItens = "";
+		
+		var valorTotal = 0;
+
+		$.each(linhasDaGrid, function(index, value) {
+
+			var linha = $(value);
+
+			var colunaValor = linha.find("td")[8];
+
+			valorTotal += intValue(removeMascaraPriceFormat($(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val()));
+			
+		});
+
+        $("#novoValorTotal").val(valorTotal);
+        
+        $("#novoValorTotal").priceFormat({
+			allowNegative: true,
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+        
+        $("#labelValorTotal").html($("#novoValorTotal").val());
+	}
+    
+    function replicarQuantidadeItem(index){
+    	if ( (document.getElementById("checkbox"+index).checked) || (document.getElementById("novoReplicarQtde").checked) ){
+    	    $("#qtdExemplaresItem"+index).val($("#qtdNotaItem"+(index)).val());
+    	}    
+    }
+
+    
+    
+    
+    //PREPARA NOVA LINHA DA GRID
+    function adicionarNovaLinha(index){
+
+    	var row;
+
+    	var codigo =       '<input maxlength="28" type="number" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="produto.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
+	     
+        var produto =      '<input maxlength="200" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="produto.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="produto.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
+			             
+		var edicao =       '<input maxlength="18" type="number" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="obterDadosEdicao('+index+');"></input>';         
+		
+		var precoDesconto ='<input maxlength="17" type="number" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
+		 
+		var qtdNota =      '<input maxlength="17" type="number" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="replicarQuantidadeItem('+index+'); calcularDiferencaEValorItem('+index+');"></input>';
+		     
+        var qtdPacote =    '<input maxlength="17" type="number" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="calcularDiferencaEValorItem('+index+');"></input>';
+			             
+		var qtdExemplares ='<input maxlength="17" type="number" name="itensRecebimento.qtdExemplaresItem" id="qtdExemplaresItem'+ index +'" style="width: 70px;" onchange="calcularDiferencaEValorItem('+index+');"></input>'; 
+			
+		var diferenca =    '<input maxlength="17" type="number" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+			 
+		var valor =        '<input maxlength="17" type="number" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+					 
+		var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +'"/>';
+
+    	var row = [{name: 'codigo', value: codigo},
+   	               {name: 'produto', value: produto},
+   	               {name: 'edicao', value: edicao},
+   	               {name: 'precoDesconto', value: precoDesconto},
+   	          	   {name: 'qtdeNota', value: qtdNota},
+   	               {name: 'qtdePcts', value: qtdPacote},
+   	               {name: 'qtdeExemplar', value: qtdExemplares},
+   	               {name: 'diferenca', value: diferenca},
+   	               {name: 'valor', value: valor},
+   	               {name: 'replicar', value: checkBox}];
+    	
+    	return row;
+    }
+    
+    //ADICIONA NOVA LINHA NA GRID
+    function incluiNovoItem(){
+    	
+    	var data = [];
+
+    	var dataValores = [];
+    	var rowValores;
+    	
+    	var idx;
+    	
+    	//OBTEM VALORES DIGITADOS
+    	var nLinhas = 0;
+    	var linhasDaGrid = $(".novoItemNotaGrid tr");
+    	
+    	$.each(linhasDaGrid, function(index, value) {
+    		
+    		nLinhas++;
+    		
+    		var linha = $(value);
+    		var colunaCodigo = linha.find("td")[0];
+			var colunaProduto = linha.find("td")[1];
+			var colunaEdicao = linha.find("td")[2];
+			var colunaPrecoDesconto = linha.find("td")[3];
+			var colunaQtdNota = linha.find("td")[4];
+			var colunaQtdPacote = linha.find("td")[5];
+			var colunaQtdExemplares = linha.find("td")[6];
+			var colunaDiferenca = linha.find("td")[7];
+			var colunaValor = linha.find("td")[8];
+			var colunaCheck = linha.find("td")[9];
+			
+			var valueCodigo = 
+				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val();
+			
+			var valueProduto = 
+				$(colunaProduto).find("div").find('input[name="itensRecebimento.produtoItem"]').val();
+
+			var valueEdicao = 
+				$(colunaEdicao).find("div").find('input[name="itensRecebimento.edicaoItem"]').val();
+
+			var valuePrecoDesconto =
+				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val();
+			
+			var valueQtdNota =
+				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
+			
+			var valueQtdPacote =
+				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val();
+			
+			var valueQtdExemplares =
+				$(colunaQtdExemplares).find("div").find('input[name="itensRecebimento.qtdExemplaresItem"]').val();
+			
+			var valueDiferenca =
+				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val();
+			
+			var valueValor =
+				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val();
+
+			
+		    rowValores = [{name: 'codigo', value: valueCodigo},
+		   	              {name: 'produto', value: valueProduto},
+		   	              {name: 'edicao', value: valueEdicao},
+		   	              {name: 'precoDesconto', value: valuePrecoDesconto},
+		   	              {name: 'qtdeNota', value: valueQtdNota},
+		   	              {name: 'qtdePcts', value: valueQtdPacote},
+		   	              {name: 'qtdeExemplar', value: valueQtdExemplares},
+		   	              {name: 'diferenca', value: valueDiferenca},
+		   	              {name: 'valor', value: valueValor},
+		   	              {name: 'replicar', value: 0}];
+			
+		    dataValores.push({id:index, cell: rowValores});
+			
+		    //MANTEM LINHAS ATUAIS
+			if (!isAtributosLancamentoVazios(valueCodigo, valueProduto, valueEdicao, valuePrecoDesconto, valueQtdNota, valueQtdPacote, valueQtdExemplares)) {
+		        data.push({id:nLinhas, cell: adicionarNovaLinha(index)});
+		    }
+			 
+		});
+    	
+    	//CRIA NOVA LINHA
+    	data.push({id:nLinhas+1, cell: adicionarNovaLinha(nLinhas)});
+
+    	$(".novoItemNotaGrid").flexAddData({
+            rows : toFlexiGridObject(data),
+            page : 1,
+            total : nLinhas+1
+        });
+
+    	//RETORNA OS DADOS DIGITADOS PARA AS LINHAS ATUAIS
+    	recuperaValoresDigitados(dataValores);
+	}
+    
+    //RECUPERA VALORES DIGITADOS ANTES DA INSERÇÃO DA NOVA LINHA
+    function recuperaValoresDigitados(dataValores){
+    	
+    	var linhasDaGrid = $(".novoItemNotaGrid tr");
+        $.each(linhasDaGrid, function(index, value) {
+        	
+        	if (index < dataValores.length){
+
+	    		var linha = $(value);
+	    		var colunaCodigo = linha.find("td")[0];
+				var colunaProduto = linha.find("td")[1];
+				var colunaEdicao = linha.find("td")[2];
+				var colunaPrecoDesconto = linha.find("td")[3];
+				var colunaQtdNota = linha.find("td")[4];
+				var colunaQtdPacote = linha.find("td")[5];
+				var colunaQtdExemplares = linha.find("td")[6];
+				var colunaDiferenca = linha.find("td")[7];
+				var colunaValor = linha.find("td")[8];
+				var colunaCheck = linha.find("td")[9];
+				
+				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val(dataValores[index].cell[0].value);
+				$(colunaProduto).find("div").find('input[name="itensRecebimento.produtoItem"]').val(dataValores[index].cell[1].value);
+				$(colunaEdicao).find("div").find('input[name="itensRecebimento.edicaoItem"]').val(dataValores[index].cell[2].value);
+				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val(dataValores[index].cell[3].value);
+				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[4].value);
+				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[5].value);
+				$(colunaQtdExemplares).find("div").find('input[name="itensRecebimento.qtdExemplaresItem"]').val(dataValores[index].cell[6].value);
+				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[7].value);
+				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val(dataValores[index].cell[8].value);
+	        	
+        	}
+        });
+    	
+    }
+    
+	function selecionarTodos(checked){
+		
+		for (var i=0;i<document.formularioItensNota.elements.length;i++) {
+		     var x = document.formularioItensNota.elements[i];
+		     if (x.name == 'checkboxGrid') {
+		    	 x.checked = checked;
+		     }    
+		}
+
+		if (checked){
+			var elem = document.getElementById("textoSelTodos");
+			elem.innerHTML = "Desmarcar todos";
+        }
+		
+		else{
+			var elem = document.getElementById("textoSelTodos");
+			elem.innerHTML = "Marcar todos";
+		}
+	}
+    
+	function limparCamposNovaNota(){
+		
+		$("#novoFornecedor").val(-1);
+		$("#novoCnpj").val("");
+		$("#novoNumeroNota").val("");
+        $("#novoSerieNota").val("");
+        $("#novoNfe").val("");
+        $("#novoChaveAcesso").val("");
+        $("#novoDataEmissao").val("");
+        $("#novoDataEntrada").val("");
+        $("#novoValorTotal").val("");
+	}
+	
+	function incluirNota() {
+
+		var url;
+		var formData;
+
+		formData = obterCabecalho() + obterListaItens();
+		url = '<c:url value="/estoque/recebimentoFisico/incluirNota" />';
+
+		$.postJSON(
+			url,
+			formData,
+			function(result) {
+
+				$("#dialog-adicionar").dialog( "close" );
+	
+				exibirMensagem(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);  
+			},
+			null,
+			true
+		);
+	}
+	
+	
+	
 	
 </script>
 
 <style type="text/css">
-  fieldset label {width: auto; margin-bottom: 0px!important;
-}
-.nfes{display:none;}
-  </style>
+    fieldset label {width: auto; margin-bottom: 0px!important;}
+    .nfes{display:none;}
+</style>
+
 </head>
 
 <body>
@@ -1247,6 +2014,16 @@ validarEdicaoCallBack : function() {
 								</a> 
 							</span>
 					</div>
+
+					<div id="botaoAdicionarOpaco">
+							<span class="bt_incluir_novo" id="bt_adicionarOpaco" title="Adicionar Nota Fiscal"> 
+								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Adicionar Nota Fiscal 
+								</a> 
+							</span>
+					</div>
+
 					<div id="botaoNovoProduto">
 							<span class="bt_incluir_novo" id="bt_novo_produto" title="Incluir Nova Linha"> 
 								<a href="javascript:;" onclick="popup_novo_item();"> 
@@ -1255,6 +2032,15 @@ validarEdicaoCallBack : function() {
 								</a> 
 							</span>
 					</div>	
+					
+					<div id="botaoAdicionar">
+							<span class="bt_incluir_novo" id="bt_adicionar" title="Adicionar Nota Fiscal"> 
+								<a href="javascript:;" onclick="popup_adicionar();">  
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Adicionar Nota Fiscal 
+								</a> 
+							</span>
+					</div>
 					
 					<div id="botoesNormais">	
 														
@@ -1314,7 +2100,122 @@ validarEdicaoCallBack : function() {
 		</div>
 
 	</div>
+	
+	
+	
+
+	<!-- NOVO POPUP DE CADASTRO DE NOTA -->
+	
+	<div id="dialog-adicionar" title="Recebimento Físico" style="display: none;" >
+	
+	    <jsp:include page="../messagesDialog.jsp" />
+		
+		<fieldset style="width:910px!important;">
+		  <legend>Dados da Nota</legend>
+		  <table width="885" cellpadding="2" cellspacing="2" style="text-align:left;">
+		   
+		    <tr style="width: 25%">
+
+		        <td width="89">Fornecedor:</td>
+		        <td width="168">
+			        <select name="select" id="novoFornecedor" name="novoFornecedor" onchange="pesquisarCnpjFornecedor();" style="width:160px ">
+				        <option selected="selected" value="">Selecione...</option>
+						<c:forEach var="fornecedor" items="${listafornecedores}">
+						    <option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
+						</c:forEach>
+			        </select>
+		        </td>
+		        
+		        <td width="95">CNPJ:</td>
+		        <td width="132">
+		            <input maxlength="200" type="text" style="width:100px " id="novoCnpj" name="novoCnpj" onchange="pesquisarFornecedorCnpj();" />
+		        </td>
+		        
+		        <td width="102">Nota Fiscal:</td>
+		        <td width="115">
+		            <input maxlength="18" type="text" style="width:100px " id="novoNumeroNota" name="novoNumeroNota"  />
+		        </td>
+		        
+		        <td width="34">Série:</td>
+		        <td width="97">
+		            <input maxlength="200" type="text" style="width:50px " id="novoSerieNota" name="novoSerieNota" />
+		        </td>
+		      
+		    </tr>
+
+		    
+		    <tr style="width: 25%">
+		      
+		      <td>NF-e:</td>
+		      <td>
+		          <input type="checkbox" id="novoNfe" name="novoNfe" />
+		      </td>
+
+		      <td>Chave de Acesso:</td>
+		      <td colspan="5">
+		          <input maxlength="200" type="text" style="width:470px" id="novoChaveAcesso" name="novoChaveAcesso" />
+		      </td>
+
+		    </tr>
+		    
+		    
+		    <tr style="width: 25%">
+		      
+		      <td>Data Emissão:</td>
+		      <td>
+		          <input type="text" id="novoDataEmissao" name="novoDataEmissao" style="width:100px " />
+		      </td>
+		      
+		      <td>Data Entrada:</td>
+		      <td>
+		          <input type="text" id="novoDataEntrada" name="novoDataEntrada" style="width:100px " />
+		      </td>
+		      
+		      <td>Valor Total R$:</td>
+		      <td>
+		          <input maxlength="17" type="text" style="width:100px; text-align:right; " id="novoValorTotal" name="novoValorTotal"/>
+		      </td>
+		      
+		      <td align="right">
+		          <input type="checkbox" id="novoReplicarQtde" name="novoReplicarQtde" />
+		      </td>
+		      <td>Replicar Qtde:</td>
+		      
+		    </tr>
+		    
+		    </table>
+		</fieldset>
+		    
+		
+		<fieldset style="width:910px!important; margin-top:10px;">
+		    <form name="formularioItensNota" id="formularioItensNota">
+			    <legend>Itens da Nota</legend>
+			    <table id="tabelaItens" class="novoItemNotaGrid"></table>
+			</form>    
+		</fieldset> 
+		
+		<span class="bt_incluir_novo" title="Incluir Novo">
+		    <a href="javascript:;" onclick="incluiNovoItem();">
+		        <img src= "${pageContext.request.contextPath}/images/ico_add.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />
+		        Incluir Novo
+		    </a>
+		</span>
+		
+		<span class="bt_sellAll" style="float:right; margin-right:40px; margin-top:8px">
+		    <label for="textoSelTodos" id="textoSelTodos">
+                Marcar Todos
+            </label>
+		    <input type="checkbox"  id="selTodos" name="selTodos" onclick="selecionarTodos(this.checked);" style="float:right; margin-top:-5px"/>
+		</span>
+		
+		<span style="float:right; margin-right:35px; margin-top:8px">
+		    <strong style="margin-right:10px;">
+		        Valor Total R$
+		    </strong> 
+		    <label id="labelValorTotal">0,00</label>
+		</span>
+	 
+	</div>
+
 
 </body>
-
-</html>

@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +39,10 @@ public class EstoqueProdutoCota {
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name = "QTDE_RECEBIDA")
-	private BigDecimal qtdeRecebida;
+	private BigInteger qtdeRecebida;
 	
 	@Column(name = "QTDE_DEVOLVIDA")
-	private BigDecimal qtdeDevolvida;
+	private BigInteger qtdeDevolvida;
 	
 	@OneToMany(mappedBy = "estoqueProdutoCota")
 	List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
@@ -74,19 +75,19 @@ public class EstoqueProdutoCota {
 		this.produtoEdicao = produtoEdicao;
 	}
 	
-	public BigDecimal getQtdeRecebida() {
+	public BigInteger getQtdeRecebida() {
 		return qtdeRecebida;
 	}
 	
-	public void setQtdeRecebida(BigDecimal qtdeRecebida) {
+	public void setQtdeRecebida(BigInteger qtdeRecebida) {
 		this.qtdeRecebida = qtdeRecebida;
 	}
 	
-	public BigDecimal getQtdeDevolvida() {
+	public BigInteger getQtdeDevolvida() {
 		return qtdeDevolvida;
 	}
 	
-	public void setQtdeDevolvida(BigDecimal qtdeDevolvida) {
+	public void setQtdeDevolvida(BigInteger qtdeDevolvida) {
 		this.qtdeDevolvida = qtdeDevolvida;
 	}
 	

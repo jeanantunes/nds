@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -335,7 +336,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(produtoEdicao.getId(), 
 																						  usuario.getId(), 
-																			 			  new BigDecimal(vnd.getQntProduto()),
+																			 			  vnd.getQntProduto(),
 																			 			  tipoMovimento);
 		
 		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
@@ -394,7 +395,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(produtoEdicao.getId(), 
 																						  usuario.getId(), 
-																			 			  new BigDecimal(vnd.getQntProduto()),
+																			 			  vnd.getQntProduto(),
 																			 			  tipoMovimento);
 		
 		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito,vendaProduto);
@@ -421,7 +422,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		VendaProduto vendaProduto = getVendaProduto(vnd,numeroCota, usuario,dataVencimentoDebito,produtoEdicao);
 		
-		BigDecimal qntProduto = new BigDecimal(vendaProduto.getQntProduto());
+		BigInteger qntProduto = vendaProduto.getQntProduto();
 		
 		gerarMovimentoCompraSuplementar(produtoEdicao.getId(), vendaProduto.getCota().getId(), usuario.getId(),qntProduto);
 		
@@ -472,7 +473,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param idUsuario
 	 * @param qntProduto
 	 */
-	private MovimentoEstoque gerarMovimentoEstoqueVendaEncalheSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigDecimal qntProduto){
+	private MovimentoEstoque gerarMovimentoEstoqueVendaEncalheSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigInteger qntProduto){
 		
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
@@ -495,7 +496,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param idUsuario
 	 * @param qntProduto
 	 */
-	private void gerarMovimentoCompraSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigDecimal qntProduto){
+	private void gerarMovimentoCompraSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigInteger qntProduto){
 				
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
@@ -516,7 +517,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param idUsuario
 	 * @param qntProduto
 	 */
-	private void gerarMovimentoEstornoCompraSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigDecimal qntProduto){
+	private void gerarMovimentoEstornoCompraSuplementar(Long idProdutoEdicao, Long idCota,Long idUsuario,BigInteger qntProduto){
 		
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
@@ -536,7 +537,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param cota
 	 * @param qntProduto
 	 */
-	private void gerarMovimentoChamadaEncalhe(ProdutoEdicao produtoEdicao, Cota cota, BigDecimal qntProduto){
+	private void gerarMovimentoChamadaEncalhe(ProdutoEdicao produtoEdicao, Cota cota, BigInteger qntProduto){
 		
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
@@ -548,11 +549,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			chamadaEncalheCota.setCota(cota);
 			chamadaEncalheCota.setPostergado(false);
 			chamadaEncalheCota.setFechado(false);
-			chamadaEncalheCota.setQtdePrevista(BigDecimal.ZERO);
+			chamadaEncalheCota.setQtdePrevista(BigInteger.ZERO);
 			chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
 		}
 		
-		BigDecimal qntPrevista = chamadaEncalheCota.getQtdePrevista();   
+		BigInteger qntPrevista = chamadaEncalheCota.getQtdePrevista();   
 		chamadaEncalheCota.setQtdePrevista( qntPrevista.add(qntProduto) );
 		
 		chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
@@ -608,16 +609,16 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		if(TipoVendaEncalhe.ENCALHE.equals(vendaProduto.getTipoVenda())){
 			
-			movimento = processarAtualizcaoMovimentoEstoque(new BigDecimal(vendaProduto.getQntProduto()),
-															BigDecimal.ZERO, vendaProduto.getProdutoEdicao().getId(),
+			movimento = processarAtualizcaoMovimentoEstoque(vendaProduto.getQntProduto(),
+															BigInteger.ZERO, vendaProduto.getProdutoEdicao().getId(),
 															vendaProduto.getUsuario().getId());
 		}
 		//Venda de encalhe SUPLEMENTAR
 		else {
 		
 			//Atualiza o estoque do distribuidor
-			movimento = processarAtualizcaoMovimentoEstoqueSuplementar(new BigDecimal(vendaProduto.getQntProduto()),
-														   			   BigDecimal.ZERO, vendaProduto.getProdutoEdicao().getId(),
+			movimento = processarAtualizcaoMovimentoEstoqueSuplementar(vendaProduto.getQntProduto(),
+																		BigInteger.ZERO, vendaProduto.getProdutoEdicao().getId(),
 														   			   vendaProduto.getUsuario().getId());
 			
 			if(isVendaConsignadoCota(vendaProduto.getProdutoEdicao())){
@@ -626,7 +627,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				gerarMovimentoEstornoCompraSuplementar(vendaProduto.getProdutoEdicao().getId(),
 														vendaProduto.getCota().getId(),
 														vendaProduto.getUsuario().getId(),
-														new BigDecimal(vendaProduto.getQntProduto()));
+														vendaProduto.getQntProduto());
 				
 				//Atualiza a chamada de encalhe do produto edição referente a cota
 				processaAtualizacaoChamadaEncalheCotaVendaCancelada(vendaProduto);
@@ -651,17 +652,17 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		if(chamadaEncalheCota!= null){
 			
-			BigDecimal qnProduto = chamadaEncalheCota.getQtdePrevista().subtract(new BigDecimal(vendaProduto.getQntProduto()));
+			BigInteger qnProduto = chamadaEncalheCota.getQtdePrevista().subtract(vendaProduto.getQntProduto());
 			
-			if(BigDecimal.ZERO.compareTo(qnProduto) == 0){
+			if(BigInteger.ZERO.compareTo(qnProduto) == 0){
 				
 				chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
 			}
 			else{
 				
-				BigDecimal qntPrevistaChamadaEncalhe = chamadaEncalheCota.getQtdePrevista();
+				BigInteger qntPrevistaChamadaEncalhe = chamadaEncalheCota.getQtdePrevista();
 				
-				qntPrevistaChamadaEncalhe = qntPrevistaChamadaEncalhe.subtract(new BigDecimal(vendaProduto.getQntProduto()));
+				qntPrevistaChamadaEncalhe = qntPrevistaChamadaEncalhe.subtract(vendaProduto.getQntProduto());
 				chamadaEncalheCota.setQtdePrevista(qntPrevistaChamadaEncalhe);
 				
 				chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
@@ -674,7 +675,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param vendaProduto
 	 * @param qntProdutoNovo
 	 */
-	private void processarAtualizacaoChamadaEncalheCota(VendaProduto vendaProduto,BigDecimal qntProdutoNovo){
+	private void processarAtualizacaoChamadaEncalheCota(VendaProduto vendaProduto,BigInteger qntProdutoNovo){
 		
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(vendaProduto.getProdutoEdicao(), TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
@@ -683,7 +684,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		if(chamadaEncalheCota!= null){
 			
-			BigDecimal qnProduto = chamadaEncalheCota.getQtdePrevista().subtract(new BigDecimal(vendaProduto.getQntProduto()));
+			BigInteger qnProduto = chamadaEncalheCota.getQtdePrevista().subtract(vendaProduto.getQntProduto());
 			qnProduto = qnProduto.add(qntProdutoNovo);
 			
 			chamadaEncalheCota.setQtdePrevista(qnProduto);
@@ -699,11 +700,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		ProdutoEdicao produtoEdicao = vendaProduto.getProdutoEdicao();
 	
-		BigDecimal qntAtualProduto = new BigDecimal(vendaProduto.getQntProduto());
-		BigDecimal qntNovaProduto = new BigDecimal(vendaEncalheDTO.getQntProduto());
+		BigInteger qntAtualProduto = vendaProduto.getQntProduto();
+		BigInteger qntNovaProduto = vendaEncalheDTO.getQntProduto();
 		
 		BigDecimal valorVendaAtual = vendaProduto.getValorTotalVenda();
-		BigDecimal valorVendaNovo = produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(qntNovaProduto);
+		BigDecimal valorVendaNovo = produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply( new BigDecimal(qntNovaProduto) );
 		
 		if(qntAtualProduto.compareTo(qntNovaProduto) != 0){
 			
@@ -816,9 +817,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	}
 		
-	private MovimentoEstoque processarAtualizcaoMovimentoEstoque(BigDecimal qntProdutoAtual,BigDecimal qntProdutoNovo,Long idProdutoEdicao, Long idUsuario){
+	private MovimentoEstoque processarAtualizcaoMovimentoEstoque(BigInteger qntProdutoAtual,BigInteger qntProdutoNovo,Long idProdutoEdicao, Long idUsuario){
 		
-		BigDecimal quantidadeProdutoAlterada = BigDecimal.ZERO;
+		BigInteger quantidadeProdutoAlterada = BigInteger.ZERO;
 		TipoMovimentoEstoque tipoMovimento = null;
 		//Se a quantidade de produto nova informada for maior que a quantidade atual, gera movimento de venda de encalhe
 		
@@ -846,9 +847,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return movimentoEstoque;
 	}
 	
-	private MovimentoEstoque processarAtualizcaoMovimentoEstoqueSuplementar(BigDecimal qntProdutoAtual,BigDecimal qntProdutoNovo,Long idProdutoEdicao, Long idUsuario){
+	private MovimentoEstoque processarAtualizcaoMovimentoEstoqueSuplementar(BigInteger qntProdutoAtual,BigInteger qntProdutoNovo,Long idProdutoEdicao, Long idUsuario){
 		
-		BigDecimal quantidadeProdutoAlterada = BigDecimal.ZERO;
+		BigInteger quantidadeProdutoAlterada = BigInteger.ZERO;
 		TipoMovimentoEstoque tipoMovimento = null;
 		//Se a quantidade de produto nova informada for maior que a quantidade atual, gera movimento de venda de encalhe
 		
@@ -876,9 +877,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return movimentoEstoque;
 	}
 	
-	private void processarAtualizacaoMovimentoEstoqueCota(BigDecimal qntProdutoAtual,BigDecimal qntProdutoNovo,Long idProdutoEdicao, Long idUsuario, Long idCota){
+	private void processarAtualizacaoMovimentoEstoqueCota(BigInteger qntProdutoAtual,BigInteger qntProdutoNovo,Long idProdutoEdicao, Long idUsuario, Long idCota){
 		
-		BigDecimal quantidadeProdutoAlterada = BigDecimal.ZERO;
+		BigInteger quantidadeProdutoAlterada = BigInteger.ZERO;
 		TipoMovimentoEstoque tipoMovimento = null;
 		//Se a quantidade de produto nova informada for maior que a quantidade atual, gera movimento de venda de encalhe
 		
@@ -955,13 +956,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 			if(TipoVendaEncalhe.ENCALHE.equals(tipoVendaEncalhe)
 					&& estoqueProduto.getQtdeDevolucaoEncalhe()!= null
-					&& estoqueProduto.getQtdeDevolucaoEncalhe().compareTo(BigDecimal.ZERO) > 0){
+					&& estoqueProduto.getQtdeDevolucaoEncalhe().compareTo(BigInteger.ZERO) > 0){
 			
 				qntProduto = estoqueProduto.getQtdeDevolucaoEncalhe().intValue();
 			}
 			else if (TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)
 					&& estoqueProduto.getQtdeSuplementar()!= null
-					&& estoqueProduto.getQtdeSuplementar().compareTo(BigDecimal.ZERO) > 0){
+					&& estoqueProduto.getQtdeSuplementar().compareTo(BigInteger.ZERO) > 0){
 				
 				qntProduto = estoqueProduto.getQtdeSuplementar().intValue();
 			}

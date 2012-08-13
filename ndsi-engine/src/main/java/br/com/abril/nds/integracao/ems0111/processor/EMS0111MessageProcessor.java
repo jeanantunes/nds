@@ -1,8 +1,10 @@
 package br.com.abril.nds.integracao.ems0111.processor;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.beanutils.converters.BigIntegerConverter;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -66,6 +68,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (null != produtoEdicao) {
 			// SE EXISTIR PRODUTO/EDICAO NA TABELA
 			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
+				
+			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());			
+			
 			StringBuilder sql = new StringBuilder();
 
 			sql.append("SELECT lcto FROM Lancamento lcto ");
@@ -110,10 +115,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 				}
 
-				if (lancamento.getReparte() != input.getRepartePrevisto())
+				if (lancamento.getReparte().longValue() != input.getRepartePrevisto())
 					;
 				{
-					lancamento.setReparte(input.getRepartePrevisto());
+					lancamento.setReparte( new BigInteger( input.getRepartePrevisto().toString() ));
 					ndsiLoggerFactory.getLogger().logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -122,12 +127,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 				}
 
-				if (lancamento.getRepartePromocional() != input
+				if (lancamento.getRepartePromocional().longValue() != input
 						.getRepartePromocional())
 					;
 				{
-					lancamento.setRepartePromocional(input
-							.getRepartePromocional());
+					lancamento.setRepartePromocional( new BigInteger( input
+							.getRepartePromocional().toString()));
 
 					ndsiLoggerFactory.getLogger().logInfo(
 							message,
@@ -149,14 +154,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setId(null);
 				lancamento.setProdutoEdicao(produtoEdicao);
 				lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-				lancamento.setTipoLancamento(parseTipo(input
-						.getTipoLancamento()));
-				lancamento.setReparte(input.getRepartePrevisto());
+				lancamento.setTipoLancamento(parseTipo(input.getTipoLancamento()));
+				lancamento.setReparte(new BigInteger( input.getRepartePrevisto().toString()));
 				lancamento.setStatus(StatusLancamento.PLANEJADO);// confirmado
-				lancamento.setRepartePromocional(input.getRepartePromocional());// confirmado
+				lancamento.setRepartePromocional(new BigInteger( input.getRepartePromocional().toString()));// confirmado
 				lancamento.setDataCriacao(new Date());// confirmado
-				lancamento.setDataLancamentoDistribuidor(input
-						.getDataLancamento());// confirmado
+				lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());// confirmado
 				lancamento.setDataRecolhimentoDistribuidor(data.getTime());// confirmado
 				lancamento.setDataRecolhimentoPrevista(data.getTime());// confirmado
 				lancamento.setDataStatus(new Date());// confirmado
@@ -164,7 +167,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setHistoricos(null);// default
 				lancamento.setRecebimentos(null);// default
 				lancamento.setNumeroReprogramacoes(null);// confirmado
-				lancamento.setSequenciaMatriz(null);// confirmado
+				lancamento.setSequenciaMatriz(null);// confirmado				
 
 				// EFETIVAR INSERCAO NA BASE
 				getSession().persist(lancamento);

@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class Estudo implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	@Column(name = "QTDE_REPARTE", nullable = false)
-	private BigDecimal qtdeReparte;
+	private BigInteger qtdeReparte;
 	@Column(name = "DATA_LANCAMENTO", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
@@ -64,11 +65,11 @@ public class Estudo implements Serializable {
 		this.id = id;
 	}
 	
-	public BigDecimal getQtdeReparte() {
+	public BigInteger getQtdeReparte() {
 		return qtdeReparte;
 	}
 	
-	public void setQtdeReparte(BigDecimal qtdeReparte) {
+	public void setQtdeReparte(BigInteger qtdeReparte) {
 		this.qtdeReparte = qtdeReparte;
 	}
 	

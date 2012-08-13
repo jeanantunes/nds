@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0106.inbound;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
@@ -16,7 +17,7 @@ public class EMS0106Input implements Serializable {
 
 	private String codigoPublicacao;
 	private Long edicao;
-	private BigDecimal reparteDistribuir;
+	private Long reparteDistribuir;
 
 	@Field(offset = 1, length = 8)
 	public String getCodigoPublicacao() {
@@ -38,11 +39,11 @@ public class EMS0106Input implements Serializable {
 
 	@Field(offset = 13, length = 8)
 	@FixedFormatDecimal(decimals=2, useDecimalDelimiter=false)
-	public BigDecimal getReparteDistribuir() {
+	public Long getReparteDistribuir() {
 		return reparteDistribuir;
 	}
 
-	public void setReparteDistribuir(BigDecimal reparteDistribuir) {
+	public void setReparteDistribuir(Long reparteDistribuir) {
 		this.reparteDistribuir = reparteDistribuir;
 	}
 

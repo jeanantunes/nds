@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl.balanceamento.lancamento;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -68,7 +69,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 	
 	private List<Long> fornecedores;
 	
-	private BigDecimal repartePrevisto;
+	private BigInteger repartePrevisto;
 	
 	@Before
 	public void setUp() {
@@ -115,28 +116,28 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		save(cromoReiLeao);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 1, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, veja, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
 
 		veja1.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 1, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRST", 2L,
+				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
 				quatroRodas, null, false);
 
 		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 1, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPQRS", 3L, infoExame, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPB", 3L, infoExame, null, false);
 
 		infoExame3.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 1, 15,
-				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQR", 4L, capricho, null, false);
+				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPC", 4L, capricho, null, false);
 		
 		capricho1.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 1, 60,
-				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPQ", 5L, cromoReiLeao, null, false);
+				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPD", 5L, cromoReiLeao, null, false);
 		
 		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);
 		
@@ -161,7 +162,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				TipoLancamento.LANCAMENTO,
-						new BigDecimal(50));
+						BigInteger.valueOf(50));
 		save(itemNotaFiscal1Veja);
 		
 		RecebimentoFisico recebimentoFisico1Veja = Fixture.recebimentoFisico(
@@ -170,7 +171,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico1Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico1Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal1Veja, recebimentoFisico1Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico1Veja);
 		
 		
@@ -186,7 +187,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 				new Date(),
 				new Date(),
 				TipoLancamento.LANCAMENTO,
-				new BigDecimal(50));
+				BigInteger.valueOf(50));
 		
 		save(itemNotaFiscal2Veja);
 
@@ -196,7 +197,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico2Veja);
 			
 		ItemRecebimentoFisico itemRecebimentoFisico2Veja = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, new BigDecimal(50));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal2Veja, recebimentoFisico2Veja, BigInteger.valueOf(50));
 		save(itemRecebimentoFisico2Veja);
 		
 		
@@ -214,7 +215,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 						new Date(),
 						new Date(), 
 						TipoLancamento.LANCAMENTO,
-						new BigDecimal(25));
+						BigInteger.valueOf(25));
 		
 		save(itemNotaFiscal4Rodas);
 		
@@ -224,12 +225,12 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		save(recebimentoFisico4Rodas);
 
 		ItemRecebimentoFisico itemRecebimentoFisico4Rodas = 
-				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, new BigDecimal(25));
+				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, BigInteger.valueOf(25));
 		save(itemRecebimentoFisico4Rodas);
 		
 		Date dataLancamento = new Date();
 		
-		repartePrevisto = BigDecimal.TEN;
+		repartePrevisto = BigInteger.TEN;
 		
 		lancamentoVeja = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja1,
 				dataLancamento,
@@ -329,12 +330,12 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 
 		save(periodoLancamentoCapricho);
 		
-		Estudo estudoCapricho = Fixture.estudo(new BigDecimal(180),
+		Estudo estudoCapricho = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoCapricho.getDataLancamentoDistribuidor(), capricho1);
 		
 		save(estudoCapricho);
 		
-		EstudoCota estudoCotaCapricho = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoCapricho, cotaDinap);
+		EstudoCota estudoCotaCapricho = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudoCapricho, cotaDinap);
 
 		save(estudoCotaCapricho);
 		
@@ -346,12 +347,12 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		save(cotaFC);
 				
-		Estudo estudoQuatroRodas = Fixture.estudo(new BigDecimal(180),
+		Estudo estudoQuatroRodas = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoQuatroRodas.getDataLancamentoDistribuidor(), quatroRoda2);
 		
 		save(estudoQuatroRodas);
 		
-		EstudoCota estudoCotaQuatroRodas = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoQuatroRodas, cotaFC);
+		EstudoCota estudoCotaQuatroRodas = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudoQuatroRodas, cotaFC);
 		
 		save(estudoCotaQuatroRodas);
 		
@@ -359,12 +360,12 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 
 		save(cotaManoel);
 		
-		Estudo estudoVeja = Fixture.estudo(new BigDecimal(180),
+		Estudo estudoVeja = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoVeja.getDataLancamentoDistribuidor(), veja1);
 		
 		save(estudoVeja);
 		
-		EstudoCota estudoCotaVeja = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoVeja, cotaManoel);
+		EstudoCota estudoCotaVeja = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudoVeja, cotaManoel);
 
 		save(estudoCotaVeja);
 		
@@ -376,12 +377,12 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		save(cotaJurandir);
 				
-		Estudo estudoInfoExame = Fixture.estudo(new BigDecimal(180),
+		Estudo estudoInfoExame = Fixture.estudo(BigInteger.valueOf(180),
 				lancamentoInfoExame.getDataLancamentoDistribuidor(), infoExame3);
 		
 		save(estudoInfoExame);
 		
-		EstudoCota estudoCotaInfoExame = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.ONE, estudoInfoExame, cotaJurandir);
+		EstudoCota estudoCotaInfoExame = Fixture.estudoCota(BigInteger.TEN, BigInteger.ONE, estudoInfoExame, cotaJurandir);
 		
 		save(estudoCotaInfoExame);
 	}

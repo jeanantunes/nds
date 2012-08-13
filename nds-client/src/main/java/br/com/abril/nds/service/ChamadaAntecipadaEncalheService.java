@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
@@ -54,7 +55,7 @@ public interface ChamadaAntecipadaEncalheService {
 	 * 
 	 * @return BigDecimal
 	 */
-	BigDecimal obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
+	BigInteger obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
 	
 	/**
 	 * 

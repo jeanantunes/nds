@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 public class RetornoExpedicaoVO {
@@ -9,7 +10,7 @@ public class RetornoExpedicaoVO {
 	
 	private List<ResumoExpedicaoBoxVO> resumosExpedicaoBox;
 	
-	private BigDecimal totalReparte;
+	private BigInteger totalReparte;
 	
 	private BigDecimal totalValorFaturado;
 
@@ -30,14 +31,14 @@ public class RetornoExpedicaoVO {
 	/**
 	 * @return the totalReparte
 	 */
-	public BigDecimal getTotalReparte() {
+	public BigInteger getTotalReparte() {
 		return totalReparte;
 	}
 
 	/**
 	 * @param totalReparte the totalReparte to set
 	 */
-	public void setTotalReparte(BigDecimal totalReparte) {
+	public void setTotalReparte(BigInteger totalReparte) {
 		this.totalReparte = totalReparte;
 	}
 

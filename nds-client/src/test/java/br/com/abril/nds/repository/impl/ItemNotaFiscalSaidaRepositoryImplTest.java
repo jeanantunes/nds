@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -96,17 +97,17 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 		save(produtoCE, produtoCE_2, produtoCE_3);
 
 		produtoEdicaoCE = Fixture.produtoEdicao("1", 84L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQRSTU", 1L, produtoCE, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, produtoCE, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 		
 		produtoEdicaoCE_2 = Fixture.produtoEdicao("1", 85L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPQRST", 2L, produtoCE_2, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPZ", 2L, produtoCE_2, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 		
 		produtoEdicaoCE_3 = Fixture.produtoEdicao("1", 86L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPQRS", 3L, produtoCE_3, null, false);
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPT", 3L, produtoCE_3, null, false);
 		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 		
@@ -251,7 +252,7 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 				Fixture.itemNotaFiscalSaidaNFE(
 						produtoEdicaoCE, 
 						notaFiscalSaidaFornecedor, 
-						BigDecimal.TEN,
+						BigInteger.TEN,
 						NCMProduto, 
 						CFOPProduto, 
 						unidadeProduto, 

@@ -3,9 +3,11 @@ package br.com.abril.nds.model.cadastro;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,6 +19,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -37,6 +40,10 @@ public class FormaCobranca implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COBRANCA", nullable = false)
 	private TipoCobranca tipoCobranca;
+	
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "FORMA_COBRANCA_BOLETO", nullable = true)
+	private FormaCobrancaBoleto formaCobrancaBoleto;	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_FORMA_COBRANCA", nullable = false)
@@ -81,11 +88,12 @@ public class FormaCobranca implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "PARAMETRO_COBRANCA_COTA_ID")
 	private ParametroCobrancaCota parametroCobrancaCota;
-	
-	@Column(name = "DIA_DO_MES")
-	private Integer diaDoMes;
+			
+	@ElementCollection
+	private List<Integer> diasDoMes; 
 	
 	@OneToMany(mappedBy="formaCobranca")
+	@OrderBy("codigoDiaSemana ASC")
 	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
 	
 	public Long getId() {
@@ -211,15 +219,8 @@ public class FormaCobranca implements Serializable {
 	public void setParametroCobrancaCota(ParametroCobrancaCota parametroCobrancaCota) {
 		this.parametroCobrancaCota = parametroCobrancaCota;
 	}
-	
-	public Integer getDiaDoMes() {
-		return diaDoMes;
-	}
 
-	public void setDiaDoMes(Integer diaDoMes) {
-		this.diaDoMes = diaDoMes;
-	}
-	
+		
 	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
 		return concentracaoCobrancaCota;
 	}
@@ -227,5 +228,33 @@ public class FormaCobranca implements Serializable {
 	public void setConcentracaoCobrancaCota(
 			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota) {
 		this.concentracaoCobrancaCota = concentracaoCobrancaCota;
+	}
+
+	/**
+	 * @return the diasDoMes
+	 */
+	public List<Integer> getDiasDoMes() {
+		return diasDoMes;
+	}
+
+	/**
+	 * @param diasDoMes the diasDoMes to set
+	 */
+	public void setDiasDoMes(List<Integer> diasDoMes) {
+		this.diasDoMes = diasDoMes;
+	}
+
+	/**
+	 * @return the formaCobrancaBoleto
+	 */
+	public FormaCobrancaBoleto getFormaCobrancaBoleto() {
+		return formaCobrancaBoleto;
+	}
+
+	/**
+	 * @param formaCobrancaBoleto the formaCobrancaBoleto to set
+	 */
+	public void setFormaCobrancaBoleto(FormaCobrancaBoleto formaCobrancaBoleto) {
+		this.formaCobrancaBoleto = formaCobrancaBoleto;
 	}
 }
