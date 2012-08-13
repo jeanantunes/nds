@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 import java.util.List;
 
+import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
@@ -10,7 +11,6 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 
 
 /**
@@ -41,6 +41,6 @@ public interface DescontoService {
 	
 	void incluirDesconto(DescontoCota desconto);
 	
-	void incluirDesconto(DescontoProduto desconto);
+	void incluirDesconto(DescontoProdutoDTO desconto);
 }
 	

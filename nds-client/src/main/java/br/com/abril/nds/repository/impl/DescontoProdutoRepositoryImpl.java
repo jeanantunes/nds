@@ -35,7 +35,6 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
-		// TODO Auto-generated method stub
 		
 		Criteria criteria = this.getSession().createCriteria(DescontoProduto.class);
 		
@@ -103,7 +102,6 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	 */
 	@Override
 	public Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
-		// TODO Auto-generated method stub
 
 		Criteria criteria = this.getSession().createCriteria(DescontoProduto.class);
 
