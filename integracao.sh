@@ -53,6 +53,7 @@ java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0117
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0116.route.EMS0116Route
 # Recupera MATRIZ LANCAMENTO RECOLHIMENTO no arquivo do mdc e persiste no nds
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0108.route.EMS0108Route
-# Recupera ESTUDO COTA (107) e ESTUDO no arquivo do mdc e persiste no nds
+# Recupera ESTUDO no arquivo do mdc e persiste no nds
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0106.route.EMS0106Route
-
+# Recupera ESTUDO COTA no arquivo do mdc e persiste no nds
+java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0107.route.EMS0107Route
