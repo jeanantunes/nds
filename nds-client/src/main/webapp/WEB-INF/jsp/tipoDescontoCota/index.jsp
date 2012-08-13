@@ -508,7 +508,7 @@ var TIPO_DESCONTO = {
 				display : 'Ação',
 				name : 'acao',
 				width : 35,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "sequencial",
@@ -565,7 +565,7 @@ var TIPO_DESCONTO = {
 				display : 'Ação',
 				name : 'acao',
 				width : 35,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "numeroCota",
@@ -621,7 +621,7 @@ var TIPO_DESCONTO = {
 				display : 'Ação',
 				name : 'acao',
 				width : 30,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigoProduto",
