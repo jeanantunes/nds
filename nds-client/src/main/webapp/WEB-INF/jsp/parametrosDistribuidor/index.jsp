@@ -113,21 +113,9 @@ function gravar() {
 		{name:'parametrosDistribuidor.notaEnvioEmail', value: $('#notaEnvioEmail').is(':checked')},
 		{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao').is(':checked')},
 		{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNE', value: $("input[name='impressaoNE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoNEFaltaDe', value: $('#impressaoNEFaltaDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNEFaltaEm', value: $('#impressaoNEFaltaEm').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNESobraDe', value: $('#impressaoNESobraDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNESobraEm', value: $('#impressaoNESobraEm').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoInterfaceLED', value: $("input[name='interfaceLED']:checked").val()},
 		{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='impressaoNECADANFE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaDe', value: $('#impressaoNECADANFEFaltaDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaEm', value: $('#impressaoNECADANFEFaltaEm').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFESobraDe', value: $('#impressaoNECADANFESobraDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFESobraEm', value: $('#impressaoNECADANFESobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='impressaoCE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoCEFaltaDe', value: $('#impressaoCEFaltaDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoCEFaltaEm', value: $('#impressaoCEFaltaEm').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoCESobraDe', value: $('#impressaoCESobraDe').is(':checked')},
-		{name:'parametrosDistribuidor.impressaoCESobraEm', value: $('#impressaoCESobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas').is(':checked')},
 		{name:'parametrosDistribuidor.prazoContrato', value: $('#prazoContrato').val()},
 		{name:'parametrosDistribuidor.informacoesComplementaresContrato', value: $('#informacoesComplementaresContrato').val()},
@@ -378,7 +366,7 @@ $(function() {
 	$("#relancamentoParciaisEmDias").val(${parametrosDistribuidor.relancamentoParciaisEmDias});
 	
 	$('input:radio[name=distribuidor][value=${parametrosDistribuidor.distribuidor}]').click();
-	$('input:radio[name=impressaoNE][value=${parametrosDistribuidor.impressaoNE}]').click();
+	$('input:radio[name=interfaceLED][value=${parametrosDistribuidor.impressaoInterfaceLED}]').click();
 	$('input:radio[name=impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]').click();
 	$('input:radio[name=impressaoCE][value=${parametrosDistribuidor.impressaoCE}]').click();
 	

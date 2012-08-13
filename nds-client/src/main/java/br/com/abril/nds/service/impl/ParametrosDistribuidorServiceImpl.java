@@ -22,8 +22,8 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
-import br.com.abril.nds.model.cadastro.TipoImpressaoNE;
-import br.com.abril.nds.model.cadastro.TipoImpressaoNECADANFE;
+import br.com.abril.nds.model.cadastro.TipoImpressaoInterfaceLED;
+import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
@@ -144,13 +144,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			}
 		}
 		
-		// Impressão NE
-		if (distribuidor.getTipoImpressaoNE() != null)
-			parametrosDistribuidor.setImpressaoNE(distribuidor.getTipoImpressaoNE().name());
+		// Impressão Interface LED
+		if (distribuidor.getTipoImpressaoInterfaceLED() != null)
+			parametrosDistribuidor.setImpressaoInterfaceLED(distribuidor.getTipoImpressaoInterfaceLED().name());
 
 		// Impressão NECA / Danfe
-		if (distribuidor.getTipoImpressaoNECADANFE() != null)
-			parametrosDistribuidor.setImpressaoNECADANFE(distribuidor.getTipoImpressaoNECADANFE().name());
+		if (distribuidor.getTipoImpressaoNENECADANFE() != null)
+			parametrosDistribuidor.setImpressaoNECADANFE(distribuidor.getTipoImpressaoNENECADANFE().name());
 
 		// Impressão CE
 		if (distribuidor.getTipoImpressaoCE() != null)
@@ -233,21 +233,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
 				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaSobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
 				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_CE) {
-				parametrosDistribuidor.setImpressaoCEFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setImpressaoCEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setImpressaoCESobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setImpressaoCEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_NE) {
-				parametrosDistribuidor.setImpressaoNEFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setImpressaoNEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setImpressaoNESobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setImpressaoNEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_NECA_DANFE) {
-				parametrosDistribuidor.setImpressaoNECADANFEFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setImpressaoNECADANFEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setImpressaoNECADANFESobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setImpressaoNECADANFEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
 			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.PRAZO_FOLLOW_UP) {
 				parametrosDistribuidor.setPrazoFollowUpFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
 				parametrosDistribuidor.setPrazoFollowUpFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
@@ -386,20 +371,20 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoSlip);
 		distribuidor.setParametrosDistribuidorEmissaoDocumentos(listaParametrosDistribuidorEmissaoDocumentos);
 		
-		// Impressão NE
-		if (parametrosDistribuidor.getImpressaoNE() != null && !parametrosDistribuidor.getImpressaoNE().isEmpty() &&  !parametrosDistribuidor.getImpressaoNE().equalsIgnoreCase(UNDEFINED)) {
-			TipoImpressaoNE tipoImpressaoNE = Enum.valueOf(TipoImpressaoNE.class, parametrosDistribuidor.getImpressaoNE());
-			distribuidor.setTipoImpressaoNE(tipoImpressaoNE);
+		// Impressão Interface LED
+		if (parametrosDistribuidor.getImpressaoInterfaceLED() != null && !parametrosDistribuidor.getImpressaoInterfaceLED().isEmpty() &&  !parametrosDistribuidor.getImpressaoInterfaceLED().equalsIgnoreCase(UNDEFINED)) {
+			TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED = Enum.valueOf(TipoImpressaoInterfaceLED.class, parametrosDistribuidor.getImpressaoInterfaceLED());
+			distribuidor.setTipoImpressaoInterfaceLED(tipoImpressaoInterfaceLED);
 		} else {
-			distribuidor.setTipoImpressaoNE(null);
+			distribuidor.setTipoImpressaoInterfaceLED(null);
 		}
 
 		// Impressão NECA / Danfe
 		if (parametrosDistribuidor.getImpressaoNECADANFE() != null && !parametrosDistribuidor.getImpressaoNECADANFE().isEmpty() && !parametrosDistribuidor.getImpressaoNECADANFE().equalsIgnoreCase(UNDEFINED)) {
-			TipoImpressaoNECADANFE tipoImpressaoNECADANFE = Enum.valueOf(TipoImpressaoNECADANFE.class, parametrosDistribuidor.getImpressaoNECADANFE());
-			distribuidor.setTipoImpressaoNECADANFE(tipoImpressaoNECADANFE);
+			TipoImpressaoNENECADANFE tipoImpressaoNECADANFE = Enum.valueOf(TipoImpressaoNENECADANFE.class, parametrosDistribuidor.getImpressaoNECADANFE());
+			distribuidor.setTipoImpressaoNENECADANFE(tipoImpressaoNECADANFE);
 		} else {
-			distribuidor.setTipoImpressaoNECADANFE(null);
+			distribuidor.setTipoImpressaoNENECADANFE(null);
 		}
 
 		// Impressão CE
@@ -572,26 +557,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoCE = new ParametrosDistribuidorFaltasSobras();
 			parametrosImpressaoCE.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_CE);
-			parametrosImpressaoCE.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoCEFaltaDe()));
-			parametrosImpressaoCE.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoCEFaltaEm()));
-			parametrosImpressaoCE.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoCESobraDe()));
-			parametrosImpressaoCE.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoCESobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoCE);
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoNE = new ParametrosDistribuidorFaltasSobras();
 			parametrosImpressaoNE.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_NE);
-			parametrosImpressaoNE.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNEFaltaDe()));
-			parametrosImpressaoNE.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNEFaltaEm()));
-			parametrosImpressaoNE.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNESobraDe()));
-			parametrosImpressaoNE.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNESobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoNE);
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoNECADANFE = new ParametrosDistribuidorFaltasSobras();
 			parametrosImpressaoNECADANFE.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_NECA_DANFE);
-			parametrosImpressaoNECADANFE.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNECADANFEFaltaDe()));
-			parametrosImpressaoNECADANFE.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNECADANFEFaltaEm()));
-			parametrosImpressaoNECADANFE.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNECADANFESobraDe()));
-			parametrosImpressaoNECADANFE.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNECADANFESobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoNECADANFE);
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoPrazoFollowUp = new ParametrosDistribuidorFaltasSobras();

@@ -81,41 +81,17 @@ public class ParametrosDistribuidorVO {
 
 	private boolean chamadaEncalheEmail;
 	
-	// Frame Impressão NE
-	// MODELO_1 ou MODELO_2
-	private String impressaoNE;
-
-	private String impressaoNEFaltaDe;
-	
-	private String impressaoNEFaltaEm;
-	
-	private String impressaoNESobraDe;
-	
-	private String impressaoNESobraEm;
+	// Frame Impressão Interface LED
+	// MODELO_1 ou MODELO_2 ou MODELO_3
+	private String impressaoInterfaceLED;
 
 	// Frame Impressão NECA / DANFE
 	// MODELO_1, MODELO_2 ou DANFE
 	private String impressaoNECADANFE;
 
-	private String impressaoNECADANFEFaltaDe;
-	
-	private String impressaoNECADANFEFaltaEm;
-	
-	private String impressaoNECADANFESobraDe;
-	
-	private String impressaoNECADANFESobraEm;
-
 	// Frame Impressão CE
 	// MODELO_1 ou MODELO_2
 	private String impressaoCE;
-	
-	private String impressaoCEFaltaDe;
-	
-	private String impressaoCEFaltaEm;
-	
-	private String impressaoCESobraDe;
-	
-	private String impressaoCESobraEm;
 	
 	// Aba Contratos e Garantias
 	// Frame Condições de Contratação
@@ -478,44 +454,12 @@ public class ParametrosDistribuidorVO {
 		this.chamadaEncalheEmail = chamadaEncalheEmail;
 	}
 
-	public String getImpressaoNE() {
-		return impressaoNE;
+	public String getImpressaoInterfaceLED() {
+		return impressaoInterfaceLED;
 	}
 
-	public void setImpressaoNE(String impressaoNE) {
-		this.impressaoNE = impressaoNE;
-	}
-
-	public String getImpressaoNEFaltaDe() {
-		return impressaoNEFaltaDe;
-	}
-
-	public void setImpressaoNEFaltaDe(String impressaoNEFaltaDe) {
-		this.impressaoNEFaltaDe = impressaoNEFaltaDe;
-	}
-
-	public String getImpressaoNEFaltaEm() {
-		return impressaoNEFaltaEm;
-	}
-
-	public void setImpressaoNEFaltaEm(String impressaoNEFaltaEm) {
-		this.impressaoNEFaltaEm = impressaoNEFaltaEm;
-	}
-
-	public String getImpressaoNESobraDe() {
-		return impressaoNESobraDe;
-	}
-
-	public void setImpressaoNESobraDe(String impressaoNESobraDe) {
-		this.impressaoNESobraDe = impressaoNESobraDe;
-	}
-
-	public String getImpressaoNESobraEm() {
-		return impressaoNESobraEm;
-	}
-
-	public void setImpressaoNESobraEm(String impressaoNESobraEm) {
-		this.impressaoNESobraEm = impressaoNESobraEm;
+	public void setImpressaoInterfaceLED(String impressaoInterfaceLED) {
+		this.impressaoInterfaceLED = impressaoInterfaceLED;
 	}
 
 	public String getImpressaoNECADANFE() {
@@ -526,76 +470,12 @@ public class ParametrosDistribuidorVO {
 		this.impressaoNECADANFE = impressaoNECADANFE;
 	}
 
-	public String getImpressaoNECADANFEFaltaDe() {
-		return impressaoNECADANFEFaltaDe;
-	}
-
-	public void setImpressaoNECADANFEFaltaDe(String impressaoNECADANFEFaltaDe) {
-		this.impressaoNECADANFEFaltaDe = impressaoNECADANFEFaltaDe;
-	}
-
-	public String getImpressaoNECADANFEFaltaEm() {
-		return impressaoNECADANFEFaltaEm;
-	}
-
-	public void setImpressaoNECADANFEFaltaEm(String impressaoNECADANFEFaltaEm) {
-		this.impressaoNECADANFEFaltaEm = impressaoNECADANFEFaltaEm;
-	}
-
-	public String getImpressaoNECADANFESobraDe() {
-		return impressaoNECADANFESobraDe;
-	}
-
-	public void setImpressaoNECADANFESobraDe(String impressaoNECADANFESobraDe) {
-		this.impressaoNECADANFESobraDe = impressaoNECADANFESobraDe;
-	}
-
-	public String getImpressaoNECADANFESobraEm() {
-		return impressaoNECADANFESobraEm;
-	}
-
-	public void setImpressaoNECADANFESobraEm(String impressaoNECADANFESobraEm) {
-		this.impressaoNECADANFESobraEm = impressaoNECADANFESobraEm;
-	}
-
 	public String getImpressaoCE() {
 		return impressaoCE;
 	}
 
 	public void setImpressaoCE(String impressaoCE) {
 		this.impressaoCE = impressaoCE;
-	}
-
-	public String getImpressaoCEFaltaDe() {
-		return impressaoCEFaltaDe;
-	}
-
-	public void setImpressaoCEFaltaDe(String impressaoCEFaltaDe) {
-		this.impressaoCEFaltaDe = impressaoCEFaltaDe;
-	}
-
-	public String getImpressaoCEFaltaEm() {
-		return impressaoCEFaltaEm;
-	}
-
-	public void setImpressaoCEFaltaEm(String impressaoCEFaltaEm) {
-		this.impressaoCEFaltaEm = impressaoCEFaltaEm;
-	}
-
-	public String getImpressaoCESobraDe() {
-		return impressaoCESobraDe;
-	}
-
-	public void setImpressaoCESobraDe(String impressaoCESobraDe) {
-		this.impressaoCESobraDe = impressaoCESobraDe;
-	}
-
-	public String getImpressaoCESobraEm() {
-		return impressaoCESobraEm;
-	}
-
-	public void setImpressaoCESobraEm(String impressaoCESobraEm) {
-		this.impressaoCESobraEm = impressaoCESobraEm;
 	}
 
 	public String getUtilizaContratoComCotas() {

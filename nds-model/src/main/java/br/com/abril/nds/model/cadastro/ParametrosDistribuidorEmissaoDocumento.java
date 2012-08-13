@@ -18,10 +18,10 @@ import javax.persistence.Table;
 @SequenceGenerator(name="PARAMETROS_DISTRIBUIDOR_EMISSAO_DOCUMENTOS_SEQ", initialValue = 1, allocationSize = 1)
 public class ParametrosDistribuidorEmissaoDocumento implements Serializable {
 
-	@Id
-	@GeneratedValue(generator = "PARAMETROS_DISTRIBUIDOR_EMISSAO_DOCUMENTOS_SEQ")
-	@Column(name = "ID")
-	private Long id;
+//	@Id
+//	@GeneratedValue(generator = "PARAMETROS_DISTRIBUIDOR_EMISSAO_DOCUMENTOS_SEQ")
+//	@Column(name = "ID")
+//	private Long id;
 
 	private static final long serialVersionUID = 4133462258175270203L;
 
@@ -35,17 +35,18 @@ public class ParametrosDistribuidorEmissaoDocumento implements Serializable {
 	@Column(name = "UTILIZA_EMAIL", nullable = false)
 	private boolean utilizaEmail;
 	
+	@Id
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_PARAMETROS_DISTRIBUIDOR_EMISSAO_DOCUMENTOS")
 	private TipoParametrosDistribuidorEmissaoDocumento tipoParametrosDistribuidorEmissaoDocumento;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+//	public Long getId() {
+//		return id;
+//	}
+//
+//	public void setId(Long id) {
+//		this.id = id;
+//	}
 
 	public boolean isUtilizaImpressao() {
 		return utilizaImpressao;
