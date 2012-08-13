@@ -77,43 +77,35 @@ var boxController = $.extend(true, {
 		});
 
 	},
-	//buscar : function(codigoBox, tipoBox) {
 	buscar : function(obj) { 
-		
-		// var serializedObj = $(obj).closest("form").serialize();
 		var serializedObj = $("#pesquisar_box_form", this.workspace).serialize();
 		
 		var codigo = $("#pesquisaCodigoBox").val();
 		var tipoBox = $("#pesquisaTipoBox").val();
 		
-		/*var codigoBox = ;
-		var tipoBox = ;*/
-		
 		$(".boxGrid", this.workspace).flexOptions({
-			"url" : this.path + 'busca.json', //'busca.json?' + serializedObj,
-//			method: 'GET',
+			"url" : this.path + 'busca.json', 
 			params: [{name:'box.codigo', value: codigo },
 			         {name:'box.tipoBox', value: tipoBox }],			
 			newp:1
 		});
 		$(".boxGrid").flexReload();
+		$("#fileExport").show();
 	},
 	bindButtons : function() {
 		$("#btnPesquisar", this.workspace).click(function() {
-			//boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
 			boxController.buscar(this);
 			$(".grids").show();
+			$("#fileExport").show();
 		});
 		$("#btnNovo", this.workspace).click(function() {
 			boxController.novo();
 		});
 	},
 	bindInputEvent : function() {
-		//$('#pesquisaCodigoBox, #boxCodigo').mask("9999");
 		$('#pesquisaCodigoBox, #boxCodigo').numeric();
 		$('#pesquisaCodigoBox').bind('keypress', function(e) {
 			if(e.keyCode == 13) {
-				//boxController.buscar(parseInt($("#pesquisaCodigoBox").val()), $("#pesquisaTipoBox").val());
 				boxController.buscar();
 				$(".grids", this.workspace).show();
 			}
@@ -127,7 +119,6 @@ var boxController = $.extend(true, {
 		this.createDialog();
 	},
 	createDialog : function() {
-		//$("#dialog-novo").dialog({
 		$("#dialog-novo", this.workspace).dialog({
 			resizable : false,
 			height : 230,
@@ -148,13 +139,10 @@ var boxController = $.extend(true, {
 			}],
 			beforeClose : clearMessageDialogTimeout,
 			form: $("#dialog-novo", this.workspace).parents("form")
-			//form: $("#dialog-novo").parents("form")
 		});
 		$("#dialog-novo", this.workspace).dialog("close");
-		//$("#dialog-novo").dialog("close");
 	},
 	showPopupEditar : function(title) {
-		//$("#dialog-novo")
 		$("#dialog-novo", this.workspace)
 			.dialog( "option" ,  "title", title )
 			.dialog( "open" );
@@ -167,7 +155,6 @@ var boxController = $.extend(true, {
 			if( typeof data.mensagens == "object") {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			} else {
-				//boxController.bindData(data, $("#novo_box_form", this.workspace));
 				$("#boxId").val(data.box.id);
 				$("#boxCodigo").val(data.box.codigo);
 				$("#boxNome").val(data.box.nome);
@@ -180,12 +167,8 @@ var boxController = $.extend(true, {
 		this.box.codigo = parseInt($("#boxCodigo").val());
 		this.box.nome = $("#boxNome").val();
 		this.box.tipoBox = $("#boxTipoBox").val();
-	},
+	},	
 	salvar : function(dialog) {
-		//this.getData();
-
-		//var obj = $(dialog).dialog("option", "form").serialize();
-
 		var obj = $("#novo_box_form", this.workspace).serialize();
 		
 		$.postJSON(this.path + 'salvar.json', obj, function(data) {
@@ -199,12 +182,11 @@ var boxController = $.extend(true, {
 			$(dialog).dialog("close");
 			$("#effect").show("highlight", {}, 1000, callback);
 			$(".grids", this.workspace).show();
-			$(".boxGrid", this.workspace).flexReload();
+			boxController.buscar(this);
 
 		}, null, true);
 	},
 	excluir : function(id) {
-		//$("#dialog-excluir").dialog({
 		$("#dialog-excluir", this.workspace).dialog({
 			resizable : false,
 			height : 170,
@@ -285,7 +267,6 @@ var boxController = $.extend(true, {
 		});
 	},
 	detalheDialog:function(){
-		//$( "#dialog-box" ).dialog({
 		$( "#dialog-box", this.workspace).dialog({
 			resizable: false,
 			height:410,
@@ -301,7 +282,6 @@ var boxController = $.extend(true, {
 		});
 	},
 	detalhe:function(id){		
-		//$(".boxCotaGrid").flexOptions({
 		$(".boxCotaGrid", this.workspace).flexOptions({
 			"url" : this.path + 'detalhe.json',
 			params : [{
@@ -310,7 +290,6 @@ var boxController = $.extend(true, {
 			}],
 			newp:1
 		});
-		//$(".boxCotaGrid").flexReload();
 		$(".boxCotaGrid", this.workspace).flexReload();
 		this.detalheDialog();
 	}

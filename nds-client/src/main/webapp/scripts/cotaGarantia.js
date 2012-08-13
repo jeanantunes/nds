@@ -986,7 +986,7 @@ function CaucaoLiquida(idCota, cotaGarantia) {
 	this.toggle();
 	this.initGrid();
 	this.cotaGarantia = cotaGarantia;
-	this.listNovosCalcao = new Array;
+	this.listNovosCalcao = new Array();
 	this.rows = new Array();
 	this.popularGrid();
 	this.caucaoLiquida = {

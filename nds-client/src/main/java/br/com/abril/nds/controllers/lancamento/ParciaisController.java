@@ -50,6 +50,12 @@ public class ParciaisController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroParcial";
 	
+	private static String FILTRO_DATA_LANCAMENTO = "filtroDataLancamento";
+	
+	private static String FILTRO_DATA_RECEBIMENTO = "filtroDataRecebimento";
+	
+	private static String FILTRO_ID_PRODUTO_EDICAO = "filtroIdProdutoEdicao";
+	
 	@Autowired
 	private HttpSession session;
 		
@@ -228,9 +234,16 @@ public class ParciaisController {
 		
 		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
-				
-		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
 		
+		for(PeriodoParcialDTO periodo:listaPeriodo) {
+			if(periodo.getReparte()=="") {
+				periodo.setReparteAcum(null);
+				periodo.setPercVendaAcumulada(null);
+			}
+		}
+		
+		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
+				
 		TableModel<CellModelKeyValue<PeriodoParcialDTO>> tableModel = new TableModel<CellModelKeyValue<PeriodoParcialDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPeriodo));
@@ -259,6 +272,29 @@ public class ParciaisController {
 						
 			result.use(Results.json()).withoutRoot().from(produto).recursive().serialize();
 		}		
+	}
+	
+	@Post
+	public void pesquisarParciaisVenda(Date dtLcto, Date dtRcto, Long idProdutoEdicao) {
+	
+	
+		this.session.setAttribute(FILTRO_DATA_LANCAMENTO,dtLcto);
+		
+		this.session.setAttribute(FILTRO_DATA_RECEBIMENTO,dtRcto);
+		
+		this.session.setAttribute(FILTRO_ID_PRODUTO_EDICAO,idProdutoEdicao);
+		
+		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(dtLcto, dtRcto, idProdutoEdicao);
+		
+		TableModel<CellModelKeyValue<ParcialVendaDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialVendaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaParcialVenda));
+		
+		tableModel.setPage(1);
+		
+		tableModel.setTotal(listaParcialVenda.size());
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	@Post
@@ -415,6 +451,18 @@ public class ParciaisController {
 		
 		List<ParcialVendaDTO> listaParcialVenda = new ArrayList<ParcialVendaDTO>();
 		
+		
+		Date lcto = (Date) this.session.getAttribute(FILTRO_DATA_LANCAMENTO);
+		
+		Date recto = (Date) this.session.getAttribute(FILTRO_DATA_RECEBIMENTO);
+		
+		Long idProdutoEdicao = (Long) this.session.getAttribute(FILTRO_ID_PRODUTO_EDICAO);
+
+		if ((lcto!=null) && (recto!=null) && (idProdutoEdicao!=null)){
+		    listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao);
+		}
+		
+		
 		if(listaParcialVenda.isEmpty()) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -422,7 +470,7 @@ public class ParciaisController {
 
 		FileExporter.to("detalhes_venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 				listaParcialVenda, ParcialVendaDTO.class, this.httpResponse);
-		
+
 		result.nothing();
 	}
 		

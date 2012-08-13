@@ -152,6 +152,8 @@ public class Produto implements Serializable {
 	
 	protected Long numeroLancamento;
 	
+	@Embedded
+	private SegmentacaoProduto segmentacao;
 	
 	public Long getId() {
 		return id;
@@ -546,5 +548,19 @@ public class Produto implements Serializable {
 	public void setNumeroLancamento(Long numeroLancamento) {
 		this.numeroLancamento = numeroLancamento;
 	}
-	
+
+	/**
+	 * @return the segmentacao
+	 */
+	public SegmentacaoProduto getSegmentacao() {
+		return segmentacao;
+	}
+
+	/**
+	 * @param segmentacao the segmentacao to set
+	 */
+	public void setSegmentacao(SegmentacaoProduto segmentacao) {
+		this.segmentacao = segmentacao;
+	}
+
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0106.processor;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -60,20 +61,22 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 				estudo.setProdutoEdicao(lancamento.getProdutoEdicao());
 				estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-				estudo.setQtdeReparte(input.getReparteDistribuir());
+				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
 		
 				getSession().persist(estudo);
-		
+				///FIXME Comentado para verificação posterios junto a Eduardo "PunkRock" Castro em 08/08
+/*		
 				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 					
 					estudo = new Estudo();
 					
 					estudo.setProdutoEdicao(produtoEdicao);
 					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-					estudo.setQtdeReparte(input.getReparteDistribuir());
+					estudo.setQtdeReparte(BigInteger.valueOf( input.getReparteDistribuir() ));
 		
 					getSession().persist(estudo);
 				}
+*/
 			}
 			
 		} else {

@@ -1199,12 +1199,6 @@ public class RecebimentoFisicoController {
 	
 	
 	
-	
-	
-	
-	
-	
-	
 	/*NOVO POPUP DE CADASTRO DE NOTA FISCAL*/
 	
 	/**
@@ -1280,34 +1274,6 @@ public class RecebimentoFisicoController {
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itemRecebimentoFisicoDTO));
 		
 		tableModel.setTotal(1);
-		
-		tableModel.setPage(1);
-		
-		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-	}
-	
-	/**
-	 * Inclui nova linha para entrada de dados na grid
-	 * @param itens
-	 */
-	@Post
-	@Path("/incluirItemNota")
-	public void incluirItemNota(List<RecebimentoFisicoDTO> itens) {
-
-		if (itens==null){
-			itens = new ArrayList<RecebimentoFisicoDTO>();
-		}
-		
-		RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
-		
-		itens.add(recFisicoDTO);
-
-		TableModel<CellModelKeyValue<RecebimentoFisicoDTO>> tableModel =
-				new TableModel<CellModelKeyValue<RecebimentoFisicoDTO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itens));
-		
-		tableModel.setTotal(itens.size());
 		
 		tableModel.setPage(1);
 		

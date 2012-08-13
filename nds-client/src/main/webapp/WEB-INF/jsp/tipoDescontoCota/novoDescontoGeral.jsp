@@ -15,12 +15,14 @@ var DESCONTO_GERAL = {
 		
 		$("#selectFornecedorSelecionado_option").clear();
 		
+		$("#descontoGeral").val("");
+		
 		TIPO_DESCONTO.carregarFornecedores("#selectFornecedor_option");
 		 
 		$( "#dialog-geral" ).dialog({
 			resizable: false,
 			height:345,
-			width:540,
+			width:550,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {								

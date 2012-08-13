@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
@@ -50,7 +51,6 @@ public class ParametrosDistribuidorController {
 		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
 		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
 		result.include("fornecedores", fornecedorService.obterFornecedores());
-		//result.include("distribuidor", distribuidorService.obter());
 	}
 
 	/**buscarDiasOperacaoFornecedor
@@ -58,6 +58,7 @@ public class ParametrosDistribuidorController {
 	 * @param distribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
+	    validarCadastroDistribuidor(parametrosDistribuidor);
 		distribuidorService.alterar(parametrosDistribuidorService.getDistribuidor(parametrosDistribuidor));
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}
@@ -116,11 +117,35 @@ public class ParametrosDistribuidorController {
 			listaMensagemValidacao.add("É necessário selecionar no mínimo um dia de Recolhimento!");
 		}
 
-		if (!listaMensagemValidacao.isEmpty()) {
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
-			throw new ValidacaoException(validacaoVO);
-		}
+		verificarExistenciaErros(listaMensagemValidacao);
 	
 	}
+	
+	/**
+	 * Valida as informações obrigatórias no cadastro do distribuidor
+	 * @param vo Value Object com as informações preenchidas em tela
+	 */
+	private void validarCadastroDistribuidor(ParametrosDistribuidorVO vo) {
+	    List<String> erros = new ArrayList<String>();
+	    if (StringUtils.isEmpty(vo.getCapacidadeManuseioHomemHoraLancamento())) {
+	        erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");
+	    }
+	    if (StringUtils.isEmpty(vo.getCapacidadeManuseioHomemHoraRecolhimento())) {
+            erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
+        }
+	    
+	    verificarExistenciaErros(erros);
+	}
+
+    /**
+     * Verifica a existência de erros e executa a tratamento apropriado
+     * @param erros lista com possíveis erros ocorridos
+     */
+	private void verificarExistenciaErros(List<String> erros) {
+        if (!erros.isEmpty()) {
+            ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, erros);
+            throw new ValidacaoException(validacaoVO);
+        }
+    }
 	
 }

@@ -1,7 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 public enum TipoFormaCobranca {
-
+		DIARIA("Diária"),
+		QUINZENAL("Quinzenal"),
 		MENSAL("Mensal"), 
 		SEMANAL("Semanal");
 		
@@ -10,9 +11,23 @@ public enum TipoFormaCobranca {
 		private TipoFormaCobranca(String descricao) {
 			this.descricao = descricao;
 		}
-		
-		@Override
-		public String toString() {
-			return this.descricao;
+
+		/**
+		 * @return the descricao
+		 */
+		public String getDescricao() {
+			return descricao;
 		}
+
+		/**
+		 * @param descricao the descricao to set
+		 */
+		public void setDescricao(String descricao) {
+			this.descricao = descricao;
+		}
+		
+		
+		
+		
+		
 }

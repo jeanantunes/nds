@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -17,13 +18,13 @@ public class ParcialVendaDTO implements Serializable {
 	private String nomeCota;
 	
 	@Export(label="Reparte")
-	private Long reparte;
+	private BigInteger reparte;
 	
 	@Export(label="Encalhe")
-	private Long encalhe;
+	private BigInteger encalhe;
 	
 	@Export(label="Venda Juramentada")
-	private Long vendaJuramentada;
+	private BigInteger vendaJuramentada;
 
 	/**
 	 * @return the numeroCota
@@ -56,42 +57,42 @@ public class ParcialVendaDTO implements Serializable {
 	/**
 	 * @return the reparte
 	 */
-	public Long getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 
 	/**
 	 * @param reparte the reparte to set
 	 */
-	public void setReparte(Long reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 
 	/**
 	 * @return the encalhe
 	 */
-	public Long getEncalhe() {
+	public BigInteger getEncalhe() {
 		return encalhe;
 	}
 
 	/**
 	 * @param encalhe the encalhe to set
 	 */
-	public void setEncalhe(Long encalhe) {
+	public void setEncalhe(BigInteger encalhe) {
 		this.encalhe = encalhe;
 	}
 
 	/**
 	 * @return the vendaJuramentada
 	 */
-	public Long getVendaJuramentada() {
+	public BigInteger getVendaJuramentada() {
 		return vendaJuramentada;
 	}
 
 	/**
 	 * @param vendaJuramentada the vendaJuramentada to set
 	 */
-	public void setVendaJuramentada(Long vendaJuramentada) {
+	public void setVendaJuramentada(BigInteger vendaJuramentada) {
 		this.vendaJuramentada = vendaJuramentada;
 	}	
 }

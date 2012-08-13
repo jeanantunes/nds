@@ -94,6 +94,7 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -998,9 +999,38 @@ public class DataLoader {
 		
 		//criarNovaNotaFiscal(session);
 		
+		gerarDescontoDistribuidorParaFornecedor(session);
 	}
 
 	
+	private static void gerarDescontoDistribuidorParaFornecedor(Session session) {
+		
+		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		fornecedores.add(fornecedorAcme);
+		fornecedores.add(fornecedorDinap);
+		DescontoDistribuidor desconto1 = Fixture.descontoDistribuidor(new BigDecimal(2), distribuidor, fornecedores , usuarioJoao);
+		
+		Set<Fornecedor> fornecedores1 = new HashSet<Fornecedor>();
+		fornecedores1.add(fornecedorAcme);
+		fornecedores1.add(fornecedorDinap);
+		DescontoDistribuidor desconto2 = Fixture.descontoDistribuidor(new BigDecimal(3), distribuidor, fornecedores1 , usuarioJoao);
+		
+		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
+		fornecedores2.add(fornecedorAcme);
+		DescontoDistribuidor desconto3 = Fixture.descontoDistribuidor(new BigDecimal(5), distribuidor, fornecedores2 , usuarioJoao);
+		
+		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
+		fornecedores3.add(fornecedorDinap);
+		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(6), distribuidor, fornecedores3 , usuarioJoao);
+		
+		Set<Fornecedor> fornecedores4 = new HashSet<Fornecedor>();
+		fornecedores4.add(fornecedorAcme);
+		fornecedores4.add(fornecedorDinap);
+		DescontoDistribuidor desconto5 = Fixture.descontoDistribuidor(new BigDecimal(7), distribuidor, fornecedores4, usuarioJoao);
+		
+		save(session,desconto1,desconto2,desconto3,desconto4,desconto5);
+	}
+
 	/*
 	 * Carga Inicial do sistema Zerado
 	 * */
@@ -1532,6 +1562,7 @@ public class DataLoader {
 		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_FF", 1L, 5, 30,
 				new BigDecimal(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao, null, false,"Cromo Brasileirão");
 		cromoBrasileiraoEd1.setParcial(true);
+		cromoBrasileiraoEd1.setOrigemInterface(false);
 		cromoBrasileiraoEd1.setDesconto(new BigDecimal(10));
 		
 		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao("COD_GG", 1L, 5, 30,
@@ -1570,19 +1601,36 @@ public class DataLoader {
 				BigInteger.valueOf(80),
 				StatusLancamento.PLANEJADO, null, 1);
 		save(session,lancamentoPeriodo2);
+		
+		Lancamento lancamentoPeriodoSuplementar = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, cromoBrasileiraoEd1,
+				Fixture.criarData(2, 2, 2011),
+				Fixture.criarData(1, 3, 2011),
+				new Date(),
+				new Date(),
+				BigInteger.valueOf(15),
+				StatusLancamento.RECOLHIDO, null, 1);
+		save(session,lancamentoPeriodoSuplementar);
 
 		Estudo estudo = Fixture.estudo(BigInteger.valueOf(200), Fixture.criarData(1, 2, 2011), cromoBrasileiraoEd1);
 		save(session,estudo);
 
-		TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
-		save(session,tipoMovimentoEncalhe);
-
 
 		EstoqueProdutoCota estoque = Fixture.estoqueProdutoCota(cromoBrasileiraoEd1, BigInteger.valueOf(50), cotaGuilherme, null);
-
-		MovimentoEstoqueCota movimento = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoEncalhe,
+		save(session,estoque);
+		
+		MovimentoEstoqueCota movimento = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoEnvioEncalhe,
 				usuarioJoao, estoque, BigInteger.valueOf(10), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
-
+		
+		MovimentoEstoqueCota movimentoReparte = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoRecReparte,
+				usuarioJoao, estoque, BigInteger.valueOf(25), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
+		movimentoReparte.setLancamento(lancamentoPeriodo);
+		save(session,movimentoReparte);
+		
+		MovimentoEstoqueCota movimentoReparteSuplementar = Fixture.movimentoEstoqueCota(cromoBrasileiraoEd1, tipoMovimentoRecReparte,
+				usuarioJoao, estoque, BigInteger.valueOf(15), cotaGuilherme, StatusAprovacao.APROVADO, "motivo");
+		movimentoReparteSuplementar.setLancamento(lancamentoPeriodoSuplementar);
+		save(session,movimentoReparteSuplementar);
+		
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(Fixture.criarData(1, 3, 2011), cromoBrasileiraoEd1,TipoChamadaEncalhe.ANTECIPADA);
 
 		chamadaEncalhe.setLancamentos(new HashSet<Lancamento>());
@@ -1603,7 +1651,7 @@ public class DataLoader {
 				BigInteger.valueOf(50),
 				cromoBrasileiraoEd1);
 
-		save(session,estoque,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
+		save(session,movimento,chamadaEncalhe,chamadaEncalheCota,controle,controleCota,conferencia);
 		
 		save(session, lancamentoPeriodo, lancamentoPeriodo2);
 		
@@ -2296,10 +2344,7 @@ public class DataLoader {
 		
 		formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaDeposito);
-		parametroCobrancaManoel = Fixture.parametroCobrancaCota(formasCobranca,
-				null, null, cotaManoel, 1,
-				false, new BigDecimal(1000), TipoCota.CONSIGNADO);
-		save(session, parametroCobrancaManoel);
+		
 		formaDeposito.setParametroCobrancaCota(parametroCobrancaManoel);
 		formaDeposito.setPrincipal(true);
 		save(session,formaDeposito);
@@ -3031,71 +3076,22 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO,
-				"C:\\notas\\"));			// windows;
-//				"/opt/interface/notas/"));	// linux;
+//				"C:\\notas\\"));			// windows;
+				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO,
-				"C:\\notas\\"));			// windows;
-//				"/opt/interface/notas/"));	// linux;
+//				"C:\\notas\\"));			// windows;
+				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/inbound/"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/outbound/"));	// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface/archive/"));		// linux;
-		
-		
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_ARCHIVE, "/opt/interface/ems0106/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_INBOUND, "/opt/interface/ems0106/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_ARCHIVE, "/opt/interface/ems0107/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_INBOUND, "/opt/interface/ems0107/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUTBOUND, "/opt/interface/ems0107/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_IN_FILEMASK, "(?i:DEAJO19.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUT_FILEMASK, "DEAPR19.NEW"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_ARCHIVE, "/opt/interface/ems0108/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_INBOUND, "/opt/interface/ems0108/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_IN_FILEMASK, "(?i:MATRIZ.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0109_ARCHIVE, "/opt/interface/ems0109/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0109_INBOUND, "/opt/interface/ems0109/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_ARCHIVE, "/opt/interface/ems0110/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_INBOUND, "/opt/interface/ems0110/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_OUTBOUND, "/opt/interface/ems0110/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_IN_FILEMASK, "([0-9]{8}).prd"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_ARCHIVE, "/opt/interface/ems0112/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_INBOUND, "/opt/interface/ems0112/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_IN_FILEMASK, "(?i:[0-9]{8}.edi)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_ARCHIVE, "/opt/interface/ems0114/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_INBOUND, "/opt/interface/ems0114/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_OUTBOUND, "/opt/interface/ems0114/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_IN_FILEMASK, "([0-9]{8}).rec"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_ARCHIVE, "/opt/interface/ems0116/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_INBOUND, "/opt/interface/ems0116/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_OUTBOUND, "/opt/interface/ems0116/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_IN_FILEMASK, "(?i:BANCA.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_ARCHIVE, "/opt/interfaceOLD/ems0117/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_INBOUND, "/opt/interfaceOLD/ems0117/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_OUTBOUND, "/opt/interfaceOLD/ems0117/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_IN_FILEMASK, "COTA.NEW"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_ARCHIVE, "/opt/interface/ems0118/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_INBOUND, "/opt/interface/ems0118/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_IN_FILEMASK, "(?i:PRECO.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_ARCHIVE, "/opt/interface/ems0119/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_INBOUND, "/opt/interface/ems0119/inbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_IN_FILEMASK, "(?i:PRODUTO.NEW)"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0120_OUTBOUND, "/opt/interface/ems0120/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0121_OUTBOUND, "/opt/interface/ems0121/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0122_OUTBOUND, "/opt/interface/ems0122/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0123_OUTBOUND, "/opt/interface/ems0123/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0124_OUTBOUND, "/opt/interface/ems0124/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_ARCHIVE, "/opt/interface/ems0129/archive/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUTBOUND, "/opt/interface/ems0129/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUT_FILEMASK, "PICKING1.NEW"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0131_OUTBOUND, "/opt/interface/ems0131/outbound/"));
-		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0133_OUTBOUND, "/opt/interface/ems0133/outbound/"));
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface/"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6248116"));
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
@@ -4432,11 +4428,13 @@ public class DataLoader {
 
 		formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaBoleto);
-		ParametroCobrancaCota parametroCobrancaConta =
-			Fixture.parametroCobrancaCota(formasCobranca, 1, BigDecimal.TEN, cotaManoel, 1,
-					                      true, BigDecimal.TEN, null);
-		save(session, parametroCobrancaConta);
-		formaBoleto.setParametroCobrancaCota(parametroCobrancaConta);
+		
+		parametroCobrancaManoel = Fixture.parametroCobrancaCota(formasCobranca,
+				null, null, cotaManoel, 1,
+				false, new BigDecimal(1000), TipoCota.CONSIGNADO);
+		save(session, parametroCobrancaManoel);
+		
+		formaBoleto.setParametroCobrancaCota(parametroCobrancaManoel);
 		formaBoleto.setPrincipal(true);
 		save(session, formaBoleto);
 
@@ -4448,7 +4446,7 @@ public class DataLoader {
 				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaJose, 1,
 											  true, BigDecimal.TEN, null);
 		save(session, parametroCobrancaConta1);
-		formaCheque.setParametroCobrancaCota(parametroCobrancaConta);
+		formaCheque.setParametroCobrancaCota(parametroCobrancaConta1);
 		formaCheque.setPrincipal(true);
 		save(session, formaCheque);
 
@@ -4460,7 +4458,7 @@ public class DataLoader {
 				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaMaria, 1,
 											  true, BigDecimal.TEN, null);
 		save(session, parametroCobrancaConta2);
-		formaDeposito.setParametroCobrancaCota(parametroCobrancaConta);
+		formaDeposito.setParametroCobrancaCota(parametroCobrancaConta2);
 		formaDeposito.setPrincipal(true);
 		save(session, formaDeposito);
 
@@ -4472,7 +4470,7 @@ public class DataLoader {
 				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaJoao, 1,
 											  false, BigDecimal.TEN, null);
 		save(session, parametroCobrancaConta3);
-		formaDinheiro.setParametroCobrancaCota(parametroCobrancaConta);
+		formaDinheiro.setParametroCobrancaCota(parametroCobrancaConta3);
 		formaDinheiro.setPrincipal(true);
 		save(session, formaDinheiro);
 
@@ -4484,7 +4482,7 @@ public class DataLoader {
 				Fixture.parametroCobrancaCota(formasCobranca, 2, BigDecimal.TEN, cotaLuis, 1,
 											  true, BigDecimal.TEN, null);
 		save(session, parametroCobrancaConta4);
-		formaTransferenciBancaria.setParametroCobrancaCota(parametroCobrancaConta);
+		formaTransferenciBancaria.setParametroCobrancaCota(parametroCobrancaConta4);
 		formaTransferenciBancaria.setPrincipal(true);
 		save(session, formaTransferenciBancaria);
 

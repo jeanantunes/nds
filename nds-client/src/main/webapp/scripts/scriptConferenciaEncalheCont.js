@@ -253,7 +253,7 @@ var ConferenciaEncalheCont = {
 				}
 		);
 	},
-	
+	indDistribuidorAceitaJuramentado:null,
 	preProcessarConsultaConferenciaEncalhe : function(result){
 		
 		if (result.mensagens){
@@ -266,7 +266,7 @@ var ConferenciaEncalheCont = {
 		
 		var modeloConferenciaEncalhe = result.listaConferenciaEncalhe;
 		
-		var indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
+		ConferenciaEncalheCont.indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
 		
 		$("._dadosConfEncalhe").remove();
 		
@@ -323,7 +323,7 @@ var ConferenciaEncalheCont = {
 					
 					var inputCheckBoxJuramentada = '';
 					
-					if(indDistribuidorAceitaJuramentado == true) {
+					if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado == true) {
 						
 						inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 						+ ' onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
@@ -410,7 +410,7 @@ var ConferenciaEncalheCont = {
 								$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/pesquisarProdutoEdicaoPorId",
 									[{name: "idProdutoEdicao", value: ui.item.chave.long}],
 									function(result2){
-										
+									
 										if (result2){
 											
 											ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe = ui.item.chave.long;
@@ -419,7 +419,14 @@ var ConferenciaEncalheCont = {
 											$("#precoCapaNovoEncalhe").val(parseFloat(result2.precoVenda).toFixed(2));
 											$("#descontoNovoEncalhe").val(parseFloat(result2.desconto).toFixed(2));
 										}
-									}, null, true, "idModalNovoEncalhe"
+											
+										
+									}, function() {
+									
+										ConferenciaEncalheCont.limparCamposNovoEncalhe();
+										$("#lstProdutos").focus();
+									}, 
+									true, "idModalNovoEncalhe"
 								);
 							}
 						});
@@ -432,7 +439,9 @@ var ConferenciaEncalheCont = {
 	adicionarEncalhe: function(){
 		
 		var data = [{name: "idProdutoEdicao", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
-		            {name: "quantidade", value: $("#exemplaresNovoEncalhe").val()}];
+		            {name: "quantidade", value: $("#exemplaresNovoEncalhe").val()},
+		            {name:"juramentada", value:$('#checkboxJueramentadaNovoEncalhe').attr('checked') == 'checked' }];
+		
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
 			function(result){
@@ -455,6 +464,12 @@ var ConferenciaEncalheCont = {
 		$("#descontoNovoEncalhe").val("");
 		$("#exemplaresNovoEncalhe").val("");
 		$("#valorTotalNovoEncalhe").val("");
+		
+		if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado){
+			$("#checkboxJueramentadaNovoEncalhe").removeAttr('disabled');
+		}else{
+			$("#checkboxJueramentadaNovoEncalhe").attr('disabled', true);
+		}
 		$("#checkboxJueramentadaNovoEncalhe").removeAttr("checked");
 	},
 	
@@ -582,7 +597,7 @@ var ConferenciaEncalheCont = {
 	},
 	
 	abrirDialogNotaFiscalDivergente: function(result){
-		
+		$(".message-dialog-encalhe > div").hide();
 		if (result.mensagens){
 			
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
@@ -674,7 +689,7 @@ var ConferenciaEncalheCont = {
 	popup_novo_encalhe: function () {
 		
 		ConferenciaEncalheCont.modalAberta = true;
-		
+		$(".message-dialog-encalhe > div").hide();
 		$("#dialog-encalhe").dialog({
 			resizable : false,
 			height : 'auto',
@@ -700,7 +715,7 @@ var ConferenciaEncalheCont = {
 	popup_alert : function() {
 		
 		ConferenciaEncalheCont.modalAberta = true;
-		
+		$(".message-dialog-encalhe > div").hide();
 		$("#dialog-alert").dialog({
 			resizable : false,
 			height : 190,
@@ -748,7 +763,7 @@ var ConferenciaEncalheCont = {
 	popup_notaFiscal: function () {
 		
 		ConferenciaEncalheCont.modalAberta = true;
-
+		$(".message-dialog-encalhe > div").hide();
 		$("#dialog-notaFiscal").dialog({
 			resizable : false,
 			height : 360,
@@ -807,7 +822,7 @@ var ConferenciaEncalheCont = {
 	popup_outros_valores: function () {
 		
 		ConferenciaEncalheCont.modalAberta = true;
-		
+		$(".message-dialog-encalhe > div").hide();
 		$("#dialog-outros-valores").dialog({
 			resizable : false,
 			height : 430,
@@ -829,7 +844,7 @@ var ConferenciaEncalheCont = {
 	popup_salvarInfos : function() {
 		
 		ConferenciaEncalheCont.modalAberta = true;
-		
+		$(".message-dialog-encalhe > div").hide();
 		$("#dialog-salvar").dialog({
 			resizable : false,
 			height : 190,
@@ -875,7 +890,7 @@ var ConferenciaEncalheCont = {
 };
 
 $(function() {
-
+	
 	$(".outrosVlrsGrid").flexigrid({
 		dataType : 'json',
 		colModel : [ {
@@ -900,6 +915,9 @@ $(function() {
 		width : 400,
 		height : 250
 	});
+	
+	//hack para message dialog com tamanho fixo
+	$(".message-dialog-encalhe > div").css('width', '93%');
 	
 	$("#numeroCota").numeric();
 	$("#numeroCota").focus();

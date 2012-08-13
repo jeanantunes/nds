@@ -68,10 +68,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (null != produtoEdicao) {
 			// SE EXISTIR PRODUTO/EDICAO NA TABELA
 			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
-			
-			
-			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());
-			
+				
+			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());			
 			
 			StringBuilder sql = new StringBuilder();
 

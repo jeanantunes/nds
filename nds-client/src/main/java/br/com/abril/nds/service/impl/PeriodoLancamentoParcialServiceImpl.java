@@ -29,5 +29,4 @@ public class PeriodoLancamentoParcialServiceImpl implements PeriodoLancamentoPar
 		return periodoLancamentoParcialRepository.totalObterPeriodosParciais(filtro);
 	}
 
-	
 }

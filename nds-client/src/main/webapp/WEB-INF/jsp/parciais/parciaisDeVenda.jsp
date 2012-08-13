@@ -33,13 +33,13 @@ $(function() {
 		dataType : 'json',
 		colModel : [ {
 			display : 'Cota',
-			name : 'cota',
+			name : 'numeroCota',
 			width : 70,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Nome',
-			name : 'nome',
+			name : 'nomeCota',
 			width : 200,
 			sortable : true,
 			align : 'left'

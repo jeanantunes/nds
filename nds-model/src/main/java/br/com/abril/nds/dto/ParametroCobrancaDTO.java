@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -31,7 +32,8 @@ public class ParametroCobrancaDTO {
 	String instrucoes;
 	
 	//DADOS DA FORMA DE COBRANÇA VINCULADA
-	Integer diaDoMes;
+	private List<Integer> diasDoMes;
+	
 	boolean domingo;
 	boolean segunda;
 	boolean terca;
@@ -41,6 +43,8 @@ public class ParametroCobrancaDTO {
 	boolean sabado;
 	
 	List<Long> fornecedoresId;
+	
+	private FormaCobrancaBoleto formaCobrancaBoleto;	
 
 	
 	public ParametroCobrancaDTO() {
@@ -54,7 +58,7 @@ public class ParametroCobrancaDTO {
 			TipoCobranca tipoCobranca, FormaEmissao formaEmissao,
 			TipoFormaCobranca tipoFormaCobranca, boolean vencimentoDiaUtil,
 			boolean acumulaDivida, boolean unificada, boolean envioEmail,
-			boolean principal, String instrucoes, Integer diaDoMes,
+			boolean principal, String instrucoes, List<Integer> diasDoMes,
 			boolean domingo, boolean segunda, boolean terca, boolean quarta,
 			boolean quinta, boolean sexta, boolean sabado,
 			List<Long> fornecedoresId) {
@@ -73,7 +77,7 @@ public class ParametroCobrancaDTO {
 		this.envioEmail = envioEmail;
 		this.principal = principal;
 		this.instrucoes = instrucoes;
-		this.diaDoMes = diaDoMes;
+		this.diasDoMes = diasDoMes;
 		this.domingo = domingo;
 		this.segunda = segunda;
 		this.terca = terca;
@@ -225,14 +229,7 @@ public class ParametroCobrancaDTO {
 	}
 
 
-	public Integer getDiaDoMes() {
-		return diaDoMes;
-	}
-
-
-	public void setDiaDoMes(Integer diaDoMes) {
-		this.diaDoMes = diaDoMes;
-	}
+	
 
 
 	public boolean isDomingo() {
@@ -322,6 +319,38 @@ public class ParametroCobrancaDTO {
 
 	public void setTipoFormaCobranca(TipoFormaCobranca tipoFormaCobranca) {
 		this.tipoFormaCobranca = tipoFormaCobranca;
+	}
+
+
+	/**
+	 * @return the diasDoMes
+	 */
+	public List<Integer> getDiasDoMes() {
+		return diasDoMes;
+	}
+
+
+	/**
+	 * @param diasDoMes the diasDoMes to set
+	 */
+	public void setDiasDoMes(List<Integer> diasDoMes) {
+		this.diasDoMes = diasDoMes;
+	}
+
+
+	/**
+	 * @return the formaCobrancaBoleto
+	 */
+	public FormaCobrancaBoleto getFormaCobrancaBoleto() {
+		return formaCobrancaBoleto;
+	}
+
+
+	/**
+	 * @param formaCobrancaBoleto the formaCobrancaBoleto to set
+	 */
+	public void setFormaCobrancaBoleto(FormaCobrancaBoleto formaCobrancaBoleto) {
+		this.formaCobrancaBoleto = formaCobrancaBoleto;
 	}
 
 }
