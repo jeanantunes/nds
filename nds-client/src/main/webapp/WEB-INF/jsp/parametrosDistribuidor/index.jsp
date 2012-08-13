@@ -86,95 +86,95 @@ function recarregarDiasDistribuidorFornecedorGrid() {
 function gravar() {
 	var data = [
 		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
-		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').is('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoPrimeiro', value: $('#diaRecolhimentoPrimeiro').is('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoSegundo', value: $('#diaRecolhimentoSegundo').is('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoTerceiro', value: $('#diaRecolhimentoTerceiro').is('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoQuarto', value: $('#diaRecolhimentoQuarto').is('checked')},
-		{name:'parametrosDistribuidor.diaRecolhimentoQuinto', value: $('#diaRecolhimentoQuinto').is('checked')},
-		{name:'parametrosDistribuidor.limiteCEProximaSemana', value: $('#limiteCEProximaSemana').is('checked')},
-		{name:'parametrosDistribuidor.conferenciaCegaRecebimento', value: $('#conferenciaCegaRecebimento').is('checked')},
-		{name:'parametrosDistribuidor.conferenciaCegaEncalhe', value: $('#conferenciaCegaEncalhe').is('checked')},
+		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoPrimeiro', value: $('#diaRecolhimentoPrimeiro').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoSegundo', value: $('#diaRecolhimentoSegundo').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoTerceiro', value: $('#diaRecolhimentoTerceiro').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoQuarto', value: $('#diaRecolhimentoQuarto').is(':checked')},
+		{name:'parametrosDistribuidor.diaRecolhimentoQuinto', value: $('#diaRecolhimentoQuinto').is(':checked')},
+		{name:'parametrosDistribuidor.limiteCEProximaSemana', value: $('#limiteCEProximaSemana').is(':checked')},
+		{name:'parametrosDistribuidor.conferenciaCegaRecebimento', value: $('#conferenciaCegaRecebimento').is(':checked')},
+		{name:'parametrosDistribuidor.conferenciaCegaEncalhe', value: $('#conferenciaCegaEncalhe').is(':checked')},
 		{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento', value: $('#capacidadeManuseioHomemHoraLancamento').val()},
 		{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento', value: $('#capacidadeManuseioHomemHoraRecolhimento').val()},
 		{name:'parametrosDistribuidor.reutilizacaoCodigoCotaInativa', value: $('#reutilizacaoCodigoCotaInativa').val()},
-		{name:'parametrosDistribuidor.obrigacaoFiscao', value: $('#obrigacaoFiscao').is('checked')},
-		{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial').is('checked')},
+		{name:'parametrosDistribuidor.obrigacaoFiscao', value: $('#obrigacaoFiscao').is(':checked')},
+		{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial').is(':checked')},
 		{name:'parametrosDistribuidor.distribuidor', value: $("[name='distribuidor']").val()},
-		{name:'parametrosDistribuidor.slipImpressao', value: $('#slipImpressao').is('checked')},
-		{name:'parametrosDistribuidor.slipEmail', value: $('#slipEmail').is('checked')},
-		{name:'parametrosDistribuidor.boletoImpressao', value: $('#boletoImpressao').is('checked')},
-		{name:'parametrosDistribuidor.boletoEmail', value: $('#boletoEmail').is('checked')},
-		{name:'parametrosDistribuidor.boletoSlipImpressao', value: $('#boletoSlipImpressao').is('checked')},
-		{name:'parametrosDistribuidor.boletoSlipEmail', value: $('#boletoSlipEmail').is('checked')},
-		{name:'parametrosDistribuidor.reciboImpressao', value: $('#reciboImpressao').is('checked')},
-		{name:'parametrosDistribuidor.reciboEmail', value: $('#reciboEmail').is('checked')},
-		{name:'parametrosDistribuidor.notaEnvioImpressao', value: $('#notaEnvioImpressao').is('checked')},
-		{name:'parametrosDistribuidor.notaEnvioEmail', value: $('#notaEnvioEmail').is('checked')},
-		{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao').is('checked')},
-		{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail').is('checked')},
+		{name:'parametrosDistribuidor.slipImpressao', value: $('#slipImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.slipEmail', value: $('#slipEmail').is(':checked')},
+		{name:'parametrosDistribuidor.boletoImpressao', value: $('#boletoImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.boletoEmail', value: $('#boletoEmail').is(':checked')},
+		{name:'parametrosDistribuidor.boletoSlipImpressao', value: $('#boletoSlipImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.boletoSlipEmail', value: $('#boletoSlipEmail').is(':checked')},
+		{name:'parametrosDistribuidor.reciboImpressao', value: $('#reciboImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.reciboEmail', value: $('#reciboEmail').is(':checked')},
+		{name:'parametrosDistribuidor.notaEnvioImpressao', value: $('#notaEnvioImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.notaEnvioEmail', value: $('#notaEnvioEmail').is(':checked')},
+		{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao').is(':checked')},
+		{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail').is(':checked')},
 		{name:'parametrosDistribuidor.impressaoNE', value: $("input[name='impressaoNE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoNEFaltaDe', value: $('#impressaoNEFaltaDe').is('checked')},
-		{name:'parametrosDistribuidor.impressaoNEFaltaEm', value: $('#impressaoNEFaltaEm').is('checked')},
-		{name:'parametrosDistribuidor.impressaoNESobraDe', value: $('#impressaoNESobraDe').is('checked')},
-		{name:'parametrosDistribuidor.impressaoNESobraEm', value: $('#impressaoNESobraEm').is('checked')},
+		{name:'parametrosDistribuidor.impressaoNEFaltaDe', value: $('#impressaoNEFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNEFaltaEm', value: $('#impressaoNEFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNESobraDe', value: $('#impressaoNESobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNESobraEm', value: $('#impressaoNESobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='impressaoNECADANFE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaDe', value: $('#impressaoNECADANFEFaltaDe').is('checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaEm', value: $('#impressaoNECADANFEFaltaEm').is('checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFESobraDe', value: $('#impressaoNECADANFESobraDe').is('checked')},
-		{name:'parametrosDistribuidor.impressaoNECADANFESobraEm', value: $('#impressaoNECADANFESobraEm').is('checked')},
+		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaDe', value: $('#impressaoNECADANFEFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNECADANFEFaltaEm', value: $('#impressaoNECADANFEFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNECADANFESobraDe', value: $('#impressaoNECADANFESobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoNECADANFESobraEm', value: $('#impressaoNECADANFESobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='impressaoCE']:checked").val()},
-		{name:'parametrosDistribuidor.impressaoCEFaltaDe', value: $('#impressaoCEFaltaDe').is('checked')},
-		{name:'parametrosDistribuidor.impressaoCEFaltaEm', value: $('#impressaoCEFaltaEm').is('checked')},
-		{name:'parametrosDistribuidor.impressaoCESobraDe', value: $('#impressaoCESobraDe').is('checked')},
-		{name:'parametrosDistribuidor.impressaoCESobraEm', value: $('#impressaoCESobraEm').is('checked')},
-		{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas').is('checked')},
+		{name:'parametrosDistribuidor.impressaoCEFaltaDe', value: $('#impressaoCEFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoCEFaltaEm', value: $('#impressaoCEFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoCESobraDe', value: $('#impressaoCESobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.impressaoCESobraEm', value: $('#impressaoCESobraEm').is(':checked')},
+		{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas').is(':checked')},
 		{name:'parametrosDistribuidor.prazoContrato', value: $('#prazoContrato').val()},
 		{name:'parametrosDistribuidor.informacoesComplementaresContrato', value: $('#informacoesComplementaresContrato').val()},
-		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').is('checked')},
+		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').is(':checked')},
 		{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao').val()},
-		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').is('checked')},
-		{name:'parametrosDistribuidor.chequeCalcao', value: $('#chequeCalcao').is('checked')},
+		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').is(':checked')},
+		{name:'parametrosDistribuidor.chequeCalcao', value: $('#chequeCalcao').is(':checked')},
 		{name:'parametrosDistribuidor.chequeCalcaoValor', value: $('#chequeCalcaoValor').val()},
-		{name:'parametrosDistribuidor.fiador', value: $('#fiador').is('checked')},
+		{name:'parametrosDistribuidor.fiador', value: $('#fiador').is(':checked')},
 		{name:'parametrosDistribuidor.fiadorValor', value: $('#fiadorValor').val()},
-		{name:'parametrosDistribuidor.imovel', value: $('#imovel').is('checked')},
+		{name:'parametrosDistribuidor.imovel', value: $('#imovel').is(':checked')},
 		{name:'parametrosDistribuidor.imovelValor', value: $('#imovelValor').val()},
-		{name:'parametrosDistribuidor.caucaoLiquida', value: $('#caucaoLiquida').is('checked')},
+		{name:'parametrosDistribuidor.caucaoLiquida', value: $('#caucaoLiquida').is(':checked')},
 		{name:'parametrosDistribuidor.caucaoLiquidaValor', value: $('#caucaoLiquidaValor').val()},
-		{name:'parametrosDistribuidor.notaPromissoria', value: $('#notaPromissoria').is('checked')},
+		{name:'parametrosDistribuidor.notaPromissoria', value: $('#notaPromissoria').is(':checked')},
 		{name:'parametrosDistribuidor.notaPromissoriaValor', value: $('#notaPromissoriaValor').val()},
-		{name:'parametrosDistribuidor.antecedenciaValidade', value: $('#antecedenciaValidade').is('checked')},
+		{name:'parametrosDistribuidor.antecedenciaValidade', value: $('#antecedenciaValidade').is(':checked')},
 		{name:'parametrosDistribuidor.antecedenciaValidadeValor', value: $('#antecedenciaValidadeValor').val()},
-		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquida', value: $('#indicadorReajusteCaucaoLiquida').is('checked')},
+		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquida', value: $('#indicadorReajusteCaucaoLiquida').is(':checked')},
 		{name:'parametrosDistribuidor.indicadorReajusteCaucaoLiquidaValor', value: $('#indicadorReajusteCaucaoLiquidaValor').val()},
 		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos').val()},
 		{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais').val()},
-		{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas').is('checked')},
+		{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas').is(':checked')},
 		{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas').val()},
-		{name:'parametrosDistribuidor.permitePagamentoDividasDivergentes', value: $('#permitePagamentoDividasDivergentes').is('checked')},
-		{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao').is('checked')},
-		{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos').is('checked')},
-		{name:'parametrosDistribuidor.negociacao', value: $('#negociacao').is('checked')},
-		{name:'parametrosDistribuidor.ajusteEstoque', value: $('#ajusteEstoque').is('checked')},
-		{name:'parametrosDistribuidor.postergacaoCobranca', value: $('#postergacaoCobranca').is('checked')},
-		{name:'parametrosDistribuidor.devolucaoFornecedor', value: $('#devolucaoFornecedor').is('checked')},
-		{name:'parametrosDistribuidor.recibo', value: $('#recibo').is('checked')},
-		{name:'parametrosDistribuidor.faltasSobras', value: $('#faltasSobras').is('checked')},
-		{name:'parametrosDistribuidor.aprovacaoFaltaDe', value: $('#aprovacaoFaltaDe').is('checked')},
-		{name:'parametrosDistribuidor.aprovacaoSobraDe', value: $('#aprovacaoSobraDe').is('checked')},
-		{name:'parametrosDistribuidor.aprovacaoFaltaEm', value: $('#aprovacaoFaltaEm').is('checked')},
-		{name:'parametrosDistribuidor.aprovacaoSobraEm', value: $('#aprovacaoSobraEm').is('checked')},
+		{name:'parametrosDistribuidor.permitePagamentoDividasDivergentes', value: $('#permitePagamentoDividasDivergentes').is(':checked')},
+		{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao').is(':checked')},
+		{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos').is(':checked')},
+		{name:'parametrosDistribuidor.negociacao', value: $('#negociacao').is(':checked')},
+		{name:'parametrosDistribuidor.ajusteEstoque', value: $('#ajusteEstoque').is(':checked')},
+		{name:'parametrosDistribuidor.postergacaoCobranca', value: $('#postergacaoCobranca').is(':checked')},
+		{name:'parametrosDistribuidor.devolucaoFornecedor', value: $('#devolucaoFornecedor').is(':checked')},
+		{name:'parametrosDistribuidor.recibo', value: $('#recibo').is(':checked')},
+		{name:'parametrosDistribuidor.faltasSobras', value: $('#faltasSobras').is(':checked')},
+		{name:'parametrosDistribuidor.aprovacaoFaltaDe', value: $('#aprovacaoFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.aprovacaoSobraDe', value: $('#aprovacaoSobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.aprovacaoFaltaEm', value: $('#aprovacaoFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.aprovacaoSobraEm', value: $('#aprovacaoSobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.prazoFollowUp', value: $('#prazoFollowUp').val()},
-		{name:'parametrosDistribuidor.prazoFollowUpFaltaDe', value: $('#prazoFollowUpFaltaDe').is('checked')},
-		{name:'parametrosDistribuidor.prazoFollowUpSobraDe', value: $('#prazoFollowUpSobraDe').is('checked')},
-		{name:'parametrosDistribuidor.prazoFollowUpFaltaEm', value: $('#prazoFollowUpFaltaEm').is('checked')},
-		{name:'parametrosDistribuidor.prazoFollowUpSobraEm', value: $('#prazoFollowUpSobraEm').is('checked')},
+		{name:'parametrosDistribuidor.prazoFollowUpFaltaDe', value: $('#prazoFollowUpFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.prazoFollowUpSobraDe', value: $('#prazoFollowUpSobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.prazoFollowUpFaltaEm', value: $('#prazoFollowUpFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.prazoFollowUpSobraEm', value: $('#prazoFollowUpSobraEm').is(':checked')},
 		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia', value: $('#prazoAvisoPrevioValidadeGarantia').val()},
-		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaDe').is('checked')},
-		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe').is('checked')},
-		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm').is('checked')},
-		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm').is('checked')}
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaDe').is(':checked')},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe').is(':checked')},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm').is(':checked')},
+		{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm').is(':checked')}
 	];
 	
 	$.postJSON("<c:url value='/administracao/parametrosDistribuidor/gravar'/>",
@@ -424,46 +424,7 @@ $(function() {
 			       <li><a href="#tabAprovacao">Aprovação</a></li>
 			</ul>
 			
-			<div id="tabFiscal">
-        	<fieldset style="width:440px!important; margin-bottom:5px; float:left;">
-              <legend>Fiscal</legend>
-              <table width="307" border="0" cellspacing="2" cellpadding="0">
-                <tr>
-                  <td>Regime Tributário:</td>
-                  <td><select name="distribuidor" id="select5" style="width:150px;">
-                    <option selected="selected"> </option>
-                    <option value="PRESTADOR_SERVICO">Prestador Serviço</option>
-                    <option value="MERCANTIL">Mercantil</option>
-                  </select></td>
-                </tr>
-                <tr>
-                  <td width="102"> Obrigação Fiscal</td>
-                  <td width="185"><select name="select4" id="select4" style="width:150px;">
-                    <option selected="selected"> </option>
-                    <option>Cota Total</option>
-                    <option>Cota NF-e Venda</option>
-                    <option>Devolução Fornecedor</option>
-                  </select></td>
-                  </tr>
-                <tr>
-                  <td>Regime Especial</td>
-                  <td><input name="input29" type="checkbox" value="" /></td>
-                  </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  </tr>
-              </table>
-            </fieldset>
-
-            <!--<span class="bt_novos" title="Incluir Novo"><a href="javascript:;"><img src="../images/ico_add.gif" hspace="5" border="0" />Incluir Novo</a></span> -->    
-          <br clear="all" />
-
-            </div>
-			
-			
-			
-			
+			<jsp:include page="tabFiscal.jsp"></jsp:include>
 			
 			<div id="tabOperacao">
 		      <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -711,108 +672,9 @@ $(function() {
                  </table> 
        
 			</div>
-			<div id="tabEmissao">
-	            <fieldset style="width:390px!important;">
-		           	<legend>Emissão de Documentos</legend>
-		                <table width="430" border="0" cellspacing="0" cellpadding="0">
-		                  <tr>
-		                    <td>Utiliza:</td>
-		                    <td align="center">Impressão</td>
-		                    <td align="center">E-mail</td>
-		                  </tr>
-		                  <tr>
-		                    <td width="203">Slip</td>
-		                    <td width="120" align="center"><input name="parametrosDistribuidor.slipImpressao" id="slipImpressao" type="checkbox"  ${parametrosDistribuidor.slipImpressao}/></td>
-		                    <td width="107" align="center"><input name="parametrosDistribuidor.slipEmail" id="slipEmail" type="checkbox"  ${parametrosDistribuidor.slipEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Boleto</td>
-		                    <td align="center"><input name="parametrosDistribuidor.boletoImpressao" id="boletoImpressao" type="checkbox"  ${parametrosDistribuidor.boletoImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.boletoEmail" id="boletoEmail" type="checkbox"  ${parametrosDistribuidor.boletoEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Boleto + Slip</td>
-		                    <td align="center"><input name="parametrosDistribuidor.boletoSlipImpressao" id="boletoSlipImpressao" type="checkbox"  ${parametrosDistribuidor.boletoSlipImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.boletoSlipEmail" id="boletoSlipEmail" type="checkbox"  ${parametrosDistribuidor.boletoSlipEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Recibo</td>
-		                    <td align="center"><input name="parametrosDistribuidor.reciboImpressao" id="reciboImpressao" type="checkbox"  ${parametrosDistribuidor.reciboImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.reciboEmail" id="reciboEmail" type="checkbox"  ${parametrosDistribuidor.reciboEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Nota de Envio</td>
-		                    <td align="center"><input name="parametrosDistribuidor.notaEnvioImpressao" id="notaEnvioImpressao" type="checkbox"  ${parametrosDistribuidor.notaEnvioImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.notaEnvioEmail" id="notaEnvioEmail" type="checkbox"  ${parametrosDistribuidor.notaEnvioEmail}/></td>
-		                  </tr>
-		                  <tr>
-		                    <td>Chamada de Encalhe</td>
-		                    <td align="center"><input name="parametrosDistribuidor.chamadaEncalheImpressao" id="chamadaEncalheImpressao" type="checkbox"  ${parametrosDistribuidor.chamadaEncalheImpressao}/></td>
-		                    <td align="center"><input name="parametrosDistribuidor.chamadaEncalheEmail" id="chamadaEncalheEmail" type="checkbox"  ${parametrosDistribuidor.chamadaEncalheEmail}/></td>
-		                  </tr>
-		                </table>
-	            </fieldset>
-	            <fieldset style="width:410px!important; margin-bottom:5px;">
-		        	<legend>Modelo NE / NECA / Danfe</legend>
-	            	<table width="325" border="0" cellspacing="0" cellpadding="0">
-	                	<tr>
-	                    	<td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFEMODELO1" value="MODELO_1" /></td>
-	                        <td width="79"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-	                        <td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFEMODELO2" value="MODELO_2" /></td>
-	                        <td width="75"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_3.htm" target="_blank">Modelo 2</a></td>
-	                        <td width="20"><input type="radio" name="impressaoNECADANFE" id="impressaoNECADANFE" value="DANFE" /></td>
-	                        <td width="111"><a href="javascript:;" target="_blank">Danfe</a></td>
-						</tr>
-	                    <tr>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                    </tr>
-					</table>
-				</fieldset>
-	            <fieldset style="width:410px!important; margin-bottom:5px;">
-		        	<legend>Modelo Impressão CE</legend>
-		            <table width="325" border="0" cellspacing="0" cellpadding="0">
-		            	<tr>
-		                	<td width="26"><input type="radio" name="impressaoCE" id="impressaoCEModelo2" value="MODELO_1" /></td>
-		                    <td width="93"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-		                    <td width="20"><input type="radio" name="impressaoCE" id="impressaoCEModelo1" value="MODELO_2" /></td>
-		                    <td width="287"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_2.html" target="_blank">Modelo 2</a></td>
-						</tr>
-		                <tr>
-		                	<td>&nbsp;</td>
-		                    <td>&nbsp;</td>
-		                    <td>&nbsp;</td>
-		                    <td>&nbsp;</td>
-		                </tr>
-	              	</table>
-	  			</fieldset>
-	  			<fieldset style="width:410px!important; margin-bottom:5px;">
-	  				<legend>Modelo Interface LED</legend>
-	  				<table width="325" border="0" cellspacing="0" cellpadding="0">
-		            	<tr>
-	                    	<td width="20"><input type="radio" name="interfaceLED" id="interfaceLEDMODELO1" value="MODELO_1" /></td>
-	                        <td width="79"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm" target="_blank">Modelo 1</a></td>
-	                        <td width="20"><input type="radio" name="interfaceLED" id="interfaceLEDMODELO2" value="MODELO_2" /></td>
-	                        <td width="75"><a href="${pageContext.request.contextPath}/modelos/ce_modelo_3.htm" target="_blank">Modelo 2</a></td>
-	                        <td width="20"><input type="radio" name="interfaceLED" id="interfaceLEDMODELO3" value="MODELO_3" /></td>
-	                        <td width="111"><a href="javascript:;" target="_blank">Modelo 3</a></td>
-						</tr>
-	                    <tr>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                    </tr>
-	              	</table>
-	  			</fieldset>
-	            <br clear="all"  />
-			</div>
+			
+			<jsp:include page="tabEmissao.jsp"></jsp:include>
+			
 			<div id="tabContratos">
 				<fieldset style="width:420px!important; margin-bottom:5px;">
 		               	<legend>Condições de Contratação:</legend>

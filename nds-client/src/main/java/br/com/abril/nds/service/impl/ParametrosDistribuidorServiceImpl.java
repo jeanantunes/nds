@@ -109,24 +109,38 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 		// Emissão de Documentos
 		for (ParametrosDistribuidorEmissaoDocumento emissaoDocumentos : distribuidor.getParametrosDistribuidorEmissaoDocumentos()) {
-			if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.BOLETO) {
-				parametrosDistribuidor.setBoletoEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setBoletoImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP) {
-				parametrosDistribuidor.setBoletoSlipEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setBoletoSlipImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE) {
-				parametrosDistribuidor.setChamadaEncalheEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setChamadaEncalheImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO) {
-				parametrosDistribuidor.setNotaEnvioEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setNotaEnvioImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.RECIBO) {
-				parametrosDistribuidor.setReciboEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setReciboImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.SLIP) {
-				parametrosDistribuidor.setSlipEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setSlipImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
+			
+			switch(emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento()){
+			case BOLETO:
+				
+				parametrosDistribuidor.setBoletoEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setBoletoImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case BOLETO_SLIP:
+				
+				parametrosDistribuidor.setBoletoSlipEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setBoletoSlipImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case CHAMADA_ENCALHE:
+				
+				parametrosDistribuidor.setChamadaEncalheEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setChamadaEncalheImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case NOTA_ENVIO:
+				
+				parametrosDistribuidor.setNotaEnvioEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setNotaEnvioImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case RECIBO:
+				
+				parametrosDistribuidor.setReciboEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setReciboImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case SLIP:
+				
+				parametrosDistribuidor.setSlipEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setSlipImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
 			}
 		}
 		
@@ -325,38 +339,38 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoBoleto = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoBoleto.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoBoleto.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.BOLETO);
-		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getBoletoEmail()));
-		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getBoletoImpressao()));
+		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaEmail(parametrosDistribuidor.getBoletoEmail());
+		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaImpressao(parametrosDistribuidor.getBoletoImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoBoletoSlip = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP);
-		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getBoletoSlipEmail()));
-		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getBoletoSlipImpressao()));
+		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaEmail(parametrosDistribuidor.getBoletoSlipEmail());
+		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaImpressao(parametrosDistribuidor.getBoletoSlipImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoChamadaEncalhe = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE);
-		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getChamadaEncalheEmail()));
-		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getChamadaEncalheImpressao()));
+		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaEmail(parametrosDistribuidor.getChamadaEncalheEmail());
+		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaImpressao(parametrosDistribuidor.getChamadaEncalheImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoNotaEnvio = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO);
-		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getNotaEnvioEmail()));
-		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getNotaEnvioImpressao()));
+		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaEmail(parametrosDistribuidor.getNotaEnvioEmail());
+		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaImpressao(parametrosDistribuidor.getNotaEnvioImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoRecibo = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoRecibo.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoRecibo.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.RECIBO);
-		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getReciboEmail()));
-		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getReciboImpressao()));
+		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaEmail(parametrosDistribuidor.getReciboEmail());
+		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaImpressao(parametrosDistribuidor.getReciboImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoSlip = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoSlip.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoSlip.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
-		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getSlipEmail()));
-		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getSlipImpressao()));
+		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaEmail(parametrosDistribuidor.getSlipEmail());
+		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaImpressao(parametrosDistribuidor.getSlipImpressao());
 
 		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = new ArrayList<ParametrosDistribuidorEmissaoDocumento>();
 
