@@ -1,231 +1,10 @@
 <head>
-
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
-
-<title>NDS - Novo Distrib</title>
-
-
-<script language="javascript" type="text/javascript">
-$(function() {
-		$( "#tab-followup" ).tabs();
-
-		
-		
-		$(".chamadaoGrid").flexigrid($.extend({},{
-			url : '<c:url value="/followup/pesquisaDadosChamadao"/>',
-			dataType : 'json',
-			preProcess: exPreProcFollowupChamadao ,
-			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nomeJornaleiro',
-				width : 300,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Consignado R$',
-				name : 'valorTotalConsignadoFormatado',
-				width : 120,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Suspenso (dias)',
-				name : 'qtdDiasSuspensao',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Programado',
-				name : 'dataProgramadoChamadao',
-				width : 85,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 120,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 880,
-			height : 255
-        }));
-
-		$(".pendenciasGrid").flexigrid($.extend({},{
-			url : '<c:url value="/followup/pesquisaDadosPendenciaNFEEncalhe"/>',
-			dataType : 'json',
-			preProcess: exPreProcFollowupPendenciasnfe,
-			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nomeJornaleiro',
-				width : 302,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Tipo de Pend&ecirc;ncia',
-				name : 'tipoPendencia',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Dt. Entrada',
-				name : 'dataEntrada',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Vlr. Diferença R$',
-				name : 'valorDiferencaFormatado',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Telefone',
-				name : 'numeroTelefone',
-				width : 125,
-				sortable : true,
-				align : 'left'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 880,
-			height : 255
-		}));
-
-		$(".alteracaoStatusGrid").flexigrid($.extend({},{
-			url : '<c:url value="/followup/pesquisaDadosStatusCota"/>',
-	        preProcess:  exPreProcFollowupStatusCota, 
-			dataType : 'json',
-			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nomeJornaleiro',
-				width : 190,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Per&iacuteodo',
-				name : 'periodoStatus',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Status',
-				name : 'statusAtual',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Novo Status',
-				name : 'statusNovo',
-				width : 83,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 155,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 880,
-			height : 255
-		}));
-
-		$(".atualizacaoCadastralGrid").flexigrid($.extend({},{
-			url : '<c:url value="/followup/pesquisaDadosCadastrais"/>',
-	        preProcess:  exPreProcFollowupStatusCota, 
-			dataType : 'json',
-			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nomeJornaleiro',
-				width : 290,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Responsável',
-				name : 'responsavel',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Documento',
-				name : 'tipo',
-				width : 125,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Valor R$',
-				name : 'valor',
-				width : 125,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Dt. Vencto.',
-				name : 'dataVencimento',
-				width : 85,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 880,
-			height : 255
-		}));
-		
-	});
-	
-</script>
-
 </head>
 
 <body>
+
     <br clear="all"/>
     <br />
     	<div id="divGeral" >
@@ -246,12 +25,12 @@ $(function() {
                     <table class="negociacaoGrid"></table>
                     <span class="bt_novos" title="Gerar Arquivo">
                         <a href="javascript:;">
-                             <img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo
+                             <img src="images/ico_excel.png" hspace="5" border="0" />Arquivo
                         </a>
                     </span>
                     <span class="bt_novos" title="Imprimir">
                         <a href="javascript:;">
-                             <img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir
+                             <img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir
                         </a>
                     </span>
                </fieldset>
@@ -341,16 +120,214 @@ $(function() {
 
 <script>
 
+$(function() {
+	$( "#tab-followup" ).tabs();
+	
+	$(".chamadaoGrid").flexigrid($.extend({},{
+		url : '<c:url value="/followup/pesquisaDadosChamadao"/>',
+		dataType : 'json',
+		preProcess: exPreProcFollowupChamadao,
+		colModel : [ {
+			display : 'Cota',
+			name : 'numeroCota',
+			width : 60,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Nome',
+			name : 'nomeJornaleiro',
+			width : 300,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Consignado R$',
+			name : 'valorTotalConsignadoFormatado',
+			width : 120,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Suspenso (dias)',
+			name : 'qtdDiasSuspensao',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Data Programado',
+			name : 'dataProgramadoChamadao',
+			width : 85,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Ação',
+			name : 'acao',
+			width : 120,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "cota",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 880,
+		height : 255
+    }));
 
+	$(".pendenciasGrid").flexigrid($.extend({},{
+		url : '<c:url value="/followup/pesquisaDadosPendenciaNFEEncalhe"/>',
+		dataType : 'json',
+		preProcess: exPreProcFollowupPendenciasnfe,
+		colModel : [ {
+			display : 'Cota',
+			name : 'numeroCota',
+			width : 60,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Nome',
+			name : 'nomeJornaleiro',
+			width : 302,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Tipo de Pend&ecirc;ncia',
+			name : 'tipoPendencia',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Dt. Entrada',
+			name : 'dataEntrada',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Vlr. Diferença R$',
+			name : 'valorDiferencaFormatado',
+			width : 100,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Telefone',
+			name : 'numeroTelefone',
+			width : 125,
+			sortable : true,
+			align : 'left'
+		}],
+		sortname : "cota",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 880,
+		height : 255
+	}));
 
+	$(".alteracaoStatusGrid").flexigrid($.extend({},{
+		url : '<c:url value="/followup/pesquisaDadosStatusCota"/>',
+        preProcess:  exPreProcFollowupStatusCota, 
+		dataType : 'json',
+		colModel : [ {
+			display : 'Cota',
+			name : 'numeroCota',
+			width : 60,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Nome',
+			name : 'nomeJornaleiro',
+			width : 190,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Per&iacuteodo',
+			name : 'periodoStatus',
+			width : 120,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Status',
+			name : 'statusAtual',
+			width : 80,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Novo Status',
+			name : 'statusNovo',
+			width : 83,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Ação',
+			name : 'acao',
+			width : 155,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "cota",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 880,
+		height : 255
+	}));
 
-
-
-
-
-
-
-
+	$(".atualizacaoCadastralGrid").flexigrid($.extend({},{
+		url : '<c:url value="/followup/pesquisaDadosCadastrais"/>',
+        preProcess:  exPreProcFollowupStatusCota, 
+		dataType : 'json',
+		colModel : [ {
+			display : 'Cota',
+			name : 'numeroCota',
+			width : 60,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Nome',
+			name : 'nomeJornaleiro',
+			width : 290,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Responsável',
+			name : 'responsavel',
+			width : 150,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Documento',
+			name : 'tipo',
+			width : 125,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Valor R$',
+			name : 'valor',
+			width : 125,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Dt. Vencto.',
+			name : 'dataVencimento',
+			width : 85,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "cota",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 880,
+		height : 255
+	}));
+	
+});
 
 $(".negociacaoGrid").flexigrid({
         preProcess:  exPreProcFollowupNegociacao, 

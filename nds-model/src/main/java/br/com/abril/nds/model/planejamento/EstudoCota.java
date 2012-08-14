@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,9 +39,9 @@ public class EstudoCota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	@Column(name = "QTDE_PREVISTA", nullable = false)
-	private BigDecimal qtdePrevista;
+	private BigInteger qtdePrevista;
 	@Column(name = "QTDE_EFETIVA", nullable = false)
-	private BigDecimal qtdeEfetiva;
+	private BigInteger qtdeEfetiva;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTUDO_ID")
 	private Estudo estudo;
@@ -61,19 +62,19 @@ public class EstudoCota implements Serializable {
 		this.id = id;
 	}
 	
-	public BigDecimal getQtdePrevista() {
+	public BigInteger getQtdePrevista() {
 		return qtdePrevista;
 	}
 	
-	public void setQtdePrevista(BigDecimal qtdePrevista) {
+	public void setQtdePrevista(BigInteger qtdePrevista) {
 		this.qtdePrevista = qtdePrevista;
 	}
 	
-	public BigDecimal getQtdeEfetiva() {
+	public BigInteger getQtdeEfetiva() {
 		return qtdeEfetiva;
 	}
 	
-	public void setQtdeEfetiva(BigDecimal qtdeEfetiva) {
+	public void setQtdeEfetiva(BigInteger qtdeEfetiva) {
 		this.qtdeEfetiva = qtdeEfetiva;
 	}
 	

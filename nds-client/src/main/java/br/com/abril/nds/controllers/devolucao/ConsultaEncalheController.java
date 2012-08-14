@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ConsultaEncalheVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -24,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
@@ -81,6 +83,7 @@ public class ConsultaEncalheController {
 	private static final String SUFIXO_DIA = "º Dia";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_ENCALHE_COTA)
 	public void index(){
 		
 		carregarComboFornecedores();

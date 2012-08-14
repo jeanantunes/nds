@@ -28,6 +28,9 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 	@Export(label = "Tipo Consulta")
 	private TipoPesquisaResumoExpedicao tipoConsulta;
 	
+	@Export(label = "Código Box")
+	private Integer codigoBox;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColunaProduto ordenacaoColunaProduto;
@@ -192,6 +195,23 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 	public void setTipoConsulta(TipoPesquisaResumoExpedicao tipoConsulta) {
 		this.tipoConsulta = tipoConsulta;
 	}
+	
+	/**
+	 * Obtém codigoBox
+	 *
+	 * @return Integer
+	 */
+	public Integer getCodigoBox() {
+		return codigoBox;
+	}
+
+	/**
+	 * Atribuí codigoBox
+	 * @param codigoBox 
+	 */
+	public void setCodigoBox(Integer codigoBox) {
+		this.codigoBox = codigoBox;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -200,6 +220,8 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((codigoBox == null) ? 0 : codigoBox.hashCode());
 		result = prime * result
 				+ ((dataLancamento == null) ? 0 : dataLancamento.hashCode());
 		result = prime
@@ -212,6 +234,8 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 						: ordenacaoColunaProduto.hashCode());
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result
+				+ ((tipoConsulta == null) ? 0 : tipoConsulta.hashCode());
 		return result;
 	}
 
@@ -220,28 +244,49 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (!(obj instanceof FiltroResumoExpedicaoDTO)) {
 			return false;
+		}
 		FiltroResumoExpedicaoDTO other = (FiltroResumoExpedicaoDTO) obj;
+		if (codigoBox == null) {
+			if (other.codigoBox != null) {
+				return false;
+			}
+		} else if (!codigoBox.equals(other.codigoBox)) {
+			return false;
+		}
 		if (dataLancamento == null) {
-			if (other.dataLancamento != null)
+			if (other.dataLancamento != null) {
 				return false;
-		} else if (!dataLancamento.equals(other.dataLancamento))
+			}
+		} else if (!dataLancamento.equals(other.dataLancamento)) {
 			return false;
-		if (ordenacaoColunaBox != other.ordenacaoColunaBox)
+		}
+		if (ordenacaoColunaBox != other.ordenacaoColunaBox) {
 			return false;
-		if (ordenacaoColunaProduto != other.ordenacaoColunaProduto)
+		}
+		if (ordenacaoColunaProduto != other.ordenacaoColunaProduto) {
 			return false;
+		}
 		if (paginacao == null) {
-			if (other.paginacao != null)
+			if (other.paginacao != null) {
 				return false;
-		} else if (!paginacao.equals(other.paginacao))
+			}
+		} else if (!paginacao.equals(other.paginacao)) {
 			return false;
+		}
+		if (tipoConsulta != other.tipoConsulta) {
+			return false;
+		}
 		return true;
 	}
+
+	
 
 }

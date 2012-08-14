@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -84,6 +86,7 @@ public class MatrizRecolhimentoController {
 	
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ)
 	public void index() {
 		
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
@@ -317,7 +320,7 @@ public class MatrizRecolhimentoController {
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData);
+		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData, filtro.getDataPesquisa());
 		
 		this.validarListaParaReprogramacao(listaProdutoRecolhimento);
 		
@@ -345,7 +348,7 @@ public class MatrizRecolhimentoController {
 		
 		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
 		
-		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData);
+		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData, filtro.getDataPesquisa());
 		
 		List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento = new ArrayList<ProdutoRecolhimentoFormatadoVO>();
 		
@@ -1001,8 +1004,9 @@ public class MatrizRecolhimentoController {
 	 * 
 	 * @param numeroSemana - número da semana
 	 * @param novaData - nova data de recolhimento
+	 * @param dataBalanceamento - data de balanceamento
 	 */
-	private void validarDataReprogramacao(Integer numeroSemana, Date novaData) {
+	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
 		
 		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
 		
@@ -1026,7 +1030,7 @@ public class MatrizRecolhimentoController {
 		}
 		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataBalanceamento);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -1077,10 +1081,9 @@ public class MatrizRecolhimentoController {
 		if (numeroSemana != null && listaIdsFornecedores != null) {
 
 			balanceamentoRecolhimento = 
-				this.recolhimentoService.obterMatrizBalanceamento(numeroSemana,
-																  listaIdsFornecedores,
-																  tipoBalanceamentoRecolhimento,
-																  forcarBalanceamento);
+				this.recolhimentoService.obterMatrizBalanceamento(
+					numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
+					forcarBalanceamento, dataBalanceamento);
 			
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 										  balanceamentoRecolhimento);

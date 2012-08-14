@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -35,6 +37,7 @@ import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 
@@ -216,27 +219,30 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults) {
 		
 		final int initialResult = ((page * maxResults) - maxResults);
-		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, sortorder,
-				sortname, initialResult, maxResults);
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(ProdutoEdicaoDTO dto) {
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde) {
 		
-		return this.produtoEdicaoRepository.countPesquisarEdicoes(dto);
+		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(ProdutoEdicaoDTO dto,
+	public List<ProdutoEdicaoDTO> pesquisarUltimasEdicoes(String codigoProduto,
 			int maxResults) {
 		
-		return this.produtoEdicaoRepository.pesquisarEdicoes(dto, "DESC",
+		return this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto,null,null,null,null,null,false, "DESC",
 				"numeroEdicao", 0, 5);
 	}
 	
@@ -387,10 +393,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		// 02) Campos a serem persistidos e/ou alterados:
 		
-		BigDecimal repartePrevisto = dto.getRepartePrevisto() == null 
-				? BigDecimal.ZERO : dto.getRepartePrevisto();
-		BigDecimal repartePromocional = dto.getRepartePromocional() == null 
-				? BigDecimal.ZERO : dto.getRepartePromocional();
+		BigInteger repartePrevisto = dto.getRepartePrevisto() == null 
+				? BigInteger.ZERO : dto.getRepartePrevisto();
+		BigInteger repartePromocional = dto.getRepartePromocional() == null 
+				? BigInteger.ZERO : dto.getRepartePromocional();
 		if (!produtoEdicao.getOrigemInterface().booleanValue()) {
 			// Campos exclusivos para o Distribuidor::
 			
@@ -425,6 +431,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dimEdicao.setEspessura(dto.getEspessura());
 			produtoEdicao.setDimensao(dimEdicao);
 			
+			produtoEdicao.getProduto().setDescricao(dto.getDescricaoProduto());
+			
 			// Texto boletim informativo:
 			produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
 		} else {
@@ -442,18 +450,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// Outros:
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setPossuiBrinde(dto.isPossuiBrinde());
+		if(produtoEdicao.getBrinde()==null){
+			produtoEdicao.setBrinde(new Brinde());
+		}
+		produtoEdicao.getBrinde().setDescricao(dto.getDescricaoBrinde());
 		
 		// Característica Física:
 		produtoEdicao.setPeso(dto.getPeso());
 		
 		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		
-		if (produtoEdicao.getId() == null) {
-			
+		if (produtoEdicao.getId() == null) {			
 			// Salvar:
 			produtoEdicaoRepository.adicionar(produtoEdicao);
-		} else {
-			
+		} else {			
 			// Atualizar:
 			produtoEdicaoRepository.alterar(produtoEdicao);
 		}
@@ -484,21 +494,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				? dto.getDataLancamentoPrevisto() : dto.getDataLancamento());	// Data Lançamento Real;
 		
 		// Reparte:
-		BigDecimal repartePrevisto = dto.getRepartePrevisto() == null 
-				? BigDecimal.ZERO : dto.getRepartePrevisto();
-		BigDecimal repartePromocional = dto.getRepartePromocional() == null 
-				? BigDecimal.ZERO : dto.getRepartePromocional();
+		BigInteger repartePrevisto = dto.getRepartePrevisto() == null 
+				? BigInteger.ZERO : dto.getRepartePrevisto();
+		BigInteger repartePromocional = dto.getRepartePromocional() == null 
+				? BigInteger.ZERO : dto.getRepartePromocional();
 		lancamento.setReparte(repartePrevisto);
 		lancamento.setRepartePromocional(repartePromocional);
 		
-		// Cálcular as datas de Recolhimento:
-		int peb = produtoEdicao.getProduto().getPeb();
-		Calendar calPeb = Calendar.getInstance();
-		calPeb.setTime(lancamento.getDataLancamentoPrevista());
-		calPeb.add(Calendar.DAY_OF_MONTH, peb);
-		Date dtPeb = calPeb.getTime();
-		lancamento.setDataRecolhimentoDistribuidor(dtPeb);
-		lancamento.setDataRecolhimentoPrevista(dtPeb);
+		lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setStatus(StatusLancamento.PLANEJADO);
 		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);

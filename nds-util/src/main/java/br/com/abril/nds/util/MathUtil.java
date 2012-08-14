@@ -11,6 +11,8 @@ import java.math.RoundingMode;
  */
 public abstract class MathUtil {
 	
+	public static final int PADRAO_PRECISAO_DECIMAL = 4;
+	
 	private static final int TOTAL_CASAS_DECIMAIS = 20;
 	
 	/**

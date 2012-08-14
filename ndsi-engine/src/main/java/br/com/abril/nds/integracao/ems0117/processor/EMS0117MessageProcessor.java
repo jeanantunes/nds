@@ -46,24 +46,21 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		StringBuilder sql = new StringBuilder();
 
 		// Obter Box
-		sql.append("SELECT b  ");
 		sql.append("FROM Box b ");
 		sql.append("WHERE ");
 		sql.append("     b.codigo = :codigo ");
 		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("codigo", input.getCodBox().toString());
-		Box box = null;
-
-		box = (Box) query.uniqueResult();
+		query.setParameter("codigo", Integer.valueOf( input.getCodBox().toString() ));
+		Box box = (Box) query.uniqueResult();
 		if (null == box) {
 			// Não encontrou a Box. Realizar Log
 			// Passar para a próxima linha
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.HIERARQUIA,
-					"Codigo BOX " + input.getCodBox()
+					"Codigo BOX " + input.getCodBox().toString()
 							+ " nao encontrado para a Cota "
-							+ input.getCodCota());
+							+ input.getCodCota().toString());
 			return;
 		}
 

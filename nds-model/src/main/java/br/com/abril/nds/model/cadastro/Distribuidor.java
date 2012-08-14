@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -95,6 +96,26 @@ public class Distribuidor {
 	private boolean aceitaJuramentado;
 	
 	/**
+	 * Tipo da contabilização selecionada pelo distribuidor
+	 * na chamada de encalhe
+	 */
+	@Column(name = "TIPO_CONT_CE")
+	@Enumerated(EnumType.STRING)
+	private TipoContabilizacaoCE tipoContabilizacaoCE;
+	
+	/**
+	 * Flag indicando se a venda negativa deve ser supervisionada
+	 */
+	@Column(name = "SUPERVISIONA_VENDA_NEGATIVA")
+	private boolean supervisionaVendaNegativa;
+	
+	/**
+	 * Parametrização de Política de Chamadão do Distribuidor
+	 */
+	@Embedded
+	private PoliticaChamadao politicaChamadao;
+	
+	/**
 	 * Capacidade de distribuição diária do distribuidor, em número de exemplares
 	 */
 	@Column(name = "CAPACIDADE_DISTRIBUICAO", nullable = false)
@@ -158,7 +179,7 @@ public class Distribuidor {
 	/**
 	 * Parametrização do contrato entre cota e distribuidor
 	 */
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
@@ -200,12 +221,12 @@ public class Distribuidor {
 	private TipoImpressaoCE tipoImpressaoCE = TipoImpressaoCE.MODELO_1;	
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_IMPRESSAO_NE", nullable = true)
-	private TipoImpressaoNE tipoImpressaoNE = TipoImpressaoNE.MODELO_1; 	
+	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
+	private TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED = TipoImpressaoInterfaceLED.MODELO_1; 	
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_IMPRESSAO_NECA_DANFE", nullable = true)
-	private TipoImpressaoNECADANFE tipoImpressaoNECADANFE = TipoImpressaoNECADANFE.MODELO_1;	
+	@Column(name = "TIPO_IMPRESSAO_NE_NECA_DANFE", nullable = true)
+	private TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE = TipoImpressaoNENECADANFE.MODELO_1;	
 
 	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = true)
 	private boolean utilizaProcuracaoEntregadores;	
@@ -213,7 +234,7 @@ public class Distribuidor {
 	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO", nullable = true)
 	private String informacoesComplementaresProcuracao;
 
-	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = true)
+	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = false)
 	private boolean utilizaGarantiaPdv;	
 
 	@Column(name = "PARCELAMENTO_DIVIDAS", nullable = true)
@@ -221,9 +242,6 @@ public class Distribuidor {
 	
 	@Column(name = "NEGOCIACAO_ATE_PARCELAS", nullable = true)
 	private Integer negociacaoAteParcelas;
-	
-	@Column(name = "PERMITE_PAGAMENTO_DIVIDAS_DIVERGENTES", nullable = true)
-	private boolean permitePagamentoDividasDivergentes;	
 
 	@Column(name = "UTILIZA_CONTROLE_APROVACAO", nullable = true)
 	private boolean utilizaControleAprovacao;	
@@ -236,6 +254,15 @@ public class Distribuidor {
 
 	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = false)
 	private Integer qtdDiasLimiteParaReprogLancamento;
+	
+	/**
+	 * Desconto da cota para negociação (Parametros do Distribuidor / Aba de Negociação)
+	 */
+	@Column(name="DESCONTO_COTA_PARA_NEGOCIACAO")
+	private BigDecimal descontoCotaNegociacao;
+	
+	@Embedded
+	private ParametroEntregaBanca parametroEntregaBanca;
 	
 	public Long getId() {
 		return id;
@@ -471,8 +498,50 @@ public class Distribuidor {
 	public void setAceitaJuramentado(boolean aceitaJuramentado) {
 		this.aceitaJuramentado = aceitaJuramentado;
 	}
-
+	
 	/**
+     * @return the tipoContabilizacaoCE
+     */
+    public TipoContabilizacaoCE getTipoContabilizacaoCE() {
+        return tipoContabilizacaoCE;
+    }
+
+    /**
+     * @param tipoContabilizacaoCE the tipoContabilizacaoCE to set
+     */
+    public void setTipoContabilizacaoCE(TipoContabilizacaoCE tipoContabilizacaoCE) {
+        this.tipoContabilizacaoCE = tipoContabilizacaoCE;
+    }
+
+    /**
+     * @return the supervisionaVendaNegativa
+     */
+    public boolean isSupervisionaVendaNegativa() {
+        return supervisionaVendaNegativa;
+    }
+
+    /**
+     * @param supervisionaVendaNegativa the supervisionaVendaNegativa to set
+     */
+    public void setSupervisionaVendaNegativa(boolean supervisionaVendaNegativa) {
+        this.supervisionaVendaNegativa = supervisionaVendaNegativa;
+    }
+
+    /**
+     * @return the politicaChamadao
+     */
+    public PoliticaChamadao getPoliticaChamadao() {
+        return politicaChamadao;
+    }
+
+    /**
+     * @param politicaChamadao the politicaChamadao to set
+     */
+    public void setPoliticaChamadao(PoliticaChamadao politicaChamadao) {
+        this.politicaChamadao = politicaChamadao;
+    }
+
+    /**
 	 * @return the leiautePicking
 	 */
 	public LeiautePicking getLeiautePicking() {
@@ -585,21 +654,21 @@ public class Distribuidor {
 		this.tipoImpressaoCE = tipoImpressaoCE;
 	}
 
-	public TipoImpressaoNE getTipoImpressaoNE() {
-		return tipoImpressaoNE;
+	public TipoImpressaoInterfaceLED getTipoImpressaoInterfaceLED() {
+		return tipoImpressaoInterfaceLED;
 	}
 
-	public void setTipoImpressaoNE(TipoImpressaoNE tipoImpressaoNE) {
-		this.tipoImpressaoNE = tipoImpressaoNE;
+	public void setTipoImpressaoInterfaceLED(TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED) {
+		this.tipoImpressaoInterfaceLED = tipoImpressaoInterfaceLED;
 	}
 
-	public TipoImpressaoNECADANFE getTipoImpressaoNECADANFE() {
-		return tipoImpressaoNECADANFE;
+	public TipoImpressaoNENECADANFE getTipoImpressaoNENECADANFE() {
+		return tipoImpressaoNENECADANFE;
 	}
 
-	public void setTipoImpressaoNECADANFE(
-			TipoImpressaoNECADANFE tipoImpressaoNECADANFE) {
-		this.tipoImpressaoNECADANFE = tipoImpressaoNECADANFE;
+	public void setTipoImpressaoNENECADANFE(
+			TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE) {
+		this.tipoImpressaoNENECADANFE = tipoImpressaoNENECADANFE;
 	}
 
 	public boolean isUtilizaProcuracaoEntregadores() {
@@ -644,15 +713,6 @@ public class Distribuidor {
 		this.negociacaoAteParcelas = negociacaoAteParcelas;
 	}
 
-	public boolean isPermitePagamentoDividasDivergentes() {
-		return permitePagamentoDividasDivergentes;
-	}
-
-	public void setPermitePagamentoDividasDivergentes(
-			boolean permitePagamentoDividasDivergentes) {
-		this.permitePagamentoDividasDivergentes = permitePagamentoDividasDivergentes;
-	}
-
 	public boolean isUtilizaControleAprovacao() {
 		return utilizaControleAprovacao;
 	}
@@ -692,5 +752,31 @@ public class Distribuidor {
 			Integer qtdDiasLimiteParaReprogLancamento) {
 		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
 	}
+
+	public BigDecimal getDescontoCotaNegociacao() {
+		return descontoCotaNegociacao;
+	}
+
+	/**
+	 * @param descontoCotaNegociacao the descontoCotaNegociacao to set
+	 */
+	public void setDescontoCotaNegociacao(BigDecimal descontoCotaNegociacao) {
+		this.descontoCotaNegociacao = descontoCotaNegociacao;
+	}
+
+    /**
+     * @return the parametroEntregaBanca
+     */
+    public ParametroEntregaBanca getParametroEntregaBanca() {
+        return parametroEntregaBanca;
+    }
+
+    /**
+     * @param parametroEntregaBanca the parametroEntregaBanca to set
+     */
+    public void setParametroEntregaBanca(ParametroEntregaBanca parametroEntregaBanca) {
+        this.parametroEntregaBanca = parametroEntregaBanca;
+    }
+	
 	
 }

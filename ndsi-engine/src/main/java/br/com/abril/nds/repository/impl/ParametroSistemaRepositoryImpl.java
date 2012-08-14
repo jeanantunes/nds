@@ -38,14 +38,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		String hql = "from ParametroSistema p where p.tipoParametroSistema in (:listaTipoParametroSistema) ";
 		
 		List<TipoParametroSistema> lst = new ArrayList<TipoParametroSistema>();
-		lst.add(TipoParametroSistema.CNPJ);
-		lst.add(TipoParametroSistema.RAZAO_SOCIAL);
 		lst.add(TipoParametroSistema.EMAIL_USUARIO);
-		lst.add(TipoParametroSistema.UF);
-		lst.add(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP);
-		lst.add(TipoParametroSistema.CODIGO_DISTRIBUIDOR_FC);
-		lst.add(TipoParametroSistema.LOGIN_DISTRIBUIDOR);
-		lst.add(TipoParametroSistema.SENHA_DISTRIBUIDOR);
 		lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_CE_EXPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_PRODIN_IMPORTACAO);
@@ -62,6 +55,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		lst.add(TipoParametroSistema.DATA_OPERACAO_CORRENTE);
 		lst.add(TipoParametroSistema.PATH_IMAGENS_CAPA);
 		lst.add(TipoParametroSistema.PATH_IMAGENS_PDV);
+		lst.add(TipoParametroSistema.FREQUENCIA_EXPURGO);
 		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameterList("listaTipoParametroSistema", lst);
@@ -77,21 +71,32 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		query.setMaxResults(1);
 		
 		for (ParametroSistema itemPS : parametrosSistema) {
-			query.setParameter("tipoParametroSistema", itemPS.getTipoParametroSistema());
-			ParametroSistema ps = (ParametroSistema) query.uniqueResult();
-			if (ps == null) {
-				
-				// Parâmetro não existe no banco - create:
-				adicionar(itemPS);
-			} else {
-				
-				// Atualiza o valor de um parâmetro existente:
-				if (!ps.getValor().equals(itemPS.getValor())) {
-					ps.setValor(itemPS.getValor());
-					alterar(ps);
+			if (!isInterface(itemPS)) {
+				query.setParameter("tipoParametroSistema",
+						itemPS.getTipoParametroSistema());
+				ParametroSistema ps = (ParametroSistema) query.uniqueResult();
+				if (ps == null) {
+
+					// Parâmetro não existe no banco - create:
+					adicionar(itemPS);
+				} else {
+
+					// Atualiza o valor de um parâmetro existente:
+					if (!ps.getValor().equals(itemPS.getValor())) {
+						ps.setValor(itemPS.getValor());
+						alterar(ps);
+					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param itemPS
+	 * @return
+	 */
+	private boolean isInterface(ParametroSistema itemPS) {
+		return TipoParametroSistema.TIPOS_INTERFACE.contains(itemPS.getTipoParametroSistema());
 	}
 	
 }

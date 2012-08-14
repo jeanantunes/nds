@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ConsultaNotaFiscalVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaDetallheNFVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -27,6 +29,7 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
@@ -86,6 +89,7 @@ public class ConsultaNotasController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroConsultaNotaFiscal";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ESTOQUE_CONSULTA_NOTAS)
 	public void index() {
 		
 		preencherCombos();
@@ -121,24 +125,22 @@ public class ConsultaNotasController {
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroConsultaNotaFiscal);
 		
 		try {
-
+			
 			List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
-				notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
+					notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 
 			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
-	
+			
+			if (quantidadeRegistros <= 0) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			} 
+			
 			TableModel<CellModel> tableModel = getTableModelNotasFiscais(listaNotasFiscais);
 			tableModel.setTotal(quantidadeRegistros);
 			tableModel.setPage(filtroConsultaNotaFiscal.getPaginacao().getPaginaAtual());
 
-			if (listaNotasFiscais == null || listaNotasFiscais.isEmpty()) {
-
-				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-
-			} else {
-
-				result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-			}
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+			
 
 		} catch (IllegalArgumentException e) {
 
@@ -251,6 +253,7 @@ public class ConsultaNotasController {
 			consultaNotaFiscalVO.setNotaRecebida(notaRecebida);
 			consultaNotaFiscalVO.setNumeroNota(notaFiscal.getNumero());
 			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getTipoNotaFiscal().getDescricao());
+			consultaNotaFiscalVO.setValor(this.obterValorTotalNota(notaFiscal.getId()));
 			
 			listaConsultasNF.add(consultaNotaFiscalVO);
 		}
@@ -264,8 +267,12 @@ public class ConsultaNotasController {
 
 		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
 			
+			
+			
 			String notaRecebida = 
 				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ";
+			
+			DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
 			
 			CellModel cellModel = 
 					new CellModel(
@@ -275,6 +282,7 @@ public class ConsultaNotasController {
 							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataExpedicao())), 
 							itemExibicaoToString(notaFiscal.getTipoNotaFiscal().getDescricao()), 
 							itemExibicaoToString(notaFiscal.getFornecedor().getJuridica().getRazaoSocial()),
+							itemExibicaoToString(decimalFormat.format(obterValorTotalNota(notaFiscal.getId()))),
 							notaRecebida, 
 							" ", 
 							itemExibicaoToString(notaFiscal.getId()));
@@ -287,6 +295,19 @@ public class ConsultaNotasController {
 		tableModel.setRows(listaCellModels);
 
 		return tableModel;
+	}
+	
+	private BigDecimal obterValorTotalNota(Long idNotaFiscal) {
+		
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		
+		DetalheNotaFiscalDTO detalheNota = this.notaFiscalService.obterDetalhesNotaFical(idNotaFiscal);
+		
+		if (detalheNota != null) {
+			valorTotal = detalheNota.getValorTotalSumarizado();
+		}
+		
+		return valorTotal;
 	}
 	
 	private TableModel<CellModel> getTableModelDetalhesNotaFiscal(List<DetalheItemNotaFiscalDTO> listaDetalhesNotaFiscal) {
@@ -346,7 +367,11 @@ public class ConsultaNotasController {
 		PeriodoVO periodo = obterPeriodoValidado(dataInicial, dataFinal);
 		
 		filtroConsultaNotaFiscal.setPeriodo(periodo);
-
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		filtroConsultaNotaFiscal.setIdDistribuidor(distribuidor.getId());
+		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 
 		filtroConsultaNotaFiscal.setPaginacao(paginacao);

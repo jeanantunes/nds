@@ -67,7 +67,8 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		hql.append(" 		produtoEdicao.numeroEdicao as numEdicao, ");
 		hql.append(" 		juridica.razaoSocial as nomeFornecedor, ");
 		hql.append(" 		lancamentoParcial.status as statusParcial, ");
-		hql.append("        produtoEdicao.precoVenda as precoCapa ");
+		hql.append("        produtoEdicao.precoVenda as precoCapa, ");
+		hql.append("        produtoEdicao.origemInterface as geradoPorInterface ");
 		
 		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
 		
@@ -243,4 +244,5 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
+
 }

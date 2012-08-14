@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -31,6 +33,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -47,7 +50,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -90,6 +92,7 @@ public class ConferenciaEncalheController {
 	private HttpServletResponse httpResponse;
 
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		carregarComboBoxEncalhe();
 	}
@@ -284,8 +287,8 @@ public class ConferenciaEncalheController {
 	
 	private void calcularTotais(Map<String, Object> dados) {
 		
-		BigDecimal qtdInformada = BigDecimal.ZERO;
-		BigDecimal qtdRecebida = BigDecimal.ZERO;
+		BigInteger qtdInformada = BigInteger.ZERO;
+		BigInteger qtdRecebida = BigInteger.ZERO;
 		
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
@@ -397,14 +400,14 @@ public class ConferenciaEncalheController {
 		
 		if (codigoAnterior != null && quantidade != null){
 			
-			conferenciaEncalheDTO = this.atualizarQuantidadeConferida(codigoAnterior, quantidade, produtoEdicao);
+			conferenciaEncalheDTO = this.atualizarQuantidadeConferida(codigoAnterior, quantidade, produtoEdicao, null);
 		}
 		
 		this.result.use(Results.json()).from(conferenciaEncalheDTO, "result").serialize();
 	}
 	
 	@Post
-	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade) {
+	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade, Boolean juramentada) {
 		
 		if (idProdutoEdicao == null){
 			
@@ -431,7 +434,7 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
+		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao, juramentada);
 		
 		this.carregarListaConferencia(null, false, false);
 		
@@ -454,7 +457,7 @@ public class ConferenciaEncalheController {
 				
 				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
 					
-					dto.setQtdExemplar(new BigDecimal(qtdExemplares));
+					dto.setQtdExemplar(BigInteger.valueOf(qtdExemplares));
 					
 					if (juramentada != null){
 					
@@ -466,7 +469,7 @@ public class ConferenciaEncalheController {
 						dto.setPrecoCapa(valorCapa);
 					}
 					
-					dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply(dto.getQtdExemplar()));
+					dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply( new BigDecimal( dto.getQtdExemplar() )));
 					
 					conf = dto;
 					
@@ -501,7 +504,7 @@ public class ConferenciaEncalheController {
 				
 				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
 					
-					dto.setQtdInformada(new BigDecimal(qtdInformada));
+					dto.setQtdInformada(BigInteger.valueOf(qtdInformada));
 					
 					if (valorCapaInformado != null){
 						
@@ -1094,7 +1097,7 @@ public class ConferenciaEncalheController {
 					valorEncalhe = valorEncalhe.add(
 							conferenciaEncalheDTO.getPrecoCapa()
 							.subtract(conferenciaEncalheDTO.getDesconto())
-							.multiply(conferenciaEncalheDTO.getQtdExemplar()));
+							.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdExemplar())));
 				}
 			}
 			
@@ -1142,7 +1145,7 @@ public class ConferenciaEncalheController {
 	/*
 	 * Atualiza quantidade da conferencia ou cria um novo registro caso seja a primeira vez que se esta conferindo o produtoedicao
 	 */
-	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicaoDTO produtoEdicao) {
+	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicaoDTO produtoEdicao, Boolean juramentada) {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = null;
 		
@@ -1163,12 +1166,14 @@ public class ConferenciaEncalheController {
 		
 		if (conferenciaEncalheDTOSessao != null){
 			
-			conferenciaEncalheDTOSessao.setQtdExemplar(new BigDecimal(quantidade));
+			conferenciaEncalheDTOSessao.setQtdExemplar(BigInteger.valueOf(quantidade));
 		} else {
 			
 			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, quantidade, true);
 		}
-		
+		if (juramentada != null) {
+			conferenciaEncalheDTOSessao.setJuramentada(juramentada);
+		}
 		return conferenciaEncalheDTOSessao;
 	}
 	
@@ -1199,18 +1204,18 @@ public class ConferenciaEncalheController {
 		
 		if (quantidade != null){
 		
-			conferenciaEncalheDTO.setQtdExemplar(new BigDecimal(quantidade));
-			conferenciaEncalheDTO.setQtdInformada(new BigDecimal(quantidade));
+			conferenciaEncalheDTO.setQtdExemplar(BigInteger.valueOf(quantidade));
+			conferenciaEncalheDTO.setQtdInformada(BigInteger.valueOf(quantidade));
 		} else {
 			
-			conferenciaEncalheDTO.setQtdExemplar(BigDecimal.ONE);
-			conferenciaEncalheDTO.setQtdInformada(BigDecimal.ONE);
+			conferenciaEncalheDTO.setQtdExemplar(BigInteger.ONE);
+			conferenciaEncalheDTO.setQtdInformada(BigInteger.ONE);
 
 		}
 		
 		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
 		
-		conferenciaEncalheDTO.setValorTotal(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(conferenciaEncalheDTO.getQtdExemplar()));
+		conferenciaEncalheDTO.setValorTotal(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(new BigDecimal( conferenciaEncalheDTO.getQtdExemplar()) ));
 		
 		if (adicionarGrid){
 			

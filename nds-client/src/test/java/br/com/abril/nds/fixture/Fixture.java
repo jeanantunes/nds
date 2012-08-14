@@ -1,8 +1,10 @@
 package br.com.abril.nds.fixture;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +14,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -32,6 +35,7 @@ import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
@@ -52,6 +56,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -69,6 +74,7 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -80,6 +86,8 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -417,6 +425,7 @@ public class Fixture {
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);
 		fornecedor.setOrigem(Origem.MANUAL);
+		fornecedor.setEmailNfe("teste@gmail.com");
 		return fornecedor;
 	}
 	
@@ -511,7 +520,7 @@ public class Fixture {
 	
 	public static Lancamento lancamento(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			Date dataStatus, BigInteger reparte, StatusLancamento statusLancamento,
 			ItemRecebimentoFisico recebimento, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
@@ -553,7 +562,7 @@ public class Fixture {
 			StatusAprovacao statusAprovacao,
 			Date drd, 
 			Date dataStatus, 
-			BigDecimal qtde) {
+			BigInteger qtde) {
 		
 		ConferenciaEncalheParcial conferenciaEncalheParcial = new ConferenciaEncalheParcial();
 		
@@ -620,7 +629,7 @@ public class Fixture {
 	
 	public static Lancamento lancamentoExpedidos(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			Date dataStatus, BigInteger reparte, StatusLancamento statusLancamento,
 			ItemRecebimentoFisico recebimento,Expedicao expedicao, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
@@ -669,7 +678,6 @@ public class Fixture {
 		distribuidor.setUtilizaGarantiaPdv(false);
 		distribuidor.setParcelamentoDividas(false);
 		distribuidor.setNegociacaoAteParcelas(Integer.valueOf(3));
-		distribuidor.setPermitePagamentoDividasDivergentes(false);
 		distribuidor.setUtilizaControleAprovacao(false);
 		distribuidor.setPrazoFollowUp(Integer.valueOf(7));
 		distribuidor.setPrazoAvisoPrevioValidadeGarantia(Integer.valueOf(7));
@@ -692,9 +700,10 @@ public class Fixture {
 		pad.setAjusteEstoque(false);
 		pad.setPostergacaoCobranca(false);
 		pad.setDevolucaoFornecedor(false);
-		pad.setRecibo(false);
 		pad.setFaltasSobras(false);
 		distribuidor.setParametrosAprovacaoDistribuidor(pad);
+		
+		distribuidor.setDescontoCotaNegociacao(BigDecimal.ZERO);
 		
 		return distribuidor;
 	}
@@ -735,7 +744,7 @@ public class Fixture {
 		return cota;
 	}
 
-	public static Estudo estudo(BigDecimal qtdReparte, Date data,
+	public static Estudo estudo(BigInteger qtdReparte, Date data,
 			ProdutoEdicao produtoEdicao) {
 
 		Estudo estudo = new Estudo();
@@ -749,8 +758,8 @@ public class Fixture {
 		return estudo;
 	}
 
-	public static EstudoCota estudoCota(BigDecimal qtdePrevista,
-			BigDecimal qtdeEfetiva, Estudo estudo, Cota cota) {
+	public static EstudoCota estudoCota(BigInteger qtdePrevista,
+			BigInteger qtdeEfetiva, Estudo estudo, Cota cota) {
 
 		EstudoCota estudoCota = new EstudoCota();
 
@@ -769,7 +778,9 @@ public class Fixture {
 		Usuario usuario = new Usuario();
 		usuario.setNome("João");
 		usuario.setLogin("joao");
-		usuario.setSenha("ABC123");
+		usuario.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // senha: 1234
+		usuario.setEmail("cabradapeste@bol.com");
+		usuario.setContaAtiva(false);
 		return usuario;
 	}
 
@@ -1069,7 +1080,7 @@ public class Fixture {
 	}
 	
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
-			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigDecimal qtde) {
+			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigInteger qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
 		itemNotaFiscal.setOrigem(Origem.MANUAL);
 		itemNotaFiscal.setProdutoEdicao(produtoEdicao);
@@ -1089,7 +1100,7 @@ public class Fixture {
 			Date dataLancamento, 
 			Date dataRecolhimento, 
 			TipoLancamento tipoLancamento, 
-			BigDecimal qtde,
+			BigInteger qtde,
 			String 		NCMProduto,
 			String 		CFOPProduto,
 			Long 		unidadeProduto,
@@ -1131,7 +1142,7 @@ public class Fixture {
 	public static ItemNotaFiscalSaida itemNotaFiscalSaida(
 			ProdutoEdicao produtoEdicao,
 			NotaFiscalSaida notaFiscal, 
-			BigDecimal qtde) {
+			BigInteger qtde) {
 		
 		ItemNotaFiscalSaida itemNotaFiscal = new ItemNotaFiscalSaida();
 		
@@ -1146,7 +1157,7 @@ public class Fixture {
 	public static ItemNotaFiscalSaida itemNotaFiscalSaidaNFE(
 			ProdutoEdicao produtoEdicao,
 			NotaFiscalSaida notaFiscal, 
-			BigDecimal qtde,
+			BigInteger qtde,
 			String		NCMProduto,
 			String 		CFOPProduto,
 			Long 		unidadeProduto,
@@ -1173,7 +1184,6 @@ public class Fixture {
 		itemNotaFiscal.setValorICMSProduto(valorICMSProduto);
 		itemNotaFiscal.setAliquotaIPIProduto(aliquotaIPIProduto);
 		itemNotaFiscal.setValorIPIProduto(valorIPIProduto);
-
 		
 		return itemNotaFiscal;
 		
@@ -1192,9 +1202,8 @@ public class Fixture {
 		tipoNotaFiscal.setContribuinte(false);
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);		
-		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
+		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
 		tipoNotaFiscal.setSerieNotaFiscal(2);
-		
 		return tipoNotaFiscal;
 	}
 
@@ -1241,7 +1250,8 @@ public class Fixture {
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);		
+		tipoNotaFiscal.setSerieNotaFiscal(3);
+		tipoNotaFiscal.setProcesso(new HashSet<Processo>());
 		return tipoNotaFiscal;
 	}
 
@@ -1696,7 +1706,7 @@ public class Fixture {
 
 	public static ItemRecebimentoFisico itemRecebimentoFisico(ItemNotaFiscalEntrada itemNotaFiscal, 
 															  RecebimentoFisico recebimentoFisico,
-															  BigDecimal qtdeFisico) {
+															  BigInteger qtdeFisico) {
 		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
 		itemRecebimentoFisico.setItemNotaFiscal(itemNotaFiscal);
 		itemRecebimentoFisico.setQtdeFisico(qtdeFisico);
@@ -1704,7 +1714,7 @@ public class Fixture {
 		return itemRecebimentoFisico;
 	}
 	
-	public static EstoqueProduto estoqueProduto(ProdutoEdicao produtoEdicao, BigDecimal qtde) {
+	public static EstoqueProduto estoqueProduto(ProdutoEdicao produtoEdicao, BigInteger qtde) {
 		EstoqueProduto estoqueProduto = new EstoqueProduto();
 		estoqueProduto.setProdutoEdicao(produtoEdicao);
 		estoqueProduto.setQtde(qtde);
@@ -1713,7 +1723,7 @@ public class Fixture {
 		return estoqueProduto;
 	}
 	
-	public static EstoqueProdutoCota estoqueProdutoCota(ProdutoEdicao produtoEdicao, BigDecimal qtde,
+	public static EstoqueProdutoCota estoqueProdutoCota(ProdutoEdicao produtoEdicao, BigInteger qtde,
 			Cota cota, List<MovimentoEstoqueCota> movimentos) {
 		EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
 		estoqueProdutoCota.setCota(cota);
@@ -1732,7 +1742,7 @@ public class Fixture {
 													Usuario usuario, 
 													EstoqueProduto estoqueProduto,
 													Date dataInclusao,
-													BigDecimal qtde, 
+													BigInteger qtde, 
 													StatusAprovacao status,
 													String motivo) {
 
@@ -1765,7 +1775,7 @@ public class Fixture {
 		return ps;
 	}
 	
-	public static Diferenca diferenca(BigDecimal qtde,
+	public static Diferenca diferenca(BigInteger qtde,
 									  Usuario usuarioResponsavel,
 									  ProdutoEdicao produtoEdicao,
 									  TipoDiferenca tipoDiferenca,
@@ -1789,8 +1799,8 @@ public class Fixture {
 	}
 	
 	public static EstoqueProdutoCota estoqueProdutoCota(
-			ProdutoEdicao produtoEdicao, Cota cota, BigDecimal qtdeRecebida,
-			BigDecimal qtdeDevolvida) {
+			ProdutoEdicao produtoEdicao, Cota cota, BigInteger qtdeRecebida,
+			BigInteger qtdeDevolvida) {
 		EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
 		estoqueProdutoCota.setCota(cota);
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
@@ -1802,7 +1812,7 @@ public class Fixture {
 	public static MovimentoEstoqueCota movimentoEstoqueCota(
 			ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimento,
 			Usuario usuario, EstoqueProdutoCota estoqueProdutoCota,
-			BigDecimal qtde, Cota cota, StatusAprovacao statusAprovacao, String motivo) {
+			BigInteger qtde, Cota cota, StatusAprovacao statusAprovacao, String motivo) {
 
 		MovimentoEstoqueCota movimentoEstoque = new MovimentoEstoqueCota();
 		movimentoEstoque.setData(new Date());
@@ -1823,7 +1833,7 @@ public class Fixture {
 			TipoMovimentoEstoque tipoMovimento,
 			Usuario usuario, 
 			EstoqueProdutoCota estoqueProdutoCota,
-			BigDecimal qtde, 
+			BigInteger qtde, 
 			Cota cota, 
 			StatusAprovacao statusAprovacao, 
 			String motivo) {
@@ -1845,7 +1855,7 @@ public class Fixture {
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			ChamadaEncalheCota chamadaEncalheCota,
 			ControleConferenciaEncalheCota controleConferenciaEncalheCota,
-			Date data, BigDecimal qtdeInformada, BigDecimal qtde,
+			Date data, BigInteger qtdeInformada, BigInteger qtde,
 			ProdutoEdicao produtoEdicao) {
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
@@ -1866,7 +1876,7 @@ public class Fixture {
 			ChamadaEncalhe chamadaEncalhe,
 			boolean conferido,
 			Cota cota,
-			BigDecimal qtdePrevista) {
+			BigInteger qtdePrevista) {
 		
 		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
 		
@@ -1879,7 +1889,7 @@ public class Fixture {
 		
 	}
 	
-	public static RateioDiferenca rateioDiferenca(BigDecimal qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota, Date dataNotaEnvio){
+	public static RateioDiferenca rateioDiferenca(BigInteger qtde, Cota cota, Diferenca diferenca, EstudoCota estudoCota, Date dataNotaEnvio){
 		RateioDiferenca rateioDiferenca = new RateioDiferenca();
 		rateioDiferenca.setCota(cota);
 		rateioDiferenca.setDiferenca(diferenca);
@@ -1901,7 +1911,7 @@ public class Fixture {
 	
 	public static Lancamento lancamentos(TipoLancamento tipoLancamento,
 			ProdutoEdicao produtoEdicao, Date dlp, Date drp, Date dataCriacao,
-			Date dataStatus, BigDecimal reparte, StatusLancamento statusLancamento,
+			Date dataStatus, BigInteger reparte, StatusLancamento statusLancamento,
 			List<ItemRecebimentoFisico> recebimentos, Integer sequenciaMatriz) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setDataCriacao(dataCriacao);
@@ -2008,14 +2018,30 @@ public class Fixture {
 		return politicaCobranca;
 	}
 	
-	public static Feriado feriado(Date data, String descricao) {
+	public static Feriado feriado(
+			Date data, 
+			TipoFeriado tipoFeriado,
+			UnidadeFederacao unidadeFederacao,
+			Localidade localidade, 
+			String descricao,
+			boolean indEfetuaCobranca,
+			boolean indOpera,
+			boolean indRepeteAnualmente) {
 		
 		Feriado feriado = new Feriado();
 		
 		feriado.setData(data);
 		feriado.setDescricao(descricao);
+		feriado.setTipoFeriado(tipoFeriado);
+		feriado.setUnidadeFederacao(unidadeFederacao);
+		feriado.setLocalidade(localidade);
+		
+		feriado.setIndEfetuaCobranca(indEfetuaCobranca);
+		feriado.setIndOpera(indOpera);
+		feriado.setIndRepeteAnualmente(indRepeteAnualmente);
 		
 		return feriado;
+		
 	}
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
@@ -3013,7 +3039,7 @@ public class Fixture {
 			Long ncm,
 			NotaFiscal notaFiscal,
 			ProdutoEdicao produtoEdicao,
-			BigDecimal quantidade,
+			BigInteger quantidade,
 			String unidade,
 			BigDecimal valorDesconto,
 			BigDecimal valorFrete,
@@ -3276,5 +3302,46 @@ public class Fixture {
 		
 	}
 	
+	public static DescontoDistribuidor descontoDistribuidor(BigDecimal desconto, Distribuidor distribuidor, Set<Fornecedor> fornecedores,Usuario usuario ){
+		
+		DescontoDistribuidor descontoReturn = new DescontoDistribuidor();
+		descontoReturn.setDesconto(desconto);
+		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setDistribuidor(distribuidor);
+		descontoReturn.setFornecedores(fornecedores);
+		descontoReturn.setUsuario(usuario);
+		
+		return descontoReturn;
+	}
 	
+    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario ){
+		
+		DescontoCota descontoReturn = new DescontoCota();
+		descontoReturn.setDesconto(desconto);
+		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setCota(cota);
+		descontoReturn.setDistribuidor(distribuidor);
+		descontoReturn.setFornecedores(fornecedores);
+		descontoReturn.setUsuario(usuario);
+		
+		return descontoReturn;
+	}
+
+	public static GrupoCota criarGrupoCota(Long id, String nome, TipoGrupo tipoGrupo,
+			Set<DiaSemana> diasRecolhimento,
+			TipoCaracteristicaSegmentacaoPDV tipoCota,
+			Set<Localidade> municipios, Set<Cota> cotas) {
+		
+		GrupoCota grupo = new GrupoCota();
+		
+		grupo.setCotas(cotas);
+		grupo.setDiasRecolhimento(diasRecolhimento);
+		grupo.setId(id);
+		grupo.setMunicipios(municipios);
+		grupo.setNome(nome);
+		grupo.setTipoCota(tipoCota);
+		grupo.setTipoGrupo(tipoGrupo);
+		
+		return grupo;
+	}	
 }

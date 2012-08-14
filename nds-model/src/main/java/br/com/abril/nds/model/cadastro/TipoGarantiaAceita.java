@@ -39,7 +39,7 @@ public class TipoGarantiaAceita implements Serializable {
 	private TipoGarantia tipoGarantia;
 
 	@Column(name = "VALOR", nullable = true)
-	private String valor;
+	private Integer valor;
 	
 	@Column(name = "UTILIZA", nullable = true)
 	private boolean utilizar;
@@ -94,13 +94,13 @@ public class TipoGarantiaAceita implements Serializable {
 
 
 
-	public String getValor() {
+	public Integer getValor() {
 		return valor;
 	}
 
 
 
-	public void setValor(String valor) {
+	public void setValor(Integer valor) {
 		this.valor = valor;
 	}
 

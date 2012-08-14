@@ -7,7 +7,7 @@ import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 
 
 public abstract class NdsiRunner {
-	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-test.xml"; 
+	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
 	
 	private static ApplicationContext applicationContext;
 	

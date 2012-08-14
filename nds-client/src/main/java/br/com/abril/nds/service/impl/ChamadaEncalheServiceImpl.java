@@ -55,9 +55,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
 		
+		Cota cota = null;
+		
 		for(CotaEmissaoDTO dto:lista) {
 			
-			Cota cota = cotaRepository.buscarPorId( dto.getIdCota());
+			cota = cotaRepository.obterPorNumerDaCota( dto.getNumCota());
 			
 			Endereco endereco = null;
 			

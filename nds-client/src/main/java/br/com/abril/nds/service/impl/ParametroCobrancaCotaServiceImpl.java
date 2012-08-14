@@ -221,7 +221,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			    concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
 			}
 			if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.MENSAL){		
-			    diaDoMes = formaCobranca.getDiaDoMes();
+			    diaDoMes = formaCobranca.getDiasDoMes().get(0);
 			}
 
 			
@@ -496,8 +496,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		    formaCobranca.setConcentracaoCobrancaCota(concentracoesCobranca);
 		}
 		
-		
-		formaCobranca.setDiaDoMes(formaCobrancaDTO.getDiaDoMes());
+		List<Integer> diasdoMes = new ArrayList<Integer>();
+		diasdoMes.add(formaCobrancaDTO.getDiaDoMes());
+		formaCobranca.setDiasDoMes(diasdoMes);
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
@@ -589,7 +590,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				}				
 			}
 			else if (formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-				strConcentracoes = "Todo dia "+formaCobrancaItem.getDiaDoMes();
+				strConcentracoes = "Todo dia "+formaCobrancaItem.getDiasDoMes().get(0);
 			}				
 			
 			if ((fornecedores!=null)&&(!fornecedores.isEmpty())){
@@ -817,7 +818,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			for (int i=0; i<idFornecedores.size();i++){
 				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
 				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
-					if (diaDoMes==itemFormaCobranca.getDiaDoMes()){
+					if (itemFormaCobranca.getDiasDoMes() !=null && itemFormaCobranca.getDiasDoMes().contains(diaDoMes)){
 						res=false;
 					}
 				}

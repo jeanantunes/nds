@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0107.processor;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			
 			String codigoPublicacao = input.getCodigoPublicacao();
 			Long edicao = input.getEdicao();
-			Long codigoCota = input.getCodigoCota();
+			Integer numeroCota = input.getCodigoCota();
 			
 			List<ProdutoEdicao> listaProdutoEdicao = 
 				this.obterProdutoEdicaoPor(codigoPublicacao, edicao);
@@ -56,7 +57,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				return;
 			}
 
-			Cota cota = obterCota(codigoCota);
+			Cota cota = obterCota(numeroCota);
 
 			Lancamento lancamento = 
 				this.getLancamento(codigoPublicacao, edicao);
@@ -77,8 +78,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 					
 					estudoCota.setCota(cota);
 					estudoCota.setEstudo(estudo);
-					estudoCota.setQtdeEfetiva(input.getQuantidadeReparte());
-					estudoCota.setQtdePrevista(input.getQuantidadeReparte());
+					estudoCota.setQtdeEfetiva( BigInteger.valueOf(input.getQuantidadeReparte()) );
+					estudoCota.setQtdePrevista( BigInteger.valueOf(input.getQuantidadeReparte()) );
 					
 					this.getSession().persist(estudoCota);
 				}
@@ -111,9 +112,21 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 	
-	private Cota obterCota(Long codigoCota) {
+	private Cota obterCota(Integer numeroCota) {
 		
-		return (Cota) this.getSession().get(Cota.class, codigoCota);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT co FROM Cota co ");
+		sql.append("WHERE ");
+		sql.append("	co.numeroCota = :numeroCota ");
+
+		Query query = getSession().createQuery(sql.toString());
+		
+		query.setMaxResults(1);
+		
+		query.setParameter("numeroCota", numeroCota);
+
+		return (Cota) query.uniqueResult();		
 	}
 
 	private Lancamento getLancamento(String codigoPublicacao, Long edicao) {

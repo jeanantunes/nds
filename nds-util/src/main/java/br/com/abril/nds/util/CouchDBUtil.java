@@ -2,6 +2,8 @@ package br.com.abril.nds.util;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.gson.GsonBuilder;
+
 /**
  * Classe utilitária para CouchDB.
  * 
@@ -9,6 +11,11 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 public abstract class CouchDBUtil {
+	
+	/**
+	 * Nome do banco de dados de usuários
+	 */
+	public static final String DB_NAME_USERS = "_users";
 	
 	/**
 	 * Prefixo do nome dos bancos de dados
@@ -28,6 +35,20 @@ public abstract class CouchDBUtil {
 		}
 		
 		return DB_NAME_PREFIX + StringUtils.leftPad(codigoDistribuidor, 8, "0");
+	}
+	
+	/**
+	 * Obtém uma instância do Gson Builder com adaptadores de data registrados.
+	 * 
+	 * @return {@link GsonBuilder}
+	 */
+	public static GsonBuilder getGsonBuilderForDate() {
+		
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		
+		gsonBuilder.setDateFormat(Constantes.DATE_TIME_PATTERN_PT_BR);
+		
+		return gsonBuilder;
 	}
 
 }

@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -14,8 +15,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoBoxVO;
+import br.com.abril.nds.client.vo.ResumoExpedicaoDetalheVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.RetornoExpedicaoVO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
@@ -25,7 +28,10 @@ import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO.TipoPesquisaResumoEx
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -77,10 +83,101 @@ public class ResumoExpedicaoController {
 	 * Carrega as informações default da tela de pesquisa.
 	 */
 	@Get
+	@Rules(Permissao.ROLE_EXPEDICAO_RESUMO_EXPEDICAO)
 	public void resumo(){
 		
 		carregarTiposResumo();
 	}
+	
+	@Post
+	@Path("/resumo/pesquisar/detalhe")
+	public void detalharResumoExpedicaoDoBox(
+			String sortorder, 
+			String sortname, 
+			int page, 
+			int rp, 
+			Integer codigoBox, 
+			String dataLancamento) {
+		
+		FiltroResumoExpedicaoDTO filtro = new FiltroResumoExpedicaoDTO();
+		
+		filtro.setDataLancamento(DateUtil.parseData(dataLancamento, "dd/MM/yyyy"));
+		
+		filtro.setCodigoBox(codigoBox);
+		
+		this.configurarPaginacaoPesquisaResumoProduto(filtro, sortorder, sortname, page, rp);
+		
+		this.tratarFiltro(filtro);
+		
+		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoProdutosDoBox(filtro);
+		
+		List<ResumoExpedicaoDetalheVO> listaDetalheResumoExpedicaoDoBox = this.pesquisarDetalheResumoExpedicaoDoBox(filtro, list);
+		
+		Long quantidadeRegistros = expedicaoService.obterQuantidadeResumoExpedicaoProdutosDoBox(filtro);
+		
+		TableModel<CellModelKeyValue<ResumoExpedicaoDetalheVO>> tableModel = 
+				new TableModel<CellModelKeyValue<ResumoExpedicaoDetalheVO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalheResumoExpedicaoDoBox));
+		tableModel.setTotal((quantidadeRegistros!= null)? quantidadeRegistros.intValue():0);
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		String soma = this.sumarizarTotalProdutoBox(list);
+		
+		result.use(CustomMapJson.class).put("resultado", tableModel).put("somaTotal", soma).serialize();
+		
+	}
+	
+	private String sumarizarTotalProdutoBox(List<ExpedicaoDTO> list) {
+		
+		BigDecimal soma = BigDecimal.ZERO;
+		
+		for (ExpedicaoDTO expd : list) {
+			if (expd.getValorFaturado() != null) {
+				soma = soma.add(expd.getValorFaturado());
+			}
+		}
+		return CurrencyUtil.formatarValor(soma);
+	}
+	
+	private List<ResumoExpedicaoDetalheVO> pesquisarDetalheResumoExpedicaoDoBox(FiltroResumoExpedicaoDTO filtro, List<ExpedicaoDTO> list){
+		
+		if (list == null || list.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		List<ResumoExpedicaoDetalheVO> listaLancamentosExpedidos = new LinkedList<ResumoExpedicaoDetalheVO>();
+		
+		ResumoExpedicaoDetalheVO resumoExpedicaoDetalheVO = null;
+		
+		for (ExpedicaoDTO expd  : list){
+			
+			BigDecimal precoDesconto = expd.getPrecoCapa();
+			
+			if (expd.getDesconto() != null) {
+				precoDesconto = expd.getPrecoCapa().subtract(expd.getDesconto());
+			}
+			
+			resumoExpedicaoDetalheVO = new ResumoExpedicaoDetalheVO();
+			
+			resumoExpedicaoDetalheVO.setNomeFornecedor(expd.getRazaoSocial());
+			resumoExpedicaoDetalheVO.setCodigoProduto(expd.getCodigoProduto());
+			resumoExpedicaoDetalheVO.setDescricaoProduto(expd.getNomeProduto());
+			resumoExpedicaoDetalheVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
+			resumoExpedicaoDetalheVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
+			resumoExpedicaoDetalheVO.setPrecoDesconto(CurrencyUtil.formatarValor(precoDesconto));
+			resumoExpedicaoDetalheVO.setReparte(getValor(expd.getQntReparte()));
+			resumoExpedicaoDetalheVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
+			resumoExpedicaoDetalheVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
+			
+			listaLancamentosExpedidos.add(resumoExpedicaoDetalheVO);
+		}
+	
+		return listaLancamentosExpedidos;
+		
+
+	}
+	
 	
 	/**
 	 * Pesquisa de resumo de expedição de edições agrupadas por produto.
@@ -176,6 +273,7 @@ public class ResumoExpedicaoController {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de consulta inválido!");
 		}
+		result.nothing();
 	}
 	
 	private void exportarResumoExpedicaoProduto(FileType fileType, 
@@ -327,7 +425,7 @@ public class ResumoExpedicaoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
+		BigInteger qtdeTotalReparte = BigInteger.ZERO;
 		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
 		
 		List<ResumoExpedicaoBoxVO> listaLancamentosExpedidosBox = new LinkedList<ResumoExpedicaoBoxVO>();
@@ -336,7 +434,10 @@ public class ResumoExpedicaoController {
 		
 		for (ExpedicaoDTO expd  : list){
 			
+			
 			resumoExpedicaoBoxVO = new ResumoExpedicaoBoxVO();
+			
+			resumoExpedicaoBoxVO.setDataLancamento(DateUtil.formatarDataPTBR(expd.getDataLancamento()));
 			resumoExpedicaoBoxVO.setCodigoBox(expd.getCodigoBox());
 			resumoExpedicaoBoxVO.setDescricaoBox(expd.getNomeBox());
 			resumoExpedicaoBoxVO.setQntProduto(getValor(expd.getQntProduto()));
@@ -352,7 +453,9 @@ public class ResumoExpedicaoController {
 		
 		RetornoExpedicaoVO retornoExpedicaoVO = new RetornoExpedicaoVO();
 		retornoExpedicaoVO.setResumosExpedicaoBox(listaLancamentosExpedidosBox);
+		
 		retornoExpedicaoVO.setTotalReparte(qtdeTotalReparte);
+		
 		retornoExpedicaoVO.setTotalValorFaturado(valorTotalFaturado);
 		
 		return retornoExpedicaoVO;
@@ -409,7 +512,7 @@ public class ResumoExpedicaoController {
 		
 		List<ResumoExpedicaoVO> listaLancamentosExpedidos = new LinkedList<ResumoExpedicaoVO>();
 		
-		BigDecimal qtdeTotalReparte = BigDecimal.ZERO;
+		BigInteger qtdeTotalReparte = BigInteger.ZERO;
 		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
 		
 		ResumoExpedicaoVO resumoExpedicaoVO = null;
@@ -547,4 +650,45 @@ public class ResumoExpedicaoController {
 		return usuario;
 	}
 	
+	@Get
+	@Path("/resumo/exportarDetalhes")
+	public void exportarDetalhes(FileType fileType, String codigoBox, Date dataLancamento) throws IOException {
+		
+		if (fileType == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+		}
+		
+		FiltroResumoExpedicaoDTO filtroSessao = 
+				(FiltroResumoExpedicaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+			
+		if (filtroSessao != null) { 
+				
+			if (filtroSessao.getPaginacao() != null) {
+			
+				filtroSessao.getPaginacao().setPaginaAtual(null);
+				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+			
+			filtroSessao.setTipoConsulta(null);
+		}
+
+		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoProdutosDoBox(filtroSessao);
+		
+		List<ResumoExpedicaoDetalheVO> listaDetalheResumoExpedicaoDoBox = pesquisarDetalheResumoExpedicaoDoBox(filtroSessao, list);
+		
+		FileExporter.to("consulta-detalhes-expedição-box", fileType)
+			.inHTTPResponse(
+					this.getNDSFileHeader(), 
+					null, 
+					null, 
+					listaDetalheResumoExpedicaoDoBox, 
+					ResumoExpedicaoDetalheVO.class, 
+					this.httpServletResponse);
+	}
+	
+	
+	@Post
+	private void sumarizarTotalProdutoFornecedor() {
+		
+	}
 }

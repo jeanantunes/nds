@@ -4,18 +4,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RegistroTipoNotaFiscalVO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Processo;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -25,7 +29,6 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -56,7 +59,16 @@ public class CadastroTipoNotaController {
 	private HttpServletResponse httpServletResponse;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_NOTA)
 	public void index() {
+		
+		List<ItemDTO<TipoAtividade, String>> listaAtividades = new ArrayList<ItemDTO<TipoAtividade,String>>();
+		
+		for(TipoAtividade atividade : TipoAtividade.values()){
+			listaAtividades.add(new ItemDTO<TipoAtividade, String>(atividade,atividade.getDescTipoDistribuidor()));
+		}
+		
+		result.include("listaAtividades",listaAtividades);
 	}
 
 	private static final String FILTRO_CADASTRO_TIPO_NOTA_SESSION_ATTRIBUTE = "filtroCadastroTipoNota";
@@ -75,11 +87,15 @@ public class CadastroTipoNotaController {
 		
 		FiltroCadastroTipoNotaDTO filtro = obterFiltroParaExportacao();
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		List<TipoNotaFiscal> lista = tipoNotaFiscalService.obterTiposNotasFiscais(filtro.getCfop(), filtro.getTipoNota(), distribuidor.getTipoAtividade());
+		List<TipoNotaFiscal> lista = tipoNotaFiscalService.consultarTipoNotaFiscal(filtro);
 		
-		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, getResultadoVO(lista), RegistroTipoNotaFiscalVO.class, this.httpServletResponse);
+		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType)
+					.inHTTPResponse(this.getNDSFileHeader(), 
+									filtro, 
+									null, 
+									getResultadoVO(lista,"\n"), 
+									RegistroTipoNotaFiscalVO.class, 
+									this.httpServletResponse);
 	}
 	
 	/**
@@ -94,19 +110,18 @@ public class CadastroTipoNotaController {
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String cfop, String tipoNota, String sortname, String sortorder, int rp, int page) throws Exception {
+	public void pesquisar(TipoAtividade operacao, String tipoNota, String sortname, String sortorder, int rp, int page) throws Exception {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		FiltroCadastroTipoNotaDTO filtro =  tratarFiltroSessao(operacao, tipoNota, sortname, sortorder, rp, page);
 		
-		gravarFiltroSessao(cfop, tipoNota, sortname, sortorder, rp, page);
-		
-		List<TipoNotaFiscal> lista = tipoNotaFiscalService.obterTiposNotasFiscais(cfop, tipoNota, distribuidor.getTipoAtividade(), sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+		List<TipoNotaFiscal> lista = tipoNotaFiscalService.consultarTipoNotaFiscal(filtro);
 		
 		if (lista == null || lista.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		
-		Long quantidade = tipoNotaFiscalService.obterQuantidadeTiposNotasFiscais(cfop, tipoNota, distribuidor.getTipoAtividade());
-		result.use(FlexiGridJson.class).from(getResultadoVO(lista)).total(quantidade.intValue()).page(page).serialize();
+		Integer quantidade = tipoNotaFiscalService.obterQuantidadeTiposNotasFiscais(filtro);
+		
+		result.use(FlexiGridJson.class).from(getResultadoVO(lista,"<br></br>")).total(quantidade).page(page).serialize();
 	}
 	
 	/**
@@ -115,16 +130,19 @@ public class CadastroTipoNotaController {
 	 * @param sortname2 
 	 * @param tipoNota 
 	 */
-	private void gravarFiltroSessao(String cfop, String tipoNota, String sortname, String sortorder, int rp, int page) {
+	private FiltroCadastroTipoNotaDTO tratarFiltroSessao(TipoAtividade operacao, String tipoNota, String sortname, String sortorder, int rp, int page) {
+		
 		FiltroCadastroTipoNotaDTO filtro = new FiltroCadastroTipoNotaDTO();
 		filtro.setTipoNota(tipoNota);
-		filtro.setCfop(cfop);
+		filtro.setTipoAtividade(operacao);
 		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtro.setPaginacao(paginacao);
 		
 		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCadastroTipoNotaDTO.OrdenacaoColunaConsulta.values(), sortname));
 		session.setAttribute(FILTRO_CADASTRO_TIPO_NOTA_SESSION_ATTRIBUTE, filtro);
+		
+		return filtro;
 	}
 	
 	/**
@@ -142,6 +160,7 @@ public class CadastroTipoNotaController {
 				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
 			}
 		}
+		
 		return filtroSessao;
 	}	
 	
@@ -178,7 +197,7 @@ public class CadastroTipoNotaController {
 	 * @param listaTipoNotaFiscal
 	 * @return List<RegistroTipoNotaFiscalVO>
 	 */
-	private List<RegistroTipoNotaFiscalVO> getResultadoVO(List<TipoNotaFiscal> listaTipoNotaFiscal) {
+	private List<RegistroTipoNotaFiscalVO> getResultadoVO(List<TipoNotaFiscal> listaTipoNotaFiscal, String tipoQuebraLinha) {
 		
 		List<RegistroTipoNotaFiscalVO> listaResultado = new ArrayList<RegistroTipoNotaFiscalVO>();
 		
@@ -187,9 +206,18 @@ public class CadastroTipoNotaController {
 		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
 			
 			resultado = new RegistroTipoNotaFiscalVO();
-			resultado.setNopDescricao(tipoNotaFiscal.getNopDescricao());
-			resultado.setCfopEstado(tipoNotaFiscal.getCfopEstado().getCodigo());
-			resultado.setCfopOutrosEstados(tipoNotaFiscal.getCfopOutrosEstados().getCodigo());
+			resultado.setNopDescricao(tipoNotaFiscal.getDescricao());
+			resultado.setCfopEstado( (tipoNotaFiscal.getCfopEstado()!= null)?tipoNotaFiscal.getCfopEstado().getCodigo():"");
+			resultado.setCfopOutrosEstados((tipoNotaFiscal.getCfopOutrosEstados()!=null)?tipoNotaFiscal.getCfopOutrosEstados().getCodigo():"");
+			resultado.setTipoAtividade(tipoNotaFiscal.getTipoAtividade().getDescTipoDistribuidor());
+			
+			String processo = "";
+			
+			for(Processo pr : tipoNotaFiscal.getProcesso()){
+				processo += pr.getDescricao() + tipoQuebraLinha;
+			}
+			
+			resultado.setProcesso(processo);
 			
 			listaResultado.add(resultado);
 			

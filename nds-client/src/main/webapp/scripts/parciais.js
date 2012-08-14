@@ -21,7 +21,12 @@ function Parciais(pathTela) {
 		
 		if(T.get('codigoProduto').length!=0 && T.get('edicaoProduto').length!=0) {
 			$('#painelLancamentos').hide();
-			$('#painelPeriodos').show();			
+			$('#painelPeriodos').show();	
+			
+			
+			T.codigoProduto = T.get('codigoProduto');
+			T.numEdicao = T.get('edicaoProduto');
+			
 			T.pesquisarPeriodosParciais();
 		} else {
 			$('#painelPeriodos').hide();
@@ -73,11 +78,15 @@ function Parciais(pathTela) {
 		
 	},
 
-	this.inserirPeriodos = function() {
-		
+	this.inserirPeriodos = function(modal) {
 		$.postJSON(contextPath + "/parciais/inserirPeriodos",
 				T.getDadosNovosPeriodo(),
-				function(result){$(".parciaisPopGrid").flexReload();},
+				function(result){
+					if(modal)
+						$(".parciaisPopGrid").flexReload();
+					else
+						$(".periodosGrid").flexReload();
+				},
 				null, 
 				true,
 				"dialog-detalhes");
@@ -112,7 +121,13 @@ function Parciais(pathTela) {
 			$('#exportacaoPeriodos').hide();
 		} else {
 			$('#exportacaoPeriodos').show();
+			T.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
+		
+		if(result.rows[0].cell.geradoPorInterface==true)
+			$("#btnIncluirPeriodos").hide();
+		else
+			$("#btnIncluirPeriodos").show();		
 		
 		$.each(result.rows, function(index,row){T.gerarAcaoDetalhes(index,row);} );
 				
@@ -129,6 +144,11 @@ function Parciais(pathTela) {
 		} else {
 			$('#exportacaoPeriodosModal').show();
 		}
+		
+		if(result.rows[0].cell.geradoPorInterface==true)
+			$("#btnIncluirPeriodosModal").hide();
+		else
+			$("#btnIncluirPeriodosModal").show();		
 		
 		$.each(result.rows, function(index,row){T.gerarAcaoDetalhes(index,row);} );
 				
@@ -220,15 +240,24 @@ function Parciais(pathTela) {
 	},
 	
 	this.gerarAcaoDetalhes = function(index, row) {
+		row.cell.vendas = '<a href="javascript:;" onclick="PARCIAIS.detalheVendas(\'' +
+		row.cell.dataLancamento +'\', \''+
+		row.cell.dataRecolhimento +'\', \''+
+		row.cell.idProdutoEdicao +'\', \''+
+		'\');">' + row.cell.vendas + '</a>';
 		
 		row.cell.acao = 
-			'<a href="javascript:;" onclick="PARCIAIS.carregarEdicaoDetalhes(\''+ 
+			'<a href="javascript:;" ' +
+			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':'onclick="PARCIAIS.carregarEdicaoDetalhes(\''+ 
 					row.cell.idLancamento +'\', \''+
 					row.cell.dataLancamento +'\', \''+
 					row.cell.dataRecolhimento +
-								
-			' \');"><img src="'+pathTela+'/images/ico_editar.gif" border="0" hspace="5" /></a>' +
-			'<a href="javascript:;" onclick="PARCIAIS.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');"><img src="'+pathTela+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+			        ' \')"')+
+			        
+			' ><img src="'+pathTela+'/images/ico_editar.gif" border="0" hspace="5" /></a>' +
+			'<a href="javascript:;" '+
+			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':' onclick="PARCIAIS.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" ')+
+			'><img src="'+pathTela+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
 	},
 	
 	this.carregarDetalhes = function(idProdutoEdicao , dataLancamento, dataRecolhimento, codigoProduto, 
@@ -295,7 +324,6 @@ function Parciais(pathTela) {
 						exibirMensagem('SUCCESS', ['Período alterado com sucesso.']);
 					}
 					
-					$().close();
 				},	
 				null,
 				true,
@@ -310,13 +338,12 @@ function Parciais(pathTela) {
 		$.postJSON(contextPath + "/parciais/excluirPeriodoParcial",
 				data,
 				function(result){
-
-					
+			
 					if($('#painelPeriodos').css('display')=='none') {
 						exibirMensagemDialog('SUCCESS', ['Período excluido com sucesso.'], "dialog-detalhes");			
 						$(".parciaisPopGrid").flexReload();
 					} else {
-						$(".parciaisGrid").flexReload();
+						$(".periodosGrid").flexReload();
 						exibirMensagem('SUCCESS', ['Período excluido com sucesso.']);
 					}
 					
@@ -329,6 +356,27 @@ function Parciais(pathTela) {
 		
 	},
 	
+
+	this.detalheVendas = function(dtLcto, dtRcto, idProdutoEdicao) {
+		
+		var data = [];
+		
+		data.push({name:'dtLcto',				value: dtLcto});
+		data.push({name:'dtRcto',				value: dtRcto});
+		data.push({name:'idProdutoEdicao',		value: idProdutoEdicao});
+		
+		
+		$(".parciaisVendaGrid").flexOptions({			
+			url : pathTela + "/parciais/pesquisarParciaisVenda",
+			dataType : 'json',
+			params: data
+		});
+
+		$(".parciaisVendaGrid").flexReload();
+
+		pupup_detalheVendas();
+	},
+		
 	/**
 	 * Atribui valor a um campo da tela
 	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false

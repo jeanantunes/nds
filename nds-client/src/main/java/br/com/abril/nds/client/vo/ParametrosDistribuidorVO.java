@@ -1,5 +1,7 @@
 package br.com.abril.nds.client.vo;
 
+import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+
 
 /**
  * VO para controle dos parametros do distribuidor
@@ -13,6 +15,9 @@ public class ParametrosDistribuidorVO {
 	private int relancamentoParciaisEmDias;
 	
 	// Frame Recolhimento
+	
+	private TipoContabilizacaoCE tipoContabilizacaoCE;
+	
 	private String aceitaEncalheJuramentada;
 	
 	private String diaRecolhimentoPrimeiro;
@@ -26,6 +31,8 @@ public class ParametrosDistribuidorVO {
 	private String diaRecolhimentoQuinto;
 
 	private String limiteCEProximaSemana;
+	
+	private boolean supervisionaVendaNegativa;
 
 	private String conferenciaCegaRecebimento;
 
@@ -50,109 +57,101 @@ public class ParametrosDistribuidorVO {
 	private String distribuidor;
 	
 	// Frame Emissão de Documentos
-	private String slipImpressao;
+	private boolean slipImpressao;
 
-	private String slipEmail;
+	private boolean slipEmail;
 
-	private String boletoImpressao;
+	private boolean boletoImpressao;
 
-	private String boletoEmail;
+	private boolean boletoEmail;
 
-	private String boletoSlipImpressao;
+	private boolean boletoSlipImpressao;
 
-	private String boletoSlipEmail;
+	private boolean boletoSlipEmail;
 
-	private String reciboImpressao;
+	private boolean reciboImpressao;
 
-	private String reciboEmail;
+	private boolean reciboEmail;
 
-	private String notaEnvioImpressao;
+	private boolean notaEnvioImpressao;
 
-	private String notaEnvioEmail;
+	private boolean notaEnvioEmail;
 
-	private String chamadaEncalheImpressao;
+	private boolean chamadaEncalheImpressao;
 
-	private String chamadaEncalheEmail;
+	private boolean chamadaEncalheEmail;
 	
-	// Frame Impressão NE
-	// MODELO_1 ou MODELO_2
-	private String impressaoNE;
-
-	private String impressaoNEFaltaDe;
-	
-	private String impressaoNEFaltaEm;
-	
-	private String impressaoNESobraDe;
-	
-	private String impressaoNESobraEm;
+	// Frame Impressão Interface LED
+	// MODELO_1 ou MODELO_2 ou MODELO_3
+	private String impressaoInterfaceLED;
 
 	// Frame Impressão NECA / DANFE
 	// MODELO_1, MODELO_2 ou DANFE
 	private String impressaoNECADANFE;
 
-	private String impressaoNECADANFEFaltaDe;
-	
-	private String impressaoNECADANFEFaltaEm;
-	
-	private String impressaoNECADANFESobraDe;
-	
-	private String impressaoNECADANFESobraEm;
-
 	// Frame Impressão CE
 	// MODELO_1 ou MODELO_2
 	private String impressaoCE;
 	
-	private String impressaoCEFaltaDe;
-	
-	private String impressaoCEFaltaEm;
-	
-	private String impressaoCESobraDe;
-	
-	private String impressaoCESobraEm;
-	
 	// Aba Contratos e Garantias
 	// Frame Condições de Contratação
-	private String utilizaContratoComCotas;
+	private boolean utilizaContratoComCotas;
 	
-	private String prazoContrato;
+	private Integer prazoContrato;
 
 	private String informacoesComplementaresContrato;
 
 	// Frame Procuração
-	private String utilizaProcuracaoEntregadores;
+	private boolean utilizaProcuracaoEntregadores;
 
 	private String informacoesComplementaresProcuracao;
+	
+	/**
+	 * Distribuidor utiliza termo de adesão para entrega em bancas
+	 */
+	private boolean utilizaTermoAdesaoEntregaBancas;
+	
+	/**
+	 * Complemento termo de adesão entrega em bancas
+	 */
+	private String complementoTermoAdesaoEntregaBancas;
 
-	// Frame Garantia
-	private String utilizaGarantiaPdv;
+	//Frame Garantia
+	private boolean utilizaGarantiaPdv;
 	
-	private String chequeCalcao;
+	private boolean utilizaChequeCaucao;
+
+	private Integer validadeChequeCaucao;
 	
-	private String chequeCalcaoValor;
+	private boolean utilizaFiador;
 	
-	private String fiador;
+	private Integer validadeFiador;
 	
-	private String fiadorValor;
+	private boolean utilizaImovel;
 	
-	private String imovel;
+	private Integer validadeImovel;
 	
-	private String imovelValor;
+	private boolean utilizaCaucaoLiquida;
 	
-	private String caucaoLiquida;
+	private Integer validadeCaucaoLiquida;
 	
-	private String caucaoLiquidaValor;
+	private boolean utilizaNotaPromissoria;
 	
-	private String notaPromissoria;
+	private Integer validadeNotaPromissoria;
 	
-	private String notaPromissoriaValor;
+	private boolean utilizaAntecedenciaValidade;
 	
-	private String antecedenciaValidade;
+	private Integer validadeAntecedenciaValidade;
 	
-	private String antecedenciaValidadeValor;
+	/**
+	 * Distribuidor utiliza garantia "OUTROS"
+	 */
+	private boolean utilizaOutros;
 	
-	private String indicadorReajusteCaucaoLiquida;
-	
-	private String indicadorReajusteCaucaoLiquidaValor;
+	/**
+	 * Validade da garantia "OUTROS" em meses
+	 */
+	private Integer validadeOutros;
 	
 	// Aba Negociação
 	// Frame Negociação de Dívidas
@@ -160,29 +159,31 @@ public class ParametrosDistribuidorVO {
 
 	private String sugereSuspensaoQuandoAtingirReais;
 
-	private String parcelamentoDividas;
+	private Boolean parcelamentoDividas;
+	
+
+	private Boolean utilizaDesconto;
+	
+
+	private String percentualDesconto;
 	
 	private String negociacaoAteParcelas;
 	
-	private String permitePagamentoDividasDivergentes;
-
 	// Aba Aprovação
 	// Frame Aprovação
-	private String utilizaControleAprovacao;
+	private boolean utilizaControleAprovacao;
 
-	private String paraDebitosCreditos;
+	private boolean paraDebitosCreditos;
 
-	private String negociacao;
+	private boolean negociacao;
 	
-	private String ajusteEstoque;
+	private boolean ajusteEstoque;
 	
-	private String postergacaoCobranca;
+	private boolean postergacaoCobranca;
 	
-	private String devolucaoFornecedor;
+	private boolean devolucaoFornecedor;
 	
-	private String recibo;
-	
-	private String faltasSobras;
+	private boolean faltasSobras;
 	
 	private String aprovacaoFaltaDe;
 	
@@ -192,26 +193,14 @@ public class ParametrosDistribuidorVO {
 
 	private String aprovacaoSobraEm;
 
-	private String prazoFollowUp;
+	private Integer prazoFollowUp;
 	
-	private String prazoFollowUpFaltaDe;
+	private Integer prazoAvisoPrevioValidadeGarantia;
 	
-	private String prazoFollowUpSobraDe;
+	private Integer chamadaoDiasSuspensao;
 	
-	private String prazoFollowUpFaltaEm;
-
-	private String prazoFollowUpSobraEm;
+	private String chamadaoValorConsignado;
 	
-	private String prazoAvisoPrevioValidadeGarantia;
-
-	private String prazoAvisoPrevioValidadeGarantiaFaltaDe;
-	
-	private String prazoAvisoPrevioValidadeGarantiaSobraDe;
-	
-	private String prazoAvisoPrevioValidadeGarantiaFaltaEm;
-
-	private String prazoAvisoPrevioValidadeGarantiaSobraEm;
-
 	public int getRelancamentoParciaisEmDias() {
 		return relancamentoParciaisEmDias;
 	}
@@ -220,7 +209,21 @@ public class ParametrosDistribuidorVO {
 		this.relancamentoParciaisEmDias = relancamentoParciaisEmDias;
 	}
 
-	public String getAceitaEncalheJuramentada() {
+	/**
+     * @return the tipoContabilizacaoCE
+     */
+    public TipoContabilizacaoCE getTipoContabilizacaoCE() {
+        return tipoContabilizacaoCE;
+    }
+
+    /**
+     * @param tipoContabilizacaoCE the tipoContabilizacaoCE to set
+     */
+    public void setTipoContabilizacaoCE(TipoContabilizacaoCE tipoContabilizacaoCE) {
+        this.tipoContabilizacaoCE = tipoContabilizacaoCE;
+    }
+
+    public String getAceitaEncalheJuramentada() {
 		return aceitaEncalheJuramentada;
 	}
 
@@ -276,7 +279,21 @@ public class ParametrosDistribuidorVO {
 		this.limiteCEProximaSemana = limiteCEProximaSemana;
 	}
 
-	public String getConferenciaCegaRecebimento() {
+	/**
+     * @return the supervisionaVendaNegativa
+     */
+    public boolean isSupervisionaVendaNegativa() {
+        return supervisionaVendaNegativa;
+    }
+
+    /**
+     * @param supervisionaVendaNegativa the supervisionaVendaNegativa to set
+     */
+    public void setSupervisionaVendaNegativa(boolean supervisionaVendaNegativa) {
+        this.supervisionaVendaNegativa = supervisionaVendaNegativa;
+    }
+
+    public String getConferenciaCegaRecebimento() {
 		return conferenciaCegaRecebimento;
 	}
 
@@ -343,140 +360,108 @@ public class ParametrosDistribuidorVO {
 		this.distribuidor = distribuidor;
 	}
 
-	public String getSlipImpressao() {
+	public boolean getSlipImpressao() {
 		return slipImpressao;
 	}
 
-	public void setSlipImpressao(String slipImpressao) {
+	public void setSlipImpressao(boolean slipImpressao) {
 		this.slipImpressao = slipImpressao;
 	}
 
-	public String getSlipEmail() {
+	public boolean getSlipEmail() {
 		return slipEmail;
 	}
 
-	public void setSlipEmail(String slipEmail) {
+	public void setSlipEmail(boolean slipEmail) {
 		this.slipEmail = slipEmail;
 	}
 
-	public String getBoletoImpressao() {
+	public boolean getBoletoImpressao() {
 		return boletoImpressao;
 	}
 
-	public void setBoletoImpressao(String boletoImpressao) {
+	public void setBoletoImpressao(boolean boletoImpressao) {
 		this.boletoImpressao = boletoImpressao;
 	}
 
-	public String getBoletoEmail() {
+	public boolean getBoletoEmail() {
 		return boletoEmail;
 	}
 
-	public void setBoletoEmail(String boletoEmail) {
+	public void setBoletoEmail(boolean boletoEmail) {
 		this.boletoEmail = boletoEmail;
 	}
 
-	public String getBoletoSlipImpressao() {
+	public boolean getBoletoSlipImpressao() {
 		return boletoSlipImpressao;
 	}
 
-	public void setBoletoSlipImpressao(String boletoSlipImpressao) {
+	public void setBoletoSlipImpressao(boolean boletoSlipImpressao) {
 		this.boletoSlipImpressao = boletoSlipImpressao;
 	}
 
-	public String getBoletoSlipEmail() {
+	public boolean getBoletoSlipEmail() {
 		return boletoSlipEmail;
 	}
 
-	public void setBoletoSlipEmail(String boletoSlipEmail) {
+	public void setBoletoSlipEmail(boolean boletoSlipEmail) {
 		this.boletoSlipEmail = boletoSlipEmail;
 	}
 
-	public String getReciboImpressao() {
+	public boolean getReciboImpressao() {
 		return reciboImpressao;
 	}
 
-	public void setReciboImpressao(String reciboImpressao) {
+	public void setReciboImpressao(boolean reciboImpressao) {
 		this.reciboImpressao = reciboImpressao;
 	}
 
-	public String getReciboEmail() {
+	public boolean getReciboEmail() {
 		return reciboEmail;
 	}
 
-	public void setReciboEmail(String reciboEmail) {
+	public void setReciboEmail(boolean reciboEmail) {
 		this.reciboEmail = reciboEmail;
 	}
 
-	public String getNotaEnvioImpressao() {
+	public boolean getNotaEnvioImpressao() {
 		return notaEnvioImpressao;
 	}
 
-	public void setNotaEnvioImpressao(String notaEnvioImpressao) {
+	public void setNotaEnvioImpressao(boolean notaEnvioImpressao) {
 		this.notaEnvioImpressao = notaEnvioImpressao;
 	}
 
-	public String getNotaEnvioEmail() {
+	public boolean getNotaEnvioEmail() {
 		return notaEnvioEmail;
 	}
 
-	public void setNotaEnvioEmail(String notaEnvioEmail) {
+	public void setNotaEnvioEmail(boolean notaEnvioEmail) {
 		this.notaEnvioEmail = notaEnvioEmail;
 	}
 
-	public String getChamadaEncalheImpressao() {
+	public boolean getChamadaEncalheImpressao() {
 		return chamadaEncalheImpressao;
 	}
 
-	public void setChamadaEncalheImpressao(String chamadaEncalheImpressao) {
+	public void setChamadaEncalheImpressao(boolean chamadaEncalheImpressao) {
 		this.chamadaEncalheImpressao = chamadaEncalheImpressao;
 	}
 
-	public String getChamadaEncalheEmail() {
+	public boolean getChamadaEncalheEmail() {
 		return chamadaEncalheEmail;
 	}
 
-	public void setChamadaEncalheEmail(String chamadaEncalheEmail) {
+	public void setChamadaEncalheEmail(boolean chamadaEncalheEmail) {
 		this.chamadaEncalheEmail = chamadaEncalheEmail;
 	}
 
-	public String getImpressaoNE() {
-		return impressaoNE;
+	public String getImpressaoInterfaceLED() {
+		return impressaoInterfaceLED;
 	}
 
-	public void setImpressaoNE(String impressaoNE) {
-		this.impressaoNE = impressaoNE;
-	}
-
-	public String getImpressaoNEFaltaDe() {
-		return impressaoNEFaltaDe;
-	}
-
-	public void setImpressaoNEFaltaDe(String impressaoNEFaltaDe) {
-		this.impressaoNEFaltaDe = impressaoNEFaltaDe;
-	}
-
-	public String getImpressaoNEFaltaEm() {
-		return impressaoNEFaltaEm;
-	}
-
-	public void setImpressaoNEFaltaEm(String impressaoNEFaltaEm) {
-		this.impressaoNEFaltaEm = impressaoNEFaltaEm;
-	}
-
-	public String getImpressaoNESobraDe() {
-		return impressaoNESobraDe;
-	}
-
-	public void setImpressaoNESobraDe(String impressaoNESobraDe) {
-		this.impressaoNESobraDe = impressaoNESobraDe;
-	}
-
-	public String getImpressaoNESobraEm() {
-		return impressaoNESobraEm;
-	}
-
-	public void setImpressaoNESobraEm(String impressaoNESobraEm) {
-		this.impressaoNESobraEm = impressaoNESobraEm;
+	public void setImpressaoInterfaceLED(String impressaoInterfaceLED) {
+		this.impressaoInterfaceLED = impressaoInterfaceLED;
 	}
 
 	public String getImpressaoNECADANFE() {
@@ -487,38 +472,6 @@ public class ParametrosDistribuidorVO {
 		this.impressaoNECADANFE = impressaoNECADANFE;
 	}
 
-	public String getImpressaoNECADANFEFaltaDe() {
-		return impressaoNECADANFEFaltaDe;
-	}
-
-	public void setImpressaoNECADANFEFaltaDe(String impressaoNECADANFEFaltaDe) {
-		this.impressaoNECADANFEFaltaDe = impressaoNECADANFEFaltaDe;
-	}
-
-	public String getImpressaoNECADANFEFaltaEm() {
-		return impressaoNECADANFEFaltaEm;
-	}
-
-	public void setImpressaoNECADANFEFaltaEm(String impressaoNECADANFEFaltaEm) {
-		this.impressaoNECADANFEFaltaEm = impressaoNECADANFEFaltaEm;
-	}
-
-	public String getImpressaoNECADANFESobraDe() {
-		return impressaoNECADANFESobraDe;
-	}
-
-	public void setImpressaoNECADANFESobraDe(String impressaoNECADANFESobraDe) {
-		this.impressaoNECADANFESobraDe = impressaoNECADANFESobraDe;
-	}
-
-	public String getImpressaoNECADANFESobraEm() {
-		return impressaoNECADANFESobraEm;
-	}
-
-	public void setImpressaoNECADANFESobraEm(String impressaoNECADANFESobraEm) {
-		this.impressaoNECADANFESobraEm = impressaoNECADANFESobraEm;
-	}
-
 	public String getImpressaoCE() {
 		return impressaoCE;
 	}
@@ -527,51 +480,19 @@ public class ParametrosDistribuidorVO {
 		this.impressaoCE = impressaoCE;
 	}
 
-	public String getImpressaoCEFaltaDe() {
-		return impressaoCEFaltaDe;
-	}
-
-	public void setImpressaoCEFaltaDe(String impressaoCEFaltaDe) {
-		this.impressaoCEFaltaDe = impressaoCEFaltaDe;
-	}
-
-	public String getImpressaoCEFaltaEm() {
-		return impressaoCEFaltaEm;
-	}
-
-	public void setImpressaoCEFaltaEm(String impressaoCEFaltaEm) {
-		this.impressaoCEFaltaEm = impressaoCEFaltaEm;
-	}
-
-	public String getImpressaoCESobraDe() {
-		return impressaoCESobraDe;
-	}
-
-	public void setImpressaoCESobraDe(String impressaoCESobraDe) {
-		this.impressaoCESobraDe = impressaoCESobraDe;
-	}
-
-	public String getImpressaoCESobraEm() {
-		return impressaoCESobraEm;
-	}
-
-	public void setImpressaoCESobraEm(String impressaoCESobraEm) {
-		this.impressaoCESobraEm = impressaoCESobraEm;
-	}
-
-	public String getUtilizaContratoComCotas() {
+	public boolean isUtilizaContratoComCotas() {
 		return utilizaContratoComCotas;
 	}
 
-	public void setUtilizaContratoComCotas(String utilizaContratoComCotas) {
+	public void setUtilizaContratoComCotas(boolean utilizaContratoComCotas) {
 		this.utilizaContratoComCotas = utilizaContratoComCotas;
 	}
 
-	public String getPrazoContrato() {
+	public Integer getPrazoContrato() {
 		return prazoContrato;
 	}
 
-	public void setPrazoContrato(String prazoContrato) {
+	public void setPrazoContrato(Integer prazoContrato) {
 		this.prazoContrato = prazoContrato;
 	}
 
@@ -584,12 +505,12 @@ public class ParametrosDistribuidorVO {
 		this.informacoesComplementaresContrato = informacoesComplementaresContrato;
 	}
 
-	public String getUtilizaProcuracaoEntregadores() {
+	public boolean isUtilizaProcuracaoEntregadores() {
 		return utilizaProcuracaoEntregadores;
 	}
 
 	public void setUtilizaProcuracaoEntregadores(
-			String utilizaProcuracaoEntregadores) {
+			boolean utilizaProcuracaoEntregadores) {
 		this.utilizaProcuracaoEntregadores = utilizaProcuracaoEntregadores;
 	}
 
@@ -601,130 +522,242 @@ public class ParametrosDistribuidorVO {
 			String informacoesComplementaresProcuracao) {
 		this.informacoesComplementaresProcuracao = informacoesComplementaresProcuracao;
 	}
+	
+	/**
+     * @return the utilizaTermoAdesaoEntregaBancas
+     */
+    public boolean isUtilizaTermoAdesaoEntregaBancas() {
+        return utilizaTermoAdesaoEntregaBancas;
+    }
 
-	public String getUtilizaGarantiaPdv() {
+    /**
+     * @param utilizaTermoAdesaoEntregaBancas the utilizaTermoAdesaoEntregaBancas to set
+     */
+    public void setUtilizaTermoAdesaoEntregaBancas(
+            boolean utilizaTermoAdesaoEntregaBancas) {
+        this.utilizaTermoAdesaoEntregaBancas = utilizaTermoAdesaoEntregaBancas;
+    }
+
+    /**
+     * @return the complementoTermoAdesaoEntregaBancas
+     */
+    public String getComplementoTermoAdesaoEntregaBancas() {
+        return complementoTermoAdesaoEntregaBancas;
+    }
+
+    /**
+     * @param complementoTermoAdesaoEntregaBancas the complementoTermoAdesaoEntregaBancas to set
+     */
+    public void setComplementoTermoAdesaoEntregaBancas(
+            String complementoTermoAdesaoEntregaBancas) {
+        this.complementoTermoAdesaoEntregaBancas = complementoTermoAdesaoEntregaBancas;
+    }
+
+    public boolean isUtilizaGarantiaPdv() {
 		return utilizaGarantiaPdv;
 	}
 
-	public void setUtilizaGarantiaPdv(String utilizaGarantiaPdv) {
+	public void setUtilizaGarantiaPdv(boolean utilizaGarantiaPdv) {
 		this.utilizaGarantiaPdv = utilizaGarantiaPdv;
 	}
+	
+	/**
+     * @return the utilizaChequeCaucao
+     */
+    public boolean isUtilizaChequeCaucao() {
+        return utilizaChequeCaucao;
+    }
 
-	public String getChequeCalcao() {
-		return chequeCalcao;
-	}
+    /**
+     * @param utilizaChequeCaucao the utilizaChequeCaucao to set
+     */
+    public void setUtilizaChequeCaucao(boolean utilizaChequeCaucao) {
+        this.utilizaChequeCaucao = utilizaChequeCaucao;
+    }
 
-	public void setChequeCalcao(String chequeCalcao) {
-		this.chequeCalcao = chequeCalcao;
-	}
+    /**
+     * @return the validadeChequeCaucao
+     */
+    public Integer getValidadeChequeCaucao() {
+        return validadeChequeCaucao;
+    }
 
-	public String getChequeCalcaoValor() {
-		return chequeCalcaoValor;
-	}
+    /**
+     * @param validadeCheque the validadeChequeCaucao to set
+     */
+    public void setValidadeChequeCaucao(Integer validadeChequeCaucao) {
+        this.validadeChequeCaucao = validadeChequeCaucao;
+    }
 
-	public void setChequeCalcaoValor(String chequeCalcaoValor) {
-		this.chequeCalcaoValor = chequeCalcaoValor;
-	}
+    /**
+     * @return the utilizaFiador
+     */
+    public boolean isUtilizaFiador() {
+        return utilizaFiador;
+    }
 
-	public String getFiador() {
-		return fiador;
-	}
+    /**
+     * @param utilizaFiador the utilizaFiador to set
+     */
+    public void setUtilizaFiador(boolean utilizaFiador) {
+        this.utilizaFiador = utilizaFiador;
+    }
 
-	public void setFiador(String fiador) {
-		this.fiador = fiador;
-	}
+    /**
+     * @return the validadeFiador
+     */
+    public Integer getValidadeFiador() {
+        return validadeFiador;
+    }
 
-	public String getFiadorValor() {
-		return fiadorValor;
-	}
+    /**
+     * @param validadeFiador the validadeFiador to set
+     */
+    public void setValidadeFiador(Integer validadeFiador) {
+        this.validadeFiador = validadeFiador;
+    }
 
-	public void setFiadorValor(String fiadorValor) {
-		this.fiadorValor = fiadorValor;
-	}
+    /**
+     * @return the utilizaImovel
+     */
+    public boolean isUtilizaImovel() {
+        return utilizaImovel;
+    }
 
-	public String getImovel() {
-		return imovel;
-	}
+    /**
+     * @param utilizaImovel the utilizaImovel to set
+     */
+    public void setUtilizaImovel(boolean utilizaImovel) {
+        this.utilizaImovel = utilizaImovel;
+    }
 
-	public void setImovel(String imovel) {
-		this.imovel = imovel;
-	}
+    /**
+     * @return the validadeImovel
+     */
+    public Integer getValidadeImovel() {
+        return validadeImovel;
+    }
 
-	public String getImovelValor() {
-		return imovelValor;
-	}
+    /**
+     * @param validadeImovel the validadeImovel to set
+     */
+    public void setValidadeImovel(Integer validadeImovel) {
+        this.validadeImovel = validadeImovel;
+    }
 
-	public void setImovelValor(String imovelValor) {
-		this.imovelValor = imovelValor;
-	}
+    /**
+     * @return the utilizaCaucaoLiquida
+     */
+    public boolean isUtilizaCaucaoLiquida() {
+        return utilizaCaucaoLiquida;
+    }
 
-	public String getCaucaoLiquida() {
-		return caucaoLiquida;
-	}
+    /**
+     * @param utilizaCaucaoLiquida the utilizaCaucaoLiquida to set
+     */
+    public void setUtilizaCaucaoLiquida(boolean utilizaCaucaoLiquida) {
+        this.utilizaCaucaoLiquida = utilizaCaucaoLiquida;
+    }
 
-	public void setCaucaoLiquida(String caucaoLiquida) {
-		this.caucaoLiquida = caucaoLiquida;
-	}
+    /**
+     * @return the validadeCaucaoLiquida
+     */
+    public Integer getValidadeCaucaoLiquida() {
+        return validadeCaucaoLiquida;
+    }
 
-	public String getCaucaoLiquidaValor() {
-		return caucaoLiquidaValor;
-	}
+    /**
+     * @param validadeCaucaoLiquida the validadeCaucaoLiquida to set
+     */
+    public void setValidadeCaucaoLiquida(Integer validadeCaucaoLiquida) {
+        this.validadeCaucaoLiquida = validadeCaucaoLiquida;
+    }
 
-	public void setCaucaoLiquidaValor(String caucaoLiquidaValor) {
-		this.caucaoLiquidaValor = caucaoLiquidaValor;
-	}
+    /**
+     * @return the utilizaNotaPromissoria
+     */
+    public boolean isUtilizaNotaPromissoria() {
+        return utilizaNotaPromissoria;
+    }
 
-	public String getNotaPromissoria() {
-		return notaPromissoria;
-	}
+    /**
+     * @param utilizaNotaPromissoria the utilizaNotaPromissoria to set
+     */
+    public void setUtilizaNotaPromissoria(boolean utilizaNotaPromissoria) {
+        this.utilizaNotaPromissoria = utilizaNotaPromissoria;
+    }
 
-	public void setNotaPromissoria(String notaPromissoria) {
-		this.notaPromissoria = notaPromissoria;
-	}
+    /**
+     * @return the validadeNotaPromissoria
+     */
+    public Integer getValidadeNotaPromissoria() {
+        return validadeNotaPromissoria;
+    }
 
-	public String getNotaPromissoriaValor() {
-		return notaPromissoriaValor;
-	}
+    /**
+     * @param validadeNotaPromissoria the validadeNotaPromissoria to set
+     */
+    public void setValidadeNotaPromissoria(Integer validadeNotaPromissoria) {
+        this.validadeNotaPromissoria = validadeNotaPromissoria;
+    }
 
-	public void setNotaPromissoriaValor(String notaPromissoriaValor) {
-		this.notaPromissoriaValor = notaPromissoriaValor;
-	}
+    /**
+     * @return the utilizaAntecedenciaValidade
+     */
+    public boolean isUtilizaAntecedenciaValidade() {
+        return utilizaAntecedenciaValidade;
+    }
 
-	public String getAntecedenciaValidade() {
-		return antecedenciaValidade;
-	}
+    /**
+     * @param utilizaAntecedenciaValidade the utilizaAntecedenciaValidade to set
+     */
+    public void setUtilizaAntecedenciaValidade(boolean utilizaAntecedenciaValidade) {
+        this.utilizaAntecedenciaValidade = utilizaAntecedenciaValidade;
+    }
 
-	public void setAntecedenciaValidade(String antecedenciaValidade) {
-		this.antecedenciaValidade = antecedenciaValidade;
-	}
+    /**
+     * @return the validadeAntecedenciaValidade
+     */
+    public Integer getValidadeAntecedenciaValidade() {
+        return validadeAntecedenciaValidade;
+    }
 
-	public String getAntecedenciaValidadeValor() {
-		return antecedenciaValidadeValor;
-	}
+    /**
+     * @param validadeAntecedenciaValidade the validadeAntecedenciaValidade to set
+     */
+    public void setValidadeAntecedenciaValidade(Integer validadeAntecedenciaValidade) {
+        this.validadeAntecedenciaValidade = validadeAntecedenciaValidade;
+    }
 
-	public void setAntecedenciaValidadeValor(String antecedenciaValidadeValor) {
-		this.antecedenciaValidadeValor = antecedenciaValidadeValor;
-	}
+    /**
+     * @return the utilizaOutros
+     */
+    public boolean isUtilizaOutros() {
+        return utilizaOutros;
+    }
 
-	public String getIndicadorReajusteCaucaoLiquida() {
-		return indicadorReajusteCaucaoLiquida;
-	}
+    /**
+     * @param utilizaOutros the utilizaOutros to set
+     */
+    public void setUtilizaOutros(boolean utilizaOutros) {
+        this.utilizaOutros = utilizaOutros;
+    }
 
-	public void setIndicadorReajusteCaucaoLiquida(
-			String indicadorReajusteCaucaoLiquida) {
-		this.indicadorReajusteCaucaoLiquida = indicadorReajusteCaucaoLiquida;
-	}
+    /**
+     * @return the validadeOutros
+     */
+    public Integer getValidadeOutros() {
+        return validadeOutros;
+    }
 
-	public String getIndicadorReajusteCaucaoLiquidaValor() {
-		return indicadorReajusteCaucaoLiquidaValor;
-	}
+    /**
+     * @param validadeOutros the validadeOutros to set
+     */
+    public void setValidadeOutros(Integer validadeOutros) {
+        this.validadeOutros = validadeOutros;
+    }
 
-	public void setIndicadorReajusteCaucaoLiquidaValor(
-			String indicadorReajusteCaucaoLiquidaValor) {
-		this.indicadorReajusteCaucaoLiquidaValor = indicadorReajusteCaucaoLiquidaValor;
-	}
-
-	public String getSugereSuspensaoQuandoAtingirBoletos() {
+    public String getSugereSuspensaoQuandoAtingirBoletos() {
 		return sugereSuspensaoQuandoAtingirBoletos;
 	}
 
@@ -742,11 +775,11 @@ public class ParametrosDistribuidorVO {
 		this.sugereSuspensaoQuandoAtingirReais = sugereSuspensaoQuandoAtingirReais;
 	}
 
-	public String getParcelamentoDividas() {
+	public Boolean getParcelamentoDividas() {
 		return parcelamentoDividas;
 	}
 
-	public void setParcelamentoDividas(String parcelamentoDividas) {
+	public void setParcelamentoDividas(Boolean parcelamentoDividas) {
 		this.parcelamentoDividas = parcelamentoDividas;
 	}
 
@@ -758,76 +791,59 @@ public class ParametrosDistribuidorVO {
 		this.negociacaoAteParcelas = negociacaoAteParcelas;
 	}
 
-	public String getPermitePagamentoDividasDivergentes() {
-		return permitePagamentoDividasDivergentes;
-	}
-
-	public void setPermitePagamentoDividasDivergentes(
-			String permitePagamentoDividasDivergentes) {
-		this.permitePagamentoDividasDivergentes = permitePagamentoDividasDivergentes;
-	}
-
-	public String getUtilizaControleAprovacao() {
+	public boolean getUtilizaControleAprovacao() {
 		return utilizaControleAprovacao;
 	}
 
-	public void setUtilizaControleAprovacao(String utilizaControleAprovacao) {
+	public void setUtilizaControleAprovacao(boolean utilizaControleAprovacao) {
 		this.utilizaControleAprovacao = utilizaControleAprovacao;
 	}
 
-	public String getParaDebitosCreditos() {
+	public boolean getParaDebitosCreditos() {
 		return paraDebitosCreditos;
 	}
 
-	public void setParaDebitosCreditos(String paraDebitosCreditos) {
+	public void setParaDebitosCreditos(boolean paraDebitosCreditos) {
 		this.paraDebitosCreditos = paraDebitosCreditos;
 	}
 
-	public String getNegociacao() {
+	public boolean getNegociacao() {
 		return negociacao;
 	}
 
-	public void setNegociacao(String negociacao) {
+	public void setNegociacao(boolean negociacao) {
 		this.negociacao = negociacao;
 	}
 
-	public String getAjusteEstoque() {
+	public boolean getAjusteEstoque() {
 		return ajusteEstoque;
 	}
 
-	public void setAjusteEstoque(String ajusteEstoque) {
+	public void setAjusteEstoque(boolean ajusteEstoque) {
 		this.ajusteEstoque = ajusteEstoque;
 	}
 
-	public String getPostergacaoCobranca() {
+	public boolean getPostergacaoCobranca() {
 		return postergacaoCobranca;
 	}
 
-	public void setPostergacaoCobranca(String postergacaoCobranca) {
+	public void setPostergacaoCobranca(boolean postergacaoCobranca) {
 		this.postergacaoCobranca = postergacaoCobranca;
 	}
 
-	public String getDevolucaoFornecedor() {
+	public boolean getDevolucaoFornecedor() {
 		return devolucaoFornecedor;
 	}
 
-	public void setDevolucaoFornecedor(String devolucaoFornecedor) {
+	public void setDevolucaoFornecedor(boolean devolucaoFornecedor) {
 		this.devolucaoFornecedor = devolucaoFornecedor;
 	}
 
-	public String getRecibo() {
-		return recibo;
-	}
-
-	public void setRecibo(String recibo) {
-		this.recibo = recibo;
-	}
-
-	public String getFaltasSobras() {
+	public boolean getFaltasSobras() {
 		return faltasSobras;
 	}
 
-	public void setFaltasSobras(String faltasSobras) {
+	public void setFaltasSobras(boolean faltasSobras) {
 		this.faltasSobras = faltasSobras;
 	}
 
@@ -863,89 +879,87 @@ public class ParametrosDistribuidorVO {
 		this.aprovacaoSobraEm = aprovacaoSobraEm;
 	}
 
-	public String getPrazoFollowUp() {
+	public Integer getPrazoFollowUp() {
 		return prazoFollowUp;
 	}
 
-	public void setPrazoFollowUp(String prazoFollowUp) {
+	public void setPrazoFollowUp(Integer prazoFollowUp) {
 		this.prazoFollowUp = prazoFollowUp;
 	}
 
-	public String getPrazoFollowUpFaltaDe() {
-		return prazoFollowUpFaltaDe;
-	}
-
-	public void setPrazoFollowUpFaltaDe(String prazoFollowUpFaltaDe) {
-		this.prazoFollowUpFaltaDe = prazoFollowUpFaltaDe;
-	}
-
-	public String getPrazoFollowUpSobraDe() {
-		return prazoFollowUpSobraDe;
-	}
-
-	public void setPrazoFollowUpSobraDe(String prazoFollowUpSobraDe) {
-		this.prazoFollowUpSobraDe = prazoFollowUpSobraDe;
-	}
-
-	public String getPrazoFollowUpFaltaEm() {
-		return prazoFollowUpFaltaEm;
-	}
-
-	public void setPrazoFollowUpFaltaEm(String prazoFollowUpFaltaEm) {
-		this.prazoFollowUpFaltaEm = prazoFollowUpFaltaEm;
-	}
-
-	public String getPrazoFollowUpSobraEm() {
-		return prazoFollowUpSobraEm;
-	}
-
-	public void setPrazoFollowUpSobraEm(String prazoFollowUpSobraEm) {
-		this.prazoFollowUpSobraEm = prazoFollowUpSobraEm;
-	}
-
-	public String getPrazoAvisoPrevioValidadeGarantia() {
+	public Integer getPrazoAvisoPrevioValidadeGarantia() {
 		return prazoAvisoPrevioValidadeGarantia;
 	}
 
 	public void setPrazoAvisoPrevioValidadeGarantia(
-			String prazoAvisoPrevioValidadeGarantia) {
+			Integer prazoAvisoPrevioValidadeGarantia) {
 		this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
 	}
 
-	public String getPrazoAvisoPrevioValidadeGarantiaFaltaDe() {
-		return prazoAvisoPrevioValidadeGarantiaFaltaDe;
+    /**
+     * @return the chamadaoDiasSuspensao
+     */
+    public Integer getChamadaoDiasSuspensao() {
+        return chamadaoDiasSuspensao;
+    }
+
+    /**
+     * @param chamadaoDiasSuspensao the chamadaoDiasSuspensao to set
+     */
+    public void setChamadaoDiasSuspensao(Integer chamadaoDiasSuspensao) {
+        this.chamadaoDiasSuspensao = chamadaoDiasSuspensao;
+    }
+
+    /**
+     * @return the chamadaoValorConsignado
+     */
+    public String getChamadaoValorConsignado() {
+        return chamadaoValorConsignado;
+    }
+
+    /**
+     * @param chamadaoValorConsignado the chamadaoValorConsignado to set
+     */
+    public void setChamadaoValorConsignado(String chamadaoValorConsignado) {
+        this.chamadaoValorConsignado = chamadaoValorConsignado;
+    }
+
+	/**
+	 * @return the utilizaDesconto
+	 */
+	public Boolean getUtilizaDesconto() {
+		return utilizaDesconto;
 	}
 
-	public void setPrazoAvisoPrevioValidadeGarantiaFaltaDe(
-			String prazoAvisoPrevioValidadeGarantiaFaltaDe) {
-		this.prazoAvisoPrevioValidadeGarantiaFaltaDe = prazoAvisoPrevioValidadeGarantiaFaltaDe;
+	/**
+	 * @param utilizaDesconto the utilizaDesconto to set
+	 */
+	public void setUtilizaDesconto(Boolean utilizaDesconto) {
+		this.utilizaDesconto = utilizaDesconto;
 	}
 
-	public String getPrazoAvisoPrevioValidadeGarantiaSobraDe() {
-		return prazoAvisoPrevioValidadeGarantiaSobraDe;
+	/**
+	 * @return the percentualDesconto
+	 */
+	public String getPercentualDesconto() {
+		return percentualDesconto;
 	}
 
-	public void setPrazoAvisoPrevioValidadeGarantiaSobraDe(
-			String prazoAvisoPrevioValidadeGarantiaSobraDe) {
-		this.prazoAvisoPrevioValidadeGarantiaSobraDe = prazoAvisoPrevioValidadeGarantiaSobraDe;
+	/**
+	 * @param percentualDesconto the percentualDesconto to set
+	 */
+	public void setPercentualDesconto(String percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
 	}
-
-	public String getPrazoAvisoPrevioValidadeGarantiaFaltaEm() {
-		return prazoAvisoPrevioValidadeGarantiaFaltaEm;
-	}
-
-	public void setPrazoAvisoPrevioValidadeGarantiaFaltaEm(
-			String prazoAvisoPrevioValidadeGarantiaFaltaEm) {
-		this.prazoAvisoPrevioValidadeGarantiaFaltaEm = prazoAvisoPrevioValidadeGarantiaFaltaEm;
-	}
-
-	public String getPrazoAvisoPrevioValidadeGarantiaSobraEm() {
-		return prazoAvisoPrevioValidadeGarantiaSobraEm;
-	}
-
-	public void setPrazoAvisoPrevioValidadeGarantiaSobraEm(
-			String prazoAvisoPrevioValidadeGarantiaSobraEm) {
-		this.prazoAvisoPrevioValidadeGarantiaSobraEm = prazoAvisoPrevioValidadeGarantiaSobraEm;
-	}
+	
+    /**
+     * Verifica se alguma garantia foi marcada para utilização
+     * @return true se ao menos uma ganatia esta sendo utilizada
+     */
+	public boolean isGarantiasUtilizadas() {
+        return utilizaChequeCaucao || utilizaCaucaoLiquida || utilizaFiador
+                || utilizaNotaPromissoria || utilizaImovel
+                || utilizaAntecedenciaValidade || utilizaOutros;
+    }
 
 }

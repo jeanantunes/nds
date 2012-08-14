@@ -4,16 +4,23 @@
 
 <script language="javascript" type="text/javascript">
 
+
+$(function() {
+	definirAcaoPesquisaTeclaEnter();
+});
+
+
 var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
 
-function popup() {
+
+function popup(modal) {
 	
 		PARCIAIS.carregaPeb();
 	
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:200,
-			width:300,
+			width:400,
 			modal: true,
 			
 			buttons:[ 
@@ -21,7 +28,7 @@ function popup() {
 				           id:"bt_confirmar",
 				           text:"Confirmar", 
 				           click: function() {
-				        	   	PARCIAIS.inserirPeriodos();								
+				        	   	PARCIAIS.inserirPeriodos(modal);								
 								$( this ).dialog( "close" );
 				           }
 			           },
@@ -35,6 +42,22 @@ function popup() {
 	        ]
 		});
 	};
+	
+	function pupup_detalheVendas() {
+		
+		$( "#dialog-detalhe-venda" ).dialog({
+			resizable: false,
+			height:450,
+			width:660,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					
+				},
+			}
+		});
+	}
 	
 	function popup_alterar() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -81,13 +104,9 @@ function popup() {
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
 			height:550,
-			width:820,
+			width:960,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					
-				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
@@ -145,11 +164,17 @@ $(function() {
 		
 </script>
 <style type="text/css">
-#dialog-detalhes fieldset{width:750px!important;}
+#dialog-detalhes fieldset{width:900px!important;}
+
 #dialog-detalhes fieldset ul{}
+
 #dialog-detalhes fieldset li{float:left; margin-right:10px; margin-left:0px; margin-bottom:5px; line-height:20px;}
+
 #dialog-novo fieldset{width:250px!important;}
-#dialog-edit-produto{display:none;}
+
+#dialog-edit-produto, #dialog-detalhe-venda{display:none;}
+
+#dialog-detalhe-venda{display:none;}
 </style>
 
 
@@ -251,7 +276,9 @@ $(function() {
 
 <fieldset>
 	<legend>Parciais</legend>
-    <table class="parciaisPopGrid"></table>
+	<div class="flexigrid" style="width: 900px; ">
+    	<table class="parciaisPopGrid"></table>
+    </div>
 </fieldset>
 
 
@@ -278,7 +305,7 @@ $(function() {
 	        
 	</div>   
 
- <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
+ <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
 
 
 </div>
@@ -324,14 +351,14 @@ $(function() {
               <td width="46">Código:</td>
               <td colspan="3">
 <!-- Código -->
-<input id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+<input class="campoDePesquisa" id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="produto.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
 				</td>
                 <td width="51">Produto:</td>
                 <td width="163">
                 
 <!-- Nome Produto -->                
-<input id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
+<input class="campoDePesquisa" id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
 					       onkeyup="produto.autoCompletarPorNomeProduto('#nomeProduto', false);"
 					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
 					    	   
@@ -340,13 +367,13 @@ $(function() {
                 <td width="148">
 
 <!-- Numero Edição -->                
-<input id="edicaoProduto"  type="text" name="edicoes" style="width:80px;"/></td>
+<input class="campoDePesquisa" id="edicaoProduto"  type="text" name="edicoes" style="width:80px;"/></td>
 
               <td width="67">Fornecedor:</td>
               <td colspan="2">
        
 <!-- Fornecedores -->
-<select id="idFornecedor" name="idFornecedor" style="width:200px;">
+<select class="campoDePesquisa" id="idFornecedor" name="idFornecedor" style="width:200px;">
     <option value="-1"  selected="selected">Todos</option>
     <c:forEach items="${listaFornecedores}" var="fornecedor">
       		<option value="${fornecedor.key}">${fornecedor.value}</option>	
@@ -360,19 +387,19 @@ $(function() {
               <td colspan="3">
 
 <!-- Data de -->              
-<input id="dataInicial" type="text" name="dataInicial" style="width:80px;"/></td>
+<input class="campoDePesquisa" id="dataInicial" type="text" name="dataInicial" style="width:80px;"/></td>
 
               <td>Até:</td>
               <td>
 
 <!-- Data até -->
-<input id="dataFinal" type="text" name="dataFinal" style="width:80px;"/></td>
+<input class="campoDePesquisa" id="dataFinal" type="text" name="dataFinal" style="width:80px;"/></td>
 
               <td>Status:</td>
               <td>
               
 <!-- Status -->              
-<select id="status" name="select2" style="width:140px;">
+<select class="campoDePesquisa" id="status" name="select2" style="width:140px;">
   <option selected="selected" value="">Todos</option>
    <c:forEach items="${listaStatus}" var="status">
       		<option value="${status.key}">${status.value}</option>	
@@ -384,7 +411,7 @@ $(function() {
               <td width="119"><span class="bt_pesquisar">
               
 <!-- Pesquisar -->
-<a href="javascript:;" onclick=" PARCIAIS.cliquePesquisar();">Pesquisar</a>
+<a class="botaoPesquisar" href="javascript:;" onclick=" PARCIAIS.cliquePesquisar();">Pesquisar</a>
 		
 			</span></td>
             </tr>
@@ -432,7 +459,7 @@ $(function() {
 	            
 	<div id="exportacaoPeriodos">
 	            
-	            <span class="bt_novos" title="Gerar Arquivo">
+		<span class="bt_novos" title="Gerar Arquivo">
 	            
 	<!-- ARQUIVO EXCEL -->
 	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
@@ -448,19 +475,25 @@ $(function() {
 	
 			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
 			</span>
+			
+	
+	 <span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
+	 		<a href="javascript:;" onclick="popup(false);">
+	 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
+	 		Incluir Períodos
+	 		</a>
+	 </span>
 	        
-	</div>           
 	           
 </fieldset>
 
       <div class="linha_separa_fields">&nbsp;</div>
-       
-
-        
-
     
     </div>
 </div> 
+
+<jsp:include page="parciaisDeVenda.jsp" />
+
 <script>
 
 $(function() {	
@@ -529,22 +562,16 @@ $(".grids").show();
 
 
 $(".periodosGrid").flexigrid($.extend({},{
-	colModel : [ {
-			display : 'Período',
-			name : 'periodo',
+		colModel : [ {
+			display : 'Lcto',
+			name : 'dataLancamento',
 			width : 100,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Data Lançamento',
-			name : 'dataLancamento',
-			width : 130,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Data Recolhimento',
+			display : 'Rcto',
 			name : 'dataRecolhimento',
-			width : 130,
+			width : 100,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -554,37 +581,62 @@ $(".periodosGrid").flexigrid($.extend({},{
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Encalhe',
-			name : 'encalhe',
+			display : 'Suplementação',
+			name : 'suplementacao',
 			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Vendas',
-			name : 'vendas',
-			width : 70,
+			display : 'Encalhe',
+			name : 'encalhe',
+			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Venda Acumulada',
-			name : 'vendaAcumulada',
-			width : 120,
+			display : 'Venda',
+			name : 'vendas',
+			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : '% Venda',
 			name : 'percVenda',
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Venda CE',
+			name : 'vendaCE',
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte Acum.',
+			name : 'reparteAcum',
+			width : 75,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Venda Acum.',
+			name : 'vendaAcumulada',
 			width : 70,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : '% Venda Acum.',
+			name : 'percVendaAcumulada',
+			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Ação',
 			name : 'acao',
-			width : 75,
+			width : 60,
 			sortable : false,
 			align : 'center'
 		}],
-		sortname : "periodo",
+
+		sortname : "dataLancamento",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,
@@ -595,46 +647,40 @@ $(".periodosGrid").flexigrid($.extend({},{
 	})); 
 
 $(".parciaisPopGrid").flexigrid($.extend({},{
-	colModel : [ {
-			display : 'Período',
-			name : 'periodo',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Data Lançamento',
+		colModel : [ {
+			display : 'Lcto',
 			name : 'dataLancamento',
-			width : 90,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Data Recolhimento',
+			display : 'Rcto',
 			name : 'dataRecolhimento',
-			width : 100,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Reparte',
 			name : 'reparte',
-			width : 45,
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Suplementação',
+			name : 'suplementacao',
+			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Encalhe',
 			name : 'encalhe',
-			width : 45,
+			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Vendas',
+			display : 'Venda',
 			name : 'vendas',
-			width : 60,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Venda Acumulada',
-			name : 'vendaAcumulada',
-			width : 120,
+			width : 40,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -644,19 +690,43 @@ $(".parciaisPopGrid").flexigrid($.extend({},{
 			sortable : true,
 			align : 'center'
 		}, {
+			display : 'Venda CE',
+			name : 'vendaCE',
+			width : 50,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte Acum.',
+			name : 'reparteAcum',
+			width : 75,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Venda Acum.',
+			name : 'vendaAcumulada',
+			width : 70,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : '% Venda Acum.',
+			name : 'percVendaAcumulada',
+			width : 80,
+			sortable : true,
+			align : 'center'
+		}, {
 			display : 'Ação',
 			name : 'acao',
-			width : 65,
+			width : 60,
 			sortable : false,
 			align : 'center'
 		}],
-		sortname : "periodo",
+		sortname : "dataLancamento",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,
 		rp : 15,
 		showTableToggleBtn : true,
-		width : 750,
+		width : 900,
 		height : 200
 	})); 
 

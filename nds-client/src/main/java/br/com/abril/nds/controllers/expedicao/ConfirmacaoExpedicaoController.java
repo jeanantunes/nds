@@ -11,10 +11,12 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
@@ -73,6 +75,7 @@ public class ConfirmacaoExpedicaoController {
 		/**
 		 * Inicializa dados da tela
 		 */
+		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO)
 		public void index() {
 			gerarListaFornecedores();
 			gerarDataLancamento();

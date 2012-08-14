@@ -25,9 +25,6 @@ public class ParametrosAprovacaoDistribuidor implements Serializable {
 	@Column(name = "DEVOLUCAO_FORNECEDOR",nullable=true)
 	private boolean devolucaoFornecedor;
 	
-	@Column(name = "RECIBO",nullable=true)
-	private boolean recibo;
-	
 	@Column(name = "FALTAS_SOBRAS",nullable=true)
 	private boolean faltasSobras;
 
@@ -69,14 +66,6 @@ public class ParametrosAprovacaoDistribuidor implements Serializable {
 
 	public void setDevolucaoFornecedor(boolean devolucaoFornecedor) {
 		this.devolucaoFornecedor = devolucaoFornecedor;
-	}
-
-	public boolean isRecibo() {
-		return recibo;
-	}
-
-	public void setRecibo(boolean recibo) {
-		this.recibo = recibo;
 	}
 
 	public boolean isFaltasSobras() {

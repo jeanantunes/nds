@@ -26,6 +26,8 @@ InformeEncalhe.prototype.initGrid = function() {
 						exibirMensagem(data.mensagens.tipoMensagem,
 								data.mensagens.listaMensagens);
 						
+						$("#consultaInformeEncalheGrid").children().remove();
+						
 					} else {
 						$.each(data.rows, function(index, value) {
 							var acao = "";

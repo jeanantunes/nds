@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,7 +32,6 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -123,16 +123,16 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRSTU", 1L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produto, null, false);
 		
 		save(produtoEdicaoVeja1);
 		
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(50), new Date(), produtoEdicaoVeja1);
+		Estudo estudo = Fixture.estudo(BigInteger.valueOf(50), new Date(), produtoEdicaoVeja1);
 		save(estudo);
 		
-		EstudoCota estudoCota = Fixture.estudoCota(new BigDecimal(50), new BigDecimal(50), estudo, cota);
+		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.valueOf(50), BigInteger.valueOf(50), estudo, cota);
 		save(estudoCota);
 		
 				
@@ -153,12 +153,12 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(tipoMovimentoRecReparte);
 
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cota, BigDecimal.TEN, BigDecimal.ZERO);
+				produtoEdicaoVeja1, cota, BigInteger.TEN, BigInteger.ZERO);
 		save(estoqueProdutoCota);
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCota,
-				new BigDecimal(100.56), cota, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(101), cota, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
@@ -265,12 +265,12 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQRST", 2L,
+				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
 		EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
-				produtoEdicaoVeja1, cota, BigDecimal.TEN, BigDecimal.ZERO);
+				produtoEdicaoVeja1, cota, BigInteger.TEN, BigInteger.ZERO);
 		save(estoqueProdutoCota);
 		
 		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
@@ -278,7 +278,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		MovimentoEstoqueCota mec = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuario, estoqueProdutoCota,
-				new BigDecimal(20), cota, StatusAprovacao.APROVADO, "Aprovado");
+				BigInteger.valueOf(20), cota, StatusAprovacao.APROVADO, "Aprovado");
 		save(mec);			
 	}
 	

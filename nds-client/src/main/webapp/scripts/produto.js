@@ -243,24 +243,31 @@ var produtoController = $.extend(true, {
 				   	"id=" + id,
 				   	function(result) {
 			   
-						$("#idProduto", this.workspace).val(result.id);
-						$("#codigoProdutoCadastro", this.workspace).val(result.codigo);
-						$("#nomeProduto", this.workspace).val(result.nome);
-						$("#sloganProduto", this.workspace).val(result.slogan);
-						$("#peb", this.workspace).val(result.peb);
-						$("#pacotePadrao", this.workspace).val(result.pacotePadrao);
-						$("#comboPeriodicidade", this.workspace).val(result.periodicidade);
-						$("#grupoEditorial", this.workspace).val(result.grupoEditorial);
-						$("#subGrupoEditorial", this.workspace).val(result.subGrupoEditorial);
-						$("#comboEditor", this.workspace).val(result.codigoEditor);
-						$("#comboFornecedoresCadastro", this.workspace).val(result.codigoFornecedor);
-						$("#comboTipoDesconto", this.workspace).val(result.tipoDesconto);
-						$("#comboTipoProdutoCadastro", this.workspace).val(result.codigoTipoProduto)
+						$("#idProduto", produtoController.workspace).val(result.id);
+						$("#codigoProdutoCadastro", produtoController.workspace).val(result.codigo);
+						$("#nomeProduto", produtoController.workspace).val(result.nome);
+						$("#sloganProduto", produtoController.workspace).val(result.slogan);
+						$("#peb", produtoController.workspace).val(result.peb);
+						$("#pacotePadrao", produtoController.workspace).val(result.pacotePadrao);
+						$("#comboPeriodicidade", produtoController.workspace).val(result.periodicidade);
+						$("#grupoEditorial", produtoController.workspace).val(result.grupoEditorial);
+						$("#subGrupoEditorial", produtoController.workspace).val(result.subGrupoEditorial);
+						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
+						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
+						$("#comboTipoDesconto", produtoController.workspace).val(result.tipoDesconto);
+						$("#comboTipoProdutoCadastro", produtoController.workspace).val(result.codigoTipoProduto);
+						$("#segmentacaoClasseSocial", produtoController.workspace).val(result.classeSocial);
+						$("#segmentacaoSexo", produtoController.workspace).val(result.sexo);
+						$("#segmentacaoFaixaEtaria", produtoController.workspace).val(result.faixaEtaria);
+						$("#segmentacaoFormato", produtoController.workspace).val(result.formatoProduto);
+						$("#segmentacaoTipoLancamento", produtoController.workspace).val(result.tipoLancamento);
+						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
+						$("#segmentacaoTemaSecundario", produtoController.workspace).val(result.temaSecundario);
 
-						if (result.formaComercializacao == 'CONTA_FIRME') {
-							$("#formaComercializacaoContaFirme", this.workspace).attr('checked', true);
-						} else if (result.formaComercializacao == 'CONSIGNADO') {
-							$("#formaComercializacaoConsignado", this.workspace).attr('checked', true);
+						if (result.formaComercializacao == 'Conta Firme') {
+							$("#formaComercializacaoContaFirme").attr('checked', true);
+						} else if (result.formaComercializacao == 'Consignado') {
+							$("#formaComercializacaoConsignado").attr('checked', true);
 						}
 						
 						if (result.tributacaoFiscal == 'TRIBUTADO') {
@@ -390,23 +397,30 @@ var produtoController = $.extend(true, {
 	
 	salvarProduto : function() {
 
-		 var params = [{name:"produto.id",value:$("#idProduto", this.workspace).val()},
-        			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", this.workspace).val()},
-        			   {name:"produto.nome",value:$("#nomeProduto", this.workspace).val()},
-        			   {name:"produto.peb",value:$("#peb", this.workspace).val()},
-        			   {name:"produto.pacotePadrao",value:$("#pacotePadrao", this.workspace).val()},
-        			   {name:"produto.slogan",value:$("#sloganProduto", this.workspace).val()},
-        			   {name:"produto.periodicidade",value:$("#comboPeriodicidade", this.workspace).val()},
-        			   {name:"produto.formaComercializacao",value:this.buscarValueRadio('formaComercializacao', this.workspace)},
-        			   {name:"produto.tributacaoFiscal",value:this.buscarValueRadio('radioTributacaoFiscal', this.workspace)},
-        			   {name:"produto.grupoEditorial",value:$("#grupoEditorial", this.workspace).val()},
-        			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial", this.workspace).val()},
-        			   {name:"codigoEditor",value:$("#comboEditor", this.workspace).val()},
-        			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", this.workspace).val()},
-        			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", this.workspace).val()},
-        			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", this.workspace).val()} ];
-
-		$.postJSON(contextPath + "/produto/salvarProduto", 
+		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
+        			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+        			   {name:"produto.nome",value:$("#nomeProduto", produtoController.workspace).val()},
+        			   {name:"produto.peb",value:$("#peb", produtoController.workspace).val()},
+        			   {name:"produto.pacotePadrao",value:$("#pacotePadrao", produtoController.workspace).val()},
+        			   {name:"produto.slogan",value:$("#sloganProduto", produtoController.workspace).val()},
+        			   {name:"produto.periodicidade",value:$("#comboPeriodicidade", produtoController.workspace).val()},
+        			   {name:"produto.formaComercializacao",value:this.buscarValueRadio('formaComercializacao', produtoController.workspace)},
+        			   {name:"produto.tributacaoFiscal",value:this.buscarValueRadio('radioTributacaoFiscal', produtoController.workspace)},
+        			   {name:"produto.grupoEditorial",value:$("#grupoEditorial", produtoController.workspace).val()},
+        			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial", produtoController.workspace).val()},	
+        			   {name:"produto.segmentacao.classeSocial",value:$("#segmentacaoClasseSocial", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.formatoProduto",value:$("#segmentacaoFormato", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.tipoLancamento",value:$("#segmentacaoTipoLancamento", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.temaSecundario",value:$("#segmentacaoTemaSecundario", produtoController.workspace).val()},
+        			   {name:"codigoEditor",value:$("#comboEditor", produtoController.workspace).val()},
+        			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
+        			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", produtoController.workspace).val()},
+        			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()}];
+ 
+		$.postJSON(contextPath + "/produto/salvarProduto",  
 			   	params,
 			   	function (result) {
 
@@ -686,7 +700,7 @@ var produtoController = $.extend(true, {
 
 	validaNumeroEdicaoSucessoCallBack : function(idCodigo, idEdicao, successCallBack) {
 		if (successCallBack) {
-			this.successCallBack(idCodigo, idEdicao);
+			successCallBack(idCodigo, idEdicao);
 		}
 	},
 	

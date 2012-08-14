@@ -345,7 +345,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 * @param valorTotal the valorTotal to set
 	 */
 	public void setValorTotal(BigDecimal valorTotal) {
-		this.valorTotal = valorTotal;
+		this.valorTotal = valorTotal == null ? BigDecimal.ZERO : valorTotal;
 	}
 
 	/**

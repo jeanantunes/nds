@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -27,7 +28,11 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal peso;
 	private String codigoProduto;
 	private String nomeProduto;
+	
+	private String descricaoProduto;
 	private boolean possuiBrinde;
+	private String descricaoBrinde;
+	
 	private BigDecimal expectativaVenda;
 	private boolean permiteValeDesconto;
 	private boolean parcial;
@@ -51,9 +56,9 @@ public class ProdutoEdicaoDTO implements Serializable {
 	// numeroEdicao; pacotePadrao;
 	private BigDecimal precoPrevisto;
 	// precoVenda; (Real)
-	private BigDecimal repartePrevisto;
-	private BigDecimal reparteDistribuido;
-	private BigDecimal repartePromocional;
+	private BigInteger repartePrevisto;
+	private BigInteger repartePromocional;
+
 	// codigoDeBarras
 	private String codigoDeBarrasCorporativo;
 	private String descricaoDesconto;
@@ -71,10 +76,16 @@ public class ProdutoEdicaoDTO implements Serializable {
 	// Lancamento:
 	// tipoLancamento;
 	private Date dataLancamentoPrevisto;
-	// dataLancamento; (Real)
-	// categoria;
+	private Date dataRecolhimentoPrevisto;
+	private Date dataRecolhimentoReal;
+	
+	private Integer semanaRecolhimento;
 	
 	private boolean origemInterface;
+	
+	
+	private String editor;
+	
 	
 	
 	/**
@@ -328,37 +339,26 @@ public class ProdutoEdicaoDTO implements Serializable {
 	/**
 	 * @return the repartePrevisto
 	 */
-	public BigDecimal getRepartePrevisto() {
+	public BigInteger getRepartePrevisto() {
 		return repartePrevisto;
 	}
 	/**
 	 * @param repartePrevisto the repartePrevisto to set
 	 */
-	public void setRepartePrevisto(BigDecimal repartePrevisto) {
+	public void setRepartePrevisto(BigInteger repartePrevisto) {
 		this.repartePrevisto = repartePrevisto;
 	}
-	/**
-	 * @return the reparteDistribuido
-	 */
-	public BigDecimal getReparteDistribuido() {
-		return reparteDistribuido;
-	}
-	/**
-	 * @param reparteDistribuido the reparteDistribuido to set
-	 */
-	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
-		this.reparteDistribuido = reparteDistribuido;
-	}
+
 	/**
 	 * @return the repartePromocional
 	 */
-	public BigDecimal getRepartePromocional() {
+	public BigInteger getRepartePromocional() {
 		return repartePromocional;
 	}
 	/**
 	 * @param repartePromocional the repartePromocional to set
 	 */
-	public void setRepartePromocional(BigDecimal repartePromocional) {
+	public void setRepartePromocional(BigInteger repartePromocional) {
 		this.repartePromocional = repartePromocional;
 	}
 	/**
@@ -480,6 +480,79 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setDescricaoDesconto(String descricaoDesconto) {
 		this.descricaoDesconto = descricaoDesconto;
+	}
+	/**
+	 * @return the editor
+	 */
+	public String getEditor() {
+		return editor;
+	}
+	/**
+	 * @param editor the editor to set
+	 */
+	public void setEditor(String editor) {
+		this.editor = editor;
+	}
+	
+	/**
+	 * @return the dataRecolhimentoPrevisto
+	 */
+	public Date getDataRecolhimentoPrevisto() {
+		return dataRecolhimentoPrevisto;
+	}
+	/**
+	 * @param dataRecolhimentoPrevisto the dataRecolhimentoPrevisto to set
+	 */
+	public void setDataRecolhimentoPrevisto(Date dataRecolhimentoPrevisto) {
+		this.dataRecolhimentoPrevisto = dataRecolhimentoPrevisto;
+	}
+	/**
+	 * @return the dataRecolhimentoReal
+	 */
+	public Date getDataRecolhimentoReal() {
+		return dataRecolhimentoReal;
+	}
+	/**
+	 * @param dataRecolhimentoReal the dataRecolhimentoReal to set
+	 */
+	public void setDataRecolhimentoReal(Date dataRecolhimentoReal) {
+		this.dataRecolhimentoReal = dataRecolhimentoReal;
+	}
+	/**
+	 * @return the semanaRecolhimento
+	 */
+	public Integer getSemanaRecolhimento() {
+		return semanaRecolhimento;
+	}
+	/**
+	 * @param semanaRecolhimento the semanaRecolhimento to set
+	 */
+	public void setSemanaRecolhimento(Integer semanaRecolhimento) {
+		this.semanaRecolhimento = semanaRecolhimento;
+	}
+	/**
+	 * @return the descricaoBrinde
+	 */
+	public String getDescricaoBrinde() {
+		return descricaoBrinde;
+	}
+	/**
+	 * @param descricaoBrinde the descricaoBrinde to set
+	 */
+	public void setDescricaoBrinde(String descricaoBrinde) {
+		this.descricaoBrinde = descricaoBrinde;
+	}
+	/**
+	 * @return the descricaoProduto
+	 */
+	public String getDescricaoProduto() {
+		return descricaoProduto;
+	}
+	/**
+	 * @param descricaoProduto the descricaoProduto to set
+	 */
+	public void setDescricaoProduto(String descricaoProduto) {
+		this.descricaoProduto = descricaoProduto;
 	}
 	
 }

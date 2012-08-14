@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
@@ -28,6 +29,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EditorService;
@@ -103,6 +105,7 @@ public class RelatorioVendasController {
 	 * Inicializa a página, populando os combos
 	 */
 	@Path("/")
+	@Rules(Permissao.ROLE_LANCAMENTO_RELATORIO_VENDAS)
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);

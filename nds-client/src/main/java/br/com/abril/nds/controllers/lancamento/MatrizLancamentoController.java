@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
@@ -87,6 +89,7 @@ public class MatrizLancamentoController {
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
 	@Path("/matrizLancamento")
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ)
 	public void index() {
 		
 		removerAtributoAlteracaoSessao();
@@ -360,6 +363,7 @@ public class MatrizLancamentoController {
 		}
 		
 		int numeroSemana = balanceamentoLancamento.getNumeroSemana();
+		Date dataLancamento = balanceamentoLancamento.getDataLancamento();
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
@@ -369,7 +373,7 @@ public class MatrizLancamentoController {
 		}
 		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataLancamento);
 		
 		boolean dataInicioSemanaMaior =
 			DateUtil.isDataInicialMaiorDataFinal(dataInicioSemana, novaData);

@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -80,7 +81,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Lancamento lancamento = 
 			Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao, dataReferencia, 
-					dataReferencia, new Date(), new Date(), BigDecimal.TEN, StatusLancamento.CONFIRMADO, null, 1);
+					dataReferencia, new Date(), new Date(), BigInteger.TEN, StatusLancamento.CONFIRMADO, null, 1);
 		
 		save(lancamento);
 		
@@ -89,7 +90,7 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	private Estudo criarEstudo(Lancamento lancamento, ProdutoEdicao produtoEdicao) {
 		
-		Estudo estudo = Fixture.estudo(new BigDecimal(100), lancamento.getDataLancamentoDistribuidor(), produtoEdicao);
+		Estudo estudo = Fixture.estudo(BigInteger.valueOf(100), lancamento.getDataLancamentoDistribuidor(), produtoEdicao);
 		
 		save(estudo);
 		

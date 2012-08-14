@@ -16,6 +16,24 @@ import br.com.abril.nds.model.estoque.Expedicao;
 public interface ExpedicaoRepository extends Repository<Expedicao, Long> {
 	
 	/**
+	 * Retorna a quantidade do resumo de expedição de produtos de um box.
+	 * @param filtro
+	 * 
+	 * @return Long
+	 */
+	public Long obterQuantidadeResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro);
+	
+	/**
+	 * Efetua consulta do resumo de expedição de produtos de um box.
+	 * @param filtro
+	 * 
+	 * @return List - ExpedicaoDTO
+	 */
+	public List<ExpedicaoDTO> obterResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro);
+	
+	
+	
+	/**
 	 * Efetua consulta do resumo de expedição de produtos.
 	 * @param filtro
 	 * @return List<ExpedicaoDTO>

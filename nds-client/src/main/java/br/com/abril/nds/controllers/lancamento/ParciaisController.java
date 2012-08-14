@@ -10,8 +10,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
+import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -21,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
@@ -48,6 +51,12 @@ import br.com.caelum.vraptor.view.Results;
 public class ParciaisController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroParcial";
+	
+	private static String FILTRO_DATA_LANCAMENTO = "filtroDataLancamento";
+	
+	private static String FILTRO_DATA_RECEBIMENTO = "filtroDataRecebimento";
+	
+	private static String FILTRO_ID_PRODUTO_EDICAO = "filtroIdProdutoEdicao";
 	
 	@Autowired
 	private HttpSession session;
@@ -90,6 +99,7 @@ public class ParciaisController {
 	/**
 	 * Inicializa dados da tela
 	 */
+	@Rules(Permissao.ROLE_CADASTRO_PARCIAIS)
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);	
@@ -227,9 +237,16 @@ public class ParciaisController {
 		
 		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
-				
-		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
 		
+		for(PeriodoParcialDTO periodo:listaPeriodo) {
+			if(periodo.getReparte()=="") {
+				periodo.setReparteAcum(null);
+				periodo.setPercVendaAcumulada(null);
+			}
+		}
+		
+		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
+				
 		TableModel<CellModelKeyValue<PeriodoParcialDTO>> tableModel = new TableModel<CellModelKeyValue<PeriodoParcialDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPeriodo));
@@ -258,6 +275,29 @@ public class ParciaisController {
 						
 			result.use(Results.json()).withoutRoot().from(produto).recursive().serialize();
 		}		
+	}
+	
+	@Post
+	public void pesquisarParciaisVenda(Date dtLcto, Date dtRcto, Long idProdutoEdicao) {
+	
+	
+		this.session.setAttribute(FILTRO_DATA_LANCAMENTO,dtLcto);
+		
+		this.session.setAttribute(FILTRO_DATA_RECEBIMENTO,dtRcto);
+		
+		this.session.setAttribute(FILTRO_ID_PRODUTO_EDICAO,idProdutoEdicao);
+		
+		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(dtLcto, dtRcto, idProdutoEdicao);
+		
+		TableModel<CellModelKeyValue<ParcialVendaDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialVendaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaParcialVenda));
+		
+		tableModel.setPage(1);
+		
+		tableModel.setTotal(listaParcialVenda.size());
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	@Post
@@ -401,8 +441,42 @@ public class ParciaisController {
 		
 		result.nothing();
 	}
+	
+	/**
+	 * Exporta os dados da pesquisa de períodos.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportarDetalhesVenda(FileType fileType) throws IOException {
 		
+		List<ParcialVendaDTO> listaParcialVenda = new ArrayList<ParcialVendaDTO>();
+		
+		
+		Date lcto = (Date) this.session.getAttribute(FILTRO_DATA_LANCAMENTO);
+		
+		Date recto = (Date) this.session.getAttribute(FILTRO_DATA_RECEBIMENTO);
+		
+		Long idProdutoEdicao = (Long) this.session.getAttribute(FILTRO_ID_PRODUTO_EDICAO);
 
+		if ((lcto!=null) && (recto!=null) && (idProdutoEdicao!=null)){
+		    listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao);
+		}
+		
+		
+		if(listaParcialVenda.isEmpty()) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+
+		FileExporter.to("detalhes_venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+				listaParcialVenda, ParcialVendaDTO.class, this.httpResponse);
+
+		result.nothing();
+	}
+		
 	/**
 	 * Método que obtém o usuário logado
 	 * 

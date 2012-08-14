@@ -1,16 +1,25 @@
 package br.com.abril.nds.model.fiscal;
 
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CollectionOfElements;
+
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 
 /**
@@ -58,6 +67,12 @@ public class TipoNotaFiscal {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_ATIVIDADE", nullable = false)
 	private TipoAtividade tipoAtividade;
+	
+	@ElementCollection(targetClass = Processo.class,fetch=FetchType.EAGER) 
+	@CollectionTable(name = "PROCESSO_NFE",
+	    joinColumns = @JoinColumn(name = "PROCESSO_NFE_ID"))
+	@Column(name = "PROCESSO")
+	private Set<Processo> processo;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "EMITENTE", nullable = false)
@@ -168,6 +183,20 @@ public class TipoNotaFiscal {
 
 	public void setNopDescricao(String nopDescricao) {
 		this.nopDescricao = nopDescricao;
+	}
+
+	/**
+	 * @return the processo
+	 */
+	public Set<Processo> getProcesso() {
+		return processo;
+	}
+
+	/**
+	 * @param processo the processo to set
+	 */
+	public void setProcesso(Set<Processo> processo) {
+		this.processo = processo;
 	}
 
 	/**

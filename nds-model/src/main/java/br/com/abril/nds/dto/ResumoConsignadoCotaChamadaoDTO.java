@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class ResumoConsignadoCotaChamadaoDTO implements Serializable{
 	
@@ -9,7 +10,7 @@ public class ResumoConsignadoCotaChamadaoDTO implements Serializable{
 	
 	private Long qtdProdutosTotal;
 	
-	private BigDecimal qtdExemplaresTotal;
+	private BigInteger qtdExemplaresTotal;
 	
 	private BigDecimal valorTotal;
 
@@ -30,14 +31,14 @@ public class ResumoConsignadoCotaChamadaoDTO implements Serializable{
 	/**
 	 * @return the qtdExemplaresTotal
 	 */
-	public BigDecimal getQtdExemplaresTotal() {
+	public BigInteger getQtdExemplaresTotal() {
 		return qtdExemplaresTotal;
 	}
 
 	/**
 	 * @param qtdExemplaresTotal the qtdExemplaresTotal to set
 	 */
-	public void setQtdExemplaresTotal(BigDecimal qtdExemplaresTotal) {
+	public void setQtdExemplaresTotal(BigInteger qtdExemplaresTotal) {
 		this.qtdExemplaresTotal = qtdExemplaresTotal;
 	}
 

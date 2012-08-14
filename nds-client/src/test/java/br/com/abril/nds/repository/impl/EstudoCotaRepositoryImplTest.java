@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -47,7 +48,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Cota cota = this.criarCota();
 		
-		EstudoCota estudoCota = Fixture.estudoCota(BigDecimal.TEN, BigDecimal.TEN, estudo, cota);
+		EstudoCota estudoCota = Fixture.estudoCota(BigInteger.TEN, BigInteger.TEN, estudo, cota);
 		
 		save(estudoCota);
 	}
@@ -102,7 +103,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
-			Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+			Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		
 		save(produtoEdicao);
 		
@@ -119,7 +120,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				this.dataReferencia, 
 				new Date(), 
 				new Date(), 
-				BigDecimal.TEN,
+				BigInteger.TEN,
 				StatusLancamento.CONFIRMADO, null, 1);
 		
 		save(lancamento);
@@ -129,7 +130,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	private Estudo criarEstudo(Lancamento lancamento, ProdutoEdicao produtoEdicao) {
 		
-		Estudo estudo = Fixture.estudo(BigDecimal.TEN, new Date(), produtoEdicao);
+		Estudo estudo = Fixture.estudo(BigInteger.TEN, new Date(), produtoEdicao);
 		
 		save(estudo);
 		

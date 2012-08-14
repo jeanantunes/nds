@@ -51,7 +51,7 @@ public class Produto implements Serializable {
 	@Column(name = "PERIODICIDADE", nullable = false)
 	private PeriodicidadeProduto periodicidade;
 	
-	@Column(name = "NOME", nullable = false, unique = true, length = 60)
+	@Column(name = "NOME", nullable = false, unique = false, length = 60)
 	private String nome;
 	
 	@Column(name = "DESCRICAO")
@@ -152,6 +152,8 @@ public class Produto implements Serializable {
 	
 	protected Long numeroLancamento;
 	
+	@Embedded
+	private SegmentacaoProduto segmentacao;
 	
 	public Long getId() {
 		return id;
@@ -546,5 +548,19 @@ public class Produto implements Serializable {
 	public void setNumeroLancamento(Long numeroLancamento) {
 		this.numeroLancamento = numeroLancamento;
 	}
-	
+
+	/**
+	 * @return the segmentacao
+	 */
+	public SegmentacaoProduto getSegmentacao() {
+		return segmentacao;
+	}
+
+	/**
+	 * @param segmentacao the segmentacao to set
+	 */
+	public void setSegmentacao(SegmentacaoProduto segmentacao) {
+		this.segmentacao = segmentacao;
+	}
+
 }

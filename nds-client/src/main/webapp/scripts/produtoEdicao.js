@@ -2,45 +2,60 @@ var produtoEdicaoController = $.extend(true, {
 
 		init : function() {
 			this.initGrids();
-			$( "#tabEdicoes", this.workspace).tabs();
-			$( "#pDataLancamento", this.workspace).datepicker({
+			$( "#tabEdicoes", produtoEdicaoController.workspace).tabs();
+			$( "#pDateLanctoDe,#pDateLanctoAte", produtoEdicaoController.workspace ).datepicker({
+				showOn: "button",
+				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+				buttonImageOnly: true
+			});		
+			
+			$( "#dateLancto_pop", produtoEdicaoController.workspace ).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true
 			});
-			$( "#dateLancto_pop", this.workspace).datepicker({
+			$( "#dtLancto", produtoEdicaoController.workspace ).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true
 			});
-			$( "#dtLancto", this.workspace).datepicker({
-				showOn: "button",
-				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true
+			$( "#pesqProdutos", produtoEdicaoController.workspace ).fadeIn('slow');
+			$( "#pesqProdutos", produtoEdicaoController.workspace ).fadeOut('slow');
+			$( ".prodLinhas", produtoEdicaoController.workspace ).show('slow');
+			
+			$("#numeroEdicao", produtoEdicaoController.workspace).numeric();
+			$("#pacotePadrao", produtoEdicaoController.workspace).numeric();
+			$("#repartePrevisto", produtoEdicaoController.workspace).numeric();
+			$("#expectativaVenda", produtoEdicaoController.workspace).numeric();
+			$("#repartePromocional", produtoEdicaoController.workspace).numeric();
+			$("#precoPrevisto", produtoEdicaoController.workspace).numeric();
+			$("#precoVenda", produtoEdicaoController.workspace).numeric();
+			$("#desconto", produtoEdicaoController.workspace).numeric();
+			$("#peso", produtoEdicaoController.workspace).numeric();
+			$("#largura", produtoEdicaoController.workspace).numeric();
+			$("#comprimento", produtoEdicaoController.workspace).numeric();
+			$("#espessura", produtoEdicaoController.workspace).numeric();
+			$("#numeroLancamento", produtoEdicaoController.workspace).numeric();
+			$("#ped", produtoEdicaoController.workspace).numeric();
+			
+
+			$("#dataLancamentoPrevisto", produtoEdicaoController.workspace).mask("99/99/9999");
+			$("#dataRecolhimentoPrevisto", produtoEdicaoController.workspace).mask("99/99/9999");
+			$("#dataRecolhimentoReal", produtoEdicaoController.workspace).mask("99/99/9999");
+			$("#dataLancamento", produtoEdicaoController.workspace).mask("99/99/9999");
+			
+			$('#possuiBrinde', produtoEdicaoController.workspace).change(function(){
+				if($(this).attr('checked')){
+					$('.descBrinde', produtoEdicaoController.workspace).show();
+				}else{
+					$('.descBrinde', produtoEdicaoController.workspace).hide();
+				}
 			});
-			$( "#pesqProdutos", this.workspace ).fadeIn('slow');
-			$( "#pesqProdutos", this.workspace ).fadeOut('slow');
-			$( ".prodLinhas", this.workspace ).show('slow');
-			$("#numeroEdicao", this.workspace).numeric();
-			$("#pacotePadrao", this.workspace).numeric();
-			$("#repartePrevisto", this.workspace).numeric();
-			$("#reparteDistribuido", this.workspace).numeric();
-			$("#repartePromocional", this.workspace).numeric();
-			$("#precoPrevisto", this.workspace).numeric();
-			$("#precoVenda", this.workspace).numeric();
-			$("#desconto", this.workspace).numeric();
-			$("#peso", this.workspace).numeric();
-			$("#largura", this.workspace).numeric();
-			$("#comprimento", this.workspace).numeric();
-			$("#espessura", this.workspace).numeric();
-			$("#numeroLancamento", this.workspace).numeric();
-			$("#dataLancamentoPrevisto", this.workspace).mask("99/99/9999");
-			$("#dataLancamento", this.workspace).mask("99/99/9999");
 
 		},
 		
 		initGrids : function () {
-			$(".bonificacoesGrid", this.workspace).flexigrid({
+			$(".bonificacoesGrid", produtoEdicaoController.workspace).flexigrid({
 				//url : '../xml/produtos_bonificacoes-xml.xml',
 				dataType : 'xml',
 				colModel : [ {
@@ -67,8 +82,9 @@ var produtoEdicaoController = $.extend(true, {
 				singleSelect : true
 			});
 
-		$(".prodsPesqGrid", this.workspace).flexigrid({
+		$(".prodsPesqGrid", produtoEdicaoController.workspace).flexigrid({
 				dataType : 'json',
+				preProcess: produtoEdicaoController.executarPreProcessamento,
 				colModel : [ {
 					display : 'Produto',
 					name : 'nomeProduto',
@@ -88,7 +104,7 @@ var produtoEdicaoController = $.extend(true, {
 			});
 			
 			
-		$(".edicoesGrid", this.workspace).flexigrid({
+		$(".edicoesGrid", produtoEdicaoController.workspace).flexigrid({
 			preProcess: produtoEdicaoController.executarPreProcessamento,
 			dataType : 'json',
 				colModel : [ {
@@ -151,8 +167,7 @@ var produtoEdicaoController = $.extend(true, {
 				singleSelect : true
 			});
 			
-			
-			$(".produtoEdicaoBaseGrid", this.workspace).flexigrid({
+			$(".produtoEdicaoBaseGrid", produtoEdicaoController.workspace).flexigrid({
 				preProcess: produtoEdicaoController.executarPreProcessamento,
 				dataType : 'json',
 				colModel : [ {
@@ -188,34 +203,39 @@ var produtoEdicaoController = $.extend(true, {
 		
 		pesquisarEdicoes : function() {
 
-			var codigoProduto = $("#pCodigoProduto", this.workspace).val();
-			var nomeProduto = $("#pNomeProduto", this.workspace).val();
-			var dataLancamento = $("#pDataLancamento", this.workspace).val();
-			var situacaoLancamento = $("#pSituacaoLancamento", this.workspace).val();
-			var codigoDeBarras = $("#pCodigoDeBarras", this.workspace).val();
+			var codigoProduto = $("#pCodigoProduto", produtoEdicaoController.workspace).val();
+			var nomeProduto = $("#pNomeProduto", produtoEdicaoController.workspace).val();
+			var dataLancamentoDe = $("#pDateLanctoDe", produtoEdicaoController.workspace).val();	
+			var precoDe = $("#pPrecoDe", produtoEdicaoController.workspace).val();
+			var precoAte = $("#pPrecoAte", produtoEdicaoController.workspace).val();
+			var dataLancamentoAte = $("#pDateLanctoAte", produtoEdicaoController.workspace).val();
+			var situacaoLancamento = $("#pSituacaoLancamento", produtoEdicaoController.workspace).val();
+			var codigoDeBarras = $("#pCodigoDeBarras", produtoEdicaoController.workspace).val();
 			
-			$("#pBrinde", this.workspace).val(0);
-			if (document.getElementById('pBrinde', this.workspace).checked){
-				$("#pBrinde", this.workspace).val(1);
+			$("#pBrinde", produtoEdicaoController.workspace).val(0);
+			if (document.getElementById('pBrinde', produtoEdicaoController.workspace).checked){
+				$("#pBrinde", produtoEdicaoController.workspace).val(1);
 			}
-			var brinde = $("#pBrinde", this.workspace).val();
+			var brinde = $("#pBrinde", produtoEdicaoController.workspace).val();
 			
-			$(".edicoesGrid", this.workspace).flexOptions({
-				url: contextPath + '/cadastro/edicao/pesquisarEdicoes.json',
+			$(".edicoesGrid", produtoEdicaoController.workspace).flexOptions({
+				url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
 				params: [{name:'codigoProduto', value: codigoProduto },
 					     {name:'nomeProduto', value: nomeProduto },
-					     {name:'dataLancamento', value: dataLancamento },
+					     {name:'dataLancamentoDe', value: dataLancamentoDe },
+					     {name:'dataLancamentoAte', value: dataLancamentoAte },
+					     {name:'precoDe', value: precoDe },
+					     {name:'precoAte', value: precoAte },
 					     {name:'situacaoLancamento', value: situacaoLancamento },
 					     {name:'codigoDeBarras', value: codigoDeBarras },
 					     {name:'brinde', value : brinde }],
 				newp: 1,
 			});
 			
-			$(".edicoesGrid", this.workspace).flexReload();
+			$(".edicoesGrid", produtoEdicaoController.workspace).flexReload();
 		},
 
 		executarPreProcessamento : function(resultado) {
-
 			// Exibe mensagem de erro/alerta, se houver:
 			var mensagens = (resultado.mensagens) ? resultado.mensagens : resultado.result;   
 			var tipoMensagem = (mensagens && mensagens.tipoMensagem) ? mensagens.tipoMensagem : null; 
@@ -230,7 +250,7 @@ var produtoEdicaoController = $.extend(true, {
 			$.each(resultado.rows, function(index, row) {
 				
 				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
-						     	  	'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
+						     	  	'<img title="Editar" src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" />' +
 						  		  '</a>';
 				
 				var linkExcluir = '<a href="javascript:;" onclick="produtoEdicaoController.removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
@@ -240,41 +260,46 @@ var produtoEdicaoController = $.extend(true, {
 				row.cell.acao = linkAprovar + linkExcluir;
 
 				//
-				nProduto = row.cell.nomeProduto;
+				if(row.cell.nomeProduto){
+					nProduto = row.cell.nomeProduto;
+				}else{
+					row.cell.nomeProduto = '';
+				}
 				cProduto = row.cell.codigoProduto;
 			});
 				
-			$(".grids").show();
+			$(".grids", produtoEdicaoController.workspace).show();
 
 			//
 			var txt = '';
 			if (nProduto != null || cProduto != null) {
 				txt = ": " + cProduto + " - " + nProduto;
 			}
-			$("#labelNomeProduto", this.workspace).html(txt);
-			$("#codigoProduto", this.workspace).val(cProduto);
+			$("#labelNomeProduto", produtoEdicaoController.workspace).html(txt);
+			$("#codigoProduto", produtoEdicaoController.workspace).val(cProduto);
 			
 			return resultado;
+
 		},
 
 		salvaUmaEdicao : function() {
 			
-			$("#formUpload", this.workspace).ajaxSubmit({
+			$("#formUpload", produtoEdicaoController.workspace).ajaxSubmit({
 				success: function(responseText, statusText, xhr, $form)  { 
 					var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
 					var tipoMensagem = mensagens.tipoMensagem;
 					var listaMensagens = mensagens.listaMensagens;
 					if (tipoMensagem && listaMensagens) {
-						exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+						produtoEdicaoController.exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 					}
 					
 					produtoEdicaoController.prepararTela(null);
 					produtoEdicaoController.carregarDialog(null);
 				}, 
-				url: contextPath + '/cadastro/edicao/salvar',
+				url: contextPath + "/cadastro/edicao/salvar",
 				type: 'POST',
 				dataType: 'json',
-				data: { codigoProduto : $("#codigoProduto", this.workspace).val() }
+				data: { codigoProduto : $("#codigoProduto", produtoEdicaoController.workspace).val() }
 			});
 
 		},
@@ -288,11 +313,10 @@ var produtoEdicaoController = $.extend(true, {
 		},
 
 		prepararTela : function(id) {
-			
 			// limpar os campos:
 			produtoEdicaoController.form_clear('formUpload');
 			produtoEdicaoController.carregarImagemCapa(id);
-			$('#formUpload', this.workspace).find(':input').each(
+			$('#formUpload', produtoEdicaoController.workspace).find(':input').each(
 				function() {
 					switch(this.type) {
 					case 'text':
@@ -313,104 +337,118 @@ var produtoEdicaoController = $.extend(true, {
 			);
 			
 			
-			// Popular a lista de Edi��es:
-			$(".prodsPesqGrid", this.workspace).flexOptions({
-				url: contextPath + '/cadastro/edicao/ultimasEdicoes.json',
-				params: [{name:'codigoProduto', value: $("#codigoProduto", this.workspace).val() }],
+			// Popular a lista de Edições:
+			$(".prodsPesqGrid", produtoEdicaoController.workspace).flexOptions({
+				url: contextPath + "/cadastro/edicao/ultimasEdicoes.json",
+				params: [{name:'codigoProduto', value: $("#codigoProduto", produtoEdicaoController.workspace).val() }],
 				newp: 1,
 			});
 
-			$(".prodsPesqGrid", this.workspace).flexReload();	
+			$(".prodsPesqGrid", produtoEdicaoController.workspace).flexReload();	
+	
 		},
 
 		carregarDialog : function(id) {
-			
 			// Exibir os dados do Produto:
 			$.postJSON(
-				contextPath + '/cadastro/edicao/carregarDadosProdutoEdicao.json',
-				{ codigoProduto : $("#codigoProduto", this.workspace).val(), 
+				contextPath + "/cadastro/edicao/carregarDadosProdutoEdicao.json",
+				{ codigoProduto : $("#codigoProduto", produtoEdicaoController.workspace).val(), 
 				  idProdutoEdicao : id},
 				function(result) {
+					$("#tabSegmentacao", produtoEdicaoController.workspace).show();	
 					if (result) {
-						$("#idProdutoEdicao", this.workspace).val(result.id);
-						$("#codigoProdutoEdicao", this.workspace).val(result.codigoProduto);
-						$("#nomePublicacao", this.workspace).val(result.nomeProduto);
-						$("#nomeComercialProduto", this.workspace).val(result.nomeComercialProduto);
-						$("#nomeFornecedor", this.workspace).val(result.nomeFornecedor);
-						$("#situacao", this.workspace).val(result.situacao);
-						$("#numeroEdicao", this.workspace).val(result.numeroEdicao);
-						$("#fase", this.workspace).val(result.fase);
-						$("#numeroLancamento", this.workspace).val(result.numeroLancamento);
-						$("#pacotePadrao", this.workspace).val(result.pacotePadrao);
-						$("#tipoLancamento", this.workspace).val(result.tipoLancamento);
-						$("#precoPrevisto", this.workspace).val(result.precoPrevisto);
-						$("#precoVenda", this.workspace).val(result.precoVenda);
-						$("#dataLancamentoPrevisto", this.workspace).val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
-						$("#dataLancamento", this.workspace).val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);
-						$("#repartePrevisto", this.workspace).val(result.repartePrevisto)
-						$("#reparteDistribuido", this.workspace).val(result.reparteDistribuido);
-						$("#repartePromocional", this.workspace).val(result.repartePromocional);
+						$("#idProdutoEdicao", produtoEdicaoController.workspace).val(result.id);
+						$("#codigoProdutoEdicao", produtoEdicaoController.workspace).val(result.codigoProduto);
+						$("#nomePublicacao", produtoEdicaoController.workspace).val(result.nomeProduto);
+						$("#nomeComercialProduto", produtoEdicaoController.workspace).val(result.nomeComercialProduto);
+						$("#nomeFornecedor", produtoEdicaoController.workspace).val(result.nomeFornecedor);
+						$("#situacao", produtoEdicaoController.workspace).val(result.situacao);
+						$("#numeroEdicao", produtoEdicaoController.workspace).val(result.numeroEdicao);
+						$("#fase", produtoEdicaoController.workspace).val(result.fase);
+						$("#numeroLancamento", produtoEdicaoController.workspace).val(result.numeroLancamento);
+						$("#pacotePadrao", produtoEdicaoController.workspace).val(result.pacotePadrao);
+						$("#tipoLancamento", produtoEdicaoController.workspace).val(result.tipoLancamento);
+						$("#precoPrevisto", produtoEdicaoController.workspace).val(result.precoPrevisto);
+						$("#precoVenda", produtoEdicaoController.workspace).val(result.precoVenda);
+						$("#dataLancamentoPrevisto", produtoEdicaoController.workspace).val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
+						$("#dataLancamento", produtoEdicaoController.workspace).val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);
+						$("#repartePrevisto", produtoEdicaoController.workspace).val(result.repartePrevisto)
+						$("#expectativaVenda", produtoEdicaoController.workspace).val(result.expectativaVenda);
+						$("#repartePromocional", produtoEdicaoController.workspace).val(result.repartePromocional);
 						//$("#categoria").val();
-						$("#codigoDeBarras", this.workspace).val(result.codigoDeBarras);
-						$("#codigoDeBarrasCorporativo", this.workspace).val(result.codigoDeBarrasCorporativo);
-						$("#desconto", this.workspace).val(result.desconto);
-						$("#peso", this.workspace).val(result.peso);
-						$("#largura", this.workspace).val(result.largura);
-						$("#comprimento", this.workspace).val(result.comprimento);
-						$("#espessura", this.workspace).val(result.espessura);
-						$("#chamadaCapa", this.workspace).val(result.chamadaCapa);
-						$('#parcial', this.workspace).val(result.parcial + "");
-						$('#possuiBrinde', this.workspace).attr('checked', result.possuiBrinde);
-						$('#boletimInformativo', this.workspace).val(result.boletimInformativo);
-
+						$("#codigoDeBarras", produtoEdicaoController.workspace).val(result.codigoDeBarras);
+						$("#codigoDeBarrasCorporativo", produtoEdicaoController.workspace).val(result.codigoDeBarrasCorporativo);
+						$("#desconto", produtoEdicaoController.workspace).val(result.desconto);
+						$("#peso", produtoEdicaoController.workspace).val(result.peso);
+						$("#largura", produtoEdicaoController.workspace).val(result.largura);
+						$("#comprimento", produtoEdicaoController.workspace).val(result.comprimento);
+						$("#espessura", produtoEdicaoController.workspace).val(result.espessura);
+						$("#chamadaCapa", produtoEdicaoController.workspace).val(result.chamadaCapa);
+						$('#parcial', produtoEdicaoController.workspace).val(result.parcial + "");
+						$('#possuiBrinde', produtoEdicaoController.workspace).attr('checked', result.possuiBrinde).change();
+						$('#boletimInformativo', produtoEdicaoController.workspace).val(result.boletimInformativo);
+						
+						$('#dataRecolhimentoPrevisto', produtoEdicaoController.workspace).val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$).attr("readonly", false);
+						$('#semanaRecolhimento', produtoEdicaoController.workspace).val(result.semanaRecolhimento);
+						$('#dataRecolhimentoReal', produtoEdicaoController.workspace).val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);
+						$("#ped", produtoEdicaoController.workspace).val(result.ped).attr("readonly", false);		
+						$("#descricaoProduto", produtoEdicaoController.workspace).val(result.descricaoProduto).attr("readonly", false);
+						$("#descricaoBrinde", produtoEdicaoController.workspace).val(result.descricaoBrinde).attr("readonly", false);
+						
 						if (result.origemInterface) {
-							$("#precoVenda", this.workspace).attr("readonly", false);				
+							$("#precoVenda", produtoEdicaoController.workspace).attr("readonly", false);	
 						} else {
-							$("#codigoProdutoEdicao", this.workspace).attr("readonly", false);
-							$("#nomeComercialProduto", this.workspace).attr("readonly", false);
-							$("#numeroEdicao", this.workspace).attr("readonly", (result.numeroEdicao == 1));
-							$("#pacotePadrao", this.workspace).attr("readonly", false);
-							$("#tipoLancamento", this.workspace).attr("disabled", false);
-							$("#precoPrevisto", this.workspace).attr("readonly", false);
-							$("#dataLancamentoPrevisto", this.workspace).attr("readonly", false);
-							$("#repartePrevisto", this.workspace).attr("readonly", false);
-							$("#repartePromocional", this.workspace).attr("readonly", false);
-							$("#codigoDeBarrasCorporativo", this.workspace).attr("readonly", false);
-							$('#parcial', this.workspace).attr("disabled", false);
-							$("#desconto", this.workspace).attr("readonly", false);
-							$("#largura", this.workspace).attr("readonly", false);
-							$("#comprimento", this.workspace).attr("readonly", false);
-							$("#espessura", this.workspace).attr("readonly", false);
-							$('#boletimInformativo', this.workspace).attr("readonly", false);
+							$("#tabSegmentacao", produtoEdicaoController.workspace).hide();	
+							$("#codigoProdutoEdicao", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#nomeComercialProduto", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#numeroEdicao", produtoEdicaoController.workspace).attr("readonly", (result.numeroEdicao == 1));
+							$("#pacotePadrao", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#tipoLancamento", produtoEdicaoController.workspace).attr("disabled", false);
+							$("#precoPrevisto", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#dataLancamentoPrevisto", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#repartePrevisto", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#repartePromocional", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#codigoDeBarrasCorporativo", produtoEdicaoController.workspace).attr("readonly", false);
+							$('#parcial', produtoEdicaoController.workspace).attr("disabled", false);
+							$("#desconto", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#largura", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#comprimento", produtoEdicaoController.workspace).attr("readonly", false);
+							$("#espessura", produtoEdicaoController.workspace).attr("readonly", false);
+							$('#boletimInformativo', produtoEdicaoController.workspace).attr("readonly", false);
 						}
 
-						$("#numeroLancamento", this.workspace).attr("readonly", false); 
-						$("#imagemCapa", this.workspace).attr("disabled", false);
-						$("#codigoDeBarras", this.workspace).attr("readonly", false);				
-						$("#chamadaCapa", this.workspace).attr("readonly", false);
-						$('#possuiBrinde', this.workspace).attr("disabled", false);
-						$("#peso", this.workspace).attr("readonly", false);
+						$("#numeroLancamento", produtoEdicaoController.workspace).attr("readonly", false); 
+						$("#imagemCapa", produtoEdicaoController.workspace).attr("disabled", false);
+						$("#codigoDeBarras", produtoEdicaoController.workspace).attr("readonly", false);				
+						$("#chamadaCapa", produtoEdicaoController.workspace).attr("readonly", false);
+						$('#possuiBrinde', produtoEdicaoController.workspace).attr("disabled", false);
+						$("#peso", produtoEdicaoController.workspace).attr("readonly", false);
 					}
 				},
 				function(result) { 
 					exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
 					},
 				true
-			);
+			);			
 
 		},
 
 		popup : function(id) {
+			if ($("#pCodigoProduto", produtoEdicaoController.workspace).val() != $("#codigoProduto", produtoEdicaoController.workspace).val()){
+				$("#codigoProduto", produtoEdicaoController.workspace).val($("#pCodigoProduto", produtoEdicaoController.workspace).val());
+			}
 			
-			if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
+			//if ($(".edicoesGrid > tbody").data() == null || $(".edicoesGrid > tbody").data() == undefined) {
+			if ($("#codigoProduto", produtoEdicaoController.workspace).val() == "") {
 				exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
 				return;
 			}
 			
-			produtoEdicaoController.prepararTela(id);
-			produtoEdicaoController.carregarDialog(id);
+			pesquisarEdicoes();
+			prepararTela(id);
+			carregarDialog(id);
 
-			$( "#dialog-novo", this.workspace ).dialog({
+			$( "#dialog-novo", produtoEdicaoController.workspace ).dialog({
 				resizable: false,
 				height:615,
 				width:960,
@@ -418,7 +456,7 @@ var produtoEdicaoController = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 
-						$("#formUpload", this.workspace).ajaxSubmit({
+						$("#formUpload", produtoEdicaoController.workspace).ajaxSubmit({
 							beforeSubmit: function(arr, formData, options) {
 								// Incluir aqui as validacoes;
 							},
@@ -429,35 +467,35 @@ var produtoEdicaoController = $.extend(true, {
 								if (tipoMensagem && listaMensagens) {
 									//exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 
-									$("#dialog-novo", this.workspace).dialog( "close" );
+									$("#dialog-novo", produtoEdicaoController.workspace).dialog( "close" );
 									produtoEdicaoController.pesquisarEdicoes();
-									exibirMensagem(tipoMensagem, listaMensagens);
+									produtoEdicaoController.exibirMensagem(tipoMensagem, listaMensagens);
 								}
 							}, 
-							url: contextPath + '/cadastro/edicao/salvar',
+							url: contextPath + "/cadastro/edicao/salvar",
 							type: 'POST',
 							dataType: 'json',
-							data: { codigoProduto : $("#codigoProduto", this.workspace).val() }
+							data: { codigoProduto : $("#codigoProduto", produtoEdicaoController.workspace).val() }
 						});
 					},
 					"Cancelar": function() {
-						$("#dialog-novo", this.workspace).dialog( "close" );
+						$("#dialog-novo", produtoEdicaoController.workspace).dialog( "close" );
 					}
 				}
-			});
+			});			
 		},
 
 		carregarImagemCapa : function(idProdutoEdicao) {
 
 			var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
-				? "" : contextPath + '/capa/' + idProdutoEdicao; 
+				? "" : contextPath + "/capa/" + idProdutoEdicao + '?' + Math.random(); 
 			var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
-			$("#div_imagem_capa", this.workspace).empty();
-			$("#div_imagem_capa", this.workspace).append(img);
+			$("#div_imagem_capa").empty();
+			$("#div_imagem_capa").append(img);
 			
 			img.load(function() {
 				if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
-					$("#div_imagem_capa", this.workspace).append(img);
+					$("#div_imagem_capa").append(img);
 				}
 			});
 
@@ -465,35 +503,33 @@ var produtoEdicaoController = $.extend(true, {
 
 		form_clear : function(formName) {
 
-			$('#' + formName, this.workspace).find(':input').each(
-				function() {
-					switch(this.type) {
-						case 'hidden': 
-						case 'text':
-						case 'textarea':
-						case 'password':
-						case 'select-multiple':
-						case 'select-one':
-						case 'file':
-							$(this).val('');
-							break;
+			$('#' + formName, produtoEdicaoController.workspace).find(':input').each(
+					function() {
+						switch(this.type) {
+							case 'hidden': 
+							case 'text':
+							case 'textarea':
+							case 'password':
+							case 'select-multiple':
+							case 'select-one':
+							case 'file':
+								$(this).val('');
+								break;
 
-						case 'checkbox':
-						case 'radio':
-							this.checked = false;
-							break;
+							case 'checkbox':
+							case 'radio':
+								this.checked = false;
+								break;
+						}
 					}
-				}
-			);
+				);
 		},
 			
 		popup_alterar : function() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-		
-			$( "#dialog-novo" , this.workspace).dialog({
+			$( "#dialog-novo", produtoEdicaoController.workspace).dialog({
 				resizable: false,
 				height:615,
-				width:950,
+				width:960,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -510,8 +546,7 @@ var produtoEdicaoController = $.extend(true, {
 		},
 			
 		removerEdicao : function(id) {
-
-			$( "#dialog-excluir" , this.workspace).dialog({
+			$( "#dialog-excluir", produtoEdicaoController.workspace).dialog({
 				resizable: false,
 				height:170,
 				width:380,
@@ -520,30 +555,30 @@ var produtoEdicaoController = $.extend(true, {
 					"Confirmar": function() {
 
 						$.postJSON(
-							contextPath + '/cadastro/edicao/removerEdicao.json',
+							contextPath + "/cadastro/edicao/removerEdicao.json",
 							{idProdutoEdicao : id},
 							function(result) {
-						   		$("#dialog-excluir", this.workspace).dialog("close");
+						   		$("#dialog-excluir", produtoEdicaoController.workspace).dialog("close");
 						   		
 								var tipoMensagem = result.tipoMensagem;
 								var listaMensagens = result.listaMensagens;
 								
 								if (tipoMensagem && listaMensagens) {
 									
-									exibirMensagem(tipoMensagem, listaMensagens);
+									produtoEdicaoController.exibirMensagem(tipoMensagem, listaMensagens);
 								}
 
-								carregarImagemCapa(null);
+								produtoEdicaoController.carregarImagemCapa(null);
 							},
 							function(result) {
-						   		$("#dialog-excluir", this.workspace).dialog("close");
+						   		$("#dialog-excluir", produtoEdicaoController.workspace).dialog("close");
 								
 								var tipoMensagem = result.tipoMensagem;
 								var listaMensagens = result.listaMensagens;
 								
 								if (tipoMensagem && listaMensagens) {
 									
-									exibirMensagem(tipoMensagem, listaMensagens);
+									produtoEdicaoController.exibirMensagem(tipoMensagem, listaMensagens);
 								}
 							},
 							true
@@ -554,15 +589,13 @@ var produtoEdicaoController = $.extend(true, {
 					}
 				},
 				beforeClose: function() {
-					clearMessageDialogTimeout();
+					produtoEdicaoController.clearMessageDialogTimeout();
 				}
 			});
 		},
-			
-		popup_excluir_capa : function() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
-			$( "#dialog-excluir-capa" , this.workspace).dialog({
+		popup_excluir_capa : function() {
+			$( "#dialog-excluir-capa", produtoEdicaoController.workspace ).dialog({
 				resizable: false,
 				height:170,
 				width:380,
@@ -570,35 +603,38 @@ var produtoEdicaoController = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						$.postJSON(
-							contextPath + '/capa/removerCapa',
-							{idProdutoEdicao : $("#idProdutoEdicao").val()},
+							contextPath + "/capa/removerCapa",
+							{idProdutoEdicao : $("#idProdutoEdicao", produtoEdicaoController.workspace).val()},
 							function(result) {
-								$( "#dialog-excluir-capa", this.workspace ).dialog( "close" );
+								$( "#dialog-excluir-capa", produtoEdicaoController.workspace ).dialog( "close" );
 								
-								var mensagens = (result.mensagens) ? result.mensagens : result.result;
+								var mensagens = (result.mensagens) ? result.mensagens : result;
 								var tipoMensagem = mensagens.tipoMensagem;
 								var listaMensagens = mensagens.listaMensagens;
 								
 								if (tipoMensagem && listaMensagens) {
 									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+									if (tipoMensagem == "SUCCESS") { 
+										$("#div_imagem_capa", produtoEdicaoController.workspace).empty();
+									}
 								}
 							},
 							function(result) {
-								$( "#dialog-excluir-capa", this.workspace ).dialog( "close" );
+								$( "#dialog-excluir-capa", produtoEdicaoController.workspace ).dialog( "close" );
 
 								var mensagens = (result.mensagens) ? result.mensagens : result.result;
 								var tipoMensagem = mensagens.tipoMensagem;
 								var listaMensagens = mensagens.listaMensagens;
 								
 								if (tipoMensagem && listaMensagens) {
-									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+									produtoEdicaoController.exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 								}
 							},
 							true
 						);
 					},
 					"Cancelar": function() {
-						$( "#dialog-excluir-capa", this.workspace).dialog( "close" );
+						$( "#dialog-excluir-capa", produtoEdicaoController.workspace ).dialog( "close" );
 					}
 				}
 			});
@@ -723,7 +759,7 @@ var produtoEdicaoController = $.extend(true, {
 				
 				if (produtoEdicaoController.pesquisaRealizada) {
 					
-					clearInterval(produtoEdicaoController.intervalo);
+					produtoEdicaoController.clearInterval(produtoEdicaoController.intervalo);
 					
 					return;
 				}
@@ -737,7 +773,7 @@ var produtoEdicaoController = $.extend(true, {
 	
 	pesquisarPorNomeProdutoAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
 		
-		clearInterval(produtoEdicaoController.intervalo);
+		produtoEdicaoController.clearInterval(produtoEdicaoController.intervalo);
 		
 		produtoEdicaoController.pesquisaRealizada = true;
 		
@@ -761,8 +797,8 @@ var produtoEdicaoController = $.extend(true, {
 	
 	pesquisarPorNomeSuccessCallBack : function(result, idCodigo, idProduto, successCallBack) {
 		if (result != "") {
-			$(idCodigo).val(result.codigo);
-			$(idProduto).val(result.nome);
+			$(idCodigo, produtoEdicaoController.workspace).val(result.codigo);
+			$(idProduto, produtoEdicaoController.workspace).val(result.nome);
 			
 			if (successCallBack) {
 				successCallBack();
@@ -771,8 +807,8 @@ var produtoEdicaoController = $.extend(true, {
 	},
 	
 	pesquisarPorNomeErrorCallBack : function(idCodigo, idProduto, errorCallBack) {
-		$(idProduto).val("");
-		$(idProduto).focus();
+		$(idProduto, produtoEdicaoController.workspace).val("");
+		$(idProduto, produtoEdicaoController.workspace).focus();
 		
 		if (errorCallBack) {
 			errorCallBack();

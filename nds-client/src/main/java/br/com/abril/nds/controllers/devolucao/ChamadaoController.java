@@ -1,7 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ChamadaoVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaoVO;
@@ -29,6 +30,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
@@ -87,6 +89,7 @@ public class ChamadaoController {
 	
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CHAMADAO)
 	public void index() {
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =
@@ -417,7 +420,7 @@ public class ChamadaoController {
 		
 		Long qtdProdutosTotal = null;
 		
-		BigDecimal qtdExemplaresTotal = null;
+		BigInteger qtdExemplaresTotal = null;
 		
 		String valorTotalFormatado = null;
 		

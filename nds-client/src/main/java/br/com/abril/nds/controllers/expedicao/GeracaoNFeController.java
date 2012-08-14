@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.expedicao;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;

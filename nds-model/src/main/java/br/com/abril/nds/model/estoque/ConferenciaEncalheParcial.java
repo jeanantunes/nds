@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -51,7 +52,7 @@ public class ConferenciaEncalheParcial {
 	private Boolean nfParcialGerada = false;
 	
 	@Column(name = "QTDE", nullable = false)
-	private BigDecimal qtde;
+	private BigInteger qtde;
 	
 	@ManyToOne(optional = true)
 	private Usuario responsavel;
@@ -91,11 +92,11 @@ public class ConferenciaEncalheParcial {
 		this.statusAprovacao = statusAprovacao;
 	}
 
-	public BigDecimal getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 
-	public void setQtde(BigDecimal qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
 

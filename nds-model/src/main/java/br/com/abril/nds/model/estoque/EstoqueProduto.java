@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,16 +33,16 @@ public class EstoqueProduto {
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name = "QTDE", nullable = false)
-	private BigDecimal qtde;
+	private BigInteger qtde;
 	
 	@Column(name = "QTDE_SUPLEMENTAR")
-	private BigDecimal qtdeSuplementar;
+	private BigInteger qtdeSuplementar;
 	
 	@Column(name = "QTDE_DEVOLUCAO_ENCALHE")
-	private BigDecimal qtdeDevolucaoEncalhe;
+	private BigInteger qtdeDevolucaoEncalhe;
 	
 	@Column(name = "QTDE_DEVOLUCAO_FORNECEDOR")
-	private BigDecimal qtdeDevolucaoFornecedor;
+	private BigInteger qtdeDevolucaoFornecedor;
 	
 	@OneToMany(mappedBy = "estoqueProduto")
 	private List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
@@ -66,19 +67,19 @@ public class EstoqueProduto {
 		this.produtoEdicao = produtoEdicao;
 	}
 	
-	public BigDecimal getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 	
-	public void setQtde(BigDecimal qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
 	
-	public BigDecimal getQtdeSuplementar() {
+	public BigInteger getQtdeSuplementar() {
 		return qtdeSuplementar;
 	}
 	
-	public void setQtdeSuplementar(BigDecimal qtdeSuplementar) {
+	public void setQtdeSuplementar(BigInteger qtdeSuplementar) {
 		this.qtdeSuplementar = qtdeSuplementar;
 	}
 	
@@ -101,28 +102,28 @@ public class EstoqueProduto {
 	/**
 	 * @return the qtdeDevolucaoEncalhe
 	 */
-	public BigDecimal getQtdeDevolucaoEncalhe() {
+	public BigInteger getQtdeDevolucaoEncalhe() {
 		return qtdeDevolucaoEncalhe;
 	}
 
 	/**
 	 * @param qtdeDevolucaoEncalhe the qtdeDevolucaoEncalhe to set
 	 */
-	public void setQtdeDevolucaoEncalhe(BigDecimal qtdeDevolucaoEncalhe) {
+	public void setQtdeDevolucaoEncalhe(BigInteger qtdeDevolucaoEncalhe) {
 		this.qtdeDevolucaoEncalhe = qtdeDevolucaoEncalhe;
 	}
 
 	/**
 	 * @return the qtdeDevolucaoFornecedor
 	 */
-	public BigDecimal getQtdeDevolucaoFornecedor() {
+	public BigInteger getQtdeDevolucaoFornecedor() {
 		return qtdeDevolucaoFornecedor;
 	}
 
 	/**
 	 * @param qtdeDevolucaoFornecedor the qtdeDevolucaoFornecedor to set
 	 */
-	public void setQtdeDevolucaoFornecedor(BigDecimal qtdeDevolucaoFornecedor) {
+	public void setQtdeDevolucaoFornecedor(BigInteger qtdeDevolucaoFornecedor) {
 		this.qtdeDevolucaoFornecedor = qtdeDevolucaoFornecedor;
 	}
 

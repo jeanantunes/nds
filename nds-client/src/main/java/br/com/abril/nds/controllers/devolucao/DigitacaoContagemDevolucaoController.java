@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -23,6 +25,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -82,6 +85,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_DEVOLUCAO_DIGICACAO_CONTAGEM_DEVOLUCAO)
 	public void index(){
 		
 		/**
@@ -364,7 +368,7 @@ public class DigitacaoContagemDevolucaoController  {
 			
 			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
-			contagemDevolucaoDTO.setQtdNota(new BigDecimal(vo.getQtdNota()));
+			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
 			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? null : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			
 			listaResultadosDto.add(contagemDevolucaoDTO);

@@ -1,18 +1,5 @@
 <head>
 <script>
-
-	function showProcuracaoPF(show) {
-
-		if (show) {
-
-			$(".arqProcuracaoPf").show();
-
-		} else {
-
-			$(".arqProcuracaoPf").hide();
-		}
-	}
-
 	function showComissaoPF(show) {
 
 		if (show) {
@@ -163,125 +150,14 @@
              <td width="65%">Não</td>
            </tr>
          </table></td>
-         <td><span class="comissionadoPf" style="display:none">
-     Informe o %:
+         <td><span class="comissionadoPf" style="display:none; font-size: 9px;">
+     Informe o % de Comissão s/ Faturamento (Preço Capa):
      </span></td>
          <td colspan="3"><span class="comissionadoPf" style="display:none">
      <input type="text" name="entregador.percentualComissao" maxlength="19" 
      		id="percentualComissaoPF" style="width:100px" />
      </span></td>
        </tr>
-       <tr>
-         <td>Procuração:</td>
-         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
-           <tr>
-             <td width="10%"><input type="radio" name="procuracaoPF" id="procuracaoPF" value="radio" onclick="showProcuracaoPF(true);" /></td>
-             <td width="15%">Sim</td>
-             <td width="10%"><input type="radio" name="procuracaoPF" id="naoProcuracaoPF" value="radio" onclick="showProcuracaoPF();" /></td>
-             <td width="64%">Não</td>
-           </tr>
-         </table></td>
-         <td>&nbsp;</td>
-         <td colspan="3">&nbsp;</td>
-       </tr>
      </table>
-    <br />
-     
-     <div class="arqProcuracaoPf" style="display:none;">
-        	<b>Dados da Procuração</b>
-            <br />
-           <table width="765" cellpadding="2" cellspacing="2">
-             <tr>
-               <td width="113">Nome Jornaleiro:</td>
-               <td width="370"><input type="text" style="width:230px " readonly="readonly" id="nomeJornaleiroProcuracaoPF" /></td>
-               <td width="86">Box:</td>
-               <td width="168"><input type="text" style="width:80px " readonly="readonly" id="boxProcuracaoPF" /></td>
-             </tr>
-             <tr>
-               <td>Cota:</td>
-               <td><input type="text" name="procuracaoEntregador.cota.numeroCota" 
-               			  id="numeroCotaProcuracaoPF"  
-               			  style="width:80px; float:left; margin-right:5px;" maxlength="11"/>
-               <span class="classPesquisar"><a href="javascript:;" onclick="obterCota($('#numeroCotaProcuracaoPF').val(), true)">&nbsp;</a></span></td>
-               <td>&nbsp;</td>
-               <td>&nbsp;</td>
-             </tr>
-             <tr>
-               <td>Nacionalidade:</td>
-               <td><input type="text" style="width:230px " readonly="readonly" id="nacionalidadeProcuracaoPF" /></td>
-               <td>Estado Civil:</td>
-               <td><select name="" style="width:155px;" disabled="disabled" id="estadoCivilProcuracaoPF">
-            <option selected="selected"></option>
-            <option value="SOLTEIRO">Solteiro</option>
-            <option value="CASADO">Casado</option>
-            <option value="DIVORCIADO">Divorciado</option>
-            <option value="VIUVO">Víuvo</option>
-          </select></td>
-             </tr>
-             <tr>
-               <td>Endereço PDV:</td>
-               <td><input type="text" style="width:350px "  readonly="readonly" id="enderecoPDVPrincipalProcuracaoPF" /></td>
-               <td>Cep:</td>
-               <td><input type="text" name="textfield2" readonly="readonly" id="cepProcuracaoPF" style="width:120px; float:left; margin-right:5px;"/></td>
-             </tr>
-             <tr>
-               <td>Bairro:</td>
-               <td><input type="text" style="width:230px " readonly="readonly" id="bairroProcuracaoPF" /></td>
-               <td>Cidade:</td>
-               <td><input type="text" style="width:150px " readonly="readonly" id="cidadeProcuracaoPF" /></td>
-             </tr>
-             <tr>
-               <td>N° Permissão:</td>
-               <td><input type="text" style="width:230px " id="numeroPermissaoPF"  /></td>
-               <td>RG:</td>
-               <td><input type="text" style="width:150px " readonly="readonly" id="rgProcuracaoPF" /></td>
-             </tr>
-             <tr>
-               <td>CPF/CNPJ:</td>
-               <td><input type="text" style="width:230px " readonly="readonly" id="cpfProcuracaoPF" /></td>
-               <td>&nbsp;</td>
-               <td>&nbsp;</td>
-             </tr>
-             <tr>
-               <td>&nbsp;</td>
-               <td>&nbsp;</td>
-               <td>&nbsp;</td>
-               <td>&nbsp;</td>
-             </tr>
-             <tr>
-               <td>Procurador:</td>
-               <td><input type="text" style="width:350px " maxlength="255" id="nomeProcuradorProcuracaoPF" /></td>
-               <td>Estado Civil:</td>
-               <td><select name="" style="width:155px;" id="estadoCivilProcuradorProcuracaoPF">
-            <option selected="selected"></option>
-            <option value="SOLTEIRO">Solteiro</option>
-            <option value="CASADO">Casado</option>
-            <option value="DIVORCIADO">Divorciado</option>
-            <option value="VIUVO">Víuvo</option>
-          </select></td>
-             </tr>
-             <tr>
-               <td>Endereço:</td>
-               <td><input type="text" style="width:350px " maxlength="255" id="enderecoProcuradorProcuracaoPF" /></td>
-               <td>RG</td>
-               <td><input type="text" style="width:150px " id="rgProcuradorProcuracaoPF"/></td>
-             </tr>
-             <tr>
-               <td>Nacionalidade:</td>
-               <td><input type="text" style="width:230px " maxlength="255" id="nacionalidadeProcuradorProcuracaoPF"/></td>
-               <td>Profissão:</td>
-               <td><input type="text" style="width:150px " maxlength="255" id="profissaoProcuradorProcuracaoPF" /></td>
-             </tr>
-           </table>
-           <br clear="all" />
-
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;" onclick="imprimirProcuracao(true)">
-				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Procuração</a>
-			</span>
-            <br clear="all" />
-
-      	</div>
         </form>
-	<br />
-
  </div>

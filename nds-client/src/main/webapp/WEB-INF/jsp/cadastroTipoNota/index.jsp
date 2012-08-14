@@ -1,15 +1,16 @@
 <head>
 <title>Cadastro de Tipos de Notas</title>
 <script language="javascript" type="text/javascript">
+
 function pesquisar() {
 
-	var cfop = $("#cfop").val();
+	var operacao = $("#operacaoID").val();
 	var tipoNota = $("#tipoNota").val();
 
 	$(".tiposNotasGrid").flexOptions({
 		url: "<c:url value='/administracao/cadastroTipoNota/pesquisar' />",
 		params: [
-	         {name:'cfop', value: cfop},
+	         {name:'operacao', value: operacao},
 	         {name:'tipoNota', value: tipoNota}
 	    ],
 	    newp: 1,
@@ -18,102 +19,35 @@ function pesquisar() {
 	$(".tiposNotasGrid").flexReload();
 }
 
-function popup() {
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:230,
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-};
-	
-function popup_alterar() {
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:230,
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$( "#abaPdv" ).show( );
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-};
-	
-function popup_excluir() {
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-};
+
+$(function() {
+	definirAcaoPesquisaTeclaEnter();	
+});
+
 </script>
-<style type="text/css">
-	#dialog-box{display:none;}
-	#dialog-box fieldset{width:570px!important;}
-</style>
+
 </head>
 
 <body>
-	<div id="dialog-excluir" title="Excluir Tipo de Nota">
-		<p>Confirma a exclusão deste Tipo de Nota?</p>
-	</div>
-	<div id="dialog-novo" title="Incluir Novo Tipo de Nota">    
-    	<table width="300" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="68">Código:</td>
-              <td width="221"><input type="text" name="textfield22" id="textfield22" style="width:80px;" readonly="readonly" /></td>
-            </tr>
-            <tr>
-              <td>Nome:</td>
-              <td><input type="text" name="textfield23" id="textfield23" style="width:200px;"/></td>
-            </tr>
-            <tr>
-              <td>CFOP:</td>
-              <td><input type="text" name="textfield" id="textfield" style="width:200px;"/></td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td><span class="bt_add"><a href="javascript:;" onclick="popup();">Incluir Novo</a></span></td>
-            </tr>
-        </table>
-    </div>
+	
 	<div class="corpo">
     	<div class="container">
       		<fieldset class="classFieldset">
    	    		<legend> Pesquisar Tipo de Nota</legend>
         		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             		<tr>
-              			<td width="47">CFOP:</td>
-                		<td width="114"><input type="text" name="cfop" id="cfop" style="width:80px;"/></td>
-		                <td width="81">Tipo de Nota:</td>
-		                <td width="576"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;"/></td>
-		              	<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
+              			<td width="55">Operação:</td>
+                		<td width="176">
+                			 <select name="operacao" id="operacaoID" style="width:150px;" class="campoDePesquisa">
+						      <option selected="selected" value="">Todos</option>
+						      <c:forEach var="operacao" items="${listaAtividades}">
+										<option value="${operacao.key}">${operacao.value}</option>
+							  </c:forEach>
+						    </select>
+                		</td>
+		                <td width="75">Tipo de Nota:</td>
+		                <td width="511"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;" class="campoDePesquisa" /></td>
+		              	<td width="107"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();" class="botaoPesquisar" >Pesquisar</a></span></td>
             		</tr>
           		</table>
       		</fieldset>
@@ -134,25 +68,37 @@ function popup_excluir() {
 				preProcess: executarPreProcessamento,
 				dataType : 'json',
 				colModel : [ {
+					display : 'Operacao',
+					name : 'tipoAtividade',
+					width : 140,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Processo',
+					name : 'processo',
+					width : 140,
+					sortable : false,
+					align : 'left'
+				},{
 					display : 'Tipo de Nota',
 					name : 'nopDescricao',
-					width : 600,
+					width : 400,
 					sortable : true,
 					align : 'left'
 				},{
 					display : 'CFOP Dentro UF',
 					name : 'cfopEstado',
-					width : 150,
+					width : 100,
 					sortable : true,
 					align : 'left'
 				},{
 					display : 'CFOP Fora UF',
 					name : 'cfopOutrosEstados',
-					width : 150,
+					width : 100,
 					sortable : true,
 					align : 'left'
 				}],
-				sortname : "nopDescricao",
+				sortname : "tipoAtividade",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,

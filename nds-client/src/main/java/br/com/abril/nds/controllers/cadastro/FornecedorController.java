@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -27,12 +28,14 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoFornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -83,6 +86,7 @@ public class FornecedorController {
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoFornecedor";
 
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR)
 	public void index() {
 
 		obterTiposFornecedor();
@@ -267,6 +271,18 @@ public class FornecedorController {
 		if (fornecedorDTO.getTipoFornecedor() == null) {
 			
 			mensagens.add("O preenchimento do campo [Tipo Fornecedor] é obrigatório.");
+		}
+		
+		if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
+			if (!Util.validarEmail(fornecedorDTO.getEmailNfe())) {
+				mensagens.add("O preenchimento do campo [E-mail NFe] está inválido!");
+			}
+		}
+		
+		if (!StringUtil.isEmpty(fornecedorDTO.getEmail())) {
+			if (!Util.validarEmail(fornecedorDTO.getEmail())) {
+				mensagens.add("O preenchimento do campo [E-mail] está inválido!");
+			}
 		}
 		
 		if (fornecedorDTO.isPossuiContrato()) {
@@ -515,6 +531,8 @@ public class FornecedorController {
 		fornecedorDTO.setCodigoInterface(fornecedor.getCodigoInterface());
 		
 		fornecedorDTO.setEmail(fornecedor.getJuridica().getEmail());
+		
+		fornecedorDTO.setEmailNfe(fornecedor.getEmailNfe());
 		
 		fornecedorDTO.setIdFornecedor(fornecedor.getId());
 		

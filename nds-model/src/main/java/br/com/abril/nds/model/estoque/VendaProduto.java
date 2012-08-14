@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
@@ -66,7 +67,7 @@ public class VendaProduto implements Serializable {
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name="QNT_PRODUTO")
-	private Long qntProduto;
+	private BigInteger qntProduto;
 	
 	@Column(name="VALOR_TOTAL_VENDA")
 	private BigDecimal valorTotalVenda;
@@ -160,14 +161,14 @@ public class VendaProduto implements Serializable {
 	/**
 	 * @return the qntProduto
 	 */
-	public Long getQntProduto() {
+	public BigInteger getQntProduto() {
 		return qntProduto;
 	}
 
 	/**
 	 * @param qntProduto the qntProduto to set
 	 */
-	public void setQntProduto(Long qntProduto) {
+	public void setQntProduto(BigInteger qntProduto) {
 		this.qntProduto = qntProduto;
 	}
 	/**

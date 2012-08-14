@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -20,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO.OrdenacaoColunaBancos
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
@@ -79,6 +81,7 @@ public class BancoController {
      * Método de chamada da página
      */
     @Get
+    @Rules(Permissao.ROLE_CADASTRO_BANCO)
     public void bancos(){ 
     	
     	listaCarteiras.clear();

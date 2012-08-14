@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +90,21 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 					this.couchDbProperties.getPort(), this.couchDbProperties.getUsername(), 
 						this.couchDbProperties.getPassword());
 		
-		couchDbClient.save(operacaoDistribuidor);
+		couchDbClient.setGsonBuilder(CouchDBUtil.getGsonBuilderForDate());
+
+		try {
+			
+			OperacaoDistribuidor operacaoDistribuidorAtual = 
+				couchDbClient.find(OperacaoDistribuidor.class, codigoDistribuidor);
+		
+			couchDbClient.remove(operacaoDistribuidorAtual);
+			
+			couchDbClient.save(operacaoDistribuidor);
+			
+		} catch (NoDocumentException noDocumentException) {
+			
+			couchDbClient.save(operacaoDistribuidor);
+		}
 	}
 	
 	/**
@@ -101,9 +116,15 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
+		if (distribuidor == null) {
+			
+			return null;
+		}
+		
 		OperacaoDistribuidor operacaoDistribuidor = new OperacaoDistribuidor();
+		
 		operacaoDistribuidor.setDataOperacao(distribuidor.getDataOperacao());
-		//TODO: operacaoDistribuidor.setIdDistribuidorInterface(idDistribuidorInterface);
+		operacaoDistribuidor.setIdDistribuidorInterface(distribuidor.getCodigo().toString());
 		
 		EnderecoDistribuidor enderecoDistribuidor = this.distribuidorRepository.obterEnderecoPrincipal();
 		
@@ -135,7 +156,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//TITULOS_LANCADOS
 		Indicador indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setTipoIndicador(TipoIndicador.TITULOS_LANCADOS);
 		indicador.setFormatoIndicador(FormatoIndicador.DECIMAL);
@@ -146,7 +167,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//TITULOS_FURADOS
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setTipoIndicador(TipoIndicador.TITULOS_FURADOS);
 		indicador.setFormatoIndicador(FormatoIndicador.DECIMAL);
@@ -157,7 +178,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//CONSIGNADO
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.LANCAMENTO);
 		indicador.setTipoIndicador(TipoIndicador.CONSIGNADO);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -170,7 +191,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//TITULOS_RECOLHIDOS
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.RECOLHIMENTO);
 		indicador.setTipoIndicador(TipoIndicador.TITULOS_RECOLHIDOS);
 		indicador.setFormatoIndicador(FormatoIndicador.DECIMAL);
@@ -181,7 +202,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//TITULOS_RECOLHIDOS
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.RECOLHIMENTO);
 		indicador.setTipoIndicador(TipoIndicador.RECOLHIMENTO);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -193,7 +214,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//VENCIMENTOS
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setTipoIndicador(TipoIndicador.VENCIMENTOS);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -204,7 +225,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//INADIMPLENCIA
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setTipoIndicador(TipoIndicador.INADIMPLENCIA);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -215,7 +236,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//INADIMPLENCIA_ACUMULADA
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setTipoIndicador(TipoIndicador.INADIMPLENCIA_ACUMULADA);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -226,7 +247,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//COBRANCA
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setTipoIndicador(TipoIndicador.COBRANCA);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -237,7 +258,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//COBRANCA_POSTERGADA
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setTipoIndicador(TipoIndicador.COBRANCA_POSTERGADA);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -248,7 +269,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//LIQUIDACAO
 		indicador = new Indicador();
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.FINANCEIRO);
 		indicador.setTipoIndicador(TipoIndicador.LIQUIDACAO);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -259,7 +280,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//CONSIGNADO
 		//TOTAL_RUA
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.CONSIGNADO);
 		indicador.setTipoIndicador(TipoIndicador.TOTAL_RUA);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -269,7 +290,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//TOTAL_RUA_INADIMPLENCIA
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.CONSIGNADO);
 		indicador.setTipoIndicador(TipoIndicador.TOTAL_RUA_INADIMPLENCIA);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -280,7 +301,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//JORNALEIRO
 		//JORNALEIROS
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS);
 		indicador.setFormatoIndicador(FormatoIndicador.DECIMAL);
@@ -290,7 +311,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//JORNALEIROS_ATIVOS
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS_ATIVOS);
 		indicador.setFormatoIndicador(FormatoIndicador.DECIMAL);
@@ -300,7 +321,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 
 		//JORNALEIROS_SUSPENSOS
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS_SUSPENSOS);
 		indicador.setFormatoIndicador(FormatoIndicador.DECIMAL);
@@ -310,7 +331,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//JORNALEIROS_INATIVOS
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
 		indicador.setTipoIndicador(TipoIndicador.JORNALEIROS_INATIVOS);
 		indicador.setFormatoIndicador(FormatoIndicador.DECIMAL);
@@ -321,7 +342,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		//QUALIDADE_OPERACIONAL
 		//SOBRAS_DE
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
 		indicador.setTipoIndicador(TipoIndicador.SOBRAS_DE);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -331,7 +352,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//SOBRAS_EM
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
 		indicador.setTipoIndicador(TipoIndicador.SOBRAS_EM);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -341,7 +362,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//FALTAS_DE
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
 		indicador.setTipoIndicador(TipoIndicador.FALTAS_DE);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);
@@ -351,7 +372,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//FALTAS_EM
 		indicador.setData(new Date());
-		indicador.setDistribuidor(operacaoDistribuidor);
+		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
 		indicador.setTipoIndicador(TipoIndicador.FALTAS_EM);
 		indicador.setFormatoIndicador(FormatoIndicador.MONETARIO);

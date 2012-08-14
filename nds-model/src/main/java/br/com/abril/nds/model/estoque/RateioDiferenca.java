@@ -1,6 +1,6 @@
 package br.com.abril.nds.model.estoque;
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -38,7 +38,7 @@ public class RateioDiferenca implements Serializable {
 	private Long id;
 	
 	@Column(name = "QTDE", nullable = false)
-	private BigDecimal qtde;
+	private BigInteger qtde;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
@@ -73,11 +73,11 @@ public class RateioDiferenca implements Serializable {
 		this.id = id;
 	}
 	
-	public BigDecimal getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 	
-	public void setQtde(BigDecimal qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
 	
