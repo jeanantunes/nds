@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
@@ -10,7 +11,9 @@ import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -53,7 +56,7 @@ public interface DescontoService {
 	 * @param fornecedores - fornecedores associados
 	 * @param usuario - usuario
 	 */
-	void incluirDesconto(BigDecimal desconto, List<Long> fornecedores,Usuario usuario);
+	void incluirDescontoDistribuidor(BigDecimal desconto, List<Long> fornecedores,Usuario usuario);
 	
 	/**
 	 * Inclui um desconto especifico para uma determindad cota.
@@ -63,7 +66,7 @@ public interface DescontoService {
 	 * @param numeroCota - número da cota
 	 * @param usuario - usuario
 	 */
-	void incluirDesconto(BigDecimal valorDesconto, List<Long> fornecedores,Integer numeroCota,Usuario usuario);
+	void incluirDescontoCota(BigDecimal valorDesconto, List<Long> fornecedores,Integer numeroCota,Usuario usuario);
 	
 	/**
 	 * Retorna os fornecedores associados a um desconto.
@@ -81,7 +84,8 @@ public interface DescontoService {
 	 * 
 	 * @param usuario - Usuário.
 	 */
-	void incluirDesconto(DescontoProdutoDTO desconto, Usuario usuario);	
+	void incluirDescontoProduto(DescontoProdutoDTO desconto, Usuario usuario);	
+
 	/**
 	 * Método que retorna uma coleção com as cotas relacionadas ao tipo de desconto especificado.
 	 * 
@@ -90,5 +94,27 @@ public interface DescontoService {
 	 * @return - List<CotaDescontoProdutoDTO> - As cotas relacionadas.
 	 */
 	List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao);
+	
+	void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, BigDecimal valorDesconto);
+	
+	void processarDescontoDistribuidor(BigDecimal valorDesconto);
+	
+	void processarDescontoCota(Cota cota,Set<Fornecedor> fornecedores, BigDecimal valorDesconto);
+	
+	void processarDescontoCota(Cota cota,BigDecimal valorDesconto);
+	
+	void processarDescontoProduto(Set<ProdutoEdicao> produtos,Set<Cota> cotas, BigDecimal valorDesconto);
+	
+	void processarDescontoProduto(ProdutoEdicao produto,BigDecimal valorDesconto);
+	
+	/**
+	 * Método que retorna uma coleção de dados referentes aos tipos de desconto por produto cadastrados
+	 * para determinada cota.
+	 * 
+	 * @param idCota - ID da Cota.
+	 * 
+	 * @return - List<TipoDescontoProdutoDTO>.
+	 */
+	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota);
 }
 	

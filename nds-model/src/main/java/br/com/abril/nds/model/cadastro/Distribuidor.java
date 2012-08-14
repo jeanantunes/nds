@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -178,7 +179,7 @@ public class Distribuidor {
 	/**
 	 * Parametrização do contrato entre cota e distribuidor
 	 */
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
@@ -233,7 +234,7 @@ public class Distribuidor {
 	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO", nullable = true)
 	private String informacoesComplementaresProcuracao;
 
-	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = true)
+	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = false)
 	private boolean utilizaGarantiaPdv;	
 
 	@Column(name = "PARCELAMENTO_DIVIDAS", nullable = true)
@@ -259,6 +260,9 @@ public class Distribuidor {
 	 */
 	@Column(name="DESCONTO_COTA_PARA_NEGOCIACAO")
 	private BigDecimal descontoCotaNegociacao;
+	
+	@Embedded
+	private ParametroEntregaBanca parametroEntregaBanca;
 	
 	public Long getId() {
 		return id;
@@ -759,5 +763,20 @@ public class Distribuidor {
 	public void setDescontoCotaNegociacao(BigDecimal descontoCotaNegociacao) {
 		this.descontoCotaNegociacao = descontoCotaNegociacao;
 	}
+
+    /**
+     * @return the parametroEntregaBanca
+     */
+    public ParametroEntregaBanca getParametroEntregaBanca() {
+        return parametroEntregaBanca;
+    }
+
+    /**
+     * @param parametroEntregaBanca the parametroEntregaBanca to set
+     */
+    public void setParametroEntregaBanca(ParametroEntregaBanca parametroEntregaBanca) {
+        this.parametroEntregaBanca = parametroEntregaBanca;
+    }
+	
 	
 }

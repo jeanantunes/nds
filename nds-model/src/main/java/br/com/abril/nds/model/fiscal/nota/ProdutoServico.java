@@ -60,7 +60,7 @@ public class ProdutoServico implements Serializable {
 	 * cEAN
 	 */
 	@Column(name="CODIGO_BARRAS", length=14, nullable=false)
-	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=1, tamanho=14), @NFEExport(secao=TipoSecao.I, posicao=11, tamanho=14)})
+	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=1, tamanho=14), @NFEExport(secao=TipoSecao.I, posicao=10, tamanho=14)})
 	private Long codigoBarras;
 	
 	/**
@@ -88,28 +88,28 @@ public class ProdutoServico implements Serializable {
 	 * CFOP
 	 */
 	@Column(name="CFOP", length=4, nullable=false)
-	@NFEExport(secao=TipoSecao.I, posicao=6, tamanho=4)
+	@NFEExport(secao=TipoSecao.I, posicao=5, tamanho=4)
 	private Integer cfop;
 	
 	/**
 	 * uCom
 	 */
 	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false)
-	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=7, tamanho=6),@NFEExport(secao=TipoSecao.I, posicao=12, tamanho=6)})
+	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=6, tamanho=6),@NFEExport(secao=TipoSecao.I, posicao=11, tamanho=6)})
 	private String unidade;
 	
 	/**
 	 * qCom
 	 */
 	@Column(name="QUANTIDADE_COMERCIAL", precision=15, scale=2 , nullable=false)
-	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=12)})
+	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=7, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=12, tamanho=12)})
 	private BigInteger quantidade;
 	
 	/**
 	 * vUnCom
 	 */
 	@Column(name="VALOR_UNITARIO_COMERCIAL",precision=21, scale=2 , nullable=false)
-	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=9, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=14, tamanho=16)})
+	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=16)})
 	private BigDecimal valorUnitario;
 	
 	/**
@@ -122,21 +122,21 @@ public class ProdutoServico implements Serializable {
 	 * vFrete
 	 */
 	@Column(name="VALOR_FRETE", precision=15, scale=2, nullable=true)
-	@NFEExport(secao=TipoSecao.I, posicao=15, tamanho=15)
+	@NFEExport(secao=TipoSecao.I, posicao=14, tamanho=15)
 	private BigDecimal valorFrete;
 	
 	/**
 	 * vSeg
 	 */
 	@Column(name="VALOR_SERGURO", precision=15, scale=2, nullable=true)
-	@NFEExport(secao=TipoSecao.I, posicao=16, tamanho=15)
+	@NFEExport(secao=TipoSecao.I, posicao=15, tamanho=15)
 	private BigDecimal valorSeguro;
 	
 	/**
 	 * vDesc
 	 */
 	@Column(name="VALOR_DESCONTO", precision=15, scale=2, nullable=true)
-	@NFEExport(secao=TipoSecao.I, posicao=17, tamanho=15)
+	@NFEExport(secao=TipoSecao.I, posicao=16, tamanho=15)
 	private BigDecimal valorDesconto;
 	
 	/**

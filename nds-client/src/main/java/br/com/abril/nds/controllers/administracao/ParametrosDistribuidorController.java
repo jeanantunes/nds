@@ -10,13 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -48,6 +51,9 @@ public class ParametrosDistribuidorController {
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 
+	@Autowired 
+	private GrupoService grupoService;
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR)
 	public void index() {
@@ -98,6 +104,12 @@ public class ParametrosDistribuidorController {
 		distribuicaoFornecedorService.gravarAtualizarDadosFornecedor(listaFornecedoresLancamento, listaDiasLancamento, listaDiasRecolhimento, distribuidor);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor cadastrado com sucesso"),"result").recursive().serialize();
 	}
+	
+	@Post
+	public void cadastrarOperacaoDiferenciada(String nomeDiferenca, List<DiaSemana> diasSemana){
+		
+		result.use(Results.json()).from("").serialize();
+	}
 
 	/**
 	 * Valida os dados selecionados ao inserir dados de dias de distribuição por fornecedor
@@ -137,6 +149,41 @@ public class ParametrosDistribuidorController {
             erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
         }
 	    
+	    if (vo.isUtilizaContratoComCotas() && vo.getPrazoContrato() == null) {
+	        erros.add("É necessário informar o Prazo do Contrato!");
+	    }
+	    
+	    if (vo.isUtilizaGarantiaPdv() && !vo.isGarantiasUtilizadas()) {
+	        erros.add("É necessário selecionar pelo menos uma Garantia!");
+	    }
+	    
+	    if (vo.isUtilizaChequeCaucao() && vo.getValidadeChequeCaucao() == null) {
+	        erros.add("É necessário informar a Validade da Garantia Cheque Caução!");
+	    }
+	    
+	    if (vo.isUtilizaCaucaoLiquida() && vo.getValidadeCaucaoLiquida() == null) {
+            erros.add("É necessário informar a Validade da Garantia Caução Líquida!");
+        }
+	    
+	    if (vo.isUtilizaFiador() && vo.getValidadeFiador() == null) {
+            erros.add("É necessário informar a Validade da Garantia Fiador!");
+        }
+	    
+	    if (vo.isUtilizaNotaPromissoria() && vo.getValidadeNotaPromissoria() == null) {
+            erros.add("É necessário informar a Validade da Garantia Nota Promissória!");
+        }
+	    
+	    if (vo.isUtilizaImovel() && vo.getValidadeImovel() == null) {
+            erros.add("É necessário informar a Validade da Garantia Imóvel!");
+        }
+	    
+	    if (vo.isUtilizaAntecedenciaValidade() && vo.getValidadeAntecedenciaValidade() == null) {
+            erros.add("É necessário informar a Validade da Garantia Antecedência da Validade!");
+        }
+	    
+	    if (vo.isUtilizaOutros() && vo.getValidadeOutros() == null) {
+            erros.add("É necessário informar a Validade da Garantia Outros!");
+        }
 	    verificarExistenciaErros(erros);
 	}
 
@@ -150,5 +197,29 @@ public class ParametrosDistribuidorController {
             throw new ValidacaoException(validacaoVO);
         }
     }
+	
+	/**
+	 * Busca todos os Grupos de Cota
+	 */
+	@Post
+	public void obterGrupos() {
+			
+		List<GrupoCotaDTO> grupos = this.grupoService.obterTodosGrupos();
+		
+		result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();
+				
+	}
+	
+	/**
+	 * Excluir Grupo
+	 * @param idGrupo
+	 */
+	public void excluirGrupo(Long idGrupo)  {
+		
+		grupoService.excluirGrupo(idGrupo);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+	}
+	
 	
 }

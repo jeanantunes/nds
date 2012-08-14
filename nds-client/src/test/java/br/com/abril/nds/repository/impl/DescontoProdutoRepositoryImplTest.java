@@ -52,6 +52,8 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 	
 	private DescontoProduto descontoProdutoSuperInteressante;
 	
+	private static Cota cota;
+	
 	@Before
 	public void setup() {
 		
@@ -77,12 +79,14 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		
 		Set<Cota> cotas = new LinkedHashSet<Cota>();
 		
+		cota = Fixture.cota(123, abril, SituacaoCadastro.ATIVO, null);
 		Cota cota1 = Fixture.cota(123, abril, SituacaoCadastro.ATIVO, null);
 		Cota cota2 = Fixture.cota(1234, abril, SituacaoCadastro.ATIVO, null);
 		Cota cota3 = Fixture.cota(12345, abril, SituacaoCadastro.ATIVO, null);
 		
-		save(cota1, cota2, cota3);
+		save(cota, cota1, cota2, cota3);
 		
+		cotas.add(cota);
 		cotas.add(cota1);
 		cotas.add(cota2);
 		cotas.add(cota3);
@@ -114,9 +118,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoQuatroRodas.setProdutoEdicao(produtoEdicaoQuatroRodas);
 		descontoProdutoQuatroRodas.setUsuario(usuario);
 		
-		save(produtoQuatroRodas, produtoEdicaoQuatroRodas);
-		
-		this.descontoProdutoQuatroRodas = merge(descontoProdutoQuatroRodas);
+		save(produtoQuatroRodas, produtoEdicaoQuatroRodas, descontoProdutoQuatroRodas);
 		
 		/* Produto de código 3 */
 		Produto produtoInfoExame = Fixture.produtoInfoExame(tipoProduto);
@@ -133,9 +135,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoInfoExame.setProdutoEdicao(produtoEdicaoInfoExame);
 		descontoProdutoInfoExame.setUsuario(usuario);
 		
-		save(produtoInfoExame, produtoEdicaoInfoExame);
-		
-		this.descontoProdutoInfoExame = merge(descontoProdutoInfoExame);
+		save(produtoInfoExame, produtoEdicaoInfoExame, descontoProdutoInfoExame);
 		
 		/* Produto de código 4 */
 		Produto produtoCapricho = Fixture.produtoCapricho(tipoProduto);
@@ -152,9 +152,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoCapricho.setProdutoEdicao(produtoEdicaoCapricho);
 		descontoProdutoCapricho.setUsuario(usuario);
 		
-		save(produtoCapricho, produtoEdicaoCapricho);
-		
-		this.descontoProdutoCapricho = merge(descontoProdutoCapricho);
+		save(produtoCapricho, produtoEdicaoCapricho, descontoProdutoCapricho);
 		
 		/* Produto de código 5 */
 		Produto produtoSuperInteressante = Fixture.produtoSuperInteressante(tipoProduto);
@@ -171,9 +169,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoSuperInteressante.setProdutoEdicao(produtoEdicaoSuperInteressante);
 		descontoProdutoSuperInteressante.setUsuario(usuario);
 		
-		save(produtoSuperInteressante, produtoEdicaoSuperInteressante);
-		
-		this.descontoProdutoSuperInteressante = merge(descontoProdutoSuperInteressante);
+		save(produtoSuperInteressante, produtoEdicaoSuperInteressante, descontoProdutoSuperInteressante);
 	}
 
 	@Test
@@ -281,10 +277,23 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		List<CotaDescontoProdutoDTO> cotas = 
 				this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(this.descontoProdutoVeja.getId(), ordenacao);
 
-		int expectedSize = 3;
+		int expectedSize = 4;
 		int actualSize = cotas.size();
 		
 		Assert.assertNotNull(cotas);
+		Assert.assertEquals(expectedSize, actualSize);
+	}
+	
+	@Test
+	public void obterTipoDescontoProdutoPorCota() {
+		
+		List<TipoDescontoProdutoDTO> descontosProduto = 
+				this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(cota.getId());
+
+		int expectedSize = 1;
+		int actualSize = descontosProduto.size();
+		
+		Assert.assertNotNull(descontosProduto);
 		Assert.assertEquals(expectedSize, actualSize);
 	}
 }

@@ -143,4 +143,41 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		
 		return query.list();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select produtoEdicao.codigo as codigoProduto, ");
+		hql.append(" produtoEdicao.nomeComercial as nomeProduto, ");
+		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
+		hql.append(" descontoProduto.desconto as desconto, ");
+		hql.append(" descontoProduto.dataAlteracao as dataAlteracao, ");
+		hql.append(" usuario.nome as nomeUsuario ");
+		hql.append(" from DescontoProduto as descontoProduto ");
+		hql.append(" join descontoProduto.produtoEdicao as produtoEdicao ");
+		hql.append(" join descontoProduto.cotas as cota ");
+		hql.append(" join descontoProduto.usuario as usuario ");
+		
+		if (idCota!=null){
+		    hql.append(" where cota.id = :idCota ");
+		}
+		
+		hql.append(" order by descontoProduto.dataAlteracao ");
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		if (idCota!=null){
+		    query.setParameter("idCota", idCota);
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(TipoDescontoProdutoDTO.class));
+		
+		return query.list();
+	}
 }

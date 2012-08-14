@@ -44,11 +44,20 @@
           <table width="335" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td width="143">Utiliza Garantia para PDVs?</td>
-              <td width="192"><input type="checkbox" id="checkUtilizaGarantiaPdv"
-                onclick="javascript:mostraTabelaGarantiasAceitas();" /></td>
+              <td width="192">
+                <c:if test="${parametrosDistribuidor.utilizaGarantiaPdv}">
+                  <input type="checkbox" id="utilizaGarantiaPdv" name="parametrosDistribuidor.utilizaGarantiaPdv"
+                        onclick="mostraTabelaGarantiasAceitas();" checked="checked" />
+                </c:if>
+                <c:if test="${not parametrosDistribuidor.utilizaGarantiaPdv}">
+                  <input type="checkbox" id="utilizaGarantiaPdv" name="parametrosDistribuidor.utilizaGarantiaPdv"
+                        onclick="mostraTabelaGarantiasAceitas();" />
+                </c:if>           
+              </td>
             </tr>
           </table>
-          <table width="335" border="0" cellspacing="1" cellpadding="1" id="tabelaGarantiasAceitas" style="display: none;">
+          <table width="335" border="0" cellspacing="1" cellpadding="1" id="tabelaGarantiasAceitas" 
+                style="${not parametrosDistribuidor.utilizaGarantiaPdv ? 'display: none;' : ''}">
             <tr class="header_table">
               <td>&nbsp;</td>
               <td>Garantia</td>
@@ -66,9 +75,17 @@
                 </c:if>
               </td>
               <td width="201">Cheque Caução</td>
-              <td width="104"><input name="parametrosDistribuidor.validadeChequeCaucao" type="text"
-                style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeChequeCaucao}" 
-                id="validadeChequeCaucao" disabled="${parametrosDistribuidor.utilizaChequeCaucao ? '' : 'disabled'}" />
+              <td width="104">
+                <c:if test="${parametrosDistribuidor.utilizaChequeCaucao}">
+                  <input name="parametrosDistribuidor.validadeChequeCaucao" type="text"
+                         style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeChequeCaucao}" 
+                         id="validadeChequeCaucao"/>
+                </c:if>
+                <c:if test="${not parametrosDistribuidor.utilizaChequeCaucao}">
+                  <input name="parametrosDistribuidor.validadeChequeCaucao" type="text"
+                         style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeChequeCaucao}" 
+                         id="validadeChequeCaucao" disabled="disabled"/>
+                </c:if>    
               </td>
             </tr>
             <tr class="class_linha_2">
@@ -83,9 +100,16 @@
                 </c:if>
               </td>
               <td>Caução Líquida</td>
-              <td><input name="parametrosDistribuidor.validadeCaucaoLiquida" type="text" style="float: left; width: 60px;"
-                value="${parametrosDistribuidor.validadeCaucaoLiquida}" id="validadeCaucaoLiquida"
-                disabled="${parametrosDistribuidor.utilizaCaucaoLiquida ? '' : 'disabled'}" /></td>
+              <td>
+                <c:if test="${parametrosDistribuidor.utilizaCaucaoLiquida}">
+                    <input name="parametrosDistribuidor.validadeCaucaoLiquida" type="text" style="float: left; width: 60px;"
+                      value="${parametrosDistribuidor.validadeCaucaoLiquida}" id="validadeCaucaoLiquida"/>
+                </c:if>
+                 <c:if test="${not parametrosDistribuidor.utilizaCaucaoLiquida}">
+                    <input name="parametrosDistribuidor.validadeCaucaoLiquida" type="text" style="float: left; width: 60px;"
+                      value="${parametrosDistribuidor.validadeCaucaoLiquida}" id="validadeCaucaoLiquida" disabled="disabled"/>
+                </c:if>            
+             </td>
             </tr>
             <tr class="class_linha_2">
               <td>
@@ -99,9 +123,16 @@
                 </c:if>
               </td>
               <td>Fiador</td>
-              <td><input name="parametrosDistribuidor.validadeFiador" type="text" style="float: left; width: 60px;"
-                id="validadeFiador" value="${parametrosDistribuidor.validadeFiador}"
-                disabled="${parametrosDistribuidor.utilizaFiador ? '' : 'disabled'}" /></td>
+              <td>
+                  <c:if test="${parametrosDistribuidor.utilizaFiador}">
+                      <input name="parametrosDistribuidor.validadeFiador" type="text" style="float: left; width: 60px;"
+                          id="validadeFiador" value="${parametrosDistribuidor.validadeFiador}" />
+                  </c:if>
+                   <c:if test="${not parametrosDistribuidor.utilizaFiador}">
+                      <input name="parametrosDistribuidor.validadeFiador" type="text" style="float: left; width: 60px;"
+                          id="validadeFiador" value="${parametrosDistribuidor.validadeFiador}" disabled="disabled" />
+                  </c:if>           
+              </td>
             </tr>
             <tr class="class_linha_1">
               <td>
@@ -115,9 +146,17 @@
                 </c:if>
               </td>
               <td>Nota Promissória</td>
-              <td><input name="parametrosDistribuidor.validadeNotaPromissoria" type="text" style="float: left; width: 60px;"
-                id="validadeNotaPromissoria" value="${parametrosDistribuidor.validadeNotaPromissoria}"
-                disabled="${parametrosDistribuidor.utilizaNotaPromissoria ? '' : 'disabled'}" /></td>
+              <td>
+                <c:if test="${parametrosDistribuidor.utilizaNotaPromissoria}">
+                    <input name="parametrosDistribuidor.validadeNotaPromissoria" type="text" style="float: left; width: 60px;"
+                      id="validadeNotaPromissoria" value="${parametrosDistribuidor.validadeNotaPromissoria}"/>
+                </c:if>  
+                 <c:if test="${not parametrosDistribuidor.utilizaNotaPromissoria}">
+                    <input name="parametrosDistribuidor.validadeNotaPromissoria" type="text" style="float: left; width: 60px;"
+                      id="validadeNotaPromissoria" value="${parametrosDistribuidor.validadeNotaPromissoria}" disabled="disabled"/>
+                </c:if>      
+                    
+              </td>
             </tr>
             <tr class="class_linha_2">
               <td>
@@ -131,9 +170,16 @@
                 </c:if>
                </td>
               <td>Imóvel</td>
-              <td><input name="parametrosDistribuidor.validadeImovel" type="text" style="float: left; width: 60px;"
-                          id="validadeImovel" value="${parametrosDistribuidor.validadeImovel}"
-                          disabled="${parametrosDistribuidor.utilizaImovel ? '' : 'disabled'}"/></td>
+              <td>
+                  <c:if test="${parametrosDistribuidor.utilizaImovel}">
+                      <input name="parametrosDistribuidor.validadeImovel" type="text" style="float: left; width: 60px;"
+                          id="validadeImovel" value="${parametrosDistribuidor.validadeImovel}"/>
+                  </c:if>
+                  <c:if test="${not parametrosDistribuidor.utilizaImovel}">
+                      <input name="parametrosDistribuidor.validadeImovel" type="text" style="float: left; width: 60px;"
+                          id="validadeImovel" value="${parametrosDistribuidor.validadeImovel}" disabled="disabled"/>
+                  </c:if>                
+              </td>
             </tr>
             <tr class="class_linha_1">
               <td>
@@ -147,10 +193,18 @@
                 </c:if>
               </td>
               <td>Antecedência da Validade</td>
-              <td><input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
-                style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
-                disabled="${parametrosDistribuidor.utilizaAntecedenciaValidade ? '' : 'disabled'}"
-                id="validadeAntecedenciaValidade" /></td>
+              <td>
+                  <c:if test="${parametrosDistribuidor.utilizaAntecedenciaValidade}">
+                      <input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
+                          style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
+                          id="validadeAntecedenciaValidade" />
+                  </c:if>
+                  <c:if test="${not parametrosDistribuidor.utilizaAntecedenciaValidade}">
+                      <input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
+                          style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
+                          id="validadeAntecedenciaValidade" disabled="disabled" />
+                  </c:if>        
+              </td>
             </tr>
             <tr class="class_linha_2">
               <td>
@@ -164,10 +218,16 @@
                 </c:if>
               </td>
               <td>Outros</td>
-              <td><input name="parametrosDistribuidor.validadeOutros" type="text" style="float: left; width: 60px;"
-                value="${parametrosDistribuidor.validadeOutros}" 
-                disabled="${parametrosDistribuidor.utilizaOutros ? '' : 'disabled'}"
-                id="validadeOutros" /></td>
+              <td>
+                <c:if test="${parametrosDistribuidor.utilizaOutros}">
+                   <input name="parametrosDistribuidor.validadeOutros" type="text" style="float: left; width: 60px;"
+                          value="${parametrosDistribuidor.validadeOutros}"  id="validadeOutros" />
+                </c:if>
+                <c:if test="${not parametrosDistribuidor.utilizaOutros}">
+                   <input name="parametrosDistribuidor.validadeOutros" type="text" style="float: left; width: 60px;"
+                          value="${parametrosDistribuidor.validadeOutros}"  id="validadeOutros" disabled="disabled" />
+                </c:if>
+                </td>
             </tr>
           </table>
         </fieldset>
@@ -225,8 +285,8 @@
               <td colspan="2">Informações complementares do Termo de Adesão:</td>
             </tr>
             <tr>
-              <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresTermoAdesaoEntregaBancas"
-                  rows="4" id="informacoesComplementaresTermoAdesaoEntregaBancas" style="width: 150px;"></textarea></td>
+              <td colspan="2"><textarea name="parametrosDistribuidor.complementoTermoAdesaoEntregaBancas"
+                  rows="4" id="complementoTermoAdesaoEntregaBancas" style="width: 150px;"></textarea></td>
             </tr>
           </table>
         </fieldset>
