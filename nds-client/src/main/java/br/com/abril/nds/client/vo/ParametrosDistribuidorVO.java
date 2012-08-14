@@ -193,25 +193,9 @@ public class ParametrosDistribuidorVO {
 
 	private String aprovacaoSobraEm;
 
-	private String prazoFollowUp;
+	private Integer prazoFollowUp;
 	
-	private String prazoFollowUpFaltaDe;
-	
-	private String prazoFollowUpSobraDe;
-	
-	private String prazoFollowUpFaltaEm;
-
-	private String prazoFollowUpSobraEm;
-	
-	private String prazoAvisoPrevioValidadeGarantia;
-
-	private String prazoAvisoPrevioValidadeGarantiaFaltaDe;
-	
-	private String prazoAvisoPrevioValidadeGarantiaSobraDe;
-	
-	private String prazoAvisoPrevioValidadeGarantiaFaltaEm;
-
-	private String prazoAvisoPrevioValidadeGarantiaSobraEm;
+	private Integer prazoAvisoPrevioValidadeGarantia;
 	
 	private Integer chamadaoDiasSuspensao;
 	
@@ -895,89 +879,21 @@ public class ParametrosDistribuidorVO {
 		this.aprovacaoSobraEm = aprovacaoSobraEm;
 	}
 
-	public String getPrazoFollowUp() {
+	public Integer getPrazoFollowUp() {
 		return prazoFollowUp;
 	}
 
-	public void setPrazoFollowUp(String prazoFollowUp) {
+	public void setPrazoFollowUp(Integer prazoFollowUp) {
 		this.prazoFollowUp = prazoFollowUp;
 	}
 
-	public String getPrazoFollowUpFaltaDe() {
-		return prazoFollowUpFaltaDe;
-	}
-
-	public void setPrazoFollowUpFaltaDe(String prazoFollowUpFaltaDe) {
-		this.prazoFollowUpFaltaDe = prazoFollowUpFaltaDe;
-	}
-
-	public String getPrazoFollowUpSobraDe() {
-		return prazoFollowUpSobraDe;
-	}
-
-	public void setPrazoFollowUpSobraDe(String prazoFollowUpSobraDe) {
-		this.prazoFollowUpSobraDe = prazoFollowUpSobraDe;
-	}
-
-	public String getPrazoFollowUpFaltaEm() {
-		return prazoFollowUpFaltaEm;
-	}
-
-	public void setPrazoFollowUpFaltaEm(String prazoFollowUpFaltaEm) {
-		this.prazoFollowUpFaltaEm = prazoFollowUpFaltaEm;
-	}
-
-	public String getPrazoFollowUpSobraEm() {
-		return prazoFollowUpSobraEm;
-	}
-
-	public void setPrazoFollowUpSobraEm(String prazoFollowUpSobraEm) {
-		this.prazoFollowUpSobraEm = prazoFollowUpSobraEm;
-	}
-
-	public String getPrazoAvisoPrevioValidadeGarantia() {
+	public Integer getPrazoAvisoPrevioValidadeGarantia() {
 		return prazoAvisoPrevioValidadeGarantia;
 	}
 
 	public void setPrazoAvisoPrevioValidadeGarantia(
-			String prazoAvisoPrevioValidadeGarantia) {
+			Integer prazoAvisoPrevioValidadeGarantia) {
 		this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
-	}
-
-	public String getPrazoAvisoPrevioValidadeGarantiaFaltaDe() {
-		return prazoAvisoPrevioValidadeGarantiaFaltaDe;
-	}
-
-	public void setPrazoAvisoPrevioValidadeGarantiaFaltaDe(
-			String prazoAvisoPrevioValidadeGarantiaFaltaDe) {
-		this.prazoAvisoPrevioValidadeGarantiaFaltaDe = prazoAvisoPrevioValidadeGarantiaFaltaDe;
-	}
-
-	public String getPrazoAvisoPrevioValidadeGarantiaSobraDe() {
-		return prazoAvisoPrevioValidadeGarantiaSobraDe;
-	}
-
-	public void setPrazoAvisoPrevioValidadeGarantiaSobraDe(
-			String prazoAvisoPrevioValidadeGarantiaSobraDe) {
-		this.prazoAvisoPrevioValidadeGarantiaSobraDe = prazoAvisoPrevioValidadeGarantiaSobraDe;
-	}
-
-	public String getPrazoAvisoPrevioValidadeGarantiaFaltaEm() {
-		return prazoAvisoPrevioValidadeGarantiaFaltaEm;
-	}
-
-	public void setPrazoAvisoPrevioValidadeGarantiaFaltaEm(
-			String prazoAvisoPrevioValidadeGarantiaFaltaEm) {
-		this.prazoAvisoPrevioValidadeGarantiaFaltaEm = prazoAvisoPrevioValidadeGarantiaFaltaEm;
-	}
-
-	public String getPrazoAvisoPrevioValidadeGarantiaSobraEm() {
-		return prazoAvisoPrevioValidadeGarantiaSobraEm;
-	}
-
-	public void setPrazoAvisoPrevioValidadeGarantiaSobraEm(
-			String prazoAvisoPrevioValidadeGarantiaSobraEm) {
-		this.prazoAvisoPrevioValidadeGarantiaSobraEm = prazoAvisoPrevioValidadeGarantiaSobraEm;
 	}
 
     /**
