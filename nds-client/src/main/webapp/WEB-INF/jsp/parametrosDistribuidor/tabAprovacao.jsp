@@ -5,7 +5,8 @@
 			<tr>
 				<td width="23"><input
 					name="parametrosDistribuidor.utilizaControleAprovacao"
-					id="utilizaControleAprovacao" type="checkbox" ${parametrosDistribuidor.utilizaControleAprovacao ? "checked" : ""} /></td>
+					id="utilizaControleAprovacao" type="checkbox" ${parametrosDistribuidor.utilizaControleAprovacao ? "checked" : ""} 
+					onclick="alternarControleAprovacao();" /></td>
 				<td width="190">Utiliza Controle de Aprovação?</td>
 				<td width="20">&nbsp;</td>
 				<td width="178">&nbsp;</td>
@@ -17,7 +18,7 @@
 				<td>&nbsp;</td>
 			</tr>
 		</table>
-		<table width="451" border="0" cellspacing="0" cellpadding="0">
+		<table width="451" border="0" cellspacing="0" cellpadding="0" id="controlesAprovacao">
 			<tr>
 				<td colspan="6">Para as Funcionalidades:</td>
 			</tr>
