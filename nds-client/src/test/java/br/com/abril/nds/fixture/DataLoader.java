@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
@@ -47,6 +49,7 @@ import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
@@ -102,6 +105,7 @@ import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -1007,10 +1011,40 @@ public class DataLoader {
 		criarDescontoProduto(session);
 
 		gerarDescontoCota(session);
+		
+		gerarGrupos(session);
 
 	}
 
 	
+	private static void gerarGrupos(Session session) {
+		
+		Set<DiaSemana> diasGrupo1 = EnumSet.of(DiaSemana.DOMINGO,DiaSemana.QUARTA_FEIRA);
+		
+		GrupoCota grupo1 = Fixture.criarGrupoCota(
+				null,
+				"Grupo 1",
+				TipoGrupo.TIPO_COTA,
+				diasGrupo1,
+				TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL,
+				null,
+				null);
+		save(session, grupo1);
+		
+		Set<DiaSemana> diasGrupo2 = EnumSet.of(DiaSemana.SABADO,DiaSemana.SEXTA_FEIRA);
+		
+		GrupoCota grupo2 = Fixture.criarGrupoCota(
+				null,
+				"Grupo 2",
+				TipoGrupo.TIPO_COTA,
+				diasGrupo2,
+				TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL,
+				null,
+				null);
+		save(session, grupo2);
+		
+	}
+
 	private static void gerarDescontoDistribuidorParaFornecedor(Session session) {
 		
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();

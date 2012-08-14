@@ -10,6 +10,17 @@ public class GrupoCotaDTO implements Serializable {
 	private String nome;
 	private String recolhimento;
 	
+	public GrupoCotaDTO() {
+		
+	}
+	
+	public GrupoCotaDTO(Long idGrupo, String nome, String recolhimento) {
+		super();
+		this.idGrupo = idGrupo;
+		this.nome = nome;
+		this.recolhimento = recolhimento;
+	}
+
 	/**
 	 * @return the idGrupo
 	 */

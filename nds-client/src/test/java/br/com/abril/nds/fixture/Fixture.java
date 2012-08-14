@@ -14,6 +14,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
@@ -3322,4 +3324,22 @@ public class Fixture {
 		
 		return descontoReturn;
 	}
+
+	public static GrupoCota criarGrupoCota(Long id, String nome, TipoGrupo tipoGrupo,
+			Set<DiaSemana> diasRecolhimento,
+			TipoCaracteristicaSegmentacaoPDV tipoCota,
+			Set<Localidade> municipios, Set<Cota> cotas) {
+		
+		GrupoCota grupo = new GrupoCota();
+		
+		grupo.setCotas(cotas);
+		grupo.setDiasRecolhimento(diasRecolhimento);
+		grupo.setId(id);
+		grupo.setMunicipios(municipios);
+		grupo.setNome(nome);
+		grupo.setTipoCota(tipoCota);
+		grupo.setTipoGrupo(tipoGrupo);
+		
+		return grupo;
+	}	
 }
