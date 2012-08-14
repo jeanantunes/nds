@@ -1056,25 +1056,25 @@ public class DataLoader {
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		fornecedores.add(fornecedorAcme);
 		fornecedores.add(fornecedorDinap);
-		DescontoDistribuidor desconto1 = Fixture.descontoDistribuidor(new BigDecimal(2), distribuidor, fornecedores , usuarioJoao);
+		DescontoDistribuidor desconto1 = Fixture.descontoDistribuidor(new BigDecimal(2), distribuidor, fornecedores , usuarioJoao, new Date());
 		
 		Set<Fornecedor> fornecedores1 = new HashSet<Fornecedor>();
 		fornecedores1.add(fornecedorAcme);
 		fornecedores1.add(fornecedorDinap);
-		DescontoDistribuidor desconto2 = Fixture.descontoDistribuidor(new BigDecimal(3), distribuidor, fornecedores1 , usuarioJoao);
+		DescontoDistribuidor desconto2 = Fixture.descontoDistribuidor(new BigDecimal(3), distribuidor, fornecedores1 , usuarioJoao, DateUtil.adicionarDias(new Date(), -2));
 		
 		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
 		fornecedores2.add(fornecedorAcme);
-		DescontoDistribuidor desconto3 = Fixture.descontoDistribuidor(new BigDecimal(5), distribuidor, fornecedores2 , usuarioJoao);
+		DescontoDistribuidor desconto3 = Fixture.descontoDistribuidor(new BigDecimal(5), distribuidor, fornecedores2 , usuarioJoao,DateUtil.adicionarDias(new Date(), -3));
 		
 		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
 		fornecedores3.add(fornecedorDinap);
-		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(6), distribuidor, fornecedores3 , usuarioJoao);
+		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(6), distribuidor, fornecedores3 , usuarioJoao,DateUtil.adicionarDias(new Date(), -4));
 		
 		Set<Fornecedor> fornecedores4 = new HashSet<Fornecedor>();
 		fornecedores4.add(fornecedorAcme);
 		fornecedores4.add(fornecedorDinap);
-		DescontoDistribuidor desconto5 = Fixture.descontoDistribuidor(new BigDecimal(7), distribuidor, fornecedores4, usuarioJoao);
+		DescontoDistribuidor desconto5 = Fixture.descontoDistribuidor(new BigDecimal(7), distribuidor, fornecedores4, usuarioJoao,DateUtil.adicionarDias(new Date(), -5));
 		
 		save(session,desconto1,desconto2,desconto3,desconto4,desconto5);
 	}
@@ -1089,18 +1089,18 @@ public class DataLoader {
 		
 		Set<Fornecedor> fornecedores1 = new HashSet<Fornecedor>();
 		fornecedores1.add(fornecedorAcme);
-		DescontoCota desconto1 = Fixture.descontoCota(new BigDecimal(2), distribuidor, cotaManoel, fornecedores1, usuario);
+		DescontoCota desconto1 = Fixture.descontoCota(new BigDecimal(2), distribuidor, cotaManoel, fornecedores1, usuario, DateUtil.adicionarDias(new Date(), 0));
 		
 		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
 		fornecedores2.add(fornecedorAcme);
 		fornecedores2.add(fornecedorDinap);
-		DescontoCota desconto2 = Fixture.descontoCota(new BigDecimal(3), distribuidor, cotaManoel, fornecedores2, usuario);
+		DescontoCota desconto2 = Fixture.descontoCota(new BigDecimal(3), distribuidor, cotaManoel, fornecedores2, usuario,DateUtil.adicionarDias(new Date(), -1));
 		
 		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
 		fornecedores3.add(fornecedorAcme);
 		fornecedores3.add(fornecedorDinap);
 		fornecedores3.add(fornecedorFc);
-		DescontoCota desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cotaManoelCunha, fornecedores3, usuario);
+		DescontoCota desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cotaManoelCunha, fornecedores3, usuario,DateUtil.adicionarDias(new Date(), -2));
 		
 		save(session,desconto1,desconto2,desconto3);
 	}
@@ -11104,7 +11104,7 @@ public class DataLoader {
 		cotas.add(cotaLuis);
 		
 		DescontoProduto descontoProdutoQuatroRodas = new DescontoProduto();
-		descontoProdutoQuatroRodas.setDataAlteracao(new Date());
+		descontoProdutoQuatroRodas.setDataAlteracao(DateUtil.adicionarDias(new Date(), -2));
 		descontoProdutoQuatroRodas.setCotas(cotas);
 		descontoProdutoQuatroRodas.setDesconto(new BigDecimal(44.30));
 		descontoProdutoQuatroRodas.setDistribuidor(distribuidor);
@@ -11117,7 +11117,7 @@ public class DataLoader {
 		cotas.add(cotaManoelCunha);
 		
 		DescontoProduto descontoProdutoInfoExame = new DescontoProduto();
-		descontoProdutoInfoExame.setDataAlteracao(new Date());
+		descontoProdutoInfoExame.setDataAlteracao(DateUtil.adicionarDias(new Date(), -3));
 		descontoProdutoInfoExame.setCotas(cotas);
 		descontoProdutoInfoExame.setDesconto(new BigDecimal(4.50));
 		descontoProdutoInfoExame.setDistribuidor(distribuidor);
@@ -11131,7 +11131,7 @@ public class DataLoader {
 		cotas.add(cotaMariana);
 		
 		DescontoProduto descontoProdutoCapricho = new DescontoProduto();
-		descontoProdutoCapricho.setDataAlteracao(new Date());
+		descontoProdutoCapricho.setDataAlteracao(DateUtil.adicionarDias(new Date(), -4));
 		descontoProdutoCapricho.setCotas(cotas);
 		descontoProdutoCapricho.setDesconto(new BigDecimal(5.11));
 		descontoProdutoCapricho.setDistribuidor(distribuidor);
@@ -11145,7 +11145,7 @@ public class DataLoader {
 		cotas.add(cotaLuis);
 		
 		DescontoProduto descontoProdutoSuperInteressante = new DescontoProduto();
-		descontoProdutoSuperInteressante.setDataAlteracao(new Date());
+		descontoProdutoSuperInteressante.setDataAlteracao(DateUtil.adicionarDias(new Date(), -6));
 		descontoProdutoSuperInteressante.setCotas(cotas);
 		descontoProdutoSuperInteressante.setDesconto(new BigDecimal(13.22));
 		descontoProdutoSuperInteressante.setDistribuidor(distribuidor);

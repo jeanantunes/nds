@@ -3302,11 +3302,11 @@ public class Fixture {
 		
 	}
 	
-	public static DescontoDistribuidor descontoDistribuidor(BigDecimal desconto, Distribuidor distribuidor, Set<Fornecedor> fornecedores,Usuario usuario ){
+	public static DescontoDistribuidor descontoDistribuidor(BigDecimal desconto, Distribuidor distribuidor, Set<Fornecedor> fornecedores,Usuario usuario, Date dataAtualizacao ){
 		
 		DescontoDistribuidor descontoReturn = new DescontoDistribuidor();
 		descontoReturn.setDesconto(desconto);
-		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setDataAlteracao(dataAtualizacao);
 		descontoReturn.setDistribuidor(distribuidor);
 		descontoReturn.setFornecedores(fornecedores);
 		descontoReturn.setUsuario(usuario);
@@ -3314,11 +3314,11 @@ public class Fixture {
 		return descontoReturn;
 	}
 	
-    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario ){
+    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario, Date dataAtualizacao ){
 		
 		DescontoCota descontoReturn = new DescontoCota();
 		descontoReturn.setDesconto(desconto);
-		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setDataAlteracao(dataAtualizacao);
 		descontoReturn.setCota(cota);
 		descontoReturn.setDistribuidor(distribuidor);
 		descontoReturn.setFornecedores(fornecedores);
