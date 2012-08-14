@@ -26,14 +26,18 @@ var DESCONTO_ESPECIFICO = {
 			height:400,
 			width:560,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					DESCONTO_ESPECIFICO.novoDescontoEspecifico();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
+			buttons: [{
+						id:"id_confirmar_especifico",text:"Confirmar",
+						click: function() {
+							DESCONTO_ESPECIFICO.novoDescontoEspecifico();
+						}
+				},{
+					id:"id_close_especifico",text:"Cancelar",
+					click: function() {
+						$( this ).dialog( "close" );
+					}
 				}
-			}
+			]
 		});		      
 	},
 	
@@ -48,7 +52,7 @@ var DESCONTO_ESPECIFICO = {
 			 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
 		});
 		
-		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoEspecifico'/>",
+		$.postJSON("<c:url value='/financeiro/tipoDescontoCota/novoDescontoEspecifico'/>",
 				"numeroCota=" + cotaEspecifica	+				
 				"&desconto=" + descontoEspecifico + "&" +
 				fornecedores

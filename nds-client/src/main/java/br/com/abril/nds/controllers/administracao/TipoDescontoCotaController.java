@@ -48,7 +48,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
-@Path("/administracao/tipoDescontoCota")
+@Path("/financeiro/tipoDescontoCota")
 public class TipoDescontoCotaController {
 	
 	@Autowired
