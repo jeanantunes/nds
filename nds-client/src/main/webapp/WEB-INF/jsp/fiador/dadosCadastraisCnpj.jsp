@@ -47,8 +47,13 @@
 	}
 	
 	$(function(){
-		$("#cnpjFiador").mask("99.999.999/9999-99");
+		$("#cnpjFiador").mask("99.999.999/9999-99",{completed:function(){buscarPessoaCNPJ(this.val()); }});
 	});
+	
+	jQuery(function($){
+		   $.mask.definitions['#']='[\-\.0-9]';
+		   $("#inscricaoEstadualFiador").mask("##################",{placeholder:" "});
+		});
 	
 	function buscarPessoaCNPJ(cnpj){
 		
@@ -86,9 +91,9 @@
 	</tr>
 	<tr>
 		<td>Inscrição Estadual:</td>
-		<td><input type="text" style="width:230px " id="inscricaoEstadualFiador" maxlength="255"/></td>
+		<td><input type="text" style="width:230px " id="inscricaoEstadualFiador"/></td>
 		<td>CNPJ:</td>
-		<td><input type="text" style="width:230px " id="cnpjFiador" onblur="buscarPessoaCNPJ(this.value);" /></td>
+		<td><input type="text" style="width:230px " id="cnpjFiador" /></td>
 	</tr>
 	<tr>
 		<td>E-mail:</td>
