@@ -1,10 +1,11 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -13,10 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.dne.Localidade;
@@ -40,25 +41,49 @@ public class GrupoCota implements Serializable {
 	@Column(name = "TIPO_GRUPO")
 	private TipoGrupo tipoGrupo;
 	
+	/*
 	@OneToMany(mappedBy="grupo")
 	private Set<DiaRecolhimentoGrupo> diasRecolhimento = new HashSet<DiaRecolhimentoGrupo>();
-	
+	*/
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COTA")
 	private TipoCaracteristicaSegmentacaoPDV tipoCota;
-		
+	
 	@ManyToMany
 	@JoinTable(name = "GRUPO_MUNICIPIO", joinColumns = {@JoinColumn(name = "GRUPO_COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "LOCALIDADE_ID")})
 	private Set<Localidade> municipios;
-		
+	
+	@ElementCollection(targetClass = DiaSemana.class) 
+	@CollectionTable(name = "DIA_RECOLHIMENTO_GRUPO_COTA",
+	    joinColumns = @JoinColumn(name = "GRUPO_ID"))
+	@Column(name = "DIA_ID")
+	protected Set<DiaSemana> diasRecolhimento; 
+	
 	@ManyToMany
 	@JoinTable(name = "COTA_GRUPO", joinColumns = {@JoinColumn(name = "GRUPO_COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
 	private Set<Cota> cotas;
 	
+	public GrupoCota() {
+		
+	}
 	
+	public GrupoCota(Long id, String nome, TipoGrupo tipoGrupo,
+			Set<DiaSemana> diasRecolhimento,
+			TipoCaracteristicaSegmentacaoPDV tipoCota,
+			Set<Localidade> municipios, Set<Cota> cotas) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.tipoGrupo = tipoGrupo;
+		this.diasRecolhimento = diasRecolhimento;
+		this.tipoCota = tipoCota;
+		this.municipios = municipios;
+		this.cotas = cotas;
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -90,14 +115,14 @@ public class GrupoCota implements Serializable {
 	/**
 	 * @return the diasRecolhimento
 	 */
-	public Set<DiaRecolhimentoGrupo> getDiasRecolhimento() {
+	public Set<DiaSemana> getDiasRecolhimento() {
 		return diasRecolhimento;
 	}
 
 	/**
 	 * @param diasRecolhimento the diasRecolhimento to set
 	 */
-	public void setDiasRecolhimento(Set<DiaRecolhimentoGrupo> diasRecolhimento) {
+	public void setDiasRecolhimento(Set<DiaSemana> diasRecolhimento) {
 		this.diasRecolhimento = diasRecolhimento;
 	}
 
