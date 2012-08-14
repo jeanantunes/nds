@@ -39,5 +39,6 @@ public interface EnderecoService {
 	List<Logradouro> obterLogradourosPorCodigoBairroNome(Long codigoBairro, String nomeLogradouro);
 	
 	EnderecoVO obterEnderecoPorCep(String cep);
-	
+
+	List<Logradouro> pesquisarLogradouros(String nomeLogradouro);
 }
