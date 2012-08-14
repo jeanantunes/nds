@@ -78,7 +78,7 @@ public class TipoDescontoCotaController {
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_DESCONTO_COTA)
+	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
 	public void index() {}
 	
 	@Post
