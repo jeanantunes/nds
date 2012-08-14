@@ -85,7 +85,7 @@ public interface DescontoService {
 	 * @param usuario - Usuário.
 	 */
 	void incluirDescontoProduto(DescontoProdutoDTO desconto, Usuario usuario);	
-	
+
 	/**
 	 * Método que retorna uma coleção com as cotas relacionadas ao tipo de desconto especificado.
 	 * 
@@ -93,7 +93,6 @@ public interface DescontoService {
 	 * 
 	 * @return - List<CotaDescontoProdutoDTO> - As cotas relacionadas.
 	 */
-	
 	List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao);
 	
 	void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, BigDecimal valorDesconto);
@@ -108,5 +107,14 @@ public interface DescontoService {
 	
 	void processarDescontoProduto(ProdutoEdicao produto,BigDecimal valorDesconto);
 	
+	/**
+	 * Método que retorna uma coleção de dados referentes aos tipos de desconto por produto cadastrados
+	 * para determinada cota.
+	 * 
+	 * @param idCota - ID da Cota.
+	 * 
+	 * @return - List<TipoDescontoProdutoDTO>.
+	 */
+	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota);
 }
 	

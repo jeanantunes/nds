@@ -44,4 +44,15 @@ public interface DescontoProdutoRepository extends Repository<DescontoProduto, L
 	 * @return - List<CotaDescontoProdutoDTO> - As cotas relacionadas.
 	 */
 	List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao);
+    
+	/**
+	 * Método que retorna uma coleção de dados referentes aos tipos de desconto por produto cadastrados
+	 * para determinada cota.
+	 * 
+	 * @param idCota - ID da Cota.
+	 * 
+	 * @return - List<TipoDescontoProdutoDTO>.
+	 */
+	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota);
+
 }

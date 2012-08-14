@@ -406,6 +406,7 @@ public class DescontoServiceImpl implements DescontoService {
 		return this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(idDescontoProduto, ordenacao);
 	}
 	
+	
 	@Override
 	@Transactional
 	public void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
@@ -493,5 +494,20 @@ public class DescontoServiceImpl implements DescontoService {
 		//TODO criar logica de filtragem de produtos passiveis de desconto
 		
 		return null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota) {
+
+		if (idCota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] precisa ser especificada.");
+		}
+		
+		return this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(idCota);
 	}
 }
