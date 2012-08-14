@@ -444,9 +444,9 @@ var produtoEdicaoController = $.extend(true, {
 				return;
 			}
 			
-			pesquisarEdicoes();
-			prepararTela(id);
-			carregarDialog(id);
+			produtoEdicaoController.pesquisarEdicoes();
+			produtoEdicaoController.prepararTela(id);
+			produtoEdicaoController.carregarDialog(id);
 
 			$( "#dialog-novo", produtoEdicaoController.workspace ).dialog({
 				resizable: false,
@@ -759,7 +759,7 @@ var produtoEdicaoController = $.extend(true, {
 				
 				if (produtoEdicaoController.pesquisaRealizada) {
 					
-					produtoEdicaoController.clearInterval(produtoEdicaoController.intervalo);
+					clearInterval(produtoEdicaoController.intervalo);
 					
 					return;
 				}
@@ -773,7 +773,7 @@ var produtoEdicaoController = $.extend(true, {
 	
 	pesquisarPorNomeProdutoAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
 		
-		produtoEdicaoController.clearInterval(produtoEdicaoController.intervalo);
+		clearInterval(produtoEdicaoController.intervalo);
 		
 		produtoEdicaoController.pesquisaRealizada = true;
 		
