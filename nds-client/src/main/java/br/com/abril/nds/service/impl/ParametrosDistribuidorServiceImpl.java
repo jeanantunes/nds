@@ -229,8 +229,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			parametrosDistribuidor.setFaltasSobras(distribuidor.getParametrosAprovacaoDistribuidor().isFaltasSobras());
 		}
 		
-		parametrosDistribuidor.setPrazoFollowUp(CurrencyUtil.formatarValorTruncado(distribuidor.getPrazoFollowUp()));
-		parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantia(CurrencyUtil.formatarValorTruncado(distribuidor.getPrazoAvisoPrevioValidadeGarantia()));
+		parametrosDistribuidor.setPrazoFollowUp(distribuidor.getPrazoFollowUp());
+		parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantia(distribuidor.getPrazoAvisoPrevioValidadeGarantia());
 		
 		for (ParametrosDistribuidorFaltasSobras parametrosDistribuidorFaltasSobras : distribuidor.getParametrosDistribuidorFaltasSobras()) {
 			if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.APROVACAO) {
@@ -238,16 +238,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				parametrosDistribuidor.setAprovacaoFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
 				parametrosDistribuidor.setAprovacaoSobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
 				parametrosDistribuidor.setAprovacaoFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.AVISO_PREVIO_VALIDADE_GARANTIA) {
-				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaSobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.PRAZO_FOLLOW_UP) {
-				parametrosDistribuidor.setPrazoFollowUpFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setPrazoFollowUpFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setPrazoFollowUpSobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setPrazoFollowUpFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));				
 			}
 		}
 		
@@ -520,13 +510,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosAprovacaoDistribuidor.setFaltasSobras(parametrosDistribuidor.getFaltasSobras());
 		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
 		
-		if (parametrosDistribuidor.getPrazoFollowUp() != null && !parametrosDistribuidor.getPrazoFollowUp().isEmpty())
-			distribuidor.setPrazoFollowUp(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoFollowUp()).intValueExact());
+		if (parametrosDistribuidor.getPrazoFollowUp() != null)
+			distribuidor.setPrazoFollowUp(parametrosDistribuidor.getPrazoFollowUp());
 		else
 			distribuidor.setPrazoFollowUp(null);
 		
-		if (parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia() != null && !parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia().isEmpty())
-			distribuidor.setPrazoAvisoPrevioValidadeGarantia(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia()).intValueExact());
+		if (parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia() != null)
+			distribuidor.setPrazoAvisoPrevioValidadeGarantia(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia());
 		else
 			distribuidor.setPrazoAvisoPrevioValidadeGarantia(null);
 		
@@ -546,10 +536,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 			ParametrosDistribuidorFaltasSobras parametrosAvisoPrevioValidadeGarantia = new ParametrosDistribuidorFaltasSobras();
 			parametrosAvisoPrevioValidadeGarantia.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.AVISO_PREVIO_VALIDADE_GARANTIA);
-			parametrosAvisoPrevioValidadeGarantia.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantiaFaltaDe()));
-			parametrosAvisoPrevioValidadeGarantia.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantiaFaltaEm()));
-			parametrosAvisoPrevioValidadeGarantia.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantiaSobraDe()));
-			parametrosAvisoPrevioValidadeGarantia.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantiaSobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosAvisoPrevioValidadeGarantia);
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoCE = new ParametrosDistribuidorFaltasSobras();
@@ -566,10 +552,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoPrazoFollowUp = new ParametrosDistribuidorFaltasSobras();
 			parametrosImpressaoPrazoFollowUp.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.PRAZO_FOLLOW_UP);
-			parametrosImpressaoPrazoFollowUp.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpFaltaDe()));
-			parametrosImpressaoPrazoFollowUp.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpFaltaEm()));
-			parametrosImpressaoPrazoFollowUp.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpSobraDe()));
-			parametrosImpressaoPrazoFollowUp.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpSobraEm()));
+
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoPrazoFollowUp);
 
 			for (ParametrosDistribuidorFaltasSobras parametrosDistribuidorFaltasSobras : listaParametrosDistribuidorFaltasSobras) {

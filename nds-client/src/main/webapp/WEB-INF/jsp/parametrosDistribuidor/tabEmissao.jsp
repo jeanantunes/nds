@@ -75,7 +75,7 @@
 				<td width="20"><input type="radio" name="impressaoNECADANFE"
 					id="impressaoNECADANFEMODELO2" value="MODELO_2" /></td>
 				<td width="75"><a
-					href="${pageContext.request.contextPath}/modelos/ce_modelo_3.htm"
+					href="${pageContext.request.contextPath}/modelos/nota_envio.html"
 					target="_blank">Modelo 2</a></td>
 				<td width="20"><input type="radio" name="impressaoNECADANFE"
 					id="impressaoNECADANFE" value="DANFE" /></td>
