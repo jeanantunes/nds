@@ -28,6 +28,8 @@ function OperacaoDiferenciada() {
 	
 	this.editarGrupo = function(index) {
 		alert('editar ' + index);
+		
+		dialogConfirmarGrupo();
 	},
 		
 	this.excluirGrupo = function(index) {
@@ -48,6 +50,27 @@ function OperacaoDiferenciada() {
 	
 	this.incluirGrupo = function() {
 		alert('incluir ' + index);
+	},
+	
+	this.confirmarGrupo = function() {
+
+		var data = [];
+		
+		data.push({name: "nomeDiferenca", value: $("#nomeDiferenca").val()});
+		
+		$.each($("#diaSemana").val(), 
+			function(index, val) {
+				
+				data.push({name: "diasSemana", value: val});
+			}
+		);
+		
+		$.postJSON(contextPath + "/administracao/parametrosDistribuidor/cadastrarOperacaoDiferenciada", data,
+			function(result){
+				
+				$( this ).dialog( "close" );
+			}, null, true
+		);
 	},
 	
 	/**
