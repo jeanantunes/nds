@@ -510,6 +510,26 @@ public class EnderecoController {
 			this.result.use(Results.json()).from(enderecoRetornado, "result").recursive().serialize();
 		}
 	}
+	
+	@Post
+	public void pesquisarLogradouros(String nomeLogradouro){
+		
+		List<ItemAutoComplete> autoCompleteLogradouros = 
+				new ArrayList<ItemAutoComplete>();
+		
+		List<Logradouro> logradouros = 
+				this.enderecoService.pesquisarLogradouros(nomeLogradouro);
+		
+		for (Logradouro logradouro : logradouros){
+			
+			ItemAutoComplete itemAutoComplete = 
+					new ItemAutoComplete(logradouro.getNome(), logradouro.getNome(), logradouro.getId());
+			
+			autoCompleteLogradouros.add(itemAutoComplete);
+		}
+		
+		this.result.use(Results.json()).from(autoCompleteLogradouros, "result").include("value", "chave").serialize();
+	}
 
 	private String retirarFormatacaoCep(String cep) {
 

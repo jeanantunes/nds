@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -90,6 +92,7 @@ public class ConferenciaEncalheController {
 	private HttpServletResponse httpResponse;
 
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		carregarComboBoxEncalhe();
 	}

@@ -8,8 +8,9 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
- * Classe responsável por armazenar os valores referente aos filtros de registros da
- * pesquisa de registros de histórico de editor.
+ * Classe responsável por armazenar os valores referente aos filtros de
+ * registros da pesquisa de registros de histórico de editor.
+ * 
  * @author InfoA2
  */
 @Exportable
@@ -23,34 +24,33 @@ public class FiltroPesquisarHistoricoEditorDTO implements Serializable {
 	private Date dataDe;
 	private Date dataAte;
 	private String numeroEditor;
-	
+
 	private List<ColunaOrdenacaoPesquisarHistoricoEditorDTO> listaColunaOrdenacao;
 
 	private ColunaOrdenacaoPesquisarHistoricoEditorDTO ordenacaoColuna;
 
 	private PaginacaoVO paginacao;
 
-	public FiltroPesquisarHistoricoEditorDTO(Date dataDe, Date dataAte, String numeroEditor) {
+	public FiltroPesquisarHistoricoEditorDTO(Date dataDe, Date dataAte,
+			String numeroEditor) {
 		this.dataDe = dataDe;
 		this.dataAte = dataAte;
 		this.numeroEditor = numeroEditor;
 	}
-	
+
 	public enum ColunaOrdenacaoPesquisarHistoricoEditorDTO {
 
-		CODIGO_PRODUTO("codigoProduto"),
-		NOME_PRODUTO("nomeProduto"),
-		EDICAO_PRODUTO("edicaoProduto"),
-		REPARTE("reparte"),
-		VENDA_EXEMPLARES("vendaExemplares"),
-		PORCENTAGEM_VENDA_EXEMPLARES("porcentagemVenda");
+		CODIGO_PRODUTO("codigoProduto"), NOME_PRODUTO("nomeProduto"), EDICAO_PRODUTO(
+				"edicaoProduto"), REPARTE("reparte"), VENDA_EXEMPLARES(
+				"vendaExemplares"), PORCENTAGEM_VENDA_EXEMPLARES(
+				"porcentagemVenda");
 
 		private String nomeColuna;
-		
+
 		private ColunaOrdenacaoPesquisarHistoricoEditorDTO(String nomeColuna) {
 			this.nomeColuna = nomeColuna;
 		}
-		
+
 		@Override
 		public String toString() {
 			return this.nomeColuna;
@@ -61,7 +61,8 @@ public class FiltroPesquisarHistoricoEditorDTO implements Serializable {
 		return listaColunaOrdenacao;
 	}
 
-	public void setListaColunaOrdenacao(List<ColunaOrdenacaoPesquisarHistoricoEditorDTO> listaColunaOrdenacao) {
+	public void setListaColunaOrdenacao(
+			List<ColunaOrdenacaoPesquisarHistoricoEditorDTO> listaColunaOrdenacao) {
 		this.listaColunaOrdenacao = listaColunaOrdenacao;
 	}
 
@@ -105,5 +106,5 @@ public class FiltroPesquisarHistoricoEditorDTO implements Serializable {
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
 	}
-	
+
 }

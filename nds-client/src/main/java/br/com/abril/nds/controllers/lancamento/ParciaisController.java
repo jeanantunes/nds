@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.ParcialVendaDTO;
@@ -22,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
@@ -97,6 +99,7 @@ public class ParciaisController {
 	/**
 	 * Inicializa dados da tela
 	 */
+	@Rules(Permissao.ROLE_CADASTRO_PARCIAIS)
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);	

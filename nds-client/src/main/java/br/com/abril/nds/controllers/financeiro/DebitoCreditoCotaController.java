@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DebitoCreditoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
@@ -40,6 +41,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
@@ -112,6 +114,7 @@ public class DebitoCreditoCotaController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "pesquisaDebitoCreditoCota";
 
 	@Path("/")
+	@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA)
 	public void index() { 
 		preencherComboTipoMovimento();
 		preencherComboBaseCalculo();

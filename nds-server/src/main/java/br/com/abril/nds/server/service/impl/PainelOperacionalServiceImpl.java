@@ -33,9 +33,9 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 		List<OperacaoDistribuidor> distribuidores = new ArrayList<OperacaoDistribuidor>();
 		OperacaoDistribuidor ultimoDistribuidor = null;
 		
-		BigDecimal qtdTotalJornaleiros = null;
-		BigDecimal cobrancaDia = null;
-		BigDecimal partLiq = null;
+		BigDecimal qtdTotalJornaleiros = BigDecimal.ZERO;
+		BigDecimal cobrancaDia = BigDecimal.ZERO;
+		BigDecimal partLiq = BigDecimal.ZERO;
 		
 		for (Indicador indicador : indicadores){
 			
@@ -47,6 +47,8 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 				}
 				
 				ultimoDistribuidor = indicador.getDistribuidor();
+				
+				ultimoDistribuidor.setIndicadores(null);
 			}
 			
 			if (ultimoDistribuidor.getIndicadores() == null){

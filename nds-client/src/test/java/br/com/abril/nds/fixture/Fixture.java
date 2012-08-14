@@ -778,7 +778,9 @@ public class Fixture {
 		Usuario usuario = new Usuario();
 		usuario.setNome("João");
 		usuario.setLogin("joao");
-		usuario.setSenha("ABC123");
+		usuario.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // senha: 1234
+		usuario.setEmail("cabradapeste@bol.com");
+		usuario.setContaAtiva(false);
 		return usuario;
 	}
 
@@ -3301,11 +3303,11 @@ public class Fixture {
 		
 	}
 	
-	public static DescontoDistribuidor descontoDistribuidor(BigDecimal desconto, Distribuidor distribuidor, Set<Fornecedor> fornecedores,Usuario usuario ){
+	public static DescontoDistribuidor descontoDistribuidor(BigDecimal desconto, Distribuidor distribuidor, Set<Fornecedor> fornecedores,Usuario usuario, Date dataAtualizacao ){
 		
 		DescontoDistribuidor descontoReturn = new DescontoDistribuidor();
 		descontoReturn.setDesconto(desconto);
-		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setDataAlteracao(dataAtualizacao);
 		descontoReturn.setDistribuidor(distribuidor);
 		descontoReturn.setFornecedores(fornecedores);
 		descontoReturn.setUsuario(usuario);
@@ -3313,11 +3315,11 @@ public class Fixture {
 		return descontoReturn;
 	}
 	
-    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario ){
+    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario, Date dataAtualizacao ){
 		
 		DescontoCota descontoReturn = new DescontoCota();
 		descontoReturn.setDesconto(desconto);
-		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setDataAlteracao(dataAtualizacao);
 		descontoReturn.setCota(cota);
 		descontoReturn.setDistribuidor(distribuidor);
 		descontoReturn.setFornecedores(fornecedores);

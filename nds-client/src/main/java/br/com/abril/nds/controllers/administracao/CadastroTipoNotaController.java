@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RegistroTipoNotaFiscalVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
@@ -18,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -57,6 +59,7 @@ public class CadastroTipoNotaController {
 	private HttpServletResponse httpServletResponse;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_NOTA)
 	public void index() {
 		
 		List<ItemDTO<TipoAtividade, String>> listaAtividades = new ArrayList<ItemDTO<TipoAtividade,String>>();
