@@ -305,19 +305,19 @@ $(function() {
 		 precision:0
 	});
 	
-	$("#validadeChequeCaucao']").maskMoney({
+	$("#validadeChequeCaucao").maskMoney({
 		 thousands:'', 
 		 decimal:'', 
 		 precision:0
 	});
 	
-	$("#validadeNotaPromissoria']").maskMoney({
+	$("#validadeNotaPromissoria").maskMoney({
 		 thousands:'', 
 		 decimal:'', 
 		 precision:0
 	});
 	
-	$("#validadeOutros']").maskMoney({
+	$("#validadeOutros").maskMoney({
 		 thousands:'', 
 		 decimal:'', 
 		 precision:0
