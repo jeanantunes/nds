@@ -261,6 +261,9 @@ public class Distribuidor {
 	@Column(name="DESCONTO_COTA_PARA_NEGOCIACAO")
 	private BigDecimal descontoCotaNegociacao;
 	
+	@Embedded
+	private ParametroEntregaBanca parametroEntregaBanca;
+	
 	public Long getId() {
 		return id;
 	}
@@ -760,5 +763,20 @@ public class Distribuidor {
 	public void setDescontoCotaNegociacao(BigDecimal descontoCotaNegociacao) {
 		this.descontoCotaNegociacao = descontoCotaNegociacao;
 	}
+
+    /**
+     * @return the parametroEntregaBanca
+     */
+    public ParametroEntregaBanca getParametroEntregaBanca() {
+        return parametroEntregaBanca;
+    }
+
+    /**
+     * @param parametroEntregaBanca the parametroEntregaBanca to set
+     */
+    public void setParametroEntregaBanca(ParametroEntregaBanca parametroEntregaBanca) {
+        this.parametroEntregaBanca = parametroEntregaBanca;
+    }
+	
 	
 }

@@ -130,7 +130,7 @@ function gravar() {
 		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').is(':checked')},
 		{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao').val()},
 		{name:'parametrosDistribuidor.utilizaTermoAdesaoEntregaBancas', value: $('#utilizaTermoAdesaoEntregaBancas').is(':checked')},
-		{name:'parametrosDistribuidor.informacoesComplementaresTermoAdesaoEntregaBancas', value: $('#informacoesComplementaresTermoAdesaoEntregaBancas').val()},
+		{name:'parametrosDistribuidor.complementoTermoAdesaoEntregaBancas', value: $('#complementoTermoAdesaoEntregaBancas').val()},
 		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').is(':checked')},
 		{name:'parametrosDistribuidor.utilizaChequeCaucao', value: $('#utilizaChequeCaucao').is(':checked')},
 		{name:'parametrosDistribuidor.validadeChequeCaucao', value: $('#validadeChequeCaucao').val()},
@@ -254,7 +254,7 @@ function utilizaProcuracaoEntregadoresListener() {
 
 function utilizaTermoAdesaoListener() {
 	if (!$('#utilizaTermoAdesaoEntregaBancas').is(':checked')) {
-		$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg('clear');
+		$('#complementoTermoAdesaoEntregaBancas').wysiwyg('clear');
 	} 
 }
 
@@ -273,9 +273,9 @@ $(document).ready(function() {
 	$('#informacoesComplementaresProcuracao').wysiwyg();
 	$('#informacoesComplementaresProcuracao').wysiwyg({controls:"font-family,italic,|,undo,redo"});
 	$('#informacoesComplementaresProcuracao').wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresProcuracao}');
-	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg();
-	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg({controls:"font-family,italic,|,undo,redo"});
-	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg('setContent','${parametrosDistribuidor.complementoTermoAdesaoEntregaBancas}');
+	$('#complementoTermoAdesaoEntregaBancas').wysiwyg();
+	$('#complementoTermoAdesaoEntregaBancas').wysiwyg({controls:"font-family,italic,|,undo,redo"});
+	$('#complementoTermoAdesaoEntregaBancas').wysiwyg('setContent','${parametrosDistribuidor.complementoTermoAdesaoEntregaBancas}');
 });
 
 $(function() {
