@@ -165,7 +165,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		
 		// Procuração
-		parametrosDistribuidor.setUtilizaProcuracaoEntregadores(verificaCheckString(distribuidor.isUtilizaProcuracaoEntregadores()));
+		parametrosDistribuidor.setUtilizaProcuracaoEntregadores(distribuidor.isUtilizaProcuracaoEntregadores());
 		parametrosDistribuidor.setInformacoesComplementaresProcuracao(distribuidor.getInformacoesComplementaresProcuracao());
 		
 		// Garantia
@@ -412,7 +412,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		
 		// Procuração
-		distribuidor.setUtilizaProcuracaoEntregadores(verificaCheckBoolean(parametrosDistribuidor.getUtilizaProcuracaoEntregadores()));
+		distribuidor.setUtilizaProcuracaoEntregadores(parametrosDistribuidor.isUtilizaProcuracaoEntregadores());
 		distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
 
 		List<TipoGarantiaAceita> listaTipoGarantiaAceitas = new ArrayList<TipoGarantiaAceita>();

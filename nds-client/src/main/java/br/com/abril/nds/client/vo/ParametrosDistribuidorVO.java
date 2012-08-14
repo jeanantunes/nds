@@ -102,7 +102,7 @@ public class ParametrosDistribuidorVO {
 	private String informacoesComplementaresContrato;
 
 	// Frame Procuração
-	private String utilizaProcuracaoEntregadores;
+	private boolean utilizaProcuracaoEntregadores;
 
 	private String informacoesComplementaresProcuracao;
 	
@@ -505,12 +505,12 @@ public class ParametrosDistribuidorVO {
 		this.informacoesComplementaresContrato = informacoesComplementaresContrato;
 	}
 
-	public String getUtilizaProcuracaoEntregadores() {
+	public boolean isUtilizaProcuracaoEntregadores() {
 		return utilizaProcuracaoEntregadores;
 	}
 
 	public void setUtilizaProcuracaoEntregadores(
-			String utilizaProcuracaoEntregadores) {
+			boolean utilizaProcuracaoEntregadores) {
 		this.utilizaProcuracaoEntregadores = utilizaProcuracaoEntregadores;
 	}
 
