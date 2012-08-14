@@ -1,4 +1,7 @@
 <head>
+<script type="text/javascript" src="scripts/gruposPermissao.js"></script>
+<script type="text/javascript" src="scripts/usuariosPermissao.js"></script>
+<script type="text/javascript" src="scripts/regrasPermissao.js"></script>
 <script type="text/javascript">
 	$(function() {
 		gruposPermissaoController.init("${pageContext.request.contextPath}");

@@ -61,8 +61,8 @@ var usuariosPermissaoController = $.extend(true, {
 		},
 		popup_novo_usuario : function() {
 
-			$("#trInsercaoSenhas").show();
-			$("#trLembreteSenha").show();
+			$("#trInsercaoSenhas", this.workspace).show();
+			$("#trLembreteSenha", this.workspace).show();
 			
 			this.limpar_selecoes();
 			
@@ -93,8 +93,8 @@ var usuariosPermissaoController = $.extend(true, {
 		},
 		popup_editar_usuario : function(idGrupo) {
 			
-			$("#trInsercaoSenhas").hide();
-			$("#trLembreteSenha").hide();
+			$("#trInsercaoSenhas", this.workspace).hide();
+			$("#trLembreteSenha", this.workspace).hide();
 			
 			this.limpar_selecoes();
 			
