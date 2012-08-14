@@ -149,6 +149,33 @@ public class ParametrosDistribuidorController {
 	        erros.add("É necessário selecionar pelo menos uma Garantia!");
 	    }
 	    
+	    if (vo.isUtilizaChequeCaucao() && vo.getValidadeChequeCaucao() == null) {
+	        erros.add("É necessário informar a Validade da Garantia Cheque Caução!");
+	    }
+	    
+	    if (vo.isUtilizaCaucaoLiquida() && vo.getValidadeCaucaoLiquida() == null) {
+            erros.add("É necessário informar a Validade da Garantia Caução Líquida!");
+        }
+	    
+	    if (vo.isUtilizaFiador() && vo.getValidadeFiador() == null) {
+            erros.add("É necessário informar a Validade da Garantia Fiador!");
+        }
+	    
+	    if (vo.isUtilizaNotaPromissoria() && vo.getValidadeNotaPromissoria() == null) {
+            erros.add("É necessário informar a Validade da Garantia Nota Promissória!");
+        }
+	    
+	    if (vo.isUtilizaImovel() && vo.getValidadeImovel() == null) {
+            erros.add("É necessário informar a Validade da Garantia Imóvel!");
+        }
+	    
+	    if (vo.isUtilizaAntecedenciaValidade() && vo.getValidadeAntecedenciaValidade() == null) {
+            erros.add("É necessário informar a Validade da Garantia Antecedência da Validade!");
+        }
+	    
+	    if (vo.isUtilizaOutros() && vo.getValidadeOutros() == null) {
+            erros.add("É necessário informar a Validade da Garantia Outros!");
+        }
 	    verificarExistenciaErros(erros);
 	}
 

@@ -129,6 +129,8 @@ function gravar() {
 		{name:'parametrosDistribuidor.informacoesComplementaresContrato', value: $('#informacoesComplementaresContrato').val()},
 		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').is(':checked')},
 		{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao').val()},
+		{name:'parametrosDistribuidor.utilizaTermoAdesaoEntregaBancas', value: $('#utilizaTermoAdesaoEntregaBancas').is(':checked')},
+		{name:'parametrosDistribuidor.informacoesComplementaresTermoAdesaoEntregaBancas', value: $('#informacoesComplementaresTermoAdesaoEntregaBancas').val()},
 		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').is(':checked')},
 		{name:'parametrosDistribuidor.utilizaChequeCaucao', value: $('#utilizaChequeCaucao').is(':checked')},
 		{name:'parametrosDistribuidor.validadeChequeCaucao', value: $('#validadeChequeCaucao').val()},
