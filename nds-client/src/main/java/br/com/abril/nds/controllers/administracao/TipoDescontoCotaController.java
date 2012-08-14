@@ -82,7 +82,7 @@ public class TipoDescontoCotaController {
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 		
-		descontoService.incluirDesconto(desconto, fornecedores, getUsuario());
+		descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
@@ -91,7 +91,7 @@ public class TipoDescontoCotaController {
 	@Path("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 		
-		descontoService.incluirDesconto(desconto, fornecedores, numeroCota, getUsuario());
+		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuario());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
@@ -102,7 +102,7 @@ public class TipoDescontoCotaController {
 
 		desconto.setCotas(cotas);
 		
-		this.descontoService.incluirDesconto(desconto, getUsuario());
+		this.descontoService.incluirDescontoProduto(desconto, getUsuario());
 
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
