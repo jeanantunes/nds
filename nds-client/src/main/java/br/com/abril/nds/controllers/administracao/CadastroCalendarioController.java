@@ -250,9 +250,13 @@ public class CadastroCalendarioController {
 			anoVigencia = getAnoCorrente();
 		}
 		
-		FiltroCalendarioFeriado filtro = new FiltroCalendarioFeriado();
-		filtro.setAnoFeriado(anoVigencia);
-		session.setAttribute(FILTRO_PESQUISA, filtro);
+		FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) this.session.getAttribute(FILTRO_PESQUISA);
+		
+		if (filtro == null) {
+			filtro = new FiltroCalendarioFeriado();
+			filtro.setAnoFeriado(anoVigencia);
+			session.setAttribute(FILTRO_PESQUISA, filtro);
+		}
 		
 		Map<Date, String> mapaFeriados = calendarioService.obterListaDataFeriado(filtro.getAnoFeriado());
 		
