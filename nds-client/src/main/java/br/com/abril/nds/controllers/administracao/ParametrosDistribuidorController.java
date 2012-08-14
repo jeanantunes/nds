@@ -141,6 +141,14 @@ public class ParametrosDistribuidorController {
             erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
         }
 	    
+	    if (vo.isUtilizaContratoComCotas() && vo.getPrazoContrato() == null) {
+	        erros.add("É necessário informar o Prazo do Contrato!");
+	    }
+	    
+	    if (vo.isUtilizaGarantiaPdv() && !vo.isGarantiasUtilizadas()) {
+	        erros.add("É necessário selecionar pelo menos uma Garantia!");
+	    }
+	    
 	    verificarExistenciaErros(erros);
 	}
 

@@ -117,14 +117,18 @@ public class NFEExporter {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private <NF> void execute(NF notaFiscal, List<Object> listaParents, TipoSecao secaoVazia) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private <NF> void execute(NF notaFiscal, List<Object> listaParents, TipoSecao[] secaoVazia) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		
 		if (listaParents != null) {
 			listaParents.add(notaFiscal);
 		}
 		
-		if (secaoVazia != null && !TipoSecao.EMPTY.equals(secaoVazia)){
-			addSecaoVazia(secaoVazia);
+		if (secaoVazia != null) {
+			for (TipoSecao tipoSecao: secaoVazia) {
+				if (tipoSecao != null && !TipoSecao.EMPTY.equals(tipoSecao)){
+					addSecaoVazia(tipoSecao);
+				}
+			}
 		}
 		
 		List<Field> campos = new ArrayList<Field>();
@@ -214,7 +218,7 @@ public class NFEExporter {
 		} else if (valor instanceof Collection && nfeExportType != null) {
 			
 			for (Object valorCollection : (Collection) valor) {
-				TipoSecao secaoVazia = nfeExportType.secaoPadrao();
+				TipoSecao secaoVazia[] = nfeExportType.secaoPadrao();
 				if (TipoSecao.EMPTY.equals(secaoVazia)) {
 					secaoVazia = null;
 				}
@@ -225,7 +229,7 @@ public class NFEExporter {
 			}
 
 		} else if (valor != null && nfeExportType != null) {
-			TipoSecao secaoVazia = nfeExportType.secaoPadrao();
+			TipoSecao secaoVazia[] = nfeExportType.secaoPadrao();
 			if (TipoSecao.EMPTY.equals(secaoVazia)) {
 				secaoVazia = null;
 			}
@@ -295,15 +299,15 @@ public class NFEExporter {
 	 * Adiciona valores padrões no documento.
 	 */
 	private void addCamposDefault() {				
-		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.0");
+		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.00");
 		addCampoSecao(versao);
 		CampoSecao modeloDocuemtno = new CampoSecao(TipoSecao.B,  4, "55");
 		addCampoSecao(modeloDocuemtno);
-		CampoSecao tipoImpressao = new CampoSecao(TipoSecao.B,  11, "1");
+		CampoSecao tipoImpressao = new CampoSecao(TipoSecao.B,  12, "1");
 		addCampoSecao(tipoImpressao);
-		CampoSecao tipoAmbiente = new CampoSecao(TipoSecao.B,  14, "1");
+		CampoSecao tipoAmbiente = new CampoSecao(TipoSecao.B,  15, "1");
 		addCampoSecao(tipoAmbiente);
-		CampoSecao processoEmissao = new CampoSecao(TipoSecao.B,  16, "0");
+		CampoSecao processoEmissao = new CampoSecao(TipoSecao.B,  17, "0");
 		addCampoSecao(processoEmissao);
 		CampoSecao codigoPaisEmitente = new CampoSecao(TipoSecao.C05,  8, "1058");
 		addCampoSecao(codigoPaisEmitente);

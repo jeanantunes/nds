@@ -137,9 +137,9 @@ function gravar() {
 		{name:'parametrosDistribuidor.utilizaImovel', value: $('#utilizaImovel').is(':checked')},
 		{name:'parametrosDistribuidor.validadeImovel', value: $('#validadeImovel').val()},
 		{name:'parametrosDistribuidor.utilizaCaucaoLiquida', value: $('#utilizaCaucaoLiquida').is(':checked')},
-		{name:'parametrosDistribuidor.validadeCaucaoLiquida', value: $('#validadeCaucaoLiquidaValor').val()},
+		{name:'parametrosDistribuidor.validadeCaucaoLiquida', value: $('#validadeCaucaoLiquida').val()},
 		{name:'parametrosDistribuidor.utilizaNotaPromissoria', value: $('#utilizaNotaPromissoria').is(':checked')},
-		{name:'parametrosDistribuidor.validadeNotaPromissoria', value: $('#validadeNotaPromissoriaValor').val()},
+		{name:'parametrosDistribuidor.validadeNotaPromissoria', value: $('#validadeNotaPromissoria').val()},
 		{name:'parametrosDistribuidor.utilizaAntecedenciaValidade', value: $('#utilizaAntecedenciaValidade').is(':checked')},
 		{name:'parametrosDistribuidor.validadeAntecedenciaValidade', value: $('#validadeAntecedenciaValidade').val()},
 		{name:'parametrosDistribuidor.utilizaOutros', value: $('#utilizaOutros').is(':checked')},
@@ -235,11 +235,32 @@ function removeFornecedor(){
 	$( ".forncedoresSel" ).fadeOut('fast');
 }
 
-function habilitaPrazoContrato() {
+function utilizaContratoCotasListener() {
 	if ($('#utilizaContratoComCotas').is(':checked')) {
-		$('#prazoContrato').attr("disabled", false);
+		$('#prazoContrato').enable();
 	} else {
-		$('#prazoContrato').attr("disabled", true);
+		$('#prazoContrato').val("").disable();
+		$('#informacoesComplementaresContrato').wysiwyg('clear');
+	}
+}
+
+function utilizaProcuracaoEntregadoresListener() {
+	if (!$('#utilizaProcuracaoEntregadores').is(':checked')) {
+		$('#informacoesComplementaresProcuracao').wysiwyg('clear');
+	} 
+}
+
+function utilizaTermoAdesaoListener() {
+	if (!$('#utilizaTermoAdesaoEntregaBancas').is(':checked')) {
+		$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg('clear');
+	} 
+}
+
+function utilizaGarantiaListener(tipoGarantia, validadeGarantia) {
+	if ($(tipoGarantia).is(':checked')) {
+		$('#' + validadeGarantia).enable();
+	} else {
+		$('#' + validadeGarantia).val('').disable();
 	}
 }
 
@@ -371,7 +392,7 @@ $(function() {
 	$('input:radio[name=impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]').click();
 	$('input:radio[name=impressaoCE][value=${parametrosDistribuidor.impressaoCE}]').click();
 	
-	habilitaPrazoContrato();
+	utilizaContratoCotasListener();
 	
 	$("#tabDistribuidor").tabs();
 	
@@ -379,7 +400,7 @@ $(function() {
 });
 
 function mostraTabelaGarantiasAceitas(){
-	if ($('#checkUtilizaGarantiaPdv').is(':checked')) {
+	if ($('#utilizaGarantiaPdv').is(':checked')) {
 		$('#tabelaGarantiasAceitas').show();
 	} else {
 		$('#tabelaGarantiasAceitas').hide();
