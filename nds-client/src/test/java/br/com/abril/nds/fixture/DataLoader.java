@@ -4371,6 +4371,7 @@ public class DataLoader {
 		politicaCobranca8.setDistribuidor(distribuidor);
 		save(session, politicaCobranca, politicaCobranca2, politicaCobranca3, politicaCobranca4, politicaCobranca5, politicaCobranca6, politicaCobranca7, politicaCobranca8);
 
+		
 		for(TipoGarantia tipo:TipoGarantia.values()){
 			save(session,Fixture.criarTipoGarantiaAceita(distribuidor, tipo));
 		}

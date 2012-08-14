@@ -405,6 +405,27 @@ function mostraTabelaGarantiasAceitas(){
 	if ($('#utilizaGarantiaPdv').is(':checked')) {
 		$('#tabelaGarantiasAceitas').show();
 	} else {
+		$('#utilizaChequeCaucao').uncheck();
+		$('#validadeChequeCaucao').val('').disable();
+		
+		$('#utilizaCaucaoLiquida').uncheck();
+		$('#validadeCaucaoLiquida').val('').disable();
+		
+		$('#utilizaFiador').uncheck();
+		$('#validadeFiador').val('').disable();
+		
+		$('#utilizaNotaPromissoria').uncheck();
+		$('#validadeNotaPromissoria').val('').disable();
+		
+		$('#utilizaImovel').uncheck();
+		$('#validadeImovel').val('').disable();
+		
+		$('#utilizaAntecedenciaValidade').uncheck();
+		$('#validadeAntecedenciaValidade').val('').disable();
+		
+		$('#utilizaOutros').uncheck();
+		$('#validadeOutros').val('').disable();
+		
 		$('#tabelaGarantiasAceitas').hide();
 	}
 }

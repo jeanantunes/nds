@@ -25,12 +25,9 @@ import javax.persistence.Table;
 @SequenceGenerator(name="TIPO_GARANTIA_ACEITA_SEQ", initialValue = 1, allocationSize = 1)
 public class TipoGarantiaAceita implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7309370426863616354L;
-	
-	@Id
+    private static final long serialVersionUID = 7578054367634139540L;
+
+    @Id
 	@GeneratedValue(generator="TIPO_GARANTIA_ACEITA_SEQ")
 	@Column
 	private Long id;
@@ -41,80 +38,118 @@ public class TipoGarantiaAceita implements Serializable {
 	@Column(name = "VALOR", nullable = true)
 	private Integer valor;
 	
-	@Column(name = "UTILIZA", nullable = true)
-	private boolean utilizar;
-	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 	
+    public TipoGarantiaAceita() {
+    }
 	
+	public TipoGarantiaAceita(TipoGarantia tipoGarantia, Integer valor,
+            Distribuidor distribuidor) {
+        this.tipoGarantia = tipoGarantia;
+        this.valor = valor;
+        this.distribuidor = distribuidor;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
 
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    /**
+     * @return the tipoGarantia
+     */
+    public TipoGarantia getTipoGarantia() {
+        return tipoGarantia;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * @param tipoGarantia the tipoGarantia to set
+     */
+    public void setTipoGarantia(TipoGarantia tipoGarantia) {
+        this.tipoGarantia = tipoGarantia;
+    }
 
+    /**
+     * @return the valor
+     */
+    public Integer getValor() {
+        return valor;
+    }
 
+    /**
+     * @param valor the valor to set
+     */
+    public void setValor(Integer valor) {
+        this.valor = valor;
+    }
 
-	public TipoGarantia getTipoGarantia() {
-		return tipoGarantia;
-	}
+    /**
+     * @return the distribuidor
+     */
+    public Distribuidor getDistribuidor() {
+        return distribuidor;
+    }
 
+    /**
+     * @param distribuidor the distribuidor to set
+     */
+    public void setDistribuidor(Distribuidor distribuidor) {
+        this.distribuidor = distribuidor;
+    }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((distribuidor == null) ? 0 : distribuidor.hashCode());
+        result = prime * result
+                + ((tipoGarantia == null) ? 0 : tipoGarantia.hashCode());
+        return result;
+    }
 
-	public void setTipoGarantia(TipoGarantia tipoGarantia) {
-		this.tipoGarantia = tipoGarantia;
-	}
-
-
-
-	public Distribuidor getDistribuidor() {
-		return distribuidor;
-	}
-
-
-
-	public void setDistribuidor(Distribuidor distribuidor) {
-		this.distribuidor = distribuidor;
-	}
-
-
-
-	/**
-	 * 
-	 */
-	public TipoGarantiaAceita() {
-	}
-
-
-
-	public Integer getValor() {
-		return valor;
-	}
-
-
-
-	public void setValor(Integer valor) {
-		this.valor = valor;
-	}
-
-
-
-	public boolean isUtilizar() {
-		return utilizar;
-	}
-
-
-
-	public void setUtilizar(boolean utilizar) {
-		this.utilizar = utilizar;
-	}
-	
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TipoGarantiaAceita other = (TipoGarantiaAceita) obj;
+        if (distribuidor == null) {
+            if (other.distribuidor != null) {
+                return false;
+            }
+        } else if (!distribuidor.equals(other.distribuidor)) {
+            return false;
+        }
+        if (tipoGarantia != other.tipoGarantia) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 	
 }
