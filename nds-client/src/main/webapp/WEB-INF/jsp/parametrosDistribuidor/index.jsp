@@ -244,7 +244,7 @@ function removeFornecedor(){
 }
 
 function habilitaPrazoContrato() {
-	if ($('#utilizaContratoComCotas').attr('checked') == "checked") {
+	if ($('#utilizaContratoComCotas').is(':checked')) {
 		$('#prazoContrato').attr("disabled", false);
 	} else {
 		$('#prazoContrato').attr("disabled", true);
@@ -260,7 +260,7 @@ $(document).ready(function() {
 	$('#informacoesComplementaresProcuracao').wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresProcuracao}');
 	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg();
 	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg({controls:"font-family,italic,|,undo,redo"});
-	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg('setContent','');
+	$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg('setContent','${parametrosDistribuidor.complementoTermoAdesaoEntregaBancas}');
 });
 
 $(function() {
@@ -284,50 +284,50 @@ $(function() {
 	});
 
 	$("input[id^='prazoContrato']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 
-	$("input[id^='caucaoLiquidaValor']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+	$("#validadeCaucaoLiquida").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 	
-	$("input[id^='antecedenciaValidadeValor']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+	$("#validadeAntecedenciaValidade").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 	
-	$("input[id^='fiadorValor']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+	$("#validadeFiador").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 	
-	$("input[id^='imovelValor']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+	$("#validadeImovel").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 	
-	$("input[id^='chequeCalcaoValor']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+	$("#validadeChequeCaucao']").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 	
-	$("input[id^='indicadorReajusteCaucaoLiquidaValor']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+	$("#validadeNotaPromissoria']").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 	
-	$("input[id^='notaPromissoriaValor']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+	$("#validadeOutros']").maskMoney({
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 	

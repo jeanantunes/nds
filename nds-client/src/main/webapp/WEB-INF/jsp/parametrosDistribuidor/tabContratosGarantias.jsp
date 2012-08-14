@@ -9,8 +9,8 @@
               <td>Utiliza Contrato com as Cotas?</td>
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaContratoComCotas}">
-                  <input name="parametrosDistribuidor.utilizaContratoComCotas" onclick="habilitaPrazoContrato();"
-                    id="javascript:utilizaContratoComCotas" checked="checked" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaContratoComCotas" onclick="javascript:habilitaPrazoContrato();"
+                    id="utilizaContratoComCotas" checked="checked" type="checkbox" />
                 </c:if> 
                 <c:if test="${not parametrosDistribuidor.utilizaContratoComCotas}">
                   <input name="parametrosDistribuidor.utilizaContratoComCotas" onclick="javascript:habilitaPrazoContrato();"
@@ -20,8 +20,12 @@
             </tr>
             <tr>
               <td width="190">Prazo do Contrato (em meses ):</td>
-              <td width="195"><input type="text" name="parametrosDistribuidor.prazoContrato" id="prazoContrato"
-                style="width: 80px;" disabled="disabled" value="${parametrosDistribuidor.prazoContrato}" /></td>
+              <td width="195">
+               <input type="text" name="parametrosDistribuidor.prazoContrato" 
+                           id="prazoContrato"
+                           style="width: 80px;"
+                           value="${parametrosDistribuidor.prazoContrato}" />
+              </td>
             </tr>
             <tr>
               <td colspan="2">&nbsp;</td>
@@ -62,7 +66,8 @@
               </td>
               <td width="201">Cheque Caução</td>
               <td width="104"><input name="parametrosDistribuidor.validadeChequeCaucao" type="text"
-                style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeChequeCaucao}" id="validadeChequeCaucao" />
+                style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeChequeCaucao}" 
+                id="validadeChequeCaucao" disabled="${parametrosDistribuidor.utilizaChequeCaucao ? '' : 'disabled'}" />
               </td>
             </tr>
             <tr class="class_linha_2">
@@ -77,7 +82,8 @@
               </td>
               <td>Caução Líquida</td>
               <td><input name="parametrosDistribuidor.validadeCaucaoLiquida" type="text" style="float: left; width: 60px;"
-                value="${parametrosDistribuidor.validadeCaucaoLiquida}" id="validadeCaucaoLiquida" /></td>
+                value="${parametrosDistribuidor.validadeCaucaoLiquida}" id="validadeCaucaoLiquida"
+                disabled="${parametrosDistribuidor.utilizaCaucaoLiquida ? '' : 'disabled'}" /></td>
             </tr>
             <tr class="class_linha_2">
               <td>
@@ -89,7 +95,8 @@
               </td>
               <td>Fiador</td>
               <td><input name="parametrosDistribuidor.validadeFiador" type="text" style="float: left; width: 60px;"
-                id="validadeFiador" value="${parametrosDistribuidor.validadeFiador}" /></td>
+                id="validadeFiador" value="${parametrosDistribuidor.validadeFiador}"
+                disabled="${parametrosDistribuidor.utilizaFiador ? '' : 'disabled'}" /></td>
             </tr>
             <tr class="class_linha_1">
               <td>
@@ -103,7 +110,8 @@
               </td>
               <td>Nota Promissória</td>
               <td><input name="parametrosDistribuidor.validadeNotaPromissoria" type="text" style="float: left; width: 60px;"
-                id="validadeNotaPromissoria" value="${parametrosDistribuidor.validadeNotaPromissoria}" /></td>
+                id="validadeNotaPromissoria" value="${parametrosDistribuidor.validadeNotaPromissoria}"
+                disabled="${parametrosDistribuidor.utilizaNotaPromissoria ? '' : 'disabled'}" /></td>
             </tr>
             <tr class="class_linha_2">
               <td>
@@ -116,7 +124,8 @@
                </td>
               <td>Imóvel</td>
               <td><input name="parametrosDistribuidor.validadeImovel" type="text" style="float: left; width: 60px;"
-                id="validadeImovel" value="${parametrosDistribuidor.validadeImovel}" /></td>
+                          id="validadeImovel" value="${parametrosDistribuidor.validadeImovel}"
+                          disabled="${parametrosDistribuidor.utilizaImovel ? '' : 'disabled'}"/></td>
             </tr>
             <tr class="class_linha_1">
               <td>
@@ -132,6 +141,7 @@
               <td>Antecedência da Validade</td>
               <td><input name="parametrosDistribuidor.validadeAntecedenciaValidade" type="text"
                 style="float: left; width: 60px;" value="${parametrosDistribuidor.validadeAntecedenciaValidade}"
+                disabled="${parametrosDistribuidor.utilizaAntecedenciaValidade ? '' : 'disabled'}"
                 id="validadeAntecedenciaValidade" /></td>
             </tr>
             <tr class="class_linha_2">
@@ -145,7 +155,9 @@
               </td>
               <td>Outros</td>
               <td><input name="parametrosDistribuidor.validadeOutros" type="text" style="float: left; width: 60px;"
-                value="${parametrosDistribuidor.validadeOutros}" id="validadeOutros" /></td>
+                value="${parametrosDistribuidor.validadeOutros}" 
+                disabled="${parametrosDistribuidor.utilizaOutros ? '' : 'disabled'}"
+                id="validadeOutros" /></td>
             </tr>
           </table>
         </fieldset>
