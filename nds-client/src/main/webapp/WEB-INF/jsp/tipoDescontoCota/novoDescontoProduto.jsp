@@ -239,19 +239,13 @@ function adicionarLinhaCota(linhaAtual){
 									onblur="cota.pesquisarPorNomeCota('#cotaInput1', '#nomeInput1',adicionarLinhaCota(1));"/>
 							</td>
 						</tr>
-						<tfoot>
-							<tr>
-								<td colspan="2">
-									Este desconto predomina sobre os demais (geral / Específico)?
-									<input type="checkbox" name="descontoPredominante" id="descontoPredominante" />
-								</td>
-							</tr>
-				      	</tfoot>
 					</table>
 				</div>
 			</fieldset>
-		</div>            
-
+		</div>  
+		          
+		<strong>Este desconto predomina sobre os demais (geral / Específico)?</strong>
+		<input type="checkbox" name="descontoPredominante" id="descontoPredominante" />
 
  </form>
 

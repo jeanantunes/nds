@@ -44,14 +44,6 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 	
 	private DescontoProduto descontoProdutoVeja;
 	
-	private DescontoProduto descontoProdutoQuatroRodas;
-	
-	private DescontoProduto descontoProdutoInfoExame;
-	
-	private DescontoProduto descontoProdutoCapricho;
-	
-	private DescontoProduto descontoProdutoSuperInteressante;
-	
 	@Before
 	public void setup() {
 		
@@ -114,9 +106,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoQuatroRodas.setProdutoEdicao(produtoEdicaoQuatroRodas);
 		descontoProdutoQuatroRodas.setUsuario(usuario);
 		
-		save(produtoQuatroRodas, produtoEdicaoQuatroRodas);
-		
-		this.descontoProdutoQuatroRodas = merge(descontoProdutoQuatroRodas);
+		save(produtoQuatroRodas, produtoEdicaoQuatroRodas, descontoProdutoQuatroRodas);
 		
 		/* Produto de código 3 */
 		Produto produtoInfoExame = Fixture.produtoInfoExame(tipoProduto);
@@ -133,9 +123,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoInfoExame.setProdutoEdicao(produtoEdicaoInfoExame);
 		descontoProdutoInfoExame.setUsuario(usuario);
 		
-		save(produtoInfoExame, produtoEdicaoInfoExame);
-		
-		this.descontoProdutoInfoExame = merge(descontoProdutoInfoExame);
+		save(produtoInfoExame, produtoEdicaoInfoExame, descontoProdutoInfoExame);
 		
 		/* Produto de código 4 */
 		Produto produtoCapricho = Fixture.produtoCapricho(tipoProduto);
@@ -152,9 +140,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoCapricho.setProdutoEdicao(produtoEdicaoCapricho);
 		descontoProdutoCapricho.setUsuario(usuario);
 		
-		save(produtoCapricho, produtoEdicaoCapricho);
-		
-		this.descontoProdutoCapricho = merge(descontoProdutoCapricho);
+		save(produtoCapricho, produtoEdicaoCapricho, descontoProdutoCapricho);
 		
 		/* Produto de código 5 */
 		Produto produtoSuperInteressante = Fixture.produtoSuperInteressante(tipoProduto);
@@ -171,9 +157,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoSuperInteressante.setProdutoEdicao(produtoEdicaoSuperInteressante);
 		descontoProdutoSuperInteressante.setUsuario(usuario);
 		
-		save(produtoSuperInteressante, produtoEdicaoSuperInteressante);
-		
-		this.descontoProdutoSuperInteressante = merge(descontoProdutoSuperInteressante);
+		save(produtoSuperInteressante, produtoEdicaoSuperInteressante, descontoProdutoSuperInteressante);
 	}
 
 	@Test
