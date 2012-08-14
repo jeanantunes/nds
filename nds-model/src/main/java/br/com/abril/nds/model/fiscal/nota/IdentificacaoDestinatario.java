@@ -36,8 +36,8 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)
 	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.CPF, export = @NFEExport(secao = TipoSecao.E02, posicao = 0)),
-			@NFEWhen(condition = NFEConditions.CNPJ, export = @NFEExport(secao = TipoSecao.E03, posicao = 0))
+			@NFEWhen(condition = NFEConditions.CPF, export = @NFEExport(secao = TipoSecao.E03, posicao = 0)),
+			@NFEWhen(condition = NFEConditions.CNPJ, export = @NFEExport(secao = TipoSecao.E02, posicao = 0))
 	})
 	private String documento;
 	
