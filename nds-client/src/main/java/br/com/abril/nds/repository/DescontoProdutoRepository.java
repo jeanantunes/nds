@@ -1,12 +1,12 @@
 package br.com.abril.nds.repository;
 
 import java.util.List;
-import java.util.Set;
 
+import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Interface que define as regras de acesso a dados
@@ -41,7 +41,7 @@ public interface DescontoProdutoRepository extends Repository<DescontoProduto, L
 	 * 
 	 * @param idDescontoProduto - ID do Tipo de desconto.
 	 * 
-	 * @return - Set<Cota> - As cotas relacionadas.
+	 * @return - List<CotaDescontoProdutoDTO> - As cotas relacionadas.
 	 */
-	Set<Cota> obterCotasDoTipoDescontoProduto(Long idDescontoProduto);
+	List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao);
 }

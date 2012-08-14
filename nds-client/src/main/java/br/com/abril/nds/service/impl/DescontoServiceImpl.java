@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -41,6 +42,7 @@ import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class DescontoServiceImpl implements DescontoService {
@@ -384,13 +386,13 @@ public class DescontoServiceImpl implements DescontoService {
 	 */
 	@Override
 	@Transactional
-	public Set<Cota> obterCotasDoTipoDescontoProduto(Long idDescontoProduto) {
+	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
 
 		if (idDescontoProduto == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "O desconto precisa ser especificado.");
 		}
 		
-		return this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(idDescontoProduto);
+		return this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(idDescontoProduto, ordenacao);
 	}
 }
