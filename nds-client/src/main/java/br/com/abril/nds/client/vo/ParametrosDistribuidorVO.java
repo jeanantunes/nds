@@ -171,21 +171,19 @@ public class ParametrosDistribuidorVO {
 	
 	// Aba Aprovação
 	// Frame Aprovação
-	private String utilizaControleAprovacao;
+	private boolean utilizaControleAprovacao;
 
-	private String paraDebitosCreditos;
+	private boolean paraDebitosCreditos;
 
-	private String negociacao;
+	private boolean negociacao;
 	
-	private String ajusteEstoque;
+	private boolean ajusteEstoque;
 	
-	private String postergacaoCobranca;
+	private boolean postergacaoCobranca;
 	
-	private String devolucaoFornecedor;
+	private boolean devolucaoFornecedor;
 	
-	private String recibo;
-	
-	private String faltasSobras;
+	private boolean faltasSobras;
 	
 	private String aprovacaoFaltaDe;
 	
@@ -809,67 +807,59 @@ public class ParametrosDistribuidorVO {
 		this.negociacaoAteParcelas = negociacaoAteParcelas;
 	}
 
-	public String getUtilizaControleAprovacao() {
+	public boolean getUtilizaControleAprovacao() {
 		return utilizaControleAprovacao;
 	}
 
-	public void setUtilizaControleAprovacao(String utilizaControleAprovacao) {
+	public void setUtilizaControleAprovacao(boolean utilizaControleAprovacao) {
 		this.utilizaControleAprovacao = utilizaControleAprovacao;
 	}
 
-	public String getParaDebitosCreditos() {
+	public boolean getParaDebitosCreditos() {
 		return paraDebitosCreditos;
 	}
 
-	public void setParaDebitosCreditos(String paraDebitosCreditos) {
+	public void setParaDebitosCreditos(boolean paraDebitosCreditos) {
 		this.paraDebitosCreditos = paraDebitosCreditos;
 	}
 
-	public String getNegociacao() {
+	public boolean getNegociacao() {
 		return negociacao;
 	}
 
-	public void setNegociacao(String negociacao) {
+	public void setNegociacao(boolean negociacao) {
 		this.negociacao = negociacao;
 	}
 
-	public String getAjusteEstoque() {
+	public boolean getAjusteEstoque() {
 		return ajusteEstoque;
 	}
 
-	public void setAjusteEstoque(String ajusteEstoque) {
+	public void setAjusteEstoque(boolean ajusteEstoque) {
 		this.ajusteEstoque = ajusteEstoque;
 	}
 
-	public String getPostergacaoCobranca() {
+	public boolean getPostergacaoCobranca() {
 		return postergacaoCobranca;
 	}
 
-	public void setPostergacaoCobranca(String postergacaoCobranca) {
+	public void setPostergacaoCobranca(boolean postergacaoCobranca) {
 		this.postergacaoCobranca = postergacaoCobranca;
 	}
 
-	public String getDevolucaoFornecedor() {
+	public boolean getDevolucaoFornecedor() {
 		return devolucaoFornecedor;
 	}
 
-	public void setDevolucaoFornecedor(String devolucaoFornecedor) {
+	public void setDevolucaoFornecedor(boolean devolucaoFornecedor) {
 		this.devolucaoFornecedor = devolucaoFornecedor;
 	}
 
-	public String getRecibo() {
-		return recibo;
-	}
-
-	public void setRecibo(String recibo) {
-		this.recibo = recibo;
-	}
-
-	public String getFaltasSobras() {
+	public boolean getFaltasSobras() {
 		return faltasSobras;
 	}
 
-	public void setFaltasSobras(String faltasSobras) {
+	public void setFaltasSobras(boolean faltasSobras) {
 		this.faltasSobras = faltasSobras;
 	}
 
