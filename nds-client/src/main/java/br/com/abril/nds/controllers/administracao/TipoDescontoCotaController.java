@@ -166,6 +166,11 @@ public class TipoDescontoCotaController {
 		List<CotaDescontoProdutoDTO> cotas = 
 					this.descontoService.obterCotasDoTipoDescontoProduto(idTipoDescontoProduto, paginacaoVO.getOrdenacao());
 
+		if (cotas == null || cotas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota cadastrada para esse tipo de desconto.");
+		}
+		
 		this.result.use(FlexiGridJson.class).from(cotas).total(cotas.size()).serialize();
 	}
 	

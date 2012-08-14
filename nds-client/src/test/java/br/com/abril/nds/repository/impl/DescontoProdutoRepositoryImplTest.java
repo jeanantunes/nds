@@ -2,7 +2,9 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -10,20 +12,24 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Testes unitários para o repositório referentes aos descontos de produto.
@@ -35,6 +41,16 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 
 	@Autowired
 	private DescontoProdutoRepository descontoProdutoRepository;
+	
+	private DescontoProduto descontoProdutoVeja;
+	
+	private DescontoProduto descontoProdutoQuatroRodas;
+	
+	private DescontoProduto descontoProdutoInfoExame;
+	
+	private DescontoProduto descontoProdutoCapricho;
+	
+	private DescontoProduto descontoProdutoSuperInteressante;
 	
 	@Before
 	public void setup() {
@@ -59,7 +75,20 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 			new BigDecimal(10), "55201", 1L, produtoVeja, new BigDecimal(10), false
 		);
 		
+		Set<Cota> cotas = new LinkedHashSet<Cota>();
+		
+		Cota cota1 = Fixture.cota(123, abril, SituacaoCadastro.ATIVO, null);
+		Cota cota2 = Fixture.cota(1234, abril, SituacaoCadastro.ATIVO, null);
+		Cota cota3 = Fixture.cota(12345, abril, SituacaoCadastro.ATIVO, null);
+		
+		save(cota1, cota2, cota3);
+		
+		cotas.add(cota1);
+		cotas.add(cota2);
+		cotas.add(cota3);
+		
 		DescontoProduto descontoProdutoVeja = new DescontoProduto();
+		descontoProdutoVeja.setCotas(cotas);
 		descontoProdutoVeja.setDataAlteracao(new Date());
 		descontoProdutoVeja.setDesconto(new BigDecimal(50));
 		descontoProdutoVeja.setDistribuidor(distribuidor);
@@ -67,6 +96,8 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoVeja.setUsuario(usuario);
 		
 		save(produtoVeja, produtoEdicaoVeja, descontoProdutoVeja);
+		
+		this.descontoProdutoVeja = merge(descontoProdutoVeja);
 		
 		/* Produto de código 2 */
 		Produto produtoQuatroRodas = Fixture.produtoQuatroRodas(tipoProduto);
@@ -83,7 +114,9 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoQuatroRodas.setProdutoEdicao(produtoEdicaoQuatroRodas);
 		descontoProdutoQuatroRodas.setUsuario(usuario);
 		
-		save(produtoQuatroRodas, produtoEdicaoQuatroRodas, descontoProdutoQuatroRodas);
+		save(produtoQuatroRodas, produtoEdicaoQuatroRodas);
+		
+		this.descontoProdutoQuatroRodas = merge(descontoProdutoQuatroRodas);
 		
 		/* Produto de código 3 */
 		Produto produtoInfoExame = Fixture.produtoInfoExame(tipoProduto);
@@ -100,7 +133,9 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoInfoExame.setProdutoEdicao(produtoEdicaoInfoExame);
 		descontoProdutoInfoExame.setUsuario(usuario);
 		
-		save(produtoInfoExame, produtoEdicaoInfoExame, descontoProdutoInfoExame);
+		save(produtoInfoExame, produtoEdicaoInfoExame);
+		
+		this.descontoProdutoInfoExame = merge(descontoProdutoInfoExame);
 		
 		/* Produto de código 4 */
 		Produto produtoCapricho = Fixture.produtoCapricho(tipoProduto);
@@ -117,7 +152,9 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoCapricho.setProdutoEdicao(produtoEdicaoCapricho);
 		descontoProdutoCapricho.setUsuario(usuario);
 		
-		save(produtoCapricho, produtoEdicaoCapricho, descontoProdutoCapricho);
+		save(produtoCapricho, produtoEdicaoCapricho);
+		
+		this.descontoProdutoCapricho = merge(descontoProdutoCapricho);
 		
 		/* Produto de código 5 */
 		Produto produtoSuperInteressante = Fixture.produtoSuperInteressante(tipoProduto);
@@ -134,7 +171,9 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		descontoProdutoSuperInteressante.setProdutoEdicao(produtoEdicaoSuperInteressante);
 		descontoProdutoSuperInteressante.setUsuario(usuario);
 		
-		save(produtoSuperInteressante, produtoEdicaoSuperInteressante, descontoProdutoSuperInteressante);
+		save(produtoSuperInteressante, produtoEdicaoSuperInteressante);
+		
+		this.descontoProdutoSuperInteressante = merge(descontoProdutoSuperInteressante);
 	}
 
 	@Test
@@ -232,5 +271,20 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		int expected = 5;
 		
 		Assert.assertEquals(expected, quantidadeTiposDescontoProduto.intValue());
+	}
+	
+	@Test
+	public void obterCotasDoTipoDescontoProduto() {
+		
+		Ordenacao ordenacao = Ordenacao.DESC;
+		
+		List<CotaDescontoProdutoDTO> cotas = 
+				this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(this.descontoProdutoVeja.getId(), ordenacao);
+
+		int expectedSize = 3;
+		int actualSize = cotas.size();
+		
+		Assert.assertNotNull(cotas);
+		Assert.assertEquals(expectedSize, actualSize);
 	}
 }

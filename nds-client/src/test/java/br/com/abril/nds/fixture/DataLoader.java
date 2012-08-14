@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -11020,37 +11021,70 @@ public class DataLoader {
 	
 	private static void criarDescontoProduto(Session session) {
 		
+		Set<Cota> cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaAcme);
+		cotas.add(cotaGuilherme);
+		cotas.add(cotaJoana);
+		
 		DescontoProduto descontoProdutoVeja = new DescontoProduto();
 		descontoProdutoVeja.setDataAlteracao(new Date());
+		descontoProdutoVeja.setCotas(cotas);
 		descontoProdutoVeja.setDesconto(new BigDecimal(50));
 		descontoProdutoVeja.setDistribuidor(distribuidor);
 		descontoProdutoVeja.setProdutoEdicao(produtoEdicaoVeja1);
 		descontoProdutoVeja.setUsuario(usuarioJoao);
 		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaJoao);
+		cotas.add(cotaLuis);
+		
 		DescontoProduto descontoProdutoQuatroRodas = new DescontoProduto();
 		descontoProdutoQuatroRodas.setDataAlteracao(new Date());
-		descontoProdutoQuatroRodas.setDesconto(new BigDecimal(50));
+		descontoProdutoQuatroRodas.setCotas(cotas);
+		descontoProdutoQuatroRodas.setDesconto(new BigDecimal(44.30));
 		descontoProdutoQuatroRodas.setDistribuidor(distribuidor);
 		descontoProdutoQuatroRodas.setProdutoEdicao(produtoEdicaoQuatroRodas1);
 		descontoProdutoQuatroRodas.setUsuario(usuarioJoao);
 		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaManoel);
+		cotas.add(cotaManoelCunha);
+		
 		DescontoProduto descontoProdutoInfoExame = new DescontoProduto();
 		descontoProdutoInfoExame.setDataAlteracao(new Date());
-		descontoProdutoInfoExame.setDesconto(new BigDecimal(50));
+		descontoProdutoInfoExame.setCotas(cotas);
+		descontoProdutoInfoExame.setDesconto(new BigDecimal(4.50));
 		descontoProdutoInfoExame.setDistribuidor(distribuidor);
 		descontoProdutoInfoExame.setProdutoEdicao(produtoEdicaoInfoExame1);
 		descontoProdutoInfoExame.setUsuario(usuarioJoao);
 		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaAcme);
+		cotas.add(cotaOrlando);
+		cotas.add(cotaMariana);
+		
 		DescontoProduto descontoProdutoCapricho = new DescontoProduto();
 		descontoProdutoCapricho.setDataAlteracao(new Date());
-		descontoProdutoCapricho.setDesconto(new BigDecimal(50));
+		descontoProdutoCapricho.setCotas(cotas);
+		descontoProdutoCapricho.setDesconto(new BigDecimal(5.11));
 		descontoProdutoCapricho.setDistribuidor(distribuidor);
 		descontoProdutoCapricho.setProdutoEdicao(produtoEdicaoCapricho1);
 		descontoProdutoCapricho.setUsuario(usuarioJoao);
 		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaMurilo);
+		cotas.add(cotaJoao);
+		cotas.add(cotaLuis);
+		
 		DescontoProduto descontoProdutoSuperInteressante = new DescontoProduto();
 		descontoProdutoSuperInteressante.setDataAlteracao(new Date());
-		descontoProdutoSuperInteressante.setDesconto(new BigDecimal(50));
+		descontoProdutoSuperInteressante.setCotas(cotas);
+		descontoProdutoSuperInteressante.setDesconto(new BigDecimal(13.22));
 		descontoProdutoSuperInteressante.setDistribuidor(distribuidor);
 		descontoProdutoSuperInteressante.setProdutoEdicao(produtoEdicaoSuper1);
 		descontoProdutoSuperInteressante.setUsuario(usuarioJoao);
