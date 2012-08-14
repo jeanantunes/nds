@@ -1,8 +1,8 @@
 package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
+import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -10,10 +10,10 @@ import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 
 /**
@@ -87,8 +87,8 @@ public interface DescontoService {
 	 * 
 	 * @param idDescontoProduto - ID do Tipo de desconto.
 	 * 
-	 * @return - Set<Cota> - As cotas relacionadas.
+	 * @return - List<CotaDescontoProdutoDTO> - As cotas relacionadas.
 	 */
-	Set<Cota> obterCotasDoTipoDescontoProduto(Long idDescontoProduto);
+	List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao);
 }
 	

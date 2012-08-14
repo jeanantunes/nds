@@ -99,6 +99,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 						.append("produto.nome,")
 						.append("produtoEd.numeroEdicao,")
 						.append("produtoEd.precoVenda,")
+						.append("produtoEd.desconto,")
 						.append("estudo.qtdeReparte,")
 						.append(" SUM (( case ")
 							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")

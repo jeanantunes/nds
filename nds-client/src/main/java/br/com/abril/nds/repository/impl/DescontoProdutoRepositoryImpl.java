@@ -1,9 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
@@ -12,11 +12,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Classe de implementação referente a acesso de dados
@@ -116,12 +117,30 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Cota> obterCotasDoTipoDescontoProduto(Long idDescontoProduto) {
-		
-		Criteria criteria = getSession().createCriteria(DescontoProduto.class);
-		
-		criteria.add(Restrictions.eq("id", idDescontoProduto));
+	@SuppressWarnings("unchecked")
+	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
 
-		return ((DescontoProduto) criteria.uniqueResult()).getCotas();
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.numeroCota as numeroCota, ");
+		hql.append(" case when cota.pessoa.nome is not null then ");
+		hql.append(" cota.pessoa.nome ");
+		hql.append(" else ");
+		hql.append(" cota.pessoa.razaoSocial ");
+		hql.append(" end ");
+		hql.append(" as nome ");
+		hql.append(" from DescontoProduto as descontoProduto ");
+		hql.append(" inner join descontoProduto.cotas as cota ");
+		hql.append(" where descontoProduto.id = :idDescontoProduto ");
+		hql.append(" order by cota.numeroCota ");
+		hql.append(ordenacao.getOrdenacao() == null ? "" : ordenacao.getOrdenacao());
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idDescontoProduto", idDescontoProduto);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDescontoProdutoDTO.class));
+		
+		return query.list();
 	}
 }
