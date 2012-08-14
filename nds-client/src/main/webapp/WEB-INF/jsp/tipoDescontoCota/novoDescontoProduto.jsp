@@ -23,14 +23,18 @@ var DESCONTO_PRODUTO = {
 			height:550,
 			width:450,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					DESCONTO_PRODUTO.novoDescontoProduto();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+			buttons:[{
+						id:"id_confirmar_produto",text:"Confirmar",
+						click: function() {
+							DESCONTO_PRODUTO.novoDescontoProduto();
+						}
+					},{
+						id:"id_close_produto",text:"Cancelar",
+						click: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				]
 		});	
 	},
 
@@ -38,7 +42,7 @@ var DESCONTO_PRODUTO = {
 		
 		var data = DESCONTO_PRODUTO.obterParametrosNovoDescontoProduto();
 
-		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoProduto'/>",
+		$.postJSON("<c:url value='/financeiro/tipoDescontoCota/novoDescontoProduto'/>",
 				   data,
 				   function(result) {
 
