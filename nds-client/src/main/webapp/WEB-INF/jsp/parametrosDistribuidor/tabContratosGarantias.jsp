@@ -9,11 +9,11 @@
               <td>Utiliza Contrato com as Cotas?</td>
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaContratoComCotas}">
-                  <input name="parametrosDistribuidor.utilizaContratoComCotas" onclick="javascript:habilitaPrazoContrato();"
+                  <input name="parametrosDistribuidor.utilizaContratoComCotas" onclick="utilizaContratoCotasListener();"
                     id="utilizaContratoComCotas" checked="checked" type="checkbox" />
                 </c:if> 
                 <c:if test="${not parametrosDistribuidor.utilizaContratoComCotas}">
-                  <input name="parametrosDistribuidor.utilizaContratoComCotas" onclick="javascript:habilitaPrazoContrato();"
+                  <input name="parametrosDistribuidor.utilizaContratoComCotas" onclick="utilizaContratoCotasListener();"
                     id="utilizaContratoComCotas" type="checkbox" />
                 </c:if>
               </td>
@@ -58,10 +58,11 @@
               <td width="20">
                 <c:if test="${parametrosDistribuidor.utilizaChequeCaucao}">
                   <input name="parametrosDistribuidor.utilizaChequeCaucao" id="utilizaChequeCaucao" type="checkbox"
-                    checked="checked" />
+                    checked="checked" onclick="utilizaGarantiaListener(this, 'validadeChequeCaucao');" />
                 </c:if> 
                 <c:if test="${not parametrosDistribuidor.utilizaChequeCaucao}">
-                  <input name="parametrosDistribuidor.utilizaChequeCaucao" id="utilizaChequeCaucao" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaChequeCaucao" id="utilizaChequeCaucao" type="checkbox" 
+                    onclick="utilizaGarantiaListener(this, 'validadeChequeCaucao');"/>
                 </c:if>
               </td>
               <td width="201">Cheque Caução</td>
@@ -74,10 +75,11 @@
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaCaucaoLiquida}">
                   <input name="parametrosDistribuidor.utilizaCaucaoLiquida" id="utilizaCaucaoLiquida" checked="checked"
-                    type="checkbox" />
+                    type="checkbox" onclick="utilizaGarantiaListener(this, 'validadeCaucaoLiquida');" />
                 </c:if>
                 <c:if test="${not parametrosDistribuidor.utilizaCaucaoLiquida}">
-                  <input name="parametrosDistribuidor.utilizaCaucaoLiquida" id="utilizaCaucaoLiquida" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaCaucaoLiquida" id="utilizaCaucaoLiquida" type="checkbox" 
+                  onclick="utilizaGarantiaListener(this, 'validadeCaucaoLiquida');"/>
                 </c:if>
               </td>
               <td>Caução Líquida</td>
@@ -88,9 +90,12 @@
             <tr class="class_linha_2">
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaFiador}">
-                  <input name="parametrosDistribuidor.utilizaFiador" id="utilizaFiador" checked="checked" type="checkbox" />
-                </c:if> <c:if test="${not parametrosDistribuidor.utilizaFiador}">
-                  <input name="parametrosDistribuidor.utilizaFiador" id="utilizaFiador" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaFiador" id="utilizaFiador" checked="checked" type="checkbox"
+                   onclick="utilizaGarantiaListener(this, 'validadeFiador');" />
+                </c:if> 
+                <c:if test="${not parametrosDistribuidor.utilizaFiador}">
+                  <input name="parametrosDistribuidor.utilizaFiador" id="utilizaFiador" type="checkbox"  
+                  onclick="utilizaGarantiaListener(this, 'validadeFiador');" />
                 </c:if>
               </td>
               <td>Fiador</td>
@@ -102,10 +107,11 @@
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaNotaPromissoria}">
                   <input name="parametrosDistribuidor.utilizaNotaPromissoria" id="utilizaNotaPromissoria" checked="checked"
-                    type="checkbox" />
+                    type="checkbox" onclick="utilizaGarantiaListener(this, 'validadeNotaPromissoria');"/>
                 </c:if>
                 <c:if test="${not parametrosDistribuidor.utilizaNotaPromissoria}">
-                  <input name="parametrosDistribuidor.utilizaNotaPromissoria" id="utilizaNotaPromissoria" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaNotaPromissoria" id="utilizaNotaPromissoria" type="checkbox" 
+                  onclick="utilizaGarantiaListener(this, 'validadeNotaPromissoria');"/>
                 </c:if>
               </td>
               <td>Nota Promissória</td>
@@ -116,10 +122,12 @@
             <tr class="class_linha_2">
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaImovel}">
-                  <input name="parametrosDistribuidor.utilizaImovel" id="utilizaImovel" checked="checked" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaImovel" id="utilizaImovel" checked="checked" type="checkbox" 
+                  onclick="utilizaGarantiaListener(this, 'validadeImovel');"/>
                 </c:if>
                  <c:if test="${not parametrosDistribuidor.utilizaImovel}">
-                  <input name="parametrosDistribuidor.utilizaImovel" id="utilizaImovel" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaImovel" id="utilizaImovel" type="checkbox"
+                  onclick="utilizaGarantiaListener(this, 'validadeImovel');" />
                 </c:if>
                </td>
               <td>Imóvel</td>
@@ -131,11 +139,11 @@
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaAntecedenciaValidade}">
                   <input name="parametrosDistribuidor.utilizaAntecedenciaValidade" id="utilizaAntecedenciaValidade"
-                    checked="checked" type="checkbox" />
+                    checked="checked" type="checkbox"   onclick="utilizaGarantiaListener(this, 'validadeAntecedenciaValidade');" />
                 </c:if> 
                 <c:if test="${not parametrosDistribuidor.utilizaAntecedenciaValidade}">
                   <input name="parametrosDistribuidor.utilizaAntecedenciaValidade" id="utilizaAntecedenciaValidade"
-                    type="checkbox" />
+                    type="checkbox"   onclick="utilizaGarantiaListener(this, 'validadeAntecedenciaValidade');" />
                 </c:if>
               </td>
               <td>Antecedência da Validade</td>
@@ -147,10 +155,12 @@
             <tr class="class_linha_2">
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaOutros}">
-                  <input name="parametrosDistribuidor.utilizaOutros" id="utilizaOutros" checked="checked" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaOutros" id="utilizaOutros" checked="checked" type="checkbox" 
+                  onclick="utilizaGarantiaListener(this, 'validadeOutros');"/>
                 </c:if> 
                 <c:if test="${not parametrosDistribuidor.utilizaOutros}">
-                  <input name="parametrosDistribuidor.utilizaOutros" id="utilizaOutros" type="checkbox" />
+                  <input name="parametrosDistribuidor.utilizaOutros" id="utilizaOutros" type="checkbox" 
+                  onclick="utilizaGarantiaListener(this, 'validadeOutros');" />
                 </c:if>
               </td>
               <td>Outros</td>
@@ -171,11 +181,11 @@
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaProcuracaoEntregadores}">
                   <input name="parametrosDistribuidor.utilizaProcuracaoEntregadores" id="utilizaProcuracaoEntregadores"
-                  type="checkbox"  checked="checked"/>
+                  type="checkbox" checked="checked" onclick="utilizaProcuracaoEntregadoresListener();" />
                 </c:if>
                 <c:if test="${not parametrosDistribuidor.utilizaProcuracaoEntregadores}">
                   <input name="parametrosDistribuidor.utilizaProcuracaoEntregadores" id="utilizaProcuracaoEntregadores"
-                  type="checkbox"/>
+                  type="checkbox" onclick="utilizaProcuracaoEntregadoresListener();"/>
                 </c:if>
                </td>
               <td width="386" align="left">Utiliza procuração para Entregadores?</td>
@@ -199,11 +209,11 @@
               <td>
                 <c:if test="${parametrosDistribuidor.utilizaTermoAdesaoEntregaBancas}">
                     <input name="parametrosDistribuidor.utilizaTermoAdesaoEntregaBancas" id="utilizaTermoAdesaoEntregaBancas"
-                    type="checkbox" checked="checked" />
+                    type="checkbox" checked="checked" onclick="utilizaTermoAdesaoListener();" />
                 </c:if>
                 <c:if test="${not parametrosDistribuidor.utilizaTermoAdesaoEntregaBancas}">
                     <input name="parametrosDistribuidor.utilizaTermoAdesaoEntregaBancas" id="utilizaTermoAdesaoEntregaBancas"
-                    type="checkbox"/>
+                    type="checkbox" onclick="utilizaTermoAdesaoListener();"/>
                 </c:if>
               </td>
               <td width="386" align="left">Utiliza Termo de Adesão para Serviço de Entrega em Banca?</td>
