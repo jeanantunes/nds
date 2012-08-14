@@ -12,6 +12,7 @@ import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametroEntregaBanca;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorFaltasSobras;
@@ -168,6 +169,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setUtilizaProcuracaoEntregadores(distribuidor.isUtilizaProcuracaoEntregadores());
 		parametrosDistribuidor.setInformacoesComplementaresProcuracao(distribuidor.getInformacoesComplementaresProcuracao());
 		
+		// Termo de adesão entrega em bancas
+		if (distribuidor.getParametroEntregaBanca() != null) {
+		    parametrosDistribuidor.setUtilizaTermoAdesaoEntregaBancas(distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao());
+		    parametrosDistribuidor.setComplementoTermoAdesaoEntregaBancas(distribuidor.getParametroEntregaBanca().getComplementoTermoAdesao());
+		}
+		
 		// Garantia
 		parametrosDistribuidor.setUtilizaGarantiaPdv(distribuidor.isUtilizaGarantiaPdv());
 		
@@ -247,7 +254,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.ParametrosDistribuidorService#getDistribuidor(br.com.abril.nds.client.vo.ParametrosDistribuidorVO)
 	 */
-	@Transactional(readOnly = false)
+	@Transactional
 	@Override
 	public Distribuidor getDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor) {
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -271,10 +278,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		politicaChamadao.setValorConsignado(chamadaoConsignado);
 		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
-		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null)
+		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
 			parametrosRecolhimentoDistribuidor = distribuidor.getParametrosRecolhimentoDistribuidor();
-		else
+		} else {
 			parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
+		}
 			
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoPrimeiro()));
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoSegundo()));
@@ -411,9 +419,23 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setParametroContratoCota(null);
 		}
 		
-		// Procuração
+		// Procuração Entregadores
 		distribuidor.setUtilizaProcuracaoEntregadores(parametrosDistribuidor.isUtilizaProcuracaoEntregadores());
-		distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
+		if (parametrosDistribuidor.isUtilizaProcuracaoEntregadores()) {
+		    distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
+		} else {
+		    distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
+		}
+		
+		// Termo Adesão entrega em bancas
+		if (parametrosDistribuidor.isUtilizaTermoAdesaoEntregaBancas()) {
+            ParametroEntregaBanca parametro = new ParametroEntregaBanca();
+            distribuidor.setParametroEntregaBanca(parametro);
+            parametro.setUtilizaTermoAdesao(true);
+            parametro.setComplementoTermoAdesao(parametrosDistribuidor.getComplementoTermoAdesaoEntregaBancas());
+        } else {
+            distribuidor.setParametroEntregaBanca(null);
+        }
 
 		List<TipoGarantiaAceita> listaTipoGarantiaAceitas = new ArrayList<TipoGarantiaAceita>();
 

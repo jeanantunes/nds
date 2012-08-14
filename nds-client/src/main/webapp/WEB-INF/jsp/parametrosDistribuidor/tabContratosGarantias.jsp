@@ -57,7 +57,7 @@
             </tr>
           </table>
           <table width="335" border="0" cellspacing="1" cellpadding="1" id="tabelaGarantiasAceitas" 
-                style="${not parametrosDistribuidor.utilizaGarantiaPdv} ? 'display: none;' : ''">
+                style="${not parametrosDistribuidor.utilizaGarantiaPdv ? 'display: none;' : ''}">
             <tr class="header_table">
               <td>&nbsp;</td>
               <td>Garantia</td>
@@ -285,8 +285,8 @@
               <td colspan="2">Informações complementares do Termo de Adesão:</td>
             </tr>
             <tr>
-              <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresTermoAdesaoEntregaBancas"
-                  rows="4" id="informacoesComplementaresTermoAdesaoEntregaBancas" style="width: 150px;"></textarea></td>
+              <td colspan="2"><textarea name="parametrosDistribuidor.complementoTermoAdesaoEntregaBancas"
+                  rows="4" id="complementoTermoAdesaoEntregaBancas" style="width: 150px;"></textarea></td>
             </tr>
           </table>
         </fieldset>

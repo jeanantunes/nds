@@ -22,7 +22,7 @@ public class ParametroEntregaBanca implements Serializable {
 	/**
 	 * Flag indicando se é utilizado termo de adesão para entrega em bancas
 	 */
-    @Column(name = "UTILIZA_ADESAO_ENTREGA_BANCA", nullable = false)
+    @Column(name = "UTILIZA_ADESAO_ENTREGA_BANCA")
     private boolean utilizaTermoAdesao;
 	
 	/**
