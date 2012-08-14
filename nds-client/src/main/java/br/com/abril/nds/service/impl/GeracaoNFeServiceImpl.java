@@ -121,38 +121,44 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
 		for (Long idCota : listaIdCota) {
-			
-			Cota cota = this.cotaRepository.buscarPorId(idCota);
-			
-			if (SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
+			//TRY adicionado para em caso de erro em alguma nota, não parar o fluxo das demais nos testes.
+			//Remove-lo ou trata-lo com Logs
+			try {
 				
-				if (idCotasSuspensas != null && !idCotasSuspensas.isEmpty()) {
-					if (!idCotasSuspensas.contains(cota.getId())) {
+				Cota cota = this.cotaRepository.buscarPorId(idCota);
+				
+				if (SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
+					
+					if (idCotasSuspensas != null && !idCotasSuspensas.isEmpty()) {
+						if (!idCotasSuspensas.contains(cota.getId())) {
+							continue;
+						}
+					} else {
 						continue;
 					}
-				} else {
-					continue;
 				}
-			}
-			
-			List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
-					cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNotaFiscal);
-			
-			if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+				
+				List<ItemNotaFiscal> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
+						cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNotaFiscal);
+				
+				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+					continue;
+				
+				List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
+				
+				InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
+				
+				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
+						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas);
+				
+				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
+				
+				this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
+				
+				listaNotaFiscal.add(notaFiscal);
+			} catch (Exception exception) {
 				continue;
-			
-			List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
-			
-			InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
-			
-			Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
-					listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas);
-			
-			NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
-			
-			this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
-			
-			listaNotaFiscal.add(notaFiscal);
+			}
 		}
 		
 		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())
