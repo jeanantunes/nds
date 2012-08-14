@@ -129,6 +129,8 @@ function gravar() {
 		{name:'parametrosDistribuidor.informacoesComplementaresContrato', value: $('#informacoesComplementaresContrato').val()},
 		{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores').is(':checked')},
 		{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao').val()},
+		{name:'parametrosDistribuidor.utilizaTermoAdesaoEntregaBancas', value: $('#utilizaTermoAdesaoEntregaBancas').is(':checked')},
+		{name:'parametrosDistribuidor.informacoesComplementaresTermoAdesaoEntregaBancas', value: $('#informacoesComplementaresTermoAdesaoEntregaBancas').val()},
 		{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv').is(':checked')},
 		{name:'parametrosDistribuidor.utilizaChequeCaucao', value: $('#utilizaChequeCaucao').is(':checked')},
 		{name:'parametrosDistribuidor.validadeChequeCaucao', value: $('#validadeChequeCaucao').val()},
@@ -137,9 +139,9 @@ function gravar() {
 		{name:'parametrosDistribuidor.utilizaImovel', value: $('#utilizaImovel').is(':checked')},
 		{name:'parametrosDistribuidor.validadeImovel', value: $('#validadeImovel').val()},
 		{name:'parametrosDistribuidor.utilizaCaucaoLiquida', value: $('#utilizaCaucaoLiquida').is(':checked')},
-		{name:'parametrosDistribuidor.validadeCaucaoLiquida', value: $('#validadeCaucaoLiquidaValor').val()},
+		{name:'parametrosDistribuidor.validadeCaucaoLiquida', value: $('#validadeCaucaoLiquida').val()},
 		{name:'parametrosDistribuidor.utilizaNotaPromissoria', value: $('#utilizaNotaPromissoria').is(':checked')},
-		{name:'parametrosDistribuidor.validadeNotaPromissoria', value: $('#validadeNotaPromissoriaValor').val()},
+		{name:'parametrosDistribuidor.validadeNotaPromissoria', value: $('#validadeNotaPromissoria').val()},
 		{name:'parametrosDistribuidor.utilizaAntecedenciaValidade', value: $('#utilizaAntecedenciaValidade').is(':checked')},
 		{name:'parametrosDistribuidor.validadeAntecedenciaValidade', value: $('#validadeAntecedenciaValidade').val()},
 		{name:'parametrosDistribuidor.utilizaOutros', value: $('#utilizaOutros').is(':checked')},
@@ -400,7 +402,7 @@ $(function() {
 });
 
 function mostraTabelaGarantiasAceitas(){
-	if ($('#checkUtilizaGarantiaPdv').is(':checked')) {
+	if ($('#utilizaGarantiaPdv').is(':checked')) {
 		$('#tabelaGarantiasAceitas').show();
 	} else {
 		$('#tabelaGarantiasAceitas').hide();

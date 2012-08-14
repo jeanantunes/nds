@@ -6,6 +6,9 @@
 
 <div id="tabDiferenciada">
             
+	<jsp:include page="../messagesDialog.jsp"></jsp:include>
+ 	
+ 	<jsp:include page="popupConfirmarOpDiferenciada.jsp"></jsp:include>
    <br clear="all" />
    <fieldset style="width:800px;">
    	<legend>Grupos</legend>

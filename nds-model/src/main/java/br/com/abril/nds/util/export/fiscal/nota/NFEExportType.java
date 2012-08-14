@@ -11,6 +11,6 @@ import br.com.abril.nds.util.TipoSecao;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface NFEExportType {
 
-	public TipoSecao secaoPadrao() default TipoSecao.EMPTY;
+	public TipoSecao[] secaoPadrao() default {TipoSecao.EMPTY};
 	
 }

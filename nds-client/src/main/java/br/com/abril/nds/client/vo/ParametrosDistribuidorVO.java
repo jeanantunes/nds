@@ -102,7 +102,7 @@ public class ParametrosDistribuidorVO {
 	private String informacoesComplementaresContrato;
 
 	// Frame Procuração
-	private String utilizaProcuracaoEntregadores;
+	private boolean utilizaProcuracaoEntregadores;
 
 	private String informacoesComplementaresProcuracao;
 	
@@ -480,7 +480,7 @@ public class ParametrosDistribuidorVO {
 		this.impressaoCE = impressaoCE;
 	}
 
-	public boolean getUtilizaContratoComCotas() {
+	public boolean isUtilizaContratoComCotas() {
 		return utilizaContratoComCotas;
 	}
 
@@ -505,12 +505,12 @@ public class ParametrosDistribuidorVO {
 		this.informacoesComplementaresContrato = informacoesComplementaresContrato;
 	}
 
-	public String getUtilizaProcuracaoEntregadores() {
+	public boolean isUtilizaProcuracaoEntregadores() {
 		return utilizaProcuracaoEntregadores;
 	}
 
 	public void setUtilizaProcuracaoEntregadores(
-			String utilizaProcuracaoEntregadores) {
+			boolean utilizaProcuracaoEntregadores) {
 		this.utilizaProcuracaoEntregadores = utilizaProcuracaoEntregadores;
 	}
 
@@ -553,7 +553,7 @@ public class ParametrosDistribuidorVO {
         this.complementoTermoAdesaoEntregaBancas = complementoTermoAdesaoEntregaBancas;
     }
 
-    public boolean getUtilizaGarantiaPdv() {
+    public boolean isUtilizaGarantiaPdv() {
 		return utilizaGarantiaPdv;
 	}
 
@@ -951,5 +951,15 @@ public class ParametrosDistribuidorVO {
 	public void setPercentualDesconto(String percentualDesconto) {
 		this.percentualDesconto = percentualDesconto;
 	}
+	
+    /**
+     * Verifica se alguma garantia foi marcada para utilização
+     * @return true se ao menos uma ganatia esta sendo utilizada
+     */
+	public boolean isGarantiasUtilizadas() {
+        return utilizaChequeCaucao || utilizaCaucaoLiquida || utilizaFiador
+                || utilizaNotaPromissoria || utilizaImovel
+                || utilizaAntecedenciaValidade || utilizaOutros;
+    }
 
 }
