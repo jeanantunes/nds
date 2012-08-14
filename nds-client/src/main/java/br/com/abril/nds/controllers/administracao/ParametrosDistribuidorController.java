@@ -11,6 +11,7 @@ import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
@@ -95,6 +96,12 @@ public class ParametrosDistribuidorController {
 		distribuicaoFornecedorService.gravarAtualizarDadosFornecedor(listaFornecedoresLancamento, listaDiasLancamento, listaDiasRecolhimento, distribuidor);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor cadastrado com sucesso"),"result").recursive().serialize();
 	}
+	
+	@Post
+	public void cadastrarOperacaoDiferenciada(String nomeDiferenca, List<DiaSemana> diasSemana){
+		
+		result.use(Results.json()).from("").serialize();
+	}
 
 	/**
 	 * Valida os dados selecionados ao inserir dados de dias de distribuição por fornecedor
@@ -134,6 +141,41 @@ public class ParametrosDistribuidorController {
             erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
         }
 	    
+	    if (vo.isUtilizaContratoComCotas() && vo.getPrazoContrato() == null) {
+	        erros.add("É necessário informar o Prazo do Contrato!");
+	    }
+	    
+	    if (vo.isUtilizaGarantiaPdv() && !vo.isGarantiasUtilizadas()) {
+	        erros.add("É necessário selecionar pelo menos uma Garantia!");
+	    }
+	    
+	    if (vo.isUtilizaChequeCaucao() && vo.getValidadeChequeCaucao() == null) {
+	        erros.add("É necessário informar a Validade da Garantia Cheque Caução!");
+	    }
+	    
+	    if (vo.isUtilizaCaucaoLiquida() && vo.getValidadeCaucaoLiquida() == null) {
+            erros.add("É necessário informar a Validade da Garantia Caução Líquida!");
+        }
+	    
+	    if (vo.isUtilizaFiador() && vo.getValidadeFiador() == null) {
+            erros.add("É necessário informar a Validade da Garantia Fiador!");
+        }
+	    
+	    if (vo.isUtilizaNotaPromissoria() && vo.getValidadeNotaPromissoria() == null) {
+            erros.add("É necessário informar a Validade da Garantia Nota Promissória!");
+        }
+	    
+	    if (vo.isUtilizaImovel() && vo.getValidadeImovel() == null) {
+            erros.add("É necessário informar a Validade da Garantia Imóvel!");
+        }
+	    
+	    if (vo.isUtilizaAntecedenciaValidade() && vo.getValidadeAntecedenciaValidade() == null) {
+            erros.add("É necessário informar a Validade da Garantia Antecedência da Validade!");
+        }
+	    
+	    if (vo.isUtilizaOutros() && vo.getValidadeOutros() == null) {
+            erros.add("É necessário informar a Validade da Garantia Outros!");
+        }
 	    verificarExistenciaErros(erros);
 	}
 

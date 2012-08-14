@@ -165,7 +165,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		
 		// Procuração
-		parametrosDistribuidor.setUtilizaProcuracaoEntregadores(verificaCheckString(distribuidor.isUtilizaProcuracaoEntregadores()));
+		parametrosDistribuidor.setUtilizaProcuracaoEntregadores(distribuidor.isUtilizaProcuracaoEntregadores());
 		parametrosDistribuidor.setInformacoesComplementaresProcuracao(distribuidor.getInformacoesComplementaresProcuracao());
 		
 		// Garantia
@@ -396,7 +396,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		// Condições de Contratação:
-		boolean utilizaContratoComCotas = parametrosDistribuidor.getUtilizaContratoComCotas();
+		boolean utilizaContratoComCotas = parametrosDistribuidor.isUtilizaContratoComCotas();
 		if (utilizaContratoComCotas) {
 			ParametroContratoCota parametroContratoCota = null;
 			if (distribuidor.getParametroContratoCota() != null) {
@@ -407,18 +407,17 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			}
 			parametroContratoCota.setDuracaoContratoCota(parametrosDistribuidor.getPrazoContrato());
 			parametroContratoCota.setComplementoContrato(parametrosDistribuidor.getInformacoesComplementaresContrato());
-			parametroContratoCotaRepository.alterar(parametroContratoCota);
 		} else {
 			distribuidor.setParametroContratoCota(null);
 		}
 		
 		// Procuração
-		distribuidor.setUtilizaProcuracaoEntregadores(verificaCheckBoolean(parametrosDistribuidor.getUtilizaProcuracaoEntregadores()));
+		distribuidor.setUtilizaProcuracaoEntregadores(parametrosDistribuidor.isUtilizaProcuracaoEntregadores());
 		distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
 
 		List<TipoGarantiaAceita> listaTipoGarantiaAceitas = new ArrayList<TipoGarantiaAceita>();
 
-		distribuidor.setUtilizaGarantiaPdv(parametrosDistribuidor.getUtilizaGarantiaPdv());
+		distribuidor.setUtilizaGarantiaPdv(parametrosDistribuidor.isUtilizaGarantiaPdv());
 		
 		//Garantias Aceitas
 		//TODO: Refatorar

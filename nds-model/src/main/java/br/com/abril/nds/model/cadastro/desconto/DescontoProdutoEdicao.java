@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -19,7 +21,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
 @Table(name = "DESCONTO_PRODUTO_EDICAO", 
-	   uniqueConstraints= {@UniqueConstraint(columnNames = {"FORNECEDOR_ID", "PRODUTO_EDICAO_ID" })})
+	   uniqueConstraints= {@UniqueConstraint(columnNames = {"FORNECEDOR_ID", "PRODUTO_EDICAO_ID", "TIPO_DESCONTO" })})
 @SequenceGenerator(name="DESCONTO_PRODUTO_EDICAO_SEQ", initialValue = 1, allocationSize = 1)
 public class DescontoProdutoEdicao implements Serializable {
 
@@ -44,6 +46,10 @@ public class DescontoProdutoEdicao implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_DESCONTO", nullable = false)
+	private TipoDesconto tipoDesconto;
 
 	/**
 	 * @return the id
@@ -113,6 +119,20 @@ public class DescontoProdutoEdicao implements Serializable {
 	 */
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
+	}
+
+	/**
+	 * @return the tipoDesconto
+	 */
+	public TipoDesconto getTipoDesconto() {
+		return tipoDesconto;
+	}
+
+	/**
+	 * @param tipoDesconto the tipoDesconto to set
+	 */
+	public void setTipoDesconto(TipoDesconto tipoDesconto) {
+		this.tipoDesconto = tipoDesconto;
 	}
 	
 	
