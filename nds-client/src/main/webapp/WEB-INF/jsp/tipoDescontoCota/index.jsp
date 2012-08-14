@@ -33,7 +33,7 @@ var TIPO_DESCONTO = {
 	pesquisarDescontoGeral:function(){
 		
 		$(".tiposDescGeralGrid").flexOptions({
-			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoGeral'/>",
+			url: "<c:url value='/financeiro/tipoDescontoCota/pesquisarDescontoGeral'/>",
 			params: [],
 		    newp: 1,
 		});
@@ -47,7 +47,7 @@ var TIPO_DESCONTO = {
 		var nomeEspecifico = $("#descricaoCotaPesquisa").val();
 		
 		$(".tiposDescEspecificoGrid").flexOptions({
-			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoEspecifico'/>",
+			url: "<c:url value='/financeiro/tipoDescontoCota/pesquisarDescontoEspecifico'/>",
 			params: [
 					 {name:'cotaEspecifica', value:cotaEspecifica},
 			         {name:'nomeEspecifico', value:nomeEspecifico}
@@ -63,7 +63,7 @@ var TIPO_DESCONTO = {
 		var produto = $("#produtoPesquisa").val();
 		
 		$(".tiposDescProdutoGrid").flexOptions({
-			url: "<c:url value='/administracao/tipoDescontoCota/pesquisarDescontoProduto'/>",
+			url: "<c:url value='/financeiro/tipoDescontoCota/pesquisarDescontoProduto'/>",
 			params: [
 					 {name:'codigo', value:codigo},
 			         {name:'produto', value:produto}
@@ -209,17 +209,21 @@ var TIPO_DESCONTO = {
 			height:'auto',
 			width:250,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
+			buttons: [{
+						id:"id_confirmar_exclusao",text:"Confirmar",
+						click: function() {
 		
-					TIPO_DESCONTO.excluirDesconto(idDesconto,TIPO_DESCONTO.tipoDescontoSelecionado);
+							TIPO_DESCONTO.excluirDesconto(idDesconto,TIPO_DESCONTO.tipoDescontoSelecionado);
 									
-					$( this ).dialog( "close" );
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+							$( this ).dialog( "close" );
+						}
+					},{
+						id:"id_cancelar_exclusao",text:"Cancelar",
+						click: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+					]
 		});
 	},
 	
@@ -237,16 +241,17 @@ var TIPO_DESCONTO = {
 			height:'auto',
 			width:400,
 			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				},
-			}
+			buttons:[ {id:"btn_close_cotas",
+				   text:"Fechar",
+				   click: function() {
+						$( this ).dialog( "close" );
+					},
+				}]
 		});	
 	},
 	
 	excluirDesconto:function(idDesconto, tipoDesconto){		
-		$.postJSON(contextPath + "/administracao/tipoDescontoCota/excluirDesconto",
+		$.postJSON(contextPath + "/financeiro/tipoDescontoCota/excluirDesconto",
 				"idDesconto="+idDesconto+"&tipoDesconto="+tipoDesconto, 
 				function(){
 					TIPO_DESCONTO.pesquisar();
@@ -262,7 +267,7 @@ var TIPO_DESCONTO = {
 	
 	carregarFornecedores:function(idComboFornecedores){
 		
-		$.postJSON(contextPath + "/administracao/tipoDescontoCota/obterFornecedores",
+		$.postJSON(contextPath + "/financeiro/tipoDescontoCota/obterFornecedores",
 				null, 
 				function(result){
 					
@@ -280,7 +285,7 @@ var TIPO_DESCONTO = {
 		var param = [{name:"idDesconto",value:idDesconto},{name:"tipoDesconto",value:TIPO_DESCONTO.tipoDescontoSelecionado}];
 		
 		$(".lstFornecedoresGrid").flexOptions({
-			url: "<c:url value='/administracao/tipoDescontoCota/obterFornecedoresAssociadosDesconto'/>",
+			url: "<c:url value='/financeiro/tipoDescontoCota/obterFornecedoresAssociadosDesconto'/>",
 			params: param,
 		    newp: 1,
 		    sortorder:'asc'
@@ -298,11 +303,12 @@ var TIPO_DESCONTO = {
 			height:'auto',
 			width:400,
 			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				},
-			}
+			buttons:[ {id:"btn_close_fornecedor",
+					   text:"Fechar",
+					   click: function() {
+							$( this ).dialog( "close" );
+						},
+					}]
 		});	      
 	}
 };
@@ -402,13 +408,13 @@ var TIPO_DESCONTO = {
 	       		<table class="tiposDescGeralGrid"></table>
 	       		
 	       		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
-	       			<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=GERAL">
+	       			<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=GERAL">
 						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 						Arquivo
 					</a>
 	       		</span>
 	             <span class="bt_novos" title="Imprimir">
-	             	<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=GERAL">
+	             	<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=GERAL">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 						Imprimir
 					</a>
@@ -427,13 +433,13 @@ var TIPO_DESCONTO = {
 				<table class="tiposDescEspecificoGrid"></table>
 				
 				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
-	       			<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=ESPECIFICO">
+	       			<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=ESPECIFICO">
 						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 						Arquivo
 					</a>
 	       		</span>
 	             <span class="bt_novos" title="Imprimir">
-	             	<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=ESPECIFICO">
+	             	<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=ESPECIFICO">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 						Imprimir
 					</a>
@@ -453,13 +459,13 @@ var TIPO_DESCONTO = {
        		<table class="tiposDescProdutoGrid"></table>
 			
 			<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;">
-       			<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=PRODUTO">
+       			<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=PRODUTO">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					Arquivo
 				</a>
        		</span>
              <span class="bt_novos" title="Imprimir">
-             	<a href="${pageContext.request.contextPath}/administracao/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=PRODUTO">
+             	<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=PDF&tipoDesconto=PRODUTO">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 					Imprimir
 				</a>
@@ -508,7 +514,7 @@ var TIPO_DESCONTO = {
 				display : 'Ação',
 				name : 'acao',
 				width : 35,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "sequencial",
@@ -565,7 +571,7 @@ var TIPO_DESCONTO = {
 				display : 'Ação',
 				name : 'acao',
 				width : 35,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "numeroCota",
@@ -621,7 +627,7 @@ var TIPO_DESCONTO = {
 				display : 'Ação',
 				name : 'acao',
 				width : 30,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "codigoProduto",
@@ -653,7 +659,7 @@ var TIPO_DESCONTO = {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -661,11 +667,12 @@ var TIPO_DESCONTO = {
 				display : 'Nome',
 				name : 'nome',
 				width : 245,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}],
 			width : 350,
-			height : 155
+			height : 155,
+			sortorder : "asc",
 		});
 </script>
 </body>

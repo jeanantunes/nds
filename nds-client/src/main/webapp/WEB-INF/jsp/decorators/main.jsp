@@ -310,6 +310,9 @@
 							</li>
 							<li><a href='<c:url value="/financeiro/consultaConsignadoCota"/>'>Consignado Cota</a>
 							</li>
+							
+							<li><a href='<c:url value="/financeiro/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
+							
 							<li><a href="Financeiro/help_financeiro.htm">Help</a>
 							</li>
 						</ul></li>
@@ -476,7 +479,7 @@
 							<li><a href='<c:url value="/followup"/>'>Follow Up do Sistema</a></li>
 							<li><a href='<c:url value="/administracao/painelProcessamento"/>'>Painel de Processamento</a></li>
 							<li><a href='<c:url value="/administracao/cadastroCalendario"/>'>Calendário</a></li>
-							<li><a href='<c:url value="/administracao/tipoDescontoCota"/>'>Tipo de Desconto Cota</a></li>
+							
 							
 							<li><a href="<c:url value="/tipoMovimento/index"/>">Tipo de Movimento</a></li>
 

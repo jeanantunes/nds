@@ -27,6 +27,7 @@ public class ExpedicaoDTO implements Serializable {
 	private String nomeBox;
 	private Long numeroEdicao;
 	private BigDecimal precoCapa;
+	private BigDecimal desconto;
 	private BigInteger qntReparte;
 	private BigInteger qntDiferenca;
 	private BigDecimal valorFaturado;
@@ -36,17 +37,19 @@ public class ExpedicaoDTO implements Serializable {
 	public ExpedicaoDTO() {}
 	
 	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
-						Long numeroEdicao, BigDecimal precoCapa, BigInteger qntReparte,
+						Long numeroEdicao, BigDecimal precoCapa, BigDecimal desconto,BigInteger qntReparte,
 						BigInteger qntDiferenca, BigDecimal valorFaturado, String razaoSocial) {
 		
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
 		this.precoCapa = precoCapa;
+		this.desconto = desconto;
 		this.qntReparte = qntReparte;
 		this.qntDiferenca = qntDiferenca;
 		this.valorFaturado = valorFaturado;
 		this.razaoSocial = razaoSocial;
+		
 	}
 	
 	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
@@ -273,5 +276,19 @@ public class ExpedicaoDTO implements Serializable {
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
 	}
-	
+
+	/**
+	 * @return the desconto
+	 */
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	/**
+	 * @param desconto the desconto to set
+	 */
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+
 }

@@ -395,6 +395,8 @@ $(function() {
 	utilizaContratoCotasListener();
 	
 	$("#tabDistribuidor").tabs();
+	
+	alternarControleAprovacao();
 });
 
 function mostraTabelaGarantiasAceitas(){
@@ -403,6 +405,20 @@ function mostraTabelaGarantiasAceitas(){
 	} else {
 		$('#tabelaGarantiasAceitas').hide();
 	}
+}
+
+function alternarControleAprovacao(){
+	
+	if ($("#utilizaControleAprovacao").is(":checked")){
+		
+		$("table#controlesAprovacao input[type=checkbox]").enable();
+	} else {
+		
+		$("table#controlesAprovacao input[type=checkbox]").uncheck();
+		$("table#controlesAprovacao input[type=checkbox]").disable();
+	}
+	
+	$("input:checkbox[id=controlesAprovacao]").attr("disabled", "disabled");
 }
 
 </script>
@@ -438,6 +454,7 @@ function mostraTabelaGarantiasAceitas(){
 			<ul>
 				<li><a href="#tabFiscal">Cadastro / Fiscal</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
+				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
 				<li><a href="#tabEmissao">Documentos</a></li>
 				<li><a href="#tabContratos">Contratos e Garantias</a></li>
 			    <li><a href="#tabNegociacao">Negociação</a></li>
@@ -447,6 +464,8 @@ function mostraTabelaGarantiasAceitas(){
             <!--  Aba Operação --> 
             <jsp:include page="tabOperacao.jsp"/>
 			
+			<jsp:include page="tabOperacaoDiferenciada.jsp"/>
+						
 			<jsp:include page="tabFiscal.jsp"></jsp:include>
 			
       
