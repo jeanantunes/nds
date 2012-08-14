@@ -14,6 +14,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.SetUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -200,6 +202,8 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.seguranca.GrupoPermissao;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
 
@@ -1003,6 +1007,8 @@ public class DataLoader {
 		gerarLogExecucaoInterfaces(session);
 
 		gerarLogradouros(session);
+
+		gerarAdministrador(session); 
 		
 		//criarNovaNotaFiscal(session);
 		
@@ -1134,8 +1140,31 @@ public class DataLoader {
 		
 		criarFeriado(session);		
 	}
-	
 
+	private static void gerarAdministrador(Session session) {
+
+		GrupoPermissao grupoAdmin = new GrupoPermissao();
+		grupoAdmin.setNome("ADMIN");
+		grupoAdmin.setPermissoes( new HashSet<Permissao>(Arrays.asList(Permissao.values())) );
+		
+		session.save(grupoAdmin);
+
+		Usuario admin = new Usuario();
+		admin.setLogin("admin");
+		admin.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // Senha: 1234
+		admin.setNome("Administrador");
+		admin.setContaAtiva(true);
+		admin.setEmail("adminteste@abril.com.br");
+		
+		Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
+		gruposPermissoes.add(grupoAdmin);
+		
+		admin.setGruposPermissoes(gruposPermissoes);
+		
+		session.save(admin);
+
+	}
+	
 	private static void criarControleNumeracaoSlip(Session session) {
 
 		controleNumeracaoSlipConferenciaEncalhe = new ControleNumeracaoSlip();

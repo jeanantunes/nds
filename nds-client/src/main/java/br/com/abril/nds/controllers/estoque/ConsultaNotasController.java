@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ConsultaNotaFiscalVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaDetallheNFVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -28,6 +29,7 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
@@ -87,6 +89,7 @@ public class ConsultaNotasController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroConsultaNotaFiscal";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ESTOQUE_CONSULTA_NOTAS)
 	public void index() {
 		
 		preencherCombos();

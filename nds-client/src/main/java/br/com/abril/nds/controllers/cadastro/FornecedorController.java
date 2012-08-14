@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoFornecedorService;
@@ -84,6 +86,7 @@ public class FornecedorController {
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoFornecedor";
 
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR)
 	public void index() {
 
 		obterTiposFornecedor();

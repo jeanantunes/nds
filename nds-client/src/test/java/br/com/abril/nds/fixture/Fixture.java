@@ -778,7 +778,9 @@ public class Fixture {
 		Usuario usuario = new Usuario();
 		usuario.setNome("João");
 		usuario.setLogin("joao");
-		usuario.setSenha("ABC123");
+		usuario.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // senha: 1234
+		usuario.setEmail("cabradapeste@bol.com");
+		usuario.setContaAtiva(false);
 		return usuario;
 	}
 

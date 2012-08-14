@@ -139,6 +139,33 @@
 			<artifactId>ndsi-engine</artifactId>
 			<version>1.0</version>
 		</dependency>
+
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-core</artifactId>
+		    <version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-web</artifactId>
+		    <version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-acl</artifactId>
+		    <version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-taglibs</artifactId>
+		    <version>${org.springframework.version}</version>
+		</dependency>		
+
 	</dependencies>
 
 	<build>
@@ -240,7 +267,7 @@
 		<profile>
 			<id>desenvolvimento</id>
 			<activation>
-	       		<activeByDefault>true</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
@@ -264,7 +291,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>		
+		</profile>
 		<profile>
 			<id>integracaoContinua</id>
 			<properties>
@@ -309,7 +336,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>		
+		</profile>
 		<profile>
 			<id>qa</id>
 			<properties>
@@ -381,7 +408,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>		
+		</profile>
 	</profiles>
 
 </project>

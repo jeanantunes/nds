@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ControleAprovacaoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -20,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO.OrdenacaoColunaCon
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.TipoMovimentoService;
@@ -63,6 +65,7 @@ public class ControleAprovacaoController {
 	private static final String QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaControleAprovacao";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO)
 	public void index() {
 		
 		carregarComboTipoMovimento();
