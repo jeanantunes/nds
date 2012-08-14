@@ -229,15 +229,7 @@ function callback() {
 		$( "#effect:visible").removeAttr( "style" ).fadeOut();
 
 	}, 1000 );
-};	
-
-function mostra_funcionalidades(){
-	if ($('#faltasSobras').attr('checked') == 'checked') {
-		$('.funcionalidades').show();
-	} else {
-		$('.funcionalidades').hide();
-	}
-}
+};
 
 function removeFornecedor(){
 	$( ".forncedoresSel" ).fadeOut('fast');
@@ -379,7 +371,6 @@ $(function() {
 	$('input:radio[name=impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]').click();
 	$('input:radio[name=impressaoCE][value=${parametrosDistribuidor.impressaoCE}]').click();
 	
-	mostra_funcionalidades();
 	habilitaPrazoContrato();
 	
 	$("#tabDistribuidor").tabs();
@@ -446,150 +437,8 @@ function mostraTabelaGarantiasAceitas(){
             			
 			<jsp:include page="tabNegociacao.jsp"></jsp:include>
 		   
-		    <div id="tabAprovacao">
-				<fieldset style="width:470px!important; margin-bottom:5px;">
-		               	<legend>Aprovação</legend>
-		                    <table width="450" border="0" cellspacing="0" cellpadding="0">
-		                      <tr>
-		                        <td width="23"><input name="parametrosDistribuidor.utilizaControleAprovacao" id="utilizaControleAprovacao" type="checkbox" ${parametrosDistribuidor.utilizaControleAprovacao} /></td>
-		                        <td width="190">Utiliza Controle de Aprovação?</td>
-		                        <td width="20">&nbsp;</td>
-		                        <td width="178">&nbsp;</td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-		                    </table>
-		                    <table width="451" border="0" cellspacing="0" cellpadding="0">
-		                      <tr>
-		                        <td colspan="6">Para as Funcionalidades:</td>
-		                      </tr>
-		                      <tr>
-		                        <td width="20"><input name="parametrosDistribuidor.paraDebitosCreditos" id="paraDebitosCreditos" type="checkbox" ${parametrosDistribuidor.paraDebitosCreditos} /></td>
-		                        <td width="143">Débitos e Créditos</td>
-		                        <td width="20"><input name="parametrosDistribuidor.negociacao" id="negociacao" type="checkbox" ${parametrosDistribuidor.negociacao} /></td>
-		                        <td width="133">Negociação</td>
-		                        <td width="20"><input name="parametrosDistribuidor.ajusteEstoque" id="ajusteEstoque" type="checkbox" ${parametrosDistribuidor.ajusteEstoque} /></td>
-		                        <td width="115">Ajuste de Estoque</td>
-		                      </tr>
-		                      <tr>
-		                        <td><input name="parametrosDistribuidor.postergacaoCobranca" type="checkbox" id="postergacaoCobranca" ${parametrosDistribuidor.postergacaoCobranca} /></td>
-		                        <td>Postergação de Cobrança</td>
-		                        <td><input name="parametrosDistribuidor.devolucaoFornecedor" type="checkbox" id="devolucaoFornecedor" ${parametrosDistribuidor.devolucaoFornecedor} /></td>
-		                        <td>Devolução Fornecedor</td>
-		                        <td><input name="parametrosDistribuidor.recibo" type="checkbox" id="recibo" ${parametrosDistribuidor.recibo} /></td>
-		                        <td>Recibo</td>
-		                      </tr>
-		                      <tr>
-		                        <td><input name="parametrosDistribuidor.faltasSobras" type="checkbox" id="faltasSobras" ${parametrosDistribuidor.faltasSobras} onchange="mostra_funcionalidades();" /></td>
-		                        <td>Faltas e Sobras</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-		                    </table>
-		                    <table width="274" border="0" cellspacing="0" cellpadding="0" class="funcionalidades" style="display:none;">
-		                      <tr>
-		                        <td colspan="4">&nbsp;</td>
-		                      </tr>
-		                      <tr>
-		                        <td colspan="4">Para as Funcionalidades:</td>
-		                      </tr>
-		                      <tr>
-		                        <td width="23"><input name="parametrosDistribuidor.aprovacaoFaltaDe" type="checkbox" id="aprovacaoFaltaDe" ${parametrosDistribuidor.aprovacaoFaltaDe} /></td>
-		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="parametrosDistribuidor.aprovacaoSobraDe" type="checkbox" id="aprovacaoSobraDe" ${parametrosDistribuidor.aprovacaoSobraDe} /></td>
-		                        <td width="108">Sobra de</td>
-		                      </tr>
-		                      <tr>
-		                        <td><input name="parametrosDistribuidor.aprovacaoFaltaEm" type="checkbox" id="aprovacaoFaltaEm" ${parametrosDistribuidor.aprovacaoFaltaEm} /></td>
-		                        <td>Falta em</td>
-		                        <td><input name="parametrosDistribuidor.aprovacaoSobraEm" type="checkbox" id="aprovacaoSobraEm" ${parametrosDistribuidor.aprovacaoSobraEm} /></td>
-		                        <td>Sobra em</td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-		                    </table>
-                </fieldset>
-	            <fieldset style="width:300px!important; margin-bottom:5px;">
-		              <legend>Prazo de Follow up</legend>
-		           	  <table width="280" border="0" cellspacing="0" cellpadding="0">
-		                <tr>
-		                  <td width="240">Aviso prévio para vencímento de contratos (dias)</td>
-		                  <td width="40"><input name="parametrosDistribuidor.prazoFollowUp" type="text" id="prazoFollowUp" style="float:left; width:40px;" value="${parametrosDistribuidor.prazoFollowUp}" /></td>
-		                </tr>
-		              </table>
-		              <table width="274" border="0" cellspacing="0" cellpadding="0" class="funcionalidades" style="display:none;">
-		                	  <tr>
-		                        <td colspan="4">&nbsp;</td>
-		                      </tr>
-		                      <tr>
-		                        <td colspan="4">Para as Funcionalidades:</td>
-		                      </tr>
-		                      <tr>
-		                        <td width="23"><input name="parametrosDistribuidor.prazoFollowUpFaltaDe" type="checkbox" id="prazoFollowUpFaltaDe" ${parametrosDistribuidor.prazoFollowUpFaltaDe} /></td>
-		                        <td width="123">Falta de</td>
-		                        <td width="20"><input name="parametrosDistribuidor.prazoFollowUpSobraDe" type="checkbox" id="prazoFollowUpSobraDe" ${parametrosDistribuidor.prazoFollowUpSobraDe} /></td>
-		                        <td width="108">Sobra de</td>
-		                      </tr>
-		                      <tr>
-		                        <td><input name="parametrosDistribuidor.prazoFollowUpFaltaEm" type="checkbox" id="prazoFollowUpFaltaEm" ${parametrosDistribuidor.prazoFollowUpFaltaEm} /></td>
-		                        <td>Falta em</td>
-		                        <td><input name="parametrosDistribuidor.prazoFollowUpSobraEm" type="checkbox" id="prazoFollowUpSobraEm" ${parametrosDistribuidor.prazoFollowUpSobraEm} /></td>
-		                        <td>Sobra em</td>
-		                      </tr>
-		                      <tr>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                        <td>&nbsp;</td>
-		                      </tr>
-	                    </table>
-                </fieldset>
-                <fieldset style="width:300px!important; margin-bottom:5px;">
-	               	<legend>Aviso Prévio para Validade de Garantia</legend>
-		           	  <table width="280" border="0" cellspacing="0" cellpadding="0">
-		                <tr>
-		                  <td width="240">Aviso prévio para vencimento de garantias (dias).</td>
-		                  <td width="40"><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia" type="text" id="prazoAvisoPrevioValidadeGarantia" value="${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia}" style="float:left; width:40px;" value="15" /></td>
-		                </tr>
-		              </table>
-		              <table width="274" border="0" cellspacing="0" cellpadding="0" class="funcionalidades" style="display:none;">
-		                  <tr>
-	                        <td colspan="4">&nbsp;</td>
-	                      </tr>
-	                      <tr>
-	                        <td colspan="4">Para as Funcionalidades:</td>
-	                      </tr>
-	                      <tr>
-	                        <td width="23"><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe" type="checkbox" id="prazoAvisoPrevioValidadeGarantiaFaltaDe" ${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe} /></td>
-	                        <td width="123">Falta de</td>
-	                        <td width="20"><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe" type="checkbox" id="prazoAvisoPrevioValidadeGarantiaSobraDe" ${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe} /></td>
-	                        <td width="108">Sobra de</td>
-	                      </tr>
-	                      <tr>
-	                        <td><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm" type="checkbox" id="prazoAvisoPrevioValidadeGarantiaFaltaEm" ${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm} /></td>
-	                        <td>Falta em</td>
-	                        <td><input name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm" type="checkbox" id="prazoAvisoPrevioValidadeGarantiaSobraEm" ${parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm} /></td>
-	                        <td>Sobra em</td>
-	                      </tr>
-	                      <tr>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                        <td>&nbsp;</td>
-	                      </tr>
-	                  </table>
-                </fieldset>
-			</div>
+		    <jsp:include page="tabAprovacao.jsp"></jsp:include>
+		    
 	   		<br clear="all" />
 		</div>
 	</fieldset>

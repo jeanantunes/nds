@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
@@ -154,6 +155,16 @@ public class TipoDescontoCotaController {
 		Integer totalRegistros  = descontoService.buscarQuantidadeTipoDescontoProduto(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaTipoDescontoProduto).total(totalRegistros).page(page).serialize();
+	}
+	
+	@Post
+	@Path("/exibirCotasTipoDescontoProduto")
+	public void exibirCotasTipoDescontoProduto(Long idTipoDescontoProduto) {
+		
+		List<Cota> cotas = 
+				new ArrayList<Cota>(this.descontoService.obterCotasDoTipoDescontoProduto(idTipoDescontoProduto));
+
+		this.result.use(FlexiGridJson.class).from(cotas).serialize();
 	}
 	
 	@Post
@@ -314,7 +325,6 @@ public class TipoDescontoCotaController {
 	
 		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.values(), sortname));
 		
-
 		FiltroTipoDescontoCotaDTO filtroSessao = (FiltroTipoDescontoCotaDTO) 
 				this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE);
 

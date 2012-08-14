@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -9,6 +10,7 @@ import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -72,7 +74,21 @@ public interface DescontoService {
 	 */
 	List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto);
 
-	void incluirDesconto(DescontoProdutoDTO desconto, Usuario usuario);
-
+	/**
+	 * Método que realiza a inclusão de um tipo de desconto para produto.
+	 * 
+	 * @param desconto - Desconto Produto
+	 * 
+	 * @param usuario - Usuário.
+	 */
+	void incluirDesconto(DescontoProdutoDTO desconto, Usuario usuario);	
+	/**
+	 * Método que retorna uma coleção com as cotas relacionadas ao tipo de desconto especificado.
+	 * 
+	 * @param idDescontoProduto - ID do Tipo de desconto.
+	 * 
+	 * @return - Set<Cota> - As cotas relacionadas.
+	 */
+	Set<Cota> obterCotasDoTipoDescontoProduto(Long idDescontoProduto);
 }
 	

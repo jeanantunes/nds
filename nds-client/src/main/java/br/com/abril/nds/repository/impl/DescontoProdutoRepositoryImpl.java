@@ -1,8 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
 
@@ -110,5 +110,18 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		criteria.setProjection(Projections.rowCount());
 
 		return ((Long) criteria.uniqueResult()).intValue();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Cota> obterCotasDoTipoDescontoProduto(Long idDescontoProduto) {
+		
+		Criteria criteria = getSession().createCriteria(DescontoProduto.class);
+		
+		criteria.add(Restrictions.eq("id", idDescontoProduto));
+
+		return ((DescontoProduto) criteria.uniqueResult()).getCotas();
 	}
 }
