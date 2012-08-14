@@ -3,14 +3,13 @@ package br.com.abril.nds.server.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.repository.impl.AbstractRepositoryModel;
 import br.com.abril.nds.server.model.Indicador;
 import br.com.abril.nds.server.repository.IndicadorRepository;
+import br.com.abril.nds.util.DateUtil;
 
 @Repository
 public class IndicadorRepositoryImpl extends AbstractRepositoryModel<Indicador, Long> implements
@@ -24,16 +23,22 @@ public class IndicadorRepositoryImpl extends AbstractRepositoryModel<Indicador, 
 	@Override
 	public List<Indicador> buscarIndicadores() {
 		
-		Criteria criteria = this.getSession().createCriteria(Indicador.class);
-		criteria.add(Restrictions.eq("data", new Date()));
+		String queryString = " select indicador from Indicador indicador "
+						   + " where data = "
+						   + " (select max(indicador.data) from Indicador indicador where data between :dataAtual and :dataDeAmanha) "
+						   + " group by indicador.tipoIndicador "
+						   + " order by indicador.operacaoDistribuidor.uf, indicador.operacaoDistribuidor.idDistribuidorInterface, "
+				           + " indicador.grupoIndicador, indicador.tipoIndicador ";
 		
-		criteria.createAlias("operacaoDistribuidor", "distribuidor");
+		Query query = this.getSession().createQuery(queryString);
 		
-		criteria.addOrder(Order.asc("distribuidor.uf"));
-		criteria.addOrder(Order.asc("distribuidor.idDistribuidorInterface"));
-		criteria.addOrder(Order.asc("grupoIndicador"));
-		criteria.addOrder(Order.asc("tipoIndicador"));
+		Date dataAtual = DateUtil.removerTimestamp(new Date());
 		
-		return criteria.list();
+		Date dataDeAmanha = DateUtil.adicionarDias(dataAtual, 1);
+		
+		query.setParameter("dataAtual", dataAtual);
+		query.setParameter("dataDeAmanha", dataDeAmanha);
+		
+		return query.list();
 	}
 }
