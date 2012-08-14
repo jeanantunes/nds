@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -533,6 +534,43 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setMaxResults(1);
 		
 		return (ProdutoEdicao) query.uniqueResult();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer obterQuantidadeEdicoesPorCodigoProduto(String codigoProduto) {
+		// TODO Auto-generated method stub
+		
+		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		return ((Long) criteria.uniqueResult()).intValue();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicao> obterProdutosEdicoesPorCodigoProdutoLimitado(String codigoProduto, Integer limite) {
+		// TODO Auto-generated method stub
+
+		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		
+		criteria.setMaxResults(limite);
+		
+		return criteria.list();
 	}
 }
  

@@ -76,7 +76,7 @@ public class EMS0117Input implements Serializable {
 		this.endereco = endereco;
 	}
 	
-	@Field(offset = 79, length = 4)
+	@Field(offset = 79, length = 5)
 	public Integer getCodBairro() {
 		return codBairro;
 	}
@@ -184,7 +184,7 @@ public class EMS0117Input implements Serializable {
 		this.codCapataz = codCapataz;
 	}
 
-	@Field(offset = 138, length = 14)
+	@Field(offset = 137, length = 14)
 	public String getCpfCNPJ() {
 		return cpfCNPJ;
 	}

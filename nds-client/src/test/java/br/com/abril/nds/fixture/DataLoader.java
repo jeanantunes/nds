@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -96,7 +97,9 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -1006,6 +1009,11 @@ public class DataLoader {
 		//criarNovaNotaFiscal(session);
 		
 		gerarDescontoDistribuidorParaFornecedor(session);
+		
+		criarDescontoProduto(session);
+
+		gerarDescontoCota(session);
+
 	}
 
 	
@@ -1035,6 +1043,32 @@ public class DataLoader {
 		DescontoDistribuidor desconto5 = Fixture.descontoDistribuidor(new BigDecimal(7), distribuidor, fornecedores4, usuarioJoao);
 		
 		save(session,desconto1,desconto2,desconto3,desconto4,desconto5);
+	}
+	
+	/*
+	 * Carrega descontos especificos da cota
+	 */
+	public static void gerarDescontoCota(Session session){
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		save(session,usuario);
+		
+		Set<Fornecedor> fornecedores1 = new HashSet<Fornecedor>();
+		fornecedores1.add(fornecedorAcme);
+		DescontoCota desconto1 = Fixture.descontoCota(new BigDecimal(2), distribuidor, cotaManoel, fornecedores1, usuario);
+		
+		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
+		fornecedores2.add(fornecedorAcme);
+		fornecedores2.add(fornecedorDinap);
+		DescontoCota desconto2 = Fixture.descontoCota(new BigDecimal(3), distribuidor, cotaManoel, fornecedores2, usuario);
+		
+		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
+		fornecedores3.add(fornecedorAcme);
+		fornecedores3.add(fornecedorDinap);
+		fornecedores3.add(fornecedorFc);
+		DescontoCota desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cotaManoelCunha, fornecedores3, usuario);
+		
+		save(session,desconto1,desconto2,desconto3);
 	}
 
 	/*
@@ -3119,6 +3153,21 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
 //				"C:\\interface_mdc\\"));		// windows;
 				"/opt/interface_mdc/"));		// linux;
+		
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_IN_FILEMASK, "(?i:DEAJO19.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUT_FILEMASK, "DEAPR19.NEW"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_IN_FILEMASK, "(?i:MATRIZ.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_IN_FILEMASK, "([0-9]{8}).prd"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_IN_FILEMASK, "(?i:[0-9]{8}.edi)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_IN_FILEMASK, "([0-9]{8}).rec"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_IN_FILEMASK, "(?i:BANCA.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_IN_FILEMASK, "COTA.NEW"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_IN_FILEMASK, "(?i:PRECO.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_IN_FILEMASK, "(?i:PRODUTO.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUT_FILEMASK, "PICKING1.NEW"));
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6248116"));
 	}
@@ -4290,7 +4339,6 @@ public class DataLoader {
 		parametrosAprovacaoDistribuidor.setFaltasSobras(true);
 		parametrosAprovacaoDistribuidor.setNegociacao(true);
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(true);
-		parametrosAprovacaoDistribuidor.setRecibo(true);
 
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
 
@@ -10998,6 +11046,82 @@ public class DataLoader {
 		}
 		
 		
+	}
+	
+	private static void criarDescontoProduto(Session session) {
+		
+		Set<Cota> cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaAcme);
+		cotas.add(cotaGuilherme);
+		cotas.add(cotaJoana);
+		
+		DescontoProduto descontoProdutoVeja = new DescontoProduto();
+		descontoProdutoVeja.setDataAlteracao(new Date());
+		descontoProdutoVeja.setCotas(cotas);
+		descontoProdutoVeja.setDesconto(new BigDecimal(50));
+		descontoProdutoVeja.setDistribuidor(distribuidor);
+		descontoProdutoVeja.setProdutoEdicao(produtoEdicaoVeja1);
+		descontoProdutoVeja.setUsuario(usuarioJoao);
+		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaJoao);
+		cotas.add(cotaLuis);
+		
+		DescontoProduto descontoProdutoQuatroRodas = new DescontoProduto();
+		descontoProdutoQuatroRodas.setDataAlteracao(new Date());
+		descontoProdutoQuatroRodas.setCotas(cotas);
+		descontoProdutoQuatroRodas.setDesconto(new BigDecimal(44.30));
+		descontoProdutoQuatroRodas.setDistribuidor(distribuidor);
+		descontoProdutoQuatroRodas.setProdutoEdicao(produtoEdicaoQuatroRodas1);
+		descontoProdutoQuatroRodas.setUsuario(usuarioJoao);
+		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaManoel);
+		cotas.add(cotaManoelCunha);
+		
+		DescontoProduto descontoProdutoInfoExame = new DescontoProduto();
+		descontoProdutoInfoExame.setDataAlteracao(new Date());
+		descontoProdutoInfoExame.setCotas(cotas);
+		descontoProdutoInfoExame.setDesconto(new BigDecimal(4.50));
+		descontoProdutoInfoExame.setDistribuidor(distribuidor);
+		descontoProdutoInfoExame.setProdutoEdicao(produtoEdicaoInfoExame1);
+		descontoProdutoInfoExame.setUsuario(usuarioJoao);
+		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaAcme);
+		cotas.add(cotaOrlando);
+		cotas.add(cotaMariana);
+		
+		DescontoProduto descontoProdutoCapricho = new DescontoProduto();
+		descontoProdutoCapricho.setDataAlteracao(new Date());
+		descontoProdutoCapricho.setCotas(cotas);
+		descontoProdutoCapricho.setDesconto(new BigDecimal(5.11));
+		descontoProdutoCapricho.setDistribuidor(distribuidor);
+		descontoProdutoCapricho.setProdutoEdicao(produtoEdicaoCapricho1);
+		descontoProdutoCapricho.setUsuario(usuarioJoao);
+		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaMurilo);
+		cotas.add(cotaJoao);
+		cotas.add(cotaLuis);
+		
+		DescontoProduto descontoProdutoSuperInteressante = new DescontoProduto();
+		descontoProdutoSuperInteressante.setDataAlteracao(new Date());
+		descontoProdutoSuperInteressante.setCotas(cotas);
+		descontoProdutoSuperInteressante.setDesconto(new BigDecimal(13.22));
+		descontoProdutoSuperInteressante.setDistribuidor(distribuidor);
+		descontoProdutoSuperInteressante.setProdutoEdicao(produtoEdicaoSuper1);
+		descontoProdutoSuperInteressante.setUsuario(usuarioJoao);
+		
+		save(
+			session, descontoProdutoVeja, descontoProdutoQuatroRodas, 
+			descontoProdutoInfoExame, descontoProdutoCapricho, descontoProdutoSuperInteressante
+		);
 	}
 	
 }

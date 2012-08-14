@@ -22,7 +22,7 @@ import javax.persistence.TemporalType;
 public class Indicador implements Serializable {
 
 	/**
-	 * 
+	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 377242597916336051L;
 
@@ -34,7 +34,7 @@ public class Indicador implements Serializable {
 	@Column(name = "VALOR")
 	private String valor;
 	
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA")
 	private Date data;
 	

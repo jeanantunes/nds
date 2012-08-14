@@ -676,7 +676,6 @@ public class Fixture {
 		distribuidor.setUtilizaGarantiaPdv(false);
 		distribuidor.setParcelamentoDividas(false);
 		distribuidor.setNegociacaoAteParcelas(Integer.valueOf(3));
-		distribuidor.setPermitePagamentoDividasDivergentes(false);
 		distribuidor.setUtilizaControleAprovacao(false);
 		distribuidor.setPrazoFollowUp(Integer.valueOf(7));
 		distribuidor.setPrazoAvisoPrevioValidadeGarantia(Integer.valueOf(7));
@@ -699,9 +698,10 @@ public class Fixture {
 		pad.setAjusteEstoque(false);
 		pad.setPostergacaoCobranca(false);
 		pad.setDevolucaoFornecedor(false);
-		pad.setRecibo(false);
 		pad.setFaltasSobras(false);
 		distribuidor.setParametrosAprovacaoDistribuidor(pad);
+		
+		distribuidor.setDescontoCotaNegociacao(BigDecimal.ZERO);
 		
 		return distribuidor;
 	}
@@ -3312,12 +3312,13 @@ public class Fixture {
 		return descontoReturn;
 	}
 	
-    public static DescontoCota descontoCota(BigDecimal desconto, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario ){
+    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario ){
 		
 		DescontoCota descontoReturn = new DescontoCota();
 		descontoReturn.setDesconto(desconto);
 		descontoReturn.setDataAlteracao(new Date());
 		descontoReturn.setCota(cota);
+		descontoReturn.setDistribuidor(distribuidor);
 		descontoReturn.setFornecedores(fornecedores);
 		descontoReturn.setUsuario(usuario);
 		

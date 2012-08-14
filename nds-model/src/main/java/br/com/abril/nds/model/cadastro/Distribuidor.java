@@ -220,12 +220,12 @@ public class Distribuidor {
 	private TipoImpressaoCE tipoImpressaoCE = TipoImpressaoCE.MODELO_1;	
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_IMPRESSAO_NE", nullable = true)
-	private TipoImpressaoNE tipoImpressaoNE = TipoImpressaoNE.MODELO_1; 	
+	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
+	private TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED = TipoImpressaoInterfaceLED.MODELO_1; 	
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_IMPRESSAO_NECA_DANFE", nullable = true)
-	private TipoImpressaoNECADANFE tipoImpressaoNECADANFE = TipoImpressaoNECADANFE.MODELO_1;	
+	@Column(name = "TIPO_IMPRESSAO_NE_NECA_DANFE", nullable = true)
+	private TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE = TipoImpressaoNENECADANFE.MODELO_1;	
 
 	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = true)
 	private boolean utilizaProcuracaoEntregadores;	
@@ -241,9 +241,6 @@ public class Distribuidor {
 	
 	@Column(name = "NEGOCIACAO_ATE_PARCELAS", nullable = true)
 	private Integer negociacaoAteParcelas;
-	
-	@Column(name = "PERMITE_PAGAMENTO_DIVIDAS_DIVERGENTES", nullable = true)
-	private boolean permitePagamentoDividasDivergentes;	
 
 	@Column(name = "UTILIZA_CONTROLE_APROVACAO", nullable = true)
 	private boolean utilizaControleAprovacao;	
@@ -256,6 +253,12 @@ public class Distribuidor {
 
 	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = false)
 	private Integer qtdDiasLimiteParaReprogLancamento;
+	
+	/**
+	 * Desconto da cota para negociação (Parametros do Distribuidor / Aba de Negociação)
+	 */
+	@Column(name="DESCONTO_COTA_PARA_NEGOCIACAO")
+	private BigDecimal descontoCotaNegociacao;
 	
 	public Long getId() {
 		return id;
@@ -647,21 +650,21 @@ public class Distribuidor {
 		this.tipoImpressaoCE = tipoImpressaoCE;
 	}
 
-	public TipoImpressaoNE getTipoImpressaoNE() {
-		return tipoImpressaoNE;
+	public TipoImpressaoInterfaceLED getTipoImpressaoInterfaceLED() {
+		return tipoImpressaoInterfaceLED;
 	}
 
-	public void setTipoImpressaoNE(TipoImpressaoNE tipoImpressaoNE) {
-		this.tipoImpressaoNE = tipoImpressaoNE;
+	public void setTipoImpressaoInterfaceLED(TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED) {
+		this.tipoImpressaoInterfaceLED = tipoImpressaoInterfaceLED;
 	}
 
-	public TipoImpressaoNECADANFE getTipoImpressaoNECADANFE() {
-		return tipoImpressaoNECADANFE;
+	public TipoImpressaoNENECADANFE getTipoImpressaoNENECADANFE() {
+		return tipoImpressaoNENECADANFE;
 	}
 
-	public void setTipoImpressaoNECADANFE(
-			TipoImpressaoNECADANFE tipoImpressaoNECADANFE) {
-		this.tipoImpressaoNECADANFE = tipoImpressaoNECADANFE;
+	public void setTipoImpressaoNENECADANFE(
+			TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE) {
+		this.tipoImpressaoNENECADANFE = tipoImpressaoNENECADANFE;
 	}
 
 	public boolean isUtilizaProcuracaoEntregadores() {
@@ -706,15 +709,6 @@ public class Distribuidor {
 		this.negociacaoAteParcelas = negociacaoAteParcelas;
 	}
 
-	public boolean isPermitePagamentoDividasDivergentes() {
-		return permitePagamentoDividasDivergentes;
-	}
-
-	public void setPermitePagamentoDividasDivergentes(
-			boolean permitePagamentoDividasDivergentes) {
-		this.permitePagamentoDividasDivergentes = permitePagamentoDividasDivergentes;
-	}
-
 	public boolean isUtilizaControleAprovacao() {
 		return utilizaControleAprovacao;
 	}
@@ -753,6 +747,17 @@ public class Distribuidor {
 	public void setQtdDiasLimiteParaReprogLancamento(
 			Integer qtdDiasLimiteParaReprogLancamento) {
 		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
+	}
+
+	public BigDecimal getDescontoCotaNegociacao() {
+		return descontoCotaNegociacao;
+	}
+
+	/**
+	 * @param descontoCotaNegociacao the descontoCotaNegociacao to set
+	 */
+	public void setDescontoCotaNegociacao(BigDecimal descontoCotaNegociacao) {
+		this.descontoCotaNegociacao = descontoCotaNegociacao;
 	}
 	
 }

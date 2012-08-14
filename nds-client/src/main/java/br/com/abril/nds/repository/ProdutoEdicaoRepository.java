@@ -230,4 +230,23 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 														    Long numeroEdicao,
 														    String nome);
 	
+	/**
+	 * Obtém a quantidade de edições cadastradas para um determinado produto.
+	 * 
+	 * @param codigoProduto - Código do produto a ser pesquisado.
+	 * 
+	 * @return - Quantidade de produtos edições.
+	 */
+	Integer obterQuantidadeEdicoesPorCodigoProduto(String codigoProduto);
+	
+	/**
+	 * 
+	 * 
+	 * @param codigoProduto
+	 * @param limite
+	 * 
+	 * @return
+	 */
+	List<ProdutoEdicao> obterProdutosEdicoesPorCodigoProdutoLimitado(String codigoProduto, Integer limite);
+	
 }

@@ -22,8 +22,8 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
-import br.com.abril.nds.model.cadastro.TipoImpressaoNE;
-import br.com.abril.nds.model.cadastro.TipoImpressaoNECADANFE;
+import br.com.abril.nds.model.cadastro.TipoImpressaoInterfaceLED;
+import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
@@ -109,34 +109,48 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 		// Emissão de Documentos
 		for (ParametrosDistribuidorEmissaoDocumento emissaoDocumentos : distribuidor.getParametrosDistribuidorEmissaoDocumentos()) {
-			if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.BOLETO) {
-				parametrosDistribuidor.setBoletoEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setBoletoImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP) {
-				parametrosDistribuidor.setBoletoSlipEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setBoletoSlipImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE) {
-				parametrosDistribuidor.setChamadaEncalheEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setChamadaEncalheImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO) {
-				parametrosDistribuidor.setNotaEnvioEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setNotaEnvioImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.RECIBO) {
-				parametrosDistribuidor.setReciboEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setReciboImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
-			} else if (emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento() == TipoParametrosDistribuidorEmissaoDocumento.SLIP) {
-				parametrosDistribuidor.setSlipEmail(verificaCheckString(emissaoDocumentos.isUtilizaEmail()));
-				parametrosDistribuidor.setSlipImpressao(verificaCheckString(emissaoDocumentos.isUtilizaImpressao()));
+			
+			switch(emissaoDocumentos.getTipoParametrosDistribuidorEmissaoDocumento()){
+			case BOLETO:
+				
+				parametrosDistribuidor.setBoletoEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setBoletoImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case BOLETO_SLIP:
+				
+				parametrosDistribuidor.setBoletoSlipEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setBoletoSlipImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case CHAMADA_ENCALHE:
+				
+				parametrosDistribuidor.setChamadaEncalheEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setChamadaEncalheImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case NOTA_ENVIO:
+				
+				parametrosDistribuidor.setNotaEnvioEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setNotaEnvioImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case RECIBO:
+				
+				parametrosDistribuidor.setReciboEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setReciboImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
+			case SLIP:
+				
+				parametrosDistribuidor.setSlipEmail(emissaoDocumentos.isUtilizaEmail());
+				parametrosDistribuidor.setSlipImpressao(emissaoDocumentos.isUtilizaImpressao());
+			break;
 			}
 		}
 		
-		// Impressão NE
-		if (distribuidor.getTipoImpressaoNE() != null)
-			parametrosDistribuidor.setImpressaoNE(distribuidor.getTipoImpressaoNE().name());
+		// Impressão Interface LED
+		if (distribuidor.getTipoImpressaoInterfaceLED() != null)
+			parametrosDistribuidor.setImpressaoInterfaceLED(distribuidor.getTipoImpressaoInterfaceLED().name());
 
 		// Impressão NECA / Danfe
-		if (distribuidor.getTipoImpressaoNECADANFE() != null)
-			parametrosDistribuidor.setImpressaoNECADANFE(distribuidor.getTipoImpressaoNECADANFE().name());
+		if (distribuidor.getTipoImpressaoNENECADANFE() != null)
+			parametrosDistribuidor.setImpressaoNECADANFE(distribuidor.getTipoImpressaoNENECADANFE().name());
 
 		// Impressão CE
 		if (distribuidor.getTipoImpressaoCE() != null)
@@ -144,9 +158,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Condições de Contratação:
 		boolean utilizaContratoComCotas = (distribuidor.getParametroContratoCota() != null);
-		parametrosDistribuidor.setUtilizaContratoComCotas((utilizaContratoComCotas ? CHECKED : ""));
+		parametrosDistribuidor.setUtilizaContratoComCotas(utilizaContratoComCotas);
 		if (utilizaContratoComCotas) {
-			parametrosDistribuidor.setPrazoContrato(CurrencyUtil.formatarValorTruncado(distribuidor.getParametroContratoCota().getDuracaoContratoCota()));
+			parametrosDistribuidor.setPrazoContrato(distribuidor.getParametroContratoCota().getDuracaoContratoCota());
 			parametrosDistribuidor.setInformacoesComplementaresContrato(distribuidor.getParametroContratoCota().getComplementoContrato());
 		}
 		
@@ -155,32 +169,32 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setInformacoesComplementaresProcuracao(distribuidor.getInformacoesComplementaresProcuracao());
 		
 		// Garantia
-		parametrosDistribuidor.setUtilizaGarantiaPdv(verificaCheckString(distribuidor.isUtilizaGarantiaPdv()));
+		parametrosDistribuidor.setUtilizaGarantiaPdv(distribuidor.isUtilizaGarantiaPdv());
 		
 		for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor.getTiposGarantiasAceita()) {
 			if (tipoGarantiaAceita.isUtilizar()) {
 				if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
-					parametrosDistribuidor.setChequeCalcao(CHECKED);
-					parametrosDistribuidor.setChequeCalcaoValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaChequeCaucao(true);
+					parametrosDistribuidor.setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
-					parametrosDistribuidor.setFiador(CHECKED);
-					parametrosDistribuidor.setFiadorValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaFiador(true);
+					parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
-					parametrosDistribuidor.setImovel(CHECKED);
-					parametrosDistribuidor.setImovelValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaImovel(true);
+					parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
-					parametrosDistribuidor.setCaucaoLiquida(CHECKED);
-					parametrosDistribuidor.setCaucaoLiquidaValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
+					parametrosDistribuidor.setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
-					parametrosDistribuidor.setNotaPromissoria(CHECKED);
-					parametrosDistribuidor.setNotaPromissoriaValor(tipoGarantiaAceita.getValor());
+					parametrosDistribuidor.setUtilizaNotaPromissoria(true);
+					parametrosDistribuidor.setValidadeNotaPromissoria(tipoGarantiaAceita.getValor());
 				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-					parametrosDistribuidor.setAntecedenciaValidade(CHECKED);
-					parametrosDistribuidor.setAntecedenciaValidadeValor(tipoGarantiaAceita.getValor());
-				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.INDICADOR_REAJUSTE_CAUCAO_LIQUIDA) {
-					parametrosDistribuidor.setIndicadorReajusteCaucaoLiquida(CHECKED);
-					parametrosDistribuidor.setIndicadorReajusteCaucaoLiquida(tipoGarantiaAceita.getValor());
-				}
+					parametrosDistribuidor.setUtilizaAntecedenciaValidade(true);
+					parametrosDistribuidor.setValidadeAntecedenciaValidade(tipoGarantiaAceita.getValor());
+				}  else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
+                    parametrosDistribuidor.setUtilizaOutros(true);
+                    parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita.getValor());
+                }
 			}
 		}
 		
@@ -191,25 +205,32 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			if (distribuidor.getPoliticaSuspensao().getValor() != null)
 				parametrosDistribuidor.setSugereSuspensaoQuandoAtingirReais(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
 		}
-		parametrosDistribuidor.setParcelamentoDividas(verificaCheckString(distribuidor.isParcelamentoDividas()));
-		parametrosDistribuidor.setNegociacaoAteParcelas(CurrencyUtil.formatarValorTruncado(distribuidor.getNegociacaoAteParcelas()));
-		parametrosDistribuidor.setPermitePagamentoDividasDivergentes(verificaCheckString(distribuidor.isPermitePagamentoDividasDivergentes()));
+		parametrosDistribuidor.setParcelamentoDividas(distribuidor.isParcelamentoDividas());
 		
-		// Aprovação
-		parametrosDistribuidor.setUtilizaControleAprovacao(verificaCheckString(distribuidor.isUtilizaControleAprovacao()));
-		
-		if (distribuidor.getParametrosAprovacaoDistribuidor() != null) {
-			parametrosDistribuidor.setParaDebitosCreditos(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isDebitoCredito()));
-			parametrosDistribuidor.setNegociacao(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isNegociacao()));
-			parametrosDistribuidor.setAjusteEstoque(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isAjusteEstoque()));
-			parametrosDistribuidor.setPostergacaoCobranca(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isPostergacaoCobranca()));
-			parametrosDistribuidor.setDevolucaoFornecedor(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isDevolucaoFornecedor()));
-			parametrosDistribuidor.setRecibo(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isRecibo()));
-			parametrosDistribuidor.setFaltasSobras(verificaCheckString(distribuidor.getParametrosAprovacaoDistribuidor().isFaltasSobras()));
+		if(distribuidor.getDescontoCotaNegociacao().compareTo(BigDecimal.ZERO) == 0) {
+			parametrosDistribuidor.setUtilizaDesconto(false);
+			parametrosDistribuidor.setPercentualDesconto(CurrencyUtil.formatarValor(0));
+		} else {
+			parametrosDistribuidor.setUtilizaDesconto(true);
+			parametrosDistribuidor.setPercentualDesconto(CurrencyUtil.formatarValor(distribuidor.getDescontoCotaNegociacao()));
 		}
 		
-		parametrosDistribuidor.setPrazoFollowUp(CurrencyUtil.formatarValorTruncado(distribuidor.getPrazoFollowUp()));
-		parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantia(CurrencyUtil.formatarValorTruncado(distribuidor.getPrazoAvisoPrevioValidadeGarantia()));
+		parametrosDistribuidor.setNegociacaoAteParcelas(CurrencyUtil.formatarValorTruncado(distribuidor.getNegociacaoAteParcelas()));
+		
+		// Aprovação
+		parametrosDistribuidor.setUtilizaControleAprovacao(distribuidor.isUtilizaControleAprovacao());
+		
+		if (distribuidor.getParametrosAprovacaoDistribuidor() != null) {
+			parametrosDistribuidor.setParaDebitosCreditos(distribuidor.getParametrosAprovacaoDistribuidor().isDebitoCredito());
+			parametrosDistribuidor.setNegociacao(distribuidor.getParametrosAprovacaoDistribuidor().isNegociacao());
+			parametrosDistribuidor.setAjusteEstoque(distribuidor.getParametrosAprovacaoDistribuidor().isAjusteEstoque());
+			parametrosDistribuidor.setPostergacaoCobranca(distribuidor.getParametrosAprovacaoDistribuidor().isPostergacaoCobranca());
+			parametrosDistribuidor.setDevolucaoFornecedor(distribuidor.getParametrosAprovacaoDistribuidor().isDevolucaoFornecedor());
+			parametrosDistribuidor.setFaltasSobras(distribuidor.getParametrosAprovacaoDistribuidor().isFaltasSobras());
+		}
+		
+		parametrosDistribuidor.setPrazoFollowUp(distribuidor.getPrazoFollowUp());
+		parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantia(distribuidor.getPrazoAvisoPrevioValidadeGarantia());
 		
 		for (ParametrosDistribuidorFaltasSobras parametrosDistribuidorFaltasSobras : distribuidor.getParametrosDistribuidorFaltasSobras()) {
 			if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.APROVACAO) {
@@ -217,31 +238,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				parametrosDistribuidor.setAprovacaoFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
 				parametrosDistribuidor.setAprovacaoSobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
 				parametrosDistribuidor.setAprovacaoFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.AVISO_PREVIO_VALIDADE_GARANTIA) {
-				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaSobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setPrazoAvisoPrevioValidadeGarantiaFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_CE) {
-				parametrosDistribuidor.setImpressaoCEFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setImpressaoCEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setImpressaoCESobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setImpressaoCEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_NE) {
-				parametrosDistribuidor.setImpressaoNEFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setImpressaoNEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setImpressaoNESobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setImpressaoNEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_NECA_DANFE) {
-				parametrosDistribuidor.setImpressaoNECADANFEFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setImpressaoNECADANFEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setImpressaoNECADANFESobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setImpressaoNECADANFEFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
-			} else if (parametrosDistribuidorFaltasSobras.getTipoParametrosDistribuidorFaltasSobras() == TipoParametrosDistribuidorFaltasSobras.PRAZO_FOLLOW_UP) {
-				parametrosDistribuidor.setPrazoFollowUpFaltaDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaDe()));
-				parametrosDistribuidor.setPrazoFollowUpFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isFaltaEm()));
-				parametrosDistribuidor.setPrazoFollowUpSobraDe(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraDe()));
-				parametrosDistribuidor.setPrazoFollowUpFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));				
 			}
 		}
 		
@@ -325,38 +321,38 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoBoleto = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoBoleto.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoBoleto.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.BOLETO);
-		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getBoletoEmail()));
-		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getBoletoImpressao()));
+		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaEmail(parametrosDistribuidor.getBoletoEmail());
+		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaImpressao(parametrosDistribuidor.getBoletoImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoBoletoSlip = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP);
-		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getBoletoSlipEmail()));
-		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getBoletoSlipImpressao()));
+		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaEmail(parametrosDistribuidor.getBoletoSlipEmail());
+		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaImpressao(parametrosDistribuidor.getBoletoSlipImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoChamadaEncalhe = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE);
-		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getChamadaEncalheEmail()));
-		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getChamadaEncalheImpressao()));
+		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaEmail(parametrosDistribuidor.getChamadaEncalheEmail());
+		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaImpressao(parametrosDistribuidor.getChamadaEncalheImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoNotaEnvio = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO);
-		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getNotaEnvioEmail()));
-		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getNotaEnvioImpressao()));
+		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaEmail(parametrosDistribuidor.getNotaEnvioEmail());
+		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaImpressao(parametrosDistribuidor.getNotaEnvioImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoRecibo = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoRecibo.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoRecibo.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.RECIBO);
-		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getReciboEmail()));
-		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getReciboImpressao()));
+		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaEmail(parametrosDistribuidor.getReciboEmail());
+		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaImpressao(parametrosDistribuidor.getReciboImpressao());
 
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoSlip = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoSlip.setDistribuidor(distribuidor);
 		parametrosDistribuidorEmissaoDocumentoSlip.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
-		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaEmail(verificaCheckBoolean(parametrosDistribuidor.getSlipEmail()));
-		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaImpressao(verificaCheckBoolean(parametrosDistribuidor.getSlipImpressao()));
+		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaEmail(parametrosDistribuidor.getSlipEmail());
+		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaImpressao(parametrosDistribuidor.getSlipImpressao());
 
 		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = new ArrayList<ParametrosDistribuidorEmissaoDocumento>();
 
@@ -375,20 +371,20 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoSlip);
 		distribuidor.setParametrosDistribuidorEmissaoDocumentos(listaParametrosDistribuidorEmissaoDocumentos);
 		
-		// Impressão NE
-		if (parametrosDistribuidor.getImpressaoNE() != null && !parametrosDistribuidor.getImpressaoNE().isEmpty() &&  !parametrosDistribuidor.getImpressaoNE().equalsIgnoreCase(UNDEFINED)) {
-			TipoImpressaoNE tipoImpressaoNE = Enum.valueOf(TipoImpressaoNE.class, parametrosDistribuidor.getImpressaoNE());
-			distribuidor.setTipoImpressaoNE(tipoImpressaoNE);
+		// Impressão Interface LED
+		if (parametrosDistribuidor.getImpressaoInterfaceLED() != null && !parametrosDistribuidor.getImpressaoInterfaceLED().isEmpty() &&  !parametrosDistribuidor.getImpressaoInterfaceLED().equalsIgnoreCase(UNDEFINED)) {
+			TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED = Enum.valueOf(TipoImpressaoInterfaceLED.class, parametrosDistribuidor.getImpressaoInterfaceLED());
+			distribuidor.setTipoImpressaoInterfaceLED(tipoImpressaoInterfaceLED);
 		} else {
-			distribuidor.setTipoImpressaoNE(null);
+			distribuidor.setTipoImpressaoInterfaceLED(null);
 		}
 
 		// Impressão NECA / Danfe
 		if (parametrosDistribuidor.getImpressaoNECADANFE() != null && !parametrosDistribuidor.getImpressaoNECADANFE().isEmpty() && !parametrosDistribuidor.getImpressaoNECADANFE().equalsIgnoreCase(UNDEFINED)) {
-			TipoImpressaoNECADANFE tipoImpressaoNECADANFE = Enum.valueOf(TipoImpressaoNECADANFE.class, parametrosDistribuidor.getImpressaoNECADANFE());
-			distribuidor.setTipoImpressaoNECADANFE(tipoImpressaoNECADANFE);
+			TipoImpressaoNENECADANFE tipoImpressaoNECADANFE = Enum.valueOf(TipoImpressaoNENECADANFE.class, parametrosDistribuidor.getImpressaoNECADANFE());
+			distribuidor.setTipoImpressaoNENECADANFE(tipoImpressaoNECADANFE);
 		} else {
-			distribuidor.setTipoImpressaoNECADANFE(null);
+			distribuidor.setTipoImpressaoNENECADANFE(null);
 		}
 
 		// Impressão CE
@@ -400,25 +396,18 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		// Condições de Contratação:
-		boolean utilizaContratoComCotas = verificaCheckBoolean(parametrosDistribuidor.getUtilizaContratoComCotas());
+		boolean utilizaContratoComCotas = parametrosDistribuidor.getUtilizaContratoComCotas();
 		if (utilizaContratoComCotas) {
 			ParametroContratoCota parametroContratoCota = null;
 			if (distribuidor.getParametroContratoCota() != null) {
 				parametroContratoCota = distribuidor.getParametroContratoCota();
 			} else {
 				parametroContratoCota = new ParametroContratoCota();
+				distribuidor.setParametroContratoCota(parametroContratoCota);
 			}
-			if (parametrosDistribuidor.getPrazoContrato() != null && !parametrosDistribuidor.getPrazoContrato().isEmpty()) {
-				parametroContratoCota.setDuracaoContratoCota(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoContrato()).intValue());
-			} else {
-				parametroContratoCota.setDuracaoContratoCota(2); // DEFAULT, entretanto, nunca deverá cair aqui
-			}
+			parametroContratoCota.setDuracaoContratoCota(parametrosDistribuidor.getPrazoContrato());
 			parametroContratoCota.setComplementoContrato(parametrosDistribuidor.getInformacoesComplementaresContrato());
-			
 			parametroContratoCotaRepository.alterar(parametroContratoCota);
-
-			distribuidor.setParametroContratoCota(parametroContratoCota);
-
 		} else {
 			distribuidor.setParametroContratoCota(null);
 		}
@@ -429,70 +418,51 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 		List<TipoGarantiaAceita> listaTipoGarantiaAceitas = new ArrayList<TipoGarantiaAceita>();
 
-		distribuidor.setUtilizaGarantiaPdv(verificaCheckBoolean(parametrosDistribuidor.getUtilizaGarantiaPdv()));
+		distribuidor.setUtilizaGarantiaPdv(parametrosDistribuidor.getUtilizaGarantiaPdv());
 		
+		//Garantias Aceitas
+		//TODO: Refatorar
 		TipoGarantiaAceita tipoGarantiaAceitaChequeCaucao = new TipoGarantiaAceita();
 		tipoGarantiaAceitaChequeCaucao.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
-		tipoGarantiaAceitaChequeCaucao.setValor(parametrosDistribuidor.getChequeCalcaoValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getChequeCalcao()))
-			tipoGarantiaAceitaChequeCaucao.setUtilizar(true);
-		else
-			tipoGarantiaAceitaChequeCaucao.setUtilizar(false);
+		tipoGarantiaAceitaChequeCaucao.setValor(parametrosDistribuidor.getValidadeChequeCaucao());
+		tipoGarantiaAceitaChequeCaucao.setUtilizar(parametrosDistribuidor.isUtilizaChequeCaucao());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaChequeCaucao);
 
 		TipoGarantiaAceita tipoGarantiaAceitaFiador = new TipoGarantiaAceita();
 		tipoGarantiaAceitaFiador.setTipoGarantia(TipoGarantia.FIADOR);
-		tipoGarantiaAceitaFiador.setValor(parametrosDistribuidor.getFiadorValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getFiador()))
-			tipoGarantiaAceitaFiador.setUtilizar(true);
-		else
-			tipoGarantiaAceitaFiador.setUtilizar(false);
+		tipoGarantiaAceitaFiador.setValor(parametrosDistribuidor.getValidadeFiador());
+		tipoGarantiaAceitaFiador.setUtilizar(parametrosDistribuidor.isUtilizaFiador());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaFiador);
 
 		TipoGarantiaAceita tipoGarantiaAceitaImovel = new TipoGarantiaAceita();
 		tipoGarantiaAceitaImovel.setTipoGarantia(TipoGarantia.IMOVEL);
-		tipoGarantiaAceitaImovel.setValor(parametrosDistribuidor.getImovelValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getImovel()))
-			tipoGarantiaAceitaImovel.setUtilizar(true);
-		else
-			tipoGarantiaAceitaImovel.setUtilizar(false);
+		tipoGarantiaAceitaImovel.setValor(parametrosDistribuidor.getValidadeImovel());
+		tipoGarantiaAceitaImovel.setUtilizar(parametrosDistribuidor.isUtilizaImovel());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaImovel);
 
 		TipoGarantiaAceita tipoGarantiaAceitaCaucaoLiquida = new TipoGarantiaAceita();
 		tipoGarantiaAceitaCaucaoLiquida.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
-		tipoGarantiaAceitaCaucaoLiquida.setValor(parametrosDistribuidor.getCaucaoLiquidaValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getCaucaoLiquida()))
-			tipoGarantiaAceitaCaucaoLiquida.setUtilizar(true);
-		else
-			tipoGarantiaAceitaCaucaoLiquida.setUtilizar(false);
+		tipoGarantiaAceitaCaucaoLiquida.setValor(parametrosDistribuidor.getValidadeCaucaoLiquida());
+		tipoGarantiaAceitaCaucaoLiquida.setUtilizar(parametrosDistribuidor.isUtilizaCaucaoLiquida());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaCaucaoLiquida);
 
 		TipoGarantiaAceita tipoGarantiaAceitaNotaPromissoria = new TipoGarantiaAceita();
 		tipoGarantiaAceitaNotaPromissoria.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
-		tipoGarantiaAceitaNotaPromissoria.setValor(parametrosDistribuidor.getNotaPromissoriaValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getNotaPromissoria()))
-			tipoGarantiaAceitaNotaPromissoria.setUtilizar(true);
-		else
-			tipoGarantiaAceitaNotaPromissoria.setUtilizar(false);
+		tipoGarantiaAceitaNotaPromissoria.setValor(parametrosDistribuidor.getValidadeNotaPromissoria());
+		tipoGarantiaAceitaNotaPromissoria.setUtilizar(parametrosDistribuidor.isUtilizaNotaPromissoria());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaNotaPromissoria);
 
 		TipoGarantiaAceita tipoGarantiaAceitaAntecedenciaValidade = new TipoGarantiaAceita();
 		tipoGarantiaAceitaAntecedenciaValidade.setTipoGarantia(TipoGarantia.ANTECEDENCIA_VALIDADE);
-		tipoGarantiaAceitaAntecedenciaValidade.setValor(parametrosDistribuidor.getAntecedenciaValidadeValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getAntecedenciaValidade()))
-			tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(true);
-		else
-			tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(false);
+		tipoGarantiaAceitaAntecedenciaValidade.setValor(parametrosDistribuidor.getValidadeAntecedenciaValidade());
+		tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(parametrosDistribuidor.isUtilizaAntecedenciaValidade());
 		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaAntecedenciaValidade);
-
-		TipoGarantiaAceita tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida = new TipoGarantiaAceita();
-		tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setTipoGarantia(TipoGarantia.INDICADOR_REAJUSTE_CAUCAO_LIQUIDA);
-		tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setValor(parametrosDistribuidor.getIndicadorReajusteCaucaoLiquidaValor());
-		if (verificaCheckBoolean(parametrosDistribuidor.getIndicadorReajusteCaucaoLiquida()))
-			tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setUtilizar(true);
-		else
-			tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida.setUtilizar(false);
-		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaIndicadorReajusteCaucaoLiquida);
+		
+		TipoGarantiaAceita tipoGarantiaOutros = new TipoGarantiaAceita();
+		tipoGarantiaOutros.setTipoGarantia(TipoGarantia.OUTROS);
+		tipoGarantiaOutros.setValor(parametrosDistribuidor.getValidadeOutros());
+		tipoGarantiaOutros.setUtilizar(parametrosDistribuidor.isUtilizaOutros());
+        listaTipoGarantiaAceitas.add(tipoGarantiaOutros);
 
 		for (TipoGarantiaAceita tipoGarantiaAceita : listaTipoGarantiaAceitas) {
 			tipoGarantiaAceita.setDistribuidor(distribuidor);
@@ -515,42 +485,46 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
+				
+		if(parametrosDistribuidor.getUtilizaDesconto() != null && parametrosDistribuidor.getUtilizaDesconto())
+			distribuidor.setDescontoCotaNegociacao(CurrencyUtil.converterValor(parametrosDistribuidor.getPercentualDesconto()));
+		else
+			distribuidor.setDescontoCotaNegociacao(BigDecimal.ZERO);
 		
-		distribuidor.setParcelamentoDividas(verificaCheckBoolean(parametrosDistribuidor.getParcelamentoDividas()));
 		if (parametrosDistribuidor.getNegociacaoAteParcelas() !=null && !parametrosDistribuidor.getNegociacaoAteParcelas().isEmpty()) {
 			distribuidor.setNegociacaoAteParcelas(CurrencyUtil.converterValor(parametrosDistribuidor.getNegociacaoAteParcelas()).intValueExact());
 		} else {
 			distribuidor.setNegociacaoAteParcelas(null);
 		}
-		distribuidor.setPermitePagamentoDividasDivergentes(verificaCheckBoolean(parametrosDistribuidor.getPermitePagamentoDividasDivergentes()));
 		
 		// Aprovação
-		distribuidor.setUtilizaControleAprovacao(verificaCheckBoolean(parametrosDistribuidor.getUtilizaControleAprovacao()));
+		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
 		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
-		parametrosAprovacaoDistribuidor.setDebitoCredito(verificaCheckBoolean(parametrosDistribuidor.getParaDebitosCreditos()));
+		parametrosAprovacaoDistribuidor.setDebitoCredito(parametrosDistribuidor.getParaDebitosCreditos());
 
-		parametrosAprovacaoDistribuidor.setNegociacao(verificaCheckBoolean(parametrosDistribuidor.getNegociacao()));
-		parametrosAprovacaoDistribuidor.setAjusteEstoque(verificaCheckBoolean(parametrosDistribuidor.getAjusteEstoque()));
-		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(verificaCheckBoolean(parametrosDistribuidor.getPostergacaoCobranca()));
-		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(verificaCheckBoolean(parametrosDistribuidor.getDevolucaoFornecedor()));
-		parametrosAprovacaoDistribuidor.setRecibo(verificaCheckBoolean(parametrosDistribuidor.getRecibo()));
-		parametrosAprovacaoDistribuidor.setFaltasSobras(verificaCheckBoolean(parametrosDistribuidor.getFaltasSobras()));
+		parametrosAprovacaoDistribuidor.setNegociacao(parametrosDistribuidor.getNegociacao());
+		parametrosAprovacaoDistribuidor.setAjusteEstoque(parametrosDistribuidor.getAjusteEstoque());
+		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
+		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(parametrosDistribuidor.getDevolucaoFornecedor());
+		parametrosAprovacaoDistribuidor.setFaltasSobras(parametrosDistribuidor.getFaltasSobras());
 		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
 		
-		if (parametrosDistribuidor.getPrazoFollowUp() != null && !parametrosDistribuidor.getPrazoFollowUp().isEmpty())
-			distribuidor.setPrazoFollowUp(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoFollowUp()).intValueExact());
+		if (parametrosDistribuidor.getPrazoFollowUp() != null)
+			distribuidor.setPrazoFollowUp(parametrosDistribuidor.getPrazoFollowUp());
 		else
 			distribuidor.setPrazoFollowUp(null);
 		
-		if (parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia() != null && !parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia().isEmpty())
-			distribuidor.setPrazoAvisoPrevioValidadeGarantia(CurrencyUtil.converterValor(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia()).intValueExact());
+		if (parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia() != null)
+			distribuidor.setPrazoAvisoPrevioValidadeGarantia(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantia());
 		else
 			distribuidor.setPrazoAvisoPrevioValidadeGarantia(null);
 		
+		distribuidor.setParcelamentoDividas(parametrosDistribuidor.getParcelamentoDividas());
+		
 		List<ParametrosDistribuidorFaltasSobras> listaParametrosDistribuidorFaltasSobras = new ArrayList<ParametrosDistribuidorFaltasSobras>();
 		
-		if (verificaCheckBoolean(parametrosDistribuidor.getFaltasSobras())) {
+		if (parametrosDistribuidor.getFaltasSobras()) {
 			
 			ParametrosDistribuidorFaltasSobras parametrosAprovacao = new ParametrosDistribuidorFaltasSobras();
 			parametrosAprovacao.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.APROVACAO);
@@ -562,42 +536,23 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 			ParametrosDistribuidorFaltasSobras parametrosAvisoPrevioValidadeGarantia = new ParametrosDistribuidorFaltasSobras();
 			parametrosAvisoPrevioValidadeGarantia.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.AVISO_PREVIO_VALIDADE_GARANTIA);
-			parametrosAvisoPrevioValidadeGarantia.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantiaFaltaDe()));
-			parametrosAvisoPrevioValidadeGarantia.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantiaFaltaEm()));
-			parametrosAvisoPrevioValidadeGarantia.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantiaSobraDe()));
-			parametrosAvisoPrevioValidadeGarantia.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoAvisoPrevioValidadeGarantiaSobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosAvisoPrevioValidadeGarantia);
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoCE = new ParametrosDistribuidorFaltasSobras();
 			parametrosImpressaoCE.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_CE);
-			parametrosImpressaoCE.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoCEFaltaDe()));
-			parametrosImpressaoCE.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoCEFaltaEm()));
-			parametrosImpressaoCE.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoCESobraDe()));
-			parametrosImpressaoCE.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoCESobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoCE);
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoNE = new ParametrosDistribuidorFaltasSobras();
 			parametrosImpressaoNE.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_NE);
-			parametrosImpressaoNE.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNEFaltaDe()));
-			parametrosImpressaoNE.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNEFaltaEm()));
-			parametrosImpressaoNE.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNESobraDe()));
-			parametrosImpressaoNE.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNESobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoNE);
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoNECADANFE = new ParametrosDistribuidorFaltasSobras();
 			parametrosImpressaoNECADANFE.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.IMPRESSAO_NECA_DANFE);
-			parametrosImpressaoNECADANFE.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNECADANFEFaltaDe()));
-			parametrosImpressaoNECADANFE.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNECADANFEFaltaEm()));
-			parametrosImpressaoNECADANFE.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNECADANFESobraDe()));
-			parametrosImpressaoNECADANFE.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getImpressaoNECADANFESobraEm()));
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoNECADANFE);
 
 			ParametrosDistribuidorFaltasSobras parametrosImpressaoPrazoFollowUp = new ParametrosDistribuidorFaltasSobras();
 			parametrosImpressaoPrazoFollowUp.setTipoParametrosDistribuidorFaltasSobras(TipoParametrosDistribuidorFaltasSobras.PRAZO_FOLLOW_UP);
-			parametrosImpressaoPrazoFollowUp.setFaltaDe(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpFaltaDe()));
-			parametrosImpressaoPrazoFollowUp.setFaltaEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpFaltaEm()));
-			parametrosImpressaoPrazoFollowUp.setSobraDe(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpSobraDe()));
-			parametrosImpressaoPrazoFollowUp.setSobraEm(verificaCheckBoolean(parametrosDistribuidor.getPrazoFollowUpSobraEm()));
+
 			listaParametrosDistribuidorFaltasSobras.add(parametrosImpressaoPrazoFollowUp);
 
 			for (ParametrosDistribuidorFaltasSobras parametrosDistribuidorFaltasSobras : listaParametrosDistribuidorFaltasSobras) {

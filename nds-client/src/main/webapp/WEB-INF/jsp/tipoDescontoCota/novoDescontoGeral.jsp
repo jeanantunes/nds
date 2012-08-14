@@ -24,14 +24,18 @@ var DESCONTO_GERAL = {
 			height:345,
 			width:550,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {								
-					DESCONTO_GERAL.novoDescontoGeral();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+			buttons: [{
+						id:"id_confirmar_geral",text:"Confirmar",
+						click: function() {								
+							DESCONTO_GERAL.novoDescontoGeral();
+						}
+					},{
+						id:"id_close_geral",text:"Cancelar",
+						click: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				]
 		});
 	},
 
@@ -45,7 +49,7 @@ var DESCONTO_GERAL = {
 			 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
 		 });
 		
-		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoGeral'/>",
+		$.postJSON("<c:url value='/financeiro/tipoDescontoCota/novoDescontoGeral'/>",
 					"desconto="+descontoGeral + "&" + fornecedores,				   
 				   function(result) {
 			        

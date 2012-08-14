@@ -141,6 +141,38 @@ a{color:#000;}
 
 
 
+.containerHome_filtro{width:980px; margin:auto auto 83px;}
+.containerHome{width:980px; margin:auto auto;}
+.container{width:980px; margin:auto auto;clear:both;}
+
+/* configuração do fieldset da home */
+.containerHome fieldset{ width:211px; float:left; border:1px solid #ccc; min-height:225px;}
+.containerHome fieldset legend{ color:#000; font-weight:bold; font-size:12px;}
+.containerHome fieldset legend img{float:left; margin-right:5px; margin-top:-5px;}
+.containerHome fieldset ul{ margin:2px; padding:2px;}
+.containerHome fieldset li{ list-style-type:none; margin-bottom:10px;} 
+.containerHome fieldset li a{color:#00649F; text-decoration:none; font-size:12px;}
+.containerHome fieldset li a:hover{color:#000; text-decoration:underline;}
+
+/* configuração do fieldset das telas internas */
+fieldset{ /* width:200px; não definir tamanho fixo para um elemento geral */ min-width:200px; margin-right:12px; float:left; border:1px solid #ccc;}
+fieldset legend{ color:#000; font-weight:bold; font-size:12px;}
+fieldset legend img{float:left; margin-right:5px; margin-top:-5px;}
+fieldset ul{}
+fieldset li{ list-style-type:none; margin-bottom:10px;} 
+fieldset li a{color:#00649F; text-decoration:none; font-size:12px;}
+fieldset li a:hover{color:#000; text-decoration:underline;}
+/* alterado fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left: 5px; margin-right: 5px; width: 65px;}*/
+fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 5px;}
+
+.classFieldset{ width:960px!important; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
+.classFieldset legend{ color:#01649E;}
+
+.classFieldset_monitoramento{ width:980px; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
+.classFieldset_monitoramento legend{ color:#01649E;}
+
+.filtro{font-weight:bold;}
+
 .bt_iniciar{background:url(../images/bt_iniciar.png) no-repeat left center; width:120px; line-height:39px; float:left;}
 .bt_iniciar a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
 .bt_iniciar a:hover{color:#00649F; text-decoration:underline;}
