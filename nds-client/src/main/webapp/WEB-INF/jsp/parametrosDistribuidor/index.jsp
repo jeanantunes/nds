@@ -235,11 +235,32 @@ function removeFornecedor(){
 	$( ".forncedoresSel" ).fadeOut('fast');
 }
 
-function habilitaPrazoContrato() {
+function utilizaContratoCotasListener() {
 	if ($('#utilizaContratoComCotas').is(':checked')) {
-		$('#prazoContrato').attr("disabled", false);
+		$('#prazoContrato').enable();
 	} else {
-		$('#prazoContrato').attr("disabled", true);
+		$('#prazoContrato').val("").disable();
+		$('#informacoesComplementaresContrato').wysiwyg('clear');
+	}
+}
+
+function utilizaProcuracaoEntregadoresListener() {
+	if (!$('#utilizaProcuracaoEntregadores').is(':checked')) {
+		$('#informacoesComplementaresProcuracao').wysiwyg('clear');
+	} 
+}
+
+function utilizaTermoAdesaoListener() {
+	if (!$('#utilizaTermoAdesaoEntregaBancas').is(':checked')) {
+		$('#informacoesComplementaresTermoAdesaoEntregaBancas').wysiwyg('clear');
+	} 
+}
+
+function utilizaGarantiaListener(tipoGarantia, validadeGarantia) {
+	if ($(tipoGarantia).is(':checked')) {
+		$('#' + validadeGarantia).enable();
+	} else {
+		$('#' + validadeGarantia).val('').disable();
 	}
 }
 
@@ -371,7 +392,7 @@ $(function() {
 	$('input:radio[name=impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]').click();
 	$('input:radio[name=impressaoCE][value=${parametrosDistribuidor.impressaoCE}]').click();
 	
-	habilitaPrazoContrato();
+	utilizaContratoCotasListener();
 	
 	$("#tabDistribuidor").tabs();
 	
