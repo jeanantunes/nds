@@ -659,7 +659,7 @@ var TIPO_DESCONTO = {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -667,11 +667,12 @@ var TIPO_DESCONTO = {
 				display : 'Nome',
 				name : 'nome',
 				width : 245,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}],
 			width : 350,
-			height : 155
+			height : 155,
+			sortorder : "asc",
 		});
 </script>
 </body>

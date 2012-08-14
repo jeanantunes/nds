@@ -151,7 +151,16 @@ function adicionarLinhaCota(linhaAtual){
 </script>
 
 <div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">
+
 <jsp:include page="../messagesDialog.jsp" />    
+
+<div id="dialog-cotas" title="Cotas" style="display:none;">
+	<fieldset style="width:350px!important;">
+    	<legend>Cotas</legend>
+        <table class="lstCotaGrid"></table>
+    </fieldset>
+</div>
+
 
 <form id="formTipoDescontoProduto">
   <table width="394" border="0" cellpadding="2" cellspacing="1" class="filtro" style="font-size:8pt">

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -24,7 +25,6 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
@@ -159,12 +159,19 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/exibirCotasTipoDescontoProduto")
-	public void exibirCotasTipoDescontoProduto(Long idTipoDescontoProduto) {
-		
-		List<Cota> cotas = 
-				new ArrayList<Cota>(this.descontoService.obterCotasDoTipoDescontoProduto(idTipoDescontoProduto));
+	public void exibirCotasTipoDescontoProduto(Long idTipoDescontoProduto, String sortorder) {
 
-		this.result.use(FlexiGridJson.class).from(cotas).serialize();
+		PaginacaoVO paginacaoVO = new PaginacaoVO(null, null, sortorder);
+
+		List<CotaDescontoProdutoDTO> cotas = 
+					this.descontoService.obterCotasDoTipoDescontoProduto(idTipoDescontoProduto, paginacaoVO.getOrdenacao());
+
+		if (cotas == null || cotas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota cadastrada para esse tipo de desconto.");
+		}
+		
+		this.result.use(FlexiGridJson.class).from(cotas).total(cotas.size()).serialize();
 	}
 	
 	@Post
