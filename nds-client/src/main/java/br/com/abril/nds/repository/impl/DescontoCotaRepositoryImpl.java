@@ -92,7 +92,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 				break;
 		}
 		
-		hql.append( " order by " + nome);
+		hql.append( " order by " + nome + filtro.getPaginacao().getSortOrder());
 		
 		return hql;
 	}
