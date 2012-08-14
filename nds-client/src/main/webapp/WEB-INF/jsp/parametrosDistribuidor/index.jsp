@@ -433,6 +433,7 @@ function alternarControleAprovacao(){
 			<ul>
 				<li><a href="#tabFiscal">Cadastro / Fiscal</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
+				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
 				<li><a href="#tabEmissao">Documentos</a></li>
 				<li><a href="#tabContratos">Contratos e Garantias</a></li>
 			    <li><a href="#tabNegociacao">Negociação</a></li>
@@ -442,6 +443,8 @@ function alternarControleAprovacao(){
             <!--  Aba Operação --> 
             <jsp:include page="tabOperacao.jsp"/>
 			
+			<jsp:include page="tabOperacaoDiferenciada.jsp"/>
+						
 			<jsp:include page="tabFiscal.jsp"></jsp:include>
 			
       
