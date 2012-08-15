@@ -17,6 +17,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -182,7 +183,7 @@ public class Distribuidor {
 	/**
 	 * Parametrização do contrato entre cota e distribuidor
 	 */
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
@@ -234,7 +235,8 @@ public class Distribuidor {
 	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = true)
 	private boolean utilizaProcuracaoEntregadores;	
 	
-	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO", nullable = true)
+	@Lob
+	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO")
 	private String informacoesComplementaresProcuracao;
 
 	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = false)
