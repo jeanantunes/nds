@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.component.DescontoComponent;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -73,6 +74,9 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private DescontoComponent descontoComponent;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -175,15 +179,6 @@ public class DescontoServiceImpl implements DescontoService {
 			default:
 				throw new RuntimeException("Tipo de Desconto inválido!");
 			}
-	}
-	
-	private void validarExclusaoDesconto(Date dataUltimaAlteracao){
-		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		if(dataUltimaAlteracao.compareTo(distribuidor.getDataOperacao()) < 0){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
-		}
 	}
 	
 	@Override
@@ -295,50 +290,6 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		//TODO chamar metodo para processamrnto de desconto produto edição
 	}
-	
-	private void validarEntradaDeDadosInclusaoDescontoPorProduto(DescontoProdutoDTO desconto) {
-	
-		List<String> mensagens = new ArrayList<String>();
-		
-		if (desconto.getCodigoProduto() == null || desconto.getCodigoProduto().isEmpty()) {
-			
-			mensagens.add("O campo Código deve ser preenchido!");
-		}
-		
-		if (desconto.getEdicaoProduto() == null && desconto.getQuantidadeEdicoes() == null) {
-			
-			mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
-		}
-	
-		Integer quantidadeEdicoesExistentes = 
-				this.produtoEdicaoRepository.obterQuantidadeEdicoesPorCodigoProduto(desconto.getCodigoProduto());
-		
-		if (desconto.getQuantidadeEdicoes() != null && 
-				quantidadeEdicoesExistentes < desconto.getQuantidadeEdicoes()) {
-
-			mensagens.add("O número máximo de edições que pode ser informado é: " + quantidadeEdicoesExistentes);
-		}
-		
-		if (desconto.getDescontoProduto() == null) {
-			
-			mensagens.add("O campo Desconto deve ser preenchido!");
-		}
-		
-		if (!desconto.isHasCotaEspecifica() && !desconto.isTodasCotas()) {
-
-			mensagens.add("O campo de cotas deve ser preenchido!");
-		}
-		
-		if (desconto.isHasCotaEspecifica() && desconto.getCotas() == null) {
-			
-			mensagens.add("Ao menos uma cota deve ser selecionada!");
-		}
-		
-		if (!mensagens.isEmpty()) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
-		}
-	}
 
 	@Override
 	@Transactional(readOnly=true)
@@ -368,28 +319,7 @@ public class DescontoServiceImpl implements DescontoService {
 		return listaFornecedores;
 	}
 	
-	private Set<Cota> obterCotas(List<Integer> idsCotas, boolean isTodasCotas) {
-
-		Set<Cota> cotas = null;
-
-		if (idsCotas != null) {
-
-			cotas = new LinkedHashSet<Cota>();
-
-			for (Integer numeroCota : idsCotas) {
-
-				Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
-
-				cotas.add(cota);
-			}
-
-		} else if (isTodasCotas) {
-
-			cotas = new HashSet<Cota>(this.cotaRepository.buscarTodos());
-		}
-
-		return cotas;
-	}
+	
 
 	/**
 	 * {@inheritDoc}
@@ -404,6 +334,21 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 		
 		return this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(idDescontoProduto, ordenacao);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota) {
+
+		if (idCota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] precisa ser especificada.");
+		}
+		
+		return this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(idCota);
 	}
 	
 	
@@ -457,7 +402,20 @@ public class DescontoServiceImpl implements DescontoService {
 		processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto);
 	}
 	
-	private void processarDesconto(TipoDesconto tipoDesconto, Set<Fornecedor> fornecedores,Set<Cota> cotas,Set<ProdutoEdicao> produtos,BigDecimal valorDesconto){
+	/*
+	 * Método que efetua o processamento do desconto de acordo com seu tipo.
+	 * 
+	 * @param tipoDesconto - tipo de desconto
+	 * @param fornecedores - lista de fornecedores
+	 * @param cotas - list de cotas
+	 * @param produtos - lista de produtos
+	 * @param valorDesconto - valor do desconto
+	 */
+	private void processarDesconto(TipoDesconto tipoDesconto, 
+								   Set<Fornecedor> fornecedores, 
+								   Set<Cota> cotas, 
+								   Set<ProdutoEdicao> produtos, 
+								   BigDecimal valorDesconto) {
 		
 		//TODO caso não passe o fornecedor no parametro buscar todos fornecedores.
 		
@@ -470,18 +428,98 @@ public class DescontoServiceImpl implements DescontoService {
 		//TODO chamar metodo para persistir desconto
 	}
 	
-	/**
-	 * {@inheritDoc}
+	/*
+	 * Efetua a validação da exclusão do desconto.
+	 * 
+	 * @param dataUltimaAlteracao - data da última alteração
 	 */
-	@Override
-	@Transactional
-	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota) {
-
-		if (idCota == null) {
+	private void validarExclusaoDesconto(Date dataUltimaAlteracao){
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		if(dataUltimaAlteracao.compareTo(distribuidor.getDataOperacao()) < 0){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
+		}
+	}
+	
+	/*
+	 * Valida a entrada de dados para inclusão de desconto por produto.
+	 * 
+	 * @param desconto - dados do desconto de produto
+	 */
+	private void validarEntradaDeDadosInclusaoDescontoPorProduto(DescontoProdutoDTO desconto) {
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		if (desconto.getCodigoProduto() == null || desconto.getCodigoProduto().isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] precisa ser especificada.");
+			mensagens.add("O campo Código deve ser preenchido!");
 		}
 		
-		return this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(idCota);
+		if (desconto.getEdicaoProduto() == null && desconto.getQuantidadeEdicoes() == null) {
+			
+			mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
+		}
+	
+		Integer quantidadeEdicoesExistentes = 
+				this.produtoEdicaoRepository.obterQuantidadeEdicoesPorCodigoProduto(desconto.getCodigoProduto());
+		
+		if (desconto.getQuantidadeEdicoes() != null && 
+				quantidadeEdicoesExistentes < desconto.getQuantidadeEdicoes()) {
+
+			mensagens.add("O número máximo de edições que pode ser informado é: " + quantidadeEdicoesExistentes);
+		}
+		
+		if (desconto.getDescontoProduto() == null) {
+			
+			mensagens.add("O campo Desconto deve ser preenchido!");
+		}
+		
+		if (!desconto.isHasCotaEspecifica() && !desconto.isTodasCotas()) {
+
+			mensagens.add("O campo de cotas deve ser preenchido!");
+		}
+		
+		if (desconto.isHasCotaEspecifica() && desconto.getCotas() == null) {
+			
+			mensagens.add("Ao menos uma cota deve ser selecionada!");
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
 	}
+	
+	/*
+	 * Obtém as cotas por id ou todas.
+	 * 
+	 * @param idsCotas - id's das cotas
+	 * @param isTodasCotas - flag para obter todas as cotas
+	 * 
+	 * @return {@link Set} de {@link Cota}
+	 */
+	private Set<Cota> obterCotas(List<Integer> idsCotas, boolean isTodasCotas) {
+
+		Set<Cota> cotas = null;
+
+		if (idsCotas != null) {
+
+			cotas = new LinkedHashSet<Cota>();
+
+			for (Integer numeroCota : idsCotas) {
+
+				Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+
+				cotas.add(cota);
+			}
+
+		} else if (isTodasCotas) {
+
+			cotas = new HashSet<Cota>(this.cotaRepository.buscarTodos());
+		}
+
+		return cotas;
+	}
+	
 }
