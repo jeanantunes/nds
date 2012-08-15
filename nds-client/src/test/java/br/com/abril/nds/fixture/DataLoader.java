@@ -10644,6 +10644,7 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
 		save(session, Fixture.criarInterfaceExecucao(198L, "EMS0198"));
+		save(session, Fixture.criarInterfaceExecucao(135L, "EMS0135"));
 	}
 
 	private static void criarEventoExecucao(Session session) {

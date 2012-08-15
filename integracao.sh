@@ -20,6 +20,8 @@ java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar 
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
 # CEP
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 185
+#Nota
+java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 135
 
 #DCLIENT
 #PRODIM
@@ -41,6 +43,8 @@ java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0126
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0113.route.EMS0113Route
 # CEP
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0185.route.EMS0185Route
+#Notas
+java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0135.route.EMS0135Route
 
 #MDC
 # Recupera PRODUTO no arquivo do mdc e persiste no nds
