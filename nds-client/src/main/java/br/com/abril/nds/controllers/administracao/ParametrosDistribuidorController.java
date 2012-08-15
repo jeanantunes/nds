@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -142,10 +141,10 @@ public class ParametrosDistribuidorController {
 	 */
 	private void validarCadastroDistribuidor(ParametrosDistribuidorVO vo) {
 	    List<String> erros = new ArrayList<String>();
-	    if (StringUtils.isEmpty(vo.getCapacidadeManuseioHomemHoraLancamento())) {
+	    if (vo.getCapacidadeManuseioHomemHoraLancamento() == null) {
 	        erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");
 	    }
-	    if (StringUtils.isEmpty(vo.getCapacidadeManuseioHomemHoraRecolhimento())) {
+	    if (vo.getCapacidadeManuseioHomemHoraRecolhimento() == null) {
             erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
         }
 	    

@@ -134,7 +134,18 @@
                     
                          <tr>
                       <td>Aceita Encalhe Juramentada:</td>
-                      <td width="22"><input name="parametrosDistribuidor.aceitaEncalheJuramentada" type="checkbox" id="aceitaEncalheJuramentada" ${parametrosDistribuidor.aceitaEncalheJuramentada} /></td>
+                      <td width="22">
+                          <c:if test="${parametrosDistribuidor.aceitaEncalheJuramentada} ">
+                            <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
+                                type="checkbox" 
+                                id="aceitaEncalheJuramentada" checked="checked" />
+                          </c:if>   
+                            <c:if test="${not parametrosDistribuidor.aceitaEncalheJuramentada} ">
+                            <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
+                                type="checkbox" 
+                                id="aceitaEncalheJuramentada"/>
+                          </c:if>        
+                          </td>
                       <td width="15">&nbsp;</td>
                       <td width="21">&nbsp;</td>
                       <td width="16">&nbsp;</td>
@@ -148,21 +159,78 @@
                     </tr>
                     <tr>
                       <td>Dias de Recolhimento:</td>
-                      <td><input name="parametrosDistribuidor.diaRecolhimentoPrimeiro" type="checkbox" id="diaRecolhimentoPrimeiro" ${parametrosDistribuidor.diaRecolhimentoPrimeiro} /></td>
+                      <td>
+                          <c:if test="${parametrosDistribuidor.diaRecolhimentoPrimeiro}">
+                              <input name="parametrosDistribuidor.diaRecolhimentoPrimeiro" 
+                                 type="checkbox" 
+                                 id="diaRecolhimentoPrimeiro" checked="checked" />
+                          </c:if>
+                          <c:if test="${not parametrosDistribuidor.diaRecolhimentoPrimeiro}">
+                              <input name="parametrosDistribuidor.diaRecolhimentoPrimeiro" 
+                                 type="checkbox" 
+                                 id="diaRecolhimentoPrimeiro"/>
+                          </c:if>           
+                          
+                      </td>
                       <td>1º</td>
-                      <td><input name="parametrosDistribuidor.diaRecolhimentoSegundo" type="checkbox" id="diaRecolhimentoSegundo" ${parametrosDistribuidor.diaRecolhimentoSegundo} /></td>
+                      <td>
+                         <c:if test="${parametrosDistribuidor.diaRecolhimentoSegundo}">   
+                           <input name="parametrosDistribuidor.diaRecolhimentoSegundo" 
+                                  type="checkbox" id="diaRecolhimentoSegundo" checked="checked" />
+                         </c:if>
+                         <c:if test="${not parametrosDistribuidor.diaRecolhimentoSegundo}">   
+                           <input name="parametrosDistribuidor.diaRecolhimentoSegundo" 
+                                  type="checkbox" id="diaRecolhimentoSegundo"/>
+                         </c:if>  
+                      </td>
                       <td>2º</td>
-                      <td><input name="parametrosDistribuidor.diaRecolhimentoTerceiro" type="checkbox" id="diaRecolhimentoTerceiro" ${parametrosDistribuidor.diaRecolhimentoTerceiro} /></td>
+                      <td>
+                         <c:if test="${parametrosDistribuidor.diaRecolhimentoTerceiro}">   
+                          <input name="parametrosDistribuidor.diaRecolhimentoTerceiro" 
+                                  type="checkbox" id="diaRecolhimentoTerceiro" checked="checked" />
+                         </c:if>
+                         <c:if test="${not parametrosDistribuidor.diaRecolhimentoTerceiro}">   
+                          <input name="parametrosDistribuidor.diaRecolhimentoTerceiro" 
+                                  type="checkbox" id="diaRecolhimentoTerceiro" />
+                         </c:if>                
+                      </td>
                       <td>3º</td>
-                      <td><input name="parametrosDistribuidor.diaRecolhimentoQuarto" type="checkbox" id="diaRecolhimentoQuarto" ${parametrosDistribuidor.diaRecolhimentoQuarto} /></td>
+                      <td>
+                          <c:if test="${parametrosDistribuidor.diaRecolhimentoQuarto}">      
+                            <input name="parametrosDistribuidor.diaRecolhimentoQuarto" 
+                                    type="checkbox" id="diaRecolhimentoQuarto" checked="checked" />
+                           </c:if>
+                           <c:if test="${not parametrosDistribuidor.diaRecolhimentoQuarto}">      
+                            <input name="parametrosDistribuidor.diaRecolhimentoQuarto" 
+                                    type="checkbox" id="diaRecolhimentoQuarto"/>
+                           </c:if>           
+                      </td>
                       <td>4º</td>
-                      <td><input name="parametrosDistribuidor.diaRecolhimentoQuinto" type="checkbox" id="diaRecolhimentoQuinto" ${parametrosDistribuidor.diaRecolhimentoQuinto} /></td>
+                      <td>
+                        <c:if test="${parametrosDistribuidor.diaRecolhimentoQuinto}"> 
+                          <input name="parametrosDistribuidor.diaRecolhimentoQuinto" 
+                                  type="checkbox" id="diaRecolhimentoQuinto" checked="checked"/>
+                        </c:if>
+                        <c:if test="${not parametrosDistribuidor.diaRecolhimentoQuinto}"> 
+                          <input name="parametrosDistribuidor.diaRecolhimentoQuinto" 
+                                  type="checkbox" id="diaRecolhimentoQuinto"/>
+                        </c:if>               
+                      </td>
                       <td>5º</td>
                       <td>Dias</td>
                     </tr>
                     <tr>
                       <td>Aceita devolução antecipada cota:</td>
-                      <td><input name="parametrosDistribuidor.limiteCEProximaSemana" type="checkbox" id="limiteCEProximaSemana" ${parametrosDistribuidor.limiteCEProximaSemana} /></td>
+                      <td>
+                        <c:if test="${parametrosDistribuidor.limiteCEProximaSemana}">
+                            <input name="parametrosDistribuidor.limiteCEProximaSemana" 
+                               type="checkbox" id="limiteCEProximaSemana" checked="checked" />
+                        </c:if>
+                        <c:if test="${not parametrosDistribuidor.limiteCEProximaSemana}">
+                            <input name="parametrosDistribuidor.limiteCEProximaSemana" 
+                               type="checkbox" id="limiteCEProximaSemana"/>
+                        </c:if>           
+                      </td>
                       <td colspan="10">Limite CE Próxima Semana</td>
                     </tr>
                           <tr>
@@ -200,8 +268,26 @@
                     </tr>
                     <tr>
                       <td width="123" align="center" class="class_linha_1">Conferência Cega</td>
-                      <td width="115" align="center"><input name="parametrosDistribuidor.conferenciaCegaRecebimento" type="checkbox" id="conferenciaCegaRecebimento" ${parametrosDistribuidor.conferenciaCegaRecebimento} /></td>
-                      <td width="148" align="center"><input name="parametrosDistribuidor.conferenciaCegaEncalhe" type="checkbox" id="conferenciaCegaEncalhe" ${parametrosDistribuidor.conferenciaCegaEncalhe} /></td>
+                      <td width="115" align="center">
+                            <c:if test="${parametrosDistribuidor.conferenciaCegaRecebimento}">
+                                <input name="parametrosDistribuidor.conferenciaCegaRecebimento" 
+                                  type="checkbox" id="conferenciaCegaRecebimento" checked="checked" />
+                            </c:if>
+                            <c:if test="${not parametrosDistribuidor.conferenciaCegaRecebimento}">
+                                <input name="parametrosDistribuidor.conferenciaCegaRecebimento" 
+                                  type="checkbox" id="conferenciaCegaRecebimento"/>
+                            </c:if>         
+                      </td>
+                      <td width="148" align="center">
+                            <c:if test="${parametrosDistribuidor.conferenciaCegaEncalhe}">
+                                <input name="parametrosDistribuidor.conferenciaCegaEncalhe" 
+                                   type="checkbox" id="conferenciaCegaEncalhe" checked="checked" />
+                            </c:if>
+                            <c:if test="${not parametrosDistribuidor.conferenciaCegaEncalhe}">
+                                <input name="parametrosDistribuidor.conferenciaCegaEncalhe" 
+                                   type="checkbox" id="conferenciaCegaEncalhe" />
+                            </c:if>           
+                      </td>
                     </tr>
                   </table>
                 </fieldset>
