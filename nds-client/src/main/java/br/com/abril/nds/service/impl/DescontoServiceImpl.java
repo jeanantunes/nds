@@ -432,9 +432,9 @@ public class DescontoServiceImpl implements DescontoService {
 			fornecedores = new HashSet<Fornecedor>(this.fornecedorRepository.obterFornecedores());
 		}
 		
-		Set<ProdutoEdicao> produtosParaDesconto = new HashSet<ProdutoEdicao>();		
-		
 		for (Fornecedor fornecedor : fornecedores) {
+			
+			Set<ProdutoEdicao> produtosParaDesconto = new HashSet<ProdutoEdicao>();
 			
 			if (obterProdutos) {
 				
@@ -467,6 +467,11 @@ public class DescontoServiceImpl implements DescontoService {
 			for (Cota cota : cotas) {
 				
 				Set<Fornecedor> fornecedoresCota = cota.getFornecedores();
+				
+				for (Fornecedor fornecedorCota : fornecedoresCota) {
+					
+					System.out.println(fornecedorCota.getId());
+				}
 				
 				if (fornecedoresCota == null ||
 						!fornecedoresCota.contains(fornecedor)) {

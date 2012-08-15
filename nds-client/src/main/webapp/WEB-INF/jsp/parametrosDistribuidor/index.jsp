@@ -25,6 +25,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.image.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.link.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.table.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 <script language="javascript" type="text/javascript">
 
 function gravarDiasDistribuidorFornecedor() {	
@@ -93,6 +94,30 @@ function recarregarDiasDistribuidorFornecedorGrid() {
 
 function gravar() {
 	var data = [
+		{name:'parametrosDistribuidor.razaoSocial', value: $('#razaoSocial').val()},
+		{name:'parametrosDistribuidor.nomeFantasia', value: $('#nomeFantasia').val()},
+		{name:'parametrosDistribuidor.cnpj', value: $('#cnpj').val()},
+		{name:'parametrosDistribuidor.inscricaoEstadual', value: $('#inscricaoEstadual').val()},
+		{name:'parametrosDistribuidor.inscricaoMunicipal', value: $('#inscricaoMunicipal').val()},
+		{name:'parametrosDistribuidor.cnpjPrincipal', value: $('#cnpjPrincipal').is(':checked')},
+		{name:'parametrosDistribuidor.email', value: $('#email').val()},
+		{name:'parametrosDistribuidor.codigoDistribuidorDinap', value: $('#codigoDistribuidorDinap').val()},
+		{name:'parametrosDistribuidor.codigoDistribuidorFC', value: $('#codigoDistribuidorFC').val()},
+		
+		{name:'parametrosDistribuidor.endereco.tipoEndereco', value: $('#tipoEndereco').val()},
+		{name:'parametrosDistribuidor.endereco.cep', value: $('#cep').val()},
+		{name:'parametrosDistribuidor.endereco.tipoLogradouro', value: $('#tipoLogradouro').val()},
+		{name:'parametrosDistribuidor.endereco.logradouro', value: $('#logradouro').val()},
+		{name:'parametrosDistribuidor.endereco.numero', value: $('#numero').val()},
+		{name:'parametrosDistribuidor.endereco.complemento', value: $('#complemento').val()},
+		{name:'parametrosDistribuidor.endereco.bairro', value: $('#bairro').val()},
+		{name:'parametrosDistribuidor.endereco.localidade', value: $('#cidade').val()},
+		{name:'parametrosDistribuidor.endereco.uf', value: $('#uf').val()},
+		
+		{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario').val()},
+		{name:'parametrosDistribuidor.obrigacaoFiscal', value: $('#obrigacaoFiscal').val()},
+		{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial').is(':checked')},
+		
 		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
 		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').is(':checked')},
 		{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $('input[name=parametrosDistribuidor.radioTipoContabilizacaoCE]:checked').val()},
@@ -110,9 +135,6 @@ function gravar() {
 		{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento', value: $('#capacidadeManuseioHomemHoraLancamento').val()},
 		{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento', value: $('#capacidadeManuseioHomemHoraRecolhimento').val()},
 		{name:'parametrosDistribuidor.reutilizacaoCodigoCotaInativa', value: $('#reutilizacaoCodigoCotaInativa').val()},
-		{name:'parametrosDistribuidor.obrigacaoFiscao', value: $('#obrigacaoFiscao').is(':checked')},
-		{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial').is(':checked')},
-		{name:'parametrosDistribuidor.distribuidor', value: $("[name='distribuidor']").val()},
 		{name:'parametrosDistribuidor.slipImpressao', value: $('#slipImpressao').is(':checked')},
 		{name:'parametrosDistribuidor.slipEmail', value: $('#slipEmail').is(':checked')},
 		{name:'parametrosDistribuidor.boletoImpressao', value: $('#boletoImpressao').is(':checked')},
@@ -189,8 +211,22 @@ function gravar() {
 			   });
 }
 
+function atualizarLogo() {
+	
+	$("#imgLogo").attr("src", contextPath + "/administracao/parametrosDistribuidor/atualizarLogo?timestamp=" + new Date().getTime());
+}
+
+function salvarLogo() {
+	
+	$('#form').submit();
+}
+
+function tratarRespostaSalvarLogo() {
+
+	atualizarLogo();
+}
+
 function popup_confirm() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
@@ -280,6 +316,12 @@ $(document).ready(function() {
 	$('#complementoTermoAdesaoEntregaBancas').wysiwyg();
 	$('#complementoTermoAdesaoEntregaBancas').wysiwyg({controls:"font-family,italic,|,undo,redo"});
 	$('#complementoTermoAdesaoEntregaBancas').wysiwyg('setContent','${parametrosDistribuidor.complementoTermoAdesaoEntregaBancas}');
+	
+	var options = {
+		success: tratarRespostaSalvarLogo,
+    };
+	
+	$('#form').ajaxForm(options);
 });
 
 $(function() {
@@ -391,9 +433,12 @@ $(function() {
 		 precision:0
 	});
 	
+	$("#tipoEndereco").val("${parametrosDistribuidor.endereco.tipoEndereco}");
+	$("#regimeTributario").val("${parametrosDistribuidor.regimeTributario}");
+	$("#obrigacaoFiscal").val("${parametrosDistribuidor.obrigacaoFiscal}");
+	
 	$("#relancamentoParciaisEmDias").val(${parametrosDistribuidor.relancamentoParciaisEmDias});
 	
-	$('input:radio[name=distribuidor][value=${parametrosDistribuidor.distribuidor}]').click();
 	$('input:radio[name=interfaceLED][value=${parametrosDistribuidor.impressaoInterfaceLED}]').click();
 	$('input:radio[name=impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]').click();
 	$('input:radio[name=impressaoCE][value=${parametrosDistribuidor.impressaoCE}]').click();
@@ -453,7 +498,10 @@ function alternarControleAprovacao(){
 
 <body>
 
-<form name="form" id="form" method="post">
+<form action="<c:url value='/administracao/parametrosDistribuidor/salvarLogo' />" id="form"
+	  method="post" enctype="multipart/form-data" >
+
+<input type="hidden" name="formUploadAjax" value="true" />
 
 <div id="dialog-pesq-fornecedor" title="Selecione os Fornecedores">
 	<fieldset>
@@ -479,7 +527,7 @@ function alternarControleAprovacao(){
    	    <legend>Parâmetros do Distribuidor</legend>
         <div id="tabDistribuidor">
 			<ul>
-				<li><a href="#tabFiscal">Cadastro / Fiscal</a></li>
+				<li><a href="#tabCadastroFiscal">Cadastro / Fiscal</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
 				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
 				<li><a href="#tabEmissao">Documentos</a></li>
@@ -488,15 +536,14 @@ function alternarControleAprovacao(){
 			     <li><a href="#tabAprovacao">Aprovação</a></li>
 			</ul>
 			
+			<!--  Aba Cadastro / Fiscal --> 
+            <jsp:include page="tabCadastroFiscal.jsp"/>
+			
             <!--  Aba Operação --> 
             <jsp:include page="tabOperacao.jsp"/>
 			
 			<jsp:include page="tabOperacaoDiferenciada.jsp"/>
 						
-			<jsp:include page="tabFiscal.jsp"></jsp:include>
-			
-      
-			
 			<jsp:include page="tabEmissao.jsp"></jsp:include>
 			
 		    <!-- Aba Contratos e Garantias  -->	
