@@ -1,5 +1,8 @@
 package br.com.abril.nds.client.vo;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 
 
@@ -9,207 +12,400 @@ import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
  */
 public class ParametrosDistribuidorVO {
 
-	// Aba Operação
-	
-	// Frame Parciais / Matriz de Lançamento
-	private int relancamentoParciaisEmDias;
-	
-	// Frame Recolhimento
-	
-	private TipoContabilizacaoCE tipoContabilizacaoCE;
-	
-	private String aceitaEncalheJuramentada;
-	
-	private String diaRecolhimentoPrimeiro;
-	
-	private String diaRecolhimentoSegundo;
+    // Aba Cadastro / Fiscal
+    private String razaoSocial;
+    
+    private String nomeFantasia;
+    
+    private String cnpj;
+    
+    private String inscricaoEstadual;
+    
+    private String inscricaoMunicipal;
+    
+    private boolean cnpjPrincipal;
+    
+    private String email;
+    
+    private String codigoDistribuidorDinap;
+    
+    private String codigoDistribuidorFC;
+    
+    private TipoAtividade regimeTributario;
+    
+    private ObrigacaoFiscal obrigacaoFiscal;
+    
+    private boolean regimeEspecial;
+    
+    private EnderecoVO endereco;
+    
+    // Aba Operação
+    
+    // Frame Parciais / Matriz de Lançamento
+    private int relancamentoParciaisEmDias;
+    
+    // Frame Recolhimento
+    
+    private TipoContabilizacaoCE tipoContabilizacaoCE;
+    
+    private boolean aceitaEncalheJuramentada;
+    
+    private boolean diaRecolhimentoPrimeiro;
+    
+    private boolean diaRecolhimentoSegundo;
 
-	private String diaRecolhimentoTerceiro;
+    private boolean diaRecolhimentoTerceiro;
 
-	private String diaRecolhimentoQuarto;
+    private boolean diaRecolhimentoQuarto;
 
-	private String diaRecolhimentoQuinto;
+    private boolean diaRecolhimentoQuinto;
 
-	private String limiteCEProximaSemana;
-	
-	private boolean supervisionaVendaNegativa;
+    private boolean limiteCEProximaSemana;
+    
+    private boolean supervisionaVendaNegativa;
 
-	private String conferenciaCegaRecebimento;
+    private boolean conferenciaCegaRecebimento;
 
-	private String conferenciaCegaEncalhe;
+    private boolean conferenciaCegaEncalhe;
 
-	// Frame Capacidade de Manuseio
-	private String capacidadeManuseioHomemHoraLancamento;
-	
-	private String capacidadeManuseioHomemHoraRecolhimento;
+    // Frame Capacidade de Manuseio
+    private Integer capacidadeManuseioHomemHoraLancamento;
+    
+    private Integer capacidadeManuseioHomemHoraRecolhimento;
 
-	// Frame Reutilização de Código de Cota
-	private String reutilizacaoCodigoCotaInativa;
+    // Frame Reutilização de Código de Cota
+    private Long reutilizacaoCodigoCotaInativa;
+    
+    // Frame Emissão de Documentos
+    private boolean slipImpressao;
 
-	// Aba Fiscal
-	
-	// Frame Fiscal
-	private String obrigacaoFiscao;
-	
-	private String regimeEspecial;
+    private boolean slipEmail;
 
-	// PRESTADOR_SERVICO ou MERCANTIL
-	private String distribuidor;
-	
-	// Frame Emissão de Documentos
-	private boolean slipImpressao;
+    private boolean boletoImpressao;
 
-	private boolean slipEmail;
+    private boolean boletoEmail;
 
-	private boolean boletoImpressao;
+    private boolean boletoSlipImpressao;
 
-	private boolean boletoEmail;
+    private boolean boletoSlipEmail;
 
-	private boolean boletoSlipImpressao;
+    private boolean reciboImpressao;
 
-	private boolean boletoSlipEmail;
+    private boolean reciboEmail;
 
-	private boolean reciboImpressao;
+    private boolean notaEnvioImpressao;
 
-	private boolean reciboEmail;
+    private boolean notaEnvioEmail;
 
-	private boolean notaEnvioImpressao;
+    private boolean chamadaEncalheImpressao;
 
-	private boolean notaEnvioEmail;
+    private boolean chamadaEncalheEmail;
+    
+    // Frame Impressão Interface LED
+    // MODELO_1 ou MODELO_2 ou MODELO_3
+    private String impressaoInterfaceLED;
 
-	private boolean chamadaEncalheImpressao;
+    // Frame Impressão NECA / DANFE
+    // MODELO_1, MODELO_2 ou DANFE
+    private String impressaoNECADANFE;
 
-	private boolean chamadaEncalheEmail;
-	
-	// Frame Impressão Interface LED
-	// MODELO_1 ou MODELO_2 ou MODELO_3
-	private String impressaoInterfaceLED;
+    // Frame Impressão CE
+    // MODELO_1 ou MODELO_2
+    private String impressaoCE;
+    
+    // Aba Contratos e Garantias
+    // Frame Condições de Contratação
+    private boolean utilizaContratoComCotas;
+    
+    private Integer prazoContrato;
 
-	// Frame Impressão NECA / DANFE
-	// MODELO_1, MODELO_2 ou DANFE
-	private String impressaoNECADANFE;
+    private String informacoesComplementaresContrato;
 
-	// Frame Impressão CE
-	// MODELO_1 ou MODELO_2
-	private String impressaoCE;
-	
-	// Aba Contratos e Garantias
-	// Frame Condições de Contratação
-	private boolean utilizaContratoComCotas;
-	
-	private Integer prazoContrato;
+    // Frame Procuração
+    private boolean utilizaProcuracaoEntregadores;
 
-	private String informacoesComplementaresContrato;
+    private String informacoesComplementaresProcuracao;
+    
+    /**
+     * Distribuidor utiliza termo de adesão para entrega em bancas
+     */
+    private boolean utilizaTermoAdesaoEntregaBancas;
+    
+    /**
+     * Complemento termo de adesão entrega em bancas
+     */
+    private String complementoTermoAdesaoEntregaBancas;
 
-	// Frame Procuração
-	private boolean utilizaProcuracaoEntregadores;
+    //Frame Garantia
+    private boolean utilizaGarantiaPdv;
+    
+    private boolean utilizaChequeCaucao;
 
-	private String informacoesComplementaresProcuracao;
-	
-	/**
-	 * Distribuidor utiliza termo de adesão para entrega em bancas
-	 */
-	private boolean utilizaTermoAdesaoEntregaBancas;
-	
-	/**
-	 * Complemento termo de adesão entrega em bancas
-	 */
-	private String complementoTermoAdesaoEntregaBancas;
+    private Integer validadeChequeCaucao;
+    
+    private boolean utilizaFiador;
+    
+    private Integer validadeFiador;
+    
+    private boolean utilizaImovel;
+    
+    private Integer validadeImovel;
+    
+    private boolean utilizaCaucaoLiquida;
+    
+    private Integer validadeCaucaoLiquida;
+    
+    private boolean utilizaNotaPromissoria;
+    
+    private Integer validadeNotaPromissoria;
+    
+    private boolean utilizaAntecedenciaValidade;
+    
+    private Integer validadeAntecedenciaValidade;
+    
+    /**
+     * Distribuidor utiliza garantia "OUTROS"
+     */
+    private boolean utilizaOutros;
+    
+    /**
+     * Validade da garantia "OUTROS" em meses
+     */
+    private Integer validadeOutros;
+    
+    // Aba Negociação
+    // Frame Negociação de Dívidas
+    private String sugereSuspensaoQuandoAtingirBoletos;
 
-	//Frame Garantia
-	private boolean utilizaGarantiaPdv;
-	
-	private boolean utilizaChequeCaucao;
+    private String sugereSuspensaoQuandoAtingirReais;
 
-	private Integer validadeChequeCaucao;
-	
-	private boolean utilizaFiador;
-	
-	private Integer validadeFiador;
-	
-	private boolean utilizaImovel;
-	
-	private Integer validadeImovel;
-	
-	private boolean utilizaCaucaoLiquida;
-	
-	private Integer validadeCaucaoLiquida;
-	
-	private boolean utilizaNotaPromissoria;
-	
-	private Integer validadeNotaPromissoria;
-	
-	private boolean utilizaAntecedenciaValidade;
-	
-	private Integer validadeAntecedenciaValidade;
-	
-	/**
-	 * Distribuidor utiliza garantia "OUTROS"
-	 */
-	private boolean utilizaOutros;
-	
-	/**
-	 * Validade da garantia "OUTROS" em meses
-	 */
-	private Integer validadeOutros;
-	
-	// Aba Negociação
-	// Frame Negociação de Dívidas
-	private String sugereSuspensaoQuandoAtingirBoletos;
+    private Boolean parcelamentoDividas;
+    
 
-	private String sugereSuspensaoQuandoAtingirReais;
+    private Boolean utilizaDesconto;
+    
 
-	private Boolean parcelamentoDividas;
-	
+    private String percentualDesconto;
+    
+    private String negociacaoAteParcelas;
+    
+    // Aba Aprovação
+    // Frame Aprovação
+    private boolean utilizaControleAprovacao;
 
-	private Boolean utilizaDesconto;
-	
+    private boolean paraDebitosCreditos;
 
-	private String percentualDesconto;
-	
-	private String negociacaoAteParcelas;
-	
-	// Aba Aprovação
-	// Frame Aprovação
-	private boolean utilizaControleAprovacao;
+    private boolean negociacao;
+    
+    private boolean ajusteEstoque;
+    
+    private boolean postergacaoCobranca;
+    
+    private boolean devolucaoFornecedor;
+    
+    private boolean faltasSobras;
+    
+    private String aprovacaoFaltaDe;
+    
+    private String aprovacaoSobraDe;
+    
+    private String aprovacaoFaltaEm;
 
-	private boolean paraDebitosCreditos;
+    private String aprovacaoSobraEm;
 
-	private boolean negociacao;
-	
-	private boolean ajusteEstoque;
-	
-	private boolean postergacaoCobranca;
-	
-	private boolean devolucaoFornecedor;
-	
-	private boolean faltasSobras;
-	
-	private String aprovacaoFaltaDe;
-	
-	private String aprovacaoSobraDe;
-	
-	private String aprovacaoFaltaEm;
+    private Integer prazoFollowUp;
+    
+    private Integer prazoAvisoPrevioValidadeGarantia;
+    
+    private Integer chamadaoDiasSuspensao;
+    
+    private String chamadaoValorConsignado;
 
-	private String aprovacaoSobraEm;
+    /**
+     * @return the razaoSocial
+     */
+    public String getRazaoSocial() {
+        return razaoSocial;
+    }
 
-	private Integer prazoFollowUp;
-	
-	private Integer prazoAvisoPrevioValidadeGarantia;
-	
-	private Integer chamadaoDiasSuspensao;
-	
-	private String chamadaoValorConsignado;
-	
-	public int getRelancamentoParciaisEmDias() {
-		return relancamentoParciaisEmDias;
-	}
+    /**
+     * @param razaoSocial the razaoSocial to set
+     */
+    public void setRazaoSocial(String razaoSocial) {
+        this.razaoSocial = razaoSocial;
+    }
 
-	public void setRelancamentoParciaisEmDias(int relancamentoParciaisEmDias) {
-		this.relancamentoParciaisEmDias = relancamentoParciaisEmDias;
-	}
+    /**
+     * @return the nomeFantasia
+     */
+    public String getNomeFantasia() {
+        return nomeFantasia;
+    }
 
-	/**
+    /**
+     * @param nomeFantasia the nomeFantasia to set
+     */
+    public void setNomeFantasia(String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
+    }
+
+    /**
+     * @return the cnpj
+     */
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    /**
+     * @param cnpj the cnpj to set
+     */
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    /**
+     * @return the inscricaoEstadual
+     */
+    public String getInscricaoEstadual() {
+        return inscricaoEstadual;
+    }
+
+    /**
+     * @param inscricaoEstadual the inscricaoEstadual to set
+     */
+    public void setInscricaoEstadual(String inscricaoEstadual) {
+        this.inscricaoEstadual = inscricaoEstadual;
+    }
+
+    /**
+     * @return the inscricaoMunicipal
+     */
+    public String getInscricaoMunicipal() {
+        return inscricaoMunicipal;
+    }
+
+    /**
+     * @param inscricaoMunicipal the inscricaoMunicipal to set
+     */
+    public void setInscricaoMunicipal(String inscricaoMunicipal) {
+        this.inscricaoMunicipal = inscricaoMunicipal;
+    }
+
+    /**
+     * @return the cnpjPrincipal
+     */
+    public boolean getCnpjPrincipal() {
+        return cnpjPrincipal;
+    }
+
+    /**
+     * @param cnpjPrincipal the cnpjPrincipal to set
+     */
+    public void setCnpjPrincipal(boolean cnpjPrincipal) {
+        this.cnpjPrincipal = cnpjPrincipal;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the codigoDistribuidorDinap
+     */
+    public String getCodigoDistribuidorDinap() {
+        return codigoDistribuidorDinap;
+    }
+
+    /**
+     * @param codigoDistribuidorDinap the codigoDistribuidorDinap to set
+     */
+    public void setCodigoDistribuidorDinap(String codigoDistribuidorDinap) {
+        this.codigoDistribuidorDinap = codigoDistribuidorDinap;
+    }
+
+    /**
+     * @return the codigoDistribuidorFC
+     */
+    public String getCodigoDistribuidorFC() {
+        return codigoDistribuidorFC;
+    }
+
+    /**
+     * @param codigoDistribuidorFC the codigoDistribuidorFC to set
+     */
+    public void setCodigoDistribuidorFC(String codigoDistribuidorFC) {
+        this.codigoDistribuidorFC = codigoDistribuidorFC;
+    }
+    
+    /**
+     * @return the regimeTributario
+     */
+    public TipoAtividade getRegimeTributario() {
+        return regimeTributario;
+    }
+
+    /**
+     * @param regimeTributario the regimeTributario to set
+     */
+    public void setRegimeTributario(TipoAtividade regimeTributario) {
+        this.regimeTributario = regimeTributario;
+    }
+
+    /**
+     * @return the obrigacaoFiscal
+     */
+    public ObrigacaoFiscal getObrigacaoFiscal() {
+        return obrigacaoFiscal;
+    }
+
+    /**
+     * @param obrigacaoFiscal the obrigacaoFiscal to set
+     */
+    public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
+        this.obrigacaoFiscal = obrigacaoFiscal;
+    }
+    
+    public boolean getRegimeEspecial() {
+        return regimeEspecial;
+    }
+
+    public void setRegimeEspecial(boolean regimeEspecial) {
+        this.regimeEspecial = regimeEspecial;
+    }
+
+    /**
+     * @return the endereco
+     */
+    public EnderecoVO getEndereco() {
+        return endereco;
+    }
+
+    /**
+     * @param endereco the endereco to set
+     */
+    public void setEndereco(EnderecoVO endereco) {
+        this.endereco = endereco;
+    }
+
+    public int getRelancamentoParciaisEmDias() {
+        return relancamentoParciaisEmDias;
+    }
+
+    public void setRelancamentoParciaisEmDias(int relancamentoParciaisEmDias) {
+        this.relancamentoParciaisEmDias = relancamentoParciaisEmDias;
+    }
+
+    /**
      * @return the tipoContabilizacaoCE
      */
     public TipoContabilizacaoCE getTipoContabilizacaoCE() {
@@ -223,63 +419,63 @@ public class ParametrosDistribuidorVO {
         this.tipoContabilizacaoCE = tipoContabilizacaoCE;
     }
 
-    public String getAceitaEncalheJuramentada() {
-		return aceitaEncalheJuramentada;
-	}
+    public boolean isAceitaEncalheJuramentada() {
+        return aceitaEncalheJuramentada;
+    }
 
-	public void setAceitaEncalheJuramentada(String aceitaEncalheJuramentada) {
-		this.aceitaEncalheJuramentada = aceitaEncalheJuramentada;
-	}
+    public void setAceitaEncalheJuramentada(boolean aceitaEncalheJuramentada) {
+        this.aceitaEncalheJuramentada = aceitaEncalheJuramentada;
+    }
 
-	public String getDiaRecolhimentoPrimeiro() {
-		return diaRecolhimentoPrimeiro;
-	}
+    public boolean isDiaRecolhimentoPrimeiro() {
+        return diaRecolhimentoPrimeiro;
+    }
 
-	public void setDiaRecolhimentoPrimeiro(String diaRecolhimentoPrimeiro) {
-		this.diaRecolhimentoPrimeiro = diaRecolhimentoPrimeiro;
-	}
+    public void setDiaRecolhimentoPrimeiro(boolean diaRecolhimentoPrimeiro) {
+        this.diaRecolhimentoPrimeiro = diaRecolhimentoPrimeiro;
+    }
 
-	public String getDiaRecolhimentoSegundo() {
-		return diaRecolhimentoSegundo;
-	}
+    public boolean isDiaRecolhimentoSegundo() {
+        return diaRecolhimentoSegundo;
+    }
 
-	public void setDiaRecolhimentoSegundo(String diaRecolhimentoSegundo) {
-		this.diaRecolhimentoSegundo = diaRecolhimentoSegundo;
-	}
+    public void setDiaRecolhimentoSegundo(boolean diaRecolhimentoSegundo) {
+        this.diaRecolhimentoSegundo = diaRecolhimentoSegundo;
+    }
 
-	public String getDiaRecolhimentoTerceiro() {
-		return diaRecolhimentoTerceiro;
-	}
+    public boolean isDiaRecolhimentoTerceiro() {
+        return diaRecolhimentoTerceiro;
+    }
 
-	public void setDiaRecolhimentoTerceiro(String diaRecolhimentoTerceiro) {
-		this.diaRecolhimentoTerceiro = diaRecolhimentoTerceiro;
-	}
+    public void setDiaRecolhimentoTerceiro(boolean diaRecolhimentoTerceiro) {
+        this.diaRecolhimentoTerceiro = diaRecolhimentoTerceiro;
+    }
 
-	public String getDiaRecolhimentoQuarto() {
-		return diaRecolhimentoQuarto;
-	}
+    public boolean isDiaRecolhimentoQuarto() {
+        return diaRecolhimentoQuarto;
+    }
 
-	public void setDiaRecolhimentoQuarto(String diaRecolhimentoQuarto) {
-		this.diaRecolhimentoQuarto = diaRecolhimentoQuarto;
-	}
+    public void setDiaRecolhimentoQuarto(boolean diaRecolhimentoQuarto) {
+        this.diaRecolhimentoQuarto = diaRecolhimentoQuarto;
+    }
 
-	public String getDiaRecolhimentoQuinto() {
-		return diaRecolhimentoQuinto;
-	}
+    public boolean isDiaRecolhimentoQuinto() {
+        return diaRecolhimentoQuinto;
+    }
 
-	public void setDiaRecolhimentoQuinto(String diaRecolhimentoQuinto) {
-		this.diaRecolhimentoQuinto = diaRecolhimentoQuinto;
-	}
+    public void setDiaRecolhimentoQuinto(boolean diaRecolhimentoQuinto) {
+        this.diaRecolhimentoQuinto = diaRecolhimentoQuinto;
+    }
 
-	public String getLimiteCEProximaSemana() {
-		return limiteCEProximaSemana;
-	}
+    public boolean isLimiteCEProximaSemana() {
+        return limiteCEProximaSemana;
+    }
 
-	public void setLimiteCEProximaSemana(String limiteCEProximaSemana) {
-		this.limiteCEProximaSemana = limiteCEProximaSemana;
-	}
+    public void setLimiteCEProximaSemana(boolean limiteCEProximaSemana) {
+        this.limiteCEProximaSemana = limiteCEProximaSemana;
+    }
 
-	/**
+    /**
      * @return the supervisionaVendaNegativa
      */
     public boolean isSupervisionaVendaNegativa() {
@@ -293,237 +489,213 @@ public class ParametrosDistribuidorVO {
         this.supervisionaVendaNegativa = supervisionaVendaNegativa;
     }
 
-    public String getConferenciaCegaRecebimento() {
-		return conferenciaCegaRecebimento;
-	}
+    public boolean isConferenciaCegaRecebimento() {
+        return conferenciaCegaRecebimento;
+    }
 
-	public void setConferenciaCegaRecebimento(String conferenciaCegaRecebimento) {
-		this.conferenciaCegaRecebimento = conferenciaCegaRecebimento;
-	}
+    public void setConferenciaCegaRecebimento(boolean conferenciaCegaRecebimento) {
+        this.conferenciaCegaRecebimento = conferenciaCegaRecebimento;
+    }
 
-	public String getConferenciaCegaEncalhe() {
-		return conferenciaCegaEncalhe;
-	}
+    public boolean isConferenciaCegaEncalhe() {
+        return conferenciaCegaEncalhe;
+    }
 
-	public void setConferenciaCegaEncalhe(String conferenciaCegaEncalhe) {
-		this.conferenciaCegaEncalhe = conferenciaCegaEncalhe;
-	}
+    public void setConferenciaCegaEncalhe(boolean conferenciaCegaEncalhe) {
+        this.conferenciaCegaEncalhe = conferenciaCegaEncalhe;
+    }
 
-	public String getCapacidadeManuseioHomemHoraLancamento() {
-		return capacidadeManuseioHomemHoraLancamento;
-	}
+    public Integer getCapacidadeManuseioHomemHoraLancamento() {
+        return capacidadeManuseioHomemHoraLancamento;
+    }
 
-	public void setCapacidadeManuseioHomemHoraLancamento(
-			String capacidadeManuseioHomemHoraLancamento) {
-		this.capacidadeManuseioHomemHoraLancamento = capacidadeManuseioHomemHoraLancamento;
-	}
+    public void setCapacidadeManuseioHomemHoraLancamento(
+            Integer capacidadeManuseioHomemHoraLancamento) {
+        this.capacidadeManuseioHomemHoraLancamento = capacidadeManuseioHomemHoraLancamento;
+    }
 
-	public String getCapacidadeManuseioHomemHoraRecolhimento() {
-		return capacidadeManuseioHomemHoraRecolhimento;
-	}
+    public Integer getCapacidadeManuseioHomemHoraRecolhimento() {
+        return capacidadeManuseioHomemHoraRecolhimento;
+    }
 
-	public void setCapacidadeManuseioHomemHoraRecolhimento(
-			String capacidadeManuseioHomemHoraRecolhimento) {
-		this.capacidadeManuseioHomemHoraRecolhimento = capacidadeManuseioHomemHoraRecolhimento;
-	}
+    public void setCapacidadeManuseioHomemHoraRecolhimento(
+            Integer capacidadeManuseioHomemHoraRecolhimento) {
+        this.capacidadeManuseioHomemHoraRecolhimento = capacidadeManuseioHomemHoraRecolhimento;
+    }
 
-	public String getReutilizacaoCodigoCotaInativa() {
-		return reutilizacaoCodigoCotaInativa;
-	}
+    public Long getReutilizacaoCodigoCotaInativa() {
+        return reutilizacaoCodigoCotaInativa;
+    }
 
-	public void setReutilizacaoCodigoCotaInativa(
-			String reutilizacaoCodigoCotaInativa) {
-		this.reutilizacaoCodigoCotaInativa = reutilizacaoCodigoCotaInativa;
-	}
+    public void setReutilizacaoCodigoCotaInativa(
+            Long reutilizacaoCodigoCotaInativa) {
+        this.reutilizacaoCodigoCotaInativa = reutilizacaoCodigoCotaInativa;
+    }
 
-	public String getObrigacaoFiscao() {
-		return obrigacaoFiscao;
-	}
+    public boolean getSlipImpressao() {
+        return slipImpressao;
+    }
 
-	public void setObrigacaoFiscao(String obrigacaoFiscao) {
-		this.obrigacaoFiscao = obrigacaoFiscao;
-	}
+    public void setSlipImpressao(boolean slipImpressao) {
+        this.slipImpressao = slipImpressao;
+    }
 
-	public String getRegimeEspecial() {
-		return regimeEspecial;
-	}
+    public boolean getSlipEmail() {
+        return slipEmail;
+    }
 
-	public void setRegimeEspecial(String regimeEspecial) {
-		this.regimeEspecial = regimeEspecial;
-	}
+    public void setSlipEmail(boolean slipEmail) {
+        this.slipEmail = slipEmail;
+    }
 
-	public String getDistribuidor() {
-		return distribuidor;
-	}
+    public boolean getBoletoImpressao() {
+        return boletoImpressao;
+    }
 
-	public void setDistribuidor(String distribuidor) {
-		this.distribuidor = distribuidor;
-	}
+    public void setBoletoImpressao(boolean boletoImpressao) {
+        this.boletoImpressao = boletoImpressao;
+    }
 
-	public boolean getSlipImpressao() {
-		return slipImpressao;
-	}
+    public boolean getBoletoEmail() {
+        return boletoEmail;
+    }
 
-	public void setSlipImpressao(boolean slipImpressao) {
-		this.slipImpressao = slipImpressao;
-	}
+    public void setBoletoEmail(boolean boletoEmail) {
+        this.boletoEmail = boletoEmail;
+    }
 
-	public boolean getSlipEmail() {
-		return slipEmail;
-	}
+    public boolean getBoletoSlipImpressao() {
+        return boletoSlipImpressao;
+    }
 
-	public void setSlipEmail(boolean slipEmail) {
-		this.slipEmail = slipEmail;
-	}
+    public void setBoletoSlipImpressao(boolean boletoSlipImpressao) {
+        this.boletoSlipImpressao = boletoSlipImpressao;
+    }
 
-	public boolean getBoletoImpressao() {
-		return boletoImpressao;
-	}
+    public boolean getBoletoSlipEmail() {
+        return boletoSlipEmail;
+    }
 
-	public void setBoletoImpressao(boolean boletoImpressao) {
-		this.boletoImpressao = boletoImpressao;
-	}
+    public void setBoletoSlipEmail(boolean boletoSlipEmail) {
+        this.boletoSlipEmail = boletoSlipEmail;
+    }
 
-	public boolean getBoletoEmail() {
-		return boletoEmail;
-	}
+    public boolean getReciboImpressao() {
+        return reciboImpressao;
+    }
 
-	public void setBoletoEmail(boolean boletoEmail) {
-		this.boletoEmail = boletoEmail;
-	}
+    public void setReciboImpressao(boolean reciboImpressao) {
+        this.reciboImpressao = reciboImpressao;
+    }
 
-	public boolean getBoletoSlipImpressao() {
-		return boletoSlipImpressao;
-	}
+    public boolean getReciboEmail() {
+        return reciboEmail;
+    }
 
-	public void setBoletoSlipImpressao(boolean boletoSlipImpressao) {
-		this.boletoSlipImpressao = boletoSlipImpressao;
-	}
+    public void setReciboEmail(boolean reciboEmail) {
+        this.reciboEmail = reciboEmail;
+    }
 
-	public boolean getBoletoSlipEmail() {
-		return boletoSlipEmail;
-	}
+    public boolean getNotaEnvioImpressao() {
+        return notaEnvioImpressao;
+    }
 
-	public void setBoletoSlipEmail(boolean boletoSlipEmail) {
-		this.boletoSlipEmail = boletoSlipEmail;
-	}
+    public void setNotaEnvioImpressao(boolean notaEnvioImpressao) {
+        this.notaEnvioImpressao = notaEnvioImpressao;
+    }
 
-	public boolean getReciboImpressao() {
-		return reciboImpressao;
-	}
+    public boolean getNotaEnvioEmail() {
+        return notaEnvioEmail;
+    }
 
-	public void setReciboImpressao(boolean reciboImpressao) {
-		this.reciboImpressao = reciboImpressao;
-	}
+    public void setNotaEnvioEmail(boolean notaEnvioEmail) {
+        this.notaEnvioEmail = notaEnvioEmail;
+    }
 
-	public boolean getReciboEmail() {
-		return reciboEmail;
-	}
+    public boolean getChamadaEncalheImpressao() {
+        return chamadaEncalheImpressao;
+    }
 
-	public void setReciboEmail(boolean reciboEmail) {
-		this.reciboEmail = reciboEmail;
-	}
+    public void setChamadaEncalheImpressao(boolean chamadaEncalheImpressao) {
+        this.chamadaEncalheImpressao = chamadaEncalheImpressao;
+    }
 
-	public boolean getNotaEnvioImpressao() {
-		return notaEnvioImpressao;
-	}
+    public boolean getChamadaEncalheEmail() {
+        return chamadaEncalheEmail;
+    }
 
-	public void setNotaEnvioImpressao(boolean notaEnvioImpressao) {
-		this.notaEnvioImpressao = notaEnvioImpressao;
-	}
+    public void setChamadaEncalheEmail(boolean chamadaEncalheEmail) {
+        this.chamadaEncalheEmail = chamadaEncalheEmail;
+    }
 
-	public boolean getNotaEnvioEmail() {
-		return notaEnvioEmail;
-	}
+    public String getImpressaoInterfaceLED() {
+        return impressaoInterfaceLED;
+    }
 
-	public void setNotaEnvioEmail(boolean notaEnvioEmail) {
-		this.notaEnvioEmail = notaEnvioEmail;
-	}
+    public void setImpressaoInterfaceLED(String impressaoInterfaceLED) {
+        this.impressaoInterfaceLED = impressaoInterfaceLED;
+    }
 
-	public boolean getChamadaEncalheImpressao() {
-		return chamadaEncalheImpressao;
-	}
+    public String getImpressaoNECADANFE() {
+        return impressaoNECADANFE;
+    }
 
-	public void setChamadaEncalheImpressao(boolean chamadaEncalheImpressao) {
-		this.chamadaEncalheImpressao = chamadaEncalheImpressao;
-	}
+    public void setImpressaoNECADANFE(String impressaoNECADANFE) {
+        this.impressaoNECADANFE = impressaoNECADANFE;
+    }
 
-	public boolean getChamadaEncalheEmail() {
-		return chamadaEncalheEmail;
-	}
+    public String getImpressaoCE() {
+        return impressaoCE;
+    }
 
-	public void setChamadaEncalheEmail(boolean chamadaEncalheEmail) {
-		this.chamadaEncalheEmail = chamadaEncalheEmail;
-	}
+    public void setImpressaoCE(String impressaoCE) {
+        this.impressaoCE = impressaoCE;
+    }
 
-	public String getImpressaoInterfaceLED() {
-		return impressaoInterfaceLED;
-	}
+    public boolean isUtilizaContratoComCotas() {
+        return utilizaContratoComCotas;
+    }
 
-	public void setImpressaoInterfaceLED(String impressaoInterfaceLED) {
-		this.impressaoInterfaceLED = impressaoInterfaceLED;
-	}
+    public void setUtilizaContratoComCotas(boolean utilizaContratoComCotas) {
+        this.utilizaContratoComCotas = utilizaContratoComCotas;
+    }
 
-	public String getImpressaoNECADANFE() {
-		return impressaoNECADANFE;
-	}
+    public Integer getPrazoContrato() {
+        return prazoContrato;
+    }
 
-	public void setImpressaoNECADANFE(String impressaoNECADANFE) {
-		this.impressaoNECADANFE = impressaoNECADANFE;
-	}
+    public void setPrazoContrato(Integer prazoContrato) {
+        this.prazoContrato = prazoContrato;
+    }
 
-	public String getImpressaoCE() {
-		return impressaoCE;
-	}
+    public String getInformacoesComplementaresContrato() {
+        return informacoesComplementaresContrato;
+    }
 
-	public void setImpressaoCE(String impressaoCE) {
-		this.impressaoCE = impressaoCE;
-	}
+    public void setInformacoesComplementaresContrato(
+            String informacoesComplementaresContrato) {
+        this.informacoesComplementaresContrato = informacoesComplementaresContrato;
+    }
 
-	public boolean isUtilizaContratoComCotas() {
-		return utilizaContratoComCotas;
-	}
+    public boolean isUtilizaProcuracaoEntregadores() {
+        return utilizaProcuracaoEntregadores;
+    }
 
-	public void setUtilizaContratoComCotas(boolean utilizaContratoComCotas) {
-		this.utilizaContratoComCotas = utilizaContratoComCotas;
-	}
+    public void setUtilizaProcuracaoEntregadores(
+            boolean utilizaProcuracaoEntregadores) {
+        this.utilizaProcuracaoEntregadores = utilizaProcuracaoEntregadores;
+    }
 
-	public Integer getPrazoContrato() {
-		return prazoContrato;
-	}
+    public String getInformacoesComplementaresProcuracao() {
+        return informacoesComplementaresProcuracao;
+    }
 
-	public void setPrazoContrato(Integer prazoContrato) {
-		this.prazoContrato = prazoContrato;
-	}
-
-	public String getInformacoesComplementaresContrato() {
-		return informacoesComplementaresContrato;
-	}
-
-	public void setInformacoesComplementaresContrato(
-			String informacoesComplementaresContrato) {
-		this.informacoesComplementaresContrato = informacoesComplementaresContrato;
-	}
-
-	public boolean isUtilizaProcuracaoEntregadores() {
-		return utilizaProcuracaoEntregadores;
-	}
-
-	public void setUtilizaProcuracaoEntregadores(
-			boolean utilizaProcuracaoEntregadores) {
-		this.utilizaProcuracaoEntregadores = utilizaProcuracaoEntregadores;
-	}
-
-	public String getInformacoesComplementaresProcuracao() {
-		return informacoesComplementaresProcuracao;
-	}
-
-	public void setInformacoesComplementaresProcuracao(
-			String informacoesComplementaresProcuracao) {
-		this.informacoesComplementaresProcuracao = informacoesComplementaresProcuracao;
-	}
-	
-	/**
+    public void setInformacoesComplementaresProcuracao(
+            String informacoesComplementaresProcuracao) {
+        this.informacoesComplementaresProcuracao = informacoesComplementaresProcuracao;
+    }
+    
+    /**
      * @return the utilizaTermoAdesaoEntregaBancas
      */
     public boolean isUtilizaTermoAdesaoEntregaBancas() {
@@ -554,14 +726,14 @@ public class ParametrosDistribuidorVO {
     }
 
     public boolean isUtilizaGarantiaPdv() {
-		return utilizaGarantiaPdv;
-	}
+        return utilizaGarantiaPdv;
+    }
 
-	public void setUtilizaGarantiaPdv(boolean utilizaGarantiaPdv) {
-		this.utilizaGarantiaPdv = utilizaGarantiaPdv;
-	}
-	
-	/**
+    public void setUtilizaGarantiaPdv(boolean utilizaGarantiaPdv) {
+        this.utilizaGarantiaPdv = utilizaGarantiaPdv;
+    }
+    
+    /**
      * @return the utilizaChequeCaucao
      */
     public boolean isUtilizaChequeCaucao() {
@@ -758,143 +930,143 @@ public class ParametrosDistribuidorVO {
     }
 
     public String getSugereSuspensaoQuandoAtingirBoletos() {
-		return sugereSuspensaoQuandoAtingirBoletos;
-	}
+        return sugereSuspensaoQuandoAtingirBoletos;
+    }
 
-	public void setSugereSuspensaoQuandoAtingirBoletos(
-			String sugereSuspensaoQuandoAtingirBoletos) {
-		this.sugereSuspensaoQuandoAtingirBoletos = sugereSuspensaoQuandoAtingirBoletos;
-	}
+    public void setSugereSuspensaoQuandoAtingirBoletos(
+            String sugereSuspensaoQuandoAtingirBoletos) {
+        this.sugereSuspensaoQuandoAtingirBoletos = sugereSuspensaoQuandoAtingirBoletos;
+    }
 
-	public String getSugereSuspensaoQuandoAtingirReais() {
-		return sugereSuspensaoQuandoAtingirReais;
-	}
+    public String getSugereSuspensaoQuandoAtingirReais() {
+        return sugereSuspensaoQuandoAtingirReais;
+    }
 
-	public void setSugereSuspensaoQuandoAtingirReais(
-			String sugereSuspensaoQuandoAtingirReais) {
-		this.sugereSuspensaoQuandoAtingirReais = sugereSuspensaoQuandoAtingirReais;
-	}
+    public void setSugereSuspensaoQuandoAtingirReais(
+            String sugereSuspensaoQuandoAtingirReais) {
+        this.sugereSuspensaoQuandoAtingirReais = sugereSuspensaoQuandoAtingirReais;
+    }
 
-	public Boolean getParcelamentoDividas() {
-		return parcelamentoDividas;
-	}
+    public Boolean getParcelamentoDividas() {
+        return parcelamentoDividas;
+    }
 
-	public void setParcelamentoDividas(Boolean parcelamentoDividas) {
-		this.parcelamentoDividas = parcelamentoDividas;
-	}
+    public void setParcelamentoDividas(Boolean parcelamentoDividas) {
+        this.parcelamentoDividas = parcelamentoDividas;
+    }
 
-	public String getNegociacaoAteParcelas() {
-		return negociacaoAteParcelas;
-	}
+    public String getNegociacaoAteParcelas() {
+        return negociacaoAteParcelas;
+    }
 
-	public void setNegociacaoAteParcelas(String negociacaoAteParcelas) {
-		this.negociacaoAteParcelas = negociacaoAteParcelas;
-	}
+    public void setNegociacaoAteParcelas(String negociacaoAteParcelas) {
+        this.negociacaoAteParcelas = negociacaoAteParcelas;
+    }
 
-	public boolean getUtilizaControleAprovacao() {
-		return utilizaControleAprovacao;
-	}
+    public boolean getUtilizaControleAprovacao() {
+        return utilizaControleAprovacao;
+    }
 
-	public void setUtilizaControleAprovacao(boolean utilizaControleAprovacao) {
-		this.utilizaControleAprovacao = utilizaControleAprovacao;
-	}
+    public void setUtilizaControleAprovacao(boolean utilizaControleAprovacao) {
+        this.utilizaControleAprovacao = utilizaControleAprovacao;
+    }
 
-	public boolean getParaDebitosCreditos() {
-		return paraDebitosCreditos;
-	}
+    public boolean getParaDebitosCreditos() {
+        return paraDebitosCreditos;
+    }
 
-	public void setParaDebitosCreditos(boolean paraDebitosCreditos) {
-		this.paraDebitosCreditos = paraDebitosCreditos;
-	}
+    public void setParaDebitosCreditos(boolean paraDebitosCreditos) {
+        this.paraDebitosCreditos = paraDebitosCreditos;
+    }
 
-	public boolean getNegociacao() {
-		return negociacao;
-	}
+    public boolean getNegociacao() {
+        return negociacao;
+    }
 
-	public void setNegociacao(boolean negociacao) {
-		this.negociacao = negociacao;
-	}
+    public void setNegociacao(boolean negociacao) {
+        this.negociacao = negociacao;
+    }
 
-	public boolean getAjusteEstoque() {
-		return ajusteEstoque;
-	}
+    public boolean getAjusteEstoque() {
+        return ajusteEstoque;
+    }
 
-	public void setAjusteEstoque(boolean ajusteEstoque) {
-		this.ajusteEstoque = ajusteEstoque;
-	}
+    public void setAjusteEstoque(boolean ajusteEstoque) {
+        this.ajusteEstoque = ajusteEstoque;
+    }
 
-	public boolean getPostergacaoCobranca() {
-		return postergacaoCobranca;
-	}
+    public boolean getPostergacaoCobranca() {
+        return postergacaoCobranca;
+    }
 
-	public void setPostergacaoCobranca(boolean postergacaoCobranca) {
-		this.postergacaoCobranca = postergacaoCobranca;
-	}
+    public void setPostergacaoCobranca(boolean postergacaoCobranca) {
+        this.postergacaoCobranca = postergacaoCobranca;
+    }
 
-	public boolean getDevolucaoFornecedor() {
-		return devolucaoFornecedor;
-	}
+    public boolean getDevolucaoFornecedor() {
+        return devolucaoFornecedor;
+    }
 
-	public void setDevolucaoFornecedor(boolean devolucaoFornecedor) {
-		this.devolucaoFornecedor = devolucaoFornecedor;
-	}
+    public void setDevolucaoFornecedor(boolean devolucaoFornecedor) {
+        this.devolucaoFornecedor = devolucaoFornecedor;
+    }
 
-	public boolean getFaltasSobras() {
-		return faltasSobras;
-	}
+    public boolean getFaltasSobras() {
+        return faltasSobras;
+    }
 
-	public void setFaltasSobras(boolean faltasSobras) {
-		this.faltasSobras = faltasSobras;
-	}
+    public void setFaltasSobras(boolean faltasSobras) {
+        this.faltasSobras = faltasSobras;
+    }
 
-	public String getAprovacaoFaltaDe() {
-		return aprovacaoFaltaDe;
-	}
+    public String getAprovacaoFaltaDe() {
+        return aprovacaoFaltaDe;
+    }
 
-	public void setAprovacaoFaltaDe(String aprovacaoFaltaDe) {
-		this.aprovacaoFaltaDe = aprovacaoFaltaDe;
-	}
+    public void setAprovacaoFaltaDe(String aprovacaoFaltaDe) {
+        this.aprovacaoFaltaDe = aprovacaoFaltaDe;
+    }
 
-	public String getAprovacaoSobraDe() {
-		return aprovacaoSobraDe;
-	}
+    public String getAprovacaoSobraDe() {
+        return aprovacaoSobraDe;
+    }
 
-	public void setAprovacaoSobraDe(String aprovacaoSobraDe) {
-		this.aprovacaoSobraDe = aprovacaoSobraDe;
-	}
+    public void setAprovacaoSobraDe(String aprovacaoSobraDe) {
+        this.aprovacaoSobraDe = aprovacaoSobraDe;
+    }
 
-	public String getAprovacaoFaltaEm() {
-		return aprovacaoFaltaEm;
-	}
+    public String getAprovacaoFaltaEm() {
+        return aprovacaoFaltaEm;
+    }
 
-	public void setAprovacaoFaltaEm(String aprovacaoFaltaEm) {
-		this.aprovacaoFaltaEm = aprovacaoFaltaEm;
-	}
+    public void setAprovacaoFaltaEm(String aprovacaoFaltaEm) {
+        this.aprovacaoFaltaEm = aprovacaoFaltaEm;
+    }
 
-	public String getAprovacaoSobraEm() {
-		return aprovacaoSobraEm;
-	}
+    public String getAprovacaoSobraEm() {
+        return aprovacaoSobraEm;
+    }
 
-	public void setAprovacaoSobraEm(String aprovacaoSobraEm) {
-		this.aprovacaoSobraEm = aprovacaoSobraEm;
-	}
+    public void setAprovacaoSobraEm(String aprovacaoSobraEm) {
+        this.aprovacaoSobraEm = aprovacaoSobraEm;
+    }
 
-	public Integer getPrazoFollowUp() {
-		return prazoFollowUp;
-	}
+    public Integer getPrazoFollowUp() {
+        return prazoFollowUp;
+    }
 
-	public void setPrazoFollowUp(Integer prazoFollowUp) {
-		this.prazoFollowUp = prazoFollowUp;
-	}
+    public void setPrazoFollowUp(Integer prazoFollowUp) {
+        this.prazoFollowUp = prazoFollowUp;
+    }
 
-	public Integer getPrazoAvisoPrevioValidadeGarantia() {
-		return prazoAvisoPrevioValidadeGarantia;
-	}
+    public Integer getPrazoAvisoPrevioValidadeGarantia() {
+        return prazoAvisoPrevioValidadeGarantia;
+    }
 
-	public void setPrazoAvisoPrevioValidadeGarantia(
-			Integer prazoAvisoPrevioValidadeGarantia) {
-		this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
-	}
+    public void setPrazoAvisoPrevioValidadeGarantia(
+            Integer prazoAvisoPrevioValidadeGarantia) {
+        this.prazoAvisoPrevioValidadeGarantia = prazoAvisoPrevioValidadeGarantia;
+    }
 
     /**
      * @return the chamadaoDiasSuspensao
@@ -924,39 +1096,39 @@ public class ParametrosDistribuidorVO {
         this.chamadaoValorConsignado = chamadaoValorConsignado;
     }
 
-	/**
-	 * @return the utilizaDesconto
-	 */
-	public Boolean getUtilizaDesconto() {
-		return utilizaDesconto;
-	}
+    /**
+     * @return the utilizaDesconto
+     */
+    public Boolean getUtilizaDesconto() {
+        return utilizaDesconto;
+    }
 
-	/**
-	 * @param utilizaDesconto the utilizaDesconto to set
-	 */
-	public void setUtilizaDesconto(Boolean utilizaDesconto) {
-		this.utilizaDesconto = utilizaDesconto;
-	}
+    /**
+     * @param utilizaDesconto the utilizaDesconto to set
+     */
+    public void setUtilizaDesconto(Boolean utilizaDesconto) {
+        this.utilizaDesconto = utilizaDesconto;
+    }
 
-	/**
-	 * @return the percentualDesconto
-	 */
-	public String getPercentualDesconto() {
-		return percentualDesconto;
-	}
+    /**
+     * @return the percentualDesconto
+     */
+    public String getPercentualDesconto() {
+        return percentualDesconto;
+    }
 
-	/**
-	 * @param percentualDesconto the percentualDesconto to set
-	 */
-	public void setPercentualDesconto(String percentualDesconto) {
-		this.percentualDesconto = percentualDesconto;
-	}
-	
+    /**
+     * @param percentualDesconto the percentualDesconto to set
+     */
+    public void setPercentualDesconto(String percentualDesconto) {
+        this.percentualDesconto = percentualDesconto;
+    }
+    
     /**
      * Verifica se alguma garantia foi marcada para utilização
      * @return true se ao menos uma ganatia esta sendo utilizada
      */
-	public boolean isGarantiasUtilizadas() {
+    public boolean isGarantiasUtilizadas() {
         return utilizaChequeCaucao || utilizaCaucaoLiquida || utilizaFiador
                 || utilizaNotaPromissoria || utilizaImovel
                 || utilizaAntecedenciaValidade || utilizaOutros;

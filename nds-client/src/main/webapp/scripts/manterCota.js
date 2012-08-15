@@ -362,23 +362,6 @@ var MANTER_COTA = {
 		}	
 	},
 	
-	verificarPendenciasCota:function(idCampoNumeroCota){
-		
-		if($(idCampoNumeroCota).val().length > 0){
-			
-			$.postJSON(
-					contextPath + "/cadastro/cota/verificarPendenciasCota",
-					"&numeroCota="+ $(idCampoNumeroCota).val(), 
-					null,
-					function(){
-						$(idCampoNumeroCota).focus();
-						$(idCampoNumeroCota).val("");
-					},	
-					true
-			);
-		}	
-	},
-	
 	mudarNomeModalCadastro:function(value){
 		
 		$("#ui-dialog-title-dialog-cota").html(value);
