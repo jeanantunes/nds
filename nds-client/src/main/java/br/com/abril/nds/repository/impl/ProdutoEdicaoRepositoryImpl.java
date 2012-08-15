@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -572,5 +573,23 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return criteria.list();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public Set<ProdutoEdicao> obterProdutosEdicaoPorFornecedor(Long idFornecedor) {
+		
+		String queryString = " select produtoEdicao from ProdutoEdicao produtoEdicao "
+				   		   + " where produtoEdicao.produto.fornecedores.id = :idFornecedor ";
+
+		Query query = this.getSession().createQuery(queryString);
+		
+		query.setParameter("idFornecedor", idFornecedor);
+		
+		return new HashSet<ProdutoEdicao>(query.list());
+	}
+	
 }
  
