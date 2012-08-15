@@ -862,9 +862,27 @@ var SOCIO_COTA = {
 					
 					$.each(result, function(index, value) {
 						
-						var socio = {id:value.id,nome:value.nome, cargo:value.cargo,principal:value.principal};
+						var socio = {
+								id:value.id,
+								nome:value.nome, 
+								cargo:value.cargo,
+								principal:value.principal,
+								endereco:value.endereco.tipoLogradouro + 
+										 " " + 
+										 value.endereco.logradouro +
+										 ", " + 
+										 value.endereco.numero + 
+										 " - " + 
+										 value.endereco.cidade +
+										 "/" + 
+										 value.endereco.uf +
+										 " " +
+										 value.endereco.cep,			
+								telefone:value.telefone.ddd + 
+										 " " +
+										 value.telefone.numero};
 						
-						SOCIO_COTA.rows.push({"id": SOCIO_COTA.rows.length,"cell":socio});
+						SOCIO_COTA.rows.push({"id": value.id,"cell":socio});
 					});
 					
 					$(".sociosPjGrid").flexAddData({rows:SOCIO_COTA.rows,page:1,total:1}  );
@@ -912,17 +930,36 @@ var SOCIO_COTA = {
 		
 		editarSocio:function(idSocio){
 			
-			var socios  = SOCIO_COTA.rows[idSocio].cell;
-			
 			SOCIO_COTA.itemEdicao = idSocio;
 			
-			$("#idNomeSocio").val(socios.nome),
-			$("#idCargoSocio").val(socios.cargo),
-			$("#idSocioPrincipal").attr("checked",(socios.principal == true)?"checked":null);
-			$("#idSocio").val(socios.id);
-			
-			$("#btnEditarSocio").show();
-			$("#btnAddSocio").hide();
+			$.postJSON(
+				contextPath+'/cadastro/cota/carregarSocioPorId',
+				"idSocioCota=" + idSocio,
+				function(result) {
+					$("#nomeSocio").val(result.nome),
+					$("#cargoSocio").val(result.cargo),
+					$("#socioPrincipal").attr("checked",(result.principal == true)?"checked":null);
+					$("#idSocio").val(result.id);	
+
+					$("#idTelefone").val(result.telefone.id);
+					$("#ddd").val(result.telefone.ddd);
+					$("#numeroTelefone").val(result.telefone.numero);
+					
+					$("#idEndereco").val(result.endereco.id);
+					$("#uf").val(result.endereco.uf);
+					$("#cep").val(result.endereco.cep);
+					$("#cidade").val(result.endereco.cidade);
+					$("#bairro").val(result.endereco.bairro);
+					$("#complemento").val(result.endereco.complemento);
+					$("#tipoLogradouro").val(result.endereco.tipoLogradouro);
+					$("#logradouro").val(result.endereco.logradouro);
+					$("#numero").val(result.endereco.numero);
+					
+					popup_novo_socio();
+				},
+				null,
+				true
+			);
 		},
 		
 		limparFormSocios:function(){
@@ -983,36 +1020,37 @@ var SOCIO_COTA = {
 			
 			return list;
 		},
-		
-		incluirSocio:function(){
-			
-			var data  = serializeObjectToPost("socioCota",  SOCIO_COTA.socio());
-			var list =   serializeArrayToPost("sociosCota",SOCIO_COTA.obterListaSocios());			
-			var objPost = concatObjects(data,list);					
-			
-			$.postJSON(contextPath + "/cadastro/cota/incluirSocioCota", 
-						objPost , 
-						function(result){
 
-							if (result){
-								
-								var novoSocio = result;
-								var rows = SOCIO_COTA.rows;
-								
-								if (SOCIO_COTA.itemEdicao == null || SOCIO_COTA.itemEdicao < 0) {
-									rows.push({"id": rows.length,"cell":novoSocio});
-								} else {
-									rows.slice(SOCIO_COTA.itemEdicao, 1);
-									rows[SOCIO_COTA.itemEdicao] = {"id":SOCIO_COTA.itemEdicao,"cell":novoSocio};
-								}
-								
-								$(".sociosPjGrid").flexAddData({rows:rows,page:1,total:1} );	
-							}
-							
-							SOCIO_COTA.limparFormSocios();
+		incluirSocio:function(){
+
+			var data = $("#formSocioCota").serializeArray();
+
+			data.push({name:'idCota', value:MANTER_COTA.idCota});
+
+			$.postJSON(
+					contextPath + "/cadastro/cota/incluirSocioCota",
+					data,
+					function(result) {
+
+						SOCIO_COTA.carregarSociosCota();
+
+						$( "#dialog-socio" ).dialog( "close" );
 					},
-					null,
-					true
+					function(result) {
+						
+						if (data.mensagens) {
+
+							exibirMensagemDialog(
+								data.mensagens.tipoMensagem, 
+								data.mensagens.listaMensagens,
+								"dialog-socio"
+							);
+							
+							return;
+						}
+					},
+					true,
+					"dialog-socio"
 				);
 		}
 };
