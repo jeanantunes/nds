@@ -471,32 +471,6 @@ public class DescontoServiceImpl implements DescontoService {
 	}
 	
 	/**
-	 * 
-	 * Persiste os dados do desconto na entidade desconto produto edição
-	 * 
-	 * @param tipoDesconto
-	 * @param fornecedor
-	 * @param cota
-	 * @param produtos
-	 * @param valorDesconto
-	 */
-	private void persistirDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Set<ProdutoEdicao> produtos, BigDecimal valorDesconto){
-		
-		//TODO remover esse metodo para o componente de desconto a ser criado
-		
-		//TODO criar logica de persistencia de dados do desconto produto edição
-	}
-	
-	private Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Set<ProdutoEdicao> produtos) {
-		
-		//TODO remover esse metodo para o componente de desconto a ser criado
-		
-		//TODO criar logica de filtragem de produtos passiveis de desconto
-		
-		return null;
-	}
-	
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override

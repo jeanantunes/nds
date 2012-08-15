@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.administracao;
+package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -26,12 +26,14 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.Constantes;
@@ -67,6 +69,9 @@ public class TipoDescontoCotaController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private HttpServletResponse httpServletResponse;
@@ -385,16 +390,27 @@ public class TipoDescontoCotaController {
 		return usuario;
 	}
 	
-	/**
-	 * Obtem os fornecedores que não possui associação com a cota informada
-	 * 
-	 * @param idCota -identificador da cota
-	 */
+	
 	@Post
 	@Path("/obterFornecedores")
-	public void obterFornecedores(Long idCota){
+	public void obterFornecedores(){
 		
 		List<Fornecedor> fornecedores =   fornecedorService.obterFornecedores();
+		
+		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/obterFornecedoresCota")
+	public void obterFornecedoresCota(Integer numeroCota){
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		List<Fornecedor> fornecedores =   cotaService.obterFornecedoresCota(cota.getId());
+		
+		if(fornecedores.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"A cota informada não possui fornecedores associados!");
+		}
 		
 		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
 	}

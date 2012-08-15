@@ -215,7 +215,7 @@ public class BancoController {
 		
 		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 
-		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,apelido,instrucoes,juros,multa,vrMulta);
+		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,apelido,juros,multa,vrMulta);
 		
 		long lAgencia = Long.parseLong(agencia);
 		long lConta = Long.parseLong(conta);
@@ -296,7 +296,7 @@ public class BancoController {
 		
 		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 		
-		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,apelido,instrucoes,juros,multa,vrMulta);
+		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,apelido,juros,multa,vrMulta);
 		
 		if (ativo==0){
 			if (this.bancoService.verificarPendencias(idBanco)){
@@ -352,7 +352,6 @@ public class BancoController {
 								  	  String conta,
 								  	  String digito,
 								  	  String apelido,
-								  	  String instrucoes,
 								  	  BigDecimal juros,
 								  	  BigDecimal multa,
 								  	  BigDecimal vrMulta){
@@ -394,10 +393,6 @@ public class BancoController {
 		
 		if ((apelido==null)||("".equals(apelido))){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo apelido.");
-		}
-
-		if ((instrucoes==null)||("".equals(instrucoes))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Digite as instruções.");
 		}
 		
 		if(juros==null){

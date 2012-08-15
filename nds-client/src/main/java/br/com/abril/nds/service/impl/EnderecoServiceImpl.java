@@ -20,6 +20,7 @@ import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.repository.LogradouroRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
@@ -29,6 +30,9 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private LogradouroRepository logradouroRepository;
 	
 	@Override
 	@Transactional
@@ -241,4 +245,10 @@ public class EnderecoServiceImpl implements EnderecoService {
 		return this.enderecoRepository.obterLogradourosPorCodigoBairroNome(codigoBairro, nomeLogradouro);
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Logradouro> pesquisarLogradouros(String nomeLogradouro) {
+		
+		return this.logradouroRepository.pesquisarLogradouros(nomeLogradouro);
+	}
 }
