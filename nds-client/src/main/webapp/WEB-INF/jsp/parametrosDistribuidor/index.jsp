@@ -273,7 +273,7 @@ function utilizaGarantiaListener(tipoGarantia, validadeGarantia) {
 $(document).ready(function() {
 	$('#informacoesComplementaresContrato').wysiwyg();
 	$('#informacoesComplementaresContrato').wysiwyg({controls:"font-family,italic,|,undo,redo"});
-	//$('#informacoesComplementaresContrato').wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresContrato}');
+	$('#informacoesComplementaresContrato').wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresContrato}');
 	$('#informacoesComplementaresProcuracao').wysiwyg();
 	$('#informacoesComplementaresProcuracao').wysiwyg({controls:"font-family,italic,|,undo,redo"});
 	$('#informacoesComplementaresProcuracao').wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresProcuracao}');
