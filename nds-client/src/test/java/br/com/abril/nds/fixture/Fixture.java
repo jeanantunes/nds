@@ -675,7 +675,7 @@ public class Fixture {
 		distribuidor.setRegimeEspecial(true);
 		distribuidor.setUtilizaProcuracaoEntregadores(true);
 		distribuidor.setInformacoesComplementaresProcuracao("Info Complementares Procuração");
-		distribuidor.setUtilizaGarantiaPdv(false);
+		distribuidor.setUtilizaGarantiaPdv(true);
 		distribuidor.setParcelamentoDividas(false);
 		distribuidor.setNegociacaoAteParcelas(Integer.valueOf(3));
 		distribuidor.setUtilizaControleAprovacao(false);
@@ -2840,6 +2840,7 @@ public class Fixture {
 		
 		tipoGarantiaAceita.setDistribuidor(distribuidor);
 		tipoGarantiaAceita.setTipoGarantia(tipoGarantia);
+		tipoGarantiaAceita.setValor(12);
 		
 		return tipoGarantiaAceita;
 	}

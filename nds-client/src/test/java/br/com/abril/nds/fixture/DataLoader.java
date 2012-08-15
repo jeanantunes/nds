@@ -14,8 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.SetUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -4400,6 +4398,7 @@ public class DataLoader {
 		politicaCobranca8.setDistribuidor(distribuidor);
 		save(session, politicaCobranca, politicaCobranca2, politicaCobranca3, politicaCobranca4, politicaCobranca5, politicaCobranca6, politicaCobranca7, politicaCobranca8);
 
+		
 		for(TipoGarantia tipo:TipoGarantia.values()){
 			save(session,Fixture.criarTipoGarantiaAceita(distribuidor, tipo));
 		}
