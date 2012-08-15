@@ -75,9 +75,6 @@ public class Distribuidor {
 	private PoliticaSuspensao politicaSuspensao;
 	
 	@OneToMany(mappedBy = "distribuidor")
-	private List<EnderecoDistribuidor> enderecos = new ArrayList<EnderecoDistribuidor>();
-	
-	@OneToMany(mappedBy = "distribuidor")
 	private List<TelefoneDistribuidor> telefones = new ArrayList<TelefoneDistribuidor>();
 	
 	/**
@@ -213,8 +210,9 @@ public class Distribuidor {
 	@Column(name = "TIPO_ATIVIDADE", nullable = true)
 	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
 
-	@Column(name = "OBRIGACAO_FISCAL", nullable = false)
-	private boolean obrigacaoFiscao;	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "OBRIGACAO_FISCAL", nullable = true)
+	private ObrigacaoFiscal obrigacaoFiscal;
 	
 	@Column(name = "REGIME_ESPECIAL", nullable = false)
 	private boolean regimeEspecial;
@@ -266,6 +264,38 @@ public class Distribuidor {
 	
 	@Embedded
 	private ParametroEntregaBanca parametroEntregaBanca;
+	
+	// Aba Cadastro / Fiscal
+	
+	@Column(name = "RAZAO_SOCIAL", nullable = true)
+	private String razaoSocial;
+	
+	@Column(name = "NOME_FANTASIA", nullable = true)
+	private String nomeFantasia;
+	
+	@Column(name = "CNPJ", nullable = true)
+	private String cnpj;
+	
+	@Column(name = "INSCRICAO_ESTADUAL", nullable = true)
+	private String inscricaoEstadual;
+	
+	@Column(name = "INSCRICAO_MUNICIPAL", nullable = true)
+	private String inscricaoMunicipal;
+	
+	@Column(name = "CNPJ_PRINCIPAL", nullable = true)
+	private boolean cnpjPrincipal;
+	
+	@Column(name = "EMAIL", nullable = true)
+	private String email;
+	
+	@Column(name = "COD_DISTRIBUIDOR_DINAP", nullable = true)
+	private String codigoDistribuidorDinap;
+	
+	@Column(name = "COD_DISTRIBUIDOR_FC", nullable = true)
+	private String codigoDistribuidorFC;
+	
+	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	private EnderecoDistribuidor enderecoDistribuidor;
 	
 	public Long getId() {
 		return id;
@@ -322,14 +352,6 @@ public class Distribuidor {
 	
 	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
 		this.politicaSuspensao = politicaSuspensao;
-	}
-	
-	public List<EnderecoDistribuidor> getEnderecos() {
-		return enderecos;
-	}
-	
-	public void setEnderecos(List<EnderecoDistribuidor> enderecos) {
-		this.enderecos = enderecos;
 	}
 	
 	public List<TelefoneDistribuidor> getTelefones() {
@@ -712,12 +734,12 @@ public class Distribuidor {
 		this.tipoAtividade = tipoAtividade;
 	}
 
-	public boolean isObrigacaoFiscao() {
-		return obrigacaoFiscao;
+	public ObrigacaoFiscal getObrigacaoFiscal() {
+		return obrigacaoFiscal;
 	}
 
-	public void setObrigacaoFiscao(boolean obrigacaoFiscao) {
-		this.obrigacaoFiscao = obrigacaoFiscao;
+	public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
+		this.obrigacaoFiscal = obrigacaoFiscal;
 	}
 
 	public boolean isRegimeEspecial() {
@@ -860,5 +882,144 @@ public class Distribuidor {
         this.parametroEntregaBanca = parametroEntregaBanca;
     }
 	
-	
+	/**
+	 * @return the razaoSocial
+	 */
+	public String getRazaoSocial() {
+		return razaoSocial;
+	}
+
+	/**
+	 * @param razaoSocial the razaoSocial to set
+	 */
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
+	}
+
+	/**
+	 * @return the nomeFantasia
+	 */
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	/**
+	 * @param nomeFantasia the nomeFantasia to set
+	 */
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
+
+	/**
+	 * @return the cnpj
+	 */
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	/**
+	 * @param cnpj the cnpj to set
+	 */
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	/**
+	 * @return the inscricaoEstadual
+	 */
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
+	}
+
+	/**
+	 * @param inscricaoEstadual the inscricaoEstadual to set
+	 */
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
+	/**
+	 * @return the inscricaoMunicipal
+	 */
+	public String getInscricaoMunicipal() {
+		return inscricaoMunicipal;
+	}
+
+	/**
+	 * @param inscricaoMunicipal the inscricaoMunicipal to set
+	 */
+	public void setInscricaoMunicipal(String inscricaoMunicipal) {
+		this.inscricaoMunicipal = inscricaoMunicipal;
+	}
+
+	/**
+	 * @return the cnpjPrincipal
+	 */
+	public boolean isCnpjPrincipal() {
+		return cnpjPrincipal;
+	}
+
+	/**
+	 * @param cnpjPrincipal the cnpjPrincipal to set
+	 */
+	public void setCnpjPrincipal(boolean cnpjPrincipal) {
+		this.cnpjPrincipal = cnpjPrincipal;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the codigoDistribuidorDinap
+	 */
+	public String getCodigoDistribuidorDinap() {
+		return codigoDistribuidorDinap;
+	}
+
+	/**
+	 * @param codigoDistribuidorDinap the codigoDistribuidorDinap to set
+	 */
+	public void setCodigoDistribuidorDinap(String codigoDistribuidorDinap) {
+		this.codigoDistribuidorDinap = codigoDistribuidorDinap;
+	}
+
+	/**
+	 * @return the codigoDistribuidorFC
+	 */
+	public String getCodigoDistribuidorFC() {
+		return codigoDistribuidorFC;
+	}
+
+	/**
+	 * @param codigoDistribuidorFC the codigoDistribuidorFC to set
+	 */
+	public void setCodigoDistribuidorFC(String codigoDistribuidorFC) {
+		this.codigoDistribuidorFC = codigoDistribuidorFC;
+	}
+
+	/**
+	 * @return the enderecoDistribuidor
+	 */
+	public EnderecoDistribuidor getEnderecoDistribuidor() {
+		return enderecoDistribuidor;
+	}
+
+	/**
+	 * @param enderecoDistribuidor the enderecoDistribuidor to set
+	 */
+	public void setEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor) {
+		this.enderecoDistribuidor = enderecoDistribuidor;
+	}
+
 }
