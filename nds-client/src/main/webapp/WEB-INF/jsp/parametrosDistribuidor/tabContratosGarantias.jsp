@@ -61,7 +61,7 @@
             <tr class="header_table">
               <td>&nbsp;</td>
               <td>Garantia</td>
-              <td>Validade (Meses)</td>
+              <td width="110">Validade (Meses)</td>
             </tr>
             <tr class="class_linha_1">
               <td width="20">
