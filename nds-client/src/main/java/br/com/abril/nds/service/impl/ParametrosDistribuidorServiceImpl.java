@@ -546,57 +546,51 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		if (distribuidor.isUtilizaGarantiaPdv()) {
 		    
             if (parametrosDistribuidor.isUtilizaChequeCaucao()) {
-                distribuidor.addTipoGarantiaAceita(new TipoGarantiaAceita(
-                        TipoGarantia.CHEQUE_CAUCAO, parametrosDistribuidor
-                                .getValidadeChequeCaucao(), distribuidor));
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.CHEQUE_CAUCAO, parametrosDistribuidor
+                                .getValidadeChequeCaucao());
             } else {
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.CHEQUE_CAUCAO);
             }
             
             if (parametrosDistribuidor.isUtilizaFiador()) {
-                distribuidor.addTipoGarantiaAceita(new TipoGarantiaAceita(
-                        TipoGarantia.FIADOR, parametrosDistribuidor
-                                .getValidadeFiador(), distribuidor));
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.FIADOR, parametrosDistribuidor
+                                .getValidadeFiador());
             } else {
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.FIADOR);
             }
             
             if (parametrosDistribuidor.isUtilizaImovel()) {
-                distribuidor.addTipoGarantiaAceita(new TipoGarantiaAceita(
+                distribuidor.addTipoGarantiaAceita(
                         TipoGarantia.IMOVEL, parametrosDistribuidor
-                                .getValidadeImovel(), distribuidor));
+                                .getValidadeImovel());
             } else {
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.IMOVEL);
             }
             
             if (parametrosDistribuidor.isUtilizaCaucaoLiquida()) {
-                distribuidor.addTipoGarantiaAceita(new TipoGarantiaAceita(
-                        TipoGarantia.CAUCAO_LIQUIDA, parametrosDistribuidor
-                                .getValidadeCaucaoLiquida(), distribuidor));
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.CAUCAO_LIQUIDA, parametrosDistribuidor
+                                .getValidadeCaucaoLiquida());
             } else {
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.CAUCAO_LIQUIDA);
             }
             
             if (parametrosDistribuidor.isUtilizaNotaPromissoria()) {
-                distribuidor.addTipoGarantiaAceita(new TipoGarantiaAceita(
-                        TipoGarantia.NOTA_PROMISSORIA, parametrosDistribuidor
-                                .getValidadeNotaPromissoria(), distribuidor));
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.NOTA_PROMISSORIA, parametrosDistribuidor
+                                .getValidadeNotaPromissoria());
             } else {
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.NOTA_PROMISSORIA);
             }
             
             if (parametrosDistribuidor.isUtilizaAntecedenciaValidade()) {
-                distribuidor.addTipoGarantiaAceita(new TipoGarantiaAceita(
-                        TipoGarantia.ANTECEDENCIA_VALIDADE, parametrosDistribuidor
-                                .getValidadeAntecedenciaValidade(), distribuidor));
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE, parametrosDistribuidor
+                                .getValidadeAntecedenciaValidade());
             } else {
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE);
             }
             
             if (parametrosDistribuidor.isUtilizaOutros()) {
-                distribuidor.addTipoGarantiaAceita(new TipoGarantiaAceita(
-                        TipoGarantia.OUTROS, parametrosDistribuidor
-                                .getValidadeOutros(), distribuidor));
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.OUTROS, parametrosDistribuidor
+                                .getValidadeOutros());
             } else {
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.OUTROS);
             }
