@@ -77,19 +77,22 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 		
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		fornecedores.add(fornecedor);
-		DescontoDistribuidor desconto2 = Fixture.descontoDistribuidor(new BigDecimal(2), distribuidor, fornecedores, usuario,new Date());
+
+		DescontoDistribuidor desconto2 = Fixture.descontoDistribuidor(new BigDecimal(2), distribuidor, fornecedores, usuario, new Date());
 		
 		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
 		fornecedores2.add(fornecedor);
 		fornecedores2.add(fornecedor1);
-		DescontoDistribuidor desconto3 = Fixture.descontoDistribuidor(new BigDecimal(3), distribuidor, fornecedores2, usuario,new Date());
+
+		DescontoDistribuidor desconto3 = Fixture.descontoDistribuidor(new BigDecimal(3), distribuidor, fornecedores2, usuario, new Date());
 		
 		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
 		fornecedores3.add(fornecedor);
 		fornecedores3.add(fornecedor1);
 		fornecedores3.add(fornecedor2);
 		fornecedores3.add(fornecedor3);
-		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(4), distribuidor, fornecedores3, usuario,new Date());
+
+		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(4), distribuidor, fornecedores3, usuario, new Date());
 		
 		save(desconto2,desconto3,desconto4);
 		

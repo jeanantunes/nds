@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DescontoCotaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 	
@@ -97,14 +98,16 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
 		fornecedores2.add(fornecedor1);
 		fornecedores2.add(fornecedor2);
-		DescontoCota desconto2 = Fixture.descontoCota(new BigDecimal(3), distribuidor, cota, fornecedores2, usuario,new Date());
+
+		DescontoCota desconto2 = Fixture.descontoCota(new BigDecimal(3), distribuidor, cota, fornecedores2, usuario, new Date());
 		
 		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
 		fornecedores3.add(fornecedor1);
 		fornecedores3.add(fornecedor2);
 		fornecedores3.add(fornecedor3);
 		fornecedores3.add(fornecedor4);
-		DescontoCota desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cota, fornecedores3, usuario,new Date());
+
+		DescontoCota desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cota, fornecedores3, usuario, new Date());
 		
 		save(desconto1,desconto2,desconto3);
 		
@@ -115,6 +118,9 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
 		List<TipoDescontoCotaDTO> lista = new ArrayList<TipoDescontoCotaDTO>();
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setSortOrder("asc");
+		filtro.setPaginacao(paginacao);
 		
 		filtro.setOrdenacaoColuna(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.DATA_ALTERACAO);
 		lista = descontoCotaRepository.obterDescontoCota(filtro);

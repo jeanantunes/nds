@@ -71,6 +71,7 @@ import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
@@ -149,6 +150,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private EnderecoService enderecoService;
+	
+	@Autowired
+	private DividaService dividaService;
 	
 	@Autowired
 	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
@@ -1376,7 +1380,7 @@ public class CotaServiceImpl implements CotaService {
 				
 				if(!isParametroDistribuidoNumeroCotaValido(numeroCota)){
 
-					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota está inativo mas não pode ser usado.");
+					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota está inativo mas não pode ser utilizado.");
 				}
 				else{
 				   //Alterar Numero Cota e registra histoico
@@ -1389,6 +1393,12 @@ public class CotaServiceImpl implements CotaService {
 					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota não pode ser utilizado.");
 				}
 			}	
+			
+			//Verifica se cota possui dívidas em aberto
+			BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(cota.getId());
+	        if (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0){
+	        	throw new ValidacaoException(TipoMensagem.WARNING, "O [Número] pertence à uma [Cota] que possui dívidas em aberto e não pode ser utilizado!");
+	        }
 		}
 	}
 	
