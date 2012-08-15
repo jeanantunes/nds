@@ -1,5 +1,8 @@
 package br.com.abril.nds.client.vo;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 
 
@@ -9,6 +12,33 @@ import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
  */
 public class ParametrosDistribuidorVO {
 
+	// Aba Cadastro / Fiscal
+	private String razaoSocial;
+	
+	private String nomeFantasia;
+	
+	private String cnpj;
+	
+	private String inscricaoEstadual;
+	
+	private String inscricaoMunicipal;
+	
+	private boolean cnpjPrincipal;
+	
+	private String email;
+	
+	private String codigoDistribuidorDinap;
+	
+	private String codigoDistribuidorFC;
+	
+	private TipoAtividade regimeTributario;
+	
+	private ObrigacaoFiscal obrigacaoFiscal;
+	
+	private boolean regimeEspecial;
+	
+	private EnderecoVO endereco;
+	
 	// Aba Operação
 	
 	// Frame Parciais / Matriz de Lançamento
@@ -45,16 +75,6 @@ public class ParametrosDistribuidorVO {
 
 	// Frame Reutilização de Código de Cota
 	private Long reutilizacaoCodigoCotaInativa;
-
-	// Aba Fiscal
-	
-	// Frame Fiscal
-	private String obrigacaoFiscao;
-	
-	private String regimeEspecial;
-
-	// PRESTADOR_SERVICO ou MERCANTIL
-	private String distribuidor;
 	
 	// Frame Emissão de Documentos
 	private boolean slipImpressao;
@@ -200,7 +220,183 @@ public class ParametrosDistribuidorVO {
 	private Integer chamadaoDiasSuspensao;
 	
 	private String chamadaoValorConsignado;
+
+	/**
+	 * @return the razaoSocial
+	 */
+	public String getRazaoSocial() {
+		return razaoSocial;
+	}
+
+	/**
+	 * @param razaoSocial the razaoSocial to set
+	 */
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
+	}
+
+	/**
+	 * @return the nomeFantasia
+	 */
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	/**
+	 * @param nomeFantasia the nomeFantasia to set
+	 */
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
+
+	/**
+	 * @return the cnpj
+	 */
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	/**
+	 * @param cnpj the cnpj to set
+	 */
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	/**
+	 * @return the inscricaoEstadual
+	 */
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
+	}
+
+	/**
+	 * @param inscricaoEstadual the inscricaoEstadual to set
+	 */
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
+	/**
+	 * @return the inscricaoMunicipal
+	 */
+	public String getInscricaoMunicipal() {
+		return inscricaoMunicipal;
+	}
+
+	/**
+	 * @param inscricaoMunicipal the inscricaoMunicipal to set
+	 */
+	public void setInscricaoMunicipal(String inscricaoMunicipal) {
+		this.inscricaoMunicipal = inscricaoMunicipal;
+	}
+
+	/**
+	 * @return the cnpjPrincipal
+	 */
+	public boolean getCnpjPrincipal() {
+		return cnpjPrincipal;
+	}
+
+	/**
+	 * @param cnpjPrincipal the cnpjPrincipal to set
+	 */
+	public void setCnpjPrincipal(boolean cnpjPrincipal) {
+		this.cnpjPrincipal = cnpjPrincipal;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the codigoDistribuidorDinap
+	 */
+	public String getCodigoDistribuidorDinap() {
+		return codigoDistribuidorDinap;
+	}
+
+	/**
+	 * @param codigoDistribuidorDinap the codigoDistribuidorDinap to set
+	 */
+	public void setCodigoDistribuidorDinap(String codigoDistribuidorDinap) {
+		this.codigoDistribuidorDinap = codigoDistribuidorDinap;
+	}
+
+	/**
+	 * @return the codigoDistribuidorFC
+	 */
+	public String getCodigoDistribuidorFC() {
+		return codigoDistribuidorFC;
+	}
+
+	/**
+	 * @param codigoDistribuidorFC the codigoDistribuidorFC to set
+	 */
+	public void setCodigoDistribuidorFC(String codigoDistribuidorFC) {
+		this.codigoDistribuidorFC = codigoDistribuidorFC;
+	}
 	
+	/**
+	 * @return the regimeTributario
+	 */
+	public TipoAtividade getRegimeTributario() {
+		return regimeTributario;
+	}
+
+	/**
+	 * @param regimeTributario the regimeTributario to set
+	 */
+	public void setRegimeTributario(TipoAtividade regimeTributario) {
+		this.regimeTributario = regimeTributario;
+	}
+
+	/**
+	 * @return the obrigacaoFiscal
+	 */
+	public ObrigacaoFiscal getObrigacaoFiscal() {
+		return obrigacaoFiscal;
+	}
+
+	/**
+	 * @param obrigacaoFiscal the obrigacaoFiscal to set
+	 */
+	public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
+		this.obrigacaoFiscal = obrigacaoFiscal;
+	}
+	
+	public boolean getRegimeEspecial() {
+		return regimeEspecial;
+	}
+
+	public void setRegimeEspecial(boolean regimeEspecial) {
+		this.regimeEspecial = regimeEspecial;
+	}
+
+	/**
+	 * @return the endereco
+	 */
+	public EnderecoVO getEndereco() {
+		return endereco;
+	}
+
+	/**
+	 * @param endereco the endereco to set
+	 */
+	public void setEndereco(EnderecoVO endereco) {
+		this.endereco = endereco;
+	}
+
 	public int getRelancamentoParciaisEmDias() {
 		return relancamentoParciaisEmDias;
 	}
@@ -334,30 +530,6 @@ public class ParametrosDistribuidorVO {
 	public void setReutilizacaoCodigoCotaInativa(
 			Long reutilizacaoCodigoCotaInativa) {
 		this.reutilizacaoCodigoCotaInativa = reutilizacaoCodigoCotaInativa;
-	}
-
-	public String getObrigacaoFiscao() {
-		return obrigacaoFiscao;
-	}
-
-	public void setObrigacaoFiscao(String obrigacaoFiscao) {
-		this.obrigacaoFiscao = obrigacaoFiscao;
-	}
-
-	public String getRegimeEspecial() {
-		return regimeEspecial;
-	}
-
-	public void setRegimeEspecial(String regimeEspecial) {
-		this.regimeEspecial = regimeEspecial;
-	}
-
-	public String getDistribuidor() {
-		return distribuidor;
-	}
-
-	public void setDistribuidor(String distribuidor) {
-		this.distribuidor = distribuidor;
 	}
 
 	public boolean getSlipImpressao() {
