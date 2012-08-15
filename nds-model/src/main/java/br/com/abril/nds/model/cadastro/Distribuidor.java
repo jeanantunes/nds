@@ -419,19 +419,52 @@ public class Distribuidor {
 	}
 	
 	/**
-	 * Adiciona um novo tipo de garantia aceita pelo distribuidor
+	 * Adiciona um novo tipo de garantia aceita pelo distribuidor, 
+	 * ou atualiza o tipo de garantia aceita existente com o(s) valore(s)
+	 * recebido(s) como parâmetro
 	 
-	 * @param tipoGarantiaAceita novo tipo de garantia aceita para inclusão
+	 * @param tipoGarantia tipo de garantia para o novo tipo de garantia aceita para
+	 * inclusão ou alteração
+	 * @param valor valor da tipo de garantia aceita para inclusão ou alteração
 	 * 
-	 * @throws IllegalArgumentException caso o parâmetro tipoGarantiaAceita for nulo
+	 * @throws IllegalArgumentException caso o parâmetro tipoGarantia e valor forem nulos 
 	 */
-	public void addTipoGarantiaAceita(TipoGarantiaAceita tipoGarantiaAceita) {
-	    Validate.notNull(tipoGarantiaAceita,"Tipo de Garantia Aceita não deve ser nula!");
+	public void addTipoGarantiaAceita(TipoGarantia tipoGarantia, Integer valor) {
+	    Validate.notNull(tipoGarantia,"Tipo de Garantia não deve ser nulo!");
+	    Validate.notNull(tipoGarantia,"Valor não deve ser nulo!");
 	    if (tiposGarantiasAceita == null) {
 	        tiposGarantiasAceita = new HashSet<TipoGarantiaAceita>();
 	    }
-	    tiposGarantiasAceita.add(tipoGarantiaAceita);
+	    TipoGarantiaAceita existente = getTipoGarantiaAceitaByTipoGarantia(tipoGarantia);
+	    if (existente == null) {
+	        tiposGarantiasAceita.add(new TipoGarantiaAceita(tipoGarantia, valor, this));
+	    } else {
+	        existente.setValor(valor);
+	    }
 	}
+	
+	
+    /**
+     * Encontra um tipo de garantia aceita pelo tipo de garantia
+     * 
+     * @param tipoGarantia
+     *            tipo de garantia para encontrar o tipo de garantia aceita
+     * @return tipo de garantia aceita com o tipo de garantia recebido ou null
+     *         caso não exista um tipo de garantia aceita com o tipo de garantia
+     *         recebido
+     * @throws IllegalArgumentException
+     *             caso o parâmetro tipoGarantia for nulo
+     */
+    public TipoGarantiaAceita getTipoGarantiaAceitaByTipoGarantia(
+            TipoGarantia tipoGarantia) {
+        Validate.notNull(tipoGarantia, "Tipo de Garantia não deve ser nulo!");
+        for (TipoGarantiaAceita tipoGarantiaAceita : tiposGarantiasAceita) {
+            if (tipoGarantiaAceita.getTipoGarantia().equals(tipoGarantia)) {
+                return tipoGarantiaAceita;
+            }
+        }
+        return null;
+    }
 	
 	/**
 	 * Remove o tipo de garantia aceita que corresponde ao tipo de garantia
