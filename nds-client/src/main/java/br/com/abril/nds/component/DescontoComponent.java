@@ -9,8 +9,25 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 
 public interface DescontoComponent {
-
-	public void persistirDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Set<ProdutoEdicao> produtos, BigDecimal valorDesconto);
 	
-	public Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Set<ProdutoEdicao> produtos);
+	/**
+	 * Persiste os dados de um tipo de desconto para N produtos associados a uma cota e fornecedor.
+	 * 
+	 * @param tipoDesconto - tipo de desconto (GERAL,ESPECIFICO,PRODUTO)
+	 * @param fornecedor - fornecedor associado aos produtos informados
+	 * @param cota - cota associada ao fornecedor informado
+	 * @param produtos - produtos candidatos a receberer o desconto
+	 * @param valorDesconto - valor do desconto atribuido aos produtos
+	 */
+	void persistirDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Set<ProdutoEdicao> produtos, BigDecimal valorDesconto);
+	
+	/**
+	 * Filtra os produtos para atibuição de desconto.
+	 * 
+	 * @param tipoDesconto - tipo de desconto (GERAL,ESPECIFICO,PRODUTO)
+	 * @param fornecedor -  fornecedor associado aos produtos informados
+	 * @param produtos - produtos candidatos a receberer o desconto
+	 * @return Set<ProdutoEdicao> - produtos que receberão desconto
+	 */
+	Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Set<ProdutoEdicao> produtos);
 }
