@@ -1032,7 +1032,7 @@ public class DataLoader {
 				"Grupo 1",
 				TipoGrupo.TIPO_COTA,
 				diasGrupo1,
-				TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL,
+				TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO,
 				null,
 				null);
 		save(session, grupo1);
@@ -1042,9 +1042,9 @@ public class DataLoader {
 		GrupoCota grupo2 = Fixture.criarGrupoCota(
 				null,
 				"Grupo 2",
-				TipoGrupo.TIPO_COTA,
+				TipoGrupo.MUNICIPIO,
 				diasGrupo2,
-				TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL,
+				null,
 				null,
 				null);
 		save(session, grupo2);

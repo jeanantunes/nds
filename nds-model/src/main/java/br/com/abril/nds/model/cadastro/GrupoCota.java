@@ -41,11 +41,6 @@ public class GrupoCota implements Serializable {
 	@Column(name = "TIPO_GRUPO")
 	private TipoGrupo tipoGrupo;
 	
-	/*
-	@OneToMany(mappedBy="grupo")
-	private Set<DiaRecolhimentoGrupo> diasRecolhimento = new HashSet<DiaRecolhimentoGrupo>();
-	*/
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COTA")
 	private TipoCaracteristicaSegmentacaoPDV tipoCota;

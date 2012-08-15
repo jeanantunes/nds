@@ -221,5 +221,24 @@ public class ParametrosDistribuidorController {
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
 	}
 	
+	public void obterDadosGrupo(Long idGrupo) {
+		//TODO
+		//grupoService.excluirGrupo(idGrupo);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+	}
 	
+	public void obterMunicipios(Long idGrupo) {
+		//TODO
+		//grupoService.excluirGrupo(idGrupo);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+	}
+	
+	public void obterCotas(Long idGrupo) {
+		//TODO
+		//grupoService.excluirGrupo(idGrupo);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+	}
 }
