@@ -44,7 +44,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		DistribuidorDTO dto = new DistribuidorDTO();
 		
 		dto.setRazaoSocial(distribuidor.getJuridica().getRazaoSocial().toUpperCase());
-		Endereco endereco = distribuidor.getEnderecos().get(0).getEndereco(); 
+		Endereco endereco = distribuidor.getEnderecoDistribuidor().getEndereco(); 
 		dto.setEndereco(endereco.getLogradouro().toUpperCase()  + " " + endereco.getNumero());
 		dto.setCnpj(distribuidor.getJuridica().getCnpj());
 		dto.setCidade(endereco.getCidade().toUpperCase());

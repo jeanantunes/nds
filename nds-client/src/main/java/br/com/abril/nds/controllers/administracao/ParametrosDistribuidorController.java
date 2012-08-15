@@ -1,8 +1,11 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,12 +13,17 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
@@ -25,6 +33,9 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -49,6 +60,11 @@ public class ParametrosDistribuidorController {
 
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private HttpSession session;
+	
+	private static final String ATRIBUTO_SESSAO_LOGOTIPO = "cadastroDistribuidorLogotipo";
 
 	@Autowired 
 	private GrupoService grupoService;
@@ -59,15 +75,94 @@ public class ParametrosDistribuidorController {
 		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
 		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
 		result.include("fornecedores", fornecedorService.obterFornecedores());
+		result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
+		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
+	}
+	
+	private List<ItemDTO<TipoAtividade, String>> carregarComboRegimeTributario() {
+
+		List<ItemDTO<TipoAtividade, String>> listaRegimeTributario =
+			new ArrayList<ItemDTO<TipoAtividade, String>>();
+		
+		listaRegimeTributario.add(
+			new ItemDTO<TipoAtividade, String>(TipoAtividade.PRESTADOR_SERVICO,
+											   TipoAtividade.PRESTADOR_SERVICO.getDescTipoDistribuidor()));
+		
+		listaRegimeTributario.add(
+			new ItemDTO<TipoAtividade, String>(TipoAtividade.MERCANTIL,
+											   TipoAtividade.MERCANTIL.getDescTipoDistribuidor()));
+		
+		return listaRegimeTributario;
+	}
+	
+	private List<ItemDTO<ObrigacaoFiscal, String>> carregarComboObrigacaoFiscal() {
+
+		List<ItemDTO<ObrigacaoFiscal, String>> listaObrigacaoFiscal =
+			new ArrayList<ItemDTO<ObrigacaoFiscal, String>>();
+		
+		listaObrigacaoFiscal.add(
+			new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.COTA_TOTAL,
+												 ObrigacaoFiscal.COTA_TOTAL.getDescricao()));
+		
+		listaObrigacaoFiscal.add(
+			new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.COTA_NFE_VENDA,
+												 ObrigacaoFiscal.COTA_NFE_VENDA.getDescricao()));
+		
+		listaObrigacaoFiscal.add(
+			new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.DEVOLUCAO_FORNECEDOR,
+												 ObrigacaoFiscal.DEVOLUCAO_FORNECEDOR.getDescricao()));
+		
+		return listaObrigacaoFiscal;
+	}
+	
+	public Download getLogo() {
+		
+		try {
+			InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
+			return new InputStreamDownload(inputStream, null, null);
+		} catch (Exception e) {
+			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage())).serialize();
+		}
+
+		return null;
+	}
+	
+	public Download atualizarLogo() {
+		
+		UploadedFile logo = (UploadedFile) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO);
+		
+		return new InputStreamDownload(logo.getFile(), null, null);
 	}
 
+	public void salvarLogo(UploadedFile logo) {
+		
+		session.setAttribute(ATRIBUTO_SESSAO_LOGOTIPO, logo);
+		
+		result.use(PlainJSONSerialization.class).from("", "result").serialize();
+	}
+	
 	/**buscarDiasOperacaoFornecedor
 	 * Grava as alterações de parametros realizadas para o distribuidor
 	 * @param distribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
-	    validarCadastroDistribuidor(parametrosDistribuidor);
-		distribuidorService.alterar(parametrosDistribuidorService.getDistribuidor(parametrosDistribuidor));
+	    
+		UploadedFile logo = (UploadedFile) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO);
+		
+		InputStream inputStream = null;
+		String contentType = null;
+
+		if (logo != null) {
+			
+			inputStream = logo.getFile();
+			contentType = logo.getContentType();
+		}
+		
+		validarCadastroDistribuidor(parametrosDistribuidor);
+		
+		parametrosDistribuidorService.salvarDistribuidor(
+			parametrosDistribuidor, inputStream, contentType);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}
 	

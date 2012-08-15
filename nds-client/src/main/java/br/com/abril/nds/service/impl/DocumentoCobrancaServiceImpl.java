@@ -268,14 +268,10 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		for(EnderecoDistribuidor endereco : distribuidor.getEnderecos()){
-			
-			if(endereco.isPrincipal()){
-				map.put("cidade",(endereco.getEndereco()==null)?"": endereco.getEndereco().getCidade());
-				map.put("enderecoDistribuidor", (endereco.getEndereco()==null)?"":endereco.getEndereco().getLogradouro() );
-				break;
-			}
-		}
+		EnderecoDistribuidor enderecoDistribuidor = distribuidor.getEnderecoDistribuidor();
+		
+		map.put("cidade",(enderecoDistribuidor.getEndereco()==null)?"": enderecoDistribuidor.getEndereco().getCidade());
+		map.put("enderecoDistribuidor", (enderecoDistribuidor.getEndereco()==null)?"":enderecoDistribuidor.getEndereco().getLogradouro() );
 		
 		for(TelefoneDistribuidor telefone : distribuidor.getTelefones()){
 			

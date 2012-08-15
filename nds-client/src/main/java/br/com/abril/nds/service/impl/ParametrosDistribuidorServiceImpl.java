@@ -1,17 +1,27 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringEscapeUtils;
+import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroEntregaBanca;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
@@ -20,12 +30,12 @@ import br.com.abril.nds.model.cadastro.ParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaChamadao;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
-import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoInterfaceLED;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
@@ -34,6 +44,8 @@ import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
+
+import com.google.gson.JsonObject;
 
 /**
  * Implementação da interface de serviços do parametrosDistribuidorVO
@@ -45,6 +57,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private final static String CHECKED = "checked";
 
 	private final static String UNDEFINED = "undefined";
+	
+	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
+	
+	private static final String DB_NAME = "db_parametro_sistema";
 	
 	@Autowired
 	DistribuidorService distribuidorService;
@@ -60,6 +76,21 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 	@Autowired
 	TipoGarantiaAceitaRepository tipoGarantiaAceitaRepository;
+	
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+	
+	private CouchDbClient couchDbClient;
+	
+	@PostConstruct
+	public void initCouchDbClient() {
+		this.couchDbClient = new CouchDbClient(DB_NAME, true,
+				couchDbProperties.getProtocol(), 
+				couchDbProperties.getHost(),
+				couchDbProperties.getPort(), 
+				couchDbProperties.getUsername(),
+				couchDbProperties.getPassword());
+	}
 
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.ParametrosDistribuidorService#getParametrosDistribuidor()
@@ -71,6 +102,25 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		Distribuidor distribuidor = distribuidorService.obter();
 		
 		ParametrosDistribuidorVO parametrosDistribuidor = new ParametrosDistribuidorVO();
+		
+		// Cadastro / Fiscal
+		// TODO:
+		parametrosDistribuidor.setRazaoSocial(distribuidor.getRazaoSocial());
+		parametrosDistribuidor.setNomeFantasia(distribuidor.getNomeFantasia());
+		parametrosDistribuidor.setCnpj(distribuidor.getCnpj());
+		parametrosDistribuidor.setInscricaoEstadual(distribuidor.getInscricaoEstadual());
+		parametrosDistribuidor.setInscricaoMunicipal(distribuidor.getInscricaoMunicipal());
+		parametrosDistribuidor.setCnpjPrincipal(distribuidor.isCnpjPrincipal());
+		parametrosDistribuidor.setEmail(distribuidor.getEmail());
+		parametrosDistribuidor.setCodigoDistribuidorDinap(distribuidor.getCodigoDistribuidorDinap());
+		parametrosDistribuidor.setCodigoDistribuidorFC(distribuidor.getCodigoDistribuidorFC());
+		
+		parametrosDistribuidor.setEndereco(
+			this.popularEnderecoVO(distribuidor.getEnderecoDistribuidor()));
+		
+		parametrosDistribuidor.setRegimeTributario(distribuidor.getTipoAtividade());
+		parametrosDistribuidor.setObrigacaoFiscal(distribuidor.getObrigacaoFiscal());
+		parametrosDistribuidor.setRegimeEspecial(distribuidor.isRegimeEspecial());
 		
 		// Parciais / Matriz de Lançamento
 		parametrosDistribuidor.setRelancamentoParciaisEmDias(distribuidor.getFatorRelancamentoParcial());
@@ -99,15 +149,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		    parametrosDistribuidor.setChamadaoValorConsignado(CurrencyUtil.formatarValor(politicaChamadao.getValorConsignado()));
 		}
 		
-		
 		// Reutilização de Código de Cota
 		parametrosDistribuidor.setReutilizacaoCodigoCotaInativa(distribuidor.getQntDiasReutilizacaoCodigoCota());
-		
-		// Fiscal
-		parametrosDistribuidor.setObrigacaoFiscao(verificaCheckString(distribuidor.isObrigacaoFiscao()));
-		parametrosDistribuidor.setRegimeEspecial(verificaCheckString(distribuidor.isRegimeEspecial()));
-		if (distribuidor.getTipoAtividade() != null)
-			parametrosDistribuidor.setDistribuidor(distribuidor.getTipoAtividade().name());
 
 		// Emissão de Documentos
 		for (ParametrosDistribuidorEmissaoDocumento emissaoDocumentos : distribuidor.getParametrosDistribuidorEmissaoDocumentos()) {
@@ -263,14 +306,98 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		return parametrosDistribuidor;
 	}
 
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.ParametrosDistribuidorService#getDistribuidor(br.com.abril.nds.client.vo.ParametrosDistribuidorVO)
+	private EnderecoDistribuidor popularEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor,
+														 EnderecoVO enderecoVO) {
+		
+		if (enderecoDistribuidor == null) {
+			
+			enderecoDistribuidor = new EnderecoDistribuidor();
+		}
+		
+		Endereco endereco = enderecoDistribuidor.getEndereco();
+
+		if (endereco == null) {
+			
+			endereco = new Endereco();
+		}
+		
+		endereco.setCep(enderecoVO.getCep());
+		endereco.setTipoLogradouro(enderecoVO.getTipoLogradouro());
+		endereco.setLogradouro(enderecoVO.getLogradouro());
+		endereco.setNumero(enderecoVO.getNumero());
+		endereco.setComplemento(enderecoVO.getComplemento());
+		endereco.setBairro(enderecoVO.getBairro());
+		endereco.setCidade(enderecoVO.getLocalidade());
+		endereco.setUf(enderecoVO.getUf());
+		
+		enderecoDistribuidor.setTipoEndereco(enderecoVO.getTipoEndereco());
+		enderecoDistribuidor.setEndereco(endereco);
+		
+		return enderecoDistribuidor;
+	}
+	
+	private EnderecoVO popularEnderecoVO(EnderecoDistribuidor enderecoDistribuidor) {
+		
+		EnderecoVO enderecoVO = new EnderecoVO();
+		
+		if (enderecoDistribuidor == null) {
+			
+			return enderecoVO;
+		}
+		
+		enderecoVO.setTipoEndereco(enderecoDistribuidor.getTipoEndereco());
+		
+		Endereco endereco = enderecoDistribuidor.getEndereco();
+		
+		if (endereco == null) {
+			
+			return enderecoVO;
+		}
+		
+		enderecoVO.setCep(endereco.getCep());
+		enderecoVO.setTipoLogradouro(endereco.getTipoLogradouro());
+		enderecoVO.setLogradouro(endereco.getLogradouro());
+		enderecoVO.setNumero(endereco.getNumero());
+		enderecoVO.setComplemento(endereco.getComplemento());
+		enderecoVO.setBairro(endereco.getBairro());
+		enderecoVO.setLocalidade(endereco.getCidade());
+		enderecoVO.setUf(endereco.getUf());
+		
+		return enderecoVO;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ParametrosDistribuidorService#salvarDistribuidor(br.com.abril.nds.client.vo.ParametrosDistribuidorVO, java.io.InputStream, java.lang.String)
 	 */
 	@Transactional
 	@Override
-	public Distribuidor getDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor) {
+	public void salvarDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor,
+								   InputStream imgLogotipo,
+								   String imgContentType) {
+		
 		Distribuidor distribuidor = distribuidorService.obter();
 
+		// Cadastro / Fiscal
+		// TODO: 
+		distribuidor.setRazaoSocial(parametrosDistribuidor.getRazaoSocial());
+		distribuidor.setNomeFantasia(parametrosDistribuidor.getNomeFantasia());
+		distribuidor.setCnpj(parametrosDistribuidor.getCnpj());
+		distribuidor.setInscricaoEstadual(parametrosDistribuidor.getInscricaoEstadual());
+		distribuidor.setInscricaoMunicipal(parametrosDistribuidor.getInscricaoMunicipal());
+		distribuidor.setCnpjPrincipal(parametrosDistribuidor.getCnpjPrincipal());
+		distribuidor.setEmail(parametrosDistribuidor.getEmail());
+		distribuidor.setCodigoDistribuidorDinap(parametrosDistribuidor.getCodigoDistribuidorDinap());
+		distribuidor.setCodigoDistribuidorFC(parametrosDistribuidor.getCodigoDistribuidorFC());
+		
+		distribuidor.setEnderecoDistribuidor(
+			this.popularEnderecoDistribuidor(
+				distribuidor.getEnderecoDistribuidor(), parametrosDistribuidor.getEndereco()));
+		
+		distribuidor.setTipoAtividade(parametrosDistribuidor.getRegimeTributario());
+		distribuidor.setObrigacaoFiscal(parametrosDistribuidor.getObrigacaoFiscal());
+		distribuidor.setRegimeEspecial(parametrosDistribuidor.getRegimeEspecial());
+		
 		// Parciais / Matriz de Lançamento
 		distribuidor.setFatorRelancamentoParcial(parametrosDistribuidor.getRelancamentoParciaisEmDias());
 
@@ -310,18 +437,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento()));
 		distribuidor.setQntDiasReutilizacaoCodigoCota(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa());
 
-		// Fiscal
-		distribuidor.setObrigacaoFiscao(verificaCheckBoolean(parametrosDistribuidor.getObrigacaoFiscao()));
-
-		distribuidor.setRegimeEspecial(verificaCheckBoolean(parametrosDistribuidor.getRegimeEspecial()));
-
-		if (parametrosDistribuidor.getDistribuidor() != null && !parametrosDistribuidor.getDistribuidor().isEmpty()) {
-			TipoAtividade tipoDistribuidor = Enum.valueOf(TipoAtividade.class, parametrosDistribuidor.getDistribuidor());
-			distribuidor.setTipoAtividade(tipoDistribuidor);
-		} else {
-			distribuidor.setTipoAtividade(null);
-		}
-		
 		// Emissão de Documentos
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoBoleto = new ParametrosDistribuidorEmissaoDocumento();
 		parametrosDistribuidorEmissaoDocumentoBoleto.setDistribuidor(distribuidor);
@@ -531,7 +646,48 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
 		}
 		
-		return distribuidor;
+		distribuidorService.alterar(distribuidor);
+		
+		if (imgLogotipo != null) {
+		
+			removerLogo();
+			
+			couchDbClient.saveAttachment(
+				imgLogotipo, ATTACHMENT_LOGOTIPO, imgContentType,
+				TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name(), null);
+		}
+	}
+	
+	private void removerLogo() {
+		
+		JsonObject jsonObject = null;
+		
+		try {
+		
+			jsonObject =
+				couchDbClient.find(JsonObject.class, TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name());
+		
+		} catch (NoDocumentException e) {
+			
+			return;
+		}
+		
+		this.couchDbClient.remove(jsonObject);
+	}
+	
+	@Override
+	public InputStream getLogotipoDistribuidor() {
+		InputStream inputStream;
+		try {
+			
+			//TODO alterar o modo de obter o LOGOTIPO_DISTRIBUIDOR, não é mais dominio do Parametro do Sistema
+			inputStream = couchDbClient.find(
+					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
+					+ "/" + ATTACHMENT_LOGOTIPO);
+		} catch (NoDocumentException e) {
+			inputStream = new ByteArrayInputStream(new byte[0]);
+		}
+		return inputStream;
 	}
 
     /**
