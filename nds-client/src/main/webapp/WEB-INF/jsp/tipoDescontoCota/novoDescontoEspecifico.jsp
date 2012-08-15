@@ -129,7 +129,7 @@ var DESCONTO_ESPECIFICO = {
     <td colspan="4" valign="top">
     	<fieldset style="width:500px;">
     		<legend>Selecione a Cota</legend>
-    		Cota:
+    		<label style="width:auto!important;">Cota:</label>
     		<input name="numCotaEspecifico" 
            		   id="numCotaEspecifico" 
            		   type="text"
@@ -138,7 +138,7 @@ var DESCONTO_ESPECIFICO = {
            		   onchange="cota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
            	  											DESCONTO_ESPECIFICO.pesquisarCotaSuccessCallBack, 
            	  											DESCONTO_ESPECIFICO.pesquisarCotaErrorCallBack);" />
-    		Nome:
+    		<label style="width:auto!important;">Nome:</label>
     		<input  name="descricaoCotaEspecifico" 
 		      		 id="descricaoCotaEspecifico" 
 		      		 type="text" 
