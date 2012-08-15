@@ -5,16 +5,28 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.DescontoService;
 
@@ -23,10 +35,15 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 	@Autowired
 	private DescontoService descontoService;
 	
+	@Autowired
+	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
+	
 	private Set<Fornecedor> fornecedores;
 	
 	@Before
 	public void setUp() {
+		
+		// FORNECEDORES
 		
 		fornecedores = new HashSet<Fornecedor>();
 		
@@ -73,6 +90,45 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		this.fornecedores.add(fornecedor1);
 		this.fornecedores.add(fornecedor2);
 		this.fornecedores.add(fornecedor3);
+		
+		// PRODUTOS
+		
+		NCM ncm = Fixture.ncm(1L, "NCM", "un");
+		
+		save(ncm);
+		
+		TipoProduto tipoProduto = Fixture.tipoRevista(ncm);
+		
+		save(tipoProduto);
+		
+		Produto produtoVeja = Fixture.produtoVeja(tipoProduto);
+		
+		produtoVeja.setFornecedores(this.fornecedores);
+		
+		save(produtoVeja);
+		
+		ProdutoEdicao produtoEdicaoVeja = 
+			Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), 
+				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
+		
+		save(produtoEdicaoVeja);
+		
+		// COTAS
+		
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
+		
+		save(box1);
+		
+		PessoaFisica manoel =
+			Fixture.pessoaFisica("123.456.789-00", "sys.discover@gmail.com", "Manoel da Silva");
+		
+		save(manoel);
+		
+		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+
+		cotaManoel.getFornecedores().addAll(this.fornecedores);
+		
+		save(cotaManoel);
 	}
 	
 	@Test
@@ -80,7 +136,22 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		BigDecimal valorDesconto = BigDecimal.TEN;
 		
-		this.descontoService.processarDescontoDistribuidor(this.fornecedores,valorDesconto);
+		this.descontoService.processarDescontoDistribuidor(this.fornecedores, valorDesconto);
+		
+		for (Fornecedor fornecedor : this.fornecedores) {
+		
+			Set<DescontoProdutoEdicao> descontosProdutoEdicao = 
+				this.descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(fornecedor);
+			
+			Assert.assertNotNull(this.fornecedores);
+			
+			//Assert.assertEquals(this.fornecedores.size(), descontosProdutoEdicao.size());
+			
+			for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
+				
+				Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+			}
+		}
 	}
 	
 	@Test
