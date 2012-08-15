@@ -1,27 +1,57 @@
 package br.com.abril.nds.client.vo;
 
+import br.com.abril.nds.client.endereco.vo.EnderecoVO;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+
 
 /**
  * VO para controle dos parametros do distribuidor
- * 
  * @author InfoA2
  */
 public class ParametrosDistribuidorVO {
 
+    // Aba Cadastro / Fiscal
+    private String razaoSocial;
+    
+    private String nomeFantasia;
+    
+    private String cnpj;
+    
+    private String inscricaoEstadual;
+    
+    private String inscricaoMunicipal;
+    
+    private boolean cnpjPrincipal;
+    
+    private String email;
+    
+    private String codigoDistribuidorDinap;
+    
+    private String codigoDistribuidorFC;
+    
+    private TipoAtividade regimeTributario;
+    
+    private ObrigacaoFiscal obrigacaoFiscal;
+    
+    private boolean regimeEspecial;
+    
+    private EnderecoVO endereco;
+    
     // Aba Operação
-
+    
     // Frame Parciais / Matriz de Lançamento
     private int relancamentoParciaisEmDias;
-
+    
     // Frame Recolhimento
-
+    
     private TipoContabilizacaoCE tipoContabilizacaoCE;
-
+    
     private boolean aceitaEncalheJuramentada;
-
+    
     private boolean diaRecolhimentoPrimeiro;
-
+    
     private boolean diaRecolhimentoSegundo;
 
     private boolean diaRecolhimentoTerceiro;
@@ -31,7 +61,7 @@ public class ParametrosDistribuidorVO {
     private boolean diaRecolhimentoQuinto;
 
     private boolean limiteCEProximaSemana;
-
+    
     private boolean supervisionaVendaNegativa;
 
     private boolean conferenciaCegaRecebimento;
@@ -40,22 +70,12 @@ public class ParametrosDistribuidorVO {
 
     // Frame Capacidade de Manuseio
     private Integer capacidadeManuseioHomemHoraLancamento;
-
+    
     private Integer capacidadeManuseioHomemHoraRecolhimento;
 
     // Frame Reutilização de Código de Cota
     private Long reutilizacaoCodigoCotaInativa;
-
-    // Aba Fiscal
-
-    // Frame Fiscal
-    private String obrigacaoFiscao;
-
-    private String regimeEspecial;
-
-    // PRESTADOR_SERVICO ou MERCANTIL
-    private String distribuidor;
-
+    
     // Frame Emissão de Documentos
     private boolean slipImpressao;
 
@@ -80,7 +100,7 @@ public class ParametrosDistribuidorVO {
     private boolean chamadaEncalheImpressao;
 
     private boolean chamadaEncalheEmail;
-
+    
     // Frame Impressão Interface LED
     // MODELO_1 ou MODELO_2 ou MODELO_3
     private String impressaoInterfaceLED;
@@ -92,11 +112,11 @@ public class ParametrosDistribuidorVO {
     // Frame Impressão CE
     // MODELO_1 ou MODELO_2
     private String impressaoCE;
-
+    
     // Aba Contratos e Garantias
     // Frame Condições de Contratação
     private boolean utilizaContratoComCotas;
-
+    
     private Integer prazoContrato;
 
     private String informacoesComplementaresContrato;
@@ -105,54 +125,54 @@ public class ParametrosDistribuidorVO {
     private boolean utilizaProcuracaoEntregadores;
 
     private String informacoesComplementaresProcuracao;
-
+    
     /**
      * Distribuidor utiliza termo de adesão para entrega em bancas
      */
     private boolean utilizaTermoAdesaoEntregaBancas;
-
+    
     /**
      * Complemento termo de adesão entrega em bancas
      */
     private String complementoTermoAdesaoEntregaBancas;
 
-    // Frame Garantia
+    //Frame Garantia
     private boolean utilizaGarantiaPdv;
-
+    
     private boolean utilizaChequeCaucao;
 
     private Integer validadeChequeCaucao;
-
+    
     private boolean utilizaFiador;
-
+    
     private Integer validadeFiador;
-
+    
     private boolean utilizaImovel;
-
+    
     private Integer validadeImovel;
-
+    
     private boolean utilizaCaucaoLiquida;
-
+    
     private Integer validadeCaucaoLiquida;
-
+    
     private boolean utilizaNotaPromissoria;
-
+    
     private Integer validadeNotaPromissoria;
-
+    
     private boolean utilizaAntecedenciaValidade;
-
+    
     private Integer validadeAntecedenciaValidade;
-
+    
     /**
      * Distribuidor utiliza garantia "OUTROS"
      */
     private boolean utilizaOutros;
-
+    
     /**
      * Validade da garantia "OUTROS" em meses
      */
     private Integer validadeOutros;
-
+    
     // Aba Negociação
     // Frame Negociação de Dívidas
     private String sugereSuspensaoQuandoAtingirBoletos;
@@ -160,13 +180,15 @@ public class ParametrosDistribuidorVO {
     private String sugereSuspensaoQuandoAtingirReais;
 
     private Boolean parcelamentoDividas;
+    
 
     private Boolean utilizaDesconto;
+    
 
     private String percentualDesconto;
-
+    
     private String negociacaoAteParcelas;
-
+    
     // Aba Aprovação
     // Frame Aprovação
     private boolean utilizaControleAprovacao;
@@ -174,30 +196,206 @@ public class ParametrosDistribuidorVO {
     private boolean paraDebitosCreditos;
 
     private boolean negociacao;
-
+    
     private boolean ajusteEstoque;
-
+    
     private boolean postergacaoCobranca;
-
+    
     private boolean devolucaoFornecedor;
-
+    
     private boolean faltasSobras;
-
+    
     private String aprovacaoFaltaDe;
-
+    
     private String aprovacaoSobraDe;
-
+    
     private String aprovacaoFaltaEm;
 
     private String aprovacaoSobraEm;
 
     private Integer prazoFollowUp;
-
+    
     private Integer prazoAvisoPrevioValidadeGarantia;
-
+    
     private Integer chamadaoDiasSuspensao;
-
+    
     private String chamadaoValorConsignado;
+
+    /**
+     * @return the razaoSocial
+     */
+    public String getRazaoSocial() {
+        return razaoSocial;
+    }
+
+    /**
+     * @param razaoSocial the razaoSocial to set
+     */
+    public void setRazaoSocial(String razaoSocial) {
+        this.razaoSocial = razaoSocial;
+    }
+
+    /**
+     * @return the nomeFantasia
+     */
+    public String getNomeFantasia() {
+        return nomeFantasia;
+    }
+
+    /**
+     * @param nomeFantasia the nomeFantasia to set
+     */
+    public void setNomeFantasia(String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
+    }
+
+    /**
+     * @return the cnpj
+     */
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    /**
+     * @param cnpj the cnpj to set
+     */
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    /**
+     * @return the inscricaoEstadual
+     */
+    public String getInscricaoEstadual() {
+        return inscricaoEstadual;
+    }
+
+    /**
+     * @param inscricaoEstadual the inscricaoEstadual to set
+     */
+    public void setInscricaoEstadual(String inscricaoEstadual) {
+        this.inscricaoEstadual = inscricaoEstadual;
+    }
+
+    /**
+     * @return the inscricaoMunicipal
+     */
+    public String getInscricaoMunicipal() {
+        return inscricaoMunicipal;
+    }
+
+    /**
+     * @param inscricaoMunicipal the inscricaoMunicipal to set
+     */
+    public void setInscricaoMunicipal(String inscricaoMunicipal) {
+        this.inscricaoMunicipal = inscricaoMunicipal;
+    }
+
+    /**
+     * @return the cnpjPrincipal
+     */
+    public boolean getCnpjPrincipal() {
+        return cnpjPrincipal;
+    }
+
+    /**
+     * @param cnpjPrincipal the cnpjPrincipal to set
+     */
+    public void setCnpjPrincipal(boolean cnpjPrincipal) {
+        this.cnpjPrincipal = cnpjPrincipal;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the codigoDistribuidorDinap
+     */
+    public String getCodigoDistribuidorDinap() {
+        return codigoDistribuidorDinap;
+    }
+
+    /**
+     * @param codigoDistribuidorDinap the codigoDistribuidorDinap to set
+     */
+    public void setCodigoDistribuidorDinap(String codigoDistribuidorDinap) {
+        this.codigoDistribuidorDinap = codigoDistribuidorDinap;
+    }
+
+    /**
+     * @return the codigoDistribuidorFC
+     */
+    public String getCodigoDistribuidorFC() {
+        return codigoDistribuidorFC;
+    }
+
+    /**
+     * @param codigoDistribuidorFC the codigoDistribuidorFC to set
+     */
+    public void setCodigoDistribuidorFC(String codigoDistribuidorFC) {
+        this.codigoDistribuidorFC = codigoDistribuidorFC;
+    }
+    
+    /**
+     * @return the regimeTributario
+     */
+    public TipoAtividade getRegimeTributario() {
+        return regimeTributario;
+    }
+
+    /**
+     * @param regimeTributario the regimeTributario to set
+     */
+    public void setRegimeTributario(TipoAtividade regimeTributario) {
+        this.regimeTributario = regimeTributario;
+    }
+
+    /**
+     * @return the obrigacaoFiscal
+     */
+    public ObrigacaoFiscal getObrigacaoFiscal() {
+        return obrigacaoFiscal;
+    }
+
+    /**
+     * @param obrigacaoFiscal the obrigacaoFiscal to set
+     */
+    public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
+        this.obrigacaoFiscal = obrigacaoFiscal;
+    }
+    
+    public boolean getRegimeEspecial() {
+        return regimeEspecial;
+    }
+
+    public void setRegimeEspecial(boolean regimeEspecial) {
+        this.regimeEspecial = regimeEspecial;
+    }
+
+    /**
+     * @return the endereco
+     */
+    public EnderecoVO getEndereco() {
+        return endereco;
+    }
+
+    /**
+     * @param endereco the endereco to set
+     */
+    public void setEndereco(EnderecoVO endereco) {
+        this.endereco = endereco;
+    }
 
     public int getRelancamentoParciaisEmDias() {
         return relancamentoParciaisEmDias;
@@ -215,11 +413,9 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param tipoContabilizacaoCE
-     *            the tipoContabilizacaoCE to set
+     * @param tipoContabilizacaoCE the tipoContabilizacaoCE to set
      */
-    public void setTipoContabilizacaoCE(
-            TipoContabilizacaoCE tipoContabilizacaoCE) {
+    public void setTipoContabilizacaoCE(TipoContabilizacaoCE tipoContabilizacaoCE) {
         this.tipoContabilizacaoCE = tipoContabilizacaoCE;
     }
 
@@ -287,8 +483,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param supervisionaVendaNegativa
-     *            the supervisionaVendaNegativa to set
+     * @param supervisionaVendaNegativa the supervisionaVendaNegativa to set
      */
     public void setSupervisionaVendaNegativa(boolean supervisionaVendaNegativa) {
         this.supervisionaVendaNegativa = supervisionaVendaNegativa;
@@ -335,30 +530,6 @@ public class ParametrosDistribuidorVO {
     public void setReutilizacaoCodigoCotaInativa(
             Long reutilizacaoCodigoCotaInativa) {
         this.reutilizacaoCodigoCotaInativa = reutilizacaoCodigoCotaInativa;
-    }
-
-    public String getObrigacaoFiscao() {
-        return obrigacaoFiscao;
-    }
-
-    public void setObrigacaoFiscao(String obrigacaoFiscao) {
-        this.obrigacaoFiscao = obrigacaoFiscao;
-    }
-
-    public String getRegimeEspecial() {
-        return regimeEspecial;
-    }
-
-    public void setRegimeEspecial(String regimeEspecial) {
-        this.regimeEspecial = regimeEspecial;
-    }
-
-    public String getDistribuidor() {
-        return distribuidor;
-    }
-
-    public void setDistribuidor(String distribuidor) {
-        this.distribuidor = distribuidor;
     }
 
     public boolean getSlipImpressao() {
@@ -523,7 +694,7 @@ public class ParametrosDistribuidorVO {
             String informacoesComplementaresProcuracao) {
         this.informacoesComplementaresProcuracao = informacoesComplementaresProcuracao;
     }
-
+    
     /**
      * @return the utilizaTermoAdesaoEntregaBancas
      */
@@ -532,8 +703,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaTermoAdesaoEntregaBancas
-     *            the utilizaTermoAdesaoEntregaBancas to set
+     * @param utilizaTermoAdesaoEntregaBancas the utilizaTermoAdesaoEntregaBancas to set
      */
     public void setUtilizaTermoAdesaoEntregaBancas(
             boolean utilizaTermoAdesaoEntregaBancas) {
@@ -548,8 +718,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param complementoTermoAdesaoEntregaBancas
-     *            the complementoTermoAdesaoEntregaBancas to set
+     * @param complementoTermoAdesaoEntregaBancas the complementoTermoAdesaoEntregaBancas to set
      */
     public void setComplementoTermoAdesaoEntregaBancas(
             String complementoTermoAdesaoEntregaBancas) {
@@ -563,7 +732,7 @@ public class ParametrosDistribuidorVO {
     public void setUtilizaGarantiaPdv(boolean utilizaGarantiaPdv) {
         this.utilizaGarantiaPdv = utilizaGarantiaPdv;
     }
-
+    
     /**
      * @return the utilizaChequeCaucao
      */
@@ -572,8 +741,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaChequeCaucao
-     *            the utilizaChequeCaucao to set
+     * @param utilizaChequeCaucao the utilizaChequeCaucao to set
      */
     public void setUtilizaChequeCaucao(boolean utilizaChequeCaucao) {
         this.utilizaChequeCaucao = utilizaChequeCaucao;
@@ -587,8 +755,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeCheque
-     *            the validadeChequeCaucao to set
+     * @param validadeCheque the validadeChequeCaucao to set
      */
     public void setValidadeChequeCaucao(Integer validadeChequeCaucao) {
         this.validadeChequeCaucao = validadeChequeCaucao;
@@ -602,8 +769,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaFiador
-     *            the utilizaFiador to set
+     * @param utilizaFiador the utilizaFiador to set
      */
     public void setUtilizaFiador(boolean utilizaFiador) {
         this.utilizaFiador = utilizaFiador;
@@ -617,8 +783,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeFiador
-     *            the validadeFiador to set
+     * @param validadeFiador the validadeFiador to set
      */
     public void setValidadeFiador(Integer validadeFiador) {
         this.validadeFiador = validadeFiador;
@@ -632,8 +797,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaImovel
-     *            the utilizaImovel to set
+     * @param utilizaImovel the utilizaImovel to set
      */
     public void setUtilizaImovel(boolean utilizaImovel) {
         this.utilizaImovel = utilizaImovel;
@@ -647,8 +811,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeImovel
-     *            the validadeImovel to set
+     * @param validadeImovel the validadeImovel to set
      */
     public void setValidadeImovel(Integer validadeImovel) {
         this.validadeImovel = validadeImovel;
@@ -662,8 +825,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaCaucaoLiquida
-     *            the utilizaCaucaoLiquida to set
+     * @param utilizaCaucaoLiquida the utilizaCaucaoLiquida to set
      */
     public void setUtilizaCaucaoLiquida(boolean utilizaCaucaoLiquida) {
         this.utilizaCaucaoLiquida = utilizaCaucaoLiquida;
@@ -677,8 +839,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeCaucaoLiquida
-     *            the validadeCaucaoLiquida to set
+     * @param validadeCaucaoLiquida the validadeCaucaoLiquida to set
      */
     public void setValidadeCaucaoLiquida(Integer validadeCaucaoLiquida) {
         this.validadeCaucaoLiquida = validadeCaucaoLiquida;
@@ -692,8 +853,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaNotaPromissoria
-     *            the utilizaNotaPromissoria to set
+     * @param utilizaNotaPromissoria the utilizaNotaPromissoria to set
      */
     public void setUtilizaNotaPromissoria(boolean utilizaNotaPromissoria) {
         this.utilizaNotaPromissoria = utilizaNotaPromissoria;
@@ -707,8 +867,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeNotaPromissoria
-     *            the validadeNotaPromissoria to set
+     * @param validadeNotaPromissoria the validadeNotaPromissoria to set
      */
     public void setValidadeNotaPromissoria(Integer validadeNotaPromissoria) {
         this.validadeNotaPromissoria = validadeNotaPromissoria;
@@ -722,11 +881,9 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaAntecedenciaValidade
-     *            the utilizaAntecedenciaValidade to set
+     * @param utilizaAntecedenciaValidade the utilizaAntecedenciaValidade to set
      */
-    public void setUtilizaAntecedenciaValidade(
-            boolean utilizaAntecedenciaValidade) {
+    public void setUtilizaAntecedenciaValidade(boolean utilizaAntecedenciaValidade) {
         this.utilizaAntecedenciaValidade = utilizaAntecedenciaValidade;
     }
 
@@ -738,11 +895,9 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeAntecedenciaValidade
-     *            the validadeAntecedenciaValidade to set
+     * @param validadeAntecedenciaValidade the validadeAntecedenciaValidade to set
      */
-    public void setValidadeAntecedenciaValidade(
-            Integer validadeAntecedenciaValidade) {
+    public void setValidadeAntecedenciaValidade(Integer validadeAntecedenciaValidade) {
         this.validadeAntecedenciaValidade = validadeAntecedenciaValidade;
     }
 
@@ -754,8 +909,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaOutros
-     *            the utilizaOutros to set
+     * @param utilizaOutros the utilizaOutros to set
      */
     public void setUtilizaOutros(boolean utilizaOutros) {
         this.utilizaOutros = utilizaOutros;
@@ -769,8 +923,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeOutros
-     *            the validadeOutros to set
+     * @param validadeOutros the validadeOutros to set
      */
     public void setValidadeOutros(Integer validadeOutros) {
         this.validadeOutros = validadeOutros;
@@ -923,8 +1076,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param chamadaoDiasSuspensao
-     *            the chamadaoDiasSuspensao to set
+     * @param chamadaoDiasSuspensao the chamadaoDiasSuspensao to set
      */
     public void setChamadaoDiasSuspensao(Integer chamadaoDiasSuspensao) {
         this.chamadaoDiasSuspensao = chamadaoDiasSuspensao;
@@ -938,8 +1090,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param chamadaoValorConsignado
-     *            the chamadaoValorConsignado to set
+     * @param chamadaoValorConsignado the chamadaoValorConsignado to set
      */
     public void setChamadaoValorConsignado(String chamadaoValorConsignado) {
         this.chamadaoValorConsignado = chamadaoValorConsignado;
@@ -953,8 +1104,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param utilizaDesconto
-     *            the utilizaDesconto to set
+     * @param utilizaDesconto the utilizaDesconto to set
      */
     public void setUtilizaDesconto(Boolean utilizaDesconto) {
         this.utilizaDesconto = utilizaDesconto;
@@ -968,16 +1118,14 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param percentualDesconto
-     *            the percentualDesconto to set
+     * @param percentualDesconto the percentualDesconto to set
      */
     public void setPercentualDesconto(String percentualDesconto) {
         this.percentualDesconto = percentualDesconto;
     }
-
+    
     /**
      * Verifica se alguma garantia foi marcada para utilização
-     * 
      * @return true se ao menos uma ganatia esta sendo utilizada
      */
     public boolean isGarantiasUtilizadas() {
