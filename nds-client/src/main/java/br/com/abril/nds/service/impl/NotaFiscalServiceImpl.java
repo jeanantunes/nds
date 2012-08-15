@@ -342,7 +342,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(id);
 		
 		if (notaFiscal != null) {
-			notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.GERADA);
+			notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
 			this.notaFiscalDAO.merge(notaFiscal);
 		}
 	}
