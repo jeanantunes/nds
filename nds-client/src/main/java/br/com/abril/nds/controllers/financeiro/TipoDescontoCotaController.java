@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.administracao;
+package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.math.BigDecimal;
