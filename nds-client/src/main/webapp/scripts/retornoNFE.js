@@ -29,8 +29,6 @@ RetornoNFE.prototype.pesquisarArquivos = function() {
 			var tipoMensagem = data.tipoMensagem;
 			var listaMensagens = data.listaMensagens;
 			
-			console.log(data);
-			
 			if (tipoMensagem && listaMensagens) {
 				exibirMensagem(tipoMensagem, listaMensagens);
 				_this.limparTabela();
@@ -51,7 +49,7 @@ RetornoNFE.prototype.confirmar = function() {
 
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
-		console.log(data);
+
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens, "");
 		} 
@@ -75,7 +73,6 @@ RetornoNFE.prototype.bindEvents = function() {
 };
 
 RetornoNFE.prototype.dataBind = function() {
-	console.log(this);
 	$("#numeroArquivos").html(this.sumarizacaoRetornoNFE.numeroTotalArquivos);
 	$("#notasAprovadas").html(this.sumarizacaoRetornoNFE.numeroNotasAprovadas);
 	$("#notasRejeitadas").html(this.sumarizacaoRetornoNFE.numeroNotasRejeitadas);

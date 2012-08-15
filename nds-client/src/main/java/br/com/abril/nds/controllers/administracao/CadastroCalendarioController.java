@@ -15,11 +15,13 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CalendarioService;
@@ -56,7 +58,10 @@ public class CadastroCalendarioController {
 	}
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO)
 	public void index(){
+		
+		adicionarAnoCorrentePesquisa();
 		
 		carregarComboTipoFeriado();
 		
@@ -123,7 +128,8 @@ public class CadastroCalendarioController {
 	public void excluirCadastroFeriado(
 			String dtFeriado, 
 			String descTipoFeriado, 
-			Long idLocalidade) {
+			Long idLocalidade,
+			boolean indRepeteAnualmente) {
 		
 		validarCadastroFeriado(dtFeriado, descTipoFeriado, "-", idLocalidade);
 		
@@ -132,6 +138,7 @@ public class CadastroCalendarioController {
 		calendarioFeriado.setDataFeriado(DateUtil.parseDataPTBR(dtFeriado));
 		calendarioFeriado.setTipoFeriado(TipoFeriado.valueOf(descTipoFeriado));
 		calendarioFeriado.setIdLocalidade(idLocalidade);
+		calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
 		
 		calendarioService.excluirFeriado(calendarioFeriado);
 		
@@ -243,12 +250,16 @@ public class CadastroCalendarioController {
 	public void obterFeriados(int anoVigencia) {
 		
 		if(anoVigencia == 0) {
-			anoVigencia = Calendar.getInstance().get(Calendar.YEAR);
+			anoVigencia = getAnoCorrente();
 		}
 		
-		FiltroCalendarioFeriado filtro = new FiltroCalendarioFeriado();
-		filtro.setAnoFeriado(anoVigencia);
-		session.setAttribute(FILTRO_PESQUISA, filtro);
+		FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) this.session.getAttribute(FILTRO_PESQUISA);
+		
+		if (filtro == null) {
+			filtro = new FiltroCalendarioFeriado();
+			filtro.setAnoFeriado(anoVigencia);
+			session.setAttribute(FILTRO_PESQUISA, filtro);
+		}
 		
 		Map<Date, String> mapaFeriados = calendarioService.obterListaDataFeriado(filtro.getAnoFeriado());
 		
@@ -260,6 +271,14 @@ public class CadastroCalendarioController {
 		
 		result.use(CustomJson.class).from(resposta).serialize();
 	
+	}
+	
+	private void adicionarAnoCorrentePesquisa() {
+		result.include("anoCorrente", getAnoCorrente());
+	}
+
+	private Integer getAnoCorrente() {
+		return Calendar.getInstance().get(Calendar.YEAR);
 	}
 	
 	/**

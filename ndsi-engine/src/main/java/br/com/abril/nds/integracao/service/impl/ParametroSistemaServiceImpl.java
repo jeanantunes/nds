@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.lightcouch.CouchDbClient;
-import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,21 +62,6 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 	}
 	
 	@Override
-	public InputStream getLogotipoDistribuidor() {
-		InputStream inputStream;
-		try {
-			
-			//TODO alterar o modo de obter o LOGOTIPO_DISTRIBUIDOR, não é mais dominio do Parametro do Sistema
-			inputStream = couchDbClient.find(
-					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
-					+ "/" + ATTACHMENT_LOGOTIPO);
-		} catch (NoDocumentException e) {
-			inputStream = new ByteArrayInputStream(new byte[0]);
-		}
-		return inputStream;
-	}
-	
-	@Override
 	@Transactional
 	public void salvar(ParametroSistemaGeralDTO dto, InputStream imgLogotipo, String imgContentType) {
 		
@@ -90,6 +73,5 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 	@Transactional
 	public void salvar(Collection<ParametroSistema> parametrosSistema) {
 		parametroSistemaRepository.salvar(parametrosSistema);
-	}
-	
+	}	
 }

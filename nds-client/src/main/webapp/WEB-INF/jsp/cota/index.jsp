@@ -87,7 +87,35 @@
 			height : 255
 		});
 	
-	});	
+	});
+	
+	function pesquisarLogradouros() {
+		
+		var nomeLogra = $("#logradouroPesquisa").val();
+		
+		nomeLogra = $.trim(nomeLogra);
+		
+		$("#logradouroPesquisa").autocomplete({source: ""});
+		
+		if (nomeLogra && nomeLogra.length > 2) {
+			
+			$.postJSON(
+				contextPath + "/cadastro/endereco/pesquisarLogradouros", "nomeLogradouro=" + nomeLogra,
+				function(result) { 
+					exibirAutoComplete(result); 
+				}
+			);
+		}
+	}
+	
+	function exibirAutoComplete (result) {
+		
+		$("#logradouroPesquisa").autocomplete({
+			source: result,
+			minLength: 4,
+			delay : 0,
+		});
+	}
 		
 </script>
 <style>
@@ -141,14 +169,32 @@
                </td>
                <td width="72">CPF / CNPJ:</td>
                <td width="253">
-               		<input type="text" name="txtCPF_CNPJ" id="txtCPF_CNPJ" style="width:150px;" maxlength="18"/>
+               		<input type="text" name="txtCPF_CNPJ" id="txtCPF_CNPJ" style="width:180px;" maxlength="18"/>
                </td>
-               <td width="104">
+               <td width="104">&nbsp;</td>
+           </tr>
+           </table>
+           <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+		   <tr>
+				<td width="68">Logradouro:</td>
+				<td colspan="3">
+					<input type="text" id="logradouroPesquisa" style="width:180px;"
+						   onkeyup="pesquisarLogradouros();"/>
+				</td>
+				<td width="36">Bairro:</td>
+				<td width="195">
+					<input type="text" id="bairroPesquisa" style="width:155px;"/>
+				</td>
+				<td width="57">Município:</td>
+				<td width="253">
+					<input type="text" id="municipioPesquisa" style="width:180px;"/>
+				</td>
+				<td width="104">
 	               	<span class="bt_pesquisar">
 	               		<a href="javascript:;" onclick="MANTER_COTA.pesquisar();">Pesquisar</a>
 	               	</span>
-               </td>
-           </tr>
+                </td>
+		   </tr>
          </table>
 
      </fieldset>

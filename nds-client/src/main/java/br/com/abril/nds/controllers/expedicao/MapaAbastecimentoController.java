@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
@@ -23,6 +24,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
@@ -63,6 +65,7 @@ public class MapaAbastecimentoController {
 	/**
 	 * Inicializa dados da tela
 	 */
+	@Rules(Permissao.ROLE_EXPEDICAO_MAPA_ABASTECIMENTO)
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);

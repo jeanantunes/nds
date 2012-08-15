@@ -1,27 +1,10 @@
 <head>
 <title>Cadastro de Tipos de Notas</title>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoNota.js"></script>
+<script type="text/javascript">
 
-function pesquisar() {
-
-	var operacao = $("#operacaoID").val();
-	var tipoNota = $("#tipoNota").val();
-
-	$(".tiposNotasGrid").flexOptions({
-		url: "<c:url value='/administracao/cadastroTipoNota/pesquisar' />",
-		params: [
-	         {name:'operacao', value: operacao},
-	         {name:'tipoNota', value: tipoNota}
-	    ],
-	    newp: 1,
-	});
-	
-	$(".tiposNotasGrid").flexReload();
-}
-
-
-$(function() {
-	definirAcaoPesquisaTeclaEnter();	
+$(function(){
+	cadastroTipoNotaController.init();
 });
 
 </script>
@@ -32,22 +15,23 @@ $(function() {
 	
 	<div class="corpo">
     	<div class="container">
-      		<fieldset class="classFieldset">
+      	  <form id="pesquisar_tipo_nota_form">	
+          <fieldset class="classFieldset">
    	    		<legend> Pesquisar Tipo de Nota</legend>
         		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             		<tr>
-              			<td width="47">Operação:</td>
-                		<td width="114">
+              			<td width="55">Operação:</td>
+                		<td width="176">
                 			 <select name="operacao" id="operacaoID" style="width:150px;" class="campoDePesquisa">
-						      <option selected="selected">Todos</option>
+						      <option selected="selected" value="">Todos</option>
 						      <c:forEach var="operacao" items="${listaAtividades}">
 										<option value="${operacao.key}">${operacao.value}</option>
 							  </c:forEach>
 						    </select>
                 		</td>
-		                <td width="81">Tipo de Nota:</td>
-		                <td width="576"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;" class="campoDePesquisa" /></td>
-		              	<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();" class="botaoPesquisar" >Pesquisar</a></span></td>
+		                <td width="75">Tipo de Nota:</td>
+		                <td width="511"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;" class="campoDePesquisa" /></td>
+		              	<td width="107"><span id="btnPesquisar" class="bt_pesquisar"><a href="javascript:;" class="botaoPesquisar" >Pesquisar</a></span></td>
             		</tr>
           		</table>
       		</fieldset>
@@ -61,67 +45,8 @@ $(function() {
 	             	<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=PDF"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
 	        	</div>
 	      	</fieldset>
+          </form>
     	</div>
 	</div> 
-	<script>
-		$(".tiposNotasGrid").flexigrid({
-				preProcess: executarPreProcessamento,
-				dataType : 'json',
-				colModel : [ {
-					display : 'Operacao',
-					name : 'tipoAtividade',
-					width : 140,
-					sortable : true,
-					align : 'left'
-				},{
-					display : 'Processo',
-					name : 'processo',
-					width : 140,
-					sortable : false,
-					align : 'left'
-				},{
-					display : 'Tipo de Nota',
-					name : 'nopDescricao',
-					width : 400,
-					sortable : true,
-					align : 'left'
-				},{
-					display : 'CFOP Dentro UF',
-					name : 'cfopEstado',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				},{
-					display : 'CFOP Fora UF',
-					name : 'cfopOutrosEstados',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}],
-				sortname : "tipoAtividade",
-				sortorder : "asc",
-				usepager : true,
-				useRp : true,
-				rp : 15,
-				showTableToggleBtn : true,
-				width : 960,
-				height : 255
-		});
-
-		function executarPreProcessamento(resultado) {
-			if (resultado.mensagens) {
-				exibirMensagem(
-					resultado.mensagens.tipoMensagem, 
-					resultado.mensagens.listaMensagens
-				);
-				$(".grids").hide();
-				return resultado;
-			}
-
-			mostrar();
-			return resultado;
-		}
-		
-	</script>
 </body>
 </html>

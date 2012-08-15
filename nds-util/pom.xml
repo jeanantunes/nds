@@ -37,6 +37,10 @@
 			<groupId>org.jrimum</groupId>
 			<artifactId>jrimum-bopepo</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>

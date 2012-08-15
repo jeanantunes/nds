@@ -3,15 +3,13 @@ package br.com.abril.nds.controllers.administracao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.RegistroTipoNotaFiscalVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
@@ -21,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -30,7 +29,6 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -61,6 +59,7 @@ public class CadastroTipoNotaController {
 	private HttpServletResponse httpServletResponse;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_NOTA)
 	public void index() {
 		
 		List<ItemDTO<TipoAtividade, String>> listaAtividades = new ArrayList<ItemDTO<TipoAtividade,String>>();

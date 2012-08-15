@@ -55,6 +55,7 @@ import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
@@ -406,7 +407,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			InvocationTargetException {
 
 		StringBuilder sBuilder = new StringBuilder();
-
+		
 		NFEExporter nfeExporter = new NFEExporter();
 
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
@@ -419,7 +420,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			sBuilder.append(s);
 		}
 
-		return sBuilder.toString();
+		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n" + sBuilder.toString();
 	}
 
 	/**
@@ -443,6 +444,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		identificacao.setTipoNotaFiscal(tipoNotaFiscal);
 		// TODO indPag
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
+		identificacao.setTipoEmissao(TipoEmissao.NORMAL);
 
 		identificacao.setListReferenciadas(listNotaFiscalReferenciada);
 		return identificacao;
@@ -479,26 +481,24 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					"Endereço principal do distribuidor não encontrada!");
 		}
 
-		Endereco endereco = enderecoDistribuidor.getEndereco();
-		enderecoRepository.detach(endereco);
-		endereco.setId(null);
-		endereco.setPessoa(null);
-		enderecoRepository.adicionar(endereco);
-		identificacaoEmitente.setEndereco(endereco);
-
+		try {
+			identificacaoEmitente.setEndereco(cloneEndereco(enderecoDistribuidor.getEndereco()));
+		} catch (Exception exception) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Erro ao adicionar o endereço do distribuidor!");
+		}
+		
 		TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository
 				.obterTelefonePrincipal();
 
-		if (telefoneDistribuidor == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Telefone principal do distribuidor não encontrada!");
+		if (telefoneDistribuidor != null) {
+			Telefone telefone = telefoneDistribuidor.getTelefone();
+			telefoneRepository.detach(telefone);
+			telefone.setId(null);
+			telefone.setPessoa(null);
+			telefoneRepository.adicionar(telefone);
+			identificacaoEmitente.setTelefone(telefone);
 		}
-		Telefone telefone = telefoneDistribuidor.getTelefone();
-		telefoneRepository.detach(telefone);
-		telefone.setId(null);
-		telefone.setPessoa(null);
-		telefoneRepository.adicionar(telefone);
-		identificacaoEmitente.setTelefone(telefone);
 		// TODO: Como definir o Regime Tributario
 		identificacaoEmitente
 				.setRegimeTributario(RegimeTributario.SIMPLES_NACIONAL);
@@ -531,12 +531,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					"Endereço principal da cota " + idCota + " não encontrada!");
 		}
 		
-		Endereco endereco = enderecoCota.getEndereco();
-		enderecoRepository.detach(endereco);
-		endereco.setId(null);
-		endereco.setPessoa(null);
-		enderecoRepository.adicionar(endereco);
-		destinatario.setEndereco(endereco);
+		try {
+			destinatario.setEndereco(cloneEndereco(enderecoCota.getEndereco()));
+		} catch (CloneNotSupportedException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Erro ao adicionar o endereço do Emitente!");
+		}
 		
 
 		if (cota.getPessoa() instanceof PessoaJuridica) {
@@ -550,17 +550,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		TelefoneCota telefoneCota = telefoneCotaRepository
 				.obterTelefonePrincipal(idCota);
-		if (telefoneCota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Telefone principal da cota " + idCota + " não encontrada!");
+		if (telefoneCota != null) {
+			Telefone telefone = telefoneCota.getTelefone();
+			
+			telefoneRepository.detach(telefone);
+			telefone.setId(null);
+			telefone.setPessoa(null);
+			telefoneRepository.adicionar(telefone);
+			destinatario.setTelefone(telefone);
 		}
-		Telefone telefone = telefoneCota.getTelefone();
-		
-		telefoneRepository.detach(telefone);
-		telefone.setId(null);
-		telefone.setPessoa(null);
-		telefoneRepository.adicionar(telefone);
-		destinatario.setTelefone(telefone);
 
 		return destinatario;
 	}
@@ -599,7 +597,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		produtoServico.setQuantidade(quantidade);
 		produtoServico.setValorUnitario(valorItem);
 		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
-		produtoServico.setValorDesconto(produtoEdicao.getDesconto());
+		if (produtoEdicao.getDesconto() != null && produtoEdicao.getDesconto().equals(BigDecimal.ZERO)) {
+			produtoServico.setValorDesconto(produtoEdicao.getDesconto());
+		}
 		produtoServico.setCfop(cfop);
 		produtoServico.setValorTotalBruto(valorItem.multiply(new BigDecimal(quantidade) ));
 
@@ -1064,6 +1064,21 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 		
 		return notaReferenciada;
+	}
+	
+	private Endereco cloneEndereco(Endereco endereco) throws CloneNotSupportedException {
+		Endereco novoEndereco = endereco.clone();
+		enderecoRepository.detach(novoEndereco);
+		novoEndereco.setId(null);
+		novoEndereco.setPessoa(null);
+		if (novoEndereco.getCep() != null) {
+			novoEndereco.setCep(novoEndereco.getCep().replace("-", ""));
+		}
+		if (novoEndereco.getCodigoUf() == null && novoEndereco.getCodigoCidadeIBGE() != null) {
+			novoEndereco.setCodigoUf(Integer.parseInt(novoEndereco.getCodigoCidadeIBGE().toString().substring(0, 2)));
+		}
+		enderecoRepository.adicionar(novoEndereco);
+		return novoEndereco;
 	}
 	
 }

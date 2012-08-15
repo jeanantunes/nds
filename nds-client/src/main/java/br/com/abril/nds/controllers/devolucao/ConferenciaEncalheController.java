@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -90,6 +92,7 @@ public class ConferenciaEncalheController {
 	private HttpServletResponse httpResponse;
 
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		carregarComboBoxEncalhe();
 	}
@@ -397,14 +400,14 @@ public class ConferenciaEncalheController {
 		
 		if (codigoAnterior != null && quantidade != null){
 			
-			conferenciaEncalheDTO = this.atualizarQuantidadeConferida(codigoAnterior, quantidade, produtoEdicao);
+			conferenciaEncalheDTO = this.atualizarQuantidadeConferida(codigoAnterior, quantidade, produtoEdicao, null);
 		}
 		
 		this.result.use(Results.json()).from(conferenciaEncalheDTO, "result").serialize();
 	}
 	
 	@Post
-	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade) {
+	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade, Boolean juramentada) {
 		
 		if (idProdutoEdicao == null){
 			
@@ -431,7 +434,7 @@ public class ConferenciaEncalheController {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao);
+		this.atualizarQuantidadeConferida(idProdutoEdicao, quantidade, produtoEdicao, juramentada);
 		
 		this.carregarListaConferencia(null, false, false);
 		
@@ -1142,7 +1145,7 @@ public class ConferenciaEncalheController {
 	/*
 	 * Atualiza quantidade da conferencia ou cria um novo registro caso seja a primeira vez que se esta conferindo o produtoedicao
 	 */
-	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicaoDTO produtoEdicao) {
+	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicaoDTO produtoEdicao, Boolean juramentada) {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = null;
 		
@@ -1168,7 +1171,9 @@ public class ConferenciaEncalheController {
 			
 			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, quantidade, true);
 		}
-		
+		if (juramentada != null) {
+			conferenciaEncalheDTOSessao.setJuramentada(juramentada);
+		}
 		return conferenciaEncalheDTOSessao;
 	}
 	

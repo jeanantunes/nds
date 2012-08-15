@@ -1,0 +1,122 @@
+@charset "utf-8";
+/* CSS Document */
+*{margin:0px; padding:0px;}
+
+body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
+
+.corpo{
+   overflow: hidden;
+   margin: 0px auto;
+   background-color: #fff;
+}
+.header{
+   float: left;
+   width: 100%;
+   background-color:#F8F8F8;
+  
+}
+
+
+
+
+#workspace{  width:100%;  min-height:480px; height:auto; overflow:hidden;}
+.breadCrumb{ line-height:23px; padding:5px 18px; background:#CCC;}
+
+.classROLE_HOME{ background:url(../images/bt_home.gif) no-repeat left center; width:16px; height:18px; float:left; margin-top:-4px; margin-right:3px;} 
+
+.classROLE_CADASTRO{ background:url(../images/bt_cadastros.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+.classROLE_FINANCEIRO{ background:url(../images/bt_financeiro.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+.classROLE_ESTOQUE{background:url(../images/bt_estoque.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+.classROLE_LANCAMENTO{background:url(../images/bt_lancamento.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+.classROLE_EXPEDICAO{background:url(../images/bt_expedicao.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+.classROLE_RECOLHIMENTO{background:url(../images/bt_recolhimento.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+.classROLE_DEVOLUCAO{background:url(../images/bt_devolucao.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+.classROLE_INDICADORES{background:url(../images/bt_indicadores.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+
+.classROLE_USUARIOS{background:url(../images/bt_usuarios.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
+
+
+.classROLE_LINKS{background:url(../images/bt_links.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
+
+
+.classROLE_HELP{background:url(../images/bt_help.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+
+.classROLE_ADMINISTRACAO{background:url(../images/bt_administracao.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:-4px;}
+
+
+
+
+.logo{ background:url(../images/logo_treelog.png) no-repeat left top; width:71px; height:45px; display:table; float:left;}
+.usuario{float:right;}
+.usuario span{
+	margin-top:6px; 
+	display:block; 
+	text-align:right; 
+	font-weight:bold;
+	font-size:11px!important;
+}
+
+.titAplicacao{float:left; margin-left:15px; margin-top:2px;}
+.titAplicacao h1{font-size:16px; margin:0px 0px 5px 0px;}
+.titAplicacao h2{font-size:11px; margin:3px 0px; font-weight:normal; display:inline }
+.titAplicacao h3{font-size:10px; margin:0px 0px 0px 20px; font-weight:bold; display:inline}
+
+.usuario .bt_novos {margin:0px!important; padding:3px; font-size:x-small; background-position:0px 6px;}
+.usuario .bt_novos label{margin-right:5px; margin-left:5px; margin-top:-20px; }
+.usuario .bt_novos a{margin-right:10px; margin-left:5px; margin-top:-20px; padding-left:18px; padding-bottom:5px;}
+.usuario .bt_novos .sair{ background:url(../images/seta_menu.gif) no-repeat 0px 5px; margin-top:0px;}
+
+
+
+.bt_novos a:hover{ border:1px solid #000; background:url(../images/seta_menu.gif) no-repeat 0px 5px #fff!important; float:left; }
+
+
+fieldset label {
+    float: left;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 23px;
+    margin: 5px 5px 6px;
+	overflow:visible;
+}
+.periodos {
+    float: left;
+}
+.periodos input, .periodos label {
+    float: left !important;
+    margin-top: 5px;
+}
+.periodos input, .periodos label {
+    float: left !important;
+    margin-top: 5px;
+}
+select, input {
+    font-size: 11px;
+    margin-left: 5px;
+    margin-right: 8px;
+	margin-bottom:5px;
+    padding: 3px;
+}
+
+.bt_pesquisar {
+    background: url("../images/bg_item_menu.jpg") repeat-x scroll 0 0 transparent;
+    float: right;
+    font-weight: bold;
+}
+.bt_pesquisar a {
+    border: 1px solid #F2F2F2;
+    color: #000000;
+    float: left;
+    padding: 2px;
+	width:20px;
+	height:20px;
+    text-decoration: none;
+}

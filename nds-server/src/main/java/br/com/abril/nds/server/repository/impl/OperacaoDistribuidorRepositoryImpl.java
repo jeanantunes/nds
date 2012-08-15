@@ -8,7 +8,7 @@ import br.com.abril.nds.server.repository.OperacaoDistribuidorRepository;
 
 @Repository
 public class OperacaoDistribuidorRepositoryImpl extends
-		AbstractRepositoryModel<OperacaoDistribuidor, Long> implements OperacaoDistribuidorRepository {
+		AbstractRepositoryModel<OperacaoDistribuidor, String> implements OperacaoDistribuidorRepository {
 
 	public OperacaoDistribuidorRepositoryImpl() {
 		super(OperacaoDistribuidor.class);

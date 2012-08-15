@@ -32,6 +32,12 @@
 		$(".imoveisGrid").flexOptions({url: "<c:url value='/cadastro/fiador/obterGarantiasFiador'/>"});
 		
 		$("#valorGarantia").numeric();
+		$("#valorGarantia").priceFormat({
+		    centsSeparator: ',',
+		    thousandsSeparator: '.',
+		    centsLimit: 4
+		});
+		
 	});
 	
 	function carregarGarantias(){
@@ -67,11 +73,11 @@
 		}
 		
 		var i;
-
+		
 		for (i = 0 ; i < data.rows.length; i++) {
-
+			
 			var lastIndex = data.rows[i].cell.length;
-
+			
 			data.rows[i].cell[lastIndex] = getActionsGarantia(data.rows[i].id);
 		}
 
@@ -96,7 +102,7 @@
 	}
 	
 	function adicionarEditarGarantia(){
-		var data = "garantia.valor=" + $("#valorGarantia").val() + "&" +
+		var data = "garantia.valor=" + $("#valorGarantia").floatValue() + "&" +
         		   "garantia.descricao=" + $("#descricaoGarantia").val() + "&" +
         		   "referencia=" + $("#referenciaGarantia").val();
 		

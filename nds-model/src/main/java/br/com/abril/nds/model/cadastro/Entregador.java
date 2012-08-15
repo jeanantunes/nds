@@ -64,6 +64,10 @@ public class Entregador {
 	
 	@OneToMany(mappedBy = "entregador")
 	private Set<TelefoneEntregador> telefones = new HashSet<TelefoneEntregador>();
+	
+	@OneToOne
+	@JoinColumn(name="ROTA_ID")
+	private Rota rota;
 
 	/**
 	 * @return the id
@@ -205,6 +209,14 @@ public class Entregador {
 		this.telefones = telefones;
 	}
 
+	public Rota getRota() {
+		return rota;
+	}
+
+	public void setRota(Rota rota) {
+		this.rota = rota;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -229,7 +241,4 @@ public class Entregador {
 			return false;
 		return true;
 	}
-	
-	
-
 }

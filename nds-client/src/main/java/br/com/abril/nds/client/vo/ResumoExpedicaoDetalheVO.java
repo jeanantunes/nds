@@ -38,16 +38,19 @@ public class ResumoExpedicaoDetalheVO implements Serializable {
 	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 4)
 	private String precoCapa;
 	
-	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Preço Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
+	private String precoDesconto;
+	
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private String reparte;
 	
-	@Export(label = "Valor Faturado R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
+	@Export(label = "Valor Faturado R$", alignment = Alignment.RIGHT, exhibitionOrder = 8)
 	private String valorFaturado;
 	
-	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 6)
+	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 7)
 	private String qntDiferenca;
 	
-	@Export(label = "Fornecedor", alignment = Alignment.CENTER, exhibitionOrder = 8)
+	@Export(label = "Fornecedor", alignment = Alignment.CENTER, exhibitionOrder = 9)
 	private String nomeFornecedor;
 	
 	
@@ -174,6 +177,18 @@ public class ResumoExpedicaoDetalheVO implements Serializable {
 	 */
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
+	}
+	/**
+	 * @return the precoDesconto
+	 */
+	public String getPrecoDesconto() {
+		return precoDesconto;
+	}
+	/**
+	 * @param precoDesconto the precoDesconto to set
+	 */
+	public void setPrecoDesconto(String precoDesconto) {
+		this.precoDesconto = precoDesconto;
 	}
 	
 }

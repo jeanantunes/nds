@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
@@ -32,7 +34,9 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -81,6 +85,9 @@ public class CotaController {
 	private CotaService cotaService;
 	
 	@Autowired
+	private DividaService dividaService;
+	
+	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
@@ -101,6 +108,7 @@ public class CotaController {
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_COTA)
 	public void index() {
 		
 		this.financeiroController.preCarregamento();
@@ -546,6 +554,18 @@ public class CotaController {
 	}
 	
 	/**
+	 * Verifica se a cota possui dividas em aberto
+	 * @param idCota
+	 * @return boolean
+	 */
+	private boolean cotaComDebitos(Long idCota){
+		
+        BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(idCota);
+		
+		return (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0);
+	}
+	
+	/**
 	 * Exclui uma cota, informada pelo usúario
 	 * 
 	 * @param idCota - identificador da cota
@@ -553,7 +573,11 @@ public class CotaController {
 	@Post
 	@Path("/excluir")
 	public void excluir(Long idCota){
-			
+
+		if (cotaComDebitos(idCota)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] possui dívidas em aberto e não pode ser excluída!");
+		}
+		
 		cotaService.excluirCota(idCota); 
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),

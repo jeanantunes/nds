@@ -1,8 +1,12 @@
 <div id="dialog-salvar" title="Salvar Conferência" style="display: none;">
 	
+	<div class="message-dialog-encalhe">
+	
 	<jsp:include page="../messagesDialog.jsp">
 		<jsp:param value="idModalConfirmarSalvarConf" name="messageDialog"/>
 	</jsp:include>
+	
+	</div>
 	
 	<fieldset style="width: 410px;">
 		<legend>Salvar Conferência</legend>
@@ -123,12 +127,13 @@
 	</fieldset>
 </div>
 
-<div id="dialog-encalhe" title="Novo Encalhe">
+<div id="dialog-encalhe" title="Novo Encalhe" >
 	
+	<div class="message-dialog-encalhe">
 	<jsp:include page="../messagesDialog.jsp">
 		<jsp:param value="idModalNovoEncalhe" name="messageDialog"/>
 	</jsp:include>
-	
+	</div>
 	<table width="425" border="0" cellspacing="2" cellpadding="2">
 		<tr>
 			<td width="125">Produto:</td>

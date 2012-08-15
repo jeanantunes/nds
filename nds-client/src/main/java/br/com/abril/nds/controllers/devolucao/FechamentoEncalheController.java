@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
@@ -18,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
@@ -67,6 +69,7 @@ public class FechamentoEncalheController {
 	private CalendarioService calendarioService;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_DEVOLUCAO_FECHAMENTO_ENCALHE)
 	public void index() {
 		
 		Distribuidor dist = distribuidorService.obter();

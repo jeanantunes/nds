@@ -20,8 +20,6 @@ import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
-@Entity
-@Table(name = "ndsi_ems0107_tmp")
 public class EMS0107Input implements Serializable {
 
 	/**
@@ -29,28 +27,17 @@ public class EMS0107Input implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id
 	private Integer id;
 
-	@Column
 	private String codigoPublicacao;
 
-	@Column
 	private Long edicao;
 
-	@Column(name="NUMERO_COTA", nullable=true)
-	private Long codigoCota;
+	private Integer codigoCota;
 
-	@Column
-	private BigInteger quantidadeReparte;
+	private Long quantidadeReparte;
 
-	@Column
 	private String repartePDV;
-
-	@ForeignKey(name="fk_ndsi_ems0107_tmp_cota")
-	@ManyToOne(optional=true)
-	@JoinColumn(name = "NUMERO_COTA", insertable=false, updatable=false, nullable=true)
-	private Cota cota;
 
 	@Field(offset = 1, length = 8)
 	public String getCodigoPublicacao() {
@@ -71,21 +58,20 @@ public class EMS0107Input implements Serializable {
 	}
 
 	@Field(offset = 13, length = 4)
-	public Long getCodigoCota() {
+	public Integer getCodigoCota() {
 		return codigoCota;
 	}
 
-	public void setCodigoCota(Long codigoCota) {
+	public void setCodigoCota(Integer codigoCota) {
 		this.codigoCota = codigoCota;
 	}
 
 	@Field(offset = 17, length = 8)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = false)
-	public BigInteger getQuantidadeReparte() {
+	public Long getQuantidadeReparte() {
 		return quantidadeReparte;
 	}
 
-	public void setQuantidadeReparte(BigInteger quantidadeReparte) {
+	public void setQuantidadeReparte(Long quantidadeReparte) {
 		this.quantidadeReparte = quantidadeReparte;
 	}
 
@@ -96,14 +82,6 @@ public class EMS0107Input implements Serializable {
 
 	public void setRepartePDV(String repartePDV) {
 		this.repartePDV = repartePDV;
-	}
-
-	public Cota getCota() {
-		return cota;
-	}
-
-	public void setCota(Cota cota) {
-		this.cota = cota;
 	}
 	
 	public Integer getId() {

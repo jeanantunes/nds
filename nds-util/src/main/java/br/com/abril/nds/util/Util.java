@@ -1,5 +1,8 @@
 package br.com.abril.nds.util;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -290,4 +293,21 @@ public abstract class Util {
 		
 		return lst;
 	}
+
+	/**
+	 * Retorna a string enviada criptografada em MD5
+	 * @param original
+	 * @return
+	 */
+	public static String md5(String original) {
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		BigInteger hash = new BigInteger(1, md.digest(original.getBytes()));  
+		return hash.toString(16);
+	}
+
 }

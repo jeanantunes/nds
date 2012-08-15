@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -19,7 +20,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -58,7 +61,10 @@ public class ProdutoEdicaoController {
 	/** Traz a página inicial. */
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO)
 	public void index() { }
+
+	
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
@@ -200,7 +206,6 @@ public class ProdutoEdicaoController {
 			dto.setNumeroEdicao(1L);
 		}
 		
-		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
 	
@@ -280,7 +285,7 @@ public class ProdutoEdicaoController {
 			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
 		} finally {
 			
-			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
+			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
 		}
 	}
 	

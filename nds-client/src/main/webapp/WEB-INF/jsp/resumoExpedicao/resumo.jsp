@@ -73,7 +73,7 @@ $(function() {
 	
 	$("#venda-encalhe-grid").flexigrid({
 		
-		preProcess:executarPreProcessamento,
+		preProcess: executarPreProcessamentoDetalheResumoExpedicao,
 		
 		dataType : 'json',
 		
@@ -86,42 +86,48 @@ $(function() {
 		}, {
 			display : 'Produto',
 			name : 'descricaoProduto',
-			width : 330,
+			width : 180,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Edição',
 			name : 'edicaoProduto',
-			width : 90,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Preço Capa R$',
 			name : 'precoCapa',
-			width : 90,
+			width : 110,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Preço Desconto R$',
+			name : 'precoDesconto',
+			width : 110,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Reparte',
 			name : 'reparte',
-			width : 90,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Diferença',
 			name : 'qntDiferenca',
-			width : 90,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Total R$',
-			name : 'total',
+			name : 'valorFaturado',
 			width : 90,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Fornecedor',
-			name : 'total',
+			name : 'nomeFornecedor',
 			width : 90,
 			sortable : true,
 			align : 'center'
@@ -203,7 +209,6 @@ $(function() {
 	 * Executa o pré processamento detalhes resumo expedicao 
 	 */
 	function executarPreProcessamentoDetalheResumoExpedicao(resultado) {
-		
 		if (resultado.mensagens) {
 	
 			exibirMensagem(
@@ -211,22 +216,36 @@ $(function() {
 				resultado.mensagens.listaMensagens
 			);
 	
-			return resultado.tableModel;
+			return resultado;
 		}
 		
-		return resultado.tableModel;
+		$("#valorTotal").html(resultado.somaTotal);
+		
+		return resultado.resultado;
 	}
+	
+	var _codigoBox = "";
+	var _dataLancamento = "";
 
-	function detalharResumoExpedicao(codigoBox, dataLancamento){ 
+	function detalharResumoExpedicao(index){ 
+		
+		_codigoBox = $("#codigoBox" + index).val();
+		_dataLancamento = $("#dataLanc" + index).text();
+		
+		var originalCodigoBox = _codigoBox.split('-')[0];
+		
+		$("#box-resumo-expedicao").html(originalCodigoBox);
+		
+		$("#nome-box-resumo-expedicao").html($("#descricaoBox"+ index).val());
 		
 		$("#venda-encalhe-grid").flexOptions({
 			
 			url: contextPath + '/expedicao/resumo/pesquisar/detalhe',
 			dataType : 'json',
 			
-			params:[{name:'codigoBox', value: codigoBox},
+			params:[{name:'codigoBox', value: originalCodigoBox},
 			        
-			        {name:'dataLancamento', value: dataLancamento}]
+			        {name:'dataLancamento', value: _dataLancamento}]
 		
 		});
 		
@@ -246,10 +265,7 @@ $(function() {
 					$( this ).dialog( "close" );
 				}
 			}
-		});		
-		
-		
-		
+		});
 	}
 	
 
@@ -283,13 +299,23 @@ $(function() {
 		
 		$.each(resultado.tableModel.rows, function(index, row) {
 			
+			row.cell.codigoBox = "<input type='hidden' id='codigoBox"+ index +"' value='"+ row.cell.codigoBox +"'/>"+ row.cell.codigoBox;
+			row.cell.descricaoBox = "<input type='hidden' id='descricaoBox"+ index +"' value='"+ row.cell.descricaoBox +"'/>"+ row.cell.descricaoBox;
+			var dataLan = "";
+			
 			if (!row.cell.dataLancamento){
 				
-				row.cell.dataLancamento = "";
+				dataLan = "";
+				
+			} else {
+				
+				dataLan = row.cell.dataLancamento;
 			}
 			
+			row.cell.dataLancamento = "<div id='dataLanc"+ index +"'>"+ dataLan +"</div>";
+			
 			row.cell.acao = "<div style='text-align: center;'>" +
-				"<a href='javascript:;' onclick='detalharResumoExpedicao("+ row.cell.codigoBox +","+ row.cell.dataLancamento +");'>"+
+				"<a href='javascript:;' onclick='detalharResumoExpedicao("+ index +");'>"+
 				"<img border='0' alt='Detalhes' src='${pageContext.request.contextPath}/images/ico_detalhes.png'></a></div>";
 		});
 		
@@ -416,6 +442,14 @@ $(function() {
 		window.location = 
 			contextPath + "/expedicao/resumo/exportar?tipoConsulta=" + tipoPesquisa + "&fileType=" + fileType;
 	}
+  	
+	function exportarDetalhes(fileType) {
+
+		var originalCodigoBox = _codigoBox.split('-')[0];
+		
+		window.location = contextPath + "/expedicao/resumo/exportarDetalhes?fileType=" + fileType + "&codigoBox=" + originalCodigoBox + "&dataLancamento=" + _dataLancamento;
+		
+	}
 </script>
 
 </head>
@@ -485,9 +519,9 @@ $(function() {
 					    	</a>
 					    </span>
 				    </td>
-				    <td width="96"><strong>Total:</strong></td>
-				    <td width="134" id="totalReparte"></td>
-				    <td width="94"></td>
+				    <td width="86"><strong>Total:</strong></td>
+				    <td width="70" id="totalReparte"></td>
+				    <td width="160"><strong>Total Valor Faturado R$:</strong></td>
 				    <td width="89" id="totalValorFaturado"></td>
 				  </tr>
 			</table>
@@ -501,14 +535,39 @@ $(function() {
 <div id="dialog-venda-encalhe" style="display:none;">
 
 	<fieldset class="classFieldset">
-	    
-		<legend id="idFiledResultResumo">Resumo  Expedição por Box</legend>
+	
+		<legend id="idFiledResultResumo" style="color: #000000;">
+			<strong>C&oacute;digo:</strong>
+			<span  id="box-resumo-expedicao" ></span>
+			- &nbsp;<strong>Box:</strong>
+			<span id="nome-box-resumo-expedicao"></span>
+		</legend>
 	    
 		<table id="venda-encalhe-grid"></table>
 		
+		<table width="100%" border="0" cellspacing="1" cellpadding="1">
+			<tr>
+				<td></td>
+    			<td>
+    				<span class="bt_novos" title="Gerar Arquivo">
+    					<a href="javascript:;" onclick="exportarDetalhes('XLS');">
+    						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+    					</a>
+    				</span>
+    				<span class="bt_novos" title="Imprimir">
+    					<a href="javascript:;" onclick="exportarDetalhes('PDF');">
+    						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
+    					</a>
+    				</span>
+    			</td>
+    			<td>
+    				<strong>Total R$:</strong>
+    			</td>
+    			<td id="valorTotal"></td>
+  			</tr>
+		</table>
 	</fieldset>
 
 </div>
- 
- 
+
 </body>

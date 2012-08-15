@@ -2,9 +2,12 @@ package br.com.abril.nds.controllers.administracao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
+import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -30,6 +33,7 @@ public class ParametrosSistemaController {
 	 */
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA)
 	public ParametroSistemaGeralDTO index() {
 		
 		ParametroSistemaGeralDTO dto = psService.buscarParametroSistemaGeral();

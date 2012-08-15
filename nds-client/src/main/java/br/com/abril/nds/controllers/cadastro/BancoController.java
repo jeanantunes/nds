@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -20,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO.OrdenacaoColunaBancos
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Carteira;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
@@ -79,6 +81,7 @@ public class BancoController {
      * Método de chamada da página
      */
     @Get
+    @Rules(Permissao.ROLE_CADASTRO_BANCO)
     public void bancos(){ 
     	
     	listaCarteiras.clear();
@@ -212,7 +215,7 @@ public class BancoController {
 		
 		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 
-		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,apelido,instrucoes,juros,multa,vrMulta);
+		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,apelido,juros,multa,vrMulta);
 		
 		long lAgencia = Long.parseLong(agencia);
 		long lConta = Long.parseLong(conta);
@@ -293,7 +296,7 @@ public class BancoController {
 		
 		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
 		
-		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,apelido,instrucoes,juros,multa,vrMulta);
+		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,apelido,juros,multa,vrMulta);
 		
 		if (ativo==0){
 			if (this.bancoService.verificarPendencias(idBanco)){
@@ -349,7 +352,6 @@ public class BancoController {
 								  	  String conta,
 								  	  String digito,
 								  	  String apelido,
-								  	  String instrucoes,
 								  	  BigDecimal juros,
 								  	  BigDecimal multa,
 								  	  BigDecimal vrMulta){
@@ -391,10 +393,6 @@ public class BancoController {
 		
 		if ((apelido==null)||("".equals(apelido))){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo apelido.");
-		}
-
-		if ((instrucoes==null)||("".equals(instrucoes))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Digite as instruções.");
 		}
 		
 		if(juros==null){

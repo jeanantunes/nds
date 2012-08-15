@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.expedicao;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -16,6 +16,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -60,6 +61,7 @@ public class GeracaoNFeController {
 	private CotaService cotaService;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NFE)
 	public void index() {
 		
 		result.include("fornecedores", fornecedorService

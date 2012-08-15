@@ -6,7 +6,8 @@ public enum FormaEmissao {
 	INDIVIDUAL_AGREGADA("Individual - Agregada a C.E."), 
 	INDIVIDUAL_BOX("Individual - No box de Encalhe"), 
 	EM_MASSA("Em massa - Após geração de dívida"), 
-	NAO_IMPRIME("Não imprime");
+	NAO_IMPRIME("Não imprime"),
+	PONTUAL("Pontual, na Integração CE Fornecedor");
 
 	
 	private String descricao;

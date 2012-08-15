@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoVendaEncalheVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.client.vo.VendaEncalheVO;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.CotaService;
@@ -92,6 +94,7 @@ public class VendaEncalheController {
 	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE)
 	public void index() {}
 
 	/**

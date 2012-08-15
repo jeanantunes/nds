@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
 import br.com.abril.nds.client.vo.DetalheProcessamentoVO;
@@ -22,6 +23,7 @@ import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
@@ -76,6 +78,7 @@ public class PainelProcessamentoController {
 	private static final int PROCESSO  = 2;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO)
 	public void index() {
 	}
 

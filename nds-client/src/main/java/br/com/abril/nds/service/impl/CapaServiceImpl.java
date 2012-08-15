@@ -174,11 +174,8 @@ public class CapaServiceImpl implements CapaService {
 		String id = toId(pe.getProduto().getCodigo(), pe.getNumeroEdicao());
 		
 		// Obter o atributo 'rev':
-		JsonObject json = couchDbClient.find(JsonObject.class, id);
-		JsonElement _rev = json.get("_rev");
-		String rev = _rev == null ? "" : _rev.toString();
-		
-		this.couchDbClient.remove(id, rev);
+		JsonObject json = couchDbClient.find(JsonObject.class, id);	
+		this.couchDbClient.remove(json);
 	}
 
 }

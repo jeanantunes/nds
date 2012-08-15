@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CabecalhoNotaDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
@@ -111,6 +113,7 @@ public class RecebimentoFisicoController {
 	/**
 	 * Direciona para a página de recebimento físico.
 	 */
+	@Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO)
 	public void index() {
 
 		preencherCombos();
@@ -1169,12 +1172,6 @@ public class RecebimentoFisicoController {
 	
 	
 	
-	
-	
-	
-	
-	
-	
 	/*NOVO POPUP DE CADASTRO DE NOTA FISCAL*/
 	
 	/**
@@ -1250,34 +1247,6 @@ public class RecebimentoFisicoController {
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itemRecebimentoFisicoDTO));
 		
 		tableModel.setTotal(1);
-		
-		tableModel.setPage(1);
-		
-		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-	}
-	
-	/**
-	 * Inclui nova linha para entrada de dados na grid
-	 * @param itens
-	 */
-	@Post
-	@Path("/incluirItemNota")
-	public void incluirItemNota(List<RecebimentoFisicoDTO> itens) {
-
-		if (itens==null){
-			itens = new ArrayList<RecebimentoFisicoDTO>();
-		}
-		
-		RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
-		
-		itens.add(recFisicoDTO);
-
-		TableModel<CellModelKeyValue<RecebimentoFisicoDTO>> tableModel =
-				new TableModel<CellModelKeyValue<RecebimentoFisicoDTO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itens));
-		
-		tableModel.setTotal(itens.size());
 		
 		tableModel.setPage(1);
 		

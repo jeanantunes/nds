@@ -1,4 +1,4 @@
-ERVER
+#SERVER
 #PRODIM
 # Integra editor no couchdb DServer
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 112
@@ -17,11 +17,12 @@ java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar 
 # Integra Desconto Distribuidor  no couchdb DServer
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 113
 # IMAGENS
-java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
+#java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
 # CEP
-java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 185
+#java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 185
 #Nota
 java -jar ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 135
+
 
 #DCLIENT
 #PRODIM
@@ -42,9 +43,12 @@ java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0126
 # Recupera Desconto Distribuidor  no couchdb  e persiste no nds
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0113.route.EMS0113Route
 # CEP
-java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0185.route.EMS0185Route
+#java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0185.route.EMS0185Route
 #Notas
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0135.route.EMS0135Route
+
+
+
 
 #MDC
 # Recupera PRODUTO no arquivo do mdc e persiste no nds
@@ -57,6 +61,7 @@ java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0117
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0116.route.EMS0116Route
 # Recupera MATRIZ LANCAMENTO RECOLHIMENTO no arquivo do mdc e persiste no nds
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0108.route.EMS0108Route
-# Recupera ESTUDO COTA (107) e ESTUDO no arquivo do mdc e persiste no nds
+# Recupera ESTUDO no arquivo do mdc e persiste no nds
 java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0106.route.EMS0106Route
-
+# Recupera ESTUDO COTA no arquivo do mdc e persiste no nds
+java -jar ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0107.route.EMS0107Route

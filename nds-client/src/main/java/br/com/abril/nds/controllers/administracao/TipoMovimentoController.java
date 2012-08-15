@@ -6,9 +6,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.TipoMovimentoDTO;
 import br.com.abril.nds.dto.TipoMovimentoDTO.IncideDivida;
 import br.com.abril.nds.dto.filtro.FiltroTipoMovimento;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -118,6 +120,7 @@ public class TipoMovimentoController {
 	/**
 	 * Inicializa dados da tela
 	 */
+	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_MOVIMENTO)
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);

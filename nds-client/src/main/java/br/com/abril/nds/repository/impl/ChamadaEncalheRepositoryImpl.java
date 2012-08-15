@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -234,7 +235,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaEmissaoDTO> obterDadosEmissaoImpressaoChamadasEncalhe(
 			FiltroEmissaoCE filtro) { 		
@@ -266,7 +267,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		for(String key : param.keySet()){
 			
 			if(param.get(key) instanceof List)
-				query.setParameterList(key, (List) param.get(key));
+				query.setParameterList(key, (List<Fornecedor>) param.get(key));
 			else					
 				query.setParameter(key, param.get(key));
 			
