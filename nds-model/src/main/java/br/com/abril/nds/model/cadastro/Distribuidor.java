@@ -186,7 +186,7 @@ public class Distribuidor {
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
-	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<TipoGarantiaAceita> tiposGarantiasAceita = new HashSet<TipoGarantiaAceita>();
 	
 	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
@@ -446,13 +446,23 @@ public class Distribuidor {
 	    if (tiposGarantiasAceita != null) {
 	       Iterator<TipoGarantiaAceita> iterator = tiposGarantiasAceita.iterator();
 	       while (iterator.hasNext()) {
-	           if (iterator.next().getTipoGarantia().equals(tipoGarantia)) {
+	           TipoGarantiaAceita tipoGarantiaAceita = iterator.next();
+	           if (tipoGarantiaAceita.getTipoGarantia().equals(tipoGarantia)) {
 	               iterator.remove();
 	               break;
 	           }
 	       }
 	    }
 	}
+	
+    /**
+     * Remove/Desassocia os tipo de garantias aceitas do Distribuidor
+     */
+	public void removerTodosTiposGarantiasAceitas() {
+        if (tiposGarantiasAceita != null) {
+                tiposGarantiasAceita.clear();
+        }
+    }
 	
 
 	public boolean isRequerAutorizacaoEncalheSuperaReparte() {

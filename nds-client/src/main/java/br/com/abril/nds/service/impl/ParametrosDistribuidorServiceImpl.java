@@ -616,7 +616,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
                 distribuidor.removerTipoGarantiaAceita(TipoGarantia.OUTROS);
             }
 		} else {
-		    distribuidor.getTiposGarantiasAceita().clear();
+		    distribuidor.removerTodosTiposGarantiasAceitas();
 		}
     }
 
