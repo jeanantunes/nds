@@ -124,6 +124,7 @@ public class DescontoComponentImpl implements DescontoComponent {
 				}
 			}
 		}
+		
 		return false;
 	}
 }
