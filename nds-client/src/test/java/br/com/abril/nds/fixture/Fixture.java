@@ -40,6 +40,7 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -88,6 +89,7 @@ import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -671,11 +673,11 @@ public class Fixture {
 		distribuidor.setValorConsignadoSuspensaoCotas(BigDecimal.TEN);
 		distribuidor.setLeiautePicking(LeiautePicking.DOIS);
 		distribuidor.setRequerAutorizacaoEncalheSuperaReparte(false);
-		distribuidor.setObrigacaoFiscao(true);
+		distribuidor.setObrigacaoFiscal(ObrigacaoFiscal.COTA_TOTAL);
 		distribuidor.setRegimeEspecial(true);
 		distribuidor.setUtilizaProcuracaoEntregadores(true);
 		distribuidor.setInformacoesComplementaresProcuracao("Info Complementares Procuração");
-		distribuidor.setUtilizaGarantiaPdv(false);
+		distribuidor.setUtilizaGarantiaPdv(true);
 		distribuidor.setParcelamentoDividas(false);
 		distribuidor.setNegociacaoAteParcelas(Integer.valueOf(3));
 		distribuidor.setUtilizaControleAprovacao(false);
@@ -2840,6 +2842,7 @@ public class Fixture {
 		
 		tipoGarantiaAceita.setDistribuidor(distribuidor);
 		tipoGarantiaAceita.setTipoGarantia(tipoGarantia);
+		tipoGarantiaAceita.setValor(12);
 		
 		return tipoGarantiaAceita;
 	}
@@ -3343,5 +3346,17 @@ public class Fixture {
 		grupo.setTipoGrupo(tipoGrupo);
 		
 		return grupo;
-	}	
+	}
+	
+	public static DescontoProdutoEdicao descontoProdutoEdicao(Cota cota, BigDecimal desconto, Fornecedor fornecedor, ProdutoEdicao produtoEdicao, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
+		
+		DescontoProdutoEdicao descontoP = new DescontoProdutoEdicao();
+		descontoP.setCota(cota);
+		descontoP.setDesconto(desconto);
+		descontoP.setFornecedor(fornecedor);
+		descontoP.setProdutoEdicao(produtoEdicao);
+		descontoP.setTipoDesconto(tipoDesconto);
+		
+		return descontoP;
+	}
 }

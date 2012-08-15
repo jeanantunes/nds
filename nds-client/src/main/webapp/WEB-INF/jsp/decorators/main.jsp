@@ -66,6 +66,9 @@
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.maskedinput.js"></script>
 
+<script language="javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+
 <link rel="stylesheet" type="text/css" 
 	href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.theme.css"/>
 	
