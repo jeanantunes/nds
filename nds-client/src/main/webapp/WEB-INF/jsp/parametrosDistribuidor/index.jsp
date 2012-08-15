@@ -95,6 +95,10 @@ function gravar() {
 	var data = [
 		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
 		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').is(':checked')},
+		{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $('input[name=parametrosDistribuidor.radioTipoContabilizacaoCE]:checked').val()},
+		{name:'parametrosDistribuidor.supervisionaVendaNegativa', value: $('#supervisionaVendaNegativa').is(':checked')},
+		{name:'parametrosDistribuidor.chamadaoDiasSuspensao', value: $('#chamadaoDiasSuspensao').val()},
+		{name:'parametrosDistribuidor.chamadaoValorConsignado', value: $('#chamadaoValorConsignado').val()},
 		{name:'parametrosDistribuidor.diaRecolhimentoPrimeiro', value: $('#diaRecolhimentoPrimeiro').is(':checked')},
 		{name:'parametrosDistribuidor.diaRecolhimentoSegundo', value: $('#diaRecolhimentoSegundo').is(':checked')},
 		{name:'parametrosDistribuidor.diaRecolhimentoTerceiro', value: $('#diaRecolhimentoTerceiro').is(':checked')},
@@ -281,20 +285,20 @@ $(document).ready(function() {
 $(function() {
 	
 	$("input[id^='reutilizacaoCodigoCotaInativa']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 
 	$("input[id^='capacidadeManuseioHomemHoraLancamento']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 
 	$("input[id^='capacidadeManuseioHomemHoraRecolhimento']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 

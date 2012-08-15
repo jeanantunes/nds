@@ -18,33 +18,33 @@ public class ParametrosDistribuidorVO {
 	
 	private TipoContabilizacaoCE tipoContabilizacaoCE;
 	
-	private String aceitaEncalheJuramentada;
+	private boolean aceitaEncalheJuramentada;
 	
-	private String diaRecolhimentoPrimeiro;
+	private boolean diaRecolhimentoPrimeiro;
 	
-	private String diaRecolhimentoSegundo;
+	private boolean diaRecolhimentoSegundo;
 
-	private String diaRecolhimentoTerceiro;
+	private boolean diaRecolhimentoTerceiro;
 
-	private String diaRecolhimentoQuarto;
+	private boolean diaRecolhimentoQuarto;
 
-	private String diaRecolhimentoQuinto;
+	private boolean diaRecolhimentoQuinto;
 
-	private String limiteCEProximaSemana;
+	private boolean limiteCEProximaSemana;
 	
 	private boolean supervisionaVendaNegativa;
 
-	private String conferenciaCegaRecebimento;
+	private boolean conferenciaCegaRecebimento;
 
-	private String conferenciaCegaEncalhe;
+	private boolean conferenciaCegaEncalhe;
 
 	// Frame Capacidade de Manuseio
-	private String capacidadeManuseioHomemHoraLancamento;
+	private Integer capacidadeManuseioHomemHoraLancamento;
 	
-	private String capacidadeManuseioHomemHoraRecolhimento;
+	private Integer capacidadeManuseioHomemHoraRecolhimento;
 
 	// Frame Reutilização de Código de Cota
-	private String reutilizacaoCodigoCotaInativa;
+	private Long reutilizacaoCodigoCotaInativa;
 
 	// Aba Fiscal
 	
@@ -223,59 +223,59 @@ public class ParametrosDistribuidorVO {
         this.tipoContabilizacaoCE = tipoContabilizacaoCE;
     }
 
-    public String getAceitaEncalheJuramentada() {
+    public boolean isAceitaEncalheJuramentada() {
 		return aceitaEncalheJuramentada;
 	}
 
-	public void setAceitaEncalheJuramentada(String aceitaEncalheJuramentada) {
+	public void setAceitaEncalheJuramentada(boolean aceitaEncalheJuramentada) {
 		this.aceitaEncalheJuramentada = aceitaEncalheJuramentada;
 	}
 
-	public String getDiaRecolhimentoPrimeiro() {
+	public boolean isDiaRecolhimentoPrimeiro() {
 		return diaRecolhimentoPrimeiro;
 	}
 
-	public void setDiaRecolhimentoPrimeiro(String diaRecolhimentoPrimeiro) {
+	public void setDiaRecolhimentoPrimeiro(boolean diaRecolhimentoPrimeiro) {
 		this.diaRecolhimentoPrimeiro = diaRecolhimentoPrimeiro;
 	}
 
-	public String getDiaRecolhimentoSegundo() {
+	public boolean isDiaRecolhimentoSegundo() {
 		return diaRecolhimentoSegundo;
 	}
 
-	public void setDiaRecolhimentoSegundo(String diaRecolhimentoSegundo) {
+	public void setDiaRecolhimentoSegundo(boolean diaRecolhimentoSegundo) {
 		this.diaRecolhimentoSegundo = diaRecolhimentoSegundo;
 	}
 
-	public String getDiaRecolhimentoTerceiro() {
+	public boolean isDiaRecolhimentoTerceiro() {
 		return diaRecolhimentoTerceiro;
 	}
 
-	public void setDiaRecolhimentoTerceiro(String diaRecolhimentoTerceiro) {
+	public void setDiaRecolhimentoTerceiro(boolean diaRecolhimentoTerceiro) {
 		this.diaRecolhimentoTerceiro = diaRecolhimentoTerceiro;
 	}
 
-	public String getDiaRecolhimentoQuarto() {
+	public boolean isDiaRecolhimentoQuarto() {
 		return diaRecolhimentoQuarto;
 	}
 
-	public void setDiaRecolhimentoQuarto(String diaRecolhimentoQuarto) {
+	public void setDiaRecolhimentoQuarto(boolean diaRecolhimentoQuarto) {
 		this.diaRecolhimentoQuarto = diaRecolhimentoQuarto;
 	}
 
-	public String getDiaRecolhimentoQuinto() {
+	public boolean isDiaRecolhimentoQuinto() {
 		return diaRecolhimentoQuinto;
 	}
 
-	public void setDiaRecolhimentoQuinto(String diaRecolhimentoQuinto) {
+	public void setDiaRecolhimentoQuinto(boolean diaRecolhimentoQuinto) {
 		this.diaRecolhimentoQuinto = diaRecolhimentoQuinto;
 	}
 
-	public String getLimiteCEProximaSemana() {
+	public boolean isLimiteCEProximaSemana() {
 		return limiteCEProximaSemana;
 	}
 
-	public void setLimiteCEProximaSemana(String limiteCEProximaSemana) {
+	public void setLimiteCEProximaSemana(boolean limiteCEProximaSemana) {
 		this.limiteCEProximaSemana = limiteCEProximaSemana;
 	}
 
@@ -293,46 +293,46 @@ public class ParametrosDistribuidorVO {
         this.supervisionaVendaNegativa = supervisionaVendaNegativa;
     }
 
-    public String getConferenciaCegaRecebimento() {
+    public boolean isConferenciaCegaRecebimento() {
 		return conferenciaCegaRecebimento;
 	}
 
-	public void setConferenciaCegaRecebimento(String conferenciaCegaRecebimento) {
+	public void setConferenciaCegaRecebimento(boolean conferenciaCegaRecebimento) {
 		this.conferenciaCegaRecebimento = conferenciaCegaRecebimento;
 	}
 
-	public String getConferenciaCegaEncalhe() {
+	public boolean isConferenciaCegaEncalhe() {
 		return conferenciaCegaEncalhe;
 	}
 
-	public void setConferenciaCegaEncalhe(String conferenciaCegaEncalhe) {
+	public void setConferenciaCegaEncalhe(boolean conferenciaCegaEncalhe) {
 		this.conferenciaCegaEncalhe = conferenciaCegaEncalhe;
 	}
 
-	public String getCapacidadeManuseioHomemHoraLancamento() {
+	public Integer getCapacidadeManuseioHomemHoraLancamento() {
 		return capacidadeManuseioHomemHoraLancamento;
 	}
 
 	public void setCapacidadeManuseioHomemHoraLancamento(
-			String capacidadeManuseioHomemHoraLancamento) {
+			Integer capacidadeManuseioHomemHoraLancamento) {
 		this.capacidadeManuseioHomemHoraLancamento = capacidadeManuseioHomemHoraLancamento;
 	}
 
-	public String getCapacidadeManuseioHomemHoraRecolhimento() {
+	public Integer getCapacidadeManuseioHomemHoraRecolhimento() {
 		return capacidadeManuseioHomemHoraRecolhimento;
 	}
 
 	public void setCapacidadeManuseioHomemHoraRecolhimento(
-			String capacidadeManuseioHomemHoraRecolhimento) {
+			Integer capacidadeManuseioHomemHoraRecolhimento) {
 		this.capacidadeManuseioHomemHoraRecolhimento = capacidadeManuseioHomemHoraRecolhimento;
 	}
 
-	public String getReutilizacaoCodigoCotaInativa() {
+	public Long getReutilizacaoCodigoCotaInativa() {
 		return reutilizacaoCodigoCotaInativa;
 	}
 
 	public void setReutilizacaoCodigoCotaInativa(
-			String reutilizacaoCodigoCotaInativa) {
+			Long reutilizacaoCodigoCotaInativa) {
 		this.reutilizacaoCodigoCotaInativa = reutilizacaoCodigoCotaInativa;
 	}
 

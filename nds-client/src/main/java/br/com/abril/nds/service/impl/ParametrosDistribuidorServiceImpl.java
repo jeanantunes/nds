@@ -75,21 +75,21 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setRelancamentoParciaisEmDias(distribuidor.getFatorRelancamentoParcial());
 		
 		// Recolhimento
-		parametrosDistribuidor.setAceitaEncalheJuramentada(verificaCheckString(distribuidor.isAceitaJuramentado()));
-		parametrosDistribuidor.setDiaRecolhimentoPrimeiro(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoPrimeiro()));
-		parametrosDistribuidor.setDiaRecolhimentoSegundo(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo()));
-		parametrosDistribuidor.setDiaRecolhimentoTerceiro(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro()));
-		parametrosDistribuidor.setDiaRecolhimentoQuarto(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto()));
-		parametrosDistribuidor.setDiaRecolhimentoQuinto(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto()));
-		parametrosDistribuidor.setLimiteCEProximaSemana(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isPermiteRecolherDiasPosteriores()));
-		parametrosDistribuidor.setConferenciaCegaEncalhe(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaEncalhe()));
-		parametrosDistribuidor.setConferenciaCegaRecebimento(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaRecebimento()));
+		parametrosDistribuidor.setAceitaEncalheJuramentada(distribuidor.isAceitaJuramentado());
+		parametrosDistribuidor.setDiaRecolhimentoPrimeiro(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoPrimeiro());
+		parametrosDistribuidor.setDiaRecolhimentoSegundo(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo());
+		parametrosDistribuidor.setDiaRecolhimentoTerceiro(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro());
+		parametrosDistribuidor.setDiaRecolhimentoQuarto(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto());
+		parametrosDistribuidor.setDiaRecolhimentoQuinto(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto());
+		parametrosDistribuidor.setLimiteCEProximaSemana(distribuidor.getParametrosRecolhimentoDistribuidor().isPermiteRecolherDiasPosteriores());
+		parametrosDistribuidor.setConferenciaCegaEncalhe(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaEncalhe());
+		parametrosDistribuidor.setConferenciaCegaRecebimento(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaRecebimento());
 		parametrosDistribuidor.setTipoContabilizacaoCE(distribuidor.getTipoContabilizacaoCE());
 		parametrosDistribuidor.setSupervisionaVendaNegativa(distribuidor.isSupervisionaVendaNegativa());		
 		
 		// Capacidade de Manuseio
-		parametrosDistribuidor.setCapacidadeManuseioHomemHoraLancamento(CurrencyUtil.formatarValorTruncado(distribuidor.getCapacidadeDistribuicao()));
-		parametrosDistribuidor.setCapacidadeManuseioHomemHoraRecolhimento(CurrencyUtil.formatarValorTruncado(distribuidor.getCapacidadeRecolhimento()));
+		parametrosDistribuidor.setCapacidadeManuseioHomemHoraLancamento(distribuidor.getCapacidadeDistribuicao().intValue());
+		parametrosDistribuidor.setCapacidadeManuseioHomemHoraRecolhimento(distribuidor.getCapacidadeRecolhimento().intValue());
 		
 		//Política chamadão
 		PoliticaChamadao politicaChamadao = distribuidor.getPoliticaChamadao();
@@ -100,7 +100,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		
 		// Reutilização de Código de Cota
-		parametrosDistribuidor.setReutilizacaoCodigoCotaInativa(CurrencyUtil.formatarValorTruncado(distribuidor.getQntDiasReutilizacaoCodigoCota()));
+		parametrosDistribuidor.setReutilizacaoCodigoCotaInativa(distribuidor.getQntDiasReutilizacaoCodigoCota());
 		
 		// Fiscal
 		parametrosDistribuidor.setObrigacaoFiscao(verificaCheckString(distribuidor.isObrigacaoFiscao()));
@@ -274,7 +274,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setFatorRelancamentoParcial(parametrosDistribuidor.getRelancamentoParciaisEmDias());
 
 		// Recolhimento
-		distribuidor.setAceitaJuramentado(verificaCheckBoolean(parametrosDistribuidor.getAceitaEncalheJuramentada()));
+		distribuidor.setAceitaJuramentado(parametrosDistribuidor.isAceitaEncalheJuramentada());
 		
 		distribuidor.setTipoContabilizacaoCE(parametrosDistribuidor.getTipoContabilizacaoCE());
 		distribuidor.setSupervisionaVendaNegativa(parametrosDistribuidor.isSupervisionaVendaNegativa());
@@ -295,34 +295,19 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
 		}
 			
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoPrimeiro()));
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoSegundo()));
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoTerceiro()));
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoQuarto()));
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoQuinto()));
-		parametrosRecolhimentoDistribuidor.setPermiteRecolherDiasPosteriores(verificaCheckBoolean(parametrosDistribuidor.getLimiteCEProximaSemana()));
-		parametrosRecolhimentoDistribuidor.setConferenciaCegaEncalhe(verificaCheckBoolean(parametrosDistribuidor.getConferenciaCegaEncalhe()));
-		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(verificaCheckBoolean(parametrosDistribuidor.getConferenciaCegaRecebimento()));
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(parametrosDistribuidor.isDiaRecolhimentoPrimeiro());
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(parametrosDistribuidor.isDiaRecolhimentoSegundo());
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(parametrosDistribuidor.isDiaRecolhimentoTerceiro());
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(parametrosDistribuidor.isDiaRecolhimentoQuarto());
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(parametrosDistribuidor.isDiaRecolhimentoQuinto());
+		parametrosRecolhimentoDistribuidor.setPermiteRecolherDiasPosteriores(parametrosDistribuidor.isLimiteCEProximaSemana());
+		parametrosRecolhimentoDistribuidor.setConferenciaCegaEncalhe(parametrosDistribuidor.isConferenciaCegaEncalhe());
+		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(parametrosDistribuidor.isConferenciaCegaRecebimento());
 		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
 		
-		// Capacidade de Manuseio
-		if (parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento() != null && !parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento().isEmpty()) {
-			distribuidor.setCapacidadeDistribuicao(CurrencyUtil.converterValor(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento()));
-		} else {
-			distribuidor.setCapacidadeDistribuicao(null);
-		}
-		if (parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento() != null && !parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento().isEmpty()) {
-			distribuidor.setCapacidadeRecolhimento(CurrencyUtil.converterValor(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento()));
-		} else {
-			distribuidor.setCapacidadeRecolhimento(null);
-		}
-		
-		// Reutilização de Código de Cota
-		if (parametrosDistribuidor.getReutilizacaoCodigoCotaInativa() != null && !parametrosDistribuidor.getReutilizacaoCodigoCotaInativa().isEmpty()) {
-			distribuidor.setQntDiasReutilizacaoCodigoCota(CurrencyUtil.converterValor(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa()).setScale(0,BigDecimal.ROUND_UP).longValueExact());
-		} else {
-			distribuidor.setQntDiasReutilizacaoCodigoCota(null);
-		}
+		distribuidor.setCapacidadeDistribuicao(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento()));
+		distribuidor.setCapacidadeRecolhimento(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento()));
+		distribuidor.setQntDiasReutilizacaoCodigoCota(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa());
 
 		// Fiscal
 		distribuidor.setObrigacaoFiscao(verificaCheckBoolean(parametrosDistribuidor.getObrigacaoFiscao()));
