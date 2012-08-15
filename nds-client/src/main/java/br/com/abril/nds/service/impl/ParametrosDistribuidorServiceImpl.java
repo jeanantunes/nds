@@ -420,7 +420,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		if (parametrosDistribuidor.isUtilizaProcuracaoEntregadores()) {
 		    distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
 		} else {
-		    distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
+		    distribuidor.setInformacoesComplementaresProcuracao(null);
 		}
 		
 		// Termo Adesão entrega em bancas
