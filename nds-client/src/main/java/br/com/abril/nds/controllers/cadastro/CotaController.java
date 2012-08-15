@@ -566,26 +566,6 @@ public class CotaController {
 	}
 	
 	/**
-	 * Valida numero da cota, verificando se existem dívidas em aberto.
-	 * @param numeroCota
-	 */
-	@Post
-	@Path("/verificarPendenciasCota")
-	public void verificarPendenciasCota(Integer numeroCota){
-        if(numeroCota != null) {
-			
-			Cota cota = this.cotaService.obterPorNumeroDaCotaAtiva(numeroCota);
-
-			if (cota != null) {
-			    if (cotaComDebitos(cota.getId())){
-		            throw new ValidacaoException(TipoMensagem.WARNING, "O [Número] pertence à uma [Cota] que possui dívidas em aberto e não pode ser utilizado!");
-			    }
-			}
-        }	
-        result.nothing();
-	}
-	
-	/**
 	 * Exclui uma cota, informada pelo usúario
 	 * 
 	 * @param idCota - identificador da cota

@@ -8,7 +8,7 @@
 	
 	//workspace : "#workspace div.ui-tabs-panel:not(.ui-tabs-hide)";
 	var BaseController = {
-			workspace : "",
+			workspace : "#workspace div.ui-tabs-panel:not(.ui-tabs-hide)",
 			bindData : function(data, form) {
 				element = data;
 				
