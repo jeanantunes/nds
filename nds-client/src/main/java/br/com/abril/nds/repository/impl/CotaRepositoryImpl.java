@@ -1103,7 +1103,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	public Set<Cota> obterCotasPorFornecedor(Long idFornecedor) {
 		
 		String queryString = " select cota from Cota cota "
-						   + " where cota.fornecedores.id = :idFornecedor ";
+						   + " join fetch cota.fornecedores fornecedores "
+						   + " where fornecedores.id = :idFornecedor ";
 		
 		Query query = this.getSession().createQuery(queryString);
 		

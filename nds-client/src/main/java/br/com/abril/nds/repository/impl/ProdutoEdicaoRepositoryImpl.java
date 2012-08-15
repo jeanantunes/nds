@@ -582,7 +582,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	public Set<ProdutoEdicao> obterProdutosEdicaoPorFornecedor(Long idFornecedor) {
 		
 		String queryString = " select produtoEdicao from ProdutoEdicao produtoEdicao "
-				   		   + " where produtoEdicao.produto.fornecedores.id = :idFornecedor ";
+						   + " join produtoEdicao.produto.fornecedores fornecedores"
+				   		   + " where fornecedores.id = :idFornecedor ";
 
 		Query query = this.getSession().createQuery(queryString);
 		
