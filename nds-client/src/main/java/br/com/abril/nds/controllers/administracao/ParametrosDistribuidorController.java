@@ -2,28 +2,24 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
-import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.GrupoCota;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
-import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -58,6 +54,7 @@ public class ParametrosDistribuidorController {
 	private GrupoService grupoService;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR)
 	public void index() {
 		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
 		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
@@ -144,10 +141,10 @@ public class ParametrosDistribuidorController {
 	 */
 	private void validarCadastroDistribuidor(ParametrosDistribuidorVO vo) {
 	    List<String> erros = new ArrayList<String>();
-	    if (StringUtils.isEmpty(vo.getCapacidadeManuseioHomemHoraLancamento())) {
+	    if (vo.getCapacidadeManuseioHomemHoraLancamento() == null) {
 	        erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");
 	    }
-	    if (StringUtils.isEmpty(vo.getCapacidadeManuseioHomemHoraRecolhimento())) {
+	    if (vo.getCapacidadeManuseioHomemHoraRecolhimento() == null) {
             erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
         }
 	    

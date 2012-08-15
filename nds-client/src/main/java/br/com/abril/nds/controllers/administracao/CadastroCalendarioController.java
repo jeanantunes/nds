@@ -15,11 +15,13 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CalendarioService;
@@ -56,6 +58,7 @@ public class CadastroCalendarioController {
 	}
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO)
 	public void index(){
 		
 		adicionarAnoCorrentePesquisa();

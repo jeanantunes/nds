@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.LeiautePicking;
@@ -183,8 +186,8 @@ public class Distribuidor {
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
-	@OneToMany(mappedBy="distribuidor")
-	private List<TipoGarantiaAceita> tiposGarantiasAceita;
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<TipoGarantiaAceita> tiposGarantiasAceita = new HashSet<TipoGarantiaAceita>();
 	
 	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
 	private boolean requerAutorizacaoEncalheSuperaReparte;
@@ -403,7 +406,7 @@ public class Distribuidor {
 	/**
 	 * @return the tiposGarantiasAceita
 	 */
-	public List<TipoGarantiaAceita> getTiposGarantiasAceita() {
+	public Set<TipoGarantiaAceita> getTiposGarantiasAceita() {
 		return tiposGarantiasAceita;
 	}
 
@@ -411,9 +414,88 @@ public class Distribuidor {
 	 * @param tiposGarantiasAceita the tiposGarantiasAceita to set
 	 */
 	public void setTiposGarantiasAceita(
-			List<TipoGarantiaAceita> tiposGarantiasAceita) {
+			Set<TipoGarantiaAceita> tiposGarantiasAceita) {
 		this.tiposGarantiasAceita = tiposGarantiasAceita;
 	}
+	
+	/**
+	 * Adiciona um novo tipo de garantia aceita pelo distribuidor, 
+	 * ou atualiza o tipo de garantia aceita existente com o(s) valore(s)
+	 * recebido(s) como parâmetro
+	 
+	 * @param tipoGarantia tipo de garantia para o novo tipo de garantia aceita para
+	 * inclusão ou alteração
+	 * @param valor valor da tipo de garantia aceita para inclusão ou alteração
+	 * 
+	 * @throws IllegalArgumentException caso o parâmetro tipoGarantia e valor forem nulos 
+	 */
+	public void addTipoGarantiaAceita(TipoGarantia tipoGarantia, Integer valor) {
+	    Validate.notNull(tipoGarantia,"Tipo de Garantia não deve ser nulo!");
+	    Validate.notNull(tipoGarantia,"Valor não deve ser nulo!");
+	    if (tiposGarantiasAceita == null) {
+	        tiposGarantiasAceita = new HashSet<TipoGarantiaAceita>();
+	    }
+	    TipoGarantiaAceita existente = getTipoGarantiaAceitaByTipoGarantia(tipoGarantia);
+	    if (existente == null) {
+	        tiposGarantiasAceita.add(new TipoGarantiaAceita(tipoGarantia, valor, this));
+	    } else {
+	        existente.setValor(valor);
+	    }
+	}
+	
+	
+    /**
+     * Encontra um tipo de garantia aceita pelo tipo de garantia
+     * 
+     * @param tipoGarantia
+     *            tipo de garantia para encontrar o tipo de garantia aceita
+     * @return tipo de garantia aceita com o tipo de garantia recebido ou null
+     *         caso não exista um tipo de garantia aceita com o tipo de garantia
+     *         recebido
+     * @throws IllegalArgumentException
+     *             caso o parâmetro tipoGarantia for nulo
+     */
+    public TipoGarantiaAceita getTipoGarantiaAceitaByTipoGarantia(
+            TipoGarantia tipoGarantia) {
+        Validate.notNull(tipoGarantia, "Tipo de Garantia não deve ser nulo!");
+        for (TipoGarantiaAceita tipoGarantiaAceita : tiposGarantiasAceita) {
+            if (tipoGarantiaAceita.getTipoGarantia().equals(tipoGarantia)) {
+                return tipoGarantiaAceita;
+            }
+        }
+        return null;
+    }
+	
+	/**
+	 * Remove o tipo de garantia aceita que corresponde ao tipo de garantia
+	 * recebido como parâmetro, caso exista
+	 * @param tipoGarantia tipo de garantia para remoção do tipo de garantia aceita
+	 * 
+	 * @throws IllegalArgumentException caso o parâmetro tipoGarantia for nulo
+	 * 
+	 */
+	public void removerTipoGarantiaAceita(TipoGarantia tipoGarantia) {
+	    Validate.notNull(tipoGarantia,"Tipo de Garantia para remoção não deve ser nulo!");
+	    if (tiposGarantiasAceita != null) {
+	       Iterator<TipoGarantiaAceita> iterator = tiposGarantiasAceita.iterator();
+	       while (iterator.hasNext()) {
+	           TipoGarantiaAceita tipoGarantiaAceita = iterator.next();
+	           if (tipoGarantiaAceita.getTipoGarantia().equals(tipoGarantia)) {
+	               iterator.remove();
+	               break;
+	           }
+	       }
+	    }
+	}
+	
+    /**
+     * Remove/Desassocia os tipo de garantias aceitas do Distribuidor
+     */
+	public void removerTodosTiposGarantiasAceitas() {
+        if (tiposGarantiasAceita != null) {
+                tiposGarantiasAceita.clear();
+        }
+    }
 	
 
 	public boolean isRequerAutorizacaoEncalheSuperaReparte() {

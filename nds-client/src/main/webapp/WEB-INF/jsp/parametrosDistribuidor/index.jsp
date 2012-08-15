@@ -95,6 +95,10 @@ function gravar() {
 	var data = [
 		{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias').val()},
 		{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada').is(':checked')},
+		{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $('input[name=parametrosDistribuidor.radioTipoContabilizacaoCE]:checked').val()},
+		{name:'parametrosDistribuidor.supervisionaVendaNegativa', value: $('#supervisionaVendaNegativa').is(':checked')},
+		{name:'parametrosDistribuidor.chamadaoDiasSuspensao', value: $('#chamadaoDiasSuspensao').val()},
+		{name:'parametrosDistribuidor.chamadaoValorConsignado', value: $('#chamadaoValorConsignado').val()},
 		{name:'parametrosDistribuidor.diaRecolhimentoPrimeiro', value: $('#diaRecolhimentoPrimeiro').is(':checked')},
 		{name:'parametrosDistribuidor.diaRecolhimentoSegundo', value: $('#diaRecolhimentoSegundo').is(':checked')},
 		{name:'parametrosDistribuidor.diaRecolhimentoTerceiro', value: $('#diaRecolhimentoTerceiro').is(':checked')},
@@ -281,20 +285,20 @@ $(document).ready(function() {
 $(function() {
 	
 	$("input[id^='reutilizacaoCodigoCotaInativa']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 
 	$("input[id^='capacidadeManuseioHomemHoraLancamento']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 
 	$("input[id^='capacidadeManuseioHomemHoraRecolhimento']").maskMoney({
-		 thousands:'.', 
-		 decimal:',', 
+		 thousands:'', 
+		 decimal:'', 
 		 precision:0
 	});
 
@@ -405,6 +409,27 @@ function mostraTabelaGarantiasAceitas(){
 	if ($('#utilizaGarantiaPdv').is(':checked')) {
 		$('#tabelaGarantiasAceitas').show();
 	} else {
+		$('#utilizaChequeCaucao').uncheck();
+		$('#validadeChequeCaucao').val('').disable();
+		
+		$('#utilizaCaucaoLiquida').uncheck();
+		$('#validadeCaucaoLiquida').val('').disable();
+		
+		$('#utilizaFiador').uncheck();
+		$('#validadeFiador').val('').disable();
+		
+		$('#utilizaNotaPromissoria').uncheck();
+		$('#validadeNotaPromissoria').val('').disable();
+		
+		$('#utilizaImovel').uncheck();
+		$('#validadeImovel').val('').disable();
+		
+		$('#utilizaAntecedenciaValidade').uncheck();
+		$('#validadeAntecedenciaValidade').val('').disable();
+		
+		$('#utilizaOutros').uncheck();
+		$('#validadeOutros').val('').disable();
+		
 		$('#tabelaGarantiasAceitas').hide();
 	}
 }

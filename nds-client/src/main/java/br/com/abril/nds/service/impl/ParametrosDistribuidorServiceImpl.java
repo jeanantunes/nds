@@ -75,21 +75,21 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setRelancamentoParciaisEmDias(distribuidor.getFatorRelancamentoParcial());
 		
 		// Recolhimento
-		parametrosDistribuidor.setAceitaEncalheJuramentada(verificaCheckString(distribuidor.isAceitaJuramentado()));
-		parametrosDistribuidor.setDiaRecolhimentoPrimeiro(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoPrimeiro()));
-		parametrosDistribuidor.setDiaRecolhimentoSegundo(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo()));
-		parametrosDistribuidor.setDiaRecolhimentoTerceiro(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro()));
-		parametrosDistribuidor.setDiaRecolhimentoQuarto(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto()));
-		parametrosDistribuidor.setDiaRecolhimentoQuinto(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto()));
-		parametrosDistribuidor.setLimiteCEProximaSemana(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isPermiteRecolherDiasPosteriores()));
-		parametrosDistribuidor.setConferenciaCegaEncalhe(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaEncalhe()));
-		parametrosDistribuidor.setConferenciaCegaRecebimento(verificaCheckString(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaRecebimento()));
+		parametrosDistribuidor.setAceitaEncalheJuramentada(distribuidor.isAceitaJuramentado());
+		parametrosDistribuidor.setDiaRecolhimentoPrimeiro(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoPrimeiro());
+		parametrosDistribuidor.setDiaRecolhimentoSegundo(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo());
+		parametrosDistribuidor.setDiaRecolhimentoTerceiro(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro());
+		parametrosDistribuidor.setDiaRecolhimentoQuarto(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto());
+		parametrosDistribuidor.setDiaRecolhimentoQuinto(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto());
+		parametrosDistribuidor.setLimiteCEProximaSemana(distribuidor.getParametrosRecolhimentoDistribuidor().isPermiteRecolherDiasPosteriores());
+		parametrosDistribuidor.setConferenciaCegaEncalhe(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaEncalhe());
+		parametrosDistribuidor.setConferenciaCegaRecebimento(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaRecebimento());
 		parametrosDistribuidor.setTipoContabilizacaoCE(distribuidor.getTipoContabilizacaoCE());
 		parametrosDistribuidor.setSupervisionaVendaNegativa(distribuidor.isSupervisionaVendaNegativa());		
 		
 		// Capacidade de Manuseio
-		parametrosDistribuidor.setCapacidadeManuseioHomemHoraLancamento(CurrencyUtil.formatarValorTruncado(distribuidor.getCapacidadeDistribuicao()));
-		parametrosDistribuidor.setCapacidadeManuseioHomemHoraRecolhimento(CurrencyUtil.formatarValorTruncado(distribuidor.getCapacidadeRecolhimento()));
+		parametrosDistribuidor.setCapacidadeManuseioHomemHoraLancamento(distribuidor.getCapacidadeDistribuicao().intValue());
+		parametrosDistribuidor.setCapacidadeManuseioHomemHoraRecolhimento(distribuidor.getCapacidadeRecolhimento().intValue());
 		
 		//Política chamadão
 		PoliticaChamadao politicaChamadao = distribuidor.getPoliticaChamadao();
@@ -100,7 +100,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		
 		// Reutilização de Código de Cota
-		parametrosDistribuidor.setReutilizacaoCodigoCotaInativa(CurrencyUtil.formatarValorTruncado(distribuidor.getQntDiasReutilizacaoCodigoCota()));
+		parametrosDistribuidor.setReutilizacaoCodigoCotaInativa(distribuidor.getQntDiasReutilizacaoCodigoCota());
 		
 		// Fiscal
 		parametrosDistribuidor.setObrigacaoFiscao(verificaCheckString(distribuidor.isObrigacaoFiscao()));
@@ -177,34 +177,45 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Garantia
 		parametrosDistribuidor.setUtilizaGarantiaPdv(distribuidor.isUtilizaGarantiaPdv());
-		
-		for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor.getTiposGarantiasAceita()) {
-			if (tipoGarantiaAceita.isUtilizar()) {
-				if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
-					parametrosDistribuidor.setUtilizaChequeCaucao(true);
-					parametrosDistribuidor.setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
-				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
-					parametrosDistribuidor.setUtilizaFiador(true);
-					parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita.getValor());
-				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
-					parametrosDistribuidor.setUtilizaImovel(true);
-					parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita.getValor());
-				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
-					parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
-					parametrosDistribuidor.setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
-				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
-					parametrosDistribuidor.setUtilizaNotaPromissoria(true);
-					parametrosDistribuidor.setValidadeNotaPromissoria(tipoGarantiaAceita.getValor());
-				} else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-					parametrosDistribuidor.setUtilizaAntecedenciaValidade(true);
-					parametrosDistribuidor.setValidadeAntecedenciaValidade(tipoGarantiaAceita.getValor());
-				}  else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
-                    parametrosDistribuidor.setUtilizaOutros(true);
-                    parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita.getValor());
-                }
-			}
+		if (distribuidor.isUtilizaGarantiaPdv()) {
+		    for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor
+		            .getTiposGarantiasAceita()) {
+		        
+		        if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
+		            parametrosDistribuidor.setUtilizaChequeCaucao(true);
+		            parametrosDistribuidor
+		            .setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
+		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
+		            parametrosDistribuidor.setUtilizaFiador(true);
+		            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita
+		                    .getValor());
+		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
+		            parametrosDistribuidor.setUtilizaImovel(true);
+		            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita
+		                    .getValor());
+		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
+		            parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
+		            parametrosDistribuidor
+		            .setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
+		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
+		            parametrosDistribuidor.setUtilizaNotaPromissoria(true);
+		            parametrosDistribuidor
+		            .setValidadeNotaPromissoria(tipoGarantiaAceita
+		                    .getValor());
+		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
+		            parametrosDistribuidor.setUtilizaAntecedenciaValidade(true);
+		            parametrosDistribuidor
+		            .setValidadeAntecedenciaValidade(tipoGarantiaAceita
+		                    .getValor());
+		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
+		            parametrosDistribuidor.setUtilizaOutros(true);
+		            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita
+		                    .getValor());
+		        }
+		    }
 		}
 		
+
 		// Negociação de Dividas
 		if (distribuidor.getPoliticaSuspensao() != null) {
 			if (distribuidor.getPoliticaSuspensao().getNumeroAcumuloDividaWrapped() != null) 
@@ -263,7 +274,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setFatorRelancamentoParcial(parametrosDistribuidor.getRelancamentoParciaisEmDias());
 
 		// Recolhimento
-		distribuidor.setAceitaJuramentado(verificaCheckBoolean(parametrosDistribuidor.getAceitaEncalheJuramentada()));
+		distribuidor.setAceitaJuramentado(parametrosDistribuidor.isAceitaEncalheJuramentada());
 		
 		distribuidor.setTipoContabilizacaoCE(parametrosDistribuidor.getTipoContabilizacaoCE());
 		distribuidor.setSupervisionaVendaNegativa(parametrosDistribuidor.isSupervisionaVendaNegativa());
@@ -284,34 +295,19 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
 		}
 			
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoPrimeiro()));
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoSegundo()));
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoTerceiro()));
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoQuarto()));
-		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(verificaCheckBoolean(parametrosDistribuidor.getDiaRecolhimentoQuinto()));
-		parametrosRecolhimentoDistribuidor.setPermiteRecolherDiasPosteriores(verificaCheckBoolean(parametrosDistribuidor.getLimiteCEProximaSemana()));
-		parametrosRecolhimentoDistribuidor.setConferenciaCegaEncalhe(verificaCheckBoolean(parametrosDistribuidor.getConferenciaCegaEncalhe()));
-		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(verificaCheckBoolean(parametrosDistribuidor.getConferenciaCegaRecebimento()));
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoPrimeiro(parametrosDistribuidor.isDiaRecolhimentoPrimeiro());
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoSegundo(parametrosDistribuidor.isDiaRecolhimentoSegundo());
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoTerceiro(parametrosDistribuidor.isDiaRecolhimentoTerceiro());
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(parametrosDistribuidor.isDiaRecolhimentoQuarto());
+		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(parametrosDistribuidor.isDiaRecolhimentoQuinto());
+		parametrosRecolhimentoDistribuidor.setPermiteRecolherDiasPosteriores(parametrosDistribuidor.isLimiteCEProximaSemana());
+		parametrosRecolhimentoDistribuidor.setConferenciaCegaEncalhe(parametrosDistribuidor.isConferenciaCegaEncalhe());
+		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(parametrosDistribuidor.isConferenciaCegaRecebimento());
 		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
 		
-		// Capacidade de Manuseio
-		if (parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento() != null && !parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento().isEmpty()) {
-			distribuidor.setCapacidadeDistribuicao(CurrencyUtil.converterValor(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento()));
-		} else {
-			distribuidor.setCapacidadeDistribuicao(null);
-		}
-		if (parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento() != null && !parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento().isEmpty()) {
-			distribuidor.setCapacidadeRecolhimento(CurrencyUtil.converterValor(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento()));
-		} else {
-			distribuidor.setCapacidadeRecolhimento(null);
-		}
-		
-		// Reutilização de Código de Cota
-		if (parametrosDistribuidor.getReutilizacaoCodigoCotaInativa() != null && !parametrosDistribuidor.getReutilizacaoCodigoCotaInativa().isEmpty()) {
-			distribuidor.setQntDiasReutilizacaoCodigoCota(CurrencyUtil.converterValor(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa()).setScale(0,BigDecimal.ROUND_UP).longValueExact());
-		} else {
-			distribuidor.setQntDiasReutilizacaoCodigoCota(null);
-		}
+		distribuidor.setCapacidadeDistribuicao(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento()));
+		distribuidor.setCapacidadeRecolhimento(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento()));
+		distribuidor.setQntDiasReutilizacaoCodigoCota(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa());
 
 		// Fiscal
 		distribuidor.setObrigacaoFiscao(verificaCheckBoolean(parametrosDistribuidor.getObrigacaoFiscao()));
@@ -424,7 +420,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		if (parametrosDistribuidor.isUtilizaProcuracaoEntregadores()) {
 		    distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
 		} else {
-		    distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
+		    distribuidor.setInformacoesComplementaresProcuracao(null);
 		}
 		
 		// Termo Adesão entrega em bancas
@@ -437,61 +433,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
             distribuidor.setParametroEntregaBanca(null);
         }
 
-		List<TipoGarantiaAceita> listaTipoGarantiaAceitas = new ArrayList<TipoGarantiaAceita>();
+		processaUtilizacaoGarantiasPDV(parametrosDistribuidor, distribuidor);
 
-		distribuidor.setUtilizaGarantiaPdv(parametrosDistribuidor.isUtilizaGarantiaPdv());
-		
-		//Garantias Aceitas
-		//TODO: Refatorar
-		TipoGarantiaAceita tipoGarantiaAceitaChequeCaucao = new TipoGarantiaAceita();
-		tipoGarantiaAceitaChequeCaucao.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
-		tipoGarantiaAceitaChequeCaucao.setValor(parametrosDistribuidor.getValidadeChequeCaucao());
-		tipoGarantiaAceitaChequeCaucao.setUtilizar(parametrosDistribuidor.isUtilizaChequeCaucao());
-		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaChequeCaucao);
-
-		TipoGarantiaAceita tipoGarantiaAceitaFiador = new TipoGarantiaAceita();
-		tipoGarantiaAceitaFiador.setTipoGarantia(TipoGarantia.FIADOR);
-		tipoGarantiaAceitaFiador.setValor(parametrosDistribuidor.getValidadeFiador());
-		tipoGarantiaAceitaFiador.setUtilizar(parametrosDistribuidor.isUtilizaFiador());
-		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaFiador);
-
-		TipoGarantiaAceita tipoGarantiaAceitaImovel = new TipoGarantiaAceita();
-		tipoGarantiaAceitaImovel.setTipoGarantia(TipoGarantia.IMOVEL);
-		tipoGarantiaAceitaImovel.setValor(parametrosDistribuidor.getValidadeImovel());
-		tipoGarantiaAceitaImovel.setUtilizar(parametrosDistribuidor.isUtilizaImovel());
-		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaImovel);
-
-		TipoGarantiaAceita tipoGarantiaAceitaCaucaoLiquida = new TipoGarantiaAceita();
-		tipoGarantiaAceitaCaucaoLiquida.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
-		tipoGarantiaAceitaCaucaoLiquida.setValor(parametrosDistribuidor.getValidadeCaucaoLiquida());
-		tipoGarantiaAceitaCaucaoLiquida.setUtilizar(parametrosDistribuidor.isUtilizaCaucaoLiquida());
-		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaCaucaoLiquida);
-
-		TipoGarantiaAceita tipoGarantiaAceitaNotaPromissoria = new TipoGarantiaAceita();
-		tipoGarantiaAceitaNotaPromissoria.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
-		tipoGarantiaAceitaNotaPromissoria.setValor(parametrosDistribuidor.getValidadeNotaPromissoria());
-		tipoGarantiaAceitaNotaPromissoria.setUtilizar(parametrosDistribuidor.isUtilizaNotaPromissoria());
-		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaNotaPromissoria);
-
-		TipoGarantiaAceita tipoGarantiaAceitaAntecedenciaValidade = new TipoGarantiaAceita();
-		tipoGarantiaAceitaAntecedenciaValidade.setTipoGarantia(TipoGarantia.ANTECEDENCIA_VALIDADE);
-		tipoGarantiaAceitaAntecedenciaValidade.setValor(parametrosDistribuidor.getValidadeAntecedenciaValidade());
-		tipoGarantiaAceitaAntecedenciaValidade.setUtilizar(parametrosDistribuidor.isUtilizaAntecedenciaValidade());
-		listaTipoGarantiaAceitas.add(tipoGarantiaAceitaAntecedenciaValidade);
-		
-		TipoGarantiaAceita tipoGarantiaOutros = new TipoGarantiaAceita();
-		tipoGarantiaOutros.setTipoGarantia(TipoGarantia.OUTROS);
-		tipoGarantiaOutros.setValor(parametrosDistribuidor.getValidadeOutros());
-		tipoGarantiaOutros.setUtilizar(parametrosDistribuidor.isUtilizaOutros());
-        listaTipoGarantiaAceitas.add(tipoGarantiaOutros);
-
-		for (TipoGarantiaAceita tipoGarantiaAceita : listaTipoGarantiaAceitas) {
-			tipoGarantiaAceita.setDistribuidor(distribuidor);
-			tipoGarantiaAceitaRepository.alterarOuCriar(tipoGarantiaAceita);
-		}
-		
-		distribuidor.setTiposGarantiasAceita(listaTipoGarantiaAceitas);
-		
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 		if (parametrosDistribuidor.getSugereSuspensaoQuandoAtingirBoletos() != null && !parametrosDistribuidor.getSugereSuspensaoQuandoAtingirBoletos().isEmpty()) {
 			politicaSuspensao.setNumeroAcumuloDivida(CurrencyUtil.converterValor(parametrosDistribuidor.getSugereSuspensaoQuandoAtingirBoletos()).intValueExact());
@@ -589,6 +532,72 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		return distribuidor;
 	}
+
+    /**
+     * Processa as informações de parametrização do distribuidor
+     * com relação as informações de tipos de garantias aceitas
+     * @param parametrosDistribuidor Value Object com as informações 
+     * @param distribuidor distribuidor em processamento
+     */
+	private void processaUtilizacaoGarantiasPDV(
+            ParametrosDistribuidorVO parametrosDistribuidor,
+            Distribuidor distribuidor) {
+        distribuidor.setUtilizaGarantiaPdv(parametrosDistribuidor.isUtilizaGarantiaPdv());
+		if (distribuidor.isUtilizaGarantiaPdv()) {
+		    
+            if (parametrosDistribuidor.isUtilizaChequeCaucao()) {
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.CHEQUE_CAUCAO, parametrosDistribuidor
+                                .getValidadeChequeCaucao());
+            } else {
+                distribuidor.removerTipoGarantiaAceita(TipoGarantia.CHEQUE_CAUCAO);
+            }
+            
+            if (parametrosDistribuidor.isUtilizaFiador()) {
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.FIADOR, parametrosDistribuidor
+                                .getValidadeFiador());
+            } else {
+                distribuidor.removerTipoGarantiaAceita(TipoGarantia.FIADOR);
+            }
+            
+            if (parametrosDistribuidor.isUtilizaImovel()) {
+                distribuidor.addTipoGarantiaAceita(
+                        TipoGarantia.IMOVEL, parametrosDistribuidor
+                                .getValidadeImovel());
+            } else {
+                distribuidor.removerTipoGarantiaAceita(TipoGarantia.IMOVEL);
+            }
+            
+            if (parametrosDistribuidor.isUtilizaCaucaoLiquida()) {
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.CAUCAO_LIQUIDA, parametrosDistribuidor
+                                .getValidadeCaucaoLiquida());
+            } else {
+                distribuidor.removerTipoGarantiaAceita(TipoGarantia.CAUCAO_LIQUIDA);
+            }
+            
+            if (parametrosDistribuidor.isUtilizaNotaPromissoria()) {
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.NOTA_PROMISSORIA, parametrosDistribuidor
+                                .getValidadeNotaPromissoria());
+            } else {
+                distribuidor.removerTipoGarantiaAceita(TipoGarantia.NOTA_PROMISSORIA);
+            }
+            
+            if (parametrosDistribuidor.isUtilizaAntecedenciaValidade()) {
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE, parametrosDistribuidor
+                                .getValidadeAntecedenciaValidade());
+            } else {
+                distribuidor.removerTipoGarantiaAceita(TipoGarantia.ANTECEDENCIA_VALIDADE);
+            }
+            
+            if (parametrosDistribuidor.isUtilizaOutros()) {
+                distribuidor.addTipoGarantiaAceita(TipoGarantia.OUTROS, parametrosDistribuidor
+                                .getValidadeOutros());
+            } else {
+                distribuidor.removerTipoGarantiaAceita(TipoGarantia.OUTROS);
+            }
+		} else {
+		    distribuidor.removerTodosTiposGarantiasAceitas();
+		}
+    }
 
 	/**
 	 * Retorna "checked" caso seja true ou "" caso contrário 

@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ColunaRelatorioInformeEncalhe;
 import br.com.abril.nds.dto.InformeEncalheDTO;
@@ -23,6 +24,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -71,6 +73,7 @@ public class ConsultaInformeEncalheController {
 	}
 
 	@Get("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE)
 	public void index() {
 		result.include("fornecedores", fornecedorService
 				.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
