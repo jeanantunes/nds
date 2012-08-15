@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.LeiautePicking;
@@ -70,9 +73,6 @@ public class Distribuidor {
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
-	
-	@OneToMany(mappedBy = "distribuidor")
-	private List<EnderecoDistribuidor> enderecos = new ArrayList<EnderecoDistribuidor>();
 	
 	@OneToMany(mappedBy = "distribuidor")
 	private List<TelefoneDistribuidor> telefones = new ArrayList<TelefoneDistribuidor>();
@@ -183,8 +183,8 @@ public class Distribuidor {
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
-	@OneToMany(mappedBy="distribuidor")
-	private List<TipoGarantiaAceita> tiposGarantiasAceita;
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<TipoGarantiaAceita> tiposGarantiasAceita = new HashSet<TipoGarantiaAceita>();
 	
 	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
 	private boolean requerAutorizacaoEncalheSuperaReparte;
@@ -210,8 +210,9 @@ public class Distribuidor {
 	@Column(name = "TIPO_ATIVIDADE", nullable = true)
 	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
 
-	@Column(name = "OBRIGACAO_FISCAL", nullable = false)
-	private boolean obrigacaoFiscao;	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "OBRIGACAO_FISCAL", nullable = true)
+	private ObrigacaoFiscal obrigacaoFiscal;
 	
 	@Column(name = "REGIME_ESPECIAL", nullable = false)
 	private boolean regimeEspecial;
@@ -263,6 +264,38 @@ public class Distribuidor {
 	
 	@Embedded
 	private ParametroEntregaBanca parametroEntregaBanca;
+	
+	// Aba Cadastro / Fiscal
+	
+	@Column(name = "RAZAO_SOCIAL", nullable = true)
+	private String razaoSocial;
+	
+	@Column(name = "NOME_FANTASIA", nullable = true)
+	private String nomeFantasia;
+	
+	@Column(name = "CNPJ", nullable = true)
+	private String cnpj;
+	
+	@Column(name = "INSCRICAO_ESTADUAL", nullable = true)
+	private String inscricaoEstadual;
+	
+	@Column(name = "INSCRICAO_MUNICIPAL", nullable = true)
+	private String inscricaoMunicipal;
+	
+	@Column(name = "CNPJ_PRINCIPAL", nullable = true)
+	private boolean cnpjPrincipal;
+	
+	@Column(name = "EMAIL", nullable = true)
+	private String email;
+	
+	@Column(name = "COD_DISTRIBUIDOR_DINAP", nullable = true)
+	private String codigoDistribuidorDinap;
+	
+	@Column(name = "COD_DISTRIBUIDOR_FC", nullable = true)
+	private String codigoDistribuidorFC;
+	
+	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	private EnderecoDistribuidor enderecoDistribuidor;
 	
 	public Long getId() {
 		return id;
@@ -319,14 +352,6 @@ public class Distribuidor {
 	
 	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
 		this.politicaSuspensao = politicaSuspensao;
-	}
-	
-	public List<EnderecoDistribuidor> getEnderecos() {
-		return enderecos;
-	}
-	
-	public void setEnderecos(List<EnderecoDistribuidor> enderecos) {
-		this.enderecos = enderecos;
 	}
 	
 	public List<TelefoneDistribuidor> getTelefones() {
@@ -403,7 +428,7 @@ public class Distribuidor {
 	/**
 	 * @return the tiposGarantiasAceita
 	 */
-	public List<TipoGarantiaAceita> getTiposGarantiasAceita() {
+	public Set<TipoGarantiaAceita> getTiposGarantiasAceita() {
 		return tiposGarantiasAceita;
 	}
 
@@ -411,9 +436,88 @@ public class Distribuidor {
 	 * @param tiposGarantiasAceita the tiposGarantiasAceita to set
 	 */
 	public void setTiposGarantiasAceita(
-			List<TipoGarantiaAceita> tiposGarantiasAceita) {
+			Set<TipoGarantiaAceita> tiposGarantiasAceita) {
 		this.tiposGarantiasAceita = tiposGarantiasAceita;
 	}
+	
+	/**
+	 * Adiciona um novo tipo de garantia aceita pelo distribuidor, 
+	 * ou atualiza o tipo de garantia aceita existente com o(s) valore(s)
+	 * recebido(s) como parâmetro
+	 
+	 * @param tipoGarantia tipo de garantia para o novo tipo de garantia aceita para
+	 * inclusão ou alteração
+	 * @param valor valor da tipo de garantia aceita para inclusão ou alteração
+	 * 
+	 * @throws IllegalArgumentException caso o parâmetro tipoGarantia e valor forem nulos 
+	 */
+	public void addTipoGarantiaAceita(TipoGarantia tipoGarantia, Integer valor) {
+	    Validate.notNull(tipoGarantia,"Tipo de Garantia não deve ser nulo!");
+	    Validate.notNull(tipoGarantia,"Valor não deve ser nulo!");
+	    if (tiposGarantiasAceita == null) {
+	        tiposGarantiasAceita = new HashSet<TipoGarantiaAceita>();
+	    }
+	    TipoGarantiaAceita existente = getTipoGarantiaAceitaByTipoGarantia(tipoGarantia);
+	    if (existente == null) {
+	        tiposGarantiasAceita.add(new TipoGarantiaAceita(tipoGarantia, valor, this));
+	    } else {
+	        existente.setValor(valor);
+	    }
+	}
+	
+	
+    /**
+     * Encontra um tipo de garantia aceita pelo tipo de garantia
+     * 
+     * @param tipoGarantia
+     *            tipo de garantia para encontrar o tipo de garantia aceita
+     * @return tipo de garantia aceita com o tipo de garantia recebido ou null
+     *         caso não exista um tipo de garantia aceita com o tipo de garantia
+     *         recebido
+     * @throws IllegalArgumentException
+     *             caso o parâmetro tipoGarantia for nulo
+     */
+    public TipoGarantiaAceita getTipoGarantiaAceitaByTipoGarantia(
+            TipoGarantia tipoGarantia) {
+        Validate.notNull(tipoGarantia, "Tipo de Garantia não deve ser nulo!");
+        for (TipoGarantiaAceita tipoGarantiaAceita : tiposGarantiasAceita) {
+            if (tipoGarantiaAceita.getTipoGarantia().equals(tipoGarantia)) {
+                return tipoGarantiaAceita;
+            }
+        }
+        return null;
+    }
+	
+	/**
+	 * Remove o tipo de garantia aceita que corresponde ao tipo de garantia
+	 * recebido como parâmetro, caso exista
+	 * @param tipoGarantia tipo de garantia para remoção do tipo de garantia aceita
+	 * 
+	 * @throws IllegalArgumentException caso o parâmetro tipoGarantia for nulo
+	 * 
+	 */
+	public void removerTipoGarantiaAceita(TipoGarantia tipoGarantia) {
+	    Validate.notNull(tipoGarantia,"Tipo de Garantia para remoção não deve ser nulo!");
+	    if (tiposGarantiasAceita != null) {
+	       Iterator<TipoGarantiaAceita> iterator = tiposGarantiasAceita.iterator();
+	       while (iterator.hasNext()) {
+	           TipoGarantiaAceita tipoGarantiaAceita = iterator.next();
+	           if (tipoGarantiaAceita.getTipoGarantia().equals(tipoGarantia)) {
+	               iterator.remove();
+	               break;
+	           }
+	       }
+	    }
+	}
+	
+    /**
+     * Remove/Desassocia os tipo de garantias aceitas do Distribuidor
+     */
+	public void removerTodosTiposGarantiasAceitas() {
+        if (tiposGarantiasAceita != null) {
+                tiposGarantiasAceita.clear();
+        }
+    }
 	
 
 	public boolean isRequerAutorizacaoEncalheSuperaReparte() {
@@ -630,12 +734,12 @@ public class Distribuidor {
 		this.tipoAtividade = tipoAtividade;
 	}
 
-	public boolean isObrigacaoFiscao() {
-		return obrigacaoFiscao;
+	public ObrigacaoFiscal getObrigacaoFiscal() {
+		return obrigacaoFiscal;
 	}
 
-	public void setObrigacaoFiscao(boolean obrigacaoFiscao) {
-		this.obrigacaoFiscao = obrigacaoFiscao;
+	public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
+		this.obrigacaoFiscal = obrigacaoFiscal;
 	}
 
 	public boolean isRegimeEspecial() {
@@ -778,5 +882,144 @@ public class Distribuidor {
         this.parametroEntregaBanca = parametroEntregaBanca;
     }
 	
-	
+	/**
+	 * @return the razaoSocial
+	 */
+	public String getRazaoSocial() {
+		return razaoSocial;
+	}
+
+	/**
+	 * @param razaoSocial the razaoSocial to set
+	 */
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
+	}
+
+	/**
+	 * @return the nomeFantasia
+	 */
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	/**
+	 * @param nomeFantasia the nomeFantasia to set
+	 */
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
+
+	/**
+	 * @return the cnpj
+	 */
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	/**
+	 * @param cnpj the cnpj to set
+	 */
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	/**
+	 * @return the inscricaoEstadual
+	 */
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
+	}
+
+	/**
+	 * @param inscricaoEstadual the inscricaoEstadual to set
+	 */
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
+	/**
+	 * @return the inscricaoMunicipal
+	 */
+	public String getInscricaoMunicipal() {
+		return inscricaoMunicipal;
+	}
+
+	/**
+	 * @param inscricaoMunicipal the inscricaoMunicipal to set
+	 */
+	public void setInscricaoMunicipal(String inscricaoMunicipal) {
+		this.inscricaoMunicipal = inscricaoMunicipal;
+	}
+
+	/**
+	 * @return the cnpjPrincipal
+	 */
+	public boolean isCnpjPrincipal() {
+		return cnpjPrincipal;
+	}
+
+	/**
+	 * @param cnpjPrincipal the cnpjPrincipal to set
+	 */
+	public void setCnpjPrincipal(boolean cnpjPrincipal) {
+		this.cnpjPrincipal = cnpjPrincipal;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the codigoDistribuidorDinap
+	 */
+	public String getCodigoDistribuidorDinap() {
+		return codigoDistribuidorDinap;
+	}
+
+	/**
+	 * @param codigoDistribuidorDinap the codigoDistribuidorDinap to set
+	 */
+	public void setCodigoDistribuidorDinap(String codigoDistribuidorDinap) {
+		this.codigoDistribuidorDinap = codigoDistribuidorDinap;
+	}
+
+	/**
+	 * @return the codigoDistribuidorFC
+	 */
+	public String getCodigoDistribuidorFC() {
+		return codigoDistribuidorFC;
+	}
+
+	/**
+	 * @param codigoDistribuidorFC the codigoDistribuidorFC to set
+	 */
+	public void setCodigoDistribuidorFC(String codigoDistribuidorFC) {
+		this.codigoDistribuidorFC = codigoDistribuidorFC;
+	}
+
+	/**
+	 * @return the enderecoDistribuidor
+	 */
+	public EnderecoDistribuidor getEnderecoDistribuidor() {
+		return enderecoDistribuidor;
+	}
+
+	/**
+	 * @param enderecoDistribuidor the enderecoDistribuidor to set
+	 */
+	public void setEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor) {
+		this.enderecoDistribuidor = enderecoDistribuidor;
+	}
+
 }

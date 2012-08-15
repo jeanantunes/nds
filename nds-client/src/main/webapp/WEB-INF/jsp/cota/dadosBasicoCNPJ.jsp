@@ -6,7 +6,7 @@
   <table width="823" cellpadding="2" cellspacing="2" style="text-align:left;">
   <tr>
       <td><strong>Cota:</strong></td>
-      <td><input name="cotaDTO.numeroCota" onchange="MANTER_COTA.verificarPendenciasCota('#numeroCota');" id="numeroCota" maxlength="16" type="text" style="width:100px" /></td>
+      <td><input name="cotaDTO.numeroCota" id="numeroCota" maxlength="16" type="text" style="width:100px" /></td>
       <td><strong>Início de Atividade:</strong></td>
       <td><span id="dataInclusao"style="width:100px"></span></td>
   </tr>

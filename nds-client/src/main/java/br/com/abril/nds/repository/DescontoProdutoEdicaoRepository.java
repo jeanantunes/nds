@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository;
 
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 
 /**
@@ -10,4 +13,5 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
  */
 public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProdutoEdicao, Long>{
 
+	DescontoProdutoEdicao buscarDescontoProdutoEdicao(Fornecedor fornecedor,Cota cota, ProdutoEdicao produto);
 }

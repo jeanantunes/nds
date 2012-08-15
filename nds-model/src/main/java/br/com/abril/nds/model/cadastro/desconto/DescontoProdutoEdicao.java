@@ -21,7 +21,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
 @Table(name = "DESCONTO_PRODUTO_EDICAO", 
-	   uniqueConstraints= {@UniqueConstraint(columnNames = {"FORNECEDOR_ID", "PRODUTO_EDICAO_ID", "TIPO_DESCONTO" })})
+	   uniqueConstraints= {@UniqueConstraint(columnNames = {"FORNECEDOR_ID", "PRODUTO_EDICAO_ID"})})
 @SequenceGenerator(name="DESCONTO_PRODUTO_EDICAO_SEQ", initialValue = 1, allocationSize = 1)
 public class DescontoProdutoEdicao implements Serializable {
 

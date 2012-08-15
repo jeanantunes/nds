@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -84,6 +86,7 @@ public class MatrizRecolhimentoController {
 	
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ)
 	public void index() {
 		
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);

@@ -15,7 +15,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
-import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 

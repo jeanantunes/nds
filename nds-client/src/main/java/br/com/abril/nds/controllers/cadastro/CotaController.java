@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -106,6 +108,7 @@ public class CotaController {
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
 	@Path("/")
+	@Rules(Permissao.ROLE_CADASTRO_COTA)
 	public void index() {
 		
 		this.financeiroController.preCarregamento();
@@ -560,26 +563,6 @@ public class CotaController {
         BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(idCota);
 		
 		return (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0);
-	}
-	
-	/**
-	 * Valida numero da cota, verificando se existem dívidas em aberto.
-	 * @param numeroCota
-	 */
-	@Post
-	@Path("/verificarPendenciasCota")
-	public void verificarPendenciasCota(Integer numeroCota){
-        if(numeroCota != null) {
-			
-			Cota cota = this.cotaService.obterPorNumeroDaCotaAtiva(numeroCota);
-
-			if (cota != null) {
-			    if (cotaComDebitos(cota.getId())){
-		            throw new ValidacaoException(TipoMensagem.WARNING, "O [Número] pertence à uma [Cota] que possui dívidas em aberto e não pode ser utilizado!");
-			    }
-			}
-        }	
-        result.nothing();
 	}
 	
 	/**

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroDTO;
 import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
@@ -27,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
@@ -94,6 +96,7 @@ public class FollowupController {
 	private int quantidadeDiasSuspensaoCotas;
 
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA)
 	public void index() {
 		session.setAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE, null);
 	}

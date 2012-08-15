@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
@@ -24,6 +25,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -83,6 +85,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_DEVOLUCAO_DIGICACAO_CONTAGEM_DEVOLUCAO)
 	public void index(){
 		
 		/**

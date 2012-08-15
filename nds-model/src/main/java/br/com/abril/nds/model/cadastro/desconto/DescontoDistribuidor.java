@@ -38,7 +38,7 @@ public class DescontoDistribuidor implements Serializable {
 	@Column(name = "DESCONTO")
 	private BigDecimal desconto;
 	
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALTERACAO")
 	private Date dataAlteracao;
 	

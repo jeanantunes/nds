@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import br.com.abril.nds.client.annotation.Public;
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.controllers.ErrorController;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -131,7 +132,6 @@ public class ValidacaoInterceptor implements Interceptor {
 	
 	@Override
 	public boolean accepts(ResourceMethod method) {
-
-		return true;
+		return !(method.getMethod().isAnnotationPresent(Public.class) || method.getResource().getType().isAnnotationPresent(Public.class));
 	}
 }

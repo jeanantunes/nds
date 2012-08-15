@@ -16,6 +16,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.service.GarantiaService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -109,6 +110,8 @@ public class GarantiasController {
 			PaginacaoUtil.ordenarEmMemoria(listaGarantiasSessao, ordenacao, sortname).toArray();
 		}
 		
+		
+		
 		this.result.use(Results.json()).from(this.getTableModelListaGarantias(listaGarantiasSessao), "result").recursive().serialize();
 	}
 	
@@ -151,10 +154,7 @@ public class GarantiasController {
 			listaGarantiasSessao.add(novaGarantiaCadastrada);
 			
 			novaGarantiaCadastrada.setGarantia(garantia);
-		} else {
-			
-			
-		}
+		} 
 		
 		this.httpSession.setAttribute(LISTA_GARANTIAS_SALVAR_SESSAO, listaGarantiasSessao);
 		
@@ -266,7 +266,7 @@ public class GarantiasController {
 			CellModel cellModel = new CellModel(
 				garantiaCadastrada.getReferencia(), 
 				garantiaCadastrada.getGarantia().getDescricao(),
-				garantiaCadastrada.getGarantia().getValor()
+				CurrencyUtil.formatarValor(garantiaCadastrada.getGarantia().getValor())
 			);
 
 			listaCellModel.add(cellModel);
