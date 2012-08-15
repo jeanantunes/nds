@@ -1,4 +1,4 @@
-package br.com.abril.nds.component;
+package br.com.abril.nds.component.impl;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.component.DescontoComponent;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
