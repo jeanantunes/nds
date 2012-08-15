@@ -356,7 +356,7 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional
 	public void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
 		
-		processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto);
+		this.processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto);
 	}
 	
 
@@ -364,7 +364,7 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional
 	public void processarDescontoDistribuidor(BigDecimal valorDesconto) {
 		
-		processarDescontoDistribuidor(null,valorDesconto);
+		this.processarDescontoDistribuidor(null,valorDesconto);
 	}
 	
 	
@@ -372,34 +372,38 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional
 	public void processarDescontoCota(Cota cota, BigDecimal valorDesconto) {
 		
-		processarDescontoCota(cota, null, valorDesconto);
+		this.processarDescontoCota(cota, null, valorDesconto);
 	}
 	
 	@Override
 	@Transactional
-	public void processarDescontoCota(Cota cota, Set<Fornecedor> fornecedores,BigDecimal valorDesconto) {
+	public void processarDescontoCota(Cota cota, Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
 		
 		Set<Cota> cotas = new HashSet<Cota>();
+		
 		cotas.add(cota);
 		
-		processarDesconto(TipoDesconto.ESPECIFICO, fornecedores, cotas , null, valorDesconto);
+		this.processarDesconto(TipoDesconto.ESPECIFICO, fornecedores, cotas , null, valorDesconto);
 	}
 	
 	@Override
 	@Transactional
-	public void processarDescontoProduto(ProdutoEdicao produto,BigDecimal valorDesconto) {
+	public void processarDescontoProduto(ProdutoEdicao produto, BigDecimal valorDesconto) {
 		
 		Set<ProdutoEdicao> produtos = new HashSet<ProdutoEdicao>();
+		
 		produtos.add(produto);
 		
-		processarDescontoProduto(produtos, null, valorDesconto); 
+		this.processarDescontoProduto(produtos, null, valorDesconto); 
 	}
 	
 	@Override
 	@Transactional
-	public void processarDescontoProduto(Set<ProdutoEdicao> produtos,Set<Cota> cotas, BigDecimal valorDesconto) {
+	public void processarDescontoProduto(Set<ProdutoEdicao> produtos, 
+										 Set<Cota> cotas, 
+										 BigDecimal valorDesconto) {
 		
-		processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto);
+		this.processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto);
 	}
 	
 	/*
@@ -416,16 +420,64 @@ public class DescontoServiceImpl implements DescontoService {
 								   Set<Cota> cotas, 
 								   Set<ProdutoEdicao> produtos, 
 								   BigDecimal valorDesconto) {
+
+		boolean obterFornecedores = fornecedores == null || fornecedores.isEmpty();
 		
-		//TODO caso não passe o fornecedor no parametro buscar todos fornecedores.
+		boolean obterProdutos = produtos == null || produtos.isEmpty();
 		
-		//TODO obter todos os produtos vinculado a cada fornecedor 
+		boolean obterCotas = cotas == null || cotas.isEmpty();
 		
-		//TODO chamar metodo para filtrar os produtos passiveis de desconto
+		if (obterFornecedores) {
+			
+			fornecedores = new HashSet<Fornecedor>(this.fornecedorRepository.obterFornecedores());
+		}
 		
-		//TODO caso não passe as cotas no parametro, buscar todas as cotas vinculadas aos fornecedores
+		Set<ProdutoEdicao> produtosParaDesconto = new HashSet<ProdutoEdicao>();		
 		
-		//TODO chamar metodo para persistir desconto
+		for (Fornecedor fornecedor : fornecedores) {
+			
+			if (obterProdutos) {
+				
+				produtos =
+					this.produtoEdicaoRepository.obterProdutosEdicaoPorFornecedor(fornecedor.getId());
+			}
+			
+			for (ProdutoEdicao produtoEdicao : produtos) {
+				
+				Set<Fornecedor> fornecedoresProduto = produtoEdicao.getProduto().getFornecedores();
+				
+				if (fornecedoresProduto == null ||
+						!fornecedoresProduto.contains(fornecedor)) {
+					
+					continue;
+				}
+				
+				produtosParaDesconto.add(produtoEdicao);
+			}
+			
+			produtosParaDesconto = 
+				this.descontoComponent.filtrarProdutosPassiveisDeDesconto(
+					tipoDesconto, fornecedor, produtosParaDesconto);
+			
+			if (obterCotas) {
+				
+				cotas = this.cotaRepository.obterCotasPorFornecedor(fornecedor.getId());
+			}
+			
+			for (Cota cota : cotas) {
+				
+				Set<Fornecedor> fornecedoresCota = cota.getFornecedores();
+				
+				if (fornecedoresCota == null ||
+						!fornecedoresCota.contains(fornecedor)) {
+					
+					continue;
+				}
+				
+				this.descontoComponent.persistirDesconto(
+					tipoDesconto, fornecedor, cota, produtosParaDesconto, valorDesconto);
+			}
+		}
 	}
 	
 	/*
