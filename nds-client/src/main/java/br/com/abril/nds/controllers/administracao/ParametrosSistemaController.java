@@ -7,7 +7,6 @@ import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -47,9 +46,6 @@ public class ParametrosSistemaController {
 	 * @param imgLogoSistema
 	 */
 	public void salvar(ParametroSistemaGeralDTO dto) {
-		
-		// WORKAROUND: para tratar o checkbox (no cenário que ele foi desmarcado):
-		dto.setNfeDpec(dto.getNfeDpec());
 			
 		// Salvar:
 		psService.salvar(dto, null, null);
