@@ -31,10 +31,6 @@
 </div>
 <div class="corpo">
     <div class="container">
-    <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Lançamento de Faltas e Sobras < evento > com < status >.</b></p>
-	</div>
    <fieldset class="classFieldset">
     <legend>Pesquisar Edições Fechadas com Saldo</legend>
 	<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
