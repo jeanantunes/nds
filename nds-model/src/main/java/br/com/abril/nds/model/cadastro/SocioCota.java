@@ -34,7 +34,15 @@ public class SocioCota implements Serializable {
 	private String cargo;
 	
 	@Column(name="PRINCIPAL")
-	private Boolean principal;
+	private boolean principal;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ENDERECO_ID")
+	private Endereco endereco;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "TELEFONE_ID")
+	private Telefone telefone;
 
 	/**
 	 * @return the id
@@ -81,14 +89,14 @@ public class SocioCota implements Serializable {
 	/**
 	 * @return the principal
 	 */
-	public Boolean getPrincipal() {
+	public boolean getPrincipal() {
 		return principal;
 	}
 
 	/**
 	 * @param principal the principal to set
 	 */
-	public void setPrincipal(Boolean principal) {
+	public void setPrincipal(boolean principal) {
 		this.principal = principal;
 	}
 
@@ -105,7 +113,32 @@ public class SocioCota implements Serializable {
 	public void setCota(Cota cota) {
 		this.cota = cota;
 	}
-	
-	
-	
+
+	/**
+	 * @return the endereco
+	 */
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	/**
+	 * @param endereco the endereco to set
+	 */
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
+	}
+
+	/**
+	 * @return the telefone
+	 */
+	public Telefone getTelefone() {
+		return telefone;
+	}
+
+	/**
+	 * @param telefone the telefone to set
+	 */
+	public void setTelefone(Telefone telefone) {
+		this.telefone = telefone;
+	}
 }

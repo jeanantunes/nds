@@ -1,82 +1,4 @@
 <head>
-<script>
-	function showComissaoPF(show) {
-
-		if (show) {
-
-			$(".comissionadoPf").show();
-
-		} else {
-
-			$(".comissionadoPf").hide();
-		}
-	}
-
-	function obterPessoaFisica(cpf) {
-
-		if (!cpf || cpf == "") {
-			return;
-		}
-		
-		$.postJSON(
-			'<c:url value="/cadastro/entregador/obterPessoaFisica" />',
-			{'cpf': cpf},
-			function(result) {
-
-				if (result.id) {
-
-					$("#nomeEntregador").val(result.nome);
-					$("#apelido").val(result.apelido);
-					$("#cpf").val(result.cpf).mask("999.999.999-99");
-					$("#rg").val(result.rg).mask("99.999.999-9");
-					$("#dataNascimento").val(result.dataNascimento).mask("99/99/9999");
-					$("#orgaoEmissor").val(result.orgaoEmissor);
-					$("#ufOrgaoEmissor").val(result.ufOrgaoEmissor);
-					$("#estadoCivil").val(result.estadoCivil);
-					$("#sexo").val(result.sexo);
-					$("#nacionalidade").val(result.nacionalidade);
-					$("#natural").val(result.natural);
-					$("#emailPF").val(result.email);
-
-				}
-			},
-			function(result) {
-
-				$("#nomeEntregador").val("");
-				$("#apelido").val("");
-				$("#cpf").val("");
-				$("#rg").val("");
-				$("#dataNascimento").val("");
-				$("#orgaoEmissor").val("");
-				$("#ufOrgaoEmissor").val("");
-				$("#estadoCivil").val("");
-				$("#sexo").val("");
-				$("#nacionalidade").val("");
-				$("#natural").val("");
-				$("#emailPF").val("");
-
-				exibirMensagemDialog(
-					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens
-				);
-			},
-			true
-		);
-	}
-	
-	$(function() {
-
-		$("#dataNascimento").mask("99/99/9999");
-		$("#cpf").mask("999.999.999-99");
-		$("#rgProcuradorProcuracaoPF").mask("99.999.999-9");
-		$("input[id^='percentualComissaoPF']").maskMoney({
-			 thousands:'.', 
-			 decimal:',', 
-			 precision:2
-		}); 	
-	});
-	
-</script>
 </head>
 <div id="dadosCadastraisPF" style="display:none">
 	<form id="formDadosEntregadorPF">
@@ -96,7 +18,7 @@
        </tr>
        <tr>
          <td>CPF:</td>
-         <td><input type="text" name="cpf" id="cpf" style="width:150px" onblur="obterPessoaFisica($(this).val())" /></td>
+         <td><input type="text" name="cpf" id="cpf" style="width:150px" /></td>
          <td>R. G.:</td>
          <td colspan="3"><input type="text" id="rg" style="width:150px" /></td>
        </tr>
@@ -144,9 +66,9 @@
          <td>É comissionado?</td>
          <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
            <tr>
-             <td width="10%"><input type="radio" name="comissionadoPF" id="comissionadoPF" onclick="showComissaoPF(true);" /></td>
+             <td width="10%"><input type="radio" name="comissionadoPF" id="comissionadoPF" /></td>
              <td width="15%">Sim</td>
-             <td width="10%"><input type="radio" name="comissionadoPF" id="naoComissionadoPF" onclick="showComissaoPF();" /></td>
+             <td width="10%"><input type="radio" name="comissionadoPF" id="naoComissionadoPF" /></td>
              <td width="65%">Não</td>
            </tr>
          </table></td>
