@@ -206,7 +206,7 @@ public class Fixture {
 	}
 	
 	public static PessoaJuridica juridicaFC() {
-		return pessoaJuridica("FC", "00.000.000/0001-00", "000000000000",
+		return pessoaJuridica("FC", "00.000.000/0001-00", "000000000002",
 				"fc@mail.com", "99.999-9");
 	}
 	
@@ -236,7 +236,7 @@ public class Fixture {
 	
 	
 	public static PessoaJuridica juridicaDinap() {		
-		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111111111111",
+		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111111111112",
 				"dinap@mail.com", "99.999-8");
 	}
 	

@@ -56,7 +56,7 @@ public class Fornecedor implements Serializable {
 	
 	@ManyToOne(optional = false)
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@JoinColumn(name = "JURIDICA_ID")
+	@JoinColumn(name = "JURIDICA_ID",unique=true)
 	private PessoaJuridica juridica;
 	
 	@Column(name="POSSUI_CONTRATO")
