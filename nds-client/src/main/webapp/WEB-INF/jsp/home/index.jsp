@@ -38,6 +38,36 @@
 <base href="<c:url value="/"/>" />
 
 <script type="text/javascript">
+
+	(function($) {
+		$.fn
+				.extend(
+						$.ui.dialog.prototype,
+						{
+							_original_init : $.ui.dialog.prototype._init,
+							_original_open : $.ui.dialog.prototype.open,
+							_init : function() {
+								var self = this.element;
+	
+								var diaOpt = {
+									form: this.options.form
+								};
+	
+								$.fn.extend(true, this.options, diaOpt);
+								this._original_init();
+	
+								
+								//this.addForm();
+							},
+							open : function() {
+								var self = this.element, o = this.options;
+								self.parent().appendTo(o.form);
+								this._original_open();
+								self.parent().css("top", "58px");
+							}
+						});
+	})(jQuery);
+
 	(function($) {
 		$.fn
 				.extend(
@@ -72,6 +102,14 @@
 																	+ index
 																	+ "] </br>anchor ["
 																	+ anchor);
+										},
+										complete : function(xhr, status, index,
+												anchor) {
+											if( $('#logout_true').length ) {
+												// Logout por fim ou perda da sessão
+												window.location.href="${pageContext.request.contextPath}/j_spring_security_logout";
+											};
+											focarPrimeiroElemento();
 										}
 									},
 									cache : true
@@ -121,6 +159,15 @@
 
 	});
 	
+	$(document).ready(function() {
+		$("#ajaxLoading").ajaxStart(function() {
+			$(this).fadeIn(200);
+		});
+		$("#ajaxLoading").ajaxStop(function() {
+			$(this).fadeOut(200);
+		});
+	});
+	
 	var contextPath = "${pageContext.request.contextPath}";	
 	
 </script>
@@ -129,6 +176,24 @@
 #workspace {
 	margin-top: 0px;
 }
+
+#ajaxLoading {
+	position: absolute;	z-index: 99999;
+	left: 0px; top: 0px; width: 100%; height: 100%; margin: 0;
+}
+#ajaxLoading #shadow {
+	background: #D0D0D0;
+	position: fixed; z-index: 1;
+	filter: alpha(opacity=50); opacity: 0.5;
+	left: 0px; top: 0px; width: 100%; height: 100%; margin: 0;
+}
+#ajaxLoading #panel {
+	position: fixed; z-index: 2;
+	top: 50%; left: 50%; width: 100px; height: 100px;
+	margin-top: -50px; margin-left: -50px;
+	text-align: center; vertical-align: 50%;
+}
+
 </style>
 </head>
 <body>
@@ -162,6 +227,7 @@
 				</div>
 			</div>
 		</div>
+		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
 		<div id="menu_principal">
 			<ul>
 				<li><a href="index.htm"><span class="classROLE_HOME">&nbsp;</span>Home</a>

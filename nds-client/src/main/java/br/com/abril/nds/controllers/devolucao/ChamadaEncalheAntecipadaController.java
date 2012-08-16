@@ -887,7 +887,7 @@ public class ChamadaEncalheAntecipadaController {
 		BigInteger totalExemplares = BigInteger.ZERO;
 		 
 		for(ChamadaEncalheAntecipadaVO vo : listaChamadaEncalheAntecipada){
-			totalExemplares.add(vo.getQntExemplares());
+			totalExemplares = totalExemplares.add(vo.getQntExemplares());
 		}
 		
 		infoChamdaAntecipadaEncalheDTO.setTotalCotas(new BigDecimal(listaChamadaEncalheAntecipada.size()));

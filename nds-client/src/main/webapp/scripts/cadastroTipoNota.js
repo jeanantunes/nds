@@ -3,7 +3,7 @@ var cadastroTipoNotaController = $.extend(true, {
 	buscar: function(){
 		var operacao = $("#operacaoID", this.worspace).val();
 		var tipoNota = $("#tipoNota", this.workspace).val();
-		$(".tiposNotasGrid").flexOptions({
+		$(".tiposNotasGrid", this.worspace).flexOptions({
 			url: contextPath + '/administracao/cadastroTipoNota/pesquisar',
 			params: [
 		         {name:'operacao', value: operacao},
@@ -18,10 +18,10 @@ var cadastroTipoNotaController = $.extend(true, {
 			preProcess: function(resultado) {
 				if (resultado.mensagens) {
 					exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
-					$(".grids").hide();
+					$(".grids", this.worspace).hide();
 					return resultado;
 				}
-				$(".grids").show();
+				$(".grids", this.worspace).show();
 				return resultado;
 			  },
 		
@@ -70,7 +70,7 @@ var cadastroTipoNotaController = $.extend(true, {
 	bindButtons : function() {
 		$("#btnPesquisar", this.workspace).click(function() {
 			cadastroTipoNotaController.buscar();
-			$(".grids").show();
+			$(".grids", this.worspace).show();
 		});
 	},
 	init : function() {

@@ -1,6 +1,6 @@
 @charset "utf-8";
 /* CSS Document */
-html{height:100%; min-height:90%; overflow:hidden;}
+html{height:100%; min-height:90%; overflow-y:auto;}
 body{
 	font-family: arial;
 	font-size: 11px;
@@ -13,7 +13,7 @@ body{
 
 .corpo{
 	width:100%;
-	overflow:hidden;
+	overflow-y:auto;
 	min-height:95%;
 
 }
@@ -261,7 +261,7 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 select{font-size: 12px; height: 21px;}
 select, input{font-size: 12px; }
 .header_table{ background:url(../images/bg_header_table.jpg) repeat-x center center; line-height:25px; font-weight:bold; }
-.scroll_grid{height:130px; overflow-y:auto;}
+.scroll_grid{height:130px; overflow-y:scroll;}
 
 
 .monitoramentos, .monitoramentos td{}
