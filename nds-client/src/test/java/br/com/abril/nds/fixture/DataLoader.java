@@ -4386,6 +4386,7 @@ public class DataLoader {
 		distribuidor.setPrazoFollowUp(50);
 		distribuidor.setValorConsignadoSuspensaoCotas(new BigDecimal(9999999));
 		distribuidor.setQtdDiasLimiteParaReprogLancamento(2);
+		distribuidor.setCodigoDistribuidorDinap("6248116");
 
 		save(session, distribuidor);
 
