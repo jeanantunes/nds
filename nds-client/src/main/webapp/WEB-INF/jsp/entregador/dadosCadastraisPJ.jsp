@@ -1,74 +1,4 @@
 <head>
-<script>
-
-	function showComissaoPJ(show) {
-
-		if (show) {
-
-			$(".comissionadoPJ").show();
-
-		} else {
-
-			$(".comissionadoPJ").hide();
-		}
-	}
-
-	$(function() {
-
-		$("#cnpj").mask("99.999.999/9999-99");
-		$("#rgProcuradorProcuracaoPJ").mask("99.999.999-9");
-		$("input[id^='percentualComissaoPJ']").maskMoney({
-			 thousands:'.', 
-			 decimal:',', 
-			 precision:2
-		}); 	
-	});
-
-	function obterPessoaJuridica(cnpj) {
-
-		if (!cnpj || cnpj == "") {
-			return;
-		}
-		
-		$.postJSON(
-			'<c:url value="/cadastro/entregador/obterPessoaJuridica" />',
-			{'cnpj': cnpj},
-			function(result) {
-
-				if (result.id) {
-
-					$("#razaoSocial").val(result.razaoSocial);
-					$("#nomeFantasia").val(result.nomeFantasia);
-					$("#cnpj").val(result.cnpj).mask("99.999.999/9999-99");
-					$("#inscricaoEstadual").val(result.inscricaoEstadual).mask("999.999.999.999");
-					$("#emailPJ").val(result.email);	
-
-				} else {
-
-					if ($("#razaoSocial").val() != '') {
-
-						$("#razaoSocial").focus();
-					}
-				}
-			},
-			function(result) {
-
-				$("#razaoSocial").val("");
-				$("#nomeFantasia").val("");
-				$("#cnpj").val("");
-				$("#inscricaoEstadual").val("");
-				$("#emailPJ").val("");
-
-				exibirMensagemDialog(
-					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens
-				);
-			},
-			true
-		);
-	}
-
-</script>
 </head>
 <div id="dadosCadastraisPJ" style="display:none">
 <form id="formDadosEntregadorPJ">
@@ -88,7 +18,7 @@
     </tr>
     <tr>
       <td>CNPJ:</td>
-      <td><input type="text" id="cnpj" style="width:230px" onblur="obterPessoaJuridica($(this).val())" /></td>
+      <td><input type="text" id="cnpj" style="width:230px" /></td>
       <td>Inscrição Estadual:</td>
       <td><input type="text" id="inscricaoEstadual" style="width:230px" /></td>
     </tr>
@@ -102,9 +32,9 @@
       <td>É comissionado?</td>
       <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="10%"><input type="radio" name="comissaoPJ" id="comissionadoPJ" value="radio" onclick="showComissaoPJ(true);" /></td>
+    <td width="10%"><input type="radio" name="comissaoPJ" id="comissionadoPJ" value="radio" /></td>
     <td width="23%">Sim</td>
-    <td width="9%"><input type="radio" name="comissaoPJ" id="naoComissionadoPJ" value="radio" onclick="showComissaoPJ();" /></td>
+    <td width="9%"><input type="radio" name="comissaoPJ" id="naoComissionadoPJ" value="radio" /></td>
     <td width="58%">Não</td>
   </tr>
 </table></td>

@@ -232,10 +232,10 @@ public interface CotaService {
 	
 	/**
 	 * Persiste os dados de sócio referente o identificador da cota informado
-	 * @param sociosCota
+	 * @param socioCota
 	 * @param idCota
 	 */
-	void salvarSociosCota(List<SocioCota> sociosCota, Long idCota );
+	void salvarSocioCota(SocioCota socioCota, Long idCota );
 	
 	/**
 	 * Retorna uma lista de sócios referente o código da cota informada
@@ -287,5 +287,12 @@ public interface CotaService {
 	 */
 	List<Cota> obterCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao);
 
-	
+	/**
+	 * Retorna o sócio através de seu ID.
+	 * 
+	 * @param idSocioCota - ID do sócio.
+	 * 
+	 * @return Sócio da cota.
+	 */ 
+	SocioCota obterSocioPorId(Long idSocioCota);
 }

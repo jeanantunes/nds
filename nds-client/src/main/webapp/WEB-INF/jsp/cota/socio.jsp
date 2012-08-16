@@ -1,25 +1,67 @@
 
 <script>
 
+function inicializarPopup() {
+	
+	ENDERECO.preencherComboUF();
+	
+	$("#formSocioCota")[0].reset();
+	
+	$("#cep").mask("99999-999");
+	
+	popup_novo_socio();
+}
+
+function popup_novo_socio() {
+	
+	$( "#dialog-socio" ).dialog({
+		resizable: false,
+		height:340,
+		width:760,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				
+				SOCIO_COTA.incluirSocio();
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+}
+
 $(".sociosPjGrid").flexigrid({
 	dataType : 'json',
 	preProcess:SOCIO_COTA.processarResultadoConsultaSocios,
 	colModel : [{
 		display : 'Nome',
 		name : 'nome',
-		width : 380,
+		width : 120,
 		sortable : false,
 		align : 'left'
 	},{
 		display : 'Cargo',
 		name : 'cargo',
-		width : 190,
+		width : 100,
 		sortable : false,
 		align : 'left'
 	}, {
+		display : 'Endereco',
+		name : 'endereco',
+		width : 340,
+		sortable : false,
+		align : 'left'
+	},{
+		display : 'Telefone',
+		name : 'telefone',
+		width : 115,
+		sortable : false,
+		align : 'left'
+	},{
 		display : 'Principal',
 		name : 'principalFlag',
-		width : 70,
+		width : 50,
 		sortable : false,
 		align : 'center'
 	}, {
@@ -29,52 +71,28 @@ $(".sociosPjGrid").flexigrid({
 		sortable : false,
 		align : 'center'
 	}],
-	width : 770,
+	width : 880,
 	height : 180
 });
 
 </script>
 
+<jsp:include page="./novoSocio.jsp" />
+
 <div id="dialog-excluir-socio" title="Socios" style="display: none;">
 	<p>Confirma esta Exclusão?</p>
 </div>
 
-<table width="300" cellspacing="2" cellpadding="2" border="0">
-    
-    <input type="hidden" id="idSocio" value=""/>
-    
-    <tbody><tr>
-      <td>Nome:</td>
-      <td><input type="text" id="idNomeSocio"></td>
-    </tr>
-    <tr>
-      <td>Cargo:</td>
-      <td><input type="text" id="idCargoSocio"></td>
-    </tr>
-    <tr>
-      <td><label for="ePrincipal">Principal:</label></td>
-      <td><input type="checkbox" id="idSocioPrincipal" value="" name="idSocioPrincipal"></td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      
-		<td>
-			<span class="bt_add"><a href="javascript:SOCIO_COTA.incluirSocio();" id="btnAddSocio">Incluir Novo</a></span>
-	
-			<span class="bt_novos"><a href="javascript:SOCIO_COTA.incluirSocio();" id="btnEditarSocio" style="display:none;">
-				<img src="/nds-client/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
- 			</span>
-	
-		</td>
-     
-      <td></td>
-    </tr>
-  </tbody>
-</table>
-<br>
+<input type="hidden" id="idSocio" value=""/>
+
 <label><strong>Sócios Cadastrados</strong></label>
-<br>
 <table class="sociosPjGrid"></table>
+    
+<span class="bt_add"><a href="javascript:inicializarPopup();" id="btnAddSocio">Incluir Novo</a></span>
+
+<br>
+
+<br>
 
 
 

@@ -245,6 +245,13 @@ function Endereco(paramTela,paramMessage) {
 	});
 	
 	this.pesquisarEnderecoPorCep = function () {
+		
+		var isFromModal = true;
+		
+		if (paramMessage == "") {
+			
+			isFromModal = false;
+		}
 	
 		var cep = $("#"+paramTela+"cep").val();
 
@@ -262,13 +269,20 @@ function Endereco(paramTela,paramMessage) {
 				$("#"+paramTela+"cidade").val(result.localidade);
 			},
 			null, 
-			true,
+			isFromModal,
 			paramMessage
 		);
 	};
 	
 	this.preencherComboUF = function () {
 
+		var isFromModal = true;
+		
+		if (paramMessage == "") {
+			
+			isFromModal = false;
+		}
+		
 		var idComboUF = "#" + paramTela + "uf";
 
 		$.postJSON(
@@ -288,11 +302,18 @@ function Endereco(paramTela,paramMessage) {
 				});
 			},
 			null,
-			true
+			isFromModal
 		);
 	}
 
 	this.autoCompletarLocalidades = function(isOnBlur) {
+		
+		var isFromModal = true;
+		
+		if (paramMessage == "") {
+			
+			isFromModal = false;
+		}
 
 		var idComboUF = "#" + paramTela + "uf";
 
@@ -330,13 +351,20 @@ function Endereco(paramTela,paramMessage) {
 					}
 				},
 				null,
-				true
+				isFromModal
 			);
 		}
 	}
 
 	this.autoCompletarBairros = function(isOnBlur) {
 
+		var isFromModal = true;
+		
+		if (paramMessage == "") {
+			
+			isFromModal = false;
+		}
+		
 		var nomeBairro = $("#"+paramTela+"bairro").val();
 		
 		var codigoIBGE = $("#"+paramTela+"codigoCidadeIBGE").val();
@@ -369,12 +397,19 @@ function Endereco(paramTela,paramMessage) {
 					}					
 				},
 				null,
-				true
+				isFromModal
 			);
 		}
 	}
 	
 	this.autoCompletarLogradouros = function(isOnBlur) {
+
+		var isFromModal = true;
+		
+		if (paramMessage == "") {
+			
+			isFromModal = false;
+		}
 
 		var codigoBairro = $("#"+paramTela+"codigoBairro").val();
 		
@@ -404,7 +439,7 @@ function Endereco(paramTela,paramMessage) {
 					}					
 				},
 				null,
-				true
+				isFromModal
 			);
 		}
 	}
