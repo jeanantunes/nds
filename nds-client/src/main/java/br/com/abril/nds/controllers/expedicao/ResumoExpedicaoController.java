@@ -30,7 +30,6 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -685,10 +684,5 @@ public class ResumoExpedicaoController {
 					ResumoExpedicaoDetalheVO.class, 
 					this.httpServletResponse);
 	}
-	
-	
-	@Post
-	private void sumarizarTotalProdutoFornecedor() {
-		
-	}
+
 }

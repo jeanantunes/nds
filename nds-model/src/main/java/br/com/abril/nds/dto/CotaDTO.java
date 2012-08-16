@@ -102,6 +102,8 @@ public class CotaDTO implements Serializable {
 	
 	private String natural;
 	
+	private String descricaoBox;
+	
 	public String getNumeroRG() {
 		return numeroRG;
 	}
@@ -164,6 +166,14 @@ public class CotaDTO implements Serializable {
 
 	public void setNatural(String natural) {
 		this.natural = natural;
+	}
+
+	public String getDescricaoBox() {
+		return descricaoBox;
+	}
+
+	public void setDescricaoBox(String descricaoBox) {
+		this.descricaoBox = descricaoBox;
 	}
 
 	/**
