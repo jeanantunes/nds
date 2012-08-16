@@ -5,32 +5,14 @@
 	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 <script language="javascript" type="text/javascript" 
 	src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametroSistema.js"></script>
 
 <script type="text/javascript">
 	
-	$(function() {
-		$("#dtOperacaoCorrente").mask("99/99/9999");
-		
-		$("#frequenciaExpurgo").numeric();
-	});
+$(function(){
+	parametroSistemaController.init();
 	
-	function salvar(){
-		
-		document.getElementById("dto.nfeDpec").value = document.getElementById('nfeDpec').checked ? "TRUE" : "FALSE";
-		
-		var formData = $("#formParametroSistema").serializeArray();
-		
-		$.postJSON(contextPath + "/administracao/parametrosSistema/salvar", 
-			formData,
-			function(result) {
-				var tipoMensagem = result.tipoMensagem;
-				var listaMensagens = result.listaMensagens;
-				if (tipoMensagem && listaMensagens) {
-					exibirMensagem(tipoMensagem, listaMensagens, "");
-				}
-		},
-		null,true);
-	}
+});
 	
 </script>
 
@@ -96,7 +78,7 @@
 									<input type="checkbox" id="nfeDpec" name="nfeDpec" value="TRUE" class="checkboxNfeDpec"/>
 								</c:otherwise>
 							</c:choose>
-							<input type="hidden" name="dto.nfeDpec" id="dto.nfeDpec" />
+							<input type="hidden" name="dto.nfeDpec" id="nfeDpecHidden" />
 						</td>
 					</tr>
 					<tr>
@@ -139,7 +121,7 @@
 					<tr>
 						<td>
 							<span class="bt_novos" title="Salvar">
-								<a onclick="salvar();" href="javascript:;">
+								<a onclick="parametroSistemaController.salvar();" href="javascript:;">
 								<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 								Salvar
 								</a>

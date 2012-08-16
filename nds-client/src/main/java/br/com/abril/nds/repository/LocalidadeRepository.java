@@ -9,4 +9,5 @@ public interface LocalidadeRepository extends Repository<Localidade, Long> {
 
 	List<Localidade> obterListaLocalidadeCotas();
 	
+	List<Localidade> pesquisarLocalidades(String nomeLocalidade);
 }

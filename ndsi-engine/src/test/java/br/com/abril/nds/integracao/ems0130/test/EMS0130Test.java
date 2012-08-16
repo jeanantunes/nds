@@ -7,6 +7,7 @@ import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.test.RouteTestTemplate;
 
 public class EMS0130Test extends RouteTestTemplate {
+	
 	@Autowired
 	private EMS0130Route rota;
 	

@@ -8,9 +8,6 @@ import com.ancientprogramming.fixedformat4j.annotation.Record;
 @Record
 public class EMS0130Output implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private Integer codigoDaCota;

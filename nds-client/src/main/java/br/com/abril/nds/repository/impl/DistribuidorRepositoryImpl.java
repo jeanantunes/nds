@@ -31,10 +31,8 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public Distribuidor obter() {
 		String hql = "from Distribuidor";
-		Query query = getSession().createQuery(hql);
-		@SuppressWarnings("unchecked")
-		List<Distribuidor> distribuidores = query.list();
-		return distribuidores.isEmpty() ? null : distribuidores.get(0);
+		Query query = getSession().createQuery(hql);		
+		return (Distribuidor) query.uniqueResult();
 	}
 
 	@Override

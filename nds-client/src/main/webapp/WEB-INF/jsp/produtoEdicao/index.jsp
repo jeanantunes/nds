@@ -144,7 +144,7 @@ function prepararTela(id) {
 	);
 	
 	
-	// Popular a lista de Edições:
+	// Popular a lista de EdiÃ§Ãµes:
 	$(".prodsPesqGrid").flexOptions({
 		url: "<c:url value='/cadastro/edicao/ultimasEdicoes.json' />",
 		params: [{name:'codigoProduto', value: $("#codigoProduto").val() }],
@@ -1019,7 +1019,7 @@ fieldset {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'A&ccedil;ões',
+				display : 'A&ccedil;Ãµes',
 				name : 'acoes',
 				width : 60,
 				sortable : true,
