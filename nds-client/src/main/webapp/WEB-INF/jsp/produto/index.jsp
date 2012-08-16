@@ -31,7 +31,8 @@
 	</div>
 	</form>
 
-	<div id="dialog-novo" title="Incluir Novo Produto">
+	<form id="novo_produto_form">
+		<div id="dialog-novo" title="Incluir Novo Produto">
      
 		<input id="idProduto" type="hidden" />
 		<jsp:include page="../messagesDialog.jsp">
@@ -278,6 +279,7 @@
 		</table>
 		
 	</div> 
+	</form>
 
 	<fieldset class="classFieldset">
 		<legend> Pesquisar Produtos</legend>
