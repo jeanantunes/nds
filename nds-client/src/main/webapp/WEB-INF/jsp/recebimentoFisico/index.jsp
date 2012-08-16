@@ -17,84 +17,6 @@
 
 <body>
 
-	<div id="dialog-nova-nota" style="display: none;" title="Nova Nota Fiscal">
-			
-			<jsp:include page="../messagesDialog.jsp" />
-			
-			<table width="439" cellpadding="2" cellspacing="2"
-				style="text-align: left;">
-				<tr>
-					<td width="127">Emissão:</td>
-					<td width="296">
-						<input 	type="text"
-								style="width: 80px"
-								name="dataEmissao"
-								id="dataEmissao" />
-					</td>
-				</tr>
-				<tr>
-					<td>Entrada:</td>
-					<td>
-						<input 	disabled="disabled"
-								type="text" 
-								value="${dataAtual}" 
-								style="width: 80px" 
-								id="dataEntrada" />
-					</td>
-				</tr>
-				<tr>
-					<td>Valor Bruto R$:</td>
-					<td>
-						<input 	type="text"
-								id="valorBruto" 
-								style="width: 80px" />
-					</td>
-				</tr>
-				<tr>
-					<td>Valor Líquido R$:</td>
-					<td>
-						<input 	type="text"
-								id="valorLiquido" 
-								style="width: 80px" />
-					</td>
-				</tr>
-				<tr>
-					<td>Valor Desconto R$:</td>
-					<td>
-						<input 	type="text"
-								id="valorDesconto" 
-								style="width: 80px" />
-					</td>
-				</tr>
-				<tr>
-					<td>CFOP:</td>
-					<td>
-					
-						<select id="cfop" style="width: 250px;">
-								<option value=""></option>
-								<c:forEach var="cfop" items="${listacfop}">
-									<option value="${cfop.id}">${cfop.codigo} - ${cfop.descricao}</option>
-								</c:forEach>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td>Tipo Nota Fiscal:</td>
-					<td>
-					
-						<select id="tipoNotaFiscal" style="width: 250px;">
-								<option value=""></option>
-								<c:forEach var="tipoNotaFiscal" items="${listaTipoNotaFiscal}">
-									<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>
-								</c:forEach>
-						</select>
-					</td>
-				</tr>
-			</table>
-
-	</div>
-
-
 	<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
 
 		<jsp:include page="../messagesDialog.jsp" />
@@ -379,6 +301,11 @@
 						</span>						
 						 
 					</div>
+					
+					<span class="bt_sellAll" style="float:right; margin-right:40px;">
+						<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
+						<input type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
+					</span>
 					
 				</div>
 

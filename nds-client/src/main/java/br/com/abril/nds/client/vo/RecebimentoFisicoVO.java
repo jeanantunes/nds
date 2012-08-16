@@ -23,7 +23,17 @@ public class RecebimentoFisicoVO implements Serializable {
 	private String qtdExemplar;
 	private String diferenca;
 	private String valorTotal;
+	
+	private String pacotePadrao;
+	
+	private String peso;
+	
 	private String destacarValorNegativo;
+	
+	private String dataLancamento;
+	private String dataRecolhimento;
+	
+	private String tipoLancamento;
 	
 	private String edicaoItemNotaPermitida;
 	private String edicaoItemRecFisicoPermitida;
@@ -281,6 +291,91 @@ public class RecebimentoFisicoVO implements Serializable {
 	 */
 	public void setIdItemRecebimentoFisico(Long idItemRecebimentoFisico) {
 		this.idItemRecebimentoFisico = idItemRecebimentoFisico;
+	}
+
+	/**
+	 * Obtém dataLancamento
+	 *
+	 * @return String
+	 */
+	public String getDataLancamento() {
+		return dataLancamento;
+	}
+
+	/**
+	 * Atribuí dataLancamento
+	 * @param dataLancamento 
+	 */
+	public void setDataLancamento(String dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+
+	/**
+	 * Obtém dataRecolhimento
+	 *
+	 * @return String
+	 */
+	public String getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	/**
+	 * Atribuí dataRecolhimento
+	 * @param dataRecolhimento 
+	 */
+	public void setDataRecolhimento(String dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	/**
+	 * Obtém tipoLancamento
+	 *
+	 * @return String
+	 */
+	public String getTipoLancamento() {
+		return tipoLancamento;
+	}
+
+	/**
+	 * Atribuí tipoLancamento
+	 * @param tipoLancamento 
+	 */
+	public void setTipoLancamento(String tipoLancamento) {
+		this.tipoLancamento = tipoLancamento;
+	}
+
+	/**
+	 * Obtém pacotePadrao
+	 *
+	 * @return String
+	 */
+	public String getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * Atribuí pacotePadrao
+	 * @param pacotePadrao 
+	 */
+	public void setPacotePadrao(String pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	/**
+	 * Obtém peso
+	 *
+	 * @return String
+	 */
+	public String getPeso() {
+		return peso;
+	}
+
+	/**
+	 * Atribuí peso
+	 * @param peso 
+	 */
+	public void setPeso(String peso) {
+		this.peso = peso;
 	}
 	
 	

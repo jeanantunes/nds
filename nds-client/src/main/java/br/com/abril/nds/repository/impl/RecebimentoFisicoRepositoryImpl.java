@@ -46,7 +46,8 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel<Rec
 		hql.append(" 	itemNotaFiscal.produtoEdicao.precoVenda, 			");
 		hql.append(" 	itemNotaFiscal.qtde, 								");
 		hql.append(" 	itemRecebimentoFisico.qtdeFisico, 					");
-		hql.append("	itemNotaFiscal.produtoEdicao.produto.pacotePadrao, 	");
+		hql.append("	itemNotaFiscal.produtoEdicao.pacotePadrao, 			");
+		hql.append("	itemNotaFiscal.produtoEdicao.peso, 					");
 		hql.append(" 	itemNotaFiscal.dataLancamento, 						");
 		hql.append(" 	itemNotaFiscal.dataRecolhimento, 					");
 		hql.append(" 	itemNotaFiscal.tipoLancamento, 						");

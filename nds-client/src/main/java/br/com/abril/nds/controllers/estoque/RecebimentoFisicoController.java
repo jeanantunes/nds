@@ -44,6 +44,7 @@ import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
@@ -146,6 +147,43 @@ public class RecebimentoFisicoController {
 	}
 	
 	/**
+	 * Replica o valor de reparte previsto para qtdPacote e qtdExemplar, e serializa o objeto 
+	 * do tipo RecebimentoFisicoVO pertinente.
+	 * 
+	 * @param lineId
+	 */
+	public void replicarValorRepartePrevisto(int lineId) {
+		
+		RecebimentoFisicoDTO itemRecebimentoFisicoDTO =  obterRecebimentoFisicoDTODaSessaoPorLineId(lineId);
+		
+		itemRecebimentoFisicoDTO.setQtdFisico(itemRecebimentoFisicoDTO.getRepartePrevisto());
+		
+		carregarValoresQtdPacoteQtdExemplar(itemRecebimentoFisicoDTO);
+		
+		obterRecebimentoFisicoVO(lineId);
+		
+	}
+	
+	/**
+	 * Replica o valor de reparte previsto para qtdPacote e qtdExemplar de todos
+	 * os objetos em session.
+	 */
+	public void replicarTodosValoresRepartePrevisto() {
+		
+		for(RecebimentoFisicoDTO itemRecebimentoFisicoDTO : getItensRecebimentoFisicoFromSession()) {
+			
+			itemRecebimentoFisicoDTO.setQtdFisico(itemRecebimentoFisicoDTO.getRepartePrevisto());
+			
+			carregarValoresQtdPacoteQtdExemplar(itemRecebimentoFisicoDTO);
+		}
+		
+		result.use(Results.json()).from("").serialize();
+		
+	}
+
+	
+	
+	/**
 	 * Serializa a listaItemRecebimentoFisico que esta em session recalculando os campos
 	 * valorTotal e valorDiferenca.
 	 */
@@ -193,7 +231,6 @@ public class RecebimentoFisicoController {
 		}
 		
 	}
-	
 		
 	/**
 	 * Faz a busca na base de dados da listaItemRecebimentoFisico e a serializa.
@@ -206,15 +243,14 @@ public class RecebimentoFisicoController {
 		Long idNotaFiscal = notaFiscal.getId();
 		
 		List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
-		
 				
 		if(itensRecebimentoFisico == null) {
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
 		}
 		
-		recarregarValoresCalculados(itensRecebimentoFisico);
-		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
+		
+		recarregarValoresCalculados(getItensRecebimentoFisicoFromSession());
 		
 		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());	
 		
@@ -309,6 +345,67 @@ public class RecebimentoFisicoController {
 	}
 	
 	/**
+	 * Obtém um item da lista em sessão a partir de seu lineId.
+	 * 
+	 * @param lineId
+	 * 
+	 * @return RecebimentoFisicoDTO
+	 */
+	private RecebimentoFisicoDTO obterRecebimentoFisicoDTODaSessaoPorLineId(int lineId) {
+		
+		for(RecebimentoFisicoDTO recebimentoFisicoDTO : getItensRecebimentoFisicoFromSession()) {
+			if(recebimentoFisicoDTO.getLineId() == lineId) {
+				return recebimentoFisicoDTO;
+			}
+		}
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item de nota encontrado");
+		
+	}
+	
+	/**
+	 * Serializa um item do tipo RecebimentoFisicoVO obtido da lista de 
+	 * itens da nota em sessão cujo lineId seja o mesmo do parâmetro.
+	 * 
+	 * @param lineId
+	 */
+	public void obterRecebimentoFisicoVO(int lineId) {
+		
+		RecebimentoFisicoDTO recebimentoFisicoDTO = obterRecebimentoFisicoDTODaSessaoPorLineId(lineId);
+		
+		String codigo			= recebimentoFisicoDTO.getCodigoProduto();
+		String nomeProduto		= recebimentoFisicoDTO.getNomeProduto();
+		String edicao			= (recebimentoFisicoDTO.getEdicao() 		== null) 	? "" 	: recebimentoFisicoDTO.getEdicao().toString();
+		String precoCapa		= (recebimentoFisicoDTO.getPrecoCapa() 		== null) 	? "0.0" : recebimentoFisicoDTO.getPrecoCapa().toString();
+		String dataLancamento	= (recebimentoFisicoDTO.getDataLancamento() != null) ? DateUtil.formatarDataPTBR(recebimentoFisicoDTO.getDataLancamento()) : "";
+		String dataRecolhimento = (recebimentoFisicoDTO.getDataRecolhimento() != null) ?  DateUtil.formatarDataPTBR(recebimentoFisicoDTO.getDataRecolhimento()) : "";
+		String repartePrevisto  = (recebimentoFisicoDTO.getRepartePrevisto()!=null) ? recebimentoFisicoDTO.getRepartePrevisto().toString() : "";
+		String tipoLancamento   = (recebimentoFisicoDTO.getTipoLancamento()!=null) ? recebimentoFisicoDTO.getTipoLancamento().name() : "";
+		String pacotePadrao		= String.valueOf(recebimentoFisicoDTO.getPacotePadrao());
+		String peso				= (recebimentoFisicoDTO.getPeso()!=null) ? recebimentoFisicoDTO.getPeso().toString() : ""; 
+		String qtdPacote		= (recebimentoFisicoDTO.getQtdPacote()!=null) ? recebimentoFisicoDTO.getQtdPacote().toString() : "";
+		String qtdExemplar		= (recebimentoFisicoDTO.getQtdExemplar()!=null) ? recebimentoFisicoDTO.getQtdExemplar().toString() : "";
+		
+		RecebimentoFisicoVO recebimentoFisicoVO = new RecebimentoFisicoVO();
+		
+		recebimentoFisicoVO.setCodigo(codigo);
+		recebimentoFisicoVO.setNomeProduto(nomeProduto);
+		recebimentoFisicoVO.setEdicao(edicao);
+		recebimentoFisicoVO.setPrecoCapa(precoCapa);
+		recebimentoFisicoVO.setDataLancamento(dataLancamento);
+		recebimentoFisicoVO.setDataRecolhimento(dataRecolhimento);
+		recebimentoFisicoVO.setRepartePrevisto(repartePrevisto);
+		recebimentoFisicoVO.setTipoLancamento(tipoLancamento);
+		recebimentoFisicoVO.setPacotePadrao(pacotePadrao);
+		recebimentoFisicoVO.setPeso(peso);
+		recebimentoFisicoVO.setQtdPacote(qtdPacote);
+		recebimentoFisicoVO.setQtdExemplar(qtdExemplar);
+		
+		result.use(Results.json()).withoutRoot().from(recebimentoFisicoVO).serialize();
+		
+	}
+	
+	/**
 	 * Inclui um novo item nota fiscal e dados de recebimento físico.
 	 * 
 	 * @param itemRecebimento
@@ -325,10 +422,11 @@ public class RecebimentoFisicoController {
 			String dataRecolhimento, 
 			List<RecebimentoFisicoDTO> itensRecebimento) {
 		
+		boolean indEdicaoItemNota = (itemRecebimento.getLineId() >= 0);
+		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())) {
-			
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		}
 		
@@ -362,21 +460,31 @@ public class RecebimentoFisicoController {
 		itemRecebimento.setEdicao(produtoEdicao.getNumeroEdicao());
 		itemRecebimento.setIdProdutoEdicao(produtoEdicao.getId());
 		
-		if(!Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())) {
-			
+		if(!Origem.INTERFACE.equals(itemRecebimento.getOrigemItemNota())) {
 			itemRecebimento.setQtdFisico(itemRecebimento.getRepartePrevisto());
 		}
 		
-		validarProdutoEdicaoExistente(itemRecebimento, itensRecebimentoFisico);
+		if(indEdicaoItemNota) {
+			
+			RecebimentoFisicoDTO itemParaRemocao = obterRecebimentoFisicoDTODaSessaoPorLineId(itemRecebimento.getLineId());
+			
+			itemRecebimento.setIdItemNota(itemParaRemocao.getIdItemNota());
+			itemRecebimento.setIdItemRecebimentoFisico(itemParaRemocao.getIdItemRecebimentoFisico());
+			
+			itensRecebimentoFisico.remove(itemParaRemocao);
+			
+		} else {
+			
+			validarProdutoEdicaoExistente(itemRecebimento, itensRecebimentoFisico);
+			
+		}
 		
 		itensRecebimentoFisico.add(itemRecebimento);
 		
 		List<String> msgs = new ArrayList<String>();
 		
 		msgs.add("Item Nota fiscal adicionado com sucesso.");
-		
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
-		
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();
 		
 	}
@@ -412,8 +520,6 @@ public class RecebimentoFisicoController {
 		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
 		BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
-		
-		 
 		
 		BigDecimal valorTotal = new BigDecimal(0.0D);
 		
@@ -464,7 +570,11 @@ public class RecebimentoFisicoController {
 	@Post
 	public void excluirItemNotaFiscal(int lineId, List<RecebimentoFisicoDTO> itensRecebimento) {
 		
-		atualizarItensRecebimentoEmSession(itensRecebimento);
+		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
+		
+		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
+			atualizarItensRecebimentoEmSession(itensRecebimento);
+		}
 		
 		List<RecebimentoFisicoDTO> itensRecebimentoFisico =  getItensRecebimentoFisicoFromSession();
 
@@ -498,7 +608,8 @@ public class RecebimentoFisicoController {
 
 
 	/**
-	 * Atualiza o campo qtdFisico da lista de itemRecebimentoFisico que se encontra em session.
+	 * Atualiza os campos qtdPacote e qtdExemplar da lista de 
+	 * itemRecebimentoFisico que se encontra em session.
 	 * 
 	 * @param itensRecebimento
 	 */
@@ -559,48 +670,6 @@ public class RecebimentoFisicoController {
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
 		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
 	}
-	
-	public void validarItensRecebimento() {
-		
-		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
-		
-		Long idNotaFiscal = notaFiscal.getId();
-		
-		List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
-		
-				
-		if(itensRecebimentoFisico == null) {
-			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
-		}
-		
-		recarregarValoresCalculados(itensRecebimentoFisico);
-		
-		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
-		
-		if(Origem.INTERFACE.equals(notaFiscal.getOrigem())){
-			
-			List<String> msgs = new ArrayList<String>();
-			
-			for(RecebimentoFisicoDTO recebimentoDTO: itensRecebimentoFisico){
-				
-				if( recebimentoDTO.getQtdFisico() == null || recebimentoDTO.getQtdFisico().compareTo(BigInteger.ZERO) == 0 ){
-					
-					msgs.add("NF interface com Itens sem quantidade física informada.");
-					
-					ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
-					
-					result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
-					
-					return;
-					
-				}
-				
-			}
-		}		
-		
-		result.use(Results.json()).from("").serialize();
-		
-	}
 
 	/**
 	 * Limpa os dados mantidos em session.
@@ -627,6 +696,7 @@ public class RecebimentoFisicoController {
 		recebimentoFisicoService.cancelarNotaFiscal(notaFiscal.getId());
 		
 		setItensRecebimentoFisicoToSession(null);
+		
 		setNotaFiscalToSession(null);
 		
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Recebimento Físico cancelado com sucesso");
@@ -757,34 +827,29 @@ public class RecebimentoFisicoController {
 
 	}
 	
-	//TODO: REMOVER METODO APOS TESTES
-	private List<RecebimentoFisicoDTO> getListaMockada() {
+	private void carregarValoresQtdPacoteQtdExemplar(RecebimentoFisicoDTO itemRecebimento) {
 		
-		List<RecebimentoFisicoDTO> listaRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
-		
-		int contador = 0;
-		
-		while(contador++<10) {
-			
-			RecebimentoFisicoDTO recebFisico = new RecebimentoFisicoDTO();
-			
-			recebFisico.setCodigoProduto(""+contador);
-			recebFisico.setNomeProduto("produto_"+contador);
-			recebFisico.setEdicao(1L);
-			recebFisico.setPrecoCapa(BigDecimal.TEN);
-			recebFisico.setRepartePrevisto(new BigInteger(String.valueOf(contador)));
-			recebFisico.setQtdPacote(new BigInteger(String.valueOf(contador)));
-			recebFisico.setQtdExemplar(new BigInteger(String.valueOf(contador)));
-			recebFisico.setDiferenca(BigInteger.ZERO);
-			recebFisico.setValorTotal(BigDecimal.TEN);
-			recebFisico.setOrigemItemNota(Origem.MANUAL);
-			
-			listaRecebimentoFisico.add(recebFisico);
+		if(Origem.MANUAL.equals(itemRecebimento.getOrigemItemNota())) {
+			itemRecebimento.setQtdFisico(itemRecebimento.getRepartePrevisto());
 		}
 		
-		return listaRecebimentoFisico;
+		BigInteger qtdFisico = (itemRecebimento.getQtdFisico() == null) ? BigInteger.ZERO : itemRecebimento.getQtdFisico();
+		
+		BigInteger pacotePadrao = (itemRecebimento.getPacotePadrao() <= 0) ? BigInteger.ONE :  
+							new BigInteger(String.valueOf(itemRecebimento.getPacotePadrao()));
+			
+		BigInteger[] qtdes = qtdFisico.divideAndRemainder(pacotePadrao);  
+
+		BigInteger qtdPacote = qtdes[0];
+		
+		BigInteger qtdQuebra = qtdes[1];
+		
+		itemRecebimento.setQtdPacote(qtdPacote);
+		
+		itemRecebimento.setQtdExemplar(qtdQuebra);
 		
 	}
+
 	
 	/**
 	 * Obtém uma lista do tipo {@link CellModelKeyValue<RecebimentoFisicoVO>}
@@ -809,6 +874,8 @@ public class RecebimentoFisicoController {
 			counter++;
 
 			dto.setLineId(counter);
+		
+			carregarValoresQtdPacoteQtdExemplar(dto);
 			
 			RecebimentoFisicoVO recebFisico = new RecebimentoFisicoVO();
 			
@@ -820,7 +887,8 @@ public class RecebimentoFisicoController {
 			String qtdPacote			 = (dto.getQtdPacote()			== null) 	? "0"	: dto.getQtdPacote().toString(); 
 			String qtdExemplar			 = (dto.getQtdExemplar()		== null)	? "0"	: dto.getQtdExemplar().toString();
 			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0" : dto.getDiferenca().toString();
-			String valorTotal		 	 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString() ;
+			String valorTotal		 	 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString();
+			
 			
 			String edicaoItemNotaPermitida 		= IND_SIM;
 			String edicaoItemRecFisicoPermitida = IND_SIM;
@@ -835,7 +903,7 @@ public class RecebimentoFisicoController {
 				if(Origem.MANUAL.equals(dto.getOrigemItemNota())) {
 
 					edicaoItemNotaPermitida 		= IND_SIM;
-					edicaoItemRecFisicoPermitida 	= IND_SIM;
+					edicaoItemRecFisicoPermitida 	= IND_NAO;
 
 					
 				} else {
@@ -1157,7 +1225,11 @@ public class RecebimentoFisicoController {
 	@Post
 	public void confirmarRecebimentoFisico(List<RecebimentoFisicoDTO> itensRecebimento){
 		
-		atualizarItensRecebimentoEmSession(itensRecebimento);
+		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
+		
+		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
+			atualizarItensRecebimentoEmSession(itensRecebimento);
+		}
 		
 		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
 		
