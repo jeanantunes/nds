@@ -93,7 +93,7 @@ public class ProdutoEdicao implements Serializable {
 	protected BigDecimal precoCusto;
 	
 	@Column(name = "PESO", nullable = false)
-	protected BigDecimal peso;
+	protected Long peso;
 	
 	@Column(name = "BOLETIM_INFORMATIVO", nullable = true, length=2048)
 	protected String boletimInformativo;
@@ -234,11 +234,11 @@ public class ProdutoEdicao implements Serializable {
 		this.precoCusto = precoCusto;
 	}
 	
-	public BigDecimal getPeso() {
+	public Long getPeso() {
 		return peso;
 	}
 	
-	public void setPeso(BigDecimal peso) {
+	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
 	

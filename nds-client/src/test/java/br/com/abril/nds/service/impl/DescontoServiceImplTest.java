@@ -108,7 +108,7 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		save(produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja = 
-			Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), 
+			Fixture.produtoEdicao("1", 1L, 10, 14, new Long(100), 
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
 		
 		save(produtoEdicaoVeja);
