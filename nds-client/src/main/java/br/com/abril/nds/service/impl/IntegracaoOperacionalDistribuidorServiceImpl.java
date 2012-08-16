@@ -279,6 +279,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//CONSIGNADO
 		//TOTAL_RUA
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.CONSIGNADO);
@@ -289,6 +290,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//TOTAL_RUA_INADIMPLENCIA
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.CONSIGNADO);
@@ -300,6 +302,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//JORNALEIRO
 		//JORNALEIROS
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
@@ -310,6 +313,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//JORNALEIROS_ATIVOS
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
@@ -320,6 +324,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 
 		//JORNALEIROS_SUSPENSOS
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
@@ -330,6 +335,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//JORNALEIROS_INATIVOS
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
@@ -341,6 +347,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//QUALIDADE_OPERACIONAL
 		//SOBRAS_DE
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
@@ -351,6 +358,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//SOBRAS_EM
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
@@ -361,6 +369,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//FALTAS_DE
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
@@ -371,6 +380,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//FALTAS_EM
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);

@@ -41,4 +41,8 @@ public interface EnderecoService {
 	EnderecoVO obterEnderecoPorCep(String cep);
 
 	List<Logradouro> pesquisarLogradouros(String nomeLogradouro);
+
+	List<Bairro> pesquisarBairros(String nomeBairro);
+
+	List<Localidade> pesquisarLocalidades(String nomeLocalidade);
 }
