@@ -65,12 +65,12 @@ public class EstudoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		save(tipoProduto);
 		
-		Produto produto = Fixture.produto("1", "teste", "teste", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal.TRIBUTADO);
+		Produto produto = Fixture.produto("1", "teste", "teste", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, new Long(10000), TributacaoFiscal.TRIBUTADO);
 		produto.addFornecedor(dinap);
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
-			Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
+			Fixture.produtoEdicao("1", 1L, 1, 1, new Long(10000), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQRSTU", 1L, produto, null, false);
 		
 		save(produtoEdicao);
 		

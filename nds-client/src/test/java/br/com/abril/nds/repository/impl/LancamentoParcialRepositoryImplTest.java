@@ -54,7 +54,7 @@ public class LancamentoParcialRepositoryImplTest extends AbstractRepositoryImplT
 		save(produtoVeja);
 		
 		produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 10,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
+				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produtoVeja, null, false);
 		
 		produtoEdicaoVeja1.setParcial(true);

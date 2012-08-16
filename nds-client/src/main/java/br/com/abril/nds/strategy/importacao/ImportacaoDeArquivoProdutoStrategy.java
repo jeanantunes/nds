@@ -263,7 +263,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 				produto = new Produto();
 				
 			    produto.setPeb(0);
-			    produto.setPeso(BigDecimal.ZERO);
+			    produto.setPeso(new Long(0));
 			    produto.setOrigem(Origem.MANUAL);
 			    produto.setTipoProduto(tipoProduto);
 		  	    produto.setEditor(editor);
@@ -311,7 +311,7 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 				produtoEdicao = new ProdutoEdicao();
 				
 			    produtoEdicao.setPeb(0);
-			    produtoEdicao.setPeso(BigDecimal.ZERO);
+			    produtoEdicao.setPeso(new Long(0));
 			    produtoEdicao.setOrigemInterface(false);
 			    produtoEdicao.setProduto(produto);
 			    
