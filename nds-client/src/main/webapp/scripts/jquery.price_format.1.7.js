@@ -264,4 +264,11 @@
 		return result;
 	};
 
+	jQuery.fn.floatValue = function(){
+				
+		var value = $(this).val().replace(".", "").replace(",", ".");
+		
+		return parseFloat(value);
+	};
+	
 })(jQuery);

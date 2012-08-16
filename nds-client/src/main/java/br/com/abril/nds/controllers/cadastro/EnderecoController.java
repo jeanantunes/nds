@@ -184,10 +184,7 @@ public class EnderecoController {
 		
 		validarDadosEndereco(enderecoAssociacao);
 
-		if (enderecoAssociacao.isEnderecoPrincipal()) {
-
-			validarExistenciaEnderecoPrincipal(enderecoAssociacao);
-		}
+		validarExistenciaEnderecoPrincipal(enderecoAssociacao);
 		
 		if (enderecoAssociacao.getEndereco() != null && enderecoAssociacao.getEndereco().getCep() != null) {
 
@@ -702,25 +699,33 @@ public class EnderecoController {
 	 * @param listaEnderecoAssociacao
 	 */
 	private void validarExistenciaEnderecoPrincipal(EnderecoAssociacaoDTO enderecoAssociacaoAtual) {
-
-		List<EnderecoAssociacaoDTO> listaEnderecoAssociacao = this.obterEnderecosSessaoSalvar();
 		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
-
-			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
-
-				throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um endereço principal.");
+		List<EnderecoAssociacaoDTO> listaEnderecos = new ArrayList<EnderecoAssociacaoDTO>();
+		
+		List<EnderecoAssociacaoDTO> listaEnderecosSalvar = this.obterEnderecosSessaoSalvar();
+		
+		List<EnderecoAssociacaoDTO> listaEnderecosExibir = this.obterEnderecosSessaoExibir();
+		
+		listaEnderecos.addAll(listaEnderecosExibir);
+		listaEnderecos.addAll(listaEnderecosSalvar);
+		
+		boolean hasPrincipal = enderecoAssociacaoAtual.isEnderecoPrincipal();
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos) {
+				
+			if (enderecoAssociacao.isEnderecoPrincipal()) {
+				
+				hasPrincipal = enderecoAssociacao.isEnderecoPrincipal();
+				
+				if (!enderecoAssociacao.equals(enderecoAssociacaoAtual) && enderecoAssociacaoAtual.isEnderecoPrincipal()) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um endereço principal.");
+				}
 			}
 		}
 		
-		List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
-		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaExibir) {
-
-			if (enderecoAssociacao.isEnderecoPrincipal() && !enderecoAssociacao.equals(enderecoAssociacaoAtual)) {
-
-				throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um endereço principal.");
-			}
+		if (!hasPrincipal) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário pelo menos um endereço principal.");
 		}
 	}
 	

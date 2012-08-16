@@ -1,7 +1,8 @@
 package br.com.abril.nds.service;
 
+import java.io.InputStream;
+
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 
 /**
  * Interface de serviços do parametrosDistribuidorVO
@@ -16,10 +17,21 @@ public interface ParametrosDistribuidorService {
 	public ParametrosDistribuidorVO getParametrosDistribuidor();
 
 	/**
-	 * Retorna o Distribuidor a partir do ParametrosDistribuidorVO
+	 * Salva a distribuidor com todos os parâmetros informados
+	 * 
 	 * @param ParametrosDistribuidorVO
-	 * @return Distribuidor
+	 * @param imgLogotipo
+	 * @param imgContentType
 	 */
-	public Distribuidor getDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor); 
+	public void salvarDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor,
+								   InputStream imgLogotipo,
+								   String imgContentType);
+	
+	/**
+	 * Retorna o logotipo do distribuidor, caso exista.
+	 * 
+	 * @return InputStream do logotipo
+	 */
+	public InputStream getLogotipoDistribuidor();
 
 }

@@ -249,4 +249,13 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	List<ProdutoEdicao> obterProdutosEdicoesPorCodigoProdutoLimitado(String codigoProduto, Integer limite);
 	
+	/**
+	 * Obtém produtos relacionados a um fornecedor.
+	 * 
+	 * @param idFornecedor - id do fornecedor
+	 * 
+	 * @return {@link Set} de {@link ProdutoEdicao}
+	 */
+	Set<ProdutoEdicao> obterProdutosEdicaoPorFornecedor(Long idFornecedor);
+	
 }
