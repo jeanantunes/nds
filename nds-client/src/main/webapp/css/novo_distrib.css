@@ -40,12 +40,11 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
 
 .classROLE_INDICADORES{background:url(../images/bt_indicadores.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
 
+.classROLE_NFE{background:url(../images/bt_nfe.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
 
 .classROLE_USUARIOS{background:url(../images/bt_usuarios.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
 
-
 .classROLE_LINKS{background:url(../images/bt_links.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
-
 
 .classROLE_HELP{background:url(../images/bt_help.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
 

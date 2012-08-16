@@ -11,12 +11,15 @@
 </style>
 </head>
 <body>
+<form id="sistemaOperacional">
 <div id="dialog-operacional" title="Sistema Operacional" style="display:none;">
     <fieldset style="width:350px!important;">
     <legend>Status do Sistema Operacional:</legend>
     <p>Sistema Operacional esta: <strong><span id="statusSistemaOperacional"></span></strong></p><br />
     </fieldset>
 </div>
+</form>
+<form id="detalhesProcessamento">
 <div id="dialog-novo" title="Detalhes do Processamento">
     <fieldset>
 	    <legend>Detalhe do Processamento</legend>
@@ -25,6 +28,8 @@
 	    <table class="detalheProcessamentoGrid"></table>
     </fieldset>
 </div>
+</form>
+<form id="detalhesInterface">
 <div id="dialog-detalhes" title="Detalhes da Interface">
     <fieldset>
     <legend>Detalhe da Interface</legend>
@@ -33,6 +38,7 @@
     <table class="detalheInterfaceGrid"></table>
     </fieldset>
 </div>
+
 <div class="corpo">
     <div class="container">
       <fieldset class="classFieldset">
