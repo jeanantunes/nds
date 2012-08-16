@@ -2,8 +2,11 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroCotaDTO implements Serializable {
 
 	/**
@@ -11,11 +14,23 @@ public class FiltroCotaDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@Export(label = "Cota")
 	private Integer numeroCota;
 	
+	@Export(label = "Nome / Razão Social")
 	private String nomeCota;
 	
+	@Export(label = "CPF / CNPJ")
 	private String numeroCpfCnpj;
+	
+	@Export(label = "Logradouro")
+	private String logradouro;
+	
+	@Export(label = "Bairro")
+	private String bairro;
+	
+	@Export(label = "Município")
+	private String municipio;
 	
 	private PaginacaoVO paginacao;
 	
@@ -23,10 +38,14 @@ public class FiltroCotaDTO implements Serializable {
 	
 	public FiltroCotaDTO() {}
 	
-	public FiltroCotaDTO(Integer numeroCota, String nomeCota ,String numeroCpfCnpj) {
+	public FiltroCotaDTO(Integer numeroCota, String nomeCota ,String numeroCpfCnpj,
+			String logradouro, String bairro, String municipio) {
 		this.numeroCota = numeroCota;
 		this.numeroCpfCnpj = numeroCpfCnpj;
 		this.nomeCota = nomeCota;
+		this.logradouro = logradouro;
+		this.bairro = bairro;
+		this.municipio = municipio;
 	}
 	
 	public enum OrdemColuna{
@@ -34,6 +53,7 @@ public class FiltroCotaDTO implements Serializable {
 		NUMERO_COTA("numero"),
 		NOME_PESSOA("nome"),
 		NUMERO_CPF_CNPJ("numeroCpfCnpj"),
+		BOX("descricaoBox"),
 		CONTATO("contato"),
 		TELEFONE("telefone"),
 		EMAIL("email"),
@@ -84,7 +104,29 @@ public class FiltroCotaDTO implements Serializable {
 		this.numeroCpfCnpj = numeroCpfCnpj;
 	}
 
-	
+	public String getLogradouro() {
+		return logradouro;
+	}
+
+	public void setLogradouro(String logradouro) {
+		this.logradouro = logradouro;
+	}
+
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	public String getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
 
 	/**
 	 * @return the paginacao
@@ -178,8 +220,4 @@ public class FiltroCotaDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
-	
-	
 }

@@ -12,7 +12,8 @@ public enum InterfaceEnum {
 	EMS0126(126L, null, EMS0126Input.class),
 	EMS0112(112L, null, EMS0112Input.class),
 	EMS0134(134L, null, null),
-	EMS0185(185L, null, null);
+	EMS0185(185L, null, null),
+	EMS0135(135L, null, EMS0135Input.class);
 	
 	
 	private Long codigoInterface;

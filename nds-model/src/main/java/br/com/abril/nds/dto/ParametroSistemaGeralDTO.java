@@ -287,9 +287,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	 * @return the nfeDpec
 	 */
 	public String getNfeDpec() {
-		return "TRUE".equals(this.getParametroSistemaString(TipoParametroSistema.NFE_DPEC)) 
-				? "TRUE"
-				: "FALSE";
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_DPEC);
 	}
 
 	/**
@@ -297,7 +295,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	 *            the nfeDpec to set
 	 */
 	public void setNfeDpec(String nfeDpec) {
-		this.params.put(TipoParametroSistema.NFE_DPEC, nfeDpec);
+		this.params.put(TipoParametroSistema.NFE_DPEC, Boolean.valueOf(nfeDpec) ? "TRUE" : "FALSE");
 	}
 	
 	/**

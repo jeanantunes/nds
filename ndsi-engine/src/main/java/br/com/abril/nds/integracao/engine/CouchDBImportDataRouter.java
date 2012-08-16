@@ -17,10 +17,8 @@ import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -30,7 +28,6 @@ import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -177,7 +174,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	private CouchDbClient getCouchDBClient() {
 		
 		return new CouchDbClient(
-				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 8, "0"),
+				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 7, "0"),
 				true,
 				couchDbProperties.getProtocol(),
 				couchDbProperties.getHost(),
@@ -201,11 +198,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 				//TODO Alterar consulta para obter o parametro "CODIGO_DISTRIBUIDOR_DINAP", 
 				// esse parametro não será mais relacionada aos Parametro do Sistema, sera relacionado aos Parametro do Distribuidor
 			
-				String hql = "SELECT p.valor from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema";
+				//String hql = "SELECT p.valor from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema";
+				String hql = "SELECT dist.id from Distribuidor dist";
 				
-				Query query = getSession().createQuery(hql);
-				query.setParameter("tipoParametroSistema", TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP);
-				query.setMaxResults(1);
+				Query query = getSession().createQuery(hql);				
 			
 				setCodDistribuidor(Long.parseLong( query.uniqueResult().toString() ));
 				

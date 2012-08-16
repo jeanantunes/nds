@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.repository.LocalidadeRepository;
 
 @Repository
@@ -39,5 +40,15 @@ AbstractRepositoryModel<Localidade, Long> implements LocalidadeRepository {
 		
 		return query.list();
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Localidade> pesquisarLocalidades(String nomeLocalidade) {
+		
+		Query query = 
+				this.getSession().createQuery("select l from Localidade l where l.nome like :nome ");
+		query.setParameter("nome", "%" + nomeLocalidade + "%");
+		
+		return query.list();
 	}
 }

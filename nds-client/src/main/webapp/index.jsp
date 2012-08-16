@@ -24,7 +24,7 @@
 <script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
-
+<script language="javascript" type="text/javascript" src="scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
 <script type="text/javascript" src="scripts/jquery.formatCurrency-1.4.0.min.js"></script>
 <script type="text/javascript" src="scripts/jquery.calculation.min.js"></script> 		

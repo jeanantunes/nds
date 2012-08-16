@@ -1,8 +1,9 @@
-var produto = $.extend(true, {
+//#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
+var produtoController = $.extend(true, {
 	
 	inicializar : function () {
 		this.iniciarGrid();
-		$( "#tabProduto" ).tabs();
+		$( "#tabProduto", this.workspace).tabs();
 
 	},
 
@@ -15,7 +16,7 @@ var produto = $.extend(true, {
 
 		var valueRadio = new Array();
 
-		$("input[type=radio][name='"+radioName+"']:checked").each(function() {
+		$("input[type=radio][name='"+radioName+"']:checked", this.workspace).each(function() {
 			valueRadio.push($(this).val());
 		});
 
@@ -23,17 +24,17 @@ var produto = $.extend(true, {
 	},
 	
 	buscarValueCheckBox:function(checkName) {
-		return $("#"+checkName).is(":checked");
+		return $("#"+checkName).is(":checked", this.workspace);
 	},
 		
 	pesquisarProdutosSuccessCallBack:function() {
 		
-		produto.pesquisarFornecedor(produto.getCodigoProdutoPesquisa());
+		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 	},
 	
 	pesquisarProdutosErrorCallBack: function() {
 			
-		produto.pesquisarFornecedor(produto.getCodigoProdutoPesquisa());
+		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 	},
 
 	getCodigoProdutoPesquisa: function () {
@@ -49,13 +50,13 @@ var produto = $.extend(true, {
 	//Mostrar auto complete por nome do produto
 	autoCompletarPorNomeFornecedor : function(idFornecedor, isFromModal) {
 		
-		produto.pesquisaRealizada = false;
+		produtoController.pesquisaRealizada = false;
 		
 		var nomeFornecedor = $(idFornecedor, this.workspace).val();
 		
 		if (nomeFornecedor && nomeFornecedor.length > 2) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorNomeFornecedor", "nomeFornecedor=" + nomeFornecedor,
-					   function(result) { produto.exibirAutoComplete(result, idFornecedor); },
+					   function(result) { produtoController.exibirAutoComplete(result, idFornecedor); },
 					   null, isFromModal);
 		}
 	},
@@ -105,7 +106,7 @@ var produto = $.extend(true, {
 
 	iniciarGrid : function() {
 		$(".produtosGrid", this.workspace).flexigrid({
-			preProcess: produto.executarPreProcessamento,
+			preProcess: produtoController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
 				display : 'C&oacute;digo',
@@ -215,29 +216,23 @@ var produto = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
-					produto.salvarProduto();
+					produtoController.salvarProduto();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
 			},
 			beforeClose: function() {
-				produto.limparModalCadastro();
+				produtoController.limparModalCadastro();
 				clearMessageDialogTimeout('dialogMensagemNovo');
 			},
-			close : function() {
-				$(this).hide();
-				$(this).dialog('destroy');
-				var form  = $(this).closest('form');
-				$(this).appendTo(form);
-				//$(this).appendTo('#novo_produto_form');
-			}
+			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 		
 		this.carregarNovoProduto(
 			function() {
-				produto.limparModalCadastro();
-				produto.carregarProdutoEditado(id);		
+				produtoController.limparModalCadastro();
+				produtoController.carregarProdutoEditado(id);		
 			}
 		);
 	},
@@ -248,26 +243,26 @@ var produto = $.extend(true, {
 				   	"id=" + id,
 				   	function(result) {
 			   
-						$("#idProduto", this.workspace).val(result.id);
-						$("#codigoProdutoCadastro", this.workspace).val(result.codigo);
-						$("#nomeProduto", this.workspace).val(result.nome);
-						$("#sloganProduto", this.workspace).val(result.slogan);
-						$("#peb", this.workspace).val(result.peb);
-						$("#pacotePadrao", this.workspace).val(result.pacotePadrao);
-						$("#comboPeriodicidade", this.workspace).val(result.periodicidade);
-						$("#grupoEditorial", this.workspace).val(result.grupoEditorial);
-						$("#subGrupoEditorial", this.workspace).val(result.subGrupoEditorial);
-						$("#comboEditor", this.workspace).val(result.codigoEditor);
-						$("#comboFornecedoresCadastro", this.workspace).val(result.codigoFornecedor);
-						$("#comboTipoDesconto", this.workspace).val(result.tipoDesconto);
-						$("#comboTipoProdutoCadastro", this.workspace).val(result.codigoTipoProduto);
-						$("#segmentacaoClasseSocial", this.workspace).val(result.classeSocial);
-						$("#segmentacaoSexo", this.workspace).val(result.sexo);
-						$("#segmentacaoFaixaEtaria", this.workspace).val(result.faixaEtaria);
-						$("#segmentacaoFormato", this.workspace).val(result.formatoProduto);
-						$("#segmentacaoTipoLancamento", this.workspace).val(result.tipoLancamento);
-						$("#segmentacaoTemaPrincipal", this.workspace).val(result.temaPrincipal);
-						$("#segmentacaoTemaSecundario", this.workspace).val(result.temaSecundario);
+						$("#idProduto", produtoController.workspace).val(result.id);
+						$("#codigoProdutoCadastro", produtoController.workspace).val(result.codigo);
+						$("#nomeProduto", produtoController.workspace).val(result.nome);
+						$("#sloganProduto", produtoController.workspace).val(result.slogan);
+						$("#peb", produtoController.workspace).val(result.peb);
+						$("#pacotePadrao", produtoController.workspace).val(result.pacotePadrao);
+						$("#comboPeriodicidade", produtoController.workspace).val(result.periodicidade);
+						$("#grupoEditorial", produtoController.workspace).val(result.grupoEditorial);
+						$("#subGrupoEditorial", produtoController.workspace).val(result.subGrupoEditorial);
+						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
+						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
+						$("#comboTipoDesconto", produtoController.workspace).val(result.tipoDesconto);
+						$("#comboTipoProdutoCadastro", produtoController.workspace).val(result.codigoTipoProduto);
+						$("#segmentacaoClasseSocial", produtoController.workspace).val(result.classeSocial);
+						$("#segmentacaoSexo", produtoController.workspace).val(result.sexo);
+						$("#segmentacaoFaixaEtaria", produtoController.workspace).val(result.faixaEtaria);
+						$("#segmentacaoFormato", produtoController.workspace).val(result.formatoProduto);
+						$("#segmentacaoTipoLancamento", produtoController.workspace).val(result.tipoLancamento);
+						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
+						$("#segmentacaoTemaSecundario", produtoController.workspace).val(result.temaSecundario);
 
 						if (result.formaComercializacao == 'Conta Firme') {
 							$("#formaComercializacaoContaFirme", this.workspace).attr('checked', true);
@@ -283,7 +278,7 @@ var produto = $.extend(true, {
 							$("#radioTributacaoOutros", this.workspace).attr('checked', true);
 						}
 
-						produto.carregarTipoDescontoProduto(produto.carregarPercentualDesconto);							
+						produtoController.carregarTipoDescontoProduto(produtoController.carregarPercentualDesconto);							
 					},
 					null,
 					true
@@ -326,7 +321,8 @@ var produto = $.extend(true, {
 			},
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
-			}
+			},
+			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 	},
 	
@@ -340,7 +336,7 @@ var produto = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
-					produto.salvarProduto();
+					produtoController.salvarProduto();
 					
 			   		$(".produtosGrid", this.workspace).flexReload();
 				},
@@ -349,8 +345,8 @@ var produto = $.extend(true, {
 				}
 			},
 			beforeClose: function() {
-				produto.limparModalCadastro();
-				clearMessageDialogTimeout('dialogMensagemNovo');
+				produtoController.limparModalCadastro();
+				clearMessageDialogTimeout('dialogMensagemNovo', this.workspace);
 			}
 		});
 
@@ -363,10 +359,10 @@ var produto = $.extend(true, {
 					null,
 					function (result) {
 
-						produto.popularCombo(result[0], $("#comboTipoProdutoCadastro", this.workspace));
-						produto.popularCombo(result[1], $("#comboFornecedoresCadastro", this.workspace));
-						produto.popularCombo(result[2], $("#comboEditor", this.workspace));
-						produto.popularCombo(result[3], $("#comboTipoDesconto", this.workspace));
+						produtoController.popularCombo(result[0], $("#comboTipoProdutoCadastro", this.workspace));
+						produtoController.popularCombo(result[1], $("#comboFornecedoresCadastro", this.workspace));
+						produtoController.popularCombo(result[2], $("#comboEditor", this.workspace));
+						produtoController.popularCombo(result[3], $("#comboTipoDesconto", this.workspace));
 
 						if (callback) {
 							callback();
@@ -401,28 +397,28 @@ var produto = $.extend(true, {
 	
 	salvarProduto : function() {
 
-		 var params = [{name:"produto.id",value:$("#idProduto", this.workspace).val()},
-        			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", this.workspace).val()},
-        			   {name:"produto.nome",value:$("#nomeProduto", this.workspace).val()},
-        			   {name:"produto.peb",value:$("#peb", this.workspace).val()},
-        			   {name:"produto.pacotePadrao",value:$("#pacotePadrao", this.workspace).val()},
-        			   {name:"produto.slogan",value:$("#sloganProduto", this.workspace).val()},
-        			   {name:"produto.periodicidade",value:$("#comboPeriodicidade", this.workspace).val()},
-        			   {name:"produto.formaComercializacao",value:this.buscarValueRadio('formaComercializacao')},
-        			   {name:"produto.tributacaoFiscal",value:this.buscarValueRadio('radioTributacaoFiscal')},
-        			   {name:"produto.grupoEditorial",value:$("#grupoEditorial", this.workspace).val()},
-        			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial", this.workspace).val()},	
-        			   {name:"produto.segmentacao.classeSocial",value:$("#segmentacaoClasseSocial", this.workspace).val()},
-        			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo", this.workspace).val()},
-        			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria", this.workspace).val()},
-        			   {name:"produto.segmentacao.formatoProduto",value:$("#segmentacaoFormato", this.workspace).val()},
-        			   {name:"produto.segmentacao.tipoLancamento",value:$("#segmentacaoTipoLancamento", this.workspace).val()},
-        			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal", this.workspace).val()},
-        			   {name:"produto.segmentacao.temaSecundario",value:$("#segmentacaoTemaSecundario", this.workspace).val()},
-        			   {name:"codigoEditor",value:$("#comboEditor", this.workspace).val()},
-        			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", this.workspace).val()},
-        			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", this.workspace).val()},
-        			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", this.workspace).val()}];
+		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
+        			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+        			   {name:"produto.nome",value:$("#nomeProduto", produtoController.workspace).val()},
+        			   {name:"produto.peb",value:$("#peb", produtoController.workspace).val()},
+        			   {name:"produto.pacotePadrao",value:$("#pacotePadrao", produtoController.workspace).val()},
+        			   {name:"produto.slogan",value:$("#sloganProduto", produtoController.workspace).val()},
+        			   {name:"produto.periodicidade",value:$("#comboPeriodicidade", produtoController.workspace).val()},
+        			   {name:"produto.formaComercializacao",value:this.buscarValueRadio('formaComercializacao', produtoController.workspace)},
+        			   {name:"produto.tributacaoFiscal",value:this.buscarValueRadio('radioTributacaoFiscal', produtoController.workspace)},
+        			   {name:"produto.grupoEditorial",value:$("#grupoEditorial", produtoController.workspace).val()},
+        			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial", produtoController.workspace).val()},	
+        			   {name:"produto.segmentacao.classeSocial",value:$("#segmentacaoClasseSocial", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.formatoProduto",value:$("#segmentacaoFormato", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.tipoLancamento",value:$("#segmentacaoTipoLancamento", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.temaSecundario",value:$("#segmentacaoTemaSecundario", produtoController.workspace).val()},
+        			   {name:"codigoEditor",value:$("#comboEditor", produtoController.workspace).val()},
+        			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
+        			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", produtoController.workspace).val()},
+        			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()}];
  
 		$.postJSON(contextPath + "/produto/salvarProduto",  
 			   	params,
@@ -451,11 +447,11 @@ var produto = $.extend(true, {
 
 		$.each(resultado.rows, function(index, row) {
 			
-			var linkAprovar = '<a href="javascript:;" onclick="produto.editarProduto(' + row.cell.id + ');" style="cursor:pointer">' +
+			var linkAprovar = '<a href="javascript:;" onclick="produtoController.editarProduto(' + row.cell.id + ');" style="cursor:pointer">' +
 					     	  	'<img title="Editar" src="' + contextPath +'/images/ico_editar.gif" hspace="5" border="0px" />' +
 					  		  '</a>';
 			
-			var linkExcluir = '<a href="javascript:;" onclick="produto.removerProduto(' + row.cell.id + ');" style="cursor:pointer">' +
+			var linkExcluir = '<a href="javascript:;" onclick="produtoController.removerProduto(' + row.cell.id + ');" style="cursor:pointer">' +
 							   	 '<img title="Excluir" src="' + contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
@@ -489,8 +485,8 @@ var produto = $.extend(true, {
 			
 			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
 					   "codigoProduto=" + codigoProduto,
-					   function(result) { produto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack); },
-					   function() { produto.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
+					   function(result) { produtoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack); },
+					   function() { produtoController.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
 		
 		} else {
 		
@@ -515,8 +511,8 @@ var produto = $.extend(true, {
 			
 			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
 					   "codigoProduto=" + codigoProduto,
-					   function(result) { produto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack, idCodigo, isFromModal); 
-					   		produto.autoCompletarEdicaoPorProduto(idCodigo, idEdicao, isFromModal);
+					   function(result) { produtoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack, idCodigo, isFromModal); 
+					   		produtoController.autoCompletarEdicaoPorProduto(idCodigo, idEdicao, isFromModal);
 						},
 					   null, isFromModal);
 		
@@ -534,7 +530,7 @@ var produto = $.extend(true, {
 		$(idProduto, this.workspace).val(result.nome);
 		$(idEdicao, this.workspace).focus();
 		
-		produto.pesquisaRealizada = true;
+		produtoController.pesquisaRealizada = true;
 		
 		if (successCallBack) {
 			successCallBack();
@@ -553,12 +549,12 @@ var produto = $.extend(true, {
 	//Mostrar auto complete por nome do produto
 	autoCompletarEdicaoPorProduto : function(idCodigoProduto, idEdicao, isFromModal) {
 		
-		produto.pesquisaRealizada = false;
+		produtoController.pesquisaRealizada = false;
 		
 		var codigoProduto = $(idCodigoProduto).val();
 		
 		$.postJSON(contextPath + "/produto/autoCompletarEdicaoPorProduto", "codigoProduto=" + codigoProduto,
-					   function(result) { produto.exibirAutoCompleteEdicao(result, idEdicao); },
+					   function(result) { produtoController.exibirAutoCompleteEdicao(result, idEdicao); },
 					   null, isFromModal);
 		
 	},
@@ -566,13 +562,13 @@ var produto = $.extend(true, {
 	//Mostrar auto complete por nome do produto
 	autoCompletarPorNomeProduto : function(idProduto, isFromModal) {
 		
-		produto.pesquisaRealizada = false;
+		produtoController.pesquisaRealizada = false;
 		
 		var nomeProduto = $(idProduto, this.workspace).val();
 		
 		if (nomeProduto && nomeProduto.length > 2) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorPorNomeProduto", "nomeProduto=" + nomeProduto,
-					   function(result) { produto.exibirAutoComplete(result, idProduto); },
+					   function(result) { produtoController.exibirAutoComplete(result, idProduto); },
 					   null, isFromModal);
 		}
 	},
@@ -588,13 +584,13 @@ var produto = $.extend(true, {
 		$(idProduto, this.workspace).autocomplete({
 			source : result,
 			focus : function(event, ui) {
-				produto.descricaoAtribuida = false;
+				produtoController.descricaoAtribuida = false;
 			},
 			close : function(event, ui) {
-				produto.descricaoAtribuida = true;
+				produtoController.descricaoAtribuida = true;
 			},
 			select : function(event, ui) {
-				produto.descricaoAtribuida = true;
+				produtoController.descricaoAtribuida = true;
 			},
 			minLength: 4,
 			delay : 0,
@@ -611,20 +607,20 @@ var produto = $.extend(true, {
 	//Pesquisar por nome do produto
 	pesquisarPorNomeProduto : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		
-		setTimeout(function() { clearInterval(produto.intervalo); }, 10 * 1000);
+		setTimeout(function() { clearInterval(produtoController.intervalo); }, 10 * 1000);
 		
-		produto.intervalo = setInterval(function() {
+		produtoController.intervalo = setInterval(function() {
 			
-			if (produto.descricaoAtribuida) {
+			if (produtoController.descricaoAtribuida) {
 				
-				if (produto.pesquisaRealizada) {
+				if (produtoController.pesquisaRealizada) {
 					
-					clearInterval(produto.intervalo);
+					clearInterval(produtoController.intervalo);
 					
 					return;
 				}
 				
-				produto.pesquisarPorNomeProdutoAposIntervalo(idCodigo, idProduto, idEdicao,
+				produtoController.pesquisarPorNomeProdutoAposIntervalo(idCodigo, idProduto, idEdicao,
 															isFromModal, successCallBack, errorCallBack);
 			}
 			
@@ -633,9 +629,9 @@ var produto = $.extend(true, {
 	
 	pesquisarPorNomeProdutoAposIntervalo : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		
-		clearInterval(produto.intervalo);
+		clearInterval(produtoController.intervalo);
 		
-		produto.pesquisaRealizada = true;
+		produtoController.pesquisaRealizada = true;
 		
 		var nomeProduto = $(idProduto, this.workspace).val();
 		
@@ -647,8 +643,8 @@ var produto = $.extend(true, {
 		
 		if (nomeProduto && nomeProduto.length > 0) {
 			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
-					   function(result) { produto.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); },
-					   function() { produto.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack); }, isFromModal);
+					   function(result) { produtoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); },
+					   function() { produtoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack); }, isFromModal);
 		} else {
 			
 			if (errorCallBack) {
@@ -692,8 +688,8 @@ var produto = $.extend(true, {
 			   		   "&numeroEdicao=" + numeroEdicao;
 
 			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
-					data, function(result) { produto.validaNumeroEdicaoSucessoCallBack(idCodigo, idEdicao, successCallBack); },
-					function() { produto.validarNumeroEdicaoErrorCallBack(idEdicao, errorCallBack); }, isFromModal);
+					data, function(result) { produtoController.validaNumeroEdicaoSucessoCallBack(idCodigo, idEdicao, successCallBack); },
+					function() { produtoController.validarNumeroEdicaoErrorCallBack(idEdicao, errorCallBack); }, isFromModal);
 		} else {
 			
 			if (errorCallBack) {
