@@ -2,6 +2,8 @@ function OperacaoDiferenciada() {
 	
 	var T = this;
 	
+	this.grupoSelecionado = null;
+	
 	this.grupos = []; 
 		
 	this.processaRetornoPesquisa = function(result) {
@@ -17,7 +19,7 @@ function OperacaoDiferenciada() {
 	this.gerarAcao = function(index,row) {
 				
 		row.cell.acao = 
-			'<a href="javascript:;" onclick="dialogEditarGrupo(' + index + ');">' +
+			'<a href="javascript:;" onclick="OD.editarGrupo(' + index + ');">' +
 			'<img src="' + contextPath + '/images/ico_editar.gif" border="0" alt="Editar" hspace="5" />' +
 			'</a>' +
 			
@@ -27,9 +29,64 @@ function OperacaoDiferenciada() {
 	},
 	
 	this.editarGrupo = function(index) {
-		alert('editar ' + index);
 		
-		dialogConfirmarGrupo();
+		T.grupoSelecionado = T.grupos[index];
+		
+		if(T.grupoSelecionado.tipoGrupo == 'TIPO_COTA') {
+			$('#radioTipoCota').prop('checked', true);
+			$('#comboTipoCota').val(T.grupoSelecionado.tipoCota);
+			T.carregarTipoCota();
+			
+		} else if (T.grupoSelecionado.tipoGrupo == 'MUNICIPIO') {
+			$('#radioMunicipios').prop('checked', true);
+			T.carregarMunicipios();
+		}
+		
+		dialogDetalhesGrupo();
+	},
+	
+	this.carregarMunicipios = function() {
+				
+		$('.selecionarMunicipio').show();
+		$('.selecionarCotas').hide();
+
+		var data = [];
+		
+		if(T.grupoSelecionado) {
+			data.push({name:'idGrupo',		value: T.grupoSelecionado.idGrupo });
+		}
+		
+		$(".selMunicipiosGrid").flexOptions({ params:data });		
+		$(".selMunicipiosGrid").flexReload();
+	},
+	
+	this.carregarTipoCota = function() {
+		
+		$('.selecionarCotas').show();
+		$('.selecionarMunicipio').hide();
+		
+		var data = [];	
+		
+		if(T.grupoSelecionado) {
+			data.push({name:'idGrupo',		value: T.grupoSelecionado.idGrupo });
+			data.push({name:'tipoCota',		value: T.grupoSelecionado.tipoCota });
+		} else {
+			data.push({name:'tipoCota',		value: $('#comboTipoCota').val() });
+		}
+		
+		$(".selCotasGrid").flexOptions({ params:data });		
+		$(".selCotasGrid").flexReload();
+	},
+	
+	this.novoGrupo = function() {
+		
+		T.grupoSelecionado = null;
+		
+		$('#comboTipoCota').hide();
+		$('#radioTipoCota').prop('checked', false);
+		$('#radioMunicipios').prop('checked', false);
+		
+		dialogDetalhesGrupo();
 	},
 		
 	this.excluirGrupo = function(index) {
