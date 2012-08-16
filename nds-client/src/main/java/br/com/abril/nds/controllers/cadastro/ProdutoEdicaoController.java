@@ -228,7 +228,7 @@ public class ProdutoEdicaoController {
 			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
 			BigInteger repartePrevisto, BigInteger repartePromocional,
 			String codigoDeBarras, String codigoDeBarrasCorporativo,
-			BigDecimal desconto, BigDecimal peso, 
+			BigDecimal desconto, Long peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
 			String boletimInformativo, Integer numeroLancamento, String descricaoBrinde, String descricaoProduto) {

@@ -144,18 +144,18 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		produto.setEditor(abril);
 		save(produto);
 
-		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
+		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		produtoEdicaoVeja.setDesconto(null);
 		save(produtoEdicaoVeja);
 		//////
 		
 		//////
-		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, new Long(100), TributacaoFiscal. TRIBUTADO);
 		produtoComDesconto.addFornecedor(dinap);
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
 
-		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 2L, produtoComDesconto, null, false);
+		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 2L, produtoComDesconto, null, false);
 		produtoEdicaoComDesconto.setDesconto(new BigDecimal(19));
 		save(produtoEdicaoComDesconto);
 		//////

@@ -2,6 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.TipoGrupo;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+
 public class GrupoCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = 4640422019892739724L;
@@ -9,6 +12,8 @@ public class GrupoCotaDTO implements Serializable {
 	private Long idGrupo;
 	private String nome;
 	private String recolhimento;
+	private TipoGrupo tipoGrupo;
+	private TipoCaracteristicaSegmentacaoPDV tipoCota;
 	
 	public GrupoCotaDTO() {
 		
@@ -61,6 +66,34 @@ public class GrupoCotaDTO implements Serializable {
 	 */
 	public void setRecolhimento(String recolhimento) {
 		this.recolhimento = recolhimento;
+	}
+
+	/**
+	 * @return the tipoGrupo
+	 */
+	public TipoGrupo getTipoGrupo() {
+		return tipoGrupo;
+	}
+
+	/**
+	 * @param tipoGrupo the tipoGrupo to set
+	 */
+	public void setTipoGrupo(TipoGrupo tipoGrupo) {
+		this.tipoGrupo = tipoGrupo;
+	}
+
+	/**
+	 * @return the tipoCota
+	 */
+	public TipoCaracteristicaSegmentacaoPDV getTipoCota() {
+		return tipoCota;
+	}
+
+	/**
+	 * @param tipoCota the tipoCota to set
+	 */
+	public void setTipoCota(TipoCaracteristicaSegmentacaoPDV tipoCota) {
+		this.tipoCota = tipoCota;
 	}
 	
 	

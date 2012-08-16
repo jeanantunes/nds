@@ -116,28 +116,28 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 		save(cromoReiLeao);
 
 		ProdutoEdicao veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
+				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
 
 		veja1.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
+				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 2L,
 				quatroRodas, null, false);
 
 		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPB", 3L, infoExame, null, false);
+				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPB", 3L, infoExame, null, false);
 
 		infoExame3.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
-				new BigDecimal(0.12), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPC", 4L, capricho, null, false);
+				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPC", 4L, capricho, null, false);
 		
 		capricho1.setExpectativaVenda(BigDecimal.TEN);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
-				new BigDecimal(0.01), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPD", 5L, cromoReiLeao, null, false);
+				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPD", 5L, cromoReiLeao, null, false);
 		
 		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);
 		

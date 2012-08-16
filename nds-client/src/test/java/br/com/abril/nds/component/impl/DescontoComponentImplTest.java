@@ -81,22 +81,22 @@ public class DescontoComponentImplTest extends AbstractRepositoryImplTest {
 		save(produtoBoaForma,produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("COD_1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"111", 2L, produtoVeja, null, false, "Veja 1");
 		save(produtoEdicaoVeja1);
 
 		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao("COD_2", 2L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"112", 3L, produtoVeja, null, false, "Veja 2");
 		save(produtoEdicaoVeja2);
 
 		ProdutoEdicao produtoEdicaoVeja3 = Fixture.produtoEdicao("COD_3", 3L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"113", 4L, produtoVeja, null, false, "Veja 3");
 		save(produtoEdicaoVeja3);
 		
 		ProdutoEdicao produtoEdicaoBoaForma1 = Fixture.produtoEdicao("COD_9", 1L, 10, 30,
-				new BigDecimal(0.10), new BigDecimal(12), new BigDecimal(15),
+				new Long(100), new BigDecimal(12), new BigDecimal(15),
 				"119", 10L, produtoBoaForma, null, false, "Boa Forma 1");
 		save(produtoEdicaoBoaForma1);
 				

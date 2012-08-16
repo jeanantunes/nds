@@ -94,13 +94,13 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
 			save(fornecedor);
 			
-			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, BigDecimal.TEN, TributacaoFiscal.TRIBUTADO);
+			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, new Long(10000), TributacaoFiscal.TRIBUTADO);
 			produto.addFornecedor(fornecedor);
 			produto.setEditor(abril);
 			save(produto); 
 			
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", i.longValue(), 50, 40, 
-					new BigDecimal(30), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);	
+					new Long(30000), new BigDecimal(20), new BigDecimal(10), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);	
 			save(produtoEdicao);
 			
 			

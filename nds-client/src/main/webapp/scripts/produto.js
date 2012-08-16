@@ -52,7 +52,7 @@ var produtoController = $.extend(true, {
 		
 		produtoController.pesquisaRealizada = false;
 		
-		var nomeFornecedor = $(idFornecedor).val();
+		var nomeFornecedor = $(idFornecedor, this.workspace).val();
 		
 		if (nomeFornecedor && nomeFornecedor.length > 2) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorNomeFornecedor", "nomeFornecedor=" + nomeFornecedor,
@@ -193,7 +193,7 @@ var produtoController = $.extend(true, {
 		var editor = $("#edicao", this.workspace).val();
 		var codigoTipoProduto = $("#comboTipoProduto", this.workspace).val();
 		
-		$(".produtosGrid").flexOptions({
+		$(".produtosGrid", this.workspace).flexOptions({
 			url: contextPath + "/produto/pesquisarProdutos",
 			params: [{name:'codigo', value: codigo },
 				     {name:'produto', value: produto },
@@ -203,7 +203,7 @@ var produtoController = $.extend(true, {
 			newp: 1,
 		});
 		
-		$(".produtosGrid").flexReload();
+		$(".produtosGrid", this.workspace).flexReload();
 	},
 	
 	editarProduto : function(id) {
@@ -265,9 +265,9 @@ var produtoController = $.extend(true, {
 						$("#segmentacaoTemaSecundario", produtoController.workspace).val(result.temaSecundario);
 
 						if (result.formaComercializacao == 'Conta Firme') {
-							$("#formaComercializacaoContaFirme").attr('checked', true);
+							$("#formaComercializacaoContaFirme", this.workspace).attr('checked', true);
 						} else if (result.formaComercializacao == 'Consignado') {
-							$("#formaComercializacaoConsignado").attr('checked', true);
+							$("#formaComercializacaoConsignado", this.workspace).attr('checked', true);
 						}
 						
 						if (result.tributacaoFiscal == 'TRIBUTADO') {
@@ -322,7 +322,7 @@ var produtoController = $.extend(true, {
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
 			},
-			form: $("#dialog-novo", this.workspace).parents("form")
+			form: $("#dialog-excluir", this.workspace).parents("form")
 		});
 	},
 	
@@ -347,7 +347,8 @@ var produtoController = $.extend(true, {
 			beforeClose: function() {
 				produtoController.limparModalCadastro();
 				clearMessageDialogTimeout('dialogMensagemNovo', this.workspace);
-			}
+			},
+			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 
 		this.carregarNovoProduto(this.limparModalCadastro);
@@ -433,7 +434,7 @@ var produtoController = $.extend(true, {
 					} 
 
 					if (tipoMensagem == 'SUCCESS') {
-						$("#dialog-novo").dialog( "close" );
+						$("#dialog-novo", this.workspace).dialog( "close" );
 					}
 					
 				},
@@ -458,7 +459,7 @@ var produtoController = $.extend(true, {
 			row.cell.acao = linkAprovar + linkExcluir;
 		});
 			
-		$(".grids").show();
+		$(".grids", this.workspace).show();
 		
 		return resultado;
 	},	
@@ -471,15 +472,15 @@ var produtoController = $.extend(true, {
 	
 	//Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo).val();
+		var codigoProduto = $(idCodigo, this.workspace).val();
 		
 		codigoProduto = $.trim(codigoProduto);
 		
-		$(idCodigo).val(codigoProduto);
+		$(idCodigo, this.workspace).val(codigoProduto);
 		
-		$(idProduto).val("");
-		$(idEdicao).val("");
-		$(idEdicao).attr("disabled", "disabled");
+		$(idProduto, this.workspace).val("");
+		$(idEdicao, this.workspace).val("");
+		$(idEdicao, this.workspace).attr("disabled", "disabled");
 		
 		if (codigoProduto && codigoProduto.length > 0) {
 			
@@ -498,14 +499,14 @@ var produtoController = $.extend(true, {
 	
 	//Pesquisa por código de produto
 	pesquisarPorCodigoProdutoAutoCompleteEdicao : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo).val();
+		var codigoProduto = $(idCodigo, this.workspace).val();
 		
 		codigoProduto = $.trim(codigoProduto);
 		
-		$(idCodigo).val(codigoProduto);
+		$(idCodigo, this.workspace).val(codigoProduto);
 		
-		$(idProduto).val("");
-		$(idEdicao).val("");
+		$(idProduto, this.workspace).val("");
+		$(idEdicao, this.workspace).val("");
 		
 		if (codigoProduto && codigoProduto.length > 0) {
 			
@@ -526,9 +527,9 @@ var produtoController = $.extend(true, {
 
 	pesquisarPorCodigoSuccessCallBack : function(result, idProduto, idEdicao, successCallBack,idCodigo, isFromModal) {
 		
-		$(idEdicao).removeAttr("disabled");
-		$(idProduto).val(result.nome);
-		$(idEdicao).focus();
+		$(idEdicao, this.workspace).removeAttr("disabled");
+		$(idProduto, this.workspace).val(result.nome);
+		$(idEdicao, this.workspace).focus();
 		
 		produtoController.pesquisaRealizada = true;
 		
@@ -538,8 +539,8 @@ var produtoController = $.extend(true, {
 	},
 	
 	pesquisarPorCodigoErrorCallBack : function(idCodigo, errorCallBack) {
-		$(idCodigo).val("");
-		$(idCodigo).focus();
+		$(idCodigo, this.workspace).val("");
+		$(idCodigo, this.workspace).focus();
 		
 		if (errorCallBack) {
 			errorCallBack();
@@ -564,7 +565,7 @@ var produtoController = $.extend(true, {
 		
 		produtoController.pesquisaRealizada = false;
 		
-		var nomeProduto = $(idProduto).val();
+		var nomeProduto = $(idProduto, this.workspace).val();
 		
 		if (nomeProduto && nomeProduto.length > 2) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorPorNomeProduto", "nomeProduto=" + nomeProduto,
@@ -581,7 +582,7 @@ var produtoController = $.extend(true, {
 	
 	exibirAutoComplete : function(result, idProduto) {
 		
-		$(idProduto).autocomplete({
+		$(idProduto, this.workspace).autocomplete({
 			source : result,
 			focus : function(event, ui) {
 				produtoController.descricaoAtribuida = false;
@@ -599,7 +600,7 @@ var produtoController = $.extend(true, {
 	
 	exibirAutoCompleteEdicao : function(result, idEdicao) {
 		
-		$(idEdicao).autocomplete({
+		$(idEdicao, this.workspace).autocomplete({
 			source : result
 		});
 	},
@@ -633,13 +634,13 @@ var produtoController = $.extend(true, {
 		
 		produtoController.pesquisaRealizada = true;
 		
-		var nomeProduto = $(idProduto).val();
+		var nomeProduto = $(idProduto, this.workspace).val();
 		
 		nomeProduto = $.trim(nomeProduto);
 		
-		$(idCodigo).val("");
-		$(idEdicao).val("");
-		$(idEdicao).attr("disabled", "disabled");
+		$(idCodigo, this.workspace).val("");
+		$(idEdicao, this.workspace).val("");
+		$(idEdicao, this.workspace).attr("disabled", "disabled");
 		
 		if (nomeProduto && nomeProduto.length > 0) {
 			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
@@ -655,11 +656,11 @@ var produtoController = $.extend(true, {
 	
 	pesquisarPorNomeSuccessCallBack : function(result, idCodigo, idProduto, idEdicao, successCallBack) {
 		if (result != "") {
-			$(idCodigo).val(result.codigo);
-			$(idProduto).val(result.nome);
+			$(idCodigo, this.workspace).val(result.codigo);
+			$(idProduto, this.workspace).val(result.nome);
 			
-			$(idEdicao).removeAttr("disabled");
-			$(idEdicao).focus();
+			$(idEdicao, this.workspace).removeAttr("disabled");
+			$(idEdicao, this.workspace).focus();
 			
 			if (successCallBack) {
 				successCallBack();
@@ -668,8 +669,8 @@ var produtoController = $.extend(true, {
 	},
 	
 	pesquisarPorNomeErrorCallBack : function(idCodigo, idProduto, idEdicao, errorCallBack) {
-		$(idProduto).val("");
-		$(idProduto).focus();
+		$(idProduto, this.workspace).val("");
+		$(idProduto, this.workspace).focus();
 		
 		if (errorCallBack) {
 			errorCallBack();
@@ -678,8 +679,8 @@ var produtoController = $.extend(true, {
 
 	//Validação do número da edição
 	validarNumEdicao : function(idCodigo, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo).val();
-		var numeroEdicao = $(idEdicao).val();
+		var codigoProduto = $(idCodigo, this.workspace).val();
+		var numeroEdicao = $(idEdicao, this.workspace).val();
 		
 		if (codigoProduto && codigoProduto.length > 0
 				&& numeroEdicao && numeroEdicao.length > 0) {
@@ -705,8 +706,8 @@ var produtoController = $.extend(true, {
 	},
 	
 	validarNumeroEdicaoErrorCallBack : function(idEdicao, errorCallBack) {
-		$(idEdicao).val("");
-		$(idEdicao).focus();
+		$(idEdicao, this.workspace).val("");
+		$(idEdicao, this.workspace).focus();
 		
 		if (errorCallBack) {
 			this.errorCallBack();

@@ -71,11 +71,11 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t, 5, 5, BigDecimal.TEN, TributacaoFiscal.TRIBUTADO);
+		Produto produto = Fixture.produto("12","Algum", "Nome-p", PeriodicidadeProduto.MENSAL, t, 5, 5, new Long(10000), TributacaoFiscal.TRIBUTADO);
 		produto.setEditor(abril);
 		save(produto);
 		
-		ProdutoEdicao pe = Fixture.produtoEdicao("1", 12L, 3, 2, new BigDecimal(12), new BigDecimal(120),new BigDecimal(35), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
+		ProdutoEdicao pe = Fixture.produtoEdicao("1", 12L, 3, 2, new Long(200), new BigDecimal(120),new BigDecimal(35), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		save(pe);
 		
 	

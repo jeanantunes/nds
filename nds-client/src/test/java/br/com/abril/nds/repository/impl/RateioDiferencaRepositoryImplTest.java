@@ -68,11 +68,11 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Produto produto = Fixture.produto("jkgfhfhjgh", "descricao", "nome", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+		Produto produto = Fixture.produto("jkgfhfhjgh", "descricao", "nome", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, new Long(100), TributacaoFiscal. TRIBUTADO);
 		produto.setEditor(abril);
 		save(produto);
 				
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao("1", 1L, 1, 1, new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		save(produtoEdicao);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("razaoSocial", "cnpj", "ie", "email", "99.999-9");
