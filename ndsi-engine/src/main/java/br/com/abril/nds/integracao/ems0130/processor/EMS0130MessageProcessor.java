@@ -8,8 +8,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0130.outbound.EMS0130Output;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
@@ -38,7 +36,7 @@ public class EMS0130MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	
 	public void processMessage(Message message) {
-	
+		
 		StringBuilder sql = new  StringBuilder();
 		sql.append("SELECT pdv ");
 		sql.append("FROM PDV pdv ");
@@ -61,8 +59,8 @@ public class EMS0130MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/BANCA.txt"));	
 			
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/BANCA.txt"));	
 			for (PDV pdv : pdvs){
 				 
 			
@@ -87,7 +85,6 @@ public class EMS0130MessageProcessor extends AbstractRepository implements Messa
 				output.setPontoDeReferencia(pdv.getPontoReferencia());
 				output.setTipoPontoVenda(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
 			
-				
 				print.println(fixedFormatManager.export(output));
 				
 			

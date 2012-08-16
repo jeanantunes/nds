@@ -13,7 +13,10 @@ var MANTER_COTA = {
 		
 		var formData = [ {name:"numCota",value:$("#numCota").val()},
 		                 {name:"nomeCota",value:$("#descricaoPessoa").val()},
-			             {name:"numeroCpfCnpj",value:$("#txtCPF_CNPJ").val()}
+			             {name:"numeroCpfCnpj",value:$("#txtCPF_CNPJ").val()},
+			             {name:"logradouro",value:$("#logradouroPesquisa").val()},
+			             {name:"bairro",value:$("#bairroPesquisa").val()},
+			             {name:"municipio",value:$("#municipioPesquisa").val()}
 			            ];
 		return formData;
 	},
@@ -365,6 +368,72 @@ var MANTER_COTA = {
 	mudarNomeModalCadastro:function(value){
 		
 		$("#ui-dialog-title-dialog-cota").html(value);
+	},
+	
+	pesquisarLogradouros: function(idCampoPesquisa) {
+		
+		var nomeLogra = $(idCampoPesquisa).val();
+		
+		nomeLogra = $.trim(nomeLogra);
+		
+		$(idCampoPesquisa).autocomplete({source: ""});
+		
+		if (nomeLogra && nomeLogra.length > 2) {
+			
+			$.postJSON(
+				contextPath + "/cadastro/endereco/pesquisarLogradouros", "nomeLogradouro=" + nomeLogra,
+				function(result) { 
+					MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa); 
+				}
+			);
+		}
+	},
+	
+	pesquisarBairros: function(idCampoPesquisa) {
+		
+		var nomeBairro = $(idCampoPesquisa).val();
+		
+		nomeBairro = $.trim(nomeBairro);
+		
+		$(idCampoPesquisa).autocomplete({source: ""});
+		
+		if (nomeBairro && nomeBairro.length > 2) {
+			
+			$.postJSON(
+				contextPath + "/cadastro/endereco/pesquisarBairros", "nomeBairro=" + nomeBairro,
+				function(result) { 
+					MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa); 
+				}
+			);
+		}
+	},
+	
+	pesquisarMunicipios: function(idCampoPesquisa) {
+		
+		var nomeMunicipio = $(idCampoPesquisa).val();
+		
+		nomeMunicipio = $.trim(nomeMunicipio);
+		
+		$(idCampoPesquisa).autocomplete({source: ""});
+		
+		if (nomeMunicipio && nomeMunicipio.length > 2) {
+			
+			$.postJSON(
+				contextPath + "/cadastro/endereco/pesquisarLocalidades", "nomeLocalidade=" + nomeMunicipio,
+				function(result) { 
+					MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa); 
+				}
+			);
+		}
+	},
+	
+	exibirAutoComplete: function(result, idCampo) {
+		
+		$(idCampo).autocomplete({
+			source: result,
+			minLength: 4,
+			delay : 0,
+		});
 	}
 };
 

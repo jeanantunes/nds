@@ -223,15 +223,14 @@ function concatObjects(obj1, obj2){
 
 //callback function to bring a hidden box back
 	
-$(document).ready(function(){	
-	$("#selFornecedor").click(function() {
-		$(".menu_fornecedor").show().fadeIn("fast");
-	})
+$(document).ready(function(){    
+    $("#selFornecedor").live("click", function() {
+          $(".menu_fornecedor").show().fadeIn("fast");
+    })
 
-	$(".menu_fornecedor").mouseleave(function() {
-		$(".menu_fornecedor").hide();
-	});
-	
+    $(".menu_fornecedor").live("mouseleave", function() {
+          $(".menu_fornecedor").hide();
+    });
 })
 	
 	
