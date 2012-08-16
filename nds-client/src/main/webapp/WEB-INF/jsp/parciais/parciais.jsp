@@ -1,164 +1,37 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parciais.js"></script>
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 <script language="javascript" type="text/javascript">
 
 
-$(function() {
-	definirAcaoPesquisaTeclaEnter();
-});
-
-
-var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
-
-
-function popup(modal) {
-	
-		PARCIAIS.carregaPeb();
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:200,
-			width:400,
-			modal: true,
-			
-			buttons:[ 
-			          {
-				           id:"bt_confirmar",
-				           text:"Confirmar", 
-				           click: function() {
-				        	   	PARCIAIS.inserirPeriodos(modal);								
-								$( this ).dialog( "close" );
-				           }
-			           },
-			           {
-				           id:"bt_cancelar",
-				           text:"Cancelar", 
-				           click: function() {
-				        	   $( this ).dialog( "close" );
-				           }
-			           }
-	        ]
-		});
-	};
-	
-	function pupup_detalheVendas() {
-		
-		$( "#dialog-detalhe-venda" ).dialog({
-			resizable: false,
-			height:450,
-			width:660,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-			}
-		});
-	}
-	
-	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:200,
-			width:350,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					PARCIAIS.excluirPeriodoParcial();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	function popup_detalhes() {
-	
-		$( "#dialog-detalhes" ).dialog({
-			resizable: false,
-			height:550,
-			width:960,
-			modal: true,
-			buttons: {
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	function popup_edit_produto() {
-	
-		$( "#dialog-edit-produto" ).dialog({
-			resizable: false,
-			height:360,
-			width:500,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					PARCIAIS.editarPeriodoParcial();
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
  
 $(function() {
-		$( "#dataLancamentoEd" ).datepicker({
+		$( "#dataLancamentoEd", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#dataRecolhimentoEd" ).datepicker({
+		$( "#dataRecolhimentoEd", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#dataInicial" ).datepicker({
+		$( "#dataInicial", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#dataFinal" ).datepicker({
+		$( "#dataFinal", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 	});
 $(function() {
-	$("#nomeProduto").autocomplete({source: ""});
-	$("#edicaoProduto").autocomplete({source: ""});
+	$("#nomeProduto", this.workspace).autocomplete({source: ""});
+	$("#edicaoProduto", this.workspace).autocomplete({source: ""});
 });
 
 		
@@ -305,7 +178,7 @@ $(function() {
 	        
 	</div>   
 
- <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
+ <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="ParciaisController.popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
 
 
 </div>
@@ -411,7 +284,7 @@ $(function() {
               <td width="119"><span class="bt_pesquisar">
               
 <!-- Pesquisar -->
-<a class="botaoPesquisar" href="javascript:;" onclick=" PARCIAIS.cliquePesquisar();">Pesquisar</a>
+<a class="botaoPesquisar" href="javascript:;" onclick=" ParciaisController.cliquePesquisar();">Pesquisar</a>
 		
 			</span></td>
             </tr>
@@ -420,7 +293,7 @@ $(function() {
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
 
-<!-- PESQUISA DE LANCAMENTOS PARCIAIS -->
+<!-- PESQUISA DE LANCAMENTOS ParciaisController -->
 <fieldset id="painelLancamentos" class="classFieldset" style="display:block">
 	       	  <legend>Parciais Cadastradas</legend>
 	       
@@ -478,7 +351,7 @@ $(function() {
 			
 	
 	 <span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
-	 		<a href="javascript:;" onclick="popup(false);">
+	 		<a href="javascript:;" onclick="ParciaisController.popup(false);">
 	 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
 	 		Incluir Períodos
 	 		</a>
@@ -498,7 +371,7 @@ $(function() {
 
 $(function() {	
 	
-	$(".parciaisGrid").flexigrid($.extend({},{
+	$(".parciaisGrid", this.workspace).flexigrid($.extend({},{
 		colModel : [ {
 			display : 'Data Lancto',
 			name : 'dataLancamento',
@@ -558,10 +431,10 @@ $(function() {
 		height : 255
 })); 	
 
-$(".grids").show();	
+$(".grids", this.workspace).show();	
 
 
-$(".periodosGrid").flexigrid($.extend({},{
+$(".periodosGrid", this.workspace).flexigrid($.extend({},{
 		colModel : [ {
 			display : 'Lcto',
 			name : 'dataLancamento',
@@ -646,7 +519,7 @@ $(".periodosGrid").flexigrid($.extend({},{
 		height : 255
 	})); 
 
-$(".parciaisPopGrid").flexigrid($.extend({},{
+$(".parciaisPopGrid", this.workspace).flexigrid($.extend({},{
 		colModel : [ {
 			display : 'Lcto',
 			name : 'dataLancamento',
