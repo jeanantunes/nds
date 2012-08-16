@@ -3,12 +3,16 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
 /**
  * Value Object para cotas.
  * 
  * @author Discover Technology
  *
  */
+@Exportable
 public class CotaVO implements Serializable {
 
 	/**
@@ -18,8 +22,10 @@ public class CotaVO implements Serializable {
 
 	private Long idCota;
 	
+	@Export(label = "Código", exhibitionOrder = 0)
 	private Integer numero;
 	
+	@Export(label = "Nome / Razão Social", exhibitionOrder = 1)
 	private String nome;
 	
 	private BigDecimal qtdeReparte;
@@ -28,15 +34,23 @@ public class CotaVO implements Serializable {
 	
 	private String codigoBox;
 	
+	@Export(label = "CPF / CNPJ", exhibitionOrder = 2)
 	private String numeroCpfCnpj;
 	
+	@Export(label = "Contato", exhibitionOrder = 4)
 	private String contato;
 	
+	@Export(label = "Telefone", exhibitionOrder = 5)
 	private String telefone;
 	
+	@Export(label = "E-Mail", exhibitionOrder = 6)
 	private String email;
 	
-	private String status; 
+	@Export(label = "Status", exhibitionOrder = 7)
+	private String status;
+	
+	@Export(label = "Box", exhibitionOrder = 3)
+	private String descricaoBox;
 	
 	/**
 	 * Construtor padrão.
@@ -180,6 +194,14 @@ public class CotaVO implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getDescricaoBox() {
+		return descricaoBox;
+	}
+
+	public void setDescricaoBox(String descricaoBox) {
+		this.descricaoBox = descricaoBox;
 	}
 
 	/* (non-Javadoc)
