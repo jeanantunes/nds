@@ -37,7 +37,7 @@
 			},{
 				display : 'Nome / Razação Social',
 				name : 'nome',
-				width : 150,
+				width : 130,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -47,9 +47,15 @@
 				sortable : true,
 				align : 'left'
 			}, {
+				display: 'Box',
+				name: 'descricaoBox',
+				width: 90,
+				sortable: true,
+				align: 'left'
+			}, {
 				display : 'Contato',
 				name : 'contato',
-				width : 100,
+				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -61,7 +67,7 @@
 			}, {
 				display : 'E-Mail',
 				name : 'email',
-				width : 210,
+				width : 150,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -88,35 +94,6 @@
 		});
 	
 	});
-	
-	function pesquisarLogradouros() {
-		
-		var nomeLogra = $("#logradouroPesquisa").val();
-		
-		nomeLogra = $.trim(nomeLogra);
-		
-		$("#logradouroPesquisa").autocomplete({source: ""});
-		
-		if (nomeLogra && nomeLogra.length > 2) {
-			
-			$.postJSON(
-				contextPath + "/cadastro/endereco/pesquisarLogradouros", "nomeLogradouro=" + nomeLogra,
-				function(result) { 
-					exibirAutoComplete(result); 
-				}
-			);
-		}
-	}
-	
-	function exibirAutoComplete (result) {
-		
-		$("#logradouroPesquisa").autocomplete({
-			source: result,
-			minLength: 4,
-			delay : 0,
-		});
-	}
-		
 </script>
 <style>
 
@@ -179,15 +156,17 @@
 				<td width="68">Logradouro:</td>
 				<td colspan="3">
 					<input type="text" id="logradouroPesquisa" style="width:180px;"
-						   onkeyup="pesquisarLogradouros();"/>
+						   onkeyup="MANTER_COTA.pesquisarLogradouros('#logradouroPesquisa');"/>
 				</td>
 				<td width="36">Bairro:</td>
 				<td width="195">
-					<input type="text" id="bairroPesquisa" style="width:155px;"/>
+					<input type="text" id="bairroPesquisa" style="width:155px;"
+						   onkeyup="MANTER_COTA.pesquisarBairros('#bairroPesquisa');"/>
 				</td>
 				<td width="57">Município:</td>
 				<td width="253">
-					<input type="text" id="municipioPesquisa" style="width:180px;"/>
+					<input type="text" id="municipioPesquisa" style="width:180px;"
+						   onkeyup="MANTER_COTA.pesquisarMunicipios('#municipioPesquisa');"/>
 				</td>
 				<td width="104">
 	               	<span class="bt_pesquisar">
@@ -218,6 +197,18 @@
 		<span class="bt_novos" title="Novo">
 			<a href="javascript:;" onclick="COTA_CNPJ.novoCNPJ();">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CNPJ
+			</a>
+		</span>
+		
+		<span class="bt_novos" title="Gerar Arquivo">
+			<a href="${pageContext.request.contextPath}/cadastro/cota/exportar?fileType=XLS">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+			</a>
+		</span>
+		
+		<span class="bt_novos" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/cadastro/cota/exportar?fileType=PDF">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
 			</a>
 		</span>
 

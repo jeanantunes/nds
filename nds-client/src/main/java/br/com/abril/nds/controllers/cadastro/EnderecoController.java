@@ -511,6 +511,9 @@ public class EnderecoController {
 		}
 	}
 	
+	/*
+	 * Método para popular autocomplete de logradouros da tela de pesquisa de cotas
+	 */
 	@Post
 	public void pesquisarLogradouros(String nomeLogradouro){
 		
@@ -529,6 +532,52 @@ public class EnderecoController {
 		}
 		
 		this.result.use(Results.json()).from(autoCompleteLogradouros, "result").include("value", "chave").serialize();
+	}
+	
+	/*
+	 * Método para popular autocomplete de bairros da tela de pesquisa de cotas
+	 */
+	@Post
+	public void pesquisarBairros(String nomeBairro){
+		
+		List<ItemAutoComplete> autoCompleteBairros = 
+				new ArrayList<ItemAutoComplete>();
+		
+		List<Bairro> bairros = 
+				this.enderecoService.pesquisarBairros(nomeBairro);
+		
+		for (Bairro bairro : bairros){
+			
+			ItemAutoComplete itemAutoComplete = 
+					new ItemAutoComplete(bairro.getNome(), bairro.getNome(), bairro.getId());
+			
+			autoCompleteBairros.add(itemAutoComplete);
+		}
+		
+		this.result.use(Results.json()).from(autoCompleteBairros, "result").include("value", "chave").serialize();
+	}
+	
+	/*
+	 * Método para popular autocomplete de municipios da tela de pesquisa de cotas
+	 */
+	@Post
+	public void pesquisarLocalidades(String nomeLocalidade){
+		
+		List<ItemAutoComplete> autoCompleteLocalidades = 
+				new ArrayList<ItemAutoComplete>();
+		
+		List<Localidade> localidades = 
+				this.enderecoService.pesquisarLocalidades(nomeLocalidade);
+		
+		for (Localidade localidade : localidades){
+			
+			ItemAutoComplete itemAutoComplete = 
+					new ItemAutoComplete(localidade.getNome(), localidade.getNome(), localidade.getId());
+			
+			autoCompleteLocalidades.add(itemAutoComplete);
+		}
+		
+		this.result.use(Results.json()).from(autoCompleteLocalidades, "result").include("value", "chave").serialize();
 	}
 
 	private String retirarFormatacaoCep(String cep) {
