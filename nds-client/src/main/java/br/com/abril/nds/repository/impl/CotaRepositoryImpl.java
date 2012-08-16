@@ -634,6 +634,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				&& !filtro.getNomeCota().trim().isEmpty()) {
 			query.setParameter("nomeCota", filtro.getNomeCota() + "%" );
 		}
+		
+		if (filtro.getLogradouro() != null
+				&& !filtro.getLogradouro().trim().isEmpty()) {
+
+			query.setParameter("logradouro", filtro.getLogradouro() + "%" );
+		}
+		
+		if (filtro.getBairro() != null
+				&& !filtro.getBairro().trim().isEmpty()) {
+
+			query.setParameter("bairro", filtro.getBairro() + "%" );
+		}
+		
+		if (filtro.getMunicipio() != null
+				&& !filtro.getMunicipio().trim().isEmpty()) {
+
+			query.setParameter("municipio", filtro.getMunicipio() + "%" );
+		}
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				CotaDTO.class));
@@ -675,6 +693,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				&& !filtro.getNomeCota().trim().isEmpty()) {
 			query.setParameter("nomeCota", filtro.getNomeCota() + "%");
 		}
+		
+		if (filtro.getLogradouro() != null
+				&& !filtro.getLogradouro().trim().isEmpty()) {
+
+			query.setParameter("logradouro", filtro.getLogradouro() + "%" );
+		}
+		
+		if (filtro.getBairro() != null
+				&& !filtro.getBairro().trim().isEmpty()) {
+
+			query.setParameter("bairro", filtro.getBairro() + "%" );
+		}
+		
+		if (filtro.getMunicipio() != null
+				&& !filtro.getMunicipio().trim().isEmpty()) {
+
+			query.setParameter("municipio", filtro.getMunicipio() + "%" );
+		}
 
 		return (Long) query.uniqueResult();
 	}
@@ -698,7 +734,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 					.append(" pdv.contato as contato ,")
 					.append(" telefone.ddd || '-'|| telefone.numero as telefone ,")
 					.append(" pessoa.email as email ,")
-					.append(" cota.situacaoCadastro as status ");
+					.append(" cota.situacaoCadastro as status, ")
+					.append(" cota.box.nome as descricaoBox ");
 		}
 
 		hql.append(" FROM Cota cota ")
@@ -706,6 +743,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				.append(" left join cota.pdvs pdv ")
 				.append(" left join cota.telefones telefonesCota ")
 				.append(" left join telefonesCota.telefone telefone ")
+				.append(" left join cota.enderecos enderecoCota ")
+				.append(" left join enderecoCota.endereco endereco ")
 
 				.append(" WHERE")
 				.append(" ( telefonesCota.principal is null OR telefonesCota.principal=:principal ) ")
@@ -724,6 +763,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				&& !filtro.getNomeCota().trim().isEmpty()) {
 
 			hql.append(" AND ( upper(pessoa.nome) like upper(:nomeCota) OR  upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
+		}
+		
+		if (filtro.getLogradouro() != null
+				&& !filtro.getLogradouro().trim().isEmpty()) {
+
+			hql.append(" AND ( upper(endereco.logradouro) like upper(:logradouro) )");
+		}
+		
+		if (filtro.getBairro() != null
+				&& !filtro.getBairro().trim().isEmpty()) {
+
+			hql.append(" AND ( upper(endereco.bairro) like upper(:bairro) )");
+		}
+		
+		if (filtro.getMunicipio() != null
+				&& !filtro.getMunicipio().trim().isEmpty()) {
+
+			hql.append(" AND ( upper(endereco.cidade) like upper(:municipio) )");
 		}
 
 		return hql.toString();
@@ -770,6 +827,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 			case STATUS:
 				hql.append(" ORDER BY status ");
+				break;
+			case BOX:
+				hql.append("ORDER BY descricaoBox ");
 				break;
 
 			default:
@@ -1093,6 +1153,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		listaIdCotas.addAll(criteria.list());
 		
 		return listaIdCotas;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public Set<Cota> obterCotasPorFornecedor(Long idFornecedor) {
+		
+		String queryString = " select cota from Cota cota "
+						   + " join fetch cota.fornecedores fornecedores "
+						   + " where fornecedores.id = :idFornecedor ";
+		
+		Query query = this.getSession().createQuery(queryString);
+		
+		query.setParameter("idFornecedor", idFornecedor);
+		
+		return new HashSet<Cota>(query.list());
 	}
 
 }

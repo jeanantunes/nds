@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoResumoExpedicaoVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoBoxVO;
 import br.com.abril.nds.client.vo.ResumoExpedicaoDetalheVO;
@@ -27,7 +28,10 @@ import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO.TipoPesquisaResumoEx
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -79,6 +83,7 @@ public class ResumoExpedicaoController {
 	 * Carrega as informações default da tela de pesquisa.
 	 */
 	@Get
+	@Rules(Permissao.ROLE_EXPEDICAO_RESUMO_EXPEDICAO)
 	public void resumo(){
 		
 		carregarTiposResumo();
@@ -104,7 +109,9 @@ public class ResumoExpedicaoController {
 		
 		this.tratarFiltro(filtro);
 		
-		List<ResumoExpedicaoDetalheVO> listaDetalheResumoExpedicaoDoBox = this.pesquisarDetalheResumoExpedicaoDoBox(filtro);
+		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoProdutosDoBox(filtro);
+		
+		List<ResumoExpedicaoDetalheVO> listaDetalheResumoExpedicaoDoBox = this.pesquisarDetalheResumoExpedicaoDoBox(filtro, list);
 		
 		Long quantidadeRegistros = expedicaoService.obterQuantidadeResumoExpedicaoProdutosDoBox(filtro);
 		
@@ -114,14 +121,26 @@ public class ResumoExpedicaoController {
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalheResumoExpedicaoDoBox));
 		tableModel.setTotal((quantidadeRegistros!= null)? quantidadeRegistros.intValue():0);
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+		String soma = this.sumarizarTotalProdutoBox(list);
+		
+		result.use(CustomMapJson.class).put("resultado", tableModel).put("somaTotal", soma).serialize();
 		
 	}
 	
-	private List<ResumoExpedicaoDetalheVO> pesquisarDetalheResumoExpedicaoDoBox(FiltroResumoExpedicaoDTO filtro){
+	private String sumarizarTotalProdutoBox(List<ExpedicaoDTO> list) {
 		
-		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoProdutosDoBox(filtro);
+		BigDecimal soma = BigDecimal.ZERO;
+		
+		for (ExpedicaoDTO expd : list) {
+			if (expd.getValorFaturado() != null) {
+				soma = soma.add(expd.getValorFaturado());
+			}
+		}
+		return CurrencyUtil.formatarValor(soma);
+	}
+	
+	private List<ResumoExpedicaoDetalheVO> pesquisarDetalheResumoExpedicaoDoBox(FiltroResumoExpedicaoDTO filtro, List<ExpedicaoDTO> list){
 		
 		if (list == null || list.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -133,6 +152,12 @@ public class ResumoExpedicaoController {
 		
 		for (ExpedicaoDTO expd  : list){
 			
+			BigDecimal precoDesconto = expd.getPrecoCapa();
+			
+			if (expd.getDesconto() != null) {
+				precoDesconto = expd.getPrecoCapa().subtract(expd.getDesconto());
+			}
+			
 			resumoExpedicaoDetalheVO = new ResumoExpedicaoDetalheVO();
 			
 			resumoExpedicaoDetalheVO.setNomeFornecedor(expd.getRazaoSocial());
@@ -140,6 +165,7 @@ public class ResumoExpedicaoController {
 			resumoExpedicaoDetalheVO.setDescricaoProduto(expd.getNomeProduto());
 			resumoExpedicaoDetalheVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
 			resumoExpedicaoDetalheVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
+			resumoExpedicaoDetalheVO.setPrecoDesconto(CurrencyUtil.formatarValor(precoDesconto));
 			resumoExpedicaoDetalheVO.setReparte(getValor(expd.getQntReparte()));
 			resumoExpedicaoDetalheVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
 			resumoExpedicaoDetalheVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
@@ -646,7 +672,9 @@ public class ResumoExpedicaoController {
 			filtroSessao.setTipoConsulta(null);
 		}
 
-		List<ResumoExpedicaoDetalheVO> listaDetalheResumoExpedicaoDoBox = pesquisarDetalheResumoExpedicaoDoBox(filtroSessao);
+		List<ExpedicaoDTO> list = expedicaoService.obterResumoExpedicaoProdutosDoBox(filtroSessao);
+		
+		List<ResumoExpedicaoDetalheVO> listaDetalheResumoExpedicaoDoBox = pesquisarDetalheResumoExpedicaoDoBox(filtroSessao, list);
 		
 		FileExporter.to("consulta-detalhes-expedição-box", fileType)
 			.inHTTPResponse(
@@ -656,5 +684,11 @@ public class ResumoExpedicaoController {
 					listaDetalheResumoExpedicaoDoBox, 
 					ResumoExpedicaoDetalheVO.class, 
 					this.httpServletResponse);
+	}
+	
+	
+	@Post
+	private void sumarizarTotalProdutoFornecedor() {
+		
 	}
 }

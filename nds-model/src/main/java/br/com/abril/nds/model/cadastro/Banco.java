@@ -47,7 +47,7 @@ public class Banco implements Serializable {
 	private Carteira carteira;
 	@Column(name = "ATIVO", nullable = false)
 	private boolean ativo;
-	@Column(name = "INSTRUCOES", nullable = false)
+	@Column(name = "INSTRUCOES")
 	private String instrucoes;
 	@Column(name = "JUROS")
 	private BigDecimal juros;

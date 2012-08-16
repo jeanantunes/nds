@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ResultadoEdicoesFechadasVO;
@@ -21,6 +22,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
@@ -72,6 +74,7 @@ public class EdicoesFechadasController {
 	private static final String FILTRO_PESQUISA_EDICOES_FECHADAS_SESSION_ATTRIBUTE = "filtroPesquisaEdicoesFechadas";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_ESTOQUE_EDICOES_FECHADAS_SALDO)
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);

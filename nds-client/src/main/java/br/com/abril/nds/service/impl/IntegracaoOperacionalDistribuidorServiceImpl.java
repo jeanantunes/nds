@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,8 +89,22 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 				true, this.couchDbProperties.getProtocol(), this.couchDbProperties.getHost(), 
 					this.couchDbProperties.getPort(), this.couchDbProperties.getUsername(), 
 						this.couchDbProperties.getPassword());
+		
+		couchDbClient.setGsonBuilder(CouchDBUtil.getGsonBuilderForDate());
+
+		try {
 			
-		couchDbClient.save(operacaoDistribuidor);
+			OperacaoDistribuidor operacaoDistribuidorAtual = 
+				couchDbClient.find(OperacaoDistribuidor.class, codigoDistribuidor);
+		
+			couchDbClient.remove(operacaoDistribuidorAtual);
+			
+			couchDbClient.save(operacaoDistribuidor);
+			
+		} catch (NoDocumentException noDocumentException) {
+			
+			couchDbClient.save(operacaoDistribuidor);
+		}
 	}
 	
 	/**
@@ -101,7 +116,13 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
+		if (distribuidor == null) {
+			
+			return null;
+		}
+		
 		OperacaoDistribuidor operacaoDistribuidor = new OperacaoDistribuidor();
+		
 		operacaoDistribuidor.setDataOperacao(distribuidor.getDataOperacao());
 		operacaoDistribuidor.setIdDistribuidorInterface(distribuidor.getCodigo().toString());
 		
@@ -258,6 +279,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//CONSIGNADO
 		//TOTAL_RUA
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.CONSIGNADO);
@@ -268,6 +290,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//TOTAL_RUA_INADIMPLENCIA
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.CONSIGNADO);
@@ -279,6 +302,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//JORNALEIRO
 		//JORNALEIROS
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
@@ -289,6 +313,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//JORNALEIROS_ATIVOS
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
@@ -299,6 +324,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 
 		//JORNALEIROS_SUSPENSOS
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
@@ -309,6 +335,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//JORNALEIROS_INATIVOS
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.JORNALEIRO);
@@ -320,6 +347,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		
 		//QUALIDADE_OPERACIONAL
 		//SOBRAS_DE
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
@@ -330,6 +358,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//SOBRAS_EM
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
@@ -340,6 +369,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//FALTAS_DE
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);
@@ -350,6 +380,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		indicadores.add(indicador);
 		
 		//FALTAS_EM
+		indicador = new Indicador();
 		indicador.setData(new Date());
 		//indicador.setDistribuidor(operacaoDistribuidor);
 		indicador.setGrupoIndicador(GrupoIndicador.QUALIDADE_OPERACIONAL);

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ChamadaEncalheAntecipadaPesCotaVO;
 import br.com.abril.nds.client.vo.ChamadaEncalheAntecipadaVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaEncalheAntecipadaVO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
@@ -102,6 +104,7 @@ public class ChamadaEncalheAntecipadaController {
 	private PdvService pdvService;
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO)
 	public void index(){
 		
 		result.include("listaFornecedores",obterFornecedores(null));

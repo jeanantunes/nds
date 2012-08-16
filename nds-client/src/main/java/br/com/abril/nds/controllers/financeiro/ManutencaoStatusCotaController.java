@@ -19,6 +19,7 @@ import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.job.StatusCotaJob;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
@@ -39,6 +40,7 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
@@ -99,6 +101,7 @@ public class ManutencaoStatusCotaController {
 	
 	@Get
 	@Path("/")
+	@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA)
 	public void index() {
 
 		this.carregarCombos();

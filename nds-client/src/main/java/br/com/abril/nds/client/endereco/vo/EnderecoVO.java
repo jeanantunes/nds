@@ -2,6 +2,8 @@ package br.com.abril.nds.client.endereco.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.cadastro.TipoEndereco;
+
 
 public class EnderecoVO implements Serializable {
 
@@ -24,6 +26,12 @@ public class EnderecoVO implements Serializable {
 	private Long codigoBairro;
 	
 	private String bairro;
+	
+	private TipoEndereco tipoEndereco;
+	
+	private Integer numero;
+	
+	private String complemento;
 
 	/**
 	 * @return the uf
@@ -150,4 +158,47 @@ public class EnderecoVO implements Serializable {
 	public void setBairro(String bairro) {
 		this.bairro = bairro;
 	}
+
+	/**
+	 * @return the tipoEndereco
+	 */
+	public TipoEndereco getTipoEndereco() {
+		return tipoEndereco;
+	}
+
+	/**
+	 * @param tipoEndereco the tipoEndereco to set
+	 */
+	public void setTipoEndereco(TipoEndereco tipoEndereco) {
+		this.tipoEndereco = tipoEndereco;
+	}
+
+	/**
+	 * @return the numero
+	 */
+	public Integer getNumero() {
+		return numero;
+	}
+
+	/**
+	 * @param numero the numero to set
+	 */
+	public void setNumero(Integer numero) {
+		this.numero = numero;
+	}
+
+	/**
+	 * @return the complemento
+	 */
+	public String getComplemento() {
+		return complemento;
+	}
+
+	/**
+	 * @param complemento the complemento to set
+	 */
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
+	}
+	
 }

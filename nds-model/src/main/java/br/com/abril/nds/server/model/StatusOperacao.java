@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "STATUS_OPERACAO")
@@ -18,7 +20,7 @@ import javax.persistence.Table;
 public class StatusOperacao implements Serializable {
 
 	/**
-	 * 
+	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 2189955082200222794L;
 
@@ -27,6 +29,7 @@ public class StatusOperacao implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA")
 	private Date data;
 	

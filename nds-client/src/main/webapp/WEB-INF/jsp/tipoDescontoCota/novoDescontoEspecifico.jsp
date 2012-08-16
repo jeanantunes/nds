@@ -14,22 +14,29 @@ var DESCONTO_ESPECIFICO = {
 	popup_especifico:function() {		
 		 
 		$("#selectFornecedorSelecionado_option_especifico").clear();
+		$("#selectFornecedor_option_especifico").clear();
 		
-		TIPO_DESCONTO.carregarFornecedores("#selectFornecedor_option_especifico");
+		$("#numCotaEspecifico").val("");
+		$("#descontoEspecifico").val("");
+		$("#descricaoCotaEspecifico").val("");
 		
 		$( "#dialog-especifico" ).dialog({
 			resizable: false,
 			height:400,
 			width:560,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					DESCONTO_ESPECIFICO.novoDescontoEspecifico();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
+			buttons: [{
+						id:"id_confirmar_especifico",text:"Confirmar",
+						click: function() {
+							DESCONTO_ESPECIFICO.novoDescontoEspecifico();
+						}
+				},{
+					id:"id_close_especifico",text:"Cancelar",
+					click: function() {
+						$( this ).dialog( "close" );
+					}
 				}
-			}
+			]
 		});		      
 	},
 	
@@ -44,7 +51,7 @@ var DESCONTO_ESPECIFICO = {
 			 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
 		});
 		
-		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoEspecifico'/>",
+		$.postJSON("<c:url value='/financeiro/tipoDescontoCota/novoDescontoEspecifico'/>",
 				"numeroCota=" + cotaEspecifica	+				
 				"&desconto=" + descontoEspecifico + "&" +
 				fornecedores
@@ -67,7 +74,32 @@ var DESCONTO_ESPECIFICO = {
 		$(".tiposDescEspecificoGrid").flexReload();
 	},
 	
-	pesquisarCotaSuccessCallBack:function(){},
+	pesquisarCotaSuccessCallBack:function(){
+		
+		var cotaEspecifica = $("#numCotaEspecifico").val();
+		
+		DESCONTO_ESPECIFICO.carregarFornecedoresCota("#selectFornecedor_option_especifico", cotaEspecifica);
+		
+	},
+
+	carregarFornecedoresCota:function(idComboFornecedores,numeroCota){
+		
+		$.postJSON(contextPath + "/financeiro/tipoDescontoCota/obterFornecedoresCota",
+				[{name:"numeroCota",value:numeroCota}], 
+				function(result){
+					
+					if(result){
+						var comboClassificacao =  montarComboBox(result, false);
+						
+						$(idComboFornecedores).html(comboClassificacao);
+					}
+				},function(result){
+					
+					$("#selectFornecedor_option_especifico").clear();
+					
+				},true,"idModalDescontoEspecifico"
+		);
+	},
 	
 	pesquisarCotaErrorCallBack:function(){
 		
@@ -97,7 +129,7 @@ var DESCONTO_ESPECIFICO = {
     <td colspan="4" valign="top">
     	<fieldset style="width:500px;">
     		<legend>Selecione a Cota</legend>
-    		Cota:
+    		<label style="width:auto!important;">Cota:</label>
     		<input name="numCotaEspecifico" 
            		   id="numCotaEspecifico" 
            		   type="text"
@@ -106,7 +138,7 @@ var DESCONTO_ESPECIFICO = {
            		   onchange="cota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
            	  											DESCONTO_ESPECIFICO.pesquisarCotaSuccessCallBack, 
            	  											DESCONTO_ESPECIFICO.pesquisarCotaErrorCallBack);" />
-    		Nome:
+    		<label style="width:auto!important;">Nome:</label>
     		<input  name="descricaoCotaEspecifico" 
 		      		 id="descricaoCotaEspecifico" 
 		      		 type="text" 

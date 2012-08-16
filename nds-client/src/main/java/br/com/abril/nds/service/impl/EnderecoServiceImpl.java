@@ -19,7 +19,10 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.repository.BairroRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.repository.LocalidadeRepository;
+import br.com.abril.nds.repository.LogradouroRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
@@ -29,6 +32,15 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private LogradouroRepository logradouroRepository;
+	
+	@Autowired
+	private BairroRepository bairroRepository;
+	
+	@Autowired
+	private LocalidadeRepository localidadeRepository;
 	
 	@Override
 	@Transactional
@@ -241,4 +253,24 @@ public class EnderecoServiceImpl implements EnderecoService {
 		return this.enderecoRepository.obterLogradourosPorCodigoBairroNome(codigoBairro, nomeLogradouro);
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Logradouro> pesquisarLogradouros(String nomeLogradouro) {
+		
+		return this.logradouroRepository.pesquisarLogradouros(nomeLogradouro);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Bairro> pesquisarBairros(String nomeBairro) {
+		
+		return this.bairroRepository.pesquisarBairros(nomeBairro);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Localidade> pesquisarLocalidades(String nomeLocalidade) {
+		
+		return this.localidadeRepository.pesquisarLocalidades(nomeLocalidade);
+	}
 }

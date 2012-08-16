@@ -1,11 +1,32 @@
 var contextPath;
 
-var edicoesFechadasController = {
+var edicoesFechadasController = $.extend(true, {
 	init : function(path) {
 		this.contextPath = path;
 		this.initGridEdicoesFechadasGrid();
 		this.initGridDetalheEdicoesFechadas();
 		this.bindButtons();
+
+		$("#dataDe").datepicker({
+			showOn : "button",
+			buttonImage : contextPath + "/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat : 'dd/mm/yy',
+			defaultDate : new Date()
+		});
+
+		$("#dataDe").mask("99/99/9999");
+
+		$("#dataAte").datepicker({
+			showOn : "button",
+			buttonImage : contextPath + "/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat : 'dd/mm/yy',
+			defaultDate : new Date()
+		});
+
+		$("#dataAte").mask("99/99/9999");
+	
 	},
 	bindButtons : function() {
 		$("#btnPesquisar").click(function() {
@@ -246,27 +267,4 @@ var edicoesFechadasController = {
 			}
 		});
 	}
-}
-
-$(function() {
-	$("#dataDe").datepicker({
-		showOn : "button",
-		buttonImage : contextPath + "/images/calendar.gif",
-		buttonImageOnly : true,
-		dateFormat : 'dd/mm/yy',
-		defaultDate : new Date()
-	});
-
-	$("#dataDe").mask("99/99/9999");
-
-	$("#dataAte").datepicker({
-		showOn : "button",
-		buttonImage : contextPath + "/images/calendar.gif",
-		buttonImageOnly : true,
-		dateFormat : 'dd/mm/yy',
-		defaultDate : new Date()
-	});
-
-	$("#dataAte").mask("99/99/9999");
-
-});
+}, BaseController);

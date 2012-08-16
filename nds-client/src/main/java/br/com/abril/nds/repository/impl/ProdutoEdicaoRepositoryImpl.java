@@ -2,11 +2,13 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -534,5 +536,61 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return (ProdutoEdicao) query.uniqueResult();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer obterQuantidadeEdicoesPorCodigoProduto(String codigoProduto) {
+		// TODO Auto-generated method stub
+		
+		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		return ((Long) criteria.uniqueResult()).intValue();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicao> obterProdutosEdicoesPorCodigoProdutoLimitado(String codigoProduto, Integer limite) {
+		// TODO Auto-generated method stub
+
+		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		
+		criteria.setMaxResults(limite);
+		
+		return criteria.list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public Set<ProdutoEdicao> obterProdutosEdicaoPorFornecedor(Long idFornecedor) {
+		
+		String queryString = " select produtoEdicao from ProdutoEdicao produtoEdicao "
+						   + " join produtoEdicao.produto.fornecedores fornecedores"
+				   		   + " where fornecedores.id = :idFornecedor ";
+
+		Query query = this.getSession().createQuery(queryString);
+		
+		query.setParameter("idFornecedor", idFornecedor);
+		
+		return new HashSet<ProdutoEdicao>(query.list());
+	}
+	
 }
  

@@ -4,12 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.component.DescontoComponent;
+import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
+import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
@@ -17,12 +23,14 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoCotaRepository;
@@ -30,10 +38,12 @@ import br.com.abril.nds.repository.DescontoDistribuidorRepository;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class DescontoServiceImpl implements DescontoService {
@@ -61,17 +71,23 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private DescontoComponent descontoComponent;
 	
 	@Override
 	@Transactional(readOnly=true)
-	public List<TipoDesconto> obterTodosTiposDescontos() {
+	public List<br.com.abril.nds.model.cadastro.TipoDesconto> obterTodosTiposDescontos() {
 		
 		return this.tipoDescontoRepository.buscarTodos();
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public TipoDesconto obterTipoDescontoPorID(Long id) {
+	public br.com.abril.nds.model.cadastro.TipoDesconto obterTipoDescontoPorID(Long id) {
 
 		return this.tipoDescontoRepository.buscarPorId(id);
 	}
@@ -93,34 +109,34 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDescontoCotaDTO> buscarTipoDescontoCota(FiltroTipoDescontoCotaDTO filtro) {
-		// FIXME Implementar a consulta paginada de desconto
-		return getMockEspecia();
+		
+		return this.descontoCotaRepository.obterDescontoCota(filtro);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public Integer buscarQuantidadeTipoDescontoCota(FiltroTipoDescontoCotaDTO filtro) {
-		// FIXME Implementar a consulta  de desconto
-		return getMockEspecia().size();
+		
+		return this.descontoCotaRepository.obterQuantidadeDescontoCota(filtro);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
-		// FIXME Implementar a consulta paginada de desconto
-		return getMockProduto();
+
+		return this.descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
-		// FIXME Implementar a consulta de desconto
-		return getMockProduto().size();
+
+		return this.descontoProdutoRepository.buscarQuantidadeTipoDescontoProduto(filtro);
 	}
 	
 	@Override
 	@Transactional
-	public void excluirDesconto(Long idDesconto,br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto) {
+	public void excluirDesconto(Long idDesconto,TipoDesconto tipoDesconto) {
 		
 		switch (tipoDesconto) {
 			case GERAL:
@@ -130,7 +146,9 @@ public class DescontoServiceImpl implements DescontoService {
 				desconto.setFornecedores(null);
 				descontoDistribuidorRepository.remover(desconto);
 				
-				//FIXME Chamar metodo de tratamento de DESCONTO PRODUTO EDICAO
+				//TODO obter desconto anterior, tratar dados para o processamento
+				
+				//TODO chamar metodo para processamrnto de desconto distribuidor
 				
 				break;
 			case ESPECIFICO:
@@ -140,7 +158,9 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoCota.setFornecedores(null);
 				descontoCotaRepository.remover(descontoCota);
 				
-				//FIXME Chamar metodo de tratamento de DESCONTO PRODUTO EDICAO
+				//TODO obter desconto anterior, tratar dados para o processamento
+				
+				//TODO chamar metodo para processamrnto de desconto cota
 				
 				break;
 			case PRODUTO:
@@ -150,24 +170,20 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoProduto.setCotas(null);
 				descontoProdutoRepository.remover(descontoProduto);
 				
-				//FIXME Chamar metodo de tratamento de DESCONTO PRODUTO EDICAO
+				//TODO obter desconto anterior, tratar dados para o processamento
+				
+				//TODO chamar metodo para processamento de desconto produto edição
 				
 				break;
+				
+			default:
+				throw new RuntimeException("Tipo de Desconto inválido!");
 			}
-	}
-	
-	private void validarExclusaoDesconto(Date dataUltimaAlteracao){
-		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		if(dataUltimaAlteracao.compareTo(distribuidor.getDataOperacao()) < 0){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
-		}
 	}
 	
 	@Override
 	@Transactional
-	public void incluirDesconto(BigDecimal valorDesconto, List<Long> fornecedores,Usuario usuario) {
+	public void incluirDescontoDistribuidor(BigDecimal valorDesconto, List<Long> fornecedores,Usuario usuario) {
 		
 		if(fornecedores == null || fornecedores.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Fornecedores selecionados deve ser preenchido!");
@@ -187,12 +203,12 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		descontoDistribuidorRepository.adicionar(desconto);
 		
-		//FIXME chamar componente de geração de desconto PRODUTO EDIÇÂO
+		//TODO chamar metodo para processamrnto de desconto produto edição
 	}
 	
 	@Override
 	@Transactional
-	public void incluirDesconto(BigDecimal valorDesconto, List<Long> fornecedores,Integer numeroCota,Usuario usuario) {
+	public void incluirDescontoCota(BigDecimal valorDesconto, List<Long> fornecedores,Integer numeroCota,Usuario usuario) {
 		
 		if(numeroCota == null ){
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Cota deve ser preenchido!");
@@ -217,56 +233,350 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		descontoCotaRepository.adicionar(descontoCota);
 		
-		//FIXME chamar componente de geração de desconto PRODUTO EDIÇÂO
+		//TODO chamar metodo para processamrnto de desconto produto edição
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void incluirDescontoProduto(DescontoProdutoDTO desconto, Usuario usuario) {
+
+		validarEntradaDeDadosInclusaoDescontoPorProduto(desconto);
+
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+
+		Set<Cota> cotas = obterCotas(desconto.getCotas(), desconto.isTodasCotas());
+
+		if (desconto.getEdicaoProduto() != null) {
+
+			ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				desconto.getCodigoProduto(), desconto.getEdicaoProduto()
+			);
+
+			DescontoProduto descontoProduto = new DescontoProduto();
+
+			descontoProduto.setDesconto(desconto.getDescontoProduto());
+			descontoProduto.setDataAlteracao(new Date());
+			descontoProduto.setCotas(cotas);
+			descontoProduto.setDistribuidor(distribuidor);
+			descontoProduto.setProdutoEdicao(produtoEdicao);
+			descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
+
+			this.descontoProdutoRepository.adicionar(descontoProduto);
+
+		} else if (desconto.getQuantidadeEdicoes() != null) {
+
+			List<ProdutoEdicao> listaProdutoEdicao = 
+				this.produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoLimitado(
+					desconto.getCodigoProduto(), desconto.getQuantidadeEdicoes()
+				);
+
+			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
+
+				DescontoProduto descontoProduto = new DescontoProduto();
+
+				descontoProduto.setDesconto(desconto.getDescontoProduto());
+				descontoProduto.setDataAlteracao(new Date());
+				descontoProduto.setCotas(cotas);
+				descontoProduto.setDistribuidor(distribuidor);
+				descontoProduto.setProdutoEdicao(produtoEdicao);
+				descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
+
+				this.descontoProdutoRepository.adicionar(descontoProduto);
+			}
+		}
+		
+		//TODO chamar metodo para processamrnto de desconto produto edição
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto,TipoDesconto tipoDesconto) {
+		List<Fornecedor> listaFornecedores = new ArrayList<Fornecedor>();
+		
+		switch (tipoDesconto) {
+		case GERAL :
+			
+			DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
+			
+			if(desconto!= null){
+				listaFornecedores.addAll(desconto.getFornecedores());
+			}
+			break;
+			
+		case ESPECIFICO :
+			
+			DescontoCota descontoCota = descontoCotaRepository.buscarPorId(idDesconto);
+			
+			if(descontoCota!= null){
+				listaFornecedores.addAll(descontoCota.getFornecedores());
+			}
+			break;
+		}
+		
+		return listaFornecedores;
+	}
+	
+	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
+
+		if (idDescontoProduto == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O desconto precisa ser especificado.");
+		}
+		
+		return this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(idDescontoProduto, ordenacao);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota) {
+
+		if (idCota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] precisa ser especificada.");
+		}
+		
+		return this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(idCota);
+	}
+	
+	
+	@Override
+	@Transactional
+	public void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
+		
+		this.processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto);
+	}
+	
+
+	@Override
+	@Transactional
+	public void processarDescontoDistribuidor(BigDecimal valorDesconto) {
+		
+		this.processarDescontoDistribuidor(null,valorDesconto);
+	}
+	
+	
+	@Override
+	@Transactional
+	public void processarDescontoCota(Cota cota, BigDecimal valorDesconto) {
+		
+		this.processarDescontoCota(cota, null, valorDesconto);
 	}
 	
 	@Override
 	@Transactional
-	public void incluirDesconto(DescontoProduto desconto) {
-		// FIXME Implementar a inclusão do desconto da cota
+	public void processarDescontoCota(Cota cota, Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
+		
+		Set<Cota> cotas = new HashSet<Cota>();
+		
+		cotas.add(cota);
+		
+		this.processarDesconto(TipoDesconto.ESPECIFICO, fornecedores, cotas , null, valorDesconto);
 	}
 	
-	private List<TipoDescontoCotaDTO> getMockEspecia(){
+	@Override
+	@Transactional
+	public void processarDescontoProduto(ProdutoEdicao produto, BigDecimal valorDesconto) {
 		
-		List<TipoDescontoCotaDTO> listaDescontoCotaDTO = new ArrayList<TipoDescontoCotaDTO>();
+		Set<ProdutoEdicao> produtos = new HashSet<ProdutoEdicao>();
 		
-		for (int i = 0; i < 10; i++) {
+		produtos.add(produto);
+		
+		this.processarDescontoProduto(produtos, null, valorDesconto); 
+	}
+	
+	@Override
+	@Transactional
+	public void processarDescontoProduto(Set<ProdutoEdicao> produtos, 
+										 Set<Cota> cotas, 
+										 BigDecimal valorDesconto) {
+		
+		this.processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto);
+	}
+	
+	/*
+	 * Método que efetua o processamento do desconto de acordo com seu tipo.
+	 * 
+	 * @param tipoDesconto - tipo de desconto
+	 * @param fornecedores - lista de fornecedores
+	 * @param cotas - list de cotas
+	 * @param produtos - lista de produtos
+	 * @param valorDesconto - valor do desconto
+	 */
+	private void processarDesconto(TipoDesconto tipoDesconto, 
+								   Set<Fornecedor> fornecedores, 
+								   Set<Cota> cotas, 
+								   Set<ProdutoEdicao> produtos, 
+								   BigDecimal valorDesconto) {
+
+		boolean obterFornecedores = fornecedores == null || fornecedores.isEmpty();
+		
+		boolean obterProdutos = produtos == null || produtos.isEmpty();
+		
+		boolean obterCotas = cotas == null || cotas.isEmpty();
+		
+		if (obterFornecedores) {
 			
-			TipoDescontoCotaDTO x = new TipoDescontoCotaDTO();
-			x.setDataAlteracao(new Date());
-			x.setDesconto(BigDecimal.TEN);
-			x.setFornecedor("Fornecedor");
-			x.setNomeCota("jose MAria");
-			x.setNomeUsuario("Mane");
-			x.setNumeroCota(123);
-			x.setIdTipoDesconto(new Long(i));
-			
-			listaDescontoCotaDTO.add(x);
+			fornecedores = new HashSet<Fornecedor>(this.fornecedorRepository.obterFornecedores());
 		}
 		
-		return listaDescontoCotaDTO;
+		for (Fornecedor fornecedor : fornecedores) {
+			
+			Set<ProdutoEdicao> produtosParaDesconto = new HashSet<ProdutoEdicao>();
+			
+			if (obterProdutos) {
+				
+				produtos =
+					this.produtoEdicaoRepository.obterProdutosEdicaoPorFornecedor(fornecedor.getId());
+			}
+			
+			for (ProdutoEdicao produtoEdicao : produtos) {
+				
+				Set<Fornecedor> fornecedoresProduto = produtoEdicao.getProduto().getFornecedores();
+				
+				if (fornecedoresProduto == null ||
+						!fornecedoresProduto.contains(fornecedor)) {
+					
+					continue;
+				}
+				
+				produtosParaDesconto.add(produtoEdicao);
+			}
+			
+			produtosParaDesconto = 
+				this.descontoComponent.filtrarProdutosPassiveisDeDesconto(
+					tipoDesconto, fornecedor, produtosParaDesconto);
+			
+			if (obterCotas) {
+				
+				cotas = this.cotaRepository.obterCotasPorFornecedor(fornecedor.getId());
+			}
+			
+			for (Cota cota : cotas) {
+				
+				Set<Fornecedor> fornecedoresCota = cota.getFornecedores();
+				
+				for (Fornecedor fornecedorCota : fornecedoresCota) {
+					
+					System.out.println(fornecedorCota.getId());
+				}
+				
+				if (fornecedoresCota == null ||
+						!fornecedoresCota.contains(fornecedor)) {
+					
+					continue;
+				}
+				
+				this.descontoComponent.persistirDesconto(
+					tipoDesconto, fornecedor, cota, produtosParaDesconto, valorDesconto);
+			}
+		}
 	}
-
-	private List<TipoDescontoProdutoDTO> getMockProduto(){
+	
+	/*
+	 * Efetua a validação da exclusão do desconto.
+	 * 
+	 * @param dataUltimaAlteracao - data da última alteração
+	 */
+	private void validarExclusaoDesconto(Date dataUltimaAlteracao){
 		
-		List<TipoDescontoProdutoDTO> listaDescontoCotaDTO = new ArrayList<TipoDescontoProdutoDTO>();
+		Distribuidor distribuidor = distribuidorRepository.obter();
 		
-		for (int i = 0; i < 10; i++) {
+		if(dataUltimaAlteracao.compareTo(distribuidor.getDataOperacao()) < 0){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
+		}
+	}
+	
+	/*
+	 * Valida a entrada de dados para inclusão de desconto por produto.
+	 * 
+	 * @param desconto - dados do desconto de produto
+	 */
+	private void validarEntradaDeDadosInclusaoDescontoPorProduto(DescontoProdutoDTO desconto) {
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		if (desconto.getCodigoProduto() == null || desconto.getCodigoProduto().isEmpty()) {
 			
-			TipoDescontoProdutoDTO x = new TipoDescontoProdutoDTO();
-			
-			x.setCodigoProduto("Prod - " + i);
-			x.setDataAlteracao(new Date());
-			x.setDesconto(BigDecimal.TEN);
-			x.setNomeProduto("Nome" + i);
-			x.setNomeUsuario("Mane");
-			x.setNumeroEdicao(i);
-			x.setIdTipoDesconto(new Long(i));
-			
-			listaDescontoCotaDTO.add(x);
+			mensagens.add("O campo Código deve ser preenchido!");
 		}
 		
-		return listaDescontoCotaDTO;
-	}
+		if (desconto.getEdicaoProduto() == null && desconto.getQuantidadeEdicoes() == null) {
+			
+			mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
+		}
+	
+		Integer quantidadeEdicoesExistentes = 
+				this.produtoEdicaoRepository.obterQuantidadeEdicoesPorCodigoProduto(desconto.getCodigoProduto());
+		
+		if (desconto.getQuantidadeEdicoes() != null && 
+				quantidadeEdicoesExistentes < desconto.getQuantidadeEdicoes()) {
 
+			mensagens.add("O número máximo de edições que pode ser informado é: " + quantidadeEdicoesExistentes);
+		}
+		
+		if (desconto.getDescontoProduto() == null) {
+			
+			mensagens.add("O campo Desconto deve ser preenchido!");
+		}
+		
+		if (!desconto.isHasCotaEspecifica() && !desconto.isTodasCotas()) {
+
+			mensagens.add("O campo de cotas deve ser preenchido!");
+		}
+		
+		if (desconto.isHasCotaEspecifica() && desconto.getCotas() == null) {
+			
+			mensagens.add("Ao menos uma cota deve ser selecionada!");
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+	}
+	
+	/*
+	 * Obtém as cotas por id ou todas.
+	 * 
+	 * @param idsCotas - id's das cotas
+	 * @param isTodasCotas - flag para obter todas as cotas
+	 * 
+	 * @return {@link Set} de {@link Cota}
+	 */
+	private Set<Cota> obterCotas(List<Integer> idsCotas, boolean isTodasCotas) {
+
+		Set<Cota> cotas = null;
+
+		if (idsCotas != null) {
+
+			cotas = new LinkedHashSet<Cota>();
+
+			for (Integer numeroCota : idsCotas) {
+
+				Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+
+				cotas.add(cota);
+			}
+
+		} else if (isTodasCotas) {
+
+			cotas = new HashSet<Cota>(this.cotaRepository.buscarTodos());
+		}
+
+		return cotas;
+	}
+	
 }

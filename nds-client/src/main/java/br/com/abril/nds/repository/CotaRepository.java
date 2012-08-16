@@ -194,5 +194,14 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao);
 
 	Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
+	
+	/**
+	 * Obtém cotas relacionadas a um fornecedor.
+	 * 
+	 * @param idFornecedor - id do fornecedor
+	 * 
+	 * @return {@link Set} de {@link Cota}
+	 */
+	Set<Cota> obterCotasPorFornecedor(Long idFornecedor);
 
 }

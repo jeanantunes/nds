@@ -1,26 +1,41 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.GrupoCotaDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -45,21 +60,109 @@ public class ParametrosDistribuidorController {
 
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private HttpSession session;
+	
+	private static final String ATRIBUTO_SESSAO_LOGOTIPO = "cadastroDistribuidorLogotipo";
 
+	@Autowired 
+	private GrupoService grupoService;
+	
 	@Path("/")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR)
 	public void index() {
 		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
 		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
 		result.include("fornecedores", fornecedorService.obterFornecedores());
+		result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
+		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
+	}
+	
+	private List<ItemDTO<TipoAtividade, String>> carregarComboRegimeTributario() {
+
+		List<ItemDTO<TipoAtividade, String>> listaRegimeTributario =
+			new ArrayList<ItemDTO<TipoAtividade, String>>();
+		
+		listaRegimeTributario.add(
+			new ItemDTO<TipoAtividade, String>(TipoAtividade.PRESTADOR_SERVICO,
+											   TipoAtividade.PRESTADOR_SERVICO.getDescTipoDistribuidor()));
+		
+		listaRegimeTributario.add(
+			new ItemDTO<TipoAtividade, String>(TipoAtividade.MERCANTIL,
+											   TipoAtividade.MERCANTIL.getDescTipoDistribuidor()));
+		
+		return listaRegimeTributario;
+	}
+	
+	private List<ItemDTO<ObrigacaoFiscal, String>> carregarComboObrigacaoFiscal() {
+
+		List<ItemDTO<ObrigacaoFiscal, String>> listaObrigacaoFiscal =
+			new ArrayList<ItemDTO<ObrigacaoFiscal, String>>();
+		
+		listaObrigacaoFiscal.add(
+			new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.COTA_TOTAL,
+												 ObrigacaoFiscal.COTA_TOTAL.getDescricao()));
+		
+		listaObrigacaoFiscal.add(
+			new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.COTA_NFE_VENDA,
+												 ObrigacaoFiscal.COTA_NFE_VENDA.getDescricao()));
+		
+		listaObrigacaoFiscal.add(
+			new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.DEVOLUCAO_FORNECEDOR,
+												 ObrigacaoFiscal.DEVOLUCAO_FORNECEDOR.getDescricao()));
+		
+		return listaObrigacaoFiscal;
+	}
+	
+	public Download getLogo() {
+		
+		try {
+			InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
+			return new InputStreamDownload(inputStream, null, null);
+		} catch (Exception e) {
+			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage())).serialize();
+		}
+
+		return null;
+	}
+	
+	public Download atualizarLogo() {
+		
+		UploadedFile logo = (UploadedFile) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO);
+		
+		return new InputStreamDownload(logo.getFile(), null, null);
 	}
 
+	public void salvarLogo(UploadedFile logo) {
+		
+		session.setAttribute(ATRIBUTO_SESSAO_LOGOTIPO, logo);
+		
+		result.use(PlainJSONSerialization.class).from("", "result").serialize();
+	}
+	
 	/**buscarDiasOperacaoFornecedor
 	 * Grava as alterações de parametros realizadas para o distribuidor
 	 * @param distribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
-	    validarCadastroDistribuidor(parametrosDistribuidor);
-		distribuidorService.alterar(parametrosDistribuidorService.getDistribuidor(parametrosDistribuidor));
+	    
+		UploadedFile logo = (UploadedFile) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO);
+		
+		InputStream inputStream = null;
+		String contentType = null;
+
+		if (logo != null) {
+			
+			inputStream = logo.getFile();
+			contentType = logo.getContentType();
+		}
+		
+		validarCadastroDistribuidor(parametrosDistribuidor);
+		
+		parametrosDistribuidorService.salvarDistribuidor(
+			parametrosDistribuidor, inputStream, contentType);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}
 	
@@ -95,6 +198,12 @@ public class ParametrosDistribuidorController {
 		distribuicaoFornecedorService.gravarAtualizarDadosFornecedor(listaFornecedoresLancamento, listaDiasLancamento, listaDiasRecolhimento, distribuidor);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor cadastrado com sucesso"),"result").recursive().serialize();
 	}
+	
+	@Post
+	public void cadastrarOperacaoDiferenciada(String nomeDiferenca, List<DiaSemana> diasSemana){
+		
+		result.use(Results.json()).from("").serialize();
+	}
 
 	/**
 	 * Valida os dados selecionados ao inserir dados de dias de distribuição por fornecedor
@@ -127,13 +236,48 @@ public class ParametrosDistribuidorController {
 	 */
 	private void validarCadastroDistribuidor(ParametrosDistribuidorVO vo) {
 	    List<String> erros = new ArrayList<String>();
-	    if (StringUtils.isEmpty(vo.getCapacidadeManuseioHomemHoraLancamento())) {
+	    if (vo.getCapacidadeManuseioHomemHoraLancamento() == null) {
 	        erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");
 	    }
-	    if (StringUtils.isEmpty(vo.getCapacidadeManuseioHomemHoraRecolhimento())) {
+	    if (vo.getCapacidadeManuseioHomemHoraRecolhimento() == null) {
             erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
         }
 	    
+	    if (vo.isUtilizaContratoComCotas() && vo.getPrazoContrato() == null) {
+	        erros.add("É necessário informar o Prazo do Contrato!");
+	    }
+	    
+	    if (vo.isUtilizaGarantiaPdv() && !vo.isGarantiasUtilizadas()) {
+	        erros.add("É necessário selecionar pelo menos uma Garantia!");
+	    }
+	    
+	    if (vo.isUtilizaChequeCaucao() && vo.getValidadeChequeCaucao() == null) {
+	        erros.add("É necessário informar a Validade da Garantia Cheque Caução!");
+	    }
+	    
+	    if (vo.isUtilizaCaucaoLiquida() && vo.getValidadeCaucaoLiquida() == null) {
+            erros.add("É necessário informar a Validade da Garantia Caução Líquida!");
+        }
+	    
+	    if (vo.isUtilizaFiador() && vo.getValidadeFiador() == null) {
+            erros.add("É necessário informar a Validade da Garantia Fiador!");
+        }
+	    
+	    if (vo.isUtilizaNotaPromissoria() && vo.getValidadeNotaPromissoria() == null) {
+            erros.add("É necessário informar a Validade da Garantia Nota Promissória!");
+        }
+	    
+	    if (vo.isUtilizaImovel() && vo.getValidadeImovel() == null) {
+            erros.add("É necessário informar a Validade da Garantia Imóvel!");
+        }
+	    
+	    if (vo.isUtilizaAntecedenciaValidade() && vo.getValidadeAntecedenciaValidade() == null) {
+            erros.add("É necessário informar a Validade da Garantia Antecedência da Validade!");
+        }
+	    
+	    if (vo.isUtilizaOutros() && vo.getValidadeOutros() == null) {
+            erros.add("É necessário informar a Validade da Garantia Outros!");
+        }
 	    verificarExistenciaErros(erros);
 	}
 
@@ -147,5 +291,29 @@ public class ParametrosDistribuidorController {
             throw new ValidacaoException(validacaoVO);
         }
     }
+	
+	/**
+	 * Busca todos os Grupos de Cota
+	 */
+	@Post
+	public void obterGrupos() {
+			
+		List<GrupoCotaDTO> grupos = this.grupoService.obterTodosGrupos();
+		
+		result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();
+				
+	}
+	
+	/**
+	 * Excluir Grupo
+	 * @param idGrupo
+	 */
+	public void excluirGrupo(Long idGrupo)  {
+		
+		grupoService.excluirGrupo(idGrupo);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+	}
+	
 	
 }

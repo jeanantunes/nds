@@ -10,6 +10,8 @@ var DESCONTO_PRODUTO = {
 		$("#formTipoDescontoProduto")[0].reset();
 		
 		esconderGridCota();
+		
+		mostraEdicao();
 	},
 
 	popup_produto:function() {
@@ -21,14 +23,18 @@ var DESCONTO_PRODUTO = {
 			height:550,
 			width:450,
 			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					DESCONTO_PRODUTO.novoDescontoProduto();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+			buttons:[{
+						id:"id_confirmar_produto",text:"Confirmar",
+						click: function() {
+							DESCONTO_PRODUTO.novoDescontoProduto();
+						}
+					},{
+						id:"id_close_produto",text:"Cancelar",
+						click: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				]
 		});	
 	},
 
@@ -36,9 +42,11 @@ var DESCONTO_PRODUTO = {
 		
 		var data = DESCONTO_PRODUTO.obterParametrosNovoDescontoProduto();
 
-		$.postJSON("<c:url value='/administracao/tipoDescontoCota/novoDescontoProduto'/>",
+		$.postJSON("<c:url value='/financeiro/tipoDescontoCota/novoDescontoProduto'/>",
 				   data,
 				   function(result) {
+
+					   TIPO_DESCONTO.pesquisarDescontoProduto();
 
 					   $( "#dialog-produto" ).dialog( "close" );
 
@@ -59,18 +67,18 @@ var DESCONTO_PRODUTO = {
 		var quantidadeEdicoes = $("#quantidadeEdicoes").val();
 		var descontoProduto = $("#descontoProduto").val();
 		var descontoPredominante = $("#descontoPredominante").attr("checked") ? true : false;
-		var isCheckedEdicao = $("#mostrarEdicao").attr("checked") ? true : false;
 		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas").checked;
+		var isTodasCotas = document.getElementById("radioTodasCotas").checked;
 		
 		var data = new Array();
 		
-		data.push({name:'codigoProduto' , value: codigoProduto});
-		data.push({name:'edicaoProduto' , value: edicaoProduto});
-		data.push({name:'descontoProduto' , value: descontoProduto});
-		data.push({name:'quantidadeEdicoes' , value: quantidadeEdicoes});
-		data.push({name:'descontoPredominante' , value: descontoPredominante});
-		data.push({name:'isCheckedEdicao' , value: isCheckedEdicao});
-		data.push({name:'hasCotaEspecifica' , value: hasCotaEspecifica});
+		data.push({name:'desconto.codigoProduto' , value: codigoProduto});
+		data.push({name:'desconto.edicaoProduto' , value: edicaoProduto});
+		data.push({name:'desconto.descontoProduto' , value: descontoProduto});
+		data.push({name:'desconto.quantidadeEdicoes' , value: quantidadeEdicoes});
+		data.push({name:'desconto.descontoPredominante' , value: descontoPredominante});
+		data.push({name:'desconto.hasCotaEspecifica' , value: hasCotaEspecifica});
+		data.push({name:'desconto.isTodasCotas' , value: isTodasCotas});
 		
 		$("input[id^=cotaInput]").each(function(index, value) {
 			if ($(this).val()) {
@@ -145,6 +153,14 @@ function adicionarLinhaCota(linhaAtual){
 <div id="dialog-produto" title="Novo Tipo de Desconto Produto" style="display:none;">
 
 <jsp:include page="../messagesDialog.jsp" />    
+
+<div id="dialog-cotas" title="Cotas" style="display:none;">
+	<fieldset style="width:350px!important;">
+    	<legend>Cotas</legend>
+        <table class="lstCotaGrid"></table>
+    </fieldset>
+</div>
+
 
 <form id="formTipoDescontoProduto">
   <table width="394" border="0" cellpadding="2" cellspacing="1" class="filtro" style="font-size:8pt">
@@ -223,19 +239,13 @@ function adicionarLinhaCota(linhaAtual){
 									onblur="cota.pesquisarPorNomeCota('#cotaInput1', '#nomeInput1',adicionarLinhaCota(1));"/>
 							</td>
 						</tr>
-						<tfoot>
-							<tr>
-								<td colspan="2">
-									Este desconto predomina sobre os demais (geral / Específico)?
-									<input type="checkbox" name="descontoPredominante" id="descontoPredominante" />
-								</td>
-							</tr>
-				      	</tfoot>
 					</table>
 				</div>
 			</fieldset>
-		</div>            
-
+		</div>  
+		          
+		<strong>Este desconto predomina sobre os demais (geral / Específico)?</strong>
+		<input type="checkbox" name="descontoPredominante" id="descontoPredominante" />
 
  </form>
 

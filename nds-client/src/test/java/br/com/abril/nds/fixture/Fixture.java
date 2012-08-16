@@ -14,6 +14,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -34,10 +35,12 @@ import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -84,7 +87,9 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -668,14 +673,13 @@ public class Fixture {
 		distribuidor.setValorConsignadoSuspensaoCotas(BigDecimal.TEN);
 		distribuidor.setLeiautePicking(LeiautePicking.DOIS);
 		distribuidor.setRequerAutorizacaoEncalheSuperaReparte(false);
-		distribuidor.setObrigacaoFiscao(true);
+		distribuidor.setObrigacaoFiscal(ObrigacaoFiscal.COTA_TOTAL);
 		distribuidor.setRegimeEspecial(true);
 		distribuidor.setUtilizaProcuracaoEntregadores(true);
 		distribuidor.setInformacoesComplementaresProcuracao("Info Complementares Procuração");
-		distribuidor.setUtilizaGarantiaPdv(false);
+		distribuidor.setUtilizaGarantiaPdv(true);
 		distribuidor.setParcelamentoDividas(false);
 		distribuidor.setNegociacaoAteParcelas(Integer.valueOf(3));
-		distribuidor.setPermitePagamentoDividasDivergentes(false);
 		distribuidor.setUtilizaControleAprovacao(false);
 		distribuidor.setPrazoFollowUp(Integer.valueOf(7));
 		distribuidor.setPrazoAvisoPrevioValidadeGarantia(Integer.valueOf(7));
@@ -698,9 +702,10 @@ public class Fixture {
 		pad.setAjusteEstoque(false);
 		pad.setPostergacaoCobranca(false);
 		pad.setDevolucaoFornecedor(false);
-		pad.setRecibo(false);
 		pad.setFaltasSobras(false);
 		distribuidor.setParametrosAprovacaoDistribuidor(pad);
+		
+		distribuidor.setDescontoCotaNegociacao(BigDecimal.ZERO);
 		
 		return distribuidor;
 	}
@@ -775,7 +780,9 @@ public class Fixture {
 		Usuario usuario = new Usuario();
 		usuario.setNome("João");
 		usuario.setLogin("joao");
-		usuario.setSenha("ABC123");
+		usuario.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // senha: 1234
+		usuario.setEmail("cabradapeste@bol.com");
+		usuario.setContaAtiva(false);
 		return usuario;
 	}
 
@@ -2835,6 +2842,7 @@ public class Fixture {
 		
 		tipoGarantiaAceita.setDistribuidor(distribuidor);
 		tipoGarantiaAceita.setTipoGarantia(tipoGarantia);
+		tipoGarantiaAceita.setValor(12);
 		
 		return tipoGarantiaAceita;
 	}
@@ -3297,15 +3305,58 @@ public class Fixture {
 		
 	}
 	
-	public static DescontoDistribuidor descontoDistribuidor(BigDecimal desconto, Distribuidor distribuidor, Set<Fornecedor> fornecedores,Usuario usuario ){
+	public static DescontoDistribuidor descontoDistribuidor(BigDecimal desconto, Distribuidor distribuidor, Set<Fornecedor> fornecedores,Usuario usuario, Date dataAtualizacao ){
 		
 		DescontoDistribuidor descontoReturn = new DescontoDistribuidor();
 		descontoReturn.setDesconto(desconto);
-		descontoReturn.setDataAlteracao(new Date());
+		descontoReturn.setDataAlteracao(dataAtualizacao);
 		descontoReturn.setDistribuidor(distribuidor);
 		descontoReturn.setFornecedores(fornecedores);
 		descontoReturn.setUsuario(usuario);
 		
 		return descontoReturn;
+	}
+	
+    public static DescontoCota descontoCota(BigDecimal desconto, Distribuidor distribuidor, Cota cota, Set<Fornecedor> fornecedores,Usuario usuario, Date dataAtualizacao ){
+		
+		DescontoCota descontoReturn = new DescontoCota();
+		descontoReturn.setDesconto(desconto);
+		descontoReturn.setDataAlteracao(dataAtualizacao);
+		descontoReturn.setCota(cota);
+		descontoReturn.setDistribuidor(distribuidor);
+		descontoReturn.setFornecedores(fornecedores);
+		descontoReturn.setUsuario(usuario);
+		
+		return descontoReturn;
+	}
+
+	public static GrupoCota criarGrupoCota(Long id, String nome, TipoGrupo tipoGrupo,
+			Set<DiaSemana> diasRecolhimento,
+			TipoCaracteristicaSegmentacaoPDV tipoCota,
+			Set<Localidade> municipios, Set<Cota> cotas) {
+		
+		GrupoCota grupo = new GrupoCota();
+		
+		grupo.setCotas(cotas);
+		grupo.setDiasRecolhimento(diasRecolhimento);
+		grupo.setId(id);
+		grupo.setMunicipios(municipios);
+		grupo.setNome(nome);
+		grupo.setTipoCota(tipoCota);
+		grupo.setTipoGrupo(tipoGrupo);
+		
+		return grupo;
+	}
+	
+	public static DescontoProdutoEdicao descontoProdutoEdicao(Cota cota, BigDecimal desconto, Fornecedor fornecedor, ProdutoEdicao produtoEdicao, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
+		
+		DescontoProdutoEdicao descontoP = new DescontoProdutoEdicao();
+		descontoP.setCota(cota);
+		descontoP.setDesconto(desconto);
+		descontoP.setFornecedor(fornecedor);
+		descontoP.setProdutoEdicao(produtoEdicao);
+		descontoP.setTipoDesconto(tipoDesconto);
+		
+		return descontoP;
 	}
 }

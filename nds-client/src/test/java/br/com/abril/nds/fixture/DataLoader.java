@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +26,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
@@ -46,6 +49,7 @@ import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
@@ -94,11 +98,14 @@ import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -193,6 +200,8 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.seguranca.GrupoPermissao;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
 
@@ -996,39 +1005,102 @@ public class DataLoader {
 		gerarLogExecucaoInterfaces(session);
 
 		gerarLogradouros(session);
+
+		gerarAdministrador(session); 
 		
 		//criarNovaNotaFiscal(session);
 		
 		gerarDescontoDistribuidorParaFornecedor(session);
+		
+		criarDescontoProduto(session);
+
+		gerarDescontoCota(session);
+		
+		gerarGrupos(session);
+
 	}
 
 	
+	private static void gerarGrupos(Session session) {
+		
+		Set<DiaSemana> diasGrupo1 = EnumSet.of(DiaSemana.DOMINGO,DiaSemana.QUARTA_FEIRA);
+		
+		GrupoCota grupo1 = Fixture.criarGrupoCota(
+				null,
+				"Grupo 1",
+				TipoGrupo.TIPO_COTA,
+				diasGrupo1,
+				TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL,
+				null,
+				null);
+		save(session, grupo1);
+		
+		Set<DiaSemana> diasGrupo2 = EnumSet.of(DiaSemana.SABADO,DiaSemana.SEXTA_FEIRA);
+		
+		GrupoCota grupo2 = Fixture.criarGrupoCota(
+				null,
+				"Grupo 2",
+				TipoGrupo.TIPO_COTA,
+				diasGrupo2,
+				TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL,
+				null,
+				null);
+		save(session, grupo2);
+		
+	}
+
 	private static void gerarDescontoDistribuidorParaFornecedor(Session session) {
 		
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		fornecedores.add(fornecedorAcme);
 		fornecedores.add(fornecedorDinap);
-		DescontoDistribuidor desconto1 = Fixture.descontoDistribuidor(new BigDecimal(2), distribuidor, fornecedores , usuarioJoao);
+		DescontoDistribuidor desconto1 = Fixture.descontoDistribuidor(new BigDecimal(2), distribuidor, fornecedores , usuarioJoao, new Date());
 		
 		Set<Fornecedor> fornecedores1 = new HashSet<Fornecedor>();
 		fornecedores1.add(fornecedorAcme);
 		fornecedores1.add(fornecedorDinap);
-		DescontoDistribuidor desconto2 = Fixture.descontoDistribuidor(new BigDecimal(3), distribuidor, fornecedores1 , usuarioJoao);
+		DescontoDistribuidor desconto2 = Fixture.descontoDistribuidor(new BigDecimal(3), distribuidor, fornecedores1 , usuarioJoao, DateUtil.adicionarDias(new Date(), -2));
 		
 		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
 		fornecedores2.add(fornecedorAcme);
-		DescontoDistribuidor desconto3 = Fixture.descontoDistribuidor(new BigDecimal(5), distribuidor, fornecedores2 , usuarioJoao);
+		DescontoDistribuidor desconto3 = Fixture.descontoDistribuidor(new BigDecimal(5), distribuidor, fornecedores2 , usuarioJoao,DateUtil.adicionarDias(new Date(), -3));
 		
 		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
 		fornecedores3.add(fornecedorDinap);
-		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(6), distribuidor, fornecedores3 , usuarioJoao);
+		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(6), distribuidor, fornecedores3 , usuarioJoao,DateUtil.adicionarDias(new Date(), -4));
 		
 		Set<Fornecedor> fornecedores4 = new HashSet<Fornecedor>();
 		fornecedores4.add(fornecedorAcme);
 		fornecedores4.add(fornecedorDinap);
-		DescontoDistribuidor desconto5 = Fixture.descontoDistribuidor(new BigDecimal(7), distribuidor, fornecedores4, usuarioJoao);
+		DescontoDistribuidor desconto5 = Fixture.descontoDistribuidor(new BigDecimal(7), distribuidor, fornecedores4, usuarioJoao,DateUtil.adicionarDias(new Date(), -5));
 		
 		save(session,desconto1,desconto2,desconto3,desconto4,desconto5);
+	}
+	
+	/*
+	 * Carrega descontos especificos da cota
+	 */
+	public static void gerarDescontoCota(Session session){
+		
+		Usuario usuario = Fixture.usuarioJoao();
+		save(session,usuario);
+		
+		Set<Fornecedor> fornecedores1 = new HashSet<Fornecedor>();
+		fornecedores1.add(fornecedorAcme);
+		DescontoCota desconto1 = Fixture.descontoCota(new BigDecimal(2), distribuidor, cotaManoel, fornecedores1, usuario, DateUtil.adicionarDias(new Date(), 0));
+		
+		Set<Fornecedor> fornecedores2 = new HashSet<Fornecedor>();
+		fornecedores2.add(fornecedorAcme);
+		fornecedores2.add(fornecedorDinap);
+		DescontoCota desconto2 = Fixture.descontoCota(new BigDecimal(3), distribuidor, cotaManoel, fornecedores2, usuario,DateUtil.adicionarDias(new Date(), -1));
+		
+		Set<Fornecedor> fornecedores3 = new HashSet<Fornecedor>();
+		fornecedores3.add(fornecedorAcme);
+		fornecedores3.add(fornecedorDinap);
+		fornecedores3.add(fornecedorFc);
+		DescontoCota desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cotaManoelCunha, fornecedores3, usuario,DateUtil.adicionarDias(new Date(), -2));
+		
+		save(session,desconto1,desconto2,desconto3);
 	}
 
 	/*
@@ -1066,8 +1138,31 @@ public class DataLoader {
 		
 		criarFeriado(session);		
 	}
-	
 
+	private static void gerarAdministrador(Session session) {
+
+		GrupoPermissao grupoAdmin = new GrupoPermissao();
+		grupoAdmin.setNome("ADMIN");
+		grupoAdmin.setPermissoes( new HashSet<Permissao>(Arrays.asList(Permissao.values())) );
+		
+		session.save(grupoAdmin);
+
+		Usuario admin = new Usuario();
+		admin.setLogin("admin");
+		admin.setSenha("81dc9bdb52d04dc20036dbd8313ed055"); // Senha: 1234
+		admin.setNome("Administrador");
+		admin.setContaAtiva(true);
+		admin.setEmail("adminteste@abril.com.br");
+		
+		Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
+		gruposPermissoes.add(grupoAdmin);
+		
+		admin.setGruposPermissoes(gruposPermissoes);
+		
+		session.save(admin);
+
+	}
+	
 	private static void criarControleNumeracaoSlip(Session session) {
 
 		controleNumeracaoSlipConferenciaEncalhe = new ControleNumeracaoSlip();
@@ -3076,11 +3171,11 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO,
-//				"C:\\notas\\"));			// windows;
-				"/opt/interface/notas/"));	// linux;
+				"C:\\notas\\"));			// windows;
+//				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO,
-//				"C:\\notas\\"));			// windows;
-				"/opt/interface/notas/"));	// linux;
+				"C:\\notas\\"));			// windows;
+//				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
 //				"C:\\interface_mdc\\"));		// windows;
 				"/opt/interface_mdc/"));		// linux;
@@ -3090,6 +3185,21 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
 //				"C:\\interface_mdc\\"));		// windows;
 				"/opt/interface_mdc/"));		// linux;
+		
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_IN_FILEMASK, "(?i:DEAJO19.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0107_OUT_FILEMASK, "DEAPR19.NEW"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0108_IN_FILEMASK, "(?i:MATRIZ.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0110_IN_FILEMASK, "([0-9]{8}).prd"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0112_IN_FILEMASK, "(?i:[0-9]{8}.edi)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0114_IN_FILEMASK, "([0-9]{8}).rec"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0116_IN_FILEMASK, "(?i:BANCA.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0117_IN_FILEMASK, "COTA.NEW"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0118_IN_FILEMASK, "(?i:PRECO.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0119_IN_FILEMASK, "(?i:PRODUTO.NEW)"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0129_OUT_FILEMASK, "PICKING1.NEW"));
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6248116"));
 	}
@@ -4147,7 +4257,7 @@ public class DataLoader {
 	private static void criarDistribuidor(Session session) {
 
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000147", "110042490114", "distrib_acme@mail.com", "99.999-9");
 		save(session, juridicaDistrib);
 
 		//FORMAS DE COBRANÇA DA COTA
@@ -4261,7 +4371,6 @@ public class DataLoader {
 		parametrosAprovacaoDistribuidor.setFaltasSobras(true);
 		parametrosAprovacaoDistribuidor.setNegociacao(true);
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(true);
-		parametrosAprovacaoDistribuidor.setRecibo(true);
 
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = new ParametrosRecolhimentoDistribuidor();
 
@@ -4289,6 +4398,7 @@ public class DataLoader {
 		politicaCobranca8.setDistribuidor(distribuidor);
 		save(session, politicaCobranca, politicaCobranca2, politicaCobranca3, politicaCobranca4, politicaCobranca5, politicaCobranca6, politicaCobranca7, politicaCobranca8);
 
+		
 		for(TipoGarantia tipo:TipoGarantia.values()){
 			save(session,Fixture.criarTipoGarantiaAceita(distribuidor, tipo));
 		}
@@ -4297,7 +4407,7 @@ public class DataLoader {
 	private static void criarEnderecoDistribuidor(Session session){
 
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",3);
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",3543402);
 
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, endereco, true, TipoEndereco.COBRANCA);
 
@@ -4527,10 +4637,10 @@ public class DataLoader {
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 
 		Endereco enderecoPrincipal = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", 50, "Centro", "Mococa", "SP",1);
+				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", 50, "Centro", "Mococa", "SP",3530508);
 
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", 50, "Centro", "Mococa", "SP",1);
+				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", 50, "Centro", "Mococa", "SP",3530508);
 
 		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
 		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
@@ -5415,22 +5525,22 @@ public class DataLoader {
 	private static void criarEndereco(Session session){
 		
 		enderecoMococa1 = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",1);
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",3530508);
 		
 		enderecoMococa2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 51, "Vila Carvalho", "Mococa", "SP",1);
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 51, "Vila Carvalho", "Mococa", "SP",3530508);
 		
 		enderecoLuisMococa3 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X Alvorada", 52, "Vila Carvalho", "Mococa", "SP",1);
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X Alvorada", 52, "Vila Carvalho", "Mococa", "SP",3530508);
 		
 		enderecoRioPardo1 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua X Da silva", 50, "Vila Carvalho", "São Jose do Rio Pardo", "SP",2);
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua X Da silva", 50, "Vila Carvalho", "São Jose do Rio Pardo", "SP",3549706);
 		
 		enderecoRioPardo2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose", 52, "Vila Jose", "São Jose do Rio Pardo", "SP",2);
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose", 52, "Vila Jose", "São Jose do Rio Pardo", "SP",3549706);
 		
 		enderecoRioPardo3 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose da Silva", 51, "Vila Jose", "São Jose do Rio Pardo", "SP",2);
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose da Silva", 51, "Vila Jose", "São Jose do Rio Pardo", "SP",3549706);
 		
 		save(session, enderecoMococa1,enderecoMococa2,enderecoLuisMococa3,enderecoRioPardo1,enderecoRioPardo2,enderecoRioPardo3);
 
@@ -7563,7 +7673,7 @@ public class DataLoader {
 				null, juridicaFc, false, null);
 		save(session, juridicaFc, entregador);
 
-		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP",1);
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP",3530508);
 
 		EnderecoEntregador enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COMERCIAL);
 
@@ -7580,7 +7690,7 @@ public class DataLoader {
 				null, jose, false, null);
 		save(session, jose, entregador);
 
-		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP",5);
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP",3543402);
 
 		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COBRANCA);
 
@@ -7598,7 +7708,7 @@ public class DataLoader {
 				456L, false, new Date(),
 				null, maria, false, null);
 
-		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP",3);
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP",3550308);
 
 		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.RESIDENCIAL);
 
@@ -10642,6 +10752,7 @@ public class DataLoader {
 		save(session, Fixture.criarInterfaceExecucao(InterfaceEnum.EMS0185.getCodigoInterface(), "EMS0185"));
 		save(session, Fixture.criarInterfaceExecucao(197L, "EMS0197"));
 		save(session, Fixture.criarInterfaceExecucao(198L, "EMS0198"));
+		save(session, Fixture.criarInterfaceExecucao(135L, "EMS0135"));
 	}
 
 	private static void criarEventoExecucao(Session session) {
@@ -10717,7 +10828,7 @@ public class DataLoader {
 		String email 		= "";
 		
 		Endereco enderecoDestinatario 	= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", 4585, "Jrd Limeira", "Pedra de Guaratiba", "RJ",6);
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", 4585, "Jrd Limeira", "Pedra de Guaratiba", "RJ",3543402);
 		
 		session.save(enderecoDestinatario);
 		
@@ -10797,7 +10908,7 @@ public class DataLoader {
 	
 		
 		Endereco enderecoTransporte = 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG",10);
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG",3543402);
 		
 		session.save(enderecoTransporte);
 		
@@ -10969,6 +11080,82 @@ public class DataLoader {
 		}
 		
 		
+	}
+	
+	private static void criarDescontoProduto(Session session) {
+		
+		Set<Cota> cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaAcme);
+		cotas.add(cotaGuilherme);
+		cotas.add(cotaJoana);
+		
+		DescontoProduto descontoProdutoVeja = new DescontoProduto();
+		descontoProdutoVeja.setDataAlteracao(new Date());
+		descontoProdutoVeja.setCotas(cotas);
+		descontoProdutoVeja.setDesconto(new BigDecimal(50));
+		descontoProdutoVeja.setDistribuidor(distribuidor);
+		descontoProdutoVeja.setProdutoEdicao(produtoEdicaoVeja1);
+		descontoProdutoVeja.setUsuario(usuarioJoao);
+		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaJoao);
+		cotas.add(cotaLuis);
+		
+		DescontoProduto descontoProdutoQuatroRodas = new DescontoProduto();
+		descontoProdutoQuatroRodas.setDataAlteracao(DateUtil.adicionarDias(new Date(), -2));
+		descontoProdutoQuatroRodas.setCotas(cotas);
+		descontoProdutoQuatroRodas.setDesconto(new BigDecimal(44.30));
+		descontoProdutoQuatroRodas.setDistribuidor(distribuidor);
+		descontoProdutoQuatroRodas.setProdutoEdicao(produtoEdicaoQuatroRodas1);
+		descontoProdutoQuatroRodas.setUsuario(usuarioJoao);
+		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaManoel);
+		cotas.add(cotaManoelCunha);
+		
+		DescontoProduto descontoProdutoInfoExame = new DescontoProduto();
+		descontoProdutoInfoExame.setDataAlteracao(DateUtil.adicionarDias(new Date(), -3));
+		descontoProdutoInfoExame.setCotas(cotas);
+		descontoProdutoInfoExame.setDesconto(new BigDecimal(4.50));
+		descontoProdutoInfoExame.setDistribuidor(distribuidor);
+		descontoProdutoInfoExame.setProdutoEdicao(produtoEdicaoInfoExame1);
+		descontoProdutoInfoExame.setUsuario(usuarioJoao);
+		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaAcme);
+		cotas.add(cotaOrlando);
+		cotas.add(cotaMariana);
+		
+		DescontoProduto descontoProdutoCapricho = new DescontoProduto();
+		descontoProdutoCapricho.setDataAlteracao(DateUtil.adicionarDias(new Date(), -4));
+		descontoProdutoCapricho.setCotas(cotas);
+		descontoProdutoCapricho.setDesconto(new BigDecimal(5.11));
+		descontoProdutoCapricho.setDistribuidor(distribuidor);
+		descontoProdutoCapricho.setProdutoEdicao(produtoEdicaoCapricho1);
+		descontoProdutoCapricho.setUsuario(usuarioJoao);
+		
+		cotas = new LinkedHashSet<Cota>();
+		
+		cotas.add(cotaMurilo);
+		cotas.add(cotaJoao);
+		cotas.add(cotaLuis);
+		
+		DescontoProduto descontoProdutoSuperInteressante = new DescontoProduto();
+		descontoProdutoSuperInteressante.setDataAlteracao(DateUtil.adicionarDias(new Date(), -6));
+		descontoProdutoSuperInteressante.setCotas(cotas);
+		descontoProdutoSuperInteressante.setDesconto(new BigDecimal(13.22));
+		descontoProdutoSuperInteressante.setDistribuidor(distribuidor);
+		descontoProdutoSuperInteressante.setProdutoEdicao(produtoEdicaoSuper1);
+		descontoProdutoSuperInteressante.setUsuario(usuarioJoao);
+		
+		save(
+			session, descontoProdutoVeja, descontoProdutoQuatroRodas, 
+			descontoProdutoInfoExame, descontoProdutoCapricho, descontoProdutoSuperInteressante
+		);
 	}
 	
 }

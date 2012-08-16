@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.administracao;
+package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -11,7 +11,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
+import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -22,11 +26,14 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.Constantes;
@@ -36,6 +43,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -44,7 +52,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
-@Path("/administracao/tipoDescontoCota")
+@Path("/financeiro/tipoDescontoCota")
 public class TipoDescontoCotaController {
 	
 	@Autowired
@@ -63,6 +71,9 @@ public class TipoDescontoCotaController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
+	private CotaService cotaService;
+	
+	@Autowired
 	private HttpServletResponse httpServletResponse;
 
 	private String FILTRO_PESQUISA_TIPO_DESCONTO_PRODUTO_SESSION_ATTRIBUTE= "filtroPesquisaPorProduto";
@@ -72,13 +83,14 @@ public class TipoDescontoCotaController {
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
 	public void index() {}
 	
 	@Post
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 		
-		descontoService.incluirDesconto(desconto, fornecedores, getUsuario());
+		descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
@@ -87,45 +99,19 @@ public class TipoDescontoCotaController {
 	@Path("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 		
-		descontoService.incluirDesconto(desconto, fornecedores, numeroCota, getUsuario());
+		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuario());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/novoDescontoProduto")
-	public void novoDescontoProduto(String codigoProduto, Long edicaoProduto, Integer quantidadeEdicoes, 
-									boolean isCheckedEdicao, boolean hasCotaEspecifica,
-									BigDecimal descontoProduto, List<Integer> cotas, boolean descontoPredominante) {		
-		//FIXME revisar a implementação da inclusão de um novo desconto de produto
-		
-		List<String> mensagens = new ArrayList<String>();
-		
-		if (codigoProduto == null || codigoProduto.isEmpty()) {
-			
-			mensagens.add("O campo Código deve ser preenchido!");
-		}
-		
-		if (isCheckedEdicao && (edicaoProduto == null || quantidadeEdicoes == null)) {
-			
-			mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
-		}
+	public void novoDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas) {		
 
-		if (descontoProduto == null) {
-			
-			mensagens.add("O campo Desconto deve ser preenchido!");
-		}
+		desconto.setCotas(cotas);
 		
-		if (hasCotaEspecifica && cotas == null) {
-			
-			mensagens.add("Ao menos uma cota deve ser selecionada!");
-		}
-		
-		if (!mensagens.isEmpty()) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
-		}
-		
+		this.descontoService.incluirDescontoProduto(desconto, getUsuario());
+
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
@@ -177,6 +163,23 @@ public class TipoDescontoCotaController {
 		Integer totalRegistros  = descontoService.buscarQuantidadeTipoDescontoProduto(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaTipoDescontoProduto).total(totalRegistros).page(page).serialize();
+	}
+	
+	@Post
+	@Path("/exibirCotasTipoDescontoProduto")
+	public void exibirCotasTipoDescontoProduto(Long idTipoDescontoProduto, String sortorder) {
+
+		PaginacaoVO paginacaoVO = new PaginacaoVO(null, null, sortorder);
+
+		List<CotaDescontoProdutoDTO> cotas = 
+					this.descontoService.obterCotasDoTipoDescontoProduto(idTipoDescontoProduto, paginacaoVO.getOrdenacao());
+
+		if (cotas == null || cotas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota cadastrada para esse tipo de desconto.");
+		}
+		
+		this.result.use(FlexiGridJson.class).from(cotas).total(cotas.size()).serialize();
 	}
 	
 	@Post
@@ -337,7 +340,6 @@ public class TipoDescontoCotaController {
 	
 		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.values(), sortname));
 		
-
 		FiltroTipoDescontoCotaDTO filtroSessao = (FiltroTipoDescontoCotaDTO) 
 				this.session.getAttribute(FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE);
 
@@ -388,16 +390,27 @@ public class TipoDescontoCotaController {
 		return usuario;
 	}
 	
-	/**
-	 * Obtem os fornecedores que não possui associação com a cota informada
-	 * 
-	 * @param idCota -identificador da cota
-	 */
+	
 	@Post
 	@Path("/obterFornecedores")
-	public void obterFornecedores(Long idCota){
+	public void obterFornecedores(){
 		
 		List<Fornecedor> fornecedores =   fornecedorService.obterFornecedores();
+		
+		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/obterFornecedoresCota")
+	public void obterFornecedoresCota(Integer numeroCota){
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		List<Fornecedor> fornecedores =   cotaService.obterFornecedoresCota(cota.getId());
+		
+		if(fornecedores.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"A cota informada não possui fornecedores associados!");
+		}
 		
 		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
 	}
@@ -420,5 +433,19 @@ public class TipoDescontoCotaController {
 		
 		return itensFornecedor;
 	}
-
+	
+	@Post
+	@Path("/obterFornecedoresAssociadosDesconto")
+	public void obterFornecedoresAssociadosDesconto(Long idDesconto, TipoDesconto tipoDesconto,String sortorder, String sortname){
+		
+		List<Fornecedor> fornecedores =   descontoService.busacarFornecedoresAssociadosADesconto(idDesconto, tipoDesconto);
+		
+		List<ItemDTO<Long, String>> lista = getFornecedores(fornecedores);
+		
+		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+		
+		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
+		
+		result.use(FlexiGridJson.class).from(lista).total(fornecedores.size()).page(1).serialize();
+	}
 }

@@ -149,6 +149,9 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy="cota", cascade={CascadeType.REMOVE})
 	private Set<HistoricoNumeroCota> historicoNumeroCota;
 
+	@ManyToMany(mappedBy="cotas", targetEntity=GrupoCota.class)
+	private Set<GrupoCota> grupos;
+	
 	public Set<HistoricoNumeroCota> getHistoricoNumeroCota() {
 		return historicoNumeroCota;
 	}
@@ -434,6 +437,20 @@ public class Cota implements Serializable {
 
 	public void setMovimentoEstoqueCotas(Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
 		this.movimentoEstoqueCotas = movimentoEstoqueCotas;
+	}
+
+	/**
+	 * @return the grupos
+	 */
+	public Set<GrupoCota> getGrupos() {
+		return grupos;
+	}
+
+	/**
+	 * @param grupos the grupos to set
+	 */
+	public void setGrupos(Set<GrupoCota> grupos) {
+		this.grupos = grupos;
 	}
 
 

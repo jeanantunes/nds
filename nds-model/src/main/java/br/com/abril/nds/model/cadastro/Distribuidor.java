@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -15,12 +17,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.LeiautePicking;
@@ -69,9 +74,6 @@ public class Distribuidor {
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
-	
-	@OneToMany(mappedBy = "distribuidor")
-	private List<EnderecoDistribuidor> enderecos = new ArrayList<EnderecoDistribuidor>();
 	
 	@OneToMany(mappedBy = "distribuidor")
 	private List<TelefoneDistribuidor> telefones = new ArrayList<TelefoneDistribuidor>();
@@ -178,12 +180,12 @@ public class Distribuidor {
 	/**
 	 * Parametrização do contrato entre cota e distribuidor
 	 */
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "PARAMETRO_CONTRATO_COTA_ID")
 	private ParametroContratoCota parametroContratoCota;
 	
-	@OneToMany(mappedBy="distribuidor")
-	private List<TipoGarantiaAceita> tiposGarantiasAceita;
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<TipoGarantiaAceita> tiposGarantiasAceita = new HashSet<TipoGarantiaAceita>();
 	
 	@Column(name = "REQUER_AUTORIZACAO_ENCALHE_SUPERA_REPARTE", nullable = false)
 	private boolean requerAutorizacaoEncalheSuperaReparte;
@@ -209,8 +211,9 @@ public class Distribuidor {
 	@Column(name = "TIPO_ATIVIDADE", nullable = true)
 	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
 
-	@Column(name = "OBRIGACAO_FISCAL", nullable = false)
-	private boolean obrigacaoFiscao;	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "OBRIGACAO_FISCAL", nullable = true)
+	private ObrigacaoFiscal obrigacaoFiscal;
 	
 	@Column(name = "REGIME_ESPECIAL", nullable = false)
 	private boolean regimeEspecial;
@@ -220,20 +223,21 @@ public class Distribuidor {
 	private TipoImpressaoCE tipoImpressaoCE = TipoImpressaoCE.MODELO_1;	
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_IMPRESSAO_NE", nullable = true)
-	private TipoImpressaoNE tipoImpressaoNE = TipoImpressaoNE.MODELO_1; 	
+	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
+	private TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED = TipoImpressaoInterfaceLED.MODELO_1; 	
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_IMPRESSAO_NECA_DANFE", nullable = true)
-	private TipoImpressaoNECADANFE tipoImpressaoNECADANFE = TipoImpressaoNECADANFE.MODELO_1;	
+	@Column(name = "TIPO_IMPRESSAO_NE_NECA_DANFE", nullable = true)
+	private TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE = TipoImpressaoNENECADANFE.MODELO_1;	
 
 	@Column(name = "UTILIZA_PROCURACAO_ENTREGADORES", nullable = true)
 	private boolean utilizaProcuracaoEntregadores;	
 	
-	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO", nullable = true)
+	@Lob
+	@Column(name = "INFORMACOES_COMPLEMENTARES_PROCURACAO")
 	private String informacoesComplementaresProcuracao;
 
-	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = true)
+	@Column(name = "UTILIZA_GARANTIA_PDV", nullable = false)
 	private boolean utilizaGarantiaPdv;	
 
 	@Column(name = "PARCELAMENTO_DIVIDAS", nullable = true)
@@ -241,9 +245,6 @@ public class Distribuidor {
 	
 	@Column(name = "NEGOCIACAO_ATE_PARCELAS", nullable = true)
 	private Integer negociacaoAteParcelas;
-	
-	@Column(name = "PERMITE_PAGAMENTO_DIVIDAS_DIVERGENTES", nullable = true)
-	private boolean permitePagamentoDividasDivergentes;	
 
 	@Column(name = "UTILIZA_CONTROLE_APROVACAO", nullable = true)
 	private boolean utilizaControleAprovacao;	
@@ -256,6 +257,47 @@ public class Distribuidor {
 
 	@Column(name="QTD_DIAS_LIMITE_PARA_REPROG_LANCAMENTO", nullable = false)
 	private Integer qtdDiasLimiteParaReprogLancamento;
+	
+	/**
+	 * Desconto da cota para negociação (Parametros do Distribuidor / Aba de Negociação)
+	 */
+	@Column(name="DESCONTO_COTA_PARA_NEGOCIACAO")
+	private BigDecimal descontoCotaNegociacao;
+	
+	@Embedded
+	private ParametroEntregaBanca parametroEntregaBanca;
+	
+	// Aba Cadastro / Fiscal
+	
+	@Column(name = "RAZAO_SOCIAL", nullable = true)
+	private String razaoSocial;
+	
+	@Column(name = "NOME_FANTASIA", nullable = true)
+	private String nomeFantasia;
+	
+	@Column(name = "CNPJ", nullable = true)
+	private String cnpj;
+	
+	@Column(name = "INSCRICAO_ESTADUAL", nullable = true)
+	private String inscricaoEstadual;
+	
+	@Column(name = "INSCRICAO_MUNICIPAL", nullable = true)
+	private String inscricaoMunicipal;
+	
+	@Column(name = "CNPJ_PRINCIPAL", nullable = true)
+	private boolean cnpjPrincipal;
+	
+	@Column(name = "EMAIL", nullable = true)
+	private String email;
+	
+	@Column(name = "COD_DISTRIBUIDOR_DINAP", nullable = true)
+	private String codigoDistribuidorDinap;
+	
+	@Column(name = "COD_DISTRIBUIDOR_FC", nullable = true)
+	private String codigoDistribuidorFC;
+	
+	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	private EnderecoDistribuidor enderecoDistribuidor;
 	
 	public Long getId() {
 		return id;
@@ -312,14 +354,6 @@ public class Distribuidor {
 	
 	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
 		this.politicaSuspensao = politicaSuspensao;
-	}
-	
-	public List<EnderecoDistribuidor> getEnderecos() {
-		return enderecos;
-	}
-	
-	public void setEnderecos(List<EnderecoDistribuidor> enderecos) {
-		this.enderecos = enderecos;
 	}
 	
 	public List<TelefoneDistribuidor> getTelefones() {
@@ -396,7 +430,7 @@ public class Distribuidor {
 	/**
 	 * @return the tiposGarantiasAceita
 	 */
-	public List<TipoGarantiaAceita> getTiposGarantiasAceita() {
+	public Set<TipoGarantiaAceita> getTiposGarantiasAceita() {
 		return tiposGarantiasAceita;
 	}
 
@@ -404,9 +438,88 @@ public class Distribuidor {
 	 * @param tiposGarantiasAceita the tiposGarantiasAceita to set
 	 */
 	public void setTiposGarantiasAceita(
-			List<TipoGarantiaAceita> tiposGarantiasAceita) {
+			Set<TipoGarantiaAceita> tiposGarantiasAceita) {
 		this.tiposGarantiasAceita = tiposGarantiasAceita;
 	}
+	
+	/**
+	 * Adiciona um novo tipo de garantia aceita pelo distribuidor, 
+	 * ou atualiza o tipo de garantia aceita existente com o(s) valore(s)
+	 * recebido(s) como parâmetro
+	 
+	 * @param tipoGarantia tipo de garantia para o novo tipo de garantia aceita para
+	 * inclusão ou alteração
+	 * @param valor valor da tipo de garantia aceita para inclusão ou alteração
+	 * 
+	 * @throws IllegalArgumentException caso o parâmetro tipoGarantia e valor forem nulos 
+	 */
+	public void addTipoGarantiaAceita(TipoGarantia tipoGarantia, Integer valor) {
+	    Validate.notNull(tipoGarantia,"Tipo de Garantia não deve ser nulo!");
+	    Validate.notNull(tipoGarantia,"Valor não deve ser nulo!");
+	    if (tiposGarantiasAceita == null) {
+	        tiposGarantiasAceita = new HashSet<TipoGarantiaAceita>();
+	    }
+	    TipoGarantiaAceita existente = getTipoGarantiaAceitaByTipoGarantia(tipoGarantia);
+	    if (existente == null) {
+	        tiposGarantiasAceita.add(new TipoGarantiaAceita(tipoGarantia, valor, this));
+	    } else {
+	        existente.setValor(valor);
+	    }
+	}
+	
+	
+    /**
+     * Encontra um tipo de garantia aceita pelo tipo de garantia
+     * 
+     * @param tipoGarantia
+     *            tipo de garantia para encontrar o tipo de garantia aceita
+     * @return tipo de garantia aceita com o tipo de garantia recebido ou null
+     *         caso não exista um tipo de garantia aceita com o tipo de garantia
+     *         recebido
+     * @throws IllegalArgumentException
+     *             caso o parâmetro tipoGarantia for nulo
+     */
+    public TipoGarantiaAceita getTipoGarantiaAceitaByTipoGarantia(
+            TipoGarantia tipoGarantia) {
+        Validate.notNull(tipoGarantia, "Tipo de Garantia não deve ser nulo!");
+        for (TipoGarantiaAceita tipoGarantiaAceita : tiposGarantiasAceita) {
+            if (tipoGarantiaAceita.getTipoGarantia().equals(tipoGarantia)) {
+                return tipoGarantiaAceita;
+            }
+        }
+        return null;
+    }
+	
+	/**
+	 * Remove o tipo de garantia aceita que corresponde ao tipo de garantia
+	 * recebido como parâmetro, caso exista
+	 * @param tipoGarantia tipo de garantia para remoção do tipo de garantia aceita
+	 * 
+	 * @throws IllegalArgumentException caso o parâmetro tipoGarantia for nulo
+	 * 
+	 */
+	public void removerTipoGarantiaAceita(TipoGarantia tipoGarantia) {
+	    Validate.notNull(tipoGarantia,"Tipo de Garantia para remoção não deve ser nulo!");
+	    if (tiposGarantiasAceita != null) {
+	       Iterator<TipoGarantiaAceita> iterator = tiposGarantiasAceita.iterator();
+	       while (iterator.hasNext()) {
+	           TipoGarantiaAceita tipoGarantiaAceita = iterator.next();
+	           if (tipoGarantiaAceita.getTipoGarantia().equals(tipoGarantia)) {
+	               iterator.remove();
+	               break;
+	           }
+	       }
+	    }
+	}
+	
+    /**
+     * Remove/Desassocia os tipo de garantias aceitas do Distribuidor
+     */
+	public void removerTodosTiposGarantiasAceitas() {
+        if (tiposGarantiasAceita != null) {
+                tiposGarantiasAceita.clear();
+        }
+    }
 	
 
 	public boolean isRequerAutorizacaoEncalheSuperaReparte() {
@@ -623,12 +736,12 @@ public class Distribuidor {
 		this.tipoAtividade = tipoAtividade;
 	}
 
-	public boolean isObrigacaoFiscao() {
-		return obrigacaoFiscao;
+	public ObrigacaoFiscal getObrigacaoFiscal() {
+		return obrigacaoFiscal;
 	}
 
-	public void setObrigacaoFiscao(boolean obrigacaoFiscao) {
-		this.obrigacaoFiscao = obrigacaoFiscao;
+	public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
+		this.obrigacaoFiscal = obrigacaoFiscal;
 	}
 
 	public boolean isRegimeEspecial() {
@@ -647,21 +760,21 @@ public class Distribuidor {
 		this.tipoImpressaoCE = tipoImpressaoCE;
 	}
 
-	public TipoImpressaoNE getTipoImpressaoNE() {
-		return tipoImpressaoNE;
+	public TipoImpressaoInterfaceLED getTipoImpressaoInterfaceLED() {
+		return tipoImpressaoInterfaceLED;
 	}
 
-	public void setTipoImpressaoNE(TipoImpressaoNE tipoImpressaoNE) {
-		this.tipoImpressaoNE = tipoImpressaoNE;
+	public void setTipoImpressaoInterfaceLED(TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED) {
+		this.tipoImpressaoInterfaceLED = tipoImpressaoInterfaceLED;
 	}
 
-	public TipoImpressaoNECADANFE getTipoImpressaoNECADANFE() {
-		return tipoImpressaoNECADANFE;
+	public TipoImpressaoNENECADANFE getTipoImpressaoNENECADANFE() {
+		return tipoImpressaoNENECADANFE;
 	}
 
-	public void setTipoImpressaoNECADANFE(
-			TipoImpressaoNECADANFE tipoImpressaoNECADANFE) {
-		this.tipoImpressaoNECADANFE = tipoImpressaoNECADANFE;
+	public void setTipoImpressaoNENECADANFE(
+			TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE) {
+		this.tipoImpressaoNENECADANFE = tipoImpressaoNENECADANFE;
 	}
 
 	public boolean isUtilizaProcuracaoEntregadores() {
@@ -706,15 +819,6 @@ public class Distribuidor {
 		this.negociacaoAteParcelas = negociacaoAteParcelas;
 	}
 
-	public boolean isPermitePagamentoDividasDivergentes() {
-		return permitePagamentoDividasDivergentes;
-	}
-
-	public void setPermitePagamentoDividasDivergentes(
-			boolean permitePagamentoDividasDivergentes) {
-		this.permitePagamentoDividasDivergentes = permitePagamentoDividasDivergentes;
-	}
-
 	public boolean isUtilizaControleAprovacao() {
 		return utilizaControleAprovacao;
 	}
@@ -754,5 +858,170 @@ public class Distribuidor {
 			Integer qtdDiasLimiteParaReprogLancamento) {
 		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
 	}
+
+	public BigDecimal getDescontoCotaNegociacao() {
+		return descontoCotaNegociacao;
+	}
+
+	/**
+	 * @param descontoCotaNegociacao the descontoCotaNegociacao to set
+	 */
+	public void setDescontoCotaNegociacao(BigDecimal descontoCotaNegociacao) {
+		this.descontoCotaNegociacao = descontoCotaNegociacao;
+	}
+
+    /**
+     * @return the parametroEntregaBanca
+     */
+    public ParametroEntregaBanca getParametroEntregaBanca() {
+        return parametroEntregaBanca;
+    }
+
+    /**
+     * @param parametroEntregaBanca the parametroEntregaBanca to set
+     */
+    public void setParametroEntregaBanca(ParametroEntregaBanca parametroEntregaBanca) {
+        this.parametroEntregaBanca = parametroEntregaBanca;
+    }
 	
+	/**
+	 * @return the razaoSocial
+	 */
+	public String getRazaoSocial() {
+		return razaoSocial;
+	}
+
+	/**
+	 * @param razaoSocial the razaoSocial to set
+	 */
+	public void setRazaoSocial(String razaoSocial) {
+		this.razaoSocial = razaoSocial;
+	}
+
+	/**
+	 * @return the nomeFantasia
+	 */
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	/**
+	 * @param nomeFantasia the nomeFantasia to set
+	 */
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
+
+	/**
+	 * @return the cnpj
+	 */
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	/**
+	 * @param cnpj the cnpj to set
+	 */
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+	/**
+	 * @return the inscricaoEstadual
+	 */
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
+	}
+
+	/**
+	 * @param inscricaoEstadual the inscricaoEstadual to set
+	 */
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
+	/**
+	 * @return the inscricaoMunicipal
+	 */
+	public String getInscricaoMunicipal() {
+		return inscricaoMunicipal;
+	}
+
+	/**
+	 * @param inscricaoMunicipal the inscricaoMunicipal to set
+	 */
+	public void setInscricaoMunicipal(String inscricaoMunicipal) {
+		this.inscricaoMunicipal = inscricaoMunicipal;
+	}
+
+	/**
+	 * @return the cnpjPrincipal
+	 */
+	public boolean isCnpjPrincipal() {
+		return cnpjPrincipal;
+	}
+
+	/**
+	 * @param cnpjPrincipal the cnpjPrincipal to set
+	 */
+	public void setCnpjPrincipal(boolean cnpjPrincipal) {
+		this.cnpjPrincipal = cnpjPrincipal;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the codigoDistribuidorDinap
+	 */
+	public String getCodigoDistribuidorDinap() {
+		return codigoDistribuidorDinap;
+	}
+
+	/**
+	 * @param codigoDistribuidorDinap the codigoDistribuidorDinap to set
+	 */
+	public void setCodigoDistribuidorDinap(String codigoDistribuidorDinap) {
+		this.codigoDistribuidorDinap = codigoDistribuidorDinap;
+	}
+
+	/**
+	 * @return the codigoDistribuidorFC
+	 */
+	public String getCodigoDistribuidorFC() {
+		return codigoDistribuidorFC;
+	}
+
+	/**
+	 * @param codigoDistribuidorFC the codigoDistribuidorFC to set
+	 */
+	public void setCodigoDistribuidorFC(String codigoDistribuidorFC) {
+		this.codigoDistribuidorFC = codigoDistribuidorFC;
+	}
+
+	/**
+	 * @return the enderecoDistribuidor
+	 */
+	public EnderecoDistribuidor getEnderecoDistribuidor() {
+		return enderecoDistribuidor;
+	}
+
+	/**
+	 * @param enderecoDistribuidor the enderecoDistribuidor to set
+	 */
+	public void setEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor) {
+		this.enderecoDistribuidor = enderecoDistribuidor;
+	}
+
 }
