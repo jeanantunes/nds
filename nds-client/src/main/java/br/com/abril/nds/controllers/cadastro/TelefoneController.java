@@ -165,7 +165,9 @@ public class TelefoneController {
 		
 		tela.setarParametros();
 		
-		this.validarDadosEntrada(tipoTelefone, ddd, numero, principal, referencia);
+		this.validarDadosEntrada(tipoTelefone, ddd, numero);
+		
+		this.validarTelefonePrincipal(principal, referencia);
 		
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
@@ -355,7 +357,48 @@ public class TelefoneController {
 		return tableModel;
 	}
 	
-	private void validarDadosEntrada(String tipoTelefone, String ddd, String numero, boolean principal, Integer referencia) {
+	private void validarTelefonePrincipal(boolean principal, Integer referencia) {
+
+		boolean hasPrincipal = principal;
+
+		Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
+
+		List<TelefoneAssociacaoDTO> listaTelefonesValidacao = new ArrayList<TelefoneAssociacaoDTO>();
+
+		List<TelefoneAssociacaoDTO> listaTelefonesSalvar = new ArrayList<TelefoneAssociacaoDTO>(this.obterTelefonesSalvarSessao().values());
+
+		List<TelefoneAssociacaoDTO> listaTelefonesExibicao = this.obterTelefonesExibicao();
+
+		listaTelefonesValidacao.addAll(listaTelefonesExibicao);
+		listaTelefonesValidacao.addAll(listaTelefonesSalvar);
+
+		for (TelefoneAssociacaoDTO dto : listaTelefonesValidacao) {
+
+			if (!telefonesRemover.contains(dto.getTelefone().getId())) {
+
+				if (dto.isPrincipal()) {
+
+					hasPrincipal = dto.isPrincipal();
+
+					if (principal) {
+
+						if (referencia == null) {
+							throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Já existe um telefone principal."));
+
+						} else if (!referencia.equals(dto.getReferencia())) {
+							throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Já existe um telefone principal."));
+						}
+					}
+				}
+			}
+		}
+
+		if (!hasPrincipal) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "É necessário pelo menos um telefone principal."));
+		}
+	}
+	
+	private void validarDadosEntrada(String tipoTelefone, String ddd, String numero) {
 		List<String> listaValidacao = new ArrayList<String>();
 		
 		if (Util.getEnumByStringValue(TipoTelefone.values(), tipoTelefone) == null){
@@ -368,63 +411,6 @@ public class TelefoneController {
 		
 		if (numero == null || numero.trim().isEmpty()){
 			listaValidacao.add("Número é obrigatório");
-		}
-		
-		if (principal){
-			
-			Set<Long> telefonesRemover = this.obterTelefonesRemoverSessao();
-			
-			Map<Integer, TelefoneAssociacaoDTO> telefones = this.obterTelefonesSalvarSessao();
-			
-			for (Integer key : telefones.keySet()){
-				
-				if (referencia == null){
-					
-					if (telefones.get(key).isPrincipal()){
-												
-						if( !telefonesRemover.contains(key) ) {						
-							listaValidacao.add("Já existe um telefone principal.");
-							break;
-						}
-					}
-					
-				} else {
-				
-					if (telefones.get(key).isPrincipal() && (!referencia.equals(telefones.get(key).getReferencia()))){
-						
-						if( !telefonesRemover.contains(key) ) {						
-							listaValidacao.add("Já existe um telefone principal.");
-							break;
-						}
-					}
-				}
-			}
-			
-			List<TelefoneAssociacaoDTO> listaExibicao = this.obterTelefonesExibicao();
-			
-			for (TelefoneAssociacaoDTO dto : listaExibicao){
-				
-				if (referencia == null){
-					
-					if (dto.isPrincipal()){
-						
-						if( !telefonesRemover.contains(dto.getTelefone().getId()) ) {						
-							listaValidacao.add("Já existe um telefone principal.");
-							break;
-						}
-						
-					}
-				} else {
-				
-					if (dto.isPrincipal() && (!referencia.equals(dto.getReferencia()))){
-						
-						if( !telefonesRemover.contains(dto.getTelefone().getId()) ) {						
-							listaValidacao.add("Já existe um telefone principal.");
-							break;
-						}
-					}
-				}
-			}
 		}
 		
 		if (!listaValidacao.isEmpty()){

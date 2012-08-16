@@ -34,7 +34,7 @@
 			<tr>
 				<td>Telefone: </td>
 				<td>
-					<input type="text" style="width:40px" id="${param.tela}ddd" maxlength="255" />-<input type="text" style="width:110px" id="${param.tela}numeroTelefone" maxlength="255"/>
+					<input type="text" style="width:40px" id="${param.tela}ddd" maxlength="3" />-<input type="text" style="width:110px" id="${param.tela}numeroTelefone" maxlength="255"/>
 				</td>
 			</tr>
 			<tr id="${param.tela}trRamalId">
