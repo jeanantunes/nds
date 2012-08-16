@@ -5,9 +5,11 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptChamdaEncalheAntecipada.js"></script>
 	
 	<script type="text/javascript">
-		$(function(){
-			chamdaEncalheAnteipadaController.init();
-		});
+	
+		var cota = new Cota(chamdaEncalheAnteipadaController.workspace);
+	
+		chamdaEncalheAnteipadaController.init(cota);
+		
 	</script>
 			
 </head>
