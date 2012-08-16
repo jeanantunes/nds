@@ -322,7 +322,7 @@ var produtoController = $.extend(true, {
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
 			},
-			form: $("#dialog-novo", this.workspace).parents("form")
+			form: $("#dialog-excluir", this.workspace).parents("form")
 		});
 	},
 	
@@ -347,7 +347,8 @@ var produtoController = $.extend(true, {
 			beforeClose: function() {
 				produtoController.limparModalCadastro();
 				clearMessageDialogTimeout('dialogMensagemNovo', this.workspace);
-			}
+			},
+			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 
 		this.carregarNovoProduto(this.limparModalCadastro);

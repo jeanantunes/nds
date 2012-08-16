@@ -1,10 +1,5 @@
 
 var parametroSistemaController = $.extend(true, {
-	tipoBoxEnun : {
-		ENCALHE : 'Encalhe',
-		LANCAMENTO : 'Lan&ccedil;amento',
-		POSTO_AVANCADO : 'Posto Avan&ccedilado'
-	},
 	path : contextPath + '/administracao/parametrosSistema/',
 	init : function() {
 		

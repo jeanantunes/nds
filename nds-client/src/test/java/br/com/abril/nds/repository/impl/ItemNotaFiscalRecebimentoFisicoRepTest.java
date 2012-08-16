@@ -74,14 +74,14 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+		Produto produto = Fixture.produto("1", "Revista Veja", "Veja", PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
 		produto.addFornecedor(dinap);
 		produto.setEditor(abril);
 		save(produto);
 		
 
 		ProdutoEdicao produtoEdicao =
-				Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);		
+				Fixture.produtoEdicao("1", 1L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);		
 		save(produtoEdicao);
 
 		CFOP cfop = Fixture.cfop5102();

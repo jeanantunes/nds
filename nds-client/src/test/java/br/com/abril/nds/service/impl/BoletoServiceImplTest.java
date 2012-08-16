@@ -136,7 +136,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(produtoVeja);		
 				
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
+				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		

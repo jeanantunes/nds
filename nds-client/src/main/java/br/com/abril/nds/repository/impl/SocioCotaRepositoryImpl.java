@@ -3,7 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,10 @@ public class SocioCotaRepositoryImpl extends AbstractRepositoryModel<SocioCota,L
 	public SocioCotaRepositoryImpl() {
 		super(SocioCota.class);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly=true)
@@ -30,13 +33,20 @@ public class SocioCotaRepositoryImpl extends AbstractRepositoryModel<SocioCota,L
 		return criteria.list();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void removerSociosCota(Long idCota) {
+	public boolean existeSocioPrincipalCota(Long idCota) {
 		
-		Query query  = getSession().createQuery("delete from SocioCota socio where socio.cota.id =:idCota ");
+		Criteria criteria = getSession().createCriteria(SocioCota.class);
 		
-		query.setParameter("idCota", idCota);
+		criteria.createAlias("cota", "cota");
 		
-		query.executeUpdate();
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+		criteria.setProjection(Projections.rowCount());
+		
+		return (Long) criteria.uniqueResult() > 0;
 	}
 }

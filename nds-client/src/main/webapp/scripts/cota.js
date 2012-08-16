@@ -1,13 +1,17 @@
-var cota = {
+function Cota(workspace) {
+
+	var cota = this;
 	
-	//Pesquisa por número da cota
-	pesquisarPorNumeroCota : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.workspace = workspace;
 		
-		var numeroCota = $(idCampoNumeroCota).val();
+	//Pesquisa por número da cota
+	this.pesquisarPorNumeroCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+		
+		var numeroCota = $(idCampoNumeroCota, cota.workspace).val();
 
 		numeroCota = $.trim(numeroCota);
 		
-		$(idCampoNomeCota).val("");
+		$(idCampoNomeCota, cota.workspace).val("");
 		
 		if (numeroCota && numeroCota.length > 0) {
 			
@@ -31,11 +35,11 @@ var cota = {
 	},
 	
 	//Success callback para pesquisa por número da cota
-	pesquisarPorNumeroSuccessCallBack : function(result, idCampoNomeCota, successCallBack) {
+	this.pesquisarPorNumeroSuccessCallBack = function(result, idCampoNomeCota, successCallBack) {
 
 		cota.pesquisaRealizada = true;
 		
-		$(idCampoNomeCota).val(result.nome);
+		$(idCampoNomeCota, cota.workspace).val(result.nome);
 		
 		if (successCallBack) {
 			
@@ -44,11 +48,11 @@ var cota = {
 	},
 	
 	//Error callback para pesquisa por número da cota
-	pesquisarPorNumeroErrorCallBack : function(idCampoNumeroCota, errorCallBack) {
+	this.pesquisarPorNumeroErrorCallBack = function(idCampoNumeroCota, errorCallBack) {
 		
-		$(idCampoNumeroCota).val("");
+		$(idCampoNumeroCota, cota.workspace).val("");
 		
-		$(idCampoNumeroCota).focus();
+		$(idCampoNumeroCota, cota.workspace).focus();
 		
 		if (errorCallBack) {
 			
@@ -57,15 +61,15 @@ var cota = {
 	},
 	
 	//Busca dados para o auto complete do nome da cota
-	autoCompletarPorNome : function(idCampoNomeCota, isFromModal) {
+	this.autoCompletarPorNome = function(idCampoNomeCota, isFromModal) {
 		
 		cota.pesquisaRealizada = false;
 		
-		var nomeCota = $(idCampoNomeCota).val();
+		var nomeCota = $(idCampoNomeCota, cota.workspace).val();
 		
 		nomeCota = $.trim(nomeCota);
 		
-		$(idCampoNomeCota).autocomplete({source: ""});
+		$(idCampoNomeCota, cota.workspace).autocomplete({source: ""});
 		
 		if (nomeCota && nomeCota.length > 2) {
 			
@@ -80,16 +84,16 @@ var cota = {
 		}
 	},
 	
-	descricaoAtribuida : true,
+	this.descricaoAtribuida = true,
 	
-	pesquisaRealizada : false,
+	this.pesquisaRealizada = false,
 	
-	intervalo : null,
+	this.intervalo = null,
 	
 	//Exibe o auto complete no campo
-	exibirAutoComplete : function(result, idCampoNomeCota) {
+	this.exibirAutoComplete = function(result, idCampoNomeCota) {
 		
-		$(idCampoNomeCota).autocomplete({
+		$(idCampoNomeCota, cota.workspace).autocomplete({
 			source: result,
 			focus : function(event, ui) {
 				cota.descricaoAtribuida = false;
@@ -106,7 +110,7 @@ var cota = {
 	},
 	
 	//Pesquisar por nome da cota
-	pesquisarPorNomeCota : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
 		
 		setTimeout(function() { clearInterval(cota.intervalo); }, 10 * 1000);
 		
@@ -128,17 +132,17 @@ var cota = {
 	},
 	
 	//Pesquisa por nome da cota após o intervalo
-	pesquisarPorNomeCotaAposIntervalo : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNomeCotaAposIntervalo = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
 		
 		clearInterval(cota.intervalo);
 		
 		cota.pesquisaRealizada = true;
 		
-		var nomeCota = $(idCampoNomeCota).val();
+		var nomeCota = $(idCampoNomeCota, cota.workspace).val();
 		
 		nomeCota = $.trim(nomeCota);
 		
-		$(idCampoNumeroCota).val("");
+		$(idCampoNumeroCota, cota.workspace).val("");
 		
 		if (nomeCota && nomeCota.length > 0) {
 			$.postJSON(
@@ -161,12 +165,12 @@ var cota = {
 	},
 	
 	//Success callback para pesquisa por nome da cota
-	pesquisarPorNomeSuccessCallBack : function(result, idCampoNumeroCota, idCampoNomeCota, successCallBack) {
+	this.pesquisarPorNomeSuccessCallBack = function(result, idCampoNumeroCota, idCampoNomeCota, successCallBack) {
 		
 		if (result != "") {
 			
-			$(idCampoNumeroCota).val(result.numero);
-			$(idCampoNomeCota).val(result.nome);
+			$(idCampoNumeroCota, cota.workspace).val(result.numero);
+			$(idCampoNomeCota, cota.workspace).val(result.nome);
 			
 			if (successCallBack) {
 				
@@ -176,11 +180,11 @@ var cota = {
 	},
 	
 	//Error callback para pesquisa por nome da cota
-	pesquisarPorNomeErrorCallBack : function(idCampoNomeCota, errorCallBack) {
+	this.pesquisarPorNomeErrorCallBack = function(idCampoNomeCota, errorCallBack) {
 		
-		$(idCampoNomeCota).val("");
+		$(idCampoNomeCota, cota.workspace).val("");
 		
-		$(idCampoNomeCota).focus();
+		$(idCampoNomeCota, cota.workspace).focus();
 		
 		if (errorCallBack) {
 			
@@ -189,7 +193,7 @@ var cota = {
 	},
 	
 	//Obtém uma cota pelo número
-	obterPorNumeroCota : function(numeroCota, isFromModal, successCallback, errorCallBack) {
+	this.obterPorNumeroCota = function(numeroCota, isFromModal, successCallback, errorCallBack) {
 		
 		if (numeroCota && numeroCota.length > 0) {
 
@@ -204,6 +208,6 @@ var cota = {
 				isFromModal
 			);
 		}
-	}
+	};
 	
-};
+}
