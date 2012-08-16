@@ -5020,7 +5020,7 @@ public class DataLoader {
 		for(Integer i=0;i<10; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"00.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
+					"00.000.000/0001-00", "000000000003", "acme@mail.com", "99.999-9");
 			session.save(juridica);
 
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
@@ -5254,7 +5254,7 @@ public class DataLoader {
 
 	private static void criarPessoas(Session session){
 		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000000000000", "sys.discover@gmail.com", "99.999-9");
+				"10000000000100", "000000000004", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11111111000111", "111111111111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
@@ -5622,7 +5622,7 @@ public class DataLoader {
 		for(Integer i=1000;i<1050; i++) {
 
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
-					"30.000.000/0001-00", "000000000000", "acme@mail.com", "99.999-9");
+					"30.000.000/0001-00", "000000000005", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
 			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
