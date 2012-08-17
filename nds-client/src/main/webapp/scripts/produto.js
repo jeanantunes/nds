@@ -100,13 +100,13 @@ var produtoController = $.extend(true, {
 			colModel : [ {
 				display : 'C&oacute;digo',
 				name : 'codigo',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'produtoDescricao',
-				width : 180,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -118,13 +118,13 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Editor',
 				name : 'nomeEditor',
-				width : 190,
+				width : 180,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Fornecedor',
 				name : 'tipoContratoFornecedor',
-				width : 150,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -134,8 +134,20 @@ var produtoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Situa&ccedil;&atilde;o',
-				name : 'situacao',
+				display : 'Pcte. Padr&atilde;o',
+				name : 'pacotePadrao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Desconto %',
+				name : 'percentualDesconto',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Periodicidade',
+				name : 'periodicidade',
 				width : 60,
 				sortable : true,
 				align : 'center'
