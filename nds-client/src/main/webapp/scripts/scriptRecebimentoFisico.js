@@ -1,125 +1,170 @@
-var indNotaFiscalInterface = false;
-
-var indRecebimentoFisicoConfirmado = false;
-
-var indTodosFornecedor = false;
-
-/**
- * lineId do ItemNota que esta sendo editado. 
- */
-var lineIdItemNotaEmEdicao = null;
-
-var jsDadosProduto = {
-
-exibirDetalhesProdutoEdicao : function() {
+var recebimentoFisicoController = $.extend(true, {
 	
-	var data = "codigo=" + $("#codigo").val() + "&edicao=" + $("#edicao").val();
+	path: contextPath + '/estoque/recebimentoFisico/',
 	
-	$.postJSON( contextPath + '/estoque/recebimentoFisico/obterProdutoEdicao', data, function(result){
+	init: function() {
 		
-		if(typeof result != "undefined") {
-			
-			$("#precoCapa").val(result.precoVenda);			
-			$("#peso").val(result.peso);			
-			$("#pacotePadrao").val(result.pacotePadrao);			
-			
-		}
+		$("#datepickerLancto", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		$("#datepickerRecolhimento", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage:  contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		$("#dataEmissao", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage:  contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
 		
-	});
-	
-},
-
-pesquisarProdutoPorCodigo : function() {
-
-	$("#precoCapa").val("");
-	$("#peso").val("");
-	$("#pacotePadrao").val("");
-	
-	produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', true, function(){});	
-},
-
-pesquisarProdutoPorNome : function() {
-
-	$("#precoCapa").val("");
-	$("#peso").val("");
-	$("#pacotePadrao").val("");
-	
-	produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', true, function(){});
-},
-
-validarNumeroEdicao : function() {
-
-	$("#precoCapa").val("");
-	$("#peso").val("");
-	$("#pacotePadrao").val("");
-	
-	produto.validarNumEdicao('#codigo', '#edicao', true, jsDadosProduto.validarEdicaoCallBack);
-},
-
-validarEdicaoCallBack : function() {
-	
-	jsDadosProduto.exibirDetalhesProdutoEdicao();
+		$("#novoDataEmissao", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage:  contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
 		
-}
+		$("#novoDataEntrada", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage:  contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		
+		$("#datepickerLancto", this.workspace).mask("99/99/9999");
+		$("#datepickerRecolhimento", this.workspace).mask("99/99/9999");
+		$("#dataEmissao", this.workspace).mask("99/99/9999");
+		$("#novoDataEmissao", this.workspace).mask("99/99/9999");
+		$("#novoDataEntrada", this.workspace).mask("99/99/9999");
+		
+		$("#valorBruto", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
 
+		$("#valorLiquido", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		
+		$("#valorDesconto", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		
+		$("#novoValorTotal", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		
+		$("#itensRecebimento.qtdNotaItem", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		
+		$("#itensRecebimento.qtdPacoteItem", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		
+		$("#itensRecebimento.qtdExemplaresItem", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		
+		$("#itensRecebimento.codigoItem", this.workspace).numeric();
+		$("#itensRecebimento.edicaoItem", this.workspace).numeric();
+		$("#novoNumeroNota", this.workspace).numeric();
+		$("#novoSerieNota", this.workspace).numeric();
+		
+		$("#produto", this.workspace).autocomplete({source: ""});
+		
+		this.inicializarGridPopUpNota();
+		
+	},
+	
+	indNotaFiscalInterface : false,
 
-};
+	indRecebimentoFisicoConfirmado : false,
+
+	indTodosFornecedor : false,
+
+	/**
+	 * LINE ID DO ITEM NOTA QUE ESTA SENDO EDITADO 
+	 */
+	lineIdItemNotaEmEdicao : null,
 
 	/**
 	 * SELECIONA UM FORNECEDOR A PARTIR DO CNPJ DIGITADO.
 	 */
-	function pesquisarPorCnpjFornecedor() {
+	pesquisarPorCnpjFornecedor : function() {
 			
-		var cnpj = $("#cnpj").val();	
+		var cnpj = $("#cnpj", this.workspace).val();	
 		
 		if(cnpj == "") {
-			$("#fornecedor").val("");
+			$("#fornecedor", this.workspace).val("");
 			return;
 		}
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/buscaCnpj', "cnpj=" + cnpj, 
+		$.postJSON(this.path + 'buscaCnpj', "cnpj=" + cnpj, 
 		function(result) { 
-			$("#fornecedor").val(result.cnpj);
+			$("#fornecedor", this.workspace).val(result.cnpj);
 		});	
 	
-	}
+	},
 	
 	/**
 	 * EXIBI O CNPJ DO FORNECEDOR SELECIONADO.
 	 */
-	function exibirCnpjDoFornecedor() {
-			
-		var cnpjDoFornecedor = $("#fornecedor").val();	
+	exibirCnpjDoFornecedor : function() {
+		
+		var cnpjDoFornecedor = $("#fornecedor", this.workspace).val();	
 		
 		if(cnpjDoFornecedor == -1){
-			document.getElementById('cnpj').value="";
-			document.getElementById('cnpj').disabled=true;			
+			
+			$("#cnpj", this.workspace).val("");
+			
+			$("#cnpj", this.workspace).attr("disabled", true);
+			
 		}else{
-			$("#cnpj").val(cnpjDoFornecedor);
-			document.getElementById('cnpj').disabled=false;
+			
+			$("#cnpj", this.workspace).val(cnpjDoFornecedor);
+			
+			$("#cnpj", this.workspace).attr("disabled", false);
+			
 		}
 	
-	}
+	},
 	
 	
 	/**
 	 * VERIFICA A EXISTENCIA DE UMA NOTAFISCAL
 	 * COM OS PARÂMETROS DE PESQUISA
 	 */
-	function verificarNotaFiscalExistente() {
-		
-		var checkBox = document.getElementById('eNF');
+	verificarNotaFiscalExistente : function() {
 
-		var cnpj 		= $("#cnpj").val();
-		var notaFiscal 	= $("#notaFiscal").val();
-		var serie 		= $("#serie").val();		
-		var chaveAcesso = $("#chaveAcesso").val();
-		var fornecedor  = $("#fornecedor").val();
+		var cnpj 		= $("#cnpj", this.workspace).val();
+		var notaFiscal 	= $("#notaFiscal", this.workspace).val();
+		var serie 		= $("#serie", this.workspace).val();		
+		var chaveAcesso = $("#chaveAcesso", this.workspace).val();
+		var fornecedor  = $("#fornecedor", this.workspace).val();
         var indNFe      = "N";
         
-        if(checkBox.checked){
+        if( $('#eNF', this.workspace).attr('checked') == 'checked' ) {
 			indNFe = "S";
-			
 		}
         
 		var dadosPesquisa = [
@@ -133,18 +178,18 @@ validarEdicaoCallBack : function() {
 		
 		limparCampos();
 		
-		$.postJSON(	contextPath +  '/estoque/recebimentoFisico/verificarNotaFiscalExistente', 
+		$.postJSON(	this.path +  'verificarNotaFiscalExistente', 
 					dadosPesquisa,
 					confirmaNotaFiscalEncontrada);
 	
-	}
+	},
 
 	/**
 	 * SE UMA NOTA FOR ENCONTRADA, SERAO PESQUISADOS OS ITEM RELATIVOS A MESMA
 	 * E POPULADA A GRID, CASO CONTRARIO, SERA EXIBIDA POPUP PARA SE CADASTRAR UMA
 	 * NOVA NOTA.
 	 */
-	function confirmaNotaFiscalEncontrada(result) {
+	confirmaNotaFiscalEncontrada : function(result) {
 		
 		var validacao = result.validacao;
 		
@@ -155,10 +200,10 @@ validarEdicaoCallBack : function() {
 		if(validacao.tipoMensagem == "SUCCESS") {
 		
 			if (indNotaFiscalInterface){
-				$('#chBoxReplicaValorRepartePrevistoAll').attr('disabled', false);
+				$('#chBoxReplicaValorRepartePrevistoAll', this.workspace).attr('disabled', false);
 	    		carregarItemNotaGridNotaInterface();
 	    	}else{
-				$('#chBoxReplicaValorRepartePrevistoAll').attr('disabled', true);
+				$('#chBoxReplicaValorRepartePrevistoAll', this.workspace).attr('disabled', true);
 	    		carregarItemNotaGridNotaManual();
 	    	}
 
@@ -174,16 +219,16 @@ validarEdicaoCallBack : function() {
 		
 		}
 		
-	}
+	},
 		
 	/**
 	 * APRESENTA O POPUP PARA CADASTRAR NOVO ITEM NOTA/RECEBIMENTO.
 	 */
-	function popup_novo_item() {
+	popup_novo_item : function() {
 		
 		lineIdItemNotaEmEdicao = null;
 		
-		var fornecedor = $("#fornecedor").val();
+		var fornecedor = $("#fornecedor", this.workspace).val();
 		
 		if(fornecedor == "-1"){
 			exibirMensagem('WARNING', ['Não é possível Adicionar Novo Produto para opção TODOS em Fornecedor']);
@@ -192,7 +237,7 @@ validarEdicaoCallBack : function() {
 		
 		limparCamposNovoItem();
 		
-		$("#dialog-novo-item").dialog({
+		$("#dialog-novo-item", this.workspace).dialog({
 			resizable: false,
 			height:480,
 			width:500,
@@ -208,12 +253,12 @@ validarEdicaoCallBack : function() {
 				clearMessageDialogTimeout();
 			}
 		});
-	}
+	},
 	
 	/**
 	*INCLUIR NOVO ITEM DA NOTA
 	*/
-	function incluirNovoItemNota(){
+	incluirNovoItemNota : function(){
 		
 		var lineId = -1;
 		
@@ -224,16 +269,16 @@ validarEdicaoCallBack : function() {
 			
 		} 
 		
-		var peso				= $("#peso").val();
-		var pacotePadrao		= $("#pacotePadrao").val();
-		var codigo 				= $("#codigo").val();
-		var produto 			= $("#produto").val();
-		var precoCapa			= $("#precoCapa").val();
-		var edicao 				= $("#edicao").val();
-		var dataLancamento 		= $("#datepickerLancto").val();
-		var dataRecolhimento 	= $("#datepickerRecolhimento").val();
-		var repartePrevisto 	= $("#repartePrevisto").val();
-		var tipoLancamento 		= $("#tipoLancamento").val();
+		var peso				= $("#peso", this.workspace).val();
+		var pacotePadrao		= $("#pacotePadrao", this.workspace).val();
+		var codigo 				= $("#codigo", this.workspace).val();
+		var produto 			= $("#produto", this.workspace).val();
+		var precoCapa			= $("#precoCapa", this.workspace).val();
+		var edicao 				= $("#edicao", this.workspace).val();
+		var dataLancamento 		= $("#datepickerLancto", this.workspace).val();
+		var dataRecolhimento 	= $("#datepickerRecolhimento", this.workspace).val();
+		var repartePrevisto 	= $("#repartePrevisto", this.workspace).val();
+		var tipoLancamento 		= $("#tipoLancamento", this.workspace).val();
 		
 		var dadosCadastro = 
 			
@@ -256,7 +301,7 @@ validarEdicaoCallBack : function() {
 			listaDeValores  = obterListaValores();
 		}
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/incluirItemNotaFiscal', (dadosCadastro +"&" + listaDeValores), 
+		$.postJSON(this.path + 'incluirItemNotaFiscal', (dadosCadastro +"&" + listaDeValores), 
 
 		function(result) {
 			
@@ -267,12 +312,12 @@ validarEdicaoCallBack : function() {
 		}, null, true);
 		
 		
-	}
+	},
 	
 	/**
 	 * CADASTRA NOVO ITEM DE NOTA.
 	 */
-	function cadastrarNovoItemNota() {
+	cadastrarNovoItemNota : function() {
 		
 		var lineId = -1;
 		
@@ -283,16 +328,16 @@ validarEdicaoCallBack : function() {
 			
 		} 
 		
-		var peso				= $("#peso").val();
-		var pacotePadrao		= $("#pacotePadrao").val();
-		var codigo 				= $("#codigo").val();
-		var produto 			= $("#produto").val();
-		var precoCapa			= $("#precoCapa").val();
-		var edicao 				= $("#edicao").val();
-		var dataLancamento 		= $("#datepickerLancto").val();
-		var dataRecolhimento 	= $("#datepickerRecolhimento").val();
-		var repartePrevisto 	= $("#repartePrevisto").val();
-		var tipoLancamento 		= $("#tipoLancamento").val();
+		var peso				= $("#peso", this.workspace).val();
+		var pacotePadrao		= $("#pacotePadrao", this.workspace).val();
+		var codigo 				= $("#codigo", this.workspace).val();
+		var produto 			= $("#produto", this.workspace).val();
+		var precoCapa			= $("#precoCapa", this.workspace).val();
+		var edicao 				= $("#edicao", this.workspace).val();
+		var dataLancamento 		= $("#datepickerLancto", this.workspace).val();
+		var dataRecolhimento 	= $("#datepickerRecolhimento", this.workspace).val();
+		var repartePrevisto 	= $("#repartePrevisto", this.workspace).val();
+		var tipoLancamento 		= $("#tipoLancamento", this.workspace).val();
 		
 		var dadosCadastro = 
 			
@@ -315,13 +360,13 @@ validarEdicaoCallBack : function() {
 			listaDeValores  = obterListaValores();
 		}
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/incluirItemNotaFiscal', (dadosCadastro +"&" + listaDeValores), 
+		$.postJSON(this.path + 'incluirItemNotaFiscal', (dadosCadastro +"&" + listaDeValores), 
 
 		function(result) {
 			
 		if(result.tipoMensagem == "SUCCESS") {
 				
-			$("#dialog-novo-item").dialog( "close" );
+			$("#dialog-novo-item", this.workspace).dialog( "close" );
 				
 		} 
 		
@@ -331,25 +376,25 @@ validarEdicaoCallBack : function() {
 		
 		
 		
-	}
+	},
 	
 	/**
 	 * CADASTRA NOVA NOTA.
 	 */
-	function cadastrarNovaNota() {
+	cadastrarNovaNota : function() {
 		
-		var cnpj 			= $("#cnpj").val();
-		var notaFiscal 		= $("#notaFiscal").val();
-		var serie 			= $("#serie").val();
-		var chaveAcesso 	= $("#chaveAcesso").val();
-		var dataEmissao 	= $("#dataEmissao").val();
-		var dataEntrada 	= $("#dataEntrada").val();
-		var valorBruto		= $("#valorBruto").val();
-		var valorLiquido	= $("#valorLiquido").val();
-		var valorDesconto 	= $("#valorDesconto").val();
-		var cfopId 			= $("#cfop").val();
-		var tipoNotaFiscal  = $("#tipoNotaFiscal").val();
-		var fornecedor      = $("#fornecedor").val();
+		var cnpj 			= $("#cnpj", this.workspace).val();
+		var notaFiscal 		= $("#notaFiscal", this.workspace).val();
+		var serie 			= $("#serie", this.workspace).val();
+		var chaveAcesso 	= $("#chaveAcesso", this.workspace).val();
+		var dataEmissao 	= $("#dataEmissao", this.workspace).val();
+		var dataEntrada 	= $("#dataEntrada", this.workspace).val();
+		var valorBruto		= $("#valorBruto", this.workspace).val();
+		var valorLiquido	= $("#valorLiquido", this.workspace).val();
+		var valorDesconto 	= $("#valorDesconto", this.workspace).val();
+		var cfopId 			= $("#cfop", this.workspace).val();
+		var tipoNotaFiscal  = $("#tipoNotaFiscal", this.workspace).val();
+		var fornecedor      = $("#fornecedor", this.workspace).val();
 		
 		var dadosCadastro = 
 
@@ -366,13 +411,13 @@ validarEdicaoCallBack : function() {
 			"notaFiscalFornecedor.cfop.id=" 			+ cfopId		+ "&" +
 			"notaFiscalFornecedor.tipoNotaFiscal.id="   + tipoNotaFiscal;
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/incluirNovaNotaFiscal', dadosCadastro, 
+		$.postJSON(this.path + 'incluirNovaNotaFiscal', dadosCadastro, 
 				function(result) {
 			
 			
 					if(result.tipoMensagem == "SUCCESS") {
 						
-						$("#dialog-nova-nota").dialog( "close" );
+						$("#dialog-nova-nota", this.workspace).dialog( "close" );
 						
 					} 
 					
@@ -381,196 +426,101 @@ validarEdicaoCallBack : function() {
 		}, null, true);
 		
 		
-	}
+	},
 	
 	/**
 	* LIMPA OS CAMPOS DE PESQUISA DE NOTA FISCAL
 	*/
-	function limparCamposPesquisa() {
+	limparCamposPesquisa : function() {
 		
-		$("#cnpj").val("");
-		$("#notaFiscal").val("");
-		$("#serie").val("");
-		$("#chaveAcesso").val("");
+		$("#cnpj", this.workspace).val("");
+		$("#notaFiscal", this.workspace).val("");
+		$("#serie", this.workspace).val("");
+		$("#chaveAcesso", this.workspace).val("");
 		
-	}
+	},
 	
 	/**
 	* LIMPA OS CAMPOS DO CADASTRO DE NOVA NOTA E NOVO ITEM.
 	*/
-	function limparCampos() {
+	limparCampos : function() {
 		
-		$("#dataEmissao").val("");
-		$("#valorBruto").val("");
-		$("#valorLiquido").val("");
-		$("#valorDesconto").val("");
-		$("#cfop").val("");
-		$("#tipoNotaFiscal").val("");
+		$("#dataEmissao", this.workspace).val("");
+		$("#valorBruto", this.workspace).val("");
+		$("#valorLiquido", this.workspace).val("");
+		$("#valorDesconto", this.workspace).val("");
+		$("#cfop", this.workspace).val("");
+		$("#tipoNotaFiscal", this.workspace).val("");
 		
-		$("#codigo").val("");
-		$("#produto").val("");
-		$("#precoCapa").val("");
-		$("#edicao").val("");
-		$("#datepickerLancto").val("");
-		$("#datepickerRecolhimento").val("");
-		$("#repartePrevisto").val("");
-		$("#tipoLancamento").val("");		
+		$("#codigo", this.workspace).val("");
+		$("#produto", this.workspace).val("");
+		$("#precoCapa", this.workspace).val("");
+		$("#edicao", this.workspace).val("");
+		$("#datepickerLancto", this.workspace).val("");
+		$("#datepickerRecolhimento", this.workspace).val("");
+		$("#repartePrevisto", this.workspace).val("");
+		$("#tipoLancamento", this.workspace).val("");		
 	
-	}
+	},
 
 	/**
 	* LIMPA OS CAMPOS DO CADASTRO DE NOVA NOTA E NOVO ITEM.
 	*/
-	function limparCamposNovoItem() {
+	limparCamposNovoItem : function() {
 		
-		$("#codigo").val("");
-		$("#produto").val("");
-		$("#precoCapa").val("");
-		$("#edicao").val("");
-		$("#datepickerLancto").val("");
-		$("#datepickerRecolhimento").val("");
-		$("#repartePrevisto").val("");
-		$("#tipoLancamento").val("");
-		$("#peso").val("");
-		$("#pacotePadrao").val("");
+		$("#codigo", this.workspace).val("");
+		$("#produto", this.workspace).val("");
+		$("#precoCapa", this.workspace).val("");
+		$("#edicao", this.workspace).val("");
+		$("#datepickerLancto", this.workspace).val("");
+		$("#datepickerRecolhimento", this.workspace).val("");
+		$("#repartePrevisto", this.workspace).val("");
+		$("#tipoLancamento", this.workspace).val("");
+		$("#peso", this.workspace).val("");
+		$("#pacotePadrao", this.workspace).val("");
 	
-	}
-
-	
-	
-	
+	},
 	
 	/**
 	 * EFEITO PARA ABERTURA POPUP. 
 	 */
-	function callback() {
+	callback : function() {
 		setTimeout(function() {
-			$( "#effect:visible").removeAttr("style" ).fadeOut();
+			$( "#effect:visible", this.workspace).removeAttr("style" ).fadeOut();
 	
 		}, 1000 );
-	}	
+	},	
 	
-	/**
-	 * CARREGA CAMPOS DE DATA COM CALENDARIO.
-	 */
-	$(function() {
-		
-			$("#datepickerLancto").datepicker({
-				showOn: "button",
-				buttonImage: contextPath + "/images/calendar.gif",
-				buttonImageOnly: true,
-				dateFormat: "dd/mm/yy"
-			});
-			$("#datepickerRecolhimento").datepicker({
-				showOn: "button",
-				buttonImage:  contextPath + "/images/calendar.gif",
-				buttonImageOnly: true,
-				dateFormat: "dd/mm/yy"
-			});
-			$("#dataEmissao").datepicker({
-				showOn: "button",
-				buttonImage:  contextPath + "/images/calendar.gif",
-				buttonImageOnly: true,
-				dateFormat: "dd/mm/yy"
-			});
-			
-			$("#novoDataEmissao").datepicker({
-				showOn: "button",
-				buttonImage:  contextPath + "/images/calendar.gif",
-				buttonImageOnly: true,
-				dateFormat: "dd/mm/yy"
-			});
-			
-			$("#novoDataEntrada").datepicker({
-				showOn: "button",
-				buttonImage:  contextPath + "/images/calendar.gif",
-				buttonImageOnly: true,
-				dateFormat: "dd/mm/yy"
-			});
-			
-			$("#datepickerLancto").mask("99/99/9999");
-			$("#datepickerRecolhimento").mask("99/99/9999");
-			$("#dataEmissao").mask("99/99/9999");
-			$("#novoDataEmissao").mask("99/99/9999");
-			$("#novoDataEntrada").mask("99/99/9999");
-			
-			$("#valorBruto").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-
-			$("#valorLiquido").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			
-			$("#valorDesconto").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			
-			$("#novoValorTotal").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			
-			$("#itensRecebimento.qtdNotaItem").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			
-			$("#itensRecebimento.qtdPacoteItem").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			
-			$("#itensRecebimento.qtdExemplaresItem").maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			
-			$("#itensRecebimento.codigoItem").numeric();
-			$("#itensRecebimento.edicaoItem").numeric();
-			$("#novoNumeroNota").numeric();
-			$("#novoSerieNota").numeric();
-			
-			$("#produto").autocomplete({source: ""});
-	});
 	
 	/**
 	 * APRESENTA O CAMPO DE CHAVE DA NFE.
 	 */
-	function mostrar_nfes(){
+	mostrar_nfes : function(){
 		
-		var checkBox = document.getElementById('eNF');
-		
-		if(checkBox.checked){
-			$(".nfes").show();
+		if( $("eNF", this.workspace).attr('checked') == 'checked' ){
+			
+			$(".nfes", this.workspace).show();
 			
 		}else{
-			$(".nfes").hide();
-			$("#chaveAcesso").val("");
+			
+			$(".nfes", this.workspace).hide();
+			
+			$("#chaveAcesso", this.workspace).val("");
+			
 		}
 
-	};
+	},
 	
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
 	 */
-	function carregarItemNotaGridNotaInterface() {
+	carregarItemNotaGridNotaInterface : function() {
 						
-		$(".gridWrapper").empty();
+		$(".gridWrapper", this.workspace).empty();
 		
-		$(".gridWrapper").append($("<table>").attr("class", "itemNotaGrid"));
+		$(".gridWrapper", this.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
-		$(".itemNotaGrid").flexigrid({
+		$(".itemNotaGrid", this.workspace).flexigrid({
 			
 				preProcess: getDataFromResultNotaInterface,
 				dataType : 'json',
@@ -651,18 +601,18 @@ validarEdicaoCallBack : function() {
 			width : 960,
 			height : 180
 		});
-	}
+	},
 	
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
 	 */
-	function carregarItemNotaGridNotaManual() {
+	carregarItemNotaGridNotaManual : function() {
 				
-		$(".gridWrapper").empty();
+		$(".gridWrapper", this.workspace).empty();
 		
-		$(".gridWrapper").append($("<table>").attr("class", "itemNotaGrid"));
+		$(".gridWrapper", this.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
-		$(".itemNotaGrid").flexigrid({
+		$(".itemNotaGrid", this.workspace).flexigrid({
 			
 				preProcess: getDataFromResultNotaManual,
 				dataType : 'json',
@@ -717,49 +667,49 @@ validarEdicaoCallBack : function() {
 			width : 960,
 			height : 180
 		});
-	}
+	},
 	
     /**
      * FAZ A PESQUISA DOS ITENS REFERENTES A NOTA ENCONTRADA.
      */
-	function pesquisarItemNotaGrid() {
+	pesquisarItemNotaGrid : function() {
     	
-		$(".itemNotaGrid").flexOptions({
+		$(".itemNotaGrid", this.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/obterListaItemRecebimentoFisico',
 			dataType : 'json'
 		});
 	
-		$(".itemNotaGrid").flexReload();
+		$(".itemNotaGrid", this.workspace).flexReload();
 	
-	}
+	},
 
     /**
      * REFRESH DOS ITENS REFERENTES A NOTA ENCONTRADA.
      */
-	function refreshItemNotaGrid(onSuccessFunction) {
+	refreshItemNotaGrid : function(onSuccessFunction) {
 	
-		$(".itemNotaGrid").flexOptions({
+		$(".itemNotaGrid", this.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/refreshListaItemRecebimentoFisico',
 			dataType : 'json',
 			onSuccess : onSuccessFunction	
 		});
 			
-		$(".itemNotaGrid").flexReload();
+		$(".itemNotaGrid", this.workspace).flexReload();
 	
-	}
+	},
 
     /**
      * FAZ O CANCELAMENTO DE UMA NOTA FISCAL E SEU RECEBIMENTO FISICO.
      */
-	function cancelarNotaRecebimentoFisico() {
+	cancelarNotaRecebimentoFisico : function() {
     	
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/cancelarNotaRecebimentoFisico', "", 
+		$.postJSON(this.path + 'cancelarNotaRecebimentoFisico', null, 
 
 		function(result) {
 					
 	    	if(result.tipoMensagem == "SUCCESS") {
 				
-	    		$(".grids").hide();
+	    		$(".grids", this.workspace).hide();
 	    		
 	    		limparCamposPesquisa();
 	        	
@@ -774,12 +724,12 @@ validarEdicaoCallBack : function() {
 		});
     	
     	
-	}
+	},
 	
     /**
      * SALVA OS DADOS DOS ITENS DA NOTA EDITADOS.
      */
-	function salvarDadosItensDaNotaFiscal() {
+	salvarDadosItensDaNotaFiscal : function() {
 		
 		var listaDeValores  = "";
 		
@@ -787,7 +737,7 @@ validarEdicaoCallBack : function() {
 			listaDeValores = obterListaValores();
 		}
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/salvarDadosItensDaNotaFiscal', listaDeValores, 
+		$.postJSON(this.path + 'salvarDadosItensDaNotaFiscal', listaDeValores, 
 		function(result) {
 			
 			exibirMensagem(result.tipoMensagem, result.listaMensagens);
@@ -796,12 +746,12 @@ validarEdicaoCallBack : function() {
 		
 		});
 		
-	}
+	},
 
     /**
      * COFIRMA OS DADOS DOS ITENS DA NOTA EDITADOS.
      */
-	function confirmarRecebimentoFisico() {
+	confirmarRecebimentoFisico : function() {
 		
 		var listaDeValores  = "";
 		
@@ -809,7 +759,7 @@ validarEdicaoCallBack : function() {
 			listaDeValores = obterListaValores();
 		}
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/confirmarRecebimentoFisico', listaDeValores, 
+		$.postJSON(this.path + 'confirmarRecebimentoFisico', listaDeValores, 
 		function(result) {
 			exibirMensagem(result.tipoMensagem, result.listaMensagens);
 			
@@ -817,14 +767,14 @@ validarEdicaoCallBack : function() {
 		
 		});
 		
-	}
+	},
     
     /**
      * OBTEM OS VALORES DA GRID A SEREM ENVIADOS AO SERVIDOR VIA AJAX
      */
-	function obterListaValores() {
+	obterListaValores : function() {
 		
-		var linhasDaGrid = $(".itemNotaGrid tr");
+		var linhasDaGrid = $(".itemNotaGrid tr", this.workspace);
 		
 		var listaDeValores = "";
 		
@@ -848,9 +798,9 @@ validarEdicaoCallBack : function() {
 		
 		return listaDeValores;
 		
-	}
+	},
 	
-	function replicarValorRepartePrevisto(lineId, elementoCheckBox) {
+	replicarValorRepartePrevisto : function(lineId, elementoCheckBox) {
 		
 		if( $(elementoCheckBox).attr('checked') != 'checked') {
 			return;
@@ -858,19 +808,19 @@ validarEdicaoCallBack : function() {
 		
 		var parametroPesquisa = [{name :"lineId", value : lineId}];
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/replicarValorRepartePrevisto', parametroPesquisa, 
+		$.postJSON(this.path + 'replicarValorRepartePrevisto', parametroPesquisa, 
 
 		function(resultado) {
 
-			$("#qtdPacote_"+lineId).val(resultado.qtdPacote);
+			$("#qtdPacote_"+lineId, this.workspace).val(resultado.qtdPacote);
 			
-			$("#qtdExemplar_"+lineId).val(resultado.qtdExemplar);
+			$("#qtdExemplar_"+lineId, this.workspace).val(resultado.qtdExemplar);
 		
 		});
 		
-	}
+	},
 	
-	function replicarTodosValoresRepartePrevisto(elementoCheckBox) {
+	replicarTodosValoresRepartePrevisto : function(elementoCheckBox) {
 	
 		var selecionado = false;
 		
@@ -880,7 +830,7 @@ validarEdicaoCallBack : function() {
 		
 		if(selecionado == false) {
 			
-			var linhasDaGrid = $(".itemNotaGrid tr");
+			var linhasDaGrid = $(".itemNotaGrid tr", this.workspace);
 			
 			$.each(linhasDaGrid, function(index, value) {
 				$(value).find('input[name="replicaQtde"]').attr('checked', false);
@@ -890,13 +840,13 @@ validarEdicaoCallBack : function() {
 			
 		}
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/replicarTodosValoresRepartePrevisto', null, 
+		$.postJSON(this.path + 'replicarTodosValoresRepartePrevisto', null, 
 				
 		function(result) {
 
 			refreshItemNotaGrid(function(){
 
-				var linhasDaGrid = $(".itemNotaGrid tr");
+				var linhasDaGrid = $(".itemNotaGrid tr", this.workspace);
 				
 				$.each(linhasDaGrid, function(index, value) {
 					
@@ -909,24 +859,19 @@ validarEdicaoCallBack : function() {
 				
 		});
 		
-		
-		
-		
-		
-		
-	}
+	},
 	
 	/**
 	 * EXCLUI UM ITEM DA NOTA
 	 */
-	function excluirItemNotaFiscal(lineId) {
+	excluirItemNotaFiscal : function(lineId) {
 		
 		if(confirm("Deseja realmente excluir o item selecionado?")){
 			var dadosExclusao = "lineId=" + lineId;
 			
 			var listaDeValores  = obterListaValores();
 			
-			$.postJSON(contextPath + '/estoque/recebimentoFisico/excluirItemNotaFiscal', (dadosExclusao + "&" + listaDeValores), 
+			$.postJSON(this.path + 'excluirItemNotaFiscal', (dadosExclusao + "&" + listaDeValores), 
 			
 			function(result) {
 				
@@ -938,13 +883,13 @@ validarEdicaoCallBack : function() {
 		}else{
 			return;
 		}		
-	}
+	},
 	
 
 	/**
 	 * EDITA UM ITEM DA NOTA
 	 */
-	function editarItemNotaFiscal(lineId) {
+	editarItemNotaFiscal : function(lineId) {
 		
 		lineIdItemNotaEmEdicao = lineId;
 		
@@ -952,23 +897,23 @@ validarEdicaoCallBack : function() {
 		
 		var parametroPesquisa = [{name :"lineId", value : lineId}];
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/obterRecebimentoFisicoVO', parametroPesquisa, 
+		$.postJSON(this.path + 'obterRecebimentoFisicoVO', parametroPesquisa, 
 
 		function(resultado) {
 
-			$("#pacotePadrao").val(resultado.pacotePadrao);
-			$("#peso").val(resultado.peso);
-			$("#codigo").val(resultado.codigo);
-			$("#produto").val(resultado.nomeProduto);
-			$("#precoCapa").val(resultado.precoCapa);
-			$("#edicao").val(resultado.edicao);
-			$("#datepickerLancto").val(resultado.dataLancamento);
-			$("#datepickerRecolhimento").val(resultado.dataRecolhimento);
-			$("#repartePrevisto").val(resultado.repartePrevisto);
-			$("#tipoLancamento").val(resultado.tipoLancamento);
+			$("#pacotePadrao", this.workspace).val(resultado.pacotePadrao);
+			$("#peso", this.workspace).val(resultado.peso);
+			$("#codigo", this.workspace).val(resultado.codigo);
+			$("#produto", this.workspace).val(resultado.nomeProduto);
+			$("#precoCapa", this.workspace).val(resultado.precoCapa);
+			$("#edicao", this.workspace).val(resultado.edicao);
+			$("#datepickerLancto", this.workspace).val(resultado.dataLancamento);
+			$("#datepickerRecolhimento", this.workspace).val(resultado.dataRecolhimento);
+			$("#repartePrevisto", this.workspace).val(resultado.repartePrevisto);
+			$("#tipoLancamento", this.workspace).val(resultado.tipoLancamento);
 
 
-			$("#dialog-novo-item").dialog({
+			$("#dialog-novo-item", this.workspace).dialog({
 				resizable: false,
 				height:480,
 				width:500,
@@ -987,17 +932,14 @@ validarEdicaoCallBack : function() {
 			
 		
 		});
-		
 			
-	}
-
-	
+	},
 	
 
 	/**
 	 * PREPARA OS DADOS DA NOTA MANUAL A SEREM APRESENTADOS NA GRID.
 	 */
-	function getDataFromResultNotaManual(data) {	
+	getDataFromResultNotaManual : function(data) {	
 		
 		$.each(data.rows, function(index, value) {
 			
@@ -1026,36 +968,36 @@ validarEdicaoCallBack : function() {
 		
 		if(data.rows) {
 
-			$(".grids").show();
+			$(".grids", this.workspace).show();
 			
 		}
 		
 		if(!indRecebimentoFisicoConfirmado){
 			
-			document.getElementById('botoesNormais').style.display="";			
-			document.getElementById('botoesOpacos').style.display="none";
-			document.getElementById('botaoNovoProdutoOpaco').style.display="none";
-			document.getElementById('botaoAdicionarOpaco').style.display="none";
-			document.getElementById('botaoNovoProduto').style.display="";
+			$("#botoesNormais", this.workspace).show();
+			$("#botoesOpacos", this.workspace).hide();
+			$("#botaoNovoProdutoOpaco", this.workspace).hide();
+			$("#botaoAdicionarOpaco", this.workspace).hide();
+			$("#botaoNovoProduto", this.workspace).show();
 			
 		}else{
-			
-			document.getElementById('botoesOpacos').style.display="";
-			document.getElementById('botoesNormais').style.display="none";
-			document.getElementById('botaoNovoProdutoOpaco').style.display="";
-			document.getElementById('botaoAdicionarOpaco').style.display="";
-			document.getElementById('botaoNovoProduto').style.display="none";
-			
+
+			$("#botoesOpacos", this.workspace).show();
+			$("#botoesNormais", this.workspace).hide();
+			$("#botaoNovoProdutoOpaco", this.workspace).show();
+			$("#botaoAdicionarOpaco", this.workspace).show();
+			$("#botaoNovoProduto", this.workspace).hide();
+
 		}
 		
 		return data;
 
-	}
+	},
 	
 	/**
 	 * PREPARA OS DADOS DA NOTA INTERFACE A SEREM APRESENTADOS NA GRID.
 	 */
-	function getDataFromResultNotaInterface(data) {		
+	getDataFromResultNotaInterface : function(data) {		
 				
 		$.each(data.rows, function(index, value) {
 			
@@ -1113,51 +1055,53 @@ validarEdicaoCallBack : function() {
 				value.cell.replicaQtd = '<input title="Replicar Item" disabled="disabled" type="checkbox"/>';
 			}
 			
-			
-			
-			
 		});
-
 		
-		
-		$(".grids").show();
+		$(".grids", this.workspace).show();
 		
 		if(!indRecebimentoFisicoConfirmado){
-			document.getElementById('botoesNormais').style.display="";
 			
-			document.getElementById('botaoNovoProdutoOpaco').style.display="none";
-			document.getElementById('botaoNovoProduto').style.display="";
+			$('#botoesNormais', this.workspace).show();
 			
-			document.getElementById('botaoAdicionarOpaco').style.display="none";
-			document.getElementById('botaoAdicionar').style.display="";
+			$('#botaoNovoProdutoOpaco', this.workspace).hide();
 			
-			document.getElementById('botoesOpacos').style.display="none";
-		}else{
-			document.getElementById('botoesOpacos').style.display="";
-			document.getElementById('botoesNormais').style.display="none";
+			$('#botaoNovoProduto', this.workspace).show();
 			
-			document.getElementById('botaoNovoProdutoOpaco').style.display="";
-			document.getElementById('botaoNovoProduto').style.display="none";
+			$('#botaoAdicionarOpaco', this.workspace).hide();
 			
-			document.getElementById('botaoAdicionarOpaco').style.display="";
-			document.getElementById('botaoAdicionar').style.display="none";
+			$('#botaoAdicionar', this.workspace).show();
+			
+			$('#botoesOpacos', this.workspace).hide();
+			
+			
+		} else {
+			
+			$('#botoesOpacos', this.workspace).show();
+			
+			$('#botoesNormais', this.workspace).hide();
+			
+			$('#botaoNovoProdutoOpaco', this.workspace).show();
+			
+			$('#botaoNovoProduto', this.workspace).hide();
+			
+			$('#botaoAdicionarOpaco', this.workspace).show();
+			
+			$('#botaoAdicionar', this.workspace).hide();
 			
 		}	
 		
 		
 		return data;
 
-	}
+	},
+	
+	//------------------------- NOVO POPUP DE NOTA ---------------------------
 	
 	
-	
-	// --------------------- conteudo abaixo do popup de nota ----------------------------
-	
-
 	/*NOVO POPUP DE LANÇAMENTO DE NOTA*/
+	inicializarGridPopUpNota : function() {
 	
-	$(function() {
-		$(".novoItemNotaGrid").flexigrid({
+		$(".novoItemNotaGrid", this.workspace).flexigrid({
 			preProcess: getDataFromResultItem,
 			dataType : 'json',
 			colModel : [
@@ -1235,13 +1179,15 @@ validarEdicaoCallBack : function() {
 			width : 910,
 			height : 180
 		});
-	});
+
+		
+	},
 	
-	function popup_adicionar() {
-	
+	popup_adicionar : function() {
+		
 		montaGridItens();
 		
-		$( "#dialog-adicionar" ).dialog({
+		$( "#dialog-adicionar", this.workspace ).dialog({
 			resizable: false,
 			height:530,
 			width:958,
@@ -1266,82 +1212,90 @@ validarEdicaoCallBack : function() {
 			    clearMessageDialogTimeout();
 	        }
 		});
-	};
+	},
 
-	function pesquisarFornecedorCnpj() {
+	pesquisarFornecedorCnpj : function() {
 		
-		var pCnpj = $("#novoCnpj").val();	
+		var pCnpj = $("#novoCnpj", this.workspace).val();	
 
 		if(pCnpj == "") {
-			$("#novoFornecedor").val("");
+			$("#novoFornecedor", this.workspace).val("");
 			return;
 		}
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/buscaCnpj', "cnpj=" + pCnpj, 
+		$.postJSON(this.path + 'buscaCnpj', "cnpj=" + pCnpj, 
 		function(result) { 
-			$("#novoFornecedor").val(result.cnpj);
+			$("#novoFornecedor", this.workspace).val(result.cnpj);
 		});	
-	}
+	},
 
-	function pesquisarCnpjFornecedor() {
+	pesquisarCnpjFornecedor : function() {
 	
-		var idFornecedor = $("#novoFornecedor").val();
+		var idFornecedor = $("#novoFornecedor", this.workspace).val();
 		
 		if(idFornecedor == -1){
-			$("#novoCnpj").val("");
-			$("#novoCnpj").disabled(true);			
+
+			$("#novoCnpj", this.workspace).val("");
+			
+			$("#novoCnpj", this.workspace).disabled(true);
+			
 		}else{
-			$.postJSON(contextPath + '/estoque/recebimentoFisico/obterCnpjFornecedor', "idFornecedor=" + idFornecedor, 
+			$.postJSON(this.path + 'obterCnpjFornecedor', "idFornecedor=" + idFornecedor, 
+			
 			function(result) {
-				$("#novoCnpj").val(result);
-				document.getElementById('novoCnpj').disabled=false;
+				
+				$("#novoCnpj", this.workspace).val(result);
+				
+				$("#novoCnpj", this.workspace).attr('disabled', true);
+				
 			},
 			null,
 			true);
 		}
-	}
+	},
 	
-	function obterDadosEdicao(index) {
+	obterDadosEdicao : function(index) {
 		
-		var codigo = $("#codigoItem"+index).val();
-		var edicao = $("#edicaoItem"+index).val();	
+		var codigo = $("#codigoItem"+index, this.workspace).val();
+		
+		var edicao = $("#edicaoItem"+index, this.workspace).val();	
 
 		if((codigo == "")||(edicao == "")) {
-			$("#precoDescontoItem"+index).val("");
+			$("#precoDescontoItem"+index, this.workspace).val("");
 			return;
 		}
 		
-		$.postJSON(contextPath + '/estoque/recebimentoFisico/obterDadosEdicao', "codigo=" + codigo + "&edicao="+edicao, 
+		$.postJSON(this.path + 'obterDadosEdicao', "codigo=" + codigo + "&edicao="+edicao, 
 			function(result) { 
-				$("#precoDescontoItem"+index).val(result.precoDesconto);
+				$("#precoDescontoItem"+index, this.workspace).val(result.precoDesconto);
 			},
 			function(result) {
-				$("#precoDescontoItem"+index).val("");	   
+				$("#precoDescontoItem"+index, this.workspace).val("");	   
 			},
 			true
 		);	
-	}
+	},
 	
-	function calcularDiferencaEValorItem(index){
+	calcularDiferencaEValorItem : function(index){
 		
-		var preco = removeMascaraPriceFormat($("#precoDescontoItem"+index).val());
-		var quantidade = removeMascaraPriceFormat($("#qtdNotaItem"+index).val());
-		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplaresItem"+index).val());
+		var preco = removeMascaraPriceFormat($("#precoDescontoItem"+index, this.workspace).val());
+		var quantidade = removeMascaraPriceFormat($("#qtdNotaItem"+index, this.workspace).val());
+		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplaresItem"+index, this.workspace).val());
 		
 		if((preco == "")||(quantidade == "")) {
-			$("#valorItem"+index).val("");
+			$("#valorItem"+index, this.workspace).val("");
 			return;
 		}
 		
 		if((quantidade == "")||(quantidadeExemp == "")) {
-			$("#diferencaItem"+index).val("");
+			$("#diferencaItem"+index, this.workspace).val("");
 		}
 		
         var valor = intValue(preco) * intValue(quantidade);
         
-        $("#valorItem"+index).val(valor);
+        $("#valorItem"+index, this.workspace).val(valor);
         
-        $("#valorItem"+index).priceFormat({
+        $("#valorItem"+index, this.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: '.',
 		    thousandsSeparator: ''
@@ -1355,30 +1309,30 @@ validarEdicaoCallBack : function() {
         	diferenca = intValue(quantidadeExemp) - intValue(quantidade);
         }
         
-		$("#diferencaItem"+index).val(diferenca);
+		$("#diferencaItem"+index, this.workspace).val(diferenca);
 		
-	    $("#diferencaItem"+index).priceFormat({
+	    $("#diferencaItem"+index, this.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: '',
 		    thousandsSeparator: '.'
 		});
 	    
 	    obterValorTotalItens();
-	}
+	},
 	
-	function obterCabecalho() {
+	obterCabecalho : function() {
 
 		var dadosCabecalho = "";
 		
-		var fornecedor = $("#novoFornecedor").val();
-		var cnpj = $("#novoCnpj").val();
-		var numeroNota = $("#novoNumeroNota").val();
-        var serieNota = $("#novoSerieNota").val();
-        var checkNfe = $("#novoNfe").val();
-        var chaveAcesso = $("#novoChaveAcesso").val();
-        var dataEmissao = $("#novoDataEmissao").val();
-        var dataEntrada = $("#novoDataEntrada").val();
-        var valorTotal = $("#novoValorTotal").val();
+		var fornecedor 	= $("#novoFornecedor"	, this.workspace).val();
+		var cnpj 		= $("#novoCnpj"			, this.workspace).val();
+		var numeroNota 	= $("#novoNumeroNota"	, this.workspace).val();
+        var serieNota 	= $("#novoSerieNota"	, this.workspace).val();
+        var checkNfe 	= $("#novoNfe"			, this.workspace).val();
+        var chaveAcesso = $("#novoChaveAcesso"	, this.workspace).val();
+        var dataEmissao = $("#novoDataEmissao"	, this.workspace).val();
+        var dataEntrada = $("#novoDataEntrada"	, this.workspace).val();
+        var valorTotal 	= $("#novoValorTotal"	, this.workspace).val();
 		
 		var cabecalho = 'nota.fornecedor=' + fornecedor + '&';
 
@@ -1399,21 +1353,21 @@ validarEdicaoCallBack : function() {
 		dadosCabecalho = (dadosCabecalho + cabecalho);
 
 		return dadosCabecalho;
-	}
+	},
 
-    function montaGridItens() {
-		$(".novoItemNotaGrid").flexOptions({url: contextPath + '/estoque/recebimentoFisico/montaGridItemNota'});
-		$(".novoItemNotaGrid").flexReload();
-	}	
+    montaGridItens : function() {
+		$(".novoItemNotaGrid", this.workspace).flexOptions({url: contextPath + '/estoque/recebimentoFisico/montaGridItemNota'});
+		$(".novoItemNotaGrid", this.workspace).flexReload();
+	},	
 	
-	function getDataFromResultItem(resultado) {
+	getDataFromResultItem : function(resultado) {
 
 		if (resultado.mensagens) {
 			exibirMensagem(
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
 			);
-			$(".grids").hide();
+			$(".grids", this.workspace).hide();
 			return resultado;
 		}
 		
@@ -1499,9 +1453,9 @@ validarEdicaoCallBack : function() {
 		);
 
 		return resultado;
-	}
+	},
 	
-	function isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplares) {
+	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplares) {
 
 		if (!$.trim(codigo) 
 				&& !$.trim(produto)
@@ -1513,11 +1467,11 @@ validarEdicaoCallBack : function() {
 
 			return true;
 		}
-	}
+	},
 	
-	function obterListaItens() {
+	obterListaItens : function() {
 
-		var linhasDaGrid = $(".novoItemNotaGrid tr");
+		var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
 
 		var listaItens = "";
 
@@ -1565,9 +1519,9 @@ validarEdicaoCallBack : function() {
 
 			if (!isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplares)) {
 
-	            var dataLancamento = $("#novoDataEntrada").val();
+	            var dataLancamento = $("#novoDataEntrada", this.workspace).val();
 				
-			    var dataRecolhimento = $("#novoDataEmissao").val();
+			    var dataRecolhimento = $("#novoDataEmissao", this.workspace).val();
 	
 				var lancamento = 'itens[' + index + '].codigoProduto=' + codigo + '&';
 	
@@ -1600,11 +1554,11 @@ validarEdicaoCallBack : function() {
 		});
 
 		return listaItens;
-	}
+	},
 
-	function obterValorTotalItens() {
+	obterValorTotalItens : function() {
 
-		var linhasDaGrid = $(".novoItemNotaGrid tr");
+		var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
 
 		var listaItens = "";
 		
@@ -1620,25 +1574,31 @@ validarEdicaoCallBack : function() {
 			
 		});
 
-        $("#novoValorTotal").val(valorTotal);
+        $("#novoValorTotal", this.workspace).val(valorTotal);
         
-        $("#novoValorTotal").priceFormat({
+        $("#novoValorTotal", this.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.'
 		});
         
-        $("#labelValorTotal").html($("#novoValorTotal").val());
-	}
+        $("#labelValorTotal", this.workspace).html($("#novoValorTotal").val());
+	},
     
-    function replicarQuantidadeItem(index){
-    	if ( (document.getElementById("checkbox"+index).checked) || (document.getElementById("novoReplicarQtde").checked) ){
-    	    $("#qtdExemplaresItem"+index).val($("#qtdNotaItem"+(index)).val());
+    replicarQuantidadeItem : function(index){
+    	
+    		
+    	
+    	if ( $("#checkbox"+index, this.workspace).attr('checked') == 'checked' || 
+    		 $("#novoReplicarQtde", this.workspace).attr('checked') == 'checked' ) {
+    		
+    	    $("#qtdExemplaresItem"+index, this.workspace).val($("#qtdNotaItem"+index, this.workspace).val());
+    	    
     	}    
-    }
+    },
     
     //PREPARA NOVA LINHA DA GRID
-    function adicionarNovaLinha(index){
+    adicionarNovaLinha : function(index){
 
     	var row;
 
@@ -1674,10 +1634,10 @@ validarEdicaoCallBack : function() {
    	               {name: 'replicar', value: checkBox}];
     	
     	return row;
-    }
+    },
     
     //ADICIONA NOVA LINHA NA GRID
-    function incluiNovoItem(){
+    incluiNovoItem : function(){
     	
     	var data = [];
 
@@ -1688,7 +1648,7 @@ validarEdicaoCallBack : function() {
     	
     	//OBTEM VALORES DIGITADOS
     	var nLinhas = 0;
-    	var linhasDaGrid = $(".novoItemNotaGrid tr");
+    	var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
     	
     	$.each(linhasDaGrid, function(index, value) {
     		
@@ -1757,7 +1717,7 @@ validarEdicaoCallBack : function() {
     	//CRIA NOVA LINHA
     	data.push({id:nLinhas+1, cell: adicionarNovaLinha(nLinhas)});
 
-    	$(".novoItemNotaGrid").flexAddData({
+    	$(".novoItemNotaGrid", this.workspace).flexAddData({
             rows : toFlexiGridObject(data),
             page : 1,
             total : nLinhas+1
@@ -1765,13 +1725,14 @@ validarEdicaoCallBack : function() {
 
     	//RETORNA OS DADOS DIGITADOS PARA AS LINHAS ATUAIS
     	recuperaValoresDigitados(dataValores);
-	}
+	},
     
     //RECUPERA VALORES DIGITADOS ANTES DA INSERÇÃO DA NOVA LINHA
-    function recuperaValoresDigitados(dataValores){
+    recuperaValoresDigitados : function(dataValores) {
     	
-    	var linhasDaGrid = $(".novoItemNotaGrid tr");
-        $.each(linhasDaGrid, function(index, value) {
+    	var linhasDaGrid = $(".novoItemNotaGrid tr", this.workspace);
+        
+    	$.each(linhasDaGrid, function(index, value) {
         	
         	if (index < dataValores.length){
 
@@ -1800,9 +1761,9 @@ validarEdicaoCallBack : function() {
         	}
         });
     	
-    }    
+    },    
     
-	function selecionarTodos(checked){
+	selecionarTodos : function(checked){
 		
 		for (var i=0;i<document.formularioItensNota.elements.length;i++) {
 		     var x = document.formularioItensNota.elements[i];
@@ -1820,30 +1781,30 @@ validarEdicaoCallBack : function() {
 			var elem = document.getElementById("textoSelTodos");
 			elem.innerHTML = "Marcar todos";
 		}
-	}
+	},
     
-	function limparCamposNovaNota(){
+	limparCamposNovaNota : function(){
 		
-		$("#novoFornecedor").val(-1);
-		$("#novoCnpj").val("");
-		$("#novoNumeroNota").val("");
-        $("#novoSerieNota").val("");
-        $("#novoNfe").val("");
-        $("#novoChaveAcesso").val("");
-        $("#novoDataEmissao").val("");
-        $("#novoDataEntrada").val("");
-        $("#novoValorTotal").val("");
+		$("#novoFornecedor", 	this.workspace).val(-1);
+		$("#novoCnpj", 			this.workspace).val("");
+		$("#novoNumeroNota", 	this.workspace).val("");
+        $("#novoSerieNota", 	this.workspace).val("");
+        $("#novoNfe", 			this.workspace).val("");
+        $("#novoChaveAcesso", 	this.workspace).val("");
+        $("#novoDataEmissao", 	this.workspace).val("");
+        $("#novoDataEntrada", 	this.workspace).val("");
+        $("#novoValorTotal", 	this.workspace).val("");
         
         montaGridItens();
-	}
+	},
 	
-	function incluirNota() {
+	incluirNota : function() {
 
 		var url;
 		var formData;
 
 		formData = obterCabecalho() + obterListaItens();
-		url = contextPath + '/estoque/recebimentoFisico/incluirNota';
+		url = this.path + 'incluirNota';
 
 		$.postJSON(
 			url,
@@ -1852,7 +1813,7 @@ validarEdicaoCallBack : function() {
 				
 				limparCamposNovaNota();
 				
-				$("#dialog-adicionar").dialog( "close" );
+				$("#dialog-adicionar", this.workspace).dialog( "close" );
 	
 				exibirMensagem(
 					result.tipoMensagem, 
@@ -1862,7 +1823,62 @@ validarEdicaoCallBack : function() {
 			null,
 			true
 		);
+	},
+	
+	jsDadosProduto : {
+		
+		exibirDetalhesProdutoEdicao : function() {
+			
+			var data = "codigo=" + $("#codigo", this.workspace).val() + "&edicao=" + $("#edicao", this.workspace).val();
+			
+			$.postJSON( this.path + 'obterProdutoEdicao', data, function(result){
+				
+				if(typeof result != "undefined") {
+					
+					$("#precoCapa", this.workspace).val(result.precoVenda);			
+					$("#peso", this.workspace).val(result.peso);			
+					$("#pacotePadrao", this.workspace).val(result.pacotePadrao);			
+					
+				}
+				
+			});
+			
+		},
+
+		pesquisarProdutoPorCodigo : function() {
+
+			$("#precoCapa", this.workspace).val("");
+			$("#peso", this.workspace).val("");
+			$("#pacotePadrao", this.workspace).val("");
+			
+			produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', true, function(){});	
+		},
+
+		pesquisarProdutoPorNome : function() {
+
+			$("#precoCapa", 	this.workspace).val("");
+			$("#peso", 			this.workspace).val("");
+			$("#pacotePadrao", 	this.workspace).val("");
+			
+			produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', true, function(){});
+		},
+
+		validarNumeroEdicao : function() {
+
+			$("#precoCapa", 	this.workspace).val("");
+			$("#peso", 			this.workspace).val("");
+			$("#pacotePadrao", 	this.workspace).val("");
+			
+			produto.validarNumEdicao('#codigo', '#edicao', true, jsDadosProduto.validarEdicaoCallBack);
+		},
+
+		validarEdicaoCallBack : function() {
+			
+			jsDadosProduto.exibirDetalhesProdutoEdicao();
+				
+		}
+		
 	}
 	
-	
+}, BaseController);
 	
