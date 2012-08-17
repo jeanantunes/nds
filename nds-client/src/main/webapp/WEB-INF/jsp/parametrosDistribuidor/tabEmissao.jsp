@@ -65,6 +65,7 @@
 	</fieldset>
 	<fieldset style="width: 410px !important; margin-bottom: 5px;">
 		<legend>Modelo NE / NECA / Danfe</legend>
+		<input type="hidden" id="_parametrosDistribuidorimpressaoNECADANFE" value="${parametrosDistribuidor.impressaoNECADANFE}"/>
 		<table width="325" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 				<td width="20"><input type="radio" name="impressaoNECADANFE"
@@ -93,15 +94,16 @@
 	</fieldset>
 	<fieldset style="width: 410px !important; margin-bottom: 5px;">
 		<legend>Modelo Impressão CE</legend>
+		<input type="hidden" id="_parametrosDistribuidorimpressaoCE" value="${parametrosDistribuidor.impressaoCE}" />
 		<table width="325" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 				<td width="26"><input type="radio" name="impressaoCE"
-					id="impressaoCEModelo2" value="MODELO_1" /></td>
+					id="impressaoCEModelo1" value="MODELO_1" /></td>
 				<td width="93"><a
 					href="${pageContext.request.contextPath}/modelos/ce_modelo_1.htm"
 					target="_blank">Modelo 1</a></td>
 				<td width="20"><input type="radio" name="impressaoCE"
-					id="impressaoCEModelo1" value="MODELO_2" /></td>
+					id="impressaoCEModelo2" value="MODELO_2" /></td>
 				<td width="287"><a
 					href="${pageContext.request.contextPath}/modelos/ce_modelo_2.html"
 					target="_blank">Modelo 2</a></td>
@@ -116,6 +118,7 @@
 	</fieldset>
 	<fieldset style="width: 410px !important; margin-bottom: 5px;">
 		<legend>Modelo Interface LED</legend>
+		<input type="hidden" id="_parametrosDistribuidorimpressaoInterfaceLED" value="${parametrosDistribuidor.impressaoInterfaceLED}" />
 		<table width="325" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 				<td width="20"><input type="radio" name="interfaceLED"
@@ -130,8 +133,7 @@
 					target="_blank">Modelo 2</a></td>
 				<td width="20"><input type="radio" name="interfaceLED"
 					id="interfaceLEDMODELO3" value="MODELO_3" /></td>
-				<td width="111"><a href="javascript:;" target="_blank">Modelo
-						3</a></td>
+				<td width="111"><a href="javascript:;" target="_blank">Modelo 3</a></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>

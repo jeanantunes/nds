@@ -472,9 +472,10 @@ public class DescontoServiceImpl implements DescontoService {
 					
 					System.out.println(fornecedorCota.getId());
 				}
-				
-				if (fornecedoresCota == null ||
-						!fornecedoresCota.contains(fornecedor)) {
+								
+				if (!obterCotas &&
+						(fornecedoresCota == null
+							|| !fornecedoresCota.contains(fornecedor))) {
 					
 					continue;
 				}
