@@ -1,7 +1,7 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDesconto.js"></script>
@@ -10,7 +10,9 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoProduto.js"></script>
 
 <script language="javascript" type="text/javascript">
-	
+
+var pesquisaCotaTipoDescontoCota = new PesquisaCota(chamdaEncalheAnteipadaController.workspace);
+
 $(function() {		
 	tipoDescontoController.init();
 	descontoDistribuidorController.init();
@@ -73,7 +75,7 @@ $(function() {
 			           		   type="text"
 			           		   maxlength="11"
 			           		   style="width:70px;"
-			           		   onchange="cota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+			           		   onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 			           	  											null, 
 			           	  											null);" />
 			    	Nome: <input  name="descricaoCotaPesquisa" 
@@ -82,8 +84,8 @@ $(function() {
 					      		 class="nome_jornaleiro" 
 					      		 maxlength="255"
 					      		 style="width:200px;"
-					      		 onkeyup="cota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
-					      		 onblur="cota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+					      		 onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
+					      		 onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 													      			null,
 													      			null);" />
 				                

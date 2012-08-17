@@ -1,8 +1,10 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script language="javascript" type="text/javascript">
+
+	var pesquisaCotaTipoDesconto = new PesquisaCota();
 
 	$(function() {		
 		$("#produto").autocomplete({source: ""});		
@@ -288,7 +290,7 @@
 	    <table width="350" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            <tr>
 	              <td width="100">Cota:</td>
-	              <td width="239"><input type="text" name="cotaEspecifica" id="cotaEspecifica" onchange="cota.pesquisarPorNumeroCota('#cotaEspecifica', '#nomeEspecifico');"  style="width:100px; float:left; margin-right:5px;" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+	              <td width="239"><input type="text" name="cotaEspecifica" id="cotaEspecifica" onchange="pesquisaCotaTipoDesconto.pesquisarPorNumeroCota('#cotaEspecifica', '#nomeEspecifico');"  style="width:100px; float:left; margin-right:5px;" /><span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
 	            </tr>
 	            <tr>
 	              <td>Nome:</td>

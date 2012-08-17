@@ -19,9 +19,10 @@
            		   type="text"
            		   maxlength="11"
            		   style="width:70px;"
-           		   onchange="cota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
+           		   onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
            	  											descontoCotaController.pesquisarCotaSuccessCallBack, 
            	  											descontoCotaController.pesquisarCotaErrorCallBack);" />
+           	  											
     		<label style="width:auto!important;">Nome:</label>
     		<input  name="descricaoCotaEspecifico" 
 		      		 id="descricaoCotaEspecifico" 
@@ -29,10 +30,11 @@
 		      		 class="nome_jornaleiro" 
 		      		 maxlength="255"
 		      		 style="width:200px;"
-		      		 onkeyup="cota.autoCompletarPorNome('#descricaoCotaEspecifico');" 
-		      		 onblur="cota.pesquisarPorNomeCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
+		      		 onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaEspecifico');" 
+		      		 onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
 										      			descontoCotaController.pesquisarCotaSuccessCallBack,
 										      			descontoCotaController.pesquisarCotaErrorCallBack);" />
+
     		
     	</fieldset>
     </td>

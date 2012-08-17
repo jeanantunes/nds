@@ -1,6 +1,5 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/box.js"></script>
 <script type="text/javascript">

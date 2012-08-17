@@ -3,12 +3,14 @@
 
 <title>Consulta Encalhe</title>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
 <script type="text/javascript">
-	
+
+var pesquisaCotaConsultaEncalhe = new PesquisaCota();
+
 var ConsultaEncalhe = {
 	
 		pesquisar: function() {
@@ -212,7 +214,7 @@ $(function() {
 
 						<input 	type="text" 
 								maxlength="17"
-								id="cota" onchange="cota.pesquisarPorNumeroCota('#cota', '#nomeCota');" 
+								id="cota" onchange="pesquisaCotaConsultaEncalhe.pesquisarPorNumeroCota('#cota', '#nomeCota');" 
 								style="width: 60px; float:left; margin-right:5px;"/>
 					
 					</td>
@@ -225,8 +227,8 @@ $(function() {
 			            maxlength="255" 
 			            name="nomeCota" 
 			            id="nomeCota" 
-			            onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
-			            onblur="cota.pesquisarPorNomeCota('#cota', '#nomeCota');" 
+			            onkeyup="pesquisaCotaConsultaEncalhe.autoCompletarPorNome('#nomeCota');" 
+			            onblur="pesquisaCotaConsultaEncalhe.pesquisarPorNomeCota('#cota', '#nomeCota');" 
 			            style="width:160px;"/>
 						
 					</td>

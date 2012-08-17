@@ -1,9 +1,11 @@
 
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script language="javascript" type="text/javascript">
+
+var pesquisaCotaCotaAusente = new PesquisaCota();
 
 var numCotaAusente;
 
@@ -330,16 +332,16 @@ function gerarLinhaNova(indice,num, nome, qtd) {
 			"60px",
 			null,
 			null,
-			"cota.pesquisarPorNumeroCota('#idNum"+indice+"', '#idNom"+indice+"',true)"));
+			"pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNum"+indice+"', '#idNom"+indice+"',true)"));
 	
-	nomeCota.append(getInput(
+	nomepesquisaCotaCotaAusente.append(getInput(
 			nome,
 			"idNom"+indice ,
 			"180px",
 			null,
-			"cota.pesquisarPorNomeCota('#idNum"+indice+"', '#idNom"+indice+"',true)", 
+			"pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idNum"+indice+"', '#idNom"+indice+"',true)", 
 			null,
-			"cota.autoCompletarPorNome('#idNom"+indice+"')"));
+			"pesquisaCotaCotaAusente.autoCompletarPorNome('#idNom"+indice+"')"));
 	
 	qtde.append(getInput(
 			qtd,
@@ -624,7 +626,7 @@ function mostra_grid(){
               <td width="446" colspan="3">
  <!-- NOVA COTA - NUM -->     
 <input id="idNovaCota" name="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
-	onchange="cota.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota',true);" />
+	onchange="pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota',true);" />
 	
 <!-- PESQUISAR NOVA COTA -->           
 	<label style="margin-left:10px;">
@@ -634,8 +636,8 @@ function mostra_grid(){
            		
  <!-- NOVA COTA - NOME -->
 <input id="idNomeNovaCota" name="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
-	onkeyup="cota.autoCompletarPorNome('#idNomeNovaCota');" 
-		 	   onblur="cota.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota',true);" />
+	onkeyup="pesquisaCotaCotaAusente.autoCompletarPorNome('#idNomeNovaCota');" 
+		 	   onblur="pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota',true);" />
 		 	   
        			</td>
             
@@ -663,15 +665,15 @@ function mostra_grid(){
                 <td width="123">
 <!-- COTA -->                
 <input id="idCota" name="idCota" type="text" style="width:80px; float:left; margin-right:5px;" 
-	onchange="cota.pesquisarPorNumeroCota('#idCota', '#idNomeCota');"/>
+	onchange="pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idCota', '#idNomeCota');"/>
 	
 <!-- PESQUISAR NOME COTA -->
 <td width="40">Nome:</td>
                 <td width="296">
 <!-- NOME -->            
 <input id="idNomeCota" name="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;" 
-	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" 
-		 	   onblur="cota.pesquisarPorNomeCota('#idCota', '#idNomeCota');"
+	onkeyup="pesquisaCotaCotaAusente.autoCompletarPorNome('#idNomeCota');" 
+		 	   onblur="pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idCota', '#idNomeCota');"
 	/>
 				</td>
                 <td width="27">Box:</td>

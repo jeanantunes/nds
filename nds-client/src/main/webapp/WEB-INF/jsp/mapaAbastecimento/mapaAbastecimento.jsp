@@ -2,9 +2,11 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/mapaAbastecimento.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script language="javascript" type="text/javascript">
 		
+		var pesquisaCotaMapaAbastecimento = new PesquisaCota();
+	
 		var MA = new MapaAbastecimento('${pageContext.request.contextPath}', 'MA');
 	</script>
 	
@@ -134,7 +136,7 @@
               
 <!-- Código Cota -->              
 <input id="codigoCota" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
-			onchange="cota.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
+			onchange="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
 
 			  </td>
               <td>Nome:</td>
@@ -142,8 +144,8 @@
               
 <!-- Nome Cota -->              
 <input id="nomeCota" disabled="disabled" type="text" class="nome_jornaleiro" style="width:220px;"
-		onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
-		 	   onblur="cota.pesquisarPorNomeCota('#codigoCota', '#nomeCota');"/>
+		onkeyup="pesquisaCotaMapaAbastecimento.autoCompletarPorNome('#nomeCota');" 
+		 	   onblur="pesquisaCotaMapaAbastecimento.pesquisarPorNomeCota('#codigoCota', '#nomeCota');"/>
 
 			 </td>
 
