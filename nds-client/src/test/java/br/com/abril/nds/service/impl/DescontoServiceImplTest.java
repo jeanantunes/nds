@@ -145,7 +145,9 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 			
 			Assert.assertNotNull(this.fornecedores);
 			
-			//Assert.assertEquals(this.fornecedores.size(), descontosProdutoEdicao.size());
+			int tamanhoEsperado = 1;
+			
+			Assert.assertEquals(tamanhoEsperado, descontosProdutoEdicao.size());
 			
 			for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
 				
