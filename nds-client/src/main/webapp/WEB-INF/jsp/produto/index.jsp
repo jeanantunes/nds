@@ -1,10 +1,13 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript">
-		$(function(){
-			produtoController.inicializar();
-		});
+	
+	var pesquisaProdutoCadastroProduto = new PesquisaProduto(produtoController.woskspace);
+	
+	produtoController.inicializar(pesquisaProdutoCadastroProduto);
+	
 	</script>
 
 	<style>
@@ -292,7 +295,7 @@
 					
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
+						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack,
 								   									   produtoController.pesquisarProdutosErrorCallBack);" />
 				</td>
@@ -300,8 +303,8 @@
 				<td width="55">Produto:</td>
 				<td width="237">
 					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
-					       onkeyup="produtoController.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="produtoController.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
+					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
+					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
 														    	   produtoController.pesquisarProdutosSuccessCallBack,
 														    	   produtoController.pesquisarProdutosErrorCallBack);"/>
 				</td>

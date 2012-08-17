@@ -1,7 +1,7 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDesconto.js"></script>
@@ -11,7 +11,9 @@
 
 <script language="javascript" type="text/javascript">
 
-var pesquisaCotaTipoDescontoCota = new PesquisaCota(chamdaEncalheAnteipadaController.workspace);
+var pesquisaCotaTipoDescontoCota = new PesquisaCota();
+
+var PesquisaProdutoTipoDescontoCota = new PesquisaProduto();
 
 $(function() {		
 	tipoDescontoController.init();
@@ -95,14 +97,14 @@ $(function() {
 	                <label style="width:auto!important;">Código:</label>
 	                <input type="text" name="codigoPesquisa" id="codigoPesquisa" maxlength="255" 
 					   	   style="width:80px; float:left;"
-					       onblur="produtoEdicao.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
+					       onblur="PesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);"/>
 	                <label style="width:auto!important;">Produto:</label>
 	                <input type="text" name="produtoPesquisa" id="produtoPesquisa" maxlength="255" 
 						   style="width:160px; float:left;"
-						   onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
-						   onblur="produtoEdicao.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
+						   onkeyup="PesquisaProdutoTipoDescontoCota.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
+						   onblur="PesquisaProdutoTipoDescontoCota.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);" />
 	                
