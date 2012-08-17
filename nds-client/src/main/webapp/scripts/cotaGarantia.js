@@ -683,11 +683,8 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 	for ( var index in data) {
 		var tipo = data[index];
 		var option = document.createElement("option");
-		
-		debugger;
-		
-		if(this.tipo[tipo].label)		
-			option.text = this.tipo[tipo].label;
+			
+		option.text = this.tipo[tipo].label;
 		
 		option.value = tipo;
 		try {
