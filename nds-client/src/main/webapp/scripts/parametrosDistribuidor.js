@@ -99,7 +99,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			
 			{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias', this.workspace).val()},
 			{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $('input[name=parametrosDistribuidor.radioTipoContabilizacaoCE]:checked', this.workspace).val()},
+			{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $("input[name='parametrosDistribuidor.tipoContabilizacaoCE']:checked", this.workspace).val()},
 			{name:'parametrosDistribuidor.supervisionaVendaNegativa', value: $('#supervisionaVendaNegativa', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.chamadaoDiasSuspensao', value: $('#chamadaoDiasSuspensao', this.workspace).val()},
 			{name:'parametrosDistribuidor.chamadaoValorConsignado', value: $('#chamadaoValorConsignado', this.workspace).val()},
@@ -220,7 +220,8 @@ var parametrosDistribuidorController = $.extend(true, {
 				"Cancelar": function() {
 					$(this).dialog("close");
 				}
-			}
+			}, 
+			form: $("#dialog-confirm", this.workspace).parents("form")
 		});
 	},
 		
@@ -239,7 +240,8 @@ var parametrosDistribuidorController = $.extend(true, {
 				"Cancelar": function() {
 					$(this).dialog("close");
 				}
-			}
+			}, 
+			form: $("#dialog-pesq-fornecedor", this.workspace).parents("form")
 		});
 	},
 		
@@ -328,16 +330,14 @@ var parametrosDistribuidorController = $.extend(true, {
 	},
 	
 	init: function(){
-		
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg();
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
-		$('#informacoesComplementaresContrato', this.workspace).wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresContrato}');
+		
 		$('#informacoesComplementaresProcuracao', this.workspace).wysiwyg();
 		$('#informacoesComplementaresProcuracao', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
-		$('#informacoesComplementaresProcuracao', this.workspace).wysiwyg('setContent','${parametrosDistribuidor.informacoesComplementaresProcuracao}');
+		
 		$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg();
 		$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
-		$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg('setContent','${parametrosDistribuidor.complementoTermoAdesaoEntregaBancas}');
 		
 		var options = {
 			success: parametrosDistribuidorController.tratarRespostaSalvarLogo,
