@@ -828,6 +828,10 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão inválida!");
 		}
 		
+		if (cotaComDebitos(idCota)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] possui dívidas em aberto e não pode ser excluída!");
+		}
+		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
 	
 		try{	
@@ -1368,6 +1372,18 @@ public class CotaServiceImpl implements CotaService {
 
 	private boolean tratarValorReferenciaCota(Integer numeroCota, BigDecimal porcentagem){
 		return (numeroCota != null && porcentagem != null);
+	}
+	
+	/**
+	 * Verifica se a cota possui dividas em aberto
+	 * @param idCota
+	 * @return boolean
+	 */
+	private boolean cotaComDebitos(Long idCota){
+		
+        BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(idCota);
+		
+		return (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0);
 	}
 	
 	/**
