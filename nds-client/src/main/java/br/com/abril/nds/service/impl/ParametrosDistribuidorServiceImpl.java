@@ -191,15 +191,15 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Impressão Interface LED
 		if (distribuidor.getTipoImpressaoInterfaceLED() != null)
-			parametrosDistribuidor.setImpressaoInterfaceLED(distribuidor.getTipoImpressaoInterfaceLED().name());
+			parametrosDistribuidor.setImpressaoInterfaceLED(distribuidor.getTipoImpressaoInterfaceLED().toString());
 
 		// Impressão NECA / Danfe
 		if (distribuidor.getTipoImpressaoNENECADANFE() != null)
-			parametrosDistribuidor.setImpressaoNECADANFE(distribuidor.getTipoImpressaoNENECADANFE().name());
+			parametrosDistribuidor.setImpressaoNECADANFE(distribuidor.getTipoImpressaoNENECADANFE().toString());
 
 		// Impressão CE
 		if (distribuidor.getTipoImpressaoCE() != null)
-			parametrosDistribuidor.setImpressaoCE(distribuidor.getTipoImpressaoCE().name());
+			parametrosDistribuidor.setImpressaoCE(distribuidor.getTipoImpressaoCE().toString());
 		
 		// Condições de Contratação:
 		boolean utilizaContratoComCotas = (distribuidor.getParametroContratoCota() != null);
