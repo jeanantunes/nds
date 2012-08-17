@@ -250,7 +250,7 @@ function PesquisaProduto(workspace) {
 		
 		pesquisaProduto.pesquisaRealizada = false;
 		
-		var codigoProduto = $(idCodigoProduto).val();
+		var codigoProduto = $(idCodigoProduto, pesquisaProduto.workspace).val();
 		
 		$.postJSON(contextPath + "/produto/autoCompletarEdicaoPorProduto", "codigoProduto=" + codigoProduto,
 					   function(result) { pesquisaProduto.exibirAutoCompleteEdicao(result, idEdicao); },
