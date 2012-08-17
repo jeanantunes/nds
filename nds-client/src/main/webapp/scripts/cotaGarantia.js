@@ -626,6 +626,14 @@ TipoCotaGarantia.prototype.tipo = {
 	'CAUCAO_LIQUIDA' : {
 		label : 'Caução Liquida',
 		controller : CaucaoLiquida
+	},
+	'ANTECEDENCIA_VALIDADE' : {
+		label : 'Caução Liquida',
+		controller : CaucaoLiquida
+	},
+	'OUTROS' : {
+		label : 'Caução Liquida',
+		controller : CaucaoLiquida
 	}
 };
 TipoCotaGarantia.prototype.get = function() {
@@ -665,15 +673,22 @@ TipoCotaGarantia.prototype.getData = function() {
 };
 
 TipoCotaGarantia.prototype.bindData = function(data) {
+	
+	
 	var select = document.getElementById("tipoGarantiaSelect");
 	for ( var index = select.options.length; index > 0; index--) {
 		select.remove(index);
 	}
-
+	
 	for ( var index in data) {
 		var tipo = data[index];
 		var option = document.createElement("option");
-		option.text = this.tipo[tipo].label;
+		
+		debugger;
+		
+		if(this.tipo[tipo].label)		
+			option.text = this.tipo[tipo].label;
+		
 		option.value = tipo;
 		try {
 			select.add(option, select.options[null]);
@@ -681,6 +696,7 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 			select.add(option, null);
 		}
 	}
+	
 };
 
 TipoCotaGarantia.prototype.onOpen = function() {
