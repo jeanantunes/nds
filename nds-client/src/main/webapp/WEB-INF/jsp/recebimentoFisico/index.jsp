@@ -1,12 +1,14 @@
 <head>
 
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>scripts/produto.js'></script>
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>scripts/pesquisaProduto.js'></script>
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 <script type="text/javascript">
+
+var pesquisaProdutoRecebimentoFisico = new PesquisaProduto();
 
 var indNotaFiscalInterface = false;
 
@@ -40,7 +42,7 @@ pesquisarProdutoPorCodigo : function() {
 	$("#peso").val("");
 	$("#pacotePadrao").val("");
 	
-	produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', true, function(){});	
+	pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', true, function(){});	
 },
 
 pesquisarProdutoPorNome : function() {
@@ -49,7 +51,7 @@ pesquisarProdutoPorNome : function() {
 	$("#peso").val("");
 	$("#pacotePadrao").val("");
 	
-	produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', true, function(){});
+	pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', true, function(){});
 },
 
 validarNumeroEdicao : function() {
@@ -58,7 +60,7 @@ validarNumeroEdicao : function() {
 	$("#peso").val("");
 	$("#pacotePadrao").val("");
 	
-	produto.validarNumEdicao('#codigo', '#edicao', true, jsDadosProduto.validarEdicaoCallBack);
+	pesquisaProdutoRecebimentoFisico.validarNumEdicao('#codigo', '#edicao', true, jsDadosProduto.validarEdicaoCallBack);
 },
 
 validarEdicaoCallBack : function() {
@@ -1315,9 +1317,9 @@ validarEdicaoCallBack : function() {
 				 valueValor = row.cell.valorTotal;
 			 }
 
-        	 var codigo =       '<input maxlength="28" value="'+valueCodigo+'" type="number" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="produto.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
+        	 var codigo =       '<input maxlength="28" value="'+valueCodigo+'" type="number" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
 	         			 					     
-	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="produto.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="produto.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
+	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
 				             
 			 var edicao =       '<input maxlength="18" value="'+valueEdicao+'" type="number" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="obterDadosEdicao('+index+');"></input>';         
 			
@@ -1496,9 +1498,9 @@ validarEdicaoCallBack : function() {
 
     	var row;
 
-    	var codigo =       '<input maxlength="28" type="number" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="produto.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
+    	var codigo =       '<input maxlength="28" type="number" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
 	     
-        var produto =      '<input maxlength="200" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="produto.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="produto.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
+        var produto =      '<input maxlength="200" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
 			             
 		var edicao =       '<input maxlength="18" type="number" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="obterDadosEdicao('+index+');"></input>';         
 		
@@ -1831,7 +1833,7 @@ validarEdicaoCallBack : function() {
 						type="text" 
 						id="produto"
 						
-					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
+					       	   onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto('#produto', false);"
 					       	   onblur="jsDadosProduto.pesquisarProdutoPorNome();"/>
 				</td>
 			</tr>

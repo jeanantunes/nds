@@ -1,8 +1,14 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parciais.js"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
+<script type="text/javascript">
+	
+	var pesquisaProdutoParciais = new PesquisaProduto();
+
+</script>
+		
 <style type="text/css">
 #dialog-detalhes fieldset{width:900px!important;}
 
@@ -199,15 +205,15 @@
               <td colspan="3">
 <!-- Código -->
 <input class="campoDePesquisa" id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produto.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
+						   onchange="pesquisaProdutoParciais.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
 				</td>
                 <td width="51">Produto:</td>
                 <td width="163">
                 
 <!-- Nome Produto -->                
 <input class="campoDePesquisa" id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
-					       onkeyup="produto.autoCompletarPorNomeProduto('#nomeProduto', false);"
-					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
+					       onkeyup="pesquisaProdutoParciais.autoCompletarPorNomeProduto('#nomeProduto', false);"
+					       onblur="pesquisaProdutoParciais.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
 					    	   
 				</td>
                 <td width="56">Edição:</td>

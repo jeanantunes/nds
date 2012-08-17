@@ -8,7 +8,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		groupNameCheck:"checkgroup",
 		nameGridPesquisaCota:"ceAntecipadaCotaGrid",
 		nameGrid:"ceAntecipadaGrid",
-		cota:null,
+		pesquisaCota:null,
 			 
 		params:function(){
 			
@@ -556,12 +556,12 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var parametroPesquisaCota = '\'#numCota' + index + '\', \'#descricaoCota'+ index + '\', false,function(){chamdaEncalheAnteipadaController.pesquisarCotaSuccessCallBack('+paramIdCheck+')}, function(){ chamdaEncalheAnteipadaController.pesquisarCotaErrorCallBack('+paramIdCheck+')}';
 				
 				var inputCodigoCota = 
-					'<input type="text" id="numCota' + index + '" name="numCota" style="width:80px; float:left; margin-right:10px;" maxlenght="255" onchange="chamdaEncalheAnteipadaController.cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
+					'<input type="text" id="numCota' + index + '" name="numCota" style="width:80px; float:left; margin-right:10px;" maxlenght="255" onchange="chamdaEncalheAnteipadaController.pesquisaCota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
 
 				var parametroAutoCompleteCota = '\'#descricaoCota' + index + '\', true';
 
 				var inputDescricaoCota = 
-					'<input type="text" id="descricaoCota' + index + '" name="descricaoCota" style="width:580px;" maxlenght="255" onkeyup="chamdaEncalheAnteipadaController.cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="chamdaEncalheAnteipadaController.cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
+					'<input type="text" id="descricaoCota' + index + '" name="descricaoCota" style="width:580px;" maxlenght="255" onkeyup="chamdaEncalheAnteipadaController.pesquisaCota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="chamdaEncalheAnteipadaController.pesquisaCota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
 
 				var inputQuantidadeExemplares = 
 					'<input type="text" id="qntExemplares' + index + '" name="qntExemplares" disabled="disabled" style="width:80px; text-align: center"   />';
@@ -990,9 +990,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			});
 		},
 		
-		init : function(cota) {
+		init : function(pesquisaCota) {
 			
-			chamdaEncalheAnteipadaController.cota = cota;
+			chamdaEncalheAnteipadaController.pesquisaCota = pesquisaCota;
 			
 		    definirAcaoPesquisaTeclaEnter();	
 

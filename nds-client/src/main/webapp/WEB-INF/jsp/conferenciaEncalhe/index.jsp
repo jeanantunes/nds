@@ -12,6 +12,12 @@
 	
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalhe.js'></script>
 	
+	<script type="text/javascript">
+	
+		var pesquisaProdutoConferenciaEncalhe = new PesquisaProduto();
+		
+	</script>
+	
 	<style type="text/css">
 		._dados:hover{
 			background: none repeat scroll 0 0 #D9EBF5;

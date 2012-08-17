@@ -1,7 +1,12 @@
 //#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
 var produtoController = $.extend(true, {
 	
-	inicializar : function () {
+	pesquisaProduto:null,
+	
+	inicializar : function (pesquisaProduto) {
+		
+		produtoController.pesquisaProduto = pesquisaProduto;
+		
 		this.iniciarGrid();
 		$( "#tabProduto", this.workspace).tabs();
 
@@ -50,13 +55,13 @@ var produtoController = $.extend(true, {
 	//Mostrar auto complete por nome do produto
 	autoCompletarPorNomeFornecedor : function(idFornecedor, isFromModal) {
 		
-		produtoController.pesquisaRealizada = false;
+		produtoController.pesquisaProduto.pesquisaRealizada = false;
 		
 		var nomeFornecedor = $(idFornecedor, this.workspace).val();
 		
 		if (nomeFornecedor && nomeFornecedor.length > 2) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorNomeFornecedor", "nomeFornecedor=" + nomeFornecedor,
-					   function(result) { produtoController.exibirAutoComplete(result, idFornecedor); },
+					   function(result) { produtoController.pesquisaProduto.exibirAutoComplete(result, idFornecedor); },
 					   null, isFromModal);
 		}
 	},

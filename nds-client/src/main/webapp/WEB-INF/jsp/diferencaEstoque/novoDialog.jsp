@@ -55,12 +55,12 @@
 				<tr>
 					<td>
 						<input type="text" id="codigoProdutoInput" style="width:60px;" maxlength="30"
-							onblur="produto.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
+							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td>
 						<input type="text" id="nomeProdutoInput" style="width:180px;" maxlength="60"
-							onkeyup="produto.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
-							onblur="produto.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
+							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
+							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td align="center">
 						<input type="text" id="edicaoProdutoInput" onblur="buscarPrecoProdutoEdicao();" style="width:50px;" maxlength="255" />

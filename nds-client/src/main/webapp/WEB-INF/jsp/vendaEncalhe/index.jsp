@@ -1,11 +1,13 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 
 <script type="text/javascript">
 
 var pesquisaCotaVendaEncalhe = new PesquisaCota();
+
+var pesquisaProdutoVendaEncalhe = new PesquisaProduto();
 
 var VENDA_PRODUTO = {
 	
@@ -374,11 +376,11 @@ var VENDA_PRODUTO = {
 			
 			var inputCodBarras ='<input type="text" id="codBarras'+index+'" name="codBarras" style="width:160px;" value="" onchange="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
 			
-			var inputCodProduto='<input type="text" id="codProduto' + index + '" name="codProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" onchange="produto.pesquisarPorCodigoProduto(' + parametroPesquisaProduto + ');" />';
+			var inputCodProduto='<input type="text" id="codProduto' + index + '" name="codProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" onchange="pesquisaProdutoVendaEncalhe.pesquisarPorCodigoProduto(' + parametroPesquisaProduto + ');" />';
 			
-			var inputNomeProduto='<input type="text" id="nmProduto' + index + '" name="nmProduto" style="width:140px;" maxlenght="255" onkeyup="produto.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onblur="produto.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
+			var inputNomeProduto='<input type="text" id="nmProduto' + index + '" name="nmProduto" style="width:140px;" maxlenght="255" onkeyup="pesquisaProdutoVendaEncalhe.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onblur="pesquisaProdutoVendaEncalhe.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
 			
-			var inputNumEdicao='<input type="text" id="numEdicao' + index + '"  name="numEdicao" style="width:40px;text-align: center;" maxlenght="20" onchange="produto.validarNumEdicao(' + parametroValidacaoEdicao + ');" disabled="disabled" />';
+			var inputNumEdicao='<input type="text" id="numEdicao' + index + '"  name="numEdicao" style="width:40px;text-align: center;" maxlenght="20" onchange="pesquisaProdutoVendaEncalhe.validarNumEdicao(' + parametroValidacaoEdicao + ');" disabled="disabled" />';
 			
 			var inputPrecoCapa='<input type="text" id="precCapa'+index+'" name="precCapa" value="" style="width:65px;text-align: center;" disabled="disabled" />';
 			
