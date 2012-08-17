@@ -1055,7 +1055,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				height : 180
 			});
 
-		$("#ceAntecipadaCotaGrid").flexigrid({
+		$("#ceAntecipadaCotaGrid",this.workspace).flexigrid({
 			preProcess:chamdaEncalheAnteipadaController.executarPreProcessamentoGridCota,
 			dataType : 'json',
 			colModel : [ {
