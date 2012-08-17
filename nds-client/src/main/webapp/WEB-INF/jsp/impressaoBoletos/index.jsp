@@ -1,7 +1,9 @@
 <head>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script language="javascript" type="text/javascript">
+	
+	var pesquisaCotaImpressaoBoletos = new PesquisaCota();
 	
 	var GeraDivida = {
 			
@@ -410,7 +412,7 @@
 				              		   maxlength="11"
 				              		   style="width:70px; 
 				              		   float:left; margin-right:5px;"
-				              		   onchange="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
+				              		   onchange="pesquisaCotaImpressaoBoletos.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
 				              	  											GeraDivida.pesquisarCotaSuccessCallBack, 
 				              	  											GeraDivida.pesquisarCotaErrorCallBack);" />
 	      					</td>
@@ -422,8 +424,8 @@
 							      		 class="nome_jornaleiro" 
 							      		 maxlength="255"
 							      		 style="width:130px;"
-							      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-							      		 onblur="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
+							      		 onkeyup="pesquisaCotaImpressaoBoletos.autoCompletarPorNome('#descricaoCota');" 
+							      		 onblur="pesquisaCotaImpressaoBoletos.pesquisarPorNomeCota('#numCota', '#descricaoCota',false,
 							      		 									GeraDivida.pesquisarCotaSuccessCallBack,
 							      		 									GeraDivida.pesquisarCotaErrorCallBack);" />
 	    					</td>

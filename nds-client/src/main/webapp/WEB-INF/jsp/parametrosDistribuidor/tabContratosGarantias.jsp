@@ -35,7 +35,7 @@
             </tr>
             <tr>
               <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresContrato" rows="4"
-                  id="informacoesComplementaresContrato" style="width: 350px;"></textarea></td>
+                  id="informacoesComplementaresContrato" style="width: 350px;">${parametrosDistribuidor.informacoesComplementaresContrato}</textarea></td>
             </tr>
           </table>
         </fieldset>
@@ -258,7 +258,7 @@
             </tr>
             <tr>
               <td colspan="2"><textarea name="parametrosDistribuidor.informacoesComplementaresProcuracao" rows="4"
-                  id="informacoesComplementaresProcuracao" style="width: 150px;"></textarea></td>
+                  id="informacoesComplementaresProcuracao" style="width: 150px;">${parametrosDistribuidor.informacoesComplementaresProcuracao}</textarea></td>
             </tr>
           </table>
         </fieldset>
@@ -286,7 +286,7 @@
             </tr>
             <tr>
               <td colspan="2"><textarea name="parametrosDistribuidor.complementoTermoAdesaoEntregaBancas"
-                  rows="4" id="complementoTermoAdesaoEntregaBancas" style="width: 150px;"></textarea></td>
+                  rows="4" id="complementoTermoAdesaoEntregaBancas" style="width: 150px;">${parametrosDistribuidor.complementoTermoAdesaoEntregaBancas}</textarea></td>
             </tr>
           </table>
         </fieldset>

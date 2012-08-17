@@ -1,14 +1,16 @@
 <head>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptChamdaEncalheAntecipada.js"></script>
 	
 	<script type="text/javascript">
 	
-		var cota = new Cota(chamdaEncalheAnteipadaController.workspace);
+		var pesquisaCotaChamadaAntecipada = new PesquisaCota(chamdaEncalheAnteipadaController.workspace);
+		
+		var pesquisaProdutoChamadaAntecipada = new PesquisaProduto(chamdaEncalheAnteipadaController.workspace);
 	
-		chamdaEncalheAnteipadaController.init(cota);
+		chamdaEncalheAnteipadaController.init(pesquisaCotaChamadaAntecipada);
 		
 	</script>
 			
@@ -59,7 +61,7 @@
 			    	
 			    	<input type="text" name="codigoProduto" id="codigoProduto" class="campoDePesquisa"
 							   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-							   onchange="produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
+							   onchange="pesquisaProdutoChamadaAntecipada.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
 									   									   chamdaEncalheAnteipadaController.pesquisarProdutosSuccessCallBack,
 									   									   chamdaEncalheAnteipadaController.pesquisarProdutosErrorCallBack);" />
 			    	
@@ -68,8 +70,8 @@
 			    <td width="54">Produto:</td>
 			    <td width="264">
 			    	<input type="text" name="produto" id="produto" style="width: 213px;" maxlength="255" class="campoDePesquisa"
-						       onkeyup="produtoController.autoCompletarPorNomeProduto('#produto', false);"
-						       onblur="produtoController.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
+						       onkeyup="pesquisaProdutoChamadaAntecipada.autoCompletarPorNomeProduto('#produto', false);"
+						       onblur="pesquisaProdutoChamadaAntecipada.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
 						    	   chamdaEncalheAnteipadaController.pesquisarProdutosSuccessCallBack,
 						    	   chamdaEncalheAnteipadaController.pesquisarProdutosErrorCallBack);"/>
 			    </td>
@@ -78,7 +80,7 @@
 			    <td width="165">
 			    	
 			    	<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled" class="campoDePesquisa"
-							   onchange="produtoController.validarNumEdicao('#codigoProduto', '#edicao', false,
+							   onchange="pesquisaProdutoChamadaAntecipada.validarNumEdicao('#codigoProduto', '#edicao', false,
 							   										chamdaEncalheAnteipadaController.validarEdicaoSuccessCallBack,
 						    	   									chamdaEncalheAnteipadaController.validarEdicaoErrorCallBack);"/>
 			    	

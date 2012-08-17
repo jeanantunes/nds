@@ -127,7 +127,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void removerProduto(Long id) throws UniqueConstraintViolationException {
 		
 		try {	

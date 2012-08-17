@@ -1,15 +1,14 @@
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/data.holder.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 	<script type="text/javascript">
 	
-	
-	
+		var pesquisaCotaBaixaFinanceira = new PesquisaCota();
 	
 		$(function() {
 			$("#filtroNumCota").numeric();
@@ -1077,7 +1076,7 @@
              		maxlength="11"
              		style="width:60px; 
              		float:left; margin-right:5px;"
-             		onchange="cota.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
+             		onchange="pesquisaCotaBaixaFinanceira.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
 				</td>
 				
 				<td width="39">Nome:</td>
@@ -1089,8 +1088,8 @@
 		      		 	   class="nome_jornaleiro" 
 		      		 	   maxlength="255"
 		      		 	   style="width:130px;"
-		      		 	   onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-		      		 	   onblur="cota.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
+		      		 	   onkeyup="pesquisaCotaBaixaFinanceira.autoCompletarPorNome('#descricaoCota');" 
+		      		 	   onblur="pesquisaCotaBaixaFinanceira.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
 		        </td>
 			  
 				<td width="97">Nosso Número:</td>

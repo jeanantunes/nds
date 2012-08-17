@@ -522,7 +522,7 @@ public class ProdutoController {
 		}
 		
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
 		}
 	}
 		

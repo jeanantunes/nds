@@ -1,10 +1,13 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript">
-		$(function(){
-			produtoController.inicializar();
-		});
+	
+	var pesquisaProdutoCadastroProduto = new PesquisaProduto(produtoController.workspace);
+	
+	produtoController.inicializar(pesquisaProdutoCadastroProduto);
+	
 	</script>
 
 	<style>
@@ -85,9 +88,9 @@
 				</tr>
 				<tr>
 					<td><strong>PEB:</strong></td>
-					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="20" /></td>
+					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="9" /></td>
 					<td><strong>Pacote Padr&atilde;o:</strong></td>
-					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="20" /></td>
+					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="9" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
@@ -172,7 +175,7 @@
 				
 				<td style="vertical-align: top;" >
 					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 205px;">
-						<legend>Segmenta&ccedil;&atilde;o</legend>
+						<legend>P&uacute;blico-Alvo</legend>
 						<table width="380" border="0" cellspacing="1" cellpadding="1">
 							<tr>
 								<td width="380" valign="top">
@@ -292,7 +295,7 @@
 					
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
+						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack,
 								   									   produtoController.pesquisarProdutosErrorCallBack);" />
 				</td>
@@ -300,8 +303,8 @@
 				<td width="55">Produto:</td>
 				<td width="237">
 					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
-					       onkeyup="produtoController.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="produtoController.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
+					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
+					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
 														    	   produtoController.pesquisarProdutosSuccessCallBack,
 														    	   produtoController.pesquisarProdutosErrorCallBack);"/>
 				</td>

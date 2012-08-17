@@ -1,18 +1,8 @@
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
+<form id="formSocioCota">
+	<div id="dialog-socio" title="Novo Sócio" style="display:none;">
+	<fieldset style="width:710px!important;">
+		<legend>Novo Sócio</legend>
 
-<script type="text/javascript">
-
-var ENDERECO = new Endereco("", "dialog-socio");
-
-
-</script>
-
-<div id="dialog-socio" title="Novo Sócio" style="display:none;">
-<fieldset style="width:710px!important;">
-	<legend>Novo Sócio</legend>
-		
-		<form id="formSocioCota">
-			
 			<input type="hidden" name="socioCota.telefone.id" id="idTelefone"/>
 			
 			<input type="hidden" name="socioCota.endereco.id" id="idEndereco"/>
@@ -43,7 +33,7 @@ var ENDERECO = new Endereco("", "dialog-socio");
 						<input type="text" name="socioCota.endereco.cep" id="cep" style="float:left; margin-right:5px;" />
 						
 						<span class="classPesquisar" title="Pesquisar Cep.">
-							<a href="javascript:ENDERECO.pesquisarEnderecoPorCep();">&nbsp;</a>
+							<a href="javascript:;" id="btnPesquisarEndereco">&nbsp;</a>
 						</span>
 					</td>
 				</tr>
@@ -59,11 +49,8 @@ var ENDERECO = new Endereco("", "dialog-socio");
 				    <td>Cidade:</td>
 					<td>
 						<input type="text" name="socioCota.endereco.cidade" style="width:250px"
-							   id="cidade" 
-							   onkeyup="ENDERECO.autoCompletarLocalidades();"
-							   onblur="ENDERECO.autoCompletarLocalidades(true);" />
+							   id="cidade" />
 					</td>
-				    
 				  
 				</tr>
 				
@@ -71,9 +58,7 @@ var ENDERECO = new Endereco("", "dialog-socio");
 					<td>Bairro:</td>
 					<td>
 						<input type="text" name="socioCota.endereco.bairro" style="width:230px"
-							   id="bairro" 
-							   onkeyup="ENDERECO.autoCompletarBairros();"
-						   	   onblur="ENDERECO.autoCompletarBairros(true);" />
+							   id="bairro" />
 					</td>
 					<td>Complemento:</td>
 					<td>
@@ -89,9 +74,7 @@ var ENDERECO = new Endereco("", "dialog-socio");
 					<td>Logradouro:</td>
 					<td>
 						<input type="text" name="socioCota.endereco.logradouro" style="width:250px" 
-							   id="logradouro" 
-							   onkeyup="ENDERECO.autoCompletarLogradouros();"
-						   	   onblur="ENDERECO.autoCompletarLogradouros(true);" />
+							   id="logradouro"  />
 					</td>
 				</tr>
 				<tr>
@@ -108,6 +91,6 @@ var ENDERECO = new Endereco("", "dialog-socio");
 			      <input type="text" name="socioCota.telefone.numero" id="numeroTelefone" style="width:100px" /></td>
 	  			</tr>
 			</table>
-		</form>
-    </fieldset>
-</div>
+	    </fieldset>
+	</div>
+</form>

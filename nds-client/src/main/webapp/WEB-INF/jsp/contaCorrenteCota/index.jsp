@@ -1,9 +1,12 @@
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/vendaEncalheCota.js'></script>
 
 <script language="javascript" type="text/javascript">
+
+var pesquisaCotaContaCorrentCota = new PesquisaCota();
+
 /**
  * VERIFICA A EXISTENCIA DE UMA NOTAFISCAL
  * COM OS PARÂMETROS DE PESQUISA
@@ -681,10 +684,10 @@ $(function() {
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="32">Cota:</td>
-              <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="cota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
               </td>
               <td width="36">Nome:</td>
-              <td width="263"><input type="text" name="nomeCota" id="nomeCota" onkeyup="cota.autoCompletarPorNome('#nomeCota');" onblur="cota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
+              <td width="263"><input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
               <td width="72">&nbsp;</td>
               <td width="283">&nbsp;</td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarItemContaCorrenteCota();">Pesquisar</a></span></td>

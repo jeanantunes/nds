@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -526,7 +525,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				distribuidor.setParametroContratoCota(parametroContratoCota);
 			}
 			parametroContratoCota.setDuracaoContratoCota(parametrosDistribuidor.getPrazoContrato());
-			parametroContratoCota.setComplementoContrato(StringEscapeUtils.escapeJavaScript(parametrosDistribuidor.getInformacoesComplementaresContrato()));
+			parametroContratoCota.setComplementoContrato(parametrosDistribuidor.getInformacoesComplementaresContrato());
 		} else {
 			distribuidor.setParametroContratoCota(null);
 		}
@@ -534,7 +533,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Procuração Entregadores
 		distribuidor.setUtilizaProcuracaoEntregadores(parametrosDistribuidor.isUtilizaProcuracaoEntregadores());
 		if (parametrosDistribuidor.isUtilizaProcuracaoEntregadores()) {
-		    distribuidor.setInformacoesComplementaresProcuracao(StringEscapeUtils.escapeJavaScript(parametrosDistribuidor.getInformacoesComplementaresProcuracao()));
+		    distribuidor.setInformacoesComplementaresProcuracao(parametrosDistribuidor.getInformacoesComplementaresProcuracao());
 		} else {
 		    distribuidor.setInformacoesComplementaresProcuracao(null);
 		}
@@ -544,7 +543,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
             ParametroEntregaBanca parametro = new ParametroEntregaBanca();
             distribuidor.setParametroEntregaBanca(parametro);
             parametro.setUtilizaTermoAdesao(true);
-            parametro.setComplementoTermoAdesao(StringEscapeUtils.escapeJavaScript(parametrosDistribuidor.getComplementoTermoAdesaoEntregaBancas()));
+            parametro.setComplementoTermoAdesao(parametrosDistribuidor.getComplementoTermoAdesaoEntregaBancas());
         } else {
             distribuidor.setParametroEntregaBanca(null);
         }

@@ -2,10 +2,6 @@
 
 $(function() {
 	
-	$("select[name='selectFornecedorSelecionado_${param.paramFornecedores}']").multiSelect("select[name='selectFornecedor_${param.paramFornecedores}']", {trigger: "#linkFornecedorVoltarTodos_${param.paramFornecedores}"});
-	
-	$("select[name='selectFornecedor_${param.paramFornecedores}']").multiSelect("select[name='selectFornecedorSelecionado_${param.paramFornecedores}']", {trigger: "#linkFornecedorEnviarTodos_${param.paramFornecedores}"});
-	
 });
 
 </script>

@@ -132,9 +132,9 @@
 				
 				var inputIdDiferenca = '<input name="idDiferenca" type="hidden" value="' + row.cell.idDiferenca + '" />';
 				
-				var inputNumeroCota = '<input id="numeroCota' + index + '" name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="cota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" value="' + numeroCota + '" />';
+				var inputNumeroCota = '<input id="numeroCota' + index + '" name="numeroCota" type="text" style="width:80px; float:left; margin-right:5px;" onchange="pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" value="' + numeroCota + '" />';
 
-				var inputNomeCota = '<input id="nomeCota' + index + '" name="nomeCota" type="text" style="width:220px;" onkeyup="cota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="cota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" value="' + nomeCota + '" />';
+				var inputNomeCota = '<input id="nomeCota' + index + '" name="nomeCota" type="text" style="width:220px;" onkeyup="autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="pesquisarPorNomeCota(' + parametroPesquisaCota + ')" value="' + nomeCota + '" />';
 
 				var inputReparteCota = '<input id="qtdeReparteCota' + index + '" name="qtdeReparteCota" type="hidden" value="' + reparteCota + '" />';
 				

@@ -55,12 +55,12 @@
 				<tr>
 					<td>
 						<input type="text" id="codigoProdutoInput" style="width:60px;" maxlength="30"
-							onblur="produto.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
+							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td>
 						<input type="text" id="nomeProdutoInput" style="width:180px;" maxlength="60"
-							onkeyup="produto.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
-							onblur="produto.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
+							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
+							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td align="center">
 						<input type="text" id="edicaoProdutoInput" onblur="buscarPrecoProdutoEdicao();" style="width:50px;" maxlength="255" />
@@ -117,12 +117,12 @@
 						<tr id="trCota1">
 							<td>
 								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="255"
-									onblur="cota.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, buscarReparteAtualCota(1));"/>
+									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, buscarReparteAtualCota(1));"/>
 							</td>
 							<td>
 								<input type="text" name="nomeInput" id="nomeInput1" style="width:180px;" maxlength="255"
-									onkeyup="cota.autoCompletarPorNome(nomeInput1);" 
-									onblur="cota.pesquisarPorNomeCota(cotaInput1, nomeInput1, buscarReparteAtualCota(1));"/>
+									onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput1);" 
+									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1, buscarReparteAtualCota(1));"/>
 							</td>
 							<td align="center" id="reparteText1"></td>
 							<td align="center">
@@ -152,13 +152,13 @@
 					<td width="27">Cota:</td>
 					<td width="118">
 						<input type="text" style="width:80px; float:left; margin-right:5px;" id="cotaInputNota" maxlength="255"
-							onblur="cota.pesquisarPorNumeroCota(cotaInputNota, nomeCotaNota, true);" />
+							onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInputNota, nomeCotaNota, true);" />
 					</td>
 					<td width="32">Nome:</td>
 					<td width="167">
 						<input type="text" style="width:160px;" id="nomeCotaNota" maxlength="255"
-							onkeyup="cota.autoCompletarPorNome(nomeCotaNota);" 
-							onblur="cota.pesquisarPorNomeCota(cotaInputNota, nomeCotaNota);" />
+							onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeCotaNota);" 
+							onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInputNota, nomeCotaNota);" />
 					</td>
 					<td width="16">
 						<img src="${pageContext.request.contextPath}/images/ico_add.gif" width="16" height="16" alt="Incluir"
@@ -630,11 +630,11 @@
 			if ($('#trCota' + (linhaAtual + 1)).length == 0 && $('#cotaInput' + (linhaAtual)).val() != ""){
 				
 				var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
-						'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="cota.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, buscarReparteAtualCota('+ (linhaAtual + 1) +'));" style="width:60px;" /></td>' +
+						'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, buscarReparteAtualCota('+ (linhaAtual + 1) +'));" style="width:60px;" /></td>' +
 						'<td>'+
 						     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:180px;" '+
-						         ' onkeyup="cota.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
-						         ' onblur="cota.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', buscarReparteAtualCota('+ (linhaAtual + 1) +'));" ' +
+						         ' onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
+						         ' onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', buscarReparteAtualCota('+ (linhaAtual + 1) +'));" ' +
 						     '/>'+
 						'</td>' +
 						'<td align="center" id="reparteText'+ (linhaAtual + 1) +'"></td>' +
