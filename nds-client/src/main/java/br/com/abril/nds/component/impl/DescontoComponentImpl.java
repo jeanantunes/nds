@@ -70,36 +70,36 @@ public class DescontoComponentImpl implements DescontoComponent {
 
 	private Set<ProdutoEdicao> filtrarProdutoDistribuidor(TipoDesconto tipoDesconto, Fornecedor fornecedor,Set<ProdutoEdicao> produtos) {
 		
-		List<DescontoProdutoEdicao> descontosProduto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicaoNotInTipoDesconto(tipoDesconto, fornecedor);
-		
-		if(descontosProduto.isEmpty()){
-			return produtos;
-		}
-		
-		for(ProdutoEdicao prd : produtos){
-			
-			if(this.contains(prd, descontosProduto,null)){
-				produtos.remove(prd);
-			}
-		}
+//		List<DescontoProdutoEdicao> descontosProduto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicaoNotInTipoDesconto(tipoDesconto, fornecedor);
+//		
+//		if(descontosProduto.isEmpty()){
+//			return produtos;
+//		}
+//		
+//		for(ProdutoEdicao prd : produtos){
+//			
+//			if(this.contains(prd, descontosProduto,null)){
+//				produtos.remove(prd);
+//			}
+//		}
 		
 		return produtos;
 	}
 
 	private Set<ProdutoEdicao> filtrarProdutosCota(TipoDesconto tipoDesconto, Fornecedor fornecedor,Set<ProdutoEdicao> produtos, Cota cota) {
 		
-		List<DescontoProdutoEdicao> descontosProduto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicaoNotInTipoDesconto(tipoDesconto, fornecedor,cota);
-		
-		if(descontosProduto.isEmpty()){
-			return produtos;
-		}
-		
-		for(ProdutoEdicao prd : produtos){
-			
-			if(!this.contains(prd, descontosProduto,TipoDesconto.GERAL)){
-				produtos.remove(prd);
-			}
-		}
+//		List<DescontoProdutoEdicao> descontosProduto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicaoNotInTipoDesconto(tipoDesconto, fornecedor,cota);
+//		
+//		if(descontosProduto.isEmpty()){
+//			return produtos;
+//		}
+//		
+//		for(ProdutoEdicao prd : produtos){
+//			
+//			if(!this.contains(prd, descontosProduto,TipoDesconto.GERAL)){
+//				produtos.remove(prd);
+//			}
+//		}
 		
 		return produtos;
 	}
