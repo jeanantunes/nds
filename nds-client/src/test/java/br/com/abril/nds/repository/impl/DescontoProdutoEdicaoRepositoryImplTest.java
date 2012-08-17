@@ -175,6 +175,25 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		}
 	}
 	
+	@Test
+	public void obterDescontoProdutoEdicaoCota() {
+		
+		Set<DescontoProdutoEdicao> descontos = 
+			this.descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(this.cota);
+	
+		Assert.assertNotNull(descontos);
+		
+		Assert.assertTrue(!descontos.isEmpty());
+		
+		int qtdeCotasDesconto = 4;
+		
+		Assert.assertEquals(qtdeCotasDesconto, descontos.size());
+		
+		for (DescontoProdutoEdicao desconto : descontos) {
+			
+			Assert.assertTrue(this.cota.equals(desconto.getCota()));
+		}
+	}
 	
 	private void testeRetornoDesconto(List<DescontoProdutoEdicao> descontos, TipoDesconto tipoDesconto){
 		

@@ -32,7 +32,7 @@ public class DescontoProdutoEdicao implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCONTO")
+	@Column(name = "DESCONTO", nullable = false)
 	private BigDecimal desconto;
 	
 	@ManyToOne(optional = false)
