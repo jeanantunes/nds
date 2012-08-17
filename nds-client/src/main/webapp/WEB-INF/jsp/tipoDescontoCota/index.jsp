@@ -11,15 +11,15 @@
 
 <script language="javascript" type="text/javascript">
 
-var pesquisaCotaTipoDescontoCota = new PesquisaCota();
+var pesquisaCotaTipoDescontoCota = new PesquisaCota(tipoDescontoController.workspace);
 
-var PesquisaProdutoTipoDescontoCota = new PesquisaProduto();
+var pesquisaProdutoTipoDescontoCota = new PesquisaProduto(tipoDescontoController.workspace);
 
 $(function() {		
 	tipoDescontoController.init();
 	descontoDistribuidorController.init();
 	descontoCotaController.init();
-	descontoProdutoController.init();
+	descontoProdutoController.init(pesquisaCotaTipoDescontoCota);
 });
 
 </script>
@@ -97,14 +97,14 @@ $(function() {
 	                <label style="width:auto!important;">Código:</label>
 	                <input type="text" name="codigoPesquisa" id="codigoPesquisa" maxlength="255" 
 					   	   style="width:80px; float:left;"
-					       onblur="PesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
+					       onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);"/>
 	                <label style="width:auto!important;">Produto:</label>
 	                <input type="text" name="produtoPesquisa" id="produtoPesquisa" maxlength="255" 
 						   style="width:160px; float:left;"
-						   onkeyup="PesquisaProdutoTipoDescontoCota.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
-						   onblur="PesquisaProdutoTipoDescontoCota.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
+						   onkeyup="pesquisaProdutoTipoDescontoCota.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
+						   onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);" />
 	                

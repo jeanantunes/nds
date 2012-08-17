@@ -19,7 +19,7 @@
 	            <td width="100">
 	            	<input type="text" name="pCodigoProduto" id="pCodigoProduto" maxlength="255" 
 						   style="width:100px; float:left; margin-right:5px;"
-						   onblur="produtoEdicao.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', true,
+						   onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', true,
 								   undefined,
 								   undefined);"/>
 	            </td>
@@ -29,8 +29,8 @@
 	            <td>
 	            	<input type="text" name="pNomeProduto" id="pNomeProduto" maxlength="255" 
 										style="width:160px;"
-										onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#pNomeProduto', false);"
-										onblur="produtoEdicao.pesquisarPorNomeProduto('#pCodigoProduto', '#pNomeProduto', true,
+										onkeyup="pesquisaProdutoTipoDescontoCota.autoCompletarPorNomeProduto('#pNomeProduto', false);"
+										onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorNomeProduto('#pCodigoProduto', '#pNomeProduto', true,
 											undefined,
 											undefined);" />
 	            </td>
