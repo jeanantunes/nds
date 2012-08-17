@@ -88,9 +88,9 @@
 				</tr>
 				<tr>
 					<td><strong>PEB:</strong></td>
-					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="20" /></td>
+					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="9" /></td>
 					<td><strong>Pacote Padr&atilde;o:</strong></td>
-					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="20" /></td>
+					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="9" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
@@ -175,7 +175,7 @@
 				
 				<td style="vertical-align: top;" >
 					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 205px;">
-						<legend>Segmenta&ccedil;&atilde;o</legend>
+						<legend>P&uacute;blico-Alvo</legend>
 						<table width="380" border="0" cellspacing="1" cellpadding="1">
 							<tr>
 								<td width="380" valign="top">

@@ -2,7 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 
 public class ConsultaProdutoDTO implements Serializable {
 
@@ -20,9 +20,14 @@ public class ConsultaProdutoDTO implements Serializable {
 	
 	private String tipoContratoFornecedor;
 	
-	private String situacao;
-	
 	private Integer peb;
+	
+	private Integer pacotePadrao;
+	
+	private Float percentualDesconto;
+
+	private PeriodicidadeProduto periodicidade;
+
 	
 	/**
 	 * Construtor Padrão
@@ -102,20 +107,6 @@ public class ConsultaProdutoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the situacao
-	 */
-	public String getSituacao() {
-		return situacao;
-	}
-
-	/**
-	 * @param situacao the situacao to set
-	 */
-	public void setSituacao(SituacaoCadastro situacao) {
-		this.situacao = situacao.toString();
-	}
-
-	/**
 	 * @return the peb
 	 */
 	public Integer getPeb() {
@@ -142,5 +133,46 @@ public class ConsultaProdutoDTO implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	/**
+	 * @return the percentualDesconto
+	 */
+	public Float getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	/**
+	 * @param percentualDesconto the percentualDesconto to set
+	 */
+	public void setPercentualDesconto(Float percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
+	}
+
+	/**
+	 * @return the periodicidade
+	 */
+	public String getPeriodicidade() {
+		return periodicidade.toString();
+	}
+
+	/**
+	 * @param periodicidade the periodicidade to set
+	 */
+	public void setPeriodicidade(PeriodicidadeProduto periodicidade) {
+		this.periodicidade = periodicidade;
+	}
 }
