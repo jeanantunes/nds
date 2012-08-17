@@ -35,6 +35,10 @@
 
 <link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
 
+<script type="text/javascript" src="scripts/gruposPermissao.js"></script>
+<script type="text/javascript" src="scripts/usuariosPermissao.js"></script>
+<script type="text/javascript" src="scripts/regrasPermissao.js"></script>
+
 <base href="<c:url value="/"/>" />
 
 <script type="text/javascript">

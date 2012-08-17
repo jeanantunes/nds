@@ -67,7 +67,6 @@ public class TipoProdutoController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_PRODUTO)
 	public void index() {
 		
 		listaNcm.clear();
