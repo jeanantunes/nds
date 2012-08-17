@@ -1,5 +1,7 @@
 var descontoProdutoController = $.extend(true,{
 	
+	pesquisaCota:null,
+	
 	inicializarModal: function() {
 		
 		$("#formTipoDescontoProduto",this.workspace)[0].reset();
@@ -109,12 +111,12 @@ var descontoProdutoController = $.extend(true,{
 			'<tr id="trCota1">' +
 			'<td>' +
 			'<input type="text" name="cotaInput" id="cotaInput1" style="width:120px;" maxlength="255" ' +
-			'onblur="cota.pesquisarPorNumeroCota(\'#cotaInput1\', \'#nomeInput1\', true);"/>' +
+			'onblur="descontoProdutoController.pesquisaCota.pesquisarPorNumeroCota(\'#cotaInput1\', \'#nomeInput1\', true);"/>' +
 			'</td>' +
 			'<td>' +
 			'<input type="text" name="nomeInput" id="nomeInput1" style="width:245px;" maxlength="255"' +
-			'onkeyup="cota.autoCompletarPorNome(\'#nomeInput1\');" ' +
-			'onblur="cota.pesquisarPorNomeCota(\'#cotaInput1\', \'#nomeInput1\',descontoProdutoController.adicionarLinhaCota(1));"/>' +
+			'onkeyup="descontoProdutoController.pesquisaCota.autoCompletarPorNome(\'#nomeInput1\');" ' +
+			'onblur="descontoProdutoController.pesquisaCota.pesquisarPorNomeCota(\'#cotaInput1\', \'#nomeInput1\',descontoProdutoController.adicionarLinhaCota(1));"/>' +
 			'</td>' +
 			'</tr>'
 		);
@@ -125,11 +127,11 @@ var descontoProdutoController = $.extend(true,{
 		if ($('#trCota' + (linhaAtual + 1),this.workspace).length == 0 && $('#cotaInput' + (linhaAtual),this.workspace).val() != ""){
 			
 			var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
-					'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="cota.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true);" style="width:120px;" /></td>' +
+					'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="descontoProdutoController.pesquisaCota.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true);" style="width:120px;" /></td>' +
 					'<td>'+
 						 '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:245px;" '+
-							 ' onkeyup="cota.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
-							 ' onblur="cota.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', descontoProdutoController.adicionarLinhaCota('+ (linhaAtual + 1) +'));" ' +
+							 ' onkeyup="descontoProdutoController.pesquisaCota.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
+							 ' onblur="descontoProdutoController.pesquisaCota.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', descontoProdutoController.adicionarLinhaCota('+ (linhaAtual + 1) +'));" ' +
 						 '/>'+
 					'</td>' +
 					'</tr>'
@@ -167,7 +169,9 @@ var descontoProdutoController = $.extend(true,{
 		});	
 	},
 	
-	init:function(){
+	init:function(pesquisaCota){
+		
+		descontoProdutoController.pesquisaCota = pesquisaCota;
 		
 		$("#descontoProduto",this.workspace).mask("99.99");
 		

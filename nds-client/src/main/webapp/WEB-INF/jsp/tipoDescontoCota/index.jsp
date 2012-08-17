@@ -19,7 +19,7 @@ $(function() {
 	tipoDescontoController.init();
 	descontoDistribuidorController.init();
 	descontoCotaController.init();
-	descontoProdutoController.init();
+	descontoProdutoController.init(pesquisaCotaTipoDescontoCota);
 });
 
 </script>
