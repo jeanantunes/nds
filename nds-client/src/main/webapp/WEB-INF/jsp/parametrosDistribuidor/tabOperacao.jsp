@@ -135,17 +135,17 @@
                          <tr>
                       <td>Aceita Encalhe Juramentada:</td>
                       <td width="22">
-                          <c:if test="${parametrosDistribuidor.aceitaEncalheJuramentada} ">
+                          <c:if test="${parametrosDistribuidor.aceitaEncalheJuramentada}">
                             <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
                                 type="checkbox" 
                                 id="aceitaEncalheJuramentada" checked="checked" />
                           </c:if>   
-                            <c:if test="${not parametrosDistribuidor.aceitaEncalheJuramentada} ">
+                            <c:if test="${not parametrosDistribuidor.aceitaEncalheJuramentada}">
                             <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
                                 type="checkbox" 
                                 id="aceitaEncalheJuramentada"/>
                           </c:if>        
-                          </td>
+                      </td>
                       <td width="15">&nbsp;</td>
                       <td width="21">&nbsp;</td>
                       <td width="16">&nbsp;</td>
