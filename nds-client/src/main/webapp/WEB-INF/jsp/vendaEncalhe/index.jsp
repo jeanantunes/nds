@@ -1,9 +1,12 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 
 <script type="text/javascript">
+
+var pesquisaCotaVendaEncalhe = new PesquisaCota();
+
 var VENDA_PRODUTO = {
 	
 	vendaNova:true,
@@ -925,7 +928,7 @@ $(function() {
 				               maxlength="11"
 				               style="width:70px; 
 				               float:left; margin-right:5px;"
-				               onchange="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
+				               onchange="pesquisaCotaVendaEncalhe.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
 				              	  									 VENDA_PRODUTO.pesquisarCotaSuccessCallBack, 
 				              	  									 VENDA_PRODUTO.pesquisarCotaErrorCallBack);"/>
 				    </td>
