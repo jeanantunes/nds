@@ -92,7 +92,8 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	@Column(name = "DATA_LANCAMENTO", nullable = false)
 	private Date dataLancamento;	
 	
-	@Column(name = "TIPO_LANCAMENTO", nullable = false)
+	/* Alterado amando de Eduardo "PunkRock" Castro 17/08/2012 */
+	@Column(name = "TIPO_LANCAMENTO", nullable = true)
 	private TipoLancamento tipoLancamento;	
 	
 	@Temporal(value=TemporalType.DATE)
