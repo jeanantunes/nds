@@ -4,7 +4,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript">
 	
-	var pesquisaProdutoCadastroProduto = new PesquisaProduto(produtoController.woskspace);
+	var pesquisaProdutoCadastroProduto = new PesquisaProduto(produtoController.workspace);
 	
 	produtoController.inicializar(pesquisaProdutoCadastroProduto);
 	

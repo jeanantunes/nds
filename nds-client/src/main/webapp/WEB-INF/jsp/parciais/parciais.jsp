@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 	
-	var pesquisaProdutoParciais = new PesquisaProduto();
+	var pesquisaProdutoParciais = new PesquisaProduto(ParciaisController.workspace);
 
 </script>
 		
