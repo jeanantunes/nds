@@ -467,11 +467,6 @@ public class DescontoServiceImpl implements DescontoService {
 			for (Cota cota : cotas) {
 				
 				Set<Fornecedor> fornecedoresCota = cota.getFornecedores();
-				
-				for (Fornecedor fornecedorCota : fornecedoresCota) {
-					
-					System.out.println(fornecedorCota.getId());
-				}
 								
 				if (!obterCotas &&
 						(fornecedoresCota == null

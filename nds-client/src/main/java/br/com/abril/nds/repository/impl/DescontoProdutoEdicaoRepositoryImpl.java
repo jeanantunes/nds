@@ -67,6 +67,15 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Cota cota) {
+		
+		return obterDescontoProdutoEdicaoCotaFornecedor(null, cota);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota) {
 		
 		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota);
@@ -95,9 +104,13 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicao.class);
 		
-		criteria.add(Restrictions.eq("fornecedor", fornecedor));
+		if (fornecedor != null) {
+			
+			criteria.add(Restrictions.eq("fornecedor", fornecedor));
+		}
 		
-		if(cota!= null){
+		if (cota!= null) {
+			
 			criteria.add(Restrictions.eq("cota", cota));
 		}
 		
@@ -111,7 +124,8 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		criteria.add(Restrictions.eq("fornecedor", fornecedor));
 
-		if(cota!= null){
+		if (cota!= null) {
+			
 			criteria.add(Restrictions.eq("cota", cota));
 		}
 		
