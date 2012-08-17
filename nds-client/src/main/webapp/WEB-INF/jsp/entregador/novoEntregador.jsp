@@ -9,13 +9,13 @@
 				<a href="#dadosCadastrais" id="linkDadosCadastrais">Dados Cadastrais</a>
 			</li>
 			<li>
-				<a href="#manutencaoEnderecos" onclick="ENDERECO_ENTREGADOR.popularGridEnderecos()">Endereços</a>
+				<a href="#manutencaoEnderecos" id="linkEndereco">Endereços</a>
 			</li>
 			<li>
-				<a href="#manutencaoTelefones" onclick="ENTREGADOR.carregarTelefones()">Telefones</a>
+				<a href="#manutencaoTelefones" id="linkTelefone">Telefones</a>
 			</li>
 			<li>
-				<a href="#cotas" id="linkCotas" onclick="pesquisarCotas();">Cotas</a>
+				<a href="#cotas" id="linkCotas">Cotas</a>
 			</li>
 		</ul>
 

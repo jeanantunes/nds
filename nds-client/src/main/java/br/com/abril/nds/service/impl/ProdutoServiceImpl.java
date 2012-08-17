@@ -187,7 +187,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 			produto.setTipoProduto(tipoProduto);
 			
 			produto.setPeriodicidade(PeriodicidadeProduto.QUINZENAL);
-			produto.setPeso(BigDecimal.TEN);
+			produto.setPeso(new Long(10));
 
 			produto = this.produtoRepository.merge(produto);
 			

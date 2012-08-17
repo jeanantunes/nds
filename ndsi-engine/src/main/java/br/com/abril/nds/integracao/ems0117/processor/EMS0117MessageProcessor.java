@@ -181,13 +181,13 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			cota.setPossuiContrato(false);
 
 			if ("1".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
-
-			} else if ("2".equals(input.getSituacaoCota())) {
 				cota.setSituacaoCadastro(SituacaoCadastro.ATIVO);
 
-			} else if ("3".equals(input.getSituacaoCota())) {
+			} else if ("2".equals(input.getSituacaoCota())) {
 				cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
+
+			} else if ("3".equals(input.getSituacaoCota())) {
+				cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
 
 			} else if ("4".equals(input.getSituacaoCota())) {
 				cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);

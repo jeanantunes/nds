@@ -5,16 +5,31 @@
                     
                     <table width="300" border="0" cellspacing="1" cellpadding="1">
                       <tr>
-                        <td width="20"><input type="radio" name="diferenciada" id="radio" value="radio" onchange="tipoCota();" /></td>
+                        <td width="20">
+                        
+<!-- Radio Tipo Cota -->                        
+<input type="radio" name="diferenciada" id="radioTipoCota" onclick="selecionarPorTipoCota();" />
+
+						</td>
                         <td width="56">Tipo Cota</td>
-                        <td width="214"><select name="select" id="select" style="width:120px; display:none;" class="TipoCota">
-                          <option selected="selected">Selecione...</option>
-                          <option>Convecional</option>
-                          <option>Alternativo</option>
-                        </select></td>
+                        <td width="214">
+                        
+<!-- Combo Tipo Cota -->                        
+<select id="comboTipoCota" onchange="OD.carregarTipoCota();" name="select" id="select" style="width:121px; display:none;" class="selecionarCotas">
+   <option selected="selected">Selecione...</option>
+   <option value="CONVENCIONAL">Convecional</option>
+   <option value="ALTERNATIVO">Alternativo</option>
+</select>
+
+					</td>
                       </tr>
                       <tr>
-                        <td><input type="radio" name="diferenciada" id="radio2" value="radio2" onchange="municipios();" /></td>
+                        <td>
+                        
+<!-- Radio Municipios -->                        
+<input type="radio" name="diferenciada" id="radioMunicipios" onclick="OD.carregarMunicipios();" />
+						
+						</td>
                         <td>Municipio</td>
                         <td>&nbsp;</td>
                       </tr>
@@ -50,3 +65,83 @@
             	</fieldset>
             </div>
 </div>
+
+<script>
+
+	function selecionarPorTipoCota() {
+		
+		$('.selecionarCotas').hide();
+		$('.selecionarMunicipio').hide();
+		$('#comboTipoCota').show();
+	}
+	
+	$(".selMunicipiosGrid").flexigrid({
+			autoload : false,
+			url : contextPath + '/administracao/parametrosDistribuidor/obterMunicipios',
+			dataType : 'json',
+			preProcess: OD.processaMunicipios,
+			colModel : [ {
+				display : 'Municipio',
+				name : 'municipio',
+				width : 525,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Qtde Cotas',
+				name : 'qtdeCotas',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : '',
+				name : 'sel',
+				width : 20,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 700,
+			height : 150
+		});
+	
+	
+	$(".selCotasGrid").flexigrid({
+			autoload : false,
+			url : contextPath + '/administracao/parametrosDistribuidor/obterCotas',
+			dataType : 'json',
+			preProcess: OD.processaCotas,
+			colModel : [ {
+				display : 'Cota',
+				name : 'cota',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 160,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Município',
+				name : 'municipio',
+				width : 90,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Endereço',
+				name : 'endereco',
+				width : 300,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : '',
+				name : 'sel',
+				width : 20,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 700,
+			height : 150
+		});
+	
+</script>

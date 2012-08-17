@@ -25,7 +25,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private int pacotePadrao;
 	private int peb;
 	private BigDecimal precoCusto;
-	private BigDecimal peso;
+	private Long peso;
 	private String codigoProduto;
 	private String nomeProduto;
 	
@@ -148,10 +148,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setPrecoCusto(BigDecimal precoCusto) {
 		this.precoCusto = precoCusto;
 	}
-	public BigDecimal getPeso() {
+	public Long getPeso() {
 		return peso;
 	}
-	public void setPeso(BigDecimal peso) {
+	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
 	public String getCodigoProduto() {

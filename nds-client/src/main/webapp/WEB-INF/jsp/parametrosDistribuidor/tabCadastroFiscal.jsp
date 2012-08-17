@@ -33,7 +33,7 @@
 			<tr>
 				<td>Logo:</td>
 				<td>
-					<input type="file" name="logo" id="logo" onchange="salvarLogo();" />
+					<input type="file" name="logo" id="logo" onchange="parametrosDistribuidorController.salvarLogo();" />
 				</td>
 			</tr>
 			<tr>

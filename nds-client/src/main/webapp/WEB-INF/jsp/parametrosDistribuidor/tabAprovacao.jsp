@@ -65,8 +65,7 @@
 		<legend>Aviso Prévio para Validade de Garantia</legend>
 		<table width="280" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-				<td width="240">Aviso prévio para vencimento de garantias
-					(dias).</td>
+				<td width="240">Aviso prévio para vencimento de garantias (dias).</td>
 				<td width="40"><input
 					name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia"
 					type="text" id="prazoAvisoPrevioValidadeGarantia"
