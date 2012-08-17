@@ -57,7 +57,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			throw new RuntimeException("Produto não encontrado.");
 		}
 		
-		NotaFiscalEntrada notafiscalEntrada = obterNotaFiscal(input.getNotaFiscal().toString());
+		NotaFiscalEntrada notafiscalEntrada = obterNotaFiscal(input.getNotaFiscal());
 		
 		if(notafiscalEntrada == null){
 			salvarNotaFiscalEntrada(input, produtoEdicao);			
@@ -73,17 +73,11 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
 		
-		Date dataEmissao = new Date(input.getDataEmissao().longValue());
-		notaFiscalEntradaFornecedor.setDataEmissao(dataEmissao);
-		
+		notaFiscalEntradaFornecedor.setDataEmissao(input.getDataEmissao());		
 		notaFiscalEntradaFornecedor.setNumero(input.getNotaFiscal().longValue());
-		notaFiscalEntradaFornecedor.setSerie(input.getSerieNotaFiscal().toString());
-		
-		Date dataExpedicao = new Date(input.getDataLancamento().longValue());
-		notaFiscalEntradaFornecedor.setDataExpedicao(dataExpedicao);
-		
-		notaFiscalEntradaFornecedor.setChaveAcesso(input.getChaveAcessoNF());
-		
+		notaFiscalEntradaFornecedor.setSerie(input.getSerieNotaFiscal().toString());		
+		notaFiscalEntradaFornecedor.setDataExpedicao(input.getDataLancamento());		
+		notaFiscalEntradaFornecedor.setChaveAcesso(input.getChaveAcessoNF());		
 		notaFiscalEntradaFornecedor.setCfop(obterCFOP());
 		notaFiscalEntradaFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalEntradaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
@@ -158,7 +152,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
-	private NotaFiscalEntrada obterNotaFiscal(String numero) {
+	private NotaFiscalEntrada obterNotaFiscal(Long numero) {
 		String hql = "from NotaFiscalEntrada nf where nf.numero = :numero ";
 		Query query = super.getSession().createQuery(hql);
 		query.setParameter("numero", numero);
@@ -218,7 +212,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private void validarDistribuidor(Message message, EMS0135Input input) {
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
-		if(!distribuidor.getId().equals(input.getDistribuidor())){			
+		if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getDistribuidor().toString())){			
 		
 			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código do distribuidor do arquivo não é o mesmo do arquivo.");
 

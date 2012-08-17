@@ -821,7 +821,7 @@ public class DataLoader {
 	private static InterfaceExecucao interfaceEMS0131;
 	private static InterfaceExecucao interfaceEMS0132;
 	private static InterfaceExecucao interfaceEMS0133;
-//	private static InterfaceExecucao interfaceEMS0134;
+	private static InterfaceExecucao interfaceEMS0135;
 	private static InterfaceExecucao interfaceEMS0185;
 	private static InterfaceExecucao interfaceEMS0197;
 	private static InterfaceExecucao interfaceEMS0198;
@@ -4386,6 +4386,7 @@ public class DataLoader {
 		distribuidor.setPrazoFollowUp(50);
 		distribuidor.setValorConsignadoSuspensaoCotas(new BigDecimal(9999999));
 		distribuidor.setQtdDiasLimiteParaReprogLancamento(2);
+		distribuidor.setCodigoDistribuidorDinap("6248116");
 
 		save(session, distribuidor);
 
@@ -10717,7 +10718,7 @@ public class DataLoader {
 		interfaceEMS0131 = Fixture.criarInterfaceExecucao(131L, "EMS0131");
 		interfaceEMS0132 = Fixture.criarInterfaceExecucao(132L, "EMS0132");
 		interfaceEMS0133 = Fixture.criarInterfaceExecucao(133L, "EMS0133");
-//		interfaceEMS0134 = Fixture.criarInterfaceExecucao(134L, "EMS0134");
+		interfaceEMS0135 = Fixture.criarInterfaceExecucao(135L, "EMS0135");
 		interfaceEMS0185 = Fixture.criarInterfaceExecucao(185L, "EMS0185");
 		interfaceEMS0197 = Fixture.criarInterfaceExecucao(197L, "EMS0197");
 		interfaceEMS0198 = Fixture.criarInterfaceExecucao(198L, "EMS0198");

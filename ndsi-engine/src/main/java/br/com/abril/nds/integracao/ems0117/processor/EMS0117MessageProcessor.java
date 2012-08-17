@@ -179,19 +179,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			cota.setInicioAtividade(new Date());
 			cota.setNumeroCota(input.getCodCota());
 			cota.setPossuiContrato(false);
-
-			if ("1".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.ATIVO);
-
-			} else if ("2".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
-
-			} else if ("3".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
-
-			} else if ("4".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);
-			}
+						
+			setSituacaoCadastro(input, cota);
 
 			cota.setSugereSuspensao(true);
 			cota.setBox(box);
@@ -272,19 +261,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			cota.setInicioAtividade(new Date());
 			cota.setNumeroCota(input.getCodCota());
 			cota.setPossuiContrato(false);
-
-			if ("1".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
-
-			} else if ("2".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.ATIVO);
-
-			} else if ("3".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
-
-			} else if ("4".equals(input.getSituacaoCota())) {
-				cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);
-			}
+			
+			setSituacaoCadastro(input, cota);
 
 			cota.setSugereSuspensao(true);
 			cota.setBox(box);
@@ -486,6 +464,21 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						"O arquivo nao contem dados de telefone para a cota "
 								+ cota.getNumeroCota());
 			}
+		}
+	}
+
+	private void setSituacaoCadastro(EMS0117Input input, Cota cota) {
+		if ("1".equals(input.getSituacaoCota())) {
+			cota.setSituacaoCadastro(SituacaoCadastro.ATIVO);
+
+		} else if ("2".equals(input.getSituacaoCota())) {
+			cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
+
+		} else if ("3".equals(input.getSituacaoCota())) {
+			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
+
+		} else if ("4".equals(input.getSituacaoCota())) {
+			cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);
 		}
 	}
 }
