@@ -43,7 +43,7 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
 	List<DescontoProdutoEdicao> obterDescontoProdutoEdicaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota);
 	
 	/**
-	 * Busca o desconto de um produto edição.
+	 * Obtém o desconto de um produto edição.
 	 * 
 	 * @param fornecedor - fornecedor
 	 * @param cota - cota
@@ -80,5 +80,14 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
 	 * @return {@link Set} de {@link DescontoProdutoEdicao}
 	 */
 	Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Cota cota);
+	
+	/**
+	 * Obtém descontos do produto edição.
+	 * 
+	 * @param produtoEdicao - produto edição
+	 * 
+	 * @return {@link Set} de {@link DescontoProdutoEdicao}
+	 */
+	Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao);
 	
 }
