@@ -58,28 +58,66 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor) {
 
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, null);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota) {
+		
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<DescontoProdutoEdicao> obterDescontoProdutoEdicaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor) {
+		
+		return obterDescontoSemTipoDesconto(tipoDesconto, fornecedor, null);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<DescontoProdutoEdicao> obterDescontoProdutoEdicaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
+		
+		return obterDescontoSemTipoDesconto(tipoDesconto, fornecedor, cota);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Set<DescontoProdutoEdicao> obterDescontoProdutoEdicaoCotaFornecedor(Fornecedor fornecedor, Cota cota){
+		
 		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicao.class);
 		
 		criteria.add(Restrictions.eq("fornecedor", fornecedor));
 		
+		if(cota!= null){
+			criteria.add(Restrictions.eq("cota", cota));
+		}
+		
 		return new HashSet<DescontoProdutoEdicao>(criteria.list());
 	}
+	
+	@SuppressWarnings("unchecked")
+	private List<DescontoProdutoEdicao> obterDescontoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota){
+		
+		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicao.class);
+		
+		criteria.add(Restrictions.eq("fornecedor", fornecedor));
 
-	@Override
-	public List<DescontoProdutoEdicao> buscarDescontoProdutoEdicaoNotInTipoDesconto(
-			TipoDesconto tipoDesconto, Fornecedor fornecedor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<DescontoProdutoEdicao> buscarDescontoProdutoEdicaoNotInTipoDesconto(
-			TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
-		// TODO Auto-generated method stub
-		return null;
+		if(cota!= null){
+			criteria.add(Restrictions.eq("cota", cota));
+		}
+		
+		criteria.add(Restrictions.not(Restrictions.eq("tipoDesconto", tipoDesconto)));
+	
+		return criteria.list();
 	}
 
 }

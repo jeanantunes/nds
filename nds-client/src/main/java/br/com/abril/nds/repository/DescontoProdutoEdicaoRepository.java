@@ -17,11 +17,30 @@ import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
  */
 public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProdutoEdicao, Long>{
 
-	List<DescontoProdutoEdicao> buscarDescontoProdutoEdicaoNotInTipoDesconto(
-			TipoDesconto tipoDesconto, Fornecedor fornecedor);
-
-	List<DescontoProdutoEdicao> buscarDescontoProdutoEdicaoNotInTipoDesconto(
-			TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota);
+	/**
+	 * Obtém descontos de produto edição diferentes do tipo de desconto informado.
+	 * 
+	 * @param tipoDesconto - tipo de desconto
+	 * 
+	 * @param fornecedor - fornecedor
+	 * 
+	 * @return {@link List} {@link DescontoProdutoEdicao}
+	 */
+	List<DescontoProdutoEdicao> obterDescontoProdutoEdicaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor);
+	
+	/**
+	 * Obtém descontos de produto edição diferentes do tipo de desconto informado.
+	 * 
+	 * 
+	 * @param tipoDesconto - tipo de desconto
+	 * 
+	 * @param fornecedor - fornecedor
+	 * 
+	 * @param cota - cota
+	 * 
+	 * @return {@link List} {@link DescontoProdutoEdicao}
+	 */
+	List<DescontoProdutoEdicao> obterDescontoProdutoEdicaoSemTipoDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota);
 	
 	/**
 	 * Busca o desconto de um produto edição.
@@ -42,4 +61,15 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
 	 * @return {@link Set} de {@link DescontoProdutoEdicao}
 	 */
 	Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor);
+	
+	/**
+	 * Obtém desconto de produto edição de um fornecedor.
+	 * 
+	 * @param fornecedor - fornecedor
+	 * 
+	 * @param cota - cota
+	 * 
+	 * @return {@link Set} de {@link DescontoProdutoEdicao}
+	 */
+	Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota);
 }
