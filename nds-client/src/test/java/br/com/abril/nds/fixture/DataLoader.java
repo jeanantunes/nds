@@ -1006,8 +1006,6 @@ public class DataLoader {
 
 		gerarLogradouros(session);
 
-		gerarAdministrador(session); 
-		
 		//criarNovaNotaFiscal(session);
 		
 		gerarDescontoDistribuidorParaFornecedor(session);
@@ -1137,9 +1135,12 @@ public class DataLoader {
 		criarTiposNotaFiscal(session);
 		
 		criarFeriado(session);		
+		
+		criarUsuarioAdministrador(session); 
+		
 	}
 
-	private static void gerarAdministrador(Session session) {
+	private static void criarUsuarioAdministrador(Session session) {
 
 		GrupoPermissao grupoAdmin = new GrupoPermissao();
 		grupoAdmin.setNome("ADMIN");

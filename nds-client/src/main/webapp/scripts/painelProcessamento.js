@@ -1,10 +1,4 @@
-var contextPath;
-
-$(function() {
-	$( "#tabPainel" ).tabs();
-});
-
-var painelProcessamentoController = {
+var painelProcessamentoController = $.extend(true, {
 	init : function(path) {
 		this.contextPath = path;
 		this.initGridDetalheInterfaceGrid();
@@ -13,9 +7,10 @@ var painelProcessamentoController = {
 		this.initGridPainelProcessamentoGrid();
 		this.pesquisarInterfaces();
 		this.bindButtonsInterfaces();
+		$( "#tabPainel", painelProcessamentoController.workspace ).tabs();
 	},
 	initGridDetalheInterfaceGrid : function() {
-		$(".detalheInterfaceGrid").flexigrid({
+		$(".detalheInterfaceGrid", painelProcessamentoController.workspace).flexigrid({
 			preProcess : painelProcessamentoController.executarPreInterface,
 			dataType : 'json',
 			colModel : [ {
@@ -48,7 +43,7 @@ var painelProcessamentoController = {
 		});
 	},
 	initGridDetalheProcessamentoGrid : function() {
-		$(".detalheProcessamentoGrid").flexigrid({
+		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexigrid({
 			preProcess : painelProcessamentoController.executarPreInterfaceProcessamento,
 			dataType : 'json',
 			colModel : [ {
@@ -81,7 +76,7 @@ var painelProcessamentoController = {
 		});
 	},
 	initGridPainelProcessamentoGrid : function() {
-		$(".painelProcessamentoGrid").flexigrid({
+		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexigrid({
 			preProcess : painelProcessamentoController.executarPreProcessamentoGrid,
 			dataType : 'json',
 			colModel : [ {
@@ -120,7 +115,7 @@ var painelProcessamentoController = {
 		});
 	},
 	initGridPainelInterfaceGrid : function() {
-		$(".painelInterfaceGrid").flexigrid({
+		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexigrid({
 			preProcess: painelProcessamentoController.executarPreProcessamentoInterfaceGrid,
 			dataType : 'json',
 			colModel : [ {
@@ -171,7 +166,7 @@ var painelProcessamentoController = {
 		});
 	},
 	popup : function() {
-		$( "#dialog-novo" ).dialog({
+		$( "#dialog-novo", painelProcessamentoController.workspace ).dialog({
 			resizable: false,
 			height:430,
 			width:750,
@@ -180,11 +175,12 @@ var painelProcessamentoController = {
 				"Fechar": function() {
 					$( this ).dialog( "close" );					
 				}
-			}
+			},
+			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 	},
 	popup_detalhes : function() {
-		$( "#dialog-detalhes" ).dialog({
+		$( "#dialog-detalhes", painelProcessamentoController.workspace ).dialog({
 			resizable: false,
 			height:430,
 			width:750,
@@ -193,11 +189,12 @@ var painelProcessamentoController = {
 				"Fechar": function() {
 					$( this ).dialog( "close" );					
 				}
-			}
+			},
+			form: $("#dialog-detalhes", this.workspace).parents("form")
 		});
 	},
 	popup_sistema : function() {
-		$( "#dialog-operacional" ).dialog({
+		$( "#dialog-operacional", painelProcessamentoController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
 			width:400,
@@ -206,26 +203,27 @@ var painelProcessamentoController = {
 				"Fechar": function() {
 					$( this ).dialog( "close" );					
 				}
-			}
+			},
+			form: $("#dialog-operacional", this.workspace).parents("form")
 		});
 	},
 	pesquisarInterfaces : function() {
 		painelProcessamentoController.bindButtonsInterfaces();
-		$(".painelInterfaceGrid").flexOptions({
+		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
 			url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
 			params: [],
 			newp: 1,
 		});
-		$(".painelInterfaceGrid").flexReload();
+		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 	},
 	pesquisarProcessos : function() {
 		painelProcessamentoController.bindButtonsProcessos();
-		$(".painelProcessamentoGrid").flexOptions({
+		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
 			url : contextPath + '/administracao/painelProcessamento/pesquisarProcessos',
 			params: [],
 			newp : 1,
 		});
-		$(".painelProcessamentoGrid").flexReload();
+		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
 	},
 	executarPreProcessamentoInterfaceGrid : function(resultado) {
 		
@@ -259,7 +257,7 @@ var painelProcessamentoController = {
 		return resultado;
 	},
 	abrirPopUpDetalhesInterface : function(idLogProcessamento) {
-		$(".detalheInterfaceGrid").flexOptions({
+		$(".detalheInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
 			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterface',
 			params: [
 		         {name:'idLogProcessamento', value: idLogProcessamento}
@@ -267,13 +265,13 @@ var painelProcessamentoController = {
 		    newp: 1,
 		});
 		
-		$(".detalheInterfaceGrid").flexReload();
+		$(".detalheInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 		painelProcessamentoController.popup_detalhes();			
 	},
 	executarPreInterface : function (resultado) {
 
 		if (resultado.mensagens) {
-			$("#dialog-detalhes").dialog("close");
+			$("#dialog-detalhes", painelProcessamentoController.workspace).dialog("close");
 			exibirMensagem(
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
@@ -286,7 +284,7 @@ var painelProcessamentoController = {
 	executarPreInterfaceProcessamento : function(resultado) {
 
 		if (resultado.mensagens) {
-			$("#dialog-novo").dialog("close");
+			$("#dialog-novo", painelProcessamentoController.workspace).dialog("close");
 			exibirMensagem(
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
@@ -301,7 +299,7 @@ var painelProcessamentoController = {
 		return resultado;
 	},
 	abrirPopUpDetalhesInterfaceProcessamento : function(idLogProcessamento) {
-		$(".detalheProcessamentoGrid").flexOptions({
+		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
 			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterfaceProcessamento',
 			params: [
 		         {name:'idLogProcessamento', value: idLogProcessamento}
@@ -309,7 +307,7 @@ var painelProcessamentoController = {
 		    newp: 1,
 		});
 		
-		$(".detalheProcessamentoGrid").flexReload();
+		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
 		painelProcessamentoController.popup();			
 	},
 	executarPreProcessamentoGrid : function(resultado) {
@@ -339,7 +337,7 @@ var painelProcessamentoController = {
 		$.postJSON(contextPath + "/administracao/painelProcessamento/buscarEstadoOperacional",
 				null,
 				function(result) {
-					$("#statusSistemaOperacional").text(result);
+					$("#statusSistemaOperacional", painelProcessamentoController.workspace).text(result);
 				},
 				null,
 				true);
@@ -347,18 +345,18 @@ var painelProcessamentoController = {
 		painelProcessamentoController.popup_sistema();
 	},
 	bindButtonsInterfaces : function() {
-		$("#btnGerarXLS").click(function() {
+		$("#btnGerarXLS", painelProcessamentoController.workspace).click(function() {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=XLS&tipoRelatorio=1";
 		});
-		$("#btnGerarPDF").click(function() {
+		$("#btnGerarPDF", painelProcessamentoController.workspace).click(function() {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=PDF&tipoRelatorio=1";
 		});	
 	},
 	bindButtonsProcessos : function() {
-		$("#btnGerarXLS").click(function() {
+		$("#btnGerarXLS", painelProcessamentoController.workspace).click(function() {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=XLS&tipoRelatorio=2";
 		});
-		$("#btnGerarPDF").click(function() {
+		$("#btnGerarPDF", painelProcessamentoController.workspace).click(function() {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=PDF&tipoRelatorio=2";
 		});
 	},
@@ -372,4 +370,4 @@ var painelProcessamentoController = {
 				   });
 	}
 
-};
+}, BaseController);
