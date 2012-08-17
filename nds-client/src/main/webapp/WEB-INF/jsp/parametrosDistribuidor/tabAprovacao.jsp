@@ -6,7 +6,7 @@
 				<td width="23"><input
 					name="parametrosDistribuidor.utilizaControleAprovacao"
 					id="utilizaControleAprovacao" type="checkbox" ${parametrosDistribuidor.utilizaControleAprovacao ? "checked" : ""} 
-					onclick="alternarControleAprovacao();" /></td>
+					onclick="parametrosDistribuidorController.alternarControleAprovacao();" /></td>
 				<td width="190">Utiliza Controle de Aprovação?</td>
 				<td width="20">&nbsp;</td>
 				<td width="178">&nbsp;</td>

@@ -27,26 +27,3 @@
 		</table>
 	</fieldset>
 </div>
-
-
-<script>
-	
-function dialogConfirmarGrupo() {
-			 
-			$( "#dialog-salvar" ).dialog({
-				resizable: false,
-				height:'auto',
-				width:350,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						OD.confirmarGrupo();
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		 }
-</script>
