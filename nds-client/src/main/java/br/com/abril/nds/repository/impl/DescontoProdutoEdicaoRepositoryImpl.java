@@ -60,7 +60,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor) {
 
-		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, null);
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, null, null);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Cota cota) {
 		
-		return obterDescontoProdutoEdicaoCotaFornecedor(null, cota);
+		return obterDescontoProdutoEdicaoCotaFornecedor(null, cota, null);
 	}
 	
 	/**
@@ -78,7 +78,16 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota) {
 		
-		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota);
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, null);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		
+		return obterDescontoProdutoEdicaoCotaFornecedor(null, null, produtoEdicao);
 	}
 
 	/**
@@ -100,7 +109,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Set<DescontoProdutoEdicao> obterDescontoProdutoEdicaoCotaFornecedor(Fornecedor fornecedor, Cota cota){
+	private Set<DescontoProdutoEdicao> obterDescontoProdutoEdicaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao){
 		
 		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicao.class);
 		
@@ -109,9 +118,14 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 			criteria.add(Restrictions.eq("fornecedor", fornecedor));
 		}
 		
-		if (cota!= null) {
+		if (cota != null) {
 			
 			criteria.add(Restrictions.eq("cota", cota));
+		}
+		
+		if (produtoEdicao != null) {
+			
+			criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
 		}
 		
 		return new HashSet<DescontoProdutoEdicao>(criteria.list());

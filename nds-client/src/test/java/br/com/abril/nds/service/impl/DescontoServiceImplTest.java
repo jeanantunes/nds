@@ -53,6 +53,8 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 	
 	private Cota cotaJoao;
 	
+	private ProdutoEdicao produtoEdicaoVeja;
+	
 	@Before
 	public void setUp() {
 		
@@ -122,13 +124,13 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		save(produtoVeja);
 		
-		ProdutoEdicao produtoEdicaoVeja = 
+		this.produtoEdicaoVeja = 
 			Fixture.produtoEdicao("1", 1L, 10, 14, new Long(100), 
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
 		
-		save(produtoEdicaoVeja);
+		save(this.produtoEdicaoVeja);
 		
-		this.produtos.add(produtoEdicaoVeja);
+		this.produtos.add(this.produtoEdicaoVeja);
 		
 		// COTAS
 		
@@ -212,6 +214,43 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		BigDecimal valorDesconto = BigDecimal.TEN;
 
 		this.descontoService.processarDescontoProduto(this.produtos, this.cotas, valorDesconto);
+		
+		this.processarDescontoProduto(this.produtos, valorDesconto);
+	}
+	
+	@Test
+	public void processarDescontoUnicoProduto() {
+		
+		BigDecimal valorDesconto = BigDecimal.TEN;
+
+		this.descontoService.processarDescontoProduto(this.produtoEdicaoVeja, valorDesconto);
+		
+		Set<ProdutoEdicao> produtos = new HashSet<ProdutoEdicao>();
+		
+		produtos.add(this.produtoEdicaoVeja);
+		
+		this.processarDescontoProduto(produtos, valorDesconto);
+	}
+	
+	private void processarDescontoProduto(Set<ProdutoEdicao> produtos,
+										  BigDecimal valorDesconto) {
+	
+		for (ProdutoEdicao produto : produtos) {
+		
+			Set<DescontoProdutoEdicao> descontosProdutoEdicao = 
+				this.descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(produto);
+			
+			Assert.assertNotNull(descontosProdutoEdicao);
+			
+			int tamanhoEsperado = this.fornecedores.size() * this.cotas.size();
+			
+			Assert.assertEquals(tamanhoEsperado, descontosProdutoEdicao.size());
+			
+			for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
+				
+				Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+			}
+		}
 	}
 	
 	private void processarDescontoCota(Set<Fornecedor> fornecedores, 
@@ -242,7 +281,7 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 			
 			Assert.assertNotNull(descontosProdutoEdicao);
 			
-			int tamanhoEsperado = 2;
+			int tamanhoEsperado = this.cotas.size();
 			
 			Assert.assertEquals(tamanhoEsperado, descontosProdutoEdicao.size());
 			
