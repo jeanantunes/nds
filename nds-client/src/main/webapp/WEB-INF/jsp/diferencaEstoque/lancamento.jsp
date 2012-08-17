@@ -2,9 +2,13 @@
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+
 	<script language="javascript" type="text/javascript">
 
 		var pesquisaProdutoLancamentoFaltasSobras = new PesquisaProduto();
+		
+		var pesquisaCotaLancamentoFaltasSobras = new PesquisaCota();
 	
 		function verificarExistenciaEstudo(idDiferenca) {
 
@@ -353,8 +357,6 @@
 	</script>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	
 	<style type="text/css">
 		fieldset label {
