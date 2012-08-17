@@ -1,14 +1,3 @@
-<script type="text/javascript">
-$(function() {
-	
-	$("select[name='selectDesconto']").multiSelect("select[name='selectTipoDesconto']", {trigger: "#linkDescontoVoltarTodos"});
-	
-	$("select[name='selectTipoDesconto']").multiSelect("select[name='selectDesconto']", {trigger: "#linkDescontoEnviarTodos"});
-	
-});
-
-</script>
-
 <table width="597" cellspacing="2" cellpadding="2" border="0" align="center">
   <tbody>
   	<tr class="especialidades">
