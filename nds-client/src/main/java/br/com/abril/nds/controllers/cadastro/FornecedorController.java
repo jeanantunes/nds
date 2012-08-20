@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoFornecedorService;
@@ -102,16 +103,18 @@ public class FornecedorController {
 		
 		filtroConsultaFornecedor = prepararFiltroFornecedor(filtroConsultaFornecedor, page, sortname, sortorder, rp);
 		
-		List<FornecedorDTO> listaFornecedores = 
-				this.fornecedorService.obterFornecedoresPorFiltro(filtroConsultaFornecedor);
 		
-		if (listaFornecedores == null) {
+		
+		Long quantidadeRegistros =
+				this.fornecedorService.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);		
+		
+		if (quantidadeRegistros <=0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 
-		Long quantidadeRegistros =
-				this.fornecedorService.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);
+		List<FornecedorDTO> listaFornecedores = 
+				this.fornecedorService.obterFornecedoresPorFiltro(filtroConsultaFornecedor);
 		
 		TableModel<CellModelKeyValue<FornecedorDTO>> tableModel = obterTableModelFornecedores(listaFornecedores);
 		
@@ -144,7 +147,7 @@ public class FornecedorController {
 		
 		Fornecedor fornecedor = criarFornecedor(fornecedorDTO);
 		
-		String mensagemSucesso = "Cadastro realizado com sucesso.";
+		String mensagemSucesso;
 		
 		if (fornecedorDTO.getIdFornecedor() != null) {
 			
@@ -157,6 +160,8 @@ public class FornecedorController {
 			fornecedor.setSituacaoCadastro(SituacaoCadastro.ATIVO);
 			
 			this.fornecedorService.salvarFornecedor(fornecedor);
+			
+			mensagemSucesso = "Cadastro realizado com sucesso.";
 		}
 		
 		processarEnderecosFornecedor(fornecedor.getId());
@@ -169,7 +174,7 @@ public class FornecedorController {
 	@Post
 	public void obterPessoaJuridica(String cnpj) {
 		
-		cnpj = cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
+		cnpj = Util.removerMascaraCnpj( cnpj);
 		
 		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(cnpj);
 		
@@ -225,8 +230,7 @@ public class FornecedorController {
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
-		
-		this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(new Date()), "result").serialize();
+		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", this.fornecedorService.obterMaxCodigoInterface() + 1).serialize();
 	}
 	
 	private void obterTiposFornecedor() {
@@ -466,13 +470,13 @@ public class FornecedorController {
 	
 	private Fornecedor criarFornecedor(FornecedorDTO fornecedorDTO) {
 		
-		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(fornecedorDTO.getCnpj());
+		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(Util.removerMascaraCnpj( fornecedorDTO.getCnpj()));
 		
 		if (pessoaJuridica == null) {
 			
 			pessoaJuridica = new PessoaJuridica();
 			
-			pessoaJuridica.setCnpj(fornecedorDTO.getCnpj());
+			pessoaJuridica.setCnpj(Util.removerMascaraCnpj( fornecedorDTO.getCnpj()));
 		}
 		
 		pessoaJuridica.setEmail(fornecedorDTO.getEmail());

@@ -594,5 +594,17 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public List<Fornecedor> obterFornecedoresPorId(List<Long> idsFornecedores) {
 		return fornecedorRepository.obterFornecedoresPorId(idsFornecedores);
 	}
+
+	/**
+	 * @return
+	 * @see br.com.abril.nds.repository.FornecedorRepository#obterMaxCodigoInterface()
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Integer obterMaxCodigoInterface() {
+		return fornecedorRepository.obterMaxCodigoInterface();
+	}
+	
+	
 }
 
