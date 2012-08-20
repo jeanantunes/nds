@@ -29,5 +29,5 @@ public interface DescontoComponent {
 	 * @param produtos - produtos candidatos a receberer o desconto
 	 * @return Set<ProdutoEdicao> - produtos que receberão desconto
 	 */
-	Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Set<ProdutoEdicao> produtos);
+	Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Cota cota,Set<ProdutoEdicao> produtos);
 }
