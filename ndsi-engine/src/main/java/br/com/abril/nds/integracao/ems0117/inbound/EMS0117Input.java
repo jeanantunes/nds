@@ -35,7 +35,7 @@ public class EMS0117Input implements Serializable {
 	private String repartePDV;
 	private String cpfCNPJ;
 	private String tipoPessoa;
-	private Integer numLogradouro;
+	private String numLogradouro;
 	private Integer codCidadeIbge;
 	private String inscrEstadual;
 	private String inscrMunicipal;
@@ -203,11 +203,11 @@ public class EMS0117Input implements Serializable {
 	}
 	
 	@Field(offset = 152, length = 6)
-	public Integer getNumLogradouro() {
+	public String getNumLogradouro() {
 		return numLogradouro;
 	}
 	
-	public void setNumLogradouro(Integer numLogradouro) {
+	public void setNumLogradouro(String numLogradouro) {
 		this.numLogradouro = numLogradouro;
 	}
 	
