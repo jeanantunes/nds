@@ -1,15 +1,4 @@
 
-<script type="text/javascript">
-$(function() {
-
-	$("select[name='selectFluxoSecundario']").multiSelect("select[name='selecTipoGeradorFluxo']", {trigger: "#linkFluxoVoltarTodos"});
-	
-	$("select[name='selecTipoGeradorFluxo']").multiSelect("select[name='selectFluxoSecundario']", {trigger: "#linkFluxoEnviarTodos"});
-	
-});
-
-</script>
-
 <fieldset>
 	<legend>Gerador de Fluxo</legend>
     <table width="620" border="0" align="center" cellpadding="2" cellspacing="2">
