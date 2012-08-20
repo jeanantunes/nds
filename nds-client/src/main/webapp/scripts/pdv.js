@@ -646,8 +646,6 @@ var PDV =  $.extend(true, {
 							$.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal", 
 									data, 
 									function(result){
-								
-										debugger;
 										
 										if (result){
 											
@@ -707,7 +705,7 @@ var PDV =  $.extend(true, {
 					return PDV.fecharModalCadastroPDV;
 					
 				},
-				form: $("#dialog-pdv", this.workspace).parents("form")
+				form: $("#workspaceCota", this.workspace)	
 			});
 
 		},
@@ -764,7 +762,7 @@ var PDV =  $.extend(true, {
 				beforeClose: function() {	
 					clearMessageDialogTimeout();
 				},
-				form: $("#dialog-img", this.workspace).parents("form")
+				form: $("#workspaceCota", this.workspace)
 			});
 
 		},

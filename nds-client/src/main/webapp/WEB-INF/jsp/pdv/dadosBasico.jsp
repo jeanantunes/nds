@@ -1,6 +1,6 @@
 <input  TYPE="hidden" id="dataAtual" value="${dataAtual}">
 
-<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formBaixaAutomatica"
+<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formUploadPDV"
 		  method="post" enctype="multipart/form-data" >
 		
 	

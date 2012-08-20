@@ -21,8 +21,8 @@
 	</div>
 </form>
 
-<form id="idFormPDVDadosEdicao">
-	<div id="dialog-pdv" title="PDV Cota">
+
+<div id="dialog-pdv" title="PDV Cota">
 		
 		<jsp:include page="../messagesDialog.jsp">
 			
@@ -57,8 +57,7 @@
 			  <br clear="all" />
 		</div>
 		
-	</div>
-</form>
+</div>
 
 <form id="idFormPDVConfirmarPP">
 	<div id="dialog-confirmaPontoPrincipal" title="Ponto Principal" style="display: none;">
