@@ -471,10 +471,9 @@ public class DescontoServiceImpl implements DescontoService {
 					continue;
 				}
 				
-				
 				produtosParaDesconto = 
-						this.descontoComponent.filtrarProdutosPassiveisDeDesconto(
-							tipoDesconto, fornecedor,cota ,produtosParaDesconto);
+					this.descontoComponent.filtrarProdutosPassiveisDeDesconto(
+						tipoDesconto, fornecedor,cota ,produtosParaDesconto);
 				
 				this.descontoComponent.persistirDesconto(
 					tipoDesconto, fornecedor, cota, produtosParaDesconto, valorDesconto);
