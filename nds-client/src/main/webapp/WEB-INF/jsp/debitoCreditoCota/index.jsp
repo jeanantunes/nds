@@ -1,10 +1,12 @@
 <head>
 
 	<title>NDS - Novo Distrib</title>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 <script>
+
+	var pesquisaCotaDebitoCreditoCota = new PesquisaCota();
 
 	function processarResultadoConsultaDebitosCreditos(data) {
 		
@@ -697,7 +699,7 @@
        		    maxlength="11"
        		    style="width:80px; 
        		    float:left; margin-right:5px;"
-       		    onchange="cota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');" />
+       		    onchange="pesquisaCotaDebitoCreditoCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');" />
 	</td>
 		
 	<td>
@@ -707,8 +709,8 @@
 	      		class="nomeCota" 
 	      		maxlength="255"
 	      		style="width:250px;"
-	      		onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
-	      		onblur="cota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');" />
+	      		onkeyup="pesquisaCotaDebitoCreditoCota.autoCompletarPorNome('#nomeCota');" 
+	      		onblur="pesquisaCotaDebitoCreditoCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');" />
 	</td>
     
     <td width="121">Tipo de Lançamento:</td>

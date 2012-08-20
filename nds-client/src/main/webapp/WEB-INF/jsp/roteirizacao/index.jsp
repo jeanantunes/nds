@@ -13,6 +13,7 @@ label{ vertical-align:super;}
 <body>
 <form action="" method="get" id="form1" name="form1">
 
+<form id="form-transfere-rota">
 <div id="dialog-transfere-rota" title="Transferir Rotas" style="display:none;">
 	<fieldset>
     	<legend>Transferir Rotas para:</legend>
@@ -43,7 +44,9 @@ label{ vertical-align:super;}
 </div>
     </fieldset>
 </div>
+</form>
 
+<form id="form-transfere-cotas">
 <div id="dialog-transfere-cotas" title="Transferir Cotas" style="display:none;">
 	<fieldset>
     	<legend>Transferir Cotas para:</legend>
@@ -59,21 +62,27 @@ label{ vertical-align:super;}
 </div>
     </fieldset>
 </div>
+</form>
 
+<form id="form-excluir-rotas">
 <div id="dialog-excluir-rotas" title="Rotas" style="display:none;">
 	<fieldset>
     	<legend>Excluir</legend>
         <p>Confirma a exclus&atilde;o destas Rotas deste Roteiro</p>
     </fieldset>
 </div>
+</form>
 
+<form id="form-excluir-cotas">
 <div id="dialog-excluir-cotas" title="Cotas" style="display:none;">
 	<fieldset>
     	<legend>Excluir</legend>
         <p>Confirma a exclus&atilde;o destas Cotas desta Rota?</p>
     </fieldset>
 </div>
+</form>
 
+<form id="form-rota">
 <div id="dialog-rota" title="Rota" style="display:none;">
 	<fieldset>
     	<legend>Nova Rota</legend>
@@ -88,9 +97,10 @@ label{ vertical-align:super;}
 
     </fieldset>
 </div>
+</form>
 
 
-
+<form id="form-roteiro">
 <div id="dialog-roteiro" title="Roteiro" style="display:none;">
 <jsp:include page="../messagesDialog.jsp" /> 
 	<fieldset>
@@ -118,7 +128,9 @@ label{ vertical-align:super;}
 
     </fieldset>
 </div>
+</form>
 
+<form id="form-roteirizacao">
 <div id="dialog-roteirizacao" title="Nova Roteiriza&ccedil;&atilde;o" style="display:none;">
 	<jsp:include page="../messagesDialog.jsp">
 		<jsp:param value="dialogRoteirizacao" name="messageDialog"/>
@@ -165,6 +177,7 @@ label{ vertical-align:super;}
     
 	<div class="linha_separa_fields">&nbsp;</div>
 </div>
+</form>
 
 
 
@@ -194,6 +207,7 @@ label{ vertical-align:super;}
 	<div class="linha_separa_fields">&nbsp;</div>
 </div>-->
 
+	<form id="form-cotas-disponiveis">
 	<div id="dialog-cotas-disponiveis" title="Cotas Dispon&icirc;veis" style="display:none;">
     
    <jsp:include page="../messagesDialog.jsp">
@@ -237,6 +251,7 @@ label{ vertical-align:super;}
 	</fieldset>
 	<br clear="all" />
 	</div>
+	</form>
 
 
 
@@ -326,7 +341,7 @@ label{ vertical-align:super;}
 			url : '../xml/roteiros-xml.xml',
 			dataType : 'xml',
 			colModel : [ {
-				display : 'Cód.',
+				display : 'Cï¿½d.',
 				name : 'codigo',
 				width : 35,
 				sortable : true,

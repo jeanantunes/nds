@@ -455,10 +455,6 @@ public class DescontoServiceImpl implements DescontoService {
 				produtosParaDesconto.add(produtoEdicao);
 			}
 			
-			produtosParaDesconto = 
-				this.descontoComponent.filtrarProdutosPassiveisDeDesconto(
-					tipoDesconto, fornecedor, produtosParaDesconto);
-			
 			if (obterCotas) {
 				
 				cotas = this.cotaRepository.obterCotasPorFornecedor(fornecedor.getId());
@@ -467,11 +463,6 @@ public class DescontoServiceImpl implements DescontoService {
 			for (Cota cota : cotas) {
 				
 				Set<Fornecedor> fornecedoresCota = cota.getFornecedores();
-				
-				for (Fornecedor fornecedorCota : fornecedoresCota) {
-					
-					System.out.println(fornecedorCota.getId());
-				}
 								
 				if (!obterCotas &&
 						(fornecedoresCota == null
@@ -479,6 +470,10 @@ public class DescontoServiceImpl implements DescontoService {
 					
 					continue;
 				}
+				
+				produtosParaDesconto = 
+					this.descontoComponent.filtrarProdutosPassiveisDeDesconto(
+						tipoDesconto, fornecedor,cota ,produtosParaDesconto);
 				
 				this.descontoComponent.persistirDesconto(
 					tipoDesconto, fornecedor, cota, produtosParaDesconto, valorDesconto);

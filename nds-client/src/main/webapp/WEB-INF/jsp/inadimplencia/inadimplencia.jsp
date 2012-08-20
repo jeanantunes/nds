@@ -5,13 +5,14 @@
 
 <script type="text/javascript"	src="${pageContext.request.contextPath}/scripts/jquery-dateFormat/jquery.dateFormat-1.0.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <title>NDS - Novo Distrib</title>
 
 
 <script language="javascript" type="text/javascript">
 
+var pesquisaCotaInadimplencia = new PesquisaCota();
 
 $(function() {		
 	$("#idNumCota").numeric();
@@ -296,14 +297,14 @@ $(document).ready(function(){
 
 <!-- NUM COTA -->
 <input type="text" name="idNumCota" id="idNumCota" style="width:80px;" 
-	onchange="cota.pesquisarPorNumeroCota('#idNumCota', '#idNomeCota');"/></td>
+	onchange="pesquisaCotaInadimplencia.pesquisarPorNumeroCota('#idNumCota', '#idNomeCota');"/></td>
               
               <td width="45">Nome:</td>
               <td width="193">
 
 <!-- NOME COTA -->
 <input type="text" name="idNomeCota" id="idNomeCota" style="width:180px;" 
-	onkeyup="cota.autoCompletarPorNome('#idNomeCota');" /></td>
+	onkeyup="pesquisaCotaInadimplencia.autoCompletarPorNome('#idNomeCota');" /></td>
             
               <td width="48">Status:</td>
               <td width="170">

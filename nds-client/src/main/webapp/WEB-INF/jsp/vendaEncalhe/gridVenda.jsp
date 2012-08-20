@@ -83,7 +83,7 @@ $(function() {
                maxlength="11"
                style="width:70px; 
                float:left; margin-right:5px;"
-               onchange="cota.pesquisarPorNumeroCota('#numCotaVenda', '#descricaoCotaVenda',true,
+               onchange="pesquisaCotaVendaEncalhe.pesquisarPorNumeroCota('#numCotaVenda', '#descricaoCotaVenda',true,
               	  									 VENDA_PRODUTO.pesquisarCotaVendaSuccessCallBack, 
               	  									 VENDA_PRODUTO.pesquisarCotaVendaErrorCallBack);"/>
 				              	  									 	

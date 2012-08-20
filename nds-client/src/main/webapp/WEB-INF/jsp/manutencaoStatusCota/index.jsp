@@ -2,10 +2,12 @@
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	
 	<script type="text/javascript">
 
+		var pesquisaCotaManutencaoStatusCota = new PesquisaCota();
+	
 		function configurarFlexiGrid() {
 			
 			$(".manutencaoStatusCotaGrid").flexigrid({
@@ -364,7 +366,7 @@
 						   id="numeroCota"
 						   maxlength="255"
 						   style="width: 80px; margin-right: 5px; float: left;"
-						   onchange="cota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
+						   onchange="pesquisaCotaManutencaoStatusCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
 				</td>
 				<td width="42">Nome:</td>
 				<td width="240">
@@ -373,8 +375,8 @@
 						   id="nomeCota" 
 						   maxlength="255" 
 						   style="width: 200px;"
-						   onkeyup="cota.autoCompletarPorNome('#nomeCota');" 
-		      		 	   onblur="cota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
+						   onkeyup="pesquisaCotaManutencaoStatusCota.autoCompletarPorNome('#nomeCota');" 
+		      		 	   onblur="pesquisaCotaManutencaoStatusCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
 				</td>
 				<td width="55">Box:</td>
 				<td width="149">

@@ -23,7 +23,7 @@ USE `nds-server`;
 
 LOCK TABLES `interface_execucao` WRITE;
 /*!40000 ALTER TABLE `interface_execucao` DISABLE KEYS */;
-INSERT INTO `interface_execucao` (`ID`, `MASCARA_ARQUIVO`, `NOME`) VALUES (109,'([0-9]{8})\\.pub','EMS0109'),(110,'([0-9]{8})\\.prd','EMS0110'),(111,'([0-9]{8})\\.lan','EMS0111'),(112,'([0-9]{10})\\.edi','EMS0112'),(113,'([0-9]{10})\\.dsf','EMS0113'),(114,'([0-9]{8})\\.rec','EMS0114'),(125,'([0-9]{8})\\.chc','EMS0125'),(126,'([0-9]{8})\\.cdb','EMS0126'),(134,'.jpeg','EMS0134'),(185,'.mdb','EMS0185');
+INSERT INTO `interface_execucao` (`ID`, `MASCARA_ARQUIVO`, `NOME`) VALUES (109,'([0-9]{8})\\.pub','EMS0109'),(110,'([0-9]{8})\\.prd','EMS0110'),(111,'([0-9]{8})\\.lan','EMS0111'),(112,'([0-9]{10})\\.edi','EMS0112'),(113,'([0-9]{10})\\.dsf','EMS0113'),(114,'([0-9]{8})\\.rec','EMS0114'),(125,'([0-9]{8})\\.chc','EMS0125'),(126,'([0-9]{8})\\.cdb','EMS0126'),(134,'.jpeg','EMS0134'),(135,'([0-9]{8})\\.nre','EMS0135'),(185,'.mdb','EMS0185');
 /*!40000 ALTER TABLE `interface_execucao` ENABLE KEYS */;
 UNLOCK TABLES;
 

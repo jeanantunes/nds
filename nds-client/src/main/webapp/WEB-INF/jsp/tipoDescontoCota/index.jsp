@@ -1,7 +1,7 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDesconto.js"></script>
@@ -10,12 +10,16 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoProduto.js"></script>
 
 <script language="javascript" type="text/javascript">
-	
+
+var pesquisaCotaTipoDescontoCota = new PesquisaCota(tipoDescontoController.workspace);
+
+var pesquisaProdutoTipoDescontoCota = new PesquisaProduto(tipoDescontoController.workspace);
+
 $(function() {		
 	tipoDescontoController.init();
 	descontoDistribuidorController.init();
 	descontoCotaController.init();
-	descontoProdutoController.init();
+	descontoProdutoController.init(pesquisaCotaTipoDescontoCota);
 });
 
 </script>
@@ -73,7 +77,7 @@ $(function() {
 			           		   type="text"
 			           		   maxlength="11"
 			           		   style="width:70px;"
-			           		   onchange="cota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+			           		   onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 			           	  											null, 
 			           	  											null);" />
 			    	Nome: <input  name="descricaoCotaPesquisa" 
@@ -82,8 +86,8 @@ $(function() {
 					      		 class="nome_jornaleiro" 
 					      		 maxlength="255"
 					      		 style="width:200px;"
-					      		 onkeyup="cota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
-					      		 onblur="cota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+					      		 onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
+					      		 onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 													      			null,
 													      			null);" />
 				                
@@ -93,14 +97,14 @@ $(function() {
 	                <label style="width:auto!important;">Código:</label>
 	                <input type="text" name="codigoPesquisa" id="codigoPesquisa" maxlength="255" 
 					   	   style="width:80px; float:left;"
-					       onblur="produtoEdicao.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
+					       onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);"/>
 	                <label style="width:auto!important;">Produto:</label>
 	                <input type="text" name="produtoPesquisa" id="produtoPesquisa" maxlength="255" 
 						   style="width:160px; float:left;"
-						   onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
-						   onblur="produtoEdicao.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
+						   onkeyup="pesquisaProdutoTipoDescontoCota.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
+						   onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);" />
 	                

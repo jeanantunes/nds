@@ -1,11 +1,13 @@
 <head>
 	<script type="text/javascript"
-			src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+			src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 			
 	<script type="text/javascript"
 			src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 	<script type="text/javascript">
+	
+		var pesquisaProdutoConsultaFaltasSobras = new PesquisaProduto();
 	
 		$(function() {			
 			
@@ -206,7 +208,7 @@
 				<td colspan="3">
 					<input type="text" name="codigo" id="codigo"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false,
+						   onchange="pesquisaProdutoConsultaFaltasSobras.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false,
 								   									   pesquisarProdutosSuccessCallBack,
 								   									   pesquisarProdutosErrorCallBack);" />
 					
@@ -214,8 +216,8 @@
 				<td width="60">Produto:</td>
 				<td width="220">
 					<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
-					       onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false,
+					       onkeyup="pesquisaProdutoConsultaFaltasSobras.autoCompletarPorNomeProduto('#produto', false);"
+					       onblur="pesquisaProdutoConsultaFaltasSobras.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false,
 					       											  pesquisarProdutosSuccessCallBack,
 					       											  pesquisarProdutosErrorCallBack);"/>
 				</td>
@@ -223,7 +225,7 @@
 				<td width="50" align="right">Edição:</td>
 				<td width="90">
 					<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled"
-						   onchange="produto.validarNumEdicao('#codigo', '#edicao', false);"/>
+						   onchange="pesquisaProdutoConsultaFaltasSobras.validarNumEdicao('#codigo', '#edicao', false);"/>
 				</td>
 				
 				<td width="73">Fornecedor:</td>

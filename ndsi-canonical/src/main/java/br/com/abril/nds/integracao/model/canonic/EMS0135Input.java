@@ -1,8 +1,10 @@
 package br.com.abril.nds.integracao.model.canonic;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
@@ -11,10 +13,10 @@ public class EMS0135Input extends IntegracaoDocument implements Serializable {
 	private static final long serialVersionUID = -2655294342766612808L;
 	
 	private Integer distribuidor;
-	private Integer dataEmissao;
-	private Integer notaFiscal;
+	private Date dataEmissao;
+	private Long notaFiscal;
 	private Integer serieNotaFiscal;
-	private Integer dataLancamento;
+	private Date dataLancamento;
 	private Integer pacotePadrao;
 	private Integer qtdExemplar;
 	private Integer codigoProduto;
@@ -35,18 +37,19 @@ public class EMS0135Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	@Field(offset = 8, length = 8)
-	public Integer getDataEmissao() {
+	@FixedFormatPattern("yyyyMMdd")  
+	public Date getDataEmissao() {
 		return dataEmissao;
 	}
-	public void setDataEmissao(Integer dataEmissao) {
+	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
 	
 	@Field(offset = 16, length = 6)
-	public Integer getNotaFiscal() {
+	public Long getNotaFiscal() {
 		return notaFiscal;
 	}
-	public void setNotaFiscal(Integer notaFiscal) {
+	public void setNotaFiscal(Long notaFiscal) {
 		this.notaFiscal = notaFiscal;
 	}
 	
@@ -59,10 +62,11 @@ public class EMS0135Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	@Field(offset = 25, length = 8)
-	public Integer getDataLancamento() {
+	@FixedFormatPattern("yyyyMMdd")
+	public Date getDataLancamento() {
 		return dataLancamento;
 	}
-	public void setDataLancamento(Integer dataLancamento) {
+	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
 	}
 	

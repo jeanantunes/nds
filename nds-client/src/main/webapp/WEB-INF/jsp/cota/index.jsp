@@ -2,6 +2,7 @@
 <title>NDS - Novo Distrib</title>
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
 
@@ -20,81 +21,12 @@
 <script language="javascript" type="text/javascript">
 	
 	$(function() {
-
-		$( "#tabpdv" ).tabs();
-
-		$("#descricaoPessoa").autocomplete({source: ""});
 		
-		$("#numCota").numeric();
-	
-		$(".pessoasGrid").flexigrid({
-			preProcess: MANTER_COTA.executarPreProcessamento,
-			dataType : 'json',
-			colModel : [  {
-				display : 'Código',
-				name : 'numero',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Nome / Razação Social',
-				name : 'nome',
-				width : 130,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'CPF/CNPJ',
-				name : 'numeroCpfCnpj',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display: 'Box',
-				name: 'descricaoBox',
-				width: 90,
-				sortable: true,
-				align: 'left'
-			}, {
-				display : 'Contato',
-				name : 'contato',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Telefone',
-				name : 'telefone',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'E-Mail',
-				name : 'email',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 60,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "numero",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255
-		});
-	
+		try{
+			MANTER_COTA.init();	
+		}catch(e){
+			alert(e);
+		}
 	});
 </script>
 <style>

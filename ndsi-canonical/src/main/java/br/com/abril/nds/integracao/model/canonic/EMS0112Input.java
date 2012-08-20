@@ -21,7 +21,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 	
 	private String tipoLogradouroEditor;
 	private String logradouroEditor;
-	private Integer numeroEditor;
+	private String numeroEditor;
 	private String complementoEditor;
 	private String cidadeEditor;
 	private String ufEditor;
@@ -29,7 +29,7 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 	
 	private String tipoLogradouroEntrega;
 	private String logradouroEntrega;
-	private Integer numeroEntrega;
+	private String numeroEntrega;
 	private String complementoEntrega;
 	private String cidadeEntrega;
 	private String ufEntrega;
@@ -110,10 +110,10 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 	}
 	
 	@Field(offset=108, length=5)	
-	public Integer getNumeroEditor() {
+	public String getNumeroEditor() {
 		return numeroEditor;
 	}
-	public void setNumeroEditor(Integer numeroEditor) {
+	public void setNumeroEditor(String numeroEditor) {
 		this.numeroEditor = numeroEditor;
 	}
 	
@@ -166,10 +166,10 @@ public class EMS0112Input extends IntegracaoDocument implements Serializable{
 	}
 	
 	@Field(offset=208, length=5)	
-	public Integer getNumeroEntrega() {
+	public String getNumeroEntrega() {
 		return numeroEntrega;
 	}
-	public void setNumeroEntrega(Integer numeroEntrega) {
+	public void setNumeroEntrega(String numeroEntrega) {
 		this.numeroEntrega = numeroEntrega;
 	}
 	
