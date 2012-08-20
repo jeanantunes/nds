@@ -29,7 +29,7 @@ public class EnderecoVO implements Serializable {
 	
 	private TipoEndereco tipoEndereco;
 	
-	private Integer numero;
+	private String numero;
 	
 	private String complemento;
 
@@ -176,14 +176,14 @@ public class EnderecoVO implements Serializable {
 	/**
 	 * @return the numero
 	 */
-	public Integer getNumero() {
+	public String getNumero() {
 		return numero;
 	}
 
 	/**
 	 * @param numero the numero to set
 	 */
-	public void setNumero(Integer numero) {
+	public void setNumero(String numero) {
 		this.numero = numero;
 	}
 

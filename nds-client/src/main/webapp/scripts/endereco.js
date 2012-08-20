@@ -48,6 +48,8 @@ function Endereco(paramTela,paramMessage) {
 						: '&nbsp;';
 
 			data.rows[i].cell[lastIndex] = _this.getAction(data.rows[i].id);
+			
+			console.log(data);
 		}
 
 		if ($("."+paramTela+"enderecosGrid").css('display') == 'none') {
@@ -141,7 +143,7 @@ function Endereco(paramTela,paramMessage) {
 				$("#"+paramTela+"idEndereco").val(result.id);
 				$("#"+paramTela+"enderecoid").val(result.endereco.id);
 				$("#"+paramTela+"tipoEndereco").val(result.tipoEndereco);
-				$("#"+paramTela+"cep").val(result.endereco.cep);
+				$("#"+paramTela+"cep").val(adicionarMascaraCEP(result.endereco.cep));
 				$("#"+paramTela+"tipoLogradouro").val(result.endereco.tipoLogradouro);
 				$("#"+paramTela+"logradouro").val(result.endereco.logradouro);
 				$("#"+paramTela+"numero").val(result.endereco.numero);
@@ -223,7 +225,6 @@ function Endereco(paramTela,paramMessage) {
 		
 		$("#"+paramTela+"cep").mask("99999-999");
 		$("#"+paramTela+"uf").mask("aa");
-		$("#"+paramTela+"numero").numeric();
 		
 		$("#"+paramTela+"linkIncluirNovoEndereco").keypress(function() {
 			

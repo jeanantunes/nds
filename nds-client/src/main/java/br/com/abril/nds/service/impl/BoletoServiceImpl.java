@@ -913,7 +913,7 @@ public class BoletoServiceImpl implements BoletoService {
 			corpoBoleto.setEnderecoSacadoCep(endereco.getCep());         
 			corpoBoleto.setEnderecoSacadoBairro(endereco.getBairro()); 
 			corpoBoleto.setEnderecoSacadoLogradouro(endereco.getLogradouro()); 
-			corpoBoleto.setEnderecoSacadoNumero(Integer.toString(endereco.getNumero())); 
+			corpoBoleto.setEnderecoSacadoNumero(endereco.getNumero()); 
 		}
 		else{
 			corpoBoleto.setEnderecoSacadoUf("SP");
