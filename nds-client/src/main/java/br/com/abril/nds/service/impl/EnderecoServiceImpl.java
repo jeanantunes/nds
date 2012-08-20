@@ -114,7 +114,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 			listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");
 		}
 
-		if (endereco.getNumero() <= 0) {
+		if (endereco.getNumero() == null || endereco.getNumero().isEmpty()) {
 			
 			listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
 		}
