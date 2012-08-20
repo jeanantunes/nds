@@ -11,6 +11,7 @@ var MANTER_COTA = $.extend(true, {
     tipoCota_CPF:"FISICA",
     tipoCota_CNPJ:"JURIDICA",
     fecharModalCadastroCota:false,
+    _workspace: this.workspace,
     
     init: function() {
     	
@@ -292,7 +293,7 @@ var MANTER_COTA = $.extend(true, {
 	
 		var comboClassificacao =  montarComboBox(result, false);
 		
-		$(idCombo, this.workspace).html(comboClassificacao);
+		$(idCombo, MANTER_COTA._workspace).html(comboClassificacao);
 	},
 
 	salvarDadosCadastrais:function(){
@@ -633,15 +634,17 @@ var COTA_FORNECEDOR = $.extend(true, {
 		},
 
 		initTabFornecedorCota: function() {
-
-			$("select[name='selectFornecedorSelecionado_${param.paramFornecedores}']", this.workspace).multiSelect(
-				"select[name='selectFornecedor_${param.paramFornecedores}']", 
-				{trigger: "#linkFornecedorVoltarTodos_${param.paramFornecedores}"}
+			
+			var idHidden = $("#telaCotaidFornecedorHidden", this.workspace).val();
+			
+			$("select[name='selectFornecedorSelecionado_"+ idHidden +"']", this.workspace).multiSelect(
+				"select[name='selectFornecedor_"+ idHidden +"']", 
+				{trigger: "#linkFornecedorVoltarTodos_"+ idHidden}
 			);
 			
-			$("select[name='selectFornecedor_${param.paramFornecedores}']", this.workspace).multiSelect(
-				"select[name='selectFornecedorSelecionado_${param.paramFornecedores}']", 
-				{trigger: "#linkFornecedorEnviarTodos_${param.paramFornecedores}"}
+			$("select[name='selectFornecedor_"+ idHidden +"']", this.workspace).multiSelect(
+				"select[name='selectFornecedorSelecionado_"+ idHidden +"']", 
+				{trigger: "#linkFornecedorEnviarTodos_"+ idHidden}
 			);
 		}
 }, BaseController);
