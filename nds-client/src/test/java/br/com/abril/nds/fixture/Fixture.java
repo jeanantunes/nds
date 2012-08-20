@@ -2047,7 +2047,7 @@ public class Fixture {
 	}
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
-										 String logradouro, int numero, 
+										 String logradouro, String numero, 
 										 String bairro, String cidade, String uf,Integer codigoCidadeIBGE) {
 		
 		Endereco endereco = new Endereco();

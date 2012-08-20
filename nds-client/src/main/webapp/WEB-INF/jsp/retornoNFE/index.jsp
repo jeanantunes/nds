@@ -5,20 +5,20 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript">
-		var retornoNFE;
+		var retornoNFEController;
 
 		$(function() {
-			retornoNFE = new RetornoNFE();	
-
-			$("#retornoNFEDataReferencia").datepicker({
+			retornoNFEController = $.extend(true,new RetornoNFEController(), BaseController);	
+									
+			$("#retornoNFEDataReferencia", this.workspace).datepicker({
 				showOn : "button",
 				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
 				buttonImageOnly : true,
-				dateFormat: 'dd/mm/yy',
-				defaultDate: new Date()
+				dateFormat: 'dd/mm/yy'
 			});	
 
-			$("#retornoNFEdatePickerDataReferencia").mask("99/99/9999");	
+			$("#retornoNFEDataReferencia", this.workspace).mask("99/99/9999");	
+			$("#retornoNFEDataReferencia", this.workspace).val(formatDateToString(new Date()));
 		});
 	</script>
 

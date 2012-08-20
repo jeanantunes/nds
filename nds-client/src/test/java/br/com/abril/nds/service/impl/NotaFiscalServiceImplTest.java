@@ -188,7 +188,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		save(distribuidor);
 		
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",1);
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", "51", "Centro", "São Paulo", "SP",1);
 		save(endereco);
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, endereco, true, TipoEndereco.COBRANCA);
 		
@@ -214,7 +214,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		
 		
 		Endereco enderecoCotaManotel = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",1);
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", "50", "Centro", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota = new EnderecoCota();
 		enderecoCota.setCota(cotaManoel);
@@ -348,7 +348,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			StatusProcessamentoInterno statusInterno, Status status) {
 
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COMERCIAL,
-				"13720000", "logradouro", 123, "bairro", "cidade", "uf",1);
+				"13720000", "logradouro", "123", "bairro", "cidade", "uf",1);
 
 		Telefone telefone = Fixture.telefone("ddd", "numero", "ramal");
 
@@ -376,7 +376,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 				.informacaoAdicional("informacoesComplementares");
 
 		Endereco enderecoTransporte = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000,
+				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", "1000",
 				"Bairro Novo", "Olimpia", "SP",1);
 
 		InformacaoTransporte informacaoTransporte = Fixture
@@ -470,7 +470,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
 		
 		Endereco enderecoTransporte = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000,
+				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", "1000",
 				"Bairro Novo", "Olimpia", "SP",1);
 		save(enderecoTransporte);
 		InformacaoTransporte informacaoTransporte = Fixture

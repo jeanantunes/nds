@@ -210,6 +210,23 @@ public abstract class Util {
 		return formatado.toString();
 	}
 	
+	public static String adicionarMascaraCEP(String cep) {
+		
+		if (cep == null) return "";
+		
+		
+		cep = cep.replace("-", "");
+		
+		if (cep.length() < 8) {
+			cep = Util.padLeft(cep, "0", 8);
+		}
+		
+		StringBuilder formatado = new StringBuilder();
+		formatado.append(cep.substring(0, 5)).append("-").append(cep.substring(5, 8));
+		
+		return formatado.toString();
+	}
+	
 	public static boolean validarEmail(final String email){
 		
 		Pattern pattern = Pattern.compile(EMAIL_PATTERN);
