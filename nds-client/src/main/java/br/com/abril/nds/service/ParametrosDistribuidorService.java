@@ -24,7 +24,7 @@ public interface ParametrosDistribuidorService {
 	 * @param imgContentType
 	 */
 	public void salvarDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor,
-								   InputStream imgLogotipo,
+								   byte[] imgLogotipo,
 								   String imgContentType);
 	
 	/**
@@ -33,5 +33,7 @@ public interface ParametrosDistribuidorService {
 	 * @return InputStream do logotipo
 	 */
 	public InputStream getLogotipoDistribuidor();
+	
+	public void salvarLogo(byte[] imgLogotipo, String imgContentType);
 
 }

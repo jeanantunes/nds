@@ -65,7 +65,7 @@ public class CadastroTipoNotaController {
 		List<ItemDTO<TipoAtividade, String>> listaAtividades = new ArrayList<ItemDTO<TipoAtividade,String>>();
 		
 		for(TipoAtividade atividade : TipoAtividade.values()){
-			listaAtividades.add(new ItemDTO<TipoAtividade, String>(atividade,atividade.getDescTipoDistribuidor()));
+			listaAtividades.add(new ItemDTO<TipoAtividade, String>(atividade,atividade.getDescricao()));
 		}
 		
 		result.include("listaAtividades",listaAtividades);
@@ -209,7 +209,7 @@ public class CadastroTipoNotaController {
 			resultado.setNopDescricao(tipoNotaFiscal.getDescricao());
 			resultado.setCfopEstado( (tipoNotaFiscal.getCfopEstado()!= null)?tipoNotaFiscal.getCfopEstado().getCodigo():"");
 			resultado.setCfopOutrosEstados((tipoNotaFiscal.getCfopOutrosEstados()!=null)?tipoNotaFiscal.getCfopOutrosEstados().getCodigo():"");
-			resultado.setTipoAtividade(tipoNotaFiscal.getTipoAtividade().getDescTipoDistribuidor());
+			resultado.setTipoAtividade(tipoNotaFiscal.getTipoAtividade().getDescricao());
 			
 			String processo = "";
 			
