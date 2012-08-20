@@ -48,8 +48,6 @@ function Endereco(paramTela,paramMessage) {
 						: '&nbsp;';
 
 			data.rows[i].cell[lastIndex] = _this.getAction(data.rows[i].id);
-			
-			console.log(data);
 		}
 
 		if ($("."+paramTela+"enderecosGrid").css('display') == 'none') {
@@ -275,7 +273,7 @@ function Endereco(paramTela,paramMessage) {
 		);
 	};
 	
-	this.preencherComboUF = function () {
+	this.preencherComboUF = function (ufSelecionado) {
 
 		var isFromModal = true;
 		
@@ -301,6 +299,11 @@ function Endereco(paramTela,paramMessage) {
 
 					$(idComboUF).append(option);	
 				});
+				
+				if (ufSelecionado) {
+					
+					$(idComboUF).val(ufSelecionado);
+				}
 			},
 			null,
 			isFromModal

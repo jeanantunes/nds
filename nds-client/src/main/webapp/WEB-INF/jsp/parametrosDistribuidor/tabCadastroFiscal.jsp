@@ -19,16 +19,11 @@
 						   value="${parametrosDistribuidor.nomeFantasia}" />
 				</td>
 			</tr>
+			
 			<tr>
 				<td colspan="2">
-					<div id="div_imagem_logotipo">
-						<img id="imgLogo" width="110" height="70" alt="Logotipo Distribuidor"
-							 src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo"/>
-					</div>
+					<div id="div_imagem_logotipo"></div>
 				</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
 			</tr>
 			<tr>
 				<td>Logo:</td>
@@ -123,8 +118,30 @@
 						   id="cep" name="cep"
 						   value="${parametrosDistribuidor.endereco.cep}" />
 					<span class="classPesquisar" title="Pesquisar Cep.">
-						<a href="javascript:;">&nbsp;</a>
+						<a href="javascript:;" onclick="endereco.pesquisarEnderecoPorCep();">&nbsp;</a>
 					</span>
+				</td>
+				<td>UF:</td>
+				<td>
+					<select style="width: 50px" id="uf" name="uf"></select>
+				</td>
+			</tr>
+			<tr>
+				<td>Cidade:</td>
+				<td>
+					<input type="text" style="width: 180px" id="cidade" name="cidade"
+						   value="${parametrosDistribuidor.endereco.localidade}"
+						   onkeyup="endereco.autoCompletarLocalidades();"
+						   onblur="endereco.autoCompletarLocalidades(true);" />
+				</td>
+			</tr>
+			<tr>
+				<td>Bairro:</td>
+				<td>
+					<input type="text" style="width: 180px" id="bairro" name="bairro"
+						   value="${parametrosDistribuidor.endereco.bairro}"
+						   onkeyup="endereco.autoCompletarBairros();"
+						   onblur="endereco.autoCompletarBairros(true);" />
 				</td>
 				<td>Tipo :</td>
 				<td>
@@ -137,7 +154,9 @@
 				<td>Logradouro:</td>
 				<td>
 					<input type="text" style="width: 180px" id="logradouro" name="logradouro"
-						   value="${parametrosDistribuidor.endereco.logradouro}" />
+						   value="${parametrosDistribuidor.endereco.logradouro}"
+						   onkeyup="endereco.autoCompletarLogradouros();"
+						   onblur="endereco.autoCompletarLogradouros(true);" />
 				</td>
 				<td>Número:</td>
 				<td>
@@ -150,28 +169,6 @@
 				<td>
 					<input type="text" style="width: 180px" id="complemento" name="complemento"
 						   value="${parametrosDistribuidor.endereco.complemento}" />
-				</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>Bairro:</td>
-				<td>
-					<input type="text" style="width: 180px" id="bairro" name="bairro"
-						   value="${parametrosDistribuidor.endereco.bairro}" />
-				</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>Cidade:</td>
-				<td>
-					<input type="text" style="width: 180px" id="cidade" name="cidade"
-						   value="${parametrosDistribuidor.endereco.localidade}" />
-				</td>
-				<td>UF:</td>
-				<td>
-					<input type="text" style="width: 50px" id="uf" name="uf" />
 				</td>
 			</tr>
 		</table>

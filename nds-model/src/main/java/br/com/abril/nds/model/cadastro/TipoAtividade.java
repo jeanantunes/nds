@@ -11,9 +11,8 @@ public enum TipoAtividade {
 		this.descricao = descricao;
 	}
 	
-	//TODO: refatorar descricao
-	public String getDescTipoDistribuidor() {
-		return this.descricao;
+	public String getDescricao() {
+		return descricao;
 	}
 	
 	@Override
