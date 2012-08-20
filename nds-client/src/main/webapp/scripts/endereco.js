@@ -275,7 +275,7 @@ var enderecoController = $.extend(true, {
 		);
 	},
 	
-	preencherComboUF = function (ufSelecionado) {
+	preencherComboUF : function (ufSelecionado) {
 
 		var isFromModal = true;
 		
