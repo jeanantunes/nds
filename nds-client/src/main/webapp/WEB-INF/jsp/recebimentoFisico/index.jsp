@@ -30,7 +30,7 @@
 					id="codigo"
 					maxlength="255"
 					style="width: 80px; float: left; margin-right: 5px;"
-					onchange="jsDadosProduto.pesquisarProdutoPorCodigo();"/>
+					onchange="recebimentoFisicoController.jsDadosProduto.pesquisarProdutoPorCodigo();"/>
 					
 				</td>
 			</tr>
@@ -43,7 +43,7 @@
 						id="produto"
 						
 					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
-					       	   onblur="jsDadosProduto.pesquisarProdutoPorNome();"/>
+					       	   onblur="recebimentoFisicoController.jsDadosProduto.pesquisarProdutoPorNome();"/>
 				</td>
 			</tr>
 			<tr>
@@ -52,7 +52,7 @@
 					type="text" 
 					id="edicao" maxlength="20"
 					style="width: 80px;" 
-					onchange="jsDadosProduto.validarNumeroEdicao();"/>
+					onchange="recebimentoFisicoController.jsDadosProduto.validarNumeroEdicao();"/>
 				</td>
 			</tr>
 			<tr>
@@ -119,7 +119,18 @@
 			</tr>
 			<tr>
 			    <td>&nbsp;</td>			
-			    <td><span class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" onclick="incluirNovoItemNota();"><img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />Incluir Novo</a></span></td>			
+			    
+			    <td>
+			    
+			    	<span 	class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" 
+			    			onclick="recebimentoFisicoController.incluirNovoItemNota();">
+			    
+			    	<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" 
+			    		alt="Incluir Novo" 
+			    		width="16" 
+			    		height="16" 
+			    		border="0" 
+			    		hspace="5" />Incluir Novo</a></span></td>			
 			 </tr>			
 		</table>
 
@@ -141,67 +152,72 @@
 				</p>
 			</div>
 
-			<fieldset class="classFieldset">
-			
-				<legend> Pesquisar Recebimento Físico</legend>
-				
-				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			<form id="pesquisar_recebimento_fisico_form">
 
-					<tr>
-						<td width="86">Fornecedor:</td>
-						
-						<td width="254"><select id="fornecedor" name="fornecedor"
-							onblur="exibirCnpjDoFornecedor()" style="width: 250px;">
-								<option value="-1">Todos</option>
-								<c:forEach var="fornecedor" items="${listafornecedores}">
-									<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.razaoSocial}</option>
-								</c:forEach>
-						</select></td>
-						
-						<td width="43" align="right">CNPJ:</td>
-						<td width="136"><input id="cnpj"
-							onblur="pesquisarPorCnpjFornecedor();" disabled="disabled" name="cnpj"
-							style="width: 130px;" />
-						</td>
-												
-						<td width="76">Nota Fiscal:</td>
-						<td width="123"><input type="text" id=notaFiscal
-							style="width: 100px;" />
-						</td>
-						<td width="33">Série:</td>
-						<td width="43"><input id="serie" type="text"
-							style="width: 30px;" />
-						</td>
-						<td width="110"><span class="bt_pesquisar"
-							title="Pesquisar Recebimento"> <a href="javascript:;"
-								onclick="verificarNotaFiscalExistente();">Pesquisar</a> </span>
-						</td>
-
-					</tr>
-					<tr>
-						<td colspan="4" height="26">
-						
-							<label for="eNF">É uma NF-e?</label>
-							
-							<input type="checkbox" name="checkbox8" id="eNF" onchange="mostrar_nfes();" style="float: left; margin-right: 10px;" /> 
-							
-							<span id="nfes" class="nfes"> 
-							
-							Chave de Acesso: 
-							
-							<input type="text" name="chaveAcesso" id="chaveAcesso"
-								style="width: 120px; margin-left: 10px;" />
-						</span>
-						
-						</td>
-						
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td></span></td>
-					</tr>
-				</table>
+				<fieldset class="classFieldset">
 				
-			</fieldset>
+					<legend> Pesquisar Recebimento Físico</legend>
+					
+					<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	
+						<tr>
+	
+							<td width="86">Fornecedor:</td>
+							
+							<td width="254"><select id="fornecedor" name="fornecedor"
+								onblur="recebimentoFisicoController.exibirCnpjDoFornecedor()" style="width: 250px;">
+									<option value="-1">Todos</option>
+									<c:forEach var="fornecedor" items="${listafornecedores}">
+										<option value="${fornecedor.juridica.cnpj}">${fornecedor.juridica.razaoSocial}</option>
+									</c:forEach>
+							</select></td>
+							
+							<td width="43" align="right">CNPJ:</td>
+							<td width="136"><input id="cnpj"
+								onblur="recebimentoFisicoController.pesquisarPorCnpjFornecedor();" disabled="disabled" name="cnpj"
+								style="width: 130px;" />
+							</td>
+													
+							<td width="76">Nota Fiscal:</td>
+							<td width="123"><input type="text" id=notaFiscal
+								style="width: 100px;" />
+							</td>
+							<td width="33">Série:</td>
+							<td width="43"><input id="serie" type="text"
+								style="width: 30px;" />
+							</td>
+							<td width="110"><span class="bt_pesquisar"
+								title="Pesquisar Recebimento"> <a href="javascript:;"
+									onclick="recebimentoFisicoController.verificarNotaFiscalExistente();">Pesquisar</a> </span>
+							</td>
+	
+						</tr>
+						<tr>
+							<td colspan="4" height="26">
+							
+								<label for="eNF">É uma NF-e?</label>
+								
+								<input type="checkbox" name="checkbox8" id="eNF" onchange="recebimentoFisicoController.mostrar_nfes();" style="float: left; margin-right: 10px;" /> 
+								
+								<span id="nfes" class="nfes"> 
+								
+								Chave de Acesso: 
+								
+								<input type="text" name="chaveAcesso" id="chaveAcesso"
+									style="width: 120px; margin-left: 10px;" />
+							</span>
+							
+							</td>
+							
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td></span></td>
+						</tr>
+					</table>
+					
+				</fieldset>
+		
+			</form>		
 			
 			<div class="linha_separa_fields">&nbsp;</div>
 
@@ -237,7 +253,7 @@
 
 					<div id="botaoNovoProduto">
 							<span class="bt_incluir_novo" id="bt_novo_produto" title="Incluir Nova Linha"> 
-								<a href="javascript:;" onclick="popup_novo_item();"> 
+								<a href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();"> 
 									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
 									Novo Produto 
 								</a> 
@@ -246,7 +262,7 @@
 					
 					<div id="botaoAdicionar">
 							<span class="bt_incluir_novo" id="bt_adicionar" title="Adicionar Nota Fiscal"> 
-								<a href="javascript:;" onclick="popup_adicionar();">  
+								<a href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();">  
 									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
 									Adicionar Nota Fiscal 
 								</a> 
@@ -256,21 +272,21 @@
 					<div id="botoesNormais">	
 														
 						<span class="bt_novos" title="Salvar"> 
-							<a href="javascript:;" onclick="salvarDadosItensDaNotaFiscal()">
+							<a href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()">
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
 								Salvar 
 							</a> 
 						</span>
 						
 						<span class="bt_novos" title="Cancelar"> 
-							<a href="javascript:;" onclick="cancelarNotaRecebimentoFisico()">
+							<a href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()">
 								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
 								Cancelar 
 							</a> 
 						</span>
 						
 						<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
-							<a href="javascript:;" onclick="confirmarRecebimentoFisico()">
+							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()">
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
 								Confirmar
 							</a>
@@ -304,7 +320,7 @@
 					
 					<span class="bt_sellAll" style="float:right; margin-right:40px;">
 						<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
-						<input type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
+						<input type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
 					</span>
 					
 				</div>
@@ -334,7 +350,7 @@
 
 		        <td width="89">Fornecedor:</td>
 		        <td width="168">
-			        <select name="select" id="novoFornecedor" name="novoFornecedor" onchange="pesquisarCnpjFornecedor();" style="width:160px ">
+			        <select name="select" id="novoFornecedor" name="novoFornecedor" onchange="recebimentoFisicoController.pesquisarCnpjFornecedor();" style="width:160px ">
 				        <option selected="selected" value="">Selecione...</option>
 						<c:forEach var="fornecedor" items="${listafornecedores}">
 						    <option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -344,7 +360,7 @@
 		        
 		        <td width="95">CNPJ:</td>
 		        <td width="132">
-		            <input maxlength="200" type="text" style="width:100px " id="novoCnpj" name="novoCnpj" onchange="pesquisarFornecedorCnpj();" />
+		            <input maxlength="200" type="text" style="width:100px " id="novoCnpj" name="novoCnpj" onchange="recebimentoFisicoController.pesquisarFornecedorCnpj();" />
 		        </td>
 		        
 		        <td width="102">Nota Fiscal:</td>
@@ -411,7 +427,7 @@
 		</fieldset> 
 		
 		<span class="bt_incluir_novo" title="Incluir Novo">
-		    <a href="javascript:;" onclick="incluiNovoItem();">
+		    <a href="javascript:;" onclick="recebimentoFisicoController.incluiNovoItem();">
 		        <img src= "${pageContext.request.contextPath}/images/ico_add.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />
 		        Incluir Novo
 		    </a>
@@ -421,7 +437,7 @@
 		    <label for="textoSelTodos" id="textoSelTodos">
                 Marcar Todos
             </label>
-		    <input type="checkbox"  id="selTodos" name="selTodos" onclick="selecionarTodos(this.checked);" style="float:right; margin-top:-5px"/>
+		    <input type="checkbox"  id="selTodos" name="selTodos" onclick="recebimentoFisicoController.selecionarTodos(this.checked);" style="float:right; margin-top:-5px"/>
 		</span>
 		
 		<span style="float:right; margin-right:35px; margin-top:8px">
