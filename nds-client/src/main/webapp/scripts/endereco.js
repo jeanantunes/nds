@@ -80,7 +80,6 @@ var enderecoController = $.extend(true, {
 						: '&nbsp;';
 
 			data.rows[i].cell[lastIndex] = enderecoController.getAction(data.rows[i].id);
-			
 		}
 
 		if ($("."+paramTelaEndereco+"enderecosGrid", enderecoController.workspace).css('display') == 'none') {
@@ -276,7 +275,7 @@ var enderecoController = $.extend(true, {
 		);
 	},
 	
-	preencherComboUF : function () {
+	preencherComboUF = function (ufSelecionado) {
 
 		var isFromModal = true;
 		
@@ -302,6 +301,11 @@ var enderecoController = $.extend(true, {
 
 					$(idComboUF, enderecoController.workspace).append(option);	
 				});
+				
+				if (ufSelecionado) {
+					
+					$(idComboUF).val(ufSelecionado);
+				}
 			},
 			null,
 			isFromModal
