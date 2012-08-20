@@ -1,121 +1,5 @@
 
-<script>
-
-$(function() {
-	
-	$("select[name='selectFornecedorSelecionado_especifico']").multiSelect("select[name='selectFornecedor_especifico']", {trigger: "#linkFornecedorVoltarTodos_especifico"});
-	
-	$("select[name='selectFornecedor_especifico']").multiSelect("select[name='selectFornecedorSelecionado_especifico']", {trigger: "#linkFornecedorEnviarTodos_especifico"});
-	
-});
-
-var DESCONTO_ESPECIFICO = {
-	
-	popup_especifico:function() {		
-		 
-		$("#selectFornecedorSelecionado_option_especifico").clear();
-		$("#selectFornecedor_option_especifico").clear();
-		
-		$("#numCotaEspecifico").val("");
-		$("#descontoEspecifico").val("");
-		$("#descricaoCotaEspecifico").val("");
-		
-		$( "#dialog-especifico" ).dialog({
-			resizable: false,
-			height:400,
-			width:560,
-			modal: true,
-			buttons: [{
-						id:"id_confirmar_especifico",text:"Confirmar",
-						click: function() {
-							DESCONTO_ESPECIFICO.novoDescontoEspecifico();
-						}
-				},{
-					id:"id_close_especifico",text:"Cancelar",
-					click: function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			]
-		});		      
-	},
-	
-	novoDescontoEspecifico:function() {
-		
-		var cotaEspecifica = $("#numCotaEspecifico").val();
-		var descontoEspecifico = $("#descontoEspecifico").val();
-		
-		var fornecedores ="";
-		
-		$("#selectFornecedorSelecionado_option_especifico option").each(function (index) {
-			 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
-		});
-		
-		$.postJSON("<c:url value='/financeiro/tipoDescontoCota/novoDescontoEspecifico'/>",
-				"numeroCota=" + cotaEspecifica	+				
-				"&desconto=" + descontoEspecifico + "&" +
-				fornecedores
-				,				   
-				function(result) {
-			           
-						 if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
-							   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalDescontoEspecifico");
-					       }
-						   else{
-							   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
-							   TIPO_DESCONTO.fecharDialogs();
-							   TIPO_DESCONTO.pesquisar();
-							   $(".tiposDescEspecificoGrid").flexReload();
-						   }
-	               },
-				   null,
-				   true,"idModalDescontoEspecifico");
-		
-		$(".tiposDescEspecificoGrid").flexReload();
-	},
-	
-	pesquisarCotaSuccessCallBack:function(){
-		
-		var cotaEspecifica = $("#numCotaEspecifico").val();
-		
-		DESCONTO_ESPECIFICO.carregarFornecedoresCota("#selectFornecedor_option_especifico", cotaEspecifica);
-		
-	},
-
-	carregarFornecedoresCota:function(idComboFornecedores,numeroCota){
-		
-		$.postJSON(contextPath + "/financeiro/tipoDescontoCota/obterFornecedoresCota",
-				[{name:"numeroCota",value:numeroCota}], 
-				function(result){
-					
-					if(result){
-						var comboClassificacao =  montarComboBox(result, false);
-						
-						$(idComboFornecedores).html(comboClassificacao);
-					}
-				},function(result){
-					
-					$("#selectFornecedor_option_especifico").clear();
-					
-				},true,"idModalDescontoEspecifico"
-		);
-	},
-	
-	pesquisarCotaErrorCallBack:function(){
-		
-		exibirMensagemDialog("WARNING", [' Cota não encontrada!'], "idModalDescontoEspecifico");
-	}
-		
-};
-
-
-
-
-
-</script>
-
 <div id="dialog-especifico" title="Novo Tipo de Desconto Especifico" style="display:none;"> 
-
 
 <jsp:include page="../messagesDialog.jsp">
 	
@@ -135,9 +19,10 @@ var DESCONTO_ESPECIFICO = {
            		   type="text"
            		   maxlength="11"
            		   style="width:70px;"
-           		   onchange="cota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
-           	  											DESCONTO_ESPECIFICO.pesquisarCotaSuccessCallBack, 
-           	  											DESCONTO_ESPECIFICO.pesquisarCotaErrorCallBack);" />
+           		   onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
+           	  											descontoCotaController.pesquisarCotaSuccessCallBack, 
+           	  											descontoCotaController.pesquisarCotaErrorCallBack);" />
+           	  											
     		<label style="width:auto!important;">Nome:</label>
     		<input  name="descricaoCotaEspecifico" 
 		      		 id="descricaoCotaEspecifico" 
@@ -145,10 +30,11 @@ var DESCONTO_ESPECIFICO = {
 		      		 class="nome_jornaleiro" 
 		      		 maxlength="255"
 		      		 style="width:200px;"
-		      		 onkeyup="cota.autoCompletarPorNome('#descricaoCotaEspecifico');" 
-		      		 onblur="cota.pesquisarPorNomeCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
-										      			DESCONTO_ESPECIFICO.pesquisarCotaSuccessCallBack,
-										      			DESCONTO_ESPECIFICO.pesquisarCotaErrorCallBack);" />
+		      		 onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaEspecifico');" 
+		      		 onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
+										      			descontoCotaController.pesquisarCotaSuccessCallBack,
+										      			descontoCotaController.pesquisarCotaErrorCallBack);" />
+
     		
     	</fieldset>
     </td>

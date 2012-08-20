@@ -66,6 +66,7 @@ import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
+import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -152,6 +153,9 @@ public class CotaServiceImpl implements CotaService {
 	private EnderecoService enderecoService;
 	
 	@Autowired
+	private TelefoneRepository telefoneRepository; 
+	
+	@Autowired
 	private DividaService dividaService;
 	
 	@Autowired
@@ -159,6 +163,7 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -823,6 +828,10 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão inválida!");
 		}
 		
+		if (cotaComDebitos(idCota)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] possui dívidas em aberto e não pode ser excluída!");
+		}
+		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
 	
 		try{	
@@ -1366,6 +1375,18 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	/**
+	 * Verifica se a cota possui dividas em aberto
+	 * @param idCota
+	 * @return boolean
+	 */
+	private boolean cotaComDebitos(Long idCota){
+		
+        BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(idCota);
+		
+		return (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0);
+	}
+	
+	/**
 	 * Verifica se o número da cota existente pode ser utilizado por uma nova cota
 	 * 
 	 * @param numeroCota - número da nova cota
@@ -1535,54 +1556,54 @@ public class CotaServiceImpl implements CotaService {
 	public List<SocioCota> obterSociosCota(Long idCota){
 		
 		return socioCotaRepository.obterSocioCotaPorIdCota(idCota);
-		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public SocioCota obterSocioPorId(Long idSocioCota) {
+
+		return socioCotaRepository.buscarPorId(idSocioCota);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
-	public void salvarSociosCota(List<SocioCota> sociosCota, Long idCota ){
+	public void salvarSocioCota(SocioCota socioCota, Long idCota ){
 		
-		if(idCota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
+		if (socioCota.getId() == null && socioCota.getPrincipal()   
+									  && this.socioCotaRepository.existeSocioPrincipalCota(idCota)) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING,"Deve ser informado um sócio principal!");
+		}
+
+		if (idCota == null ) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Parâmetro Cota inválido!");
 		}
 		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
 		
-		if(cota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
-		}
-		
-		if( cota.getSociosCota() != null && !cota.getSociosCota().isEmpty()){
-	    	
-			socioCotaRepository.removerSociosCota(idCota);
-	    }
-		
-		if( sociosCota!= null && !sociosCota.isEmpty()){
+		if (cota == null ) {
 			
-			if(!isSocioPrincipal(sociosCota)){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Deve ser informado um sócio principal!");
-			}
-	
-			for(SocioCota ref : sociosCota){
-	    		ref.setCota(cota);
-				socioCotaRepository.merge(ref);
-	    	}
+			throw new ValidacaoException(TipoMensagem.WARNING,"Parâmetro Cota inválido!");
 		}
-	}
-	
-	/**
-	 * Verifica se existe sócio principal
-	 * @param sociosCota
-	 * @return boolean
-	 */
-	private boolean isSocioPrincipal(List<SocioCota> sociosCota) {
+
+		Telefone telefone = this.telefoneRepository.merge(socioCota.getTelefone());
 		
-		for(SocioCota socio : sociosCota){
-			if(socio.getPrincipal()!= null && socio.getPrincipal())
-				return true;
-		}
+		Endereco endereco = this.enderecoService.salvarEndereco(socioCota.getEndereco());
+
+		socioCota.setTelefone(telefone);
 		
-		return false;
+		socioCota.setEndereco(endereco);
+
+		socioCota.setCota(cota);
+
+		this.socioCotaRepository.merge(socioCota);
 	}
 	
 	@Transactional

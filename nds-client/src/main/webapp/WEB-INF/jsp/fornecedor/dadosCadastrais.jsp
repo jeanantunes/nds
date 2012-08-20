@@ -23,15 +23,15 @@
     <tr>
       <td>CNPJ:</td>
       <td>
-      	<input type="text" onblur="obterPessoaJuridica()" name="fornecedorDTO.cnpj" id="cnpj" maxlength="255" style="width:230px" />
+      	<input type="text" name="fornecedorDTO.cnpj" id="cnpj" maxlength="255" style="width:230px" />
       </td>
       <td>Inscrição Estadual:</td>
       <td>
-      	<input type="text" name="fornecedorDTO.inscricaoEstadual" id="inscricaoEstadual" maxlength="255" style="width:230px" />
+      	<input type="text" name="fornecedorDTO.inscricaoEstadual" id="inscricaoEstadual" style="width:230px" />
       </td>
     </tr>
     <tr>
-      <td>Responsável:</td>
+      <td>Contato:</td>
       <td>
       	<input type="text" name="fornecedorDTO.responsavel" id="responsavel" maxlength="255" style="width:230px" />
       </td>
@@ -62,12 +62,8 @@
 	    <td>
 	    	<input type="checkbox" name="fornecedorDTO.possuiContrato" id="possuiContrato" onclick="mostraValidade();" />
 	    </td>
-    </tr>
-    <tr class="validade">
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>Informe a Validade</td>
-      <td>
+	    <td class="validade">Informe a Validade</td>
+      	<td class="validade">
       	<input name="fornecedorDTO.validadeContrato" type="text" style="width:100px;" id="validadeContrato" />
       </td>
     </tr>

@@ -25,7 +25,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private int pacotePadrao;
 	private int peb;
 	private BigDecimal precoCusto;
-	private BigDecimal peso;
+	private Long peso;
 	private String codigoProduto;
 	private String nomeProduto;
 	
@@ -81,7 +81,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	
 	private Integer semanaRecolhimento;
 	
-	private boolean origemInterface;
+	private Boolean origemInterface;
 	
 	
 	private String editor;
@@ -148,10 +148,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setPrecoCusto(BigDecimal precoCusto) {
 		this.precoCusto = precoCusto;
 	}
-	public BigDecimal getPeso() {
+	public Long getPeso() {
 		return peso;
 	}
-	public void setPeso(BigDecimal peso) {
+	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
 	public String getCodigoProduto() {
@@ -460,13 +460,13 @@ public class ProdutoEdicaoDTO implements Serializable {
 	/**
 	 * @return the origemInterface
 	 */
-	public boolean isOrigemInterface() {
+	public Boolean isOrigemInterface() {
 		return origemInterface;
 	}
 	/**
 	 * @param origemInterface the origemInterface to set
 	 */
-	public void setOrigemInterface(boolean origemInterface) {
+	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
 	}
 	/**

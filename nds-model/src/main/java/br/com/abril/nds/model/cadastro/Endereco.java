@@ -93,7 +93,7 @@ public class Endereco implements Serializable, Cloneable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=1, tamanho=60)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=1 , tamanho=60))
 	})
-	private Integer numero;
+	private String numero;
 	
 	@Column(name = "UF", length=2)
 	@NFEWhens(value = {
@@ -175,11 +175,11 @@ public class Endereco implements Serializable, Cloneable {
 		this.logradouro = logradouro;
 	}
 
-	public Integer getNumero() {
+	public String getNumero() {
 		return numero;
 	}
 
-	public void setNumero(Integer numero) {
+	public void setNumero(String numero) {
 		this.numero = numero;
 	}
 

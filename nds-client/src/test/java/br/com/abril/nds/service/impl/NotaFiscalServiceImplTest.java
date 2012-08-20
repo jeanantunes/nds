@@ -188,7 +188,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		save(distribuidor);
 		
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",1);
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", "51", "Centro", "São Paulo", "SP",1);
 		save(endereco);
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, endereco, true, TipoEndereco.COBRANCA);
 		
@@ -214,7 +214,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		
 		
 		Endereco enderecoCotaManotel = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",1);
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", "50", "Centro", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota = new EnderecoCota();
 		enderecoCota.setCota(cotaManoel);
@@ -261,7 +261,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 
 		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"798765431", 1L, produto, null, false);
 		produtoEdicaoVeja.setDesconto(null);
 		save(produtoEdicaoVeja);
@@ -269,13 +269,13 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		// ////
 		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo",
-				PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal.TRIBUTADO);
+				PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, new Long(100), TributacaoFiscal.TRIBUTADO);
 		produtoComDesconto.addFornecedor(dinap);
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
 
 		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"798765431", 2L, produtoComDesconto, null, false);
 		produtoEdicaoComDesconto.setDesconto(new BigDecimal(19));
 		save(produtoEdicaoComDesconto);
@@ -348,7 +348,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 			StatusProcessamentoInterno statusInterno, Status status) {
 
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COMERCIAL,
-				"13720000", "logradouro", 123, "bairro", "cidade", "uf",1);
+				"13720000", "logradouro", "123", "bairro", "cidade", "uf",1);
 
 		Telefone telefone = Fixture.telefone("ddd", "numero", "ramal");
 
@@ -376,7 +376,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 				.informacaoAdicional("informacoesComplementares");
 
 		Endereco enderecoTransporte = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000,
+				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", "1000",
 				"Bairro Novo", "Olimpia", "SP",1);
 
 		InformacaoTransporte informacaoTransporte = Fixture
@@ -433,12 +433,10 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 			Produto produto = Fixture.produto("0" + numero + "codigo",
 					"descricao", "0" + numero + "nome",
-					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new BigDecimal(
-							123), TributacaoFiscal. TRIBUTADO);
+					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new Long(100), TributacaoFiscal. TRIBUTADO);
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
-					"codigoProdutoEdicao", 999L, 1111, 222, new BigDecimal(
-							99999), new BigDecimal(99999),
+					"codigoProdutoEdicao", 999L, 1111, 222, new Long(1000), new BigDecimal(99999),
 					new BigDecimal(99999), "codigoDeBarras", 4321L, produto,
 					new BigDecimal(99999), false);
 
@@ -472,7 +470,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		listItemNotaFiscal.add(new ItemNotaFiscal(produtoEdicaoComDesconto.getId(), BigInteger.TEN, BigDecimal.TEN, "091"));
 		
 		Endereco enderecoTransporte = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", 1000,
+				TipoEndereco.COMERCIAL, "10500250", "Rua Nova", "1000",
 				"Bairro Novo", "Olimpia", "SP",1);
 		save(enderecoTransporte);
 		InformacaoTransporte informacaoTransporte = Fixture

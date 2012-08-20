@@ -1,9 +1,11 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 <script type="text/javascript">
+
+	var pesquisaCotaConsultaBoletos = new PesquisaCota();
 
 	$(function() {
 		$(".boletosCotaGrid").flexigrid({
@@ -210,7 +212,7 @@
               		   maxlength="11"
               		   style="width:80px; 
               		   float:left; margin-right:5px;"
-              		   onchange="cota.pesquisarPorNumeroCota('#numCota', '#descricaoCota');" />
+              		   onchange="pesquisaCotaConsultaBoletos.pesquisarPorNumeroCota('#numCota', '#descricaoCota');" />
 			  </td>
 				
 			  <td>
@@ -220,8 +222,8 @@
 			      		 class="nome_jornaleiro" 
 			      		 maxlength="255"
 			      		 style="width:130px;"
-			      		 onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-			      		 onblur="cota.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
+			      		 onkeyup="pesquisaCotaConsultaBoletos.autoCompletarPorNome('#descricaoCota');" 
+			      		 onblur="pesquisaCotaConsultaBoletos.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
 			  </td>
               
               <td width="124">Data de Vencimento:</td>

@@ -4,8 +4,6 @@
 
 	<title>Conferencia Encalhe</title>
 
-	<script type="text/javascript" src='<c:url value="/"/>scripts/produto.js'></script>
-
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/shortcut.js'></script>

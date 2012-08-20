@@ -1,7 +1,12 @@
 //#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
 var produtoController = $.extend(true, {
 	
-	inicializar : function () {
+	pesquisaProduto:null,
+	
+	inicializar : function (pesquisaProduto) {
+		
+		produtoController.pesquisaProduto = pesquisaProduto;
+		
 		this.iniciarGrid();
 		$( "#tabProduto", this.workspace).tabs();
 
@@ -50,13 +55,13 @@ var produtoController = $.extend(true, {
 	//Mostrar auto complete por nome do produto
 	autoCompletarPorNomeFornecedor : function(idFornecedor, isFromModal) {
 		
-		produtoController.pesquisaRealizada = false;
+		produtoController.pesquisaProduto.pesquisaRealizada = false;
 		
 		var nomeFornecedor = $(idFornecedor, this.workspace).val();
 		
 		if (nomeFornecedor && nomeFornecedor.length > 2) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorNomeFornecedor", "nomeFornecedor=" + nomeFornecedor,
-					   function(result) { produtoController.exibirAutoComplete(result, idFornecedor); },
+					   function(result) { produtoController.pesquisaProduto.exibirAutoComplete(result, idFornecedor); },
 					   null, isFromModal);
 		}
 	},
@@ -65,22 +70,6 @@ var produtoController = $.extend(true, {
 		var comboFornecedores =  montarComboBox(result, true);
 		
 		$("#fornecedor", this.workspace).html(comboFornecedores);
-	},
-	
-	validarEdicaoSuccessCallBack : function(){
-		
-		 var data = [{name:"codigoProduto",value:$("#codigoProduto", this.workspace).val()},
-         			 {name:"numeroEdicao",value:$("#edicao", this.workspace).val()},
-					];
-		
-		 $.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarDataProgramada",
-				   data, function(result) {
-			 $("#dataProgramada", this.workspace).val(result);
-		 });
-	},
-	
-	validarEdicaoErrorCallBack: function() {
-		 $("#dataProgramada", this.workspace).val("");
 	},	
 	
 	carregarPercentualDesconto : function() {
@@ -111,13 +100,13 @@ var produtoController = $.extend(true, {
 			colModel : [ {
 				display : 'C&oacute;digo',
 				name : 'codigo',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'produtoDescricao',
-				width : 180,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -129,13 +118,13 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Editor',
 				name : 'nomeEditor',
-				width : 190,
+				width : 180,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Fornecedor',
 				name : 'tipoContratoFornecedor',
-				width : 150,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -145,8 +134,20 @@ var produtoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Situa&ccedil;&atilde;o',
-				name : 'situacao',
+				display : 'Pcte. Padr&atilde;o',
+				name : 'pacotePadrao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Desconto %',
+				name : 'percentualDesconto',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Periodicidade',
+				name : 'periodicidade',
 				width : 60,
 				sortable : true,
 				align : 'center'
@@ -322,7 +323,7 @@ var produtoController = $.extend(true, {
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
 			},
-			form: $("#dialog-novo", this.workspace).parents("form")
+			form: $("#dialog-excluir", this.workspace).parents("form")
 		});
 	},
 	
@@ -347,7 +348,8 @@ var produtoController = $.extend(true, {
 			beforeClose: function() {
 				produtoController.limparModalCadastro();
 				clearMessageDialogTimeout('dialogMensagemNovo', this.workspace);
-			}
+			},
+			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 
 		this.carregarNovoProduto(this.limparModalCadastro);
@@ -466,250 +468,6 @@ var produtoController = $.extend(true, {
 	carregarTipoDescontoProduto : function(callback) {
 		if (callback) {
 			callback();
-		}
-	},
-	
-	//Pesquisa por código de produto
-	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo, this.workspace).val();
-		
-		codigoProduto = $.trim(codigoProduto);
-		
-		$(idCodigo, this.workspace).val(codigoProduto);
-		
-		$(idProduto, this.workspace).val("");
-		$(idEdicao, this.workspace).val("");
-		$(idEdicao, this.workspace).attr("disabled", "disabled");
-		
-		if (codigoProduto && codigoProduto.length > 0) {
-			
-			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					   "codigoProduto=" + codigoProduto,
-					   function(result) { produtoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack); },
-					   function() { produtoController.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
-		
-		} else {
-		
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-	
-	//Pesquisa por código de produto
-	pesquisarPorCodigoProdutoAutoCompleteEdicao : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo, this.workspace).val();
-		
-		codigoProduto = $.trim(codigoProduto);
-		
-		$(idCodigo, this.workspace).val(codigoProduto);
-		
-		$(idProduto, this.workspace).val("");
-		$(idEdicao, this.workspace).val("");
-		
-		if (codigoProduto && codigoProduto.length > 0) {
-			
-			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					   "codigoProduto=" + codigoProduto,
-					   function(result) { produtoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack, idCodigo, isFromModal); 
-					   		produtoController.autoCompletarEdicaoPorProduto(idCodigo, idEdicao, isFromModal);
-						},
-					   null, isFromModal);
-		
-		} else {
-		
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-
-	pesquisarPorCodigoSuccessCallBack : function(result, idProduto, idEdicao, successCallBack,idCodigo, isFromModal) {
-		
-		$(idEdicao, this.workspace).removeAttr("disabled");
-		$(idProduto, this.workspace).val(result.nome);
-		$(idEdicao, this.workspace).focus();
-		
-		produtoController.pesquisaRealizada = true;
-		
-		if (successCallBack) {
-			successCallBack();
-		}
-	},
-	
-	pesquisarPorCodigoErrorCallBack : function(idCodigo, errorCallBack) {
-		$(idCodigo, this.workspace).val("");
-		$(idCodigo, this.workspace).focus();
-		
-		if (errorCallBack) {
-			errorCallBack();
-		}
-	},
-	
-	//Mostrar auto complete por nome do produto
-	autoCompletarEdicaoPorProduto : function(idCodigoProduto, idEdicao, isFromModal) {
-		
-		produtoController.pesquisaRealizada = false;
-		
-		var codigoProduto = $(idCodigoProduto).val();
-		
-		$.postJSON(contextPath + "/produto/autoCompletarEdicaoPorProduto", "codigoProduto=" + codigoProduto,
-					   function(result) { produtoController.exibirAutoCompleteEdicao(result, idEdicao); },
-					   null, isFromModal);
-		
-	},
-	
-	//Mostrar auto complete por nome do produto
-	autoCompletarPorNomeProduto : function(idProduto, isFromModal) {
-		
-		produtoController.pesquisaRealizada = false;
-		
-		var nomeProduto = $(idProduto, this.workspace).val();
-		
-		if (nomeProduto && nomeProduto.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorPorNomeProduto", "nomeProduto=" + nomeProduto,
-					   function(result) { produtoController.exibirAutoComplete(result, idProduto); },
-					   null, isFromModal);
-		}
-	},
-	
-	descricaoAtribuida : true,
-	
-	pesquisaRealizada : false,
-	
-	intervalo : null,
-	
-	exibirAutoComplete : function(result, idProduto) {
-		
-		$(idProduto, this.workspace).autocomplete({
-			source : result,
-			focus : function(event, ui) {
-				produtoController.descricaoAtribuida = false;
-			},
-			close : function(event, ui) {
-				produtoController.descricaoAtribuida = true;
-			},
-			select : function(event, ui) {
-				produtoController.descricaoAtribuida = true;
-			},
-			minLength: 4,
-			delay : 0,
-		});
-	},
-	
-	exibirAutoCompleteEdicao : function(result, idEdicao) {
-		
-		$(idEdicao, this.workspace).autocomplete({
-			source : result
-		});
-	},
-	
-	//Pesquisar por nome do produto
-	pesquisarPorNomeProduto : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		
-		setTimeout(function() { clearInterval(produtoController.intervalo); }, 10 * 1000);
-		
-		produtoController.intervalo = setInterval(function() {
-			
-			if (produtoController.descricaoAtribuida) {
-				
-				if (produtoController.pesquisaRealizada) {
-					
-					clearInterval(produtoController.intervalo);
-					
-					return;
-				}
-				
-				produtoController.pesquisarPorNomeProdutoAposIntervalo(idCodigo, idProduto, idEdicao,
-															isFromModal, successCallBack, errorCallBack);
-			}
-			
-		}, 100);
-	},
-	
-	pesquisarPorNomeProdutoAposIntervalo : function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		
-		clearInterval(produtoController.intervalo);
-		
-		produtoController.pesquisaRealizada = true;
-		
-		var nomeProduto = $(idProduto, this.workspace).val();
-		
-		nomeProduto = $.trim(nomeProduto);
-		
-		$(idCodigo, this.workspace).val("");
-		$(idEdicao, this.workspace).val("");
-		$(idEdicao, this.workspace).attr("disabled", "disabled");
-		
-		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
-					   function(result) { produtoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); },
-					   function() { produtoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack); }, isFromModal);
-		} else {
-			
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-	
-	pesquisarPorNomeSuccessCallBack : function(result, idCodigo, idProduto, idEdicao, successCallBack) {
-		if (result != "") {
-			$(idCodigo, this.workspace).val(result.codigo);
-			$(idProduto, this.workspace).val(result.nome);
-			
-			$(idEdicao, this.workspace).removeAttr("disabled");
-			$(idEdicao, this.workspace).focus();
-			
-			if (successCallBack) {
-				successCallBack();
-			}
-		}
-	},
-	
-	pesquisarPorNomeErrorCallBack : function(idCodigo, idProduto, idEdicao, errorCallBack) {
-		$(idProduto, this.workspace).val("");
-		$(idProduto, this.workspace).focus();
-		
-		if (errorCallBack) {
-			errorCallBack();
-		}
-	},	
-
-	//Validação do número da edição
-	validarNumEdicao : function(idCodigo, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo, this.workspace).val();
-		var numeroEdicao = $(idEdicao, this.workspace).val();
-		
-		if (codigoProduto && codigoProduto.length > 0
-				&& numeroEdicao && numeroEdicao.length > 0) {
-			
-			var data = "codigoProduto=" + codigoProduto +
-			   		   "&numeroEdicao=" + numeroEdicao;
-
-			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
-					data, function(result) { produtoController.validaNumeroEdicaoSucessoCallBack(idCodigo, idEdicao, successCallBack); },
-					function() { produtoController.validarNumeroEdicaoErrorCallBack(idEdicao, errorCallBack); }, isFromModal);
-		} else {
-			
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-
-	validaNumeroEdicaoSucessoCallBack : function(idCodigo, idEdicao, successCallBack) {
-		if (successCallBack) {
-			successCallBack(idCodigo, idEdicao);
-		}
-	},
-	
-	validarNumeroEdicaoErrorCallBack : function(idEdicao, errorCallBack) {
-		$(idEdicao, this.workspace).val("");
-		$(idEdicao, this.workspace).focus();
-		
-		if (errorCallBack) {
-			this.errorCallBack();
 		}
 	},
 

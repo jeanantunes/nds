@@ -174,7 +174,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	private CouchDbClient getCouchDBClient() {
 		
 		return new CouchDbClient(
-				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 7, "0"),
+				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 8, "0"),
 				true,
 				couchDbProperties.getProtocol(),
 				couchDbProperties.getHost(),
@@ -199,7 +199,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 				// esse parametro não será mais relacionada aos Parametro do Sistema, sera relacionado aos Parametro do Distribuidor
 			
 				//String hql = "SELECT p.valor from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema";
-				String hql = "SELECT dist.id from Distribuidor dist";
+				String hql = "SELECT dist.codigoDistribuidorDinap from Distribuidor dist";
 				
 				Query query = getSession().createQuery(hql);				
 			

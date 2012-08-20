@@ -49,182 +49,182 @@
 				<legend> Painel Operacional</legend>
 				<ul id="map">
 					<li id="crs" estado="rs">
-						<a href="javascript:;" onclick="mostrarIndicadores('RS');">
+						<a href="javascript:;" >
 							<div id="rs" class="${estados['RS'] != null ? 'rsActive' : ''}" title="RS">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="RS" border="0" />
 							</div>
 						</a>
 					</li>
 					<li id="csc" estado="sc">
-						<a href="javascript:;" onclick="mostrarIndicadores('SC');">
+						<a href="javascript:;" >
 							<div id="sc" class="${estados['SC'] != null ? 'scActive' : ''}" title="SC">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="SC" border="0" />
 							</div>
 						</a>
 					</li>
 					<li id="cpr" estado="pr">
-						<a href="javascript:;" onclick="mostrarIndicadores('PR');">
+						<a href="javascript:;" >
 							<div id="pr" title="PR" class="${estados['PR'] != null ? 'prActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="PR" border="0" />
 							</div>
 						</a>
 					</li>
 					<li id="csp" estado="sp">
-						<a href="javascript:;" onclick="mostrarIndicadores('SP');">
+						<a href="javascript:;" >
 							<div id="sp" title="SP" class="${estados['SP'] != null ? 'spActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="SP" />
 							</div>
 						</a>
 					</li>
 					<li id="cms" estado="ms">
-						<a href="javascript:;" onclick="mostrarIndicadores('MS');">
+						<a href="javascript:;" >
 							<div id="ms" title="MS" class="${estados['MS'] != null ? 'msActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="MS" />
 							</div>
 						</a>
 					</li>
 					<li id="crj" estado="rj">
-						<a href="javascript:;" onclick="mostrarIndicadores('RJ');">
+						<a href="javascript:;" >
 							<div id="rj" title="RJ" class="${estados['RJ'] != null ? 'rjActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="RJ" />
 							</div>
 						</a>
 					</li>
 					<li id="ces" estado="es">
-						<a href="javascript:;" onclick="mostrarIndicadores('ES');">
+						<a href="javascript:;" >
 							<div id="es" title="ES" class="${estados['ES'] != null ? 'esActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="ES" />
 							</div>
 						</a>
 					</li>
 					<li id="cmg" estado="mg">
-						<a href="javascript:;" onclick="mostrarIndicadores('MG');">
+						<a href="javascript:;" >
 							<div id="mg" title="MG" class="${estados['MG'] != null ? 'mgActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="MG" />
 							</div>
 						</a>
 					</li>
 					<li id="cgo" estado="go">
-						<a href="javascript:;" onclick="mostrarIndicadores('GO');">
+						<a href="javascript:;" >
 							<div id="go" title="GO" class="${estados['GO'] != null ? 'goActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="GO" />
 							</div>
 						</a>
 					</li>
 					<li id="cba" estado="ba">
-						<a href="javascript:;" onclick="mostrarIndicadores('BA');">
+						<a href="javascript:;">
 							<div id="ba" title="BA" class="${estados['BA'] != null ? 'baActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="BA" />
 							</div>
 						</a>
 					</li>
 					<li id="cmt" estado="mt">
-						<a href="javascript:;" onclick="mostrarIndicadores('MT');">
+						<a href="javascript:;">
 							<div id="mt" title="MT" class="${estados['MT'] != null ? 'mtActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="MT" border="0" />
 							</div>
 						</a>
 					</li>
 					<li id="cro" estado="ro">
-						<a href="javascript:;" onclick="mostrarIndicadores('RO');">
+						<a href="javascript:;" >
 							<div id="ro" title="RO" class="${estados['RO'] != null ? 'roActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="RO" />
 							</div>
 						</a>
 					</li>
 					<li id="cac" estado="ac">
-						<a href="javascript:;" onclick="mostrarIndicadores('AC');">
+						<a href="javascript:;">
 							<div id="ac" title="AC" class="${estados['AC'] != null ? 'acActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="AC" />
 							</div>
 						</a>
 					</li>
 					<li id="cam" estado="am">
-						<a href="javascript:;" onclick="mostrarIndicadores('AM');">
+						<a href="javascript:;">
 							<div id="am" title="AM" class="${estados['AM'] != null ? 'amActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="AM" />
 							</div>
 						</a>
 					</li>
 					<li id="crr" estado="rr">
-						<a href="javascript:;" onclick="mostrarIndicadores('RR');">
+						<a href="javascript:;">
 							<div id="rr" title="RR" class="${estados['RR'] != null ? 'rrActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="RR" />
 							</div>
 						</a>
 					</li>
 					<li id="cpa" estado="pa">
-						<a href="javascript:;" onclick="mostrarIndicadores('PA');">
+						<a href="javascript:;" >
 							<div id="pa" title="PA" class="${estados['PA'] != null ? 'paActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="PA" />
 							</div>
 						</a>
 					</li>
 					<li id="cap" estado="ap">
-						<a href="javascript:;" onclick="mostrarIndicadores('AP');">
+						<a href="javascript:;" >
 							<div id="ap" title="AP" class="${estados['AP'] != null ? 'apActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="AP" />
 							</div>
 						</a>
 					</li>
 					<li id="cma" estado="ma">
-						<a href="javascript:;" onclick="mostrarIndicadores('MA');">
+						<a href="javascript:;" >
 							<div id="ma" title="MA" class="${estados['MA'] != null ? 'maActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="MA" />
 							</div>
 						</a>
 					</li>
 					<li id="cto" estado="to">
-						<a href="javascript:;" onclick="mostrarIndicadores('TO');">
+						<a href="javascript:;">
 							<div id="to" title="TO" class="${estados['TO'] != null ? 'toActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="TO" />
 							</div>
 						</a>
 					</li>
 					<li id="cse" estado="se">
-						<a href="javascript:;" onclick="mostrarIndicadores('SE');">
+						<a href="javascript:;">
 							<div id="se" title="SE" class="${estados['SE'] != null ? 'seActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="SE" />
 							</div>
 						</a>
 					</li>
 					<li id="cal" estado="al">
-						<a href="javascript:;" onclick="mostrarIndicadores('AL');">
+						<a href="javascript:;">
 							<div id="al" title="AL" class="${estados['AL'] != null ? 'alActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="AL" />
 							</div>
 						</a>
 					</li>
 					<li id="cpe" estado="pe">
-						<a href="javascript:;" onclick="mostrarIndicadores('PE');">
+						<a href="javascript:;">
 							<div id="pe" title="PE" class="${estados['PE'] != null ? 'peActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="PE" />
 							</div>
 						</a>
 					</li>
 					<li id="cpb" estado="pb">
-						<a href="javascript:;" onclick="mostrarIndicadores('PB');">
+						<a href="javascript:;">
 							<div id="pb" title="PB" class="${estados['PB'] != null ? 'pbActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="PB" />
 							</div>
 						</a>
 					</li>
 					<li id="crn" estado="rn">
-						<a href="javascript:;" onclick="mostrarIndicadores('RN');">
+						<a href="javascript:;">
 							<div id="rn" title="RN" class="${estados['RN'] != null ? 'rnActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="RN" />
 							</div>
 						</a>
 					</li>
 					<li id="cce" estado="ce">
-						<a href="javascript:;" onclick="mostrarIndicadores('CE');">
+						<a href="javascript:;">
 							<div id="ce" title="CE" class="${estados['CE'] != null ? 'ceActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="CE" />
 							</div>
 						</a>
 					</li>
 					<li id="cpi" estado="pi">
-						<a href="javascript:;" onclick="mostrarIndicadores('PI');">
+						<a href="javascript:;">
 							<div id="pi" title="PI" class="${estados['PI'] != null ? 'piActive' : ''}">
 								<img src="${pageContext.request.contextPath}/mapa/img/null.gif" alt="PI" />
 							</div>
@@ -277,14 +277,14 @@
 										</c:when>
 									</c:choose>
 									
-									<div>
-										<a href="javascript:;" onclick="openDistrib(${distribuidor.idDistribuidorInterface});">
+									<div class="linkPainel">
+										<a href="javascript:;" id="${distribuidor.idDistribuidorInterface}" >
 											${distribuidor.nome}
 										</a>
 									</div>
 
 									<div class="detalhesPainel" id="detalhe_${distribuidor.idDistribuidorInterface}" style="display: none; width: 340px; padding-left: 10px;">
-										<a href="javascript:;" onclick="closeDistrib(${distribuidor.idDistribuidorInterface});">
+										<a href="javascript:;" id="${distribuidor.idDistribuidorInterface}">
 											<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" 
 											     alt="Fechar" border="0" style="float: right;" />
 										</a>

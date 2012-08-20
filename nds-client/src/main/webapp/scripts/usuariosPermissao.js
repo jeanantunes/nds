@@ -6,15 +6,15 @@ var usuariosPermissaoController = $.extend(true, {
 			this.mostrarUsuario();
 		},
 		limpar_selecoes : function() {
-			$("#gruposUsuario option", this.workspace).remove();
-			$("#gruposSelecionadosUsuario option", this.workspace).remove();
-			$("#permissoesUsuario option", this.workspace).remove();
-			$("#permissoesSelecionadasUsuario option", this.workspace).remove();
+			$("#gruposUsuario option", usuariosPermissaoController.workspace).remove();
+			$("#gruposSelecionadosUsuario option", usuariosPermissaoController.workspace).remove();
+			$("#permissoesUsuario option", usuariosPermissaoController.workspace).remove();
+			$("#permissoesSelecionadasUsuario option", usuariosPermissaoController.workspace).remove();
 			$("#usuarioCep").mask("99999-999");
 		},
 		popup_alterar_senha : function(idUsuario) {
 			
-			this.clearForm($("#alterar_senha_form", this.workspace));
+			this.clearForm($("#alterar_senha_form", usuariosPermissaoController.workspace));
 			
 			$.getJSON(
 					this.path + "/editarUsuario",
@@ -26,14 +26,14 @@ var usuariosPermissaoController = $.extend(true, {
 					}
 				);
 			
-			$( "#dialog-alterar-senha" , this.workspace).dialog({
+			$( "#dialog-alterar-senha" , usuariosPermissaoController.workspace).dialog({
 				resizable: false,
 				height:220,
 				width:300,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						var obj = $("#alterar_senha_form", this.workspace).serialize();
+						var obj = $("#alterar_senha_form", usuariosPermissaoController.workspace).serialize();
 
 						$.postJSON(usuariosPermissaoController.path + '/alterarSenha', obj, function(data) {
 							var tipoMensagem = data.tipoMensagem;
@@ -56,17 +56,18 @@ var usuariosPermissaoController = $.extend(true, {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-alterar-senha", usuariosPermissaoController.workspace).parents("form")
 			});
 		},
 		popup_novo_usuario : function() {
 
-			$("#trInsercaoSenhas", this.workspace).show();
-			$("#trLembreteSenha", this.workspace).show();
+			$("#trInsercaoSenhas", usuariosPermissaoController.workspace).show();
+			$("#trLembreteSenha", usuariosPermissaoController.workspace).show();
 			
 			this.limpar_selecoes();
 			
-			this.clearForm($("#novo_usuario_form", this.workspace));
+			this.clearForm($("#novo_usuario_form", usuariosPermissaoController.workspace));
 			
 			$('#usuarioAtivaTrue').attr('checked', true).button("refresh");								
 			
@@ -76,13 +77,13 @@ var usuariosPermissaoController = $.extend(true, {
 					function(result) {
 						if (result) {
 							$(result.usuarioDTO.grupos).each(function() {
-								$("#gruposUsuario", this.workspace).append($("<option/>", {value: $(this)[0].id,
+								$("#gruposUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].id,
 																			 			   text: $(this)[0].nome 
 																			 			  }));
 							});
 							$(result.usuarioDTO.permissoes).each(function() {
-								$("#permissoesUsuario", this.workspace).append($("<option/>", {value: $(this)[0].toString(),
-																			 			   text: $(this)[0].toString() 
+								$("#permissoesUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
+																			 			   text: $(this)[0].toString()
 																			 			  }));
 							});
 						}
@@ -93,8 +94,8 @@ var usuariosPermissaoController = $.extend(true, {
 		},
 		popup_editar_usuario : function(idGrupo) {
 			
-			$("#trInsercaoSenhas", this.workspace).hide();
-			$("#trLembreteSenha", this.workspace).hide();
+			$("#trInsercaoSenhas", usuariosPermissaoController.workspace).hide();
+			$("#trLembreteSenha", usuariosPermissaoController.workspace).hide();
 			
 			this.limpar_selecoes();
 			
@@ -126,7 +127,7 @@ var usuariosPermissaoController = $.extend(true, {
 
 							$(result.usuarioDTO.permissoes).each(function() {
 								$("#permissoesUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
-																			 			   text: $(this)[0].toString() 
+																			 			   text: $(this)[0].toString()
 																			 			  }));
 							});
 
@@ -143,17 +144,17 @@ var usuariosPermissaoController = $.extend(true, {
 			this.popup_usuario();
 		},
 		popup_usuario : function() {
-			$( "#dialog-novo-usuario" , this.workspace).dialog({
+			$( "#dialog-novo-usuario" , usuariosPermissaoController.workspace).dialog({
 				resizable: false,
 				height:620,
 				width:750,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						var obj = $("#novo_usuario_form", this.workspace).serialize();
+						var obj = $("#novo_usuario_form", usuariosPermissaoController.workspace).serialize();
 						
 						var permissoes = "";
-						$("#permissoesSelecionadasUsuario option", this.workspace).each(function() {
+						$("#permissoesSelecionadasUsuario option", usuariosPermissaoController.workspace).each(function() {
 							if (permissoes!="") {
 								permissoes += ",";
 							}
@@ -161,7 +162,7 @@ var usuariosPermissaoController = $.extend(true, {
 					    });
 
 						var grupos = "";
-						$("#gruposSelecionadosUsuario option", this.workspace).each(function() {
+						$("#gruposSelecionadosUsuario option", usuariosPermissaoController.workspace).each(function() {
 							if (grupos!="") {
 								grupos += ",";
 							}
@@ -196,11 +197,12 @@ var usuariosPermissaoController = $.extend(true, {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-novo-usuario", usuariosPermissaoController.workspace).parents("form")
 			});
 		},
 		popup_excluir_usuario : function(codigoUsuario) {
-			$( "#dialog-excluir-usuario", this.workspace ).dialog({
+			$( "#dialog-excluir-usuario", usuariosPermissaoController.workspace ).dialog({
 				resizable: false,
 				height:170,
 				width:380,
@@ -232,56 +234,57 @@ var usuariosPermissaoController = $.extend(true, {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-excluir-usuario", usuariosPermissaoController.workspace).parents("form")
 			});
 		},
 		adicionaGruposSelecionados : function() {
-			$('#gruposUsuario', this.workspace).find(":selected").each(function() {
-				$("#gruposSelecionadosUsuario", this.workspace).append($("<option/>", {value: $(this)[0].value,
+			$('#gruposUsuario', usuariosPermissaoController.workspace).find(":selected").each(function() {
+				$("#gruposSelecionadosUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].value,
 		 			   text: $(this)[0].text
 		 			  }));
 			});
-			$("#gruposUsuario option:selected", this.workspace).remove();
+			$("#gruposUsuario option:selected", usuariosPermissaoController.workspace).remove();
 		},
 		removeGruposSelecionados : function() {
-			$('#gruposSelecionadosUsuario', this.workspace).find(":selected").each(function() {
-				$("#gruposUsuario", this.workspace).append($("<option/>", {value: $(this)[0].value,
+			$('#gruposSelecionadosUsuario', usuariosPermissaoController.workspace).find(":selected").each(function() {
+				$("#gruposUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].value,
 		 			   text: $(this)[0].text
 		 			  }));
 			});
-			$("#gruposSelecionadosUsuario option:selected", this.workspace).remove();
+			$("#gruposSelecionadosUsuario option:selected", usuariosPermissaoController.workspace).remove();
 		},
 		adicionaPermissoesSelecionadas : function() {
-			$('#permissoesUsuario', this.workspace).find(":selected").each(function() {
-				$("#permissoesSelecionadasUsuario", this.workspace).append($("<option/>", {value: $(this)[0].value,
+			$('#permissoesUsuario', usuariosPermissaoController.workspace).find(":selected").each(function() {
+				$("#permissoesSelecionadasUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].value,
 		 			   text: $(this)[0].text
 		 			  }));
 			});
-			$("#permissoesUsuario option:selected", this.workspace).remove();
+			$("#permissoesUsuario option:selected", usuariosPermissaoController.workspace).remove();
 		},
 		removePermissoesSelecionadas : function() {
-			$('#permissoesSelecionadasUsuario', this.workspace).find(":selected").each(function() {
-				$("#permissoesUsuario", this.workspace).append($("<option/>", {value: $(this)[0].value,
+			$('#permissoesSelecionadasUsuario', usuariosPermissaoController.workspace).find(":selected").each(function() {
+				$("#permissoesUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].value,
 		 			   text: $(this)[0].text
 		 			  }));
 			});
-			$("#permissoesSelecionadasUsuario option:selected", this.workspace).remove();
+			$("#permissoesSelecionadasUsuario option:selected", usuariosPermissaoController.workspace).remove();
 		},
 		mostrarUsuario : function() {
-			var serializedObj = $("#pesquisar_usuario_form", this.workspace).serialize();
-			$(".usuariosGrid", this.workspace).flexOptions({
+			var serializedObj = $("#pesquisar_usuario_form", usuariosPermissaoController.workspace).serialize();
+			$(".usuariosGrid", usuariosPermissaoController.workspace).flexOptions({
 				"url" : this.path + '/pesquisarUsuarios?' + serializedObj,
 				method: 'GET',
 				newp:1
 			});
-			$('.usuariosGrid', this.workspace).flexReload();
+			$('.usuariosGrid', usuariosPermissaoController.workspace).flexReload();
 		},
 		initUsuariosGrid : function() {
-			$(".usuariosGrid", this.workspace).flexigrid({
+			$(".usuariosGrid", usuariosPermissaoController.workspace).flexigrid({
 				preProcess: function(data) {
 					if( typeof data.mensagens == "object") {
 						exibirMensagemDialog(data.mensagens.tipoMensagem, data.mensagens.listaMensagens, "dialog-novo-usuario");
-						$(".gridsGrupos", this.workspace).hide();
+						$(".gridsGrupos", usuariosPermissaoController.workspace).hide();
 					} else {
 						$.each(data.rows , function(index, value) {
 
@@ -342,7 +345,7 @@ var usuariosPermissaoController = $.extend(true, {
 							value.cell[6] = linkEditarUsuario + linkAlterarSenha + linkExcluirUsuario;
 
 						});
-						$(".gridsUsuario", this.workspace).show();
+						$(".gridsUsuario", usuariosPermissaoController.workspace).show();
 					}
 					return data;
 				},

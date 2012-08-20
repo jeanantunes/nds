@@ -1,354 +1,73 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDesconto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoDistribuidor.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoProduto.js"></script>
 
 <script language="javascript" type="text/javascript">
-	
+
+var pesquisaCotaTipoDescontoCota = new PesquisaCota(tipoDescontoController.workspace);
+
+var pesquisaProdutoTipoDescontoCota = new PesquisaProduto(tipoDescontoController.workspace);
+
 $(function() {		
-	$("#produto").autocomplete({source: ""});		
-	$("#descontoGeral").mask("99.99");
-	$("#descontoEspecifico").mask("99.99");
-	$("#descontoProduto").mask("99.99");		
+	tipoDescontoController.init();
+	descontoDistribuidorController.init();
+	descontoCotaController.init();
+	descontoProdutoController.init(pesquisaCotaTipoDescontoCota);
 });
-
-var TIPO_DESCONTO = {
-	
-	tipoDescontoSelecionado:"",
-	
-	pesquisar:function () {
-		
-		if(TIPO_DESCONTO.tipoDescontoSelecionado == 'GERAL'){
-			TIPO_DESCONTO.pesquisarDescontoGeral();						
-		}else if(TIPO_DESCONTO.tipoDescontoSelecionado == 'ESPECIFICO'){
-			TIPO_DESCONTO.pesquisarDescontoEspecifico();
-		}else if (TIPO_DESCONTO.tipoDescontoSelecionado == 'PRODUTO') {
-			TIPO_DESCONTO.pesquisarDescontoProduto();
-		}else{
-			exibirMensagem("WARNING", ['Informe um tipo de desconto para pesquisa!'], "");
-		}	
-	},
-	
-	pesquisarDescontoGeral:function(){
-		
-		$(".tiposDescGeralGrid").flexOptions({
-			url: "<c:url value='/financeiro/tipoDescontoCota/pesquisarDescontoGeral'/>",
-			params: [],
-		    newp: 1,
-		});
-		
-		$(".tiposDescGeralGrid").flexReload();
-	},
-	
-	pesquisarDescontoEspecifico:function(){
-		 
-		var cotaEspecifica = $("#numCotaPesquisa").val();
-		var nomeEspecifico = $("#descricaoCotaPesquisa").val();
-		
-		$(".tiposDescEspecificoGrid").flexOptions({
-			url: "<c:url value='/financeiro/tipoDescontoCota/pesquisarDescontoEspecifico'/>",
-			params: [
-					 {name:'cotaEspecifica', value:cotaEspecifica},
-			         {name:'nomeEspecifico', value:nomeEspecifico}
-			         ],
-		    newp: 1,
-		});
-		
-		$(".tiposDescEspecificoGrid").flexReload();
-	},
-	
-	pesquisarDescontoProduto:function(){
-		var codigo = $("#codigoPesquisa").val();
-		var produto = $("#produtoPesquisa").val();
-		
-		$(".tiposDescProdutoGrid").flexOptions({
-			url: "<c:url value='/financeiro/tipoDescontoCota/pesquisarDescontoProduto'/>",
-			params: [
-					 {name:'codigo', value:codigo},
-			         {name:'produto', value:produto}
-			         ],
-		    newp: 1,
-		});
-		
-		$(".tiposDescProdutoGrid").flexReload();
-	},
-			
-	mostra_geral:function(){
-		
-		TIPO_DESCONTO.tipoDescontoSelecionado = "GERAL";
-		
-		$( '#tpoGeral' ).show();
-		$( '#tpoEspecifico' ).hide();
-		$( '#tpoProduto' ).hide();
-		$( '.especifico' ).hide();
-		$( '.produto' ).hide();
-		
-		TIPO_DESCONTO.exibirExportacao(false);
-		
-		$(".grids").show();
-	},
-	
-	mostra_especifico:function(){
-		
-		TIPO_DESCONTO.tipoDescontoSelecionado = "ESPECIFICO";
-		
-		$( '#tpoGeral' ).hide();
-		$( '#tpoEspecifico' ).show();
-		$( '.especifico' ).show();
-		$( '#tpoProduto' ).hide();
-		$( '.produto' ).hide();
-		
-		TIPO_DESCONTO.exibirExportacao(false);
-		
-		$(".grids").show();
-	},
-	
-	mostra_produto:function(){
-		
-		TIPO_DESCONTO.tipoDescontoSelecionado = "PRODUTO";
-		
-		$( '#tpoGeral' ).hide();
-		$( '#tpoEspecifico' ).hide();
-		$( '.especifico' ).hide();
-		$( '#tpoProduto' ).show();
-		$( '.produto' ).show();
-		
-		TIPO_DESCONTO.exibirExportacao(false);
-		
-		$(".grids").show();
-	},
-	
-	exibirExportacao:function(isExibir){
-		
-		if(TIPO_DESCONTO.tipoDescontoSelecionado =="PRODUTO"){
-			if(isExibir == true){
-				$("#idExportacaoProduto").show();	
-			}else{
-				$("#idExportacaoProduto").hide();
-			}
-		}
-		
-		if(TIPO_DESCONTO.tipoDescontoSelecionado =="GERAL"){
-			if(isExibir == true){
-				$("#idExportacaoGeral").show();	
-			}else{
-				$("#idExportacaoGeral").hide();
-			}
-		}
-		
-		if(TIPO_DESCONTO.tipoDescontoSelecionado =="ESPECIFICO"){
-			if(isExibir == true){
-				$("#idExportacaoEspecifico").show();	
-			}else{
-				$("#idExportacaoEspecifico").hide();
-			}
-		}
-	},
-	
-	executarPreProcessamento:function(resultado) {				
-		
-		if (resultado.mensagens) {
-
-			exibirMensagem(
-				resultado.mensagens.tipoMensagem, 
-				resultado.mensagens.listaMensagens
-			);
-			
-			$(".grids").hide();
-			
-			TIPO_DESCONTO.exibirExportacao(false);
-			
-			if(TIPO_DESCONTO.tipoDescontoSelecionado == "PRODUTO"){
-				TIPO_DESCONTO.mostra_produto();
-			}else if (TIPO_DESCONTO.tipoDescontoSelecionado == "GERAL"){
-				TIPO_DESCONTO.mostra_geral();
-			}else{
-				TIPO_DESCONTO.mostra_especifico();
-			}
-
-			return resultado;
-		}
-
-		$.each(resultado.rows, function(index, row) {					
-
-			if(TIPO_DESCONTO.tipoDescontoSelecionado == "PRODUTO"){
-
-				var linkCotas = '<a href="javascript:;" onclick="TIPO_DESCONTO.exibirDialogCotasProdutoEdicao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
-							    row.cell.nomeProduto +
-							    '</a>';
-							    
-				row.cell.nomeProduto = linkCotas;
-				
-			} else{
-				
-				if(row.cell.fornecedor=="Diversos"){
-					var linkFornecedores = '<a href="javascript:;" onclick="TIPO_DESCONTO.carregarFornecedoresAssociadosADesconto('+ row.cell.idTipoDesconto +');">Diversos</a>';
-						
-					row.cell.fornecedor = linkFornecedores; 
-				}
-			}
-			
-			var linkExcluir = '<a href="javascript:;" onclick="TIPO_DESCONTO.exibirDialogExclusao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
-							   	 '<img title="Excluir Desconto" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0px" />' +
-							   '</a>';
-			
-			row.cell.acao = linkExcluir;
-		});
-		
-		$(".grids").show();
-		
-		TIPO_DESCONTO.exibirExportacao(true);
-		
-		return resultado;
-	},
-
-	exibirDialogExclusao:function(idDesconto){		
-		$("#dialog-excluirCota" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:250,
-			modal: true,
-			buttons: [{
-						id:"id_confirmar_exclusao",text:"Confirmar",
-						click: function() {
-		
-							TIPO_DESCONTO.excluirDesconto(idDesconto,TIPO_DESCONTO.tipoDescontoSelecionado);
-									
-							$( this ).dialog( "close" );
-						}
-					},{
-						id:"id_cancelar_exclusao",text:"Cancelar",
-						click: function() {
-							$( this ).dialog( "close" );
-						}
-					}
-					]
-		});
-	},
-	
-	exibirDialogCotasProdutoEdicao: function(idTipoDesconto) {
-		
-		$(".lstCotaGrid").flexOptions({
-			url: "<c:url value='/administracao/tipoDescontoCota/exibirCotasTipoDescontoProduto'/>",
-			params: [{name: 'idTipoDescontoProduto', value: idTipoDesconto}]
-		});
-
-		$(".lstCotaGrid").flexReload();
-
-		$( "#dialog-cotas" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:400,
-			modal: true,
-			buttons:[ {id:"btn_close_cotas",
-				   text:"Fechar",
-				   click: function() {
-						$( this ).dialog( "close" );
-					},
-				}]
-		});	
-	},
-	
-	excluirDesconto:function(idDesconto, tipoDesconto){		
-		$.postJSON(contextPath + "/financeiro/tipoDescontoCota/excluirDesconto",
-				"idDesconto="+idDesconto+"&tipoDesconto="+tipoDesconto, 
-				function(){
-					TIPO_DESCONTO.pesquisar();
-				}
-		);
-	},
-	
-	fecharDialogs:function() {
-		$( "#dialog-geral" ).dialog( "close" );
-		$( "#dialog-especifico" ).dialog( "close" );
-		$( "#dialog-produto" ).dialog( "close" );
-	},
-	
-	carregarFornecedores:function(idComboFornecedores){
-		
-		$.postJSON(contextPath + "/financeiro/tipoDescontoCota/obterFornecedores",
-				null, 
-				function(result){
-					
-					if(result){
-						var comboClassificacao =  montarComboBox(result, false);
-						
-						$(idComboFornecedores).html(comboClassificacao);
-					}
-				},null,true
-		);
-	},
-	
-	carregarFornecedoresAssociadosADesconto:function(idDesconto){
-		
-		var param = [{name:"idDesconto",value:idDesconto},{name:"tipoDesconto",value:TIPO_DESCONTO.tipoDescontoSelecionado}];
-		
-		$(".lstFornecedoresGrid").flexOptions({
-			url: "<c:url value='/financeiro/tipoDescontoCota/obterFornecedoresAssociadosDesconto'/>",
-			params: param,
-		    newp: 1,
-		    sortorder:'asc'
-		});
-		
-		$(".lstFornecedoresGrid").flexReload();
-		
-		TIPO_DESCONTO.popup_lista_fornecedores();
-	},
-	
-	popup_lista_fornecedores:function() {
-		
-		$( "#dialog-fornecedores" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:400,
-			modal: true,
-			buttons:[ {id:"btn_close_fornecedor",
-					   text:"Fechar",
-					   click: function() {
-							$( this ).dialog( "close" );
-						},
-					}]
-		});	      
-	}
-};
 
 </script>
 
 </head>
 
 <body>
-	<div id="dialog-excluirCota" title="Atenção" style="display:none">
-		<p>Confirmar exclusão Desconto ?</p>
-	</div>
-
+	
+	<form action="/administracao/cadastroTipoNota" id="dialog-excluirCota_form">
+		<div id="dialog-excluirCota" title="Atenção" style="display:none">
+			<p>Confirmar exclusão Desconto ?</p>
+		</div>
+	</form>
+	
 	<!-- Modal de inclusão de novo desconto Geral  -->
-	<jsp:include page="novoDescontoGeral.jsp"/>
+	<form action="/administracao/cadastroTipoNota" id="dialog-geral_form">
+		<jsp:include page="novoDescontoGeral.jsp"/>
+	</form>	
 	
 	<!-- Modal de inclusão de novo desconto Especifico  -->
-	<jsp:include page="novoDescontoEspecifico.jsp"/>
-
+	<form action="/administracao/cadastroTipoNota" id="dialog-especifico_form">
+		<jsp:include page="novoDescontoEspecifico.jsp"/>
+	</form>
+	
 	<!-- Modal de inclusão de novo desconto Produto  -->
 	<jsp:include page="novoDescontoProduto.jsp"/>
 	
-	<div id="dialog-fornecedores" title="Fornecedores" style="display:none;">
-		<fieldset style="width:350px!important;">
-    		<legend>Fornecedores</legend>
-        	<table class="lstFornecedoresGrid"></table>
-    	</fieldset>
-	</div>
+	
+	<form action="/administracao/cadastroTipoNota" id="dialog-fornecedores_form">
+		<div id="dialog-fornecedores" title="Fornecedores" style="display:none;">
+			<fieldset style="width:350px!important;">
+	    		<legend>Fornecedores</legend>
+	        	<table class="lstFornecedoresGrid"></table>
+	    	</fieldset>
+		</div>
+	</form>
 
-   <div class="container">
-    
+	<form action="/administracao/cadastroTipoNota" id="dialog_consulta_tipo_desconto_form">
+ 
       <fieldset class="classFieldset">
    	    <legend> Pesquisar Tipo de Desconto Cota</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
-              <td width="20"><input type="radio" name="radio" id="radioGeral" value="radio" onclick="TIPO_DESCONTO.mostra_geral();" /></td>
+              <td width="20"><input type="radio" name="radio" id="radioGeral" value="radio" onclick="tipoDescontoController.mostra_geral();" /></td>
                 <td width="47">Geral</td>
-                <td width="20"><input type="radio" name="radio" id="radioEspecifico" value="radio" onclick="TIPO_DESCONTO.mostra_especifico();"  /></td>
+                <td width="20"><input type="radio" name="radio" id="radioEspecifico" value="radio" onclick="tipoDescontoController.mostra_especifico();"  /></td>
                 <td width="65">Específico</td>
-                <td width="20"><input type="radio" name="radio" id="radioProduto" value="radio" onclick="TIPO_DESCONTO.mostra_produto();"  /></td>
+                <td width="20"><input type="radio" name="radio" id="radioProduto" value="radio" onclick="tipoDescontoController.mostra_produto();"  /></td>
                 <td width="48">Produto</td>
                 <td width="585">
                 <div class="especifico" style="display: none">
@@ -358,7 +77,7 @@ var TIPO_DESCONTO = {
 			           		   type="text"
 			           		   maxlength="11"
 			           		   style="width:70px;"
-			           		   onchange="cota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+			           		   onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 			           	  											null, 
 			           	  											null);" />
 			    	Nome: <input  name="descricaoCotaPesquisa" 
@@ -367,8 +86,8 @@ var TIPO_DESCONTO = {
 					      		 class="nome_jornaleiro" 
 					      		 maxlength="255"
 					      		 style="width:200px;"
-					      		 onkeyup="cota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
-					      		 onblur="cota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+					      		 onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
+					      		 onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 													      			null,
 													      			null);" />
 				                
@@ -378,20 +97,20 @@ var TIPO_DESCONTO = {
 	                <label style="width:auto!important;">Código:</label>
 	                <input type="text" name="codigoPesquisa" id="codigoPesquisa" maxlength="255" 
 					   	   style="width:80px; float:left;"
-					       onblur="produtoEdicao.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
+					       onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);"/>
 	                <label style="width:auto!important;">Produto:</label>
 	                <input type="text" name="produtoPesquisa" id="produtoPesquisa" maxlength="255" 
 						   style="width:160px; float:left;"
-						   onkeyup="produtoEdicao.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
-						   onblur="produtoEdicao.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
+						   onkeyup="pesquisaProdutoTipoDescontoCota.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
+						   onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);" />
 	                
                 </div>
                 </td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="TIPO_DESCONTO.pesquisar();">Pesquisar</a></span></td>
+              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="tipoDescontoController.pesquisar();">Pesquisar</a></span></td>
             </tr>
           </table>
 
@@ -420,7 +139,7 @@ var TIPO_DESCONTO = {
 					</a>
 	             </span>
              </div>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="DESCONTO_GERAL.popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="descontoDistribuidorController.popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
       
@@ -445,7 +164,7 @@ var TIPO_DESCONTO = {
 					</a>
 	             </span>
 	        </div>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="DESCONTO_ESPECIFICO.popup_especifico();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="descontoCotaController.popup_especifico();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
       
@@ -471,208 +190,10 @@ var TIPO_DESCONTO = {
 				</a>
              </span>
         </div>
-        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="DESCONTO_PRODUTO.popup_produto();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="descontoProdutoController.popup_produto();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
     </div>
-</div>
-<script>
-	$(".tiposDescGeralGrid").flexigrid({
-		preProcess: TIPO_DESCONTO.executarPreProcessamento,
-			dataType : 'json',
-			colModel : [ {
-				display : '',
-				name : 'sequencial',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			},{
-				display : 'Desconto %',
-				name : 'desconto',
-				width : 150,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Fornecedores',
-				name : 'fornecedor',
-				width : 320,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Data Alteração',
-				name : 'dataAlteracao',
-				width : 150,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Usuário',
-				name : 'usuario',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 35,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "sequencial",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255
-		});
-		
-		
-		$(".tiposDescEspecificoGrid").flexigrid({
-			preProcess: TIPO_DESCONTO.executarPreProcessamento,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Nome',
-				name : 'nomeCota',
-				width : 200,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Desconto %',
-				name : 'desconto',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Fornecedor(es)',
-				name : 'fornecedor',
-				width : 180,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Data Alteração',
-				name : 'dataAlteracao',
-				width : 120,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Usuário',
-				name : 'nomeUsuario',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 35,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "numeroCota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255
-		});
-		
-		$(".tiposDescProdutoGrid").flexigrid({
-			preProcess: TIPO_DESCONTO.executarPreProcessamento,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigoProduto',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 228,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'numeroEdicao',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Desconto %',
-				name : 'desconto',
-				width : 150,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Alteração',
-				name : 'dataAlteracao',
-				width : 120,
-				sortable : true,
-				align : 'center'			
-			}, {
-				display : 'Usuário',
-				name : 'nomeUsuario',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "codigoProduto",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255
-		});
-		
-		$(".lstFornecedoresGrid").flexigrid({
-			dataType : 'json',
-			colModel : [ {
-				display : 'Nome',
-				name : 'value',
-				width : 315,
-				sortable : true,
-				align : 'left'
-			}],
-			width : 350,
-			height : 155,
-			sortname : "value",
-			sortorder : "asc",
-		});
-	
-		$(".lstCotaGrid").flexigrid({
-			dataType : 'json',
-			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Nome',
-				name : 'nome',
-				width : 245,
-				sortable : false,
-				align : 'left'
-			}],
-			width : 350,
-			height : 155,
-			sortorder : "asc",
-		});
-</script>
+</form>
+
 </body>

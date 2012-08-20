@@ -26,7 +26,12 @@ import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
@@ -41,6 +46,7 @@ import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
@@ -58,6 +64,7 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -95,6 +102,9 @@ public class CotaController {
 	
 	@Autowired
 	private DividaService dividaService;
+	
+	@Autowired
+	private DescontoService descontoService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -570,18 +580,6 @@ public class CotaController {
 	}
 	
 	/**
-	 * Verifica se a cota possui dividas em aberto
-	 * @param idCota
-	 * @return boolean
-	 */
-	private boolean cotaComDebitos(Long idCota){
-		
-        BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(idCota);
-		
-		return (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0);
-	}
-	
-	/**
 	 * Exclui uma cota, informada pelo usúario
 	 * 
 	 * @param idCota - identificador da cota
@@ -589,10 +587,6 @@ public class CotaController {
 	@Post
 	@Path("/excluir")
 	public void excluir(Long idCota){
-
-		if (cotaComDebitos(idCota)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] possui dívidas em aberto e não pode ser excluída!");
-		}
 		
 		cotaService.excluirCota(idCota); 
 		
@@ -777,6 +771,71 @@ public class CotaController {
 		
 		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
 	}
+
+	
+	/** TODO: Aba descontos do cadastro de cota
+	 * 
+	 * Obtem os tipos de desconto do distribuidor
+	 */
+	private List<TipoDescontoDTO> obterDescontosDistribuidor(){
+		
+		FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.DATA_ALTERACAO);
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+		filtro.setPaginacao(paginacao);
+		
+		List<TipoDescontoDTO> descontos = descontoService.buscarTipoDesconto(filtro);
+		
+		return descontos;
+	}
+	
+	/** TODO: Aba descontos do cadastro de cota
+	 * 
+	 * Obtem os tipos de desconto especificos associados a cota informada
+	 * @param idCota -identificador da cota
+	 */
+	private List<TipoDescontoCotaDTO> obterDescontosEspecificos(Long idCota){
+		
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		filtro.setOrdenacaoColuna(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.DATA_ALTERACAO);
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+		paginacao.setSortOrder("asc");
+		filtro.setPaginacao(paginacao);
+		
+		List<TipoDescontoCotaDTO> descontos = descontoService.buscarTipoDescontoCota(filtro);
+		
+		return descontos;
+	}
+	
+	/** TODO: Aba descontos do cadastro de cota
+	 * 
+	 * Obtem os tipos de desconto especificos associados a cota informada
+	 * @param idCota -identificador da cota
+	 */
+	@Post
+	@Path("/obterTiposDesconto")
+	public void obterTiposDesconto(Long idCota){
+		
+		List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(idCota);
+		
+		if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
+		    result.use(Results.json()).from(descontosEspecificos,"result").recursive().serialize();
+		}
+		else{
+			
+			List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor();
+			
+			if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
+				result.use(Results.json()).from(descontosDistribuidor,"result").recursive().serialize();
+		    }
+		}
+		
+		result.nothing();
+	}
+	
+	
 	
 	/**
 	 * Valida se o número da cota informada para histórico base é ativo.

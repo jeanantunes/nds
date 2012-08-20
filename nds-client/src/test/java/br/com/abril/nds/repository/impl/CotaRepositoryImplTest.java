@@ -123,7 +123,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
+				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L,
 				produto, null, false);
 		
 		save(produtoEdicaoVeja1);
@@ -265,7 +265,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
+				new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", 2L,
 				produtoVeja, null, false);
 		save(produtoEdicaoVeja1);
 		
@@ -329,7 +329,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private void criarEnderecoCota(Cota cota) {
 		
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",1);
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", "50", "Centro", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota = new EnderecoCota();
 		enderecoCota.setCota(cota);
@@ -338,7 +338,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		enderecoCota.setTipoEndereco(TipoEndereco.COBRANCA);
 		
 		Endereco endereco2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 50, "Vila Carvalho", "Mococa", "SP",1);
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", "50", "Vila Carvalho", "Mococa", "SP",1);
 
 		EnderecoCota enderecoCota2 = new EnderecoCota();
 		enderecoCota2.setCota(cota);

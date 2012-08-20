@@ -206,7 +206,7 @@ public class Fixture {
 	}
 	
 	public static PessoaJuridica juridicaFC() {
-		return pessoaJuridica("FC", "00.000.000/0001-00", "000000000000",
+		return pessoaJuridica("FC", "00.000.000/0001-00", "000000000002",
 				"fc@mail.com", "99.999-9");
 	}
 	
@@ -236,7 +236,7 @@ public class Fixture {
 	
 	
 	public static PessoaJuridica juridicaDinap() {		
-		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111111111111",
+		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111111111112",
 				"dinap@mail.com", "99.999-8");
 	}
 	
@@ -259,78 +259,78 @@ public class Fixture {
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
 		return produto("1", "Veja", "Veja", PeriodicidadeProduto.SEMANAL,
-				tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoQuatroRodas(TipoProduto tipoProduto) {
 		return produto("2", "Quatro Rodas", "Quatro Rodas",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoInfoExame(TipoProduto tipoProduto) {
 		return produto("3", "Info Exame", "Info Exame",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoCapricho(TipoProduto tipoProduto) {
 		return produto("4", "Capricho", "Capricho",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoSuperInteressante(TipoProduto tipoProduto) {
 		return produto("5",
 				"Superinteressante", "Superinteressante",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoBoaForma(TipoProduto tipoProduto) {
 		return produto("6", "Boa Forma", "Boa Forma",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoBravo(TipoProduto tipoProduto) {
 		return produto("7", "Bravo", "Bravo",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoContigo(TipoProduto tipoProduto) {
 		return produto("8", "Contigo", "Contigo",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCaras(TipoProduto tipoProduto) {
 		return produto("9", "Caras", "Caras",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoClaudia(TipoProduto tipoProduto) {
 		return produto("10", "Claudia", "Claudia",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCasaClaudia(TipoProduto tipoProduto) {
 		return produto("11", "Casa Claudia", "Casa Claudia",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoManequim(TipoProduto tipoProduto) {
 		return produto("12", "Manequim", "Manequim",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoNationalGeographic(TipoProduto tipoProduto) {
 		return produto("13", "National Geographic", "National Geographic",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoPlacar(TipoProduto tipoProduto) {
 		return produto("14", "Placar", "Placar",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCromoReiLeao(TipoProduto tipoProduto) {
 		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static TipoProduto tipoRevista(NCM ncm) {
@@ -459,7 +459,7 @@ public class Fixture {
 
 	public static Produto produto(String codigo, String descricao, String nome,
 								  PeriodicidadeProduto periodicidade, TipoProduto tipo, 
-								  int peb, int pacotePadrao, BigDecimal peso, TributacaoFiscal tributacaoFiscal) {
+								  int peb, int pacotePadrao, Long peso, TributacaoFiscal tributacaoFiscal) {
 		
 		Produto produto = new Produto();
 		produto.setCodigo(codigo);
@@ -475,7 +475,7 @@ public class Fixture {
 	}
 
 	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
-			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			int pacotePadrao, int peb, Long peso, BigDecimal precoCusto,
 			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
 			BigDecimal expectativaVenda, boolean parcial,String nomeComercial) {
 		
@@ -498,7 +498,7 @@ public class Fixture {
 	}
 	
 	public static ProdutoEdicao produtoEdicao(String codigoProdutoEdicao, Long numeroEdicao, 
-			int pacotePadrao, int peb, BigDecimal peso, BigDecimal precoCusto,
+			int pacotePadrao, int peb, Long peso, BigDecimal precoCusto,
 			BigDecimal precoVenda, String codigoDeBarras, Long cdSMNotUsedAnyMore, Produto produto, 
 			BigDecimal expectativaVenda, boolean parcial) {
 		
@@ -2047,7 +2047,7 @@ public class Fixture {
 	}
 
 	public static Endereco criarEndereco(TipoEndereco tipoEndereco, String cep,
-										 String logradouro, int numero, 
+										 String logradouro, String numero, 
 										 String bairro, String cidade, String uf,Integer codigoCidadeIBGE) {
 		
 		Endereco endereco = new Endereco();

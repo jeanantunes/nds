@@ -34,6 +34,8 @@ public class CotaSocioController {
 		if(socioCota== null){
 			listaMensagens.add("O preenchimento do campo [Nome] é obrigatório!");
 			listaMensagens.add("O preenchimento do campo [Cargo] é obrigatório!");
+			listaMensagens.add("O preenchimento do Endereço é obrigatório!");
+			listaMensagens.add("O preenchimento do Telefone é obrigatório!");
 		}
 		else{
 			
@@ -43,6 +45,14 @@ public class CotaSocioController {
 			
 			if(socioCota.getCargo() == null || socioCota.getCargo().isEmpty() ){
 				listaMensagens.add("O preenchimento do campo [Cargo] é obrigatório!");
+			}
+
+			if(socioCota.getEndereco() == null){
+				listaMensagens.add("O preenchimento do Endereço é obrigatório!");
+			}
+
+			if(socioCota.getTelefone() == null){
+				listaMensagens.add("O preenchimento do Telefone é obrigatório!");
 			}
 		}
 		
@@ -55,66 +65,27 @@ public class CotaSocioController {
 	@Post
 	public void carregarSociosCota(Long idCota){
 		
-		List<SocioCota> sociosCota = cotaService.obterSociosCota(idCota);
+		List<SocioCota> sociosCota = this.cotaService.obterSociosCota(idCota);
 		
-		result.use(Results.json()).from(sociosCota, "result").exclude("cota").recursive().serialize();		
+		this.result.use(Results.json()).from(sociosCota, "result").exclude("cota").recursive().serialize();		
 	}
 	
 	@Post
-	public void incluirSocioCota(SocioCota socioCota, List<SocioCota> sociosCota){
+	public void carregarSocioPorId(Long idSocioCota) {
+		
+		SocioCota socioCota = this.cotaService.obterSocioPorId(idSocioCota);
+		
+		this.result.use(Results.json()).from(socioCota, "result").exclude("cota").recursive().serialize();	
+	}
+	
+	@Post
+	public void incluirSocioCota(Long idCota, SocioCota socioCota) {
 		
 		validarInclusaoSocio(socioCota);
 		
-		validarInclusaoSocioPrincipal(socioCota,sociosCota);
-		
-		result.use(Results.json()).from(socioCota,"result").recursive().serialize();
-	}
-	
-	@Post
-	public void salvarSocioCota(Long idCota, List<SocioCota> sociosCota){
-		
-		cotaService.salvarSociosCota(sociosCota, idCota);
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
-	}
+		this.cotaService.salvarSocioCota(socioCota, idCota);
 
-	/**
-	 * Verifica se o sócio informado é principal
-	 * @param socioCota
-	 * @param sociosCota
-	 */
-	private void validarInclusaoSocioPrincipal(SocioCota socioCota, List<SocioCota> sociosCota) {
-		
-		if(sociosCota != null && !sociosCota.isEmpty()){
-			
-			for(SocioCota socio : sociosCota){
-				
-				if( socio.getId()== null || !(socio.getId().equals(socioCota.getId()))){
-					
-					if(socio.getPrincipal()!= null && socio.getPrincipal() && socioCota.getPrincipal()!= null && socioCota.getPrincipal()){
-						throw new ValidacaoException(TipoMensagem.WARNING,"Socio principal ja foi cadastrado!");
-					}
-				}
-					
-			}
-		}
-	}
-	
-	/**
-	 * Verifica se existe algum sócio cadastrado como principal
-	 * @param sociosCota
-	 * @return boolean 
-	 */
-	private boolean isSocioPrincipal(List<SocioCota> sociosCota) {
-		
-		if(sociosCota != null && !sociosCota.isEmpty()){
-			
-			for(SocioCota socio : sociosCota){
-				if( socio.getPrincipal()!= null && socio.getPrincipal())
-					return true;
-			}
-		}
-		return false;	
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+						Constantes.PARAM_MSGS).recursive().serialize();
 	}
 }

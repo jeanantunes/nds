@@ -63,7 +63,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 
 	private String espessura;
 
-	private BigDecimal peso;
+	private Long peso;
 
 	private boolean status;
 
@@ -326,7 +326,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	 * @return the peso
 	 */
 	@Field(offset=168, length=5)
-	public BigDecimal getPeso() {
+	public Long getPeso() {
 		return peso;
 	}
 
@@ -763,7 +763,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	/**
 	 * @param peso the peso to set
 	 */
-	public void setPeso(BigDecimal peso) {
+	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
 

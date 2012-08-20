@@ -687,7 +687,7 @@ public class EnderecoController {
 				enderecoAssociacao.getEndereco().getLogradouro() 
 					+ ", nº: " + enderecoAssociacao.getEndereco().getNumero(), 
 				enderecoAssociacao.getEndereco().getBairro(),
-				enderecoAssociacao.getEndereco().getCep(), 
+				Util.adicionarMascaraCEP(enderecoAssociacao.getEndereco().getCep()), 
 				enderecoAssociacao.getEndereco().getCidade(), 
 				String.valueOf(enderecoAssociacao.isEnderecoPrincipal())
 			);

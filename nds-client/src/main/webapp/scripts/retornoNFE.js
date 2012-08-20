@@ -1,4 +1,4 @@
-function RetornoNFE(){
+function RetornoNFEController(){
 	
 	this.bindEvents();
 	
@@ -10,13 +10,13 @@ function RetornoNFE(){
 	
 };
 
-RetornoNFE.prototype.path = contextPath +"/nfe/retornoNFe/";
+RetornoNFEController.prototype.path = contextPath +"/nfe/retornoNFe/";
 
-RetornoNFE.prototype.pesquisarArquivos = function() {
+RetornoNFEController.prototype.pesquisarArquivos = function() {
 	
 	this.limparTabela();
 	
-	var dataReferencia = $("#retornoNFEDataReferencia").val();
+	var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
 	
 	if(!dataReferencia) {
 		exibirMensagem("WARNING", ["O campo [Date de Referência] é obrigatório"], "");
@@ -41,7 +41,7 @@ RetornoNFE.prototype.pesquisarArquivos = function() {
 	}
 };
 
-RetornoNFE.prototype.confirmar = function() {
+RetornoNFEController.prototype.confirmar = function() {
 	
 	var _this = this;
 	
@@ -59,37 +59,37 @@ RetornoNFE.prototype.confirmar = function() {
 	});
 };
 
-RetornoNFE.prototype.bindEvents = function() {
+RetornoNFEController.prototype.bindEvents = function() {
 	
 	var _this = this;
 	
-	$("#retornoNFEPesquisar").click(function() {
+	$("#retornoNFEPesquisar", this.workspace).click(function() {
 		_this.pesquisarArquivos();
 	});
 	
-	$("#retornoNFEConfirmar").click(function() {
+	$("#retornoNFEConfirmar", this.workspace).click(function() {
 		_this.confirmar();
 	});
 };
 
-RetornoNFE.prototype.dataBind = function() {
-	$("#numeroArquivos").html(this.sumarizacaoRetornoNFE.numeroTotalArquivos);
-	$("#notasAprovadas").html(this.sumarizacaoRetornoNFE.numeroNotasAprovadas);
-	$("#notasRejeitadas").html(this.sumarizacaoRetornoNFE.numeroNotasRejeitadas);
+RetornoNFEController.prototype.dataBind = function() {
+	$("#numeroArquivos", this.workspace).html(this.sumarizacaoRetornoNFE.numeroTotalArquivos);
+	$("#notasAprovadas", this.workspace).html(this.sumarizacaoRetornoNFE.numeroNotasAprovadas);
+	$("#notasRejeitadas", this.workspace).html(this.sumarizacaoRetornoNFE.numeroNotasRejeitadas);
 	
 };
 
-RetornoNFE.prototype.dataUnBind = function() {
-	this.sumarizacaoRetornoNFE.numeroTotalArquivos = $("#numeroArquivos").html();
-	this.sumarizacaoRetornoNFE.numeroNotasAprovadas = $("#notasAprovadas").html();
-	this.sumarizacaoRetornoNFE.numeroNotasRejeitadas = $("#notasRejeitadas").html();
+RetornoNFEController.prototype.dataUnBind = function() {
+	this.sumarizacaoRetornoNFE.numeroTotalArquivos = $("#numeroArquivos", this.workspace).html();
+	this.sumarizacaoRetornoNFE.numeroNotasAprovadas = $("#notasAprovadas", this.workspace).html();
+	this.sumarizacaoRetornoNFE.numeroNotasRejeitadas = $("#notasRejeitadas", this.workspace).html();
 };
 
-RetornoNFE.prototype.limparTabela = function() {
+RetornoNFEController.prototype.limparTabela = function() {
 	
-	$("#numeroArquivos").html(0);
-	$("#notasAprovadas").html(0);
-	$("#notasRejeitadas").html(0);
+	$("#numeroArquivos", this.workspace).html(0);
+	$("#notasAprovadas", this.workspace).html(0);
+	$("#notasRejeitadas", this.workspace).html(0);
 	this.dataUnBind();
 };
 

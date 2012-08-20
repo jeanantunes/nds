@@ -116,7 +116,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		String email 		= "";
 		
 		Endereco enderecoDestinatario 	= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", 4585, "Jrd Limeira", "Pedra de Guaratiba", "RJ",1);
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", "4585", "Jrd Limeira", "Pedra de Guaratiba", "RJ",1);
 		
 		save(enderecoDestinatario);
 		
@@ -143,7 +143,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		String documentoEmitente = "";
 		
 		Endereco enderecoEmitente= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", 4585, "Jrd Brasil", "Santana do Livramento", "RJ",2);
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", "4585", "Jrd Brasil", "Santana do Livramento", "RJ",2);
 		
 		save(enderecoEmitente);
 		
@@ -196,7 +196,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 	
 		
 		Endereco enderecoTransporte = 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG",2);
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", "4585", "Jrd Brasil", "Piuí", "MG",2);
 		
 		save(enderecoTransporte);
 		
@@ -304,13 +304,13 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 			PeriodicidadeProduto periodicidade,
 			int produtoPeb,
 			int produtoPacotePadrao,
-			BigDecimal produtoPeso,
+			Long produtoPeso,
 
 			String codigoProdutoEdicao,
 			Long numeroEdicao,
 			int pacotePadrao,
 			int peb,
-			BigDecimal peso,
+			Long peso,
 			BigDecimal precoCusto,
 			BigDecimal precoVenda,
 			String codigoDeBarras,
@@ -376,13 +376,13 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 			PeriodicidadeProduto periodicidade = PeriodicidadeProduto.ANUAL;
 			int produtoPeb = 1;
 			int produtoPacotePadrao = 1;
-			BigDecimal produtoPeso = new BigDecimal(10);
+			Long produtoPeso = new Long(100);
 
 			String codigoProdutoEdicao = contador+"";
 			Long numeroEdicao = new Long(contador);
 			int pacotePadrao = 1;
 			int peb = 1;
-			BigDecimal peso = BigDecimal.ZERO;
+			Long peso = new Long(0);
 			BigDecimal precoCusto = BigDecimal.ZERO;
 			BigDecimal precoVenda = BigDecimal.ZERO;
 			String codigoDeBarras = contador+"";

@@ -2,12 +2,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meuConteudo</title>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 <script type="text/javascript">
 
-
+var pesquisaProdutoExtratoEdicao = new PesquisaProduto();
 
 var jsExtratoEdicao = {
 
@@ -66,7 +66,7 @@ var jsExtratoEdicao = {
 		$("#nomeFornecedor").val("");
 		$("#precoCapa").val("");
 		
-		produto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);	
+		pesquisaProdutoExtratoEdicao.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);	
 	},
 
 	pesquisarProdutoPorNome : function() {
@@ -74,14 +74,14 @@ var jsExtratoEdicao = {
 		$("#nomeFornecedor").val("");
 		$("#precoCapa").val("");
 		
-		produto.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);
+		pesquisaProdutoExtratoEdicao.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);
 	},
 
 	validarNumeroEdicao : function() {
 
 		$("#precoCapa").val("");
 		
-		produto.validarNumEdicao('#codigo', '#edicao', false, jsExtratoEdicao.validarEdicaoCallBack);
+		pesquisaProdutoExtratoEdicao.validarNumEdicao('#codigo', '#edicao', false, jsExtratoEdicao.validarEdicaoCallBack);
 	},
 	
 	validarEdicaoCallBack : function() {
@@ -277,7 +277,7 @@ $(function() {
 
 						<input type="text" name="produto" id="produto" style="width: 220px;" 
 							   maxlength="255"
-					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
+					       	   onkeyup="pesquisaProdutoExtratoEdicao.autoCompletarPorNomeProduto('#produto', false);"
 					       	   onblur="jsExtratoEdicao.pesquisarProdutoPorNome();"/>
 
 						
