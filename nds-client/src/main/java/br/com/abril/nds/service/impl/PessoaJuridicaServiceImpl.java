@@ -32,7 +32,7 @@ public class PessoaJuridicaServiceImpl implements PessoaJuridicaService {
 	public PessoaJuridica salvarPessoaJuridica(PessoaJuridica pessoaJuridica) {
 		
 		return this.pessoaJuridicaRepository.merge(pessoaJuridica);
-	}
+	}	
 
 	@Override
 	@Transactional
