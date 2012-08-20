@@ -1,20 +1,57 @@
 
-var PDV = {
-		
+var PDV =  $.extend(true, {
+	
 		idCota:"",
 		fecharModalCadastroPDV:false,
 		diasFuncionamento:[],
+		
+		
+		init : function() {
+			
+			PDV.inicializarBinds();
+			PDV.inicializarGrids();
+			PDV.inicializarAbaDadosBasicos();
+			PDV.inicializarGeradorFluxo();
+			PDV.inicializarMap();
+		},
+		
+		inicializarMap : function() {
+			$("select[name='selectMap']", this.workspace).multiSelect("select[name='selectMaterialPromocional']", {trigger: "#linkMapVoltarTodos"});
+			
+			$("select[name='selectMaterialPromocional']", this.workspace).multiSelect("select[name='selectMap']", {trigger: "#linkMapEnviarTodos"});
+		},
+		
+		inicializarGeradorFluxo : function() {
+			$("select[name='selectFluxoSecundario']", this.workspace).multiSelect("select[name='selecTipoGeradorFluxo']", {trigger: "#linkFluxoVoltarTodos"});
+			
+			$("select[name='selecTipoGeradorFluxo']", this.workspace).multiSelect("select[name='selectFluxoSecundario']", {trigger: "#linkFluxoEnviarTodos"});
+		},
+		
+		inicializarAbaDadosBasicos : function() {
+
+			$('#inicioHorario', this.workspace).mask('99:99'); 
+			$('#fimHorario', this.workspace).mask('99:99'); 
+			$("#porcentagemFaturamento", this.workspace).numeric();
+			$("#qntFuncionarios", this.workspace).numeric();
+			$("#numerolicenca", this.workspace).numeric();	
+			
+			var options = {
+					success: PDV.tratarRetornoUploadImagem,
+				};
+				
+				$('#formBaixaAutomatica', this.workspace).ajaxForm(options);	
+		},
 		
 		pesquisarPdvs: function (idCota){
 			
 			var param = [{name:"idCota",value:idCota}];
 			
-			$(".PDVsGrid").flexOptions({
+			$(".PDVsGrid", this.workspace).flexOptions({
 				url: contextPath + "/cadastro/pdv/consultar",
 				params: param
 			});
 			
-			$(".PDVsGrid").flexReload();
+			$(".PDVsGrid", this.workspace).flexReload();
 		},
 		
 		executarPreProcessamento : function (resultado){
@@ -49,36 +86,36 @@ var PDV = {
 		carregarAbaDadosBasico: function (result){
 			
 			if(result.pdvDTO.pathImagem) {
-				$("#idImagem").attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				$("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
 			} else {
-				$("#idImagem").attr("src",contextPath + "/images/pdv/no_image.jpeg");
+				$("#idImagem", this.workspace).attr("src",contextPath + "/images/pdv/no_image.jpeg");
 			}
 			
-			$("#idBtnExcluir").click(function() {
+			$("#idBtnExcluir", this.workspace).click(function() {
 				PDV.excluirImagem(result.pdvDTO.id);
 			});
 			
-			$("#idPDV").val(result.pdvDTO.id);
-			$("#idCotaImagem").val(result.pdvDTO.idCota);
-			$("#selectStatus").val(result.pdvDTO.statusPDV);
+			$("#idPDV", this.workspace).val(result.pdvDTO.id);
+			$("#idCotaImagem", this.workspace).val(result.pdvDTO.idCota);
+			$("#selectStatus", this.workspace).val(result.pdvDTO.statusPDV);
 			if(result.pdvDTO.dataInicio)
-				$("#dataInicio").val(result.pdvDTO.dataInicio.$.substr(0,10));
-			$("#nomePDV").val(result.pdvDTO.nomePDV);
-			$("#contatoPDV").val(result.pdvDTO.contato);
-			$("#sitePDV").val(result.pdvDTO.site);
-			$("#emailPDV").val(result.pdvDTO.email);
-			$("#pontoReferenciaPDV").val(result.pdvDTO.pontoReferencia);
-			$("#selectTipoEstabelecimento").val(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo);
-			$("#selectTamanhoPDV").val(result.pdvDTO.tamanhoPDV);
-			$("#qntFuncionarios").val(result.pdvDTO.qtdeFuncionarios);
-			$("#sistemaIPV").attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
-			$("#porcentagemFaturamento").val(result.pdvDTO.porcentagemFaturamento);
-			$("#selectTipoLicenca").val(result.pdvDTO.tipoLicencaMunicipal.codigo);
-			$("#numerolicenca").val(result.pdvDTO.numeroLicenca);
-			$("#nomeLicenca").val(result.pdvDTO.nomeLicenca);
-			$("#arrendatario").attr("checked", result.pdvDTO.arrendatario ? "checked" : null);
-			$("#ptoPrincipal").attr("checked", result.pdvDTO.caracteristicaDTO.pontoPrincipal ? "checked" : null);
-			$("#dentroOutroEstabelecimento").attr(
+				$("#dataInicio", this.workspace).val(result.pdvDTO.dataInicio.$.substr(0,10));
+			$("#nomePDV", this.workspace).val(result.pdvDTO.nomePDV);
+			$("#contatoPDV", this.workspace).val(result.pdvDTO.contato);
+			$("#sitePDV", this.workspace).val(result.pdvDTO.site);
+			$("#emailPDV", this.workspace).val(result.pdvDTO.email);
+			$("#pontoReferenciaPDV", this.workspace).val(result.pdvDTO.pontoReferencia);
+			$("#selectTipoEstabelecimento", this.workspace).val(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo);
+			$("#selectTamanhoPDV", this.workspace).val(result.pdvDTO.tamanhoPDV);
+			$("#qntFuncionarios", this.workspace).val(result.pdvDTO.qtdeFuncionarios);
+			$("#sistemaIPV", this.workspace).attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
+			$("#porcentagemFaturamento", this.workspace).val(result.pdvDTO.porcentagemFaturamento);
+			$("#selectTipoLicenca", this.workspace).val(result.pdvDTO.tipoLicencaMunicipal.codigo);
+			$("#numerolicenca", this.workspace).val(result.pdvDTO.numeroLicenca);
+			$("#nomeLicenca", this.workspace).val(result.pdvDTO.nomeLicenca);
+			$("#arrendatario", this.workspace).attr("checked", result.pdvDTO.arrendatario ? "checked" : null);
+			$("#ptoPrincipal", this.workspace).attr("checked", result.pdvDTO.caracteristicaDTO.pontoPrincipal ? "checked" : null);
+			$("#dentroOutroEstabelecimento", this.workspace).attr(
 					"checked", result.pdvDTO.dentroOutroEstabelecimento ? "checked" : null);
 			
 			PDV.opcaoEstabelecimento("#dentroOutroEstabelecimento");
@@ -112,16 +149,16 @@ var PDV = {
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.luminoso,"#luminoso");
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.possuiCartao,"#possuiCartao");
 			
-			$("#textoLuminoso").val(result.pdvDTO.caracteristicaDTO.textoLuminoso);
-	        $("#selectdTipoPonto").val(result.pdvDTO.caracteristicaDTO.tipoPonto);
-	        $("#selectCaracteristica").val(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV);
-	        $("#selectAreainfluencia").val(result.pdvDTO.caracteristicaDTO.areaInfluencia);
+			$("#textoLuminoso", this.workspace).val(result.pdvDTO.caracteristicaDTO.textoLuminoso);
+	        $("#selectdTipoPonto", this.workspace).val(result.pdvDTO.caracteristicaDTO.tipoPonto);
+	        $("#selectCaracteristica", this.workspace).val(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV);
+	        $("#selectAreainfluencia", this.workspace).val(result.pdvDTO.caracteristicaDTO.areaInfluencia);
 	        
 	        if(this.isChecked("#luminoso")){
-				$("#textoLuminoso").removeAttr("disabled");
+				$("#textoLuminoso", this.workspace).removeAttr("disabled");
 			}
 	        else{
-	        	$("#textoLuminoso").attr("disabled","disabled");
+	        	$("#textoLuminoso", this.workspace).attr("disabled","disabled");
 	        }
 	        
 		},
@@ -153,8 +190,8 @@ var PDV = {
 				$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
 						parametro, 
 						   function(result){
-					$("#txtGeradorFluxoPrincipal").val(result[0].value.$);
-					$("#hiddenGeradorFluxoPrincipal").val(result[0].key.$);	
+					$("#txtGeradorFluxoPrincipal", this.workspace).val(result[0].value.$);
+					$("#hiddenGeradorFluxoPrincipal", this.workspace).val(result[0].key.$);	
 				});
 			}
 			else{
@@ -181,7 +218,7 @@ var PDV = {
 			}
 			
 			PDV.atribuirValorChecked(result.pdvDTO.expositor, "#expositor");
-			$("#tipoExpositor").val(result.pdvDTO.tipoExpositor); 
+			$("#tipoExpositor", this.workspace).val(result.pdvDTO.tipoExpositor); 
 			
 			PDV.mostra_expositor("#expositor");
 		},
@@ -241,7 +278,7 @@ var PDV = {
 					}
 				}
 			
-				$("#dialog-pdv").dialog( "close" );
+				$("#dialog-pdv", this.workspace).dialog( "close" );
 				PDV.fecharModalCadastroPDV = true;
 				PDV.pesquisarPdvs(PDV.idCota);
 				PDV.limparCamposTela();	
@@ -259,25 +296,25 @@ var PDV = {
 			
 			var dados = 
 				"pdvDTO.idCota="								+PDV.idCota + "&" +
-				"pdvDTO.id="									+$("#idPDV").val() + "&" +
-				"pdvDTO.statusPDV="  							+$("#selectStatus").val() + "&" +
-				"pdvDTO.dataInicio="							+$("#dataInicio").val()+ "&" +
-				"pdvDTO.nomePDV="								+$("#nomePDV").val()+ "&" +
-				"pdvDTO.contato="								+$("#contatoPDV").val()+ "&" +
-				"pdvDTO.site="									+$("#sitePDV").val()+ "&" +
-				"pdvDTO.email="									+$("#emailPDV").val()+ "&" +
-				"pdvDTO.pontoReferencia="						+$("#pontoReferenciaPDV").val()+ "&" +
-				"pdvDTO.dentroOutroEstabelecimento="	 		+this.isChecked("#dentroOutroEstabelecimento") + "&" +
-				"pdvDTO.arrendatario="	 						+this.isChecked("#arrendatario") + "&" +
-				"pdvDTO.caracteristicaDTO.pontoPrincipal=" 		+ this.isChecked("#ptoPrincipal") +"&"+
-				"pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo="	+$("#selectTipoEstabelecimento").val()+ "&" +
-				"pdvDTO.tamanhoPDV="							+$("#selectTamanhoPDV").val()+ "&" +
-				"pdvDTO.qtdeFuncionarios="						+$("#qntFuncionarios").val()+ "&" +
-				"pdvDTO.sistemaIPV="							+this.isChecked("#sistemaIPV")+ "&" +
-				"pdvDTO.porcentagemFaturamento="				+$("#porcentagemFaturamento").val()+ "&" +
-				"pdvDTO.tipoLicencaMunicipal.id="				+$("#selectTipoLicenca").val()+ "&" +
-				"pdvDTO.numeroLicenca="							+$("#numerolicenca").val()+ "&" +
-				"pdvDTO.nomeLicenca="							+$("#nomeLicenca").val();
+				"pdvDTO.id="									+$("#idPDV", this.workspace).val() + "&" +
+				"pdvDTO.statusPDV="  							+$("#selectStatus", this.workspace).val() + "&" +
+				"pdvDTO.dataInicio="							+$("#dataInicio", this.workspace).val()+ "&" +
+				"pdvDTO.nomePDV="								+$("#nomePDV", this.workspace).val()+ "&" +
+				"pdvDTO.contato="								+$("#contatoPDV", this.workspace).val()+ "&" +
+				"pdvDTO.site="									+$("#sitePDV", this.workspace).val()+ "&" +
+				"pdvDTO.email="									+$("#emailPDV", this.workspace).val()+ "&" +
+				"pdvDTO.pontoReferencia="						+$("#pontoReferenciaPDV", this.workspace).val()+ "&" +
+				"pdvDTO.dentroOutroEstabelecimento="	 		+this.isChecked("#dentroOutroEstabelecimento", this.workspace) + "&" +
+				"pdvDTO.arrendatario="	 						+this.isChecked("#arrendatario", this.workspace) + "&" +
+				"pdvDTO.caracteristicaDTO.pontoPrincipal=" 		+ this.isChecked("#ptoPrincipal", this.workspace) +"&"+
+				"pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo="	+$("#selectTipoEstabelecimento", this.workspace).val()+ "&" +
+				"pdvDTO.tamanhoPDV="							+$("#selectTamanhoPDV", this.workspace).val()+ "&" +
+				"pdvDTO.qtdeFuncionarios="						+$("#qntFuncionarios", this.workspace).val()+ "&" +
+				"pdvDTO.sistemaIPV="							+this.isChecked("#sistemaIPV", this.workspace)+ "&" +
+				"pdvDTO.porcentagemFaturamento="				+$("#porcentagemFaturamento", this.workspace).val()+ "&" +
+				"pdvDTO.tipoLicencaMunicipal.id="				+$("#selectTipoLicenca", this.workspace).val()+ "&" +
+				"pdvDTO.numeroLicenca="							+$("#numerolicenca", this.workspace).val()+ "&" +
+				"pdvDTO.nomeLicenca="							+$("#nomeLicenca", this.workspace).val();
 			
 			$.each(PDV.diasFuncionamento, function(index, diaFuncionamento) {
 				
@@ -293,14 +330,14 @@ var PDV = {
 		getDadosCaracteristica: function (){
 			
 			var dados =	              
-	              "pdvDTO.caracteristicaDTO.balcaoCentral="  + this.isChecked("#balcaoCentral")+"&"+
-	              "pdvDTO.caracteristicaDTO.temComputador="  + this.isChecked("#temComputador")+"&"+
-	              "pdvDTO.caracteristicaDTO.possuiCartao="  + this.isChecked("#possuiCartao")+"&"+
-	              "pdvDTO.caracteristicaDTO.luminoso="       + this.isChecked("#luminoso")+"&"+
-	              "pdvDTO.caracteristicaDTO.textoLuminoso="  + $("#textoLuminoso").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.tipoPonto="      + $("#selectdTipoPonto").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV="+$("#selectCaracteristica").val()+"&"+
-	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + $("#selectAreainfluencia").val();
+	              "pdvDTO.caracteristicaDTO.balcaoCentral="  + 						this.isChecked("#balcaoCentral")+"&"+
+	              "pdvDTO.caracteristicaDTO.temComputador="  + 						this.isChecked("#temComputador")+"&"+
+	              "pdvDTO.caracteristicaDTO.possuiCartao="  + 						this.isChecked("#possuiCartao")+"&"+
+	              "pdvDTO.caracteristicaDTO.luminoso="       + 						this.isChecked("#luminoso")+"&"+
+	              "pdvDTO.caracteristicaDTO.textoLuminoso="  + 						$("#textoLuminoso", this.workspace).val()+"&"+
+	              "pdvDTO.caracteristicaDTO.tipoPonto="      +						$("#selectdTipoPonto", this.workspace).val()+"&"+
+	              "pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV="+		$("#selectCaracteristica", this.workspace).val()+"&"+
+	              "pdvDTO.caracteristicaDTO.areaInfluencia=" + 						$("#selectAreainfluencia", this.workspace).val();
 						
 			return dados;
 		},
@@ -309,11 +346,11 @@ var PDV = {
 			
 			 var listaFluxoSecundario ="";
 			
-			 $("#selectFluxoSecundario option").each(function (index) {
+			 $("#selectFluxoSecundario option", this.workspace).each(function (index) {
 				 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoSecundario["+index+"]="+ $(this).val() +"&";
 			 });
 			 
-			 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoPrincipal="+ $("#hiddenGeradorFluxoPrincipal").val() +"&";
+			 listaFluxoSecundario = listaFluxoSecundario + "pdvDTO.geradorFluxoPrincipal="+ $("#hiddenGeradorFluxoPrincipal", this.workspace).val() +"&";
  
 			 return listaFluxoSecundario;	
 		},
@@ -322,49 +359,49 @@ var PDV = {
 			
 			var listaMaps ="";
 			
-			 $("#selectMap option").each(function (index) {
+			 $("#selectMap option", this.workspace).each(function (index) {
 				 listaMaps = listaMaps + "pdvDTO.maps["+index+"]="+ $(this).val() +"&";
             });
 			 
 			 listaMaps = listaMaps +  "pdvDTO.expositor="+PDV.isChecked("#expositor")+"&" 
-			 					   +  "pdvDTO.tipoExpositor="+$("#tipoExpositor").val(); 
+			 					   +  "pdvDTO.tipoExpositor="+$("#tipoExpositor", this.workspace).val(); 
   
 			return listaMaps;
 		},
 		
 		isChecked : function (idCampo){	
-			return ($(idCampo).attr("checked") == "checked");
+			return ($(idCampo, this.workspace).attr("checked") == "checked");
 		},
 		
 		opcaoEstabelecimento: function (idCampo){
 			
 			if(this.isChecked(idCampo)){
-				$("#divTipoEstabelecimento").show();
+				$("#divTipoEstabelecimento", this.workspace).show();
 			}
 			else{
-				$("#divTipoEstabelecimento").hide();
+				$("#divTipoEstabelecimento", this.workspace).hide();
 			}
 		},
 		
 		opcaoTextoLuminoso: function (idCampo){
 			
 			if(this.isChecked(idCampo)){
-				$("#textoLuminoso").removeAttr("disabled");
-				$("#textoLuminoso").val("");
-				$("#textoLuminoso").focus();
+				$("#textoLuminoso", this.workspace).removeAttr("disabled");
+				$("#textoLuminoso", this.workspace).val("");
+				$("#textoLuminoso", this.workspace).focus();
 
 			}
 			else{
-				$("#textoLuminoso").attr("disabled","disabled");
-				$("#textoLuminoso").val("");
+				$("#textoLuminoso", this.workspace).attr("disabled","disabled");
+				$("#textoLuminoso", this.workspace).val("");
 			}
 		},
 		
 		adicionarDiaFuncionamento: function() {
 			
-			var tipoPeriodo = $("#selectDiasFuncionamento").val();
-			var inicioHorario = $("#inicioHorario").val();
-			var fimHorario = $("#fimHorario").val();		
+			var tipoPeriodo = $("#selectDiasFuncionamento", this.workspace).val();
+			var inicioHorario = $("#inicioHorario", this.workspace).val();
+			var fimHorario = $("#fimHorario", this.workspace).val();		
 						
 			var parametros = PDV.getDiasFuncionamentoPDV();
 						
@@ -433,7 +470,7 @@ var PDV = {
 				items.splice(0,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "Selecione"}});
 				
 				var combo =  montarComboBox(items, false);
-				$("#selectDiasFuncionamento").html(combo);
+				$("#selectDiasFuncionamento", this.workspace).html(combo);
 				
 			} else {
 				
@@ -445,7 +482,7 @@ var PDV = {
 		
 		montartabelaDiasFuncionamento: function(){
 				 
-			 $('#listaDiasFuncionais tr').remove();;
+			 $('#listaDiasFuncionais tr', this.workspace).remove();;
 			 
 			
 			$.each(PDV.diasFuncionamento, function(index, row) {
@@ -466,7 +503,7 @@ var PDV = {
 				 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
 				 			"width='15' height='15' border='0'/></a></td>");
 			      
-				 $('#listaDiasFuncionais').append(tr);
+				 $('#listaDiasFuncionais', this.workspace).append(tr);
 			});
 		},
 		
@@ -502,7 +539,7 @@ var PDV = {
 				exibirMensagem(status,mensagens);
 			}
 			
-			var combo = $("#selectDiasFuncionamento");
+			var combo = $("#selectDiasFuncionamento", this.workspace);
 			combo.clear();
 			
 			var option = document.createElement("OPTION");
@@ -523,7 +560,7 @@ var PDV = {
 		
 		exibirDialogExclusao:function(idPdv,idCota){
 			
-			$("#dialog-excluirPdv" ).dialog({
+			$("#dialog-excluirPdv", this.workspace ).dialog({
 				resizable: false,
 				height:'auto',
 				width:250,
@@ -536,13 +573,14 @@ var PDV = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-excluirPdv", this.workspace).parents("form")
 			});
 		},
 		
 		cancelarCadastro:function(){
 			
-			$("#dialog-cancelar-cadastro-pdv").dialog({
+			$("#dialog-cancelar-cadastro-pdv", this.workspace).dialog({
 				resizable: false,
 				height:150,
 				width:600,
@@ -557,9 +595,9 @@ var PDV = {
 								PDV.fecharModalCadastroPDV = true;
 								PDV.limparCamposTela();
 								
-								$("#dialog-close").dialog("close");
-								$("#dialog-cancelar-cadastro-pdv").dialog("close");
-								$("#dialog-pdv").dialog("close");
+								$("#dialog-close", this.workspace).dialog("close");
+								$("#dialog-cancelar-cadastro-pdv", this.workspace).dialog("close");
+								$("#dialog-pdv", this.workspace).dialog("close");
 							}
 						);
 					},
@@ -567,13 +605,14 @@ var PDV = {
 						PDV.fecharModalCadastroPDV = false;
 						$(this).dialog("close");
 					}
-				}
+				},
+				form: $("#dialog-cancelar-cadastro-pdv", this.workspace).parents("form")
 			});
 		},
 	
 		
 		poupNovoPDV:function(){
-			
+						
 			PDV.limparCamposTela();
 			PDV.carregarMaterialPromocional(null);
 			PDV.carregarGeradorFluxo(null);
@@ -590,9 +629,8 @@ var PDV = {
 			);
 		},
 		
-		popup_novoPdv:function() {
-			
-			$( "#dialog-pdv" ).dialog({
+		popup_novoPdv : function() {
+			$( "#dialog-pdv", this.workspace ).dialog({
 				resizable: false,
 				height:600,
 				width:890,
@@ -600,7 +638,7 @@ var PDV = {
 				buttons: {
 					"Confirmar": function() {
 						
-						if ($("#ptoPrincipal").attr("checked")){
+						if ($("#ptoPrincipal", this.workspace).attr("checked")){
 							
 							data = "idCota=" + PDV.idCota + 
 							       "&" + "idPdv=" + $("#idPDV").val();
@@ -608,10 +646,12 @@ var PDV = {
 							$.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal", 
 									data, 
 									function(result){
+								
+										debugger;
 										
 										if (result){
 											
-											$("#dialog-confirmaPontoPrincipal").dialog({
+											$("#dialog-confirmaPontoPrincipal", this.workspace).dialog({
 												resizable : false,
 												height : 200,
 												width : 360,
@@ -619,20 +659,20 @@ var PDV = {
 												buttons : {
 													"Confirmar" : function() {
 														
-														$("#dialog-confirmaPontoPrincipal").dialog("close");
+														$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
 														PDV.fecharModalCadastroPDV = true;
 														PDV.salvarPDV();
 													},
 													"Cancelar" : function() {
 														
-														$("#dialog-confirmaPontoPrincipal").dialog("close");
+														$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
 														PDV.fecharModalCadastroPDV = true;
 													}
 
 												}
 											});
 										} else {
-											$("#dialog-confirmaPontoPrincipal").dialog("close");
+											$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
 											PDV.fecharModalCadastroPDV = true;
 											PDV.salvarPDV();
 										}
@@ -666,7 +706,8 @@ var PDV = {
 						
 					return PDV.fecharModalCadastroPDV;
 					
-				}
+				},
+				form: $("#dialog-pdv", this.workspace).parents("form")
 			});
 
 		},
@@ -676,35 +717,35 @@ var PDV = {
 			var txtGeradorFluxoPrincipal ="";
 			var hiddenGeradorFluxoPrincipal=""; 
 			
-			if($("#txtGeradorFluxoPrincipal").val().length == 0){
+			if($("#txtGeradorFluxoPrincipal", this.workspace).val().length == 0){
 				
-				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").text();
-				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").val();
-				$("#selecTipoGeradorFluxo option:selected").remove();
+				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected", this.workspace).text();
+				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected", this.workspace).val();
+				$("#selecTipoGeradorFluxo option:selected", this.workspace).remove();
 			}
 			else{
 				
-				txtGeradorFluxoPrincipal = $("#txtGeradorFluxoPrincipal").val();
-				hiddenGeradorFluxoPrincipal=$("#hiddenGeradorFluxoPrincipal").val(); 
+				txtGeradorFluxoPrincipal = $("#txtGeradorFluxoPrincipal", this.workspace).val();
+				hiddenGeradorFluxoPrincipal=$("#hiddenGeradorFluxoPrincipal", this.workspace).val(); 
 				var option = "<option value='" + hiddenGeradorFluxoPrincipal + "'>" + txtGeradorFluxoPrincipal + "</option>";
 				
 				$("#selecTipoGeradorFluxo").append(option);
 				
-				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").text();
-				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected").val();
+				txtGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected", this.workspace).text();
+				hiddenGeradorFluxoPrincipal = $("#selecTipoGeradorFluxo option:selected", this.workspace).val();
 				
-				$("#selecTipoGeradorFluxo option:selected").remove();
+				$("#selecTipoGeradorFluxo option:selected", this.workspace).remove();
 			}
 			
-			$("#txtGeradorFluxoPrincipal").val(txtGeradorFluxoPrincipal);
-			$("#hiddenGeradorFluxoPrincipal").val(hiddenGeradorFluxoPrincipal);
+			$("#txtGeradorFluxoPrincipal", this.workspace).val(txtGeradorFluxoPrincipal);
+			$("#hiddenGeradorFluxoPrincipal", this.workspace).val(hiddenGeradorFluxoPrincipal);
 			
-			$("#selecTipoGeradorFluxo").sortOptions();
+			$("#selecTipoGeradorFluxo", this.workspace).sortOptions();
 
 		}, 
 		popup_img:function () {
 			
-			$( "#dialog-img" ).dialog({
+			$( "#dialog-img", this.workspace ).dialog({
 				resizable: false,
 				height:'auto',
 				width:450,
@@ -722,7 +763,8 @@ var PDV = {
 				},
 				beforeClose: function() {	
 					clearMessageDialogTimeout();
-				}
+				},
+				form: $("#dialog-img", this.workspace).parents("form")
 			});
 
 		},
@@ -736,7 +778,7 @@ var PDV = {
 				var mensagens = result[0];
 				var status = result[1];
 				
-				$("#idImagem").attr("src", contextPath + "/images/pdv/no_image.jpeg");
+				$("#idImagem", this.workspace).attr("src", contextPath + "/images/pdv/no_image.jpeg");
 							
 				if(mensagens!=null && mensagens.length!=0) {
 					exibirMensagem(status,mensagens);
@@ -748,7 +790,7 @@ var PDV = {
 			er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
 			if(!er.exec(email)) {
 				exibirMensagemDialog("WARNING",["N&atildeo &eacute um email v&aacutelido."],'idModalPDV');	
-				$("#emailPDV").focus();
+				$("#emailPDV", this.workspace).focus();
 			}
 		},
 		carregarPeriodosFuncionamento:function(){
@@ -760,7 +802,7 @@ var PDV = {
 							result.splice(6,0,{"key": {"@class": "string","$": "-1"},"value": {"@class": "string","$": "-------------------------"}});
 							
 							var combo =  montarComboBox(result, false);
-							$("#selectDiasFuncionamento").html(combo);
+							$("#selectDiasFuncionamento", this.workspace).html(combo);
 			},null,true,"idModalPDV");
 		},
 		
@@ -769,8 +811,8 @@ var PDV = {
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);
-							$("#selectMaterialPromocional").html(combo);
-							$("#selectMaterialPromocional").sortOptions();
+							$("#selectMaterialPromocional", this.workspace).html(combo);
+							$("#selectMaterialPromocional", this.workspace).sortOptions();
 			},null,true,"idModalPDV");
 		},
 		
@@ -779,8 +821,8 @@ var PDV = {
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);
-							$("#selectMaterialPromocional").html(combo);
-							$("#selectMaterialPromocional").sortOptions();
+							$("#selectMaterialPromocional", this.workspace).html(combo);
+							$("#selectMaterialPromocional", this.workspace).sortOptions();
 			},null,true,"idModalPDV");
 		},
 		
@@ -789,8 +831,8 @@ var PDV = {
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);
-							$("#selectMap").html(combo);
-							$("#selectMap").sortOptions();
+							$("#selectMap", this.workspace).html(combo);
+							$("#selectMap", this.workspace).sortOptions();
 			},null,true,"idModalPDV");
 		},				
 		
@@ -799,8 +841,8 @@ var PDV = {
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);
-							$("#selecTipoGeradorFluxo").html(combo);
-							$("#selecTipoGeradorFluxo").sortOptions();
+							$("#selecTipoGeradorFluxo", this.workspace).html(combo);
+							$("#selecTipoGeradorFluxo", this.workspace).sortOptions();
 			},null,true,"idModalPDV");
 		},
 		
@@ -809,8 +851,8 @@ var PDV = {
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);
-							$("#selecTipoGeradorFluxo").html(combo);
-							$("#selecTipoGeradorFluxo").sortOptions();
+							$("#selecTipoGeradorFluxo", this.workspace).html(combo);
+							$("#selecTipoGeradorFluxo", this.workspace).sortOptions();
 			},null,true,"idModalPDV");
 		},
 		
@@ -819,83 +861,250 @@ var PDV = {
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);
-							$("#selectFluxoSecundario").html(combo);
-							$("#selectFluxoSecundario").sortOptions();
+							$("#selectFluxoSecundario", this.workspace).html(combo);
+							$("#selectFluxoSecundario", this.workspace).sortOptions();
 			},null,true,"idModalPDV");
 		},
 		
 		mostra_expositor:function(idChecked){
 			
 			if(PDV.isChecked(idChecked)){
-				$(".tipoExpositor" ).show();
+				$(".tipoExpositor", this.workspace ).show();
 			}
 			else{
-				$(".tipoExpositor" ).hide();
-				$("#tipoExpositor").val("");
+				$(".tipoExpositor", this.workspace ).hide();
+				$("#tipoExpositor", this.workspace).val("");
 			}
 		},
 
 		limparCamposTela:function(){
 			
-			$("#idImagem").attr("src",  contextPath + "/images/pdv/no_image.jpeg");
-			$("#selectStatus").val(""); 
-			$("#nomePDV").val("");
-			$("#dataInicio").val(dataAtual);
-			$("#contatoPDV").val("");
-			$("#sitePDV").val("");
-			$("#emailPDV").val("");
-			$("#pontoReferenciaPDV").val("");
-			$("#dentroOutroEstabelecimento").attr("checked",null);
-			$("#arrendatario").attr("checked",null);
-			$("#selectTipoEstabelecimento").val("");
-			$("#selectTamanhoPDV").val("");
-			$("#qntFuncionarios").val("");
-			$("#sistemaIPV").attr("checked",null);
-			$("#porcentagemFaturamento").val("");
-			$("#selectTipoLicenca").val("");
-			$("#numerolicenca").val("");
-			$("#nomeLicenca").val("");
-			$("#selectDiasFuncionamento").val("");
-			$("#inicioHorario").val("");
-			$("#fimHorario").val("");
-			$("#divTipoEstabelecimento").hide();
+			$("#idImagem", this.workspace).attr("src",  contextPath + "/images/pdv/no_image.jpeg");
+			$("#selectStatus", this.workspace).val(""); 
+			$("#nomePDV", this.workspace).val("");
+			$("#dataInicio", this.workspace).val( $('#dataAtual',this.workspace).val() );
+			$("#contatoPDV", this.workspace).val("");
+			$("#sitePDV", this.workspace).val("");
+			$("#emailPDV", this.workspace).val("");
+			$("#pontoReferenciaPDV", this.workspace).val("");
+			$("#dentroOutroEstabelecimento", this.workspace).attr("checked",null);
+			$("#arrendatario", this.workspace).attr("checked",null);
+			$("#selectTipoEstabelecimento", this.workspace).val("");
+			$("#selectTamanhoPDV", this.workspace).val("");
+			$("#qntFuncionarios", this.workspace).val("");
+			$("#sistemaIPV", this.workspace).attr("checked",null);
+			$("#porcentagemFaturamento", this.workspace).val("");
+			$("#selectTipoLicenca", this.workspace).val("");
+			$("#numerolicenca", this.workspace).val("");
+			$("#nomeLicenca", this.workspace).val("");
+			$("#selectDiasFuncionamento", this.workspace).val("");
+			$("#inicioHorario", this.workspace).val("");
+			$("#fimHorario", this.workspace).val("");
+			$("#divTipoEstabelecimento", this.workspace).hide();
 			
 			PDV.diasFuncionamento = [];
 			
 			PDV.montartabelaDiasFuncionamento();
 			
-			$("#ptoPrincipal").attr("checked",null);
-            $("#balcaoCentral").attr("checked",null);
-            $("#temComputador").attr("checked",null);
-            $("#possuiCartao").attr("checked",null);
+			$("#ptoPrincipal", this.workspace).attr("checked",null);
+            $("#balcaoCentral", this.workspace).attr("checked",null);
+            $("#temComputador", this.workspace).attr("checked",null);
+            $("#possuiCartao", this.workspace).attr("checked",null);
                         
-            $("#luminoso").attr("checked",null);
-            $("#textoLuminoso").val("");
-            $("#selectdTipoPonto").val("");
-            $("#selectCaracteristica").val("");
-            $("#selectAreainfluencia").val("");
+            $("#luminoso", this.workspace).attr("checked",null);
+            $("#textoLuminoso", this.workspace).val("");
+            $("#selectdTipoPonto", this.workspace).val("");
+            $("#selectCaracteristica", this.workspace).val("");
+            $("#selectAreainfluencia", this.workspace).val("");
                      
-            $("#selectFluxoSecundario option").remove();
+            $("#selectFluxoSecundario option", this.workspace).remove();
             
-            $("#selectMap option").remove();
+            $("#selectMap option", this.workspace).remove();
             
-            $("#hiddenGeradorFluxoPrincipal").val("");
-            $("#txtGeradorFluxoPrincipal").val("");
+            $("#hiddenGeradorFluxoPrincipal", this.workspace).val("");
+            $("#txtGeradorFluxoPrincipal", this.workspace).val("");
             
-            $("#idPDV").val("");
+            $("#idPDV", this.workspace).val("");
             
-            $("#tabpdv").tabs('select', 0);
+            $("#tabpdv", this.workspace).tabs('select', 0);
 		},
 		
 		selecionarDiaFuncionamento: function() {
 			
-			if($("#selectDiasFuncionamento").val()=='VINTE_QUATRO_HORAS') {
-				$("#inicioHorario").attr('disabled', 'desabled');
-				$("#fimHorario").attr('disabled', 'desabled');
+			if($("#selectDiasFuncionamento", this.workspace).val()=='VINTE_QUATRO_HORAS') {
+				$("#inicioHorario", this.workspace).attr('disabled', 'desabled');
+				$("#fimHorario", this.workspace).attr('disabled', 'desabled');
 				
 			} else {
-				$("#inicioHorario").attr('disabled', null);
-				$("#fimHorario").attr('disabled', null);
+				$("#inicioHorario", this.workspace).attr('disabled', null);
+				$("#fimHorario", this.workspace).attr('disabled', null);
+			}
+		},
+		
+		inicializarBinds : function () {
+			
+			$("#btnSalvarPDV", this.workspace).keypress(function() {
+				
+				var keynum = 0;
+			      
+			    if(window.event) {
+
+			        keynum = event.keyCode;
+			    
+			    } else if(event.which) {   
+
+			    	keynum = event.which;
+			    }
+
+				if (keynum == 13) {
+					
+					if ($("#ptoPrincipal", this.workspace).attr("checked")){
+						
+						data = "idCota=" + PDV.idCota + 
+						       "&" + "idPdv=" + $("#idPDV").val();
+						
+						$.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal", 
+								data, 
+								function(result){
+									
+									if (result){
+										
+										$("#dialog-confirmaPontoPrincipal", this.workspace).dialog({
+											resizable : false,
+											height : 200,
+											width : 360,
+											modal : true,
+											buttons : {
+												"Confirmar" : function() {
+													
+													$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
+													PDV.fecharModalCadastroPDV = true;
+													PDV.salvarPDV();
+												},
+												"Cancelar" : function() {
+													
+													$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
+													PDV.fecharModalCadastroPDV = true;
+												}
+
+											},
+											form: $("#dialog-confirmaPontoPrincipal", this.workspace).parents("form")
+										});
+									} else {
+										$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
+										PDV.fecharModalCadastroPDV = true;
+										PDV.salvarPDV();
+									}
+								},
+								null,
+								true,
+								"idModalPDV"
+						);
+					} else {
+						
+						PDV.fecharModalCadastroPDV = true;
+						PDV.salvarPDV();
+					}
+				}
+			});
+
+		},
+		
+		inicializarGrids : function() {
+			
+			$(".PDVsGrid", this.workspace).flexigrid({
+				preProcess: PDV.executarPreProcessamento,
+				dataType : 'json',
+				colModel : [  {
+					display : 'Nome PDV',
+					name : 'nomePdv',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Tipo de Ponto',
+					name : 'tipoPonto',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Contato',
+					name : 'contato',
+					width : 80,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Telefone',
+					name : 'telefone',
+					width : 80,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Endereço',
+					name : 'endereco',
+					width : 170,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Principal',
+					name : 'principal',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Status',
+					name : 'status',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : '% Fat.',
+					name : 'faturamento',
+					width : 50,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Ação',
+					name : 'acao',
+					width : 55,
+					sortable : true,
+					align : 'center'
+				}],
+				width : 880,
+				height : 150,
+				sortname : "nomePdv",
+				sortorder : "asc"
+			});
+
+		},		
+
+		tratarRetornoUploadImagem : function(data) {
+			
+			data = replaceAll(data, "<pre>", "");
+			data = replaceAll(data, "</pre>", "");
+			
+			data = replaceAll(data, "<PRE>", "");
+			data = replaceAll(data, "</PRE>", "");
+			
+			var responseJson = jQuery.parseJSON(data);
+			
+			var mensagens = responseJson.result[0];
+			var status = responseJson.result[1];
+			var pathArquivo = responseJson.result[2];
+				
+			if(pathArquivo) {
+				$("#idImagem", this.workspace).attr("src", contextPath + "/" + pathArquivo);
+			} else {
+				$("#idImagem", this.workspace).attr("src", contextPath +  "/images/pdv/no_image.jpeg");
+			}	
+			
+			if(mensagens!=null && mensagens.length!=0) {
+				exibirMensagemDialog(status,mensagens);
 			}
 		}
-};
+		
+}, BaseController);
+
+$(function() {
+	PDV.init();				
+});
