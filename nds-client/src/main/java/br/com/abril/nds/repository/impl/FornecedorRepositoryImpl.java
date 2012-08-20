@@ -49,13 +49,9 @@ public class FornecedorRepositoryImpl extends
 			
 						.append(" select fornecedorF.id from Cota cota JOIN cota.fornecedores fornecedorF ")
 						.append(" where cota.id = :idCota ) ");
-						//.append(" and fornecedorF.situacaoCadastro = :situacaoCadastro )")
-						
-			//.append(" and fornecedor.situacaoCadastro = :situacaoCadastro");
 		
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idCota",idCota);
-		//query.setParameter("situacaoCadastro",SituacaoCadastro.ATIVO);
 		
 		return query.list();
 	}
