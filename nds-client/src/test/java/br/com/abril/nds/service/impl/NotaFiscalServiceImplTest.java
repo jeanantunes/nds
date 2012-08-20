@@ -261,7 +261,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 
 		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"798765431", 1L, produto, null, false);
 		produtoEdicaoVeja.setDesconto(null);
 		save(produtoEdicaoVeja);
@@ -269,13 +269,13 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		// ////
 		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo",
-				PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, BigDecimal.TEN, TributacaoFiscal.TRIBUTADO);
+				PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, new Long(100), TributacaoFiscal.TRIBUTADO);
 		produtoComDesconto.addFornecedor(dinap);
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
 
 		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14,
-				new BigDecimal(0.1), BigDecimal.TEN, new BigDecimal(20),
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"798765431", 2L, produtoComDesconto, null, false);
 		produtoEdicaoComDesconto.setDesconto(new BigDecimal(19));
 		save(produtoEdicaoComDesconto);
@@ -433,12 +433,10 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 			Produto produto = Fixture.produto("0" + numero + "codigo",
 					"descricao", "0" + numero + "nome",
-					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new BigDecimal(
-							123), TributacaoFiscal. TRIBUTADO);
+					PeriodicidadeProduto.ANUAL, tipo, 123, 123, new Long(100), TributacaoFiscal. TRIBUTADO);
 
 			ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(
-					"codigoProdutoEdicao", 999L, 1111, 222, new BigDecimal(
-							99999), new BigDecimal(99999),
+					"codigoProdutoEdicao", 999L, 1111, 222, new Long(1000), new BigDecimal(99999),
 					new BigDecimal(99999), "codigoDeBarras", 4321L, produto,
 					new BigDecimal(99999), false);
 

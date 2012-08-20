@@ -1,4 +1,5 @@
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/consultaNotas.js"></script>
 <title>Consulta de Notas</title>
 
 <style type="text/css">
@@ -12,6 +13,7 @@ fieldset label
 </head>
 
 <body>
+	<form id="detalhe-nota-sem-fisico-form">
 	<div id="dialog-novo" title="Detalhes da Nota">
 	    <table id="notasSemFisicoDetalheGrid" class="notasSemFisicoDetalheGrid"></table>
 		<br />
@@ -28,6 +30,7 @@ fieldset label
 	      </tr>
 	    </table>
 	</div>
+	</form>
 	
 	<div class="container">
 
@@ -90,7 +93,7 @@ fieldset label
 						<td width="31">&nbsp;</td>
 						<td width="222">
 							<span class="bt_pesquisar">
-								<a href="javascript:;" onclick="pesquisarNotas()" id="btnPesquisar">Pesquisar</a>
+								<a href="javascript:;" onclick="consultaNotasController.pesquisarNotas()" id="btnPesquisar">Pesquisar</a>
 							</span>
 						</td>
 					</tr>
@@ -119,265 +122,11 @@ fieldset label
 	</div>
 	
 <script language="javascript" type="text/javascript">
-	
-		function processarResultadoConsultaNF(data) {
-			
-			if ($("#datepickerDe").val() == "" && $("#datepickerAte").val() == "") {
 
-				var dataAtual = $.format.date(new Date(), "dd/MM/yyyy");
+$(function(){
+	consultaNotasController.init();
+});
 
-				$("#datepickerDe").val(dataAtual);
-				$("#datepickerAte").val(dataAtual);
-			} 
-
-			if (data.mensagens) {
-
-				exibirMensagem(
-					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
-				);
-
-				$(".grids").hide();
-
-				return;
-			}
-
-			var i;
-
-			for (i = 0 ; i < data.rows.length; i++) {
-
-				var lastIndex = data.rows[i].cell.length - 1;
-				
-				data.rows[i].cell[lastIndex-1] = 
-					'<a href="javascript:;" onclick="pesquisarDetalhesNota(' + data.rows[i].cell[lastIndex] + ')" ' +
-					' style="cursor:pointer;border:0px" title="Visualizar Detalhes">' +
-					'<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0px"/>' +
-					'</a>';
-			}
-
-			if ($(".grids").css('display') == 'none') {
-					
-				$(".grids").show();
-			}
-
-			return data;
-		} 
-
-		function pesquisarNotas() { 
-			
-			var formData = $('#formPesquisaNotas').serializeArray();
-			
-			$("#notasSemFisicoGrid").flexOptions({
-				url : contextPath + "/estoque/consultaNotas/pesquisarNotas",
-				params: formData,
-				newp: 1
-			});
-
-			$("#notasSemFisicoGrid").flexReload();
-		}
-		
-		function pesquisarDetalhesNota(idNota) {
-
-			$("#notasSemFisicoDetalheGrid").flexigrid({
-				url :  contextPath + "/estoque/consultaNotas/pesquisarDetalhesNotaFiscal",
-				preProcess: montarGridComRodape,
-				dataType : 'json',
-				colModel : [ {
-					display : 'Código',
-					name : 'codigoItem',
-					width : 40,
-					sortable : true,
-					align : 'left'
-				},{
-					display : 'Produto',
-					name : 'nomeProduto',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Edição',
-					name : 'numeroEdicao',
-					width : 70,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Preço de Venda R$',
-					name : 'precoCapa',
-					width : 100,
-					sortable : true,
-					align : 'right'
-				}, {
-					display : 'Exemplares',
-					name : 'quantidadeExemplares',
-					width : 60,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Sobras / Faltas',
-					name : 'sobrasFaltas',
-					width : 80,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Total R$',
-					name : 'total',
-					width : 60,
-					sortable : true,
-					align : 'right'
-				}],
-				width : 600,
-				height : 200,
-				params: [{ name: 'idNota', value: idNota }],
-				resizable:false
-			});
-			
-			$("#notasSemFisicoDetalheGrid").flexOptions({url : '<c:url value="/estoque/consultaNotas/pesquisarDetalhesNotaFiscal" />', 
-				params: [{ name: 'idNota', value: idNota }]});
-
-			$("#notasSemFisicoDetalheGrid").flexReload();
-		}
-		
-		function montarGridComRodape(data) {
-
-			if (data.mensagens) {
-				exibirMensagem(
-					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
-				);
-
-				return;
-			}
-			
-			var jsonData = jQuery.toJSON(data);
-
-			var result = jQuery.evalJSON(jsonData);
-
-			$("#totalExemplares").html(result.totalExemplares);
-			$("#totalSumarizado").html("R$ " + result.totalSumarizado);
-
-			popup();
-			
-			return result.tableModel;
-		}
-		
-		function popup() {
-
-			$("#dialog-novo").dialog({
-				resizable: false,
-				height:370,
-				width:630,
-				modal : true,
-				buttons : {
-					"Fechar" : function() {
-						$(this).dialog("close");
-					},
-				}
-			});
-		};
-
-		$("#btnPesquisar").keypress(function(event) {
-			
-			var keynum;  
-	          
-	        if(window.event) {   
-	        	
-	            keynum = event.keyCode  
-	        
-	        } else if(event.which) {   
-	            
-	        	keynum = event.which  
-	        }
-	        
-			if (keynum == 13) {
-				pesquisarNotas();
-			}
-		});
-		
-		$(function() {
-			
-			$("#notasSemFisicoGrid").flexigrid({
-				preProcess: processarResultadoConsultaNF,
-				dataType : 'json',
-				colModel : [ {
-					display : 'Número da Nota',
-					name : 'numero',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Data de Emissão',
-					name : 'dataEmissao',
-					width : 120,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Data de Expedição',
-					name : 'dataExpedicao',
-					width : 120,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Tipo',
-					name : 'descricao',
-					width : 150,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Fornecedor',
-					name : 'razaoSocial',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Valor R$',
-					name : 'valor',
-					width : 80,
-					sortable : true,
-					align : 'right'
-				},{
-					display : 'Nota Recebida',
-					name : 'statusNotaFiscal',
-					width : 110,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : "Ação",
-					name : 'acao',
-					width : 60,
-					sortable : true,
-					align : 'center'
-				}],
-				sortname : "numero, dataEmissao",
-				sortorder : "asc",
-				usepager : true,
-				useRp : true,
-				rp : 15,
-				showTableToggleBtn : true,
-				width : 960,
-				height : 180,
-				singleSelect: true
-			});
-			
-			$("#datepickerDe").datepicker({
-				showOn : "button",
-				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
-				buttonImageOnly : true,
-				dateFormat: 'dd/mm/yy',
-				defaultDate: new Date()
-			});
-			
-			$("#datepickerDe").mask("99/99/9999");
-	
-			$("#datepickerAte").datepicker({
-				showOn : "button",
-				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
-				buttonImageOnly : true,
-				dateFormat: 'dd/mm/yy',
-				defaultDate: new Date()
-			});
-			
-			$("#datepickerAte").mask("99/99/9999");
-		});
-	</script>
+</script>
 	
 </body>

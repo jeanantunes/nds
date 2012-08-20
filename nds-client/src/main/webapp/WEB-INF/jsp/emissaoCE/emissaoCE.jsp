@@ -2,112 +2,11 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/emissaoCE.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
-<script language="javascript" type="text/javascript">
-	
-	var ECE = new EmissaoCE('${pageContext.request.contextPath}', 'ECE');
-		
-	
-	function ativarPersonalizada(elemento) {
-		if(elemento.checked==true)
-			$('.personalizada').show();
-		else
-			$('.personalizada').hide();
-	}
-	
-	function popup_pesq_fornecedor() {
-		
-		 	$("#selectFornecedores").val(ECE.fornecedoresSelecionados);
-		
-			$( "#dialog-pesq-fornecedor" ).dialog({
-				resizable: false,
-				height:300,
-				width:500,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						ECE.getFornecedoresSelecionados();
-						ECE.gerarFornecedoresSelecionados();
-						
-						$( this ).dialog( "close" );
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-	};
-		
-	function popup_alterar() {
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:210,
-			width:650,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:230,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-  //callback function to bring a hidden box back
-		function callback() {
-			setTimeout(function() {
-				$( "#effect:visible").removeAttr( "style" ).fadeOut();
 
-			}, 1000 );
-		};	
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/emissaoCE.js"></script>
 
-	function mostrar(){
-		$(".grids").show();
-	}	
-	
-	function confirmar(){
-		$(".dados").show();
-	}
-	
-	function pesqEncalhe(){
-		$(".dadosFiltro").show();
-	}
-	
-	function removeFornecedor(){
-		$( ".forncedoresSel" ).fadeOut('fast');
-		$( ".linhaForncedoresSel" ).hide();
-	}	
-	
-</script>
 <style type="text/css">
   .dados, .dadosFiltro{display:none;}
 
@@ -123,50 +22,22 @@
 </head>
 
 <body>
-<form action="" method="get" id="form1" name="form1">
 
-<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
-<fieldset>
-	<legend>Selecione um ou mais Fornecedores</legend>
-    <select id="selectFornecedores" name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
-      
-	      <c:forEach items="${listaFornecedores}" var="fornecedor">
-	      	<option value="${fornecedor.key}_${fornecedor.value}">${fornecedor.value}</option>
-	      </c:forEach>
-    
-    </select>
-
-</fieldset>
-</div>
-
-
-
-
-
-
-<div id="dialog-excluir" title="Suspensão de Cotas">
-	<p>Confirma a Suspensão destas Cotas?</p>
-    
-   	  <b>Motivo</b><br clear="all" />
-
-        <textarea cols="" rows="4" style="width:340px;"></textarea>
-    </fieldset>
-</div>
-
-
-
-
-
-<div id="dialog-novo" title="CE Antecipada">
-	<p>Data Antecipada:      <input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;"/></p>
-	<p>Confirma a gravação dessas informações? </p>     
-</div>
-
-
-
-
-
-
+<form id="idEmissaoCEfornecedor">
+	<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
+	<fieldset>
+		<legend>Selecione um ou mais Fornecedores</legend>
+	    <select id="selectFornecedores" name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
+	      
+		      <c:forEach items="${listaFornecedores}" var="fornecedor">
+		      	<option value="${fornecedor.key}_${fornecedor.value}">${fornecedor.value}</option>
+		      </c:forEach>
+	    
+	    </select>
+	
+	</fieldset>
+	</div>
+</form>
 
 
 <div class="corpo">
@@ -186,7 +57,7 @@
     <td width="113">
     
 <!-- Dt Recolhimento de -->    
-<input id="dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:80px;"/></td>
+<input id="dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:70px;"/></td>
 
     <td width="28" colspan="-1" align="center">Até</td>
     <td width="130">
@@ -262,7 +133,7 @@
 
 
 <!-- Capa -->    
-<input  id="capa" type="checkbox" name="checkbox" onclick="ativarPersonalizada(this);"  /></td>
+<input  id="capa" type="checkbox" name="checkbox" onclick="EmissaoCEController.ativarPersonalizada(this);"  /></td>
 
 
     <td> Capa </td>
@@ -280,7 +151,7 @@
   </tr>
   <tr>
     <td>Fornecedor:</td>
-    <td colspan="2"><div style="float:left; line-height:35px; margin-right:5px;"><a href="javascript:;" onclick="popup_pesq_fornecedor();">clique para selecionar</a></div></td>
+    <td colspan="2"><div style="float:left; line-height:35px; margin-right:5px;"><a href="javascript:;" onclick="EmissaoCEController.popup_pesq_fornecedor();">clique para selecionar</a></div></td>
     <td colspan="8">
     
 <!-- Fornecedores Selecionados -->
@@ -293,7 +164,7 @@
     
     
 <!-- Pesquisar -->    
-<a href="javascript:;" onclick="ECE.cliquePesquisar();">Pesquisar</a></span></td>
+<a href="javascript:;" onclick="EmissaoCEController.cliquePesquisar();">Pesquisar</a></span></td>
 
 
     </tr>
@@ -304,7 +175,7 @@
       
        <fieldset class="classFieldset">
        	  <legend> Emissão CE</legend>
-        <div class="grids" style="display:none;">
+        <div class="grids">
 		  <table class="ceEmissaoGrid"></table>
 		  
 		  
@@ -336,73 +207,8 @@
 		
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-
-        
-
     
     </div>
 </div> 
-<script>
-
-$(function(){
-	$(".ceEmissaoGrid").flexigrid({
-		colModel : [ {
-			display : 'Cota',
-			name : 'numCota',
-			width : 100,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Nome',
-			name : 'nomeCota',
-			width : 530,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Qtde. Exemplares',
-			name : 'qtdeExemplares',
-			width : 130,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Valor Total CE R$',
-			name : 'vlrTotalCe',
-			width : 130,
-			sortable : true,
-			align : 'right'
-		}],
-			width : 960,
-			height : 180,
-			sortname : "nomeCota",
-			sortorder : "asc"
-		});
-	
-		$(".grids").show();
-		
-		$("#dataDe").mask("99/99/9999");
-		
-		$( "#dataDe" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$("#dataAte").mask("99/99/9999");
-		
-		$( "#dataAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});		
-		
-		$("#cotaDe").numeric();
-		
-		$("#cotaAte").numeric();
-
-		
-		
-});
-</script>
-</form>
 
 </body>

@@ -29,7 +29,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	private Long edicaoProd; 				
 	private String nomeProd; 				
 	private String codBarra;				
-	private BigDecimal pesoUni; 			
+	private Long pesoUni; 			
 	private String tipoProd;				
 	private int peb;						
  	private Float largura;
@@ -161,11 +161,11 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	@Field(offset = 94, length = 5)
-	public BigDecimal getPesoUni() {
+	public Long getPesoUni() {
 		return pesoUni;
 	}
 	
-	public void setPesoUni(BigDecimal pesoUni) {
+	public void setPesoUni(Long pesoUni) {
 		this.pesoUni = pesoUni;
 	}
 	

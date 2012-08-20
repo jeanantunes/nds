@@ -1,5 +1,15 @@
 <head>
 <script language="javascript" type="text/javascript">
+$(function(){
+	$('#filtroConsultaFornecedorRazaoSocial,#filtroConsultaFornecedorCnpj,#filtroConsultaFornecedorNomeFantasia').bind('keypress', function(e) {
+		if(e.keyCode == 13) {
+			pesquisarFornecedores();
+		}
+	});
+	
+	$('#filtroConsultaFornecedorRazaoSocial').focus();
+	
+});
 
 	function novoFornecedor(isEdicao) {
 		
@@ -24,6 +34,8 @@
 			
 			showPopupFornecedor();
 		}
+
+		$( "#tabFornecedores" ).tabs( "select" , 0 );
 	};
 
 	function showPopupFornecedor() {
@@ -58,6 +70,8 @@
 		$("#emailNfe").val("");
 		$("#possuiContrato").uncheck();
 		$( '.validade' ).hide();
+		FORNECEDOR.limparCamposTelefone();
+		ENDERECO_FORNECEDOR.limparFormEndereco();
 	}
 	
 	function cadastrarFornecedor() {
@@ -338,7 +352,7 @@
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Responsável',
+				display : 'Contato',
 				name : 'responsavel',
 				width : 130,
 				sortable : true,
@@ -382,12 +396,19 @@
 		
 		$( "#validadeContrato" ).mask("99/99/9999");
 		
-		$( "#cnpj" ).mask("99.999.999/9999-99");
+		$( "#cnpj" ).mask("99.999.999/9999-99",{completed:function(){
+			obterPessoaJuridica();
+		}});
 				
 		$( "#validadeContrato" ).mask("99/99/9999");
 		
 		$( "#tabFornecedores" ).tabs();
 	});
+	
+	jQuery(function($){
+		   $.mask.definitions['#']='[\-\.0-9]';
+		   $("#inscricaoEstadual").mask("##################",{placeholder:" "});
+		});
 
 	function mostraValidade() {
 		
@@ -434,12 +455,12 @@
             <tr>
               <td width="81">Razão Social:</td>
               <td colspan="3">
-              	<input type="text" name="filtroConsultaFornecedor.razaoSocial" id="textfield2" style="width:180px;"/>
+              	<input type="text" name="filtroConsultaFornecedor.razaoSocial" id="filtroConsultaFornecedorRazaoSocial" style="width:180px;"/>
               </td>
                 <td width="34">CNPJ:</td>
-                <td width="138"><input type="text" name="filtroConsultaFornecedor.cnpj" id="textfield" style="width:130px;"/></td>
+                <td width="138"><input type="text" name="filtroConsultaFornecedor.cnpj" id="filtroConsultaFornecedorCnpj" style="width:130px;"/></td>
                 <td width="93">Nome Fantasia:</td>
-                <td width="223"><input type="text" name="filtroConsultaFornecedor.nomeFantasia" id="textfield" style="width:150px;"/></td>
+                <td width="223"><input type="text" name="filtroConsultaFornecedor.nomeFantasia" id="filtroConsultaFornecedorNomeFantasia" style="width:150px;"/></td>
               <td width="148"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarFornecedores();">Pesquisar</a></span></td>
             </tr>
           </table>

@@ -99,7 +99,7 @@ public class Produto implements Serializable {
 	protected int peb;
 	
 	@Column(name = "PESO", nullable = false)
-	protected BigDecimal peso;
+	protected Long peso;
 	
 	/**
 	 * Flag que indica se o Produto foi criado atraves de interface de sistemas ou por cadastro
@@ -340,14 +340,14 @@ public class Produto implements Serializable {
 	/**
 	 * @return the peso
 	 */
-	public BigDecimal getPeso() {
+	public Long getPeso() {
 		return peso;
 	}
 
 	/**
 	 * @param peso the peso to set
 	 */
-	public void setPeso(BigDecimal peso) {
+	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
 

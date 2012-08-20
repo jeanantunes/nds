@@ -10,14 +10,15 @@
   </style>
 
 <script type="text/javascript">
-var geracaoNFe;
+var geracaoNFeController;
 $(function(){
-	geracaoNFe =  new GeracaoNFe();
+	geracaoNFeController = $.extend(true, new GeracaoNFeController(),  BaseController);
 	
 });
 </script>
 
 <div id="dialogCotasSuspensas" title="Gera&ccedil;&atilde;o NF-e">
+	<form>
      <fieldset>
      	<legend>Cotas Suspensas</legend>
      	<table id="gridCotasSuspensas"></table>
@@ -26,11 +27,12 @@ $(function(){
 	        <input type="checkbox" name="Todos" id="checkboxCheckAllCotasSuspensas" style="float:left;"/>
         </span>
      </fieldset>
+     </form>
 </div>
 
 
 <fieldset class="classFieldset">
-
+		<form>
    	    <legend> Pesquisar NF-e</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		  <tr>
@@ -84,7 +86,7 @@ $(function(){
           <span class="bt_novos" title="Visualizar NE/NECA"><a href="javascript:alert('Nao Implementada');"><img src="${pageContext.request.contextPath}/images/ico_detalhes.png" alt="Visualizar NE/NECA" hspace="5" border="0" />Visualizar NE/NECA</a></span>
 
 		</div>
-
+		</form>
       </fieldset>
 
       <div class="linha_separa_fields">&nbsp;</div>

@@ -44,7 +44,7 @@
                       <tr>
                         <td>&nbsp;</td>
                         <td align="center">&nbsp;</td>
-                        <td width="139" align="center"><span class="bt_add"><a href="javascript:;" onclick="gravarDiasDistribuidorFornecedor()" >Incluir Novo</a></span></td>
+                        <td width="139" align="center"><span class="bt_add"><a href="javascript:;" onclick="parametrosDistribuidorController.gravarDiasDistribuidorFornecedor()" >Incluir Novo</a></span></td>
                       </tr>
                     </table>
                     <br />
@@ -61,7 +61,7 @@
                             <td width="139">${registroDiaOperacaoFornecedor.fornecedor.juridica.nomeFantasia}</td>
                             <td width="144" align="center">${registroDiaOperacaoFornecedor.diasLancamento}</td>
                             <td width="125" align="center">${registroDiaOperacaoFornecedor.diasRecolhimento}</td>
-                            <td width="28" align="center"><a href="javascript:;" onclick="excluirDiasDistribuidorFornecedor(${registroDiaOperacaoFornecedor.fornecedor.id})" ><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td>
+                            <td width="28" align="center"><a href="javascript:;" onclick="parametrosDistribuidorController.excluirDiasDistribuidorFornecedor(${registroDiaOperacaoFornecedor.fornecedor.id})" ><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td>
                           </tr>
                           </c:forEach>
                       </table>
@@ -71,10 +71,14 @@
                     <legend>Parciais / Matriz de Lançamento</legend>
                     <label>Relançamento de Parciais em D+: </label>
                     <select name="parametrosDistribuidor.relancamentoParciaisEmDias" size="1" id="relancamentoParciaisEmDias" style="width:50px; height:19px;">
-                      <option value="2" selected="selected">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
+                      <c:forEach begin="2" end="5" varStatus="current"> 
+                         <c:if test="${parametrosDistribuidor.relancamentoParciaisEmDias eq current.index}"> 
+                            <option value="${current.index}" selected="selected">${current.index}</option>
+                         </c:if>
+                         <c:if test="${not (parametrosDistribuidor.relancamentoParciaisEmDias eq current.index)}"> 
+                            <option value="${current.index}">${current.index}</option>
+                         </c:if>
+                      </c:forEach>
                     </select>
                   </fieldset>
                    <fieldset style="width:440px!important; margin-bottom:5px;">
@@ -135,17 +139,17 @@
                          <tr>
                       <td>Aceita Encalhe Juramentada:</td>
                       <td width="22">
-                          <c:if test="${parametrosDistribuidor.aceitaEncalheJuramentada} ">
+                          <c:if test="${parametrosDistribuidor.aceitaEncalheJuramentada}">
                             <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
                                 type="checkbox" 
                                 id="aceitaEncalheJuramentada" checked="checked" />
                           </c:if>   
-                            <c:if test="${not parametrosDistribuidor.aceitaEncalheJuramentada} ">
+                            <c:if test="${not parametrosDistribuidor.aceitaEncalheJuramentada}">
                             <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
                                 type="checkbox" 
                                 id="aceitaEncalheJuramentada"/>
                           </c:if>        
-                          </td>
+                      </td>
                       <td width="15">&nbsp;</td>
                       <td width="21">&nbsp;</td>
                       <td width="16">&nbsp;</td>

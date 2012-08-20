@@ -1,168 +1,14 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parciais.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+	
+	var pesquisaProdutoParciais = new PesquisaProduto(ParciaisController.workspace);
 
-
-$(function() {
-	definirAcaoPesquisaTeclaEnter();
-});
-
-
-var PARCIAIS = new Parciais('${pageContext.request.contextPath}');
-
-
-function popup(modal) {
-	
-		PARCIAIS.carregaPeb();
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:200,
-			width:400,
-			modal: true,
-			
-			buttons:[ 
-			          {
-				           id:"bt_confirmar",
-				           text:"Confirmar", 
-				           click: function() {
-				        	   	PARCIAIS.inserirPeriodos(modal);								
-								$( this ).dialog( "close" );
-				           }
-			           },
-			           {
-				           id:"bt_cancelar",
-				           text:"Cancelar", 
-				           click: function() {
-				        	   $( this ).dialog( "close" );
-				           }
-			           }
-	        ]
-		});
-	};
-	
-	function pupup_detalheVendas() {
-		
-		$( "#dialog-detalhe-venda" ).dialog({
-			resizable: false,
-			height:450,
-			width:660,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-			}
-		});
-	}
-	
-	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:200,
-			width:350,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					PARCIAIS.excluirPeriodoParcial();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	function popup_detalhes() {
-	
-		$( "#dialog-detalhes" ).dialog({
-			resizable: false,
-			height:550,
-			width:960,
-			modal: true,
-			buttons: {
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	function popup_edit_produto() {
-	
-		$( "#dialog-edit-produto" ).dialog({
-			resizable: false,
-			height:360,
-			width:500,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					PARCIAIS.editarPeriodoParcial();
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
- 
-$(function() {
-		$( "#dataLancamentoEd" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dataRecolhimentoEd" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dataInicial" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dataFinal" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-	});
-$(function() {
-	$("#nomeProduto").autocomplete({source: ""});
-	$("#edicaoProduto").autocomplete({source: ""});
-});
-
-		
 </script>
+		
 <style type="text/css">
 #dialog-detalhes fieldset{width:900px!important;}
 
@@ -177,162 +23,169 @@ $(function() {
 #dialog-detalhe-venda{display:none;}
 </style>
 
+<form id="idParciaisEditProduto">
 
-<div id="dialog-edit-produto" title="Dados do Produto">
+	<div id="dialog-edit-produto" title="Dados do Produto">
+		
+		<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialog-edit-produto" name="messageDialog"/>
+		</jsp:include>
+	
+	        <table width="412" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	            <tr>
+	              <td width="129">Código:</td>
+	              <td width="272">
+	
+	
+	<input id="codigoProdutoEd" name="textfield2" type="text" style="width:80px;" value="" disabled="disabled" /></td>
+	
+	            </tr>
+	            <tr>
+	              <td>Produto:</td>
+	              <td>
+	              
+	<input id="nomeProdutoEd" name="textfield7" type="text" style="width:250px;" value="" disabled="disabled"/></td>
+	 
+	            </tr>
+	            <tr>
+	              <td>Edição:</td>
+	              <td>
+	
+	<input id="numEdicaoEd" name="textfield" type="text" style="width:80px;" value="" disabled="disabled"/></td>
+	
+	            </tr>
+	            <tr>
+	              <td>Preço Capa R$:</td>
+	              <td>
+	
+	<input id="precoCapaEd" name="textfield3" type="text" style="width:80px; text-align:right" value="" disabled="disabled"/></td>
+	
+	            </tr>
+	            <tr>
+	              <td>Fornecedor:</td>
+	              <td>
+	
+	<input id="nomeFornecedorEd" name="textfield4" type="text" style="width:250px;" value="" disabled="disabled"/></td>
+	
+	            </tr>
+	            <tr>
+	              <td>Data Lançamento:</td>
+	              <td>
+	
+	<input id="dataLancamentoEd" type="text" style="width:80px;" /></td>
+	
+	            </tr>
+	            <tr>
+	              <td>Data Recolhimento:</td>
+	              <td>
+	
+	<input id="dataRecolhimentoEd" type="text"  style="width:80px;" /></td>
+	
+	            </tr>
+	          </table>
+	</div>
+</form>
+
+<form id="idParciaisExcluir">
+	<div id="dialog-excluir" title="Excluir Parcial">
+	  <p>Confirma a exclusão desta Parcial?</p>
+	</div>
+</form>
+
+<form id="idParciaisDetalhes">
+	
+	<div id="dialog-detalhes" title="Parcial">
 	
 	<jsp:include page="../messagesDialog.jsp">
-		<jsp:param value="dialog-edit-produto" name="messageDialog"/>
+		<jsp:param value="dialog-detalhes" name="messageDialog"/>
 	</jsp:include>
-
-        <table width="412" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="129">Código:</td>
-              <td width="272">
-
-
-<input id="codigoProdutoEd" name="textfield2" type="text" style="width:80px;" value="" disabled="disabled" /></td>
-
-            </tr>
-            <tr>
-              <td>Produto:</td>
-              <td>
-              
-<input id="nomeProdutoEd" name="textfield7" type="text" style="width:250px;" value="" disabled="disabled"/></td>
- 
-            </tr>
-            <tr>
-              <td>Edição:</td>
-              <td>
-
-<input id="numEdicaoEd" name="textfield" type="text" style="width:80px;" value="" disabled="disabled"/></td>
-
-            </tr>
-            <tr>
-              <td>Preço Capa R$:</td>
-              <td>
-
-<input id="precoCapaEd" name="textfield3" type="text" style="width:80px; text-align:right" value="" disabled="disabled"/></td>
-
-            </tr>
-            <tr>
-              <td>Fornecedor:</td>
-              <td>
-
-<input id="nomeFornecedorEd" name="textfield4" type="text" style="width:250px;" value="" disabled="disabled"/></td>
-
-            </tr>
-            <tr>
-              <td>Data Lançamento:</td>
-              <td>
-
-<input id="dataLancamentoEd" type="text" style="width:80px;" /></td>
-
-            </tr>
-            <tr>
-              <td>Data Recolhimento:</td>
-              <td>
-
-<input id="dataRecolhimentoEd" type="text"  style="width:80px;" /></td>
-
-            </tr>
-          </table>
-</div>
-
-<div id="dialog-excluir" title="Excluir Parcial">
-  <p>Confirma a exclusão desta Parcial?</p>
-</div>
-
-<div id="dialog-detalhes" title="Parcial">
-
-<jsp:include page="../messagesDialog.jsp">
-	<jsp:param value="dialog-detalhes" name="messageDialog"/>
-</jsp:include>
-
-<fieldset>
-	<legend>Dados da Parcial</legend>
-    <table width="740" border="0" cellpadding="2" cellspacing="1">
-            <tr>
-              <td width="81"><strong>Código:</strong></td>
-              <td width="94" id="codigoProdutoM" ></td>
-              <td width="132"><strong>Produto:</strong></td>
-              <td width="194" id="nomeProdutoM"></td>
-              <td width="81"><strong>Edição:</strong></td>
-              <td width="127" id="numEdicaoM">4345</td>
-            </tr>
-            <tr>
-              <td><strong>Fornecedor:</strong></td>
-              <td id="nomeFornecedorM"></td>
-              <td><strong>Data Lançamento:</strong></td>
-              <td id="dataLancamentoM"></td>
-              <td><strong>Data Final:</strong></td>
-              <td id="dataRecolhimentoM"></td>
-            </tr>
-          </table>
-          
-</fieldset>
-<br />
-<br clear="all" />
-<br />
-
-<fieldset>
-	<legend>Parciais</legend>
-	<div class="flexigrid" style="width: 900px; ">
-    	<table class="parciaisPopGrid"></table>
-    </div>
-</fieldset>
-
-
-<br />
-
-<div id="exportacaoPeriodosModal">
-	            
-	            <span class="bt_novos" title="Gerar Arquivo">
-	            
-	<!-- ARQUIVO EXCEL -->
-	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
-			
-			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-			</span>
 	
-			<span class="bt_novos" title="Imprimir">
+	<fieldset>
+		<legend>Dados da Parcial</legend>
+	    <table width="740" border="0" cellpadding="2" cellspacing="1">
+	            <tr>
+	              <td width="81"><strong>Código:</strong></td>
+	              <td width="94" id="codigoProdutoM" ></td>
+	              <td width="132"><strong>Produto:</strong></td>
+	              <td width="194" id="nomeProdutoM"></td>
+	              <td width="81"><strong>Edição:</strong></td>
+	              <td width="127" id="numEdicaoM">4345</td>
+	            </tr>
+	            <tr>
+	              <td><strong>Fornecedor:</strong></td>
+	              <td id="nomeFornecedorM"></td>
+	              <td><strong>Data Lançamento:</strong></td>
+	              <td id="dataLancamentoM"></td>
+	              <td><strong>Data Final:</strong></td>
+	              <td id="dataRecolhimentoM"></td>
+	            </tr>
+	          </table>
+	          
+	</fieldset>
+	<br />
+	<br clear="all" />
+	<br />
 	
+	<fieldset>
+		<legend>Parciais</legend>
+		<div class="flexigrid" style="width: 900px; ">
+	    	<table class="parciaisPopGrid"></table>
+	    </div>
+	</fieldset>
+	
+	
+	<br />
+	
+	<div id="exportacaoPeriodosModal">
+		            
+		            <span class="bt_novos" title="Gerar Arquivo">
+		            
+		<!-- ARQUIVO EXCEL -->
+		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
+				
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+				</span>
 		
-	<!-- IMPRIMIR PDF -->	
-	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+				<span class="bt_novos" title="Imprimir">
+		
+			
+		<!-- IMPRIMIR PDF -->	
+		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+		
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+				</span>
+		        
+		</div>   
 	
-			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-			</span>
+	 <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="ParciaisController.popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
+	
+	
+	</div>
+</form>
+
+<form id="idParciaisNovo">
+	<div id="dialog-novo" title="Nova Parcial">
+	     <fieldset>
+	     	<legend>Novo Período</legend>
+	        <table width="236" border="0" cellspacing="1" cellpadding="1">
+	          <tr>
+	            <td width="103">PEB:</td>
+	            <td width="126">
+	<!-- PEB -->
+	<input id="peb" name="" type="text" style="width:80px;" /> dias</td>
+	          </tr>
+	          <tr>
+	            <td>Qtde. Períodos:</td>
+	            <td>
+	<!-- QTDE -->
+	<input id="qtde" name="" type="text" style="width:80px;" /></td>
+	          </tr>
+	        </table>
 	        
-	</div>   
-
- <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
-
-
-</div>
-
-
-
-<div id="dialog-novo" title="Nova Parcial">
-     <fieldset>
-     	<legend>Novo Período</legend>
-        <table width="236" border="0" cellspacing="1" cellpadding="1">
-          <tr>
-            <td width="103">PEB:</td>
-            <td width="126">
-<!-- PEB -->
-<input id="peb" name="" type="text" style="width:80px;" /> dias</td>
-          </tr>
-          <tr>
-            <td>Qtde. Períodos:</td>
-            <td>
-<!-- QTDE -->
-<input id="qtde" name="" type="text" style="width:80px;" /></td>
-          </tr>
-        </table>
-        
-     </fieldset>
-   
- </div>
+	     </fieldset>
+	   
+	 </div>
+</form>
 
 
 <div class="corpo">
@@ -352,15 +205,15 @@ $(function() {
               <td colspan="3">
 <!-- Código -->
 <input class="campoDePesquisa" id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="produto.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
+						   onchange="pesquisaProdutoParciais.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
 				</td>
                 <td width="51">Produto:</td>
                 <td width="163">
                 
 <!-- Nome Produto -->                
 <input class="campoDePesquisa" id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
-					       onkeyup="produto.autoCompletarPorNomeProduto('#nomeProduto', false);"
-					       onblur="produto.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
+					       onkeyup="pesquisaProdutoParciais.autoCompletarPorNomeProduto('#nomeProduto', false);"
+					       onblur="pesquisaProdutoParciais.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
 					    	   
 				</td>
                 <td width="56">Edição:</td>
@@ -411,7 +264,7 @@ $(function() {
               <td width="119"><span class="bt_pesquisar">
               
 <!-- Pesquisar -->
-<a class="botaoPesquisar" href="javascript:;" onclick=" PARCIAIS.cliquePesquisar();">Pesquisar</a>
+<a class="botaoPesquisar" href="javascript:;" onclick=" ParciaisController.cliquePesquisar();">Pesquisar</a>
 		
 			</span></td>
             </tr>
@@ -420,7 +273,7 @@ $(function() {
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
 
-<!-- PESQUISA DE LANCAMENTOS PARCIAIS -->
+<!-- PESQUISA DE LANCAMENTOS ParciaisController -->
 <fieldset id="painelLancamentos" class="classFieldset" style="display:block">
 	       	  <legend>Parciais Cadastradas</legend>
 	       
@@ -478,7 +331,7 @@ $(function() {
 			
 	
 	 <span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
-	 		<a href="javascript:;" onclick="popup(false);">
+	 		<a href="javascript:;" onclick="ParciaisController.popup(false);">
 	 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
 	 		Incluir Períodos
 	 		</a>
@@ -493,242 +346,3 @@ $(function() {
 </div> 
 
 <jsp:include page="parciaisDeVenda.jsp" />
-
-<script>
-
-$(function() {	
-	
-	$(".parciaisGrid").flexigrid($.extend({},{
-		colModel : [ {
-			display : 'Data Lancto',
-			name : 'dataLancamento',
-			width : 100,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Data Recolhimento',
-			name : 'dataRecolhimento',
-			width : 100,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Código',
-			name : 'codigoProduto',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Produto',
-			name : 'nomeProduto',
-			width : 180,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Edição',
-			name : 'numEdicao',
-			width : 80,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Fornecedor',
-			name : 'nomeFornecedor',
-			width : 180,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Status',
-			name : 'statusParcial',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Ação',
-			name : 'acao',
-			width : 80,
-			sortable : false,
-			align : 'center'
-		}],
-		sortname : "codigoProduto",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 960,
-		height : 255
-})); 	
-
-$(".grids").show();	
-
-
-$(".periodosGrid").flexigrid($.extend({},{
-		colModel : [ {
-			display : 'Lcto',
-			name : 'dataLancamento',
-			width : 100,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Rcto',
-			name : 'dataRecolhimento',
-			width : 100,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Reparte',
-			name : 'reparte',
-			width : 50,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Suplementação',
-			name : 'suplementacao',
-			width : 80,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Encalhe',
-			name : 'encalhe',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Venda',
-			name : 'vendas',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : '% Venda',
-			name : 'percVenda',
-			width : 50,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Venda CE',
-			name : 'vendaCE',
-			width : 50,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Reparte Acum.',
-			name : 'reparteAcum',
-			width : 75,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Venda Acum.',
-			name : 'vendaAcumulada',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : '% Venda Acum.',
-			name : 'percVendaAcumulada',
-			width : 80,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Ação',
-			name : 'acao',
-			width : 60,
-			sortable : false,
-			align : 'center'
-		}],
-
-		sortname : "dataLancamento",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 960,
-		height : 255
-	})); 
-
-$(".parciaisPopGrid").flexigrid($.extend({},{
-		colModel : [ {
-			display : 'Lcto',
-			name : 'dataLancamento',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Rcto',
-			name : 'dataRecolhimento',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Reparte',
-			name : 'reparte',
-			width : 50,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Suplementação',
-			name : 'suplementacao',
-			width : 80,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Encalhe',
-			name : 'encalhe',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Venda',
-			name : 'vendas',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : '% Venda',
-			name : 'percVenda',
-			width : 50,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Venda CE',
-			name : 'vendaCE',
-			width : 50,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Reparte Acum.',
-			name : 'reparteAcum',
-			width : 75,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Venda Acum.',
-			name : 'vendaAcumulada',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : '% Venda Acum.',
-			name : 'percVendaAcumulada',
-			width : 80,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Ação',
-			name : 'acao',
-			width : 60,
-			sortable : false,
-			align : 'center'
-		}],
-		sortname : "dataLancamento",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 900,
-		height : 200
-	})); 
-
-});
-</script>

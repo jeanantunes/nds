@@ -1,6 +1,8 @@
 <head>
 <title>NDS - Novo Distrib</title>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
+
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
@@ -18,105 +20,13 @@
 <script language="javascript" type="text/javascript">
 	
 	$(function() {
-
-		$( "#tabpdv" ).tabs();
-
-		$("#descricaoPessoa").autocomplete({source: ""});
 		
-		$("#numCota").numeric();
-	
-		$(".pessoasGrid").flexigrid({
-			preProcess: MANTER_COTA.executarPreProcessamento,
-			dataType : 'json',
-			colModel : [  {
-				display : 'Código',
-				name : 'numero',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Nome / Razação Social',
-				name : 'nome',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'CPF/CNPJ',
-				name : 'numeroCpfCnpj',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Contato',
-				name : 'contato',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Telefone',
-				name : 'telefone',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'E-Mail',
-				name : 'email',
-				width : 210,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 60,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "numero",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255
-		});
-	
-	});
-	
-	function pesquisarLogradouros() {
-		
-		var nomeLogra = $("#logradouroPesquisa").val();
-		
-		nomeLogra = $.trim(nomeLogra);
-		
-		$("#logradouroPesquisa").autocomplete({source: ""});
-		
-		if (nomeLogra && nomeLogra.length > 2) {
-			
-			$.postJSON(
-				contextPath + "/cadastro/endereco/pesquisarLogradouros", "nomeLogradouro=" + nomeLogra,
-				function(result) { 
-					exibirAutoComplete(result); 
-				}
-			);
+		try{
+			MANTER_COTA.init();	
+		}catch(e){
+			alert(e);
 		}
-	}
-	
-	function exibirAutoComplete (result) {
-		
-		$("#logradouroPesquisa").autocomplete({
-			source: result,
-			minLength: 4,
-			delay : 0,
-		});
-	}
-		
+	});
 </script>
 <style>
 
@@ -179,15 +89,17 @@
 				<td width="68">Logradouro:</td>
 				<td colspan="3">
 					<input type="text" id="logradouroPesquisa" style="width:180px;"
-						   onkeyup="pesquisarLogradouros();"/>
+						   onkeyup="MANTER_COTA.pesquisarLogradouros('#logradouroPesquisa');"/>
 				</td>
 				<td width="36">Bairro:</td>
 				<td width="195">
-					<input type="text" id="bairroPesquisa" style="width:155px;"/>
+					<input type="text" id="bairroPesquisa" style="width:155px;"
+						   onkeyup="MANTER_COTA.pesquisarBairros('#bairroPesquisa');"/>
 				</td>
 				<td width="57">Município:</td>
 				<td width="253">
-					<input type="text" id="municipioPesquisa" style="width:180px;"/>
+					<input type="text" id="municipioPesquisa" style="width:180px;"
+						   onkeyup="MANTER_COTA.pesquisarMunicipios('#municipioPesquisa');"/>
 				</td>
 				<td width="104">
 	               	<span class="bt_pesquisar">
@@ -218,6 +130,18 @@
 		<span class="bt_novos" title="Novo">
 			<a href="javascript:;" onclick="COTA_CNPJ.novoCNPJ();">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CNPJ
+			</a>
+		</span>
+		
+		<span class="bt_novos" title="Gerar Arquivo">
+			<a href="${pageContext.request.contextPath}/cadastro/cota/exportar?fileType=XLS">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+			</a>
+		</span>
+		
+		<span class="bt_novos" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/cadastro/cota/exportar?fileType=PDF">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
 			</a>
 		</span>
 

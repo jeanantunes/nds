@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,17 @@ import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -35,7 +44,9 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
@@ -48,7 +59,12 @@ import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Get;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -88,6 +104,9 @@ public class CotaController {
 	private DividaService dividaService;
 	
 	@Autowired
+	private DescontoService descontoService;
+	
+	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
@@ -104,6 +123,12 @@ public class CotaController {
 	
 	@Autowired
 	private PessoaFisicaService pessoaFisicaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
@@ -113,6 +138,7 @@ public class CotaController {
 		
 		this.financeiroController.preCarregamento();
 		this.pdvController.preCarregamento();
+		this.limparDadosSession();
 	}
 	
 	/**
@@ -554,18 +580,6 @@ public class CotaController {
 	}
 	
 	/**
-	 * Verifica se a cota possui dividas em aberto
-	 * @param idCota
-	 * @return boolean
-	 */
-	private boolean cotaComDebitos(Long idCota){
-		
-        BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(idCota);
-		
-		return (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0);
-	}
-	
-	/**
 	 * Exclui uma cota, informada pelo usúario
 	 * 
 	 * @param idCota - identificador da cota
@@ -573,10 +587,6 @@ public class CotaController {
 	@Post
 	@Path("/excluir")
 	public void excluir(Long idCota){
-
-		if (cotaComDebitos(idCota)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] possui dívidas em aberto e não pode ser excluída!");
-		}
 		
 		cotaService.excluirCota(idCota); 
 		
@@ -761,6 +771,71 @@ public class CotaController {
 		
 		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
 	}
+
+	
+	/** TODO: Aba descontos do cadastro de cota
+	 * 
+	 * Obtem os tipos de desconto do distribuidor
+	 */
+	private List<TipoDescontoDTO> obterDescontosDistribuidor(){
+		
+		FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
+		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.DATA_ALTERACAO);
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+		filtro.setPaginacao(paginacao);
+		
+		List<TipoDescontoDTO> descontos = descontoService.buscarTipoDesconto(filtro);
+		
+		return descontos;
+	}
+	
+	/** TODO: Aba descontos do cadastro de cota
+	 * 
+	 * Obtem os tipos de desconto especificos associados a cota informada
+	 * @param idCota -identificador da cota
+	 */
+	private List<TipoDescontoCotaDTO> obterDescontosEspecificos(Long idCota){
+		
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		filtro.setOrdenacaoColuna(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.DATA_ALTERACAO);
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+		paginacao.setSortOrder("asc");
+		filtro.setPaginacao(paginacao);
+		
+		List<TipoDescontoCotaDTO> descontos = descontoService.buscarTipoDescontoCota(filtro);
+		
+		return descontos;
+	}
+	
+	/** TODO: Aba descontos do cadastro de cota
+	 * 
+	 * Obtem os tipos de desconto especificos associados a cota informada
+	 * @param idCota -identificador da cota
+	 */
+	@Post
+	@Path("/obterTiposDesconto")
+	public void obterTiposDesconto(Long idCota){
+		
+		List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(idCota);
+		
+		if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
+		    result.use(Results.json()).from(descontosEspecificos,"result").recursive().serialize();
+		}
+		else{
+			
+			List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor();
+			
+			if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
+				result.use(Results.json()).from(descontosDistribuidor,"result").recursive().serialize();
+		    }
+		}
+		
+		result.nothing();
+	}
+	
+	
 	
 	/**
 	 * Valida se o número da cota informada para histórico base é ativo.
@@ -798,21 +873,73 @@ public class CotaController {
 	@Post
 	@Path("/pesquisarCotas")
 	public void pesquisarCotas(Integer numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
+							   String logradouro, String bairro, String municipio,
 			 				   String sortname, int page, int rp){
 		
 		numeroCpfCnpj = numeroCpfCnpj.replace(".", "").replace("-", "").replace("/", "");
 		
-		validarParametrosPesquisa(numCota,nomeCota,numeroCpfCnpj);
+		validarParametrosPesquisa(numCota,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio);
 		
 		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
 		
-		FiltroCotaDTO filtro = new FiltroCotaDTO( numCota,nomeCota,numeroCpfCnpj );
+		FiltroCotaDTO filtro = new FiltroCotaDTO( numCota,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
 		tratarFiltro(filtro);
 		
 		efetuarConsulta(filtro);
+	}
+	
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		List<CotaDTO> listaCotas = null;
+		
+		if (filtro != null){
+			
+			listaCotas = cotaService.obterCotas(filtro);
+		}
+		
+		if (listaCotas == null || listaCotas.isEmpty()){
+			
+			listaCotas = new ArrayList<CotaDTO>();
+		}
+		
+		List<CotaVO> listaCotasVO = getListaCotaVO(listaCotas);
+		
+		FileExporter.to("cotas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaCotasVO, CotaVO.class, this.httpResponse);
+		
+		result.nothing();
+	}
+	
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor != null) {
+			
+			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
+			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+		}
+		
+		ndsFileHeader.setData(new Date());
+		
+		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
+		
+		return ndsFileHeader;
+	}
+	
+	private Usuario getUsuario() {
+		//TODO getUsuario
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		return usuario;
 	}
 	
 	/**
@@ -866,6 +993,7 @@ public class CotaController {
 			cotaVO.setNumeroCpfCnpj( formatarNumeroCPFCNPJ(dto.getNumeroCpfCnpj()));
 			cotaVO.setStatus( tratarValor(dto.getStatus()));
 			cotaVO.setTelefone( tratarValor( dto.getTelefone()));
+			cotaVO.setDescricaoBox(tratarValor(dto.getDescricaoBox()));
 			
 			listaRetorno.add(cotaVO);
 		}
@@ -916,11 +1044,15 @@ public class CotaController {
 	 * @param numeroCpfCnpj - número do CNPJ ou CPF
 	 * 
 	 */
-	private void validarParametrosPesquisa(Integer numCota,String nomeCota, String numeroCpfCnpj) {
+	private void validarParametrosPesquisa(Integer numCota,String nomeCota, String numeroCpfCnpj,
+			String logradouro, String bairro, String municipio) {
 		
 		if(numCota == null 
 				&& (nomeCota == null || nomeCota.isEmpty())
-				&& (numeroCpfCnpj == null || numeroCpfCnpj.isEmpty())){
+				&& (numeroCpfCnpj == null || numeroCpfCnpj.isEmpty())
+				&& (logradouro == null || logradouro.isEmpty())
+				&& (bairro == null || bairro.isEmpty())
+				&& (municipio == null || municipio.isEmpty())){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um dos filtros deve ser informado!");
 		}
@@ -1069,6 +1201,7 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
+		this.session.removeAttribute(FILTRO_SESSION_ATTRIBUTE);
 	}
 }
 

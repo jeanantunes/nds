@@ -16,6 +16,7 @@
 
 <form name="form" action="<c:url value='j_spring_security_check'/>" method="POST">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <input:hidden id="logout_true" name="logout_true" />
   <tr>
     <td align="center"><img src="images/logo_sistema.png" width="110" height="70" alt="Treelog"  /></td>
   </tr>

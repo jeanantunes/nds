@@ -1,6 +1,6 @@
 @charset "utf-8";
 /* CSS Document */
-html{height:100%; min-height:90%; overflow:hidden;}
+html{height:100%; min-height:90%; overflow-y:auto;}
 body{
 	font-family: arial;
 	font-size: 11px;
@@ -13,7 +13,7 @@ body{
 
 .corpo{
 	width:100%;
-	overflow:hidden;
+	overflow-y:auto;
 	min-height:95%;
 
 }
@@ -120,12 +120,11 @@ a{color:#000;}
 
 .itensMenu .classROLE_INDICADORES{background:url(../images/bt_indicadores.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
 
+.itensMenu .classROLE_NFE{background:url(../images/bt_nfe.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
 
 .itensMenu .classROLE_USUARIOS{background:url(../images/bt_usuarios.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
 
-
 .itensMenu .classROLE_LINK{background:url(../images/bt_links.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
-
 
 .itensMenu .classROLE_HELP{background:url(../images/bt_help.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
 
@@ -261,7 +260,7 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 select{font-size: 12px; height: 21px;}
 select, input{font-size: 12px; }
 .header_table{ background:url(../images/bg_header_table.jpg) repeat-x center center; line-height:25px; font-weight:bold; }
-.scroll_grid{height:130px; overflow-y:auto;}
+.scroll_grid{height:130px; overflow-y:scroll;}
 
 
 .monitoramentos, .monitoramentos td{}

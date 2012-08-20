@@ -290,6 +290,7 @@ function Telefone(paramTela,message) {
 	$(function() {
 		$("#"+paramTela+"ddd").numeric();
 		$("#"+paramTela+"numeroTelefone").numeric();
+		$("#"+paramTela+"numeroTelefone").mask("9999-9999");
 		$("#"+paramTela+"ramal").numeric();
 	});
 }

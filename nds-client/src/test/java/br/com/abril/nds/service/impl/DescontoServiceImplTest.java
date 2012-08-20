@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.DescontoService;
 
@@ -38,7 +40,20 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 	@Autowired
 	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
 	
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
+	
 	private Set<Fornecedor> fornecedores;
+	
+	private Set<Cota> cotas;
+	
+	private Set<ProdutoEdicao> produtos;
+	
+	private Cota cotaManoel;
+	
+	private Cota cotaJoao;
+	
+	private ProdutoEdicao produtoEdicaoVeja;
 	
 	@Before
 	public void setUp() {
@@ -48,7 +63,7 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		fornecedores = new HashSet<Fornecedor>();
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000147", "333333333334", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), null);
@@ -58,22 +73,22 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		save(tipoFornecedor);
 		
 		PessoaJuridica pessoa1 = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000148", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000148", "333333333335", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa1);
 		
 
 		PessoaJuridica pessoa2 = Fixture.pessoaJuridica("Distribuidor Acme 1",
-				"56003315000149", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000149", "333333333336", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa2);
 		
 
 		PessoaJuridica pessoa3 = Fixture.pessoaJuridica("Distribuidor Acm 2",
-				"56003315000145", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000145", "333333333337", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa3);
 		
 
 		PessoaJuridica pessoa4 = Fixture.pessoaJuridica("Distribuidor Acme 3",
-				"56003315000142", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000142", "333333333338", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa4);
 		
 		Fornecedor fornecedor = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
@@ -93,6 +108,8 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		// PRODUTOS
 		
+		this.produtos = new HashSet<ProdutoEdicao>();
+		
 		NCM ncm = Fixture.ncm(1L, "NCM", "un");
 		
 		save(ncm);
@@ -107,13 +124,17 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		save(produtoVeja);
 		
-		ProdutoEdicao produtoEdicaoVeja = 
-			Fixture.produtoEdicao("1", 1L, 10, 14, new BigDecimal(0.1), 
+		this.produtoEdicaoVeja = 
+			Fixture.produtoEdicao("1", 1L, 10, 14, new Long(100), 
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
 		
-		save(produtoEdicaoVeja);
+		save(this.produtoEdicaoVeja);
+		
+		this.produtos.add(this.produtoEdicaoVeja);
 		
 		// COTAS
+		
+		this.cotas = new HashSet<Cota>();
 		
 		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		
@@ -124,11 +145,23 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		save(manoel);
 		
-		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
-
-		cotaManoel.getFornecedores().addAll(this.fornecedores);
+		PessoaFisica joao =
+			Fixture.pessoaFisica("124.456.789-00", "sys2.discover@gmail.com", "João da Silva");
+			
+		save(joao);
 		
-		save(cotaManoel);
+		this.cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+
+		this.cotaManoel.getFornecedores().addAll(this.fornecedores);
+		
+		this.cotaJoao = Fixture.cota(1234, joao, SituacaoCadastro.ATIVO, box1);
+		
+		this.cotaJoao.getFornecedores().addAll(this.fornecedores);
+		
+		save(this.cotaManoel, this.cotaJoao);
+		
+		this.cotas.add(cotaManoel);
+		this.cotas.add(cotaJoao);
 	}
 	
 	@Test
@@ -138,20 +171,7 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		this.descontoService.processarDescontoDistribuidor(this.fornecedores, valorDesconto);
 		
-		for (Fornecedor fornecedor : this.fornecedores) {
-		
-			Set<DescontoProdutoEdicao> descontosProdutoEdicao = 
-				this.descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(fornecedor);
-			
-			Assert.assertNotNull(this.fornecedores);
-			
-			//Assert.assertEquals(this.fornecedores.size(), descontosProdutoEdicao.size());
-			
-			for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
-				
-				Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
-			}
-		}
+		this.processarDescontoDistribuidor(this.fornecedores, valorDesconto);
 	}
 	
 	@Test
@@ -160,7 +180,116 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		BigDecimal valorDesconto = BigDecimal.TEN;
 		
 		this.descontoService.processarDescontoDistribuidor(valorDesconto);
+		
+		List<Fornecedor> fornecedores = this.fornecedorRepository.obterFornecedoresAtivos();
+		
+		this.processarDescontoDistribuidor(new HashSet<Fornecedor>(fornecedores), valorDesconto);
 	}
+	
+	@Test
+	public void processarDescontoCotaMultiplosFornecedores() {
+		
+		BigDecimal valorDesconto = BigDecimal.TEN;
+		
+		this.descontoService.processarDescontoCota(this.cotaManoel, this.fornecedores, valorDesconto);
+		
+		this.processarDescontoCota(this.fornecedores, valorDesconto);
+	}
+	
+	@Test
+	public void processarDescontoCotaTodosFornecedores() {
+		
+		BigDecimal valorDesconto = BigDecimal.TEN;
+		
+		List<Fornecedor> fornecedores = this.fornecedorRepository.obterFornecedoresAtivos();
+		
+		this.descontoService.processarDescontoCota(this.cotaManoel, valorDesconto);
+		
+		this.processarDescontoCota(new HashSet<Fornecedor>(fornecedores), valorDesconto);
+	}
+	
+	@Test
+	public void processarDescontoMultiplosProdutos() {
+		
+		BigDecimal valorDesconto = BigDecimal.TEN;
 
+		this.descontoService.processarDescontoProduto(this.produtos, this.cotas, valorDesconto);
+		
+		this.processarDescontoProduto(this.produtos, valorDesconto);
+	}
+	
+	@Test
+	public void processarDescontoUnicoProduto() {
+		
+		BigDecimal valorDesconto = BigDecimal.TEN;
+
+		this.descontoService.processarDescontoProduto(this.produtoEdicaoVeja, valorDesconto);
+		
+		Set<ProdutoEdicao> produtos = new HashSet<ProdutoEdicao>();
+		
+		produtos.add(this.produtoEdicaoVeja);
+		
+		this.processarDescontoProduto(produtos, valorDesconto);
+	}
+	
+	private void processarDescontoProduto(Set<ProdutoEdicao> produtos,
+										  BigDecimal valorDesconto) {
+	
+		for (ProdutoEdicao produto : produtos) {
+		
+			Set<DescontoProdutoEdicao> descontosProdutoEdicao = 
+				this.descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(produto);
+			
+			Assert.assertNotNull(descontosProdutoEdicao);
+			
+			int tamanhoEsperado = this.fornecedores.size() * this.cotas.size();
+			
+			Assert.assertEquals(tamanhoEsperado, descontosProdutoEdicao.size());
+			
+			for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
+				
+				Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+			}
+		}
+	}
+	
+	private void processarDescontoCota(Set<Fornecedor> fornecedores, 
+			   						   BigDecimal valorDesconto) {
+
+		Set<DescontoProdutoEdicao> descontosProdutoEdicao = 
+			this.descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(this.cotaManoel);
+		
+		Assert.assertNotNull(descontosProdutoEdicao);
+		
+		int tamanhoEsperado = fornecedores.size();
+		
+		Assert.assertEquals(tamanhoEsperado, descontosProdutoEdicao.size());
+		
+		for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
+			
+			Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+		}
+	}
+	
+	private void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, 
+											   BigDecimal valorDesconto) {
+
+		for (Fornecedor fornecedor : fornecedores) {
+		
+			Set<DescontoProdutoEdicao> descontosProdutoEdicao = 
+				this.descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(fornecedor);
+			
+			Assert.assertNotNull(descontosProdutoEdicao);
+			
+			int tamanhoEsperado = this.cotas.size();
+			
+			Assert.assertEquals(tamanhoEsperado, descontosProdutoEdicao.size());
+			
+			for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
+				
+				Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+			}
+		}
+	}
 
 }

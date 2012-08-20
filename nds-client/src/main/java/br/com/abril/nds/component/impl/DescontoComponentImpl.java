@@ -1,6 +1,7 @@
 package br.com.abril.nds.component.impl;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,9 +49,7 @@ public class DescontoComponentImpl implements DescontoComponent {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Set<ProdutoEdicao> produtos) {
-		
-		Cota cota = null;
+	public Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Cota cota,Set<ProdutoEdicao> produtos) {
 		
 		switch (tipoDesconto) {
 			
@@ -61,47 +60,53 @@ public class DescontoComponentImpl implements DescontoComponent {
 				return filtrarProdutosCota(tipoDesconto,fornecedor,produtos,cota);
 			
 			case GERAL:
-				return filtrarProdutoDistribuidor(tipoDesconto,fornecedor,produtos);
+				return filtrarProdutoDistribuidor(tipoDesconto,fornecedor,cota,produtos);
 			
 			default:
 				throw new RuntimeException("Tipo de Desconto inválido!");
 		}
 	}
 
-	private Set<ProdutoEdicao> filtrarProdutoDistribuidor(TipoDesconto tipoDesconto, Fornecedor fornecedor,Set<ProdutoEdicao> produtos) {
+	private Set<ProdutoEdicao> filtrarProdutoDistribuidor(TipoDesconto tipoDesconto, Fornecedor fornecedor,Cota cota,Set<ProdutoEdicao> produtos) {
 		
-		List<DescontoProdutoEdicao> descontosProduto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicaoNotInTipoDesconto(tipoDesconto, fornecedor);
+		List<DescontoProdutoEdicao> descontosProduto = descontoProdutoEdicaoRepository.obterDescontoProdutoEdicaoSemTipoDesconto(tipoDesconto, fornecedor,cota);
 		
 		if(descontosProduto.isEmpty()){
 			return produtos;
 		}
+		
+		Set<ProdutoEdicao> produtosCandidatosDesconto = new HashSet<ProdutoEdicao>();
+		produtosCandidatosDesconto.addAll(produtos);
 		
 		for(ProdutoEdicao prd : produtos){
 			
 			if(this.contains(prd, descontosProduto,null)){
-				produtos.remove(prd);
+				produtosCandidatosDesconto.remove(prd);
 			}
 		}
 		
-		return produtos;
+		return produtosCandidatosDesconto;
 	}
 
 	private Set<ProdutoEdicao> filtrarProdutosCota(TipoDesconto tipoDesconto, Fornecedor fornecedor,Set<ProdutoEdicao> produtos, Cota cota) {
 		
-		List<DescontoProdutoEdicao> descontosProduto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicaoNotInTipoDesconto(tipoDesconto, fornecedor,cota);
+		List<DescontoProdutoEdicao> descontosProduto = descontoProdutoEdicaoRepository.obterDescontoProdutoEdicaoSemTipoDesconto(tipoDesconto, fornecedor,cota);
 		
 		if(descontosProduto.isEmpty()){
 			return produtos;
 		}
 		
+		Set<ProdutoEdicao> produtosCandidatosDesconto = new HashSet<ProdutoEdicao>();
+		produtosCandidatosDesconto.addAll(produtos);
+		
 		for(ProdutoEdicao prd : produtos){
 			
 			if(!this.contains(prd, descontosProduto,TipoDesconto.GERAL)){
-				produtos.remove(prd);
+				produtosCandidatosDesconto.remove(prd);
 			}
 		}
 		
-		return produtos;
+		return produtosCandidatosDesconto;
 	}
 	
 	private boolean contains(ProdutoEdicao produtoEdicao, List<DescontoProdutoEdicao> descontos,TipoDesconto tipoDesconto){
@@ -110,21 +115,9 @@ public class DescontoComponentImpl implements DescontoComponent {
 			
 			if(desc.getProdutoEdicao().equals(produtoEdicao)){	
 				
-				if(tipoDesconto!= null){
-					
-					if(desc.getTipoDesconto().equals(tipoDesconto)){	
-						return true;
-					}
-					else{
-						return false;
-					}
-				}
-				else{
-					return true;
-				}
+				return (tipoDesconto!= null) ? (desc.getTipoDesconto().equals(tipoDesconto)):true; 
 			}
 		}
-		
 		return false;
 	}
 }

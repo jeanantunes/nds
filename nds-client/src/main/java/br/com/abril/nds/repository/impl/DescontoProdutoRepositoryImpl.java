@@ -53,11 +53,18 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		}
 
 		if (filtro != null && filtro.getPaginacao() != null) {
+			
+			if(filtro.getPaginacao().getPosicaoInicial()!= null){
 
-			criteria.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+				criteria.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina()!= null){				
 
-			criteria.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+				criteria.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 
+			}
+			
 			if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao().getOrdenacao() != null) {
 
 				switch(filtro.getPaginacao().getOrdenacao()) {

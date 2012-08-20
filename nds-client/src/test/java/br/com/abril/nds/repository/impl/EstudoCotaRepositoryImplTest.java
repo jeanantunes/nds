@@ -103,7 +103,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
-			Fixture.produtoEdicao("1", 1L, 1, 1, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
+			Fixture.produtoEdicao("1", 1L, 1, 1, new Long(10000), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
 		
 		save(produtoEdicao);
 		

@@ -1,19 +1,16 @@
-/**
- * 
- */
-function GeracaoNFe() {
+function GeracaoNFeController() {
 	this.initGrid();
 	this.init();
 	this.mapCotasSuspensas = new Object();
 }
 
-GeracaoNFe.prototype.path = contextPath + '/expedicao/geracaoNFe/';
-GeracaoNFe.prototype.init = function() {
+GeracaoNFeController.prototype.path = contextPath + '/expedicao/geracaoNFe/';
+GeracaoNFeController.prototype.init = function() {
 	var _this = this;
 	
 	
 	
-	$("#selectFornecedores").multiselect({
+	$("#selectFornecedores", this.workspace).multiselect({
 		selectedList : 6
 	});
 
@@ -27,28 +24,28 @@ GeracaoNFe.prototype.init = function() {
 						buttonImageOnly : true
 					});
 
-	$("#btnPesquisar").click(function() {
+	$("#btnPesquisar", this.workspace).click(function() {
 		_this.pequisar();
 	});
 
-	$("#btnGerar").click(function() {
+	$("#btnGerar", this.workspace).click(function() {
 		_this.btnGerarOnClick();
 	});
 
-	$("#btnImprimirXLS").click(function() {
+	$("#btnImprimirXLS", this.workspace).click(function() {
 		_this.imprimir('XLS');
 	});
-	$("#btnImprimirPDF").click(function() {
+	$("#btnImprimirPDF", this.workspace).click(function() {
 		_this.imprimir('PDF');
 	});
 
-	$('#checkboxCheckAllCotasSuspensas').change(
+	$('#checkboxCheckAllCotasSuspensas', this.workspace).change(
 			function() {
-				$(".checkboxCheckCotasSuspensas").attr('checked',
+				$(".checkboxCheckCotasSuspensas", this.workspace).attr('checked',
 						$(this).attr('checked') == 'checked');
 			});
 
-	this.$dialogCotasSuspensas = $('#dialogCotasSuspensas').dialog({
+	this.$dialogCotasSuspensas = $('#dialogCotasSuspensas', this.workspace).dialog({
 		autoOpen : false,
 		resizable : false,
 		height : 400,
@@ -66,13 +63,13 @@ GeracaoNFe.prototype.init = function() {
 	});
 	
 	var dataEmissao = formatDateToString(new Date());
-	$("#datepickerEmissao").val(dataEmissao);
+	$("#datepickerEmissao", this.workspace).val(dataEmissao);
 };
-GeracaoNFe.prototype.gerar = function() {
+GeracaoNFeController.prototype.gerar = function() {
 	var params = this.getParams();
-	var todas = $('#checkboxCheckAllCotasSuspensas').checked;
+	var todas = $('#checkboxCheckAllCotasSuspensas', this.workspace).checked;
 	
-	var cotasSuspensas = $(".checkboxCheckCotasSuspensas");
+	var cotasSuspensas = $(".checkboxCheckCotasSuspensas", this.workspace);
 	
 	var listaCotasSuspensas = new Array;
 	
@@ -83,7 +80,7 @@ GeracaoNFe.prototype.gerar = function() {
 	}
 	
 	params = serializeArrayToPost('idCotasSuspensas', listaCotasSuspensas, params);
-	params['dataEmissao'] = $("#datepickerEmissao").val();
+	params['dataEmissao'] = $("#datepickerEmissao", this.workspace).val();
 	params['todasCotasSuspensa'] = todas;
 	
 	var _this = this;
@@ -101,12 +98,12 @@ GeracaoNFe.prototype.gerar = function() {
 	});
 };
 
-GeracaoNFe.prototype.imprimir = function(fileType) {
+GeracaoNFeController.prototype.imprimir = function(fileType) {
 	var params = this.getParams();
 	
-	var todas = $('#checkboxCheckAllCotasSuspensas').checked;
+	var todas = $('#checkboxCheckAllCotasSuspensas', this.workspace).checked;
 	
-	var cotasSuspensas = $(".checkboxCheckCotasSuspensas");
+	var cotasSuspensas = $(".checkboxCheckCotasSuspensas", this.workspace);
 	
 	var listaCotasSuspensas = new Array;
 	
@@ -117,7 +114,7 @@ GeracaoNFe.prototype.imprimir = function(fileType) {
 	}
 	
 	params = serializeArrayToPost('idCotasSuspensas', listaCotasSuspensas, params);
-	params['dataEmissao'] = $("#datepickerEmissao").val();
+	params['dataEmissao'] = $("#datepickerEmissao", this.workspace).val();
 	params['todasCotasSuspensa'] = todas;
 	params['fileType'] = fileType;
 
@@ -127,19 +124,19 @@ GeracaoNFe.prototype.imprimir = function(fileType) {
 	});
 };
 
-GeracaoNFe.prototype.getParams = function() {
+GeracaoNFeController.prototype.getParams = function() {
 	var params = {
-		"intervaloBoxDe" : $("#inputIntervaloBoxDe").val(),
-		"intervaloBoxAte" : $("#inputIntervaloBoxAte").val(),
-		"intervalorCotaDe" : $("#inputIntervaloCotaDe").val(),
-		"intervaloCotaAte" : $("#inputIntervaloCotaAte").val(),
-		"intervaloDateMovimentoDe" : $("#datepickerIntervaloMovimentoDe")
+		"intervaloBoxDe" : $("#inputIntervaloBoxDe", this.workspace).val(),
+		"intervaloBoxAte" : $("#inputIntervaloBoxAte", this.workspace).val(),
+		"intervalorCotaDe" : $("#inputIntervaloCotaDe", this.workspace).val(),
+		"intervaloCotaAte" : $("#inputIntervaloCotaAte", this.workspace).val(),
+		"intervaloDateMovimentoDe" : $("#datepickerIntervaloMovimentoDe", this.workspace)
 				.val(),
-		"intervaloDateMovimentoAte" : $("#datepickerIntervaloMovimentoAte")
+		"intervaloDateMovimentoAte" : $("#datepickerIntervaloMovimentoAte", this.workspace)
 				.val(),
-		"tipoNotaFiscal" : $("#selectTipoNotaFiscal").val()
+		"tipoNotaFiscal" : $("#selectTipoNotaFiscal", this.workspace).val()
 	};
-	var listaFornecedores = $("#selectFornecedores").val();
+	var listaFornecedores = $("#selectFornecedores", this.workspace).val();
 	if (listaFornecedores) {
 		params = serializeArrayToPost('listIdFornecedor', listaFornecedores,
 				params);
@@ -147,10 +144,10 @@ GeracaoNFe.prototype.getParams = function() {
 	return params;
 };
 
-GeracaoNFe.prototype.btnGerarOnClick = function() {
+GeracaoNFeController.prototype.btnGerarOnClick = function() {
 	this.mapCotasSuspensas = new Object();
 	
-	$('#checkboxCheckAllCotasSuspensas').attr('checked', false);
+	$('#checkboxCheckAllCotasSuspensas', this.workspace).attr('checked', false);
 	var _this = this;
 	var params = this.getParams();
 	$.postJSON(this.path + 'hasCotasSuspensas.json', params, function(data) {
@@ -171,68 +168,68 @@ GeracaoNFe.prototype.btnGerarOnClick = function() {
 	});
 };
 
-GeracaoNFe.prototype.pequisar = function() {
+GeracaoNFeController.prototype.pequisar = function() {
 	this.gridReaload(this.$gridNFe, 'busca.json');
 	$(".grids").show();
 };
 
-GeracaoNFe.prototype.gridReaload = function(grid, uri) {
+GeracaoNFeController.prototype.gridReaload = function(grid, uri) {
 	var params = [ {
 		name : "tipoNotaFiscal",
-		value : $("#selectTipoNotaFiscal").val()
+		value : $("#selectTipoNotaFiscal", this.workspace).val()
 	} ];
 
-	if ($("#inputIntervaloBoxDe").val().length > 0) {
+	if ($("#inputIntervaloBoxDe", this.workspace).val().length > 0) {
 		params.push({
 			name : "intervaloBoxDe",
-			value : $("#inputIntervaloBoxDe").val()
+			value : $("#inputIntervaloBoxDe", this.workspace).val()
 		});
 	}
 
-	if ($("#inputIntervaloBoxAte").val().length > 0) {
+	if ($("#inputIntervaloBoxAte", this.workspace).val().length > 0) {
 		params.push({
 			name : "intervaloBoxAte",
-			value : $("#inputIntervaloBoxAte").val()
+			value : $("#inputIntervaloBoxAte", this.workspace).val()
 		});
 	}
 
-	if ($("#inputIntervaloCotaDe").val().length > 0) {
+	if ($("#inputIntervaloCotaDe", this.workspace).val().length > 0) {
 		params.push({
 			name : "intervaloCotaDe",
-			value : parseInt($("#inputIntervaloCotaDe").val())
+			value : parseInt($("#inputIntervaloCotaDe", this.workspace).val())
 		});
 	}
 
-	if ($("#inputIntervaloCotaAte").val().length > 0) {
+	if ($("#inputIntervaloCotaAte", this.workspace).val().length > 0) {
 		params.push({
 			name : "intervaloCotaAte",
-			value : parseInt($("#inputIntervaloCotaAte").val())
+			value : parseInt($("#inputIntervaloCotaAte", this.workspace).val())
 		});
 	}
 
-	if ($("#datepickerIntervaloMovimentoDe").val().length > 0) {
+	if ($("#datepickerIntervaloMovimentoDe", this.workspace).val().length > 0) {
 		params.push({
 			name : "intervaloDateMovimentoDe",
-			value : $("#datepickerIntervaloMovimentoDe").val()
+			value : $("#datepickerIntervaloMovimentoDe", this.workspace).val()
 		});
 	}
 
-	if ($("#datepickerIntervaloMovimentoAte").val().length > 0) {
+	if ($("#datepickerIntervaloMovimentoAte", this.workspace).val().length > 0) {
 		params.push({
 			name : "intervaloDateMovimentoAte",
-			value : $("#datepickerIntervaloMovimentoAte").val()
+			value : $("#datepickerIntervaloMovimentoAte", this.workspace).val()
 		});
 	}
 	
-	if (($("#inputIntervaloCotaDe").val().length > 0)
-			&& ($("#inputIntervaloCotaAte").val().length > 0) 
-			&& (($("#datepickerIntervaloMovimentoDe").val().length == 0) 
-					||  ($("#datepickerIntervaloMovimentoAte").val().length == 0))) {
+	if (($("#inputIntervaloCotaDe", this.workspace).val().length > 0)
+			&& ($("#inputIntervaloCotaAte", this.workspace).val().length > 0) 
+			&& (($("#datepickerIntervaloMovimentoDe", this.workspace).val().length == 0) 
+					||  ($("#datepickerIntervaloMovimentoAte", this.workspace).val().length == 0))) {
 		exibirMensagem("WARNING", ["Quando haver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
 		return;
 	}
 	
-	var listaFornecedores = $("#selectFornecedores").val();
+	var listaFornecedores = $("#selectFornecedores", this.workspace).val();
 	if (listaFornecedores) {
 		$.each(listaFornecedores, function(index, value) {
 			params.push({
@@ -250,9 +247,9 @@ GeracaoNFe.prototype.gridReaload = function(grid, uri) {
 	grid.flexReload();
 };
 
-GeracaoNFe.prototype.initGrid = function() {
+GeracaoNFeController.prototype.initGrid = function() {
 	var _this = this;
-	this.$gridNFe = $("#gridNFe").flexigrid(
+	this.$gridNFe = $("#gridNFe", this.workspace).flexigrid(
 			{
 				preProcess : function(data) {
 					if (typeof data.mensagens == "object") {
@@ -293,7 +290,7 @@ GeracaoNFe.prototype.initGrid = function() {
 				width : 960,
 				height : 180
 			});
-	this.$gridCotasSuspensas = $("#gridCotasSuspensas").flexigrid(
+	this.$gridCotasSuspensas = $("#gridCotasSuspensas", this.workspace).flexigrid(
 			{
 				preProcess : function(data) {
 					if (typeof data.mensagens == "object") {
@@ -345,7 +342,7 @@ GeracaoNFe.prototype.initGrid = function() {
 			});
 };
 
-GeracaoNFe.prototype.processCotasSuspensas = function(tdDiv, pid) {
+GeracaoNFeController.prototype.processCotasSuspensas = function(tdDiv, pid) {
 	var idCota = tdDiv.innerHTML;
 	var _this = this;
 

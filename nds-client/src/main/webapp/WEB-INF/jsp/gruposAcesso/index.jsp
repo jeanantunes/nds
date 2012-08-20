@@ -20,8 +20,8 @@
 	  <p>Confirma a exclusão deste Grupo?</p>
 	</div>
 	</form>
+	<form action="/administracao/gruposAcesso" id="novo_grupo_form">
 	<div id="dialog-novo-grupo" title="Grupo" style="display:none;">
-		<form action="/administracao/gruposAcesso" id="novo_grupo_form">
         <input type="hidden" name="grupoPermissaoDTO.id" id="grupoPermissaoId" />
      	<table width="379" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	        <tr>
@@ -51,15 +51,15 @@
 				</td>
 			 </tr>
 		</table>      	
-		</form>
 	</div>
+	</form>
 	<form action="/administracao/gruposAcesso" id="excluir_usuario_form">
 	<div id="dialog-excluir-usuario" title="Excluir Usuário" style="display:none;">
 	  <p>Confirma a exclusão deste usuário?</p>
 	</div>
 	</form>
+	<form action="/administracao/gruposAcesso" id="alterar_senha_form">
 	<div id="dialog-alterar-senha" title="Alterar Senha" style="display:none;">
-		<form action="/administracao/gruposAcesso" id="alterar_senha_form">
 			<input type="hidden" name="usuarioDTO.id" id="usuarioId" />
           	<table width="248" border="0" cellpadding="2" cellspacing="1" class="filtro">
             	<tr>
@@ -75,10 +75,10 @@
 	            	<td width="130"><input type="text" name="usuarioDTO.lembreteSenha" id="usuarioLembreteSenha" style="width:120px;"/></td>
 	            </tr>
            	</table>
-		</form>
 	</div>
+	</form>
+	<form action="/administracao/gruposAcesso" id="novo_usuario_form">
 	<div id="dialog-novo-usuario" title="Usuário" style="display:none;">
-		<form action="/administracao/gruposAcesso" id="novo_usuario_form">
 		  <input type="hidden" name="usuarioDTO.id" id="usuarioId" />
           <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -191,8 +191,8 @@
 				</td>
 			 </tr>
 		</table>
-	</form>
 	</div>
+	</form>
 	<div class="corpo">
 		<div class="container">
 			<jsp:include page="../messagesDialog.jsp" />	
@@ -277,4 +277,3 @@
 		</div>
 	</div> 
 </body>
-</html>

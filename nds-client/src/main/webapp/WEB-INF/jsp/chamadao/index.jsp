@@ -1,10 +1,12 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 <script>
+
+	var pesquisaCotaChamadao = new PesquisaCota();
 
 	$(function() {
 		var followUp = $('#numeroCotaFollowUp').val();
@@ -457,14 +459,14 @@
 			    <td width="29">Cota:</td>
 			    <td width="98">
 			    	<input type="text" name="numeroCota" id="numeroCota" style="width:70px; float:left;
-						   margin-right:5px;" onchange="cota.pesquisarPorNumeroCota('#numeroCota', '#descricaoCota');" />
+						   margin-right:5px;" onchange="pesquisaCotaChamadao.pesquisarPorNumeroCota('#numeroCota', '#descricaoCota');" />
 			    </td>
 			    <td width="38">Nome:</td>
 			    <td width="178">
 			    	<input name="descricaoCota" id="descricaoCota" type="text"
 		      		 	   class="nome_jornaleiro" maxlength="255" style="width:130px;"
-		      		 	   onkeyup="cota.autoCompletarPorNome('#descricaoCota');" 
-		      		 	   onblur="cota.pesquisarPorNomeCota('#numeroCota', '#descricaoCota');" />
+		      		 	   onkeyup="pesquisaCotaChamadao.autoCompletarPorNome('#descricaoCota');" 
+		      		 	   onblur="pesquisaCotaChamadao.pesquisarPorNomeCota('#numeroCota', '#descricaoCota');" />
 		      	</td>
 			    <td width="96">Data Chamadão:</td>
 			    <td width="102">

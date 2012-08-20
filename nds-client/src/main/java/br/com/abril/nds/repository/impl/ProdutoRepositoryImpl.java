@@ -86,8 +86,9 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		hql += " tipoProduto.descricao as tipoProdutoDescricao, ";
 		hql += " case when editor.nome is null then '' else editor.nome end as nomeEditor, ";
 		hql += " juridica.razaoSocial as tipoContratoFornecedor, ";
-		hql += " fornecedor.situacaoCadastro as situacao, ";
-		hql += " produto.peb as peb ";
+		hql += " produto.peb as peb, produto.pacotePadrao as pacotePadrao, ";
+		hql += " coalesce(descontoLogistica.percentualDesconto, 0) as percentualDesconto, ";
+		hql += " produto.periodicidade as periodicidade ";
 		
 		try {
 			
@@ -137,6 +138,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		hql += " join produto.fornecedores fornecedor ";
 		hql += " join fornecedor.juridica juridica ";
 		hql += " join produto.tipoProduto tipoProduto ";
+		hql += " left join produto.descontoLogistica descontoLogistica ";
 		hql += " left join produto.editor as editor ";
 		
 		String auxHql = " where ";

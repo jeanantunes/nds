@@ -41,8 +41,14 @@ public class GrupoServiceImpl implements GrupoService {
 				dias.append(dia.getDescricaoDiaSemana());
 			}
 			
-			gruposDTO.add(new GrupoCotaDTO(grupo.getId(), grupo.getNome(), dias.toString()));
+			GrupoCotaDTO dto = new GrupoCotaDTO();
+			dto.setIdGrupo(grupo.getId());
+			dto.setNome(grupo.getNome());
+			dto.setRecolhimento(dias.toString());
+			dto.setTipoCota(grupo.getTipoCota());
+			dto.setTipoGrupo(grupo.getTipoGrupo());
 			
+			gruposDTO.add(dto);			
 		}
 		
 		return gruposDTO;
