@@ -12,7 +12,7 @@ public class BancoVO {
     Long conta;
     String digito;
     String apelido;
-    Integer codigoCarteira;
+    Integer carteira;
     BigDecimal juros;
     boolean ativo;
     BigDecimal multa;
@@ -26,7 +26,7 @@ public class BancoVO {
 
 	public BancoVO(long idBanco, String numero, String nome,
 			String codigoCedente, Long agencia, Long conta, String digito,
-			String apelido, Integer codigoCarteira, BigDecimal juros,
+			String apelido, Integer carteira, BigDecimal juros,
 			boolean ativo, BigDecimal multa, BigDecimal vrMulta,
 			String instrucoes) {
 		super();
@@ -38,7 +38,7 @@ public class BancoVO {
 		this.conta = conta;
 		this.digito = digito;
 		this.apelido = apelido;
-		this.codigoCarteira = codigoCarteira;
+		this.carteira = carteira;
 		this.juros = juros;
 		this.ativo = ativo;
 		this.multa = multa;
@@ -110,13 +110,13 @@ public class BancoVO {
 	public void setApelido(String apelido) {
 		this.apelido = apelido;
 	}
-
-	public Integer getCodigoCarteira() {
-		return codigoCarteira;
+	
+	public Integer getCarteira() {
+		return carteira;
 	}
 
-	public void setCodigoCarteira(Integer codigoCarteira) {
-		this.codigoCarteira = codigoCarteira;
+	public void setCarteira(Integer carteira) {
+		this.carteira = carteira;
 	}
 
 	public BigDecimal getJuros() {

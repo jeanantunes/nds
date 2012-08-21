@@ -71,14 +71,10 @@ label {
 				<tr>
 					<td>Carteira:</td>
 					<td>
-	
-					<select name="newCarteira" id="newCarteira" style="width:150px;">
-					    <option></option>
-	                    <c:forEach varStatus="counter" var="newCarteira" items="${listaCarteiras}">
-					       <option value="${newCarteira.key}">${newCarteira.value}</option>
-					    </c:forEach>
-	                </select>
 					
+					<input type="text" name="newCarteira" maxlength="100"
+						id="newCarteira" style="width: 215px;" />
+													
 					</td>
 					<td>Juros %:</td>
 					<td><input maxlength="17" type="text" name="newJuros" id="newJuros"
@@ -157,14 +153,10 @@ label {
 				<tr>
 					<td>Carteira:</td>
 					<td>
-					
-						<select name="alterCarteira" id="alterCarteira" style="width:150px;">
-		                    <option></option>
-		                    <c:forEach varStatus="counter" var="carteira" items="${listaCarteiras}">
-						       <option value="${carteira.key}">${carteira.value}</option>
-						    </c:forEach>
-		                </select>
-		                
+						
+						<input type="text" name="alterCarteira" maxlength="100"
+						id="alterCarteira" style="width: 215px;" />
+								                
 					</td>
 					<td>Juros %:</td>
 					<td><input maxlength="17" type="text" name="alterJuros" id="alterJuros"

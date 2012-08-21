@@ -25,7 +25,6 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -40,7 +39,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -72,11 +70,8 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	public void setup() {
 		
 		MockitoAnnotations.initMocks(this);
-		
-		Carteira carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteiraSemRegistro);
-		
-		Banco bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+				
+		Banco bancoHSBC = Fixture.banco(10L, true, 30, "1010",
 			  							123456L, "1", "1", "Instruções.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		

@@ -103,7 +103,7 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setAgencia(banco.getAgencia());
 			bancoVO.setConta(banco.getConta());
 			bancoVO.setDigito(banco.getDvConta());
-			bancoVO.setCodigoCarteira(banco.getCarteira()!=null?banco.getCarteira().getCodigo():0);
+			bancoVO.setCarteira(banco.getCarteira()!=null?banco.getCarteira():0);
 			bancoVO.setJuros(banco.getJuros());
 			bancoVO.setAtivo(banco.isAtivo());
 			bancoVO.setMulta(banco.getMulta());

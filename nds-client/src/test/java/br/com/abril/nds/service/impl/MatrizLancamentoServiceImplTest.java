@@ -65,8 +65,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 
 		MockitoAnnotations.initMocks(this);
 		
-		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		Banco banco = Fixture.hsbc(carteira); 
+		Banco banco = Fixture.hsbc(); 
 		
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 

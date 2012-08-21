@@ -355,7 +355,7 @@ public class ProdutoEdicaoController {
 		}
 		
 		if (!listaMensagens.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
 		}
 	}
 	

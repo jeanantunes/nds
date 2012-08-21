@@ -17,7 +17,6 @@ import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -32,7 +31,6 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 
@@ -47,11 +45,7 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 	@Before
 	public void setup() {
 		
-		
-		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteira);
-		
-		Banco banco = Fixture.hsbc(carteira); 
+		Banco banco = Fixture.hsbc(); 
 		save(banco);
 		
 		
