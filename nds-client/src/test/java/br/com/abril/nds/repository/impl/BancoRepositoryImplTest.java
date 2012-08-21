@@ -58,7 +58,7 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
   		//CRIA UM OBJETO BANCO NA SESSAO PARA TESTES
   		Banco bancoHSBC= Fixture.banco(100L, 
 				  				       true, 
-				  				       carteiraRegistrada, 
+				  				       30, 
 				  				       "1010",
 								       123456L, 
 								       "1", 
@@ -73,7 +73,7 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
   	    //CRIA UM OBJETO BANCO NA SESSAO PARA TESTES
   		Banco bancoBB= Fixture.banco(101L, 
   				                     false, 
-				  				     carteiraSemRegistro, 
+				  				     30, 
 				  				     "1011",
 								     123456L, 
 								     "2", 

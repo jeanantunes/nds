@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+
 /**
  * Classe de interceptação para eventos de entidades.
  * 
@@ -25,8 +27,14 @@ public class EntityInterceptor extends EmptyInterceptor {
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state,
 						  String[] propertyNames, Type[] types) {
+		
+		
+		if(entity instanceof PessoaJuridica){
+			PessoaJuridica pessoaJuridica = (PessoaJuridica) entity;
+			pessoaJuridica.removeMaskCnpj();
+		}
 
-		return super.onSave(entity, id, state, propertyNames, types);
+		return false;
 	}
 	
 }

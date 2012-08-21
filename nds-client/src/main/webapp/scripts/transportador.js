@@ -404,7 +404,7 @@ var transportadorController = $.extend(true, {
 				
 				if (!fecharModalCadastroTransp){
 					
-					cancelarCadastro();
+					transportadorController.cancelarCadastro();
 					
 					return fecharModalCadastroTransp;
 				}

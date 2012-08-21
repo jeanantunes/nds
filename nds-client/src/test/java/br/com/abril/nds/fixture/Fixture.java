@@ -201,12 +201,12 @@ import br.com.abril.nds.model.seguranca.Usuario;
 public class Fixture {
 	
 	public static PessoaJuridica juridicaAbril() {
-		return pessoaJuridica("Abril", "00.000.000/0002-00", "010000000000",
+		return pessoaJuridica("Abril", "00000000000200", "010000000000",
 				"abril@mail.com", "99.999-1");
 	}
 	
 	public static PessoaJuridica juridicaFC() {
-		return pessoaJuridica("FC", "00.000.000/0001-00", "000000000002",
+		return pessoaJuridica("FC", "00000000000100", "000000000002",
 				"fc@mail.com", "99.999-9");
 	}
 	
@@ -236,12 +236,12 @@ public class Fixture {
 	
 	
 	public static PessoaJuridica juridicaDinap() {		
-		return pessoaJuridica("Dinap", "11.111.111/0001-00", "111111111112",
+		return pessoaJuridica("Dinap", "11111111000100", "111111111112",
 				"dinap@mail.com", "99.999-8");
 	}
 	
 	public static PessoaJuridica juridicaAcme() {
-		return pessoaJuridica("ACME", "11.222.333/0001-00", "111222333444",
+		return pessoaJuridica("ACME", "11222333000100", "111222333444",
 				"acme@mail.com", "99.999-7");
 	}
 
@@ -353,8 +353,8 @@ public class Fixture {
 		return criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 	}
 	
-	public static Banco hsbc(Carteira carteira) {
-		return Fixture.banco(10L, true, carteira, "1010",
+	public static Banco hsbc() {
+		return Fixture.banco(10L, true, 30, "1010",
 				  123456L, "1", "1", "Sem instruções", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 	}
 	
@@ -2075,7 +2075,7 @@ public class Fixture {
 		return parametrosEmail;
 	}
 	
-	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
+	public static Banco banco(Long agencia, boolean ativo, Integer carteira, String codigoCedente, Long conta, String dvAgencia,
 								 String dvConta, String instrucoes, String apelido, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
 		
 		Banco banco = new Banco();

@@ -217,3 +217,41 @@ function clickLineFlexigrid(inputCheck, select) {
 		$(line).removeClass("trSelected");
 	}
 }
+
+
+
+/*Função que padroniza telefone (11) 4184-1241*/
+function Telefone(v){
+	v=v.replace(/\D/g,"");                         
+	v=v.replace(/^(\d\d)(\d)/g,"($1) $2");
+	v=v.replace(/(\d{4})(\d)/,"$1-$2");   
+	return v;
+}
+
+/*Função que padroniza telefone (11) 41841241*/
+function TelefoneCall(v){
+	v=v.replace(/\D/g,"");                 
+	v=v.replace(/^(\d\d)(\d)/g,"($1) $2"); 
+	return v;
+}
+
+/*Função que padroniza CPF*/
+function Cpf(v){
+	v=v.replace(/\D/g,"");                               
+	v=v.replace(/(\d{3})(\d)/,"$1.$2");     
+	v=v.replace(/(\d{3})(\d)/,"$1.$2");
+	v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+	return v;
+}
+
+/*Função que padroniza CNPJ*/
+function Cnpj(v){
+	v=v.replace(/\D/g,"")    ;                          
+	v=v.replace(/^(\d{2})(\d)/,"$1.$2")     ; 
+	v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3") ;
+	v=v.replace(/\.(\d{3})(\d)/,".$1/$2")     ;         
+	v=v.replace(/(\d{4})(\d)/,"$1-$2")     ;                   
+	return v;
+}
+
+

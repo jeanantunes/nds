@@ -71,7 +71,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="produtoEdicaoController.salvaUmaEdicao();">Incluir Novo</a></span>
+					<span class="bt_add"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);">Incluir Novo</a></span>
 				</div>
 				
 				<div class="ldForm">

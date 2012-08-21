@@ -192,7 +192,18 @@ var parametrosDistribuidorController = $.extend(true, {
 
 	atualizarLogo: function() {
 		
-		$("#imgLogo", this.workspace).attr("src", parametrosDistribuidorController.path + "atualizarLogo?timestamp=" + new Date().getTime());
+		$("#div_imagem_logotipo").empty();
+		
+		var img = $("<img />");
+		img.load(
+		    function() {						
+		    	$("#div_imagem_logotipo").append(img);
+		    }
+		)
+		.attr('src', parametrosDistribuidorController.path + "getLogo?timestamp=" + new Date().getTime())
+		.attr('width', 110)
+		.attr('height', 70)
+		.attr('alt', "Logotipo Distribuidor");
 	},
 
 	salvarLogo: function() {
@@ -329,7 +340,8 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("input:checkbox[id=controlesAprovacao]", this.workspace).attr("disabled", "disabled");
 	},
 	
-	init: function(){
+	init: function(existeLogotipo) {
+		
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg();
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
 		
@@ -456,6 +468,11 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("#regimeTributario", this.workspace).val("${parametrosDistribuidor.regimeTributario}");
 		$("#obrigacaoFiscal", this.workspace).val("${parametrosDistribuidor.obrigacaoFiscal}");
 		
+		if (eval(existeLogotipo)) {
+			
+			parametrosDistribuidorController.atualizarLogo();
+		}
+		
 		$("#relancamentoParciaisEmDias", this.workspace).val('${parametrosDistribuidor.relancamentoParciaisEmDias}');
 		
 		$('input:radio[name=interfaceLED][value=${parametrosDistribuidor.impressaoInterfaceLED}]', this.workspace).click();
@@ -519,8 +536,3 @@ var parametrosDistribuidorController = $.extend(true, {
 		});
 	 }
 }, BaseController);
-
-$(function() {
-	
-	parametrosDistribuidorController.init();
-});
