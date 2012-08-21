@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
@@ -70,11 +71,14 @@ public class ParametrosDistribuidorController {
 	private HttpSession session;
 	
 	@Autowired
+	private HttpServletRequest request;
+	
+	@Autowired
 	private ServletContext servletContext;
 	
 	private static final String ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE = "cadastroDistribuidorLogotipoContentType";
 	
-	private static final String ATRIBUTO_SESSAO_EXISTE_LOGOTIPO = "cadastroDistribuidorExisteLogotipo";
+	private static final String ATRIBUTO_REQUEST_HAS_LOGOTIPO = "hasLogotipo";
 
 	private static final String DIRETORIO_TEMPORARIO_PARAMETROS_DISTRIBUIDOR = "temp/parametros_distribuidor/";
 	
@@ -140,13 +144,13 @@ public class ParametrosDistribuidorController {
 		
 		if (imgLogotipo != null) {
 		
-			session.setAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO, true);
+			request.setAttribute(ATRIBUTO_REQUEST_HAS_LOGOTIPO, true);
 			
 			this.gravarArquivoTemporario(imgLogotipo);
 			
 		} else {
 			
-			session.setAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO, false);
+			request.setAttribute(ATRIBUTO_REQUEST_HAS_LOGOTIPO, false);
 		}
 	}
 
@@ -249,7 +253,7 @@ public class ParametrosDistribuidorController {
 	
 	private void limparLogoSessao() {
 		
-		session.removeAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO);
+		session.removeAttribute(ATRIBUTO_REQUEST_HAS_LOGOTIPO);
 		
 		session.removeAttribute(ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE);
 	}
