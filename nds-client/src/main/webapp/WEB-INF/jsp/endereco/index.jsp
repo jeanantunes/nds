@@ -48,7 +48,7 @@
 				<td width="76">CEP:</td>
 				<td width="241">
 				<input type="text" style="float:left; margin-right:5px;" 
-					   name="enderecoAssociacao.endereco.cep" id="${param.telaEndereco}cep" />
+					   name="enderecoAssociacao.endereco.cep" onkeyup="${param.telaEndereco}.autoCompletarCep();" id="${param.telaEndereco}cep" />
 
 					<span class="classPesquisar" title="Pesquisar Cep.">
 						<a href="javascript:;" onclick="${param.telaEndereco}.pesquisarEnderecoPorCep();">&nbsp;</a>

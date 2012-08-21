@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
 
@@ -42,7 +43,8 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 				.append("then 'Diversos' ")
 				.append("when (select count(fornecedor.id) from DescontoDistribuidor descontoFor JOIN descontoFor.fornecedores fornecedor  ")
 					.append("where descontoFor.id = desconto.id ) = 1 then pessoa.razaoSocial ")
-			.append("else null end) as fornecedor ");
+			.append("else null end) as fornecedor, ")
+		    .append(" 'Geral' as descTipoDesconto ");
 		
 		hql.append(" from DescontoDistribuidor desconto")
 			.append(" JOIN desconto.fornecedores fornecedor ")
@@ -102,6 +104,10 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 				hql.append(" order by fornecedor ");
 				break;	
 				
+			case TIPO_DESCONTO:
+				hql.append(" order by descTipoDesconto ");
+				break;		
+				
 			default:
 				hql.append(" order by sequencial ");
 		}
@@ -111,6 +117,31 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		}
 
 		return hql.toString();
+	}
+	
+	@Override
+	public DescontoDistribuidor buscarUltimoDescontoValido(Long idUltimoDesconto, Fornecedor fornecedor) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select desconto from DescontoDistribuidor desconto JOIN desconto.fornecedores fornecedor  ")
+			.append("where desconto.dataAlteracao = ")
+			.append(" ( select max(descontoSub.dataAlteracao) from DescontoDistribuidor descontoSub  ")
+				.append(" JOIN descontoSub.fornecedores fornecedorSub ")
+				.append(" where fornecedorSub.id =:idFornecedor ")
+				.append(" and descontoSub.id not in (:idUltimoDesconto) ")
+			.append(" ) ")
+			.append(" AND fornecedor.id =:idFornecedor ");
+	
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idFornecedor",fornecedor.getId());
+		
+		query.setParameter("idUltimoDesconto", idUltimoDesconto);
+		
+		query.setMaxResults(1);
+		
+		return (DescontoDistribuidor)  query.uniqueResult();
 	}
 
 }

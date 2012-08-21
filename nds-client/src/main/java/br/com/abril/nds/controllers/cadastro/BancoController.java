@@ -15,12 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO.OrdenacaoColunaBancos;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.util.CellModel;
@@ -58,8 +56,6 @@ public class BancoController {
     
     private HttpSession httpSession;
     
-    private static List<ItemDTO<Integer,String>> listaCarteiras =  new ArrayList<ItemDTO<Integer,String>>();
-    
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBancos";
     
     
@@ -83,11 +79,7 @@ public class BancoController {
     @Get
     @Rules(Permissao.ROLE_CADASTRO_BANCO)
     public void bancos(){ 
-    	
-    	listaCarteiras.clear();
-    	listaCarteiras = this.bancoService.getComboCarteiras();
-		result.include("listaCarteiras",listaCarteiras);
-		
+   		
 	}
     
     
@@ -109,7 +101,7 @@ public class BancoController {
 	public void consultaBancos(String nome,
 			                   String numero,
 			                   String cedente,
-			                   int ativo,
+			                   boolean ativo,
 			                   String sortorder, 
 							   String sortname, 
 							   int page, 
@@ -119,7 +111,7 @@ public class BancoController {
 		FiltroConsultaBancosDTO filtroAtual = new FiltroConsultaBancosDTO(nome.trim(),
 														                  numero.trim(),
 														                  cedente.trim(),
-														                  (ativo==1));
+														                  ativo);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setPaginacao(paginacao);
 		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBancos.values(), sortname));
@@ -151,7 +143,7 @@ public class BancoController {
 										  (banco.getConta()!=null?banco.getConta().toString()+"-"+banco.getDvConta():""),
 										  (banco.getCodigoCedente()!=null?banco.getCodigoCedente().toString():""),
 										  (banco.getApelido()!=null?banco.getApelido().toString():""),
-										  (banco.getCarteira()!=null?banco.getCarteira().getTipoRegistroCobranca().toString():""),
+										  (banco.getCarteira()!=null?banco.getCarteira():""),
 										  (banco.isAtivo()?"Ativo":"Desativado"),
 										  ""
                       					)
@@ -206,15 +198,13 @@ public class BancoController {
 						  String conta,
 						  String digito,
 						  String apelido,
-						  Integer codigoCarteira,
+						  Integer carteira,
 						  BigDecimal juros,
-						  int ativo,
+						  boolean ativo,
 						  BigDecimal multa,
 						  BigDecimal vrMulta,
 						  String instrucoes){
 		
-		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
-
 		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,apelido,juros,multa,vrMulta);
 		
 		long lAgencia = Long.parseLong(agencia);
@@ -230,7 +220,7 @@ public class BancoController {
         banco.setApelido(apelido);
         banco.setCarteira(carteira);
         banco.setJuros(juros);
-        banco.setAtivo(ativo==1);
+        banco.setAtivo(ativo);
         banco.setMulta(multa);
         banco.setVrMulta(vrMulta);
         banco.setInstrucoes(instrucoes);
@@ -287,18 +277,17 @@ public class BancoController {
 						  	String conta,
 						  	String digito,
 						  	String apelido,
-						  	Integer codigoCarteira,
+						  	Integer carteira,
 						  	BigDecimal juros,
-						  	int ativo,
+						  	boolean ativo,
 						  	BigDecimal multa,
 						  	BigDecimal vrMulta,
 						  	String instrucoes){
 		
-		Carteira carteira = this.bancoService.obterCarteiraPorCodigo(codigoCarteira);
-		
+			
 		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,apelido,juros,multa,vrMulta);
 		
-		if (ativo==0){
+		if (ativo){
 			if (this.bancoService.verificarPendencias(idBanco)){
 				throw new ValidacaoException(TipoMensagem.WARNING, "O banco "+nome+" possui pendências e não pode ser desativado.");
 			}
@@ -317,7 +306,7 @@ public class BancoController {
 		banco.setApelido(apelido);
 		banco.setCarteira(carteira);
 		banco.setJuros(juros);
-		banco.setAtivo(ativo==1);
+		banco.setAtivo(ativo);
 		banco.setMulta(multa);
 		banco.setVrMulta(vrMulta);
 		banco.setInstrucoes(instrucoes);

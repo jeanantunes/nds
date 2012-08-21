@@ -19,7 +19,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
@@ -72,7 +71,6 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
@@ -83,7 +81,6 @@ import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
@@ -353,8 +350,8 @@ public class Fixture {
 		return criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 	}
 	
-	public static Banco hsbc(Carteira carteira) {
-		return Fixture.banco(10L, true, carteira, "1010",
+	public static Banco hsbc() {
+		return Fixture.banco(10L, true, 30, "1010",
 				  123456L, "1", "1", "Sem instruções", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 	}
 	
@@ -1944,13 +1941,7 @@ public class Fixture {
 		return box;
 	}
 	
-	public static Carteira carteira(int codigo, TipoRegistroCobranca tipoRegistroCobranca){
-		Carteira carteira = new Carteira();
-		carteira.setCodigo(codigo);
-		carteira.setTipoRegistroCobranca(tipoRegistroCobranca);
-		return carteira;
-	}
-	
+
 	public static Boleto boleto(String nossoNumero,
 								String digitoNossoNumero,
 								String nossoNumeroCompleto,
@@ -2075,7 +2066,7 @@ public class Fixture {
 		return parametrosEmail;
 	}
 	
-	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
+	public static Banco banco(Long agencia, boolean ativo, Integer carteira, String codigoCedente, Long conta, String dvAgencia,
 								 String dvConta, String instrucoes, String apelido, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
 		
 		Banco banco = new Banco();
@@ -2878,16 +2869,6 @@ public class Fixture {
 		parcial.setTipo(tipo);
 		
 		return parcial;
-	}
-	
-	public static TipoDesconto criarTipoDesconto(String codigo, String descricao, BigDecimal porcentagem){
-		
-		TipoDesconto tipoDesconto = new TipoDesconto();
-		tipoDesconto.setCodigo(codigo);
-		tipoDesconto.setDescricao(descricao);
-		tipoDesconto.setPorcentagem(porcentagem);
-		
-		return tipoDesconto;
 	}
 	
 	public static Roteirizacao criarRoteirizacao(PDV pdv, Rota rota,Integer ordem ){

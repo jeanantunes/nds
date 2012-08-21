@@ -6,7 +6,9 @@
 <div id="workspaceCota">
 <div id="dialog-cota" title="Nova Cota" style="display: none">
 	
-	<jsp:include page="../messagesDialog.jsp" />
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-cota" name="messageDialog"/>
+	</jsp:include>
 	
 	<div id="tabCota">
            

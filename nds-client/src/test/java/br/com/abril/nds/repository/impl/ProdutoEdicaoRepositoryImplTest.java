@@ -16,7 +16,6 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -47,8 +46,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 
 	private FormaCobranca formaBoleto;
 	
-	private Carteira carteiraSemRegistro;
-	
 	private Distribuidor distribuidor;
 	
 	private Banco bancoHSBC;
@@ -65,13 +62,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	@Before
 	public void setUp() {
 		
-		//////////////
-
-		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		
-		save(carteiraSemRegistro);
-		
-		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoHSBC = Fixture.banco(10L, true, 30, "1010",
 				  123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		save(bancoHSBC);

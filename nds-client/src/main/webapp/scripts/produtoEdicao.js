@@ -451,27 +451,6 @@ var produtoEdicaoController =$.extend(true,  {
 
 			return resultado;
 		},
-		salvaUmaEdicao:function () {
-
-			$("#produtoEdicaoController-formUpload",this.workspace).ajaxSubmit({
-				success: function(responseText, statusText, xhr, $form)  { 
-					var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-					var tipoMensagem = mensagens.tipoMensagem;
-					var listaMensagens = mensagens.listaMensagens;
-					if (tipoMensagem && listaMensagens) {
-						exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-					}
-
-					produtoEdicaoController.prepararTela(null);
-					produtoEdicaoController.carregarDialog(null);
-				}, 
-				url:  contextPath + '/cadastro/edicao/salvar',
-				type: 'POST',
-				dataType: 'json',
-				data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val() }
-			});
-
-		},
 		novaEdicao : function () {
 			produtoEdicaoController.popup(null);
 		},
@@ -624,35 +603,46 @@ var produtoEdicaoController =$.extend(true,  {
 				buttons: {
 					"Confirmar": function() {
 
-						$("#produtoEdicaoController-formUpload").ajaxSubmit({
-							beforeSubmit: function(arr, formData, options) {
-								// Incluir aqui as validacoes;
-							},
-							success: function(responseText, statusText, xhr, $form)  { 
-								var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-								var tipoMensagem = mensagens.tipoMensagem;
-								var listaMensagens = mensagens.listaMensagens;
-								if (tipoMensagem && listaMensagens) {
-									// exibirMensagemDialog(tipoMensagem,
-									// listaMensagens,
-									// 'dialogMensagemNovo');
-
-									$("#produtoEdicaoController-dialog-novo").dialog( "close" );
-									produtoEdicaoController.pesquisarEdicoes();
-									exibirMensagem(tipoMensagem, listaMensagens);
-								}
-							}, 
-							url:  contextPath + '/cadastro/edicao/salvar',
-							type: 'POST',
-							dataType: 'json',
-							data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val() }
-						});
+						produtoEdicaoController.salvarProdutoEdicao(true);
+						
+						
 					},
 					"Cancelar": function() {
 						$("#produtoEdicaoController-dialog-novo",this.workspace).dialog( "close" );
 					}
 				},
 				form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
+			});
+		},
+		salvarProdutoEdicao : function(closePopUp) {
+
+			$("#produtoEdicaoController-formUpload").ajaxSubmit({
+				beforeSubmit: function(arr, formData, options) {
+					// Incluir aqui as validacoes;
+				},
+				success: function(responseText, statusText, xhr, $form)  { 
+					var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+					var tipoMensagem = mensagens.tipoMensagem;
+					var listaMensagens = mensagens.listaMensagens;
+	
+					if (tipoMensagem && listaMensagens) {
+						if (tipoMensagem != 'SUCCESS') {
+							exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+						} else if(closePopUp) {
+							$("#produtoEdicaoController-dialog-novo").dialog( "close" );
+							produtoEdicaoController.pesquisarEdicoes();
+							exibirMensagem(tipoMensagem, listaMensagens);
+						} else {
+							exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+							produtoEdicaoController.prepararTela(null);
+							produtoEdicaoController.carregarDialog(null);
+						}
+					}
+				}, 
+				url:  contextPath + '/cadastro/edicao/salvar',
+				type: 'POST',
+				dataType: 'json',
+				data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val() }
 			});
 		},
 		carregarImagemCapa:			function (idProdutoEdicao) {
@@ -662,9 +652,10 @@ var produtoEdicaoController =$.extend(true,  {
 			var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 			$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 			$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
-
+			
 			img.load(function() {
 				if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
+					$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 					$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
 				}
 			});
@@ -788,7 +779,9 @@ var produtoEdicaoController =$.extend(true,  {
 									if (tipoMensagem && listaMensagens) {
 										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 										if (tipoMensagem == "SUCCESS") { 
+											var img = $("<img />").attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 											$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
+											$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
 										}
 									}
 								},
