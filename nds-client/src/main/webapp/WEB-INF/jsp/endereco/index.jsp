@@ -1,13 +1,12 @@
 <head>
-
+<script type="text/javascript" src="scripts/endereco.js"></script>
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
 
 <script type="text/javascript">
 
-	var ${param.telaEndereco} = new Endereco('${param.telaEndereco}','${param.message}');
-	
+	var ${param.telaEndereco} = getEnderecoController('${param.telaEndereco}','${param.message}');
+
 </script>
 
 </head>
@@ -18,7 +17,7 @@
 		<p>Confirma a exclusão desse endereço?</p>
 	</div>
 
-	<form name="${param.telaEndereco}formEnderecos" id="${param.telaEndereco}formEnderecos">
+	<div name="${param.telaEndereco}formEnderecos" id="${param.telaEndereco}formEnderecos">
 
 		<input type="hidden" name="enderecoAssociacao.id" id="${param.telaEndereco}idEndereco"/>
 		
@@ -131,7 +130,7 @@
 			  <td>&nbsp;</td>
 		  </tr>		
 		</table>
-	</form>
+	</div>
     <br />
     <label>
     	<strong>Endereços Cadastrados</strong>

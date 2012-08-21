@@ -1,21 +1,41 @@
-function Telefone(paramTela,message) {
+function getTelefoneController(tela,mensagem) {
+	telefoneController.init(tela, mensagem);
+	return telefoneController;
+}
 
-	this.popupTelefone = function() {
+var telefoneController = $.extend(true, {
 
-		$("#"+paramTela+"manutencaoTelefones").dialog({
+	paramTelaTelefone : "",
+	messageTelefone : "",
+
+	init : function(tela,mensagem) {
+		
+		paramTelaTelefone = tela;
+		messageTelefone = mensagem;
+
+		$("#"+paramTelaTelefone+"ddd", telefoneController.workspace).numeric();
+		$("#"+paramTelaTelefone+"numeroTelefone", telefoneController.workspace).numeric();
+		$("#"+paramTelaTelefone+"numeroTelefone", telefoneController.workspace).mask("9999-9999");
+		$("#"+paramTelaTelefone+"ramal", telefoneController.workspace).numeric();
+		
+	},
+	
+	popupTelefone : function() {
+
+		$("#"+paramTelaTelefone+"manutencaoTelefones", telefoneController.workspace).dialog({
 			resizable : false,
 			height : 500,
 			width : 840,
 			modal : true
 		});
 
-		this.popularGrid();
-	};
+		telefoneController.popularGrid();
+	},
 
-	this.popularGrid = function() {
+	popularGrid : function() {
 
-		$("#"+paramTela+"telefonesGrid").flexigrid({
-			preProcess : this.processarResultado,
+		$("#"+paramTelaTelefone+"telefonesGrid", telefoneController.workspace).flexigrid({
+			preProcess : telefoneController.processarResultado,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Tipo Telefone',
@@ -61,21 +81,19 @@ function Telefone(paramTela,message) {
 			sortname : "tipoTelefone"
 		});
 
-		$("#"+paramTela+"telefonesGrid").flexOptions({
+		$("#"+paramTelaTelefone+"telefonesGrid", telefoneController.workspace).flexOptions({
 			url : contextPath + "/cadastro/telefone/pesquisarTelefones",
-			params:[{name:'tela', value:paramTela}]
+			params:[{name:'tela', value:paramTelaTelefone}]
 		});
-	};
-	
-	var _this = this;
+	},
 
-	this.processarResultado = function(data) {
+	processarResultado : function(data) {
 		
 		if (data.mensagens) {
 			
 			exibirMensagemDialog(data.mensagens.tipoMensagem, 
 					data.mensagens.listaMensagens,
-					message);
+					messageTelefone);
 			
 			return;
 		}
@@ -94,12 +112,12 @@ function Telefone(paramTela,message) {
 			data.rows[i].cell[lastIndex - 1] = data.rows[i].cell[lastIndex - 1] == "true" ? '<img src="/nds-client/images/ico_check.gif" border="0px"/>'
 					: '&nbsp;';
 
-			data.rows[i].cell[lastIndex] = _this.getActions(data.rows[i].id);
+			data.rows[i].cell[lastIndex] = telefoneController.getActions(data.rows[i].id);
 		}
 
-		if ($('#telefonesGrid').css('display') == 'none') {
+		if ($('#telefonesGrid', telefoneController.workspace).css('display') == 'none') {
 
-			$('#telefonesGrid').show();
+			$('#telefonesGrid', telefoneController.workspace).show();
 		}
 
 		if (data.result) {
@@ -108,62 +126,58 @@ function Telefone(paramTela,message) {
 		}
 		
 		return data;
-	};
+	},
 
-	this.getActions = function(idTelefone) {
+	getActions : function(idTelefone) {
 
-		return '<a href="javascript:;" onclick="' + paramTela + '.editarTelefone('
+		return '<a href="javascript:;" onclick="' + paramTelaTelefone + '.editarTelefone('
 				+ idTelefone
 				+ ')" '
 				+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar telefone">'
 				+ '<img src="/nds-client/images/ico_editar.gif" border="0px"/>'
 				+ '</a>'
-				+ '<a href="javascript:;" onclick="' + paramTela + '.removerTelefone('
+				+ '<a href="javascript:;" onclick="' + paramTelaTelefone + '.removerTelefone('
 				+ idTelefone
 				+ ')" '
 				+ ' style="cursor:pointer;border:0px;margin:5px" title="Excluir telefone">'
 				+ '<img src="/nds-client/images/ico_excluir.gif" border="0px"/>'
 				+ '</a>';
-	};
+	},
 
-	this.adicionarTelefone = function() {
+	adicionarTelefone : function() {
 
-		var data = "tela=" + paramTela + "&referencia="
-				+ $("#"+paramTela+"referenciaHidden").val() + "&tipoTelefone="
-				+ $("#"+paramTela+"tipoTelefone").val() + "&ddd=" + $("#"+paramTela+"ddd").val()
-				+ "&numero=" + $("#"+paramTela+"numeroTelefone").val() + "&ramal="
-				+ $("#"+paramTela+"ramal").val() + "&principal="
-				+ ("" + $("#"+paramTela+"telefonePrincipal").attr("checked") == 'checked');
+		var data = "tela=" + paramTelaTelefone + "&referencia="
+				+ $("#"+paramTelaTelefone+"referenciaHidden", telefoneController.workspace).val() + "&tipoTelefone="
+				+ $("#"+paramTelaTelefone+"tipoTelefone", telefoneController.workspace).val() + "&ddd=" + $("#"+paramTelaTelefone+"ddd", telefoneController.workspace).val()
+				+ "&numero=" + $("#"+paramTelaTelefone+"numeroTelefone", telefoneController.workspace).val() + "&ramal="
+				+ $("#"+paramTelaTelefone+"ramal", telefoneController.workspace).val() + "&principal="
+				+ ("" + $("#"+paramTelaTelefone+"telefonePrincipal", telefoneController.workspace).attr("checked") == 'checked');
 
-		var _this = this;
-		
 		$.postJSON(contextPath + "/cadastro/telefone/adicionarTelefone",
 					data, 
 					function(result) {
-						$("#"+paramTela+"telefonesGrid").flexAddData({
+						$("#"+paramTelaTelefone+"telefonesGrid", telefoneController.workspace).flexAddData({
 							page : 1,
 							total : 1,
 							rows : result.rows
 						});
 
-						_this.limparCamposTelefone();
+						telefoneController.limparCamposTelefone();
 
-						$("#"+paramTela+"referenciaHidden").val("");
+						$("#"+paramTelaTelefone+"referenciaHidden", telefoneController.workspace).val("");
 
-						$("#"+paramTela+"botaoAddEditar").text("Incluir Novo");
+						$("#"+paramTelaTelefone+"botaoAddEditar", telefoneController.workspace).text("Incluir Novo");
 					}, 
 					null, 
 					true,
-					message
+					messageTelefone
 		);
-	};
+	},
 
-	this.removerTelefone = function(referenciaTelefone) {
-		var data = "tela=" + paramTela + "&referencia=" + referenciaTelefone;
+	removerTelefone : function(referenciaTelefone) {
+		var data = "tela=" + paramTelaTelefone + "&referencia=" + referenciaTelefone;
 
-		var _this = this;
-		
-		$("#"+paramTela+"dialog-excluir").dialog({
+		$("#"+paramTelaTelefone+"dialog-excluir", telefoneController.workspace).dialog({
 			resizable : false,
 			height : 'auto',
 			width : 300,
@@ -176,21 +190,21 @@ function Telefone(paramTela,message) {
 					$.postJSON(contextPath + "/cadastro/telefone/removerTelefone",
 				  				data,
 				  				function(result) {
-				  					$("#"+paramTela+"telefonesGrid").flexAddData({
+				  					$("#"+paramTelaTelefone+"telefonesGrid", telefoneController.workspace).flexAddData({
 				  						page : 1,
 										total : 1,
 										rows : result.rows
 									});
 				  				
-				  					_this.limparCamposTelefone();
+				  					telefoneController.limparCamposTelefone();
 
-				  					$("#"+paramTela+"referenciaHidden").val("");
+				  					$("#"+paramTelaTelefone+"referenciaHidden", telefoneController.workspace).val("");
 
-				  					$("#"+paramTela+"botaoAddEditar").text("Incluir Novo");
+				  					$("#"+paramTelaTelefone+"botaoAddEditar", telefoneController.workspace).text("Incluir Novo");
 								}, 
 								null, 
 								true,
-								message
+								messageTelefone
 					);
 				},
 				"Cancelar" : function() {
@@ -199,48 +213,46 @@ function Telefone(paramTela,message) {
 			}
 		});
 
-		$("#"+paramTela+"dialog-excluir").show();
-	};
+		$("#"+paramTelaTelefone+"dialog-excluir", telefoneController.workspace).show();
+	},
 
-	this.editarTelefone = function(referenciaTelefone) {
+	editarTelefone : function(referenciaTelefone) {
 		
-		this.limparCamposTelefone();
+		telefoneController.limparCamposTelefone();
 
-		var data = "tela=" + paramTela +"&referencia=" + referenciaTelefone;
-		
-		var _this = this;
+		var data = "tela=" + paramTelaTelefone +"&referencia=" + referenciaTelefone;
 		
 		$.postJSON(contextPath + "/cadastro/telefone/editarTelefone", data,
 				function(result) {
 					if (result != '') {
-						$("#"+paramTela+"tipoTelefone").val(result.tipoTelefone);
-						$("#"+paramTela+"ddd").val(result.telefone.ddd);
-						$("#"+paramTela+"numeroTelefone").val(result.telefone.numero);
-						$("#"+paramTela+"ramal").val(result.telefone.ramal);
-						$("#"+paramTela+"telefonePrincipal").attr("checked",
+						$("#"+paramTelaTelefone+"tipoTelefone", telefoneController.workspace).val(result.tipoTelefone);
+						$("#"+paramTelaTelefone+"ddd", telefoneController.workspace).val(result.telefone.ddd);
+						$("#"+paramTelaTelefone+"numeroTelefone", telefoneController.workspace).val(result.telefone.numero);
+						$("#"+paramTelaTelefone+"ramal", telefoneController.workspace).val(result.telefone.ramal);
+						$("#"+paramTelaTelefone+"telefonePrincipal", telefoneController.workspace).attr("checked",
 								result.principal);
 
-						$("#"+paramTela+"referenciaHidden").val(referenciaTelefone);
+						$("#"+paramTelaTelefone+"referenciaHidden", telefoneController.workspace).val(referenciaTelefone);
 
-						$("#"+paramTela+"botaoAddEditar").text("Editar");
+						$("#"+paramTelaTelefone+"botaoAddEditar", telefoneController.workspace).text("Editar");
 
-						_this.opcaoTel(result.tipoTelefone, 'trRamalId', 'lblRamalId', 'ramal');
+						telefoneController.opcaoTel(result.tipoTelefone, 'trRamalId', 'lblRamalId', 'ramal');
 					}
-				}, null, true, message);
-	};
+				}, null, true, messageTelefone);
+	},
 
-	this.limparCamposTelefone = function() {
-		$("#"+paramTela+"tipoTelefone").val("");
-		$("#"+paramTela+"ddd").val("");
-		$("#"+paramTela+"numeroTelefone").val("");
-		$("#"+paramTela+"ramal").val("");
-		$("#"+paramTela+"telefonePrincipal").attr("checked", false);
-	};
+	limparCamposTelefone : function() {
+		$("#"+paramTelaTelefone+"tipoTelefone", telefoneController.workspace).val("");
+		$("#"+paramTelaTelefone+"ddd", telefoneController.workspace).val("");
+		$("#"+paramTelaTelefone+"numeroTelefone", telefoneController.workspace).val("");
+		$("#"+paramTelaTelefone+"ramal", telefoneController.workspace).val("");
+		$("#"+paramTelaTelefone+"telefonePrincipal", telefoneController.workspace).attr("checked", false);
+	},
 
-	this.opcaoTel = function(opcao, idDiv, idLbl, idCampo) {
-		var div1 = $("#"+paramTela+ idDiv);
-		var lbl = $("#"+paramTela + idLbl);
-		var campo = $("#"+paramTela + idCampo);
+	opcaoTel : function(opcao, idDiv, idLbl, idCampo) {
+		var div1 = $("#"+paramTelaTelefone+ idDiv, telefoneController.workspace);
+		var lbl = $("#"+paramTelaTelefone + idLbl, telefoneController.workspace);
+		var campo = $("#"+paramTelaTelefone + idCampo, telefoneController.workspace);
 
 		switch (opcao) {
 		case 'COMERCIAL':
@@ -259,38 +271,29 @@ function Telefone(paramTela,message) {
 			campo.val("");
 			break;
 		}
-	};
+	},
 
-	this.carregarTelefones = function() {
-		this.popularGrid();
+	carregarTelefones : function() {
+		telefoneController.popularGrid();
 		
-		var _this = this;
-
 		$.postJSON(contextPath + "/cadastro/telefone/pesquisarTelefones",
-					"tela=" + paramTela, 
+					"tela=" + paramTelaTelefone, 
 					function(result) {
-						$("#"+paramTela+"telefonesGrid").flexAddData({
+						$("#"+paramTelaTelefone+"telefonesGrid", telefoneController.workspace).flexAddData({
 							page : result.page,
 							total : result.total,
 							rows : result.rows
 						});
 
-						_this.limparCamposTelefone();
+						telefoneController.limparCamposTelefone();
 
-						$("#"+paramTela+"referenciaHidden").val("");
+						$("#"+paramTelaTelefone+"referenciaHidden", telefoneController.workspace).val("");
 
-						$("#"+paramTela+"botaoAddEditar").text("Incluir Novo");
+						$("#"+paramTelaTelefone+"botaoAddEditar", telefoneController.workspace).text("Incluir Novo");
 					}, 
 					null, 
 					true,
-					message
+					messageTelefone
 		);
-	};
-
-	$(function() {
-		$("#"+paramTela+"ddd").numeric();
-		$("#"+paramTela+"numeroTelefone").numeric();
-		$("#"+paramTela+"numeroTelefone").mask("9999-9999");
-		$("#"+paramTela+"ramal").numeric();
-	});
-}
+	}
+});

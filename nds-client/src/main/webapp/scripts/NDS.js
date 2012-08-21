@@ -669,3 +669,12 @@ function definirAcaoPesquisaTeclaEnter() {
 		
 	});
 }
+
+function logout() {
+	limparCache();
+	window.location.href= contextPath + "/j_spring_security_logout";
+}
+
+function limparCache() {
+	$("#workspace .ui-tabs-nav a").removeData("cache.tabs");	
+}
