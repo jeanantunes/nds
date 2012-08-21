@@ -71,7 +71,6 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
@@ -2870,16 +2869,6 @@ public class Fixture {
 		parcial.setTipo(tipo);
 		
 		return parcial;
-	}
-	
-	public static TipoDesconto criarTipoDesconto(String codigo, String descricao, BigDecimal porcentagem){
-		
-		TipoDesconto tipoDesconto = new TipoDesconto();
-		tipoDesconto.setCodigo(codigo);
-		tipoDesconto.setDescricao(descricao);
-		tipoDesconto.setPorcentagem(porcentagem);
-		
-		return tipoDesconto;
 	}
 	
 	public static Roteirizacao criarRoteirizacao(PDV pdv, Rota rota,Integer ordem ){

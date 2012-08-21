@@ -28,7 +28,8 @@ public class FiltroTipoDescontoCotaDTO extends FiltroDTO implements Serializable
 		DESCONTO("desconto"),
 		FORNECEDORES("fornecedor"),
 		DATA_ALTERACAO("dataAlteracao"),
-		USUARIO("nomeUsuario");
+		USUARIO("nomeUsuario"),
+		TIPO_DESCONTO("descTipoDesconto");
 		
 		private String nomeColuna;
 		

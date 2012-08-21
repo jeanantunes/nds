@@ -39,7 +39,6 @@ import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -47,9 +46,6 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class DescontoServiceImpl implements DescontoService {
-
-	@Autowired
-	private TipoDescontoRepository tipoDescontoRepository;
 	
 	@Autowired
 	private DescontoDistribuidorRepository descontoDistribuidorRepository;
@@ -77,20 +73,6 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Autowired
 	private DescontoComponent descontoComponent;
-	
-	@Override
-	@Transactional(readOnly=true)
-	public List<br.com.abril.nds.model.cadastro.TipoDesconto> obterTodosTiposDescontos() {
-		
-		return this.tipoDescontoRepository.buscarTodos();
-	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public br.com.abril.nds.model.cadastro.TipoDesconto obterTipoDescontoPorID(Long id) {
-
-		return this.tipoDescontoRepository.buscarPorId(id);
-	}
 
 	@Override
 	@Transactional(readOnly=true)
@@ -347,14 +329,14 @@ public class DescontoServiceImpl implements DescontoService {
 	 */
 	@Override
 	@Transactional
-	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota) {
+	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota, String sortorder, String sortname) {
 
 		if (idCota == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] precisa ser especificada.");
 		}
 		
-		return this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(idCota);
+		return this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(idCota, sortorder, sortname);
 	}
 	
 	
