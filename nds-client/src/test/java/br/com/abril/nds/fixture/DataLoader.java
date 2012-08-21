@@ -32,7 +32,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
@@ -94,7 +93,6 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
@@ -325,9 +323,6 @@ public class DataLoader {
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota28;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota29;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota30;
-
-	private static Carteira carteiraRegistrada;
-	private static Carteira carteiraSemRegistro;
 
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
@@ -899,7 +894,6 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		carregarDadosClean(session);
 
-		criarCarteira(session);
 		criarBanco(session);
 		criarUsuarios(session);
 		
@@ -5220,15 +5214,6 @@ public class DataLoader {
 		RateioDiferenca rateioDiferencaJose = Fixture.rateioDiferenca(BigInteger.valueOf(10), cotaJose, diferenca, estudoCotaVeja2Joao, new Date());
 		session.save(rateioDiferencaJose);
 
-	}
-
-
-	private static void criarCarteira(Session session){
-		carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
-
-		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-
-		save(session,carteiraRegistrada,carteiraSemRegistro);
 	}
 
 

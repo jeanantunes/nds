@@ -19,7 +19,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
@@ -83,7 +82,6 @@ import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
@@ -1944,13 +1942,7 @@ public class Fixture {
 		return box;
 	}
 	
-	public static Carteira carteira(int codigo, TipoRegistroCobranca tipoRegistroCobranca){
-		Carteira carteira = new Carteira();
-		carteira.setCodigo(codigo);
-		carteira.setTipoRegistroCobranca(tipoRegistroCobranca);
-		return carteira;
-	}
-	
+
 	public static Boleto boleto(String nossoNumero,
 								String digitoNossoNumero,
 								String nossoNumeroCompleto,

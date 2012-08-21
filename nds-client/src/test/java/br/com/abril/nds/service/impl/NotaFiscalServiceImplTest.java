@@ -18,7 +18,6 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -43,7 +42,6 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -84,8 +82,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 	private List<NotaFiscal> notasParaTesteArquivo = new ArrayList<NotaFiscal>();
 	private FormaCobranca formaBoleto;
-
-	private Carteira carteiraSemRegistro;
 
 	private Distribuidor distribuidor;
 

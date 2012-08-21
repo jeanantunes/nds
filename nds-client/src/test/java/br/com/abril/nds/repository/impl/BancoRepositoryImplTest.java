@@ -11,12 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -47,13 +44,6 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
     //TAREFAS ANTES DA EXECUCAO DO METODO A SER TESTADO
   	@Before
   	public void setup() {
-  		
-  	    //CRIA UM OBJETO CARTEIRA NA SESSAO PARA TESTES
-  		Carteira carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
-  	    
-  		//CRIA UM OBJETO CARTEIRA NA SESSAO PARA TESTES
-		Carteira carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteiraRegistrada,carteiraSemRegistro);
   		
   		//CRIA UM OBJETO BANCO NA SESSAO PARA TESTES
   		Banco bancoHSBC= Fixture.banco(100L, 
@@ -153,16 +143,6 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
   		}
   	}
     
-	@Test
-  	public void obterCarteiraPorCodigo() {
-		Carteira carteira = this.bancoRepository.obterCarteiraPorCodigo(30);
-		Assert.assertTrue(carteira!=null);
-		Assert.assertEquals(TipoRegistroCobranca.REGISTRADA, carteira.getTipoRegistroCobranca());
-		
-		carteira = this.bancoRepository.obterCarteiraPorCodigo(1);
-		Assert.assertNotNull(carteira);
-		Assert.assertEquals(TipoRegistroCobranca.SEM_REGISTRO, carteira.getTipoRegistroCobranca());
-	}
 
 
 	@Test
