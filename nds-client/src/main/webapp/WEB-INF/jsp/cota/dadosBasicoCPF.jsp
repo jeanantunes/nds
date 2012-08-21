@@ -107,7 +107,7 @@
    <tr>
       <td width="424" valign="top" class="antigosProp">
       <strong>Antigos Proprietários</strong><br />
-      <table class="antigosProprietariosGrid"></table>
+      <table class="antigosProprietariosGridCPF"></table>
       <span class="bt_novos" title="Alterar Titularidade">
         <a href="javascript:;" onclick="MANTER_COTA.alterarTitular();">
           <img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0" />Alterar Titularidade

@@ -20,7 +20,6 @@ import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
-import br.com.abril.nds.dto.CotaProprietarioDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -570,28 +569,9 @@ public class CotaController {
 		
 		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 		cotaDTO.setListaClassificacao(getListaClassificacao());
-		
-		List<CotaProprietarioDTO> proprietarios = criarListaProprietarios(cotaDTO);
-        cotaDTO.setProprietarios(proprietarios);
 	
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
-
-	//TODO: Implementar, lista fake dos proprietários da cota
-    protected List<CotaProprietarioDTO> criarListaProprietarios(CotaDTO cotaDTO) {
-        List<CotaProprietarioDTO> proprietarios = new ArrayList<CotaProprietarioDTO>();
-        CotaProprietarioDTO proprietarioAtual = new CotaProprietarioDTO(
-                cotaDTO.getIdCota(), new Date(),
-                null, "Benedito da Silva",
-                "223.456.798-00");
-        proprietarios.add(proprietarioAtual);
-        CotaProprietarioDTO proprietario1 = new CotaProprietarioDTO(
-                cotaDTO.getIdCota(), DateUtil.subtrairDias(new Date(), 60),
-                DateUtil.subtrairDias(new Date(), 1), "João da Silva",
-                "123.456.789-00");
-        proprietarios.add(proprietario1);
-        return proprietarios;
-    }
 	
 	/**
 	 * Exclui uma cota, informada pelo usúario

@@ -40,7 +40,7 @@
                   </span>
                   <span class="bt_novos" title="Novo" style="margin-left:10px;">
                     <a href="javascript:;">
-                      <img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" border="0"/>
+                      <img src="${pageContext.request.contextPath}/images/ico_usuarios.gif" border="0"/>
                       CNPJ
                      </a>
                    </span>

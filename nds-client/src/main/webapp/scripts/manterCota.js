@@ -529,10 +529,10 @@ var MANTER_COTA = $.extend(true, {
 	alterarTitular : function() {
 		$( "#dialog-titular" ).dialog({
 			resizable: false,
-			height:120,
-			width:200,
-			modal: true
-			form: $("#workspaceCota", this.workspace)
+			height:150,
+			width:230,
+			modal: true,
+			form: $("#workspaceCota", MANTER_COTA._workspace)
 		});
 	}
 }, BaseController);
@@ -662,7 +662,7 @@ var COTA_FORNECEDOR = $.extend(true, {
 
 var COTA_CNPJ = $.extend(true, {	
 	
-	gridAntigosProprietarios : new GridAntigosProprietarios(this.workspace),
+	gridAntigosProprietarios : new GridAntigosProprietarios(".antigosProprietariosGridCNPJ", this.workspace),
 	
 	tratarExibicaoDadosCadastrais:function(){
 		
@@ -829,7 +829,7 @@ var COTA_CNPJ = $.extend(true, {
 
 var COTA_CPF = $.extend(true, {
 	
-	gridAntigosProprietarios : new GridAntigosProprietarios(this.workspace),
+	gridAntigosProprietarios : new GridAntigosProprietarios(".antigosProprietariosGridCPF", this.workspace),
 	
 	tratarExibicaoDadosCadastrais:function(){
 		
@@ -1436,12 +1436,13 @@ var SOCIO_COTA = $.extend(true, {
 		}
 }, BaseController);
 
-function GridAntigosProprietarios(workspace) {
+function GridAntigosProprietarios(element, workspace) {
 	
+	var _element = element;
 	var _workspace = workspace;
 	
 	this.init =  function(data) { 
-			$(".antigosProprietariosGrid", _workspace).flexigrid({
+			$(_element, _workspace).flexigrid({
 			dataType : 'json',
 			preProcess: function(data) {
 				if (data.rows) {
@@ -1488,13 +1489,13 @@ function GridAntigosProprietarios(workspace) {
 			height : 110
 		});
 		if (data) {
-			$(".antigosProprietariosGrid", _workspace).flexAddData({
+			$(_element, _workspace).flexAddData({
 				rows:  toFlexiGridObject(data.proprietarios), 
 				page:1, 
 				total:data.proprietarios.length
 			});
 		} else {
-			$(".antigosProprietariosGrid", _workspace).flexAddData({
+			$(_element, _workspace).flexAddData({
 				rows:  toFlexiGridObject([]), 
 				page:1, 
 				total:0

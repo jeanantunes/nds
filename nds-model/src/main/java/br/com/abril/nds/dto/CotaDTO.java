@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -105,7 +106,7 @@ public class CotaDTO implements Serializable {
 	
 	private String descricaoBox;
 	
-	private Collection<CotaProprietarioDTO> proprietarios;
+	private Collection<CotaProprietarioDTO> proprietarios = new ArrayList<CotaProprietarioDTO>();
 	
 	public String getNumeroRG() {
 		return numeroRG;
