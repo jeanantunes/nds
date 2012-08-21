@@ -304,7 +304,7 @@ function Endereco(paramTela,paramMessage) {
 			null,
 			isFromModal
 		);
-	}
+	};
 
 	this.autoCompletarLocalidades = function(isOnBlur) {
 		
@@ -354,7 +354,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	};
 
 	this.autoCompletarBairros = function(isOnBlur) {
 
@@ -400,7 +400,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	};
 	
 	this.autoCompletarLogradouros = function(isOnBlur) {
 
@@ -442,7 +442,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	};
 	
 	this.popularGrid = function(){
 		

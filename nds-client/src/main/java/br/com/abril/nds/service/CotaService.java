@@ -19,7 +19,6 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -231,20 +230,6 @@ public interface CotaService {
 	void salvarDescontosCota(List<Long> descontos, Long idCota);
 	
 	/**
-	 * Persiste os dados de sócio referente o identificador da cota informado
-	 * @param socioCota
-	 * @param idCota
-	 */
-	void salvarSocioCota(SocioCota socioCota, Long idCota );
-	
-	/**
-	 * Retorna uma lista de sócios referente o código da cota informada
-	 * @param idCota - identificador da cota
-	 * @return  List<SocioCota>
-	 */
-	List<SocioCota> obterSociosCota(Long idCota);
-	
-	/**
 	 * Retorna uma cota ativa referente ao número de cota informado
 	 * 
 	 * @param numeroCota - número da cota
@@ -287,12 +272,4 @@ public interface CotaService {
 	 */
 	List<Cota> obterCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao);
 
-	/**
-	 * Retorna o sócio através de seu ID.
-	 * 
-	 * @param idSocioCota - ID do sócio.
-	 * 
-	 * @return Sócio da cota.
-	 */ 
-	SocioCota obterSocioPorId(Long idSocioCota);
 }

@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.SocioCota;
-import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.service.SocioCotaService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -25,7 +26,7 @@ public class CotaSocioController {
 	private Result result;
 	
 	@Autowired
-	private CotaService cotaService;
+	private SocioCotaService socioCotaService;
 	
 	private void validarInclusaoSocio(SocioCota socioCota){
 		
@@ -47,13 +48,9 @@ public class CotaSocioController {
 				listaMensagens.add("O preenchimento do campo [Cargo] é obrigatório!");
 			}
 
-			if(socioCota.getEndereco() == null){
-				listaMensagens.add("O preenchimento do Endereço é obrigatório!");
-			}
-
-			if(socioCota.getTelefone() == null){
-				listaMensagens.add("O preenchimento do Telefone é obrigatório!");
-			}
+			listaMensagens.addAll(this.obterMensagensValidacaoEnderecoSocio(socioCota.getEndereco()));
+			
+			listaMensagens.addAll(this.obterMensagensValidacaoTelefoneSocio(socioCota.getTelefone()));
 		}
 		
 		if(!listaMensagens.isEmpty()){
@@ -62,10 +59,83 @@ public class CotaSocioController {
 		}
 	}
 	
+	private List<String> obterMensagensValidacaoEnderecoSocio(Endereco endereco) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (endereco == null){
+			
+			listaMensagens.add("Endereço é obrigatório.");
+			
+			return listaMensagens;
+		}
+		
+		if (endereco.getCep() == null || endereco.getCep().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");
+		}
+
+		if (endereco.getTipoLogradouro() == null || endereco.getTipoLogradouro().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Tipo Logradouro] é obrigatório.");
+		}
+		
+		if (endereco.getLogradouro() == null || endereco.getLogradouro().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");
+		}
+
+		if (endereco.getNumero() == null || endereco.getNumero() <= 0) {
+			
+			listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
+		}
+		
+		if (endereco.getBairro() == null || endereco.getBairro().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Bairro] é obrigatório.");
+		}		
+
+		if (endereco.getCidade() == null || endereco.getCidade().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Cidade] é obrigatório.");
+		}
+		
+		if (endereco.getUf() == null || endereco.getUf().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [UF] é obrigatório.");
+		}
+		
+		return listaMensagens;
+	}
+
+	private List<String> obterMensagensValidacaoTelefoneSocio(Telefone telefone) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (telefone == null) {
+			
+			listaMensagens.add("Telefone é obrigatório.");
+		
+			return listaMensagens;
+		}
+		
+		if (telefone.getDdd() == null || telefone.getDdd().trim().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [DDD] é obrigatório.");
+		}
+		
+		if (telefone.getNumero() == null || telefone.getNumero().trim().isEmpty()) {
+			
+			listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
+		}
+		
+		return listaMensagens;
+	}
+	
 	@Post
 	public void carregarSociosCota(Long idCota){
 		
-		List<SocioCota> sociosCota = this.cotaService.obterSociosCota(idCota);
+		List<SocioCota> sociosCota = this.socioCotaService.obterSociosCota(idCota);
 		
 		this.result.use(Results.json()).from(sociosCota, "result").exclude("cota").recursive().serialize();		
 	}
@@ -73,7 +143,7 @@ public class CotaSocioController {
 	@Post
 	public void carregarSocioPorId(Long idSocioCota) {
 		
-		SocioCota socioCota = this.cotaService.obterSocioPorId(idSocioCota);
+		SocioCota socioCota = this.socioCotaService.obterSocioPorId(idSocioCota);
 		
 		this.result.use(Results.json()).from(socioCota, "result").exclude("cota").recursive().serialize();	
 	}
@@ -83,9 +153,27 @@ public class CotaSocioController {
 		
 		validarInclusaoSocio(socioCota);
 		
-		this.cotaService.salvarSocioCota(socioCota, idCota);
+		this.socioCotaService.salvarSocioCota(socioCota, idCota);
 
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-						Constantes.PARAM_MSGS).recursive().serialize();
+				"result").recursive().serialize();
+	}
+	
+	@Post
+	public void removerSocioCota(Long idSocioCota) {
+		
+		this.socioCotaService.removerSocioCota(idSocioCota);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				"result").recursive().serialize();
+	}
+	
+	@Post
+	public void confirmarSocioCota(Long idCota) {
+		
+		this.socioCotaService.confirmarCadastroSociosCota(idCota);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				"result").recursive().serialize();
 	}
 }

@@ -21,11 +21,7 @@
 	
 	$(function() {
 		
-		try{
-			MANTER_COTA.init();	
-		}catch(e){
-			alert(e);
-		}
+		MANTER_COTA.init();	
 	});
 </script>
 <style>

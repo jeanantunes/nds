@@ -989,6 +989,7 @@ var SOCIO_COTA = $.extend(true, {
 
 		itemEdicao:null,
 		rows:[],
+		_workspace: this.workspace,
 		
 		socio:function(){
 			
@@ -1002,21 +1003,22 @@ var SOCIO_COTA = $.extend(true, {
 			return socio;
 		},
 		
-		inicializarPopup: function() {
+		inicializarPopupSocio: function() {
 
+			SOCIO_COTA.popup_novo_socio();
+			
+			SOCIO_COTA.bindButtonActions();
+			
 			ENDERECO.preencherComboUF();
 
-//			$("#formSocioCota", this.workspace)[0].reset();
-
+			SOCIO_COTA.limparCamposSocio();
+			
 			$("#cep", this.workspace).mask("99999-999");
-
-			SOCIO_COTA.bindButtonActions();
-			SOCIO_COTA.popup_novo_socio();
 		},
 		
 		popup_novo_socio: function() {
 			
-			$( "#dialog-socio", this.workspace ).dialog({
+			$( "#dialog-socio", SOCIO_COTA._workspace ).dialog({
 				resizable: false,
 				height:340,
 				width:760,
@@ -1027,7 +1029,7 @@ var SOCIO_COTA = $.extend(true, {
 						SOCIO_COTA.incluirSocio();
 					},
 					"Cancelar": function() {
-						$( this, this.workspace ).dialog( "close" );
+						$( this, SOCIO_COTA._workspace ).dialog( "close" );
 					}
 				}
 			});
@@ -1035,37 +1037,37 @@ var SOCIO_COTA = $.extend(true, {
 		
 		bindButtonActions: function() {
 
-			$("#btnPesquisarEndereco", this.workspace).click(function() {
+			$("#btnPesquisarEndereco", SOCIO_COTA._workspace).click(function() {
 				
 				ENDERECO.pesquisarEnderecoPorCep();
 			});
 			
-			$("#cidade", this.workspace).keyup(function() {
+			$("#cidade", SOCIO_COTA._workspace).keyup(function() {
 				
 				ENDERECO.autoCompletarLocalidades();
 			});
 			
-			$("#cidade", this.workspace).blur(function() {
+			$("#cidade", SOCIO_COTA._workspace).blur(function() {
 				
 				ENDERECO.autoCompletarLocalidades(true);
 			});
 			
-			$("#bairro", this.workspace).keyup(function() {
+			$("#bairro", SOCIO_COTA._workspace).keyup(function() {
 				
 				ENDERECO.autoCompletarBairros();
 			});
 			
-			$("#bairro", this.workspace).blur(function() {
+			$("#bairro", SOCIO_COTA._workspace).blur(function() {
 				
 				ENDERECO.autoCompletarBairros(true);
 			});
 
-			$("#logradouro", this.workspace).keyup(function() {
+			$("#logradouro", SOCIO_COTA._workspace).keyup(function() {
 				
 				ENDERECO.autoCompletarLogradouros();
 			});
 			
-			$("#logradouro", this.workspace).blur(function() {
+			$("#logradouro", SOCIO_COTA._workspace).blur(function() {
 				
 				ENDERECO.autoCompletarLogradouros(true);
 			});
@@ -1118,17 +1120,55 @@ var SOCIO_COTA = $.extend(true, {
 			});
 		},
 		
+		limparCamposSocio: function() {
+
+			$("#dialog-socio", SOCIO_COTA._workspace).find(":input, select").each(function () {
+		        switch (this.type) {
+		            case "text":
+		                $(this, SOCIO_COTA._workspace).val("");
+		                break;
+		            case "hidden":
+		                $(this, SOCIO_COTA._workspace).val("");
+		                break;
+		            case "checkbox":
+		            	$(this, SOCIO_COTA._workspace).removeAttr("checked");
+		            	break;
+		            case "select":
+		            	$(this, SOCIO_COTA._workspace).val("");
+		            	break;
+		        }
+		    });
+		},
+		
 		salvarSocios:function(){
 			
-//			var list =   serializeArrayToPost("sociosCota",SOCIO_COTA.obterListaSocios());			
-//			var objPost = concatObjects({idCota:MANTER_COTA.idCota},list);
-			
-//			$.postJSON(contextPath + "/cadastro/cota/salvarSocioCota",
-//					objPost , 
-//					null,
-//					null,
-//					true
-//			);
+			$.postJSON(contextPath + "/cadastro/cota/confirmarSocioCota",
+					"idCota=" + MANTER_COTA.idCota, 
+					function(mensagens) {
+
+						if (mensagens) {
+							
+							exibirMensagemDialog(
+						
+								mensagens.tipoMensagem, 
+								mensagens.listaMensagens,
+								"dialog-cota"
+							);
+						}
+					},
+					function(result) {
+						
+						if (result.mensagens) {
+						
+							exibirMensagemDialog(
+								result.mensagens.tipoMensagem, 
+								result.mensagens.listaMensagens,
+								"dialog-cota"
+							);
+						}
+					},
+					true
+			);
 			
 			return false;
 		},
@@ -1218,10 +1258,13 @@ var SOCIO_COTA = $.extend(true, {
 				contextPath+'/cadastro/cota/carregarSocioPorId',
 				"idSocioCota=" + idSocio,
 				function(result) {
+					
+					ENDERECO.preencherComboUF();//result.endereco.uf);
+					
 					$("#nomeSocio", this.workspace).val(result.nome),
 					$("#cargoSocio", this.workspace).val(result.cargo),
-					$("#socioPrincipal", this.workspace).attr("checked",(result.principal == true)?"checked":null);
-					$("#idSocio", this.workspace).val(result.id);	
+					$("#checkboxSocioPrincipal", this.workspace).attr("checked",(result.principal == true)?"checked":null);
+					$("#idSocioCota", this.workspace).val(idSocio);	
 
 					$("#idTelefone", this.workspace).val(result.telefone.id);
 					$("#ddd", this.workspace).val(result.telefone.ddd);
@@ -1237,7 +1280,7 @@ var SOCIO_COTA = $.extend(true, {
 					$("#logradouro", this.workspace).val(result.endereco.logradouro);
 					$("#numero", this.workspace).val(result.endereco.numero);
 					
-					popup_novo_socio();
+					SOCIO_COTA.popup_novo_socio();
 				},
 				null,
 				true
@@ -1256,9 +1299,9 @@ var SOCIO_COTA = $.extend(true, {
 			$("#btnAddSocio", this.workspace).show();
 		},
 		
-		removerSocio:function(idSocio){
+		removerSocio:function(idSocio) {
 			
-			$("#dialog-excluir-socio", this.workspace).dialog({
+			$("#dialog-excluir-socio", SOCIO_COTA._workspace).dialog({
 				resizable: false,
 				height:'auto',
 				width:300,
@@ -1266,27 +1309,46 @@ var SOCIO_COTA = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						
-						SOCIO_COTA.rows.splice(idSocio, 1);
-						
-						var lista = new Array;
-						
-						for (var index in SOCIO_COTA.rows) {	
-							lista.push({"id":lista.length, "cell":SOCIO_COTA.rows[index].cell});
-						}
-						
-						SOCIO_COTA.rows = lista;
-						
-						$(".sociosPjGrid", this.workspace).flexAddData({rows:lista,page:1,total:1}  );
-						
-						$(this, this.workspace).dialog("close");
+						$.postJSON(
+							contextPath + "/cadastro/cota/removerSocioCota",
+							[{name:'idSocioCota', value:idSocio}],
+							function(mensagens) {
+
+								$("#dialog-excluir-socio", SOCIO_COTA._workspace).dialog("close");
+
+								SOCIO_COTA.carregarSociosCota();
+								
+								if (mensagens) {
+									
+									exibirMensagemDialog(
+								
+										mensagens.tipoMensagem, 
+										mensagens.listaMensagens,
+										"dialog-cota"
+									);
+								}
+							},
+							function(result) {
+								
+								if (result.mensagens) {
+								
+									$("#dialog-excluir-socio", SOCIO_COTA._workspace).dialog("close");
+								
+									exibirMensagemDialog(
+										result.mensagens.tipoMensagem, 
+										result.mensagens.listaMensagens,
+										"dialog-cota"
+									);
+								}
+							},
+							true
+						);
 					},
 					"Cancelar": function() {
-						$(this, this.workspace).dialog("close");
+						$(this, SOCIO_COTA._workspace).dialog("close");
 					}
 				}
 			});
-			
-			$("#dialog-excluir-socio", this.workspace).show();
 		},
 		
 		obterListaSocios:function(){
@@ -1305,34 +1367,40 @@ var SOCIO_COTA = $.extend(true, {
 
 		incluirSocio:function(){
 
-			var data = $("#formSocioCota", this.workspace).serializeArray();
+			var data = $("#dialog-socio", SOCIO_COTA._workspace).find("select, input").serializeArray();
 
 			data.push({name:'idCota', value:MANTER_COTA.idCota});
 
 			$.postJSON(
 					contextPath + "/cadastro/cota/incluirSocioCota",
 					data,
-					function(result) {
+					function(mensagens) {
 
 						SOCIO_COTA.carregarSociosCota();
 
-						$( "#dialog-socio", this.workspace ).dialog( "close" );
+						if (mensagens) {
+
+							exibirMensagemDialog(
+								mensagens.tipoMensagem, 
+								mensagens.listaMensagens,
+								"dialog-cota"
+							);
+						}
+						
+						$( "#dialog-socio", SOCIO_COTA._workspace ).dialog( "close" );
 					},
 					function(result) {
 						
-						if (data.mensagens) {
+						if (result.mensagens) {
 
 							exibirMensagemDialog(
-								data.mensagens.tipoMensagem, 
-								data.mensagens.listaMensagens,
+								result.mensagens.tipoMensagem, 
+								result.mensagens.listaMensagens,
 								"dialog-socio"
 							);
-							
-							return;
 						}
 					},
-					true,
-					"dialog-socio"
+					true
 				);
 		}
 }, BaseController);
