@@ -5,7 +5,6 @@ import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Moeda;
 
 
@@ -36,12 +35,8 @@ public interface BancoService {
 	boolean verificarPendencias(long idBanco);
 	
 	void dasativarBanco(long idBanco);
-	
-	List<ItemDTO<Integer, String>> getComboCarteiras();
-	
+
 	List<ItemDTO<Moeda, String>> getComboMoedas();
-	
-	Carteira obterCarteiraPorCodigo(Integer codigoCarteira);
-	
+		
 	List<ItemDTO<Integer, String>> getComboBancos();
 }

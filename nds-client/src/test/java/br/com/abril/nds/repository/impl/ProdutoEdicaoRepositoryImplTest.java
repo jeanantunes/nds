@@ -16,7 +16,6 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -46,8 +45,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	private ProdutoEdicaoRepositoryImpl produtoEdicaoRepository;
 
 	private FormaCobranca formaBoleto;
-	
-	private Carteira carteiraSemRegistro;
 	
 	private Distribuidor distribuidor;
 	

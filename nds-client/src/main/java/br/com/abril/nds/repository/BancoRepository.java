@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Carteira;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -55,17 +54,5 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	 * @return boolean: true, caso o banco esteja relacionado com alguma cobranca em aberto
 	 */
 	boolean verificarPedencias(long idBanco);
-	
-	/**
-	 * Método responsável por obter Carteiras cadastradas
-	 * @return {@link List<Carteira>}: Lista de Carteiras.
-	 */
-	List<Carteira> obterCarteiras();
-	
-	/**
-	 * Método responsável por obter Carteira por id.
-	 * @return {@link br.com.abril.nds.model.cadastro.Carteira} 
-	 */
-	Carteira obterCarteiraPorCodigo(Integer codigoCarteira);
 	
 }
