@@ -1,7 +1,7 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
 <script type="text/javascript">
@@ -48,14 +48,13 @@ fieldset {
 </div>
 
 
-
+<form id="produtoEdicaoController-formUpload" name="formUpload" method="post" enctype="multipart/form-data" >
 <div id="produtoEdicaoController-dialog-novo" title="Incluir Nova Edi&ccedil;&atilde;o">
 	
 	<jsp:include page="../messagesDialog.jsp">
 		<jsp:param value="dialogMensagemNovo" name="messageDialog"/>
 	</jsp:include> 
 	
-	<form id="produtoEdicaoController-formUpload" name="formUpload" method="post" enctype="multipart/form-data" >
 		<div id="produtoEdicaoController-tabEdicoes">
 			<ul>
 				<li><a id="produtoEdicaoController-tabIdentificacao" href="#produtoEdicaoController-tabEdicoes-1">Identifica&ccedil;&atilde;o</a></li>
@@ -392,8 +391,8 @@ fieldset {
 				<br clear="all" />
 			</div>
 		</div>
-	</form>
 </div>
+</form>
 
 <fieldset class="classFieldset">
 			<input type="hidden" id="produtoEdicaoController-codigoProduto" name="codigoProduto" value="" />

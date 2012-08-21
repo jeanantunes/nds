@@ -274,7 +274,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 				produtoLancamento.setDataLancamentoDistribuidor(data);
 				produtoLancamento.setRepartePrevisto(repartePrevisto);
 				produtoLancamento.setDataRecolhimentoPrevista(dataRecolhimentoPrevista);
-				produtoLancamento.setPeso(new BigDecimal(10));
+				produtoLancamento.setPeso(10L);
 				produtoLancamento.setValorTotal(new BigDecimal(2));
 				produtoLancamento.setReparteFisico(new BigDecimal(5));
 				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());

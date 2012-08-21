@@ -1,13 +1,17 @@
 package br.com.abril.nds.repository.impl;
 
-import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.repository.DescontoCotaRepository;
 
@@ -180,5 +184,32 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		return query.list().size();
 	}
 
+	@Override
+	public DescontoCota buscarUltimoDescontoValido(Long idDesconto,Fornecedor fornecedor, Cota cota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select desconto from DescontoCota desconto JOIN desconto.fornecedores fornecedor JOIN desconto.cota cota  ")
+			.append("where desconto.dataAlteracao = ")
+			.append(" ( select max(descontoSub.dataAlteracao) from DescontoCota descontoSub  ")
+				.append(" JOIN descontoSub.fornecedores fornecedorSub JOIN descontoSub.cota cotaSub ")
+				.append(" where fornecedorSub.id =:idFornecedor ")
+				.append(" and descontoSub.id not in (:idUltimoDesconto) ")
+				.append(" and cotaSub.id =:idCota ")
+			.append(" ) ")
+			.append(" AND fornecedor.id =:idFornecedor ")
+			.append(" AND cota.id =:idCota ");
 	
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idFornecedor",fornecedor.getId());
+		
+		query.setParameter("idUltimoDesconto", idDesconto);
+		
+		query.setParameter("idCota", cota.getId());
+		
+		query.setMaxResults(1);
+		
+		return (DescontoCota)  query.uniqueResult();
+	}
 }

@@ -123,26 +123,12 @@ public class DescontoServiceImpl implements DescontoService {
 		switch (tipoDesconto) {
 			case GERAL:
 				
-				DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
-				validarExclusaoDesconto(desconto.getDataAlteracao());
-				desconto.setFornecedores(null);
-				descontoDistribuidorRepository.remover(desconto);
-				
-				//TODO obter desconto anterior, tratar dados para o processamento
-				
-				//TODO chamar metodo para processamrnto de desconto distribuidor
+				this.excluirDescontoDistribuidor(idDesconto);
 				
 				break;
 			case ESPECIFICO:
 				
-				DescontoCota descontoCota = descontoCotaRepository.buscarPorId(idDesconto);
-				validarExclusaoDesconto(descontoCota.getDataAlteracao());
-				descontoCota.setFornecedores(null);
-				descontoCotaRepository.remover(descontoCota);
-				
-				//TODO obter desconto anterior, tratar dados para o processamento
-				
-				//TODO chamar metodo para processamrnto de desconto cota
+				this.excluirDescontoCota(idDesconto);
 				
 				break;
 			case PRODUTO:
@@ -162,6 +148,7 @@ public class DescontoServiceImpl implements DescontoService {
 				throw new RuntimeException("Tipo de Desconto inválido!");
 			}
 	}
+	
 	
 	@Override
 	@Transactional
@@ -563,6 +550,107 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 
 		return cotas;
+	}
+	
+	/*
+	 * 
+	 * Excluir um desconto do distribuidor e atualiza os descontos dos produtos edição
+	 * 
+	 * @param idDesconto - identificador do desconto a ser removido
+	 */
+	private void excluirDescontoDistribuidor(Long idDesconto){
+		
+		DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarPorId(idDesconto);
+		
+		validarExclusaoDesconto(desconto.getDataAlteracao());
+		
+		DescontoDistribuidor ultimoDesconto = null;
+		
+		for(Fornecedor fornecedor : desconto.getFornecedores()){
+			
+			 ultimoDesconto = descontoDistribuidorRepository.buscarUltimoDescontoValido(idDesconto,fornecedor);
+			
+			if(ultimoDesconto != null){
+				
+				if(ultimoDesconto.getDataAlteracao().before(desconto.getDataAlteracao())){
+					
+					Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+				
+					fornecedores.add(fornecedor);
+					
+					processarDescontoDistribuidor(fornecedores, ultimoDesconto.getDesconto());
+				}
+			}
+			else{
+				
+				Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+				
+				fornecedores.add(fornecedor);
+				
+				processarDescontoDistribuidor(fornecedores,BigDecimal.ZERO);
+			}
+		}
+		
+		desconto.setFornecedores(null);
+		
+		descontoDistribuidorRepository.remover(desconto);
+	}
+	
+	/*
+	 * 
+	 * Excluir um desconto da cota e atualiza os descontos dos produtos edição.
+	 * 
+	 * @param idDesconto - identificador do desconto a ser removido
+	 */
+	private void excluirDescontoCota(Long idDesconto){
+		
+		DescontoCota descontoCota = descontoCotaRepository.buscarPorId(idDesconto);
+		
+		validarExclusaoDesconto(descontoCota.getDataAlteracao());
+		
+		DescontoCota ultimoDescontoCota = null;
+		
+		for(Fornecedor fornecedor : descontoCota.getFornecedores()){
+			
+			 ultimoDescontoCota = descontoCotaRepository.buscarUltimoDescontoValido(idDesconto,fornecedor,descontoCota.getCota());
+			
+			if(ultimoDescontoCota != null){
+				
+				if(ultimoDescontoCota.getDataAlteracao().before(descontoCota.getDataAlteracao())){
+					
+					Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+				
+					fornecedores.add(fornecedor);
+					
+					processarDescontoCota(descontoCota.getCota(), fornecedores, ultimoDescontoCota.getDesconto());
+				}
+			}
+			else{
+				
+				Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+				Set<Cota> cotas = new HashSet<Cota>();
+				
+				fornecedores.add(fornecedor);	
+				cotas.add(descontoCota.getCota());
+				
+				DescontoDistribuidor ultimoDescontoDistribuidor = descontoDistribuidorRepository.buscarUltimoDescontoValido(idDesconto,fornecedor);
+			
+				descontoComponent.removerDescontos(fornecedor,descontoCota.getCota(), TipoDesconto.ESPECIFICO);
+				
+				if(ultimoDescontoDistribuidor!= null){
+					
+					processarDesconto(TipoDesconto.GERAL, fornecedores,cotas,null,ultimoDescontoDistribuidor.getDesconto());
+				}
+				else{
+					
+					processarDesconto(TipoDesconto.GERAL, fornecedores,cotas,null,BigDecimal.ZERO);
+				}
+			}
+		}
+		
+		descontoCota.setFornecedores(null);
+		
+		descontoCotaRepository.remover(descontoCota);
 	}
 	
 }

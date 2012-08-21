@@ -974,7 +974,7 @@ public class MatrizLancamentoController {
 				Long qtdeTitulos = 0L;
 				Long qtdeTitulosParciais = 0L;
 				
-				BigDecimal pesoTotal = BigDecimal.ZERO;
+				Long pesoTotal = 0L;
 				BigDecimal qtdeExemplares = BigDecimal.ZERO;
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
@@ -992,7 +992,7 @@ public class MatrizLancamentoController {
 					
 					if (produtoBalanceamento.getPeso() != null) {
 						
-						pesoTotal = pesoTotal.add(produtoBalanceamento.getPeso());
+						pesoTotal += produtoBalanceamento.getPeso();
 					}
 					
 					if (produtoBalanceamento.getValorTotal() != null) {
