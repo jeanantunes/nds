@@ -308,8 +308,16 @@ function Endereco(paramTela,paramMessage) {
 			null,
 			isFromModal
 		);
-	}
-
+	};
+	
+	this.autoCompletarCep = function() {
+		var cep = $("#"+paramTela+"cep").val().replace("_","");
+		
+		if (cep.length == 9) {
+			this.pesquisarEnderecoPorCep();
+		}
+	};
+	
 	this.autoCompletarLocalidades = function(isOnBlur) {
 		
 		var isFromModal = true;
@@ -358,7 +366,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	};
 
 	this.autoCompletarBairros = function(isOnBlur) {
 
@@ -404,7 +412,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	};
 	
 	this.autoCompletarLogradouros = function(isOnBlur) {
 
@@ -446,7 +454,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	};
 	
 	this.popularGrid = function(){
 		

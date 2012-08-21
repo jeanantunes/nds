@@ -131,14 +131,8 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 	 * 
 	 */
 	private void produtoEdicaoSetup() {
-		// ////////////
-
-		carteiraSemRegistro = Fixture.carteira(1,
-				TipoRegistroCobranca.SEM_REGISTRO);
-
-		save(carteiraSemRegistro);
-
-		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		
+		bancoHSBC = Fixture.banco(10L, true, 30, "1010",
 				123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399",
 				BigDecimal.ZERO, BigDecimal.ZERO);
 
