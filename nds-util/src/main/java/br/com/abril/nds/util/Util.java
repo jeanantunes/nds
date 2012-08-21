@@ -326,5 +326,17 @@ public abstract class Util {
 		BigInteger hash = new BigInteger(1, md.digest(original.getBytes()));  
 		return hash.toString(16);
 	}
+	
+	/**
+	 * Remove a mascara do CNPJ
+	 * @param cnpj
+	 * @return
+	 */
+	public static String removerMascaraCnpj(String cnpj){
+		if(cnpj == null){
+			return null;
+		}		
+		return cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
+	}
 
 }

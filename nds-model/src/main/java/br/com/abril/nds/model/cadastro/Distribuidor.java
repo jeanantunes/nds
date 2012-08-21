@@ -278,14 +278,11 @@ public class Distribuidor {
 	@Column(name = "CNPJ", nullable = true)
 	private String cnpj;
 	
-	@Column(name = "INSCRICAO_ESTADUAL", nullable = true)
+	@Column(name = "INSCRICAO_ESTADUAL", length = 14, nullable = true)
 	private String inscricaoEstadual;
 	
-	@Column(name = "INSCRICAO_MUNICIPAL", nullable = true)
+	@Column(name = "INSCRICAO_MUNICIPAL", length = 15, nullable = true)
 	private String inscricaoMunicipal;
-	
-	@Column(name = "CNPJ_PRINCIPAL", nullable = true)
-	private boolean cnpjPrincipal;
 	
 	@Column(name = "EMAIL", nullable = true)
 	private String email;
@@ -952,20 +949,6 @@ public class Distribuidor {
 	 */
 	public void setInscricaoMunicipal(String inscricaoMunicipal) {
 		this.inscricaoMunicipal = inscricaoMunicipal;
-	}
-
-	/**
-	 * @return the cnpjPrincipal
-	 */
-	public boolean isCnpjPrincipal() {
-		return cnpjPrincipal;
-	}
-
-	/**
-	 * @param cnpjPrincipal the cnpjPrincipal to set
-	 */
-	public void setCnpjPrincipal(boolean cnpjPrincipal) {
-		this.cnpjPrincipal = cnpjPrincipal;
 	}
 
 	/**

@@ -1,12 +1,18 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -21,7 +27,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
@@ -64,19 +69,33 @@ public class ParametrosDistribuidorController {
 	@Autowired
 	private HttpSession session;
 	
-	private static final String ATRIBUTO_SESSAO_LOGOTIPO = "cadastroDistribuidorLogotipo";
+	@Autowired
+	private ServletContext servletContext;
+	
+	private static final String ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE = "cadastroDistribuidorLogotipoContentType";
+	
+	private static final String ATRIBUTO_SESSAO_EXISTE_LOGOTIPO = "cadastroDistribuidorExisteLogotipo";
 
+	private static final String DIRETORIO_TEMPORARIO_PARAMETROS_DISTRIBUIDOR = "temp/parametros_distribuidor/";
+	
+	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
+	
 	@Autowired 
 	private GrupoService grupoService;
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR)
 	public void index() {
+		
+		this.limparLogoSessao();
+		
 		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
 		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
 		result.include("fornecedores", fornecedorService.obterFornecedores());
 		result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
 		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
+		
+		this.buscarLogoArmazenarSessao();
 	}
 	
 	private List<ItemDTO<TipoAtividade, String>> carregarComboRegimeTributario() {
@@ -86,11 +105,11 @@ public class ParametrosDistribuidorController {
 		
 		listaRegimeTributario.add(
 			new ItemDTO<TipoAtividade, String>(TipoAtividade.PRESTADOR_SERVICO,
-											   TipoAtividade.PRESTADOR_SERVICO.getDescTipoDistribuidor()));
+											   TipoAtividade.PRESTADOR_SERVICO.getDescricao()));
 		
 		listaRegimeTributario.add(
 			new ItemDTO<TipoAtividade, String>(TipoAtividade.MERCANTIL,
-											   TipoAtividade.MERCANTIL.getDescTipoDistribuidor()));
+											   TipoAtividade.MERCANTIL.getDescricao()));
 		
 		return listaRegimeTributario;
 	}
@@ -115,28 +134,39 @@ public class ParametrosDistribuidorController {
 		return listaObrigacaoFiscal;
 	}
 	
+	private void buscarLogoArmazenarSessao() {
+
+		InputStream imgLogotipo = parametrosDistribuidorService.getLogotipoDistribuidor();
+		
+		if (imgLogotipo != null) {
+		
+			session.setAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO, true);
+			
+			this.gravarArquivoTemporario(imgLogotipo);
+			
+		} else {
+			
+			session.setAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO, false);
+		}
+	}
+
 	public Download getLogo() {
 		
-		try {
-			InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
-			return new InputStreamDownload(inputStream, null, null);
-		} catch (Exception e) {
-			result.use(CustomJson.class).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage())).serialize();
+		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();;
+		
+		if (imgLogotipo != null) {
+		
+			return new InputStreamDownload(imgLogotipo, null, null);
 		}
-
+		
 		return null;
-	}
-	
-	public Download atualizarLogo() {
-		
-		UploadedFile logo = (UploadedFile) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO);
-		
-		return new InputStreamDownload(logo.getFile(), null, null);
 	}
 
 	public void salvarLogo(UploadedFile logo) {
 		
-		session.setAttribute(ATRIBUTO_SESSAO_LOGOTIPO, logo);
+		this.gravarArquivoTemporario(logo.getFile());
+		
+		session.setAttribute(ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE, logo.getContentType());
 		
 		result.use(PlainJSONSerialization.class).from("", "result").serialize();
 	}
@@ -147,23 +177,81 @@ public class ParametrosDistribuidorController {
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
 	    
-		UploadedFile logo = (UploadedFile) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO);
+		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();
 		
-		InputStream inputStream = null;
-		String contentType = null;
-
-		if (logo != null) {
-			
-			inputStream = logo.getFile();
-			contentType = logo.getContentType();
-		}
+		String contentType = (String) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE);
 		
 		validarCadastroDistribuidor(parametrosDistribuidor);
 		
 		parametrosDistribuidorService.salvarDistribuidor(
-			parametrosDistribuidor, inputStream, contentType);
+			parametrosDistribuidor, imgLogotipo, contentType);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
+	}
+	
+	private void gravarArquivoTemporario(InputStream imgLogotipo) {
+
+		File fileLogotipo = this.getFileLogo();
+		
+		FileOutputStream fos = null;
+		
+		try {
+			
+			fos = new FileOutputStream(fileLogotipo);
+			
+			IOUtils.copyLarge(imgLogotipo, fos);
+		
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"Falha ao gravar o arquivo em disco!");
+		
+		} finally {
+			try { 
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (Exception e) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+					"Falha ao gravar o arquivo em disco!");
+			}
+		}
+	}
+
+	private File getFileLogo() {
+		
+		String pathAplicacao = servletContext.getRealPath("");
+		
+		pathAplicacao = pathAplicacao.replace("\\", "/");
+		
+		File fileDir = new File(pathAplicacao, DIRETORIO_TEMPORARIO_PARAMETROS_DISTRIBUIDOR);
+		
+		fileDir.mkdirs();
+		
+		File fileLogotipo = new File(fileDir, ATTACHMENT_LOGOTIPO);
+		
+		return fileLogotipo;
+	}
+	
+	private InputStream getInputStreamArquivoTemporario() {
+		
+		File fileLogotipo = this.getFileLogo();
+		
+		try {
+			
+			return new FileInputStream(fileLogotipo);
+			
+		} catch (FileNotFoundException e) {
+			
+			return null;
+		}
+	}
+	
+	private void limparLogoSessao() {
+		
+		session.removeAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO);
+		
+		session.removeAttribute(ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE);
 	}
 	
 	/**
@@ -236,6 +324,37 @@ public class ParametrosDistribuidorController {
 	 */
 	private void validarCadastroDistribuidor(ParametrosDistribuidorVO vo) {
 	    List<String> erros = new ArrayList<String>();
+	    
+	    if (vo.getRazaoSocial() == null || vo.getRazaoSocial().trim().isEmpty()) {
+	        erros.add("É necessário informar a Razão Social!");
+	    }
+	    if (vo.getCnpj() == null || vo.getCnpj().trim().isEmpty()) {
+	        erros.add("É necessário informar o CNPJ!");
+	    }
+	    if (vo.getInscricaoEstadual() == null || vo.getInscricaoEstadual().trim().isEmpty()) {
+	        erros.add("É necessário informar a Insc. Estadual!");
+	    }
+	    if (vo.getEndereco().getTipoEndereco() == null) {
+	        erros.add("É necessário informar o Tipo Endereço!");
+	    }
+	    if (vo.getEndereco().getCep() == null || vo.getEndereco().getCep().trim().isEmpty()) {
+	        erros.add("É necessário informar o CEP!");
+	    }
+	    if (vo.getEndereco().getUf() == null || vo.getEndereco().getUf().trim().isEmpty()) {
+	        erros.add("É necessário informar o campo UF!");
+	    }
+	    if (vo.getEndereco().getLocalidade() == null || vo.getEndereco().getLocalidade().trim().isEmpty()) {
+	        erros.add("É necessário informar a Cidade!");
+	    }
+	    if (vo.getEndereco().getLogradouro() == null || vo.getEndereco().getLogradouro().trim().isEmpty()) {
+	        erros.add("É necessário informar o Logradouro!");
+	    }
+	    if (vo.getRegimeTributario() == null) {
+	        erros.add("É necessário informar o campo Regime Tributário!");
+	    }
+	    if (vo.getObrigacaoFiscal() == null) {
+	        erros.add("É necessário informar o campo Obrigação Fiscal!");
+	    }
 	    if (vo.getCapacidadeManuseioHomemHoraLancamento() == null) {
 	        erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");
 	    }

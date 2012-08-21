@@ -7,7 +7,7 @@
 				<td width="139">Razão Social:</td>
 				<td width="220">
 					<input type="text" name="razaoSocial"
-						   id="razaoSocial" style="width: 220px;"
+						   id="razaoSocial" style="width: 220px;" maxlength="255"
 						   value="${parametrosDistribuidor.razaoSocial}" />
 				</td>
 			</tr>
@@ -15,20 +15,15 @@
 				<td>Nome Fantasia:</td>
 				<td>
 					<input type="text" name="nomeFantasia"
-						   id="nomeFantasia" style="width: 220px;"
+						   id="nomeFantasia" style="width: 220px;" maxlength="255"
 						   value="${parametrosDistribuidor.nomeFantasia}" />
 				</td>
 			</tr>
+			
 			<tr>
 				<td colspan="2">
-					<div id="div_imagem_logotipo">
-						<img id="imgLogo" width="110" height="70" alt="Logotipo Distribuidor"
-							 src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo"/>
-					</div>
+					<div id="div_imagem_logotipo"></div>
 				</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
 			</tr>
 			<tr>
 				<td>Logo:</td>
@@ -40,14 +35,14 @@
 				<td>CNPJ:</td>
 				<td>
 					<input type="text" name="cnpj"
-						   id="cnpj" style="width: 220px;"
+						   id="cnpj" style="width: 220px;" maxlength="255"
 						   value="${parametrosDistribuidor.cnpj}" />
 				</td>
 			</tr>
 			<tr>
 				<td>Insc. Estadual:</td>
 				<td><input type="text" name="inscricaoEstadual"
-						   id="inscricaoEstadual" style="width: 220px;"
+						   id="inscricaoEstadual" style="width: 220px;" maxlength="14"
 						   value="${parametrosDistribuidor.inscricaoEstadual}" />
 				</td>
 			</tr>
@@ -55,27 +50,14 @@
 				<td>Insc. Municipal:</td>
 				<td>
 					<input type="text" name="inscricaoMunicipal"
-						   id="inscricaoMunicipal" style="width: 220px;"
+						   id="inscricaoMunicipal" style="width: 220px;" maxlength="15"
 						   value="${parametrosDistribuidor.inscricaoMunicipal}" />
-				</td>
-			</tr>
-			<tr>
-				<td>Principal?</td>
-				<td>
-					<c:if test="${parametrosDistribuidor.cnpjPrincipal}">
-						<input type="checkbox" name="cnpjPrincipal"
-						   	   id="cnpjPrincipal" checked="checked" />
-					</c:if>
-                    <c:if test="${empty parametrosDistribuidor.cnpjPrincipal or (not parametrosDistribuidor.cnpjPrincipal)}">
-						<input type="checkbox" name="cnpjPrincipal"
-						   	   id="cnpjPrincipal" />
-			   	   	</c:if>
 				</td>
 			</tr>
 			<tr>
 				<td>E-mail:</td>
 				<td>
-					<input type="text" name="email" id="email"
+					<input type="text" name="email" id="email" maxlength="255"
 						   style="width: 220px;" value="${parametrosDistribuidor.email}" />
 				</td>
 			</tr>
@@ -83,7 +65,7 @@
 				<td>Cód. Distribuidor Dinap:</td>
 				<td>
 					<input type="text" name="codigoDistribuidorDinap"
-						   id="codigoDistribuidorDinap" style="width: 220px;"
+						   id="codigoDistribuidorDinap" style="width: 220px;" maxlength="255"
 						   value="${parametrosDistribuidor.codigoDistribuidorDinap}" />
 				</td>
 			</tr>
@@ -91,7 +73,7 @@
 				<td>Cód. Distribuidor FC:</td>
 				<td>
 					<input type="text" name="codigoDistribuidorFC"
-						   id="codigoDistribuidorFC" style="width: 220px;"
+						   id="codigoDistribuidorFC" style="width: 220px;" maxlength="255"
 						   value="${parametrosDistribuidor.codigoDistribuidorFC}" />
 				</td>
 			</tr>
@@ -100,6 +82,13 @@
 
 	<fieldset
 		style="width: 440px !important; margin-bottom: 5px; float: left;">
+		
+		<input type="hidden" name="parametrosDistribuidor.endereco.codigoBairro"
+			   id="codigoBairro" value="${parametrosDistribuidor.endereco.codigoBairro}" />
+		
+		<input type="hidden" name="parametrosDistribuidor.endereco.codigoCidadeIBGE"
+			   id="codigoCidadeIBGE" value="${parametrosDistribuidor.endereco.codigoCidadeIBGE}" />
+		
 		<legend>Endereço</legend>
 		<table width="443" cellpadding="2" cellspacing="2"
 			style="text-align: left">
@@ -121,57 +110,66 @@
 				<td width="180">
 					<input type="text" style="float: left; margin-right: 5px;" 
 						   id="cep" name="cep"
-						   value="${parametrosDistribuidor.endereco.cep}" />
+						   value="${parametrosDistribuidor.endereco.cep}"
+						   maxlength="9" />
 					<span class="classPesquisar" title="Pesquisar Cep.">
-						<a href="javascript:;">&nbsp;</a>
+						<a href="javascript:;" onclick="enderecoController.pesquisarEnderecoPorCep();">&nbsp;</a>
 					</span>
+				</td>
+				<td>UF:</td>
+				<td>
+					<select style="width: 50px" id="uf" name="uf"></select>
+				</td>
+			</tr>
+			<tr>
+				<td>Cidade:</td>
+				<td>
+					<input type="text" style="width: 180px" id="cidade" name="cidade"
+						   value="${parametrosDistribuidor.endereco.localidade}"
+						   onkeyup="enderecoController.autoCompletarLocalidades();"
+						   onblur="enderecoController.autoCompletarLocalidades(true);"
+						   maxlength="60"/>
+				</td>
+			</tr>
+			<tr>
+				<td>Bairro:</td>
+				<td>
+					<input type="text" style="width: 180px" id="bairro" name="bairro"
+						   value="${parametrosDistribuidor.endereco.bairro}"
+						   onkeyup="enderecoController.autoCompletarBairros();"
+						   onblur="enderecoController.autoCompletarBairros(true);"
+						   maxlength="60"/>
 				</td>
 				<td>Tipo :</td>
 				<td>
 					<input type="text" style="width: 50px"
 						   id="tipoLogradouro" name="tipoLogradouro"
-						   value="${parametrosDistribuidor.endereco.tipoLogradouro}" />
+						   value="${parametrosDistribuidor.endereco.tipoLogradouro}"
+						   maxlength="255" />
 				</td>
 			</tr>
 			<tr>
 				<td>Logradouro:</td>
 				<td>
 					<input type="text" style="width: 180px" id="logradouro" name="logradouro"
-						   value="${parametrosDistribuidor.endereco.logradouro}" />
+						   value="${parametrosDistribuidor.endereco.logradouro}"
+						   onkeyup="enderecoController.autoCompletarLogradouros();"
+						   onblur="enderecoController.autoCompletarLogradouros(true);"
+						   maxlength="60"/>
 				</td>
 				<td>Número:</td>
 				<td>
 					<input type="text" style="width: 50px" id="numero" name="numero"
-						   value="${parametrosDistribuidor.endereco.numero}" />
+						   value="${parametrosDistribuidor.endereco.numero}"
+						   maxlength="11" />
 				</td>
 			</tr>
 			<tr>
 				<td>Complemento:</td>
 				<td>
 					<input type="text" style="width: 180px" id="complemento" name="complemento"
-						   value="${parametrosDistribuidor.endereco.complemento}" />
-				</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>Bairro:</td>
-				<td>
-					<input type="text" style="width: 180px" id="bairro" name="bairro"
-						   value="${parametrosDistribuidor.endereco.bairro}" />
-				</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>Cidade:</td>
-				<td>
-					<input type="text" style="width: 180px" id="cidade" name="cidade"
-						   value="${parametrosDistribuidor.endereco.localidade}" />
-				</td>
-				<td>UF:</td>
-				<td>
-					<input type="text" style="width: 50px" id="uf" name="uf" />
+						   value="${parametrosDistribuidor.endereco.complemento}"
+						   maxlength="60" />
 				</td>
 			</tr>
 		</table>

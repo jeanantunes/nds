@@ -1,66 +1,21 @@
+<input  TYPE="hidden" id="dataAtual" value="${dataAtual}">
 
-
-<script>
-
-var dataAtual = '${dataAtual}';
-
-$(function() {
-	
-	$('#inicioHorario').mask('99:99'); 
-	$('#fimHorario').mask('99:99'); 
-	$("#porcentagemFaturamento").numeric();
-	$("#qntFuncionarios").numeric();
-	$("#numerolicenca").numeric();	
-	
-	var options = {
-			success: tratarRetornoUploadImagem,
-		};
-		
-		$('#formBaixaAutomatica').ajaxForm(options);		
-});
-
-function tratarRetornoUploadImagem(data) {
-	
-	data = replaceAll(data, "<pre>", "");
-	data = replaceAll(data, "</pre>", "");
-	
-	data = replaceAll(data, "<PRE>", "");
-	data = replaceAll(data, "</PRE>", "");
-	
-	var responseJson = jQuery.parseJSON(data);
-	
-	var mensagens = responseJson.result[0];
-	var status = responseJson.result[1];
-	var pathArquivo = responseJson.result[2];
-		
-	if(pathArquivo) {
-		$("#idImagem").attr("src","${pageContext.request.contextPath}/" + pathArquivo);
-	} else {
-		$("#idImagem").attr("src","${pageContext.request.contextPath}/images/pdv/no_image.jpeg");
-	}	
-	
-	if(mensagens!=null && mensagens.length!=0) {
-		exibirMensagemDialog(status,mensagens);
-	}
-}
-
-</script>
-
-
-<div id="dialog-img" title="Incluir Foto do PDV">
-<br />
-
-	<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formBaixaAutomatica"
+<form action="<c:url value='/cadastro/pdv/uploadImagem' />" id="formUploadPDV"
 		  method="post" enctype="multipart/form-data" >
-	
-		<input type="hidden" name="formUploadAjax" value="true" />
 		
-	<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
-									
-	</form>
-
-
-</div>
+	
+	<div id="dialog-img" title="Incluir Foto do PDV">
+	<br />
+	
+		
+			<input type="hidden" name="formUploadAjax" value="true" />
+			
+		<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
+										
+	
+	
+	</div>
+</form>
 
 <fieldset>
 <legend>Dados Básicos</legend>

@@ -98,4 +98,10 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 * @return Fornecedor
 	 */
 	Fornecedor obterFornecedorPorCodigo(Integer codigo);
+	
+	/**
+	 * Obtem o maior codigo de interface.
+	 * @return
+	 */
+	public abstract Integer obterMaxCodigoInterface();
 }

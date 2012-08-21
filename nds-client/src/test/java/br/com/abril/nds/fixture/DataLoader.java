@@ -32,7 +32,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
@@ -85,7 +84,6 @@ import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
@@ -94,7 +92,6 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
@@ -325,9 +322,6 @@ public class DataLoader {
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota28;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota29;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota30;
-
-	private static Carteira carteiraRegistrada;
-	private static Carteira carteiraSemRegistro;
 
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
@@ -899,7 +893,6 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		carregarDadosClean(session);
 
-		criarCarteira(session);
 		criarBanco(session);
 		criarUsuarios(session);
 		
@@ -989,8 +982,6 @@ public class DataLoader {
 		gerarTipoEntrega(session);
 
 		gerarParciais(session);
-
-		gerarDescontos(session);
 
 		criarDadosBalanceamentos(session);
 
@@ -1186,30 +1177,7 @@ public class DataLoader {
 
 		save(session, algoritmoRJ, algoritmoSP);
 	}
-
-	private static void gerarDescontos(Session session){
-
-		TipoDesconto tipoDesconto = Fixture.criarTipoDesconto("001", "Normal", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("002", "Produtos Tributados", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("003", "Video Print de 1/1/96 A", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("004", "Cromos - Normal Exc Ju", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("005", "Importadas - Eletrolibe", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("006", "Promoções", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("007", "Especial Globo", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("008", "Magazine Fome Zero", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("009", "Impratadas Mag", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("010", "Importadas MagExpress", new BigDecimal(10));
-		save(session, tipoDesconto);
-	}
+	
 
 	private static void gerarCfops(Session session) {
 
@@ -5223,15 +5191,6 @@ public class DataLoader {
 	}
 
 
-	private static void criarCarteira(Session session){
-		carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
-
-		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-
-		save(session,carteiraRegistrada,carteiraSemRegistro);
-	}
-
-
 	private static void criarBox(Session session){
 
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
@@ -5699,16 +5658,16 @@ public class DataLoader {
 
 	private static void criarBanco(Session session) {
 
-		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoHSBC = Fixture.banco(10L, true, 1, "1010",
 							  123456L, "1", "1", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
-		bancoITAU = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoITAU = Fixture.banco(10L, true, 1, "1010",
 				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "184", BigDecimal.TEN, BigDecimal.ONE);
 
-		bancoDOBRASIL = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoDOBRASIL = Fixture.banco(10L, true, 1, "1010",
 				  123456L, "1", "1", "Instrucoes DOBRASIL.", "BB", "BANCO DO BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
 
-		bancoBRADESCO = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoBRADESCO = Fixture.banco(10L, true, 1, "1010",
 				  123456L, "1", "1", "Instrucoes BRADESCO.", "BRADESCO", "BANCO BRADESCO S/A", "065", BigDecimal.ZERO, BigDecimal.TEN);
 
 		save(session, bancoHSBC,bancoITAU,bancoDOBRASIL,bancoBRADESCO);

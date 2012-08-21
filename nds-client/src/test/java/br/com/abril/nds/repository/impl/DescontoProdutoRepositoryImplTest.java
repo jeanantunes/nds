@@ -288,7 +288,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 	public void obterTipoDescontoProdutoPorCota() {
 		
 		List<TipoDescontoProdutoDTO> descontosProduto = 
-				this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(cota.getId());
+				this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(cota.getId(),"desc","dataAlteracao");
 
 		int expectedSize = 1;
 		int actualSize = descontosProduto.size();

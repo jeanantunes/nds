@@ -166,11 +166,13 @@
 			<div id="tabs-2">
 				<jsp:include page="../endereco/index.jsp">
 					<jsp:param value="ENDERECO_TRANSPORTADOR" name="telaEndereco"/>
+					<jsp:param value="idModalCadastroTransportador" name="message"/>
 				</jsp:include>
 			</div>
 			<div id="tabs-3">
 				<jsp:include page="../telefone/index.jsp">
 					<jsp:param value="TRANSPORTADOR" name="tela"/>
+					<jsp:param value="idModalCadastroTransportador" name="message"/>
 				</jsp:include>
 			</div>
 

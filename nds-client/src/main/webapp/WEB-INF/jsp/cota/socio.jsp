@@ -11,7 +11,7 @@
 <table class="sociosPjGrid"></table>
 
 <span class="bt_add">
-	<a href="javascript:SOCIO_COTA.inicializarPopup();" id="btnAddSocio">Incluir Novo</a>
+	<a href="javascript:;" onclick="SOCIO_COTA.inicializarPopupSocio();" id="btnAddSocio">Incluir Novo</a>
 </span>
 
 <br/>
