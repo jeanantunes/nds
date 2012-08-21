@@ -1,5 +1,6 @@
 <head>
 
+<script type="text/javascript" src="scripts/endereco.js"></script>
 <script language="javascript" type="text/javascript">
 
 	$(function() {		
