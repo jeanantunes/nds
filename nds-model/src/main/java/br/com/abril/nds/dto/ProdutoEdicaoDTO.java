@@ -81,7 +81,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	
 	private Integer semanaRecolhimento;
 	
-	private boolean origemInterface;
+	private Boolean origemInterface;
 	
 	
 	private String editor;
@@ -460,13 +460,13 @@ public class ProdutoEdicaoDTO implements Serializable {
 	/**
 	 * @return the origemInterface
 	 */
-	public boolean isOrigemInterface() {
+	public Boolean isOrigemInterface() {
 		return origemInterface;
 	}
 	/**
 	 * @param origemInterface the origemInterface to set
 	 */
-	public void setOrigemInterface(boolean origemInterface) {
+	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
 	}
 	/**

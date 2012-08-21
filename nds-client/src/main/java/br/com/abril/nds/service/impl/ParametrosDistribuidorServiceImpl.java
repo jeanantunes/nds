@@ -59,7 +59,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
 	
-	private static final String DB_NAME = "db_parametro_sistema";
+	private static final String DB_NAME = "db_parametro_distribuidor";
 	
 	@Autowired
 	DistribuidorService distribuidorService;
@@ -103,7 +103,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		ParametrosDistribuidorVO parametrosDistribuidor = new ParametrosDistribuidorVO();
 		
 		// Cadastro / Fiscal
-		// TODO:
 		parametrosDistribuidor.setRazaoSocial(distribuidor.getRazaoSocial());
 		parametrosDistribuidor.setNomeFantasia(distribuidor.getNomeFantasia());
 		parametrosDistribuidor.setCnpj(distribuidor.getCnpj());
@@ -323,7 +322,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		endereco.setCep(enderecoVO.getCep());
 		endereco.setTipoLogradouro(enderecoVO.getTipoLogradouro());
 		endereco.setLogradouro(enderecoVO.getLogradouro());
-		endereco.setNumero(enderecoVO.getNumero());
+		endereco.setNumero((enderecoVO.getNumero().trim().isEmpty()) ? null : enderecoVO.getNumero());
 		endereco.setComplemento(enderecoVO.getComplemento());
 		endereco.setBairro(enderecoVO.getBairro());
 		endereco.setCidade(enderecoVO.getLocalidade());
@@ -372,13 +371,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	@Transactional
 	@Override
 	public void salvarDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor,
-								   InputStream imgLogotipo,
+								   byte[] imgLogotipo,
 								   String imgContentType) {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 
 		// Cadastro / Fiscal
-		// TODO: 
 		distribuidor.setRazaoSocial(parametrosDistribuidor.getRazaoSocial());
 		distribuidor.setNomeFantasia(parametrosDistribuidor.getNomeFantasia());
 		distribuidor.setCnpj(parametrosDistribuidor.getCnpj());
@@ -647,12 +645,19 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		distribuidorService.alterar(distribuidor);
 		
-		if (imgLogotipo != null) {
+		this.salvarLogo(imgLogotipo, imgContentType);
+	}
+
+	public void salvarLogo(byte[] imgLogotipo, String imgContentType) {
+		
+		if (imgLogotipo != null && imgContentType != null) {
 		
 			removerLogo();
 			
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(imgLogotipo);
+			
 			couchDbClient.saveAttachment(
-				imgLogotipo, ATTACHMENT_LOGOTIPO, imgContentType,
+				inputStream, ATTACHMENT_LOGOTIPO, imgContentType,
 				TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name(), null);
 		}
 	}
@@ -676,16 +681,19 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Override
 	public InputStream getLogotipoDistribuidor() {
-		InputStream inputStream;
+		
+		InputStream inputStream = null;
+		
 		try {
 			
-			//TODO alterar o modo de obter o LOGOTIPO_DISTRIBUIDOR, não é mais dominio do Parametro do Sistema
 			inputStream = couchDbClient.find(
 					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
 					+ "/" + ATTACHMENT_LOGOTIPO);
 		} catch (NoDocumentException e) {
-			inputStream = new ByteArrayInputStream(new byte[0]);
+			
+			return null;
 		}
+		
 		return inputStream;
 	}
 

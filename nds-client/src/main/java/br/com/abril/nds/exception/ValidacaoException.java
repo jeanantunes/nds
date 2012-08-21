@@ -1,6 +1,7 @@
 package br.com.abril.nds.exception;
 
 import java.io.Serializable;
+import java.util.List;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.util.TipoMensagem;
@@ -33,6 +34,15 @@ public class ValidacaoException extends RuntimeException implements Serializable
 		this.validacao = new ValidacaoVO(tipoMensagem, mensagem);
 	}
 
+	
+	/**
+	 * 
+	 * @param tipoMensagem
+	 * @param listaMensagens
+	 */
+	public ValidacaoException (TipoMensagem tipoMensagem, List<String> listaMensagens){
+		this.validacao = new ValidacaoVO(tipoMensagem, listaMensagens);
+	}
 	/**
 	 * Construtor.
 	 * 

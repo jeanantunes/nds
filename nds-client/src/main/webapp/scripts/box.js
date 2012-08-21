@@ -1,4 +1,3 @@
-
 var boxController = $.extend(true, {
 	tipoBoxEnun : {
 		ENCALHE : 'Encalhe',

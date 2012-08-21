@@ -1,19 +1,20 @@
 <head>
 <title>NDS - Novo Distrib</title>
 
+<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
+
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
+
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pessoa.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
-
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pessoa.js"></script>
-
-<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
-
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
 

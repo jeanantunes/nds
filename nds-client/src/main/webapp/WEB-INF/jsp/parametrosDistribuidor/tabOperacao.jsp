@@ -71,10 +71,14 @@
                     <legend>Parciais / Matriz de Lançamento</legend>
                     <label>Relançamento de Parciais em D+: </label>
                     <select name="parametrosDistribuidor.relancamentoParciaisEmDias" size="1" id="relancamentoParciaisEmDias" style="width:50px; height:19px;">
-                      <option value="2" selected="selected">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
+                      <c:forEach begin="2" end="5" varStatus="current"> 
+                         <c:if test="${parametrosDistribuidor.relancamentoParciaisEmDias eq current.index}"> 
+                            <option value="${current.index}" selected="selected">${current.index}</option>
+                         </c:if>
+                         <c:if test="${not (parametrosDistribuidor.relancamentoParciaisEmDias eq current.index)}"> 
+                            <option value="${current.index}">${current.index}</option>
+                         </c:if>
+                      </c:forEach>
                     </select>
                   </fieldset>
                    <fieldset style="width:440px!important; margin-bottom:5px;">

@@ -33,7 +33,7 @@ public class EMS0131Output implements Serializable {
 	private Long codigoDoCapataz; //CODIGO -- ENTREGADOR
 	private String cpfCnpj; //CPF -- PESSOA / CNPJ -- PESSOA
 	private String tipoDePessoa; //TIPO -- PESSOA
-	private Integer numeroDoLogradouro; //NUMERO -- ENDERECO
+	private String numeroDoLogradouro; //NUMERO -- ENDERECO
 	private Integer codigoDaCidade; //CODIGO_CIDADE_IBGE -- ENDERECO
 	private String inscricaoEstadual; //INSC_ESTADUAL -- PESSOA
 	private String inscricaoMunicipal;//INSC_MUNICIPAL -- PESSOA
@@ -187,10 +187,10 @@ public class EMS0131Output implements Serializable {
 	}
 	
 	@Field(offset = 153, length = 6)
-	public Integer getNumeroDoLogradouro() {
+	public String getNumeroDoLogradouro() {
 		return numeroDoLogradouro;
 	}
-	public void setNumeroDoLogradouro(Integer numeroDoLogradouro) {
+	public void setNumeroDoLogradouro(String numeroDoLogradouro) {
 		this.numeroDoLogradouro = numeroDoLogradouro;
 	}
 	

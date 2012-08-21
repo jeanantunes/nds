@@ -3,6 +3,7 @@
 	<p>Informações das abas não salvas serão perdidos. Confirma ?</p>
 </div>
 
+<div id="workspaceCota">
 <div id="dialog-cota" title="Nova Cota" style="display: none">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -75,6 +76,7 @@
 		
 	</div>
 
+</div>
 </div>
 
 

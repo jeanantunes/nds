@@ -14,7 +14,7 @@
 <br />
 <br />
 
-<form name="form" action="<c:url value='j_spring_security_check'/>" method="POST">
+<form name="form" action="<c:url value='j_spring_security_check'/>" method="POST" onload="$('#username').focus()" onsubmit="form.submit();">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <input:hidden id="logout_true" name="logout_true" />
   <tr>
