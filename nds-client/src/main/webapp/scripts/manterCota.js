@@ -852,9 +852,13 @@ var COTA_CPF = $.extend(true, {
 
 	editarCPF:function(result){
 		
+		
 		COTA_CPF.tratarExibicaoDadosCadastrais();
 		
 		COTA_CPF.carregarDadosCpf(result);
+		
+		COTA_CPF.initGridProprietarios(result);
+		
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
 		
@@ -906,6 +910,8 @@ var COTA_CPF = $.extend(true, {
 		if(result.fimPeriodo){
 			$("#periodoCotaAteCPF", this.workspace).val(result.fimPeriodo.$);
 		}
+		
+		
 	},
 	
 	salvarDadosBasico:function (){
@@ -984,6 +990,42 @@ var COTA_CPF = $.extend(true, {
 		$("#periodoCotaAteCPF", this.workspace).val("");
 		
 		clearMessageDialogTimeout(null);
+	}, 
+	
+	initGridProprietarios: function(data) {
+		
+		$(".antigosProprietariosGrid", this.workspace).flexigrid({
+			dataType : 'json',
+			preProcess: false,
+			colModel : [{
+				display : 'Período',
+				name : 'periodo',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'CPF',
+				name : 'documento',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 400,
+			height : 110
+		});
+		$(".antigosProprietariosGrid", this.workspace).flexigrid().flexAddData(data.proprietarios);
 	}
 	
 }, BaseController);
