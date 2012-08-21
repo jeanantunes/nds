@@ -1,4 +1,4 @@
-var fornecedorController = {
+var fornecedorController = $.extend(true,{
 		init:function(){
 			$('#fornecedorController-filtroConsultaFornecedorRazaoSocial,#fornecedorController-filtroConsultaFornecedorCnpj,#fornecedorController-filtroConsultaFornecedorNomeFantasia').bind('keypress', function(e) {
 				if(e.keyCode == 13) {
@@ -422,4 +422,4 @@ var fornecedorController = {
 				}
 
 			}		
-};
+}, BaseController);
