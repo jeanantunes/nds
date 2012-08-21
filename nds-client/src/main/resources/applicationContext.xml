@@ -47,6 +47,7 @@
 		<property name="entityInterceptor">
     		<bean class="br.com.abril.nds.interceptor.EntityInterceptor"/>
   		</property>
+  		
 	</bean>
 
 	<bean id="transactionManager"

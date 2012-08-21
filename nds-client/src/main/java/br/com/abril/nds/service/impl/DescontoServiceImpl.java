@@ -203,7 +203,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		descontoDistribuidorRepository.adicionar(desconto);
 		
-		//TODO chamar metodo para processamrnto de desconto produto edição
+		processarDescontoDistribuidor(desconto.getFornecedores(), valorDesconto);
 	}
 	
 	@Override
@@ -233,7 +233,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		descontoCotaRepository.adicionar(descontoCota);
 		
-		//TODO chamar metodo para processamrnto de desconto produto edição
+		processarDescontoCota(descontoCota.getCota(), descontoCota.getFornecedores(), valorDesconto);
 	}
 	
 	/**
@@ -249,6 +249,8 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Set<Cota> cotas = obterCotas(desconto.getCotas(), desconto.isTodasCotas());
 
+		Set<ProdutoEdicao>produtosEdicao = new HashSet<ProdutoEdicao>();
+		
 		if (desconto.getEdicaoProduto() != null) {
 
 			ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
@@ -265,6 +267,8 @@ public class DescontoServiceImpl implements DescontoService {
 			descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
 
 			this.descontoProdutoRepository.adicionar(descontoProduto);
+			
+			produtosEdicao.add(produtoEdicao);
 
 		} else if (desconto.getQuantidadeEdicoes() != null) {
 
@@ -286,9 +290,11 @@ public class DescontoServiceImpl implements DescontoService {
 
 				this.descontoProdutoRepository.adicionar(descontoProduto);
 			}
+			
+			produtosEdicao.addAll(listaProdutoEdicao);
 		}
 		
-		//TODO chamar metodo para processamrnto de desconto produto edição
+		processarDescontoProduto(produtosEdicao, cotas, desconto.getDescontoProduto());
 	}
 
 	@Override
@@ -432,6 +438,8 @@ public class DescontoServiceImpl implements DescontoService {
 			fornecedores = new HashSet<Fornecedor>(this.fornecedorRepository.obterFornecedores());
 		}
 		
+		Set<ProdutoEdicao> produtosParaInclusao = new HashSet<ProdutoEdicao>();
+		
 		for (Fornecedor fornecedor : fornecedores) {
 			
 			Set<ProdutoEdicao> produtosParaDesconto = new HashSet<ProdutoEdicao>();
@@ -471,12 +479,12 @@ public class DescontoServiceImpl implements DescontoService {
 					continue;
 				}
 				
-				produtosParaDesconto = 
+				produtosParaInclusao = 
 					this.descontoComponent.filtrarProdutosPassiveisDeDesconto(
 						tipoDesconto, fornecedor,cota ,produtosParaDesconto);
 				
 				this.descontoComponent.persistirDesconto(
-					tipoDesconto, fornecedor, cota, produtosParaDesconto, valorDesconto);
+					tipoDesconto, fornecedor, cota, produtosParaInclusao, valorDesconto);
 			}
 		}
 	}

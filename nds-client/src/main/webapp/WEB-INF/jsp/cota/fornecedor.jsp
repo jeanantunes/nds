@@ -5,7 +5,7 @@ $(function() {
 });
 
 </script>
-
+<input type="hidden" id="telaCotaidFornecedorHidden" value="${param.paramFornecedores}">
 <table width="597" cellspacing="2" cellpadding="2" border="0" align="center">
   <tbody>
   	
