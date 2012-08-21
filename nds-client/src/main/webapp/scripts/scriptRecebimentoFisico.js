@@ -716,11 +716,11 @@ var recebimentoFisicoController = $.extend(true, {
 				
 	    		$(".grids", this.workspace).hide();
 	    		
-	    		this.limparCamposPesquisa();
+	    		recebimentoFisicoController.limparCamposPesquisa();
 	        	
-	    		this.limparCamposNovoItem();
+	    		recebimentoFisicoController.limparCamposNovoItem();
 	        	
-	    		this.limparCampos();
+	    		recebimentoFisicoController.limparCampos();
 	        	
 	        	exibirMensagem(result.tipoMensagem, result.listaMensagens);
 	        	
@@ -963,13 +963,13 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			if(edicaoItemNotaPermitida == "S") {
 				
-				value.cell.acao = '<a href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>' + 
-				'<a href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>';
+				value.cell.acao = '<a href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>'  +
+								  '<a href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
 				
 			} else{
 				
-				value.cell.acao = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgExclusao + '</a>' + 
-							 '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgEdicao   + '</a>';
+				value.cell.acao = 	'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgEdicao   + '</a>' + 
+							 		'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgExclusao + '</a>';
 				
 			} 
 			
@@ -1049,13 +1049,13 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			if(edicaoItemNotaPermitida == "S") {
 				
-				value.cell.acao = '<a href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>' + 
-				'<a href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>';
+				value.cell.acao =  '<a href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>' +
+				'<a href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
 				
 			} else{
 				
-				value.cell.acao = '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgExclusao + '</a>' + 
-							 '<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgEdicao   + '</a>';
+				value.cell.acao = 	'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgEdicao   + '</a>' + 
+							 		'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgExclusao + '</a>' ;
 			}
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
