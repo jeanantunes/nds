@@ -5,6 +5,10 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
+import br.com.abril.nds.util.Util;
 
 /**
  * @author francisco.garcia
@@ -29,7 +33,7 @@ public class PessoaJuridica extends Pessoa implements Serializable {
 	@Column(name = "CNPJ", unique = true)
 	private String cnpj;
 	
-	@Column(name = "INSC_ESTADUAL",length=14, unique = true)
+	@Column(name = "INSC_ESTADUAL",length=18, unique = true)
 	private String inscricaoEstadual;
 	
 	@Column(name = "INSC_MUNICIPAL",length=15)
@@ -108,6 +112,12 @@ public class PessoaJuridica extends Pessoa implements Serializable {
 	@Override
 	public String getDocumento() {
 		return this.cnpj;
+	}
+	
+	@PrePersist
+	@PreUpdate
+	public void removeMaskCnpj(){
+		this.setCnpj(Util.removerMascaraCnpj(this.getCnpj()));
 	}
 
 }

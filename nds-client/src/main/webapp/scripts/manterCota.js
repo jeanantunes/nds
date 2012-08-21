@@ -1,3 +1,4 @@
+
 var TAB_COTA = new TabCota('tabCota');
 
 var ENDERECO = new Endereco("", "dialog-socio");
@@ -406,7 +407,8 @@ var MANTER_COTA = $.extend(true, {
 				
 				return MANTER_COTA.fecharModalCadastroCota;
 				
-			}
+			},
+			form: $("#workspaceCota", this.workspace)		
 		});
 	},
 	

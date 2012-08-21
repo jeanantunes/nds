@@ -27,6 +27,18 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.table.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametrosDistribuidor.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
+
+<script type="text/javascript">
+	
+	parametrosDistribuidorController.init("${sessionScope.cadastroDistribuidorExisteLogotipo}");
+	
+	var endereco = new Endereco("", "");
+	
+	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
+</script>
+
 </head>
 
 <body>

@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -226,7 +227,7 @@ public class FornecedorRepositoryImpl extends
 		   .append(" fornecedor.juridica.razaoSocial as razaoSocial, ")
 		   .append(" fornecedor.juridica.cnpj as cnpj, ")
 		   .append(" fornecedor.responsavel as responsavel, ")
-		   .append(" telefone.numero as telefone, ")
+		   .append(" '(' || telefone.ddd || ') ' || telefone.numero as telefone, ")
 		   .append(" fornecedor.juridica.email as email, ")
 		   .append(" fornecedor.emailNfe as emailNfe ")
 		   .append(" from Fornecedor fornecedor ")
@@ -376,6 +377,14 @@ public class FornecedorRepositoryImpl extends
 		criteria.setMaxResults(1);
 
 		return (Fornecedor) criteria.uniqueResult();
+	}
+	
+	@Override
+	public Integer obterMaxCodigoInterface(){
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);		
+		
+		criteria.setProjection(Projections.max("codigoInterface"));
+		return (Integer) criteria.uniqueResult();
 	}
 	
 }

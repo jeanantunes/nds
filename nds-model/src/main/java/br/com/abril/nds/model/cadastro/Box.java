@@ -11,8 +11,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import br.com.abril.nds.util.Util;
 
 /**
  * @author francisco.garcia
@@ -163,5 +167,12 @@ public class Box implements Serializable {
 		if (tipoBox != other.tipoBox)
 			return false;
 		return true;
+	}
+	
+	
+	@PrePersist
+	@PreUpdate
+	private void removeMaskCnpj(Box box){
+		System.out.println("\t\t\t BLA");
 	}
 }
