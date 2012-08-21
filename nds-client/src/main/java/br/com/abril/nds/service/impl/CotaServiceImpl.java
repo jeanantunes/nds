@@ -1490,10 +1490,6 @@ public class CotaServiceImpl implements CotaService {
 		}
 		return comboTiposCota;
 	}
-	
-	@Override
-	@Transactional(readOnly=true)
-	public List<SocioCota> obterSociosCota(Long idCota){
 		
 	@Transactional
 	@Override
