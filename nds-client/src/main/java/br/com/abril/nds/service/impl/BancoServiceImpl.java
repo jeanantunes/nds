@@ -11,7 +11,6 @@ import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.service.BancoService;
@@ -103,7 +102,7 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setAgencia(banco.getAgencia());
 			bancoVO.setConta(banco.getConta());
 			bancoVO.setDigito(banco.getDvConta());
-			bancoVO.setCodigoCarteira(banco.getCarteira()!=null?banco.getCarteira().getCodigo():0);
+			bancoVO.setCarteira(banco.getCarteira()!=null?banco.getCarteira():0);
 			bancoVO.setJuros(banco.getJuros());
 			bancoVO.setAtivo(banco.isAtivo());
 			bancoVO.setMulta(banco.getMulta());
@@ -154,21 +153,7 @@ public class BancoServiceImpl implements BancoService {
 		bancoRepository.desativarBanco(idBanco);
 	}
 	
-	/**
-	 * Método responsável por obter carteiras para preencher combo da camada view
-	 * @return comboCarteiras: carteiras cadastradas
-	 */
-	@Transactional(readOnly=true)
-	@Override
-	public List<ItemDTO<Integer, String>> getComboCarteiras() {
-		List<ItemDTO<Integer,String>> comboCarteiras =  new ArrayList<ItemDTO<Integer,String>>();
-		List<Carteira> carteiras = bancoRepository.obterCarteiras();
-		for (Carteira itemCarteira : carteiras){
-			comboCarteiras.add(new ItemDTO<Integer,String>(itemCarteira.getCodigo(),itemCarteira.getTipoRegistroCobranca().toString()));
-		}
-		return comboCarteiras;
-	}
-	
+		
 	/**
 	 * Método responsável por obter moedas para preencher combo da camada view
 	 * @return comboMoedas: moedas parametrizadas
@@ -181,18 +166,7 @@ public class BancoServiceImpl implements BancoService {
 		}
 		return comboMoedas;
 	}
-
-	/**
-	 * Método responsável por obter carteira por id.
-	 * @return {@link br.com.abril.nds.model.cadastro.Carteira} 
-	 */
-	@Transactional(readOnly=true)
-	@Override
-	public Carteira obterCarteiraPorCodigo(Integer codigoCarteira) {
-		return this.bancoRepository.obterCarteiraPorCodigo(codigoCarteira);
-	}
-
-	
+		
 	/**
 	 * Método responsável por obter bancos para preencher combo da camada view
 	 * @return comboBancos: bancos cadastrados
@@ -207,5 +181,5 @@ public class BancoServiceImpl implements BancoService {
 		}
 		return comboBancos;
 	}
-	
+
 }

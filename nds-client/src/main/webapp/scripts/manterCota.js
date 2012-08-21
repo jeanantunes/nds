@@ -21,7 +21,7 @@ var MANTER_COTA = $.extend(true, {
 		
 		COTA_FORNECEDOR.initTabFornecedorCota();
 
-		COTA_DESCONTO.initTabDescontoCota();
+		//COTA_DESCONTO.initTabDescontoCota();
 
 		SOCIO_COTA.initGridSocioCota();
 
@@ -147,9 +147,8 @@ var MANTER_COTA = $.extend(true, {
     },
     
     carregarDescontos:function(){
-    	
-    	TAB_COTA.funcaoSalvar = COTA_DESCONTO.salvarDesconto;
-    	COTA_DESCONTO.carregarDescontoCota();
+        
+    	//descontoController.initDescontos(MANTER_COTA.numeroCota);
     },
     
     carregarDistribuicao:function(){
@@ -528,8 +527,10 @@ var MANTER_COTA = $.extend(true, {
 	}
 }, BaseController);
 
+
+/*
 var COTA_DESCONTO = $.extend(true, {
-		
+
 		salvarDesconto:function(){
 			
 			var descontos = "";
@@ -581,8 +582,10 @@ var COTA_DESCONTO = $.extend(true, {
 				"select[name='selectDesconto']", {trigger: "#linkDescontoEnviarTodos"}
 			);
 		}
-		
+
 }, BaseController);
+*/
+
 
 var COTA_FORNECEDOR = $.extend(true, {
 	

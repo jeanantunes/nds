@@ -18,7 +18,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -121,11 +120,8 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		
 		usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
-		
-		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteira);
-		
-		Banco banco = Fixture.hsbc(carteira); 
+				
+		Banco banco = Fixture.hsbc(); 
 		save(banco);
 		
 		

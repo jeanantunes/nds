@@ -11,12 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.Moeda;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -48,17 +45,10 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
   	@Before
   	public void setup() {
   		
-  	    //CRIA UM OBJETO CARTEIRA NA SESSAO PARA TESTES
-  		Carteira carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
-  	    
-  		//CRIA UM OBJETO CARTEIRA NA SESSAO PARA TESTES
-		Carteira carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteiraRegistrada,carteiraSemRegistro);
-  		
   		//CRIA UM OBJETO BANCO NA SESSAO PARA TESTES
   		Banco bancoHSBC= Fixture.banco(100L, 
 				  				       true, 
-				  				       carteiraRegistrada, 
+				  				       30, 
 				  				       "1010",
 								       123456L, 
 								       "1", 
@@ -73,7 +63,7 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
   	    //CRIA UM OBJETO BANCO NA SESSAO PARA TESTES
   		Banco bancoBB= Fixture.banco(101L, 
   				                     false, 
-				  				     carteiraSemRegistro, 
+				  				     30, 
 				  				     "1011",
 								     123456L, 
 								     "2", 
@@ -153,16 +143,6 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
   		}
   	}
     
-	@Test
-  	public void obterCarteiraPorCodigo() {
-		Carteira carteira = this.bancoRepository.obterCarteiraPorCodigo(30);
-		Assert.assertTrue(carteira!=null);
-		Assert.assertEquals(TipoRegistroCobranca.REGISTRADA, carteira.getTipoRegistroCobranca());
-		
-		carteira = this.bancoRepository.obterCarteiraPorCodigo(1);
-		Assert.assertNotNull(carteira);
-		Assert.assertEquals(TipoRegistroCobranca.SEM_REGISTRO, carteira.getTipoRegistroCobranca());
-	}
 
 
 	@Test

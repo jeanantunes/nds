@@ -42,7 +42,8 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 				.append("then 'Diversos' ")
 				.append("when (select count(fornecedor.id) from DescontoDistribuidor descontoFor JOIN descontoFor.fornecedores fornecedor  ")
 					.append("where descontoFor.id = desconto.id ) = 1 then pessoa.razaoSocial ")
-			.append("else null end) as fornecedor ");
+			.append("else null end) as fornecedor, ")
+		    .append(" 'Geral' as descTipoDesconto ");
 		
 		hql.append(" from DescontoDistribuidor desconto")
 			.append(" JOIN desconto.fornecedores fornecedor ")
@@ -101,6 +102,10 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 			case FORNECEDORES:
 				hql.append(" order by fornecedor ");
 				break;	
+				
+			case TIPO_DESCONTO:
+				hql.append(" order by descTipoDesconto ");
+				break;		
 				
 			default:
 				hql.append(" order by sequencial ");

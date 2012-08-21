@@ -20,7 +20,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.Intervalo;
@@ -207,27 +206,6 @@ public interface CotaService {
 	 * @return Integer
 	 */
 	Integer gerarNumeroSugestaoCota();
-	
-	/**
-	 *  Retorna uma lista de tipos de desconto não associadas a uma cota
-	 * @param idCota
-	 * @return List<TipoDesconto>
-	 */
-	List<TipoDesconto> obterDescontos(Long idCota);
-	
-	/**
-	 * Retorna uma lista de tipos de desconto associadas a uma cota
-	 * @param idCota
-	 * @return List<TipoDesconto>
-	 */
-	List<TipoDesconto> obterDescontosCota(Long idCota);
-
-	/**
-	 * Persiste os dados de tipo de desconto referente a cota informada
-	 * @param descontos
-	 * @param idCota
-	 */
-	void salvarDescontosCota(List<Long> descontos, Long idCota);
 	
 	/**
 	 * Retorna uma cota ativa referente ao número de cota informado

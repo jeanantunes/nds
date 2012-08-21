@@ -28,6 +28,8 @@ public class TipoDescontoDTO implements Serializable {
 	@Export(label="Usuário", exhibitionOrder = 5,alignment=Alignment.LEFT)
 	private String usuario;
 	
+	private String descTipoDesconto;
+	
 	private Long idTipoDesconto;
 
 	/**
@@ -113,6 +115,20 @@ public class TipoDescontoDTO implements Serializable {
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
-	
+
+	/**
+	 * @return the tipoDesconto
+	 */
+	public String getDescTipoDesconto() {
+		return descTipoDesconto;
+	}
+
+	/**
+	 * @param tipoDesconto the tipoDesconto to set
+	 */
+	public void setDescTipoDesconto(String descTipoDesconto) {
+		this.descTipoDesconto = descTipoDesconto;
+	}
+
 	
 }

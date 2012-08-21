@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.repository.BancoRepository;
 
 @Repository
@@ -177,23 +176,6 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
         query.setParameter("idBanco", idBanco);
         query.setParameter("status", StatusCobranca.NAO_PAGO);
 		return (query.list().size() > 0);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Carteira> obterCarteiras() {
-		StringBuilder hql = new StringBuilder();
-		hql.append(" from Carteira c ");		
-        Query query = super.getSession().createQuery(hql.toString());
-		return query.list();
-	}
-
-	@Override
-	public Carteira obterCarteiraPorCodigo(Integer codigoCarteira) {
-		Criteria criteria = super.getSession().createCriteria(Carteira.class);
-		criteria.add(Restrictions.eq("codigo", codigoCarteira));
-		criteria.setMaxResults(1);
-		return (Carteira) criteria.uniqueResult();
 	}
 	
 }

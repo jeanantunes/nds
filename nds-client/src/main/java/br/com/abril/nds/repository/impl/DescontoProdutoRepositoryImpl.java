@@ -156,7 +156,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota) {
+	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota, String sortorder, String sortname) {
 
 		StringBuilder hql = new StringBuilder();
 		
@@ -175,7 +175,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		    hql.append(" where cota.id = :idCota ");
 		}
 		
-		hql.append(" order by descontoProduto.dataAlteracao ");
+		hql.append(" order by "+sortname+" "+sortorder);
 
 		Query query = getSession().createQuery(hql.toString());
 		

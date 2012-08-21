@@ -1,8 +1,8 @@
 var bancoController = $.extend(true, {
 	init : function() {
 
-			$(".bancosGrid", bancoController.workspace).flexigrid({
-				preProcess: bancoController.getDataFromResult,
+			$(".bancosGrid", this.workspace).flexigrid({
+				preProcess: this.getDataFromResult,
 				dataType : 'json',
 				colModel : [ {
 					display : 'Código',
@@ -75,26 +75,27 @@ var bancoController = $.extend(true, {
 				height : 255
 			});
 		
-			$("#numero", bancoController.workspace).numeric();	
-			$("#cedente", bancoController.workspace).numeric();	
+			$("#numero", this.workspace).numeric();	
+			$("#cedente", this.workspace).numeric();	
 			
-			$("#newNumero", bancoController.workspace).numeric();	
-			$("#newCodigoCedente", bancoController.workspace).numeric();	
-			$("#newAgencia", bancoController.workspace).numeric();	
-			$("#newConta", bancoController.workspace).numeric();	
-			$("#newDigito", bancoController.workspace).numeric();	
-			$("#newJuros", bancoController.workspace).numeric();	
-			$("#newMulta", bancoController.workspace).numeric();
-			$("#newVrMulta", bancoController.workspace).numeric();
+			$("#newNumero", this.workspace).numeric();	
+			$("#newCodigoCedente", this.workspace).numeric();	
+			$("#newAgencia", this.workspace).numeric();	
+			$("#newConta", this.workspace).numeric();	
+			$("#newDigito", this.workspace).numeric();
+			$("#newCarteira", this.workspace).numeric();
+			$("#newJuros", this.workspace).numeric();	
+			$("#newMulta", this.workspace).numeric();
+			$("#newVrMulta", this.workspace).numeric();
 			
-			$("#alterNumero", bancoController.workspace).numeric();	
-			$("#alterCodigoCedente", bancoController.workspace).numeric();	
-			$("#alterAgencia", bancoController.workspace).numeric();	
-			$("#alterConta", bancoController.workspace).numeric();	
-			$("#alterDigito", bancoController.workspace).numeric();	
-			$("#alterJuros", bancoController.workspace).numeric();	
-			$("#alterMulta", bancoController.workspace).numeric();
-			$("#alterVrMulta", bancoController.workspace).numeric();
+			$("#alterNumero", this.workspace).numeric();	
+			$("#alterCodigoCedente", this.workspace).numeric();	
+			$("#alterAgencia", this.workspace).numeric();	
+			$("#alterConta", this.workspace).numeric();	
+			$("#alterDigito", this.workspace).numeric();	
+			$("#alterJuros", this.workspace).numeric();	
+			$("#alterMulta", this.workspace).numeric();
+			$("#alterVrMulta", this.workspace).numeric();
 
 		},
 		
@@ -102,7 +103,7 @@ var bancoController = $.extend(true, {
 		
 	    	bancoController.limparTelaCadastroBanco();
 			
-			$( "#dialog-novo", bancoController.workspace ).dialog({
+			$( "#dialog-novo", this.workspace ).dialog({
 				resizable: false,
 				height:350,
 				width:655,
@@ -118,13 +119,13 @@ var bancoController = $.extend(true, {
 				beforeClose: function() {
 					clearMessageDialogTimeout();
 				},
-				form: $("#dialog-novo", bancoController.workspace).parents("form")
+				form: $("#dialog-novo", this.workspace).parents("form")
 			});
 		},
 		
 		popup_alterar : function() {
 		
-			$( "#dialog-alterar", bancoController.workspace ).dialog({
+			$( "#dialog-alterar", this.workspace ).dialog({
 				resizable: false,
 				height:350,
 				width:655,
@@ -140,14 +141,14 @@ var bancoController = $.extend(true, {
 				beforeClose: function() {
 					clearMessageDialogTimeout();
 			    },
-				form: $("#dialog-alterar", bancoController.workspace).parents("form")
+				form: $("#dialog-alterar", this.workspace).parents("form")
 			});	
 			      
 		},
 		
 		popup_excluir : function(idBanco) {
 		
-			$( "#dialog-excluir", bancoController.workspace ).dialog({
+			$( "#dialog-excluir", this.workspace ).dialog({
 				resizable: false,
 				height:170,
 				width:380,
@@ -173,35 +174,35 @@ var bancoController = $.extend(true, {
 				beforeClose: function() {
 					clearMessageDialogTimeout();
 			    },
-				form: $("#dialog-excluir", bancoController.workspace).parents("form")
+				form: $("#dialog-excluir", this.workspace).parents("form")
 				
 			});
 		},
 		
 	    mostrarGridConsulta : function() {
 	    	
-	    	$("#ativo", bancoController.workspace).val(0);
+	    	$("#ativo", this.workspace).val(0);
 	    	if (document.formularioFiltro.ativo.checked){
-	    		$("#ativo", bancoController.workspace).val(1);
+	    		$("#ativo", this.workspace).val(1);
 			}
 	    	
 			/*PASSAGEM DE PARAMETROS*/
-			$(".bancosGrid", bancoController.workspace).flexOptions({
+			$(".bancosGrid", this.workspace).flexOptions({
 				/*METODO QUE RECEBERA OS PARAMETROS*/
 				url: contextPath + "/banco/consultaBancos",
 				params: [
-				         {name:'nome', value:$("#nome", bancoController.workspace).val()},
-				         {name:'numero', value:$("#numero", bancoController.workspace).val()},
-				         {name:'cedente', value:$("#cedente", bancoController.workspace).val()},
-				         {name:'ativo', value:$("#ativo", bancoController.workspace).val() }
+				         {name:'nome', value:$("#nome", this.workspace).val()},
+				         {name:'numero', value:$("#numero", this.workspace).val()},
+				         {name:'cedente', value:$("#cedente", this.workspace).val()},
+				         {name:'ativo', value:$("#ativo", this.workspace).val() }
 				        ] ,
 				        newp: 1
 			});
 			
 			/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
-			$(".bancosGrid", bancoController.workspace).flexReload();
+			$(".bancosGrid", this.workspace).flexReload();
 			
-			$(".grids", bancoController.workspace).show();
+			$(".grids", this.workspace).show();
 		},
 		
 		getDataFromResult : function(resultado) {
@@ -212,7 +213,7 @@ var bancoController = $.extend(true, {
 					resultado.mensagens.tipoMensagem, 
 					resultado.mensagens.listaMensagens
 				);
-				$(".grids", bancoController.workspace).hide();
+				$(".grids", this.workspace).hide();
 				return resultado.tableModel;
 			}
 			
@@ -243,32 +244,29 @@ var bancoController = $.extend(true, {
 		},
 		
 		fecharDialogs : function() {
-			$( "#dialog-novo", bancoController.workspace ).dialog( "close" );
-		    $( "#dialog-alterar", bancoController.workspace ).dialog( "close" );
-		    $( "#dialog-excluir", bancoController.workspace ).dialog( "close" );
+			$( "#dialog-novo", this.workspace ).dialog( "close" );
+		    $( "#dialog-alterar", this.workspace ).dialog( "close" );
+		    $( "#dialog-excluir", this.workspace ).dialog( "close" );
 		},
 		
 	    novoBanco : function() {
 			
-	    	var numero     = $("#newNumero", bancoController.workspace).val();
-			var nome       = $("#newNome", bancoController.workspace).val();
-			var cedente    = $("#newCodigoCedente", bancoController.workspace).val();
-			var agencia    = $("#newAgencia", bancoController.workspace).val();
-			var conta      = $("#newConta", bancoController.workspace).val();
-			var digito     = $("#newDigito", bancoController.workspace).val();
-			var apelido    = $("#newApelido", bancoController.workspace).val();
-			var carteira   = $("#newCarteira", bancoController.workspace).val();
-			var juros      = $("#newJuros", bancoController.workspace).val();
+	    	var numero     = $("#newNumero", this.workspace).val();
+			var nome       = $("#newNome", this.workspace).val();
+			var cedente    = $("#newCodigoCedente", this.workspace).val();
+			var agencia    = $("#newAgencia", this.workspace).val();
+			var conta      = $("#newConta", this.workspace).val();
+			var digito     = $("#newDigito", this.workspace).val();
+			var apelido    = $("#newApelido", this.workspace).val();
+			var carteira   = $("#newCarteira", this.workspace).val();
+			var juros      = $("#newJuros", this.workspace).val();
+			debugger;
 			
-			$("#newAtivo", bancoController.workspace).val(0);
-	    	if (document.formularioNovoBanco.newAtivo.checked){
-	    		$("#newAtivo", bancoController.workspace).val(1);
-			}
-			var ativo      = $("#newAtivo", bancoController.workspace).val();
+			var ativo      = $("#newAtivo", this.workspace).is(':checked');
 			
-			var multa      = $("#newMulta", bancoController.workspace).val();
-			var vrMulta    = $("#newVrMulta", bancoController.workspace).val();
-			var instrucoes = $("#newInstrucoes", bancoController.workspace).val();
+			var multa      = $("#newMulta", this.workspace).val();
+			var vrMulta    = $("#newVrMulta", this.workspace).val();
+			var instrucoes = $("#newInstrucoes", this.workspace).val();
 
 			$.postJSON(contextPath + "/banco/novoBanco",
 					   "numero="+numero+
@@ -278,7 +276,7 @@ var bancoController = $.extend(true, {
 					   "&conta="+ conta+
 					   "&digito="+ digito+
 					   "&apelido="+ apelido+
-					   "&codigoCarteira="+ carteira+
+					   "&carteira="+ carteira+
 					   "&juros="+ juros+
 					   "&ativo="+ ativo+
 					   "&multa="+ multa+
@@ -299,26 +297,22 @@ var bancoController = $.extend(true, {
 		
 		alterarBanco : function() {
 			
-			var idBanco    = $("#idBanco", bancoController.workspace).val();
-	    	var numero     = $("#alterNumero", bancoController.workspace).val();
-			var nome       = $("#alterNome", bancoController.workspace).val();
-			var cedente    = $("#alterCodigoCedente", bancoController.workspace).val();
-			var agencia    = $("#alterAgencia", bancoController.workspace).val();
-			var conta      = $("#alterConta", bancoController.workspace).val();
-			var digito     = $("#alterDigito", bancoController.workspace).val();
-			var apelido    = $("#alterApelido", bancoController.workspace).val();
-			var carteira   = $("#alterCarteira", bancoController.workspace).val();
-			var juros      = $("#alterJuros", bancoController.workspace).val();
+			var idBanco    = $("#idBanco", this.workspace).val();
+	    	var numero     = $("#alterNumero", this.workspace).val();
+			var nome       = $("#alterNome", this.workspace).val();
+			var cedente    = $("#alterCodigoCedente", this.workspace).val();
+			var agencia    = $("#alterAgencia", this.workspace).val();
+			var conta      = $("#alterConta", this.workspace).val();
+			var digito     = $("#alterDigito", this.workspace).val();
+			var apelido    = $("#alterApelido", this.workspace).val();
+			var carteira   = $("#alterCarteira", this.workspace).val();
+			var juros      = $("#alterJuros", this.workspace).val();
 			
-			$("#alterAtivo", bancoController.workspace).val(0);
-	    	if (document.formularioAlteraBanco.alterAtivo.checked){
-	    		$("#alterAtivo", bancoController.workspace).val(1);
-			}
-			var ativo      = $("#alterAtivo", bancoController.workspace).val();
+			var ativo      = $("#alterAtivo", this.workspace).is(':checked');
 			
-			var multa      = $("#alterMulta", bancoController.workspace).val();
-			var vrMulta    = $("#alterVrMulta", bancoController.workspace).val();
-			var instrucoes = $("#alterInstrucoes", bancoController.workspace).val();
+			var multa      = $("#alterMulta", this.workspace).val();
+			var vrMulta    = $("#alterVrMulta", this.workspace).val();
+			var instrucoes = $("#alterInstrucoes", this.workspace).val();
 
 			$.postJSON(contextPath + "/banco/alteraBanco",
 					   "idBanco="+idBanco+
@@ -329,7 +323,7 @@ var bancoController = $.extend(true, {
 					   "&conta="+ conta+
 					   "&digito="+ digito+
 					   "&apelido="+ apelido+
-					   "&codigoCarteira="+ carteira+
+					   "&carteira="+ carteira+
 					   "&juros="+ juros+
 					   "&ativo="+ ativo+
 					   "&multa="+ multa+
@@ -358,23 +352,23 @@ var bancoController = $.extend(true, {
 		
 		sucessCallbackCadastroBanco : function(resultado) {
 			
-			$("#idBanco", bancoController.workspace).val(resultado.idBanco);
-			$("#alterNumero", bancoController.workspace).val(resultado.numero);
-			$("#alterNome", bancoController.workspace).val(resultado.nome);
-			$("#alterCodigoCedente", bancoController.workspace).val(resultado.codigoCedente);
-			$("#alterAgencia", bancoController.workspace).val(resultado.agencia);
-			$("#alterConta", bancoController.workspace).val(resultado.conta);
-			$("#alterDigito", bancoController.workspace).val(resultado.digito);
-			$("#alterApelido", bancoController.workspace).val(resultado.apelido);
-			$("#alterCarteira", bancoController.workspace).val(resultado.codigoCarteira);
-			$("#alterJuros", bancoController.workspace).val(resultado.juros);
+			$("#idBanco", this.workspace).val(resultado.idBanco);
+			$("#alterNumero", this.workspace).val(resultado.numero);
+			$("#alterNome", this.workspace).val(resultado.nome);
+			$("#alterCodigoCedente", this.workspace).val(resultado.codigoCedente);
+			$("#alterAgencia", this.workspace).val(resultado.agencia);
+			$("#alterConta", this.workspace).val(resultado.conta);
+			$("#alterDigito", this.workspace).val(resultado.digito);
+			$("#alterApelido", this.workspace).val(resultado.apelido);
+			$("#alterCarteira", this.workspace).val(resultado.carteira);
+			$("#alterJuros", this.workspace).val(resultado.juros);
 			
-			$("#alterAtivo", bancoController.workspace).val(resultado.ativo);
+			$("#alterAtivo", this.workspace).val(resultado.ativo);
 			document.formularioAlteraBanco.alterAtivo.checked = resultado.ativo;
 			
-			$("#alterMulta", bancoController.workspace).val(resultado.multa);
-			$("#alterVrMulta", bancoController.workspace).val(resultado.vrMulta);
-			$("#alterInstrucoes", bancoController.workspace).val(resultado.instrucoes);
+			$("#alterMulta", this.workspace).val(resultado.multa);
+			$("#alterVrMulta", this.workspace).val(resultado.vrMulta);
+			$("#alterInstrucoes", this.workspace).val(resultado.instrucoes);
 			
 			bancoController.popup_alterar();
 		},
@@ -393,29 +387,29 @@ var bancoController = $.extend(true, {
 		},
 		
 	    limparTelaCadastroBanco : function() {
-			$("#newNumero", bancoController.workspace).val("");
-			$("#newNome", bancoController.workspace).val("");
-			$("#newCodigoCedente", bancoController.workspace).val("");
-			$("#newAgencia", bancoController.workspace).val("");
-			$("#newConta", bancoController.workspace).val("");
-			$("#newDigito", bancoController.workspace).val("");
-			$("#newApelido", bancoController.workspace).val("");
-			$("#newCarteira", bancoController.workspace).val("");
-			$("#newJuros", bancoController.workspace).val("");
-			$("#newAtivo", bancoController.workspace).val("");
-			$("#newMulta", bancoController.workspace).val("");
-			$("#newVrMulta", bancoController.workspace).val("");
-			$("#newInstrucoes", bancoController.workspace).val("");
+			$("#newNumero", this.workspace).val("");
+			$("#newNome", this.workspace).val("");
+			$("#newCodigoCedente", this.workspace).val("");
+			$("#newAgencia", this.workspace).val("");
+			$("#newConta", this.workspace).val("");
+			$("#newDigito", this.workspace).val("");
+			$("#newApelido", this.workspace).val("");
+			$("#newCarteira", this.workspace).val("");
+			$("#newJuros", this.workspace).val("");
+			$("#newAtivo", this.workspace).val("");
+			$("#newMulta", this.workspace).val("");
+			$("#newVrMulta", this.workspace).val("");
+			$("#newInstrucoes", this.workspace).val("");
 		}, 
 	    
 	    limparMulta : function(){
-	    	$("#newMulta", bancoController.workspace).val("");
-	    	$("#alterMulta", bancoController.workspace).val("");
+	    	$("#newMulta", this.workspace).val("");
+	    	$("#alterMulta", this.workspace).val("");
 	    },
 	    
 	    limparVrMulta : function(){
-	    	$("#newVrMulta", bancoController.workspace).val("");
-	    	$("#alterVrMulta", bancoController.workspace).val("");
+	    	$("#newVrMulta", this.workspace).val("");
+	    	$("#alterVrMulta", this.workspace).val("");
 	    }
 	    
 }, BaseController);
