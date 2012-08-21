@@ -48,6 +48,19 @@ public class DescontoComponentImpl implements DescontoComponent {
 	}
 	
 	@Override
+	
+	@Transactional
+	public void removerDescontos(Fornecedor fornecedor,Cota cota,TipoDesconto tipoDesconto){
+		
+		Set<DescontoProdutoEdicao> descontosParaExclusao = descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(tipoDesconto, fornecedor, cota);
+		
+		for(DescontoProdutoEdicao desconto : descontosParaExclusao){
+			
+			descontoProdutoEdicaoRepository.remover(desconto);
+		}
+	}
+	
+	@Override
 	@Transactional(readOnly=true)
 	public Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Cota cota,Set<ProdutoEdicao> produtos) {
 		

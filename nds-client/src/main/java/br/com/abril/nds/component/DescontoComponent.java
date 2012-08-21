@@ -30,4 +30,15 @@ public interface DescontoComponent {
 	 * @return Set<ProdutoEdicao> - produtos que receberão desconto
 	 */
 	Set<ProdutoEdicao> filtrarProdutosPassiveisDeDesconto(TipoDesconto tipoDesconto,Fornecedor fornecedor,Cota cota,Set<ProdutoEdicao> produtos);
+	
+	/**
+	 * Remove so desconto produto edição conforme parâmentros informados.
+	 * 
+	 * @param fornecedor - fornecedor
+	 * 
+	 * @param cota - cota
+	 * 
+	 * @param tipoDesconto - tipo de desconto
+	 */
+	void removerDescontos(Fornecedor fornecedor,Cota cota,TipoDesconto tipoDesconto);
 }

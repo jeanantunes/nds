@@ -60,7 +60,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor) {
 
-		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, null, null);
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, null, null,null);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Cota cota) {
 		
-		return obterDescontoProdutoEdicaoCotaFornecedor(null, cota, null);
+		return obterDescontoProdutoEdicaoCotaFornecedor(null, cota, null,null);
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota) {
 		
-		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, null);
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, null,null);
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		
-		return obterDescontoProdutoEdicaoCotaFornecedor(null, null, produtoEdicao);
+		return obterDescontoProdutoEdicaoCotaFornecedor(null, null, produtoEdicao,null);
 	}
 
 	/**
@@ -108,8 +108,18 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		return obterDescontoSemTipoDesconto(tipoDesconto, fornecedor, cota);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<DescontoProdutoEdicao> obterDescontoProdutoEdicao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
+		
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, null,tipoDesconto);
+	}
+	
+	
 	@SuppressWarnings("unchecked")
-	private Set<DescontoProdutoEdicao> obterDescontoProdutoEdicaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao){
+	private Set<DescontoProdutoEdicao> obterDescontoProdutoEdicaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao,TipoDesconto tipoDesconto){
 		
 		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicao.class);
 		
@@ -126,6 +136,11 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		if (produtoEdicao != null) {
 			
 			criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		}
+		
+		if(tipoDesconto!= null){
+			
+			criteria.add(Restrictions.eq("tipoDesconto", tipoDesconto));
 		}
 		
 		return new HashSet<DescontoProdutoEdicao>(criteria.list());
