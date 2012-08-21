@@ -108,7 +108,9 @@
       <td width="424" valign="top" class="antigosProp">
       <strong>Antigos Proprietários</strong><br />
       <table class="antigosProprietariosGrid"></table>
-      <span class="bt_novos" title="Alterar Titularidade"><a href="javascript:;" onclick="#"><img src="../images/ico_add_novo.gif" hspace="5" border="0" />Alterar Titularidade</a></span>
+      <span class="bt_novos" title="Alterar Titularidade"><a href="javascript:;" onclick="#">
+        <img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0" />Alterar Titularidade</a>
+      </span>
       </td> 
 	  <td width="439" valign="top"><table width="439" border="0" cellspacing="2" cellpadding="2">
       <tr class="linhas">

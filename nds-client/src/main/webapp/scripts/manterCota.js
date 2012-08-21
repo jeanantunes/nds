@@ -827,6 +827,7 @@ var COTA_CPF = $.extend(true, {
 		MANTER_COTA.numeroCota="";
 		
 		COTA_CPF.tratarExibicaoDadosCadastrais();
+		COTA_CPF.initGridProprietarios();
 		COTA_CPF.limparCampos();
 		
 		TAB_COTA.possuiDadosObrigatorios = false;
@@ -998,7 +999,22 @@ var COTA_CPF = $.extend(true, {
 		
 		$(".antigosProprietariosGrid", this.workspace).flexigrid({
 			dataType : 'json',
-			preProcess: false,
+			preProcess: function(data) {
+				if (data.rows) {
+					$.each(data.rows, function(index, row) {
+						if (row.cell.fim) {
+							row.cell.periodo = row.cell.inicio + ' a ' + row.cell.fim ;
+						} else {
+							row.cell.periodo = 'Desde ' + row.cell.inicio;
+						}
+						
+						var acao = '<a href="javascript:;" onclick="">';
+						acao += '<img src="' + contextPath + '/images/ico_detalhes.png" alt="Alterar Titularidade" border="0" /></a>';
+						row.cell.acao = acao;
+					});
+					return data;
+				}
+			},
 			colModel : [{
 				display : 'Período',
 				name : 'periodo',
@@ -1027,7 +1043,19 @@ var COTA_CPF = $.extend(true, {
 			width : 400,
 			height : 110
 		});
-		$(".antigosProprietariosGrid", this.workspace).flexigrid().flexAddData(data.proprietarios);
+		if (data) {
+			$(".antigosProprietariosGrid", this.workspace).flexAddData({
+				rows:  toFlexiGridObject(data.proprietarios), 
+				page:1, 
+				total:data.proprietarios.length
+			});
+		} else {
+			$(".antigosProprietariosGrid", this.workspace).flexAddData({
+				rows:  toFlexiGridObject([]), 
+				page:1, 
+				total:0
+			});
+		}
 	}
 	
 }, BaseController);
