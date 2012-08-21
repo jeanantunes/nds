@@ -1,0 +1,77 @@
+package br.com.abril.nds.dto;
+
+import java.io.Serializable;
+
+public class MunicipioDTO  implements Serializable {
+	 
+	private static final long serialVersionUID = 1753803641359682149L;
+
+	private Long id;
+	private String municipio;
+	private Integer qtde;
+	private Boolean selecionado;
+	
+	public MunicipioDTO() {
+		
+	}
+	
+	public MunicipioDTO(Long id, String municipio, Integer qtde, Boolean selecionado) {
+		super();
+		this.id = id;
+		this.municipio = municipio;
+		this.qtde = qtde;
+		this.selecionado = selecionado;
+	}
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+	/**
+	 * @return the municipio
+	 */
+	public String getMunicipio() {
+		return municipio;
+	}
+	/**
+	 * @param municipio the municipio to set
+	 */
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+	/**
+	 * @return the qtde
+	 */
+	public Integer getQtde() {
+		return qtde;
+	}
+	/**
+	 * @param qtde the qtde to set
+	 */
+	public void setQtde(Integer qtde) {
+		this.qtde = qtde;
+	}
+
+	/**
+	 * @return the selecionado
+	 */
+	public Boolean getSelecionado() {
+		return selecionado;
+	}
+
+	/**
+	 * @param selecionado the selecionado to set
+	 */
+	public void setSelecionado(Boolean selecionado) {
+		this.selecionado = selecionado;
+	}
+	
+	
+}

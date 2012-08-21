@@ -10,6 +10,7 @@ import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
+import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
@@ -19,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -203,5 +205,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return {@link Set} de {@link Cota}
 	 */
 	Set<Cota> obterCotasPorFornecedor(Long idFornecedor);
+
+	List<CotaTipoDTO> obterCotaPorTipo(TipoCota tipoCota);
 
 }

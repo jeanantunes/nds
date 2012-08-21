@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.GrupoCota;
+import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.service.GrupoService;
 
@@ -19,7 +22,10 @@ public class GrupoServiceImpl implements GrupoService {
 
 	@Autowired
 	private GrupoRepository grupoRepository;
-
+	
+	@Autowired
+	private CotaRepository cotaRepository;
+	
 	@Override
 	@Transactional
 	public List<GrupoCotaDTO> obterTodosGrupos() {
@@ -65,5 +71,11 @@ public class GrupoServiceImpl implements GrupoService {
 		//grupoRepository.alterar(grupo);
 		
 		grupoRepository.remover(grupo);
+	}
+
+	@Override
+	public List<CotaTipoDTO> obterCotaPorTipo(TipoCota tipoCota) {
+
+		return cotaRepository.obterCotaPorTipo(tipoCota);
 	}
 }

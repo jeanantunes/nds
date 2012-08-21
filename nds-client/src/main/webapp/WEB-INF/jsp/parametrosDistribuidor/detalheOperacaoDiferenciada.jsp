@@ -8,7 +8,7 @@
                         <td width="20">
                         
 <!-- Radio Tipo Cota -->                        
-<input type="radio" name="diferenciada" id="radioTipoCota" onclick="selecionarPorTipoCota();" />
+<input type="radio" name="diferenciada" id="radioTipoCota" onclick="OD.selecionarPorTipoCota();" />
 
 						</td>
                         <td width="56">Tipo Cota</td>
@@ -88,17 +88,22 @@
 				align : 'left'
 			},{
 				display : 'Qtde Cotas',
-				name : 'qtdeCotas',
+				name : 'qtde',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '',
-				name : 'sel',
+				name : 'selecionado',
 				width : 20,
 				sortable : true,
 				align : 'center'
 			}],
+			sortname : "municipio",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
 			width : 700,
 			height : 150
 		});
@@ -111,7 +116,7 @@
 			preProcess: OD.processaCotas,
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numCota',
 				width : 50,
 				sortable : true,
 				align : 'left'
@@ -135,11 +140,16 @@
 				align : 'left'
 			}, {
 				display : '',
-				name : 'sel',
+				name : 'selecionado',
 				width : 20,
 				sortable : true,
 				align : 'center'
 			}],
+			sortname : "numCota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
 			width : 700,
 			height : 150
 		});

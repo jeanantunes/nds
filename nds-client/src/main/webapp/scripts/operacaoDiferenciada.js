@@ -60,6 +60,11 @@ function OperacaoDiferenciada() {
 		$(".selMunicipiosGrid").flexReload();
 	},
 	
+	this.selecionarPorTipoCota = function() {
+		$('#comboTipoCota').val("");
+		T.carregarTipoCota();
+	},
+	
 	this.carregarTipoCota = function() {
 		
 		$('.selecionarCotas').show();
@@ -85,6 +90,7 @@ function OperacaoDiferenciada() {
 		$('#comboTipoCota').hide();
 		$('#radioTipoCota').prop('checked', false);
 		$('#radioMunicipios').prop('checked', false);
+		$('#comboTipoCota').val('');
 		
 		dialogDetalhesGrupo();
 	},
@@ -128,6 +134,28 @@ function OperacaoDiferenciada() {
 				$( this ).dialog( "close" );
 			}, null, true
 		);
+	},
+	
+	this.processaMunicipios = function(result) {
+		
+		$.each(result.rows, function(index, row) {
+			row.cell.selecionado='<input name="input52" type="checkbox" ' +
+			(row.cell.selecionado == 'true' ? 'checked="checked"' : '') + 
+			'>';
+		});
+				
+		return result;
+	},
+	
+	this.processaCotas = function(result) {
+		
+		$.each(result.rows, function(index, row) {
+			row.cell.selecionado='<input name="input52" type="checkbox" ' +
+			(row.cell.selecionado == true ? 'checked="checked"' : '') + 
+			'>';
+		});
+				
+		return result;
 	},
 	
 	/**

@@ -12,14 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -314,25 +318,26 @@ public class ParametrosDistribuidorController {
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
 	}
-	
-	public void obterDadosGrupo(Long idGrupo) {
-		//TODO
-		//grupoService.excluirGrupo(idGrupo);
 		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+	public void obterMunicipios(Long idGrupo, Integer page, Integer rp, String sortname, String sortorder) {
+		
+		List<MunicipioDTO> municipios = new ArrayList<MunicipioDTO>();
+		
+		municipios.add(new MunicipioDTO(1L, "Arceburgo", 10, false));
+		
+		int total =  10;
+		
+		result.use(FlexiGridJson.class).from(municipios).page(page).total(total).serialize();
 	}
 	
-	public void obterMunicipios(Long idGrupo) {
-		//TODO
-		//grupoService.excluirGrupo(idGrupo);
+	public void obterCotas(Long idGrupo, TipoCota tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
 		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
-	}
-	
-	public void obterCotas(Long idGrupo) {
-		//TODO
-		//grupoService.excluirGrupo(idGrupo);
+		List<CotaTipoDTO> cotas =	grupoService.obterCotaPorTipo(tipoCota);
+				
+		cotas.add(new CotaTipoDTO(1L, 33, "Guilherme de Morais", "Arceburgo", "Manoel Pereira da Silva,104", true));
 		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
+		int total =  10;
+		
+		result.use(FlexiGridJson.class).from(cotas).page(page).total(total).serialize();		
 	}
 }
