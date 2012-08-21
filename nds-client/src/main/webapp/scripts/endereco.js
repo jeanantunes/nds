@@ -311,7 +311,7 @@ var enderecoController = $.extend(true, {
 	},
 
 	autoCompletarCep : function() {
-		var cep = $("#"+paramTela+"cep").val().replace("_","");
+		var cep = $("#"+paramTelaEndereco+"cep").val().replace("_","");
 		
 		if (cep.length == 9) {
 			this.pesquisarEnderecoPorCep();
