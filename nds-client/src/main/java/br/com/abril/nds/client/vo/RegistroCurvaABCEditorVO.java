@@ -5,12 +5,13 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class RegistroCurvaABCEditorVO extends RegistroCurvaABC implements
+public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		Serializable {
 
 	/**

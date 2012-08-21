@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -20,6 +19,7 @@ import br.com.abril.nds.repository.TelefoneEntregadorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class TelefoneServiceImpl implements TelefoneService {
