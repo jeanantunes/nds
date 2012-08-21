@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
@@ -64,6 +63,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Classe de implementação de serviços referentes a entidade

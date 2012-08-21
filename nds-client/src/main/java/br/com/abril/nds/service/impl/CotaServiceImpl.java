@@ -12,15 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -76,6 +75,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -1499,13 +1499,13 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 	}
 

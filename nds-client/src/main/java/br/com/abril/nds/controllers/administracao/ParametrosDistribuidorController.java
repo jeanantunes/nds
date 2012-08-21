@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -34,6 +33,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;

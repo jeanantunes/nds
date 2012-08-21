@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.RecebimentoFisicoVO;
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CabecalhoNotaDTO;
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
@@ -49,6 +48,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
