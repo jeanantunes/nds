@@ -526,6 +526,16 @@ var MANTER_COTA = $.extend(true, {
 			minLength: 4,
 			delay : 0,
 		});
+	}, 
+	
+	alterarTitular : function() {
+		$( "#dialog-titular" ).dialog({
+			resizable: false,
+			height:120,
+			width:200,
+			modal: true
+			form: $("#workspaceCota", this.workspace)
+		});
 	}
 }, BaseController);
 
