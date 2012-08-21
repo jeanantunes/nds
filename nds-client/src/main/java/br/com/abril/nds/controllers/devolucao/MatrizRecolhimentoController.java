@@ -1134,7 +1134,7 @@ public class MatrizRecolhimentoController {
 				Long qtdeTitulos = Long.valueOf(listaProdutosRecolhimento.size());
 				Long qtdeTitulosParciais = 0L;
 				
-				BigDecimal pesoTotal = BigDecimal.ZERO;
+				Long pesoTotal = 0L;
 				BigDecimal qtdeExemplares = BigDecimal.ZERO;
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
@@ -1153,7 +1153,7 @@ public class MatrizRecolhimentoController {
 					
 					if (produtoRecolhimento.getPeso() != null) {
 						
-						pesoTotal = pesoTotal.add(produtoRecolhimento.getPeso());
+						pesoTotal += produtoRecolhimento.getPeso();
 					}
 					
 					if (produtoRecolhimento.getValorTotal() != null) {
