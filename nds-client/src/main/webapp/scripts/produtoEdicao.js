@@ -651,9 +651,10 @@ var produtoEdicaoController =$.extend(true,  {
 			var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 			$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 			$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
-
+			
 			img.load(function() {
 				if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
+					$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 					$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
 				}
 			});
@@ -775,7 +776,9 @@ var produtoEdicaoController =$.extend(true,  {
 									if (tipoMensagem && listaMensagens) {
 										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 										if (tipoMensagem == "SUCCESS") { 
+											var img = $("<img />").attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 											$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
+											$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
 										}
 									}
 								},
