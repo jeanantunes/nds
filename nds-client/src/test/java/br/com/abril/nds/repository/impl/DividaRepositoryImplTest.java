@@ -23,7 +23,6 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -41,7 +40,6 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -72,10 +70,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	public void setUp() {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
-		
-		Carteira carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
-	    
-		save(carteiraRegistrada);
 		
 		Banco bancoHSBC = Fixture.banco(10L, true, 30, "1010",
 				  123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);

@@ -53,6 +53,6 @@ public interface DescontoProdutoRepository extends Repository<DescontoProduto, L
 	 * 
 	 * @return - List<TipoDescontoProdutoDTO>.
 	 */
-	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota);
+	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota, String sortorder, String sortname);
 
 }

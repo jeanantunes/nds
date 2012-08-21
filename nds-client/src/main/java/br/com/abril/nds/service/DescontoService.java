@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -36,10 +35,6 @@ public interface DescontoService {
 	List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro);
 	
 	Integer buscarQuantidadeTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro);
-	
-	List<TipoDesconto> obterTodosTiposDescontos();
-	
-	TipoDesconto obterTipoDescontoPorID(Long id);
 	
 	/**
 	 * Exclui um tipo de desconto, respeitando a data vigente desse desconto.
@@ -115,6 +110,6 @@ public interface DescontoService {
 	 * 
 	 * @return - List<TipoDescontoProdutoDTO>.
 	 */
-	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota);
+	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota, String sortorder, String sortname);
 }
 	
