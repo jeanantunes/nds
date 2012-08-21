@@ -1,9 +1,17 @@
 <head>
 
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>scripts/produto.js'></script>
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
-<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptRecebimentoFisico.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptRecebimentoFisico.js"></script>
+
+<script type="text/javascript">
+
+	var pesquisaProdutoRecebimentoFisico = new PesquisaProduto(recebimentoFisicoController.workspace);
+
+	recebimentoFisicoController.init();
+	
+</script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
@@ -17,124 +25,131 @@
 
 <body>
 
-	<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
 
-		<jsp:include page="../messagesDialog.jsp" />
+	<form action="/recebimentoFisico" id="form_novo_item">
+
+		<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
 	
-		<table width="341" border="0" cellspacing="2" cellpadding="2">
-			<tr>
-				<td>Código:</td>
-				<td width="202">
-					<input 
-					type="text"
-					id="codigo"
-					maxlength="255"
-					style="width: 80px; float: left; margin-right: 5px;"
-					onchange="recebimentoFisicoController.jsDadosProduto.pesquisarProdutoPorCodigo();"/>
-					
-				</td>
-			</tr>
-			<tr>
-				<td>Produto:</td>
-				<td width="202">
-					<input 
+			<jsp:include page="../messagesDialog.jsp" />
+		
+			<table width="341" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+					<td>Código:</td>
+					<td width="202">
+						<input 
+						type="text"
+						id="codigo"
 						maxlength="255"
-						type="text" 
-						id="produto"
+						style="width: 80px; float: left; margin-right: 5px;"
 						
-					       	   onkeyup="produto.autoCompletarPorNomeProduto('#produto', false);"
-					       	   onblur="recebimentoFisicoController.jsDadosProduto.pesquisarProdutoPorNome();"/>
-				</td>
-			</tr>
-			<tr>
-				<td>Edição:</td>
-				<td><input 
-					type="text" 
-					id="edicao" maxlength="20"
-					style="width: 80px;" 
-					onchange="recebimentoFisicoController.jsDadosProduto.validarNumeroEdicao();"/>
-				</td>
-			</tr>
-			<tr>
-				<td>Data Lançamento:</td>
-				<td><input 	type="text" 
-							name="datepickerLancto"
-							id="datepickerLancto" 
-							style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Data Recolhimento:</td>
-				<td><input 	type="text" 
-							name="datepickerRecolhimento"
-							id="datepickerRecolhimento" 
-							style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Preço R$:</td>
-				<td><input 	
-							disabled="disabled"
+						onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', true, function(){});"
+						/>
+						
+					</td>
+				</tr>
+				<tr>
+					<td>Produto:</td>
+					<td width="202">
+						<input 
+							maxlength="255"
 							type="text" 
-							id="precoCapa"
-							style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Peso:</td>
-				<td><input 	disabled="disabled"
-							type="text" 
-							id="peso"
-							style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Pacote Padrão:</td>
-				<td><input 	disabled="disabled"
-							type="text" 
-							id="pacotePadrao"
-							style="width: 200px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>Reparte Previsto:</td>
-				<td><input 	type="text" 
-							id="repartePrevisto"
-							style="width: 80px;" />
-				</td>
-			</tr>
-			<tr>
-				<td>
-					Lançamento: 
-				</td>				
-				<td>
-					<select name="tipoLancamento"
-						id="tipoLancamento" style="width: 250px;">
-							<option value=""></option>
-							<c:forEach var="tipoLancamento" items="${listaTipoLancamento}">
-								<option value="${tipoLancamento}">${tipoLancamento}</option>
-							</c:forEach>
-					</select>
-				</td>
-			</tr>
-			<tr>
-			    <td>&nbsp;</td>			
-			    
-			    <td>
-			    
-			    	<span 	class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" 
-			    			onclick="recebimentoFisicoController.incluirNovoItemNota();">
-			    
-			    	<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" 
-			    		alt="Incluir Novo" 
-			    		width="16" 
-			    		height="16" 
-			    		border="0" 
-			    		hspace="5" />Incluir Novo</a></span></td>			
-			 </tr>			
-		</table>
+							id="produto"
+							
+						       	   onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto('#produto', false);"
+						       	   onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', true, function(){});"/>
+					</td>
+				</tr>
+				<tr>
+					<td>Edição:</td>
+					<td><input 
+						type="text" 
+						id="edicao" maxlength="20"
+						style="width: 80px;" 
+						onchange="pesquisaProdutoRecebimentoFisico.validarNumEdicao('#codigo', '#edicao', true, recebimentoFisicoController.exibirDetalhesProdutoEdicao);"/>
+					</td>
+				</tr>
+				<tr>
+					<td>Data Lançamento:</td>
+					<td><input 	type="text" 
+								name="datepickerLancto"
+								id="datepickerLancto" 
+								style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Data Recolhimento:</td>
+					<td><input 	type="text" 
+								name="datepickerRecolhimento"
+								id="datepickerRecolhimento" 
+								style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Preço R$:</td>
+					<td><input 	
+								disabled="disabled"
+								type="text" 
+								id="precoCapa"
+								style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Peso:</td>
+					<td><input 	disabled="disabled"
+								type="text" 
+								id="peso"
+								style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Pacote Padrão:</td>
+					<td><input 	disabled="disabled"
+								type="text" 
+								id="pacotePadrao"
+								style="width: 200px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Reparte Previsto:</td>
+					<td><input 	type="text" 
+								id="repartePrevisto"
+								style="width: 80px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Lançamento: 
+					</td>				
+					<td>
+						<select name="tipoLancamento"
+							id="tipoLancamento" style="width: 250px;">
+								<option value=""></option>
+								<c:forEach var="tipoLancamento" items="${listaTipoLancamento}">
+									<option value="${tipoLancamento}">${tipoLancamento}</option>
+								</c:forEach>
+						</select>
+					</td>
+				</tr>
+				<tr>
+				    <td>&nbsp;</td>			
+				    
+				    <td>
+				    
+				    	<span 	class="bt_incluir_novo" title="Incluir Nova Linha"><a href="javascript:;" 
+				    			onclick="recebimentoFisicoController.incluirNovoItemNota();">
+				    
+				    	<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" 
+				    		alt="Incluir Novo" 
+				    		width="16" 
+				    		height="16" 
+				    		border="0" 
+				    		hspace="5" />Incluir Novo</a></span></td>			
+				 </tr>			
+			</table>
+	
+		</div>
 
-	</div>
+	</form>
 
 
 	<div class="corpo">
@@ -143,16 +158,7 @@
 
 		<div class="container">
 
-			<div id="effect" style="padding: 0 .7em;"
-				class="ui-state-highlight ui-corner-all">
-				<p>
-					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info"></span> <b>Recebimento Físico <
-						evento > com < status >.</b>
-				</p>
-			</div>
-
-			<form id="pesquisar_recebimento_fisico_form">
+			<form id="pesquisa_recebimento_fisico_form">
 
 				<fieldset class="classFieldset">
 				
@@ -338,116 +344,119 @@
 
 	<!-- NOVO POPUP DE CADASTRO DE NOTA -->
 	
-	<div id="dialog-adicionar" title="Recebimento Físico" style="display: none;" >
+	<div id="div-wrapper-dialog-adicionar">
 	
-	    <jsp:include page="../messagesDialog.jsp" />
+		<div id="dialog-adicionar" title="Recebimento Físico" style="display: none;" >
 		
-		<fieldset style="width:910px!important;">
-		  <legend>Dados da Nota</legend>
-		  <table width="885" cellpadding="2" cellspacing="2" style="text-align:left;">
-		   
-		    <tr style="width: 25%">
-
-		        <td width="89">Fornecedor:</td>
-		        <td width="168">
-			        <select name="select" id="novoFornecedor" name="novoFornecedor" onchange="recebimentoFisicoController.pesquisarCnpjFornecedor();" style="width:160px ">
-				        <option selected="selected" value="">Selecione...</option>
-						<c:forEach var="fornecedor" items="${listafornecedores}">
-						    <option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
-						</c:forEach>
-			        </select>
-		        </td>
-		        
-		        <td width="95">CNPJ:</td>
-		        <td width="132">
-		            <input maxlength="200" type="text" style="width:100px " id="novoCnpj" name="novoCnpj" onchange="recebimentoFisicoController.pesquisarFornecedorCnpj();" />
-		        </td>
-		        
-		        <td width="102">Nota Fiscal:</td>
-		        <td width="115">
-		            <input maxlength="18" type="text" style="width:100px " id="novoNumeroNota" name="novoNumeroNota"  />
-		        </td>
-		        
-		        <td width="34">Série:</td>
-		        <td width="97">
-		            <input maxlength="200" type="text" style="width:50px " id="novoSerieNota" name="novoSerieNota" />
-		        </td>
-		      
-		    </tr>
-
-		    
-		    <tr style="width: 25%">
-		      
-		      <td>NF-e:</td>
-		      <td>
-		          <input type="checkbox" id="novoNfe" name="novoNfe" />
-		      </td>
-
-		      <td>Chave de Acesso:</td>
-		      <td colspan="5">
-		          <input maxlength="200" type="text" style="width:470px" id="novoChaveAcesso" name="novoChaveAcesso" />
-		      </td>
-
-		    </tr>
-		    
-		    
-		    <tr style="width: 25%">
-		      
-		      <td>Data Emissão:</td>
-		      <td>
-		          <input type="text" id="novoDataEmissao" name="novoDataEmissao" style="width:100px " />
-		      </td>
-		      
-		      <td>Data Entrada:</td>
-		      <td>
-		          <input type="text" id="novoDataEntrada" name="novoDataEntrada" style="width:100px " />
-		      </td>
-		      
-		      <td>Valor Total R$:</td>
-		      <td>
-		          <input maxlength="17" type="text" style="width:100px; text-align:right; " id="novoValorTotal" name="novoValorTotal"/>
-		      </td>
-		      
-		      <td align="right">
-		          <input type="checkbox" id="novoReplicarQtde" name="novoReplicarQtde" />
-		      </td>
-		      <td>Replicar Qtde:</td>
-		      
-		    </tr>
-		    
-		    </table>
-		</fieldset>
-		    
-		
-		<fieldset style="width:910px!important; margin-top:10px;">
-		    <form name="formularioItensNota" id="formularioItensNota">
-			    <legend>Itens da Nota</legend>
-			    <table id="tabelaItens" class="novoItemNotaGrid"></table>
-			</form>    
-		</fieldset> 
-		
-		<span class="bt_incluir_novo" title="Incluir Novo">
-		    <a href="javascript:;" onclick="recebimentoFisicoController.incluiNovoItem();">
-		        <img src= "${pageContext.request.contextPath}/images/ico_add.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />
-		        Incluir Novo
-		    </a>
-		</span>
-		
-		<span class="bt_sellAll" style="float:right; margin-right:40px; margin-top:8px">
-		    <label for="textoSelTodos" id="textoSelTodos">
-                Marcar Todos
-            </label>
-		    <input type="checkbox"  id="selTodos" name="selTodos" onclick="recebimentoFisicoController.selecionarTodos(this.checked);" style="float:right; margin-top:-5px"/>
-		</span>
-		
-		<span style="float:right; margin-right:35px; margin-top:8px">
-		    <strong style="margin-right:10px;">
-		        Valor Total R$
-		    </strong> 
-		    <label id="labelValorTotal">0,00</label>
-		</span>
-	 
+		    <jsp:include page="../messagesDialog.jsp" />
+			
+			<fieldset style="width:910px!important;">
+			  <legend>Dados da Nota</legend>
+			  <table width="885" cellpadding="2" cellspacing="2" style="text-align:left;">
+			   
+			    <tr style="width: 25%">
+	
+			        <td width="89">Fornecedor:</td>
+			        <td width="168">
+				        <select name="select" id="novoFornecedor" name="novoFornecedor" onchange="recebimentoFisicoController.pesquisarCnpjFornecedor();" style="width:160px ">
+					        <option selected="selected" value="">Selecione...</option>
+							<c:forEach var="fornecedor" items="${listafornecedores}">
+							    <option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
+							</c:forEach>
+				        </select>
+			        </td>
+			        
+			        <td width="95">CNPJ:</td>
+			        <td width="132">
+			            <input maxlength="200" type="text" style="width:100px " id="novoCnpj" name="novoCnpj" onchange="recebimentoFisicoController.pesquisarFornecedorCnpj();" />
+			        </td>
+			        
+			        <td width="102">Nota Fiscal:</td>
+			        <td width="115">
+			            <input maxlength="18" type="text" style="width:100px " id="novoNumeroNota" name="novoNumeroNota"  />
+			        </td>
+			        
+			        <td width="34">Série:</td>
+			        <td width="97">
+			            <input maxlength="200" type="text" style="width:50px " id="novoSerieNota" name="novoSerieNota" />
+			        </td>
+			      
+			    </tr>
+	
+			    
+			    <tr style="width: 25%">
+			      
+			      <td>NF-e:</td>
+			      <td>
+			          <input type="checkbox" id="novoNfe" name="novoNfe" />
+			      </td>
+	
+			      <td>Chave de Acesso:</td>
+			      <td colspan="5">
+			          <input maxlength="200" type="text" style="width:470px" id="novoChaveAcesso" name="novoChaveAcesso" />
+			      </td>
+	
+			    </tr>
+			    
+			    
+			    <tr style="width: 25%">
+			      
+			      <td>Data Emissão:</td>
+			      <td>
+			          <input type="text" id="novoDataEmissao" name="novoDataEmissao" style="width:100px " />
+			      </td>
+			      
+			      <td>Data Entrada:</td>
+			      <td>
+			          <input type="text" id="novoDataEntrada" name="novoDataEntrada" style="width:100px " />
+			      </td>
+			      
+			      <td>Valor Total R$:</td>
+			      <td>
+			          <input maxlength="17" type="text" style="width:100px; text-align:right; " id="novoValorTotal" name="novoValorTotal"/>
+			      </td>
+			      
+			      <td align="right">
+			          <input type="checkbox" id="novoReplicarQtde" name="novoReplicarQtde" />
+			      </td>
+			      <td>Replicar Qtde:</td>
+			      
+			    </tr>
+			    
+			    </table>
+			</fieldset>
+			    
+			
+			<fieldset style="width:910px!important; margin-top:10px;">
+			    <form name="formularioItensNota" id="formularioItensNota">
+				    <legend>Itens da Nota</legend>
+				    <table id="tabelaItens" class="novoItemNotaGrid"></table>
+				</form>    
+			</fieldset> 
+			
+			<span class="bt_incluir_novo" title="Incluir Novo">
+			    <a href="javascript:;" onclick="recebimentoFisicoController.incluiNovoItem();">
+			        <img src= "${pageContext.request.contextPath}/images/ico_add.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />
+			        Incluir Novo
+			    </a>
+			</span>
+			
+			<span class="bt_sellAll" style="float:right; margin-right:40px; margin-top:8px">
+			    <label for="textoSelTodos" id="textoSelTodos">
+	                Marcar Todos
+	            </label>
+			    <input type="checkbox"  id="selTodos" name="selTodos" onclick="recebimentoFisicoController.selecionarTodos(this.checked);" style="float:right; margin-top:-5px"/>
+			</span>
+			
+			<span style="float:right; margin-right:35px; margin-top:8px">
+			    <strong style="margin-right:10px;">
+			        Valor Total R$
+			    </strong> 
+			    <label id="labelValorTotal">0,00</label>
+			</span>
+		 
+		</div>
+	
 	</div>
-
 
 </body>

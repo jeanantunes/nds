@@ -31,7 +31,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private int pacotePadrao;
 	
-	private BigDecimal peso;
+	private Long peso;
 	
 	/*
 	 * Campo referente a quantidade deste item na nota.
@@ -86,7 +86,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 			BigInteger repartePrevisto, 
 			BigInteger qtdFisico,
 			int pacotePadrao,
-			BigDecimal peso,
+			Long peso,
 			Date dataLancamento,
 			Date dataRecolhimento,
 			TipoLancamento tipoLancamento,			
@@ -283,11 +283,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.lineId = lineId;
 	}
 	
-	public BigDecimal getPeso() {
+	public Long getPeso() {
 		return peso;
 	}
 
-	public void setPeso(BigDecimal peso) {
+	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
 
