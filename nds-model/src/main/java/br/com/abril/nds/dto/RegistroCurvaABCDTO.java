@@ -1,10 +1,10 @@
-package br.com.abril.nds.client.vo;
+package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 
 import br.com.abril.nds.util.CurrencyUtil;
 
-public abstract class RegistroCurvaABC {
+public abstract class RegistroCurvaABCDTO {
 
 	private BigDecimal participacao;
 

@@ -1,4 +1,4 @@
-package br.com.abril.nds.client.vo;
+package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,7 +13,7 @@ import br.com.abril.nds.util.export.Exportable;
  * @author InfoA2
  */
 @Exportable
-public class RegistroCurvaABCCotaVO extends RegistroCurvaABC implements Serializable {
+public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Serializable {
 
 	/**
 	 * 
@@ -49,10 +49,10 @@ public class RegistroCurvaABCCotaVO extends RegistroCurvaABC implements Serializ
 	@Export(label = "Faturamento R$", exhibitionOrder = 7)
 	private String faturamentoFormatado;
 	
-	public RegistroCurvaABCCotaVO	() {
+	public RegistroCurvaABCCotaDTO	() {
 	}
 
-	public RegistroCurvaABCCotaVO(String numeroProduto, String codigoProduto,
+	public RegistroCurvaABCCotaDTO(String numeroProduto, String codigoProduto,
 			Long numeroEdicao, BigDecimal reparte,
 			BigDecimal vendaExemplares, BigDecimal faturamento) {
 		this.codigoProduto = numeroProduto;
