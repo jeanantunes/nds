@@ -46,7 +46,8 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 	    hql.append("     else '' end) as fornecedor, ");
 	    
 		hql.append(" dc.dataAlteracao as dataAlteracao, ");	
-		hql.append(" usuario.nome as nomeUsuario ");
+		hql.append(" usuario.nome as nomeUsuario, ");
+		hql.append(" 'Específico' as descTipoDesconto ");
 		
 		hql.append(" from DescontoCota dc "); 
 		hql.append(" join dc.cota cota ");	
@@ -88,6 +89,9 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 			case USUARIO:
 				nome = " nomeUsuario ";
 				break;
+			case TIPO_DESCONTO:
+				nome = " descTipoDesconto ";
+				break;			
 			default:
 				break;
 		}
