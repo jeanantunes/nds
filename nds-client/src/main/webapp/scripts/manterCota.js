@@ -1020,7 +1020,7 @@ var SOCIO_COTA = $.extend(true, {
 		itemEdicao:null,
 		rows:[],
 		_workspace: this.workspace,
-		enderecoSocio: getEnderecoController("", "dialog-socio"),
+		enderecoSocio: null, //getEnderecoController("SOCIO_COTA", "dialog-socio"), Precisei voltar á forma antiga, favor rever a forma de popular isto. Grato.
 		
 		socio:function(){
 			

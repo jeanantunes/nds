@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 
-	var ${param.telaEndereco} = getEnderecoController('${param.telaEndereco}','${param.message}');
+	var ${param.telaEndereco} = new Endereco('${param.telaEndereco}','${param.message}');
 
 </script>
 
