@@ -610,7 +610,8 @@ var produtoEdicaoController =$.extend(true,  {
 					"Cancelar": function() {
 						$("#produtoEdicaoController-dialog-novo",this.workspace).dialog( "close" );
 					}
-				}
+				},
+				form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
 			});
 		},
 		salvarProdutoEdicao : function(closePopUp) {
@@ -647,7 +648,7 @@ var produtoEdicaoController =$.extend(true,  {
 		carregarImagemCapa:			function (idProdutoEdicao) {
 
 			var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
-			? "" :  contextPath + '/capa/' + idProdutoEdicao + '?' + Math.random(); 
+			? "" :  contextPath + '/capa/' + idProdutoEdicao + '?' + Math.random();
 			var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 			$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
 			$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
@@ -701,7 +702,8 @@ var produtoEdicaoController =$.extend(true,  {
 					"Cancelar": function() {
 						$( this ,this.workspace).dialog( "close" );
 					}
-				}
+				},
+				form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
 			});	      
 		},
 		removerEdicao:				function (id) {
@@ -750,7 +752,8 @@ var produtoEdicaoController =$.extend(true,  {
 				},
 				beforeClose: function() {
 					clearMessageDialogTimeout();
-				}
+				},
+				form: $("#produtoEdicaoController-dialog-excluir", this.workspace).parents("form")
 			});
 		},
 		popup_excluir_capa:			function () {
@@ -798,7 +801,8 @@ var produtoEdicaoController =$.extend(true,  {
 					},
 					"Cancelar": function() {
 						$( "#produtoEdicaoController-dialog-excluir-capa" ,this.workspace).dialog( "close" );
-					}
+					},
+					form: $("#produtoEdicaoController-dialog-excluir-capa", this.workspace).parents("form")
 				}
 			});
 		},
