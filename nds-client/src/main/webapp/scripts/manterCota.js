@@ -524,6 +524,16 @@ var MANTER_COTA = $.extend(true, {
 			minLength: 4,
 			delay : 0,
 		});
+	}, 
+	
+	alterarTitular : function() {
+		$( "#dialog-titular" ).dialog({
+			resizable: false,
+			height:150,
+			width:230,
+			modal: true,
+			form: $("#workspaceCota", MANTER_COTA._workspace)
+		});
 	}
 }, BaseController);
 
@@ -652,6 +662,8 @@ var COTA_FORNECEDOR = $.extend(true, {
 
 var COTA_CNPJ = $.extend(true, {	
 	
+	gridAntigosProprietarios : new GridAntigosProprietarios(".antigosProprietariosGridCNPJ", this.workspace),
+	
 	tratarExibicaoDadosCadastrais:function(){
 		
 		$("#dadosCNPJ", this.workspace).show();
@@ -667,6 +679,8 @@ var COTA_CNPJ = $.extend(true, {
 		TAB_COTA.possuiDadosObrigatorios = false;
 		MANTER_COTA.fecharModalCadastroCota = false;
 		MANTER_COTA.mudarNomeModalCadastro("Nova Cota");
+		
+		COTA_CNPJ.gridAntigosProprietarios.init();
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
 		MANTER_COTA.idCota="";
@@ -697,6 +711,8 @@ var COTA_CNPJ = $.extend(true, {
 		COTA_CNPJ.tratarExibicaoDadosCadastrais();
 		
 		COTA_CNPJ.carregarDadosCadastraisCnpj(result);
+		
+		COTA_CNPJ.gridAntigosProprietarios.init(result);	
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
 			
@@ -813,6 +829,8 @@ var COTA_CNPJ = $.extend(true, {
 
 var COTA_CPF = $.extend(true, {
 	
+	gridAntigosProprietarios : new GridAntigosProprietarios(".antigosProprietariosGridCPF", this.workspace),
+	
 	tratarExibicaoDadosCadastrais:function(){
 		
 		$("#dadosCPF", this.workspace).show();
@@ -828,6 +846,7 @@ var COTA_CPF = $.extend(true, {
 		MANTER_COTA.numeroCota="";
 		
 		COTA_CPF.tratarExibicaoDadosCadastrais();
+		COTA_CPF.gridAntigosProprietarios.init();
 		COTA_CPF.limparCampos();
 		
 		TAB_COTA.possuiDadosObrigatorios = false;
@@ -855,9 +874,12 @@ var COTA_CPF = $.extend(true, {
 
 	editarCPF:function(result){
 		
+		
 		COTA_CPF.tratarExibicaoDadosCadastrais();
 		
 		COTA_CPF.carregarDadosCpf(result);
+		
+		COTA_CPF.gridAntigosProprietarios.init(result);		
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
 		
@@ -909,6 +931,8 @@ var COTA_CPF = $.extend(true, {
 		if(result.fimPeriodo){
 			$("#periodoCotaAteCPF", this.workspace).val(result.fimPeriodo.$);
 		}
+		
+		
 	},
 	
 	salvarDadosBasico:function (){
@@ -1411,3 +1435,71 @@ var SOCIO_COTA = $.extend(true, {
 				);
 		}
 }, BaseController);
+
+function GridAntigosProprietarios(element, workspace) {
+	
+	var _element = element;
+	var _workspace = workspace;
+	
+	this.init =  function(data) { 
+			$(_element, _workspace).flexigrid({
+			dataType : 'json',
+			preProcess: function(data) {
+				if (data.rows) {
+					$.each(data.rows, function(index, row) {
+						if (row.cell.fim) {
+							row.cell.periodo = row.cell.inicio + ' a ' + row.cell.fim ;
+						} else {
+							row.cell.periodo = 'Desde ' + row.cell.inicio;
+						}
+						
+						var acao = '<a href="javascript:;" onclick="">';
+						acao += '<img src="' + contextPath + '/images/ico_detalhes.png" alt="Alterar Titularidade" border="0" /></a>';
+						row.cell.acao = acao;
+					});
+					return data;
+				}
+			},
+			colModel : [{
+				display : 'Período',
+				name : 'periodo',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'CPF',
+				name : 'documento',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 400,
+			height : 110
+		});
+		if (data) {
+			$(_element, _workspace).flexAddData({
+				rows:  toFlexiGridObject(data.proprietarios), 
+				page:1, 
+				total:data.proprietarios.length
+			});
+		} else {
+			$(_element, _workspace).flexAddData({
+				rows:  toFlexiGridObject([]), 
+				page:1, 
+				total:0
+			});
+		}
+	};
+}
