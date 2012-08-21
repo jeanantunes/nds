@@ -25,10 +25,8 @@ public class PoliticaCobrancaRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	@Before
 	public void setUp() {
-		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteira);
-		
-		Banco banco = Fixture.hsbc(carteira); 
+	
+		Banco banco = Fixture.hsbc(); 
 		save(banco);
 				
 		ParametroCobrancaCota parametroCobranca = 

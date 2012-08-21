@@ -78,11 +78,8 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 	public void setup() {
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
-		
-		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteira);
-		
-		Banco banco = Fixture.hsbc(carteira); 
+	
+		Banco banco = Fixture.hsbc(); 
 		save(banco);
 		
 		

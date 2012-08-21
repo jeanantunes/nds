@@ -42,9 +42,8 @@ public class Banco implements Serializable {
 	private String dvConta;
 	@Column(name = "CODIGO_CEDENTE", nullable = false)
 	private String codigoCedente;
-	@ManyToOne
-	@JoinColumn(name = "CARTEIRA_ID")
-	private Carteira carteira;
+	@Column(name = "CARTEIRA")
+	private Integer carteira;
 	@Column(name = "ATIVO", nullable = false)
 	private boolean ativo;
 	@Column(name = "INSTRUCOES")
@@ -128,11 +127,11 @@ public class Banco implements Serializable {
 		this.codigoCedente = codigoCedente;
 	}
 	
-	public Carteira getCarteira() {
+	public Integer getCarteira() {
 		return carteira;
 	}
 	
-	public void setCarteira(Carteira carteira) {
+	public void setCarteira(Integer carteira) {
 		this.carteira = carteira;
 	}
 	

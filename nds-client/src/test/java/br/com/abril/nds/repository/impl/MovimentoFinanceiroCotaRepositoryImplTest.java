@@ -53,10 +53,8 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	
 	@Before
 	public void setup() {
-		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteira);
 		
-		Banco banco = Fixture.hsbc(carteira); 
+		Banco banco = Fixture.hsbc(); 
 		save(banco);
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",

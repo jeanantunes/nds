@@ -353,8 +353,8 @@ public class Fixture {
 		return criarBox(300, "Box 300", TipoBox.LANCAMENTO);
 	}
 	
-	public static Banco hsbc(Carteira carteira) {
-		return Fixture.banco(10L, true, carteira, "1010",
+	public static Banco hsbc() {
+		return Fixture.banco(10L, true, 30, "1010",
 				  123456L, "1", "1", "Sem instruções", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 	}
 	
@@ -2075,7 +2075,7 @@ public class Fixture {
 		return parametrosEmail;
 	}
 	
-	public static Banco banco(Long agencia, boolean ativo, Carteira carteira, String codigoCedente, Long conta, String dvAgencia,
+	public static Banco banco(Long agencia, boolean ativo, Integer carteira, String codigoCedente, Long conta, String dvAgencia,
 								 String dvConta, String instrucoes, String apelido, String nome, String numeroBanco, BigDecimal juros, BigDecimal multa) {
 		
 		Banco banco = new Banco();

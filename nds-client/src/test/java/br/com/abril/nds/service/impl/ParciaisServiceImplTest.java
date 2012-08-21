@@ -121,11 +121,8 @@ public class ParciaisServiceImplTest extends AbstractRepositoryImplTest  {
 		
 		usuarioJoao = Fixture.usuarioJoao();
 		save(usuarioJoao);
-		
-		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		save(carteira);
-		
-		Banco banco = Fixture.hsbc(carteira); 
+				
+		Banco banco = Fixture.hsbc(); 
 		save(banco);
 		
 		

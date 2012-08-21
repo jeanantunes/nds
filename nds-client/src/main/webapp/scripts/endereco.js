@@ -51,7 +51,7 @@ var enderecoController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}			
+			}		
 		});
 	},
 
@@ -191,8 +191,6 @@ var enderecoController = $.extend(true, {
 		
 		var data = "tela=" + paramTelaEndereco +"&idEnderecoAssociacao=" + idEndereco;
 		
-		
-		
 		$.postJSON(
 			contextPath+'/cadastro/endereco/removerEndereco',
 			data,
@@ -312,6 +310,14 @@ var enderecoController = $.extend(true, {
 		);
 	},
 
+	autoCompletarCep : function() {
+		var cep = $("#"+paramTela+"cep").val().replace("_","");
+		
+		if (cep.length == 9) {
+			this.pesquisarEnderecoPorCep();
+		}
+	},
+	
 	autoCompletarLocalidades : function(isOnBlur) {
 		
 		var isFromModal = true;
