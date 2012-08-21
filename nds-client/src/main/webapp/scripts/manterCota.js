@@ -1,8 +1,6 @@
 
 var TAB_COTA = new TabCota('tabCota');
 
-var ENDERECO = new Endereco("", "dialog-socio");
-
 var MANTER_COTA = $.extend(true, {
 	
     numeroCota:"",
@@ -995,6 +993,7 @@ var SOCIO_COTA = $.extend(true, {
 		itemEdicao:null,
 		rows:[],
 		_workspace: this.workspace,
+		enderecoSocio: getEnderecoController("", "dialog-socio"),
 		
 		socio:function(){
 			
@@ -1009,12 +1008,12 @@ var SOCIO_COTA = $.extend(true, {
 		},
 		
 		inicializarPopupSocio: function() {
-
+			
 			SOCIO_COTA.popup_novo_socio();
 			
 			SOCIO_COTA.bindButtonActions();
 			
-			ENDERECO.preencherComboUF();
+			SOCIO_COTA.enderecoSocio.preencherComboUF();
 
 			SOCIO_COTA.limparCamposSocio();
 			
@@ -1044,37 +1043,37 @@ var SOCIO_COTA = $.extend(true, {
 
 			$("#btnPesquisarEndereco", SOCIO_COTA._workspace).click(function() {
 				
-				ENDERECO.pesquisarEnderecoPorCep();
+				SOCIO_COTA.enderecoSocio.pesquisarEnderecoPorCep();
 			});
 			
 			$("#cidade", SOCIO_COTA._workspace).keyup(function() {
 				
-				ENDERECO.autoCompletarLocalidades();
+				SOCIO_COTA.enderecoSocio.autoCompletarLocalidades();
 			});
 			
 			$("#cidade", SOCIO_COTA._workspace).blur(function() {
 				
-				ENDERECO.autoCompletarLocalidades(true);
+				SOCIO_COTA.enderecoSocio.autoCompletarLocalidades(true);
 			});
 			
 			$("#bairro", SOCIO_COTA._workspace).keyup(function() {
 				
-				ENDERECO.autoCompletarBairros();
+				SOCIO_COTA.enderecoSocio.autoCompletarBairros();
 			});
 			
 			$("#bairro", SOCIO_COTA._workspace).blur(function() {
 				
-				ENDERECO.autoCompletarBairros(true);
+				SOCIO_COTA.enderecoSocio.autoCompletarBairros(true);
 			});
 
 			$("#logradouro", SOCIO_COTA._workspace).keyup(function() {
 				
-				ENDERECO.autoCompletarLogradouros();
+				SOCIO_COTA.enderecoSocio.autoCompletarLogradouros();
 			});
 			
 			$("#logradouro", SOCIO_COTA._workspace).blur(function() {
 				
-				ENDERECO.autoCompletarLogradouros(true);
+				SOCIO_COTA.enderecoSocio.autoCompletarLogradouros(true);
 			});
 		},
 		
@@ -1263,8 +1262,8 @@ var SOCIO_COTA = $.extend(true, {
 				contextPath+'/cadastro/cota/carregarSocioPorId',
 				"idSocioCota=" + idSocio,
 				function(result) {
-					
-					ENDERECO.preencherComboUF();//result.endereco.uf);
+
+					SOCIO_COTA.enderecoSocio.preencherComboUF(result.endereco.uf);
 					
 					$("#nomeSocio", this.workspace).val(result.nome),
 					$("#cargoSocio", this.workspace).val(result.cargo),
