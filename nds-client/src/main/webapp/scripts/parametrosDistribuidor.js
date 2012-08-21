@@ -78,7 +78,6 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.cnpj', value: $('#cnpj', this.workspace).val()},
 			{name:'parametrosDistribuidor.inscricaoEstadual', value: $('#inscricaoEstadual', this.workspace).val()},
 			{name:'parametrosDistribuidor.inscricaoMunicipal', value: $('#inscricaoMunicipal', this.workspace).val()},
-			{name:'parametrosDistribuidor.cnpjPrincipal', value: $('#cnpjPrincipal', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.email', value: $('#email', this.workspace).val()},
 			{name:'parametrosDistribuidor.codigoDistribuidorDinap', value: $('#codigoDistribuidorDinap', this.workspace).val()},
 			{name:'parametrosDistribuidor.codigoDistribuidorFC', value: $('#codigoDistribuidorFC', this.workspace).val()},
@@ -92,6 +91,8 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.endereco.bairro', value: $('#bairro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.localidade', value: $('#cidade', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.uf', value: $('#uf', this.workspace).val()},
+			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val()},
+			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val()},
 			
 			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.obrigacaoFiscal', value: $('#obrigacaoFiscal', this.workspace).val()},
@@ -515,6 +516,10 @@ var parametrosDistribuidorController = $.extend(true, {
 			
 			$("#interfaceLEDMODELO3", this.workspace).check();
 		}
+		
+		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
+		
+		$("#numero", this.workspace).numeric();
 	},
 	
 	dialogConfirmarGrupo: function() {
