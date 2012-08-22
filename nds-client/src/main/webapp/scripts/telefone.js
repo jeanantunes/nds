@@ -1,8 +1,20 @@
 function Telefone(paramTela,message) {
 
+	this.workspace = "";
+	
+	this.init = function(workspace) {
+		this.workspace = workspace;
+
+		$("#"+paramTela+"ddd", Telefone.workspace).numeric();
+		$("#"+paramTela+"numeroTelefone", Telefone.workspace).numeric();
+		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
+		$("#"+paramTela+"ramal", Telefone.workspace).numeric();
+
+	};	
+	
 	this.popupTelefone = function() {
 
-		$("#"+paramTela+"manutencaoTelefones", BaseController.workspace).dialog({
+		$("#"+paramTela+"manutencaoTelefones", Telefone.workspace).dialog({
 			resizable : false,
 			height : 500,
 			width : 840,
@@ -14,7 +26,7 @@ function Telefone(paramTela,message) {
 
 	this.popularGrid = function() {
 
-		$("#"+paramTela+"telefonesGrid", BaseController.workspace).flexigrid({
+		$("#"+paramTela+"telefonesGrid", Telefone.workspace).flexigrid({
 			preProcess : this.processarResultado,
 			dataType : 'json',
 			colModel : [ {
@@ -61,7 +73,7 @@ function Telefone(paramTela,message) {
 			sortname : "tipoTelefone"
 		});
 
-		$("#"+paramTela+"telefonesGrid", BaseController.workspace).flexOptions({
+		$("#"+paramTela+"telefonesGrid", Telefone.workspace).flexOptions({
 			url : contextPath + "/cadastro/telefone/pesquisarTelefones",
 			params:[{name:'tela', value:paramTela}]
 		});
@@ -97,9 +109,9 @@ function Telefone(paramTela,message) {
 			data.rows[i].cell[lastIndex] = _this.getActions(data.rows[i].id);
 		}
 
-		if ($('#telefonesGrid', BaseController.workspace).css('display') == 'none') {
+		if ($('#telefonesGrid', Telefone.workspace).css('display') == 'none') {
 
-			$('#telefonesGrid', BaseController.workspace).show();
+			$('#telefonesGrid', Telefone.workspace).show();
 		}
 
 		if (data.result) {
@@ -129,18 +141,18 @@ function Telefone(paramTela,message) {
 	this.adicionarTelefone = function() {
 
 		var data = "tela=" + paramTela + "&referencia="
-				+ $("#"+paramTela+"referenciaHidden", BaseController.workspace).val() + "&tipoTelefone="
-				+ $("#"+paramTela+"tipoTelefone", BaseController.workspace).val() + "&ddd=" + $("#"+paramTela+"ddd", BaseController.workspace).val()
-				+ "&numero=" + $("#"+paramTela+"numeroTelefone", BaseController.workspace).val() + "&ramal="
-				+ $("#"+paramTela+"ramal", BaseController.workspace).val() + "&principal="
-				+ ("" + $("#"+paramTela+"telefonePrincipal", BaseController.workspace).attr("checked") == 'checked');
+				+ $("#"+paramTela+"referenciaHidden", Telefone.workspace).val() + "&tipoTelefone="
+				+ $("#"+paramTela+"tipoTelefone", Telefone.workspace).val() + "&ddd=" + $("#"+paramTela+"ddd", Telefone.workspace).val()
+				+ "&numero=" + $("#"+paramTela+"numeroTelefone", Telefone.workspace).val() + "&ramal="
+				+ $("#"+paramTela+"ramal", Telefone.workspace).val() + "&principal="
+				+ ("" + $("#"+paramTela+"telefonePrincipal", Telefone.workspace).attr("checked") == 'checked');
 
 		var _this = this;
 		
 		$.postJSON(contextPath + "/cadastro/telefone/adicionarTelefone",
 					data, 
 					function(result) {
-						$("#"+paramTela+"telefonesGrid", BaseController.workspace).flexAddData({
+						$("#"+paramTela+"telefonesGrid", Telefone.workspace).flexAddData({
 							page : 1,
 							total : 1,
 							rows : result.rows
@@ -148,9 +160,9 @@ function Telefone(paramTela,message) {
 
 						_this.limparCamposTelefone();
 
-						$("#"+paramTela+"referenciaHidden", BaseController.workspace).val("");
+						$("#"+paramTela+"referenciaHidden", Telefone.workspace).val("");
 
-						$("#"+paramTela+"botaoAddEditar", BaseController.workspace).text("Incluir Novo");
+						$("#"+paramTela+"botaoAddEditar", Telefone.workspace).text("Incluir Novo");
 					}, 
 					null, 
 					true,
@@ -163,7 +175,7 @@ function Telefone(paramTela,message) {
 
 		var _this = this;
 		
-		$("#"+paramTela+"dialog-excluir", BaseController.workspace).dialog({
+		$("#"+paramTela+"dialog-excluir", Telefone.workspace).dialog({
 			resizable : false,
 			height : 'auto',
 			width : 300,
@@ -176,7 +188,7 @@ function Telefone(paramTela,message) {
 					$.postJSON(contextPath + "/cadastro/telefone/removerTelefone",
 				  				data,
 				  				function(result) {
-				  					$("#"+paramTela+"telefonesGrid", BaseController.workspace).flexAddData({
+				  					$("#"+paramTela+"telefonesGrid", Telefone.workspace).flexAddData({
 				  						page : 1,
 										total : 1,
 										rows : result.rows
@@ -184,9 +196,9 @@ function Telefone(paramTela,message) {
 				  				
 				  					_this.limparCamposTelefone();
 
-				  					$("#"+paramTela+"referenciaHidden", BaseController.workspace).val("");
+				  					$("#"+paramTela+"referenciaHidden", Telefone.workspace).val("");
 
-				  					$("#"+paramTela+"botaoAddEditar", BaseController.workspace).text("Incluir Novo");
+				  					$("#"+paramTela+"botaoAddEditar", Telefone.workspace).text("Incluir Novo");
 								}, 
 								null, 
 								true,
@@ -199,7 +211,7 @@ function Telefone(paramTela,message) {
 			}
 		});
 
-		$("#"+paramTela+"dialog-excluir", BaseController.workspace).show();
+		$("#"+paramTela+"dialog-excluir", Telefone.workspace).show();
 	};
 
 	this.editarTelefone = function(referenciaTelefone) {
@@ -213,16 +225,16 @@ function Telefone(paramTela,message) {
 		$.postJSON(contextPath + "/cadastro/telefone/editarTelefone", data,
 				function(result) {
 					if (result != '') {
-						$("#"+paramTela+"tipoTelefone", BaseController.workspace).val(result.tipoTelefone);
-						$("#"+paramTela+"ddd", BaseController.workspace).val(result.telefone.ddd);
-						$("#"+paramTela+"numeroTelefone", BaseController.workspace).val(result.telefone.numero);
-						$("#"+paramTela+"ramal", BaseController.workspace).val(result.telefone.ramal);
-						$("#"+paramTela+"telefonePrincipal", BaseController.workspace).attr("checked",
+						$("#"+paramTela+"tipoTelefone", Telefone.workspace).val(result.tipoTelefone);
+						$("#"+paramTela+"ddd", Telefone.workspace).val(result.telefone.ddd);
+						$("#"+paramTela+"numeroTelefone", Telefone.workspace).val(result.telefone.numero);
+						$("#"+paramTela+"ramal", Telefone.workspace).val(result.telefone.ramal);
+						$("#"+paramTela+"telefonePrincipal", Telefone.workspace).attr("checked",
 								result.principal);
 
-						$("#"+paramTela+"referenciaHidden", BaseController.workspace).val(referenciaTelefone);
+						$("#"+paramTela+"referenciaHidden", Telefone.workspace).val(referenciaTelefone);
 
-						$("#"+paramTela+"botaoAddEditar", BaseController.workspace).text("Editar");
+						$("#"+paramTela+"botaoAddEditar", Telefone.workspace).text("Editar");
 
 						_this.opcaoTel(result.tipoTelefone, 'trRamalId', 'lblRamalId', 'ramal');
 					}
@@ -230,17 +242,17 @@ function Telefone(paramTela,message) {
 	};
 
 	this.limparCamposTelefone = function() {
-		$("#"+paramTela+"tipoTelefone").val("");
-		$("#"+paramTela+"ddd").val("");
-		$("#"+paramTela+"numeroTelefone").val("");
-		$("#"+paramTela+"ramal").val("");
-		$("#"+paramTela+"telefonePrincipal").attr("checked", false);
+		$("#"+paramTela+"tipoTelefone", Telefone.workspace).val("");
+		$("#"+paramTela+"ddd", Telefone.workspace).val("");
+		$("#"+paramTela+"numeroTelefone", Telefone.workspace).val("");
+		$("#"+paramTela+"ramal", Telefone.workspace).val("");
+		$("#"+paramTela+"telefonePrincipal", Telefone.workspace).attr("checked", false);
 	};
 
 	this.opcaoTel = function(opcao, idDiv, idLbl, idCampo) {
-		var div1 = $("#"+paramTela+ idDiv);
-		var lbl = $("#"+paramTela + idLbl);
-		var campo = $("#"+paramTela + idCampo);
+		var div1 = $("#"+paramTela+ idDiv, Telefone.workspace);
+		var lbl = $("#"+paramTela + idLbl, Telefone.workspace);
+		var campo = $("#"+paramTela + idCampo, Telefone.workspace);
 
 		switch (opcao) {
 		case 'COMERCIAL':
@@ -269,7 +281,7 @@ function Telefone(paramTela,message) {
 		$.postJSON(contextPath + "/cadastro/telefone/pesquisarTelefones",
 					"tela=" + paramTela, 
 					function(result) {
-						$("#"+paramTela+"telefonesGrid").flexAddData({
+						$("#"+paramTela+"telefonesGrid", Telefone.workspace).flexAddData({
 							page : result.page,
 							total : result.total,
 							rows : result.rows
@@ -277,9 +289,9 @@ function Telefone(paramTela,message) {
 
 						_this.limparCamposTelefone();
 
-						$("#"+paramTela+"referenciaHidden").val("");
+						$("#"+paramTela+"referenciaHidden", Telefone.workspace).val("");
 
-						$("#"+paramTela+"botaoAddEditar").text("Incluir Novo");
+						$("#"+paramTela+"botaoAddEditar", Telefone.workspace).text("Incluir Novo");
 					}, 
 					null, 
 					true,
@@ -287,10 +299,4 @@ function Telefone(paramTela,message) {
 		);
 	};
 
-	$(function() {
-		$("#"+paramTela+"ddd").numeric();
-		$("#"+paramTela+"numeroTelefone").numeric();
-		$("#"+paramTela+"numeroTelefone").mask("9999-9999");
-		$("#"+paramTela+"ramal").numeric();
-	});
 }

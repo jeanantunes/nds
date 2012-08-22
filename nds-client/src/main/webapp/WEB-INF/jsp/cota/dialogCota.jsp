@@ -97,4 +97,10 @@
 </div>
 </div>
 
+<script type="text/javascript">
+$(function(){
+	ENDERECO_COTA.init(MANTER_COTA.workspace);
+	COTA.init(MANTER_COTA.workspace);
+});
+</script>
 

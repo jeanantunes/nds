@@ -109,3 +109,10 @@
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 </body>
+
+<script type="text/javascript">
+$(function(){
+	ENDERECO_FIADOR.init(fiadorController.workspace);
+	FIADOR.init(fiadorController.workspace);
+});
+</script>

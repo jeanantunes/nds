@@ -9,3 +9,9 @@
 	</jsp:include>
 	
 </fieldset>
+
+<script type="text/javascript">
+$(function(){
+	TELEFONE_PDV.init(PDV.workspace);
+});
+</script>

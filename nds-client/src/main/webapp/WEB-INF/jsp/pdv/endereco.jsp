@@ -10,6 +10,12 @@
 	
 </fieldset>
 
+<script type="text/javascript">
+$(function(){
+	ENDERECO_PDV.init(PDV.workspace);
+});
+</script>
+
 
 
 
