@@ -274,9 +274,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 		for (Fornecedor fornecedor : fornecedores) {
 		
 			DescontoProdutoEdicao descontoProdutoEdicao = 
-					this.descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(
-						TipoDesconto.GERAL, fornecedor, null, null
-					);
+				this.descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(
+					TipoDesconto.GERAL, fornecedor, null, null
+				);
 			
 			if (descontoProdutoEdicao != null) {
 
