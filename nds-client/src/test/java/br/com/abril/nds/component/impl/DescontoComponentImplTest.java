@@ -255,7 +255,7 @@ public class DescontoComponentImplTest extends AbstractRepositoryImplTest {
 		
 		for(ProdutoEdicao prod : this.produtos){
 			
-			desconto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(fornecedorACM, cota123, prod);
+			desconto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(null, fornecedorACM, cota123, prod);
 			
 			Assert.assertTrue(desconto.getDesconto().equals(valorDesconto));
 			Assert.assertTrue(desconto.getTipoDesconto().equals(tipoDesconto));

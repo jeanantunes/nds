@@ -37,17 +37,32 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DescontoProdutoEdicao buscarDescontoProdutoEdicao(Fornecedor fornecedor, 
+	public DescontoProdutoEdicao buscarDescontoProdutoEdicao(TipoDesconto tipoDesconto,
+															 Fornecedor fornecedor, 
 															 Cota cota,
 															 ProdutoEdicao produto) {
 		
 		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicao.class);
+
+		if (fornecedor != null) {
 		
-		criteria.add(Restrictions.eq("fornecedor", fornecedor));
+			criteria.add(Restrictions.eq("fornecedor", fornecedor));
+		}
 
-		criteria.add(Restrictions.eq("cota", cota));
+		if (cota != null) {
+		
+			criteria.add(Restrictions.eq("cota", cota));
+		}
 
-		criteria.add(Restrictions.eq("produtoEdicao", produto));
+		if (produto != null) {
+		
+			criteria.add(Restrictions.eq("produtoEdicao", produto));
+		}
+		
+		if (tipoDesconto != null) {
+			
+			criteria.add(Restrictions.eq("tipoDesconto", tipoDesconto));
+		}
 		
 		criteria.setMaxResults(1);
 		
