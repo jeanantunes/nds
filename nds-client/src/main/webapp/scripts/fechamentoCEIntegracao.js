@@ -1,0 +1,87 @@
+var fechamentoCEIntegracaoController = $.extend(true, {
+	
+	init : function(){
+		//initGrid();
+		alert("testando o controller");
+	},
+	initGrid : function(){
+		
+		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexigrid({
+			url : '../xml/fechamento_Ce_integracao-xml.xml',
+			dataType : 'xml',
+			colModel : [ {
+				display : 'Qtde',
+				name : 'qtde',
+				width : 30,
+				sortable : true,
+				align : 'left'
+			},  {
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 200,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Tipo',
+				name : 'tipo',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			},  {
+				display : 'Reparte',
+				name : 'reparte',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			},  {
+				display : 'Encalhe',
+				name : 'encalhe',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			},  {
+				display : 'Venda',
+				name : 'qtdeVenda',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			},  {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Valor Venda R$',
+				name : 'vlrVenda',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}],
+			sortname : "qtde",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 180
+		});
+		
+	}
+	
+	
+	
+}, BaseController);

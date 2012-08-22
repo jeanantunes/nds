@@ -491,7 +491,7 @@ font-weight:bold;
 								de Contagem para DevoluÃ§Ã£o</a>
 						</li>
 						<li><a href='<c:url value="devolucao/fechamentoEncalhe/"/>'>Fechamento Encalhe</a>
-						</li>
+						</li>						
 						<li><a href="Devolucao/help_devolucao.htm">Help</a>
 						</li>
 					</ul>

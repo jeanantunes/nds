@@ -53,6 +53,7 @@ public enum Permissao
 	ROLE_DEVOLUCAO_EMISSAO_CE("Emissão CE",															  	   Permissao.ROLE_DEVOLUCAO),
 	ROLE_DEVOLUCAO_DIGICACAO_CONTAGEM_DEVOLUCAO("Digitação Contagem Devolução", 						   Permissao.ROLE_DEVOLUCAO),
 	ROLE_DEVOLUCAO_FECHAMENTO_ENCALHE("Fechamento Encalhe",											  	   Permissao.ROLE_DEVOLUCAO),
+	ROLE_DEVOLUCAO_FECHAMENTO_INTEGRACAO("Fechamento CE - Integração",								  	   Permissao.ROLE_DEVOLUCAO),
 	ROLE_DEVOLUCAO_HELP("Help",																		  	   Permissao.ROLE_DEVOLUCAO),
 	ROLE_NFE("NF-e",																	  	   			   null),
 	ROLE_NFE_RETORNO_NFE("Retorno NF-e",																   Permissao.ROLE_NFE),
