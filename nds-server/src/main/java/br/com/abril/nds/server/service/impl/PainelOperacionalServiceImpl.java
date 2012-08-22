@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ancientprogramming.fixedformat4j.format.impl.StringFormatter;
+
 import br.com.abril.nds.server.model.FormatoIndicador;
 import br.com.abril.nds.server.model.Indicador;
 import br.com.abril.nds.server.model.OperacaoDistribuidor;
@@ -33,7 +35,7 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 		List<OperacaoDistribuidor> distribuidores = new ArrayList<OperacaoDistribuidor>();
 		OperacaoDistribuidor ultimoDistribuidor = null;
 		
-		BigDecimal qtdTotalJornaleiros = BigDecimal.ZERO;
+		Integer qtdTotalJornaleiros = 0;
 		BigDecimal cobrancaDia = BigDecimal.ZERO;
 		BigDecimal partLiq = BigDecimal.ZERO;
 		
@@ -72,7 +74,7 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 			switch (indicador.getTipoIndicador()) {
 				case JORNALEIROS:
 					
-					qtdTotalJornaleiros = new BigDecimal(indicador.getValor());
+					qtdTotalJornaleiros = new Integer(indicador.getValor());
 				break;
 				case COBRANCA:
 					
@@ -91,11 +93,8 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 							qtdTotalJornaleiros != null){
 						
 						if (indicador.getValor() != null){
-							
-							BigDecimal pct = qtdTotalJornaleiros.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
-							
-//							indicador.setValor(indicador.getValor() + " - (" + pct.setScale(0, RoundingMode.HALF_EVEN).toString() + "%)");
-							indicador.setValor(indicador.getValor() + " - (" + pct.toString() + "%)");
+							Float pct = (( new Float(indicador.getValor())/qtdTotalJornaleiros.floatValue() ) * 100);							
+							indicador.setValor(String.format("%s -( %2.2f %% )", indicador.getValor(), pct));							
 						} else {
 							
 							indicador.setValor("0");
@@ -107,11 +106,10 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 					
 					if (TipoIndicador.COBRANCA_POSTERGADA.equals(indicador.getTipoIndicador())){
 						
-						if (indicador.getValor() != null){
+						if (indicador.getValor() != null && !indicador.getValor().equals("0")){
 							
-							BigDecimal pctc = cobrancaDia.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
+							BigDecimal pctc =  new BigDecimal(indicador.getValor()).divide(cobrancaDia).multiply(CEM);
 							
-//							indicador.setValor(indicador.getValor() + " - (" + pctc.setScale(0, RoundingMode.HALF_EVEN).toString() + "%)");
 							indicador.setValor(indicador.getValor() + " - (" + pctc.toString() + "%)");
 						} else {
 							
@@ -119,12 +117,9 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 						}
 					} else if (TipoIndicador.INADIMPLENCIA.equals(indicador.getTipoIndicador())){
 						
-						if (indicador.getValor() != null){
-							BigDecimal valorInd = new BigDecimal(indicador.getValor());
+						if (indicador.getValor() != null && !indicador.getValor().equals("0")){
+							BigDecimal pctPartLiqui = new BigDecimal(indicador.getValor()).divide(partLiq).multiply(CEM);
 							
-							BigDecimal pctPartLiqui = valorInd.multiply(partLiq).divide(CEM);
-							
-//							indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.setScale(0, RoundingMode.HALF_EVEN).toString() + "%)");
 							indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.toString() + "%)");
 						} else {
 							

@@ -138,6 +138,8 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 					operacaoDistribuidorAtual.setRevisao(operacaoDistribuidor.getRevisao());
 					operacaoDistribuidorAtual.setDataOperacao(operacaoDistribuidor.getDataOperacao());
 					operacaoDistribuidorAtual.setStatusOperacao(operacaoDistribuidor.getStatusOperacao());
+					operacaoDistribuidorAtual.setNome(operacaoDistribuidor.getNome());
+					operacaoDistribuidorAtual.setUf(operacaoDistribuidor.getUf());
 					
 					this.operacaoDistribuidorRepository.alterar(operacaoDistribuidorAtual);
 				}
