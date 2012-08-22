@@ -261,19 +261,19 @@ public class ProdutoEdicaoController {
 		dto.setNumeroLancamento(numeroLancamento);
 		dto.setDescricaoBrinde(descricaoBrinde);
 		dto.setDescricaoProduto(descricaoProduto);
-		this.validarProdutoEdicao(dto);
-		
-		
-		// Dados da Imagem:
-		String contentType = null;
-		InputStream imgInputStream = null;
-		if (imagemCapa != null) {
-			contentType = imagemCapa.getContentType();
-			imgInputStream = imagemCapa.getFile();
-		}
 		
 		ValidacaoVO vo = null;
 		try {
+			this.validarProdutoEdicao(dto);
+			
+			
+			// Dados da Imagem:
+			String contentType = null;
+			InputStream imgInputStream = null;
+			if (imagemCapa != null) {
+				contentType = imagemCapa.getContentType();
+				imgInputStream = imagemCapa.getFile();
+			}
 			
 			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
