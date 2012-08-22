@@ -150,7 +150,7 @@ var ParciaisController = $.extend(true, {
 			this.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
 		
-		if(result.rows[0].cell.geradoPorInterface==true)
+		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
 			$("#btnIncluirPeriodos",this.workspace).hide();
 		else
 			$("#btnIncluirPeriodos",this.workspace).show();		
@@ -171,7 +171,7 @@ var ParciaisController = $.extend(true, {
 			$('#exportacaoPeriodosModal',this.workspace).show();
 		}
 		
-		if(result.rows[0].cell.geradoPorInterface==true)
+		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
 			$("#btnIncluirPeriodosModal",this.workspace).hide();
 		else
 			$("#btnIncluirPeriodosModal",this.workspace).show();		

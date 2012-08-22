@@ -185,7 +185,18 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 	}
 
 	@Override
+	public DescontoCota buscarUltimoDescontoValido(Fornecedor fornecedor, Cota cota) {
+		
+		return obterDescontoValido(null, fornecedor, cota);
+	}
+	
+	@Override
 	public DescontoCota buscarUltimoDescontoValido(Long idDesconto,Fornecedor fornecedor, Cota cota) {
+		
+		return obterDescontoValido(idDesconto, fornecedor, cota);
+	}
+
+	private DescontoCota obterDescontoValido(Long idDesconto,Fornecedor fornecedor, Cota cota) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -194,9 +205,12 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 			.append(" ( select max(descontoSub.dataAlteracao) from DescontoCota descontoSub  ")
 				.append(" JOIN descontoSub.fornecedores fornecedorSub JOIN descontoSub.cota cotaSub ")
 				.append(" where fornecedorSub.id =:idFornecedor ")
-				.append(" and descontoSub.id not in (:idUltimoDesconto) ")
-				.append(" and cotaSub.id =:idCota ")
-			.append(" ) ")
+				.append(" and cotaSub.id =:idCota ");
+				if(idDesconto!= null){
+					hql.append(" and descontoSub.id not in (:idUltimoDesconto) ");
+				}
+				
+		hql.append(" ) ")
 			.append(" AND fornecedor.id =:idFornecedor ")
 			.append(" AND cota.id =:idCota ");
 	
@@ -204,7 +218,10 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		
 		query.setParameter("idFornecedor",fornecedor.getId());
 		
-		query.setParameter("idUltimoDesconto", idDesconto);
+		if(idDesconto!= null){
+			
+			query.setParameter("idUltimoDesconto", idDesconto);
+		}
 		
 		query.setParameter("idCota", cota.getId());
 		

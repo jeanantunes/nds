@@ -42,5 +42,17 @@ public interface DescontoCotaRepository extends Repository<DescontoCota, Long> {
 	 * @return DescontoCota
 	 */
 	DescontoCota buscarUltimoDescontoValido(Long idDesconto,Fornecedor fornecedor, Cota cota);
+	
+	/**
+	 * Retorna o ultimo desconto válido da cota de um forncedor
+	 * 
+	 * 
+	 * @param fornecedor - fornecedor
+	 * 
+	 * @param cota - cota
+	 * 
+	 * @return DescontoCota
+	 */
+	DescontoCota buscarUltimoDescontoValido(Fornecedor fornecedor, Cota cota);
 
 }
