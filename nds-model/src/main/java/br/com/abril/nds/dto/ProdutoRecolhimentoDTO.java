@@ -29,7 +29,7 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 
 	private boolean possuiBrinde;
 
-	private BigDecimal peso;
+	private Long peso;
 
 	private BigDecimal desconto = BigDecimal.ZERO;
 
@@ -146,17 +146,11 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 		this.possuiBrinde = possuiBrinde;
 	}
 
-	/**
-	 * @return the peso
-	 */
-	public BigDecimal getPeso() {
+	public Long getPeso() {
 		return peso;
 	}
 
-	/**
-	 * @param peso the peso to set
-	 */
-	public void setPeso(BigDecimal peso) {
+	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
 

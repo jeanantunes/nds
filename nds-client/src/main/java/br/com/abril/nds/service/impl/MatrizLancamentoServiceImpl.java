@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.util.BigIntegerUtil;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
@@ -46,6 +45,7 @@ import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {

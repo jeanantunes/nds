@@ -31,7 +31,7 @@ public class DescontoComponentImpl implements DescontoComponent {
 		
 		for(ProdutoEdicao produto : produtos){
 			
-			descontoProdutoEdicao =  descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(fornecedor,cota,produto);
+			descontoProdutoEdicao =  descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(null, fornecedor,cota,produto);
 			
 			if(descontoProdutoEdicao == null){
 				descontoProdutoEdicao = new DescontoProdutoEdicao();

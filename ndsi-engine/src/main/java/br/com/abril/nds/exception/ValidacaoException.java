@@ -3,8 +3,8 @@ package br.com.abril.nds.exception;
 import java.io.Serializable;
 import java.util.List;
 
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Value Object para mensagens de validação do sistema.

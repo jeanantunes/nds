@@ -1,4 +1,3 @@
-
 var TAB_COTA = new TabCota('tabCota');
 
 var MANTER_COTA = $.extend(true, {
@@ -19,9 +18,7 @@ var MANTER_COTA = $.extend(true, {
 		
 		$("#numCota", this.workspace).numeric();
 		
-		COTA_FORNECEDOR.initTabFornecedorCota();
-
-		//COTA_DESCONTO.initTabDescontoCota();
+		COTA_FORNECEDOR.initTabFornecedorCota();	
 
 		SOCIO_COTA.initGridSocioCota();
 
@@ -147,8 +144,8 @@ var MANTER_COTA = $.extend(true, {
     },
     
     carregarDescontos:function(){
-        
-    	//descontoController.initDescontos(MANTER_COTA.numeroCota);
+
+    	COTA_DESCONTO.initDescontos(MANTER_COTA.numeroCota);
     },
     
     carregarDistribuicao:function(){
@@ -524,68 +521,158 @@ var MANTER_COTA = $.extend(true, {
 			minLength: 4,
 			delay : 0,
 		});
+	}, 
+	
+	alterarTitular : function() {
+		$( "#dialog-titular" ).dialog({
+			resizable: false,
+			height:150,
+			width:230,
+			modal: true,
+			form: $("#workspaceCota", MANTER_COTA._workspace)
+		});
 	}
 }, BaseController);
 
-
-/*
-var COTA_DESCONTO = $.extend(true, {
-
-		salvarDesconto:function(){
-			
-			var descontos = "";
-			
-			 $("#selectDesconto option", this.workspace).each(function (index) {
-				 descontos = descontos + "descontos["+index+"]="+ $(this, this.workspace).val() +"&";
-			 });
-			
-			$.postJSON(
-					contextPath + "/cadastro/cota/salvarDescontos",
-					descontos + 
-					"&idCota="+ MANTER_COTA.idCota, 
-					null,
-					null,
-					true
-			);
-		},
+var COTA_DESCONTO = $.extend(true,
+    {
+	    initDescontos : function(numCota){
+	    	COTA_DESCONTO.initDescontoCota();
+	    	COTA_DESCONTO.initDescontoProduto();
+	    	COTA_DESCONTO.obterDescontoCota(numCota); 
+	    	COTA_DESCONTO.obterDescontoProduto(numCota);
+	    	
+	    },
+	
+	    initDescontoProduto : function(){
+		    $(".descProdutosGrid", this.workspace).flexigrid({
+		    	preProcess: COTA_DESCONTO.getDataFromResult,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 80,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 350,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'nomeProduto',
+					width : 60,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : '% Desconto',
+					name : 'desconto',
+					width : 115,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Data da Alteração',
+					name : 'dataAlteracao',
+					width : 120,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "dataAlteracao",
+				sortorder : "asc",
+				width : 810,
+				height : 150
+			});
+	    },	
 		
-		carregarDescontoCota:function(){
+	    initDescontoCota : function(){
+			$(".descCotaGrid", this.workspace).flexigrid({
+				preProcess: COTA_DESCONTO.getDataFromResult,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Fornecedor',
+					name : 'fornecedor',
+					width : 440,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : '% Desconto',
+					name : 'desconto',
+					width : 80,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Tipo',
+					name : 'descTipoDesconto',
+					width : 120,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Última Atualização',
+					name : 'dataAlteracao',
+					width : 100,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "dataAlteracao",
+				sortorder : "asc",
+				width : 810,
+				height : 150
+			});
+	    },
+	    
+        obterDescontoProduto : function(numCota){
+        	
+        	$(".descProdutosGrid", this.workspace).flexOptions({
+				url: contextPath+'/cadastro/cota/obterTiposDescontoProduto',
+				params: [
+				         {name:'numCota', value:numCota}
+				        ] ,
+				        newp: 1
+			});
 			
-			$.postJSON(contextPath + "/cadastro/cota/obterDescontos",
-					"idCota="+ MANTER_COTA.idCota, 
-					function(result){
-						
-						if(result){
-							MANTER_COTA.montarCombo(result,"#selectTipoDesconto");
-						}
-					},null,true
-			);
+			$(".descProdutosGrid", this.workspace).flexReload();
 			
-			$.postJSON(contextPath + "/cadastro/cota/obterDescontosSelecionados",
-					"idCota="+ MANTER_COTA.idCota, 
-					function(result){
-					
-						if(result){
-							MANTER_COTA.montarCombo(result,"#selectDesconto");
-						}
-					},null,true
-			);
-		},
+			$(".grids", this.workspace).show();
+	    },
+	    
+	    obterDescontoCota : function(numCota){
+	    	
+			$(".descCotaGrid", this.workspace).flexOptions({
+				url: contextPath+'/cadastro/cota/obterTiposDescontoCota',
+				params: [
+				         {name:'numCota', value:numCota}
+				        ] ,
+				        newp: 1
+			});
+			
+			$(".descCotaGrid", this.workspace).flexReload();
+			
+			$(".grids", this.workspace).show();
+	    },
 
-		initTabDescontoCota: function() {
+	    
+        getDataFromResult : function(resultado){
 			
-			$("select[name='selectDesconto']", this.workspace).multiSelect(
-				"select[name='selectTipoDesconto']", {trigger: "#linkDescontoVoltarTodos"}
-			);
+			if (resultado.mensagens) {
+				exibirMensagemDialog(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				$(".grids", this.workspace).hide();
+				return resultado;
+			}	
+				
+			$(".grids", this.workspace).show();
 			
-			$("select[name='selectTipoDesconto']", this.workspace).multiSelect(
-				"select[name='selectDesconto']", {trigger: "#linkDescontoEnviarTodos"}
-			);
+			return resultado;
 		}
-
-}, BaseController);
-*/
-
+ 
+    }
+	,
+	BaseController
+);
 
 var COTA_FORNECEDOR = $.extend(true, {
 	
@@ -652,6 +739,8 @@ var COTA_FORNECEDOR = $.extend(true, {
 
 var COTA_CNPJ = $.extend(true, {	
 	
+	gridAntigosProprietarios : new GridAntigosProprietarios(".antigosProprietariosGridCNPJ", this.workspace),
+	
 	tratarExibicaoDadosCadastrais:function(){
 		
 		$("#dadosCNPJ", this.workspace).show();
@@ -667,6 +756,8 @@ var COTA_CNPJ = $.extend(true, {
 		TAB_COTA.possuiDadosObrigatorios = false;
 		MANTER_COTA.fecharModalCadastroCota = false;
 		MANTER_COTA.mudarNomeModalCadastro("Nova Cota");
+		
+		COTA_CNPJ.gridAntigosProprietarios.init();
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
 		MANTER_COTA.idCota="";
@@ -697,6 +788,8 @@ var COTA_CNPJ = $.extend(true, {
 		COTA_CNPJ.tratarExibicaoDadosCadastrais();
 		
 		COTA_CNPJ.carregarDadosCadastraisCnpj(result);
+		
+		COTA_CNPJ.gridAntigosProprietarios.init(result);	
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
 			
@@ -813,6 +906,8 @@ var COTA_CNPJ = $.extend(true, {
 
 var COTA_CPF = $.extend(true, {
 	
+	gridAntigosProprietarios : new GridAntigosProprietarios(".antigosProprietariosGridCPF", this.workspace),
+	
 	tratarExibicaoDadosCadastrais:function(){
 		
 		$("#dadosCPF", this.workspace).show();
@@ -828,6 +923,7 @@ var COTA_CPF = $.extend(true, {
 		MANTER_COTA.numeroCota="";
 		
 		COTA_CPF.tratarExibicaoDadosCadastrais();
+		COTA_CPF.gridAntigosProprietarios.init();
 		COTA_CPF.limparCampos();
 		
 		TAB_COTA.possuiDadosObrigatorios = false;
@@ -855,9 +951,12 @@ var COTA_CPF = $.extend(true, {
 
 	editarCPF:function(result){
 		
+		
 		COTA_CPF.tratarExibicaoDadosCadastrais();
 		
 		COTA_CPF.carregarDadosCpf(result);
+		
+		COTA_CPF.gridAntigosProprietarios.init(result);		
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
 		
@@ -909,6 +1008,8 @@ var COTA_CPF = $.extend(true, {
 		if(result.fimPeriodo){
 			$("#periodoCotaAteCPF", this.workspace).val(result.fimPeriodo.$);
 		}
+		
+		
 	},
 	
 	salvarDadosBasico:function (){
@@ -996,7 +1097,7 @@ var SOCIO_COTA = $.extend(true, {
 		itemEdicao:null,
 		rows:[],
 		_workspace: this.workspace,
-		enderecoSocio: getEnderecoController("", "dialog-socio"),
+		enderecoSocio: null, //getEnderecoController("SOCIO_COTA", "dialog-socio"), Precisei voltar á forma antiga, favor rever a forma de popular isto. Grato.
 		
 		socio:function(){
 			
@@ -1411,3 +1512,71 @@ var SOCIO_COTA = $.extend(true, {
 				);
 		}
 }, BaseController);
+
+function GridAntigosProprietarios(element, workspace) {
+	
+	var _element = element;
+	var _workspace = workspace;
+	
+	this.init =  function(data) { 
+			$(_element, _workspace).flexigrid({
+			dataType : 'json',
+			preProcess: function(data) {
+				if (data.rows) {
+					$.each(data.rows, function(index, row) {
+						if (row.cell.fim) {
+							row.cell.periodo = row.cell.inicio + ' a ' + row.cell.fim ;
+						} else {
+							row.cell.periodo = 'Desde ' + row.cell.inicio;
+						}
+						
+						var acao = '<a href="javascript:;" onclick="">';
+						acao += '<img src="' + contextPath + '/images/ico_detalhes.png" alt="Alterar Titularidade" border="0" /></a>';
+						row.cell.acao = acao;
+					});
+					return data;
+				}
+			},
+			colModel : [{
+				display : 'Período',
+				name : 'periodo',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'CPF',
+				name : 'documento',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 400,
+			height : 110
+		});
+		if (data) {
+			$(_element, _workspace).flexAddData({
+				rows:  toFlexiGridObject(data.proprietarios), 
+				page:1, 
+				total:data.proprietarios.length
+			});
+		} else {
+			$(_element, _workspace).flexAddData({
+				rows:  toFlexiGridObject([]), 
+				page:1, 
+				total:0
+			});
+		}
+	};
+}

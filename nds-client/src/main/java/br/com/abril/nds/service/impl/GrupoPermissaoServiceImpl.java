@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ResultadoGrupoVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.GrupoPermissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaGrupoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -19,6 +18,7 @@ import br.com.abril.nds.repository.GrupoPermissaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * @author InfoA2

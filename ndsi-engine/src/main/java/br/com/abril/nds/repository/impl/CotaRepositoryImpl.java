@@ -20,13 +20,13 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
+import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -859,10 +859,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 * @see br.com.abril.nds.repository.CotaRepository#obterCurvaABCCotaTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO)
 	 */
 	@Override
-	public ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtro){
+	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtro){
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ").append(ResultadoCurvaABCCota.class.getCanonicalName())
+		hql.append("SELECT new ").append(ResultadoCurvaABCCotaDTO.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
 
@@ -875,7 +875,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		return (ResultadoCurvaABCCota) query.list().get(0);
+		return (ResultadoCurvaABCCotaDTO) query.list().get(0);
 	}
 
 	/* (non-Javadoc)
@@ -883,10 +883,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
+	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
 		StringBuilder hql = new StringBuilder();
 
-		hql.append("SELECT new ").append(RegistroCurvaABCCotaVO.class.getCanonicalName())
+		hql.append("SELECT new ").append(RegistroCurvaABCCotaDTO.class.getCanonicalName())
 		.append(" ( estoqueProdutoCota.produtoEdicao.produto.codigo , ")
 		.append("   estoqueProdutoCota.produtoEdicao.produto.nome , ")
 		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
@@ -905,7 +905,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter(key, param.get(key));
 		}
 
-		return complementarCurvaABCCota((List<RegistroCurvaABCCotaVO>) query.list());
+		return complementarCurvaABCCota((List<RegistroCurvaABCCotaDTO>) query.list());
 
 	}
 
@@ -1035,13 +1035,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 * @param lista
 	 * @return
 	 */
-	private List<RegistroCurvaABCCotaVO> complementarCurvaABCCota(List<RegistroCurvaABCCotaVO> lista) {
+	private List<RegistroCurvaABCCotaDTO> complementarCurvaABCCota(List<RegistroCurvaABCCotaDTO> lista) {
 
 		BigDecimal participacaoTotal = new BigDecimal(0);
 		BigDecimal vendaTotal = new BigDecimal(0);
 
 		// Soma todos os valores de participacao
-		for (RegistroCurvaABCCotaVO registro : lista) {
+		for (RegistroCurvaABCCotaDTO registro : lista) {
 			participacaoTotal.add(registro.getFaturamento());
 			vendaTotal.add(registro.getVendaExemplares());
 		}
@@ -1050,12 +1050,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		BigDecimal participacaoAcumulada = new BigDecimal(0);
 		BigDecimal porcentagemVendaRegistro = new BigDecimal(0);
 		
-		RegistroCurvaABCCotaVO registro = null;
+		RegistroCurvaABCCotaDTO registro = null;
 
 		// Verifica o percentual dos valores em relação ao total de participacao
 		for (int i=0; i<lista.size(); i++) {
 
-			registro = (RegistroCurvaABCCotaVO) lista.get(i);
+			registro = (RegistroCurvaABCCotaDTO) lista.get(i);
 
 			// Partipacao do registro em relacao a participacao total no periodo
 			if ( participacaoTotal.doubleValue() != 0 ) {

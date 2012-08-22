@@ -6,7 +6,7 @@
 	
 	<script type="text/javascript">
 
-		var ${param.tela} = getTelefoneController('${param.tela}','${param.message}');
+		var ${param.tela} = new Telefone('${param.tela}','${param.message}');
 		
 	</script>
 	
