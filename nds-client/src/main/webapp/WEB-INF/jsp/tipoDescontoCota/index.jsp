@@ -72,20 +72,22 @@ $(function() {
                 <td width="585">
                 <div class="especifico" style="display: none">
 	                
-	                Cota: <input name="numCotaPesquisa" 
+	                <label style="width:auto!important;">Cota:</label>
+	                <input name="numCotaPesquisa" 
 			           		   id="numCotaPesquisa" 
 			           		   type="text"
 			           		   maxlength="11"
-			           		   style="width:70px;"
+			           		   style="width:70px;float:left;"
 			           		   onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 			           	  											null, 
 			           	  											null);" />
-			    	Nome: <input  name="descricaoCotaPesquisa" 
+			    	<label style="width:auto!important;">Nome:</label>
+			        <input  name="descricaoCotaPesquisa" 
 					      		 id="descricaoCotaPesquisa" 
 					      		 type="text" 
 					      		 class="nome_jornaleiro" 
 					      		 maxlength="255"
-					      		 style="width:200px;"
+					      		 style="width:200px;float:left;"
 					      		 onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
 					      		 onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 													      			null,
