@@ -1,10 +1,38 @@
-function Endereco(paramTela,paramMessage) {
+function Endereco(paramTela, paramMessage) {
+
+	var _this = this;
+    
+	$(function() {
+		
+		var _this = this;
+		
+		$("#"+paramTela+"cep").mask("99999-999");
+		$("#"+paramTela+"uf").mask("aa");
+		
+		$("#"+paramTela+"linkIncluirNovoEndereco").keypress(function() {
+			
+			var keynum = 0;
+	          
+	        if(window.event) {
+
+	            keynum = event.keyCode;
+	        
+	        } else if(event.which) {   
+
+	        	keynum = event.which;
+	        }
+
+			if (keynum == 13) {
+				_this.incluirNovoEndereco();
+			}
+		});
+	});
 
 	this.confirmarExclusaoEndereco = function (idEndereco) {
 		
 		var _this = this;
 		
-		$( "#dialog-excluir-end", BaseController.workspace ).dialog({
+		$( "#dialog-excluir-end").dialog({
 			resizable: false,
 			height:'auto',
 			width:380,
@@ -19,9 +47,7 @@ function Endereco(paramTela,paramMessage) {
 				}
 			}			
 		});
-	};
-
-	var _this = this;
+	},
 	
 	this.processarResultadoConsultaEndereco = function (data) {
                                                                                                                                                                                                                                                                                                                                                                   
@@ -52,13 +78,13 @@ function Endereco(paramTela,paramMessage) {
 			console.log(data);
 		}
 
-		if ($("."+paramTela+"enderecosGrid", BaseController.workspace).css('display') == 'none') {
+		if ($("."+paramTela+"enderecosGrid").css('display') == 'none') {
 
-			$("."+paramTela+"enderecosGrid", BaseController.workspace).show();
+			$("."+paramTela+"enderecosGrid").show();
 		}
 
 		return data;
-	};
+	},
 
 	this.getAction = function (idEndereco) {
 
@@ -70,7 +96,7 @@ function Endereco(paramTela,paramMessage) {
 				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
 				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
-	};
+	},
 
 	this.popularGridEnderecos = function() {
 		
@@ -82,7 +108,7 @@ function Endereco(paramTela,paramMessage) {
 			contextPath+'/cadastro/endereco/pesquisarEnderecos',
 			"tela=" + paramTela,
 			function(result) {
-				$("."+paramTela+"enderecosGrid", BaseController.workspace).flexAddData({
+				$("."+paramTela+"enderecosGrid").flexAddData({
 					page: result.page, total: result.total, rows: result.rows
 				});	
 				
@@ -90,7 +116,7 @@ function Endereco(paramTela,paramMessage) {
 
 				_this.preencherComboUF();
 				
-				$("#"+paramTela+"tipoEndereco", BaseController.workspace).focus();
+				$("#"+paramTela+"tipoEndereco").focus();
 			},
 			function(result) {
 				
@@ -98,11 +124,11 @@ function Endereco(paramTela,paramMessage) {
 			},
 			true
 		);
-	};		
+	},		
 	
 	this.incluirNovoEndereco = function () {
 
-		var formData = $("#"+paramTela+"formEnderecos :input", BaseController.workspace).serializeArray();
+		var formData = $("#"+paramTela+"formEnderecos :input").serializeArray();
 		
 		var _this = this;
 		
@@ -110,13 +136,13 @@ function Endereco(paramTela,paramMessage) {
 			contextPath+'/cadastro/endereco/incluirNovoEndereco',
 			formData,
 			function(result) {
-				$("."+paramTela+"enderecosGrid", BaseController.workspace).flexAddData({
+				$("."+paramTela+"enderecosGrid").flexAddData({
 					page: result.page, total: result.total, rows: result.rows
 				});	
 				
 				_this.limparFormEndereco();
 				
-				$("#"+paramTela+"tipoEndereco", BaseController.workspace).focus();
+				$("#"+paramTela+"tipoEndereco").focus();
 			},
 			function(result) {
 				
@@ -125,14 +151,14 @@ function Endereco(paramTela,paramMessage) {
 			true,
 			paramMessage
 		);
-	};
+	},
 
 	this.editarEndereco = function(idEndereco) {
 		
-		$("#"+paramTela+"linkIncluirNovoEndereco", BaseController.workspace).html("");
-		$("#"+paramTela+"linkIncluirNovoEndereco", BaseController.workspace).html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> Salvar");
-		$("#"+paramTela+"btnIncluirNovoEndereco", BaseController.workspace).removeClass("bt_add");
-		$("#"+paramTela+"btnIncluirNovoEndereco", BaseController.workspace).addClass("bt_novos");
+		$("#"+paramTela+"linkIncluirNovoEndereco").html("");
+		$("#"+paramTela+"linkIncluirNovoEndereco").html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> Salvar");
+		$("#"+paramTela+"btnIncluirNovoEndereco").removeClass("bt_add");
+		$("#"+paramTela+"btnIncluirNovoEndereco").addClass("bt_novos");
 		
 		var data = "tela=" + paramTela +"&idEnderecoAssociacao=" + idEndereco;
 		
@@ -140,26 +166,26 @@ function Endereco(paramTela,paramMessage) {
 				contextPath+'/cadastro/endereco/editarEndereco',
 				data,
 			function(result) {
-				$("#"+paramTela+"idEndereco", BaseController.workspace).val(result.id);
-				$("#"+paramTela+"enderecoid", BaseController.workspace).val(result.endereco.id);
-				$("#"+paramTela+"tipoEndereco", BaseController.workspace).val(result.tipoEndereco);
-				$("#"+paramTela+"cep", BaseController.workspace).val(adicionarMascaraCEP(result.endereco.cep));
-				$("#"+paramTela+"tipoLogradouro", BaseController.workspace).val(result.endereco.tipoLogradouro);
-				$("#"+paramTela+"logradouro", BaseController.workspace).val(result.endereco.logradouro);
-				$("#"+paramTela+"numero", BaseController.workspace).val(result.endereco.numero);
-				$("#"+paramTela+"complemento", BaseController.workspace).val(result.endereco.complemento);
-				$("#"+paramTela+"bairro", BaseController.workspace).val(result.endereco.bairro);
-				$("#"+paramTela+"cidade", BaseController.workspace).val(result.endereco.cidade);
-				$("#"+paramTela+"uf", BaseController.workspace).val(result.endereco.uf);
-				$("#"+paramTela+"principal", BaseController.workspace).attr("checked", result.enderecoPrincipal);
-				$("#"+paramTela+"codigoBairro", BaseController.workspace).val(result.endereco.codigoBairro);
-				$("#"+paramTela+"codigoCidadeIBGE", BaseController.workspace).val(result.endereco.codigoCidadeIBGE);
+				$("#"+paramTela+"idEndereco").val(result.id);
+				$("#"+paramTela+"enderecoid").val(result.endereco.id);
+				$("#"+paramTela+"tipoEndereco").val(result.tipoEndereco);
+				$("#"+paramTela+"cep").val(adicionarMascaraCEP(result.endereco.cep));
+				$("#"+paramTela+"tipoLogradouro").val(result.endereco.tipoLogradouro);
+				$("#"+paramTela+"logradouro").val(result.endereco.logradouro);
+				$("#"+paramTela+"numero").val(result.endereco.numero);
+				$("#"+paramTela+"complemento").val(result.endereco.complemento);
+				$("#"+paramTela+"bairro").val(result.endereco.bairro);
+				$("#"+paramTela+"cidade").val(result.endereco.cidade);
+				$("#"+paramTela+"uf").val(result.endereco.uf);
+				$("#"+paramTela+"principal").attr("checked", result.enderecoPrincipal);
+				$("#"+paramTela+"codigoBairro").val(result.endereco.codigoBairro);
+				$("#"+paramTela+"codigoCidadeIBGE").val(result.endereco.codigoCidadeIBGE);
 			},
 			null, 
 			true,
 			paramMessage
 		);
-	};
+	},
 
 	this.removerEndereco = function (idEndereco) {
 		
@@ -171,7 +197,7 @@ function Endereco(paramTela,paramMessage) {
 			contextPath+'/cadastro/endereco/removerEndereco',
 			data,
 			function(result) {
-				$("."+paramTela+"enderecosGrid", BaseController.workspace).flexAddData({
+				$("."+paramTela+"enderecosGrid").flexAddData({
 					page: result.page, total: result.total, rows: result.rows
 				});		
 			},
@@ -181,11 +207,11 @@ function Endereco(paramTela,paramMessage) {
 			},
 			true
 		);
-	};
+	},
 
 	this.popup = function () {
 
-		$("#"+paramTela+"manutencaoEnderecos", BaseController.workspace).dialog({
+		$("#"+paramTela+"manutencaoEnderecos").dialog({
 			resizable: false,
 			height:640,
 			width:840,
@@ -198,52 +224,26 @@ function Endereco(paramTela,paramMessage) {
 		});
 		
 		this.popularGrid();
-	};
+	},
 	
 	this.limparFormEndereco = function () {
 
-		$("#"+paramTela+"linkIncluirNovoEndereco", BaseController.workspace).html("Incluir Novo");
-		$("#"+paramTela+"btnIncluirNovoEndereco", BaseController.workspace).removeClass();
-		$("#"+paramTela+"btnIncluirNovoEndereco", BaseController.workspace).addClass("bt_add");
+		$("#"+paramTela+"linkIncluirNovoEndereco").html("Incluir Novo");
+		$("#"+paramTela+"btnIncluirNovoEndereco").removeClass();
+		$("#"+paramTela+"btnIncluirNovoEndereco").addClass("bt_add");
 
-		$("#"+paramTela+"idEndereco", BaseController.workspace).val("");
-		$("#"+paramTela+"tipoEndereco", BaseController.workspace).val("");
-		$("#"+paramTela+"cep", BaseController.workspace).val("");
-		$("#"+paramTela+"tipoLogradouro", BaseController.workspace).val("");
-		$("#"+paramTela+"logradouro", BaseController.workspace).val("");
-		$("#"+paramTela+"numero", BaseController.workspace).val("");
-		$("#"+paramTela+"complemento", BaseController.workspace).val("");
-		$("#"+paramTela+"bairro", BaseController.workspace).val("");
-		$("#"+paramTela+"cidade", BaseController.workspace).val("");
-		$("#"+paramTela+"uf", BaseController.workspace).val("");
-		$("#"+paramTela+"principal", BaseController.workspace).attr("checked", false);
-	};
-	
-	$(function() {
-		
-		var _this = this;
-		
-		$("#"+paramTela+"cep", BaseController.workspace).mask("99999-999");
-		$("#"+paramTela+"uf", BaseController.workspace).mask("aa");
-		
-		$("#"+paramTela+"linkIncluirNovoEndereco", BaseController.workspace).keypress(function() {
-			
-			var keynum = 0;
-	          
-	        if(window.event) {
-
-	            keynum = event.keyCode;
-	        
-	        } else if(event.which) {   
-
-	        	keynum = event.which;
-	        }
-
-			if (keynum == 13) {
-				_this.incluirNovoEndereco();
-			}
-		});
-	});
+		$("#"+paramTela+"idEndereco").val("");
+		$("#"+paramTela+"tipoEndereco").val("");
+		$("#"+paramTela+"cep").val("");
+		$("#"+paramTela+"tipoLogradouro").val("");
+		$("#"+paramTela+"logradouro").val("");
+		$("#"+paramTela+"numero").val("");
+		$("#"+paramTela+"complemento").val("");
+		$("#"+paramTela+"bairro").val("");
+		$("#"+paramTela+"cidade").val("");
+		$("#"+paramTela+"uf").val("");
+		$("#"+paramTela+"principal").attr("checked", false);
+	},
 	
 	this.pesquisarEnderecoPorCep = function () {
 		
@@ -254,26 +254,26 @@ function Endereco(paramTela,paramMessage) {
 			isFromModal = false;
 		}
 	
-		var cep = $("#"+paramTela+"cep", BaseController.workspace).val();
+		var cep = $("#"+paramTela+"cep").val();
 
 		$.postJSON(
 			contextPath+'/cadastro/endereco/obterEnderecoPorCep',
 			{ "cep": cep },			 
 			function(result) {
-				$("#"+paramTela+"idEndereco", BaseController.workspace).val(result.id);
-				$("#"+paramTela+"tipoLogradouro", BaseController.workspace).val(result.tipoLogradouro);
-				$("#"+paramTela+"logradouro", BaseController.workspace).val(result.logradouro);
-				$("#"+paramTela+"codigoBairro", BaseController.workspace).val(result.codigoBairro);
-				$("#"+paramTela+"bairro", BaseController.workspace).val(result.bairro);
-				$("#"+paramTela+"uf", BaseController.workspace).val(result.uf);
-				$("#"+paramTela+"codigoCidadeIBGE", BaseController.workspace).val(result.codigoCidadeIBGE);
-				$("#"+paramTela+"cidade", BaseController.workspace).val(result.localidade);
+				$("#"+paramTela+"idEndereco").val(result.id);
+				$("#"+paramTela+"tipoLogradouro").val(result.tipoLogradouro);
+				$("#"+paramTela+"logradouro").val(result.logradouro);
+				$("#"+paramTela+"codigoBairro").val(result.codigoBairro);
+				$("#"+paramTela+"bairro").val(result.bairro);
+				$("#"+paramTela+"uf").val(result.uf);
+				$("#"+paramTela+"codigoCidadeIBGE").val(result.codigoCidadeIBGE);
+				$("#"+paramTela+"cidade").val(result.localidade);
 			},
 			null, 
 			isFromModal,
 			paramMessage
 		);
-	};
+	},
 	
 	this.preencherComboUF = function (ufSelecionado) {
 
@@ -291,15 +291,15 @@ function Endereco(paramTela,paramMessage) {
 			null,
 			function(result) {
 
-				$(idComboUF, BaseController.workspace).html("");
+				$(idComboUF, this.workspace).html("");
 				
-				$(idComboUF, BaseController.workspace).append('<option selected="selected"></option>');
+				$(idComboUF, this.workspace).append('<option selected="selected"></option>');
 
 				$.each(result, function(index, value) {
 
 					var option = "<option value='" + value + "'>" + value + "</option>";
 
-					$(idComboUF, BaseController.workspace).append(option);	
+					$(idComboUF, this.workspace).append(option);	
 				});
 				
 				if (ufSelecionado) {
@@ -332,11 +332,11 @@ function Endereco(paramTela,paramMessage) {
 
 		var idComboUF = "#" + paramTela + "uf";
 
-		var uf = $(idComboUF, BaseController.workspace).val();
+		var uf = $(idComboUF).val();
 
 		var idCampoCidade = "#" + paramTela + "cidade";
 		
-		var nomeLocalidade = $(idCampoCidade, BaseController.workspace).val();
+		var nomeLocalidade = $(idCampoCidade).val();
 		
 		if (nomeLocalidade && nomeLocalidade.length > 2 && uf) {
 
@@ -354,13 +354,13 @@ function Endereco(paramTela,paramMessage) {
 
 						var codigoIBGE = result[0] ? result[0].chave.$ : "";
 
-						$(idCampoCidade, BaseController.workspace).val(valor);
+						$(idCampoCidade).val(valor);
 
 						$("#"+paramTela+"codigoCidadeIBGE").val(codigoIBGE);
 
 					} else {
 
-						$(idCampoCidade, BaseController.workspace).autocomplete({
+						$(idCampoCidade).autocomplete({
 							source: result
 						});	
 					}
@@ -369,7 +369,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	},
 
 	this.autoCompletarBairros = function(isOnBlur) {
 
@@ -380,9 +380,9 @@ function Endereco(paramTela,paramMessage) {
 			isFromModal = false;
 		}
 		
-		var nomeBairro = $("#"+paramTela+"bairro", BaseController.workspace).val();
+		var nomeBairro = $("#"+paramTela+"bairro").val();
 		
-		var codigoIBGE = $("#"+paramTela+"codigoCidadeIBGE", BaseController.workspace).val();
+		var codigoIBGE = $("#"+paramTela+"codigoCidadeIBGE").val();
 		
 		if (nomeBairro && nomeBairro.length > 2 && codigoIBGE) {
 
@@ -402,11 +402,11 @@ function Endereco(paramTela,paramMessage) {
 
 						$("#"+paramTela+"bairro").val(nome);
 
-						$("#"+paramTela+"codigoBairro", BaseController.workspace).val(codigoBairro);
+						$("#"+paramTela+"codigoBairro").val(codigoBairro);
 
 					} else {
 
-						$("#"+paramTela+"bairro", BaseController.workspace).autocomplete({
+						$("#"+paramTela+"bairro").autocomplete({
 							source: result
 						});	
 					}					
@@ -415,7 +415,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	},
 	
 	this.autoCompletarLogradouros = function(isOnBlur) {
 
@@ -426,9 +426,9 @@ function Endereco(paramTela,paramMessage) {
 			isFromModal = false;
 		}
 
-		var codigoBairro = $("#"+paramTela+"codigoBairro", BaseController.workspace).val();
+		var codigoBairro = $("#"+paramTela+"codigoBairro").val();
 		
-		var nomeLogradouros = $("#"+paramTela+"logradouro", BaseController.workspace).val();
+		var nomeLogradouros = $("#"+paramTela+"logradouro").val();
 
 		if (nomeLogradouros && nomeLogradouros.length > 2 && codigoBairro) {
 
@@ -444,11 +444,11 @@ function Endereco(paramTela,paramMessage) {
 
 						var nome = result[0] ? result[0].value : nomeLogradouros;
 
-						$("#"+paramTela+"logradouro", BaseController.workspace).val(nome);
+						$("#"+paramTela+"logradouro").val(nome);
 
 					} else {
 
-						$("#"+paramTela+"logradouro", BaseController.workspace).autocomplete({
+						$("#"+paramTela+"logradouro").autocomplete({
 							source: result
 						});	
 					}					
@@ -457,13 +457,13 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	},
 	
 	this.popularGrid = function(){
 		
 		var nomeGrid = paramTela +"enderecosGrid";
 		
-		$("."+nomeGrid, BaseController.workspace).flexigrid({
+		$("."+nomeGrid).flexigrid({
 			preProcess: this.processarResultadoConsultaEndereco,
 			dataType : 'json',
 			colModel : [  {

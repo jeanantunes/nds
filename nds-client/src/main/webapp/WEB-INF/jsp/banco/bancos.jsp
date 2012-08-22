@@ -9,6 +9,7 @@
 <script language="javascript" type="text/javascript">
 $(function(){
 	bancoController.init();
+
 });
 </script>
 <style>
