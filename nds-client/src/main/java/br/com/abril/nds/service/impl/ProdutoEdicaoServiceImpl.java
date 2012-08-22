@@ -260,7 +260,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	 */
 	private void inserirDescontoProdutoEdicao(ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
 
-		List<DescontoProdutoEdicao>  //descontoService.
+		List<DescontoProdutoEdicao> listaDescontoProdutoEdicao =  null; //descontoService.
 		// Detectar se o fornecedor do produto edicao possui desconto especifico
 		
 			// SIM: Temos a lista de cotas, e o valor que cada cota recebeu de desnconto
