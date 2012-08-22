@@ -136,7 +136,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		sql.append("WHERE ");
 		sql.append("	pe.numeroEdicao = :numeroEdicao ");
 		sql.append("	AND p.codigo = :codigoProduto ");
-		sql.append("	AND lcto.dataLancamentoPrevista >= current_date() ");
+		sql.append("	AND lcto.dataLancamentoPrevista >= :dataAtual ");
 		sql.append("ORDER BY lcto.dataLancamentoPrevista DESC");
 
 		Query query = getSession().createQuery(sql.toString());
@@ -145,6 +145,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 
 		query.setParameter("numeroEdicao", edicao);
 		query.setParameter("codigoProduto", codigoPublicacao);
+		query.setParameter("dataAtual", new Date(2012, 07, 27));
 
 		return (Lancamento) query.uniqueResult();
 	}

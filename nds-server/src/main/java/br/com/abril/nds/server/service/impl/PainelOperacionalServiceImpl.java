@@ -94,7 +94,8 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 							
 							BigDecimal pct = qtdTotalJornaleiros.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
 							
-							indicador.setValor(indicador.getValor() + " - (" + pct.setScale(0) + "%)");
+//							indicador.setValor(indicador.getValor() + " - (" + pct.setScale(0, RoundingMode.HALF_EVEN).toString() + "%)");
+							indicador.setValor(indicador.getValor() + " - (" + pct.toString() + "%)");
 						} else {
 							
 							indicador.setValor("0");
@@ -110,7 +111,8 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 							
 							BigDecimal pctc = cobrancaDia.multiply(new BigDecimal(indicador.getValor()).divide(CEM));
 							
-							indicador.setValor(indicador.getValor() + " - (" + pctc.setScale(0, RoundingMode.HALF_EVEN) + "%)");
+//							indicador.setValor(indicador.getValor() + " - (" + pctc.setScale(0, RoundingMode.HALF_EVEN).toString() + "%)");
+							indicador.setValor(indicador.getValor() + " - (" + pctc.toString() + "%)");
 						} else {
 							
 							indicador.setValor("0");
@@ -122,7 +124,8 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 							
 							BigDecimal pctPartLiqui = valorInd.multiply(partLiq).divide(CEM);
 							
-							indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.setScale(0, RoundingMode.HALF_EVEN) + "%)");
+//							indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.setScale(0, RoundingMode.HALF_EVEN).toString() + "%)");
+							indicador.setValor(indicador.getValor() + " - (" + pctPartLiqui.toString() + "%)");
 						} else {
 							
 							indicador.setValor("0");
