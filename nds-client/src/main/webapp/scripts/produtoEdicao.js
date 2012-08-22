@@ -572,7 +572,8 @@ var produtoEdicaoController =$.extend(true,  {
 							}
 						},
 						function(result) { 
-							exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
+							$("#produtoEdicaoController-dialog-novo",this.workspace).dialog( "close" );
+							exibirMensagem(result.tipoMensagem, result.listaMensagens);
 						},
 						true
 			);
@@ -592,8 +593,6 @@ var produtoEdicaoController =$.extend(true,  {
 			}
 
 			produtoEdicaoController.pesquisarEdicoes();
-			produtoEdicaoController.prepararTela(id);
-			produtoEdicaoController.carregarDialog(id);
 
 			$( "#produtoEdicaoController-dialog-novo" ).dialog({
 				resizable: false,
@@ -613,6 +612,9 @@ var produtoEdicaoController =$.extend(true,  {
 				},
 				form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
 			});
+
+			produtoEdicaoController.prepararTela(id);
+			produtoEdicaoController.carregarDialog(id);
 		},
 		salvarProdutoEdicao : function(closePopUp) {
 

@@ -51,6 +51,8 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 	private DescontoProduto descontoProdutoCapricho;
 	
 	private DescontoProduto descontoProdutoSuperInteressante;
+
+	private ProdutoEdicao produtoEdicaoCapricho;
 	
 	private static Cota cota;
 	
@@ -140,7 +142,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		/* Produto de código 4 */
 		Produto produtoCapricho = Fixture.produtoCapricho(tipoProduto);
 		
-		ProdutoEdicao produtoEdicaoCapricho = Fixture.produtoEdicao(
+		produtoEdicaoCapricho = Fixture.produtoEdicao(
 			"123", 2L, 10, 10, new Long(100), new BigDecimal(10), 
 			new BigDecimal(10), "55201", 1L, produtoCapricho, new BigDecimal(10), false
 		);
@@ -295,5 +297,21 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		
 		Assert.assertNotNull(descontosProduto);
 		Assert.assertEquals(expectedSize, actualSize);
+	}
+	
+	@Test
+	public void testObterUltimoDescontoValido(){
+		
+		DescontoProduto desconto  = descontoProdutoRepository.buscarUltimoDescontoValido(cota,produtoEdicaoCapricho);
+		
+		Assert.assertNotNull(desconto);
+	}
+	
+	@Test
+	public void testObterUltimoDescontoValidoDoUltimo(){
+		
+		DescontoProduto desconto  = descontoProdutoRepository.buscarUltimoDescontoValido(descontoProdutoVeja.getId(),cota,produtoEdicaoCapricho);
+		
+		Assert.assertNotNull(desconto);
 	}
 }
