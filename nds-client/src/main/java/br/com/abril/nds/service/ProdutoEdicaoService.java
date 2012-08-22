@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.Intervalo;
 
@@ -136,8 +137,9 @@ public interface ProdutoEdicaoService {
 	 * @param codigoProduto
 	 * @param contentType
 	 * @param imgInputStream
+	 * @param usuario
 	 */
-	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream);
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream, Usuario usuario);
 	
 	/**
 	 * Exclui uma Edição da base de dados.<br>

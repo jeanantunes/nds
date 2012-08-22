@@ -21,6 +21,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.LancamentoService;
@@ -218,6 +219,18 @@ public class ProdutoEdicaoController {
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
 	
+	//TODO: não há como reconhecer usuario, ainda
+	private Usuario getUsuario() {
+			
+		Usuario usuario = new Usuario();
+			
+		usuario.setId(1L);
+			
+		usuario.setNome("Jornaleiro da Silva");
+			
+		return usuario;
+	}
+	
 	@Post
 	public void salvar(UploadedFile imagemCapa,
 			String codigoProduto, Long idProdutoEdicao,
@@ -275,7 +288,7 @@ public class ProdutoEdicaoController {
 		ValidacaoVO vo = null;
 		try {
 			
-			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
+			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream, getUsuario());
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
 		} catch (ValidacaoException e) {
 			

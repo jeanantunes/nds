@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -25,15 +26,18 @@ import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
@@ -70,6 +74,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private MatrizLancamentoService matrizLancamentoService;
+	
+	private DescontoService descontoService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -246,12 +252,42 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				"numeroEdicao", 0, 5);
 	}
 	
+	/**
+	 * Insere os dados de desconto relativos ao produto edição em questão.
+	 * 
+	 * @param produtoEdicao
+	 * @param indNovoProdutoEdicao
+	 */
+	private void inserirDescontoProdutoEdicao(ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
+
+		List<DescontoProdutoEdicao>  //descontoService.
+		// Detectar se o fornecedor do produto edicao possui desconto especifico
+		
+			// SIM: Temos a lista de cotas, e o valor que cada cota recebeu de desnconto
+		
+				// Iterar a lista de cotas passando os dados do item da lista (fornec, cota, desconto)
+				descontoService.processarDescontoCota(cota, fornecedores, valorDesconto)
+				
+			// NAO: Nao faz nada...
+		
+		
+		// Detectar se o fornecedor possui registr. tipo de desconto geral
+					
+			// SIM:	temos a lista de cota vinc. a este fornecedor,
+		
+				descontoService.processarDescontoDistribuidor(fornecedores, valorDesconto)
+		
+	}
+	
 	@Override
 	@Transactional
 	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, 
-			String contentType, InputStream imgInputStream) {
+			String contentType, InputStream imgInputStream, Usuario usuario) {
 		
 		ProdutoEdicao produtoEdicao = null;
+		
+		boolean indNovoProdutoEdicao = true;
+		
 		if (dto.getId() == null) {
 			
 			// Novo ProdutoEdicao - create:
@@ -259,6 +295,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
 			produtoEdicao.setOrigemInterface(Boolean.FALSE);
 		} else {
+			
+			indNovoProdutoEdicao = false;
 			
 			// ProdutoEdicao existente - update:
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
@@ -281,9 +319,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
 		}
 		
-		
 		// 03) Salvar/Atualizar o lancamento:
 		this.salvarLancamento(dto, produtoEdicao);
+		
+		this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao, usuario);
+		
+		
 	}
 	
 	/**
