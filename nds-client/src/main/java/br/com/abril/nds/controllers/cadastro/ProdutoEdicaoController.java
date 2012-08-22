@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Dimensao;
@@ -31,6 +30,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -218,6 +218,7 @@ public class ProdutoEdicaoController {
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
 	
+	
 	@Post
 	public void salvar(UploadedFile imagemCapa,
 			String codigoProduto, Long idProdutoEdicao,
@@ -261,19 +262,19 @@ public class ProdutoEdicaoController {
 		dto.setNumeroLancamento(numeroLancamento);
 		dto.setDescricaoBrinde(descricaoBrinde);
 		dto.setDescricaoProduto(descricaoProduto);
-		this.validarProdutoEdicao(dto);
-		
-		
-		// Dados da Imagem:
-		String contentType = null;
-		InputStream imgInputStream = null;
-		if (imagemCapa != null) {
-			contentType = imagemCapa.getContentType();
-			imgInputStream = imagemCapa.getFile();
-		}
 		
 		ValidacaoVO vo = null;
 		try {
+			this.validarProdutoEdicao(dto);
+			
+			
+			// Dados da Imagem:
+			String contentType = null;
+			InputStream imgInputStream = null;
+			if (imagemCapa != null) {
+				contentType = imagemCapa.getContentType();
+				imgInputStream = imagemCapa.getFile();
+			}
 			
 			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
@@ -355,7 +356,7 @@ public class ProdutoEdicaoController {
 		}
 		
 		if (!listaMensagens.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
 		}
 	}
 	

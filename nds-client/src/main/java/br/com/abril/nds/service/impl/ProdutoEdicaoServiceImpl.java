@@ -8,38 +8,47 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Brinde;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Dimensao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -70,6 +79,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private MatrizLancamentoService matrizLancamentoService;
+	
+	@Autowired
+	private DescontoService descontoService;
+	
+	@Autowired
+	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -246,12 +261,73 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				"numeroEdicao", 0, 5);
 	}
 	
+	/**
+	 * Insere os dados de desconto relativos ao produto edição em questão.
+	 * 
+	 * @param produtoEdicao
+	 * @param indNovoProdutoEdicao
+	 */
+	private void inserirDescontoProdutoEdicao(ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao) {
+
+		Produto produto = produtoEdicao.getProduto();
+		
+		GrupoProduto grupoProduto = produto.getTipoProduto().getGrupoProduto();
+		
+		if(!indNovoProdutoEdicao || GrupoProduto.OUTROS.equals( grupoProduto )) {
+			return;
+		}
+		
+		Fornecedor fornecedor = produto.getFornecedor();
+		
+		Set<Fornecedor> conjuntoFornecedor = new HashSet<Fornecedor>();
+		
+		conjuntoFornecedor.add(fornecedor);
+		
+		
+		
+		Set<DescontoProdutoEdicao> conjuntoDescontoProdutoEdicaoEspecifico = 
+				descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(TipoDesconto.ESPECIFICO, fornecedor, null);
+		
+		if(conjuntoDescontoProdutoEdicaoEspecifico!=null && !conjuntoDescontoProdutoEdicaoEspecifico.isEmpty()) {
+			
+			
+			for(DescontoProdutoEdicao descontoEspecifico : conjuntoDescontoProdutoEdicaoEspecifico) {
+				
+				Cota cota = descontoEspecifico.getCota();
+				
+				descontoService.processarDescontoCota(cota, conjuntoFornecedor, descontoEspecifico.getDesconto());
+				
+			}
+			
+			
+		}
+		
+		Set<DescontoProdutoEdicao> conjuntoDescontoProdutoEdicaoGeral = 
+				descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(TipoDesconto.GERAL, fornecedor, null);
+		
+		if(conjuntoDescontoProdutoEdicaoGeral!=null && !conjuntoDescontoProdutoEdicaoGeral.isEmpty()) {
+			
+			
+			for(DescontoProdutoEdicao descontoGeral : conjuntoDescontoProdutoEdicaoGeral) {
+				
+				descontoService.processarDescontoDistribuidor(conjuntoFornecedor, descontoGeral.getDesconto());
+				
+			}
+			
+			
+		}
+		
+	}
+	
 	@Override
 	@Transactional
 	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, 
 			String contentType, InputStream imgInputStream) {
 		
 		ProdutoEdicao produtoEdicao = null;
+		
+		boolean indNovoProdutoEdicao = true;
+		
 		if (dto.getId() == null) {
 			
 			// Novo ProdutoEdicao - create:
@@ -259,6 +335,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
 			produtoEdicao.setOrigemInterface(Boolean.FALSE);
 		} else {
+			
+			indNovoProdutoEdicao = false;
 			
 			// ProdutoEdicao existente - update:
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
@@ -281,9 +359,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
 		}
 		
-		
 		// 03) Salvar/Atualizar o lancamento:
 		this.salvarLancamento(dto, produtoEdicao);
+		
+		this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
+		
+		
 	}
 	
 	/**

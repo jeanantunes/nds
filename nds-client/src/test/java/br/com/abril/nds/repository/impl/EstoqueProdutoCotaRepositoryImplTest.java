@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -33,7 +32,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -55,8 +53,6 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	
 	private static FormaCobranca formaBoleto;
 
-	private static Carteira carteiraSemRegistro;
-	
 	private static Distribuidor distribuidor;
 	
 	private static Banco bancoHSBC;
@@ -70,11 +66,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	@Before
 	public void setup() {
 		
-		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		
-		save(carteiraSemRegistro);
-		
-		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoHSBC = Fixture.banco(10L, true, 1, "1010",
 				  123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		save(bancoHSBC);
@@ -204,11 +196,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	
 	public void criarDistribuidor() {
 		
-		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		
-		save(carteiraSemRegistro);
-		
-		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoHSBC = Fixture.banco(10L, true, 1, "1010",
 				  123456L, "1", "1", "Instrucoes.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		save(bancoHSBC);

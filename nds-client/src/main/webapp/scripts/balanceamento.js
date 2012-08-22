@@ -55,16 +55,16 @@ function Balanceamento(pathTela, descInstancia) {
 	 * @param result
 	 */
 	this.popularDetalheProduto = function(result){
-		$("#detalheNome").html(result.nomeProduto);
-		$("#detalhePreco").html(result.precoCapa);
-		$("#detalheCCapa").html(result.chamadaCapa);
-		$("#detalhePrecoDesc").html(result.precoComDesconto);
-		$("#detalheFornecedor").html(result.fornecedor);
-		$("#detalheBrinde").html(result.possuiBrinde);
-		$("#detalheEditor").html(result.codigoEditor+"-"+result.nomeEditor);
-		$("#detalhePacote").html(result.pacotePadrao);
+		$("#produtoEdicaoController-detalheNome").html(result.nomeProduto);
+		$("#produtoEdicaoController-detalhePreco").html(result.precoCapa);
+		$("#produtoEdicaoController-detalheCCapa").html(result.chamadaCapa);
+		$("#produtoEdicaoController-detalhePrecoDesc").html(result.precoComDesconto);
+		$("#produtoEdicaoController-detalheFornecedor").html(result.fornecedor);
+		$("#produtoEdicaoController-detalheBrinde").html(result.possuiBrinde);
+		$("#produtoEdicaoController-detalheEditor").html(result.codigoEditor+"-"+result.nomeEditor);
+		$("#produtoEdicaoController-detalhePacote").html(result.pacotePadrao);
 
-		T.carregarImagemCapa(result.idProdutoEdicao,'129','170','Capa',"td_imagem_capa");
+		T.carregarImagemCapa(result.idProdutoEdicao,'129','170','Capa',"produtoEdicaoController-td_imagem_capa");
 	},
 	
 	/**

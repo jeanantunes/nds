@@ -78,7 +78,6 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.cnpj', value: $('#cnpj', this.workspace).val()},
 			{name:'parametrosDistribuidor.inscricaoEstadual', value: $('#inscricaoEstadual', this.workspace).val()},
 			{name:'parametrosDistribuidor.inscricaoMunicipal', value: $('#inscricaoMunicipal', this.workspace).val()},
-			{name:'parametrosDistribuidor.cnpjPrincipal', value: $('#cnpjPrincipal', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.email', value: $('#email', this.workspace).val()},
 			{name:'parametrosDistribuidor.codigoDistribuidorDinap', value: $('#codigoDistribuidorDinap', this.workspace).val()},
 			{name:'parametrosDistribuidor.codigoDistribuidorFC', value: $('#codigoDistribuidorFC', this.workspace).val()},
@@ -92,6 +91,8 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.endereco.bairro', value: $('#bairro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.localidade', value: $('#cidade', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.uf', value: $('#uf', this.workspace).val()},
+			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val()},
+			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val()},
 			
 			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.obrigacaoFiscal', value: $('#obrigacaoFiscal', this.workspace).val()},
@@ -192,7 +193,18 @@ var parametrosDistribuidorController = $.extend(true, {
 
 	atualizarLogo: function() {
 		
-		$("#imgLogo", this.workspace).attr("src", parametrosDistribuidorController.path + "atualizarLogo?timestamp=" + new Date().getTime());
+		$("#div_imagem_logotipo").empty();
+		
+		var img = $("<img />");
+		img.load(
+		    function() {						
+		    	$("#div_imagem_logotipo").append(img);
+		    }
+		)
+		.attr('src', parametrosDistribuidorController.path + "getLogo?timestamp=" + new Date().getTime())
+		.attr('width', 110)
+		.attr('height', 70)
+		.attr('alt', "Logotipo Distribuidor");
 	},
 
 	salvarLogo: function() {
@@ -329,7 +341,8 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("input:checkbox[id=controlesAprovacao]", this.workspace).attr("disabled", "disabled");
 	},
 	
-	init: function(){
+	init: function() {
+		
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg();
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
 		
@@ -452,15 +465,22 @@ var parametrosDistribuidorController = $.extend(true, {
 			 precision:0
 		});
 		
-		$("#tipoEndereco", this.workspace).val("${parametrosDistribuidor.endereco.tipoEndereco}");
-		$("#regimeTributario", this.workspace).val("${parametrosDistribuidor.regimeTributario}");
-		$("#obrigacaoFiscal", this.workspace).val("${parametrosDistribuidor.obrigacaoFiscal}");
+		$("#tipoEndereco", this.workspace).val($("#tipoEnderecoHidden").val());
+		$("#regimeTributario", this.workspace).val($("#regimeTributarioHidden").val());
+		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
 		
-		$("#relancamentoParciaisEmDias", this.workspace).val('${parametrosDistribuidor.relancamentoParciaisEmDias}');
+		var hasLogotipo = $("#hasLogotipoHidden").val();
 		
-		$('input:radio[name=interfaceLED][value=${parametrosDistribuidor.impressaoInterfaceLED}]', this.workspace).click();
-		$('input:radio[name=impressaoNECADANFE][value=${parametrosDistribuidor.impressaoNECADANFE}]', this.workspace).click();
-		$('input:radio[name=impressaoCE][value=${parametrosDistribuidor.impressaoCE}]', this.workspace).click();
+		if (eval(hasLogotipo)) {
+			
+			parametrosDistribuidorController.atualizarLogo();
+		}
+		
+		$("#relancamentoParciaisEmDias", this.workspace).val($("#relancamentoParciaisEmDias").val());
+		
+		$('input:radio[name=interfaceLED][value=' + $("#impressaoInterfaceLEDHidden").val() + ']', this.workspace).click();
+		$('input:radio[name=impressaoNECADANFE][value=' + $("#impressaoNECADANFEHidden").val() + ']', this.workspace).click();
+		$('input:radio[name=impressaoCE][value=' + $("#impressaoCEHidden").val() + ']', this.workspace).click();
 		
 		parametrosDistribuidorController.utilizaContratoCotasListener();
 		
@@ -498,6 +518,10 @@ var parametrosDistribuidorController = $.extend(true, {
 			
 			$("#interfaceLEDMODELO3", this.workspace).check();
 		}
+		
+		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
+		
+		$("#numero", this.workspace).numeric();
 	},
 	
 	dialogConfirmarGrupo: function() {
@@ -520,7 +544,4 @@ var parametrosDistribuidorController = $.extend(true, {
 	 }
 }, BaseController);
 
-$(function() {
-	
-	parametrosDistribuidorController.init();
-});
+//@ sourceURL=parametrosDistribuidor.js

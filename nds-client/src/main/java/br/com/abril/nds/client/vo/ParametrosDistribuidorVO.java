@@ -23,8 +23,6 @@ public class ParametrosDistribuidorVO {
     
     private String inscricaoMunicipal;
     
-    private boolean cnpjPrincipal;
-    
     private String email;
     
     private String codigoDistribuidorDinap;
@@ -37,7 +35,7 @@ public class ParametrosDistribuidorVO {
     
     private boolean regimeEspecial;
     
-    private EnderecoVO endereco;
+    private EnderecoVO endereco = new EnderecoVO();
     
     // Aba Operação
     
@@ -289,20 +287,6 @@ public class ParametrosDistribuidorVO {
      */
     public void setInscricaoMunicipal(String inscricaoMunicipal) {
         this.inscricaoMunicipal = inscricaoMunicipal;
-    }
-
-    /**
-     * @return the cnpjPrincipal
-     */
-    public boolean getCnpjPrincipal() {
-        return cnpjPrincipal;
-    }
-
-    /**
-     * @param cnpjPrincipal the cnpjPrincipal to set
-     */
-    public void setCnpjPrincipal(boolean cnpjPrincipal) {
-        this.cnpjPrincipal = cnpjPrincipal;
     }
 
     /**

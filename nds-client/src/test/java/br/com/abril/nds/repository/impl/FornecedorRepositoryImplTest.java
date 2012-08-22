@@ -276,4 +276,9 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(idsForncedores.size(), fornecedores.size());
 	}
 	
+	@Test
+	public void obterMaxCodigoInterface(){
+		this.fornecedorRepository.obterMaxCodigoInterface();
+	}
+	
 }

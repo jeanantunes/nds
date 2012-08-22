@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
@@ -27,6 +26,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -63,6 +63,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -913,7 +914,7 @@ public class BoletoServiceImpl implements BoletoService {
 			corpoBoleto.setEnderecoSacadoCep(endereco.getCep());         
 			corpoBoleto.setEnderecoSacadoBairro(endereco.getBairro()); 
 			corpoBoleto.setEnderecoSacadoLogradouro(endereco.getLogradouro()); 
-			corpoBoleto.setEnderecoSacadoNumero(Integer.toString(endereco.getNumero())); 
+			corpoBoleto.setEnderecoSacadoNumero(endereco.getNumero()); 
 		}
 		else{
 			corpoBoleto.setEnderecoSacadoUf("SP");
@@ -929,14 +930,18 @@ public class BoletoServiceImpl implements BoletoService {
         String contaNumero=boleto.getBanco().getConta().toString();
         String contaNumeroDocumento=boleto.getNossoNumero();
         corpoBoleto.setContaNumeroBanco(boleto.getBanco().getNumeroBanco());                  
-        corpoBoleto.setContaCarteira(boleto.getBanco().getCarteira().getCodigo());
-
-        if (boleto.getBanco().getCarteira().getCodigo()==1){
-        	corpoBoleto.setContaTipoDeCobranca("SEM_REGISTRO");
+        corpoBoleto.setContaCarteira(boleto.getBanco().getCarteira());
+       
+        Set<FormaCobranca> formasCobranca = 
+        		boleto.getCota().getParametroCobranca().getFormasCobrancaCota();
+        
+        for (FormaCobranca formaCobranca : formasCobranca) {
+        	
+        	if(formaCobranca.getBanco().getApelido().equals(boleto.getBanco().getApelido())) {
+        		corpoBoleto.setContaTipoDeCobranca(formaCobranca.getFormaCobrancaBoleto().toString());
+        	}
         }
-        if (boleto.getBanco().getCarteira().getCodigo()==30){  
-        	corpoBoleto.setContaTipoDeCobranca("COM_REGISTRO");
-        }
+        
         corpoBoleto.setContaAgencia(boleto.getBanco().getAgencia().intValue());    
         corpoBoleto.setContaNumero(Integer.parseInt(contaNumero));   
         

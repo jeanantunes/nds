@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
+import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
@@ -59,7 +59,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
 	
-	private static final String DB_NAME = "db_parametro_sistema";
+	private static final String DB_NAME = "db_parametro_distribuidor";
 	
 	@Autowired
 	DistribuidorService distribuidorService;
@@ -75,6 +75,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 	@Autowired
 	TipoGarantiaAceitaRepository tipoGarantiaAceitaRepository;
+	
+	@Autowired
+	EnderecoDistribuidorRepository enderecoDistribuidorRepository;
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
@@ -102,14 +105,17 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		ParametrosDistribuidorVO parametrosDistribuidor = new ParametrosDistribuidorVO();
 		
+		if (distribuidor == null) {
+			
+			return parametrosDistribuidor;
+		}
+		
 		// Cadastro / Fiscal
-		// TODO:
 		parametrosDistribuidor.setRazaoSocial(distribuidor.getRazaoSocial());
 		parametrosDistribuidor.setNomeFantasia(distribuidor.getNomeFantasia());
 		parametrosDistribuidor.setCnpj(distribuidor.getCnpj());
 		parametrosDistribuidor.setInscricaoEstadual(distribuidor.getInscricaoEstadual());
 		parametrosDistribuidor.setInscricaoMunicipal(distribuidor.getInscricaoMunicipal());
-		parametrosDistribuidor.setCnpjPrincipal(distribuidor.isCnpjPrincipal());
 		parametrosDistribuidor.setEmail(distribuidor.getEmail());
 		parametrosDistribuidor.setCodigoDistribuidorDinap(distribuidor.getCodigoDistribuidorDinap());
 		parametrosDistribuidor.setCodigoDistribuidorFC(distribuidor.getCodigoDistribuidorFC());
@@ -305,8 +311,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		return parametrosDistribuidor;
 	}
 
-	private EnderecoDistribuidor popularEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor,
-														 EnderecoVO enderecoVO) {
+	private EnderecoDistribuidor gravarEnderecoDistribuidor(Distribuidor distribuidor,
+														 	 EnderecoVO enderecoVO) {
+		
+		EnderecoDistribuidor enderecoDistribuidor = distribuidor.getEnderecoDistribuidor();
 		
 		if (enderecoDistribuidor == null) {
 			
@@ -323,14 +331,23 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		endereco.setCep(enderecoVO.getCep());
 		endereco.setTipoLogradouro(enderecoVO.getTipoLogradouro());
 		endereco.setLogradouro(enderecoVO.getLogradouro());
-		endereco.setNumero(enderecoVO.getNumero());
+		endereco.setNumero((enderecoVO.getNumero().trim().isEmpty()) ? null : enderecoVO.getNumero());
 		endereco.setComplemento(enderecoVO.getComplemento());
 		endereco.setBairro(enderecoVO.getBairro());
 		endereco.setCidade(enderecoVO.getLocalidade());
 		endereco.setUf(enderecoVO.getUf());
 		
+		endereco.setCodigoBairro(
+			(enderecoVO.getCodigoBairro() == null) ? null : enderecoVO.getCodigoBairro().intValue());
+		
+		endereco.setCodigoCidadeIBGE(
+			(enderecoVO.getCodigoCidadeIBGE() == null) ? null : enderecoVO.getCodigoCidadeIBGE().intValue());
+		
+		enderecoDistribuidor.setDistribuidor(distribuidor);
 		enderecoDistribuidor.setTipoEndereco(enderecoVO.getTipoEndereco());
 		enderecoDistribuidor.setEndereco(endereco);
+		
+		enderecoDistribuidorRepository.merge(enderecoDistribuidor);
 		
 		return enderecoDistribuidor;
 	}
@@ -362,6 +379,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		enderecoVO.setLocalidade(endereco.getCidade());
 		enderecoVO.setUf(endereco.getUf());
 		
+		enderecoVO.setCodigoBairro(
+			(endereco.getCodigoBairro() == null) ? null : endereco.getCodigoBairro().longValue());
+		
+		enderecoVO.setCodigoCidadeIBGE(
+			(endereco.getCodigoCidadeIBGE() == null) ? null : endereco.getCodigoCidadeIBGE().longValue());
+		
 		return enderecoVO;
 	}
 	
@@ -377,21 +400,20 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 
+		if (distribuidor == null) {
+			
+			distribuidor = new Distribuidor();
+		}
+		
 		// Cadastro / Fiscal
-		// TODO: 
 		distribuidor.setRazaoSocial(parametrosDistribuidor.getRazaoSocial());
 		distribuidor.setNomeFantasia(parametrosDistribuidor.getNomeFantasia());
 		distribuidor.setCnpj(parametrosDistribuidor.getCnpj());
 		distribuidor.setInscricaoEstadual(parametrosDistribuidor.getInscricaoEstadual());
 		distribuidor.setInscricaoMunicipal(parametrosDistribuidor.getInscricaoMunicipal());
-		distribuidor.setCnpjPrincipal(parametrosDistribuidor.getCnpjPrincipal());
 		distribuidor.setEmail(parametrosDistribuidor.getEmail());
 		distribuidor.setCodigoDistribuidorDinap(parametrosDistribuidor.getCodigoDistribuidorDinap());
 		distribuidor.setCodigoDistribuidorFC(parametrosDistribuidor.getCodigoDistribuidorFC());
-		
-		distribuidor.setEnderecoDistribuidor(
-			this.popularEnderecoDistribuidor(
-				distribuidor.getEnderecoDistribuidor(), parametrosDistribuidor.getEndereco()));
 		
 		distribuidor.setTipoAtividade(parametrosDistribuidor.getRegimeTributario());
 		distribuidor.setObrigacaoFiscal(parametrosDistribuidor.getObrigacaoFiscal());
@@ -647,7 +669,15 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		distribuidorService.alterar(distribuidor);
 		
-		if (imgLogotipo != null) {
+		distribuidor.setEnderecoDistribuidor(
+			this.gravarEnderecoDistribuidor(distribuidor, parametrosDistribuidor.getEndereco()));
+		
+		this.salvarLogo(imgLogotipo, imgContentType);
+	}
+
+	private void salvarLogo(InputStream imgLogotipo, String imgContentType) {
+		
+		if (imgLogotipo != null && imgContentType != null) {
 		
 			removerLogo();
 			
@@ -676,16 +706,19 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Override
 	public InputStream getLogotipoDistribuidor() {
-		InputStream inputStream;
+		
+		InputStream inputStream = null;
+		
 		try {
 			
-			//TODO alterar o modo de obter o LOGOTIPO_DISTRIBUIDOR, não é mais dominio do Parametro do Sistema
 			inputStream = couchDbClient.find(
 					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
 					+ "/" + ATTACHMENT_LOGOTIPO);
 		} catch (NoDocumentException e) {
-			inputStream = new ByteArrayInputStream(new byte[0]);
+			
+			return null;
 		}
+		
 		return inputStream;
 	}
 

@@ -26,11 +26,15 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.EnderecoFornecedorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -52,6 +56,12 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	@Autowired
 	private EnderecoFornecedorRepository enderecoFornecedorRepository;
+
+	@Autowired
+	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
+	
+	@Autowired
+	private DescontoService descontoService;
 	
 	@Autowired
 	private TelefoneService telefoneService;
@@ -179,7 +189,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		cotaRepository.alterar(cota);
 
+		processarDescontosFornecedorCota(cota, listaFonecedores);
 	}
+
 	private void validarIntegridadeFornecedor(List<Long> fornecedores,Long idCota) {
 		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
@@ -257,6 +269,26 @@ public class FornecedorServiceImpl implements FornecedorService {
 		return false;
 	}
 
+	private void processarDescontosFornecedorCota(Cota cota, Set<Fornecedor> fornecedores) {
+
+		for (Fornecedor fornecedor : fornecedores) {
+		
+			DescontoProdutoEdicao descontoProdutoEdicao = 
+				this.descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(
+					TipoDesconto.GERAL, fornecedor, null, null
+				);
+			
+			if (descontoProdutoEdicao != null) {
+
+				Set<Fornecedor> setFornecedores = new HashSet<Fornecedor>();
+
+				setFornecedores.add(fornecedor);
+
+				this.descontoService.processarDescontoCota(cota, setFornecedores, descontoProdutoEdicao.getDesconto());
+			}
+		}
+	}
+	
 	/**
 	 * Método responsável por obter fornecedores para preencher combo da camada view
 	 * @return comboFornecedores: fornecedores cadastrados
@@ -594,5 +626,17 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public List<Fornecedor> obterFornecedoresPorId(List<Long> idsFornecedores) {
 		return fornecedorRepository.obterFornecedoresPorId(idsFornecedores);
 	}
+
+	/**
+	 * @return
+	 * @see br.com.abril.nds.repository.FornecedorRepository#obterMaxCodigoInterface()
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Integer obterMaxCodigoInterface() {
+		return fornecedorRepository.obterMaxCodigoInterface();
+	}
+	
+	
 }
 

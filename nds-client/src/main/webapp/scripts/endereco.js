@@ -1,10 +1,38 @@
-function Endereco(paramTela,paramMessage) {
+function Endereco(paramTela, paramMessage) {
+
+	var _this = this;
+    
+	$(function() {
+		
+		var _this = this;
+		
+		$("#"+paramTela+"cep").mask("99999-999");
+		$("#"+paramTela+"uf").mask("aa");
+		
+		$("#"+paramTela+"linkIncluirNovoEndereco").keypress(function() {
+			
+			var keynum = 0;
+	          
+	        if(window.event) {
+
+	            keynum = event.keyCode;
+	        
+	        } else if(event.which) {   
+
+	        	keynum = event.which;
+	        }
+
+			if (keynum == 13) {
+				_this.incluirNovoEndereco();
+			}
+		});
+	});
 
 	this.confirmarExclusaoEndereco = function (idEndereco) {
 		
 		var _this = this;
 		
-		$( "#dialog-excluir-end" ).dialog({
+		$( "#dialog-excluir-end").dialog({
 			resizable: false,
 			height:'auto',
 			width:380,
@@ -19,9 +47,7 @@ function Endereco(paramTela,paramMessage) {
 				}
 			}			
 		});
-	};
-
-	var _this = this;
+	},
 	
 	this.processarResultadoConsultaEndereco = function (data) {
                                                                                                                                                                                                                                                                                                                                                                   
@@ -48,6 +74,8 @@ function Endereco(paramTela,paramMessage) {
 						: '&nbsp;';
 
 			data.rows[i].cell[lastIndex] = _this.getAction(data.rows[i].id);
+			
+			console.log(data);
 		}
 
 		if ($("."+paramTela+"enderecosGrid").css('display') == 'none') {
@@ -56,7 +84,7 @@ function Endereco(paramTela,paramMessage) {
 		}
 
 		return data;
-	};
+	},
 
 	this.getAction = function (idEndereco) {
 
@@ -68,7 +96,7 @@ function Endereco(paramTela,paramMessage) {
 				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
 				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
-	};
+	},
 
 	this.popularGridEnderecos = function() {
 		
@@ -96,11 +124,11 @@ function Endereco(paramTela,paramMessage) {
 			},
 			true
 		);
-	};		
+	},		
 	
 	this.incluirNovoEndereco = function () {
 
-		var formData = $("#"+paramTela+"formEnderecos").serializeArray();
+		var formData = $("#"+paramTela+"formEnderecos :input").serializeArray();
 		
 		var _this = this;
 		
@@ -123,7 +151,7 @@ function Endereco(paramTela,paramMessage) {
 			true,
 			paramMessage
 		);
-	};
+	},
 
 	this.editarEndereco = function(idEndereco) {
 		
@@ -141,7 +169,7 @@ function Endereco(paramTela,paramMessage) {
 				$("#"+paramTela+"idEndereco").val(result.id);
 				$("#"+paramTela+"enderecoid").val(result.endereco.id);
 				$("#"+paramTela+"tipoEndereco").val(result.tipoEndereco);
-				$("#"+paramTela+"cep").val(result.endereco.cep);
+				$("#"+paramTela+"cep").val(adicionarMascaraCEP(result.endereco.cep));
 				$("#"+paramTela+"tipoLogradouro").val(result.endereco.tipoLogradouro);
 				$("#"+paramTela+"logradouro").val(result.endereco.logradouro);
 				$("#"+paramTela+"numero").val(result.endereco.numero);
@@ -157,7 +185,7 @@ function Endereco(paramTela,paramMessage) {
 			true,
 			paramMessage
 		);
-	};
+	},
 
 	this.removerEndereco = function (idEndereco) {
 		
@@ -179,7 +207,7 @@ function Endereco(paramTela,paramMessage) {
 			},
 			true
 		);
-	};
+	},
 
 	this.popup = function () {
 
@@ -196,7 +224,7 @@ function Endereco(paramTela,paramMessage) {
 		});
 		
 		this.popularGrid();
-	};
+	},
 	
 	this.limparFormEndereco = function () {
 
@@ -215,34 +243,7 @@ function Endereco(paramTela,paramMessage) {
 		$("#"+paramTela+"cidade").val("");
 		$("#"+paramTela+"uf").val("");
 		$("#"+paramTela+"principal").attr("checked", false);
-	};
-	
-	$(function() {
-		
-		var _this = this;
-		
-		$("#"+paramTela+"cep").mask("99999-999");
-		$("#"+paramTela+"uf").mask("aa");
-		$("#"+paramTela+"numero").numeric();
-		
-		$("#"+paramTela+"linkIncluirNovoEndereco").keypress(function() {
-			
-			var keynum = 0;
-	          
-	        if(window.event) {
-
-	            keynum = event.keyCode;
-	        
-	        } else if(event.which) {   
-
-	        	keynum = event.which;
-	        }
-
-			if (keynum == 13) {
-				_this.incluirNovoEndereco();
-			}
-		});
-	});
+	},
 	
 	this.pesquisarEnderecoPorCep = function () {
 		
@@ -272,9 +273,9 @@ function Endereco(paramTela,paramMessage) {
 			isFromModal,
 			paramMessage
 		);
-	};
+	},
 	
-	this.preencherComboUF = function () {
+	this.preencherComboUF = function (ufSelecionado) {
 
 		var isFromModal = true;
 		
@@ -290,22 +291,36 @@ function Endereco(paramTela,paramMessage) {
 			null,
 			function(result) {
 
-				$(idComboUF).html("");
+				$(idComboUF, this.workspace).html("");
 				
-				$(idComboUF).append('<option selected="selected"></option>');
+				$(idComboUF, this.workspace).append('<option selected="selected"></option>');
 
 				$.each(result, function(index, value) {
 
 					var option = "<option value='" + value + "'>" + value + "</option>";
 
-					$(idComboUF).append(option);	
+					$(idComboUF, this.workspace).append(option);	
 				});
+				
+				if (ufSelecionado) {
+					
+					$(idComboUF).val(ufSelecionado);
+				}
 			},
 			null,
 			isFromModal
 		);
 	}
 
+	this.autoCompletarCep = function() {
+		var cep = $("#"+paramTela+"cep").val().replace("_","");
+		
+		if (cep.length == 9) {
+			this.pesquisarEnderecoPorCep();
+		}
+	},
+
+	
 	this.autoCompletarLocalidades = function(isOnBlur) {
 		
 		var isFromModal = true;
@@ -354,7 +369,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	},
 
 	this.autoCompletarBairros = function(isOnBlur) {
 
@@ -400,7 +415,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	},
 	
 	this.autoCompletarLogradouros = function(isOnBlur) {
 
@@ -442,7 +457,7 @@ function Endereco(paramTela,paramMessage) {
 				isFromModal
 			);
 		}
-	}
+	},
 	
 	this.popularGrid = function(){
 		
@@ -503,3 +518,5 @@ function Endereco(paramTela,paramMessage) {
 	};
 	
 }
+
+//@ sourceURL=endereco.js

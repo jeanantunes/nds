@@ -161,6 +161,15 @@ function formatDateToString(date) {
 	return day+"/"+mouth+"/"+year;
 }
 
+function adicionarMascaraCEP(cep) {
+	
+	cep = cep.toString();
+	cep = cep.replace("-", "");
+	
+	cep = cep.substr(0,5)+"-"+cep.substr(5, cep.lenght);
+	return cep;
+}
+
 function serializeObjectToPost(objectName, object, obj) {
 	obj = (obj)?obj:new Object();
 	for ( var propriedade in object) {
@@ -659,4 +668,13 @@ function definirAcaoPesquisaTeclaEnter() {
 	      }
 		
 	});
+}
+
+function logout() {
+	limparCache();
+	window.location.href= contextPath + "/j_spring_security_logout";
+}
+
+function limparCache() {
+	$("#workspace .ui-tabs-nav a").removeData("cache.tabs");	
 }

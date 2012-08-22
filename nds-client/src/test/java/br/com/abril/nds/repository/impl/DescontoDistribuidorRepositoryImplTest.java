@@ -28,13 +28,15 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 	
 	@Autowired
 	private DescontoDistribuidorRepository descontoDistribuidorRepository;
+	private DescontoDistribuidor desconto4;
+	private Fornecedor fornecedor3;
 	
 	
 	@Before
 	public void setup() {
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000147", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000147", "333333333331", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		Distribuidor distribuidor = Fixture.distribuidor(1, juridicaDistrib, new Date(), null);
@@ -44,7 +46,7 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 		save(tipoFornecedor);
 		
 		PessoaJuridica pessoa1 = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000148", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000148", "333333333332", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa1);
 		
 
@@ -54,12 +56,12 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 		
 
 		PessoaJuridica pessoa3 = Fixture.pessoaJuridica("Distribuidor Acm 2",
-				"56003315000145", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000145", "333333333334", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa3);
 		
 
 		PessoaJuridica pessoa4 = Fixture.pessoaJuridica("Distribuidor Acme 3",
-				"56003315000142", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000142", "333333333335", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa4);
 		
 		Fornecedor fornecedor = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
@@ -68,7 +70,7 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 		
 		Fornecedor fornecedor2 = Fixture.fornecedor(pessoa3, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
 		
-		Fornecedor fornecedor3 = Fixture.fornecedor(pessoa4, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		fornecedor3 = Fixture.fornecedor(pessoa4, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
 		
 		save(fornecedor, fornecedor1, fornecedor2,fornecedor3);
 		
@@ -92,7 +94,7 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 		fornecedores3.add(fornecedor2);
 		fornecedores3.add(fornecedor3);
 
-		DescontoDistribuidor desconto4 = Fixture.descontoDistribuidor(new BigDecimal(4), distribuidor, fornecedores3, usuario, new Date());
+		desconto4 = Fixture.descontoDistribuidor(new BigDecimal(4), distribuidor, fornecedores3, usuario, new Date());
 		
 		save(desconto2,desconto3,desconto4);
 		
@@ -142,6 +144,14 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 		Integer quantidade = descontoDistribuidorRepository.buscarQuantidadeDescontos(filtro);
 		
 	    Assert.assertTrue(quantidade > 0);
+	}
+	
+	@Test
+	public void testeBuscarUltimoDescontoPorData(){
+		
+		DescontoDistribuidor desconto = descontoDistribuidorRepository.buscarUltimoDescontoValido(desconto4.getId(), fornecedor3);
+		
+		Assert.assertNull(desconto);
 	}
 	
 }

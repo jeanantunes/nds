@@ -1022,7 +1022,7 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("valorTotal")
 			.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 			.addScalar("numeroEdicao", StandardBasicTypes.LONG)
-			.addScalar("peso")
+			.addScalar("peso", StandardBasicTypes.LONG)
 			.addScalar("precoVenda")
 			.addScalar("codigoProduto")
 			.addScalar("nomeProduto")

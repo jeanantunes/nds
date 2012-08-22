@@ -5,7 +5,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/telefone.js"></script>
 	
 	<script type="text/javascript">
-		
+
 		var ${param.tela} = new Telefone('${param.tela}','${param.message}');
 		
 	</script>

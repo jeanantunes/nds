@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -19,7 +18,6 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.DistribuicaoDTO;
@@ -28,10 +26,10 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
-import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
@@ -41,13 +39,12 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
-import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -63,8 +60,8 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -99,9 +96,6 @@ public class CotaController {
 	
 	@Autowired
 	private CotaService cotaService;
-	
-	@Autowired
-	private DividaService dividaService;
 	
 	@Autowired
 	private DescontoService descontoService;
@@ -604,46 +598,8 @@ public class CotaController {
 	@Path("/salvarFornecedores")
 	public void salvarFornecedores(List<Long> fornecedores, Long idCota){
 		
-		if(fornecedores == null){
-			
-			List<Fornecedor> list = fornecedorService.obterFornecedoresCota(idCota);
-	
-			if(list!= null && !list.isEmpty()){
-				
-				fornecedorService.salvarFornecedorCota(fornecedores, idCota);
-			}
-		}else {
-			
-			fornecedorService.salvarFornecedorCota(fornecedores, idCota);
-		}
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
-				Constantes.PARAM_MSGS).recursive().serialize();
-	}
-	
-	/**
-	 * Salva os dados referente a tipo de desconto, associa os tipos de desconto a cota informada.
-	 * 
-	 * @param descontos  - tipos de desconto selecionados
-	 * @param idCota - identificador da cota
-	 */
-	@Post
-	@Path("/salvarDescontos")
-	public void salvarDescontos(List<Long> descontos, Long idCota){
-		
-		if(descontos == null){
-			
-			List<TipoDesconto> list = cotaService.obterDescontosCota(idCota);
-	
-			if(list!= null && !list.isEmpty()){
-				
-				cotaService.salvarDescontosCota(descontos, idCota);
-			}
-		}else {
-			
-			cotaService.salvarDescontosCota(descontos, idCota);
-		}
-		
+		fornecedorService.salvarFornecedorCota(fornecedores, idCota);
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
@@ -726,114 +682,130 @@ public class CotaController {
 		return itensFornecedor;
 	}
 	
-	/**
-	 * Obtem os tipos de desconto que não possui associação com a cota informada
-	 * 
-	 * @param idCota -identificador da cota
-	 */
-	@Post
-	@Path("/obterDescontos")
-	public void obterDescontos(Long idCota){
-		
-		List<TipoDesconto> descontos =   cotaService.obterDescontos(idCota);
-		
-		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
-	}
 	
-	/**
-	 * Retorna uma lista de tipo de desconto para exibição na tela
-	 * 
-	 * @param descontos - lista de descontos
-	 * 
-	 * @return List<ItemDTO<Long, String>>
-	 */
-	private List<ItemDTO<Long, String>> getDescontos(List<TipoDesconto> descontos){
-		
-		List<ItemDTO<Long, String>> itensDesconto = new ArrayList<ItemDTO<Long,String>>();
-		
-		for(TipoDesconto desconto : descontos){
-			
-			itensDesconto.add(new ItemDTO<Long, String>(desconto.getId(), desconto.getCodigo()+" - " +desconto.getDescricao()));
-		}
-		return itensDesconto;
-	}
 	
-	/**
-	 * Obtem os tipos de desconto associados a cota informada
-	 * 
-	 * @param idCota -identificador da cota
-	 */
-	@Post
-	@Path("/obterDescontosSelecionados")
-	public void obterDescontosSelecionados(Long idCota){
-		
-		List<TipoDesconto> descontos =   cotaService.obterDescontosCota(idCota);
-		
-		result.use(Results.json()).from(this.getDescontos(descontos),"result").recursive().serialize();
-	}
 
 	
-	/** TODO: Aba descontos do cadastro de cota
-	 * 
-	 * Obtem os tipos de desconto do distribuidor
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Descontos da cota: Obtem os tipos de desconto por produto relacionados à cota
+	 * @param idCota
 	 */
-	private List<TipoDescontoDTO> obterDescontosDistribuidor(){
+	private List<TipoDescontoProdutoDTO> obterDescontosProduto(Cota cota, String sortorder, String sortname){
+
+		List<TipoDescontoProdutoDTO> descontos = descontoService.obterTiposDescontoProdutoPorCota(cota.getId(), sortorder, sortname);
 		
-		FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
-		filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.DATA_ALTERACAO);
-		PaginacaoVO paginacao = new PaginacaoVO();
-		paginacao.setOrdenacao(Ordenacao.ASC);
+		return descontos;
+	}
+	
+	/**
+	 * Descontos da cota: Obtem os tipos de desconto do distribuidor
+	 */
+	private List<TipoDescontoDTO> obterDescontosDistribuidor(String sortorder, String sortname){
+		
+        FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
+        
+        Integer totalDeRegistros = descontoService.buscarQntTipoDesconto(filtro);
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1, totalDeRegistros, sortorder);
+		
 		filtro.setPaginacao(paginacao);
+	
+		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoDTO.OrdenacaoColunaConsulta.values(), sortname));
 		
 		List<TipoDescontoDTO> descontos = descontoService.buscarTipoDesconto(filtro);
 		
 		return descontos;
 	}
 	
-	/** TODO: Aba descontos do cadastro de cota
-	 * 
-	 * Obtem os tipos de desconto especificos associados a cota informada
+	/** 
+	 * Descontos da Cota: Obtem os tipos de desconto especificos associados a cota informada
 	 * @param idCota -identificador da cota
 	 */
-	private List<TipoDescontoCotaDTO> obterDescontosEspecificos(Long idCota){
+	private List<TipoDescontoCotaDTO> obterDescontosEspecificos(Cota cota, String sortorder, String sortname){
 		
-		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
-		filtro.setOrdenacaoColuna(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.DATA_ALTERACAO);
-		PaginacaoVO paginacao = new PaginacaoVO();
-		paginacao.setOrdenacao(Ordenacao.ASC);
-		paginacao.setSortOrder("asc");
+        FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		
+		filtro.setNumeroCota(cota.getNumeroCota());
+		filtro.setNomeCota(cota.getPessoa().getNome());
+		
+		Integer totalRegistros  = descontoService.buscarQuantidadeTipoDescontoCota(filtro);
+		
+		PaginacaoVO paginacao = new PaginacaoVO(1, totalRegistros, sortorder);
+		
 		filtro.setPaginacao(paginacao);
-		
+	
+		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.values(), sortname));
+
 		List<TipoDescontoCotaDTO> descontos = descontoService.buscarTipoDescontoCota(filtro);
 		
 		return descontos;
 	}
 	
-	/** TODO: Aba descontos do cadastro de cota
-	 * 
-	 * Obtem os tipos de desconto especificos associados a cota informada
+	/**
+	 * Descontos da Cota: Obtem os tipos de desconto por produto associados a cota informada
 	 * @param idCota -identificador da cota
 	 */
 	@Post
-	@Path("/obterTiposDesconto")
-	public void obterTiposDesconto(Long idCota){
+	@Path("/obterTiposDescontoProduto")
+	public void obterTiposDescontoProduto(Integer numCota, String sortorder, String sortname){
 		
-		List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(idCota);
+		Cota cota = cotaService.obterPorNumeroDaCota(numCota);
 		
-		if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
-		    result.use(Results.json()).from(descontosEspecificos,"result").recursive().serialize();
-		}
-		else{
+		if (cota!=null){
+			List<TipoDescontoProdutoDTO> descontosProduto = this.obterDescontosProduto(cota, sortorder, sortname);
 			
-			List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor();
-			
-			if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
-				result.use(Results.json()).from(descontosDistribuidor,"result").recursive().serialize();
-		    }
-		}
-		
+			if (descontosProduto!=null && descontosProduto.size() > 0){
+			    result.use(FlexiGridJson.class).from(descontosProduto).page(1).total(1).serialize();
+			}
+	    }
+
 		result.nothing();
 	}
+	
+	/**
+	 * Descontos da Cota: Obtem os tipos de desconto especificos associados a cota informada
+	 * @param idCota -identificador da cota
+	 */
+	@Post
+	@Path("/obterTiposDescontoCota")
+	public void obterTiposDescontoCota(Integer numCota, String sortorder, String sortname){
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numCota);
+		
+		if (cota!=null){
+			
+			List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
+			
+			if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
+				result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
+			}
+			else{
+				
+				List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname);
+				
+				if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
+					result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
+			    }
+			}
+		}
+			
+		result.nothing();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

@@ -164,4 +164,6 @@ public interface FornecedorService {
 	List<Fornecedor> obterFornecedorLikeNomeFornecedor(String nomeFornecedor);
 	
 	List<Fornecedor> obterFornecedoresPorId(List<Long> idsFornecedores);
+
+	public abstract Integer obterMaxCodigoInterface();
 }

@@ -1,5 +1,10 @@
 <form id="formSocioCota">
 	<div id="dialog-socio" title="Novo Sócio" style="display:none;">
+	
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-socio" name="messageDialog"/>
+	</jsp:include>
+	
 	<fieldset style="width:710px!important;">
 		<legend>Novo Sócio</legend>
 
@@ -13,7 +18,7 @@
 		
 			<input type="hidden" id="idLocalidade"/>
 			
-			<input type="hidden" id="idSocio"/>
+			<input type="hidden" id="idSocioCota" name="socioCota.id"/>
 		
 			<table width="700" cellpadding="2" cellspacing="2" style="text-align:left ">
 				<tr>
@@ -25,7 +30,7 @@
 				<tr>
 					<td width="78">Principal:</td>
 					<td width="251">
-						<input type="checkbox" name="socioCota.principal" id="checkbox" />
+						<input type="checkbox" name="socioCota.principal" id="checkboxSocioPrincipal" />
 					</td>
 					<td width="95">CEP:</td>
 					<td width="261">

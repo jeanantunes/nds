@@ -35,10 +35,6 @@
 
 <link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
 
-<script type="text/javascript" src="scripts/gruposPermissao.js"></script>
-<script type="text/javascript" src="scripts/usuariosPermissao.js"></script>
-<script type="text/javascript" src="scripts/regrasPermissao.js"></script>
-
 <base href="<c:url value="/"/>" />
 
 <script type="text/javascript">
@@ -111,7 +107,7 @@
 												anchor) {
 											if( $('#logout_true').length ) {
 												// Logout por fim ou perda da sessão
-												window.location.href="${pageContext.request.contextPath}/j_spring_security_logout";
+												logout();
 											};
 											focarPrimeiroElemento();
 										}
@@ -157,7 +153,7 @@
 		$("#menu_principal ul li ul li").click(
 				function() {
 					$('#workspace').tabs('addTab', $("a", this).html(),
-							$("a", this).prop("href"));
+							$("a", this).prop("href") + "?random=" + Math.random());
 					return false;
 				});
 
@@ -225,7 +221,7 @@
 						</script> </label>
 					</div>
 					<div class="bt_novos">
-						<a href="${pageContext.request.contextPath}/j_spring_security_logout" title="Sair do Sistema" class="sair">Sair</a>
+						<a href="javascript:;" onclick="logout()" title="Sair do Sistema" class="sair">Sair</a>
 					</div>
 
 				</div>

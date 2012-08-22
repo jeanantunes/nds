@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BaseComboVO;
 import br.com.abril.nds.client.vo.ProdutoCadastroVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -22,22 +21,22 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -299,7 +298,10 @@ public class ProdutoController {
 
 		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
 		
-		listaCombos.add(parseComboTipoDesconto(this.tipoDescontoService.obterTodosTiposDescontos()));
+		
+		//TODO:Entidade TipoDesconto excluída
+		//listaCombos.add(parseComboTipoDesconto(this.tipoDescontoService.obterTodosTiposDescontos()));
+		
 		
 		this.result.use(Results.json()).from(listaCombos, "result").recursive().serialize();
 	}
@@ -380,14 +382,22 @@ public class ProdutoController {
 	@Post
 	public void carregarPercentualDesconto(Long codigoTipoDesconto) {
 	
+		
+		//TODO:Entidade TipoDesconto excluída
+		
+		
+		/*
 		TipoDesconto tipoDesconto = 
 			this.tipoDescontoService.obterTipoDescontoPorID(codigoTipoDesconto);
+		*/
 		
 		BigDecimal porcentagem = BigDecimal.ZERO;
 		
+		/*
 		if (tipoDesconto != null) {
 			porcentagem = tipoDesconto.getPorcentagem();
 		}
+		*/
 		
 		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
 	}
@@ -524,25 +534,6 @@ public class ProdutoController {
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
 		}
-	}
-		
-	/**
-	 * Parse para combo.
-	 * 
-	 * @param listaTipoDesconto
-	 * @return
-	 */
-	private List<BaseComboVO> parseComboTipoDesconto(List<TipoDesconto> listaTipoDesconto) {
-		
-		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
-
-		listaBaseComboVO.add(getDefaultBaseComboVO());
-		
-		for (TipoDesconto tipoDesconto : listaTipoDesconto) {
-			listaBaseComboVO.add(new BaseComboVO(tipoDesconto.getId(), tipoDesconto.getDescricao()));
-		}
-		
-		return listaBaseComboVO;
 	}
 	
 	/**

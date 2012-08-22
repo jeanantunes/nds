@@ -1,15 +1,4 @@
 
-<script type="text/javascript">
-$(function() {
-	
-	$("select[name='selectMap']").multiSelect("select[name='selectMaterialPromocional']", {trigger: "#linkMapVoltarTodos"});
-	
-	$("select[name='selectMaterialPromocional']").multiSelect("select[name='selectMap']", {trigger: "#linkMapEnviarTodos"});
-	
-});
-
-</script>
-
 <fieldset>
 	<legend>MAP</legend>
 	<table width="605" border="0" align="center" cellpadding="2" cellspacing="2">
