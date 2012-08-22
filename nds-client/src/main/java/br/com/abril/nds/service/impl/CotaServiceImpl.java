@@ -12,15 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -44,11 +43,9 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -64,10 +61,7 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
-import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
-import br.com.abril.nds.repository.TelefoneRepository;
-import br.com.abril.nds.repository.TipoDescontoRepository;
 import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -81,6 +75,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -141,19 +136,10 @@ public class CotaServiceImpl implements CotaService {
 	private ReferenciaCotaRepository referenciaCotaRepository;
 	
 	@Autowired
-	private TipoDescontoRepository tipoDescontoRepository;
-	
-	@Autowired
-	private SocioCotaRepository socioCotaRepository;
-	
-	@Autowired
 	private HistoricoNumeroCotaRepository historicoNumeroCotaRepository;
 	
 	@Autowired
 	private EnderecoService enderecoService;
-	
-	@Autowired
-	private TelefoneRepository telefoneRepository; 
 	
 	@Autowired
 	private DividaService dividaService;
@@ -1492,7 +1478,6 @@ public class CotaServiceImpl implements CotaService {
 		return (qntDiasInativo > qntDiasDistribuidor );
 	}
 
-	
 	/**
 	 * Método responsável por obter tipos de cota para preencher combo da camada view
 	 * @return comboTiposCota: Tipos de cota padrão.
@@ -1505,107 +1490,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		return comboTiposCota;
 	}
-	
-	@Transactional(readOnly=true)
-	@Override
-	public List<TipoDesconto> obterDescontos(Long idCota){
 		
-		return tipoDescontoRepository.obterTipoDescontoNaoReferenciadosComCota(idCota);
-	}
-	
-	@Transactional(readOnly=true)
-	@Override
-	public List<TipoDesconto> obterDescontosCota(Long idCota){
-		
-		return tipoDescontoRepository.obterTiposDescontoCota(idCota);
-	}
-	
-	@Transactional
-	@Override
-	public void salvarDescontosCota(List<Long> descontos, Long idCota){
-		
-		if(idCota == null ){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Parâmetro Cota inválido!");
-		}
-		
-		Set<TipoDesconto> listaDescontos = new HashSet<TipoDesconto>();
-		
-		if(descontos != null && !descontos.isEmpty()){
-			
-			TipoDesconto tipoDesconto = null;
-			
-			for(Long  td :  descontos ){
-				
-				tipoDesconto = tipoDescontoRepository.buscarPorId(td) ;
-				
-				if(tipoDesconto != null){
-					listaDescontos.add( tipoDesconto );
-				}
-
-			}
-		}
-
-		Cota cota = cotaRepository.buscarPorId(idCota);
-		cota.setTiposDescontoCota(listaDescontos);
-		
-		cotaRepository.alterar(cota);
-	}
-	
-	@Override
-	@Transactional(readOnly=true)
-	public List<SocioCota> obterSociosCota(Long idCota){
-		
-		return socioCotaRepository.obterSocioCotaPorIdCota(idCota);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly=true)
-	public SocioCota obterSocioPorId(Long idSocioCota) {
-
-		return socioCotaRepository.buscarPorId(idSocioCota);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public void salvarSocioCota(SocioCota socioCota, Long idCota ){
-		
-		if (socioCota.getId() == null && socioCota.getPrincipal()   
-									  && this.socioCotaRepository.existeSocioPrincipalCota(idCota)) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING,"Deve ser informado um sócio principal!");
-		}
-
-		if (idCota == null ) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Parâmetro Cota inválido!");
-		}
-		
-		Cota cota  = cotaRepository.buscarPorId(idCota);
-		
-		if (cota == null ) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Parâmetro Cota inválido!");
-		}
-
-		Telefone telefone = this.telefoneRepository.merge(socioCota.getTelefone());
-		
-		Endereco endereco = this.enderecoService.salvarEndereco(socioCota.getEndereco());
-
-		socioCota.setTelefone(telefone);
-		
-		socioCota.setEndereco(endereco);
-
-		socioCota.setCota(cota);
-
-		this.socioCotaRepository.merge(socioCota);
-	}
-	
 	@Transactional
 	@Override
 	public void alterarCota(Cota cota) {
@@ -1614,13 +1499,13 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 	}
 

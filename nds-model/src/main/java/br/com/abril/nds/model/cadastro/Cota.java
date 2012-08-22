@@ -138,11 +138,6 @@ public class Cota implements Serializable {
 	@OneToOne(mappedBy = "cota",cascade={CascadeType.REMOVE})
 	private BaseReferenciaCota baseReferenciaCota;
 	
-	@ManyToMany(cascade={CascadeType.REMOVE})
-	@JoinTable(name = "COTA_TIPO_DESCONTO", joinColumns = {@JoinColumn(name = "COTA_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "TIPO_DESCONTO_ID")})
-	private Set<TipoDesconto> tiposDescontoCota;
-	
 	@OneToMany(mappedBy = "cota",cascade={CascadeType.REMOVE})
 	private Set<SocioCota> sociosCota = new HashSet<SocioCota>();
 	
@@ -367,20 +362,6 @@ public class Cota implements Serializable {
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
-	}
-
-	/**
-	 * @return the tiposDescontoCota
-	 */
-	public Set<TipoDesconto> getTiposDescontoCota() {
-		return tiposDescontoCota;
-	}
-
-	/**
-	 * @param tiposDescontoCota the tiposDescontoCota to set
-	 */
-	public void setTiposDescontoCota(Set<TipoDesconto> tiposDescontoCota) {
-		this.tiposDescontoCota = tiposDescontoCota;
 	}
 
 	/**

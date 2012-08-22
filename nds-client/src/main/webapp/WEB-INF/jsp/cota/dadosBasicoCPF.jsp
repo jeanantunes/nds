@@ -103,7 +103,18 @@
 
 <br clear="all" />
 
-  <table width="515" border="0" cellspacing="2" cellpadding="2">
+<table width="870" border="0" cellspacing="1" cellpadding="1">
+   <tr>
+      <td width="424" valign="top" class="antigosProp">
+      <strong>Antigos Proprietários</strong><br />
+      <table class="antigosProprietariosGridCPF"></table>
+      <span class="bt_novos" title="Alterar Titularidade">
+        <a href="javascript:;" onclick="MANTER_COTA.alterarTitular();">
+          <img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0" />Alterar Titularidade
+        </a>
+      </span>
+      </td> 
+	  <td width="439" valign="top"><table width="439" border="0" cellspacing="2" cellpadding="2">
       <tr class="linhas">
         <td width="127" nowrap="nowrap"><strong>Cota Base:</strong></td>
         <td><table width="348" border="0" cellspacing="1" cellpadding="2">
@@ -146,8 +157,10 @@
           </tr>
         </table></td>
       </tr>
-    </table>
-    
+	</table>
+ </td>
+  </tr>
+</table>
  </form>
  
 </div>

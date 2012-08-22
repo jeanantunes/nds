@@ -1,6 +1,5 @@
-var TAB_COTA = new TabCota('tabCota');
 
-var ENDERECO = new Endereco("", "dialog-socio");
+var TAB_COTA = new TabCota('tabCota');
 
 var MANTER_COTA = $.extend(true, {
 	
@@ -10,6 +9,7 @@ var MANTER_COTA = $.extend(true, {
     tipoCota_CPF:"FISICA",
     tipoCota_CNPJ:"JURIDICA",
     fecharModalCadastroCota:false,
+    _workspace: this.workspace,
     
     init: function() {
     	
@@ -21,7 +21,7 @@ var MANTER_COTA = $.extend(true, {
 		
 		COTA_FORNECEDOR.initTabFornecedorCota();
 
-		COTA_DESCONTO.initTabDescontoCota();
+		//COTA_DESCONTO.initTabDescontoCota();
 
 		SOCIO_COTA.initGridSocioCota();
 
@@ -147,9 +147,8 @@ var MANTER_COTA = $.extend(true, {
     },
     
     carregarDescontos:function(){
-    	
-    	TAB_COTA.funcaoSalvar = COTA_DESCONTO.salvarDesconto;
-    	COTA_DESCONTO.carregarDescontoCota();
+        
+    	//descontoController.initDescontos(MANTER_COTA.numeroCota);
     },
     
     carregarDistribuicao:function(){
@@ -291,7 +290,7 @@ var MANTER_COTA = $.extend(true, {
 	
 		var comboClassificacao =  montarComboBox(result, false);
 		
-		$(idCombo, this.workspace).html(comboClassificacao);
+		$(idCombo, MANTER_COTA._workspace).html(comboClassificacao);
 	},
 
 	salvarDadosCadastrais:function(){
@@ -405,7 +404,8 @@ var MANTER_COTA = $.extend(true, {
 				
 				return MANTER_COTA.fecharModalCadastroCota;
 				
-			}
+			},
+			form: $("#workspaceCota", this.workspace)		
 		});
 	},
 	
@@ -524,11 +524,23 @@ var MANTER_COTA = $.extend(true, {
 			minLength: 4,
 			delay : 0,
 		});
+	}, 
+	
+	alterarTitular : function() {
+		$( "#dialog-titular" ).dialog({
+			resizable: false,
+			height:150,
+			width:230,
+			modal: true,
+			form: $("#workspaceCota", MANTER_COTA._workspace)
+		});
 	}
 }, BaseController);
 
+
+/*
 var COTA_DESCONTO = $.extend(true, {
-		
+
 		salvarDesconto:function(){
 			
 			var descontos = "";
@@ -580,8 +592,10 @@ var COTA_DESCONTO = $.extend(true, {
 				"select[name='selectDesconto']", {trigger: "#linkDescontoEnviarTodos"}
 			);
 		}
-		
+
 }, BaseController);
+*/
+
 
 var COTA_FORNECEDOR = $.extend(true, {
 	
@@ -631,20 +645,24 @@ var COTA_FORNECEDOR = $.extend(true, {
 		},
 
 		initTabFornecedorCota: function() {
-
-			$("select[name='selectFornecedorSelecionado_${param.paramFornecedores}']", this.workspace).multiSelect(
-				"select[name='selectFornecedor_${param.paramFornecedores}']", 
-				{trigger: "#linkFornecedorVoltarTodos_${param.paramFornecedores}"}
+			
+			var idHidden = $("#telaCotaidFornecedorHidden", this.workspace).val();
+			
+			$("select[name='selectFornecedorSelecionado_"+ idHidden +"']", this.workspace).multiSelect(
+				"select[name='selectFornecedor_"+ idHidden +"']", 
+				{trigger: "#linkFornecedorVoltarTodos_"+ idHidden}
 			);
 			
-			$("select[name='selectFornecedor_${param.paramFornecedores}']", this.workspace).multiSelect(
-				"select[name='selectFornecedorSelecionado_${param.paramFornecedores}']", 
-				{trigger: "#linkFornecedorEnviarTodos_${param.paramFornecedores}"}
+			$("select[name='selectFornecedor_"+ idHidden +"']", this.workspace).multiSelect(
+				"select[name='selectFornecedorSelecionado_"+ idHidden +"']", 
+				{trigger: "#linkFornecedorEnviarTodos_"+ idHidden}
 			);
 		}
 }, BaseController);
 
 var COTA_CNPJ = $.extend(true, {	
+	
+	gridAntigosProprietarios : new GridAntigosProprietarios(".antigosProprietariosGridCNPJ", this.workspace),
 	
 	tratarExibicaoDadosCadastrais:function(){
 		
@@ -661,6 +679,8 @@ var COTA_CNPJ = $.extend(true, {
 		TAB_COTA.possuiDadosObrigatorios = false;
 		MANTER_COTA.fecharModalCadastroCota = false;
 		MANTER_COTA.mudarNomeModalCadastro("Nova Cota");
+		
+		COTA_CNPJ.gridAntigosProprietarios.init();
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
 		MANTER_COTA.idCota="";
@@ -691,6 +711,8 @@ var COTA_CNPJ = $.extend(true, {
 		COTA_CNPJ.tratarExibicaoDadosCadastrais();
 		
 		COTA_CNPJ.carregarDadosCadastraisCnpj(result);
+		
+		COTA_CNPJ.gridAntigosProprietarios.init(result);	
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
 			
@@ -807,6 +829,8 @@ var COTA_CNPJ = $.extend(true, {
 
 var COTA_CPF = $.extend(true, {
 	
+	gridAntigosProprietarios : new GridAntigosProprietarios(".antigosProprietariosGridCPF", this.workspace),
+	
 	tratarExibicaoDadosCadastrais:function(){
 		
 		$("#dadosCPF", this.workspace).show();
@@ -822,6 +846,7 @@ var COTA_CPF = $.extend(true, {
 		MANTER_COTA.numeroCota="";
 		
 		COTA_CPF.tratarExibicaoDadosCadastrais();
+		COTA_CPF.gridAntigosProprietarios.init();
 		COTA_CPF.limparCampos();
 		
 		TAB_COTA.possuiDadosObrigatorios = false;
@@ -849,9 +874,12 @@ var COTA_CPF = $.extend(true, {
 
 	editarCPF:function(result){
 		
+		
 		COTA_CPF.tratarExibicaoDadosCadastrais();
 		
 		COTA_CPF.carregarDadosCpf(result);
+		
+		COTA_CPF.gridAntigosProprietarios.init(result);		
 		
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
 		
@@ -903,6 +931,8 @@ var COTA_CPF = $.extend(true, {
 		if(result.fimPeriodo){
 			$("#periodoCotaAteCPF", this.workspace).val(result.fimPeriodo.$);
 		}
+		
+		
 	},
 	
 	salvarDadosBasico:function (){
@@ -989,6 +1019,8 @@ var SOCIO_COTA = $.extend(true, {
 
 		itemEdicao:null,
 		rows:[],
+		_workspace: this.workspace,
+		enderecoSocio: null, //getEnderecoController("SOCIO_COTA", "dialog-socio"), Precisei voltar á forma antiga, favor rever a forma de popular isto. Grato.
 		
 		socio:function(){
 			
@@ -1002,21 +1034,22 @@ var SOCIO_COTA = $.extend(true, {
 			return socio;
 		},
 		
-		inicializarPopup: function() {
-
-			ENDERECO.preencherComboUF();
-
-//			$("#formSocioCota", this.workspace)[0].reset();
-
-			$("#cep", this.workspace).mask("99999-999");
-
-			SOCIO_COTA.bindButtonActions();
+		inicializarPopupSocio: function() {
+			
 			SOCIO_COTA.popup_novo_socio();
+			
+			SOCIO_COTA.bindButtonActions();
+			
+			SOCIO_COTA.enderecoSocio.preencherComboUF();
+
+			SOCIO_COTA.limparCamposSocio();
+			
+			$("#cep", this.workspace).mask("99999-999");
 		},
 		
 		popup_novo_socio: function() {
 			
-			$( "#dialog-socio", this.workspace ).dialog({
+			$( "#dialog-socio", SOCIO_COTA._workspace ).dialog({
 				resizable: false,
 				height:340,
 				width:760,
@@ -1027,7 +1060,7 @@ var SOCIO_COTA = $.extend(true, {
 						SOCIO_COTA.incluirSocio();
 					},
 					"Cancelar": function() {
-						$( this, this.workspace ).dialog( "close" );
+						$( this, SOCIO_COTA._workspace ).dialog( "close" );
 					}
 				}
 			});
@@ -1035,39 +1068,39 @@ var SOCIO_COTA = $.extend(true, {
 		
 		bindButtonActions: function() {
 
-			$("#btnPesquisarEndereco", this.workspace).click(function() {
+			$("#btnPesquisarEndereco", SOCIO_COTA._workspace).click(function() {
 				
-				ENDERECO.pesquisarEnderecoPorCep();
+				SOCIO_COTA.enderecoSocio.pesquisarEnderecoPorCep();
 			});
 			
-			$("#cidade", this.workspace).keyup(function() {
+			$("#cidade", SOCIO_COTA._workspace).keyup(function() {
 				
-				ENDERECO.autoCompletarLocalidades();
+				SOCIO_COTA.enderecoSocio.autoCompletarLocalidades();
 			});
 			
-			$("#cidade", this.workspace).blur(function() {
+			$("#cidade", SOCIO_COTA._workspace).blur(function() {
 				
-				ENDERECO.autoCompletarLocalidades(true);
+				SOCIO_COTA.enderecoSocio.autoCompletarLocalidades(true);
 			});
 			
-			$("#bairro", this.workspace).keyup(function() {
+			$("#bairro", SOCIO_COTA._workspace).keyup(function() {
 				
-				ENDERECO.autoCompletarBairros();
+				SOCIO_COTA.enderecoSocio.autoCompletarBairros();
 			});
 			
-			$("#bairro", this.workspace).blur(function() {
+			$("#bairro", SOCIO_COTA._workspace).blur(function() {
 				
-				ENDERECO.autoCompletarBairros(true);
+				SOCIO_COTA.enderecoSocio.autoCompletarBairros(true);
 			});
 
-			$("#logradouro", this.workspace).keyup(function() {
+			$("#logradouro", SOCIO_COTA._workspace).keyup(function() {
 				
-				ENDERECO.autoCompletarLogradouros();
+				SOCIO_COTA.enderecoSocio.autoCompletarLogradouros();
 			});
 			
-			$("#logradouro", this.workspace).blur(function() {
+			$("#logradouro", SOCIO_COTA._workspace).blur(function() {
 				
-				ENDERECO.autoCompletarLogradouros(true);
+				SOCIO_COTA.enderecoSocio.autoCompletarLogradouros(true);
 			});
 		},
 		
@@ -1118,17 +1151,55 @@ var SOCIO_COTA = $.extend(true, {
 			});
 		},
 		
+		limparCamposSocio: function() {
+
+			$("#dialog-socio", SOCIO_COTA._workspace).find(":input, select").each(function () {
+		        switch (this.type) {
+		            case "text":
+		                $(this, SOCIO_COTA._workspace).val("");
+		                break;
+		            case "hidden":
+		                $(this, SOCIO_COTA._workspace).val("");
+		                break;
+		            case "checkbox":
+		            	$(this, SOCIO_COTA._workspace).removeAttr("checked");
+		            	break;
+		            case "select":
+		            	$(this, SOCIO_COTA._workspace).val("");
+		            	break;
+		        }
+		    });
+		},
+		
 		salvarSocios:function(){
 			
-//			var list =   serializeArrayToPost("sociosCota",SOCIO_COTA.obterListaSocios());			
-//			var objPost = concatObjects({idCota:MANTER_COTA.idCota},list);
-			
-//			$.postJSON(contextPath + "/cadastro/cota/salvarSocioCota",
-//					objPost , 
-//					null,
-//					null,
-//					true
-//			);
+			$.postJSON(contextPath + "/cadastro/cota/confirmarSocioCota",
+					"idCota=" + MANTER_COTA.idCota, 
+					function(mensagens) {
+
+						if (mensagens) {
+							
+							exibirMensagemDialog(
+						
+								mensagens.tipoMensagem, 
+								mensagens.listaMensagens,
+								"dialog-cota"
+							);
+						}
+					},
+					function(result) {
+						
+						if (result.mensagens) {
+						
+							exibirMensagemDialog(
+								result.mensagens.tipoMensagem, 
+								result.mensagens.listaMensagens,
+								"dialog-cota"
+							);
+						}
+					},
+					true
+			);
 			
 			return false;
 		},
@@ -1218,10 +1289,13 @@ var SOCIO_COTA = $.extend(true, {
 				contextPath+'/cadastro/cota/carregarSocioPorId',
 				"idSocioCota=" + idSocio,
 				function(result) {
+
+					SOCIO_COTA.enderecoSocio.preencherComboUF(result.endereco.uf);
+					
 					$("#nomeSocio", this.workspace).val(result.nome),
 					$("#cargoSocio", this.workspace).val(result.cargo),
-					$("#socioPrincipal", this.workspace).attr("checked",(result.principal == true)?"checked":null);
-					$("#idSocio", this.workspace).val(result.id);	
+					$("#checkboxSocioPrincipal", this.workspace).attr("checked",(result.principal == true)?"checked":null);
+					$("#idSocioCota", this.workspace).val(idSocio);	
 
 					$("#idTelefone", this.workspace).val(result.telefone.id);
 					$("#ddd", this.workspace).val(result.telefone.ddd);
@@ -1237,7 +1311,7 @@ var SOCIO_COTA = $.extend(true, {
 					$("#logradouro", this.workspace).val(result.endereco.logradouro);
 					$("#numero", this.workspace).val(result.endereco.numero);
 					
-					popup_novo_socio();
+					SOCIO_COTA.popup_novo_socio();
 				},
 				null,
 				true
@@ -1256,9 +1330,9 @@ var SOCIO_COTA = $.extend(true, {
 			$("#btnAddSocio", this.workspace).show();
 		},
 		
-		removerSocio:function(idSocio){
+		removerSocio:function(idSocio) {
 			
-			$("#dialog-excluir-socio", this.workspace).dialog({
+			$("#dialog-excluir-socio", SOCIO_COTA._workspace).dialog({
 				resizable: false,
 				height:'auto',
 				width:300,
@@ -1266,27 +1340,46 @@ var SOCIO_COTA = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						
-						SOCIO_COTA.rows.splice(idSocio, 1);
-						
-						var lista = new Array;
-						
-						for (var index in SOCIO_COTA.rows) {	
-							lista.push({"id":lista.length, "cell":SOCIO_COTA.rows[index].cell});
-						}
-						
-						SOCIO_COTA.rows = lista;
-						
-						$(".sociosPjGrid", this.workspace).flexAddData({rows:lista,page:1,total:1}  );
-						
-						$(this, this.workspace).dialog("close");
+						$.postJSON(
+							contextPath + "/cadastro/cota/removerSocioCota",
+							[{name:'idSocioCota', value:idSocio}],
+							function(mensagens) {
+
+								$("#dialog-excluir-socio", SOCIO_COTA._workspace).dialog("close");
+
+								SOCIO_COTA.carregarSociosCota();
+								
+								if (mensagens) {
+									
+									exibirMensagemDialog(
+								
+										mensagens.tipoMensagem, 
+										mensagens.listaMensagens,
+										"dialog-cota"
+									);
+								}
+							},
+							function(result) {
+								
+								if (result.mensagens) {
+								
+									$("#dialog-excluir-socio", SOCIO_COTA._workspace).dialog("close");
+								
+									exibirMensagemDialog(
+										result.mensagens.tipoMensagem, 
+										result.mensagens.listaMensagens,
+										"dialog-cota"
+									);
+								}
+							},
+							true
+						);
 					},
 					"Cancelar": function() {
-						$(this, this.workspace).dialog("close");
+						$(this, SOCIO_COTA._workspace).dialog("close");
 					}
 				}
 			});
-			
-			$("#dialog-excluir-socio", this.workspace).show();
 		},
 		
 		obterListaSocios:function(){
@@ -1305,34 +1398,108 @@ var SOCIO_COTA = $.extend(true, {
 
 		incluirSocio:function(){
 
-			var data = $("#formSocioCota", this.workspace).serializeArray();
+			var data = $("#dialog-socio", SOCIO_COTA._workspace).find("select, input").serializeArray();
 
 			data.push({name:'idCota', value:MANTER_COTA.idCota});
 
 			$.postJSON(
 					contextPath + "/cadastro/cota/incluirSocioCota",
 					data,
-					function(result) {
+					function(mensagens) {
 
 						SOCIO_COTA.carregarSociosCota();
 
-						$( "#dialog-socio", this.workspace ).dialog( "close" );
+						if (mensagens) {
+
+							exibirMensagemDialog(
+								mensagens.tipoMensagem, 
+								mensagens.listaMensagens,
+								"dialog-cota"
+							);
+						}
+						
+						$( "#dialog-socio", SOCIO_COTA._workspace ).dialog( "close" );
 					},
 					function(result) {
 						
-						if (data.mensagens) {
+						if (result.mensagens) {
 
 							exibirMensagemDialog(
-								data.mensagens.tipoMensagem, 
-								data.mensagens.listaMensagens,
+								result.mensagens.tipoMensagem, 
+								result.mensagens.listaMensagens,
 								"dialog-socio"
 							);
-							
-							return;
 						}
 					},
-					true,
-					"dialog-socio"
+					true
 				);
 		}
 }, BaseController);
+
+function GridAntigosProprietarios(element, workspace) {
+	
+	var _element = element;
+	var _workspace = workspace;
+	
+	this.init =  function(data) { 
+			$(_element, _workspace).flexigrid({
+			dataType : 'json',
+			preProcess: function(data) {
+				if (data.rows) {
+					$.each(data.rows, function(index, row) {
+						if (row.cell.fim) {
+							row.cell.periodo = row.cell.inicio + ' a ' + row.cell.fim ;
+						} else {
+							row.cell.periodo = 'Desde ' + row.cell.inicio;
+						}
+						
+						var acao = '<a href="javascript:;" onclick="">';
+						acao += '<img src="' + contextPath + '/images/ico_detalhes.png" alt="Alterar Titularidade" border="0" /></a>';
+						row.cell.acao = acao;
+					});
+					return data;
+				}
+			},
+			colModel : [{
+				display : 'Período',
+				name : 'periodo',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'CPF',
+				name : 'documento',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 400,
+			height : 110
+		});
+		if (data) {
+			$(_element, _workspace).flexAddData({
+				rows:  toFlexiGridObject(data.proprietarios), 
+				page:1, 
+				total:data.proprietarios.length
+			});
+		} else {
+			$(_element, _workspace).flexAddData({
+				rows:  toFlexiGridObject([]), 
+				page:1, 
+				total:0
+			});
+		}
+	};
+}

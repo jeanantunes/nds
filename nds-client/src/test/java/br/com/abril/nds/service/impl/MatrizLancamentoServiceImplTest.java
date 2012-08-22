@@ -23,7 +23,6 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -36,7 +35,6 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -65,8 +63,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 
 		MockitoAnnotations.initMocks(this);
 		
-		Carteira carteira = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-		Banco banco = Fixture.hsbc(carteira); 
+		Banco banco = Fixture.hsbc(); 
 		
 		ParametroCobrancaCota parametroCobranca = 
 				Fixture.parametroCobrancaCota(null, 2, BigDecimal.TEN, null, 1, 
@@ -277,7 +274,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 				produtoLancamento.setDataLancamentoDistribuidor(data);
 				produtoLancamento.setRepartePrevisto(repartePrevisto);
 				produtoLancamento.setDataRecolhimentoPrevista(dataRecolhimentoPrevista);
-				produtoLancamento.setPeso(new BigDecimal(10));
+				produtoLancamento.setPeso(10L);
 				produtoLancamento.setValorTotal(new BigDecimal(2));
 				produtoLancamento.setReparteFisico(new BigDecimal(5));
 				produtoLancamento.setStatusLancamento(StatusLancamento.PLANEJADO.toString());

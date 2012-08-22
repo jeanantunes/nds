@@ -32,7 +32,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Carteira;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
@@ -85,7 +84,6 @@ import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.cadastro.TipoDesconto;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
@@ -94,7 +92,6 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
@@ -325,9 +322,6 @@ public class DataLoader {
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota28;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota29;
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota30;
-
-	private static Carteira carteiraRegistrada;
-	private static Carteira carteiraSemRegistro;
 
 	private static CFOP cfop5102;
 	private static TipoNotaFiscal tipoNotaFiscalRecebimento;
@@ -899,7 +893,6 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		carregarDadosClean(session);
 
-		criarCarteira(session);
 		criarBanco(session);
 		criarUsuarios(session);
 		
@@ -989,8 +982,6 @@ public class DataLoader {
 		gerarTipoEntrega(session);
 
 		gerarParciais(session);
-
-		gerarDescontos(session);
 
 		criarDadosBalanceamentos(session);
 
@@ -1186,30 +1177,7 @@ public class DataLoader {
 
 		save(session, algoritmoRJ, algoritmoSP);
 	}
-
-	private static void gerarDescontos(Session session){
-
-		TipoDesconto tipoDesconto = Fixture.criarTipoDesconto("001", "Normal", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("002", "Produtos Tributados", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("003", "Video Print de 1/1/96 A", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("004", "Cromos - Normal Exc Ju", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("005", "Importadas - Eletrolibe", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("006", "Promoções", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("007", "Especial Globo", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("008", "Magazine Fome Zero", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("009", "Impratadas Mag", new BigDecimal(10));
-		save(session, tipoDesconto);
-		tipoDesconto = Fixture.criarTipoDesconto("010", "Importadas MagExpress", new BigDecimal(10));
-		save(session, tipoDesconto);
-	}
+	
 
 	private static void gerarCfops(Session session) {
 
@@ -4409,7 +4377,7 @@ public class DataLoader {
 	private static void criarEnderecoDistribuidor(Session session){
 
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", 51, "Centro", "São Paulo", "SP",3543402);
+				TipoEndereco.COBRANCA, "13222-020", "Rua João de Souza", "51", "Centro", "São Paulo", "SP",3543402);
 
 		EnderecoDistribuidor enderecoDistribuidor = Fixture.enderecoDistribuidor(distribuidor, endereco, true, TipoEndereco.COBRANCA);
 
@@ -4639,10 +4607,10 @@ public class DataLoader {
 		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
 
 		Endereco enderecoPrincipal = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", 50, "Centro", "Mococa", "SP",3530508);
+				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", "50", "Centro", "Mococa", "SP",3530508);
 
 		Endereco endereco = Fixture.criarEndereco(
-				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", 50, "Centro", "Mococa", "SP",3530508);
+				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", "50", "Centro", "Mococa", "SP",3530508);
 
 		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
 		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
@@ -5223,15 +5191,6 @@ public class DataLoader {
 	}
 
 
-	private static void criarCarteira(Session session){
-		carteiraRegistrada = Fixture.carteira(30, TipoRegistroCobranca.REGISTRADA);
-
-		carteiraSemRegistro = Fixture.carteira(1, TipoRegistroCobranca.SEM_REGISTRO);
-
-		save(session,carteiraRegistrada,carteiraSemRegistro);
-	}
-
-
 	private static void criarBox(Session session){
 
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
@@ -5527,22 +5486,22 @@ public class DataLoader {
 	private static void criarEndereco(Session session){
 		
 		enderecoMococa1 = Fixture.criarEndereco(
-				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", 50, "Centro", "Mococa", "SP",3530508);
+				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", "50", "Centro", "Mococa", "SP",3530508);
 		
 		enderecoMococa2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", 51, "Vila Carvalho", "Mococa", "SP",3530508);
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X", "51", "Vila Carvalho", "Mococa", "SP",3530508);
 		
 		enderecoLuisMococa3 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X Alvorada", 52, "Vila Carvalho", "Mococa", "SP",3530508);
+				TipoEndereco.LOCAL_ENTREGA, "13730-000", "Rua X Alvorada", "52", "Vila Carvalho", "Mococa", "SP",3530508);
 		
 		enderecoRioPardo1 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua X Da silva", 50, "Vila Carvalho", "São Jose do Rio Pardo", "SP",3549706);
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua X Da silva", "50", "Vila Carvalho", "São Jose do Rio Pardo", "SP",3549706);
 		
 		enderecoRioPardo2 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose", 52, "Vila Jose", "São Jose do Rio Pardo", "SP",3549706);
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose", "52", "Vila Jose", "São Jose do Rio Pardo", "SP",3549706);
 		
 		enderecoRioPardo3 = Fixture.criarEndereco(
-				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose da Silva", 51, "Vila Jose", "São Jose do Rio Pardo", "SP",3549706);
+				TipoEndereco.LOCAL_ENTREGA, "13720-000", "Rua Jose da Silva", "51", "Vila Jose", "São Jose do Rio Pardo", "SP",3549706);
 		
 		save(session, enderecoMococa1,enderecoMococa2,enderecoLuisMococa3,enderecoRioPardo1,enderecoRioPardo2,enderecoRioPardo3);
 
@@ -5699,16 +5658,16 @@ public class DataLoader {
 
 	private static void criarBanco(Session session) {
 
-		bancoHSBC = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoHSBC = Fixture.banco(10L, true, 1, "1010",
 							  123456L, "1", "1", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
-		bancoITAU = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoITAU = Fixture.banco(10L, true, 1, "1010",
 				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "184", BigDecimal.TEN, BigDecimal.ONE);
 
-		bancoDOBRASIL = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoDOBRASIL = Fixture.banco(10L, true, 1, "1010",
 				  123456L, "1", "1", "Instrucoes DOBRASIL.", "BB", "BANCO DO BRASIL", "001", BigDecimal.ZERO, BigDecimal.ONE);
 
-		bancoBRADESCO = Fixture.banco(10L, true, carteiraSemRegistro, "1010",
+		bancoBRADESCO = Fixture.banco(10L, true, 1, "1010",
 				  123456L, "1", "1", "Instrucoes BRADESCO.", "BRADESCO", "BANCO BRADESCO S/A", "065", BigDecimal.ZERO, BigDecimal.TEN);
 
 		save(session, bancoHSBC,bancoITAU,bancoDOBRASIL,bancoBRADESCO);
@@ -7675,7 +7634,7 @@ public class DataLoader {
 				null, juridicaFc, false, null);
 		save(session, juridicaFc, entregador);
 
-		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", 50, "Centro", "Mococa", "SP",3530508);
+		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", "50", "Centro", "Mococa", "SP",3530508);
 
 		EnderecoEntregador enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COMERCIAL);
 
@@ -7692,7 +7651,7 @@ public class DataLoader {
 				null, jose, false, null);
 		save(session, jose, entregador);
 
-		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", 10, "Centro", "Ribeirão Preto", "SP",3543402);
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", "10", "Centro", "Ribeirão Preto", "SP",3543402);
 
 		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.COBRANCA);
 
@@ -7710,7 +7669,7 @@ public class DataLoader {
 				456L, false, new Date(),
 				null, maria, false, null);
 
-		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", 10, "Centro", "São Paulo", "SP",3550308);
+		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", "10", "Centro", "São Paulo", "SP",3550308);
 
 		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.RESIDENCIAL);
 
@@ -10830,7 +10789,7 @@ public class DataLoader {
 		String email 		= "";
 		
 		Endereco enderecoDestinatario 	= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", 4585, "Jrd Limeira", "Pedra de Guaratiba", "RJ",3543402);
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", "4585", "Jrd Limeira", "Pedra de Guaratiba", "RJ",3543402);
 		
 		session.save(enderecoDestinatario);
 		
@@ -10857,7 +10816,7 @@ public class DataLoader {
 		String documentoEmitente = "";
 		
 		Endereco enderecoEmitente= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", 4585, "Jrd Brasil", "Santana do Livramento", "RJ",6);
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", "4585", "Jrd Brasil", "Santana do Livramento", "RJ",6);
 		
 		session.save(enderecoEmitente);
 		
@@ -10910,7 +10869,7 @@ public class DataLoader {
 	
 		
 		Endereco enderecoTransporte = 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", 4585, "Jrd Brasil", "Piuí", "MG",3543402);
+				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", "4585", "Jrd Brasil", "Piuí", "MG",3543402);
 		
 		session.save(enderecoTransporte);
 		
