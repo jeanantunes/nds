@@ -104,4 +104,20 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
 	 */
 	Set<DescontoProdutoEdicao> obterDescontoProdutoEdicao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota);
 	
+	/**
+	 * 
+	 * Obtém descontos de produtos edição de fornecedor, cota e tipo de desconto.
+	 * 
+	 * @param tipoDesconto - tipo de desconto
+	 * 
+	 * @param fornecedor - fornecedor
+	 * 
+	 * @param cota - cota
+	 * 
+	 * @param produtoEdicao - produto edição
+	 * 
+	 * @return {@link Set} {@link DescontoProdutoEdicao}
+	 */
+	Set<DescontoProdutoEdicao> obterDescontoProdutoEdicao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao);
+	
 }
