@@ -133,14 +133,7 @@ public class DescontoServiceImpl implements DescontoService {
 				break;
 			case PRODUTO:
 		
-				DescontoProduto descontoProduto = descontoProdutoRepository.buscarPorId(idDesconto);
-				validarExclusaoDesconto(descontoProduto.getDataAlteracao());
-				descontoProduto.setCotas(null);
-				descontoProdutoRepository.remover(descontoProduto);
-				
-				//TODO obter desconto anterior, tratar dados para o processamento
-				
-				//TODO chamar metodo para processamento de desconto produto edição
+				this.excluirDescontoProduto(idDesconto);
 				
 				break;
 				
@@ -564,30 +557,25 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		validarExclusaoDesconto(desconto.getDataAlteracao());
 		
-		DescontoDistribuidor ultimoDesconto = null;
-		
-		for(Fornecedor fornecedor : desconto.getFornecedores()){
+		for (Fornecedor fornecedor : desconto.getFornecedores()) {
 			
-			 ultimoDesconto = descontoDistribuidorRepository.buscarUltimoDescontoValido(idDesconto,fornecedor);
+			DescontoDistribuidor ultimoDesconto =
+				descontoDistribuidorRepository.buscarUltimoDescontoValido(idDesconto,fornecedor);
 			
-			if(ultimoDesconto != null){
+			Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+			
+			fornecedores.add(fornecedor);
+			
+			if (ultimoDesconto != null) {
 				
-				if(ultimoDesconto.getDataAlteracao().before(desconto.getDataAlteracao())){
-					
-					Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-				
-					fornecedores.add(fornecedor);
-					
+				if (ultimoDesconto.getDataAlteracao().before(desconto.getDataAlteracao())) {
+
 					processarDescontoDistribuidor(fornecedores, ultimoDesconto.getDesconto());
 				}
-			}
-			else{
 				
-				Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+			} else {
 				
-				fornecedores.add(fornecedor);
-				
-				processarDescontoDistribuidor(fornecedores,BigDecimal.ZERO);
+				processarDescontoDistribuidor(fornecedores, BigDecimal.ZERO);
 			}
 		}
 		
@@ -608,13 +596,12 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		validarExclusaoDesconto(descontoCota.getDataAlteracao());
 		
-		DescontoCota ultimoDescontoCota = null;
-		
-		for(Fornecedor fornecedor : descontoCota.getFornecedores()){
+		for (Fornecedor fornecedor : descontoCota.getFornecedores()) {
 			
-			 ultimoDescontoCota = descontoCotaRepository.buscarUltimoDescontoValido(idDesconto,fornecedor,descontoCota.getCota());
+			DescontoCota ultimoDescontoCota =
+				descontoCotaRepository.buscarUltimoDescontoValido(idDesconto, fornecedor, descontoCota.getCota());
 			
-			if(ultimoDescontoCota != null){
+			if (ultimoDescontoCota != null) {
 				
 				if(ultimoDescontoCota.getDataAlteracao().before(descontoCota.getDataAlteracao())){
 					
@@ -624,27 +611,11 @@ public class DescontoServiceImpl implements DescontoService {
 					
 					processarDescontoCota(descontoCota.getCota(), fornecedores, ultimoDescontoCota.getDesconto());
 				}
-			}
-			else{
+			} else {
 				
-				Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-				Set<Cota> cotas = new HashSet<Cota>();
+				descontoComponent.removerDescontos(fornecedor, descontoCota.getCota(), TipoDesconto.ESPECIFICO);
 				
-				fornecedores.add(fornecedor);	
-				cotas.add(descontoCota.getCota());
-				
-				DescontoDistribuidor ultimoDescontoDistribuidor = descontoDistribuidorRepository.buscarUltimoDescontoValido(idDesconto,fornecedor);
-			
-				descontoComponent.removerDescontos(fornecedor,descontoCota.getCota(), TipoDesconto.ESPECIFICO);
-				
-				if(ultimoDescontoDistribuidor!= null){
-					
-					processarDesconto(TipoDesconto.GERAL, fornecedores,cotas,null,ultimoDescontoDistribuidor.getDesconto());
-				}
-				else{
-					
-					processarDesconto(TipoDesconto.GERAL, fornecedores,cotas,null,BigDecimal.ZERO);
-				}
+				processarExclusaoPorDistribuidor(descontoCota.getCota(), fornecedor);
 			}
 		}
 		
@@ -653,4 +624,96 @@ public class DescontoServiceImpl implements DescontoService {
 		descontoCotaRepository.remover(descontoCota);
 	}
 	
+	/*
+	 * 
+	 * Excluir um desconto da cota e atualiza os descontos dos produtos edição.
+	 * 
+	 * @param idDesconto - identificador do desconto a ser removido
+	 */
+	private void excluirDescontoProduto(Long idDesconto){
+		
+		DescontoProduto descontoProduto = descontoProdutoRepository.buscarPorId(idDesconto);
+		
+		validarExclusaoDesconto(descontoProduto.getDataAlteracao());
+
+		for (Cota cota : descontoProduto.getCotas()) {
+		
+			DescontoProduto ultimoDescontoProduto =
+				descontoProdutoRepository.buscarUltimoDescontoValido(idDesconto, cota, descontoProduto.getProdutoEdicao());
+			
+			if (ultimoDescontoProduto != null) {
+				
+				if (ultimoDescontoProduto.getDataAlteracao().before(descontoProduto.getDataAlteracao())) {
+					
+					Set<ProdutoEdicao> produtosEdicao = new HashSet<ProdutoEdicao>();
+					produtosEdicao.add(descontoProduto.getProdutoEdicao());
+					
+					Set<Cota> cotas = new HashSet<Cota>();
+					cotas.add(cota);
+					
+					processarDescontoProduto(produtosEdicao, cotas, ultimoDescontoProduto.getDesconto());
+				}
+ 			} else {
+				
+				processarExclusaoDescontoProdutoCota(descontoProduto, cota);
+			}
+		}
+
+		descontoProduto.setCotas(null);
+		
+		descontoProdutoRepository.remover(descontoProduto);
+	}
+
+	/*
+	 * Processa desconto Produto para exclusão de desconto de produto
+	 * 
+	 * @param descontoProduto - desconto produto
+	 * 
+	 * @param cota - cota
+	 */
+	private void processarExclusaoDescontoProdutoCota(DescontoProduto descontoProduto, Cota cota) {
+		
+		for(Fornecedor fornecedor : cota.getFornecedores()){
+			
+			DescontoCota ultimoDescontoCota = descontoCotaRepository.buscarUltimoDescontoValido(fornecedor,cota);
+			
+			descontoComponent.removerDescontos(fornecedor,cota, descontoProduto.getProdutoEdicao() ,TipoDesconto.PRODUTO);
+			
+			if(ultimoDescontoCota!= null){
+				
+				Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+				
+				fornecedores.add(fornecedor);
+				
+				processarDescontoCota(cota, fornecedores, ultimoDescontoCota.getDesconto());
+			}
+			else{
+				
+ 				processarExclusaoPorDistribuidor(cota, fornecedor);
+			} 
+		}
+	}
+	
+	/*
+	 * Processa desconto Distribuidor para exclusão de desconto Cota ou de Produto.
+	 * 
+	 * @param cota - cota
+	 * 
+	 * @param fornecedor - fornecedor
+	 */
+	private void processarExclusaoPorDistribuidor(Cota cota,Fornecedor fornecedor) {
+		
+		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		Set<Cota> cotas = new HashSet<Cota>();
+		
+		fornecedores.add(fornecedor);	
+		cotas.add(cota);
+		
+		DescontoDistribuidor ultimoDescontoDistribuidor = descontoDistribuidorRepository.buscarUltimoDescontoValido(fornecedor);
+
+		BigDecimal valorDescontoProduto = (ultimoDescontoDistribuidor!= null)
+				?ultimoDescontoDistribuidor.getDesconto():BigDecimal.ZERO; 
+		
+		processarDesconto(TipoDesconto.GERAL, fornecedores,cotas,null,valorDescontoProduto);
+	}
 }
