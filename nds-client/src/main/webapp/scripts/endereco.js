@@ -275,7 +275,7 @@ function Endereco(paramTela,paramMessage) {
 		);
 	};
 	
-	this.preencherComboUF = function () {
+	this.preencherComboUF = function (ufSelecionado) {
 
 		var isFromModal = true;
 		
@@ -301,6 +301,11 @@ function Endereco(paramTela,paramMessage) {
 
 					$(idComboUF, BaseController.workspace).append(option);	
 				});
+				
+				if (ufSelecionado) {
+					
+					$(idComboUF).val(ufSelecionado);
+				}
 			},
 			null,
 			isFromModal
@@ -513,3 +518,5 @@ function Endereco(paramTela,paramMessage) {
 	};
 	
 }
+
+//@ sourceURL=endereco.js
