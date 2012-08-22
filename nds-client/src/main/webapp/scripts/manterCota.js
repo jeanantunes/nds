@@ -1,4 +1,3 @@
-
 var TAB_COTA = new TabCota('tabCota');
 
 var MANTER_COTA = $.extend(true, {
@@ -19,9 +18,7 @@ var MANTER_COTA = $.extend(true, {
 		
 		$("#numCota", this.workspace).numeric();
 		
-		COTA_FORNECEDOR.initTabFornecedorCota();
-
-		//COTA_DESCONTO.initTabDescontoCota();
+		COTA_FORNECEDOR.initTabFornecedorCota();	
 
 		SOCIO_COTA.initGridSocioCota();
 
@@ -147,8 +144,8 @@ var MANTER_COTA = $.extend(true, {
     },
     
     carregarDescontos:function(){
-        
-    	//descontoController.initDescontos(MANTER_COTA.numeroCota);
+
+    	COTA_DESCONTO.initDescontos(MANTER_COTA.numeroCota);
     },
     
     carregarDistribuicao:function(){
@@ -537,65 +534,145 @@ var MANTER_COTA = $.extend(true, {
 	}
 }, BaseController);
 
-
-/*
-var COTA_DESCONTO = $.extend(true, {
-
-		salvarDesconto:function(){
-			
-			var descontos = "";
-			
-			 $("#selectDesconto option", this.workspace).each(function (index) {
-				 descontos = descontos + "descontos["+index+"]="+ $(this, this.workspace).val() +"&";
-			 });
-			
-			$.postJSON(
-					contextPath + "/cadastro/cota/salvarDescontos",
-					descontos + 
-					"&idCota="+ MANTER_COTA.idCota, 
-					null,
-					null,
-					true
-			);
-		},
+var COTA_DESCONTO = $.extend(true,
+    {
+	    initDescontos : function(numCota){
+	    	COTA_DESCONTO.initDescontoCota();
+	    	COTA_DESCONTO.initDescontoProduto();
+	    	COTA_DESCONTO.obterDescontoCota(numCota); 
+	    	COTA_DESCONTO.obterDescontoProduto(numCota);
+	    	
+	    },
+	
+	    initDescontoProduto : function(){
+		    $(".descProdutosGrid", this.workspace).flexigrid({
+		    	preProcess: COTA_DESCONTO.getDataFromResult,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 80,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 350,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'nomeProduto',
+					width : 60,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : '% Desconto',
+					name : 'desconto',
+					width : 115,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Data da Alteração',
+					name : 'dataAlteracao',
+					width : 120,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "dataAlteracao",
+				sortorder : "asc",
+				width : 810,
+				height : 150
+			});
+	    },	
 		
-		carregarDescontoCota:function(){
+	    initDescontoCota : function(){
+			$(".descCotaGrid", this.workspace).flexigrid({
+				preProcess: COTA_DESCONTO.getDataFromResult,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Fornecedor',
+					name : 'fornecedor',
+					width : 440,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : '% Desconto',
+					name : 'desconto',
+					width : 80,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Tipo',
+					name : 'descTipoDesconto',
+					width : 120,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Última Atualização',
+					name : 'dataAlteracao',
+					width : 100,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "dataAlteracao",
+				sortorder : "asc",
+				width : 810,
+				height : 150
+			});
+	    },
+	    
+        obterDescontoProduto : function(numCota){
+        	
+        	$(".descProdutosGrid", this.workspace).flexOptions({
+				url: contextPath+'/cadastro/cota/obterTiposDescontoProduto',
+				params: [
+				         {name:'numCota', value:numCota}
+				        ] ,
+				        newp: 1
+			});
 			
-			$.postJSON(contextPath + "/cadastro/cota/obterDescontos",
-					"idCota="+ MANTER_COTA.idCota, 
-					function(result){
-						
-						if(result){
-							MANTER_COTA.montarCombo(result,"#selectTipoDesconto");
-						}
-					},null,true
-			);
+			$(".descProdutosGrid", this.workspace).flexReload();
 			
-			$.postJSON(contextPath + "/cadastro/cota/obterDescontosSelecionados",
-					"idCota="+ MANTER_COTA.idCota, 
-					function(result){
-					
-						if(result){
-							MANTER_COTA.montarCombo(result,"#selectDesconto");
-						}
-					},null,true
-			);
-		},
+			$(".grids", this.workspace).show();
+	    },
+	    
+	    obterDescontoCota : function(numCota){
+	    	
+			$(".descCotaGrid", this.workspace).flexOptions({
+				url: contextPath+'/cadastro/cota/obterTiposDescontoCota',
+				params: [
+				         {name:'numCota', value:numCota}
+				        ] ,
+				        newp: 1
+			});
+			
+			$(".descCotaGrid", this.workspace).flexReload();
+			
+			$(".grids", this.workspace).show();
+	    },
 
-		initTabDescontoCota: function() {
+	    
+        getDataFromResult : function(resultado){
 			
-			$("select[name='selectDesconto']", this.workspace).multiSelect(
-				"select[name='selectTipoDesconto']", {trigger: "#linkDescontoVoltarTodos"}
-			);
+			if (resultado.mensagens) {
+				exibirMensagemDialog(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+				$(".grids", this.workspace).hide();
+				return resultado;
+			}	
+				
+			$(".grids", this.workspace).show();
 			
-			$("select[name='selectTipoDesconto']", this.workspace).multiSelect(
-				"select[name='selectDesconto']", {trigger: "#linkDescontoEnviarTodos"}
-			);
+			return resultado;
 		}
-
-}, BaseController);
-*/
-
+ 
+    }
+	,
+	BaseController
+);
 
 var COTA_FORNECEDOR = $.extend(true, {
 	
