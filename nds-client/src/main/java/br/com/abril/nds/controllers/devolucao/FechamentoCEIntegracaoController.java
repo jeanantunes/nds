@@ -3,25 +3,42 @@ package br.com.abril.nds.controllers.devolucao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RomaneioDTO;
+import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("devolucao/fechamentoCEIntegracao")
 public class FechamentoCEIntegracaoController {
 	
+	private static final String FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO = "filtroFechamentoCEIntegracao";
+	
 	private Result result;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private HttpSession session;
 	
 	
 	public FechamentoCEIntegracaoController(Result result) {
@@ -33,6 +50,68 @@ public class FechamentoCEIntegracaoController {
 	public void index(){
 		this.carregarComboFornecedores();
 		
+	}
+	
+	@Post
+	@Path("/pesquisaPrincipal")
+	public void pesquisaPrincipal(FiltroFechamentoCEIntegracaoDTO filtro, String sortorder, String sortname, int page, int rp){
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		this.validarEntrada(filtro);
+		
+		this.tratarFiltro(filtro);
+		
+		TableModel<CellModelKeyValue<RomaneioDTO>> tableModel = efetuarConsultaFechamentoCEIntegracao(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	private TableModel<CellModelKeyValue<RomaneioDTO>> efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, "limitar");
+		
+		TableModel<CellModelKeyValue<RomaneioDTO>> tableModel = new TableModel<CellModelKeyValue<RomaneioDTO>>();
+		
+		Integer totalRegistros = this.romaneioService.buscarTotalDeRomaneios(filtro);
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaRomaneios));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(totalRegistros);
+		
+		return tableModel;
+	}
+	
+	private void validarEntrada(FiltroFechamentoCEIntegracaoDTO filtro) {
+		boolean validar = false;
+		
+		if(filtro.getIdFornecedor() == 0 && filtro.getSemana() == 0){
+			validar = true;
+		}
+		
+		if(validar){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um filtro deve ser preenchido!");
+		}
+		
+	}
+	
+	private void tratarFiltro(FiltroFechamentoCEIntegracaoDTO filtroAtual) {
+
+		FiltroRomaneioDTO filtroSession = (FiltroRomaneioDTO) session
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		if (filtroSession != null && filtroSession.equals(filtroAtual)) {
+
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO, filtroAtual);
 	}
 	
 	private void carregarComboFornecedores() {

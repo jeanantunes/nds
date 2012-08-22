@@ -1,14 +1,30 @@
 var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	init : function(){
-		//initGrid();
-		alert("testando o controller");
+		fechamentoCEIntegracaoController.initGrid();
+		fechamentoCEIntegracaoController.bindButtons();
 	},
-	initGrid : function(){
-		
+	
+	bindButtons : function(){
+		$("#btnPesquisar", fechamentoCEIntegracaoController.workspace).click(function() {
+			fechamentoCEIntegracaoController.pesquisaPrincipal();
+			$(".grids", fechamentoCEIntegracaoController.worspace).show();
+		});
+	},
+	initGrid : function(){	
 		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexigrid({
-			url : '../xml/fechamento_Ce_integracao-xml.xml',
-			dataType : 'xml',
+			preProcess : function(resultado) {
+				
+				if (resultado.mensagens) {
+					exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+					return resultado;
+				}
+				
+				$(".grids", fechamentoCEIntegracaoController.workspace).show();
+				return resultado;
+			  },
+			dataType : 'json',
 			colModel : [ {
 				display : 'Qtde',
 				name : 'qtde',
@@ -80,6 +96,21 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			height : 180
 		});
 		
+	},
+	
+	pesquisaPrincipal : function(){
+		var idFornecedor = $("#idFornecedor", fechamentoCEIntegracaoController.workspace).val();
+		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
+		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexOptions({
+			url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisaPrincipal',
+			dataType : 'json',
+			params: [
+			         {name:'filtro.idFornecedor' , value:idFornecedor},
+			         {name:'filtro.semana' , value:semana}
+			         ]
+		});
+		
+		$(".fechamentoCeGrid").flexReload();
 	}
 	
 	
