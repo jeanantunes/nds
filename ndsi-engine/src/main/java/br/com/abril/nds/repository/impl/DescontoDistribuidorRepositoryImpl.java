@@ -120,28 +120,43 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 	}
 	
 	@Override
+	public DescontoDistribuidor buscarUltimoDescontoValido(Fornecedor fornecedor) {
+		
+		return obterUltimoDescontoValido(null,fornecedor);
+	}
+	
+	@Override
 	public DescontoDistribuidor buscarUltimoDescontoValido(Long idUltimoDesconto, Fornecedor fornecedor) {
 		
+		return obterUltimoDescontoValido(idUltimoDesconto, fornecedor);
+	}
+	
+	private DescontoDistribuidor obterUltimoDescontoValido(Long idUltimoDesconto, Fornecedor fornecedor){
+			
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select desconto from DescontoDistribuidor desconto JOIN desconto.fornecedores fornecedor  ")
 			.append("where desconto.dataAlteracao = ")
 			.append(" ( select max(descontoSub.dataAlteracao) from DescontoDistribuidor descontoSub  ")
 				.append(" JOIN descontoSub.fornecedores fornecedorSub ")
-				.append(" where fornecedorSub.id =:idFornecedor ")
-				.append(" and descontoSub.id not in (:idUltimoDesconto) ")
-			.append(" ) ")
+				.append(" where fornecedorSub.id =:idFornecedor ");
+				if(idUltimoDesconto!= null){
+					hql.append(" and descontoSub.id not in (:idUltimoDesconto) ");
+				}
+		hql.append(" ) ")
 			.append(" AND fornecedor.id =:idFornecedor ");
 	
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idFornecedor",fornecedor.getId());
 		
-		query.setParameter("idUltimoDesconto", idUltimoDesconto);
+		if(idUltimoDesconto!= null){
+			
+			query.setParameter("idUltimoDesconto", idUltimoDesconto);
+		}
 		
 		query.setMaxResults(1);
 		
 		return (DescontoDistribuidor)  query.uniqueResult();
 	}
-
 }

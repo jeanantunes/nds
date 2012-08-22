@@ -38,4 +38,13 @@ public interface DescontoDistribuidorRepository extends Repository<DescontoDistr
 	 * @return DescontoDistribuidor
 	 */
 	DescontoDistribuidor buscarUltimoDescontoValido(Long idUltimoDesconto, Fornecedor fornecedor);
+	
+	/**
+	 * Retorna o ultimo desconto valido do distribuidor a um fornecedor
+	 * 
+	 * @param fornecedor - fornecedor
+	 * 
+	 * @return DescontoDistribuidor
+	 */
+	DescontoDistribuidor buscarUltimoDescontoValido(Fornecedor fornecedor);
 }

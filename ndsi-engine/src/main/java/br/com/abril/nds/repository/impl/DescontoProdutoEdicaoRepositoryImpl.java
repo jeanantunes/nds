@@ -132,6 +132,14 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, null,tipoDesconto);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<DescontoProdutoEdicao> obterDescontoProdutoEdicao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao) {
+		
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, produtoEdicao,tipoDesconto);
+	}
 	
 	@SuppressWarnings("unchecked")
 	private Set<DescontoProdutoEdicao> obterDescontoProdutoEdicaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao,TipoDesconto tipoDesconto){

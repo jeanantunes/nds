@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -186,5 +188,51 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		query.setResultTransformer(new AliasToBeanResultTransformer(TipoDescontoProdutoDTO.class));
 		
 		return query.list();
+	}
+	
+	@Override
+	public DescontoProduto buscarUltimoDescontoValido(Cota cota,ProdutoEdicao produtoEdicao) {
+		
+		return obterDescontoValido(null, cota, produtoEdicao);
+	}
+	
+	@Override
+	public DescontoProduto buscarUltimoDescontoValido(Long idDesconto,Cota cota, ProdutoEdicao produtoEdicao) {
+		
+		return obterDescontoValido(idDesconto, cota, produtoEdicao);
+	}
+	
+	private DescontoProduto obterDescontoValido(Long idDesconto, Cota cota, ProdutoEdicao produtoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select desconto from DescontoProduto desconto JOIN desconto.produtoEdicao produtoEdicao JOIN desconto.cotas cota  ")
+			.append("where desconto.dataAlteracao = ")
+			.append(" ( select max(descontoSub.dataAlteracao) from DescontoProduto descontoSub  ")
+				.append(" JOIN descontoSub.produtoEdicao produtoEdicaoSub JOIN descontoSub.cotas cotaSub ")
+				.append(" where produtoEdicaoSub.id =:idProdutoEdicao ")
+				.append(" and cotaSub.id =:idCota ");
+				if(idDesconto!= null){
+					hql.append(" and descontoSub.id not in (:idUltimoDesconto) ");
+				}
+				
+		hql.append(" ) ")
+			.append(" AND produtoEdicao.id =:idProdutoEdicao ")
+			.append(" AND cota.id =:idCota ");
+	
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao",produtoEdicao.getId());
+		
+		if(idDesconto!= null){
+			
+			query.setParameter("idUltimoDesconto", idDesconto);
+		}
+		
+		query.setParameter("idCota", cota.getId());
+		
+		query.setMaxResults(1);
+		
+		return (DescontoProduto)  query.uniqueResult();
 	}
 }
