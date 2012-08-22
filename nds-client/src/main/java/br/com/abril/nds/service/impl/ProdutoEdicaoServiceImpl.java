@@ -8,28 +8,33 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Brinde;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Dimensao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
@@ -75,7 +80,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Autowired
 	private MatrizLancamentoService matrizLancamentoService;
 	
+	@Autowired
 	private DescontoService descontoService;
+	
+	@Autowired
+	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -258,31 +267,62 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	 * @param produtoEdicao
 	 * @param indNovoProdutoEdicao
 	 */
-	private void inserirDescontoProdutoEdicao(ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
+	private void inserirDescontoProdutoEdicao(ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao) {
 
-		List<DescontoProdutoEdicao> listaDescontoProdutoEdicao =  null; //descontoService.
-		// Detectar se o fornecedor do produto edicao possui desconto especifico
+		Produto produto = produtoEdicao.getProduto();
 		
-			// SIM: Temos a lista de cotas, e o valor que cada cota recebeu de desnconto
+		GrupoProduto grupoProduto = produto.getTipoProduto().getGrupoProduto();
 		
-				// Iterar a lista de cotas passando os dados do item da lista (fornec, cota, desconto)
-				descontoService.processarDescontoCota(cota, fornecedores, valorDesconto)
+		if(!indNovoProdutoEdicao || GrupoProduto.OUTROS.equals( grupoProduto )) {
+			return;
+		}
+		
+		Fornecedor fornecedor = produto.getFornecedor();
+		
+		Set<Fornecedor> conjuntoFornecedor = new HashSet<Fornecedor>();
+		
+		conjuntoFornecedor.add(fornecedor);
+		
+		
+		
+		Set<DescontoProdutoEdicao> conjuntoDescontoProdutoEdicaoEspecifico = 
+				descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(TipoDesconto.ESPECIFICO, fornecedor, null);
+		
+		if(conjuntoDescontoProdutoEdicaoEspecifico!=null && !conjuntoDescontoProdutoEdicaoEspecifico.isEmpty()) {
+			
+			
+			for(DescontoProdutoEdicao descontoEspecifico : conjuntoDescontoProdutoEdicaoEspecifico) {
 				
-			// NAO: Nao faz nada...
+				Cota cota = descontoEspecifico.getCota();
+				
+				descontoService.processarDescontoCota(cota, conjuntoFornecedor, descontoEspecifico.getDesconto());
+				
+			}
+			
+			
+		}
 		
+		Set<DescontoProdutoEdicao> conjuntoDescontoProdutoEdicaoGeral = 
+				descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(TipoDesconto.GERAL, fornecedor, null);
 		
-		// Detectar se o fornecedor possui registr. tipo de desconto geral
-					
-			// SIM:	temos a lista de cota vinc. a este fornecedor,
-		
-				descontoService.processarDescontoDistribuidor(fornecedores, valorDesconto)
+		if(conjuntoDescontoProdutoEdicaoGeral!=null && !conjuntoDescontoProdutoEdicaoGeral.isEmpty()) {
+			
+			
+			for(DescontoProdutoEdicao descontoGeral : conjuntoDescontoProdutoEdicaoGeral) {
+				
+				descontoService.processarDescontoDistribuidor(conjuntoFornecedor, descontoGeral.getDesconto());
+				
+			}
+			
+			
+		}
 		
 	}
 	
 	@Override
 	@Transactional
 	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, 
-			String contentType, InputStream imgInputStream, Usuario usuario) {
+			String contentType, InputStream imgInputStream) {
 		
 		ProdutoEdicao produtoEdicao = null;
 		
@@ -322,7 +362,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// 03) Salvar/Atualizar o lancamento:
 		this.salvarLancamento(dto, produtoEdicao);
 		
-		this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao, usuario);
+		this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
 		
 		
 	}

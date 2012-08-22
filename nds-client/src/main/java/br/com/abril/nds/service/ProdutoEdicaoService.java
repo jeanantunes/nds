@@ -137,9 +137,8 @@ public interface ProdutoEdicaoService {
 	 * @param codigoProduto
 	 * @param contentType
 	 * @param imgInputStream
-	 * @param usuario
 	 */
-	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream, Usuario usuario);
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream);
 	
 	/**
 	 * Exclui uma Edição da base de dados.<br>
