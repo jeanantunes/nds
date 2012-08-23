@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#folders=( "backup" "2707" "3107" "0108" "0208" "0308" "0608" "0708" "0808" "0908" "1008" "1308" "1408" "1508" "1608" "1708" )
-folders=( "2707" "3107" "0108" "0208" "0308" "0608" "0708" "0808" "0908" "1008" "1308" "1408" "1508" "1608" "1708" )
+#folders=( "backup" "2707" "3107" "0108" "0208" "0308" "0608" "0708" "0808" "0908" "1008" "1308" "1408" "1508" "1608" "1708" "2008" )
+folders=( "2008" )
 emsDServer=( 112 109 110 111 114 125 126 113 135 )
 emsDClient=( 112 109 110 111 114 125 126 113 135 )
 #emsDClient_mdc=( 119 118 117 116 108 106 107 )
@@ -16,27 +16,27 @@ do
 	for j in "${emsDServer[@]}"
 	do
 	   :
-		CMD="java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron ${j}"
+		CMD="java -jar /opt/ndistrib/ndsi-couchdbinterface/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron ${j}"
 		LOG="/opt/ndistrib/log/log_dserver_${i}_${j}.txt"
 		echo "${CMD} >> ${LOG}"
-		#$CMD >> $LOG
+		$CMD >> $LOG
 	done
 
 
 	for j in "${emsDClient[@]}"
 	do
 	   :
-		CMD="java -jar /opt/ndistrib/ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0${j}.route.EMS0${j}Route"
+		CMD="java -jar /opt/ndistrib/ndsi-engine/ndsi-engine.jar br.com.abril.nds.integracao.ems0${j}.route.EMS0${j}Route"
 		LOG="/opt/ndistrib/log/log_dclient_${i}_${j}.txt"
 		echo "${CMD} >> ${LOG}"
-		#$CMD >> $LOG
+		$CMD >> $LOG
 	done
 
 
 	for j in "${emsDClient_mdc[@]}"
 	do
 	   :
-		CMD="java -jar /opt/ndistrib/ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0${j}.route.EMS0${j}Route"
+		CMD="java -jar /opt/ndistrib/ndsi-engine/ndsi-engine.jar br.com.abril.nds.integracao.ems0${j}.route.EMS0${j}Route"
 		LOG="/opt/ndistrib/log/log_mdc_${i}_${j}.txt"
 		echo "${CMD} >> ${LOG}"
 		$CMD >> $LOG
@@ -44,8 +44,9 @@ do
 done
 
 
+## Imagem
 #sudo mount -t smbfs //abwbw2k01/images /mnt/images -o username=t30541,password=Pestinha@09,uid=t30541,gid=t30541
-java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
+#java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
 
 
 ## CEP
