@@ -5,8 +5,11 @@ function Endereco(paramTela, paramMessage) {
 	var _this = this;
     
 	this.init = function(workspace) {
-		this.workspace = workspace;
-
+		this.workspace = workspace
+	}
+	
+	$(function() {
+		
 		var _this = this;
 		
 		$("#"+paramTela+"cep", Endereco.workspace).mask("99999-999");
@@ -29,9 +32,8 @@ function Endereco(paramTela, paramMessage) {
 				_this.incluirNovoEndereco();
 			}
 		});
+	});
 
-	};
-	
 	this.confirmarExclusaoEndereco = function (idEndereco) {
 		
 		var _this = this;

@@ -242,17 +242,17 @@ function Telefone(paramTela,message) {
 	};
 
 	this.limparCamposTelefone = function() {
-		$("#"+paramTela+"tipoTelefone", Telefone.workspace).val("");
-		$("#"+paramTela+"ddd", Telefone.workspace).val("");
-		$("#"+paramTela+"numeroTelefone", Telefone.workspace).val("");
-		$("#"+paramTela+"ramal", Telefone.workspace).val("");
-		$("#"+paramTela+"telefonePrincipal", Telefone.workspace).attr("checked", false);
+		$("#"+paramTela+"tipoTelefone").val("");
+		$("#"+paramTela+"ddd").val("");
+		$("#"+paramTela+"numeroTelefone").val("");
+		$("#"+paramTela+"ramal").val("");
+		$("#"+paramTela+"telefonePrincipal").attr("checked", false);
 	};
 
 	this.opcaoTel = function(opcao, idDiv, idLbl, idCampo) {
-		var div1 = $("#"+paramTela+ idDiv, Telefone.workspace);
-		var lbl = $("#"+paramTela + idLbl, Telefone.workspace);
-		var campo = $("#"+paramTela + idCampo, Telefone.workspace);
+		var div1 = $("#"+paramTela+ idDiv);
+		var lbl = $("#"+paramTela + idLbl);
+		var campo = $("#"+paramTela + idCampo);
 
 		switch (opcao) {
 		case 'COMERCIAL':
@@ -281,7 +281,7 @@ function Telefone(paramTela,message) {
 		$.postJSON(contextPath + "/cadastro/telefone/pesquisarTelefones",
 					"tela=" + paramTela, 
 					function(result) {
-						$("#"+paramTela+"telefonesGrid", Telefone.workspace).flexAddData({
+						$("#"+paramTela+"telefonesGrid").flexAddData({
 							page : result.page,
 							total : result.total,
 							rows : result.rows
@@ -289,9 +289,9 @@ function Telefone(paramTela,message) {
 
 						_this.limparCamposTelefone();
 
-						$("#"+paramTela+"referenciaHidden", Telefone.workspace).val("");
+						$("#"+paramTela+"referenciaHidden").val("");
 
-						$("#"+paramTela+"botaoAddEditar", Telefone.workspace).text("Incluir Novo");
+						$("#"+paramTela+"botaoAddEditar").text("Incluir Novo");
 					}, 
 					null, 
 					true,
