@@ -231,56 +231,12 @@ font-weight:bold;
 </head>
 <body>
 
-<div class="header_fino">
-	<img src="images/logo_treelog_fixo.png" alt="Treelog" align="left" />
-	
-    <ul>
-    	<li><strong>UsuÃ¡rio:</strong> Junior Fonseca &nbsp;</li>
-        <li><script type="text/javascript"
-					language="JavaScript">
-							diaSemana();
-			</script>
-        </li>
-        <li><a href="javascript:;" title="Sair do Sistema" class="sair">Sair</a></li>
-        <li><a href="javascript:;" onclick="mostraHeader();"><img src="images/seta_desce.gif" width="15" height="15" border="0" /></a></li>
-    </ul>
-	
-</div>
+<div class="header">
+	<div class="sub-header">
+		<div class="logo">&nbsp;</div>
 
-		<div class="header">
-			<div class="sub-header">
-				<div class="logo">&nbsp;</div>
-
-				<div class="titAplicacao">
-					<h1>Treelog S/A. LogÃ­stica e DistribuiÃ§Ã£o - SP</h1>
-					<h2>CNPJ: 00.000.000/00001-00</h2>
-					<h3>Distrib vs.1</h3>
-				</div>
-
-				<div class="usuario">
-					<div class="bt_novos">
-
-						<label title="UsuÃ¡rio Logado no Sistema">UsuÃ¡rio: Junior
-							Fonseca</label>
-					</div>
-					<div class="bt_novos">
-						<label> <script type="text/javascript"
-								language="JavaScript">
-							diaSemana();
-						</script> </label>
-					</div>
-					<div class="bt_novos">
-						<a href="javascript:;" title="Sair do Sistema" class="sair">Sair</a>
-					</div>
-
-				</div>
-			</div>
-		</div>
-
-		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
 		<div id="menu_principal">
         	<ul style="float:left!important;">
-				<li class="headerEsconde"><img src="images/logo_treelog_fixo.png" alt="Treelog" align="left" /></li>
                 <li><a id="linkHome" href='<c:url value="/index"/>'><span class="classHome">&nbsp;</span>Home</a>
 				</li>
 				<li><a href="javascript:;" class="trigger"><span
@@ -544,40 +500,63 @@ font-weight:bold;
 				</li>
                 <li><a href='help.htm'><span class="classHelp">&nbsp;</span>Help</a>
 				</li>
-				<li class="headerEsconde"><a href="javascript:;" title="Sair do Sistema" class="sair">Sair</a></li>
-				<li id="desceHeader" class="headerEsconde"><a href="javascript:;" onclick="mostraHeader();" rel="tipsy" title="Use o atalho CRTL + Seta para baixo" style="padding-right:0px!important;"><img src="images/seta_desce.gif"  border="0" /></a></li>
 			</ul>
-			<div id="sobeHeader" class="sobeHeader"><a href="javascript:;" onclick="escondeHeader();" rel="tipsy" title=" Use o atalho CRTL + Seta para cima"><img src="images/seta_sobe.gif" border="0" /></a></div>
 			<br clear="all"/>
-			
-			<div class="container">
-				<div id="notify" style="display: none;"></div>
-				<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextSuccess"></b>
-					</p>
-				</div>
-				<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextWarning"></b>
-					</p>
-				</div>
-				<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextError"></b>
-					</p>
-				</div>
-			</div>			
-			
+	
+	<div class="container">
+		<div id="notify" style="display: none;"></div>
+		<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
+			<p>
+				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+				<b id="idTextSuccess"></b>
+			</p>
 		</div>
+		<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
+			<p>
+				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+				<b id="idTextWarning"></b>
+			</p>
+		</div>
+		<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
+			<p>
+				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+				<b id="idTextError"></b>
+			</p>
+		</div>
+	</div>			
+	
+</div>
 		
 		
-		<div id="workspace">
-			<ul></ul>
+		
+
+		<div class="usuario">
+			<div class="bt_novos">
+
+				<label title="UsuÃ¡rio Logado no Sistema">UsuÃ¡rio: Junior
+					Fonseca</label>
+			</div>
+			<div class="bt_novos">
+				<label> <script type="text/javascript"
+						language="JavaScript">
+					diaSemana();
+				</script> </label>
+			</div>
+			<div class="bt_novos">
+				<a href="javascript:;" title="Sair do Sistema" class="sair">Sair</a>
+			</div>
+
 		</div>
+	</div>
+</div>
+
+<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
+
+
+
+<div id="workspace">
+	<ul></ul>
+</div>
 		
 		
 </body>

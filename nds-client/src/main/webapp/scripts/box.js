@@ -62,7 +62,7 @@ var boxController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 280
+			height : 330
 		});
 		$(".boxGrid", this.workspace).flexOptions({
 			"url" : this.path + 'busca.json',
@@ -262,7 +262,7 @@ var boxController = $.extend(true, {
 				align : 'left'
 			}],
 			width : 570,
-			height : 255
+			height : 210
 		});
 	},
 	detalheDialog:function(){
