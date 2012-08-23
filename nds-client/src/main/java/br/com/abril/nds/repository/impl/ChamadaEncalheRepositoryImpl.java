@@ -397,7 +397,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		StringBuilder hql = new StringBuilder("select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoId = produtoEdicao.produto.id ")
+		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
 		   .append(" and view.fornecedorId = fornecedores.id ");
 		
 		return hql.toString();
