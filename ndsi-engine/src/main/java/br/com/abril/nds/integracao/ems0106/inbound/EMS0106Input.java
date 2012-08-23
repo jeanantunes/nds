@@ -13,10 +13,16 @@ public class EMS0106Input implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/** Código da publicação. */
 	private String codigoPublicacao;
+	
+	/** Número da Edição. */
 	private Long edicao;
+	
+	/** Quantidade total do reparte desta edição. */
 	private Long reparteDistribuir;
-
+	
+	
 	@Field(offset = 1, length = 8)
 	public String getCodigoPublicacao() {
 		return codigoPublicacao;
