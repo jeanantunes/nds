@@ -1,11 +1,9 @@
 #!/bin/bash
 
-#folders=( "backup" "2707" "3107" "0108" "0208" "0308" "0608" "0708" "0808" "0908" "1008" "1308" "1408" "1508" "1608" "1708" "2008" )
-folders=( "2008" )
+folders=( "backup" "2707" "3107" "0108" "0208" "0308" "0608" "0708" "0808" "0908" "1008" "1308" "1408" "1508" "1608" "1708" "2008" "2108" "2208" "2308")
 emsDServer=( 112 109 110 111 114 125 126 113 135 )
 emsDClient=( 112 109 110 111 114 125 126 113 135 )
-#emsDClient_mdc=( 119 118 117 116 108 106 107 )
-emsDClient_mdc=( 106 107 )
+emsDClient_mdc=( 119 118 117 116 108 106 107 )
 
 for i in "${folders[@]}"
 do
@@ -45,13 +43,13 @@ done
 
 
 ## Imagem
-#sudo mount -t smbfs //abwbw2k01/images /mnt/images -o username=t30541,password=Pestinha@09,uid=t30541,gid=t30541
-#java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
+sudo mount -t smbfs //abwbw2k01/images /mnt/images -o username=t30541,password=Pestinha@09,uid=t30541,gid=t30541
+java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
 
 
 ## CEP
-#java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 185
-#java -jar /opt/ndistrib/ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0185.route.EMS0185Route
+java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 185
+java -jar /opt/ndistrib/ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0185.route.EMS0185Route
 
 
 
