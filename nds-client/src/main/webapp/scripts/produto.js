@@ -106,7 +106,7 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'produtoDescricao',
-				width : 120,
+				width : 170,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -118,7 +118,7 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Editor',
 				name : 'nomeEditor',
-				width : 180,
+				width : 110,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -136,19 +136,19 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Pcte. Padr&atilde;o',
 				name : 'pacotePadrao',
-				width : 60,
+				width : 65,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Desconto %',
 				name : 'percentualDesconto',
-				width : 60,
+				width : 65,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Periodicidade',
 				name : 'periodicidade',
-				width : 60,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -165,7 +165,7 @@ var produtoController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 255,
+			height : 290,
 			singleSelect : true
 		});
 	},			
@@ -450,7 +450,7 @@ var produtoController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 			
 			var linkAprovar = '<a href="javascript:;" onclick="produtoController.editarProduto(' + row.cell.id + ');" style="cursor:pointer">' +
-					     	  	'<img title="Editar" src="' + contextPath +'/images/ico_editar.gif" hspace="5" border="0px" />' +
+					     	  	'<img title="Editar" src="' + contextPath +'/images/ico_editar.gif" style="margin-right:5px" border="0px" />' +
 					  		  '</a>';
 			
 			var linkExcluir = '<a href="javascript:;" onclick="produtoController.removerProduto(' + row.cell.id + ');" style="cursor:pointer">' +

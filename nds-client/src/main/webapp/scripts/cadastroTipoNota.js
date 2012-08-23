@@ -29,33 +29,33 @@ var cadastroTipoNotaController = $.extend(true, {
 			colModel : [ {
 				display : 'Operacao',
 				name : 'tipoAtividade',
-				width : 140,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Processo',
 				name : 'processo',
-				width : 140,
+				width : 200,
 				sortable : false,
 				align : 'left'
 			},{
 				display : 'Tipo de Nota',
 				name : 'nopDescricao',
-				width : 400,
+				width : 390,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'CFOP Dentro UF',
 				name : 'cfopEstado',
-				width : 100,
+				width : 90,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			},{
 				display : 'CFOP Fora UF',
 				name : 'cfopOutrosEstados',
-				width : 100,
+				width : 90,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			}],
 			sortname : "tipoAtividade",
 			sortorder : "asc",
@@ -63,8 +63,8 @@ var cadastroTipoNotaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
-			height : 255
+			width : 950,
+			height : 315
 		});
 	}, 
 	bindButtons : function() {

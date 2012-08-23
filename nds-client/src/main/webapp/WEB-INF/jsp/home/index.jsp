@@ -193,7 +193,9 @@
 	margin-top: -50px; margin-left: -50px;
 	text-align: center; vertical-align: 50%;
 }
-
+.ui-tabs .ui-tabs-panel {
+    padding: 0px;
+}
 </style>
 </head>
 <body>
@@ -201,76 +203,78 @@
 	<div class="corpo">
 		<div class="header">
 			<div class="sub-header">
-				<div class="logo">&nbsp;</div>
-
-				<div class="titAplicacao">
-					<h1>Treelog S/A. Logística e Distribuição - SP</h1>
-					<h2>CNPJ: 00.000.000/00001-00</h2>
-					<h3>Distrib vs.1</h3>
-				</div>
-
-				<div class="usuario">
-					<div class="bt_novos">
-
-						<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
+				<div id="menu_principal" style="float:left!important;">
+					<ul>
+						<li><div class="logo">&nbsp;</div></li>
+						<!-- <li><a href="index.htm"><span class="classROLE_HOME">&nbsp;</span>Home</a>
+						</li> -->
+							<c:forEach items="${menus}" var="menu">
+								<li><a href="javascript:;" class="trigger"><span
+									class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
+									<ul>
+										<c:forEach items="${menus[menu.key]}" var="submenu">
+											<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
+											</li>
+										</c:forEach>						
+									</ul>
+								</li>
+							</c:forEach>
+						<li>
+							<a href="help.htm"><span class="classROLE_HELP">&nbsp;</span>Help</a>
+						</li>
+					</ul>
 					</div>
-					<div class="bt_novos">
-						<label> <script type="text/javascript"
-								language="JavaScript">
-							diaSemana();
-						</script> </label>
+					<br clear="all"/>
+					<div class="bts_header">
+						<span class="bt_novos">
+							<a href="index.htm" rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
+						</span>
+					
+						<div class="usuario">
+							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
+										
+							<label> <script type="text/javascript"
+									language="JavaScript">
+								diaSemana();
+							</script> </label>
+						
+							<label>
+								<a href="javascript:;" onclick="logout()" title="Sair do Sistema" class="sair">Sair</a>
+							</label>
+			
+						</div>
 					</div>
-					<div class="bt_novos">
-						<a href="javascript:;" onclick="logout()" title="Sair do Sistema" class="sair">Sair</a>
-					</div>
+					<br class="clearit">
 
-				</div>
+				<div class="container">
+					<div id="notify" style="display: none;"></div>
+					<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
+						<p>
+							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+							<b id="idTextSuccess"></b>
+						</p>
+					</div>
+					<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
+						<p>
+							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+							<b id="idTextWarning"></b>
+						</p>
+					</div>
+					<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
+						<p>
+							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+							<b id="idTextError"></b>
+						</p>
+					</div>
+				</div>			
+
+			
+
+				
 			</div>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
-		<div id="menu_principal">
-			<ul>
-				<li><a href="index.htm"><span class="classROLE_HOME">&nbsp;</span>Home</a>
-				</li>
-					<c:forEach items="${menus}" var="menu">
-						<li><a href="javascript:;" class="trigger"><span
-							class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
-							<ul>
-								<c:forEach items="${menus[menu.key]}" var="submenu">
-									<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
-									</li>
-								</c:forEach>						
-							</ul>
-						</li>
-					</c:forEach>
-				<li><a href="help.htm"><span class="classROLE_HELP">&nbsp;</span>Help</a>
-				</li>
-			</ul>
-			<br class="clearit">
-
-			<div class="container">
-				<div id="notify" style="display: none;"></div>
-				<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextSuccess"></b>
-					</p>
-				</div>
-				<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextWarning"></b>
-					</p>
-				</div>
-				<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextError"></b>
-					</p>
-				</div>
-			</div>			
-
-		</div>
+		
 
 		<div id="workspace">
 			<ul></ul>
