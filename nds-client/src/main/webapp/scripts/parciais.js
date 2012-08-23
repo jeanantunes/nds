@@ -544,7 +544,7 @@ var ParciaisController = $.extend(true, {
 				width:940,
 				modal: true,
 				buttons: {
-					"Cancelar": function() {
+					"Fechar": function() {
 						$( this ).dialog( "close" );
 					}
 				},
@@ -633,7 +633,7 @@ var ParciaisController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 305
+				height : 'auto'
 		}); 	
 
 		$(".grids", this.workspace).show();	
