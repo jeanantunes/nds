@@ -33,7 +33,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private StatusLancamento statusLancamento;
 
-	private BigDecimal peso;
+	private Long peso;
 
 	private String codigoProduto;
 
@@ -176,14 +176,14 @@ public class ProdutoLancamentoDTO implements Serializable {
 	/**
 	 * @return the peso
 	 */
-	public BigDecimal getPeso() {
+	public Long getPeso() {
 		return peso;
 	}
 
 	/**
-	 * @param peso the peso to set
+	 * @param peso
 	 */
-	public void setPeso(BigDecimal peso) {
+	public void setPeso(Long peso) {
 		this.peso = peso;
 	}
 

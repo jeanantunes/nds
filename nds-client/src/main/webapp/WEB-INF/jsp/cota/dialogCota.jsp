@@ -6,7 +6,9 @@
 <div id="workspaceCota">
 <div id="dialog-cota" title="Nova Cota" style="display: none">
 	
-	<jsp:include page="../messagesDialog.jsp" />
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-cota" name="messageDialog"/>
+	</jsp:include>
 	
 	<div id="tabCota">
            
@@ -26,6 +28,24 @@
         <div id="tabCota-1">
       		<jsp:include page="dadosBasicoCNPJ.jsp"/>
       		<jsp:include page="dadosBasicoCPF.jsp"/>
+            
+            <div id="dialog-titular" title="Alterar Titularidade" style="display:none;">
+              <fieldset>
+                  <legend>Novo Titular</legend>
+                  <span class="bt_novos" title="Novo">
+                      <a href="javascript:;">
+                        <img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
+                        CPF
+                      </a>
+                  </span>
+                  <span class="bt_novos" title="Novo" style="margin-left:10px;">
+                    <a href="javascript:;">
+                      <img src="${pageContext.request.contextPath}/images/ico_usuarios.gif" border="0"/>
+                      CNPJ
+                     </a>
+                   </span>
+              </fieldset>
+            </div>
 		</div>
 		
 		<div id="tabCota-2">

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
 
@@ -117,5 +118,45 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 
 		return hql.toString();
 	}
-
+	
+	@Override
+	public DescontoDistribuidor buscarUltimoDescontoValido(Fornecedor fornecedor) {
+		
+		return obterUltimoDescontoValido(null,fornecedor);
+	}
+	
+	@Override
+	public DescontoDistribuidor buscarUltimoDescontoValido(Long idUltimoDesconto, Fornecedor fornecedor) {
+		
+		return obterUltimoDescontoValido(idUltimoDesconto, fornecedor);
+	}
+	
+	private DescontoDistribuidor obterUltimoDescontoValido(Long idUltimoDesconto, Fornecedor fornecedor){
+			
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select desconto from DescontoDistribuidor desconto JOIN desconto.fornecedores fornecedor  ")
+			.append("where desconto.dataAlteracao = ")
+			.append(" ( select max(descontoSub.dataAlteracao) from DescontoDistribuidor descontoSub  ")
+				.append(" JOIN descontoSub.fornecedores fornecedorSub ")
+				.append(" where fornecedorSub.id =:idFornecedor ");
+				if(idUltimoDesconto!= null){
+					hql.append(" and descontoSub.id not in (:idUltimoDesconto) ");
+				}
+		hql.append(" ) ")
+			.append(" AND fornecedor.id =:idFornecedor ");
+	
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idFornecedor",fornecedor.getId());
+		
+		if(idUltimoDesconto!= null){
+			
+			query.setParameter("idUltimoDesconto", idUltimoDesconto);
+		}
+		
+		query.setMaxResults(1);
+		
+		return (DescontoDistribuidor)  query.uniqueResult();
+	}
 }

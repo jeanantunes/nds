@@ -35,51 +35,51 @@ import br.com.abril.nds.model.Origem;
 public class Fornecedor implements Serializable {
 
 	private static final long serialVersionUID = -1534481069627822217L;
-	
+
 	@Id
 	@GeneratedValue(generator = "FORNECEDOR_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	
+
 	@Column(name = "COD_INTERFACE", nullable = true)
 	private Integer codigoInterface;
-	
+
 	@Column(name = "TIPO_CONTRATO")
 	private String tipoContrato;
-	
+
 	@Column(name = "INICIO_ATIVIDADE", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date inicioAtividade;
-	
+
 	@Column(name = "PERMITE_BALANCEAMENTO", nullable = false)
 	private boolean permiteBalanceamento;
-	
+
 	@ManyToOne(optional = false)
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "JURIDICA_ID",unique=true)
 	private PessoaJuridica juridica;
-	
+
 	@Column(name="POSSUI_CONTRATO")
 	private boolean possuiContrato;
-	
+
 	@Column(name="VALIDADE_CONTRATO")
 	private Date validadeContrato;
-	
+
 	@Column(name="RESPONSAVEL")
 	private String responsavel;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
-	
+
 	@OneToMany(mappedBy = "fornecedor")
 	@Cascade(value={CascadeType.ALL})
 	private Set<EnderecoFornecedor> enderecos = new HashSet<EnderecoFornecedor>();
-	
+
 	@OneToMany(mappedBy = "fornecedor")
 	@Cascade(value={CascadeType.ALL})
 	private Set<TelefoneFornecedor> telefones = new HashSet<TelefoneFornecedor>();
-	
+
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_FORNECEDOR_ID")
@@ -88,26 +88,26 @@ public class Fornecedor implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
-	
+
 	@Column(name = "EMAIL_NFE")
 	private String emailNfe;
 
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getTipoContrato() {
 		return tipoContrato;
 	}
-	
+
 	public void setTipoContrato(String tipoContrato) {
 		this.tipoContrato = tipoContrato;
 	}
-	
+
 	public Date getInicioAtividade() {
 		return inicioAtividade;
 	}
@@ -119,19 +119,19 @@ public class Fornecedor implements Serializable {
 	public boolean isPermiteBalanceamento() {
 		return permiteBalanceamento;
 	}
-	
+
 	public void setPermiteBalanceamento(boolean permiteBalanceamento) {
 		this.permiteBalanceamento = permiteBalanceamento;
 	}
-	
+
 	public PessoaJuridica getJuridica() {
 		return juridica;
 	}
-	
+
 	public void setJuridica(PessoaJuridica juridica) {
 		this.juridica = juridica;
 	}
-	
+
 	public boolean isPossuiContrato() {
 		return possuiContrato;
 	}
@@ -159,15 +159,15 @@ public class Fornecedor implements Serializable {
 	public SituacaoCadastro getSituacaoCadastro() {
 		return situacaoCadastro;
 	}
-	
+
 	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
 		this.situacaoCadastro = situacaoCadastro;
 	}
-	
+
 	public Set<EnderecoFornecedor> getEnderecos() {
 		return enderecos;
 	}
-	
+
 	public void setEnderecos(Set<EnderecoFornecedor> enderecos) {
 		this.enderecos = enderecos;
 	}
@@ -183,7 +183,7 @@ public class Fornecedor implements Serializable {
 	public TipoFornecedor getTipoFornecedor() {
 		return tipoFornecedor;
 	}
-	
+
 	public void setTipoFornecedor(TipoFornecedor tipoFornecedor) {
 		this.tipoFornecedor = tipoFornecedor;
 	}
@@ -195,7 +195,7 @@ public class Fornecedor implements Serializable {
 	public void setCodigoInterface(Integer codigoInterface) {
 		this.codigoInterface = codigoInterface;
 	}
-	
+
 	/**
 	 * @return the origem
 	 */
