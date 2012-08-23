@@ -39,11 +39,10 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			List<ProdutoEdicao> listaProdutoEdicao =
 				this.obterProdutoEdicaoPor(codigoPublicacao, edicao);
-			
 			if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.HIERARQUIA,
-					"NAO ENCONTROU ProdutoEdicao OU Lancamento");
+					"NAO ENCONTROU ProdutoEdicao");
 				return;
 			}
 			
