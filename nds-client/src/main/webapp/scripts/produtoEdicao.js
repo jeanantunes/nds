@@ -333,7 +333,7 @@ var produtoEdicaoController =$.extend(true,  {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255,
+				height : 295,
 				singleSelect : true
 			});
 			
@@ -421,7 +421,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$.each(resultado.rows, function(index, row) {
 
 				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
-				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
+				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" style="margin-right:5px;" border="0px" />' +
 				'</a>';
 
 				var linkExcluir = '<a href="javascript:;" onclick="produtoEdicaoController.removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +

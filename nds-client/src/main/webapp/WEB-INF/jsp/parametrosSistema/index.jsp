@@ -22,10 +22,17 @@ $(function(){
 
 <form id="formParametroSistema" method="post">
 
-<div class="corpo">
-	<br />
-	<div class="container">
-		<fieldset class="classFieldset">
+		<div class="areaBts">
+			<div class="area">
+				<span class="bt_novos" title="Salvar">
+					<a onclick="parametroSistemaController.salvar();" href="javascript:;">
+					<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
+					</a>
+				</span>
+			</div>
+		</div>
+		<div class="linha_separa_fields">&nbsp;</div>
+		<fieldset class="fieldFiltro">
 			<legend>Par&acirc;metros do Sistema</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<thead />
@@ -118,27 +125,12 @@ $(function(){
 							meses
 						</td>
 					</tr>
-					<tr>
-						<td>
-							<span class="bt_novos" title="Salvar">
-								<a onclick="parametroSistemaController.salvar();" href="javascript:;">
-								<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
-								Salvar
-								</a>
-							</span>
-		
-						</td>
-					
-						<td>&nbsp;</td>
-						
-					</tr>
 				</tbody>
 			</table>
 		</fieldset>
 		
 		<div class="linha_separa_fields">&nbsp;</div>
-	</div>
-</div>
+
 
 </form>
 </body>

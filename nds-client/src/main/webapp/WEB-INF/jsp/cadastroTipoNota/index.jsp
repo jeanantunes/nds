@@ -12,41 +12,43 @@ $(function(){
 </head>
 
 <body>
-	
-	<div class="corpo">
-    	<div class="container">
-      	  <form id="pesquisar_tipo_nota_form">	
-          <fieldset class="classFieldset">
-   	    		<legend> Pesquisar Tipo de Nota</legend>
-        		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            		<tr>
-              			<td width="55">Operação:</td>
-                		<td width="176">
-                			 <select name="operacao" id="operacaoID" style="width:150px;" class="campoDePesquisa">
-						      <option selected="selected" value="">Todos</option>
-						      <c:forEach var="operacao" items="${listaAtividades}">
-										<option value="${operacao.key}">${operacao.value}</option>
-							  </c:forEach>
-						    </select>
-                		</td>
-		                <td width="75">Tipo de Nota:</td>
-		                <td width="511"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;" class="campoDePesquisa" /></td>
-		              	<td width="107"><span id="btnPesquisar" class="bt_pesquisar"><a href="javascript:;" class="botaoPesquisar" >Pesquisar</a></span></td>
-            		</tr>
-          		</table>
-      		</fieldset>
-      		<div class="linha_separa_fields">&nbsp;</div>
-	      	<fieldset class="classFieldset">
-	       	  	<legend>Tipos de Notas Cadastradas</legend>
-	        	<div class="grids" style="display:none;">
-	        		<table class="tiposNotasGrid"></table>
-	            	<div class="linha_separa_fields">&nbsp;</div>
-	       			<span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=XLS"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-	             	<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=PDF"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-	        	</div>
-	      	</fieldset>
-          </form>
-    	</div>
-	</div> 
+  
+  <form id="pesquisar_tipo_nota_form">	
+  <div class="areaBts">
+  	<div class="area">
+  		<span class="bt_arq" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+    	<span class="bt_arq" title="Imprimir"><a href="${pageContext.request.contextPath}/administracao/cadastroTipoNota/exportar?fileType=PDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
+  	</div>
+  </div>
+ <div class="linha_separa_fields">&nbsp;</div>
+   <fieldset class="fieldFiltro">
+ 		<legend> Pesquisar Tipo de Nota</legend>
+ 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+     		<tr>
+       			<td width="64">Operação:</td>
+         		<td width="175">
+         			 <select name="operacao" id="operacaoID" style="width:150px;" class="campoDePesquisa">
+					     <option selected="selected" value="">Todos</option>
+					     <c:forEach var="operacao" items="${listaAtividades}">
+								<option value="${operacao.key}">${operacao.value}</option>
+					  	 </c:forEach>
+					   </select>
+         		</td>
+	            <td width="74">Tipo de Nota:</td>
+	            <td width="200"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;" class="campoDePesquisa" /></td>
+	         	<td width="411"><span id="btnPesquisar" class="bt_novos"><a href="javascript:;" class="botaoPesquisar" ><img src="/nds-client/images/ico_pesquisar.png" border="0" /></a></span></td>
+     		</tr>
+   		</table>
+	</fieldset>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldGrid">
+ 	  	<legend>Tipos de Notas Cadastradas</legend>
+  	<div class="grids" style="display:none;">
+  		<table class="tiposNotasGrid"></table>
+      	
+ 			
+  	</div>
+	</fieldset>
+   </form>
 </body>
 </html>

@@ -59,7 +59,7 @@ $(function() {
 
 	<form action="/administracao/cadastroTipoNota" id="dialog_consulta_tipo_desconto_form">
  
-      <fieldset class="classFieldset">
+      <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Tipo de Desconto Cota</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -119,7 +119,7 @@ $(function() {
       
       <div class="grids" style="display:none;">
       
-      <fieldset class="classFieldset" id="tpoGeral" style="display:none;">
+      <fieldset class="fieldGrid" id="tpoGeral" style="display:none;">
        	  <legend>Tipos de Desconto Geral</legend>
         
             <div id="idExportacaoGeral">
@@ -144,7 +144,7 @@ $(function() {
       </fieldset>
       
       
-      <fieldset class="classFieldset" id="tpoEspecifico" style="display:none;">
+      <fieldset class="fieldGrid" id="tpoEspecifico" style="display:none;">
        	  <legend>Tipos de Desconto Específico</legend>
        
        		<div id="idExportacaoEspecifico">
@@ -169,7 +169,7 @@ $(function() {
       </fieldset>
       
       
-      <fieldset class="classFieldset" id="tpoProduto" style="display:none;">
+      <fieldset class="fieldGrid" id="tpoProduto" style="display:none;">
        	
        	<legend>Tipos de Desconto Produto</legend>
        		
