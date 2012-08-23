@@ -1,8 +1,6 @@
 package br.com.abril.nds.integracao.ems0106.inbound;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
