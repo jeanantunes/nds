@@ -333,7 +333,7 @@ var produtoEdicaoController =$.extend(true,  {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 295,
+				height : 255,
 				singleSelect : true
 			});
 			
@@ -421,7 +421,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$.each(resultado.rows, function(index, row) {
 
 				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
-				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" style="margin-right:5px;" border="0px" />' +
+				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
 				'</a>';
 
 				var linkExcluir = '<a href="javascript:;" onclick="produtoEdicaoController.removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
@@ -460,10 +460,11 @@ var produtoEdicaoController =$.extend(true,  {
 
 		prepararTela : 			function (id) {
 
-			// limpar os campos:
-			produtoEdicaoController.form_clear('formUpload');
+			produtoEdicaoController.form_clear('dialog-novo');
+			
 			produtoEdicaoController.carregarImagemCapa(id);
-			$('#produtoEdicaoController-formUpload',this.workspace).find(':input').each(
+			$('produtoEdicaoController-dialog-novo',this.workspace).find(':input').each(
+					
 					function() {
 						switch(this.type) {
 						case 'text':
@@ -573,7 +574,15 @@ var produtoEdicaoController =$.extend(true,  {
 						},
 						function(result) { 
 							$("#produtoEdicaoController-dialog-novo",this.workspace).dialog( "close" );
-							exibirMensagem(result.tipoMensagem, result.listaMensagens);
+							
+							var mensagens = (result.mensagens) ? result.mensagens : result;   
+							var tipoMensagem = mensagens.tipoMensagem;
+							var listaMensagens = mensagens.listaMensagens;
+			
+							if (tipoMensagem && listaMensagens) {
+
+								exibirMensagem(tipoMensagem, listaMensagens);
+							}
 						},
 						true
 			);
