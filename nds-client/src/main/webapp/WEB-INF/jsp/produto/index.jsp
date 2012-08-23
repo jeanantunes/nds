@@ -286,7 +286,17 @@
 	</form>
 
 	<form action="/produto" id="pesquisar_form">
-	<fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_novos" title="Novo">
+				<a href="javascript:;" onclick="produtoController.novoProduto();" rel="tipsy" title="Novo Produto">
+					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
+				</a>
+			</span>
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldFiltro">
 		<legend> Pesquisar Produtos</legend>
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
@@ -331,8 +341,8 @@
 					</select>
 				</td>
 				<td>
-					<span class="bt_pesquisar">
-						<a href="javascript:;" onclick="produtoController.pesquisar();">Pesquisar</a>
+					<span class="bt_novos">
+						<a href="javascript:;" onclick="produtoController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					</span>
 				</td>
 			</tr>
@@ -341,20 +351,10 @@
 	</form>
 
 	<div class="linha_separa_fields">&nbsp;</div>
-	
-	<fieldset class="classFieldset">
-		<legend>Produtos Cadastrados</legend>
-			<div class="grids" style="display:none;">
-				<table class="produtosGrid"></table>
-			</div>
-	
-		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="produtoController.novoProduto();">
-				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo
-			</a>
-		</span>
-	</fieldset>
-	
-	<div class="linha_separa_fields">&nbsp;</div>
-
+	<div class="grids" style="display:none;">
+		<fieldset class="fieldGrid">
+			<legend>Produtos Cadastrados</legend>
+					<table class="produtosGrid"></table>
+		</fieldset>
+	</div>
 </body>

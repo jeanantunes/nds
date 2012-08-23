@@ -197,7 +197,7 @@ var parametroCobrancaController = $.extend(true,
 	
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
-				height:580,
+				height:560,
 				width:890,
 				modal: true,
 				buttons:[ 
@@ -604,7 +604,7 @@ var parametroCobrancaController = $.extend(true,
 	
 			var options = "";
 			
-			options += "<select name='"+name+"' id='"+name+"' style='width:150px;' onchange='"+onChange+"'>";
+			options += "<select name='"+name+"' id='"+name+"' style='width:220px;' onchange='"+onChange+"'>";
 			options += "<option value=''>Selecione</option>";
 			$.each(result, function(index, row) {
 				if (selected == row.key.$){
