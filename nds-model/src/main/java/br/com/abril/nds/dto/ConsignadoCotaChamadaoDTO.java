@@ -27,6 +27,8 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	private BigDecimal valorTotal;
 	
 	private Long idLancamento;
+	
+	private BigDecimal deconto;
 
 	/**
 	 * @return the codigoProduto
@@ -168,4 +170,11 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 		this.idLancamento = idLancamento;
 	}
 
+	public BigDecimal getDeconto() {
+		return deconto;
+	}
+
+	public void setDeconto(BigDecimal deconto) {
+		this.deconto = deconto;
+	}
 }

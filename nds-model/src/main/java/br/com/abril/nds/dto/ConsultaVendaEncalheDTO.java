@@ -44,6 +44,8 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 
 	@Export(label = "Toral R$", alignment = Alignment.RIGHT)
 	private BigDecimal total;
+	
+	private BigDecimal desconto;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -115,6 +117,14 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 
 	public void setExemplares(BigDecimal exemplares) {
 		this.exemplares = exemplares;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
 	}
 
 }

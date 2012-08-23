@@ -12,8 +12,10 @@ DROP TABLE IF EXISTS VIEW_DESCONTO;
 
 --Cria a view correspondente a entidade (ViewDesconto)
 
-CREATE OR REPLACE VIEW VIEW_DESCONTO AS SELECT CASE tipo_produto.GRUPO_PRODUTO WHEN 'OUTROS' THEN produto.DESCONTO_LOGISTICA_ID ELSE desconto_produto_edicao.DESCONTO END AS DESCONTO, cota.ID AS COTA_ID, produto.ID AS PRODUTO_ID, fornecedor.ID AS FORNECEDOR_ID FROM desconto_produto_edicao, cota, produto, tipo_produto, fornecedor WHERE desconto_produto_edicao.COTA_ID = cota.ID AND desconto_produto_edicao.PRODUTO_EDICAO_ID = produto.ID AND desconto_produto_edicao.FORNECEDOR_ID = fornecedor.ID AND produto.TIPO_PRODUTO_ID = tipo_produto.ID;
+DROP TABLE IF EXISTS VIEW_DESCONTO;
 
+CREATE OR REPLACE VIEW VIEW_DESCONTO AS SELECT CASE tipo_produto.GRUPO_PRODUTO WHEN 'OUTROS' THEN produto.DESCONTO_LOGISTICA_ID ELSE desconto_produto_edicao.DESCONTO END AS DESCONTO, cota.ID AS COTA_ID, produto_edicao.ID AS PRODUTO_EDICAO_ID, fornecedor.ID AS FORNECEDOR_ID FROM desconto_produto_edicao, cota, produto, produto_edicao, tipo_produto, fornecedor WHERE desconto_produto_edicao.COTA_ID = cota.ID AND desconto_produto_edicao.PRODUTO_EDICAO_ID = produto_edicao.ID AND desconto_produto_edicao.FORNECEDOR_ID = fornecedor.ID AND produto_edicao.PRODUTO_ID = produto.ID AND produto.TIPO_PRODUTO_ID = tipo_produto.ID;
+	
 --Cria as tabelas do Quartz
 
 CREATE TABLE IF NOT EXISTS QRTZ_JOB_DETAILS(SCHED_NAME VARCHAR(120) NOT NULL,JOB_NAME  VARCHAR(200) NOT NULL,JOB_GROUP VARCHAR(200) NOT NULL,DESCRIPTION VARCHAR(250) NULL,JOB_CLASS_NAME   VARCHAR(250) NOT NULL,IS_DURABLE VARCHAR(1) NOT NULL,IS_NONCONCURRENT VARCHAR(1) NOT NULL,IS_UPDATE_DATA VARCHAR(1) NOT NULL,REQUESTS_RECOVERY VARCHAR(1) NOT NULL,JOB_DATA BLOB NULL,PRIMARY KEY (SCHED_NAME,JOB_NAME,JOB_GROUP));

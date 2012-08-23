@@ -9,21 +9,23 @@ SELECT
 	WHEN 
 		'OUTROS' 
 	THEN 
-		produto.DESCONTO_LOGISTICA_ID
+		produto.DESCONTO
 	ELSE
 		desconto_produto_edicao.DESCONTO 
-	END					 AS DESCONTO,
-		cota.ID			 AS COTA_ID,
-		produto.ID		 AS PRODUTO_ID,
-		fornecedor.ID	 AS FORNECEDOR_ID
+	END					 		 AS DESCONTO,
+		cota.ID			 		 AS COTA_ID,
+		produto_edicao.ID		 AS PRODUTO_EDICAO_ID,
+		fornecedor.ID	 		 AS FORNECEDOR_ID
 FROM
 	desconto_produto_edicao,
 	cota,
 	produto,
+	produto_edicao,
 	tipo_produto,
 	fornecedor
 WHERE
 	desconto_produto_edicao.COTA_ID = cota.ID
-	AND desconto_produto_edicao.PRODUTO_EDICAO_ID = produto.ID
+	AND desconto_produto_edicao.PRODUTO_EDICAO_ID = produto_edicao.ID
 	AND desconto_produto_edicao.FORNECEDOR_ID = fornecedor.ID
+	AND produto_edicao.PRODUTO_ID = produto.ID
 	AND produto.TIPO_PRODUTO_ID = tipo_produto.ID;

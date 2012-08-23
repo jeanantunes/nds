@@ -41,11 +41,11 @@
     			</td>                
               </tr>
               <tr>
-                <td width="22%"><strong>Login:</strong></td>
+                <td width="22%">Login:</td>
                 <td width="78%"><input type="text" style="width:200px;" name="j_username" id="username" value='<c:if test="${not empty param.error}"><c:out value="${SPRING_SECURITY_LAST_USERNAME}"/></c:if>' /></td>
               </tr>
               <tr>
-                <td><strong>Senha:</strong></td>
+                <td>Senha:</td>
                 <td><input type="password"  style="width:200px;" name="j_password" id="password" /></td>
               </tr>
               <tr>
