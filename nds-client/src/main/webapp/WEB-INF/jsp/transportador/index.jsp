@@ -272,3 +272,10 @@
 		</div>
 	</div>
 </body>
+
+<script type="text/javascript">
+$(function(){
+	ENDERECO_TRANSPORTADOR.init(transportadorController.workspace);
+	TRANSPORTADOR.init(transportadorController.workspace);
+});
+</script>

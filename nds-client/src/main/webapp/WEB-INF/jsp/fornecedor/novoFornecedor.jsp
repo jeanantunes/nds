@@ -30,3 +30,10 @@
 	</div>
 
 </div>
+
+<script type="text/javascript">
+$(function(){
+	ENDERECO_FORNECEDOR.init(fornecedorController.workspace);
+	FORNECEDOR.init(fornecedorController.workspace);
+});
+</script>
