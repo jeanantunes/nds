@@ -125,8 +125,8 @@ var MANTER_COTA = $.extend(true, {
     
     carregaFinanceiroCota:function (){
     	
-    	TAB_COTA.funcaoSalvar = postarParametroCobranca;
-    	carregaFinanceiro(MANTER_COTA.idCota);
+    	TAB_COTA.funcaoSalvar = parametroCobrancaCotaController.postarParametroCobranca;
+    	parametroCobrancaCotaController.carregaFinanceiro(MANTER_COTA.idCota);
     },
     
     carregarEnderecos: function(){

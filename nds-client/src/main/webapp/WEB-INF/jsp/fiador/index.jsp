@@ -72,12 +72,12 @@
 	</div>
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
-            	<a href="javascript:;" onclick='$(".inicioAtividadeNovo").show();$(".inicioAtividadeEdicao").hide();popupCadastroFiadorCPF();' rel="tipsy" title="Incluir Novo Fiador Pessoa Física"><img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/></a>
+            <span class="bt_novos" title="Novo">
+            	<a href="javascript:;" onclick='$(".inicioAtividadeNovo").show();$(".inicioAtividadeEdicao").hide();popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
             </span>
         	
         	<span class="bt_novos" title="Novo">
-        		<a href="javascript:;" onclick="popupCadastroFiadorCNPJ();" rel="tipsy" title="Incluir Novo Entregador Pessoa Juridica"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/></a>
+        		<a href="javascript:;" onclick="popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
         	</span>
 		</div>
 	</div>
@@ -112,3 +112,10 @@
 		</fieldset>
 	</div>
 </body>
+
+<script type="text/javascript">
+$(function(){
+	ENDERECO_FIADOR.init(fiadorController.workspace);
+	FIADOR.init(fiadorController.workspace);
+});
+</script>

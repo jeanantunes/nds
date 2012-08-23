@@ -265,7 +265,7 @@ public class ProdutoEdicaoController {
 		
 		ValidacaoVO vo = null;
 		try {
-			this.validarProdutoEdicao(dto);
+			this.validarProdutoEdicao(dto, codigoProduto);
 			
 			
 			// Dados da Imagem:
@@ -295,7 +295,7 @@ public class ProdutoEdicaoController {
 	 * 
 	 * @param dto
 	 */
-	private void validarProdutoEdicao(ProdutoEdicaoDTO dto) {
+	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		boolean origemInterface = false;
@@ -353,6 +353,19 @@ public class ProdutoEdicaoController {
 		
 		if (dto.getCodigoDeBarras() == null || dto.getCodigoDeBarras().trim().length() <= 0) {
 			listaMensagens.add("Campo 'Código de Barras' deve ser preenchido!");
+		}
+		
+		if (codigoProduto != null
+				&& codigoProduto.trim().length() > 0
+				&& dto.getNumeroEdicao() != null
+				&& !Long.valueOf(0).equals(dto.getNumeroEdicao())) {
+			
+			ProdutoEdicao produtoEdicao = 
+					peService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
+		
+			if (produtoEdicao != null && !produtoEdicao.getId().equals(dto.getId())) {
+				listaMensagens.add("O 'Número de Edição' deve ser unico para esse Produto!");
+			}
 		}
 		
 		if (!listaMensagens.isEmpty()) {

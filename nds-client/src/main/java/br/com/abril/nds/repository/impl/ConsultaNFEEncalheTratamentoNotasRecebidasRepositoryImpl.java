@@ -5,15 +5,12 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
-import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
 
@@ -24,9 +21,6 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	public ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl() {
 		super(NotaFiscalEntrada.class);
 	}
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -237,8 +231,6 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
 			FiltroConsultaNFEEncalheTratamento filtro) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT produto.codigo as codigoProduto, ");
@@ -248,14 +240,9 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append("conf.qtdeInformada as qtdInformada, ");
 		hql.append("conf.qtde as qtdRecebida, ");
 		hql.append("conf.precoCapaInformado as precoCapa, ");
-		
-		hql.append("        ( conf.precoCapaInformado -  ( ");
-		hql.append(    getSubSqlQueryValorDesconto()			);		
-		hql.append("         )  ) AS precoDesconto,        ");
-		
-		hql.append("        ( (conf.precoCapaInformado -  ( ");
-		hql.append(    getSubSqlQueryValorDesconto()			);		
-		hql.append("         ) )* conf.qtdeInformada) AS totalDoItem, ");
+		hql.append(" ("+ getSubSqlQueryValorDesconto() +") as desconto, ");
+		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * desconto / 100)) AS precoDesconto, ");
+		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * desconto / 100) * conf.qtdeInformada) AS totalDoItem, ");
 		hql.append("conf.qtde as qtdRecebida, ");
 		hql.append("conf.data as dataConferenciaEncalhe, ");
 		hql.append("chamadaEncalhe.dataRecolhimento as dataChamadaEncalhe ");
@@ -264,7 +251,6 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 		Query query =  getSession().createQuery(hql.toString());
 		query.setParameter("idNota", filtro.getCodigoNota());
-		query.setParameter("idDistribuidor", distribuidor.getId());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ItemNotaFiscalPendenteDTO.class));
@@ -286,7 +272,8 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append(" from ItemNotaFiscalEntrada as item, ControleConferenciaEncalheCota as confCota ");
 		hql.append(" LEFT JOIN item.notaFiscal as nf ");
 		hql.append(" LEFT JOIN item.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");		
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN produto.fornecedores as fornecedores ");
 		hql.append(" left join confCota.conferenciasEncalhe as conf  ");
 		hql.append(" left join conf.chamadaEncalheCota as chamadaCota  ");
 		hql.append(" left join chamadaCota.chamadaEncalhe chamadaEncalhe  ");
@@ -299,27 +286,11 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	
 	private String getSubSqlQueryValorDesconto() {
 		
-		StringBuffer hql = new StringBuffer();
-		
-		hql.append("            SELECT                                                                                   ");
-		hql.append("             CASE                                                                                    ");
-		hql.append("                 WHEN PE.desconto IS NOT NULL THEN PE.desconto                                       ");
-		hql.append("                 ELSE CASE                                                                           ");
-		hql.append("                     WHEN CT.fatorDesconto IS NOT NULL THEN CT.fatorDesconto                         ");
-		hql.append("                     ELSE CASE                                                                       ");
-		hql.append("                         WHEN DISTRIB.fatorDesconto IS NOT NULL THEN DISTRIB.fatorDesconto         ");
-		hql.append("                         ELSE 0                        ");
-		hql.append("                     END                               ");
-		hql.append("                 END                                   ");
-		hql.append("             END                                       ");
-		hql.append("         FROM                                          ");
-		hql.append("             ProdutoEdicao as PE, 		                   ");
-		hql.append("             Cota as CT, 		                           ");
-		hql.append("             Distribuidor as DISTRIB                      ");
-		hql.append("         WHERE                                         ");
-		hql.append("             CT.id=confCota.cota.id       ");
-		hql.append("             AND PE.id=conf.produtoEdicao.id  ");
-		hql.append("             AND DISTRIB.id= :idDistribuidor           ");
+		StringBuilder hql = new StringBuilder("select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = confCota.cota.id ")
+		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
+		   .append(" and view.fornecedorId = fornecedores.id ");
 		
 		return hql.toString();
 		

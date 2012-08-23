@@ -155,6 +155,8 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
+	private BigDecimal desconto;
+	
 	public Long getId() {
 		return id;
 	}
@@ -561,6 +563,14 @@ public class Produto implements Serializable {
 	 */
 	public void setSegmentacao(SegmentacaoProduto segmentacao) {
 		this.segmentacao = segmentacao;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
 	}
 
 }

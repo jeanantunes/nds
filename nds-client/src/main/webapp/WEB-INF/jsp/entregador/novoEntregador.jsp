@@ -63,3 +63,10 @@
 	</div>
 	
 </div>
+
+<script type="text/javascript">
+$(function(){
+	ENDERECO_ENTREGADOR.init(entregadorController.workspace);
+	ENTREGADOR.init(entregadorController.workspace);
+});
+</script>

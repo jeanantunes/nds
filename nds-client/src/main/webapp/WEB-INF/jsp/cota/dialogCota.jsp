@@ -51,12 +51,14 @@
 		<div id="tabCota-2">
 			<jsp:include page="../endereco/index.jsp">
 				<jsp:param value="ENDERECO_COTA" name="telaEndereco"/>
+				<jsp:param value="dialog-cota" name="message"/>
 			</jsp:include>
 		</div>
 		
 		<div id="tabCota-3">
 			<jsp:include page="../telefone/index.jsp">
 				<jsp:param value="COTA" name="tela"/>
+				<jsp:param value="dialog-cota" name="message"/>
 			</jsp:include>
 		</div>
 		
@@ -97,4 +99,10 @@
 </div>
 </div>
 
+<script type="text/javascript">
+$(function(){
+	ENDERECO_COTA.init(MANTER_COTA.workspace);
+	COTA.init(MANTER_COTA.workspace);
+});
+</script>
 

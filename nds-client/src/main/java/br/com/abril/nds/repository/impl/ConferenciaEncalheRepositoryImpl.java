@@ -2,7 +2,9 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Query;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 
@@ -30,7 +33,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterDadosSlipConferenciaEncalhe(java.lang.Long, java.lang.Long)
 	 */
 	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
-		
+
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select ");
@@ -40,12 +43,12 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
 		
 		hql.append(" (conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda -	");
-		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 )) as precoVenda,	");
+		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ this.obterSQLDesconto("conferencia.movimentoEstoqueCota.cota.id", "conferencia.movimentoEstoqueCota.produtoEdicao.id", "conferencia.movimentoEstoqueCota.produtoEdicao.produto.fornecedores.id") + ") / 100 )) as precoVenda,	");
 		
 		hql.append(" conferencia.movimentoEstoqueCota.qtde as encalhe, ");
 		
 		hql.append(" ((conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda -  			");
-		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ))  ");
+		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * ("+ this.obterSQLDesconto("conferencia.movimentoEstoqueCota.cota.id", "conferencia.movimentoEstoqueCota.produtoEdicao.id", "conferencia.movimentoEstoqueCota.produtoEdicao.produto.fornecedores.id") +") / 100 ))  ");
 		hql.append(" * conferencia.movimentoEstoqueCota.qtde) as valorTotal ");
 		
 		hql.append(" from ConferenciaEncalhe conferencia	");
@@ -100,7 +103,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");		
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  (  ");
-		hql.append(    getSubSqlQueryValorDesconto()	     );		
+		hql.append(    this.obterSQLDesconto("CHAMADA_ENCALHE_COTA.cota.id", "PROD_EDICAO.id", "PROD_EDICAO.produto.fornecedores.id")	     );		
 		hql.append("         ) / 100 ) AS desconto         	");
 		
 		hql.append("    FROM    ");
@@ -187,7 +190,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    		");
 
 		hql.append(" ( ");
-		hql.append( subSqlQuerySequenciaMatriz() );
+		hql.append(    this.obterSQLDesconto("CHAMADA_ENCALHE_COTA.cota.id", "PROD_EDICAO.id", "PROD_EDICAO.produto.fornecedores.id") );
 		hql.append(" ) AS codigoSM, ");
 		
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
@@ -198,13 +201,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
-		hql.append(    getSubSqlQueryValorDesconto()			);		
+		hql.append(    this.obterSQLDesconto("CHAMADA_ENCALHE_COTA.cota.id", "PROD_EDICAO.id", "PROD_EDICAO.produto.fornecedores.id")			);		
 		hql.append("         ) / 100 ) AS desconto,        ");
 		
 		hql.append("         CONF_ENCALHE.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *  ");
 		
 		hql.append(" ( 							");
-		hql.append(getSubSqlQueryValorDesconto()	 );
+		hql.append(    this.obterSQLDesconto("CHAMADA_ENCALHE_COTA.cota.id", "PROD_EDICAO.id", "PROD_EDICAO.produto.fornecedores.id")	 );
 		hql.append(" ) 							");
 		hql.append(" /100)) AS valorTotal,  	");
 		
@@ -321,7 +324,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum( conferencia.produtoEdicao.precoVenda - (conferencia.produtoEdicao.precoVenda * ("+ getSubHqlQueryValorDesconto() +") / 100 ) ) ");
+		hql.append(" select sum( conferencia.produtoEdicao.precoVenda - (conferencia.produtoEdicao.precoVenda * ("+ this.obterSQLDesconto("conferencia.controleConferenciaEncalheCota.cota.id", "conferencia.produtoEdicao.id", "conferencia.produtoEdicao.produto.fornecedores.id") +") / 100 ) ) ");
 		
 		hql.append(" from ConferenciaEncalhe conferencia  ");
 		
@@ -343,6 +346,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * 
 	 * @return String
 	 */
+	/*
 	private String getSubHqlQueryValorDesconto() {
 		
 		StringBuilder hql = new StringBuilder();
@@ -367,6 +371,39 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		return hql.toString();
 		
+	}
+	*/
+	
+	
+	
+	
+
+	
+    private String obterSQLDesconto(String cota, String produto, String fornecedor){
+    	
+		String auxC = " where ";
+		StringBuilder hql = new StringBuilder("select view.desconto from ViewDesconto view ");
+		
+
+    	 if (cota!=null && !"".equals(cota)){
+ 		    hql.append(auxC+" view.cotaId = "+cota);
+ 		    auxC = " and ";
+ 		 }
+
+
+		 if (produto!=null && !"".equals(produto)){
+	 	     hql.append(auxC+" view.produtoId = "+produto);
+	 	     auxC = " and ";
+	     }
+
+
+		 if (fornecedor!=null && !"".equals(fornecedor)){
+	 	     hql.append(auxC+" view.fornecedorId = "+fornecedor);
+	 	     auxC = " and ";
+	     }	 
+
+
+		return hql.toString();
 	}
 	
 }
