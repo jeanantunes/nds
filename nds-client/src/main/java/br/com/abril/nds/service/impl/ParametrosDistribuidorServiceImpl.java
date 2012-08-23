@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaChamadao;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -40,6 +41,7 @@ import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
+import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -62,22 +64,25 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private static final String DB_NAME = "db_parametro_distribuidor";
 	
 	@Autowired
-	DistribuidorService distribuidorService;
+	private DistribuidorService distribuidorService;
 
 	@Autowired
-	ParametroContratoCotaRepository parametroContratoCotaRepository;
+	private ParametroContratoCotaRepository parametroContratoCotaRepository;
 
 	@Autowired
-	ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
+	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
 
 	@Autowired
-	ParametrosDistribuidorFaltasSobrasRepository parametrosDistribuidorFaltasSobrasRepository;
+	private ParametrosDistribuidorFaltasSobrasRepository parametrosDistribuidorFaltasSobrasRepository;
 
 	@Autowired
-	TipoGarantiaAceitaRepository tipoGarantiaAceitaRepository;
+	private TipoGarantiaAceitaRepository tipoGarantiaAceitaRepository;
 	
 	@Autowired
-	EnderecoDistribuidorRepository enderecoDistribuidorRepository;
+	private EnderecoDistribuidorRepository enderecoDistribuidorRepository;
+	
+	@Autowired
+	private PessoaRepository pessoaRepository;
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
@@ -111,12 +116,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		
 		// Cadastro / Fiscal
-		parametrosDistribuidor.setRazaoSocial(distribuidor.getRazaoSocial());
-		parametrosDistribuidor.setNomeFantasia(distribuidor.getNomeFantasia());
-		parametrosDistribuidor.setCnpj(distribuidor.getCnpj());
-		parametrosDistribuidor.setInscricaoEstadual(distribuidor.getInscricaoEstadual());
-		parametrosDistribuidor.setInscricaoMunicipal(distribuidor.getInscricaoMunicipal());
-		parametrosDistribuidor.setEmail(distribuidor.getEmail());
+		parametrosDistribuidor.setRazaoSocial(distribuidor.getJuridica().getRazaoSocial());
+		parametrosDistribuidor.setNomeFantasia(distribuidor.getJuridica().getNomeFantasia());
+		parametrosDistribuidor.setCnpj(distribuidor.getJuridica().getCnpj());
+		parametrosDistribuidor.setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
+		parametrosDistribuidor.setInscricaoMunicipal(distribuidor.getJuridica().getInscricaoMunicipal());
+		parametrosDistribuidor.setEmail(distribuidor.getJuridica().getEmail());
 		parametrosDistribuidor.setCodigoDistribuidorDinap(distribuidor.getCodigoDistribuidorDinap());
 		parametrosDistribuidor.setCodigoDistribuidorFC(distribuidor.getCodigoDistribuidorFC());
 		
@@ -310,6 +315,28 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		return parametrosDistribuidor;
 	}
+	
+	private PessoaJuridica gravarPessoaJuridicaDistribuidor(Distribuidor distribuidor,
+															ParametrosDistribuidorVO parametrosDistribuidor) {
+		
+		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();
+		
+		if (pessoaJuridica == null) {
+			
+			pessoaJuridica = new PessoaJuridica();
+		}
+		
+		pessoaJuridica.setRazaoSocial(parametrosDistribuidor.getRazaoSocial());
+		pessoaJuridica.setNomeFantasia(parametrosDistribuidor.getNomeFantasia());
+		pessoaJuridica.setCnpj(parametrosDistribuidor.getCnpj());
+		pessoaJuridica.setInscricaoEstadual(parametrosDistribuidor.getInscricaoEstadual());
+		pessoaJuridica.setInscricaoMunicipal(parametrosDistribuidor.getInscricaoMunicipal());
+		pessoaJuridica.setEmail(parametrosDistribuidor.getEmail());
+		
+		this.pessoaRepository.merge(pessoaJuridica);
+		
+		return pessoaJuridica;
+	}
 
 	private EnderecoDistribuidor gravarEnderecoDistribuidor(Distribuidor distribuidor,
 														 	 EnderecoVO enderecoVO) {
@@ -406,12 +433,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		
 		// Cadastro / Fiscal
-		distribuidor.setRazaoSocial(parametrosDistribuidor.getRazaoSocial());
-		distribuidor.setNomeFantasia(parametrosDistribuidor.getNomeFantasia());
-		distribuidor.setCnpj(parametrosDistribuidor.getCnpj());
-		distribuidor.setInscricaoEstadual(parametrosDistribuidor.getInscricaoEstadual());
-		distribuidor.setInscricaoMunicipal(parametrosDistribuidor.getInscricaoMunicipal());
-		distribuidor.setEmail(parametrosDistribuidor.getEmail());
+		
+		distribuidor.setJuridica(this.gravarPessoaJuridicaDistribuidor(distribuidor, parametrosDistribuidor));
+		
 		distribuidor.setCodigoDistribuidorDinap(parametrosDistribuidor.getCodigoDistribuidorDinap());
 		distribuidor.setCodigoDistribuidorFC(parametrosDistribuidor.getCodigoDistribuidorFC());
 		
