@@ -33,6 +33,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	
 	private BigDecimal precoCapa;
 	private BigDecimal precoDesconto;
+	private BigDecimal desconto;
 	
 	@Export(label = "Reparte" , alignment= Alignment.CENTER, exhibitionOrder = 8)
 	private BigDecimal reparte;
@@ -173,6 +174,14 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10)
 	public String getTotalDescontoFormatado(){
 		return totalDescontoFormatado;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
 	}
 
 	

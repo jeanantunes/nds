@@ -105,8 +105,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" f.juridica.razaoSocial as nomeFornecedor, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");
-		hql.append(" (pe.precoVenda - pe.desconto) as precoComDesconto, ");
-		hql.append(" sum(mec.qtde*(pe.precoVenda - pe.desconto)) as total, ");
+		hql.append(" ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaEncalhe() +") as desconto, ");
+		hql.append(" (pe.precoVenda - (pe.precoVenda * desconto / 100)) as precoComDesconto, ");
+		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * desconto / 100))) as total, ");
 		hql.append(" sum(mec.qtde) as encalhe ");
 
 		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
@@ -133,7 +134,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" pe.desconto, ");
+		hql.append(" desconto, ");
 		hql.append(" juridica.razaoSocial ");
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
@@ -198,6 +199,17 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		return query.list();
 
 	}
+	
+	private String obterSQLDescontoObterMovimentoEstoqueCotaEncalhe(){
+		
+		StringBuilder hql = new StringBuilder("select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = c.id ")
+		   .append(" and view.produtoEdicaoId = pe.id ")
+		   .append(" and view.fornecedorId = f.id ");
+		
+		return hql.toString();
+	}
 
 	@SuppressWarnings(value = "unchecked")
 	public List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(
@@ -210,8 +222,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" f.juridica.razaoSocial as nomeFornecedor, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");
-		hql.append(" (pe.precoVenda - pe.desconto) as precoComDesconto, ");
-		hql.append(" sum(mec.qtde*(pe.precoVenda - pe.desconto)) as total, ");
+		hql.append(" ("+ this.obterSQLDescontoObterMovimentoVendaEncalhe() +") as desconto, ");
+		hql.append(" (pe.precoVenda - (pe.precoVenda * desconto / 100)) as precoComDesconto, ");
+		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * desconto / 100))) as total, ");
 		hql.append(" box.codigo as box,");
 		hql.append(" mec.qtde as exemplares");
 
@@ -237,7 +250,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" pe.desconto, ");
+		hql.append(" desconto, ");
 		hql.append(" f.juridica.razaoSocial ");
 		
 		if (filtro.getOrdenacaoColuna() != null) {
@@ -272,6 +285,17 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 
 		return query.list();
 	}
+	
+	private String obterSQLDescontoObterMovimentoVendaEncalhe(){
+		
+		StringBuilder hql = new StringBuilder("select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = cota.id ")
+		   .append(" and view.produtoEdicaoId = pe.id ")
+		   .append(" and view.fornecedorId = f.id ");
+		
+		return hql.toString();
+	}
 
 	/**
 	 * Método que obtem os movimentos de Envio ao Jornaleiro (Consignado) para conta corrente da Cota
@@ -286,13 +310,14 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome as nomeProduto, ");
 		hql.append(" juridica.razaoSocial as nomeFornecedor, ");				
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
-		hql.append(" pe.precoVenda as precoCapa, ");		
-		hql.append(" (pe.precoVenda - pe.desconto) as precoComDesconto, ");
+		hql.append(" pe.precoVenda as precoCapa, ");
+		hql.append(" ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaConsignado() +") as desconto, ");
+		hql.append(" (pe.precoVenda - (pe.precoVenda * desconto / 100)) as precoComDesconto, ");
 		hql.append(" ec.qtdePrevista as reparteSugerido, ");
 		hql.append(" ec.qtdeEfetiva as reparteFinal, ");
 		hql.append(" (ec.qtdePrevista - ec.qtdeEfetiva) as diferenca, ");
 		hql.append(" d.tipoDiferenca as motivo, ");		
-		hql.append(" sum(mec.qtde*(pe.precoVenda - pe.desconto)) as total ");
+		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * desconto / 100))) as total ");
 
 		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
 		
@@ -325,7 +350,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" pe.desconto, ");
+		hql.append(" desconto, ");
 		hql.append(" juridica.razaoSocial ");
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
@@ -399,6 +424,17 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		return query.list();
 		
  	}
+	
+	private String obterSQLDescontoObterMovimentoEstoqueCotaConsignado(){
+		
+		StringBuilder hql = new StringBuilder("select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = c.id ")
+		   .append(" and view.produtoEdicaoId = pe.id ")
+		   .append(" and view.fornecedorId = f.id ");
+		
+		return hql.toString();
+	}
 
 	@Override
 	public ConsolidadoFinanceiroCota obterConsolidadoPorIdMovimentoFinanceiro(Long idMovimentoFinanceiro) {
