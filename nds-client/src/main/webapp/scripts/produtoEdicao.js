@@ -708,9 +708,9 @@ var produtoEdicaoController =$.extend(true,  {
 				form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
 			});	      
 		},
-		removerEdicao:				function (id) {
+		removerEdicao:function (id) {
 
-			$( "#produtoEdicaoController-dialog-excluir" ,this.workspace).dialog({
+			$( "#produtoEdicaoController-dialog-excluir").dialog({
 				resizable: false,
 				height:170,
 				width:380,
@@ -722,7 +722,7 @@ var produtoEdicaoController =$.extend(true,  {
 								 contextPath + '/cadastro/edicao/removerEdicao.json',
 								{idProdutoEdicao : id},
 								function(result) {
-									$("#produtoEdicaoController-dialog-excluir",this.workspace).dialog("close");
+									$("#produtoEdicaoController-dialog-excluir").dialog("close");
 
 									var tipoMensagem = result.tipoMensagem;
 									var listaMensagens = result.listaMensagens;
@@ -733,9 +733,10 @@ var produtoEdicaoController =$.extend(true,  {
 									}
 
 									produtoEdicaoController.carregarImagemCapa(null);
+									$(".edicoesGrid").flexReload();
 								},
 								function(result) {
-									$("#produtoEdicaoController-dialog-excluir",this.workspace).dialog("close");
+									$("#produtoEdicaoController-dialog-excluir").dialog("close");
 
 									var tipoMensagem = result.tipoMensagem;
 									var listaMensagens = result.listaMensagens;
@@ -747,6 +748,7 @@ var produtoEdicaoController =$.extend(true,  {
 								},
 								true
 						);
+						
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
