@@ -267,26 +267,6 @@ public class Distribuidor {
 	@Embedded
 	private ParametroEntregaBanca parametroEntregaBanca;
 	
-	// Aba Cadastro / Fiscal
-	
-	@Column(name = "RAZAO_SOCIAL", nullable = true)
-	private String razaoSocial;
-	
-	@Column(name = "NOME_FANTASIA", nullable = true)
-	private String nomeFantasia;
-	
-	@Column(name = "CNPJ", nullable = true)
-	private String cnpj;
-	
-	@Column(name = "INSCRICAO_ESTADUAL", length = 14, nullable = true)
-	private String inscricaoEstadual;
-	
-	@Column(name = "INSCRICAO_MUNICIPAL", length = 15, nullable = true)
-	private String inscricaoMunicipal;
-	
-	@Column(name = "EMAIL", nullable = true)
-	private String email;
-	
 	@Column(name = "COD_DISTRIBUIDOR_DINAP", nullable = true)
 	private String codigoDistribuidorDinap;
 	
@@ -880,90 +860,6 @@ public class Distribuidor {
     public void setParametroEntregaBanca(ParametroEntregaBanca parametroEntregaBanca) {
         this.parametroEntregaBanca = parametroEntregaBanca;
     }
-	
-	/**
-	 * @return the razaoSocial
-	 */
-	public String getRazaoSocial() {
-		return razaoSocial;
-	}
-
-	/**
-	 * @param razaoSocial the razaoSocial to set
-	 */
-	public void setRazaoSocial(String razaoSocial) {
-		this.razaoSocial = razaoSocial;
-	}
-
-	/**
-	 * @return the nomeFantasia
-	 */
-	public String getNomeFantasia() {
-		return nomeFantasia;
-	}
-
-	/**
-	 * @param nomeFantasia the nomeFantasia to set
-	 */
-	public void setNomeFantasia(String nomeFantasia) {
-		this.nomeFantasia = nomeFantasia;
-	}
-
-	/**
-	 * @return the cnpj
-	 */
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	/**
-	 * @param cnpj the cnpj to set
-	 */
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
-	}
-
-	/**
-	 * @return the inscricaoEstadual
-	 */
-	public String getInscricaoEstadual() {
-		return inscricaoEstadual;
-	}
-
-	/**
-	 * @param inscricaoEstadual the inscricaoEstadual to set
-	 */
-	public void setInscricaoEstadual(String inscricaoEstadual) {
-		this.inscricaoEstadual = inscricaoEstadual;
-	}
-
-	/**
-	 * @return the inscricaoMunicipal
-	 */
-	public String getInscricaoMunicipal() {
-		return inscricaoMunicipal;
-	}
-
-	/**
-	 * @param inscricaoMunicipal the inscricaoMunicipal to set
-	 */
-	public void setInscricaoMunicipal(String inscricaoMunicipal) {
-		this.inscricaoMunicipal = inscricaoMunicipal;
-	}
-
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
-
-	/**
-	 * @param email the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
 
 	/**
 	 * @return the codigoDistribuidorDinap
