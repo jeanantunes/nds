@@ -129,7 +129,7 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		EnderecoDistribuidor enderecoDistribuidor = this.distribuidorRepository.obterEnderecoPrincipal();
 		
 		operacaoDistribuidor.setUf(enderecoDistribuidor != null ? enderecoDistribuidor.getEndereco().getUf() : "--");
-		operacaoDistribuidor.setNome(distribuidor.getRazaoSocial());
+		operacaoDistribuidor.setNome(distribuidor.getJuridica().getRazaoSocial());
 		
 		StatusOperacao statusOperacao = new StatusOperacao();
 		statusOperacao.setData(new Date());
