@@ -124,12 +124,12 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 		OperacaoDistribuidor operacaoDistribuidor = new OperacaoDistribuidor();
 		
 		operacaoDistribuidor.setDataOperacao(distribuidor.getDataOperacao());
-		operacaoDistribuidor.setIdDistribuidorInterface(distribuidor.getCodigo().toString());
+		operacaoDistribuidor.setIdDistribuidorInterface(distribuidor.getCodigoDistribuidorDinap().toString());
 		
 		EnderecoDistribuidor enderecoDistribuidor = this.distribuidorRepository.obterEnderecoPrincipal();
 		
 		operacaoDistribuidor.setUf(enderecoDistribuidor != null ? enderecoDistribuidor.getEndereco().getUf() : "--");
-		operacaoDistribuidor.setNome(distribuidor.getJuridica().getRazaoSocial());
+		operacaoDistribuidor.setNome(distribuidor.getRazaoSocial());
 		
 		StatusOperacao statusOperacao = new StatusOperacao();
 		statusOperacao.setData(new Date());
