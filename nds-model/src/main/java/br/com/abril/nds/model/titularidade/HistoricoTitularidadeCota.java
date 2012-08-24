@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -153,8 +154,21 @@ public class HistoricoTitularidadeCota implements Serializable {
     @CollectionTable(name = "HISTORICO_TITULARIDADE_REFERENCIA_COTA", joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID") })
     private Collection<HistoricoTitularidadeReferenciaCota> referencias;
 
+    /**
+     * Informações de desconto do histórico de titularidade da cota
+     */
     @OneToMany(mappedBy = "historicoTitularidadeCota", cascade = { CascadeType.ALL })
     private Collection<HistoricoTitularidadeDescontoCota> descontos;
+    
+    @OneToOne
+    @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FINANCEIRO_ID")
+    private HistoricoTitularidadeCotaFinanceiro financeiro;
+    
+    /**
+     * Parâmetros de distribuição do histórico de titularidade da cota
+     */
+    @Embedded
+    private HistoricoTitularidadeCotaDistribuicao distribuicao;
 
     /**
      * @return the id
@@ -447,6 +461,34 @@ public class HistoricoTitularidadeCota implements Serializable {
     public void setDescontos(
             Collection<HistoricoTitularidadeDescontoCota> descontos) {
         this.descontos = descontos;
+    }
+
+    /**
+     * @return the financeiro
+     */
+    public HistoricoTitularidadeCotaFinanceiro getFinanceiro() {
+        return financeiro;
+    }
+
+    /**
+     * @param financeiro the financeiro to set
+     */
+    public void setFinanceiro(HistoricoTitularidadeCotaFinanceiro financeiro) {
+        this.financeiro = financeiro;
+    }
+
+    /**
+     * @return the distribuicao
+     */
+    public HistoricoTitularidadeCotaDistribuicao getDistribuicao() {
+        return distribuicao;
+    }
+
+    /**
+     * @param distribuicao the distribuicao to set
+     */
+    public void setDistribuicao(HistoricoTitularidadeCotaDistribuicao distribuicao) {
+        this.distribuicao = distribuicao;
     }
 
 }
