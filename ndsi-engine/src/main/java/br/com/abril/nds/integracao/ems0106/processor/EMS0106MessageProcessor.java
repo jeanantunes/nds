@@ -48,6 +48,12 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			Lancamento lancamento = 
 				this.getLancamento(codigoPublicacao, edicao);
+			if (lancamento == null) {
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.HIERARQUIA,
+						"NAO ENCONTROU Lancamento");
+					return;
+			}
 		
 			List<Estudo> listaEstudos = 
 				this.getEstudosSalvos(
