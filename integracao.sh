@@ -44,12 +44,12 @@ done
 
 ## Imagem
 sudo mount -t smbfs //abwbw2k01/images /mnt/images -o username=t30541,password=Pestinha@09,uid=t30541,gid=t30541
-java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
+java -jar /opt/ndistrib/ndsi-couchdbinterface/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 134
 
 
 ## CEP
-java -jar /opt/ndistrib/ndsi-couchdbinterface/target/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 185
-java -jar /opt/ndistrib/ndsi-engine/target/ndsi-engine.jar br.com.abril.nds.integracao.ems0185.route.EMS0185Route
+java -jar /opt/ndistrib/ndsi-couchdbinterface/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron 185
+java -jar /opt/ndistrib/ndsi-engine/ndsi-engine.jar br.com.abril.nds.integracao.ems0185.route.EMS0185Route
 
 
 

@@ -1,11 +1,16 @@
 package br.com.abril.nds.integracao.fileimporter;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -221,7 +226,45 @@ public class InterfaceExecutor {
 		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
 		
 		try {
+/*
+			Scanner scan = new Scanner(System.in);
+			String line;
+			String unixCommand = "/usr/bin/mdb-export " + diretorio + "data/dnecom.mdb LOG_BAIRRO"; 
+			ProcessBuilder builder = new ProcessBuilder(new String [] { "/bin/csh", "-c", unixCommand} );
+			builder.redirectErrorStream(true);
+			Process process = builder.start();
+			
+			
+			OutputStream stdin = process.getOutputStream ();
+			InputStream stderr = process.getErrorStream ();
+			InputStream stdout = process.getInputStream ();
 
+			BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
+			
+
+			while (scan.hasNext()) {
+			    String input = scan.nextLine();
+			    if (input.trim().equals("exit")) {
+			        // Putting 'exit' amongst the echo --EOF--s below doesn't work.
+			        writer.write("exit\n");
+			    } else {
+			        writer.write("((" + input + ") && echo --EOF--) || echo --EOF--\n");
+			    }
+			    writer.flush();
+
+			    line = reader.readLine();
+			    while (line != null && ! line.trim().equals("--EOF--")) {
+			        System.out.println ("Stdout: " + line);
+			        line = reader.readLine();
+			    }
+			    if (line == null) {
+			        break;
+			    }
+			}
+			
+			writer.close();
+*/
 			Process process = Runtime.getRuntime().exec(diretorio + "bin/cep-export");
 			int retorno = process.waitFor();
 			
@@ -241,10 +284,11 @@ public class InterfaceExecutor {
 
 			FileInputStream in = new FileInputStream(new File(diretorio + "data/dnecom.tar.gz"));
 			couchDbClient.saveAttachment(in, "dnecom", "application/x-gzip-compressed", doc.get_id(), doc.get_rev());
-			
+
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
+		
 	}
 	
 	
