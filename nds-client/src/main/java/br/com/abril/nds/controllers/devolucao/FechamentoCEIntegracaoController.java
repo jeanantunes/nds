@@ -8,13 +8,13 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -36,6 +36,9 @@ public class FechamentoCEIntegracaoController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private FechamentoCEIntegracaoService fechamentoCEIntegracaoService;
 	
 	@Autowired
 	private HttpSession session;
@@ -62,28 +65,29 @@ public class FechamentoCEIntegracaoController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<RomaneioDTO>> tableModel = efetuarConsultaFechamentoCEIntegracao(filtro);
+		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = efetuarConsultaFechamentoCEIntegracao(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<RomaneioDTO>> efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+	private TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, "limitar");
+		//List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, "limitar");
+		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
 		
-		TableModel<CellModelKeyValue<RomaneioDTO>> tableModel = new TableModel<CellModelKeyValue<RomaneioDTO>>();
-		
-		Integer totalRegistros = this.romaneioService.buscarTotalDeRomaneios(filtro);
-		if(totalRegistros == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-		}
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaRomaneios));
+		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
+//		
+//		Integer totalRegistros = this.romaneioService.buscarTotalDeRomaneios(filtro);
+//		if(totalRegistros == 0){
+//			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+//		}
+//
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFechamento));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(totalRegistros);
+		//tableModel.setTotal(totalRegistros);
 		
 		return tableModel;
 	}
@@ -103,7 +107,7 @@ public class FechamentoCEIntegracaoController {
 	
 	private void tratarFiltro(FiltroFechamentoCEIntegracaoDTO filtroAtual) {
 
-		FiltroRomaneioDTO filtroSession = (FiltroRomaneioDTO) session
+		FiltroFechamentoCEIntegracaoDTO filtroSession = (FiltroFechamentoCEIntegracaoDTO) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
 		if (filtroSession != null && filtroSession.equals(filtroAtual)) {
