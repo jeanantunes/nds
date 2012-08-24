@@ -5,13 +5,13 @@ CREATE OR REPLACE VIEW VIEW_DESCONTO AS
 SELECT
 	
 	CASE 
-		tipo_produto.GRUPO_PRODUTO 
+		tipo_produto.GRUPO_PRODUTO
 	WHEN 
 		'OUTROS' 
 	THEN 
-		produto.DESCONTO
+		COALESCE(produto.DESCONTO, 0)
 	ELSE
-		desconto_produto_edicao.DESCONTO 
+		COALESCE(desconto_produto_edicao.DESCONTO, 0) 
 	END					 		 AS DESCONTO,
 		cota.ID			 		 AS COTA_ID,
 		produto_edicao.ID		 AS PRODUTO_EDICAO_ID,
