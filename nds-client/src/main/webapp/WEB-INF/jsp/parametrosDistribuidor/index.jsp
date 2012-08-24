@@ -34,14 +34,17 @@
 	
 	parametrosDistribuidorController.init("${sessionScope.cadastroDistribuidorExisteLogotipo}");
 	
-	var endereco = new Endereco("", "");
+	//var endereco = new Endereco("", "");
 	
-	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
+	//endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
 </script>
 
 </head>
 
 <body>
+
+<form id="salvarParametrosDistribuidor">
+</form>
 
 <form action="<c:url value='/administracao/parametrosDistribuidor/salvarLogo' />" id="formParamentrosDistribuidor"
 	  method="post" enctype="multipart/form-data" >

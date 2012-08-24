@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
@@ -35,7 +36,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
-import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -1177,7 +1178,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CotaTipoDTO> obterCotaPorTipo(TipoCota tipoCota) {
+	public List<CotaTipoDTO> obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -1185,25 +1186,149 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(" select cota.id as idCota, ");
 		hql.append(" 		cota.numeroCota as numCota, ");
 		hql.append(" 		pessoa.nome as nome, ");
-		hql.append(" 		pessoa.nome as municipio, ");
-		hql.append(" 		pessoa.nome as endereco, ");
-		hql.append(" 		pessoa.nome as municipio, ");
+		hql.append(" 		endereco.cidade as municipio, ");
+		hql.append(" 		endereco.logradouro || ', ' || endereco.numero || ' - ' || endereco.bairro || ' / ' || endereco.uf as endereco ");
 		
-		hql.append(" from Cota cota ");
-			
-		hql.append(" join cota.pessoa pessoa ");
-		hql.append(" join cota.pdvs pdv ");
+		gerarWhereFromObterCotaPorTipo(hql);
 		
-		hql.append(" where pdv.pontoPrincipal=true ");
-		hql.append(" where pdv.pontoPrincipal=true ");
-		
-		
+		gerarOrderByObterCotaPorTipo(hql, sortname, sortorder);
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
+		query.setParameter("tipoCota", tipoCota);
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaTipoDTO.class));
 
+		query.setFirstResult( (rp * page) - rp);
+		
+		query.setMaxResults(rp);
+		
+		return query.list();
+	}
+	
+	private void gerarWhereFromObterCotaPorTipo(StringBuilder hql) {
+		
+		hql.append(" from Cota cota ");
+		hql.append(" join cota.pessoa pessoa ");
+		hql.append(" join cota.pdvs pdv ");
+		hql.append(" join cota.enderecos enderecoCota ");
+		hql.append(" join enderecoCota.endereco endereco ");
+		
+		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
+		hql.append(" and enderecoCota.principal=true ");		
+		hql.append(" and pdv.segmentacao.tipoCaracteristica=:tipoCota");
+				
+	}
+
+	private void gerarOrderByObterCotaPorTipo(StringBuilder hql,
+			String sortname, String sortorder) {
+		
+		if(sortname == null || sortorder == null || sortname.isEmpty() || sortorder.isEmpty())
+			return;
+		
+		if (sortname.equals("numCota")) {
+			hql.append(" ORDER BY numCota ");
+		} else if (sortname.equals("nome")) {
+			hql.append(" ORDER BY nome ");
+		} else if (sortname.equals("municipio")) {
+			hql.append(" ORDER BY municipio ");
+		} else if (sortname.equals("endereco")) {
+			hql.append(" ORDER BY endereco ");
+		}
+		
+		if(sortorder.equals("desc"))
+			hql.append(" DESC ");
+		else 
+			hql.append(" ASC ");		
+	}
+
+	@Override
+	public int obterCountCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(cota.id) ");
+		
+		gerarWhereFromObterCotaPorTipo(hql);
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoCota", tipoCota);
+		
+		return ((Long)query.uniqueResult()).intValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MunicipioDTO> obterQtdeCotaMunicipio(Integer page, Integer rp, String sortname, String sortorder) {
+		
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select localidade.id as id, ");
+		hql.append(" 		endereco.cidade as municipio, ");
+		hql.append(" 		count(cota.id) as qtde ");
+				
+		gerarWhereFromObterQtdeCotaMunicipio(hql);		
+		
+		hql.append(" group by endereco.cidade ");	
+		
+		gerarOrderByObterQtdeCotaMunicipio(hql, sortname, sortorder);
+		
+		Query query = this.getSession().createQuery(hql.toString());
+				
+		query.setResultTransformer(new AliasToBeanResultTransformer(MunicipioDTO.class));
+
+		query.setFirstResult( (rp * page) - rp);
+		
+		query.setMaxResults(rp);
+		
 		return query.list();
 	}
 
+	private void gerarOrderByObterQtdeCotaMunicipio(StringBuilder hql,
+			String sortname, String sortorder) {
+		
+		if(sortname == null || sortorder == null || sortname.isEmpty() || sortorder.isEmpty())
+			return;
+		
+		if (sortname.equals("municipio")) {
+			hql.append(" ORDER BY municipio ");
+		} else if (sortname.equals("qtde")) {
+			hql.append(" ORDER BY qtde ");
+		} 
+		
+		if(sortorder.equals("desc"))
+			hql.append(" DESC ");
+		else 
+			hql.append(" ASC ");	
+		
+	}
+	
+	private void gerarWhereFromObterQtdeCotaMunicipio(StringBuilder hql) {
+		
+		hql.append(" from Cota cota, Localidade localidade ");
+		hql.append(" join cota.pessoa pessoa ");
+		hql.append(" join cota.pdvs pdv ");
+		hql.append(" join cota.enderecos enderecoCota ");
+		hql.append(" join enderecoCota.endereco endereco ");
+		
+		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
+		hql.append(" and enderecoCota.principal=true ");
+		hql.append(" and endereco.cidade=localidade.nome ");	
+	}
+	
+	@Override
+	public int obterCountQtdeCotaMunicipio() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(distinct endereco.cidade) ");
+		
+		gerarWhereFromObterQtdeCotaMunicipio(hql);
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		return ((Long)query.uniqueResult()).intValue();
+	}
 }

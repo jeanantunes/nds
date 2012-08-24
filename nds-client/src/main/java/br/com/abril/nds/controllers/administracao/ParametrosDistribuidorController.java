@@ -29,7 +29,7 @@ import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
-import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -83,6 +83,12 @@ public class ParametrosDistribuidorController {
 	private static final String DIRETORIO_TEMPORARIO_PARAMETROS_DISTRIBUIDOR = "temp/parametros_distribuidor/";
 	
 	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
+	
+	private static final String MUNICIPIOS_SELECIONADOS = "idsMunicipiosSelecionadosGrupo";
+	
+	private static final String COTAS_SELECIONADAS = "idsCotasSelecionadaGrupo";
+	
+	private static final String TIPO_COTA = "tipoCotaGrupo";
 	
 	@Autowired 
 	private GrupoService grupoService;
@@ -291,12 +297,6 @@ public class ParametrosDistribuidorController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
-	@Post
-	public void cadastrarOperacaoDiferenciada(String nomeDiferenca, List<DiaSemana> diasSemana){
-		
-		result.use(Results.json()).from("").serialize();
-	}
-
 	/**
 	 * Valida os dados selecionados ao inserir dados de dias de distribuição por fornecedor
 	 * @param selectFornecedoresLancamento
@@ -438,25 +438,185 @@ public class ParametrosDistribuidorController {
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
 	}
 		
+		
 	public void obterMunicipios(Long idGrupo, Integer page, Integer rp, String sortname, String sortorder) {
 		
-		List<MunicipioDTO> municipios = new ArrayList<MunicipioDTO>();
+		int total =  grupoService.obterCountQtdeCotaMunicipio();
+				
+		List<MunicipioDTO> municipios =	grupoService.obterQtdeCotaMunicipio(page, rp, sortname, sortorder);
 		
-		municipios.add(new MunicipioDTO(1L, "Arceburgo", 10, false));
-		
-		int total =  10;
+		List<Long> selecionados = getSelecionados(TipoGrupo.MUNICIPIO);
+				
+		for(MunicipioDTO municipio : municipios) {
+			if(selecionados.contains(municipio.getId()))
+				municipio.setSelecionado(true);
+		}
 		
 		result.use(FlexiGridJson.class).from(municipios).page(page).total(total).serialize();
 	}
-	
-	public void obterCotas(Long idGrupo, TipoCota tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
+
+	public void obterCotas(Long idGrupo, TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
 		
-		List<CotaTipoDTO> cotas =	grupoService.obterCotaPorTipo(tipoCota);
-				
-		cotas.add(new CotaTipoDTO(1L, 33, "Guilherme de Morais", "Arceburgo", "Manoel Pereira da Silva,104", true));
+		int total =  grupoService.obterCountCotaPorTipo(tipoCota);
 		
-		int total =  10;
+		session.setAttribute(TIPO_COTA, tipoCota);
+		
+		List<Long> selecionados = getSelecionados(TipoGrupo.TIPO_COTA);
+		
+		List<CotaTipoDTO> cotas =	grupoService.obterCotaPorTipo(tipoCota, page, rp, sortname, sortorder);
+		
+		for(CotaTipoDTO cota : cotas) {
+			if(selecionados.contains(cota.getIdCota()))
+				cota.setSelecionado(true);
+		}
 		
 		result.use(FlexiGridJson.class).from(cotas).page(page).total(total).serialize();		
+	}
+	
+	private List<Long> getSelecionados(TipoGrupo tipoGrupo) {
+		
+		String tipo;
+		
+		if(TipoGrupo.TIPO_COTA.equals(tipoGrupo))
+			tipo = COTAS_SELECIONADAS;
+		else
+			tipo = MUNICIPIOS_SELECIONADOS;
+		
+		@SuppressWarnings("unchecked")
+		List<Long> selecionados = session.getAttribute(tipo) == null ?  new ArrayList<Long>()
+				: (List<Long>)session.getAttribute(tipo);
+		
+		return selecionados;
+	}
+	
+	/**
+	 * Adiciona ou remove um item da lista de item adicionado
+	 * 
+	 */
+	@Post
+	public void selecionarCota(Long idCota, Boolean selecionado, Boolean addResult) {
+		
+		
+		List<Long> selecionados = getSelecionados(TipoGrupo.TIPO_COTA);
+		
+		int index = selecionados.indexOf(idCota); 
+		
+		if(index==-1 && selecionado==true) {
+			selecionados.add(idCota);
+		} else if(index!=-1 && selecionado==false){
+			selecionados.remove(index);
+		}
+		
+		session.setAttribute(COTAS_SELECIONADAS, selecionados);
+		
+		if(addResult!=null && addResult==false)
+			return;
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
+	/**
+	 * Adiciona ou remove um item da lista de item adicionado
+	 * 
+	 */
+	@Post
+	public void selecionarMunicipio(Long idMunicipio, Boolean selecionado, Boolean addResult) {
+				
+		List<Long> selecionados = getSelecionados(TipoGrupo.MUNICIPIO);		
+		
+		int index = selecionados.indexOf(idMunicipio); 
+		
+		if(index==-1 && selecionado==true) {
+			selecionados.add(idMunicipio);
+		} else if(index!=-1 && selecionado==false){
+			selecionados.remove(index);
+		}
+		
+		session.setAttribute(MUNICIPIOS_SELECIONADOS, selecionados);
+			
+		if(addResult!=null && addResult==false)
+			return;
+			
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
+	/**
+	 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
+	 * 
+	 * @param selecionado - true(adiciona todos) false (remove todos)
+	 */
+	@Post
+	public void selecionarTodasCotas(List<Long>selecionados, Boolean selecionado){
+		
+		for(Long id : selecionados)
+			selecionarCota(id, selecionado, false);
+						
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
+	/**
+	 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
+	 * 
+	 * @param selecionado - true(adiciona todos) false (remove todos)
+	 */
+	@Post
+	public void selecionarTodosMunicipios(List<Long>selecionados, Boolean selecionado){
+		
+		for(Long id : selecionados)
+			selecionarMunicipio(id, selecionado, false);
+				
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
+	@Post
+	public void limparSelecoes() {
+		
+		session.setAttribute(COTAS_SELECIONADAS, null);
+		session.setAttribute(MUNICIPIOS_SELECIONADOS, null);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Post
+	public void cadastrarOperacaoDiferenciada(String nome,List<DiaSemana> diasSemana, Long idGrupo){
+		
+		List<Long> cotas = (List<Long>) (session.getAttribute(COTAS_SELECIONADAS) == null ?
+				null
+				:session.getAttribute(COTAS_SELECIONADAS));
+		
+		if(cotas != null) {
+			TipoCaracteristicaSegmentacaoPDV tipoCota = (TipoCaracteristicaSegmentacaoPDV) session.getAttribute(TIPO_COTA);
+			grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, tipoCota);
+		} else {
+		
+			List<Long> municipios = (List<Long>) (session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?
+					null
+					:session.getAttribute(MUNICIPIOS_SELECIONADOS));
+			
+			grupoService.salvarGrupoMunicipios(idGrupo,municipios, nome, diasSemana);
+		}
+		
+		result.use(Results.json()).from("").serialize();
+	}
+	
+	@Post
+	public void carregarSelecoes(Long idGrupo, TipoGrupo tipoGrupo) {
+
+		if(tipoGrupo.equals(TipoGrupo.MUNICIPIO)) {
+		
+			List<Long> ids = grupoService.obterMunicipiosDoGrupo(idGrupo);
+			
+			session.setAttribute(COTAS_SELECIONADAS, null);
+			session.setAttribute(MUNICIPIOS_SELECIONADOS, ids);
+		} else {
+			
+			List<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);
+			
+			session.setAttribute(MUNICIPIOS_SELECIONADOS, null);
+			session.setAttribute(COTAS_SELECIONADAS, ids);
+		}
+		
+		result.use(Results.json()).from("").serialize();
 	}
 }

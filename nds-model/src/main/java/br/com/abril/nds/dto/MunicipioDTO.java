@@ -23,18 +23,6 @@ public class MunicipioDTO  implements Serializable {
 		this.selecionado = selecionado;
 	}
 	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-	/**
 	 * @return the municipio
 	 */
 	public String getMunicipio() {
@@ -55,8 +43,8 @@ public class MunicipioDTO  implements Serializable {
 	/**
 	 * @param qtde the qtde to set
 	 */
-	public void setQtde(Integer qtde) {
-		this.qtde = qtde;
+	public void setQtde(Long qtde) {
+		this.qtde = qtde.intValue();
 	}
 
 	/**
@@ -71,6 +59,24 @@ public class MunicipioDTO  implements Serializable {
 	 */
 	public void setSelecionado(Boolean selecionado) {
 		this.selecionado = selecionado;
+	}
+
+	/**
+	 * @return the codigoMunicipioIBGE
+	 */	
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	
