@@ -213,6 +213,8 @@ label{ vertical-align:super;}
    <jsp:include page="../messagesDialog.jsp">
 		<jsp:param value="dialogRoteirizacaoCotaDisponivel" name="messageDialog"/>
 	</jsp:include> 
+	
+	
     <fieldset style="width:800px; float:left;">
 		<legend>Pesquisar Cotas</legend>
 		<table width="800" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -254,17 +256,21 @@ label{ vertical-align:super;}
 	</form>
 
 
-
-
-  <div class="header">
-    <div class="container">
     
      <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 				<b>Roteiriza&ccedil;&atilde;o < evento > com < status >.</b></p>
 	</div>
-    	
-      <fieldset class="classFieldset">
+	
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_novos" title="Roteiriza&ccedil;&atilde;o"><a href="javascript:;" onclick="roteirizacao.popupRoteirizacao();" rel="tipsy" title="Incluir Nova Roteirização"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0"/></a></span>
+			<span class="bt_arq" title="Gerar Arquivo"><a href="javascript:;" onclick="roteirizacao.gerarArquivoRoteirizacao('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+    		<span class="bt_arq" title="Imprimir"><a href="javascript:;" onclick="roteirizacao.imprimirArquivo('PDF');" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
+		</div>
+	</div>
+    <div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Rota / Roteiro</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -315,24 +321,12 @@ label{ vertical-align:super;}
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="classFieldset">
-       	  <legend>Rotas / Roteiros Cadastrados</legend>
-        <div class="grids" style="display:none;">
-        	<table class="rotaRoteirosGrid"></table>
-        </div>
-		
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="roteirizacao.gerarArquivoRoteirizacao('XLS');" ><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-    <span class="bt_novos" title="Imprimir"><a href="javascript:;" onclick="roteirizacao.imprimirArquivo('PDF');" ><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-       <span class="bt_novos" title="Roteiriza&ccedil;&atilde;o"><a href="javascript:;" onclick="roteirizacao.popupRoteirizacao();"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0"/>Roteiriza&ccedil;&atilde;o</a></span>
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-       
-
-        
-
-    
-    </div>
-</div> 
+      <div class="grids" style="display:none;">
+	      <fieldset class="fieldGrid">
+	       	  <legend>Rotas / Roteiros Cadastrados</legend>
+	        	<table class="rotaRoteirosGrid"></table>
+	      </fieldset>
+      </div>
 <script>
 	
 	
