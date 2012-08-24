@@ -1,5 +1,6 @@
 <head>
 </head>
+<div class="linha_separa_fields">&nbsp;</div>
 <div id="dadosCadastraisPF" style="display:none">
 	<form id="formDadosEntregadorPF">
 		<input type="hidden" name="entregador.id" id="idEntregadorPF"/>
@@ -81,5 +82,5 @@
      </span></td>
        </tr>
      </table>
-        </form>
+    </form>
  </div>

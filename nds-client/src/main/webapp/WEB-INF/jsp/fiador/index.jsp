@@ -70,34 +70,8 @@
 	    	</div>
 		</div>
 	</div>
-	
-	<fieldset class="classFieldset">
-   		<legend> Pesquisar Fiador</legend>
-        	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-				<tr>
-					<td width="41">Nome:</td>
-              		<td colspan="3">
-              			<input type="text" name="textfield2" id="fiadorController-nomeFiadorPesquisa" style="width:180px;" maxlength="255"/>
-              		</td>
-                	<td width="68">CPF/CNPJ:</td>
-                	<td width="477">
-                		<input type="text" name="textfield" id="fiadorController-cpfCnpjFiadorPesquisa" style="width:130px;" maxlength="255"/>
-                	</td>
-              		<td width="104">
-              			<span class="bt_pesquisar"><a href="javascript:exibirGridFiadoresCadastrados();">Pesquisar</a></span>
-              		</td>
-            	</tr>
-          	</table>
-	</fieldset>
-    
-    <div class="linha_separa_fields">&nbsp;</div>
-    
-    <fieldset class="classFieldset">
-		<legend>Fiadores Cadastrados</legend>
-        	<div class="fiadorController-grids" style="display:none;" id="fiadorController-gridFiadoresCadastrados">
-        		<table class="fiadorController-pessoasGrid"></table>
-        	</div>
-
+	<div class="areaBts">
+		<div class="area">
             <span class="bt_novos" title="Novo">
             	<a href="javascript:;" onclick='$(".inicioAtividadeNovo").show();$(".inicioAtividadeEdicao").hide();popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
             </span>
@@ -105,9 +79,38 @@
         	<span class="bt_novos" title="Novo">
         		<a href="javascript:;" onclick="popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
         	</span>
-	</fieldset>
-	
+		</div>
+	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldFiltro">
+   		<legend> Pesquisar Fiador</legend>
+        	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+				<tr>
+					<td width="41">Nome:</td>
+              		<td colspan="3">
+              			<input type="text" name="textfield2" id="fiadorController-nomeFiadorPesquisa" style="width:180px;" maxlength="255"/>
+              		</td>
+                	<td width="74">CPF/CNPJ:</td>
+                	<td width="139">
+                		<input type="text" name="textfield" id="fiadorController-cpfCnpjFiadorPesquisa" style="width:130px;" maxlength="255"/>
+                	</td>
+              		<td width="480">
+              			<span class="bt_novos"><a href="javascript:exibirGridFiadoresCadastrados();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+              		</td>
+            	</tr>
+          	</table>
+	</fieldset>
+    
+    <div class="linha_separa_fields">&nbsp;</div>
+    
+    <div class="grids" style="display:none;">
+	    <fieldset class="fieldGrid">
+			<legend>Fiadores Cadastrados</legend>
+	        	<div class="fiadorController-grids" style="display:none;" id="fiadorController-gridFiadoresCadastrados">
+	        		<table class="fiadorController-pessoasGrid"></table>
+	        	</div>
+		</fieldset>
+	</div>
 </body>
 
 <script type="text/javascript">
