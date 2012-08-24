@@ -144,7 +144,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 
 		query.setParameter("numeroEdicao", edicao);
 		query.setParameter("codigoProduto", codigoPublicacao);
-		query.setParameter("dataAtual", new Date(2012, 07, 27));
+		query.setParameter("dataAtual", new Date());
 
 		return (Lancamento) query.uniqueResult();
 	}
