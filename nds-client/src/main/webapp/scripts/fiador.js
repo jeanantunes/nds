@@ -111,7 +111,6 @@ var fiadorController = {
 		},
 		
 		exibirGridFiadoresCadastrados:function (){
-			var _this = this;
 			var data = "filtro.nome=" + $("#fiadorController-nomeFiadorPesquisa").val() + "&filtro.cpfCnpj=" + $("#fiadorController-cpfCnpjFiadorPesquisa").val();
 			$.postJSON(contextPath + '/cadastro/fiador/pesquisarFiador', data, 
 				function(result){
@@ -389,9 +388,9 @@ var fiadorController = {
 						$("#fiadorController-nacionalidadeFiadorCpf").val(result[10]);
 						$("#fiadorController-naturalFiadorCpf").val(result[11]);
 						
-						if ($("#fiadorController-estadoCivilFiadorCpf").val() == "CASADO"){
+						if (result[8] == "CASADO"){
 							
-							_this.opcaoCivilPf("CASADO",'#fiadorController-');
+							_this.opcaoCivilPf("CASADO",'fiadorController-');
 							
 							$("#fiadorController-nomeConjugeCpf").val(result[12]);
 					        $("#fiadorController-emailConjugeCpf").val(result[13]);
@@ -409,7 +408,6 @@ var fiadorController = {
 						} else {
 							$(".fiadorController-inicioAtividadeEdicao").text(result[12]);
 						}
-						
 						
 					} else {
 						
@@ -489,8 +487,8 @@ var fiadorController = {
 		    //cotas associadas
 		    this.limparCamposCotasAssociadas();
 		    
-		    this.opcaoCivilPf("",'#fiadorController-socio-');
-		    this.opcaoCivilPf("",'#fiadorController-');
+		    this.opcaoCivilPf("",'fiadorController-socio-');
+		    this.opcaoCivilPf("",'fiadorController-');
 		},
 		cadastrarFiadorCnpj :function (janela){
 			var _this = this;
@@ -796,7 +794,7 @@ var fiadorController = {
 						
 						_this.limparDadosCadastraisCPFSocio();
 						
-						_this.opcaoCivilPf("",'#fiadorController-socio-');
+						_this.opcaoCivilPf("",'fiadorController-socio-');
 						
 						$("#fiadorController-btnAddEditarSocio").text("Incluir Novo");
 						
@@ -834,7 +832,7 @@ var fiadorController = {
 						
 						if (result[7] == "CASADO"){
 							
-							_this.opcaoCivilPf(result[7],'#fiadorController-socio-');
+							_this.opcaoCivilPf(result[7],'fiadorController-socio-');
 							
 							$('#fiadorController-socio-nomeConjugeCpf').val(result[11]);
 							$('#fiadorController-socio-emailConjugeCpf').val(result[12]);
