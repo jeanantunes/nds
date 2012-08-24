@@ -1,12 +1,18 @@
 <head>
-	<script language="javascript" type="text/javascript">
-		
-	</script>
+	
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+	
+	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/fiador.js"></script>
 		
+		
+	<script language="javascript" type="text/javascript">
+		$(function(){
+			fiadorController.init();
+		});
+	</script>	
 	<style>
 		.diasFunc label, .finceiro label{ vertical-align:super;}
 	</style>
@@ -27,12 +33,12 @@
 	
 		<div id="fiadorController-tabs">
 			<ul>
-				<li><a href="#tab-1">Dados Cadastrais</a></li>
-				<li id="fiadorController-tabSocio"><a href="#tab-2" onclick="$('.trSocioPrincipal').show();carregarSocios();" >Sócios</a></li>
-	            <li><a href="#tab-3" onclick="ENDERECO_FIADOR.popularGridEnderecos();">Endereços</a></li>
-	            <li><a href="#tab-4" onclick="FIADOR.carregarTelefones();">Telefones</a></li>
-	            <li><a href="#tab-5" onclick="carregarGarantias();">Garantia</a></li>
-				<li><a href="#tab-6" onclick="carregarCotasAssociadas();">Cotas Associadas</a></li>
+				<li><a href="#fiadorController-tab-1">Dados Cadastrais</a></li>
+				<li id="fiadorController-tabSocio"><a href="#fiadorController-tab-2" onclick="$('.fiadorController-trSocioPrincipal').show();fiadorController.carregarSocios();" >Sócios</a></li>
+	            <li><a href="#fiadorController-tab-3" onclick="ENDERECO_FIADOR.popularGridEnderecos();">Endereços</a></li>
+	            <li><a href="#fiadorController-tab-4" onclick="FIADOR.carregarTelefones();">Telefones</a></li>
+	            <li><a href="#fiadorController-tab-5" onclick="fiadorController.carregarGarantias();">Garantia</a></li>
+				<li><a href="#fiadorController-tab-6" onclick="fiadorController.carregarCotasAssociadas();">Cotas Associadas</a></li>
 			</ul>
 			
 	        <div id="fiadorController-tab-1">
@@ -41,12 +47,16 @@
 				</div>
 				
 				<div id="fiadorController-cadastroCpf" style="display: none;">
-					<jsp:include page="dadosCadastraisCpf.jsp"></jsp:include>
+					<jsp:include page="dadosCadastraisCpf.jsp">
+						<jsp:param value="fiadorController-" name="prefix"/>
+					</jsp:include>
 				</div>
 	        </div>
 	        
 	        <div id="fiadorController-tab-2">
+	        	<div id='fiadorController-tab-socios'>
 				<jsp:include page="socios.jsp"></jsp:include>
+				</div>
 			</div>
 	        
 			<div id="fiadorController-tab-3">
@@ -73,11 +83,11 @@
 	<div class="areaBts">
 		<div class="area">
             <span class="bt_novos" title="Novo">
-            	<a href="javascript:;" onclick='$(".inicioAtividadeNovo").show();$(".inicioAtividadeEdicao").hide();popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
+            	<a href="javascript:;" onclick='$(".fiadorController-inicioAtividadeNovo").show();$(".fiadorController-inicioAtividadeEdicao").hide();fiadorController.popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
             </span>
         	
         	<span class="bt_novos" title="Novo">
-        		<a href="javascript:;" onclick="popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
+        		<a href="javascript:;" onclick="fiadorController.popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
         	</span>
 		</div>
 	</div>
@@ -95,7 +105,7 @@
                 		<input type="text" name="textfield" id="fiadorController-cpfCnpjFiadorPesquisa" style="width:130px;" maxlength="255"/>
                 	</td>
               		<td width="480">
-              			<span class="bt_novos"><a href="javascript:exibirGridFiadoresCadastrados();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+              			<span class="bt_pesquisar"><a href="javascript:fiadorController.exibirGridFiadoresCadastrados();">Pesquisar</a></span>
               		</td>
             	</tr>
           	</table>
@@ -112,7 +122,6 @@
 		</fieldset>
 	</div>
 </body>
-
 <script type="text/javascript">
 $(function(){
 	ENDERECO_FIADOR.init(fiadorController.workspace);
