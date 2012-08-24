@@ -333,7 +333,7 @@ var produtoEdicaoController =$.extend(true,  {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255,
+				height : 'auto',
 				singleSelect : true
 			});
 			
