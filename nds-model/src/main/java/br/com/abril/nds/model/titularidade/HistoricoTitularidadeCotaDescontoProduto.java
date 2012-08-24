@@ -13,8 +13,10 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("PRODUTO")
-public class HistoricoTitularidadeDescontoProduto extends
-        HistoricoTitularidadeDescontoCota {
+public class HistoricoTitularidadeCotaDescontoProduto extends
+        HistoricoTitularidadeCotaDesconto {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Código do Produto

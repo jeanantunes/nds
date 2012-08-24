@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -14,7 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
- * Representa a garantia no histórico 
+ * Representa classe base de garantias no histórico 
  * de titularidade da cota
  * 
  * @author francisco.garcia
@@ -25,8 +27,10 @@ import javax.persistence.Table;
 @SequenceGenerator(name="HIST_TIT_COTA_GARANTIA_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
-public abstract class HistoricoTitularidadeCotaGarantia {
+public abstract class HistoricoTitularidadeCotaGarantia implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator="HIST_TIT_COTA_GARANTIA_SEQ")
     @Column(name="ID")

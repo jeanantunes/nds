@@ -6,15 +6,15 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * Classe Embeddable com informações de código e descrição, 
- * facilitando o mapeamento de entidades que possuem informações
- * populadas com informações oriundas de sistemas legados
+ * Classe com informações de código e descrição, facilitando o mapeamento de
+ * entidades que possuem informações populadas com informações oriundas de
+ * sistemas legados
  * 
  * @author francisco.garcia
- *
+ * 
  */
 @Embeddable
-public class HistoricoTitularidadeCodigoDescricao implements Serializable {
+public class HistoricoTitularidadeCotaCodigoDescricao implements Serializable {
     
     private static final long serialVersionUID = 1L;
 

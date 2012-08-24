@@ -1,33 +1,49 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * Representa a garantia do tipo "IMOVEL" no histórico de
- * titularidade da cota
+ * Representa a garantia do tipo "IMOVEL" no histórico de titularidade da cota
  * 
  * @author francisco.garcia
  * 
  */
 @Entity
 @DiscriminatorValue("IMOVEL")
-public class HistoricoTitularidadeCotaImovel extends HistoricoTitularidadeCotaGarantia {
-    
-    @Column(name="IMOVEL_PROPRIETARIO", nullable=false)
+public class HistoricoTitularidadeCotaImovel extends
+        HistoricoTitularidadeCotaGarantia {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Nome do proprietário do imóvel
+     */
+    @Column(name = "IMOVEL_PROPRIETARIO", nullable = false)
     private String proprietario;
-    
-    @Column(name="IMOVEL_ENDERECO", nullable=false)
+
+    /**
+     * Endereço do imóvel
+     */
+    @Column(name = "IMOVEL_ENDERECO", nullable = false)
     private String endereco;
-    
-    @Column(name="IMOVEL_NUMERO_REGISTRO", nullable=false)
+
+    /**
+     * Número de registro do imóvel
+     */
+    @Column(name = "IMOVEL_NUMERO_REGISTRO", nullable = false)
     private String numeroRegistro;
-    
-    @Column(name="IMOVEL_VALOR", nullable=false)
-    private Double valor;
-    
-    @Column(name="IMOVEL_OBSERVACAO", nullable=false)
+
+    /**
+     * Valor do imóvel
+     */
+    @Column(name = "IMOVEL_VALOR", nullable = false)
+    private BigDecimal valor;
+
+    @Column(name = "IMOVEL_OBSERVACAO", nullable = false)
     private String observacao;
 
     /**
@@ -38,7 +54,8 @@ public class HistoricoTitularidadeCotaImovel extends HistoricoTitularidadeCotaGa
     }
 
     /**
-     * @param proprietario the proprietario to set
+     * @param proprietario
+     *            the proprietario to set
      */
     public void setProprietario(String proprietario) {
         this.proprietario = proprietario;
@@ -52,7 +69,8 @@ public class HistoricoTitularidadeCotaImovel extends HistoricoTitularidadeCotaGa
     }
 
     /**
-     * @param endereco the endereco to set
+     * @param endereco
+     *            the endereco to set
      */
     public void setEndereco(String endereco) {
         this.endereco = endereco;
@@ -66,7 +84,8 @@ public class HistoricoTitularidadeCotaImovel extends HistoricoTitularidadeCotaGa
     }
 
     /**
-     * @param numeroRegistro the numeroRegistro to set
+     * @param numeroRegistro
+     *            the numeroRegistro to set
      */
     public void setNumeroRegistro(String numeroRegistro) {
         this.numeroRegistro = numeroRegistro;
@@ -75,14 +94,15 @@ public class HistoricoTitularidadeCotaImovel extends HistoricoTitularidadeCotaGa
     /**
      * @return the valor
      */
-    public Double getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
     /**
-     * @param valor the valor to set
+     * @param valor
+     *            the valor to set
      */
-    public void setValor(Double valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 
@@ -94,7 +114,8 @@ public class HistoricoTitularidadeCotaImovel extends HistoricoTitularidadeCotaGa
     }
 
     /**
-     * @param observacao the observacao to set
+     * @param observacao
+     *            the observacao to set
      */
     public void setObservacao(String observacao) {
         this.observacao = observacao;

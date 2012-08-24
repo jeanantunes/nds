@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -30,21 +31,29 @@ import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
  * 
  */
 @Entity
-@Table(name = "HISTORICO_TITULARIDADE_DESCONTO_COTA")
-@SequenceGenerator(name="HIST_TIT_DESCONTO_COTA_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "HISTORICO_TITULARIDADE_COTA_DESCONTO")
+@SequenceGenerator(name="HIST_TIT_COTA_DESCONTO_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
-public abstract class HistoricoTitularidadeDescontoCota {
+public abstract class HistoricoTitularidadeCotaDesconto implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(generator = "HIST_TIT_DESCONTO_COTA_SEQ")
+    @GeneratedValue(generator = "HIST_TIT_COTA_DESCONTO_SEQ")
     @Column(name = "ID")
     protected Long id;
     
+    /**
+     * Data última atualização
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "ATUALIZACAO", nullable = false)
     protected Date atualizacao;
     
+    /**
+     * Porcentagem do desconto
+     */
     @Column(name = "DESCONTO", nullable = false)
     protected BigDecimal desconto;
     
@@ -52,6 +61,9 @@ public abstract class HistoricoTitularidadeDescontoCota {
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     protected HistoricoTitularidadeCota historicoTitularidadeCota;
     
+    /**
+     * Tipo do desconto
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "TIPO_DESCONTO")
     protected TipoDesconto tipoDesconto;
@@ -126,7 +138,5 @@ public abstract class HistoricoTitularidadeDescontoCota {
     public void setTipoDesconto(TipoDesconto tipoDesconto) {
         this.tipoDesconto = tipoDesconto;
     }
-    
-    
     
 }

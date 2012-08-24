@@ -1,44 +1,47 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * Representa a pessoa física que detém a titularidade da cota em um determinado
- * período
+ * Representa a Pessoa Jurídica no histórico de titularidade da cota
  * 
  * @author francisco.garcia
  *
  */
 @Embeddable
-public class HistoricoTitularidadePessoaJuridica {
+public class HistoricoTitularidadeCotaPessoaJuridica implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     /**
-     * Razão social da PJ titular da cota
+     * Razão social da PJ 
      */
     @Column(name = "RAZAO_SOCIAL")
     private String razaoSocial;
     
     /**
-     * Nome fantasia da PJ titular da cota
+     * Nome fantasia da PJ
      */
     @Column(name = "NOME_FANTASIA", length = 60)
     private String nomeFantasia;
     
     /**
-     * CNPJ da PJ titular da cota
+     * CNPJ da PJ 
      */
     @Column(name = "CNPJ")
     private String cnpj;
     
     /**
-     * Inscrição estadual da PJ titular da cota
+     * Inscrição estadual da PJ 
      */
     @Column(name = "INSC_ESTADUAL", length=18)
     private String inscricaoEstadual;
     
     /**
-     * Inscrição municipal da PJ titular da cota
+     * Inscrição municipal da PJ 
      */
     @Column(name = "INSC_MUNICIPAL", length=15)
     private String inscricaoMunicipal;

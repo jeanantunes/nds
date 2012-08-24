@@ -13,8 +13,13 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("FORNECEDOR")
-public class HistoricoTitularidadeDescontoForncecedor extends HistoricoTitularidadeDescontoCota {
+public class HistoricoTitularidadeCotaDescontoForncecedor extends HistoricoTitularidadeCotaDesconto {
     
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Nome do fornecedor
+     */
     @Column(name = "NOME_FORNECEDOR")
     private String fornecedor;
 

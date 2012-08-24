@@ -856,11 +856,11 @@ public class DataLoader {
 				session = sf.openSession();
 				tx = session.beginTransaction();				
 				
-//				if (parans.contains(PARAM_CLEAN_DATA)) {
-//					carregarDadosClean(session);
-//				} else {
-//					carregarDados(session);
-//				}
+				if (parans.contains(PARAM_CLEAN_DATA)) {
+					carregarDadosClean(session);
+				} else {
+					carregarDados(session);
+				}
 
 				commit = true;
 			} catch (Exception e) {

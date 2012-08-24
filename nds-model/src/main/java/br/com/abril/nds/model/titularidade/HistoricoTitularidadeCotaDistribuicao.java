@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -13,74 +14,136 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 
 /**
- * Representa as informações de distribuição da cota
- * no histórico de titularidade
+ * Representa as informações de distribuição da cota no histórico de
+ * titularidade
  * 
  * @author francisco.garcia
- *
+ * 
  */
 @Embeddable
-public class HistoricoTitularidadeCotaDistribuicao {
+public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Quantidade de pdvs
+     */
     @Column(name = "DISTRIBUICAO_QTDE_PDV")
     private Integer qtdePDV;
     
+    /**
+     * Nome do assistente comercial
+     */
     @Column(name = "DISTRIBUICAO_ASSISTENTE_COMERCIAL")
     private String assistenteComercial;
     
+    /**
+     * Observação
+     */
     @Column(name = "DISTRIBUICAO_OBSERVACAO")
     private String observacao;
     
+    /**
+     * Flag indicando se é arrendatário 
+     */
     @Column(name = "DISTRIBUICAO_ARRENDATARIO")
     private boolean arrendatario;
     
+    /**
+     * Flag indicando se o reparte é por ponto de venda
+     */
     @Column(name = "DISTRIBUICAO_REPARTE_POR_PONTO_VENDA")
     private boolean repartePorPontoVenda;
     
+    /**
+     * Flag indicando se solicita números atrasados
+     */
     @Column(name = "DISTRIBUICAO_SOLICITA_NUM_ATRASADOS")
     private boolean solicitaNumAtras;
     
+    /**
+     * Flag indicando se recebe ou recolhe parciais
+     */
     @Column(name = "DISTRIBUICAO_RECEBE_RECOLHE_PARCIAIS")
     private boolean recebeRecolheParcias;
     
+    /**
+     * Flag indicando se a nota é impressa
+     */
     @Column(name = "DISTRIBUICAO_NOTA_ENVIO_IMPRESSO")
     private boolean notaEnvioImpresso;
     
+    /**
+     * Flag indicando se a nota é enviada por email
+     */
     @Column(name = "DISTRIBUICAO_NOTA_ENVIO_EMAIL")
     private boolean notaEnvioEmail;
     
+    /**
+     * Flag indicando se a chamada de encalhe é impressa
+     */
     @Column(name = "DISTRIBUICAO_CHAMADA_ENCALHE_IMPRESSO")
     private boolean chamadaEncalheImpresso;
     
+    /**
+     * Flag indicando se a chamada de encalhe é enviada por email
+     */
     @Column(name = "DISTRIBUICAO_CHAMADA_ENCALHE_EMAIL")
     private boolean chamadaEncalheEmail;
     
+    /**
+     * Flag indicando se o slip é impresso
+     */
     @Column(name = "DISTRIBUICAO_SLIP_IMPRESSO")
     private boolean slipImpresso;
     
+    /**
+     * Flag indicando se o slip é enviado por email
+     */
     @Column(name = "DISTRIBUICAO_SLIP_EMAIL")
     private boolean slipEmail;
     
+    /**
+     * Flag indicando se utiliza procuração
+     */
     @Column(name = "DISTRIBUICAO_PROCURACAO_ASSINADA")
     private boolean procuracaoAssinada;
     
+    /**
+     * Tipo de entrega utilizada
+     */
     @Column(name = "DISTRIBUICAO_TIPO_ENTREGA")
     private String tipoEntrega;
     
+    /**
+     * Taxa fica de entrega
+     */
     @Column(name = "DISTRIBUICAO_TAXA_FIXA_ENTREGA")
     private BigDecimal taxaFixaEntrega;
     
+    /**
+     * Percentual do faturamento que corresponde a entrega
+     */
     @Column(name = "DISTRIBUICAO_PERCENTUAL_FATURAMENTO_ENTREGA")
     private Float percentualFaturamentoEntrega;
     
+    /**
+     * Base de cálculo da entrega
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "DISTRIBUICAO_BASE_CALCULO_ENTREGA")
     private BaseCalculo baseCalculoEntrega;
     
+    /**
+     * Início do período de carencia da entrega
+     */
     @Column(name = "DISTRIBUICAO_INICIO_PERIODO_CARENCIA")
     @Temporal(TemporalType.DATE)
     private Date inicioPeriodoCarencia;
     
+    /**
+     * Fim do período de carência da entrega
+     */
     @Column(name = "DISTRIBUICAO_FIM_PERIODO_CARENCIA")
     @Temporal(TemporalType.DATE)
     private Date fimPeriodoCarencia;

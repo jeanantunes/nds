@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 
@@ -19,38 +20,54 @@ import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoCota;
 
 /**
- * Representa as informações financeiras no histórico de titularidade
- * da cota
+ * Representa as informações financeiras no histórico de titularidade da cota
  * 
  * @author francisco.garcia
- *
+ * 
  */
 @Entity
 @Table(name = "HISTORICO_TITULARIDADE_COTA_FINANCEIRO")
 @SequenceGenerator(name = "HIST_TIT_COTA_FINANCEIRO_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoTitularidadeCotaFinanceiro {
+public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "HIST_TIT_COTA_FINANCEIRO_SEQ")
     @Column(name = "ID")
     private Long id;
     
+    /**
+     * Fator de vencimento nas cobranças
+     */
     @Column(name = "FATOR_VENCIMENTO")
     private int fatorVencimento;
     
+    /**
+     * Valor mínimo de cobrança
+     */
     @Column(name = "VALOR_MINIMO_COBRANCA")
     private BigDecimal valorMininoCobranca;
     
+    /**
+     * Tipo de cota
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "TIPO_COTA")
     private TipoCota tipoCota;
     
+    /**
+     * Política de suspensão da cota
+     */
     @Embedded
     private PoliticaSuspensao politicaSuspensao;
     
+    /**
+     * Formas de pagamento
+     */
     @OneToMany
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FINANCEIRO_ID")
-    private Collection<HistoricoTitularidadeFormaPagamento> formasPagamento;
+    private Collection<HistoricoTitularidadeCotaFormaPagamento> formasPagamento;
 
     /**
      * @return the id
@@ -125,7 +142,7 @@ public class HistoricoTitularidadeCotaFinanceiro {
     /**
      * @return the formasPagamento
      */
-    public Collection<HistoricoTitularidadeFormaPagamento> getFormasPagamento() {
+    public Collection<HistoricoTitularidadeCotaFormaPagamento> getFormasPagamento() {
         return formasPagamento;
     }
 
@@ -133,7 +150,7 @@ public class HistoricoTitularidadeCotaFinanceiro {
      * @param formasPagamento the formasPagamento to set
      */
     public void setFormasPagamento(
-            Collection<HistoricoTitularidadeFormaPagamento> formasPagamento) {
+            Collection<HistoricoTitularidadeCotaFormaPagamento> formasPagamento) {
         this.formasPagamento = formasPagamento;
     }
     

@@ -1,14 +1,12 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -20,7 +18,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -32,10 +29,18 @@ import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 
+/**
+ * Representa o PDV no histórico de titularidade da cota
+ * 
+ * @author francisco.garcia
+ * 
+ */
 @Entity
 @Table(name = "HISTORICO_TITULARIDADE_COTA_PDV")
 @SequenceGenerator(name = "HIST_TIT_COTA_PDV_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoTitularidadeCotaPDV {
+public class HistoricoTitularidadeCotaPDV implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "HIST_TIT_COTA_PDV_SEQ")
@@ -47,7 +52,7 @@ public class HistoricoTitularidadeCotaPDV {
      */
     @Column(name = "ID_ORIGEM")
     private Long idOrigem;
-    
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     private HistoricoTitularidadeCota historicoTitularidadeCota;
@@ -99,15 +104,17 @@ public class HistoricoTitularidadeCotaPDV {
     /**
      * Endereços do PDV
      */
-    @OneToMany(mappedBy = "historicoTitularidadeCotaPDV", cascade = CascadeType.REMOVE)
-    private Set<HistoricoTitularidadeCotaPDVEndereco> enderecos = new HashSet<HistoricoTitularidadeCotaPDVEndereco>();
+    @ElementCollection
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_PDV_ENDERECO", joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_PDV_ID") })
+    private Collection<HistoricoTitularidadeCotaEndereco> enderecos;
 
     /**
      * Telefones do PDV
      */
-    @OneToMany(mappedBy = "historicoTitularidadeCotaPDV", cascade = CascadeType.REMOVE)
-    private Set<HistoricoTitularidadeCotaPDVTelefone> telefones = new HashSet<HistoricoTitularidadeCotaPDVTelefone>();
-    
+    @ElementCollection
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_PDV_TELEFONE", joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_PDV_ID") })
+    private Collection<HistoricoTitularidadeCotaTelefone> telefones;
+
     /**
      * Flag indicando se o pdv esta dentro de outro estabelecimento
      */
@@ -144,11 +151,13 @@ public class HistoricoTitularidadeCotaPDV {
      */
     @Column(name = "PORCENTAGEM_FATURAMENTO")
     private BigDecimal porcentagemFaturamento;
-    
+
+    /**
+     * Períodos de funcionamento do PDV
+     */
     @ElementCollection
-    @CollectionTable(name = "HISTORICO_TITULARIDADE_FUNCIONAMENTO_PDV", 
-        joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_PDV_ID")})
-    private Collection<HistoricoTitularidadeFuncionamentoPDV> periodos;
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_FUNCIONAMENTO_PDV", joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_PDV_ID") })
+    private Collection<HistoricoTitularidadeCotaFuncionamentoPDV> periodos;
 
     /**
      * Licença municipal do PDV
@@ -161,45 +170,60 @@ public class HistoricoTitularidadeCotaPDV {
      */
     @Embedded
     private CaracteristicasPDV caracteristicas;
-    
-    @Embedded
-    @AttributeOverrides(value = {@AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_TIPO_PONTO")), 
-            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_TIPO_PONTO"))})
-    private HistoricoTitularidadeCodigoDescricao tipoPonto;
-    
+
     /**
-     * Tipo característica segmentação do PDV 
+     * Tipo do ponto do PDV
+     */
+    @Embedded
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_TIPO_PONTO")),
+            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_TIPO_PONTO")) })
+    private HistoricoTitularidadeCotaCodigoDescricao tipoPonto;
+
+    /**
+     * Tipo característica segmentação do PDV
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "TIPO_CARACTERISTICA_PDV")
     private TipoCaracteristicaSegmentacaoPDV tipoCaracteristica;
-    
-    
+
+    /**
+     * Área de influência do PDV
+     */
     @Embedded
-    @AttributeOverrides(value = {@AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_AREA_INFLUENCIA")), 
-            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_AREA_INFLUENCIA"))})
-    private HistoricoTitularidadeCodigoDescricao areaInfluencia;
-    
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_AREA_INFLUENCIA")),
+            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_AREA_INFLUENCIA")) })
+    private HistoricoTitularidadeCotaCodigoDescricao areaInfluencia;
+
+    /**
+     * Materiais promocionais do PDV
+     */
     @ElementCollection
-    @CollectionTable(name = "HISTORICO_TITULARIDADE_MATERIAL_PROMOCIONAL_PDV", 
-        joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_PDV_ID")})
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_MATERIAL_PROMOCIONAL_PDV", joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_PDV_ID") })
     @AttributeOverrides(value = {
             @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_MATERIAL")),
             @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_MATERIAL")) })
-    private Collection<HistoricoTitularidadeCodigoDescricao> materiais;
-    
+    private Collection<HistoricoTitularidadeCotaCodigoDescricao> materiais;
+
+    /**
+     * Gerador de fluxo principal do PDV
+     */
     @Embedded
-    @AttributeOverrides(value = {@AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_GERADOR_FLUXO_PRINCIPAL")), 
-            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_GERADOR_FLUXO_PRINCIPAL"))})
-    private HistoricoTitularidadeCodigoDescricao geradorFluxoPrincipal;
-    
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_GERADOR_FLUXO_PRINCIPAL")),
+            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_GERADOR_FLUXO_PRINCIPAL")) })
+    private HistoricoTitularidadeCotaCodigoDescricao geradorFluxoPrincipal;
+
+    /**
+     * Geradores de fluxo secundários do PDV
+     */
     @ElementCollection
-    @CollectionTable(name = "HISTORICO_TITULARIDADE_GERADOR_FLUXO_SECUNDARIO", 
-        joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_PDV_ID")})
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_GERADOR_FLUXO_SECUNDARIO", joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_PDV_ID") })
     @AttributeOverrides(value = {
             @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_GERADOR_FLUXO")),
             @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_GERADOR_FLUXO")) })
-    private Collection<HistoricoTitularidadeCodigoDescricao> geradoresFluxoSecundarios;
+    private Collection<HistoricoTitularidadeCotaCodigoDescricao> geradoresFluxoSecundarios;
 
     /**
      * @return the id
@@ -209,7 +233,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
     public void setId(Long id) {
         this.id = id;
@@ -223,7 +248,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param idOrigem the idOrigem to set
+     * @param idOrigem
+     *            the idOrigem to set
      */
     public void setIdOrigem(Long idOrigem) {
         this.idOrigem = idOrigem;
@@ -237,7 +263,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param historicoTitularidadeCota the historicoTitularidadeCota to set
+     * @param historicoTitularidadeCota
+     *            the historicoTitularidadeCota to set
      */
     public void setHistoricoTitularidadeCota(
             HistoricoTitularidadeCota historicoTitularidadeCota) {
@@ -252,7 +279,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param dataInclusao the dataInclusao to set
+     * @param dataInclusao
+     *            the dataInclusao to set
      */
     public void setDataInclusao(Date dataInclusao) {
         this.dataInclusao = dataInclusao;
@@ -266,7 +294,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param status the status to set
+     * @param status
+     *            the status to set
      */
     public void setStatus(StatusPDV status) {
         this.status = status;
@@ -280,7 +309,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param nome the nome to set
+     * @param nome
+     *            the nome to set
      */
     public void setNome(String nome) {
         this.nome = nome;
@@ -294,7 +324,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param contato the contato to set
+     * @param contato
+     *            the contato to set
      */
     public void setContato(String contato) {
         this.contato = contato;
@@ -308,7 +339,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param site the site to set
+     * @param site
+     *            the site to set
      */
     public void setSite(String site) {
         this.site = site;
@@ -322,7 +354,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param email the email to set
+     * @param email
+     *            the email to set
      */
     public void setEmail(String email) {
         this.email = email;
@@ -336,7 +369,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param pontoReferencia the pontoReferencia to set
+     * @param pontoReferencia
+     *            the pontoReferencia to set
      */
     public void setPontoReferencia(String pontoReferencia) {
         this.pontoReferencia = pontoReferencia;
@@ -345,28 +379,32 @@ public class HistoricoTitularidadeCotaPDV {
     /**
      * @return the enderecos
      */
-    public Set<HistoricoTitularidadeCotaPDVEndereco> getEnderecos() {
+    public Collection<HistoricoTitularidadeCotaEndereco> getEnderecos() {
         return enderecos;
     }
 
     /**
-     * @param enderecos the enderecos to set
+     * @param enderecos
+     *            the enderecos to set
      */
-    public void setEnderecos(Set<HistoricoTitularidadeCotaPDVEndereco> enderecos) {
+    public void setEnderecos(
+            Collection<HistoricoTitularidadeCotaEndereco> enderecos) {
         this.enderecos = enderecos;
     }
 
     /**
      * @return the telefones
      */
-    public Set<HistoricoTitularidadeCotaPDVTelefone> getTelefones() {
+    public Collection<HistoricoTitularidadeCotaTelefone> getTelefones() {
         return telefones;
     }
 
     /**
-     * @param telefones the telefones to set
+     * @param telefones
+     *            the telefones to set
      */
-    public void setTelefones(Set<HistoricoTitularidadeCotaPDVTelefone> telefones) {
+    public void setTelefones(
+            Collection<HistoricoTitularidadeCotaTelefone> telefones) {
         this.telefones = telefones;
     }
 
@@ -378,7 +416,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param dentroOutroEstabelecimento the dentroOutroEstabelecimento to set
+     * @param dentroOutroEstabelecimento
+     *            the dentroOutroEstabelecimento to set
      */
     public void setDentroOutroEstabelecimento(boolean dentroOutroEstabelecimento) {
         this.dentroOutroEstabelecimento = dentroOutroEstabelecimento;
@@ -392,7 +431,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param arrendatario the arrendatario to set
+     * @param arrendatario
+     *            the arrendatario to set
      */
     public void setArrendatario(boolean arrendatario) {
         this.arrendatario = arrendatario;
@@ -406,7 +446,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param tamanhoPDV the tamanhoPDV to set
+     * @param tamanhoPDV
+     *            the tamanhoPDV to set
      */
     public void setTamanhoPDV(TamanhoPDV tamanhoPDV) {
         this.tamanhoPDV = tamanhoPDV;
@@ -420,7 +461,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param possuiSistemaIPV the possuiSistemaIPV to set
+     * @param possuiSistemaIPV
+     *            the possuiSistemaIPV to set
      */
     public void setPossuiSistemaIPV(boolean possuiSistemaIPV) {
         this.possuiSistemaIPV = possuiSistemaIPV;
@@ -434,7 +476,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param qtdeFuncionarios the qtdeFuncionarios to set
+     * @param qtdeFuncionarios
+     *            the qtdeFuncionarios to set
      */
     public void setQtdeFuncionarios(int qtdeFuncionarios) {
         this.qtdeFuncionarios = qtdeFuncionarios;
@@ -448,7 +491,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param porcentagemFaturamento the porcentagemFaturamento to set
+     * @param porcentagemFaturamento
+     *            the porcentagemFaturamento to set
      */
     public void setPorcentagemFaturamento(BigDecimal porcentagemFaturamento) {
         this.porcentagemFaturamento = porcentagemFaturamento;
@@ -457,15 +501,16 @@ public class HistoricoTitularidadeCotaPDV {
     /**
      * @return the periodos
      */
-    public Collection<HistoricoTitularidadeFuncionamentoPDV> getPeriodos() {
+    public Collection<HistoricoTitularidadeCotaFuncionamentoPDV> getPeriodos() {
         return periodos;
     }
 
     /**
-     * @param periodos the periodos to set
+     * @param periodos
+     *            the periodos to set
      */
     public void setPeriodos(
-            Collection<HistoricoTitularidadeFuncionamentoPDV> periodos) {
+            Collection<HistoricoTitularidadeCotaFuncionamentoPDV> periodos) {
         this.periodos = periodos;
     }
 
@@ -477,7 +522,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param licencaMunicipal the licencaMunicipal to set
+     * @param licencaMunicipal
+     *            the licencaMunicipal to set
      */
     public void setLicencaMunicipal(LicencaMunicipal licencaMunicipal) {
         this.licencaMunicipal = licencaMunicipal;
@@ -491,7 +537,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param caracteristicas the caracteristicas to set
+     * @param caracteristicas
+     *            the caracteristicas to set
      */
     public void setCaracteristicas(CaracteristicasPDV caracteristicas) {
         this.caracteristicas = caracteristicas;
@@ -500,14 +547,15 @@ public class HistoricoTitularidadeCotaPDV {
     /**
      * @return the tipoPonto
      */
-    public HistoricoTitularidadeCodigoDescricao getTipoPonto() {
+    public HistoricoTitularidadeCotaCodigoDescricao getTipoPonto() {
         return tipoPonto;
     }
 
     /**
-     * @param tipoPonto the tipoPonto to set
+     * @param tipoPonto
+     *            the tipoPonto to set
      */
-    public void setTipoPonto(HistoricoTitularidadeCodigoDescricao tipoPonto) {
+    public void setTipoPonto(HistoricoTitularidadeCotaCodigoDescricao tipoPonto) {
         this.tipoPonto = tipoPonto;
     }
 
@@ -519,7 +567,8 @@ public class HistoricoTitularidadeCotaPDV {
     }
 
     /**
-     * @param tipoCaracteristica the tipoCaracteristica to set
+     * @param tipoCaracteristica
+     *            the tipoCaracteristica to set
      */
     public void setTipoCaracteristica(
             TipoCaracteristicaSegmentacaoPDV tipoCaracteristica) {
@@ -529,62 +578,65 @@ public class HistoricoTitularidadeCotaPDV {
     /**
      * @return the areaInfluencia
      */
-    public HistoricoTitularidadeCodigoDescricao getAreaInfluencia() {
+    public HistoricoTitularidadeCotaCodigoDescricao getAreaInfluencia() {
         return areaInfluencia;
     }
 
     /**
-     * @param areaInfluencia the areaInfluencia to set
+     * @param areaInfluencia
+     *            the areaInfluencia to set
      */
     public void setAreaInfluencia(
-            HistoricoTitularidadeCodigoDescricao areaInfluencia) {
+            HistoricoTitularidadeCotaCodigoDescricao areaInfluencia) {
         this.areaInfluencia = areaInfluencia;
     }
 
     /**
      * @return the materiais
      */
-    public Collection<HistoricoTitularidadeCodigoDescricao> getMateriais() {
+    public Collection<HistoricoTitularidadeCotaCodigoDescricao> getMateriais() {
         return materiais;
     }
 
     /**
-     * @param materiais the materiais to set
+     * @param materiais
+     *            the materiais to set
      */
     public void setMateriais(
-            Collection<HistoricoTitularidadeCodigoDescricao> materiais) {
+            Collection<HistoricoTitularidadeCotaCodigoDescricao> materiais) {
         this.materiais = materiais;
     }
 
     /**
      * @return the geradorFluxoPrincipal
      */
-    public HistoricoTitularidadeCodigoDescricao getGeradorFluxoPrincipal() {
+    public HistoricoTitularidadeCotaCodigoDescricao getGeradorFluxoPrincipal() {
         return geradorFluxoPrincipal;
     }
 
     /**
-     * @param geradorFluxoPrincipal the geradorFluxoPrincipal to set
+     * @param geradorFluxoPrincipal
+     *            the geradorFluxoPrincipal to set
      */
     public void setGeradorFluxoPrincipal(
-            HistoricoTitularidadeCodigoDescricao geradorFluxoPrincipal) {
+            HistoricoTitularidadeCotaCodigoDescricao geradorFluxoPrincipal) {
         this.geradorFluxoPrincipal = geradorFluxoPrincipal;
     }
 
     /**
      * @return the geradoresFluxoSecundarios
      */
-    public Collection<HistoricoTitularidadeCodigoDescricao> getGeradoresFluxoSecundarios() {
+    public Collection<HistoricoTitularidadeCotaCodigoDescricao> getGeradoresFluxoSecundarios() {
         return geradoresFluxoSecundarios;
     }
 
     /**
-     * @param geradoresFluxoSecundarios the geradoresFluxoSecundarios to set
+     * @param geradoresFluxoSecundarios
+     *            the geradoresFluxoSecundarios to set
      */
     public void setGeradoresFluxoSecundarios(
-            Collection<HistoricoTitularidadeCodigoDescricao> geradoresFluxoSecundarios) {
+            Collection<HistoricoTitularidadeCotaCodigoDescricao> geradoresFluxoSecundarios) {
         this.geradoresFluxoSecundarios = geradoresFluxoSecundarios;
     }
-    
 
 }

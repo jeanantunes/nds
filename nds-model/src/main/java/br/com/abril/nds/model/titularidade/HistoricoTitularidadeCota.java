@@ -57,14 +57,14 @@ public class HistoricoTitularidadeCota implements Serializable {
      * Início da titularidade para a cota
      */
     @Temporal(TemporalType.DATE)
-    @Column(name = "INICIO", nullable = false)
+    @Column(name = "INICIO_TITULARIDADE", nullable = false)
     private Date inicio;
 
     /**
      * Fim da titularidade para a cota
      */
     @Temporal(TemporalType.DATE)
-    @Column(name = "FIM", nullable = false)
+    @Column(name = "FIM_TITULARIDADE", nullable = false)
     private Date fim;
 
     /**
@@ -74,7 +74,7 @@ public class HistoricoTitularidadeCota implements Serializable {
     private Integer numeroCota;
 
     /**
-     * Situacao de cadastro da cota na alteração da titularidade
+     * Situação do cadastro da cota na alteração da titularidade
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "SITUACAO_CADASTRO", nullable = false)
@@ -87,31 +87,38 @@ public class HistoricoTitularidadeCota implements Serializable {
     private String email;
 
     /**
-     * Pessoa física titular da cota
+     * Pessoa Física titular da cota do histórico de titularidade 
      */
     @Embedded
-    private HistoricoTitularidadePessoaFisica pessoaFisica;
+    private HistoricoTitularidadeCotaPessoaFisica pessoaFisica;
 
     /**
-     * Pessoa Jurídica titular da cota
+     * Pessoa Jurídica titular da cota do histórico de titularidade 
      */
     @Embedded
-    private HistoricoTitularidadePessoaJuridica pessoaJuridica;
+    private HistoricoTitularidadeCotaPessoaJuridica pessoaJuridica;
 
+    /**
+     * Expectativa de faturamento da cota do histórico de titularidade 
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "CLASSIFICACAO_EXPECTATIVA_FATURAMENTO")
     private ClassificacaoEspectativaFaturamento classificacaoExpectativaFaturamento;
 
     /**
-     * Endereços da titularidade da cota
+     * Endereços do histórico de titularidade 
      */
-    @OneToMany(mappedBy = "historicoTitularidadeCota")
+    @ElementCollection
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_ENDERECO", 
+        joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID") })
     private Collection<HistoricoTitularidadeCotaEndereco> enderecos;
 
     /**
-     * Telefones da titularidade da cota
+     * Telefones do histórico de titularidade 
      */
-    @OneToMany(mappedBy = "historicoTitularidadeCota")
+    @ElementCollection
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_TELEFONE", 
+        joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID") })
     private Collection<HistoricoTitularidadeCotaTelefone> telefones;
 
     /**
@@ -128,47 +135,55 @@ public class HistoricoTitularidadeCota implements Serializable {
     private Collection<HistoricoTitularidadeCotaPDV> pdvs;
 
     /**
-     * Garantias da cota
+     * Garantias da cota no histórico de titularidade 
      */
     @OneToMany(mappedBy = "historicoTitularidadeCota", cascade = { CascadeType.ALL })
     private Collection<HistoricoTitularidadeCotaGarantia> garantias;
 
     /**
-     * Início do período base para cota
+     * Início do período base para cota no histórico de titularidade 
      */
     @Temporal(TemporalType.DATE)
     @Column(name = "INICIO_PERIODO_COTA_BASE")
     private Date inicioPeriodoCotaBase;
 
     /**
-     * Fim do período base para a cota
+     * Fim do período base para a cota no histórico de titularidade 
      */
     @Temporal(TemporalType.DATE)
     @Column(name = "FIM_PERIODO_COTA_BASE")
     private Date fimPeriodoCotaBase;
 
     /**
-     * Cotas utilizadas como referência
+     * Cotas utilizadas como referência no histórico de titularidade 
      */
     @ElementCollection
-    @CollectionTable(name = "HISTORICO_TITULARIDADE_REFERENCIA_COTA", joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID") })
-    private Collection<HistoricoTitularidadeReferenciaCota> referencias;
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_REFERENCIA_COTA", 
+        joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID") })
+    private Collection<HistoricoTitularidadeCotaReferenciaCota> referencias;
 
     /**
-     * Informações de desconto do histórico de titularidade da cota
+     * Informações de desconto do histórico de titularidade 
      */
     @OneToMany(mappedBy = "historicoTitularidadeCota", cascade = { CascadeType.ALL })
-    private Collection<HistoricoTitularidadeDescontoCota> descontos;
+    private Collection<HistoricoTitularidadeCotaDesconto> descontos;
     
     @OneToOne
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FINANCEIRO_ID")
     private HistoricoTitularidadeCotaFinanceiro financeiro;
     
     /**
-     * Parâmetros de distribuição do histórico de titularidade da cota
+     * Parâmetros de distribuição do histórico de titularidade
      */
     @Embedded
     private HistoricoTitularidadeCotaDistribuicao distribuicao;
+    
+    /**
+     * Sócios da cota do histórico de titularidade
+     */
+    @OneToMany
+    @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
+    private Collection<HistoricoTitularidadeCotaSocio> socios;
 
     /**
      * @return the id
@@ -278,7 +293,7 @@ public class HistoricoTitularidadeCota implements Serializable {
     /**
      * @return the pessoaFisica
      */
-    public HistoricoTitularidadePessoaFisica getPessoaFisica() {
+    public HistoricoTitularidadeCotaPessoaFisica getPessoaFisica() {
         return pessoaFisica;
     }
 
@@ -286,14 +301,14 @@ public class HistoricoTitularidadeCota implements Serializable {
      * @param pessoaFisica
      *            the pessoaFisica to set
      */
-    public void setPessoaFisica(HistoricoTitularidadePessoaFisica pessoaFisica) {
+    public void setPessoaFisica(HistoricoTitularidadeCotaPessoaFisica pessoaFisica) {
         this.pessoaFisica = pessoaFisica;
     }
 
     /**
      * @return the pessoaJuridica
      */
-    public HistoricoTitularidadePessoaJuridica getPessoaJuridica() {
+    public HistoricoTitularidadeCotaPessoaJuridica getPessoaJuridica() {
         return pessoaJuridica;
     }
 
@@ -302,7 +317,7 @@ public class HistoricoTitularidadeCota implements Serializable {
      *            the pessoaJuridica to set
      */
     public void setPessoaJuridica(
-            HistoricoTitularidadePessoaJuridica pessoaJuridica) {
+            HistoricoTitularidadeCotaPessoaJuridica pessoaJuridica) {
         this.pessoaJuridica = pessoaJuridica;
     }
 
@@ -434,7 +449,7 @@ public class HistoricoTitularidadeCota implements Serializable {
     /**
      * @return the referencias
      */
-    public Collection<HistoricoTitularidadeReferenciaCota> getReferencias() {
+    public Collection<HistoricoTitularidadeCotaReferenciaCota> getReferencias() {
         return referencias;
     }
 
@@ -443,14 +458,14 @@ public class HistoricoTitularidadeCota implements Serializable {
      *            the referencias to set
      */
     public void setReferencias(
-            Collection<HistoricoTitularidadeReferenciaCota> referencias) {
+            Collection<HistoricoTitularidadeCotaReferenciaCota> referencias) {
         this.referencias = referencias;
     }
 
     /**
      * @return the descontos
      */
-    public Collection<HistoricoTitularidadeDescontoCota> getDescontos() {
+    public Collection<HistoricoTitularidadeCotaDesconto> getDescontos() {
         return descontos;
     }
 
@@ -459,7 +474,7 @@ public class HistoricoTitularidadeCota implements Serializable {
      *            the descontos to set
      */
     public void setDescontos(
-            Collection<HistoricoTitularidadeDescontoCota> descontos) {
+            Collection<HistoricoTitularidadeCotaDesconto> descontos) {
         this.descontos = descontos;
     }
 
@@ -489,6 +504,20 @@ public class HistoricoTitularidadeCota implements Serializable {
      */
     public void setDistribuicao(HistoricoTitularidadeCotaDistribuicao distribuicao) {
         this.distribuicao = distribuicao;
+    }
+
+    /**
+     * @return the socios
+     */
+    public Collection<HistoricoTitularidadeCotaSocio> getSocios() {
+        return socios;
+    }
+
+    /**
+     * @param socios the socios to set
+     */
+    public void setSocios(Collection<HistoricoTitularidadeCotaSocio> socios) {
+        this.socios = socios;
     }
 
 }

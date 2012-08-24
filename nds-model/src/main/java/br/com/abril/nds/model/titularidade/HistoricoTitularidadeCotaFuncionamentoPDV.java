@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -12,23 +13,34 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 
 /**
- * Representa a o período de funcionamento do pdv, utilizado para armazenamento
+ * Representa a o período de funcionamento do PDV, utilizado para armazenamento
  * das informações do PDV no histórico de titularidade da cota
  * 
  * @author francisco.garcia
  * 
  */
 @Embeddable
-public class HistoricoTitularidadeFuncionamentoPDV {
+public class HistoricoTitularidadeCotaFuncionamentoPDV implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Tipo do período de funcionamento
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "FUNCIONAMENTO_PDV")
     private TipoPeriodoFuncionamentoPDV tipoPeriodoFuncionamentoPDV;
     
+    /**
+     * Horário de início do funcionamento
+     */
     @Temporal(TemporalType.TIME)
     @Column(name = "HORARIO_INICIO")
     private Date horarioInicio;
     
+    /**
+     * Horário de fim de funcionamento
+     */
     @Temporal(TemporalType.TIME)
     @Column(name = "HORARIO_FIM")
     private Date horarioFim;

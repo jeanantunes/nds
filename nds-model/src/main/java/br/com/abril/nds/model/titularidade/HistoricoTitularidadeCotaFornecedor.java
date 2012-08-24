@@ -10,15 +10,21 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+/**
+ * Representa o fornecedor no histórico de titularidade da cota
+ * 
+ * @author francisco.garcia
+ * 
+ */
 @Entity
 @Table(name = "HISTORICO_TITULARIDADE_COTA_FORNECEDOR")
-@SequenceGenerator(name="HIST_TIT_FORN_SEQ", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name="HIST_TIT_COTA_FORN_SEQ", initialValue = 1, allocationSize = 1)
 public class HistoricoTitularidadeCotaFornecedor implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "HIST_TIT_FORN_SEQ")
+    @GeneratedValue(generator = "HIST_TIT_COTA_FORN_SEQ")
     @Column(name = "ID")
     private Long id;
     
@@ -32,7 +38,7 @@ public class HistoricoTitularidadeCotaFornecedor implements Serializable {
      * Pessoa Jurídica que corresponde ao fornecedor
      */
     @Embedded
-    private HistoricoTitularidadePessoaJuridica pessoaJuridica;
+    private HistoricoTitularidadeCotaPessoaJuridica pessoaJuridica;
 
     /**
      * @return the id
@@ -65,14 +71,14 @@ public class HistoricoTitularidadeCotaFornecedor implements Serializable {
     /**
      * @return the pessoaJuridica
      */
-    public HistoricoTitularidadePessoaJuridica getPessoaJuridica() {
+    public HistoricoTitularidadeCotaPessoaJuridica getPessoaJuridica() {
         return pessoaJuridica;
     }
 
     /**
      * @param pessoaJuridica the pessoaJuridica to set
      */
-    public void setPessoaJuridica(HistoricoTitularidadePessoaJuridica pessoaJuridica) {
+    public void setPessoaJuridica(HistoricoTitularidadeCotaPessoaJuridica pessoaJuridica) {
         this.pessoaJuridica = pessoaJuridica;
     }
 

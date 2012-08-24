@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -9,24 +10,36 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * Representa a garantia do tipo "NOTA PROMISSORIA" no histórico de
- * titularidade da cota
+ * Representa a garantia do tipo "NOTA PROMISSORIA" no histórico de titularidade
+ * da cota
  * 
  * @author francisco.garcia
  * 
  */
 @Entity
 @DiscriminatorValue("NOTA_PROMISSORIA")
-public class HistoricoTitularidadeCotaNotaPromissoria extends HistoricoTitularidadeCotaGarantia {
-    
+public class HistoricoTitularidadeCotaNotaPromissoria extends
+        HistoricoTitularidadeCotaGarantia {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Vencimento da nota promissória
+     */
     @Temporal(TemporalType.DATE)
-    @Column(name="NOTA_PROMISSORIA_VENCIMENTO", nullable=false)
+    @Column(name = "NOTA_PROMISSORIA_VENCIMENTO", nullable = false)
     private Date vencimento;
-    
-    @Column(name="NOTA_PROMISSORIA_VALOR", nullable=false)
-    private Double valor;
-    
-    @Column(name="NOTA_PROMISSORIA_VALOR_EXTENSO", nullable=false)
+
+    /**
+     * Valor da nota promissória
+     */
+    @Column(name = "NOTA_PROMISSORIA_VALOR", nullable = false)
+    private BigDecimal valor;
+
+    /**
+     * Valor da nota promissória por extenso
+     */
+    @Column(name = "NOTA_PROMISSORIA_VALOR_EXTENSO", nullable = false)
     private String valorExtenso;
 
     /**
@@ -37,7 +50,8 @@ public class HistoricoTitularidadeCotaNotaPromissoria extends HistoricoTitularid
     }
 
     /**
-     * @param vencimento the vencimento to set
+     * @param vencimento
+     *            the vencimento to set
      */
     public void setVencimento(Date vencimento) {
         this.vencimento = vencimento;
@@ -46,14 +60,15 @@ public class HistoricoTitularidadeCotaNotaPromissoria extends HistoricoTitularid
     /**
      * @return the valor
      */
-    public Double getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
     /**
-     * @param valor the valor to set
+     * @param valor
+     *            the valor to set
      */
-    public void setValor(Double valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 
@@ -65,7 +80,8 @@ public class HistoricoTitularidadeCotaNotaPromissoria extends HistoricoTitularid
     }
 
     /**
-     * @param valorExtenso the valorExtenso to set
+     * @param valorExtenso
+     *            the valorExtenso to set
      */
     public void setValorExtenso(String valorExtenso) {
         this.valorExtenso = valorExtenso;

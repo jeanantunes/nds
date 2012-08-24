@@ -10,8 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
 /**
- * Representa a garantia do tipo "FIADOR" no histórico de
- * titularidade da cota
+ * Representa a garantia do tipo "FIADOR" no histórico de titularidade da cota
  * 
  * @author francisco.garcia
  * 
@@ -20,22 +19,39 @@ import javax.persistence.JoinColumn;
 @DiscriminatorValue("FIADOR")
 public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGarantia{
     
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Nome do fiador
+     */
     @Column(name = "FIADOR_NOME")
     private String nome;
     
+    /**
+     * CPF/CNPJ do fiador
+     */
     @Column(name = "FIADOR_CPF_CNPJ")
     private String cpfCnpj;
     
+    /**
+     * Endereço do fiador
+     */
     @Column(name = "FIADOR_ENDERECO")
     private String endereco;
     
+    /**
+     * Telefone do fiador
+     */
     @Column(name = "FIADOR_TELEFONE")
     private String telefone;
     
+    /**
+     * Garantias do fiador
+     */
     @ElementCollection
-    @CollectionTable(name = "HISTORICO_TITULARIDADE_FIADOR_GARANTIA", 
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_FIADOR_GARANTIA", 
         joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FIADOR_ID")})
-    private Collection<HistoricoTitularidadeFiadorGarantia> garantias;
+    private Collection<HistoricoTitularidadeCotaFiadorGarantia> garantias;
 
 
     /**
@@ -97,14 +113,14 @@ public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGa
     /**
      * @return the garantias
      */
-    public Collection<HistoricoTitularidadeFiadorGarantia> getGarantias() {
+    public Collection<HistoricoTitularidadeCotaFiadorGarantia> getGarantias() {
         return garantias;
     }
 
     /**
      * @param garantias the garantias to set
      */
-    public void setGarantias(Collection<HistoricoTitularidadeFiadorGarantia> garantias) {
+    public void setGarantias(Collection<HistoricoTitularidadeCotaFiadorGarantia> garantias) {
         this.garantias = garantias;
     }
     

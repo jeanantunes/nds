@@ -1,64 +1,284 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 
 /**
- * Endereço do histórico de titularidade
- * da cota
+ * Entidade para os endereços utilizados no histórico de titularidade da cota
  * 
  * @author francisco.garcia
- *
+ * 
  */
-@Entity
-@Table(name = "HISTORICO_TITULARIDADE_COTA_ENDERECO")
-@SequenceGenerator(name="HIST_TIT_COTA_ENDERECO_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoTitularidadeCotaEndereco extends HistoricoTitularidadeEndereco{
+@Embeddable
+public class HistoricoTitularidadeCotaEndereco implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(generator = "HIST_TIT_COTA_ENDERECO_SEQ")
-    @Column(name = "ID")
-    private Long id;
+    /**
+     * Código do bairro
+     */
+    @Column(name = "ENDERECO_CODIGO_BAIRRO")
+    private Integer codigoBairro;
+
+    /**
+     * Bairro do endereço
+     */
+    @Column(name = "ENDERECO_BAIRRO", length = 60)
+    private String bairro;
+
+    /**
+     * Cep do endereço
+     */
+    @Column(name = "ENDERECO_CEP", length = 9)
+    private String cep;
+
+    /**
+     * Código da cidade IBGE
+     */
+    @Column(name = "ENDERECO_CODIGO_CIDADE_IBGE", length = 7)
+    private Integer codigoCidadeIBGE;
+
+    /**
+     * Cidade do endereço
+     */
+    @Column(name = "ENDERECO_CIDADE", length = 60)
+    private String cidade;
+
+    /**
+     * Complemento do endereço
+     */
+    @Column(name = "ENDERECO_COMPLEMENTO", length = 60)
+    private String complemento;
+
+    /**
+     * Tipo do logradouro do endereço
+     */
+    @Column(name = "ENDERECO_TIPO_LOGRADOURO")
+    private String tipoLogradouro;
+
+    /**
+     * Logradouro do endereço 
+     */
+    @Column(name = "ENDERECO_LOGRADOURO", length = 60)
+    private String logradouro;
+
+    /**
+     * Número do endereço
+     */
+    @Column(name = "ENDERECO_NUMERO", length = 60)
+    private String numero;
+
+    /**
+     * UF do endereço
+     */
+    @Column(name = "ENDERECO_UF", length = 2)
+    private String uf;
+
+    /**
+     * Código da UF do endereço
+     */
+    @Column(name = "ENDERECO_CODIGO_UF", length = 2)
+    private Integer codigoUf;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
-    private HistoricoTitularidadeCota historicoTitularidadeCota;
+    /**
+     * Tipo do endereço
+     */
+    @Column(name = "ENDERECO_TIPO_ENDERECO", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TipoEndereco tipoEndereco;
+   
+    /**
+     * Flag indicando se é o endereço principal
+     */
+    @Column(name = "ENDERECO_PRINCIPAL", nullable = false)
+    private boolean principal;
 
     /**
-     * @return the id
+     * @return the codigoBairro
      */
-    public Long getId() {
-        return id;
+    public Integer getCodigoBairro() {
+        return codigoBairro;
     }
 
     /**
-     * @param id the id to set
+     * @param codigoBairro the codigoBairro to set
      */
-    public void setId(Long id) {
-        this.id = id;
+    public void setCodigoBairro(Integer codigoBairro) {
+        this.codigoBairro = codigoBairro;
     }
 
     /**
-     * @return the historicoTitularidadeCota
+     * @return the bairro
      */
-    public HistoricoTitularidadeCota getHistoricoTitularidadeCota() {
-        return historicoTitularidadeCota;
+    public String getBairro() {
+        return bairro;
     }
 
     /**
-     * @param historicoTitularidadeCota the historicoTitularidadeCota to set
+     * @param bairro the bairro to set
      */
-    public void setHistoricoTitularidadeCota(
-            HistoricoTitularidadeCota historicoTitularidadeCota) {
-        this.historicoTitularidadeCota = historicoTitularidadeCota;
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
+    }
+
+    /**
+     * @return the cep
+     */
+    public String getCep() {
+        return cep;
+    }
+
+    /**
+     * @param cep the cep to set
+     */
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    /**
+     * @return the codigoCidadeIBGE
+     */
+    public Integer getCodigoCidadeIBGE() {
+        return codigoCidadeIBGE;
+    }
+
+    /**
+     * @param codigoCidadeIBGE the codigoCidadeIBGE to set
+     */
+    public void setCodigoCidadeIBGE(Integer codigoCidadeIBGE) {
+        this.codigoCidadeIBGE = codigoCidadeIBGE;
+    }
+
+    /**
+     * @return the cidade
+     */
+    public String getCidade() {
+        return cidade;
+    }
+
+    /**
+     * @param cidade the cidade to set
+     */
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    /**
+     * @return the complemento
+     */
+    public String getComplemento() {
+        return complemento;
+    }
+
+    /**
+     * @param complemento the complemento to set
+     */
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    /**
+     * @return the tipoLogradouro
+     */
+    public String getTipoLogradouro() {
+        return tipoLogradouro;
+    }
+
+    /**
+     * @param tipoLogradouro the tipoLogradouro to set
+     */
+    public void setTipoLogradouro(String tipoLogradouro) {
+        this.tipoLogradouro = tipoLogradouro;
+    }
+
+    /**
+     * @return the logradouro
+     */
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    /**
+     * @param logradouro the logradouro to set
+     */
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
+    }
+
+    /**
+     * @return the numero
+     */
+    public String getNumero() {
+        return numero;
+    }
+
+    /**
+     * @param numero the numero to set
+     */
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    /**
+     * @return the uf
+     */
+    public String getUf() {
+        return uf;
+    }
+
+    /**
+     * @param uf the uf to set
+     */
+    public void setUf(String uf) {
+        this.uf = uf;
+    }
+
+    /**
+     * @return the codigoUf
+     */
+    public Integer getCodigoUf() {
+        return codigoUf;
+    }
+
+    /**
+     * @param codigoUf the codigoUf to set
+     */
+    public void setCodigoUf(Integer codigoUf) {
+        this.codigoUf = codigoUf;
+    }
+
+    /**
+     * @return the tipoEndereco
+     */
+    public TipoEndereco getTipoEndereco() {
+        return tipoEndereco;
+    }
+
+    /**
+     * @param tipoEndereco the tipoEndereco to set
+     */
+    public void setTipoEndereco(TipoEndereco tipoEndereco) {
+        this.tipoEndereco = tipoEndereco;
+    }
+
+    /**
+     * @return the principal
+     */
+    public boolean isPrincipal() {
+        return principal;
+    }
+
+    /**
+     * @param principal the principal to set
+     */
+    public void setPrincipal(boolean principal) {
+        this.principal = principal;
     }
 
 }

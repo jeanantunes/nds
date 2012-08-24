@@ -1,66 +1,104 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import br.com.abril.nds.model.cadastro.TipoTelefone;
 
 /**
- * Telefone do histórico de titularidade da cota
+ * Entidade para os telefones utilizados no histórico de titularidade da cota
  * 
  * @author francisco.garcia
  * 
  */
-@Entity
-@Table(name = "HISTORICO_TITULARIDADE_COTA_TELEFONE")
-@SequenceGenerator(name = "HIST_TIT_COTA_TELEFONE_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoTitularidadeCotaTelefone extends
-        HistoricoTitularidadeTelefone {
+@Embeddable
+public class HistoricoTitularidadeCotaTelefone implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(generator = "HIST_TIT_COTA_TELEFONE_SEQ")
-    @Column(name = "ID")
-    private Long id;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
-    private HistoricoTitularidadeCota historicoTitularidadeCota;
+    
+    /**
+     * Número do telefone
+     */
+    @Column(name = "TELEFONE_NUMERO", nullable = false)
+    private String numero;
+    
+    /**
+     * Ramal do telefone
+     */
+    @Column(name = "TELEFONE_RAMAL")
+    private String ramal;
+    
+    /**
+     * Tipo do telefone
+     */
+    @Column(name = "TELEFONE_TIPO_TELEFONE", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TipoTelefone tipoTelefone;
+    
+    /**
+     * Flag indicando se este é o telefone principal
+     */
+    @Column(name = "TELEFONE_PRINCIPAL", nullable = false)
+    private boolean principal;
 
     /**
-     * @return the id
+     * @return the numero
      */
-    public Long getId() {
-        return id;
+    public String getNumero() {
+        return numero;
     }
 
     /**
-     * @param id
-     *            the id to set
+     * @param numero the numero to set
      */
-    public void setId(Long id) {
-        this.id = id;
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     /**
-     * @return the historicoTitularidadeCota
+     * @return the ramal
      */
-    public HistoricoTitularidadeCota getHistoricoTitularidadeCota() {
-        return historicoTitularidadeCota;
+    public String getRamal() {
+        return ramal;
     }
 
     /**
-     * @param historicoTitularidadeCota
-     *            the historicoTitularidadeCota to set
+     * @param ramal the ramal to set
      */
-    public void setHistoricoTitularidadeCota(
-            HistoricoTitularidadeCota historicoTitularidadeCota) {
-        this.historicoTitularidadeCota = historicoTitularidadeCota;
+    public void setRamal(String ramal) {
+        this.ramal = ramal;
+    }
+
+    /**
+     * @return the tipoTelefone
+     */
+    public TipoTelefone getTipoTelefone() {
+        return tipoTelefone;
+    }
+
+    /**
+     * @param tipoTelefone the tipoTelefone to set
+     */
+    public void setTipoTelefone(TipoTelefone tipoTelefone) {
+        this.tipoTelefone = tipoTelefone;
+    }
+
+    /**
+     * @return the principal
+     */
+    public boolean isPrincipal() {
+        return principal;
+    }
+
+    /**
+     * @param principal the principal to set
+     */
+    public void setPrincipal(boolean principal) {
+        this.principal = principal;
     }
 
 }

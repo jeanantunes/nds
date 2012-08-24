@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.CollectionTable;
@@ -18,34 +19,45 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 /**
- * Representa a concentração de cobrança
- * no histórico de titularidade da cota
+ * Representa a concentração de cobrança no histórico de titularidade da cota
  * 
  * 
  * @author francisco.garcia
- *
+ * 
  */
 @Entity
-@Table(name = "HISTORICO_TITULARIDADE_CONCENTRACAO_COBRANCA")
-@SequenceGenerator(name = "HIST_TIT_CONCENTRACAO_COBRANCA_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoTitularidadeConcentracaoCobranca {
+@Table(name = "HISTORICO_TITULARIDADE_COTA_CONCENTRACAO_COBRANCA")
+@SequenceGenerator(name = "HIST_TIT_COTA_CONCENTRACAO_COBRANCA_SEQ", initialValue = 1, allocationSize = 1)
+public class HistoricoTitularidadeCotaConcentracaoCobranca implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(generator = "HIST_TIT_CONCENTRACAO_COBRANCA_SEQ")
+    @GeneratedValue(generator = "HIST_TIT_COTA_CONCENTRACAO_COBRANCA_SEQ")
+    @Column(name = "ID")
     private Long id;
     
+    /**
+     * Tipo de periodiciodade da cobrança
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "TIPO_FORMA_COBRANCA", nullable = false)
     private TipoFormaCobranca tipoFormaCobranca;
     
+    /**
+     * Dias da semana para cobrança
+     */
     @ElementCollection
-    @CollectionTable(name = "HISTORICO_TITULARIDADE_CONCENTRACAO_COBRANCA_DIA_SEMANA", 
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_CONCENTRACAO_COBRANCA_DIA_SEMANA", 
         joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_CONCENTRACAO_COBRANCA_ID")})
     @Column(name = "DIA_SEMANA")
     private Collection<DiaSemana> diasSemana;
     
+    /**
+     * Dias do mês para cobrança
+     */
     @ElementCollection
-    @CollectionTable(name = "HISTORICO_TITULARIDADE_CONCENTRACAO_COBRANCA_DIA_MES", 
+    @CollectionTable(name = "HISTORICO_TITULARIDADE_COTA_CONCENTRACAO_COBRANCA_DIA_MES", 
         joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_CONCENTRACAO_COBRANCA_ID")})
     @Column(name = "DIA_MES")
     private Collection<Integer> diasMes;

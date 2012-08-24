@@ -10,8 +10,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * Representa a garantia do tipo "CAUCAO LIQUIDA" no histórico de
- * titularidade da cota
+ * Representa a garantia do tipo "CAUCAO LIQUIDA" no histórico de titularidade
+ * da cota
  * 
  * @author francisco.garcia
  * 
@@ -20,13 +20,24 @@ import javax.persistence.TemporalType;
 @DiscriminatorValue("CAUCAO_LIQUIDA")
 public class HistoricoTitularidadeCotaCaucaoLiquida extends HistoricoTitularidadeCotaGarantia {
     
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Valor da caução líquida
+     */
     @Column(name="CAUCAO_LIQUIDA_VALOR")
     private BigDecimal valor;
     
+    /**
+     * Data da última atualização
+     */
     @Column(name="CAUCAO_LIQUIDA_DATA_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date atualizacao;
     
+    /**
+     * Índice de reajuste
+     */
     @Column(name="CAUCAO_LIQUIDA_INDICE_REAJUSTE")
     private BigDecimal indiceReajuste;
 

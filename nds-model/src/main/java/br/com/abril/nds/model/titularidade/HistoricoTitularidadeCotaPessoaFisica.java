@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -13,80 +14,81 @@ import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Sexo;
 
 /**
- * Representa a pessoa física que detém a titularidade da cota em um determinado
- * período
+ * Representa a Pessoa Física no histórico de titularidade da cota
  * 
  * @author francisco.garcia
  * 
  */
 @Embeddable
-public class HistoricoTitularidadePessoaFisica {
+public class HistoricoTitularidadeCotaPessoaFisica implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Nome do titular
+     * Nome da pessoa
      */
     @Column(name = "NOME")
     private String nome;
 
     /**
-     * CPF do titular
+     * CPF da pessoa
      */
     @Column(name = "CPF")
     private String cpf;
 
     /**
-     * RG do titular
+     * RG da pessoa
      */
     @Column(name = "RG")
     private String rg;
 
     /**
-     * Orgão emissor do RG do titular
+     * Orgão emissor do RG da pessoa
      */
     @Column(name = "ORGAO_EMISSOR")
     private String orgaoEmissor;
 
     /**
-     * UF do orgão emissor do RG do titular
+     * UF do orgão emissor do RG da pessoa
      */
     @Column(name = "UF_ORGAO_EMISSOR")
     private String ufOrgaoEmissor;
 
     /**
-     * Data de nascimento do titular da cota
+     * Data de nascimento da pessoa
      */
     @Column(name = "DATA_NASCIMENTO")
     @Temporal(TemporalType.DATE)
     private Date dataNascimento;
 
-   /**
-    * Estado civil do titular da cota
-    */
+    /**
+     * Estado civil da pessoa
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "ESTADO_CIVIL")
     private EstadoCivil estadoCivil;
 
     /**
-     * Sexo do titular da cota
+     * Sexo da pessoa
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "SEXO")
     private Sexo sexo;
 
     /**
-     * Nacionalidade do titular da cota
+     * Nacionalidade da pessoa
      */
     @Column(name = "NACIONALIDADE")
     private String nacionalidade;
 
     /**
-     * Naturalidade do titular da cota
+     * Naturalidade da pessoa
      */
     @Column(name = "NATURALIDADE")
     private String natural;
 
     /**
-     * Apelido do titular da cota
+     * Apelido da pessoa
      */
     @Column(name = "APELIDO", length = 25)
     private String apelido;
@@ -99,7 +101,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param nome the nome to set
+     * @param nome
+     *            the nome to set
      */
     public void setNome(String nome) {
         this.nome = nome;
@@ -113,7 +116,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param cpf the cpf to set
+     * @param cpf
+     *            the cpf to set
      */
     public void setCpf(String cpf) {
         this.cpf = cpf;
@@ -127,7 +131,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param rg the rg to set
+     * @param rg
+     *            the rg to set
      */
     public void setRg(String rg) {
         this.rg = rg;
@@ -141,7 +146,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param orgaoEmissor the orgaoEmissor to set
+     * @param orgaoEmissor
+     *            the orgaoEmissor to set
      */
     public void setOrgaoEmissor(String orgaoEmissor) {
         this.orgaoEmissor = orgaoEmissor;
@@ -155,7 +161,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param ufOrgaoEmissor the ufOrgaoEmissor to set
+     * @param ufOrgaoEmissor
+     *            the ufOrgaoEmissor to set
      */
     public void setUfOrgaoEmissor(String ufOrgaoEmissor) {
         this.ufOrgaoEmissor = ufOrgaoEmissor;
@@ -169,7 +176,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param dataNascimento the dataNascimento to set
+     * @param dataNascimento
+     *            the dataNascimento to set
      */
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
@@ -183,7 +191,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param estadoCivil the estadoCivil to set
+     * @param estadoCivil
+     *            the estadoCivil to set
      */
     public void setEstadoCivil(EstadoCivil estadoCivil) {
         this.estadoCivil = estadoCivil;
@@ -197,7 +206,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param sexo the sexo to set
+     * @param sexo
+     *            the sexo to set
      */
     public void setSexo(Sexo sexo) {
         this.sexo = sexo;
@@ -211,7 +221,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param nacionalidade the nacionalidade to set
+     * @param nacionalidade
+     *            the nacionalidade to set
      */
     public void setNacionalidade(String nacionalidade) {
         this.nacionalidade = nacionalidade;
@@ -225,7 +236,8 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param natural the natural to set
+     * @param natural
+     *            the natural to set
      */
     public void setNatural(String natural) {
         this.natural = natural;
@@ -239,11 +251,11 @@ public class HistoricoTitularidadePessoaFisica {
     }
 
     /**
-     * @param apelido the apelido to set
+     * @param apelido
+     *            the apelido to set
      */
     public void setApelido(String apelido) {
         this.apelido = apelido;
     }
-    
 
 }

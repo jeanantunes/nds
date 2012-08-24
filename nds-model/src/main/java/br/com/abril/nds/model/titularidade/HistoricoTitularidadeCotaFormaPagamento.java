@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.Column;
@@ -17,39 +18,53 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+
 /**
- * Representa as formas de pagamento no histórico de titularidade
- * da cota
+ * Representa as formas de pagamento no histórico de titularidade da cota
  * 
  * @author francisco.garcia
- *
+ * 
  */
 @Entity
-@Table(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO")
-@SequenceGenerator(name = "HIST_TIT_FORMA_PAGAMENTO_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoTitularidadeFormaPagamento {
+@Table(name = "HISTORICO_TITULARIDADE_COTA_FORMA_PAGAMENTO")
+@SequenceGenerator(name = "HIST_TIT_COTA_FORMA_PAGAMENTO_SEQ", initialValue = 1, allocationSize = 1)
+public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(generator = "HIST_TIT_FORMA_PAGAMENTO_SEQ")
+    @GeneratedValue(generator = "HIST_TIT_COTA_FORMA_PAGAMENTO_SEQ")
     @Column(name = "ID")
     private Long id;
     
+    /**
+     * Fornecedores associados à forma de pagamento
+     */
     @ManyToMany
-    @JoinTable(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_FORNECEDOR", 
+    @JoinTable(name = "HISTORICO_TITULARIDADE_COTA_FORMA_PAGAMENTO_FORNECEDOR", 
         joinColumns = {@JoinColumn(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_ID")}, 
         inverseJoinColumns = {@JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FORNECEDOR_ID")})
     private Collection<HistoricoTitularidadeCotaFornecedor> fornecedores;
     
+    /**
+     * Tipo de pagamento
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "TIPO_COBRANCA", nullable = false)
     private TipoCobranca tipoCobranca;
     
+    /**
+     * Banco associado a forma de pagamento
+     */
     @Embedded
-    private HistoricoTitularidadeBanco banco;
+    private HistoricoTitularidadeCotaBanco banco;
     
+    /**
+     * Concentrações de pagamento
+     */
     @OneToMany
     @JoinColumn(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_ID")
-    private Collection<HistoricoTitularidadeConcentracaoCobranca> concentracoesCobranca;
+    private Collection<HistoricoTitularidadeCotaConcentracaoCobranca> concentracoesCobranca;
 
     /**
      * @return the id
@@ -97,21 +112,21 @@ public class HistoricoTitularidadeFormaPagamento {
     /**
      * @return the banco
      */
-    public HistoricoTitularidadeBanco getBanco() {
+    public HistoricoTitularidadeCotaBanco getBanco() {
         return banco;
     }
 
     /**
      * @param banco the banco to set
      */
-    public void setBanco(HistoricoTitularidadeBanco banco) {
+    public void setBanco(HistoricoTitularidadeCotaBanco banco) {
         this.banco = banco;
     }
 
     /**
      * @return the concentracoesCobranca
      */
-    public Collection<HistoricoTitularidadeConcentracaoCobranca> getConcentracoesCobranca() {
+    public Collection<HistoricoTitularidadeCotaConcentracaoCobranca> getConcentracoesCobranca() {
         return concentracoesCobranca;
     }
 
@@ -119,10 +134,8 @@ public class HistoricoTitularidadeFormaPagamento {
      * @param concentracoesCobranca the concentracoesCobranca to set
      */
     public void setConcentracoesCobranca(
-            Collection<HistoricoTitularidadeConcentracaoCobranca> concentracoesCobranca) {
+            Collection<HistoricoTitularidadeCotaConcentracaoCobranca> concentracoesCobranca) {
         this.concentracoesCobranca = concentracoesCobranca;
     }
-    
-    
 
 }
