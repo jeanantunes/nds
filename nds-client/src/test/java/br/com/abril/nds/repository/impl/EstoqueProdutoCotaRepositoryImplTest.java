@@ -63,7 +63,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	private Lancamento lancamentoVeja1;
 	private Lancamento lancamentoCaras1;
 	
-	@Before
+	//@Before
 	public void setup() {
 		
 		bancoHSBC = Fixture.banco(10L, true, 1, "1010",
@@ -268,16 +268,16 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		List<Long> listaIdProdutoEdicao = new LinkedList<Long>();
 		
-		listaIdProdutoEdicao.add(produtoEdicaoVeja1.getId());
+		listaIdProdutoEdicao.add(1L);
 		
-		listaIdProdutoEdicao.add(produtoEdicaoCaras1.getId());
+		listaIdProdutoEdicao.add(2L);
 		
-		Long idDistribuidor = distribuidor.getId();
+		//Long idDistribuidor = distribuidor.getId();
 		
-		Integer numeroCota = cotaManoel1.getNumeroCota();
+		//Integer numeroCota = cotaManoel1.getNumeroCota();
 		
 		BigDecimal valorTotalReparteCota = 
-				estoqueProdutoCotaRepository.obterValorTotalReparteCota(numeroCota, listaIdProdutoEdicao, idDistribuidor);
+				estoqueProdutoCotaRepository.obterValorTotalReparteCota(123, listaIdProdutoEdicao, 1L);
 		
 		Assert.assertEquals(364, valorTotalReparteCota.intValue());
 		
@@ -287,7 +287,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	public void testObterFaturamentoCota() {
 		Double faturamento = null;
 		
-		faturamento  = estoqueProdutoCotaRepository.obterFaturamentoCota(cotaManoel1.getId());
+		faturamento  = estoqueProdutoCotaRepository.obterFaturamentoCota(123L);
 		
 		Assert.assertTrue(faturamento.equals(108.0));
 		
