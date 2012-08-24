@@ -18,8 +18,9 @@ public interface DescontoComponent {
 	 * @param cota - cota associada ao fornecedor informado
 	 * @param produtos - produtos candidatos a receberer o desconto
 	 * @param valorDesconto - valor do desconto atribuido aos produtos
+	 * @param descontoPredominante - desconto predominante
 	 */
-	void persistirDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Set<ProdutoEdicao> produtos, BigDecimal valorDesconto);
+	void persistirDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Set<ProdutoEdicao> produtos, BigDecimal valorDesconto, Boolean descontoPredominante);
 	
 	/**
 	 * Filtra os produtos para atibuição de desconto.

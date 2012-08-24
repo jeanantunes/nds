@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
@@ -54,6 +55,8 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 	private Cota cotaJoao;
 	
 	private ProdutoEdicao produtoEdicaoVeja;
+	
+	private BigDecimal valorDesconto = BigDecimal.TEN;
 	
 	@Before
 	public void setUp() {
@@ -162,6 +165,46 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		this.cotas.add(cotaManoel);
 		this.cotas.add(cotaJoao);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao =
+			Fixture.descontoProdutoEdicao(
+				cotaManoel, this.valorDesconto, fornecedor, produtoEdicaoVeja, TipoDesconto.GERAL);
+		save(descontoProdutoEdicao);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao2 =
+			Fixture.descontoProdutoEdicao(
+				cotaManoel, this.valorDesconto, fornecedor1, produtoEdicaoVeja, TipoDesconto.GERAL);
+		save(descontoProdutoEdicao2);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao3 =
+			Fixture.descontoProdutoEdicao(
+				cotaManoel, this.valorDesconto, fornecedor2, produtoEdicaoVeja, TipoDesconto.GERAL);
+		save(descontoProdutoEdicao3);
+				
+		DescontoProdutoEdicao descontoProdutoEdicao4 =
+			Fixture.descontoProdutoEdicao(
+				cotaManoel, this.valorDesconto, fornecedor3, produtoEdicaoVeja, TipoDesconto.PRODUTO);
+		save(descontoProdutoEdicao4);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao5 =
+			Fixture.descontoProdutoEdicao(
+				cotaJoao, this.valorDesconto, fornecedor, produtoEdicaoVeja, TipoDesconto.GERAL);
+		save(descontoProdutoEdicao5);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao6 =
+			Fixture.descontoProdutoEdicao(
+				cotaJoao, this.valorDesconto, fornecedor1, produtoEdicaoVeja, TipoDesconto.GERAL);
+		save(descontoProdutoEdicao6);
+		
+		DescontoProdutoEdicao descontoProdutoEdicao7 =
+			Fixture.descontoProdutoEdicao(
+				cotaJoao, this.valorDesconto, fornecedor2, produtoEdicaoVeja, TipoDesconto.GERAL);
+		save(descontoProdutoEdicao7);
+				
+		DescontoProdutoEdicao descontoProdutoEdicao8 =
+			Fixture.descontoProdutoEdicao(
+				cotaJoao, this.valorDesconto, fornecedor3, produtoEdicaoVeja, TipoDesconto.PRODUTO);
+		save(descontoProdutoEdicao8);
 	}
 	
 	@Test
@@ -213,9 +256,23 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		BigDecimal valorDesconto = BigDecimal.TEN;
 
-		this.descontoService.processarDescontoProduto(this.produtos, this.cotas, valorDesconto);
+		Boolean descontoPredominante = true;
 		
-		this.processarDescontoProduto(this.produtos, valorDesconto);
+		this.descontoService.processarDescontoProduto(this.produtos, this.cotas, valorDesconto, descontoPredominante);
+		
+		this.processarDescontoProduto(this.produtos, valorDesconto, descontoPredominante);
+	}
+	
+	@Test
+	public void processarDescontoMultiplosProdutosSemPredominancia() {
+		
+		BigDecimal valorDesconto = BigDecimal.ONE;
+
+		Boolean descontoPredominante = false;
+		
+		this.descontoService.processarDescontoProduto(this.produtos, this.cotas, valorDesconto, descontoPredominante);
+		
+		this.processarDescontoProduto(this.produtos, valorDesconto, descontoPredominante);
 	}
 	
 	@Test
@@ -223,17 +280,36 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		BigDecimal valorDesconto = BigDecimal.TEN;
 
-		this.descontoService.processarDescontoProduto(this.produtoEdicaoVeja, valorDesconto);
+		Boolean descontoPredominante = false;
+		
+		this.descontoService.processarDescontoProduto(this.produtoEdicaoVeja, valorDesconto, descontoPredominante);
 		
 		Set<ProdutoEdicao> produtos = new HashSet<ProdutoEdicao>();
 		
 		produtos.add(this.produtoEdicaoVeja);
 		
-		this.processarDescontoProduto(produtos, valorDesconto);
+		this.processarDescontoProduto(produtos, valorDesconto, descontoPredominante);
+	}
+	
+	@Test
+	public void processarDescontoUnicoProdutoSemPredominancia() {
+		
+		BigDecimal valorDesconto = BigDecimal.ONE;
+
+		Boolean descontoPredominante = false;
+	
+		this.descontoService.processarDescontoProduto(this.produtoEdicaoVeja, valorDesconto, descontoPredominante);
+		
+		Set<ProdutoEdicao> produtos = new HashSet<ProdutoEdicao>();
+		
+		produtos.add(this.produtoEdicaoVeja);
+		
+		this.processarDescontoProduto(produtos, valorDesconto, descontoPredominante);
 	}
 	
 	private void processarDescontoProduto(Set<ProdutoEdicao> produtos,
-										  BigDecimal valorDesconto) {
+										  BigDecimal valorDesconto,
+										  Boolean descontoPredominante) {
 	
 		for (ProdutoEdicao produto : produtos) {
 		
@@ -248,7 +324,16 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 			
 			for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
 				
-				Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+				if (descontoPredominante != null && !descontoPredominante
+						&& !descontoProdutoEdicao.getTipoDesconto().equals(TipoDesconto.PRODUTO)) {
+				
+					Assert.assertTrue(
+						descontoProdutoEdicao.getDesconto().compareTo(this.valorDesconto) == 0);
+					
+				} else {
+					
+					Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+				}
 			}
 		}
 	}
@@ -267,7 +352,7 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
 			
-			Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+			Assert.assertTrue(valorDesconto.compareTo(descontoProdutoEdicao.getDesconto()) == 0);
 		}
 	}
 	
@@ -287,7 +372,7 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 			
 			for (DescontoProdutoEdicao descontoProdutoEdicao : descontosProdutoEdicao) {
 				
-				Assert.assertEquals(valorDesconto, descontoProdutoEdicao.getDesconto());
+				Assert.assertTrue(valorDesconto.compareTo(descontoProdutoEdicao.getDesconto()) == 0);
 			}
 		}
 	}
