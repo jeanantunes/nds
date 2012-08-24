@@ -1,11 +1,12 @@
+//@ sourceURL=fiadorjs
 var fiadorController = {
 		fecharModalCadastroFiador: false,
 		addConjuge : false,
 		
 		popupCadastroFiadorCPF:function () {
 			
-			$("#fiadorController-fiadorController-tabSocio").hide();
-			$('#fiadorController-fiadorController-tabs').tabs('select', 0);
+			$("#fiadorController-tabSocio").hide();
+			$('#fiadorController-tabs').tabs('select', 0);
 			
 			$("#fiadorController-cadastroCnpj").hide();
 			$("#fiadorController-cadastroCpf").show();
@@ -72,15 +73,12 @@ var fiadorController = {
 				buttons: {
 					"Confirmar": function() {
 						
-						$.postJSON("<c:url value='/cadastro/fiador/cancelarCadastro'/>", null, 
+						$.postJSON(contextPath + '/cadastro/fiador/cancelarCadastro', null, 
 							function(result){
-							_this.fecharModalCadastroFiador = true;
+								_this.fecharModalCadastroFiador = true;
 								$("#fiadorController-dialog-close").dialog("close");
 								$("#fiadorController-dialog-fiador").dialog("close");
-								$("#fiadorController-dialog-cancelar-cadastro-fiador").dialog("close");
-								$('[name="cpfFiador"]').removeAttr("disabled");
-								$('[name="cpfConjuge"]').removeAttr("disabled");
-								$("#fiadorController-cnpjFiador").removeAttr("disabled");
+								$("#fiadorController-dialog-cancelar-cadastro-fiador").dialog("close");					
 								
 								_this.limparCamposCadastroFiador();
 							}
@@ -113,9 +111,8 @@ var fiadorController = {
 		},
 		
 		exibirGridFiadoresCadastrados:function (){
-			var _this = this;
 			var data = "filtro.nome=" + $("#fiadorController-nomeFiadorPesquisa").val() + "&filtro.cpfCnpj=" + $("#fiadorController-cpfCnpjFiadorPesquisa").val();
-			$.postJSON("<c:url value='/cadastro/fiador/pesquisarFiador'/>", data, 
+			$.postJSON(contextPath + '/cadastro/fiador/pesquisarFiador', data, 
 				function(result){
 					
 					if (result[0].tipoMensagem){
@@ -127,9 +124,9 @@ var fiadorController = {
 							page: result[1].page, total: result[1].total, rows: result[1].rows
 						});
 						
-						$("#fiadorController-gridFiadoresCadastrados").show();
+						$("#fiadorController-gridFiadoresCadastrados,.fiadorController-gridFiadoresCadastrados").show();
 					} else {
-						$("#fiadorController-gridFiadoresCadastrados").hide();
+						$("#fiadorController-gridFiadoresCadastrados,.fiadorController-gridFiadoresCadastrados").hide();
 					}
 				}
 			);
@@ -140,10 +137,10 @@ var fiadorController = {
 			$("#fiadorController-tabs").tabs();
 			
 			$(".fiadorController-pessoasGrid").flexigrid({
-				preProcess: function(){_this.processarResultadoConsultaFiadores();},
+				preProcess: function(data){return _this.processarResultadoConsultaFiadores(data);},
 				dataType : 'json',
 				colModel : [  {
-					display : 'CÃ³digo',
+					display : 'Código',
 					name : 'codigo',
 					width : 60,
 					sortable : true,
@@ -161,7 +158,7 @@ var fiadorController = {
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'RG / InscriÃ§Ã£o Estadual',
+					display : 'RG / Inscrição Estadual',
 					name : 'rg',
 					width : 110,
 					sortable : true,
@@ -179,7 +176,7 @@ var fiadorController = {
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'AÃ§Ã£o',
+					display : 'Ação',
 					name : 'acao',
 					width : 60,
 					sortable : false,
@@ -196,7 +193,7 @@ var fiadorController = {
 				height : 255
 			});
 			
-			$(".fiadorController-pessoasGrid").flexOptions({url: "<c:url value='/cadastro/fiador/pesquisarFiador'/>"});
+			$(".fiadorController-pessoasGrid").flexOptions({url:contextPath + '/cadastro/fiador/pesquisarFiador'});
 			
 			
 			$("#fiadorController-cnpjFiador").mask("99.999.999/9999-99",{completed:function(){_this.buscarPessoaCNPJ(this.val()); }});
@@ -205,12 +202,121 @@ var fiadorController = {
 				   $("#inscricaoEstadualFiador").mask("?##################",{placeholder:" "});
 			});
 			
-			$('[name="cpfFiador"]').mask("999.999.999-99");
-			$('[name="cpfConjuge"]').mask("999.999.999-99");
-			$('[name="dataNascimentoFiadorCpf"]').mask("99/99/9999");
-			$('[name="dataNascimentoConjugeCpf"]').mask("99/99/9999");
-			$('[name="selectUfOrgaoEmiCpf"]').mask("aa");
-			$('[name="selectUfOrgaoEmiConjugeCpf"]').mask("aa");
+			$('#fiadorController-cpfFiador').mask("999.999.999-99",{completed:function(){
+				_this.buscarPessoaCPF(this.value, true);
+			}});	
+			$('#fiadorController-socio-cpfFiador').mask("999.999.999-99",{completed:function(){
+				_this.buscarPessoaCPF(this.value, true);
+			}});
+			$('#fiadorController-cpfConjuge, #fiadorController-socio-cpfFiador').mask("999.999.999-99");
+			$('#fiadorController-dataNascimentoFiadorCpf,#fiadorController-socio-dataNascimentoFiadorCpf').mask("99/99/9999");
+			$('#fiadorController-dataNascimentoConjugeCpf,#fiadorController-socio-dataNascimentoConjugeCpf').mask("99/99/9999");
+			$('#fiadorController-selectUfOrgaoEmiCpf,#fiadorController-socio-selectUfOrgaoEmiConjugeCpf').mask("aa");
+			
+			
+			
+			$(".fiadorController-sociosGrid").flexigrid({
+				preProcess:function(data){return _this.processarResultadoSocios(data);},
+				dataType : 'json',
+				colModel : [  {
+					display : 'Nome',
+					name : 'nome',
+					width : 580,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Principal',
+					name : 'principal',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Ação',
+					name : 'acao',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				}],
+				width : 770,
+				height : 160
+			});
+			
+			$(".fiadorController-cotasAssociadasGrid").flexOptions({url:contextPath + '/cadastro/fiador/pesquisarSociosFiador'});
+			
+			
+			
+			$(".fiadorController-imoveisGrid").flexigrid({
+				preProcess: function(data){return _this.processarResultadoGarantias(data);},
+				dataType : 'json',
+				colModel : [ {
+					display : 'Descrição',
+					name : 'garantia.descricao',
+					width : 510,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Valor R$',
+					name : 'garantia.valor',
+					width : 130,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Ação',
+					name : 'acao',
+					width : 60,
+					sortable : false,
+					align : 'center'
+				} ],
+				width : 770,
+				height : 150,
+				sortname : "garantia.descricao",
+				sortorder : "asc",
+				disableSelect: true
+			});
+			
+			$(".fiadorController-imoveisGrid").flexOptions({url:contextPath + '/cadastro/fiador/obterGarantiasFiador'});
+			
+			$("#fiadorController-garantia-valorGarantia").numeric();
+			$("#fiadorController-garantia-valorGarantia").priceFormat({
+			    centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit: 4
+			});
+			
+			$(".fiadorController-cotasAssociadasGrid").flexigrid({
+				preProcess: function(data){return _this.processarResultadoCotasAssociadas(data);},
+				url: contextPath + '/cadastro/fiador/obterAssociacoesCotaFiador',
+				dataType : 'json',
+				colModel : [ {
+					display : 'Cota',
+					name : 'numeroCota',
+					width : 60,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nome',
+					name : 'nomeCota',
+					width : 620,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : '',
+					name : 'sel',
+					width : 30,
+					sortable : false,
+					align : 'center'
+				} ],
+				width : 770,
+				height : 150,
+				sortname : "numeroCota",
+				sortorder : "asc",
+				disableSelect: true
+			});
+			
+			$("#numeroCota").numeric();
+		
+			
+			
 		},
 		
 		processarResultadoConsultaFiadores:function (data){
@@ -237,7 +343,7 @@ var fiadorController = {
 				data.rows[i].cell[lastIndex] = this.getActionsConsultaFiadores(data.rows[i].id);
 			}
 
-			$('.imoveisGrid').show();
+			$('.fiadorController-socio-imoveisGrid').show();
 			
 			if (data.result){
 				return data.result[1];
@@ -246,19 +352,19 @@ var fiadorController = {
 		},
 		
 		getActionsConsultaFiadores: function (idFiador){
-			return '<a href="javascript:;" onclick="editarFiador(' + idFiador + ')" ' +
+			return '<a href="javascript:;" onclick="fiadorController.editarFiador(' + idFiador + ')" ' +
 					' style="cursor:pointer;border:0px;margin:5px" title="Editar Fiador">' +
-					'<img src="/nds-client/images/ico_editar.gif" border="0px"/>' +
+					'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 					'</a>' +
-					'<a href="javascript:;" onclick="excluirFiador(' + idFiador + ')" ' +
+					'<a href="javascript:;" onclick="fiadorController.excluirFiador(' + idFiador + ')" ' +
 					' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fiador">' +
-					'<img src="/nds-client/images/ico_excluir.gif" border="0px"/>' +
+					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 					'</a>';
 		},
 		
 		editarFiador:function (idFiador){
 			var _this = this;
-			$.postJSON("<c:url value='/cadastro/fiador/editarFiador' />", "idFiador=" + idFiador, 
+			$.postJSON(contextPath +'/cadastro/fiador/editarFiador', "idFiador=" + idFiador, 
 				function(result) {
 					
 					$(".fiadorController-inicioAtividadeNovo").hide();
@@ -272,7 +378,7 @@ var fiadorController = {
 						
 						$("#fiadorController-nomeFiadorCpf").val(result[1]);
 						$("#fiadorController-emailFiadorCpf").val(result[2]);
-						$("#fiadorController-cpfFiador").val(result[3]);
+						$("#fiadorController-cpfFiador").val(result[3]).attr("disabled", true);
 						$("#fiadorController-rgFiador").val(result[4]);
 						$("#fiadorController-dataNascimentoFiadorCpf").val(result[5]);
 						$("#fiadorController-orgaoEmissorFiadorCpf").val(result[6]);
@@ -282,13 +388,13 @@ var fiadorController = {
 						$("#fiadorController-nacionalidadeFiadorCpf").val(result[10]);
 						$("#fiadorController-naturalFiadorCpf").val(result[11]);
 						
-						if ($("#fiadorController-estadoCivilFiadorCpf").val() == "CASADO"){
+						if (result[8] == "CASADO"){
 							
-							_this.opcaoCivilPf("CASADO");
+							_this.opcaoCivilPf("CASADO",'fiadorController-');
 							
 							$("#fiadorController-nomeConjugeCpf").val(result[12]);
 					        $("#fiadorController-emailConjugeCpf").val(result[13]);
-					        $("#fiadorController-cpfConjuge").val(result[14]);
+					        $("#fiadorController-cpfConjuge").val(result[14]).attr("disabled", true);
 					        $("#fiadorController-rgConjuge").val(result[15]);
 					        $("#fiadorController-dataNascimentoConjugeCpf").val(result[16]);
 					        $("#fiadorController-orgaoEmissorConjugeCpf").val(result[17]);
@@ -303,8 +409,6 @@ var fiadorController = {
 							$(".fiadorController-inicioAtividadeEdicao").text(result[12]);
 						}
 						
-						$('[name="cpfFiador"]').attr("disabled", true);
-						$('[name="cpfConjuge"]').attr("disabled", true);
 					} else {
 						
 						_this.popupCadastroFiadorCNPJ();
@@ -332,7 +436,7 @@ var fiadorController = {
 					"Confirmar": function() {
 						$(this).dialog("close");
 						
-						$.postJSON("<c:url value='/cadastro/fiador/excluirFiador' />", "idFiador=" + idFiador, 
+						$.postJSON(contextPath + '/cadastro/fiador/excluirFiador', "idFiador=" + idFiador, 
 							function(result) {
 								
 								if (result[0].tipoMensagem){
@@ -363,13 +467,13 @@ var fiadorController = {
 		
 		limparCamposCadastroFiador:function (){
 			//dados cadastrais cpf
-			this.limparDadosCadastraisCPF(0);
+			this.limparDadosCadastraisCPFFiador();
 	        
 	        //dados cadastrais cnpj
 			this.limparDadosCadastraisCNPJ();
 	        
 			//dados cadastrais socios
-			this.limparDadosCadastraisCPF(1);
+			this.limparDadosCadastraisCPFSocio();
 		    
 		    //endereÃ§os
 			ENDERECO_FIADOR.limparFormEndereco();
@@ -383,7 +487,8 @@ var fiadorController = {
 		    //cotas associadas
 		    this.limparCamposCotasAssociadas();
 		    
-		    this.opcaoCivilPf("");
+		    this.opcaoCivilPf("",'fiadorController-socio-');
+		    this.opcaoCivilPf("",'fiadorController-');
 		},
 		cadastrarFiadorCnpj :function (janela){
 			var _this = this;
@@ -395,7 +500,7 @@ var fiadorController = {
 			           "fiador.cnpj=" + $("#fiadorController-cnpjFiador").val() + "&" +
 			           "fiador.email=" + $("#fiadorController-emailFiadorCnpj").val();
 			
-			$.postJSON("<c:url value='/cadastro/fiador/cadastrarFiadorCnpj' />", data, 
+			$.postJSON(contextPath + '/cadastro/fiador/cadastrarFiadorCnpj', data, 
 				function(result){
 			
 					if (result[0].tipoMensagem){
@@ -436,7 +541,7 @@ var fiadorController = {
 			
 			if (cnpj != "__.___.___/____-__" && cnpj != ""){
 				
-				$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCNPJ' />", "cnpj=" + cnpj, 
+				$.postJSON(contextPath + '/cadastro/fiador/buscarPessoaCNPJ', "cnpj=" + cnpj, 
 					function(result) {
 						
 						if (result[0] != undefined){
@@ -453,12 +558,12 @@ var fiadorController = {
 			}
 		},
 		
-		opcaoCivilPf:function (valor){
+		opcaoCivilPf:function (valor,prefix){
 			if (valor == "CASADO"){
-				$(".fiadorController-divConjuge").show();
+				$("."+prefix+"divConjuge").show();
 				this.addConjuge = true;
 			} else {
-				$(".fiadorController-divConjuge").hide();
+				$("."+prefix+"divConjuge").hide();
 				this.addConjuge = false;
 			}
 		},
@@ -492,7 +597,7 @@ var fiadorController = {
 			           "pessoa.conjuge.natural=" + $("#fiadorController-naturalConjugeCpf").val();
 			}
 			
-			$.postJSON("<c:url value='/cadastro/fiador/cadastrarFiadorCpf'/>", data, 
+			$.postJSON(contextPath + '/cadastro/fiador/cadastrarFiadorCpf', data, 
 				function(result){
 						
 					if (result[0].tipoMensagem){
@@ -521,111 +626,65 @@ var fiadorController = {
 				true
 			);
 		},
-		
-		limparDadosCadastraisCPF:function (indiceAba){
-			
-			$('[name="nomeFiadorCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="emailFiadorCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="cpfFiador"]:eq('+ indiceAba +')').val("");
-	        $('[name="rgFiador"]:eq('+ indiceAba +')').val("");
-	        $('[name="dataNascimentoFiadorCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="orgaoEmissorFiadorCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="selectUfOrgaoEmiCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="estadoCivilFiadorCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="selectSexoFiador"]:eq('+ indiceAba +')').val("");
-	        $('[name="nacionalidadeFiadorCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="naturalFiadorCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="nomeConjugeCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="emailConjugeCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="cpfConjuge"]:eq('+ indiceAba +')').val("");
-	        $('[name="rgConjuge"]:eq('+ indiceAba +')').val("");
-	        $('[name="dataNascimentoConjugeCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="orgaoEmissorConjugeCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="selectUfOrgaoEmiConjugeCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="selectSexoConjuge"]:eq('+ indiceAba +')').val("");
-	        $('[name="nacionalidadeConjugeCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="naturalConjugeCpf"]:eq('+ indiceAba +')').val("");
-	        $('[name="checkboxSocioPrincipal"]:eq('+ indiceAba +')').uncheck();
-	        enableFields(indiceAba);
+		limparDadosCadastraisCPFFiador:function(){
+			$('input','#fiadorController-cadastroCpf').attr('disabled', false).val("").uncheck();
 		},
-		
-		enableFields:function (indiceAba) {
-			$('[name="nomeFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="emailFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="cpfFiador"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="rgFiador"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="dataNascimentoFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="orgaoEmissorFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="selectUfOrgaoEmiCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="estadoCivilFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="selectSexoFiador"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="nacionalidadeFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="naturalFiadorCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="nomeConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="emailConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="cpfConjuge"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="rgConjuge"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="dataNascimentoConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="orgaoEmissorConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="selectUfOrgaoEmiConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="selectSexoConjuge"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="nacionalidadeConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
-	        $('[name="naturalConjugeCpf"]:eq('+ indiceAba +')').attr("disabled", false);
+		limparDadosCadastraisCPFSocio:function(){
+			$('input','#fiadorController-tab-socios').attr('disabled', false).val("").uncheck();
 		},
 		buscarPessoaCPF:function (cpf, fiador){
 			var _this = this;
-			var refAba = $("#tab-1").css("display") == "block" ? 0 : 1;
 			
 			if (cpf != "___.___.___-__" && cpf != ""){
 				
-				var data = "cpf=" + cpf + "&isFiador=" + fiador + "&cpfConjuge=" + $('[name="cpfFiador"]:eq(' + refAba + ')').val() +
-					"&socio=" + (refAba == 0 ? "false" : "true");
+				var data = "cpf=" + cpf + "&isFiador=" + fiador + "&cpfConjuge=" + $('#fiadorController-cpfConjuge').val() +
+					"&socio=" + (!fiador);
 				
-				$.postJSON("<c:url value='/cadastro/fiador/buscarPessoaCPF' />", data, 
+				$.postJSON(contextPath +  '/cadastro/fiador/buscarPessoaCPF', data, 
 					function(result) {
 					
 						if (result[0] != undefined){
 							
 							if (fiador){
-								$('[name="nomeFiadorCpf"]:eq(' + refAba + ')').val(result[0]);
-								$('[name="emailFiadorCpf"]:eq(' + refAba + ')').val(result[1]);
-								$('[name="cpfFiador"]:eq(' + refAba + ')').val(result[2]);
-								$('[name="rgFiador"]:eq(' + refAba + ')').val(result[3]);
-								$('[name="dataNascimentoFiadorCpf"]:eq(' + refAba + ')').val(result[4]);
-								$('[name="orgaoEmissorFiadorCpf"]:eq(' + refAba + ')').val(result[5]);
-								$('[name="selectUfOrgaoEmiCpf"]:eq(' + refAba + ')').val(result[6]);
-								$('[name="estadoCivilFiadorCpf"]:eq(' + refAba + ')').val(result[7]);
-								$('[name="selectSexoFiador"]:eq(' + refAba + ')').val(result[8]);
-								$('[name="nacionalidadeFiadorCpf"]:eq(' + refAba + ')').val(result[9]);
-								$('[name="naturalFiadorCpf"]:eq(' + refAba + ')').val(result[10]);
+								$('#fiadorController-nomeFiadorCpf').val(result[0]);
+								$('#fiadorController-emailFiadorCpf').val(result[1]);
+								$('#fiadorController-cpfFiador').val(result[2]);
+								$('#fiadorController-rgFiador').val(result[3]);
+								$('#fiadorController-dataNascimentoFiadorCpf').val(result[4]);
+								$('#fiadorController-orgaoEmissorFiadorCpf').val(result[5]);
+								$('#fiadorController-selectUfOrgaoEmiCpf').val(result[6]);
+								$('#fiadorController-estadoCivilFiadorCpf').val(result[7]);
+								$('#fiadorController-selectSexoFiador').val(result[8]);
+								$('#fiadorController-nacionalidadeFiadorCpf').val(result[9]);
+								$('#fiadorController-naturalFiadorCpf').val(result[10]);
 								
 								if (result[7] == "CASADO"){
 									
-									_this.opcaoCivilPf(result[7]);
+									_this.opcaoCivilPf(result[7],'fiadorController-');
 									
-									$('[name="nomeConjugeCpf"]:eq(' + refAba + ')').val(result[11]);
-									$('[name="emailConjugeCpf"]:eq(' + refAba + ')').val(result[12]);
-									$('[name="cpfConjuge"]:eq(' + refAba + ')').val(result[13]);
-									$('[name="rgConjuge"]:eq(' + refAba + ')').val(result[14]);
-									$('[name="dataNascimentoConjugeCpf"]:eq(' + refAba + ')').val(result[15]);
-									$('[name="orgaoEmissorConjugeCpf"]:eq(' + refAba + ')').val(result[16]);
-									$('[name="selectUfOrgaoEmiConjugeCpf"]:eq(' + refAba + ')').val(result[17]);
-									$('[name="selectSexoConjuge"]:eq(' + refAba + ')').val(result[18]);
-									$('[name="nacionalidadeConjugeCpf"]:eq(' + refAba + ')').val(result[19]);
-									$('[name="naturalConjugeCpf"]:eq(' + refAba + ')').val(result[20]);
+									$('#fiadorController-nomeConjugeCpf').val(result[11]);
+									$('#fiadorController-emailConjugeCpf').val(result[12]);
+									$('#fiadorController-cpfConjuge').val(result[13]);
+									$('#fiadorController-rgConjuge').val(result[14]);
+									$('#fiadorController-dataNascimentoConjugeCpf').val(result[15]);
+									$('#fiadorController-orgaoEmissorConjugeCpf').val(result[16]);
+									$('#fiadorController-selectUfOrgaoEmiConjugeCpf').val(result[17]);
+									$('#fiadorController-selectSexoConjuge').val(result[18]);
+									$('#fiadorController-nacionalidadeConjugeCpf').val(result[19]);
+									$('#fiadorController-naturalConjugeCpf').val(result[20]);
 								}
 							} else {
 								
-								$('[name="nomeConjugeCpf"]:eq(' + refAba + ')').val(result[0]);
-								$('[name="emailConjugeCpf"]:eq(' + refAba + ')').val(result[1]);
-								$('[name="cpfConjuge"]:eq(' + refAba + ')').val(result[2]);
-								$('[name="rgConjuge"]:eq(' + refAba + ')').val(result[3]);
-								$('[name="dataNascimentoConjugeCpf"]:eq(' + refAba + ')').val(result[4]);
-								$('[name="orgaoEmissorConjugeCpf"]:eq(' + refAba + ')').val(result[5]);
-								$('[name="selectUfOrgaoEmiConjugeCpf"]:eq(' + refAba + ')').val(result[6]);
-								$('[name="selectSexoConjuge"]:eq(' + refAba + ')').val(result[8]);
-								$('[name="nacionalidadeConjugeCpf"]:eq(' + refAba + ')').val(result[9]);
-								$('[name="naturalConjugeCpf"]:eq(' + refAba + ')').val(result[10]);
+								$('#fiadorController-socio-nomeConjugeCpf').val(result[0]);
+								$('#fiadorController-socio-emailConjugeCpf').val(result[1]);
+								$('#fiadorController-socio-cpfConjuge').val(result[2]);
+								$('#fiadorController-socio-rgConjuge').val(result[3]);
+								$('#fiadorController-socio-dataNascimentoConjugeCpf').val(result[4]);
+								$('#fiadorController-socio-orgaoEmissorConjugeCpf').val(result[5]);
+								$('#fiadorController-socio-selectUfOrgaoEmiConjugeCpf').val(result[6]);
+								$('#fiadorController-socio-selectSexoConjuge').val(result[8]);
+								$('#fiadorController-socio-nacionalidadeConjugeCpf').val(result[9]);
+								$('#fiadorController-socio-naturalConjugeCpf').val(result[10]);
 							}
 						}
 					},
@@ -633,6 +692,488 @@ var fiadorController = {
 					true
 				);
 			}
-		}
+		},
 		
+		carregarSocios:function (){
+			$.postJSON(contextPath + '/cadastro/fiador/pesquisarSociosFiador', null, 
+				function(result) {
+					$(".fiadorController-sociosGrid").flexAddData({
+						page: 1, total: 1, rows: result.rows
+					});	
+					
+					$("#fiadorController-btnAddEditarSocio").text("Incluir Novo");
+				},
+				null,
+				true
+			);
+		},
+		
+		processarResultadoSocios:function (data){
+			if (data.mensagens) {
+
+				exibirMensagemDialog(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				
+				return;
+			}
+			
+			if (data.result){
+				data.rows = data.result.rows;
+			}
+			
+			var i;
+
+			for (i = 0 ; i < data.rows.length; i++) {
+
+				var lastIndex = data.rows[i].cell.length;
+
+				data.rows[i].cell[lastIndex] = fiadorController.getActionsSocios(data.rows[i].id);
+				
+				data.rows[i].cell[1] = 
+					data.rows[i].cell[1] == "true" ? '<img src="'+contextPath+'/images/ico_check.gif" border="0px"/>'
+						                           : '&nbsp;';
+			}
+
+			$('.fiadorController-sociosGrid').show();
+			
+			if (data.result){
+				return data.result;
+			}
+			return data;
+		},
+		
+		getActionsSocios:function (idSocio){
+			return '<a href="javascript:;" onclick="fiadorController.editarSocio(' + idSocio + ')" ' +
+					' style="cursor:pointer;border:0px;margin:5px" title="Editar Socio">' +
+					'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
+					'</a>' +
+					'<a href="javascript:;" onclick="fiadorController.removerSocio(' + idSocio + ')" ' +
+					' style="cursor:pointer;border:0px;margin:5px" title="Excluir Socio">' +
+					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+					'</a>';
+		},
+		
+		adicionarSocio: function (){
+			var data = "pessoa.nome=" + $('#fiadorController-socio-nomeFiadorCpf').val() + "&" +
+				"pessoa.email=" + $('#fiadorController-socio-emailFiadorCpf').val() + "&" +
+		        "pessoa.cpf=" + $('#fiadorController-socio-cpfFiador').val() + "&" +
+		        "pessoa.rg=" + $('#fiadorController-socio-rgFiador').val() + "&" +
+		        "pessoa.dataNascimento=" + $('#fiadorController-socio-dataNascimentoFiadorCpf').val() + "&" +
+		        "pessoa.orgaoEmissor=" + $('#fiadorController-socio-orgaoEmissorFiadorCpf').val() + "&" +
+		        "pessoa.ufOrgaoEmissor=" + $('#fiadorController-socio-selectUfOrgaoEmiCpf').val() + "&" +
+		        "pessoa.estadoCivil=" + $('#fiadorController-socio-estadoCivilFiadorCpf').val() + "&" +
+		        "pessoa.sexo=" + $('#fiadorController-socio-selectSexoFiador').val() + "&" +
+		        "pessoa.nacionalidade=" + $('#fiadorController-socio-nacionalidadeFiadorCpf').val() + "&" +
+		        "pessoa.natural=" + $('#fiadorController-socio-naturalFiadorCpf').val() + "&" +
+		        "pessoa.socioPrincipal=" + ("" + $('#fiadorController-socio-checkboxSocioPrincipal').attr("checked") == 'checked');
+		    
+		    if (this.addConjuge){ 
+		        data = data + "&pessoa.conjuge.nome=" + $('#fiadorController-socio-nomeConjugeCpf').val() + "&" +
+		        "pessoa.conjuge.email=" + $('#fiadorController-socio-emailConjugeCpf').val() + "&" +
+		        "pessoa.conjuge.cpf=" + $('#fiadorController-socio-cpfConjuge').val() + "&" +
+		        "pessoa.conjuge.rg=" + $('#fiadorController-socio-rgConjuge').val() + "&" +
+		        "pessoa.conjuge.dataNascimento=" + $('#fiadorController-socio-dataNascimentoConjugeCpf').val() + "&" +
+		        "pessoa.conjuge.orgaoEmissor=" + $('#fiadorController-socio-orgaoEmissorConjugeCpf').val() + "&" +
+		        "pessoa.conjuge.ufOrgaoEmissor=" + $('#fiadorController-socio-selectUfOrgaoEmiConjugeCpf').val() + "&" +
+		        "pessoa.conjuge.sexo=" + $('#fiadorController-socio-selectSexoConjuge').val() + "&" +
+		        "pessoa.conjuge.nacionalidade=" + $('#fiadorController-socio-nacionalidadeConjugeCpf').val() + "&" +
+		        "pessoa.conjuge.natural=" + $('#fiadorController-socio-naturalConjugeCpf').val();
+		    }
+		    
+		    data = data + "&referencia=" + $("#fiadorController-socio-idSocioEdicao").val();
+		    var _this =this;
+			$.postJSON(contextPath +'/cadastro/fiador/adicionarSocio', data, 
+				function(result){
+			
+					if (result != ""){
+						$(".fiadorController-sociosGrid").flexAddData({
+							page: result.page, total: result.total, rows: result.rows
+						});
+						
+						_this.limparDadosCadastraisCPFSocio();
+						
+						_this.opcaoCivilPf("",'fiadorController-socio-');
+						
+						$("#fiadorController-btnAddEditarSocio").text("Incluir Novo");
+						
+						$('#fiadorController-socio-cpfFiador').removeAttr("disabled");
+						$('#fiadorController-socio-cpfConjuge').removeAttr("disabled");
+						
+						$("#fiadorController-socio-idSocioEdicao").val("");
+					}
+				},
+				null,
+				true
+			);
+		},
+		
+		editarSocio : function (referencia){
+			var _this = this;
+			$.postJSON(contextPath + '/cadastro/fiador/editarSocio', "referencia=" + referencia, 
+				function(result) {
+					
+				_this.limparDadosCadastraisCPFSocio();
+				
+					if (result){
+						
+						$('#fiadorController-socio-nomeFiadorCpf').val(result[0]);
+						$('#fiadorController-socio-emailFiadorCpf').val(result[1]);
+						$('#fiadorController-socio-cpfFiador').val(result[2]);
+						$('#fiadorController-socio-rgFiador').val(result[3]);
+						$('#fiadorController-socio-dataNascimentoFiadorCpf').val(result[4]);
+						$('#fiadorController-socio-orgaoEmissorFiadorCpf').val(result[5]);
+						$('#fiadorController-socio-selectUfOrgaoEmiCpf').val(result[6]);
+						$('#fiadorController-socio-estadoCivilFiadorCpf').val(result[7]);
+						$('#fiadorController-socio-selectSexoFiador').val(result[8]);
+						$('#fiadorController-socio-nacionalidadeFiadorCpf').val(result[9]);
+						$('#fiadorController-socio-naturalFiadorCpf').val(result[10]);
+						
+						if (result[7] == "CASADO"){
+							
+							_this.opcaoCivilPf(result[7],'fiadorController-socio-');
+							
+							$('#fiadorController-socio-nomeConjugeCpf').val(result[11]);
+							$('#fiadorController-socio-emailConjugeCpf').val(result[12]);
+							$('#fiadorController-socio-cpfConjuge').val(result[13]);
+							$('#fiadorController-socio-rgConjuge').val(result[14]);
+							$('#fiadorController-socio-dataNascimentoConjugeCpf').val(result[15]);
+							$('#fiadorController-socio-orgaoEmissorConjugeCpf').val(result[16]);
+							$('#fiadorController-socio-selectUfOrgaoEmiConjugeCpf').val(result[17]);
+							$('#fiadorController-socio-selectSexoConjuge').val(result[18]);
+							$('#fiadorController-socio-nacionalidadeConjugeCpf').val(result[19]);
+							$('#fiadorController-socio-naturalConjugeCpf').val(result[20]);
+							
+							if (result[21] == "true"){
+								$('#fiadorController-socio-checkboxSocioPrincipal').check();
+							} else {
+								$('#fiadorController-socio-checkboxSocioPrincipal').uncheck();
+							}
+						} else {
+							
+							if (result[11] == "true"){
+								$('#fiadorController-socio-checkboxSocioPrincipal').check();
+							} else {
+								$('#fiadorController-socio-checkboxSocioPrincipal').uncheck();
+							}
+						}
+						
+						
+						
+						$("#fiadorController-idSocioEdicao").val(referencia);
+					}
+					
+					$('#fiadorController-socio-cpfFiador').attr("disabled", true);
+					$('#fiadorController-socio-cpfConjuge').attr("disabled", true);
+					
+					$("#fiadorController-btnAddEditarSocio").text("Editar");
+				}
+			);
+		},
+		
+		removerSocio:function (referencia){
+			var _this = this;
+			$("#fiadorController-dialog-excluir-socio").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$(this).dialog("close");
+						
+						$.postJSON(contextPath + '/cadastro/fiador/removerSocio', "referencia=" + referencia, 
+							function(result) {
+								$(".sociosGrid").flexAddData({
+									page: 1, total: 1, rows: result.rows
+								});
+								
+								$("#fiadorController-btnAddEditarSocio").text("Incluir Novo");
+								_this.limparDadosCadastraisCPFSocio();
+							},
+							null,
+							true
+						);
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+			
+			$("#fiadorController-dialog-excluir-socio").show();
+		},
+		
+		carregarGarantias:function (){
+			$.postJSON(contextPath + '/cadastro/fiador/obterGarantiasFiador', null, 
+				function(result) {
+					$(".fiadorController-imoveisGrid").flexAddData({
+						page: result.page, total: result.total, rows: result.rows
+					});	
+					
+					$("#fiadorController-botaoAddEditarGarantia").text("Incluir Novo");
+					
+					$("#fiadorController-garantia-valorGarantia").val("");
+					$("#fiadorController-garantia-descricaoGarantia").val("");
+				},
+				null,
+				true
+			);
+		},
+		
+		processarResultadoGarantias:function (data){
+			if (data.mensagens) {
+
+				exibirMensagemDialog(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				
+				return;
+			}
+			
+			if (data.result){
+				data.rows = data.result.rows;
+			}
+			
+			var i;
+			
+			for (i = 0 ; i < data.rows.length; i++) {
+				
+				var lastIndex = data.rows[i].cell.length;
+				
+				data.rows[i].cell[lastIndex] = fiadorController.getActionsGarantia(data.rows[i].id);
+			}
+
+			$('.fiadorController-imoveisGrid').show();
+			
+			if (data.result){
+				return data.result;
+			}
+			return data;
+		},
+		
+		getActionsGarantia:function (idGarantia) {
+
+			return '<a href="javascript:;" onclick="fiadorController.editarGarantia(' + idGarantia + ')" ' +
+					' style="cursor:pointer;border:0px;margin:5px" title="Editar Garantia">' +
+					'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/></a>' +
+					'<a href="javascript:;" onclick="fiadorController.removerGarantia(' + idGarantia + ')" ' +
+					' style="cursor:pointer;border:0px;margin:5px" title="Excluir Garantia">' +
+					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/></a>';
+		},
+		
+		adicionarEditarGarantia:function (){
+			var data = "garantia.valor=" + $("#fiadorController-garantia-valorGarantia").floatValue() + "&" +
+	        		   "garantia.descricao=" + $("#fiadorController-garantia-descricaoGarantia").val() + "&" +
+	        		   "referencia=" + $("#fiadorController-garantia-referenciaGarantia").val();
+			
+			$.postJSON(contextPath + '/cadastro/fiador/adicionarGarantia', data, 
+				function(result) {
+					$('.fiadorController-imoveisGrid').flexAddData({
+						page: 1, total: 1, rows: result.rows
+					});	
+					
+					$("#fiadorController-botaoAddEditarGarantia").text("Incluir Novo");
+					
+					$("#fiadorController-garantia-valorGarantia").val("");
+					$("#fiadorController-garantia-descricaoGarantia").val("");
+					$("#fiadorController-referenciaGarantia").val("");
+				},
+				null,
+				true
+			);
+		},
+		
+		editarGarantia:function (referencia){
+			$.postJSON(contextPath + '/cadastro/fiador/editarGarantia', "referencia=" + referencia, 
+				function(result) {
+					
+					$("#fiadorController-botaoAddEditarGarantia").text("Editar");
+					
+					$("#fiadorController-garantia-valorGarantia").val(result.valor);
+					$("#fiadorController-garantia-descricaoGarantia").val(result.descricao);
+					$("#fiadorController-referenciaGarantia").val(referencia);
+				},
+				null,
+				true
+			);
+		}, 
+		
+		removerGarantia:function (referencia){
+			$("#fiadorController-dialog-excluir-garantia").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$(this).dialog("close");
+						
+						$.postJSON(contextPath + '/cadastro/fiador/excluirGarantia', "referencia=" + referencia, 
+							function(result) {
+								
+								$(".fiadorController-imoveisGrid").flexAddData({
+									page: 1, total: 1, rows: result.rows
+								});
+								
+								$("#fiadorController-botaoAddEditarGarantia").text("Incluir Novo");
+								
+								$("#fiadorController-garantia-valorGarantia").val("");
+								$("#fiadorController-garantia-descricaoGarantia").val("");
+								$("#fiadorController-referenciaGarantia").val("");
+							},
+							null,
+							true
+						);
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+			
+			$("#fiadorController-dialog-excluir-garantia").show();
+		},
+		
+		limparCamposGarantias:function (){
+			$("#fiadorController-garantia-valorGarantia").val("");
+			$("#fiadorController-garantia-descricaoGarantia").val("");
+		},
+		
+		processarResultadoCotasAssociadas:function (data){
+			if (data.mensagens) {
+
+				exibirMensagemDialog(
+					data.mensagens.tipoMensagem, 
+					data.mensagens.listaMensagens
+				);
+				
+				return;
+			}
+			
+			if (data.result){
+				data.rows = data.result.rows;
+			}
+			
+			var i;
+
+			for (i = 0 ; i < data.rows.length; i++) {
+
+				var lastIndex = data.rows[i].cell.length;
+
+				data.rows[i].cell[lastIndex] = fiadorController.getActionCotaCadastrada(data.rows[i].id);
+			}
+
+			$('.fiadorController-cotasAssociadasGrid').show();
+			
+			if (data.result){
+				return data.result;
+			}
+			return data;
+		},
+		
+		getActionCotaCadastrada:function (referencia){
+			return '<a href="javascript:;" onclick="fiadorController.removerAssociacaoCota(' + referencia + ')" ' +
+			' style="cursor:pointer;border:0px;margin:5px" title="Excluir AssociaÃ§Ã£o">' +
+			'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+			'</a>';
+		},
+		
+		carregarCotasAssociadas:function (){
+			$.postJSON(contextPath+'/cadastro/fiador/obterAssociacoesCotaFiador', null, 
+				function(result) {
+					$(".fiadorController-cotasAssociadasGrid").flexAddData({
+						page: result.page, total: result.total, rows: result.rows
+					});
+					
+					$("#fiadorController-cotasAssociadas-numeroCota").val("");
+					$("#fiadorController-cotasAssociadas-nomeCota").val("");
+				},
+				null,
+				true
+			);
+		},
+		
+		adicionarAssociacaoCota:	function (){
+			var data = "numeroCota=" + $("#fiadorController-cotasAssociadas-numeroCota").val() + "&nomeCota=" + $("#fiadorController-cotasAssociadas-nomeCota").val();
+			
+			$.postJSON(contextPath + '/cadastro/fiador/adicionarAssociacaoCota', data, 
+				function(result) {
+					$(".fiadorController-cotasAssociadasGrid").flexAddData({
+						page: 1, total: 1, rows: result.rows
+					});
+					
+					$("#fiadorController-cotasAssociadas-numeroCota").val("");
+					$("#fiadorController-cotasAssociadas-nomeCota").val("");
+				},
+				null,
+				true
+			);
+		},
+		
+		removerAssociacaoCota:function (referencia){
+			
+			$(".fiadorController-cotasAssociadas-dialog-excluir").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$(this).dialog("close");
+						
+						$.postJSON(contextPath +'/cadastro/fiador/removerAssociacaoCota', "referencia=" + referencia, 
+							function(result) {
+								$(".fiadorController-cotasAssociadasGrid").flexAddData({
+									page: 1, total: 1, rows: result.rows
+								});
+								
+								$("#fiadorController-cotasAssociadas-numeroCota").val("");
+								$("#fiadorController-cotasAssociadas-nomeCota").val("");
+							},
+							null,
+							true
+						);
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+			
+			$(".fiadorController-cotasAssociadas-dialog-excluir").show();
+		},
+		
+		limparCamposCotasAssociadas:function (){
+			$("#fiadorController-cotasAssociadas-numeroCota").val("");
+			$("#fiadorController-cotasAssociadas-nomeCota").val("");
+		},
+		
+		buscarNomeCota:function (){
+			
+			var numeroCota = $("#fiadorController-cotasAssociadas-numeroCota").val();
+			
+			if (numeroCota.length > 0){
+			
+				$.postJSON(contextPath + '/cadastro/fiador/pesquisarNomeCotaPorNumeroCota', "numeroCota=" + numeroCota, 
+					function(result) {
+						if (result != ""){
+							
+							$("#fiadorController-cotasAssociadas-nomeCota").val(result);
+							$("#fiadorController-cotasAssociadas-adicionarCotaAssociacao").attr("href", "javascript:fiadorController.adicionarAssociacaoCota();");
+						} else {
+							
+							$("#fiadorController-cotasAssociadas-nomeCota").val("");
+							$("#fiadorController-cotasAssociadas-adicionarCotaAssociacao").removeAttr("href");
+						}
+					},
+					null,
+					true
+				);
+			} else {
+				$("#fiadorController-cotasAssociadas-nomeCota").val("");
+			}
+		}	
 };
