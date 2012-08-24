@@ -431,7 +431,7 @@ var produtoController = $.extend(true, {
 					
 					if (tipoMensagem && listaMensagens) {
 						
-						this.exibirMensagem(tipoMensagem, listaMensagens);
+						exibirMensagem(tipoMensagem, listaMensagens);
 					} 
 
 					if (tipoMensagem == 'SUCCESS') {
