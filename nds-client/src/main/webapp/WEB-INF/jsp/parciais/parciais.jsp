@@ -141,7 +141,7 @@
 		<span class="bt_novos" title="Gerar Arquivo">
 		            
 		<!-- ARQUIVO EXCEL -->
-		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
+		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				
 				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
 		</span>
@@ -149,7 +149,7 @@
 		<span class="bt_novos" title="Imprimir">
 			
 		<!-- IMPRIMIR PDF -->	
-		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF" rel="tipsy" title="Imprimir">
 		
 				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
 				</span>
