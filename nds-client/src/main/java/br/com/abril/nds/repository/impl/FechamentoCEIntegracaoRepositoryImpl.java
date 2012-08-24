@@ -36,7 +36,8 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			.add(Projections.property("pe.numeroEdicao"), "edicao")
 			.add(Projections.property("pe.precoVenda"), "precoCapa")
 			.add(Projections.property("pe.id"), "produtoEdicao")
-			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
+			.add(Projections.property("ce.qtdeInformada"), "reparte")
+			.add(Projections.property("ce.qtde"), "encalhe")
 			.add(Projections.groupProperty("p.codigo"))
 			.add(Projections.groupProperty("p.nome"))
 			.add(Projections.groupProperty("pe.numeroEdicao"))
@@ -57,7 +58,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		criteria.setFetchMode("p", FetchMode.JOIN);
 		
 		
-		criteria.createAlias("pe.fornecedores", "pf");
+		criteria.createAlias("p.fornecedores", "pf");
 		criteria.setFetchMode("pf", FetchMode.JOIN);
 		
 		

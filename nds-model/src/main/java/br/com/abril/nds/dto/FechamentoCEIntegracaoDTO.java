@@ -1,11 +1,12 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FechamentoCEIntegracaoDTO {
@@ -22,9 +23,11 @@ public class FechamentoCEIntegracaoDTO {
 	@Export(label = "Edição", alignment = Alignment.LEFT, exhibitionOrder = 4)
 	private Long edicao;
 	
+	private BigInteger reparte;
+	
 	private Long produtoEdicao;
 	private BigDecimal precoCapa;
-	private BigDecimal exemplaresDevolucao;
+	private BigInteger encalhe;
 	private BigDecimal total;
 	
 	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 7)
@@ -42,15 +45,11 @@ public class FechamentoCEIntegracaoDTO {
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
 	private String totalFormatado;
 	
-	private String replicar = "";
+	private BigInteger venda;
 	
-	private Boolean fechado;
+	private String valorVendaFormatado;
 	
 	
-	public String getReplicar() {
-		return replicar;
-	}
-
 	public String getPrecoCapaFormatado() {
 		return this.precoCapaFormatado;
 	}
@@ -95,12 +94,12 @@ public class FechamentoCEIntegracaoDTO {
 		this.precoCapa = precoCapa;
 		this.precoCapaFormatado = CurrencyUtil.formatarValor(this.precoCapa); 
 	}
-	public BigDecimal getExemplaresDevolucao() {
-		return exemplaresDevolucao;
+	public BigInteger getEncalhe() {
+		return encalhe;
 	}
-	public void setExemplaresDevolucao(BigDecimal exemplaresDevolucao) {
-		this.exemplaresDevolucao = exemplaresDevolucao;
-		this.exemplaresDevolucaoFormatado = CurrencyUtil.formatarValorTruncado(this.exemplaresDevolucao).replaceAll("\\D", "");
+	public void setEncalhe(BigInteger encalhe) {
+		this.encalhe = encalhe;
+		this.exemplaresDevolucaoFormatado = CurrencyUtil.formatarValorTruncado(this.encalhe).replaceAll("\\D", "");
 	}
 	public BigDecimal getTotal() {
 		return total;
@@ -120,11 +119,40 @@ public class FechamentoCEIntegracaoDTO {
 	}
 	public void setDiferenca(Long diferenca) {
 		this.diferenca = diferenca;
+	}	
+
+	public Integer getSequencial() {
+		return sequencial;
 	}
-	public Boolean getFechado() {
-		return fechado;
+
+	public void setSequencial(Integer sequencial) {
+		this.sequencial = sequencial;
 	}
-	public void setFechado(Boolean fechado) {
-		this.fechado = fechado;
+
+	public BigInteger getReparte() {
+		return reparte;
 	}
+
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+
+	public BigInteger getVenda() {
+		return venda;
+	}
+
+	public void setVenda(BigInteger venda) {
+		this.venda = venda;
+	}
+
+	public String getvalorVendaFormatado() {
+		return valorVendaFormatado;
+	}
+
+	public void setvalorVendaFormatado(String valorVendaFormatado) {
+		this.valorVendaFormatado = valorVendaFormatado;
+	}
+	
+	
+	
 }

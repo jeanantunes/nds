@@ -17,6 +17,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -73,8 +74,9 @@ public class FechamentoCEIntegracaoController {
 	
 	private TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-		//List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, "limitar");
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
+		
+		listaFechamento = calcularVenda(listaFechamento);
 		
 		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
 //		
@@ -87,11 +89,22 @@ public class FechamentoCEIntegracaoController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		//tableModel.setTotal(totalRegistros);
+		tableModel.setTotal(15);
 		
 		return tableModel;
 	}
 	
+	private List<FechamentoCEIntegracaoDTO> calcularVenda(List<FechamentoCEIntegracaoDTO> listaFechamento) {
+		List<FechamentoCEIntegracaoDTO> lista = new ArrayList<FechamentoCEIntegracaoDTO>();
+		for(FechamentoCEIntegracaoDTO dto: listaFechamento){
+			dto.setVenda(dto.getReparte().subtract(dto.getEncalhe()));
+			double valorDaVenda = dto.getVenda().doubleValue() * dto.getPrecoCapa().doubleValue();
+			dto.setvalorVendaFormatado(CurrencyUtil.formatarValor(valorDaVenda));
+			lista.add(dto);
+		}
+		return lista;		
+	}
+
 	private void validarEntrada(FiltroFechamentoCEIntegracaoDTO filtro) {
 		boolean validar = false;
 		

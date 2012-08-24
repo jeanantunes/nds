@@ -33,7 +33,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				align : 'left'
 			},  {
 				display : 'Código',
-				name : 'codigoProduto',
+				name : 'codigo',
 				width : 80,
 				sortable : true,
 				align : 'left'
@@ -69,7 +69,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				align : 'center'
 			},  {
 				display : 'Venda',
-				name : 'qtdeVenda',
+				name : 'venda',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -81,7 +81,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Valor Venda R$',
-				name : 'vlrVenda',
+				name : 'valorVendaFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
