@@ -60,7 +60,7 @@ label {
 				<tr>
 					<td>Conta / Digito:</td>
 					<td><input maxlength="17" type="text" name="newConta" id="newConta"
-						style="width: 97px;" /> - <input maxlength="1" type="text" name="newDigito"
+						style="width: 80px;" /> - <input maxlength="1" type="text" name="newDigito"
 						id="newDigito" style="width: 30px;" />
 					</td>
 					<td>Apelido:</td>
@@ -73,7 +73,7 @@ label {
 					<td>
 					
 					<input type="text" name="newCarteira" maxlength="100"
-						id="newCarteira" style="width: 215px;" />
+						id="newCarteira" style="width: 143px;" />
 													
 					</td>
 					<td>Juros %:</td>
@@ -97,7 +97,7 @@ label {
 				<tr>
 					<td>Instruções:</td>
 					<td colspan="3"><textarea name="newInstrucoes" id="newInstrucoes" maxlength="200"
-							style="width: 300px;"></textarea>
+							style="width: 503px;"></textarea>
 					</td>
 				</tr>
 			</table>
