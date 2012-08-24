@@ -113,7 +113,7 @@
     
     <div class="linha_separa_fields">&nbsp;</div>
     
-    <div class="grids" style="display:none;">
+    <div class="fiadorController-gridFiadoresCadastrados" style="display:none;">
 	    <fieldset class="fieldGrid">
 			<legend>Fiadores Cadastrados</legend>
 	        	<div class="fiadorController-grids" style="display:none;" id="fiadorController-gridFiadoresCadastrados">
