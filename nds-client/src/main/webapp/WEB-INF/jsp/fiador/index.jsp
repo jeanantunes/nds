@@ -83,11 +83,11 @@
 	<div class="areaBts">
 		<div class="area">
             <span class="bt_novos" title="Novo">
-            	<a href="javascript:;" onclick='$(".inicioAtividadeNovo").show();$(".inicioAtividadeEdicao").hide();popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
+            	<a href="javascript:;" onclick='$(".fiadorController-inicioAtividadeNovo").show();$(".fiadorController-inicioAtividadeEdicao").hide();fiadorController.popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
             </span>
         	
         	<span class="bt_novos" title="Novo">
-        		<a href="javascript:;" onclick="popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
+        		<a href="javascript:;" onclick="fiadorController.popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
         	</span>
 		</div>
 	</div>
@@ -121,18 +121,6 @@
 	        	</div>
 		</fieldset>
 	</div>
-</body>
-
-            <span class="bt_novos" title="Novo">
-            	<a href="javascript:;" onclick='$(".fiadorController-inicioAtividadeNovo").show();$(".fiadorController-inicioAtividadeEdicao").hide();fiadorController.popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
-            </span>
-        	
-        	<span class="bt_novos" title="Novo">
-        		<a href="javascript:;" onclick="fiadorController.popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
-        	</span>
-	</fieldset>
-	
-	<div class="linha_separa_fields">&nbsp;</div>
 </body>
 <script type="text/javascript">
 $(function(){
