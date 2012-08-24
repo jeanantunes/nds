@@ -38,10 +38,11 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append("pessoa.razaoSocial as nomeFornecedor, ");
 		hql.append("movimento.data as dataLancamento, ");
 		hql.append("pe.precoVenda as precoCapa, ");
-		hql.append("(pe.precoVenda - pe.desconto) as precoDesconto, ");
+		hql.append("("+ this.getHQLDesconto() +") as desconto, ");
+		hql.append("(pe.precoVenda - (pe.precoVenda * desconto / 100)) as precoDesconto, ");
 		hql.append(" movimento.qtde as reparte, ");		
 		hql.append(" (pe.precoVenda * movimento.qtde) as total, ");
-		hql.append(" ( (pe.precoVenda - pe.desconto) * movimento.qtde)  as totalDesconto ");
+		hql.append(" ( (pe.precoVenda - (pe.precoVenda * desconto / 100)) * movimento.qtde)  as totalDesconto ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -78,7 +79,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append("pessoaCota.nome as nomeCota, ");
 		hql.append(" movimento.qtde as reparte, ");
 		hql.append(" (pe.precoVenda * movimento.qtde) as total, ");
-		hql.append(" ( (pe.precoVenda - pe.desconto) * movimento.qtde)  as totalDesconto, ");
+		hql.append(" ( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)  as totalDesconto, ");
 		hql.append("pessoa.razaoSocial as nomeFornecedor,  ");
 		hql.append("fornecedor.id as idFornecedor  ");
 		
@@ -140,7 +141,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT sum(( (pe.precoVenda - pe.desconto) * movimento.qtde))");
+		hql.append("SELECT sum(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde))");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -164,7 +165,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT sum(( (pe.precoVenda - pe.desconto) * movimento.qtde)) as total, ");
+		hql.append("SELECT sum(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)) as total, ");
 		hql.append("pessoa.razaoSocial as nomeFornecedor");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
@@ -259,9 +260,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		return param;
 	}
-
 	
+	private String getHQLDesconto(){
+		
+		StringBuilder hql = new StringBuilder("select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = cota.id ")
+		   .append(" and view.produtoEdicaoId = pe.id ")
+		   .append(" and view.fornecedorId = fornecedor.id ");
+		
+		return hql.toString();
+	}
 	
-	
-
 }

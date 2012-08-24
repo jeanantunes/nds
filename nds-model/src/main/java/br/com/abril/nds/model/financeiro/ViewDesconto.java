@@ -26,8 +26,8 @@ public class ViewDesconto implements Serializable {
 	@Column(name = "COTA_ID")
 	private Long cotaId;
 	
-	@Column(name = "PRODUTO_ID")
-	private Long produtoId;
+	@Column(name = "PRODUTO_EDICAO_ID")
+	private Long produtoEdicaoId;
 	
 	@Column(name = "FORNECEDOR_ID")
 	private Long fornecedorId;
@@ -56,12 +56,12 @@ public class ViewDesconto implements Serializable {
 		this.cotaId = cotaId;
 	}
 
-	public Long getProdutoId() {
-		return produtoId;
+	public Long getProdutoEdicaoId() {
+		return produtoEdicaoId;
 	}
 
-	public void setProdutoId(Long produtoId) {
-		this.produtoId = produtoId;
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+		this.produtoEdicaoId = produtoEdicaoId;
 	}
 
 	public Long getFornecedorId() {

@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -52,7 +54,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 			    .add(Projections.max("logExecucaoMensagem.nomeArquivo"), "nomeArquivo"))
 			    .setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class)); 
 
-		criteria.add( Restrictions.eq("logExecucao.dataInicio", distribuidor.getDataOperacao()) );
+		criteria.add( Restrictions.between("logExecucao.dataInicio", distribuidor.getDataOperacao(), DateUtils.addDays(distribuidor.getDataOperacao(), 1) ));
 
 		return criteria.list();
 	}

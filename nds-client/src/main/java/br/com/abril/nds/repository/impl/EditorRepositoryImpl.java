@@ -48,7 +48,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCEditor.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - (("+ this.getHQLDesconto() +") * estoqueProdutoCota.produtoEdicao.precoVenda / 100))) ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCEditor(filtro));
 
@@ -75,7 +75,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		.append("   editor.nome , ")
 		.append("   (sum(movimentos.qtde)) , ")
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - (("+ this.getHQLDesconto() +") * estoqueProdutoCota.produtoEdicao.precoVenda / 100))) ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCEditor(filtro));
 		hql.append(getGroupQueryObterCurvaABCEditor(filtro));
@@ -161,6 +161,17 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		hql.append(" GROUP BY editor.codigo, ")
 		   .append("   editor.nome ");
 
+		return hql.toString();
+	}
+	
+	private String getHQLDesconto(){
+		
+		StringBuilder hql = new StringBuilder("select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
+		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
+		   .append(" and view.fornecedorId = fornecedores.id ");
+		
 		return hql.toString();
 	}
 

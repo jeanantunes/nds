@@ -45,6 +45,7 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -563,18 +564,23 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			return;
 		}
 		
+		Lancamento lancamento = null;
+		if (produtoEdicao.getLancamentos().isEmpty()) {
+			lancamento = new Lancamento();
+		} else {
+			for (Lancamento lancto: produtoEdicao.getLancamentos()) {
+				if (lancamento == null 
+						|| DateUtil.isDataInicialMaiorDataFinal(lancto.getDataLancamentoDistribuidor(), lancamento.getDataLancamentoDistribuidor())) {
+					lancamento = lancto;
+				}
+			}
+		}
 		
-		Lancamento lancamento = new Lancamento();
-		
-		// Identificação:
 		lancamento.setTipoLancamento(dto.getTipoLancamento());
 		
-		// Data lançamento:
 		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
-		lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento() == null 
-				? dto.getDataLancamentoPrevisto() : dto.getDataLancamento());	// Data Lançamento Real;
+		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
 		
-		// Reparte:
 		BigInteger repartePrevisto = dto.getRepartePrevisto() == null 
 				? BigInteger.ZERO : dto.getRepartePrevisto();
 		BigInteger repartePromocional = dto.getRepartePromocional() == null 
@@ -582,21 +588,29 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setReparte(repartePrevisto);
 		lancamento.setRepartePromocional(repartePromocional);
 		
-		lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
-		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
-		lancamento.setProdutoEdicao(produtoEdicao);
-		lancamento.setStatus(StatusLancamento.PLANEJADO);
-		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+		if (produtoEdicao.getLancamentos().isEmpty()) {
+			lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento() == null 
+					? dto.getDataLancamentoPrevisto() : dto.getDataLancamento());	// Data Lançamento Real;
+			lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+
+			lancamento.setStatus(StatusLancamento.PLANEJADO);
+			lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+
+			Date dtSysdate = new Date();
+			lancamento.setDataCriacao(dtSysdate);
+			lancamento.setDataStatus(dtSysdate);
+			
+			lancamento.setProdutoEdicao(produtoEdicao);
+		}
 		
-		Date dtSysdate = new Date();
-		lancamento.setDataCriacao(dtSysdate);
-		lancamento.setDataStatus(dtSysdate);
 		
-		// Salvar:
-		lancamentoRepository.adicionar(lancamento);
+		if (produtoEdicao.getLancamentos().isEmpty()) {
+			lancamentoRepository.adicionar(lancamento);
+			produtoEdicao.getLancamentos().add(lancamento);
+		} else {
+			lancamentoRepository.alterar(lancamento);
+		}
 		
-		// Atualizar:
-		produtoEdicao.getLancamentos().add(lancamento);
 		produtoEdicaoRepository.alterar(produtoEdicao);
 	}
 	
