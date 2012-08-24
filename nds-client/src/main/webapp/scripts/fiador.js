@@ -5,8 +5,8 @@ var fiadorController = {
 		
 		popupCadastroFiadorCPF:function () {
 			
-			$("#fiadorController-fiadorController-tabSocio").hide();
-			$('#fiadorController-fiadorController-tabs').tabs('select', 0);
+			$("#fiadorController-tabSocio").hide();
+			$('#fiadorController-tabs').tabs('select', 0);
 			
 			$("#fiadorController-cadastroCnpj").hide();
 			$("#fiadorController-cadastroCpf").show();
@@ -111,7 +111,6 @@ var fiadorController = {
 		},
 		
 		exibirGridFiadoresCadastrados:function (){
-			var _this = this;
 			var data = "filtro.nome=" + $("#fiadorController-nomeFiadorPesquisa").val() + "&filtro.cpfCnpj=" + $("#fiadorController-cpfCnpjFiadorPesquisa").val();
 			$.postJSON(contextPath + '/cadastro/fiador/pesquisarFiador', data, 
 				function(result){
@@ -125,9 +124,9 @@ var fiadorController = {
 							page: result[1].page, total: result[1].total, rows: result[1].rows
 						});
 						
-						$("#fiadorController-gridFiadoresCadastrados").show();
+						$("#fiadorController-gridFiadoresCadastrados,.fiadorController-gridFiadoresCadastrados").show();
 					} else {
-						$("#fiadorController-gridFiadoresCadastrados").hide();
+						$("#fiadorController-gridFiadoresCadastrados,.fiadorController-gridFiadoresCadastrados").hide();
 					}
 				}
 			);
@@ -200,7 +199,7 @@ var fiadorController = {
 			$("#fiadorController-cnpjFiador").mask("99.999.999/9999-99",{completed:function(){_this.buscarPessoaCNPJ(this.val()); }});
 			jQuery(function($){
 				   $.mask.definitions['#']='[\-\.0-9]';
-				   $("#inscricaoEstadualFiador").mask("?##################",{placeholder:" "});
+				   $("#fiadorController-inscricaoEstadualFiador").mask("?##################",{placeholder:" "});
 			});
 			
 			$('#fiadorController-cpfFiador').mask("999.999.999-99",{completed:function(){
@@ -389,9 +388,9 @@ var fiadorController = {
 						$("#fiadorController-nacionalidadeFiadorCpf").val(result[10]);
 						$("#fiadorController-naturalFiadorCpf").val(result[11]);
 						
-						if ($("#fiadorController-estadoCivilFiadorCpf").val() == "CASADO"){
+						if (result[8] == "CASADO"){
 							
-							_this.opcaoCivilPf("CASADO");
+							_this.opcaoCivilPf("CASADO",'fiadorController-');
 							
 							$("#fiadorController-nomeConjugeCpf").val(result[12]);
 					        $("#fiadorController-emailConjugeCpf").val(result[13]);
@@ -409,7 +408,6 @@ var fiadorController = {
 						} else {
 							$(".fiadorController-inicioAtividadeEdicao").text(result[12]);
 						}
-						
 						
 					} else {
 						
@@ -489,7 +487,8 @@ var fiadorController = {
 		    //cotas associadas
 		    this.limparCamposCotasAssociadas();
 		    
-		    this.opcaoCivilPf("");
+		    this.opcaoCivilPf("",'fiadorController-socio-');
+		    this.opcaoCivilPf("",'fiadorController-');
 		},
 		cadastrarFiadorCnpj :function (janela){
 			var _this = this;
@@ -559,12 +558,12 @@ var fiadorController = {
 			}
 		},
 		
-		opcaoCivilPf:function (valor){
+		opcaoCivilPf:function (valor,prefix){
 			if (valor == "CASADO"){
-				$(".fiadorController-divConjuge").show();
+				$("."+prefix+"divConjuge").show();
 				this.addConjuge = true;
 			} else {
-				$(".fiadorController-divConjuge").hide();
+				$("."+prefix+"divConjuge").hide();
 				this.addConjuge = false;
 			}
 		},
@@ -661,7 +660,7 @@ var fiadorController = {
 								
 								if (result[7] == "CASADO"){
 									
-									_this.opcaoCivilPf(result[7]);
+									_this.opcaoCivilPf(result[7],'fiadorController-');
 									
 									$('#fiadorController-nomeConjugeCpf').val(result[11]);
 									$('#fiadorController-emailConjugeCpf').val(result[12]);
@@ -795,12 +794,12 @@ var fiadorController = {
 						
 						_this.limparDadosCadastraisCPFSocio();
 						
-						_this.opcaoCivilPf("");
+						_this.opcaoCivilPf("",'fiadorController-socio-');
 						
 						$("#fiadorController-btnAddEditarSocio").text("Incluir Novo");
 						
 						$('#fiadorController-socio-cpfFiador').removeAttr("disabled");
-						$('#fiadorController-socio-cpfConjuge)').removeAttr("disabled");
+						$('#fiadorController-socio-cpfConjuge').removeAttr("disabled");
 						
 						$("#fiadorController-socio-idSocioEdicao").val("");
 					}
@@ -833,7 +832,7 @@ var fiadorController = {
 						
 						if (result[7] == "CASADO"){
 							
-							_this.opcaoCivilPf(result[7]);
+							_this.opcaoCivilPf(result[7],'fiadorController-socio-');
 							
 							$('#fiadorController-socio-nomeConjugeCpf').val(result[11]);
 							$('#fiadorController-socio-emailConjugeCpf').val(result[12]);
@@ -1064,7 +1063,7 @@ var fiadorController = {
 
 				var lastIndex = data.rows[i].cell.length;
 
-				data.rows[i].cell[lastIndex] = fiacdorController.getActionCotaCadastrada(data.rows[i].id);
+				data.rows[i].cell[lastIndex] = fiadorController.getActionCotaCadastrada(data.rows[i].id);
 			}
 
 			$('.fiadorController-cotasAssociadasGrid').show();
@@ -1102,7 +1101,7 @@ var fiadorController = {
 			
 			$.postJSON(contextPath + '/cadastro/fiador/adicionarAssociacaoCota', data, 
 				function(result) {
-					$(".cotasAssociadasGrid").flexAddData({
+					$(".fiadorController-cotasAssociadasGrid").flexAddData({
 						page: 1, total: 1, rows: result.rows
 					});
 					

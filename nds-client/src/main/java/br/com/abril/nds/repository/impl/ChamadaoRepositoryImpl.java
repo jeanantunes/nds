@@ -71,7 +71,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append("produtoEdicao.NUMERO_EDICAO as numeroEdicao, ")
 			.append("produtoEdicao.PRECO_VENDA as precoVenda, ")
 			.append("("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") as desconto, ")
-			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * desconto / 100)) as precoDesconto, ")
+			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) as precoDesconto, ")
 			.append("estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA as reparte, ")
 			.append("(case ")
 				.append("when (select count(produtoFor.FORNECEDORES_ID) from PRODUTO_FORNECEDOR produtoFor ")
@@ -85,7 +85,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 					.append("and fornecedor.JURIDICA_ID = pessoa.ID and produtoFor.PRODUTO_ID = produto.ID) ")
 				.append("else null end) as nomeFornecedor, ")
 			.append("lancamento.DATA_REC_PREVISTA as dataRecolhimento, ")
-			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * desconto / 100)) * ")
+			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) * ")
 			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotal, ")
 			.append("lancamento.ID as idLancamento ");
 		
