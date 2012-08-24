@@ -199,7 +199,7 @@ var fiadorController = {
 			$("#fiadorController-cnpjFiador").mask("99.999.999/9999-99",{completed:function(){_this.buscarPessoaCNPJ(this.val()); }});
 			jQuery(function($){
 				   $.mask.definitions['#']='[\-\.0-9]';
-				   $("#inscricaoEstadualFiador").mask("?##################",{placeholder:" "});
+				   $("#fiadorController-inscricaoEstadualFiador").mask("?##################",{placeholder:" "});
 			});
 			
 			$('#fiadorController-cpfFiador').mask("999.999.999-99",{completed:function(){
