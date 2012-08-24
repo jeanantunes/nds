@@ -174,6 +174,9 @@
 		$("#ajaxLoading").ajaxStop(function() {
 			$(this).fadeOut(200);
 		});
+		
+		redimensionarWorkspace();		
+		
 	});
 	
 	var pressedCtrl = false; 
