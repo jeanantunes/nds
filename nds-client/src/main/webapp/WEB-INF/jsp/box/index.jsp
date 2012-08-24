@@ -23,14 +23,14 @@ $(function(){
 	    	<legend>Cotas Associadas ao Box</legend>
 	        <table class="boxCotaGrid"></table>
 	  
-  		  		<span class="bt_arquivo">
+  		  		<span class="bt_novos">
 					<a href="${pageContext.request.contextPath}/cadastro/box/exportarDetalhes?fileType=XLS">
-						Arquivo
+						<img src="/nds-client/images/bt_excel.png" border="0" />
 					</a>
 				</span>
-  		  		<span class="bt_imprimir">
+  		  		<span class="bt_novos">
 					<a href="${pageContext.request.contextPath}/cadastro/box/exportarDetalhes?fileType=PDF">
-						Imprimir
+						<img src="/nds-client/images/bt_imprimir.png" border="0" />
 					</a>
 				</span>
 		 </fieldset>
@@ -70,51 +70,60 @@ $(function(){
     </div>
 	</form>
 	
+	
 	<form action="/cadastro/box/" id="pesquisar_box_form">
-	 <fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_novos" title="Novo">
+				<a href="javascript:;" id="btnNovo" rel="tipsy" title="Incluir Novo Box">
+					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
+				</a>
+			</span>
+			<div id="fileExport" style="display: none;">
+				<span class="bt_arq">
+					<a href="${pageContext.request.contextPath}/cadastro/box/exportarConsulta?fileType=PDF" rel="tipsy" title="Imprimir">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
+					</a>
+				</span>
+				
+				<span class="bt_arq">
+					<a href="${pageContext.request.contextPath}/cadastro/box/exportarConsulta?fileType=XLS"  rel="tipsy" title="Gerar Arquivo">
+						<img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
+					</a>
+				</span>
+			</div>
+		</div>  		  		
+	</div>
+  	<div class="linha_separa_fields">&nbsp;</div>
+	
+	
+	
+	 <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Box</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="30">Box:</td>
-                <td><input type="text" name="box.codigo" id="pesquisaCodigoBox" style="width:130px;"/></td>
-                <td width="76">Tipo de Box:</td>
-                <td><select name="box.tipoBox" id="pesquisaTipoBox" style="width:180px;">
+                <td width="152"><input type="text" name="box.codigo" id="pesquisaCodigoBox" style="width:130px;"/></td>
+                <td width="77">Tipo de Box:</td>
+                <td width="191"><select name="box.tipoBox" id="pesquisaTipoBox" style="width:180px;">
                 		<option selected="selected"> </option>
 	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
 	                    <option value="POSTO_AVANCADO">Posto Avan&ccedilado</option>
               </select></td>
-              <td><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar">Pesquisar</a></span></td>
+              <td width="474"><span class="bt_novos"><a href="javascript:;" id="btnPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>
           </table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="classFieldset">
+      <fieldset class="fieldGrid">
        	  <legend>Boxes Cadastrados</legend>
         <div class="grids" style="display:none;">
         	<table class="boxGrid"></table>
         </div>
 
-          <div id="fileExport" style="display: none;">
-  		  		
-  		  		<span class="bt_arquivo">
-					<a href="${pageContext.request.contextPath}/cadastro/box/exportarConsulta?fileType=XLS">
-						Arquivo
-					</a>
-				</span>
-  		  		
-  		  		<span class="bt_imprimir">
-					<a href="${pageContext.request.contextPath}/cadastro/box/exportarConsulta?fileType=PDF">
-						Imprimir
-					</a>
-				</span>
-			</div>
-			
-			<span class="bt_novos" title="Novo"><a href="javascript:;" id="btnNovo"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
-  		  
       </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
     </form>
 
 </body>

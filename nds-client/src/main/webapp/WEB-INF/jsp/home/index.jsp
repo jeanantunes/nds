@@ -157,6 +157,14 @@
 					return false;
 				});
 
+		$('#linkHome').click(function() {
+			$('#workspace').tabs('addTab', $('#linkHome').html(),
+					$('#linkHome').prop("href"));
+			return false;
+		});
+
+		$('#linkHome').click();
+		
 	});
 	
 	$(document).ready(function() {
@@ -167,6 +175,59 @@
 			$(this).fadeOut(200);
 		});
 	});
+	
+	var pressedCtrl = false; 
+	var pressedAlt = false; 
+	var pressedShift = false;
+	$(document).keyup(function (e) {
+		if(e.which == 17)
+			pressedCtrl=false; 
+		
+		if (e.which == 18)
+			pressedAlt=false;
+		
+		if (e.shiftKey==1)
+			pressedShift = false;
+	})
+
+	$(document).keydown(function (e) {
+		if(e.which == 17) 
+			pressedCtrl = true; 
+
+		if (e.shiftKey==1)
+			pressedShift = true;
+
+		if (e.which==18)
+			pressedAlt=true;
+
+		if(e.which == 38 && pressedCtrl == true) { 
+			//Aqui vai o cÃ³digo e chamadas de funÃ§Ãµes para o ctrl+s
+			escondeHeader();
+		}
+		else if(e.which == 40 && pressedCtrl == true) { 
+			//Aqui vai o cÃ³digo e chamadas de funÃ§Ãµes para o ctrl+s
+			mostraHeader();
+		} else if (e.which == 69 && pressedShift == true) {
+			// CÃ³digo para shift+e (XLS)
+			if ($('#bt_xls_excell').length != 0) {
+				$('#bt_xls_excell')[0].click();
+			}
+			
+		} else if (e.which == 73 && pressedShift == true) {
+			// CÃ³digo para shift+i (Imprimir PDF)
+			if ($('#bt_imprimir_pdf').length != 0) {
+				$('#bt_imprimir_pdf')[0].click();
+			}
+			
+		} else if(e.which == 13) {
+			// CÃ³digo para Enter (Pesquisas e Novo)
+			if ($('#bt_pesquisar_cadastrar').length != 0) {
+				$('#bt_pesquisar_cadastrar')[0].click();
+			} else if ($('#btnPesquisar').length != 0) {
+				$('#btnPesquisar')[0].click();
+			}
+		}
+	});	
 	
 	var contextPath = "${pageContext.request.contextPath}";	
 	
@@ -193,84 +254,88 @@
 	margin-top: -50px; margin-left: -50px;
 	text-align: center; vertical-align: 50%;
 }
-
+.ui-tabs .ui-tabs-panel {
+    padding: 0px;
+}
 </style>
 </head>
 <body>
 
-	<div class="corpo">
+	<div class="corpo" id="divCorpo">
 		<div class="header">
 			<div class="sub-header">
-				<div class="logo">&nbsp;</div>
-
-				<div class="titAplicacao">
-					<h1>Treelog S/A. Logística e Distribuição - SP</h1>
-					<h2>CNPJ: 00.000.000/00001-00</h2>
-					<h3>Distrib vs.1</h3>
-				</div>
-
-				<div class="usuario">
-					<div class="bt_novos">
-
-						<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
+				<div id="menu_principal" style="float:left!important;">
+					<ul>
+						<li><div class="logo">&nbsp;</div></li>
+						<!-- <li><a href="index.htm"><span class="classROLE_HOME">&nbsp;</span>Home</a>
+						</li> -->
+							<c:forEach items="${menus}" var="menu">
+								<li><a href="javascript:;" class="trigger"><span
+									class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
+									<ul>
+										<c:forEach items="${menus[menu.key]}" var="submenu">
+											<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
+											</li>
+										</c:forEach>						
+									</ul>
+								</li>
+							</c:forEach>
+						<li>
+							<a href="help.htm"><span class="classROLE_HELP">&nbsp;</span>Help</a>
+						</li>
+					</ul>
 					</div>
-					<div class="bt_novos">
-						<label> <script type="text/javascript"
-								language="JavaScript">
-							diaSemana();
-						</script> </label>
+					<br clear="all"/>
+					<div class="bts_header">
+						<span class="bt_novos">
+							<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
+						</span>
+					
+						<div class="usuario">
+							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
+										
+							<label> <script type="text/javascript"
+									language="JavaScript">
+								diaSemana();
+							</script> </label>
+						
+							<label>
+								<a href="javascript:;" onclick="logout()" title="Sair do Sistema" class="sair">Sair</a>
+							</label>
+			
+						</div>
 					</div>
-					<div class="bt_novos">
-						<a href="javascript:;" onclick="logout()" title="Sair do Sistema" class="sair">Sair</a>
-					</div>
+					<br class="clearit">
 
-				</div>
+				<div class="container">
+					<div id="notify" style="display: none;"></div>
+					<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
+						<p>
+							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+							<b id="idTextSuccess"></b>
+						</p>
+					</div>
+					<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
+						<p>
+							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+							<b id="idTextWarning"></b>
+						</p>
+					</div>
+					<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
+						<p>
+							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+							<b id="idTextError"></b>
+						</p>
+					</div>
+				</div>			
+
+			
+
+				
 			</div>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
-		<div id="menu_principal">
-			<ul>
-				<li><a href="index.htm"><span class="classROLE_HOME">&nbsp;</span>Home</a>
-				</li>
-					<c:forEach items="${menus}" var="menu">
-						<li><a href="javascript:;" class="trigger"><span
-							class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
-							<ul>
-								<c:forEach items="${menus[menu.key]}" var="submenu">
-									<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
-									</li>
-								</c:forEach>						
-							</ul>
-						</li>
-					</c:forEach>
-				<li><a href="help.htm"><span class="classROLE_HELP">&nbsp;</span>Help</a>
-				</li>
-			</ul>
-			<br class="clearit">
-
-			<div class="container">
-				<div id="notify" style="display: none;"></div>
-				<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextSuccess"></b>
-					</p>
-				</div>
-				<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextWarning"></b>
-					</p>
-				</div>
-				<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
-					<p>
-						<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-						<b id="idTextError"></b>
-					</p>
-				</div>
-			</div>			
-
-		</div>
+		
 
 		<div id="workspace">
 			<ul></ul>

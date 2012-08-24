@@ -392,39 +392,45 @@ fieldset {
 			</div>
 		</div>
 </div>
-</form>
-
-<fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_novos" title="Novo">
+				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova Edição"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
+			</span>
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+		<fieldset class="fieldFiltro">
 			<input type="hidden" id="produtoEdicaoController-codigoProduto" name="codigoProduto" value="" />
 			<legend>Pesquisar Produto</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<thead/>
 				<tbody>
 					<tr>
-						<td width="74">C&oacute;digo:</td>
-						<td width="81">
+						<td width="75">C&oacute;digo:</td>
+						<td width="65">
 							<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="255" 
-									style="width:80px;" 
+									style="width:60px;" 
 									onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNomeProduto', false,
 											undefined,
 											undefined);" />
 						</td>
-						<td width="48">Produto:</td>
-						<td width="167">
+						<td width="57">Produto:</td>
+						<td width="170">
 							<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNomeProduto" maxlength="255" 
-									style="width:160px;"
+									style="width:150px;"
 									onkeyup="produtoEdicaoController.autoCompletarPorNomeProduto('#produtoEdicaoController-pNomeProduto', false);"
 									onblur="produtoEdicaoController.pesquisarPorNomeProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNomeProduto', false,
 										undefined,
 										undefined);" />
 						</td>
-						<td width="86">Per&iacute;odo Lcto:</td>
-		                <td width="103"><input type="text" name="pDateLanctoDe" id="produtoEdicaoController-pDateLanctoDe" style="width:80px;"/></td>
-		                <td width="22">At&eacute;:</td>
-		                <td width="108"><input type="text" name="pDateLanctoAte" id="produtoEdicaoController-pDateLanctoAte" style="width:80px;"/></td>
-						<td width="20">&nbsp;</td>
-						<td width="52">Situa&ccedil;&atilde;o:</td>
-						<td width="133">
+						<td width="93">Per&iacute;odo Lcto:</td>
+		                <td width="106"><input type="text" name="pDateLanctoDe" id="produtoEdicaoController-pDateLanctoDe" style="width:60px;"/></td>
+		                <td width="26">At&eacute;:</td>
+		                <td width="110"><input type="text" name="pDateLanctoAte" id="produtoEdicaoController-pDateLanctoAte" style="width:60px;"/></td>
+						<td width="22">&nbsp;</td>
+						<td width="57">Situa&ccedil;&atilde;o:</td>
+						<td width="113">
 							<select name="select" id="produtoEdicaoController-pSituacaoLancamento" name="pSituacaoLancamento" style="width:130px;">
 								<option value="" selected="selected">Selecione...</option>
 								<option value="Transmitido">Transmitido</option>
@@ -444,14 +450,14 @@ fieldset {
 					</tr>
 					<tr>
 						<td>C&oacute;d. Barras:</td>
-						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="produtoEdicaoController-pCodigoDeBarras" style="width:300px;"/></td>						
+						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="produtoEdicaoController-pCodigoDeBarras" style="width:290px;"/></td>						
 						<td>Pre&ccedil;o (R$) de:</td>
-		                <td><input type="text" name="pPrecoDe" id="produtoEdicaoController-pPrecoDe" style="width:80px; text-align:right;"/></td>
+		                <td><input type="text" name="pPrecoDe" id="produtoEdicaoController-pPrecoDe" style="width:60px; text-align:right;"/></td>
 		                <td>At&eacute;:</td>
-		                <td><input type="text" name="pPrecoAte" id="produtoEdicaoController-pPrecoAte" style="width:80px;text-align:right;"/></td>
+		                <td><input type="text" name="pPrecoAte" id="produtoEdicaoController-pPrecoAte" style="width:60px;text-align:right;"/></td>
 						<td align="right"><input type="checkbox" name="pBrinde" id="produtoEdicaoController-pBrinde" value=""/></td>
 						<td><label for="pBrinde">Brinde</label></td>
-						<td><span class="bt_pesquisar"><a href="javascript:;" onclick="produtoEdicaoController.pesquisarEdicoes();">Pesquisar</a></span></td>
+						<td><span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.pesquisarEdicoes();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 					</tr>
 				</tbody>
 			</table>
@@ -459,15 +465,11 @@ fieldset {
 		
 		<div class="linha_separa_fields">&nbsp;</div>
 		
-		<fieldset class="classFieldset">
-			<legend>Edi&ccedil;&otilde;es do Produto<span id="produtoEdicaoController-labelNomeProduto" /></legend>
-			<div class="grids" style="display:none;">
+		<div class="grids" style="display:none;">
+			<fieldset class="fieldGrid">
+				<legend>Edi&ccedil;&otilde;es do Produto<span id="produtoEdicaoController-labelNomeProduto" /></legend>
 				<table class="edicoesGrid"></table>
-			</div>
-			
-			<span class="bt_novos" title="Novo">
-				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
-			</span>
-		</fieldset>
+			</fieldset>
+		</div>
 </body>
 </html>

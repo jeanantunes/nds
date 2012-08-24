@@ -94,6 +94,9 @@ var descontoCotaController = $.extend(true,{
 	pesquisarCotaErrorCallBack:function(){
 		
 		exibirMensagemDialog("WARNING", [' Cota não encontrada!'], "idModalDescontoEspecifico");
+		
+		$("#selectFornecedorSelecionado_option_especifico",this.workspace).clear();
+		$("#selectFornecedor_option_especifico",this.workspace).clear();
 	},
 	
 	init:function(){
@@ -161,4 +164,5 @@ var descontoCotaController = $.extend(true,{
 		});		
 	}
 }, BaseController);
+
 	

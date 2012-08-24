@@ -1,5 +1,4 @@
 <head>
-<title>Parâmetros do Distribuidor</title>
 <style type="text/css">
 	#dialog-confirm{display:none;}
 	label{width:auto!important;}
@@ -20,7 +19,7 @@
 	margin: 0px;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css"></link>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.image.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.link.js"></script>
@@ -29,6 +28,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametrosDistribuidor.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/operacaoDiferenciada.js"></script>
+
 
 <script type="text/javascript">
 	
@@ -42,6 +43,9 @@
 </head>
 
 <body>
+
+<form id="salvarParametrosDistribuidor">
+</form>
 
 <form action="<c:url value='/administracao/parametrosDistribuidor/salvarLogo' />" id="formParamentrosDistribuidor"
 	  method="post" enctype="multipart/form-data" >
@@ -102,7 +106,7 @@
 				<jsp:include page="tabEmissao.jsp"></jsp:include>
 				
 			    <!-- Aba Contratos e Garantias  -->	
-	            <jsp:include page="tabContratosGarantias.jsp"></jsp:include>
+	            <jsp:include page="tabContratosGarantias.jsp"/>
 	            			
 				<jsp:include page="tabNegociacao.jsp"></jsp:include>
 			   

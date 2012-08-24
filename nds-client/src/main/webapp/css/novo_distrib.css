@@ -19,10 +19,10 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
 
 
 
-#workspace{  width:100%;  min-height:480px; height:auto; overflow:hidden;}
+#workspace{  width:100%;  min-height:100%; height:100%; overflow:hidden;}
 .breadCrumb{ line-height:23px; padding:5px 18px; background:#CCC;}
 
-.classROLE_HOME{ background:url(../images/bt_home.gif) no-repeat left center; width:16px; height:18px; float:left; margin-top:-4px; margin-right:3px;} 
+.classROLE_HOME{ background:url(../images/bt_home.gif) no-repeat 2px 3px; width:21px; height:21px; float:left; margin-top:-4px; margin-right:3px;} 
 
 .classROLE_CADASTRO{ background:url(../images/bt_cadastros.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
 
@@ -46,14 +46,13 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
 
 .classROLE_LINKS{background:url(../images/bt_links.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
 
-.classROLE_HELP{background:url(../images/bt_help.png) no-repeat left center; width:16px; height:18px; float:left;  margin-top:-4px; margin-right:3px;}
+.classROLE_HELP{background:url(../images/bt_help.png) no-repeat 2px 4px; width:21px; height:21px; float:left;  margin-top:-4px; margin-right:3px;}
 
 .classROLE_ADMINISTRACAO{background:url(../images/bt_administracao.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:-4px;}
 
 
 
 
-.logo{ background:url(../images/logo_treelog.png) no-repeat left top; width:71px; height:45px; display:table; float:left;}
 .usuario{float:right;}
 .usuario span{
 	margin-top:6px; 
@@ -63,10 +62,6 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
 	font-size:11px!important;
 }
 
-.titAplicacao{float:left; margin-left:15px; margin-top:2px;}
-.titAplicacao h1{font-size:16px; margin:0px 0px 5px 0px;}
-.titAplicacao h2{font-size:11px; margin:3px 0px; font-weight:normal; display:inline }
-.titAplicacao h3{font-size:10px; margin:0px 0px 0px 20px; font-weight:bold; display:inline}
 
 .usuario .bt_novos {margin:0px!important; padding:3px; font-size:x-small; background-position:0px 6px;}
 .usuario .bt_novos label{margin-right:5px; margin-left:5px; margin-top:-20px; }
@@ -75,13 +70,12 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
 
 
 
-.bt_novos a:hover{ border:1px solid #000; background:url(../images/seta_menu.gif) no-repeat 0px 5px #fff!important; float:left; }
+.bt_novos a:hover{ border:1px solid #000; }
 
 
 fieldset label {
     float: left;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 11px
     line-height: 23px;
     margin: 5px 5px 6px;
 	overflow:visible;
@@ -105,17 +99,3 @@ select, input {
     padding: 3px;
 }
 
-.bt_pesquisar {
-    background: url("../images/bg_item_menu.jpg") repeat-x scroll 0 0 transparent;
-    float: right;
-    font-weight: bold;
-}
-.bt_pesquisar a {
-    border: 1px solid #F2F2F2;
-    color: #000000;
-    float: left;
-    padding: 2px;
-	width:20px;
-	height:20px;
-    text-decoration: none;
-}

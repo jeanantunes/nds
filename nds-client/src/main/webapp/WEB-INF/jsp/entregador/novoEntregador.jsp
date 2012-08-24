@@ -20,26 +20,53 @@
 		</ul>
 
 		<div id="dadosCadastrais">
-			<jsp:include page="dadosCadastraisPF.jsp" />
-			<jsp:include page="dadosCadastraisPJ.jsp" />
+			<div class="linha_separa_fields">&nbsp;</div>
+			<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+				<legend>Entregador - Pessoa Física</legend>
+				<jsp:include page="dadosCadastraisPF.jsp" />
+				<jsp:include page="dadosCadastraisPJ.jsp" />
+			</fieldset>
+			<br clear="all"/>
 		</div>
 		
 		<div id="manutencaoEnderecos">
-			<jsp:include page="../endereco/index.jsp">
-				<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
-			</jsp:include>
+			<div class="linha_separa_fields">&nbsp;</div>
+			<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+				<legend>Endereços</legend>
+					<jsp:include page="../endereco/index.jsp">
+					<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
+					</jsp:include>
+			</fieldset>
+			<br clear="all"/>
 		</div>
 		
 		<div id="manutencaoTelefones">
-			<jsp:include page="../telefone/index.jsp">
-				<jsp:param value="ENTREGADOR" name="tela"/>
-			</jsp:include>
+			<div class="linha_separa_fields">&nbsp;</div>
+				<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+					<legend>Endereços</legend>
+					<jsp:include page="../telefone/index.jsp">
+					<jsp:param value="ENTREGADOR" name="tela"/>
+					</jsp:include>
+				</fieldset>
+			<br clear="all"/>
 		</div>
 		
 		<div id="cotas">
-			<jsp:include page="cotas.jsp" />
+			<div class="linha_separa_fields">&nbsp;</div>
+				<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+					<legend>Endereços</legend>
+					<jsp:include page="cotas.jsp" />
+				</fieldset>
+			<br clear="all"/>
 		</div>
 
 	</div>
 	
 </div>
+
+<script type="text/javascript">
+$(function(){
+	ENDERECO_ENTREGADOR.init(entregadorController.workspace);
+	ENTREGADOR.init(entregadorController.workspace);
+});
+</script>

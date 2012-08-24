@@ -80,8 +80,19 @@
 	    	</div>
 		</div>
 	</div>
-	
-	<fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+            <span class="bt_novos" title="Novo">
+            	<a href="javascript:;" onclick='$(".inicioAtividadeNovo").show();$(".inicioAtividadeEdicao").hide();popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
+            </span>
+        	
+        	<span class="bt_novos" title="Novo">
+        		<a href="javascript:;" onclick="popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
+        	</span>
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldFiltro">
    		<legend> Pesquisar Fiador</legend>
         	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
@@ -89,11 +100,11 @@
               		<td colspan="3">
               			<input type="text" name="textfield2" id="fiadorController-nomeFiadorPesquisa" style="width:180px;" maxlength="255"/>
               		</td>
-                	<td width="68">CPF/CNPJ:</td>
-                	<td width="477">
+                	<td width="74">CPF/CNPJ:</td>
+                	<td width="139">
                 		<input type="text" name="textfield" id="fiadorController-cpfCnpjFiadorPesquisa" style="width:130px;" maxlength="255"/>
                 	</td>
-              		<td width="104">
+              		<td width="480">
               			<span class="bt_pesquisar"><a href="javascript:fiadorController.exibirGridFiadoresCadastrados();">Pesquisar</a></span>
               		</td>
             	</tr>
@@ -102,11 +113,15 @@
     
     <div class="linha_separa_fields">&nbsp;</div>
     
-    <fieldset class="classFieldset">
-		<legend>Fiadores Cadastrados</legend>
-        	<div class="fiadorController-grids" style="display:none;" id="fiadorController-gridFiadoresCadastrados">
-        		<table class="fiadorController-pessoasGrid"></table>
-        	</div>
+    <div class="grids" style="display:none;">
+	    <fieldset class="fieldGrid">
+			<legend>Fiadores Cadastrados</legend>
+	        	<div class="fiadorController-grids" style="display:none;" id="fiadorController-gridFiadoresCadastrados">
+	        		<table class="fiadorController-pessoasGrid"></table>
+	        	</div>
+		</fieldset>
+	</div>
+</body>
 
             <span class="bt_novos" title="Novo">
             	<a href="javascript:;" onclick='$(".fiadorController-inicioAtividadeNovo").show();$(".fiadorController-inicioAtividadeEdicao").hide();fiadorController.popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
@@ -119,3 +134,9 @@
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 </body>
+<script type="text/javascript">
+$(function(){
+	ENDERECO_FIADOR.init(fiadorController.workspace);
+	FIADOR.init(fiadorController.workspace);
+});
+</script>

@@ -598,19 +598,8 @@ public class CotaController {
 	@Path("/salvarFornecedores")
 	public void salvarFornecedores(List<Long> fornecedores, Long idCota){
 		
-		if(fornecedores == null){
-			
-			List<Fornecedor> list = fornecedorService.obterFornecedoresCota(idCota);
-	
-			if(list!= null && !list.isEmpty()){
-				
-				fornecedorService.salvarFornecedorCota(fornecedores, idCota);
-			}
-		}else {
-			
-			fornecedorService.salvarFornecedorCota(fornecedores, idCota);
-		}
-		
+		fornecedorService.salvarFornecedorCota(fornecedores, idCota);
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}

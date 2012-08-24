@@ -16,8 +16,8 @@ var boxController = $.extend(true, {
 				} else {
 					$.each(data.rows, function(index, value) {
 						var idBox = value.cell.id;
-						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" />';
-						acao += '</a> <a href="javascript:;" onclick="boxController.excluir(' + idBox + ');""><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-left:5px;" />';
+						acao += '</a> <a href="javascript:;" onclick="boxController.excluir(' + idBox + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
 
 						value.cell.acao = acao;						
 						value.cell.tipoBox = boxController.tipoBoxEnun[value.cell.tipoBox];				
@@ -53,7 +53,7 @@ var boxController = $.extend(true, {
 				name : 'acao',
 				width : 60,
 				sortable : false,
-				align : 'left'
+				align : 'center'
 			}],
 			sortname : "codigo",
 			sortorder : "asc",
@@ -62,7 +62,7 @@ var boxController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 280
+			height : 'auto'
 		});
 		$(".boxGrid", this.workspace).flexOptions({
 			"url" : this.path + 'busca.json',
@@ -262,7 +262,7 @@ var boxController = $.extend(true, {
 				align : 'left'
 			}],
 			width : 570,
-			height : 255
+			height : 210
 		});
 	},
 	detalheDialog:function(){

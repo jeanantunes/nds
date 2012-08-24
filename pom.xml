@@ -423,7 +423,7 @@
 
 		<module>nds-client</module>
 
-		<!-- DESABILITADO até início de atividades neste módulo <module>nds-server</module> -->
+		<module>nds-server</module>
 
 	</modules>
 

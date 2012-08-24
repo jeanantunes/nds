@@ -218,6 +218,7 @@ public class ProdutoEdicaoController {
 		this.result.use(FlexiGridJson.class).from(lst).total(lst.size()).page(1).serialize();
 	}
 	
+	
 	@Post
 	public void salvar(UploadedFile imagemCapa,
 			String codigoProduto, Long idProdutoEdicao,
@@ -261,19 +262,19 @@ public class ProdutoEdicaoController {
 		dto.setNumeroLancamento(numeroLancamento);
 		dto.setDescricaoBrinde(descricaoBrinde);
 		dto.setDescricaoProduto(descricaoProduto);
-		this.validarProdutoEdicao(dto);
-		
-		
-		// Dados da Imagem:
-		String contentType = null;
-		InputStream imgInputStream = null;
-		if (imagemCapa != null) {
-			contentType = imagemCapa.getContentType();
-			imgInputStream = imagemCapa.getFile();
-		}
 		
 		ValidacaoVO vo = null;
 		try {
+			this.validarProdutoEdicao(dto, codigoProduto);
+			
+			
+			// Dados da Imagem:
+			String contentType = null;
+			InputStream imgInputStream = null;
+			if (imagemCapa != null) {
+				contentType = imagemCapa.getContentType();
+				imgInputStream = imagemCapa.getFile();
+			}
 			
 			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
@@ -294,7 +295,7 @@ public class ProdutoEdicaoController {
 	 * 
 	 * @param dto
 	 */
-	private void validarProdutoEdicao(ProdutoEdicaoDTO dto) {
+	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		boolean origemInterface = false;
@@ -352,6 +353,19 @@ public class ProdutoEdicaoController {
 		
 		if (dto.getCodigoDeBarras() == null || dto.getCodigoDeBarras().trim().length() <= 0) {
 			listaMensagens.add("Campo 'Código de Barras' deve ser preenchido!");
+		}
+		
+		if (codigoProduto != null
+				&& codigoProduto.trim().length() > 0
+				&& dto.getNumeroEdicao() != null
+				&& !Long.valueOf(0).equals(dto.getNumeroEdicao())) {
+			
+			ProdutoEdicao produtoEdicao = 
+					peService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
+		
+			if (produtoEdicao != null && !produtoEdicao.getId().equals(dto.getId())) {
+				listaMensagens.add("O 'Número de Edição' deve ser unico para esse Produto!");
+			}
 		}
 		
 		if (!listaMensagens.isEmpty()) {

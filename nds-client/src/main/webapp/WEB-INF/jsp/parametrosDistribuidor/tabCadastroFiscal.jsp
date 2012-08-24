@@ -113,7 +113,7 @@
 						   value="${parametrosDistribuidor.endereco.cep}"
 						   maxlength="9" />
 					<span class="classPesquisar" title="Pesquisar Cep.">
-						<a href="javascript:;" onclick="enderecoController.pesquisarEnderecoPorCep();">&nbsp;</a>
+						<a href="javascript:;" onclick="endereco.pesquisarEnderecoPorCep();">&nbsp;</a>
 					</span>
 				</td>
 				<td>UF:</td>
@@ -126,8 +126,8 @@
 				<td>
 					<input type="text" style="width: 180px" id="cidade" name="cidade"
 						   value="${parametrosDistribuidor.endereco.localidade}"
-						   onkeyup="enderecoController.autoCompletarLocalidades();"
-						   onblur="enderecoController.autoCompletarLocalidades(true);"
+						   onkeyup="endereco.autoCompletarLocalidades();"
+						   onblur="endereco.autoCompletarLocalidades(true);"
 						   maxlength="60"/>
 				</td>
 			</tr>
@@ -136,8 +136,8 @@
 				<td>
 					<input type="text" style="width: 180px" id="bairro" name="bairro"
 						   value="${parametrosDistribuidor.endereco.bairro}"
-						   onkeyup="enderecoController.autoCompletarBairros();"
-						   onblur="enderecoController.autoCompletarBairros(true);"
+						   onkeyup="endereco.autoCompletarBairros();"
+						   onblur="endereco.autoCompletarBairros(true);"
 						   maxlength="60"/>
 				</td>
 				<td>Tipo :</td>
@@ -153,8 +153,8 @@
 				<td>
 					<input type="text" style="width: 180px" id="logradouro" name="logradouro"
 						   value="${parametrosDistribuidor.endereco.logradouro}"
-						   onkeyup="enderecoController.autoCompletarLogradouros();"
-						   onblur="enderecoController.autoCompletarLogradouros(true);"
+						   onkeyup="endereco.autoCompletarLogradouros();"
+						   onblur="endereco.autoCompletarLogradouros(true);"
 						   maxlength="60"/>
 				</td>
 				<td>Número:</td>

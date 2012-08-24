@@ -79,7 +79,7 @@ var recebimentoFisicoController = $.extend(true, {
 			 precision:2
 		});
 		
-		$("#itensRecebimento.qtdExemplaresItem", this.workspace).maskMoney({
+		$("#itensRecebimento.qtdExemplarItem", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
@@ -1294,7 +1294,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var preco = removeMascaraPriceFormat($("#precoDescontoItem"+index, this.workspace).val());
 		var quantidade = removeMascaraPriceFormat($("#qtdNotaItem"+index, this.workspace).val());
-		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplaresItem"+index, this.workspace).val());
+		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplarItem"+index, this.workspace).val());
 		
 		if((preco == "")||(quantidade == "")) {
 			$("#valorItem"+index, this.workspace).val("");
@@ -1417,9 +1417,9 @@ var recebimentoFisicoController = $.extend(true, {
 				 valueQtdPacote = row.cell.qtdPacote;
 			 }
 			 
-			 var valueQtdExemplares='';
-			 if (row.cell.qtdExemplares!=null){
-				 valueQtdExemplares = row.cell.qtdExemplares;
+			 var valueQtdExemplar='';
+			 if (row.cell.qtdExemplar!=null){
+				 valueQtdExemplar = row.cell.qtdExemplar;
 			 }
 			 
 			 var valueDiferenca='';
@@ -1444,7 +1444,7 @@ var recebimentoFisicoController = $.extend(true, {
 			     
 	         var qtdPacote =    '<input maxlength="17" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
 				             
-			 var qtdExemplares ='<input maxlength="17" value="'+valueQtdExemplares+'" type="text" name="itensRecebimento.qtdExemplaresItem" id="qtdExemplaresItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
+			 var qtdExemplar ='<input maxlength="17" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
 				
 			 var diferenca =    '<input maxlength="17" value="'+valueDiferenca+'" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 				 
@@ -1458,7 +1458,7 @@ var recebimentoFisicoController = $.extend(true, {
 		     row.cell[3] = precoDesconto;
 		     row.cell[4] = qtdNota;
 		     row.cell[5] = qtdPacote;
-		     row.cell[6] = qtdExemplares;
+		     row.cell[6] = qtdExemplar;
 		     row.cell[7] = diferenca;
 		     row.cell[8] = valor;
 		     row.cell[9] = checkBox;
@@ -1469,7 +1469,7 @@ var recebimentoFisicoController = $.extend(true, {
 		return resultado;
 	},
 	
-	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplares) {
+	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar) {
 
 		if (!$.trim(codigo) 
 				&& !$.trim(produto)
@@ -1477,7 +1477,7 @@ var recebimentoFisicoController = $.extend(true, {
 				&& !$.trim(precoDesconto)
 				&& !$.trim(qtdNota)
 				&& !$.trim(qtdPacote)
-				&& !$.trim(qtdExemplares)) {
+				&& !$.trim(qtdExemplar)) {
 
 			return true;
 		}
@@ -1499,7 +1499,7 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaPrecoDesconto = linha.find("td")[3];
 			var colunaQtdNota = linha.find("td")[4];
 			var colunaQtdPacote = linha.find("td")[5];
-			var colunaQtdExemplares = linha.find("td")[6];
+			var colunaQtdExemplar = linha.find("td")[6];
 			var colunaDiferenca = linha.find("td")[7];
 			var colunaValor = linha.find("td")[8];
 			var colunaCheck = linha.find("td")[9];
@@ -1522,8 +1522,8 @@ var recebimentoFisicoController = $.extend(true, {
 			var qtdPacote =
 				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val();
 			
-			var qtdExemplares =
-				$(colunaQtdExemplares).find("div").find('input[name="itensRecebimento.qtdExemplaresItem"]').val();
+			var qtdExemplar =
+				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val();
 			
 			var diferenca =
 				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val();
@@ -1531,7 +1531,7 @@ var recebimentoFisicoController = $.extend(true, {
 			var valor =
 				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val();
 
-			if (!recebimentoFisicoController.isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplares)) {
+			if (!recebimentoFisicoController.isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar)) {
 
 	            var dataLancamento = $("#novoDataEntrada", this.workspace).val();
 				
@@ -1551,7 +1551,7 @@ var recebimentoFisicoController = $.extend(true, {
 				
 				lancamento += 'itens[' + index + '].qtdPacote=' + qtdPacote + '&';
 				
-				lancamento += 'itens[' + index + '].qtdExemplares=' + qtdExemplares + '&';
+				lancamento += 'itens[' + index + '].qtdExemplar=' + qtdExemplar + '&';
 				
 				lancamento += 'itens[' + index + '].diferenca=' + diferenca + '&';
 				
@@ -1606,7 +1606,7 @@ var recebimentoFisicoController = $.extend(true, {
     	if ( $("#checkbox"+index, this.workspace).attr('checked') == 'checked' || 
     		 $("#novoReplicarQtde", this.workspace).attr('checked') == 'checked' ) {
     		
-    	    $("#qtdExemplaresItem"+index, this.workspace).val($("#qtdNotaItem"+index, this.workspace).val());
+    	    $("#qtdExemplarItem"+index, this.workspace).val($("#qtdNotaItem"+index, this.workspace).val());
     	    
     	}    
     },
@@ -1628,7 +1628,7 @@ var recebimentoFisicoController = $.extend(true, {
 		     
         var qtdPacote =    '<input maxlength="17" type="number" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
 			             
-		var qtdExemplares ='<input maxlength="17" type="number" name="itensRecebimento.qtdExemplaresItem" id="qtdExemplaresItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
+		var qtdExemplar ='<input maxlength="17" type="number" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
 			
 		var diferenca =    '<input maxlength="17" type="number" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 			 
@@ -1642,7 +1642,7 @@ var recebimentoFisicoController = $.extend(true, {
    	               {name: 'precoDesconto', value: precoDesconto},
    	          	   {name: 'qtdeNota', value: qtdNota},
    	               {name: 'qtdePcts', value: qtdPacote},
-   	               {name: 'qtdeExemplar', value: qtdExemplares},
+   	               {name: 'qtdeExemplar', value: qtdExemplar},
    	               {name: 'diferenca', value: diferenca},
    	               {name: 'valor', value: valor},
    	               {name: 'replicar', value: checkBox}];
@@ -1675,7 +1675,7 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaPrecoDesconto = linha.find("td")[3];
 			var colunaQtdNota = linha.find("td")[4];
 			var colunaQtdPacote = linha.find("td")[5];
-			var colunaQtdExemplares = linha.find("td")[6];
+			var colunaQtdExemplar = linha.find("td")[6];
 			var colunaDiferenca = linha.find("td")[7];
 			var colunaValor = linha.find("td")[8];
 			var colunaCheck = linha.find("td")[9];
@@ -1698,8 +1698,8 @@ var recebimentoFisicoController = $.extend(true, {
 			var valueQtdPacote =
 				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val();
 			
-			var valueQtdExemplares =
-				$(colunaQtdExemplares).find("div").find('input[name="itensRecebimento.qtdExemplaresItem"]').val();
+			var valueQtdExemplar =
+				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val();
 			
 			var valueDiferenca =
 				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val();
@@ -1714,7 +1714,7 @@ var recebimentoFisicoController = $.extend(true, {
 		   	              {name: 'precoDesconto', value: valuePrecoDesconto},
 		   	              {name: 'qtdeNota', value: valueQtdNota},
 		   	              {name: 'qtdePcts', value: valueQtdPacote},
-		   	              {name: 'qtdeExemplar', value: valueQtdExemplares},
+		   	              {name: 'qtdeExemplar', value: valueQtdExemplar},
 		   	              {name: 'diferenca', value: valueDiferenca},
 		   	              {name: 'valor', value: valueValor},
 		   	              {name: 'replicar', value: 0}];
@@ -1722,7 +1722,7 @@ var recebimentoFisicoController = $.extend(true, {
 		    dataValores.push({id:index, cell: rowValores});
 			
 		    //MANTEM LINHAS ATUAIS
-			if (!recebimentoFisicoController.isAtributosLancamentoVazios(valueCodigo, valueProduto, valueEdicao, valuePrecoDesconto, valueQtdNota, valueQtdPacote, valueQtdExemplares)) {
+			if (!recebimentoFisicoController.isAtributosLancamentoVazios(valueCodigo, valueProduto, valueEdicao, valuePrecoDesconto, valueQtdNota, valueQtdPacote, valueQtdExemplar)) {
 		        data.push({id:nLinhas, cell: recebimentoFisicoController.adicionarNovaLinha(index)});
 		    }
 			 
@@ -1757,7 +1757,7 @@ var recebimentoFisicoController = $.extend(true, {
 				var colunaPrecoDesconto = linha.find("td")[3];
 				var colunaQtdNota = linha.find("td")[4];
 				var colunaQtdPacote = linha.find("td")[5];
-				var colunaQtdExemplares = linha.find("td")[6];
+				var colunaQtdExemplar = linha.find("td")[6];
 				var colunaDiferenca = linha.find("td")[7];
 				var colunaValor = linha.find("td")[8];
 				var colunaCheck = linha.find("td")[9];
@@ -1768,7 +1768,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val(dataValores[index].cell[3].value);
 				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[4].value);
 				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[5].value);
-				$(colunaQtdExemplares).find("div").find('input[name="itensRecebimento.qtdExemplaresItem"]').val(dataValores[index].cell[6].value);
+				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val(dataValores[index].cell[6].value);
 				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[7].value);
 				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val(dataValores[index].cell[8].value);
 	        	

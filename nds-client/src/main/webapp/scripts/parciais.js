@@ -150,7 +150,7 @@ var ParciaisController = $.extend(true, {
 			this.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
 		
-		if(result.rows[0].cell.geradoPorInterface==true)
+		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
 			$("#btnIncluirPeriodos",this.workspace).hide();
 		else
 			$("#btnIncluirPeriodos",this.workspace).show();		
@@ -171,7 +171,7 @@ var ParciaisController = $.extend(true, {
 			$('#exportacaoPeriodosModal',this.workspace).show();
 		}
 		
-		if(result.rows[0].cell.geradoPorInterface==true)
+		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
 			$("#btnIncluirPeriodosModal",this.workspace).hide();
 		else
 			$("#btnIncluirPeriodosModal",this.workspace).show();		
@@ -280,7 +280,7 @@ var ParciaisController = $.extend(true, {
 					row.cell.dataRecolhimento +
 			        ' \')"')+
 			        
-			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0" hspace="5" /></a>' +
+			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0"  style="margin-right:5px;" /></a>' +
 			'<a href="javascript:;" '+
 			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':' onclick="ParciaisController.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" ')+
 			'><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
@@ -540,11 +540,11 @@ var ParciaisController = $.extend(true, {
 		
 			$( "#dialog-detalhes", this.workspace).dialog({
 				resizable: false,
-				height:550,
-				width:960,
+				height:480,
+				width:940,
 				modal: true,
 				buttons: {
-					"Cancelar": function() {
+					"Fechar": function() {
 						$( this ).dialog( "close" );
 					}
 				},
@@ -592,7 +592,7 @@ var ParciaisController = $.extend(true, {
 				}, {
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 60,
+					width : 80,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -616,13 +616,13 @@ var ParciaisController = $.extend(true, {
 				}, {
 					display : 'Status',
 					name : 'statusParcial',
-					width : 60,
+					width : 80,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Ação',
 					name : 'acao',
-					width : 80,
+					width : 40,
 					sortable : false,
 					align : 'center'
 				}],
@@ -633,7 +633,7 @@ var ParciaisController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 		}); 	
 
 		$(".grids", this.workspace).show();	

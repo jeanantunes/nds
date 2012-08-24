@@ -13,20 +13,42 @@
 		</ul>
 	
 		<div id="fornecedorController-dadosCadastrais">
-			<jsp:include page="dadosCadastrais.jsp" />
+			<div class="linha_separa_fields">&nbsp;</div>
+			<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+				<legend>Dados Cadastrais</legend>
+				<jsp:include page="dadosCadastrais.jsp" />
+			</fieldset>
+			<br clear="all"/>
 		</div>
 		
 		<div id="fornecedorController-manutencaoEnderecos">
-			<jsp:include page="../endereco/index.jsp">
-				<jsp:param value="ENDERECO_FORNECEDOR" name="telaEndereco"/>
-			</jsp:include>
+			<div class="linha_separa_fields">&nbsp;</div>
+			<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+				<legend>Endereços</legend>
+				<jsp:include page="../endereco/index.jsp">
+					<jsp:param value="ENDERECO_FORNECEDOR" name="telaEndereco"/>
+				</jsp:include>
+			</fieldset>
+			<br clear="all"/>
 		</div>
 		
 		<div id="fornecedorController-manutencaoTelefones">
-			<jsp:include page="../telefone/index.jsp">
-				<jsp:param value="FORNECEDOR" name="tela"/>
-			</jsp:include>
+			<div class="linha_separa_fields">&nbsp;</div>
+			<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+				<legend>Telefones</legend>
+				<jsp:include page="../telefone/index.jsp">
+					<jsp:param value="FORNECEDOR" name="tela"/>
+				</jsp:include>
+			</fieldset>
+			<br clear="all"/>
 		</div>
 	</div>
 
 </div>
+
+<script type="text/javascript">
+$(function(){
+	ENDERECO_FORNECEDOR.init(fornecedorController.workspace);
+	FORNECEDOR.init(fornecedorController.workspace);
+});
+</script>

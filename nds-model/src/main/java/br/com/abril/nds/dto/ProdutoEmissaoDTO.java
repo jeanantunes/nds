@@ -105,8 +105,16 @@ public class ProdutoEmissaoDTO implements Serializable{
 	 * @param desconto the desconto to set
 	 */
 	public void setDesconto(BigDecimal desconto) {
-		vlrDesconto = desconto.doubleValue();
-		this.desconto = CurrencyUtil.formatarValor(desconto);
+		
+		if (desconto != null){
+		
+			vlrDesconto = desconto.doubleValue();
+			this.desconto = CurrencyUtil.formatarValor(desconto);
+		} else {
+			
+			vlrDesconto = 0d;
+			this.desconto = "0.00";
+		}
 	}
 	/**
 	 * @return the tipoRecolhimento

@@ -49,19 +49,19 @@ var bancoController = $.extend(true, {
 				},{
 					display : 'Carteira',
 					name : 'carteira',
-					width : 130,
+					width : 120,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Status',
 					name : 'status',
-					width : 70,
+					width : 50,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Ação',
 					name : 'acao',
-					width : 60,
+					width : 50,
 					sortable : false,
 					align : 'center'
 				}],
@@ -71,8 +71,8 @@ var bancoController = $.extend(true, {
 				useRp : true,
 				rp : 15,
 				showTableToggleBtn : true,
-				width : 960,
-				height : 255
+				width : 950,
+				height : 'auto'
 			});
 		
 			$("#numero", this.workspace).numeric();	
@@ -103,7 +103,7 @@ var bancoController = $.extend(true, {
 		
 	    	bancoController.limparTelaCadastroBanco();
 			
-			$( "#dialog-novo", this.workspace ).dialog({
+			$( "#dialog-novo").dialog({
 				resizable: false,
 				height:350,
 				width:655,
@@ -125,7 +125,7 @@ var bancoController = $.extend(true, {
 		
 		popup_alterar : function() {
 		
-			$( "#dialog-alterar", this.workspace ).dialog({
+			$( "#dialog-alterar").dialog({
 				resizable: false,
 				height:350,
 				width:655,
@@ -227,12 +227,12 @@ var bancoController = $.extend(true, {
 			$.each(dadosPesquisa.rows, 
 					function(index, row) {
 
-						 var linkEditar = '<a href="javascript:;" onclick="bancoController.editarBanco(' + row.cell[0] + ');" style="cursor:pointer">' +
+						 var linkEditar = '<a href="javascript:;" onclick="bancoController.editarBanco(' + row.cell[0] + ');" style="margin-right:5px; ">' +
 	                                      '<img src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" title="Altera banco" />' +
 		                                  '</a>';			
 					
 				         var linkExcluir =    '<a href="javascript:;" onclick="bancoController.popup_excluir(' + row.cell[0] + ');" style="cursor:pointer">' +
-				                              '<img src="'+ contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" title="Exclui banco" />' +
+				                              '<img src="'+ contextPath + '/images/ico_excluir.gif" border="0px" title="Exclui banco" />' +
 							                  '</a>';		 					 
 										
 					     row.cell[9] = linkEditar + linkExcluir;

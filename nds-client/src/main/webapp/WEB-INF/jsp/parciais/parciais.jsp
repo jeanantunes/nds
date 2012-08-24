@@ -138,26 +138,24 @@
 	
 	<div id="exportacaoPeriodosModal">
 		            
-		            <span class="bt_novos" title="Gerar Arquivo">
+		<span class="bt_novos" title="Gerar Arquivo">
 		            
 		<!-- ARQUIVO EXCEL -->
-		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
+		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				
-				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-				</span>
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
+		</span>
 		
-				<span class="bt_novos" title="Imprimir">
-		
+		<span class="bt_novos" title="Imprimir">
 			
 		<!-- IMPRIMIR PDF -->	
-		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF" rel="tipsy" title="Imprimir">
 		
-				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
 				</span>
-		        
 		</div>   
 	
-	 <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="ParciaisController.popup(true);"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />Incluir Períodos</a></span>
+	 <span id="btnIncluirPeriodosModal" class="bt_novos" title="Novo"><a href="javascript:;" onclick="ParciaisController.popup(true);" rel="tipsy" title="Incluir Novo Período"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Períodos" /></a></span>
 	
 	
 	</div>
@@ -187,28 +185,34 @@
 	 </div>
 </form>
 
-
-<div class="corpo">
- 
-    <div class="container">
-    
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Parcial < evento > com < status >.</b></p>
-	</div>
-    	
-      <fieldset class="classFieldset">
+		<div class="areaBts">
+			<div class="area">
+				<span class="bt_arq" title="Gerar Arquivo">
+				<!-- ARQUIVO EXCEL -->
+				<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
+			</span>
+	
+			<span class="bt_arq" title="Imprimir">
+			<!-- IMPRIMIR PDF -->	
+				<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
+			</span>
+			</div>
+		</div>
+		<div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Parciais</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
-              <td width="46">Código:</td>
+              <td width="51">Código:</td>
               <td colspan="3">
 <!-- Código -->
 <input class="campoDePesquisa" id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="pesquisaProdutoParciais.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
 				</td>
-                <td width="51">Produto:</td>
-                <td width="163">
+                <td width="52">Produto:</td>
+                <td width="192">
                 
 <!-- Nome Produto -->                
 <input class="campoDePesquisa" id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
@@ -217,13 +221,13 @@
 					    	   
 				</td>
                 <td width="56">Edição:</td>
-                <td width="148">
+                <td width="163">
 
 <!-- Numero Edição -->                
 <input class="campoDePesquisa" id="edicaoProduto"  type="text" name="edicoes" style="width:80px;"/></td>
 
-              <td width="67">Fornecedor:</td>
-              <td colspan="2">
+              <td width="74">Fornecedor:</td>
+              <td>
        
 <!-- Fornecedores -->
 <select class="campoDePesquisa" id="idFornecedor" name="idFornecedor" style="width:200px;">
@@ -238,74 +242,51 @@
             <tr>
               <td>Período:</td>
               <td colspan="3">
-
-<!-- Data de -->              
-<input class="campoDePesquisa" id="dataInicial" type="text" name="dataInicial" style="width:80px;"/></td>
+				
+				<!-- Data de -->              
+				<input class="campoDePesquisa" id="dataInicial" type="text" name="dataInicial" style="width:80px;"/></td>
 
               <td>Até:</td>
               <td>
-
-<!-- Data até -->
-<input class="campoDePesquisa" id="dataFinal" type="text" name="dataFinal" style="width:80px;"/></td>
+				
+				<!-- Data até -->
+				<input class="campoDePesquisa" id="dataFinal" type="text" name="dataFinal" style="width:80px;"/></td>
 
               <td>Status:</td>
               <td>
-              
-<!-- Status -->              
-<select class="campoDePesquisa" id="status" name="select2" style="width:140px;">
-  <option selected="selected" value="">Todos</option>
-   <c:forEach items="${listaStatus}" var="status">
-      		<option value="${status.key}">${status.value}</option>	
-    </c:forEach>
-</select>
+				              
+				<!-- Status -->              
+				<select class="campoDePesquisa" id="status" name="select2" style="width:140px;">
+				  <option selected="selected" value="">Todos</option>
+				   <c:forEach items="${listaStatus}" var="status">
+				      		<option value="${status.key}">${status.value}</option>	
+				    </c:forEach>
+				</select>
 				</td>
               <td>&nbsp;</td>
-              <td width="137">&nbsp;</td>
-              <td width="119"><span class="bt_pesquisar">
-              
-<!-- Pesquisar -->
-<a class="botaoPesquisar" href="javascript:;" onclick=" ParciaisController.cliquePesquisar();">Pesquisar</a>
-		
-			</span></td>
+              <td width="200"><span class="bt_novos"><a href="javascript:;" onclick=" ParciaisController.cliquePesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0"/></a></span></td>
             </tr>
           </table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-
-<!-- PESQUISA DE LANCAMENTOS ParciaisController -->
-<fieldset id="painelLancamentos" class="classFieldset" style="display:block">
-	       	  <legend>Parciais Cadastradas</legend>
-	       
-	        	
-	        	<table class="parciaisGrid"></table>
-	            
-	<div id="exportacao">
-	            
-	            <span class="bt_novos" title="Gerar Arquivo">
-	            
-	<!-- ARQUIVO EXCEL -->
-	<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=XLS">
-			
-			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-			</span>
-	
-			<span class="bt_novos" title="Imprimir">
-	
-		
-	<!-- IMPRIMIR PDF -->	
-	<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=PDF">
-	
-			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-			</span>
-	        
-	</div>           
-           
+		<div class="grids" style="display:none;">
+		<!-- PESQUISA DE LANCAMENTOS ParciaisController -->
+		<fieldset id="painelLancamentos" class="fieldGrid" style="display:block">
+			     <legend>Parciais Cadastradas</legend>
+			        	
+			    <table class="parciaisGrid"></table>
+			            
+				<div id="exportacao">
+				            
+				</div>           
+		</div>  
 </fieldset>
 
 
 <!-- PESQUISA DE PERIODOS PARCIAIS -->
-<fieldset id="painelPeriodos" class="classFieldset" style="display:none">
+
+<fieldset id="painelPeriodos" class="fieldGrid" style="display:none">
 	       	  <legend>Períodos Cadastrados</legend>
 	               	
 	        	<table class="periodosGrid"></table>
@@ -317,7 +298,7 @@
 	<!-- ARQUIVO EXCEL -->
 	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
 			
-			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
 			</span>
 	
 			<span class="bt_novos" title="Imprimir">
@@ -326,23 +307,17 @@
 	<!-- IMPRIMIR PDF -->	
 	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
 	
-			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
 			</span>
 			
 	
 	 <span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
 	 		<a href="javascript:;" onclick="ParciaisController.popup(false);">
 	 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
-	 		Incluir Períodos
 	 		</a>
 	 </span>
 	        
 	           
 </fieldset>
-
-      <div class="linha_separa_fields">&nbsp;</div>
-    
-    </div>
-</div> 
 
 <jsp:include page="parciaisDeVenda.jsp" />

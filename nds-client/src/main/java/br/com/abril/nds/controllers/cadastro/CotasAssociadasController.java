@@ -144,6 +144,12 @@ public class CotasAssociadasController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota é obrigatório.");
 		}
 		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		if(cota.getFiador() != null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Esta cota já possui um fiador.");
+		}
+		
 		List<AssociacaoCota> listaAssociacao = this.obterListaAssociacaoSalvar();
 		
 		boolean add = true;

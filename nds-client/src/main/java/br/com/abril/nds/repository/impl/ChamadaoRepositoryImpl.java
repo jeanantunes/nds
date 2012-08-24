@@ -35,18 +35,20 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	@Override
 	public ResumoConsignadoCotaChamadaoDTO obterResumoConsignadosParaChamadao(FiltroChamadaoDTO filtro) {
 		
-		StringBuilder hql = new StringBuilder();
+		StringBuilder hql = new StringBuilder("select sum(consignadoCota.qtdExemplaresTotal) as qtdExemplaresTotal, sum(consignadoCota.valorTotal) as valorTotal from ( ");
 		
 		hql.append("SELECT ")
 			.append(" sum(estoqueProdCota.QTDE_RECEBIDA ")
 			.append(" - estoqueProdCota.QTDE_DEVOLVIDA) as qtdExemplaresTotal, ")
-			.append(" sum((produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) * ")
+			.append(" sum((produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) * ")
 			.append(" (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA)) as valorTotal ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
+		hql.append(" ) as consignadoCota");
+		
 		Query query = this.getSession().createSQLQuery(hql.toString())
-			.addScalar("qtdExemplaresTotal", StandardBasicTypes.BIG_DECIMAL)
+			.addScalar("qtdExemplaresTotal", StandardBasicTypes.BIG_INTEGER)
 			.addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
 		
 		aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
@@ -68,7 +70,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append("produto.NOME as nomeProduto, ")
 			.append("produtoEdicao.NUMERO_EDICAO as numeroEdicao, ")
 			.append("produtoEdicao.PRECO_VENDA as precoVenda, ")
-			.append("(produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) as precoDesconto, ")
+			.append("("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") as desconto, ")
+			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * desconto / 100)) as precoDesconto, ")
 			.append("estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA as reparte, ")
 			.append("(case ")
 				.append("when (select count(produtoFor.FORNECEDORES_ID) from PRODUTO_FORNECEDOR produtoFor ")
@@ -82,7 +85,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 					.append("and fornecedor.JURIDICA_ID = pessoa.ID and produtoFor.PRODUTO_ID = produto.ID) ")
 				.append("else null end) as nomeFornecedor, ")
 			.append("lancamento.DATA_REC_PREVISTA as dataRecolhimento, ")
-			.append("(produtoEdicao.PRECO_VENDA - produtoEdicao.DESCONTO) * ")
+			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * desconto / 100)) * ")
 			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotal, ")
 			.append("lancamento.ID as idLancamento ");
 		
@@ -166,11 +169,13 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	@Override
 	public Long obterTotalConsignadosParaChamadao(FiltroChamadaoDTO filtro) {
 		
-		StringBuilder hql = new StringBuilder();
+		StringBuilder hql = new StringBuilder("select count(consignadoCota.totalConsignados) as totalConsignados from ( ");
 				
 		hql.append("SELECT count(cota.ID) as totalConsignados ");
 				
 		hql.append(this.gerarQueryConsignados(filtro));
+		
+		hql.append(" ) as consignadoCota ");
 		
 		Query query = getSession().createSQLQuery(hql.toString())
 			.addScalar("totalConsignados", StandardBasicTypes.LONG);
@@ -203,13 +208,11 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	        .append("inner join PRODUTO produto ") 
 	            .append("on produtoEdicao.PRODUTO_ID = produto.ID ") 
 	        .append("inner join LANCAMENTO lancamento ") 
-	            .append("on produtoEdicao.ID = lancamento.PRODUTO_EDICAO_ID ");
+	            .append("on (produtoEdicao.ID = lancamento.PRODUTO_EDICAO_ID ")
+	            .append("and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
 	            
-	    if (filtro.getIdFornecedor() != null) {
-	    	
-	    	hql.append("inner join PRODUTO_FORNECEDOR produtoFornecedor ")
-	    		.append("on produtoFornecedor.PRODUTO_ID = produto.ID ");
-	    }
+    	hql.append("inner join PRODUTO_FORNECEDOR produtoFornecedor ")
+    		.append("on produtoFornecedor.PRODUTO_ID = produto.ID ");
 	            
 	    hql.append("where estoqueProdCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
 	        .append("and ( ")
@@ -244,6 +247,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 				hql.append(" AND produtoFornecedor.FORNECEDORES_ID = :idFornecedor ");
 			}
 		}
+		
+		hql.append(" group by lancamento.ID");
 		
 		return hql;
 	}
@@ -289,4 +294,14 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		}
 	}
 	
+	private String obterSQLDescontoObterResumoConsignadosParaChamadao(){
+		
+		StringBuilder hql = new StringBuilder("select view.DESCONTO");
+		hql.append(" from VIEW_DESCONTO view ")
+		   .append(" where view.COTA_ID = cota.ID ")
+		   .append(" and view.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
+		   .append(" and view.FORNECEDOR_ID = produtoFornecedor.fornecedores_ID ");
+		
+		return hql.toString();
+	}
 }

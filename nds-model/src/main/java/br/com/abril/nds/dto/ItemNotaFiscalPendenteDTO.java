@@ -43,6 +43,8 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 	private String precoDescontoFormatado;
 	private String totalDoItemFormatado;
 	
+	private BigDecimal desconto;
+	
 	public ItemNotaFiscalPendenteDTO() {}
 	
 	public ItemNotaFiscalPendenteDTO(String codigoProduto, String nomeProduto,
@@ -179,6 +181,14 @@ public class ItemNotaFiscalPendenteDTO implements Serializable {
 
 	public void setDataChamadaEncalhe(Date dataChamadaEncalhe) {
 		this.dataChamadaEncalhe = dataChamadaEncalhe;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
 	}
 	
 }
