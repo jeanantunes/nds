@@ -41,7 +41,7 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	private static BigInteger qtdEstoqueVeja1;
 	
-	@Before
+	//@Before
 	public void setup() {
 		
 		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
