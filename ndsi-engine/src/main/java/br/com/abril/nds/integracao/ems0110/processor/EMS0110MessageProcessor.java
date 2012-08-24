@@ -1,25 +1,33 @@
 package br.com.abril.nds.integracao.ems0110.processor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.model.cadastro.Brinde;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Dimensao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.impl.AbstractRepository;
+import br.com.abril.nds.service.DescontoService;
 
 @Component
 public class EMS0110MessageProcessor extends AbstractRepository implements
@@ -27,7 +35,19 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
-
+	
+	@Autowired
+	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
+	
+	@Autowired
+	private DescontoService descontoService;
+	
 	@Override
 	public void processMessage(Message message) {
 
@@ -136,7 +156,9 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			throw new RuntimeException("Produto "+ input.getCodProd() +" nao encontrado.");
 		}
 	}
-
+	
+	
+	
 	private void criarProdutoEdicaoConformeInput(Produto produto,
 			Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
@@ -183,8 +205,76 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setDataDesativacao(input.getDataDesativacao());
 		edicao.setChamadaCapa(input.getChamadaCapa());
 		this.getSession().persist(edicao);
+		
+		inserirDescontoProdutoEdicao(edicao, produto);
+		
 	}
 
+	/**
+	 * Insere os dados de desconto relativos ao produto edição em questão.
+	 * 
+	 * @param produtoEdicao
+	 * @param indNovoProdutoEdicao
+	 */
+	private void inserirDescontoProdutoEdicao(ProdutoEdicao produtoEdicao, Produto produto) {
+		
+		GrupoProduto grupoProduto = produtoRepository.obterGrupoProduto(produto.getCodigo());
+		
+		if(GrupoProduto.OUTROS.equals(grupoProduto)) {
+			return;
+		}
+		
+		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedoresDeProduto(produto.getCodigo(), null);
+		
+		if(fornecedores == null || fornecedores.isEmpty()) {
+			throw new IllegalStateException("Não há fornecedor associado ao produto.");
+		}
+
+		if(fornecedores.size()!=1) {
+			throw new IllegalStateException("Mais de um fornecedor associado ao produto.");
+		}
+		
+		Set<Fornecedor> conjuntoFornecedor = new HashSet<Fornecedor>();
+		
+		Fornecedor fornecedor = fornecedores.get(0);
+		
+		conjuntoFornecedor.add(fornecedor);
+		
+		Set<DescontoProdutoEdicao> conjuntoDescontoProdutoEdicaoEspecifico = 
+				descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(TipoDesconto.ESPECIFICO, fornecedor, null);
+		
+		if(conjuntoDescontoProdutoEdicaoEspecifico!=null && !conjuntoDescontoProdutoEdicaoEspecifico.isEmpty()) {
+			
+			
+			for(DescontoProdutoEdicao descontoEspecifico : conjuntoDescontoProdutoEdicaoEspecifico) {
+				
+				Cota cota = descontoEspecifico.getCota();
+				
+				descontoService.processarDescontoCota(cota, conjuntoFornecedor, descontoEspecifico.getDesconto());
+				
+			}
+			
+			
+		}
+		
+		Set<DescontoProdutoEdicao> conjuntoDescontoProdutoEdicaoGeral = 
+				descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(TipoDesconto.GERAL, fornecedor, null);
+		
+		if(conjuntoDescontoProdutoEdicaoGeral!=null && !conjuntoDescontoProdutoEdicaoGeral.isEmpty()) {
+			
+			
+			for(DescontoProdutoEdicao descontoGeral : conjuntoDescontoProdutoEdicaoGeral) {
+				
+				descontoService.processarDescontoDistribuidor(conjuntoFornecedor, descontoGeral.getDesconto());
+				
+			}
+			
+			
+		}
+		
+	}
+
+	
 	private void atualizaProdutoEdicaoConformeInput(ProdutoEdicao edicao,
 			Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
