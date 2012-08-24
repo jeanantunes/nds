@@ -11,7 +11,7 @@ import br.com.abril.nds.repository.ProdutoRepository;
 public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long> implements ProdutoRepository {
 
 	/**
-	 * Construtor padr„o.
+	 * Construtor padr√£o.
 	 */
 	public ProdutoRepositoryImpl() {
 		super(Produto.class);

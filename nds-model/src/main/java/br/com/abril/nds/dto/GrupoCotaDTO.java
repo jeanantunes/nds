@@ -1,7 +1,9 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 
@@ -14,6 +16,8 @@ public class GrupoCotaDTO implements Serializable {
 	private String recolhimento;
 	private TipoGrupo tipoGrupo;
 	private TipoCaracteristicaSegmentacaoPDV tipoCota;
+	private List<DiaSemana> diasSemana;
+	private List<Long> selecionados;
 	
 	public GrupoCotaDTO() {
 		
@@ -94,6 +98,34 @@ public class GrupoCotaDTO implements Serializable {
 	 */
 	public void setTipoCota(TipoCaracteristicaSegmentacaoPDV tipoCota) {
 		this.tipoCota = tipoCota;
+	}
+
+	/**
+	 * @return the diasSemana
+	 */
+	public List<DiaSemana> getDiasSemana() {
+		return diasSemana;
+	}
+
+	/**
+	 * @param diasSemana the diasSemana to set
+	 */
+	public void setDiasSemana(List<DiaSemana> diasSemana) {
+		this.diasSemana = diasSemana;
+	}
+
+	/**
+	 * @return the selecionados
+	 */
+	public List<Long> getSelecionados() {
+		return selecionados;
+	}
+
+	/**
+	 * @param selecionados the selecionados to set
+	 */
+	public void setSelecionados(List<Long> selecionados) {
+		this.selecionados = selecionados;
 	}
 	
 	

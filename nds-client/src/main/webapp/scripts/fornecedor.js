@@ -48,7 +48,7 @@ var fornecedorController = $.extend(true,{
 				}, {
 					display : 'A&ccedil;&atilde;o',
 					name : 'acao',
-					width : 60,
+					width : 50,
 					sortable : false,
 					align : 'center'
 				}],
@@ -59,8 +59,8 @@ var fornecedorController = $.extend(true,{
 				singleSelect: true,
 				rp : 15,
 				showTableToggleBtn : true,
-				width : 960,
-				height : 255
+				width : 950,
+				height : 'auto'
 			});
 			
 			$("#fornecedorController-validadeContrato").datepicker({
