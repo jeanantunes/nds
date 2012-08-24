@@ -6,7 +6,6 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	
 	init : function() {
 		OperacaoDiferenciadaController.inicializarGrids();
-		OperacaoDiferenciadaController.inicializarDialogs();
 	},
 	
 	processaRetornoPesquisa : function(result) {
@@ -329,8 +328,8 @@ var OperacaoDiferenciadaController = $.extend(true, {
 						function(result){
 							
 						$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexReload();
-						$( "#dialog-salvar", OperacaoDiferenciadaController.workspace ).dialog( "close" );
 						$( "#dialog-novo-grupo", OperacaoDiferenciadaController.workspace ).dialog( "close" );
+						$( "#dialog-salvar", OperacaoDiferenciadaController.workspace ).dialog( "close" );
 
 						exibirMensagem('SUCCESS', ['Grupo salvo com sucesso.']);	
 						}, null, true
@@ -340,7 +339,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#idFormConfirmarGrupo", OperacaoDiferenciadaController.workspace)
+			form: $("#dialog-confirm-grupo", this.workspace).parents("form")
 		});
 	},
 	

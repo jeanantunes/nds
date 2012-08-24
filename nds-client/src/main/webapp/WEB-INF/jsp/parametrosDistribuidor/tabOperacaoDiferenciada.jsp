@@ -1,5 +1,3 @@
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/operacaoDiferenciada.js"></script>
-
 <div id="tabDiferenciada">
             
 
@@ -13,11 +11,9 @@
        
    </fieldset>
    <br clear="all" />
-            
-</div>
-          
-
-<form id="idFormExcluiGrupo">
+   
+   
+   
 	<div id="dialog-confirm-grupo" title="Excluir Grupo" style="display:none;">
 		<fieldset style="width:350px!important;">
 	  		<legend>Confirmação</legend>
@@ -25,9 +21,8 @@
 	        
 	    </fieldset>
 	</div>
-</form>
 
-<form id="idFormConfirmarGrupo">
+
 	<div id="dialog-salvar" title="Salvar" style="display: none;">
 			<fieldset style="width: 300px;">
 				<legend>Digite o Nome</legend>
@@ -57,7 +52,9 @@
 				</table>
 			</fieldset>
 		</div>
-</form>
 
 <jsp:include page="detalheOperacaoDiferenciada.jsp"></jsp:include>
-<jsp:include page="../messagesDialog.jsp"></jsp:include>
+   
+            
+</div>
+          
