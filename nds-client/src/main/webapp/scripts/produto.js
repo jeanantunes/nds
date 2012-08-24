@@ -165,7 +165,7 @@ var produtoController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 290,
+			height : 'auto',
 			singleSelect : true
 		});
 	},			
@@ -431,7 +431,7 @@ var produtoController = $.extend(true, {
 					
 					if (tipoMensagem && listaMensagens) {
 						
-						this.exibirMensagem(tipoMensagem, listaMensagens);
+						exibirMensagem(tipoMensagem, listaMensagens);
 					} 
 
 					if (tipoMensagem == 'SUCCESS') {

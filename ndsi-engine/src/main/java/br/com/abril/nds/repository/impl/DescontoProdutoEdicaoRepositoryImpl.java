@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -47,6 +48,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		if (fornecedor != null) {
 		
 			criteria.add(Restrictions.eq("fornecedor", fornecedor));
+			
 		}
 
 		if (cota != null) {
@@ -165,6 +167,8 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 			
 			criteria.add(Restrictions.eq("tipoDesconto", tipoDesconto));
 		}
+		
+		criteria.setFetchMode("cota", FetchMode.JOIN);
 		
 		return new HashSet<DescontoProdutoEdicao>(criteria.list());
 	}
