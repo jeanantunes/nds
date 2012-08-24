@@ -305,7 +305,7 @@
 							</script> </label>
 						
 							<label>
-								<a href="javascript:;" onclick="logout()" title="Sair do Sistema" class="sair">Sair</a>
+								<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
 							</label>
 			
 						</div>
