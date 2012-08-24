@@ -35,9 +35,9 @@
 	
 	parametrosDistribuidorController.init();
 	
-	//var endereco = new Endereco("", "");
+	var endereco = new Endereco("", "");
 	
-	//endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
+	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
 </script>
 
 </head>
