@@ -8,7 +8,9 @@ import java.util.Set;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
+import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
@@ -19,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -203,5 +206,26 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return {@link Set} de {@link Cota}
 	 */
 	Set<Cota> obterCotasPorFornecedor(Long idFornecedor);
+
+	List<CotaTipoDTO> obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page, Integer rp, String sortname, String sortorder);
+
+	int obterCountCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota);
+	
+	/**
+	 * Retorna Municipios e a quantidade de cotas para cada - resultado paginado
+	 * @param page
+	 * @param rp
+	 * @param sortname
+	 * @param sortorder
+	 * @return
+	 */
+	List<MunicipioDTO> obterQtdeCotaMunicipio(Integer page, Integer rp, String sortname, String sortorder);
+
+	/**
+	 * Count da pesquisa "obterQtdeCotaMunicipio" 
+	 * 
+	 * @return
+	 */
+	int obterCountQtdeCotaMunicipio();
 
 }
