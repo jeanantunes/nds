@@ -47,6 +47,8 @@ public class DescontoComponentImplTest extends AbstractRepositoryImplTest {
 
 	private Cota cota1234;
 	
+	private BigDecimal valorDesconto = BigDecimal.TEN;
+	
 	@Before
 	public void setUp() {
 		
@@ -145,16 +147,16 @@ public class DescontoComponentImplTest extends AbstractRepositoryImplTest {
 		this.produtos.add(produtoEdicaoVeja3);
 		this.produtos.add(produtoEdicaoBoaForma1);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota123, BigDecimal.ONE, fornecedorACM, produtoEdicaoVeja1, TipoDesconto.GERAL);
+		DescontoProdutoEdicao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota123, this.valorDesconto, fornecedorACM, produtoEdicaoVeja1, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota123, BigDecimal.ONE, fornecedorACM, produtoEdicaoVeja2, TipoDesconto.GERAL);
+		DescontoProdutoEdicao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota123, this.valorDesconto, fornecedorACM, produtoEdicaoVeja2, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao2);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota123, BigDecimal.ONE, fornecedorACM, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
+		DescontoProdutoEdicao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota123, this.valorDesconto, fornecedorACM, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
 		save(descontoProdutoEdicao3);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota123, BigDecimal.ONE, fornecedorACM, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
+		DescontoProdutoEdicao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota123, this.valorDesconto, fornecedorACM, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
 		save(descontoProdutoEdicao4);
 		
 		//
@@ -175,20 +177,26 @@ public class DescontoComponentImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void persistirDescontoComTipoDescontoGeral(){
 		
-		persistirDesconto(TipoDesconto.GERAL);
+		persistirDesconto(TipoDesconto.GERAL, null);
 	}
 	
 	@Test
 	public void persistirDescontoComTipoDescontoEspecifico(){
 		
-		persistirDesconto(TipoDesconto.ESPECIFICO);
+		persistirDesconto(TipoDesconto.ESPECIFICO, null);
 	}
 	
 	@Test
 	public void persistirDescontoComTipoDescontoProduto(){
 		
-		persistirDesconto(TipoDesconto.PRODUTO);
+		persistirDesconto(TipoDesconto.PRODUTO, true);
 		
+	}
+	
+	@Test
+	public void persistirDescontoComTipoDescontoProdutoSemPredominancia() {
+		
+		persistirDesconto(TipoDesconto.PRODUTO, false);
 	}
 	
 	@Test
@@ -245,11 +253,13 @@ public class DescontoComponentImplTest extends AbstractRepositoryImplTest {
 		}
 	}
 	
-	private void persistirDesconto(TipoDesconto tipoDesconto) {
+	private void persistirDesconto(TipoDesconto tipoDesconto, Boolean descontoPredominante) {
 		
-		BigDecimal valorDesconto = BigDecimal.TEN;
-		
-		descontoComponent.persistirDesconto(tipoDesconto, this.fornecedorACM, this.cota123, this.produtos, valorDesconto);
+		BigDecimal novoValorDesconto = BigDecimal.ONE;
+
+		descontoComponent.persistirDesconto(
+			tipoDesconto, this.fornecedorACM, this.cota123,
+			this.produtos, novoValorDesconto, descontoPredominante);
 		
 		DescontoProdutoEdicao desconto = null;
 		
@@ -257,8 +267,17 @@ public class DescontoComponentImplTest extends AbstractRepositoryImplTest {
 			
 			desconto = descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(null, fornecedorACM, cota123, prod);
 			
-			Assert.assertTrue(desconto.getDesconto().equals(valorDesconto));
-			Assert.assertTrue(desconto.getTipoDesconto().equals(tipoDesconto));
+			if (descontoPredominante != null && !descontoPredominante
+					&& !desconto.getTipoDesconto().equals(TipoDesconto.PRODUTO)) {
+			
+				Assert.assertTrue(desconto.getDesconto().compareTo(this.valorDesconto) == 0);
+				
+			} else {
+				
+				Assert.assertTrue(desconto.getDesconto().compareTo(novoValorDesconto) == 0);
+				Assert.assertTrue(desconto.getTipoDesconto().equals(tipoDesconto));
+			}
 		}
 	}
+	
 }
