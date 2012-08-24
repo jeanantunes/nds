@@ -18,7 +18,7 @@
 			<input type="text" style="width: 150px" id="${param.prefix}cpfFiador" name="cpfFiador" />
 		</td>
 		<td>R. G.:</td>
-		<td colspan="3"><input type="text" style="width: 150px" id="${param.prefix}}rgFiador" name="rgFiador" /></td>
+		<td colspan="3"><input type="text" style="width: 150px" id="${param.prefix}rgFiador" name="rgFiador" /></td>
 	</tr>
 	<tr>
 		<td>Data Nascimento:</td>
@@ -37,7 +37,7 @@
 	<tr>
 		<td>Estado Civil:</td>
 		<td>
-			<select name="estadoCivilFiadorCpf" style="width: 155px;" onchange="fiadorController.opcaoCivilPf(this.value);" id="${param.prefix}estadoCivilFiadorCpf">
+			<select name="estadoCivilFiadorCpf" style="width: 155px;" onchange="fiadorController.opcaoCivilPf(this.value,'${param.prefix}');" id="${param.prefix}estadoCivilFiadorCpf">
 				<option selected="selected">Selecione...</option>
 				<option value="SOLTEIRO">Solteiro</option>
 				<option value="CASADO">Casado</option>
@@ -72,7 +72,7 @@
 	</tr>
 </table>
 
-<div class="divConjuge" style="display: none; margin-left: 5px; margin-top: 5px;">
+<div class="${param.prefix}divConjuge" style="display: none; margin-left: 5px; margin-top: 5px;">
 	<strong>Dados do Conjuge</strong>
 	<table width="760" cellpadding="2" cellspacing="2" style="text-align: left;">
 		<tr>
@@ -83,7 +83,7 @@
 		</tr>
 		<tr>
 			<td>CPF:</td>
-			<td><input type="text" style="width: 150px" id="${param.prefix}cpfConjuge" name="cpfConjuge" onblur="buscarPessoaCPF(this.value, false);"/></td>
+			<td><input type="text" style="width: 150px" id="${param.prefix}cpfConjuge" name="cpfConjuge" onblur="fiadorController.buscarPessoaCPF(this.value, false);"/></td>
 			<td>R. G.:</td>
 			<td colspan="3"><input type="text" style="width: 175px" id="${param.prefix}rgConjuge" name="rgConjuge" /></td>
 		</tr>
