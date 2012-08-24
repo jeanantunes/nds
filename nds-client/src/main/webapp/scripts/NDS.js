@@ -678,3 +678,7 @@ function logout() {
 function limparCache() {
 	$("#workspace .ui-tabs-nav a").removeData("cache.tabs");	
 }
+
+function redimensionarWorkspace() {
+	$("#workspace").innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
+}

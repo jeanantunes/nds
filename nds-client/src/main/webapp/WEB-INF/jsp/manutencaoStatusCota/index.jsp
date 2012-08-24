@@ -194,7 +194,7 @@
 		
 		function carregarCodigoBox() {
 			
-			cota.obterPorNumeroCota($("#numeroCota").val(), false, function(result) {
+			pesquisaCotaManutencaoStatusCota.obterPorNumeroCota($("#numeroCota").val(), false, function(result) {
 
 				if (!result) {
 
