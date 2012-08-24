@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -13,7 +14,7 @@ import br.com.abril.nds.util.export.Exportable;
  * @author InfoA2
  */
 @Exportable
-public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABC implements Serializable {
+public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implements Serializable {
 
 	/**
 	 * Serial Version UID

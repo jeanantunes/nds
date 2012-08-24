@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -38,6 +38,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -74,11 +75,14 @@ public class ParametrosDistribuidorController {
 	private HttpSession session;
 	
 	@Autowired
+	private HttpServletRequest request;
+	
+	@Autowired
 	private ServletContext servletContext;
 	
 	private static final String ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE = "cadastroDistribuidorLogotipoContentType";
 	
-	private static final String ATRIBUTO_SESSAO_EXISTE_LOGOTIPO = "cadastroDistribuidorExisteLogotipo";
+	private static final String ATRIBUTO_REQUEST_HAS_LOGOTIPO = "hasLogotipo";
 
 	private static final String DIRETORIO_TEMPORARIO_PARAMETROS_DISTRIBUIDOR = "temp/parametros_distribuidor/";
 	
@@ -150,13 +154,13 @@ public class ParametrosDistribuidorController {
 		
 		if (imgLogotipo != null) {
 		
-			session.setAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO, true);
+			request.setAttribute(ATRIBUTO_REQUEST_HAS_LOGOTIPO, true);
 			
 			this.gravarArquivoTemporario(imgLogotipo);
 			
 		} else {
 			
-			session.setAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO, false);
+			request.setAttribute(ATRIBUTO_REQUEST_HAS_LOGOTIPO, false);
 		}
 	}
 
@@ -259,7 +263,7 @@ public class ParametrosDistribuidorController {
 	
 	private void limparLogoSessao() {
 		
-		session.removeAttribute(ATRIBUTO_SESSAO_EXISTE_LOGOTIPO);
+		session.removeAttribute(ATRIBUTO_REQUEST_HAS_LOGOTIPO);
 		
 		session.removeAttribute(ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE);
 	}

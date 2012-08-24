@@ -62,7 +62,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.produtoEdicao.precoVenda ";
 					break;
 				case PRECO_DESCONTO:
-					hql += "order by diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto ";
+					hql += "order by diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100)";
 					break;
 				case TIPO_DIFERENCA:
 					hql += "order by diferenca.tipoDiferenca ";
@@ -71,9 +71,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += " order by "
 						+  " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 						+  " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						+  " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
+						+  " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 						+  " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-						+  " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
+						+  " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 						+  " else 0 end ";
 					break;
 				default:
@@ -177,16 +177,18 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		} else {
 
 			hql = " select diferenca, "
+				+ "("+ this.obterHQLDesconto() +") as desconto, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
 					
 		hql += " from Diferenca diferenca "
 			+  " join diferenca.movimentoEstoque movimentoEstoque "
+			+  " left join diferenca.produtoEdicao.produto.fornecedores fornecedor "
 			+  " where diferenca.statusConfirmacao = :statusConfirmacao "
 			+  " and movimentoEstoque.status = :statusAprovacao ";
 		
@@ -204,6 +206,18 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		}
 		
 		return hql;
+	}
+
+	private String obterHQLDesconto() {
+		
+		StringBuilder hql = new StringBuilder("select view.desconto");
+		hql.append(" from ViewDesconto view, RateioDiferenca rateio ")
+		   .append(" where view.cotaId = rateio.cota.id ")
+		   .append(" and rateio.diferenca.id = diferenca.id ")
+		   .append(" and view.produtoEdicaoId = diferenca.produtoEdicao.id ")
+		   .append(" and view.fornecedorId = fornecedor.id ");
+		
+		return hql.toString();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -236,7 +250,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.produtoEdicao.precoVenda ";
 					break;
 				case PRECO_DESCONTO:
-					hql += "order by diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto ";
+					hql += "order by diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100) ";
 					break;
 				case TIPO_DIFERENCA:
 					hql += "order by diferenca.tipoDiferenca ";
@@ -254,9 +268,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += " order by "
 						 + " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 						 + " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						 + " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
+						 + " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 						 + " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
+						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 						 + " else 0 end ";
 					break;
 				default:
@@ -333,16 +347,18 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		} else {
 			
 			hql = " select diferenca, "
+				+ " ("+ this.obterHQLDesconto() +") as desconto, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - diferenca.produtoEdicao.desconto)) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
 		
 		hql += " from Diferenca diferenca "
 			 + " left join diferenca.itemRecebimentoFisico itemRecebimentoFisico "
+			 + " left join diferenca.produtoEdicao.produto.fornecedores fornecedor "
 			 + " left join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal "
 			 + " left join itemNotaFiscal.notaFiscal notaFiscal ";
 		

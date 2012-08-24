@@ -1022,7 +1022,7 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("valorTotal")
 			.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 			.addScalar("numeroEdicao", StandardBasicTypes.LONG)
-			.addScalar("peso")
+			.addScalar("peso", StandardBasicTypes.LONG)
 			.addScalar("precoVenda")
 			.addScalar("codigoProduto")
 			.addScalar("nomeProduto")
@@ -1187,9 +1187,9 @@ public class LancamentoRepositoryImpl extends
 	public BigDecimal obterConsignadoDia(StatusLancamento statusLancamento){
 		
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" sum(lanc.produtoEdicao.precoVenda) * sum(lanc.produtoEdicao.reparteDistribuido) ")
+		hql.append(" sum(lanc.produtoEdicao.precoVenda * lanc.reparte) ")
 		   .append(" from Lancamento lanc ")
-		   .append(" where lanc.produtoEdicao.reparteDistribuido is not null ")
+		   .append(" where lanc.reparte is not null ")
 		   .append(" and lanc.produtoEdicao.precoVenda is not null ")
 		   .append(" and lanc.dataLancamentoPrevista = :hoje ")
 		   .append(" and lanc.status = :statusLancamento ");

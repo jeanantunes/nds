@@ -31,7 +31,7 @@ public class DescontoComponentImpl implements DescontoComponent {
 		
 		for(ProdutoEdicao produto : produtos){
 			
-			descontoProdutoEdicao =  descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(fornecedor,cota,produto);
+			descontoProdutoEdicao =  descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(null, fornecedor,cota,produto);
 			
 			if(descontoProdutoEdicao == null){
 				descontoProdutoEdicao = new DescontoProdutoEdicao();
@@ -44,6 +44,32 @@ public class DescontoComponentImpl implements DescontoComponent {
 			descontoProdutoEdicao.setTipoDesconto(tipoDesconto);
 			
 			descontoProdutoEdicaoRepository.merge(descontoProdutoEdicao);
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void removerDescontos(Fornecedor fornecedor,Cota cota,TipoDesconto tipoDesconto){
+		
+		Set<DescontoProdutoEdicao> descontosParaExclusao = descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(tipoDesconto, fornecedor, cota);
+		
+		processarRemocaoDesconto(descontosParaExclusao);
+	}
+	
+	@Override
+	@Transactional
+	public void removerDescontos(Fornecedor fornecedor,Cota cota,ProdutoEdicao produtoEdicao,TipoDesconto tipoDesconto){
+		
+		Set<DescontoProdutoEdicao> descontosParaExclusao = descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(tipoDesconto, fornecedor, cota, produtoEdicao);
+		
+		processarRemocaoDesconto(descontosParaExclusao);
+	}
+
+	private void processarRemocaoDesconto(Set<DescontoProdutoEdicao> descontosParaExclusao) {
+		
+		for(DescontoProdutoEdicao desconto : descontosParaExclusao){
+			
+			descontoProdutoEdicaoRepository.remover(desconto);
 		}
 	}
 	

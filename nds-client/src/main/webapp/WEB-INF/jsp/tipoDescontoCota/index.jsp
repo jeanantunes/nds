@@ -59,7 +59,7 @@ $(function() {
 
 	<form action="/administracao/cadastroTipoNota" id="dialog_consulta_tipo_desconto_form">
  
-      <fieldset class="classFieldset">
+      <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Tipo de Desconto Cota</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -72,20 +72,22 @@ $(function() {
                 <td width="585">
                 <div class="especifico" style="display: none">
 	                
-	                Cota: <input name="numCotaPesquisa" 
+	                <label style="width:auto!important;">Cota:</label>
+	                <input name="numCotaPesquisa" 
 			           		   id="numCotaPesquisa" 
 			           		   type="text"
 			           		   maxlength="11"
-			           		   style="width:70px;"
+			           		   style="width:70px;float:left;"
 			           		   onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 			           	  											null, 
 			           	  											null);" />
-			    	Nome: <input  name="descricaoCotaPesquisa" 
+			    	<label style="width:auto!important;">Nome:</label>
+			        <input  name="descricaoCotaPesquisa" 
 					      		 id="descricaoCotaPesquisa" 
 					      		 type="text" 
 					      		 class="nome_jornaleiro" 
 					      		 maxlength="255"
-					      		 style="width:200px;"
+					      		 style="width:200px;float:left;"
 					      		 onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaPesquisa');" 
 					      		 onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
 													      			null,
@@ -119,7 +121,7 @@ $(function() {
       
       <div class="grids" style="display:none;">
       
-      <fieldset class="classFieldset" id="tpoGeral" style="display:none;">
+      <fieldset class="fieldGrid" id="tpoGeral" style="display:none;">
        	  <legend>Tipos de Desconto Geral</legend>
         
             <div id="idExportacaoGeral">
@@ -144,7 +146,7 @@ $(function() {
       </fieldset>
       
       
-      <fieldset class="classFieldset" id="tpoEspecifico" style="display:none;">
+      <fieldset class="fieldGrid" id="tpoEspecifico" style="display:none;">
        	  <legend>Tipos de Desconto Específico</legend>
        
        		<div id="idExportacaoEspecifico">
@@ -169,7 +171,7 @@ $(function() {
       </fieldset>
       
       
-      <fieldset class="classFieldset" id="tpoProduto" style="display:none;">
+      <fieldset class="fieldGrid" id="tpoProduto" style="display:none;">
        	
        	<legend>Tipos de Desconto Produto</legend>
        		

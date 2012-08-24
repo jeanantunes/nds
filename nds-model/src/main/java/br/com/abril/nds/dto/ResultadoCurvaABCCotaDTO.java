@@ -1,4 +1,4 @@
-package br.com.abril.nds.client.vo;
+package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,11 +10,11 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ResultadoCurvaABCCota implements Serializable {
+public class ResultadoCurvaABCCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = -1269456885268785522L;
 
-	private TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> tableModel;
+	private TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel;
 	
 	private BigDecimal totalVendaExemplares;
 	
@@ -26,18 +26,18 @@ public class ResultadoCurvaABCCota implements Serializable {
 	@Export(label = "Faturamento Total", exhibitionOrder = 2)
 	private String totalFaturamentoFormatado;
 	
-	public ResultadoCurvaABCCota(BigDecimal totalVendaExemplares, BigDecimal totalFaturamento) {
+	public ResultadoCurvaABCCotaDTO(BigDecimal totalVendaExemplares, BigDecimal totalFaturamento) {
 		this.totalVendaExemplares = totalVendaExemplares;
 		this.totalFaturamento = totalFaturamento;
 		formatarCampos();
 	}
 
-	public TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> getTableModel() {
+	public TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> getTableModel() {
 		return tableModel;
 	}
 
 	public void setTableModel(
-			TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> tableModel) {
+			TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel) {
 		this.tableModel = tableModel;
 	}
 

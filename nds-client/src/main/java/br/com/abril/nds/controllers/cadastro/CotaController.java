@@ -18,7 +18,6 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.DistribuicaoDTO;
@@ -61,6 +60,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -598,19 +598,8 @@ public class CotaController {
 	@Path("/salvarFornecedores")
 	public void salvarFornecedores(List<Long> fornecedores, Long idCota){
 		
-		if(fornecedores == null){
-			
-			List<Fornecedor> list = fornecedorService.obterFornecedoresCota(idCota);
-	
-			if(list!= null && !list.isEmpty()){
-				
-				fornecedorService.salvarFornecedorCota(fornecedores, idCota);
-			}
-		}else {
-			
-			fornecedorService.salvarFornecedorCota(fornecedores, idCota);
-		}
-		
+		fornecedorService.salvarFornecedorCota(fornecedores, idCota);
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}

@@ -44,6 +44,8 @@ public class ConsignadoCotaDTO implements Serializable{
 	
 	@Export(label="Total")
 	private BigDecimal total;
+	
+	private BigDecimal desconto;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -131,6 +133,14 @@ public class ConsignadoCotaDTO implements Serializable{
 
 	public void setMotivo(TipoDiferenca motivo) {
 		this.motivo = motivo;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
 	}
 	
 }

@@ -13,14 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
-import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
-import br.com.abril.nds.client.vo.ValidacaoVO;
+import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
@@ -46,6 +45,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -216,10 +216,10 @@ public class RelatorioVendasController {
 			}
 		}
 		
-		List<RegistroCurvaABCCotaVO> lista = cotaService.obterCurvaABCCota(filtroSessao);
-		ResultadoCurvaABCCota resultadoTotal = cotaService.obterCurvaABCCotaTotal(filtroSessao);
+		List<RegistroCurvaABCCotaDTO> lista = cotaService.obterCurvaABCCota(filtroSessao);
+		ResultadoCurvaABCCotaDTO resultadoTotal = cotaService.obterCurvaABCCotaTotal(filtroSessao);
 		
-		FileExporter.to("relatorio-vendas-curva-abc-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCCotaVO.class, this.httpServletResponse);
+		FileExporter.to("relatorio-vendas-curva-abc-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCCotaDTO.class, this.httpServletResponse);
 	}
 
 	/**
@@ -666,7 +666,7 @@ public class RelatorioVendasController {
 				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
 				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
 
-		List<RegistroCurvaABCCotaVO> resultadoCurvaABCCota = null;
+		List<RegistroCurvaABCCotaDTO> resultadoCurvaABCCota = null;
 		try {
 			resultadoCurvaABCCota = cotaService.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 		} catch (Exception e) {
@@ -686,15 +686,15 @@ public class RelatorioVendasController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCCota.size();
 
-			List<RegistroCurvaABCCotaVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCCota, filtroCurvaABCCotaDTO.getPaginacao(), filtroCurvaABCCotaDTO.getOrdenacaoColuna().toString());
+			List<RegistroCurvaABCCotaDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCCota, filtroCurvaABCCotaDTO.getPaginacao(), filtroCurvaABCCotaDTO.getOrdenacaoColuna().toString());
 			
-			TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaVO>>();
+			TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>>();
 	
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(filtroCurvaABCCotaDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
-			ResultadoCurvaABCCota resultado = cotaService.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
+			ResultadoCurvaABCCotaDTO resultado = cotaService.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();

@@ -32,7 +32,7 @@
 
 <script type="text/javascript">
 	
-	parametrosDistribuidorController.init("${sessionScope.cadastroDistribuidorExisteLogotipo}");
+	parametrosDistribuidorController.init();
 	
 	//var endereco = new Endereco("", "");
 	
@@ -51,6 +51,30 @@
 
 	<input type="hidden" name="formUploadAjax" value="true" />
 	
+	<input type="hidden" id="tipoEnderecoHidden"
+		   value="${parametrosDistribuidor.endereco.tipoEndereco}" />
+		   
+    <input type="hidden" id="regimeTributarioHidden"
+		   value="${parametrosDistribuidor.regimeTributario}" />
+		   
+    <input type="hidden" id="obrigacaoFiscalHidden"
+		   value="${parametrosDistribuidor.obrigacaoFiscal}" />
+		  
+	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
+		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />
+		   
+    <input type="hidden" id="impressaoInterfaceLEDHidden"
+		   value="${parametrosDistribuidor.impressaoInterfaceLED}" />
+		   
+    <input type="hidden" id="impressaoNECADANFEHidden"
+		   value="${parametrosDistribuidor.impressaoNECADANFE}" />
+	
+	<input type="hidden" id="impressaoCEHidden"
+		   value="${parametrosDistribuidor.impressaoCE}" />
+		   
+	<input type="hidden" id="hasLogotipoHidden"
+		   value="${hasLogotipo}" />
+		   
 	<div class="corpo">
 	    <div class="container">	
 	    <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 

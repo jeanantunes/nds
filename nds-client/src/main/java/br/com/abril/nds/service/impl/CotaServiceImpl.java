@@ -12,15 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.RegistroCurvaABCCotaVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABCCota;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -44,7 +43,6 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -63,9 +61,7 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
-import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
-import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -79,6 +75,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -139,16 +136,10 @@ public class CotaServiceImpl implements CotaService {
 	private ReferenciaCotaRepository referenciaCotaRepository;
 	
 	@Autowired
-	private SocioCotaRepository socioCotaRepository;
-	
-	@Autowired
 	private HistoricoNumeroCotaRepository historicoNumeroCotaRepository;
 	
 	@Autowired
 	private EnderecoService enderecoService;
-	
-	@Autowired
-	private TelefoneRepository telefoneRepository; 
 	
 	@Autowired
 	private DividaService dividaService;
@@ -1499,62 +1490,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		return comboTiposCota;
 	}
-	
-	@Override
-	@Transactional(readOnly=true)
-	public List<SocioCota> obterSociosCota(Long idCota){
 		
-		return socioCotaRepository.obterSocioCotaPorIdCota(idCota);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly=true)
-	public SocioCota obterSocioPorId(Long idSocioCota) {
-
-		return socioCotaRepository.buscarPorId(idSocioCota);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public void salvarSocioCota(SocioCota socioCota, Long idCota ){
-		
-		if (socioCota.getId() == null && socioCota.getPrincipal()   
-									  && this.socioCotaRepository.existeSocioPrincipalCota(idCota)) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING,"Deve ser informado um sócio principal!");
-		}
-
-		if (idCota == null ) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Parâmetro Cota inválido!");
-		}
-		
-		Cota cota  = cotaRepository.buscarPorId(idCota);
-		
-		if (cota == null ) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Parâmetro Cota inválido!");
-		}
-
-		Telefone telefone = this.telefoneRepository.merge(socioCota.getTelefone());
-		
-		Endereco endereco = this.enderecoService.salvarEndereco(socioCota.getEndereco());
-
-		socioCota.setTelefone(telefone);
-		
-		socioCota.setEndereco(endereco);
-
-		socioCota.setCota(cota);
-
-		this.socioCotaRepository.merge(socioCota);
-	}
-	
 	@Transactional
 	@Override
 	public void alterarCota(Cota cota) {
@@ -1563,13 +1499,13 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ResultadoCurvaABCCota obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<RegistroCurvaABCCotaVO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		return cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 	}
 

@@ -2,6 +2,7 @@
 <title>NDS - Novo Distrib</title>
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
@@ -22,11 +23,7 @@
 	
 	$(function() {
 		
-		try{
-			MANTER_COTA.init();	
-		}catch(e){
-			alert(e);
-		}
+		MANTER_COTA.init();	
 	});
 </script>
 <style>

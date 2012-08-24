@@ -5,6 +5,8 @@ import java.util.List;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -54,5 +56,30 @@ public interface DescontoProdutoRepository extends Repository<DescontoProduto, L
 	 * @return - List<TipoDescontoProdutoDTO>.
 	 */
 	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota, String sortorder, String sortname);
+	
+	/**
+	 * Retorna o ultimo desconto produto
+	 * 
+	 * @param idDesconto
+	 * 
+	 * @param cota
+	 * 
+	 * @param produtoEdicao
+	 * 
+	 * @return
+	 */
+	DescontoProduto buscarUltimoDescontoValido(Long idDesconto, Cota cota,ProdutoEdicao produtoEdicao);
+	
+	/**
+	 * 
+	 * Retorna o ultimo desconto produto
+	 * 
+	 * @param cota - cota 
+	 * 
+	 * @param produtoEdicao - produto edição
+	 * 
+	 * @return DescontoProduto
+	 */
+	DescontoProduto buscarUltimoDescontoValido(Cota cota,ProdutoEdicao produtoEdicao);
 
 }

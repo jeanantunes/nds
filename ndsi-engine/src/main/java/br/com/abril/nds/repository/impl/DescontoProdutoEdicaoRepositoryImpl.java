@@ -37,17 +37,32 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DescontoProdutoEdicao buscarDescontoProdutoEdicao(Fornecedor fornecedor, 
+	public DescontoProdutoEdicao buscarDescontoProdutoEdicao(TipoDesconto tipoDesconto,
+															 Fornecedor fornecedor, 
 															 Cota cota,
 															 ProdutoEdicao produto) {
 		
 		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicao.class);
+
+		if (fornecedor != null) {
 		
-		criteria.add(Restrictions.eq("fornecedor", fornecedor));
+			criteria.add(Restrictions.eq("fornecedor", fornecedor));
+		}
 
-		criteria.add(Restrictions.eq("cota", cota));
+		if (cota != null) {
+		
+			criteria.add(Restrictions.eq("cota", cota));
+		}
 
-		criteria.add(Restrictions.eq("produtoEdicao", produto));
+		if (produto != null) {
+		
+			criteria.add(Restrictions.eq("produtoEdicao", produto));
+		}
+		
+		if (tipoDesconto != null) {
+			
+			criteria.add(Restrictions.eq("tipoDesconto", tipoDesconto));
+		}
 		
 		criteria.setMaxResults(1);
 		
@@ -60,7 +75,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor) {
 
-		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, null, null);
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, null, null,null);
 	}
 	
 	/**
@@ -69,7 +84,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Cota cota) {
 		
-		return obterDescontoProdutoEdicaoCotaFornecedor(null, cota, null);
+		return obterDescontoProdutoEdicaoCotaFornecedor(null, cota, null,null);
 	}
 	
 	/**
@@ -78,7 +93,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota) {
 		
-		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, null);
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, null,null);
 	}
 	
 	/**
@@ -87,7 +102,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public Set<DescontoProdutoEdicao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		
-		return obterDescontoProdutoEdicaoCotaFornecedor(null, null, produtoEdicao);
+		return obterDescontoProdutoEdicaoCotaFornecedor(null, null, produtoEdicao,null);
 	}
 
 	/**
@@ -108,8 +123,26 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		return obterDescontoSemTipoDesconto(tipoDesconto, fornecedor, cota);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<DescontoProdutoEdicao> obterDescontoProdutoEdicao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
+		
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, null,tipoDesconto);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<DescontoProdutoEdicao> obterDescontoProdutoEdicao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao) {
+		
+		return obterDescontoProdutoEdicaoCotaFornecedor(fornecedor, cota, produtoEdicao,tipoDesconto);
+	}
+	
 	@SuppressWarnings("unchecked")
-	private Set<DescontoProdutoEdicao> obterDescontoProdutoEdicaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao){
+	private Set<DescontoProdutoEdicao> obterDescontoProdutoEdicaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao,TipoDesconto tipoDesconto){
 		
 		Criteria criteria = getSession().createCriteria(DescontoProdutoEdicao.class);
 		
@@ -126,6 +159,11 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		if (produtoEdicao != null) {
 			
 			criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		}
+		
+		if(tipoDesconto!= null){
+			
+			criteria.add(Restrictions.eq("tipoDesconto", tipoDesconto));
 		}
 		
 		return new HashSet<DescontoProdutoEdicao>(criteria.list());

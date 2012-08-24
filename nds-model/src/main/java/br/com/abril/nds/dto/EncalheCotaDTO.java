@@ -92,7 +92,7 @@ public class EncalheCotaDTO implements Serializable {
 	@Export(label = "Toral R$", alignment = Alignment.RIGHT)
 	private BigDecimal total;
 
-	
+	private BigDecimal desconto;
 
 	public BigDecimal getEncalhe() {
 		return encalhe;
@@ -100,6 +100,14 @@ public class EncalheCotaDTO implements Serializable {
 
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
 	}
 
 }

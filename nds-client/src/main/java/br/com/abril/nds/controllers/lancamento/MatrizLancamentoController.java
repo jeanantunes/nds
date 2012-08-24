@@ -24,7 +24,6 @@ import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
-import br.com.abril.nds.client.vo.ValidacaoVO;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
@@ -51,6 +50,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -974,7 +974,7 @@ public class MatrizLancamentoController {
 				Long qtdeTitulos = 0L;
 				Long qtdeTitulosParciais = 0L;
 				
-				BigDecimal pesoTotal = BigDecimal.ZERO;
+				Long pesoTotal = 0L;
 				BigDecimal qtdeExemplares = BigDecimal.ZERO;
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
@@ -992,7 +992,7 @@ public class MatrizLancamentoController {
 					
 					if (produtoBalanceamento.getPeso() != null) {
 						
-						pesoTotal = pesoTotal.add(produtoBalanceamento.getPeso());
+						pesoTotal += produtoBalanceamento.getPeso();
 					}
 					
 					if (produtoBalanceamento.getValorTotal() != null) {

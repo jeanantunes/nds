@@ -33,6 +33,10 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	@Autowired
 	private DescontoCotaRepository descontoCotaRepository;
+
+	private DescontoCota desconto3;
+
+	private Fornecedor fornecedor1;
 	
 	private static Cota cota;
 	
@@ -40,7 +44,7 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 	public void setup() {
 		
 		PessoaJuridica juridicaDistrib = Fixture.pessoaJuridica("Distribuidor Acme",
-				"56003315000146", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000146", "333333333334", "distrib_acme@mail.com", "99.999-9");
 		save(juridicaDistrib);
 		
 		PessoaJuridica juridicaCota = Fixture.pessoaJuridica("Cota Juridica",
@@ -60,25 +64,25 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(tipoFornecedor);
 		
 		PessoaJuridica pessoa1 = Fixture.pessoaJuridica("Fornecedor 1",
-				"56003315000148", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000148", "333333333335", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa1);
 		
 
 		PessoaJuridica pessoa2 = Fixture.pessoaJuridica("Fornecedor 2",
-				"56003315000149", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000149", "333333333353", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa2);
 		
 
 		PessoaJuridica pessoa3 = Fixture.pessoaJuridica("Fornecedor 3",
-				"56003315000145", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000145", "333333353333", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa3);
 		
 
 		PessoaJuridica pessoa4 = Fixture.pessoaJuridica("Fornecedor 4",
-				"56003315000142", "333333333333", "distrib_acme@mail.com", "99.999-9");
+				"56003315000142", "333533333333", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa4);
 		
-		Fornecedor fornecedor1 = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		fornecedor1 = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
 		
 		Fornecedor fornecedor2 = Fixture.fornecedor(pessoa2, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
 		
@@ -107,7 +111,7 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 		fornecedores3.add(fornecedor3);
 		fornecedores3.add(fornecedor4);
 
-		DescontoCota desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cota, fornecedores3, usuario, new Date());
+		desconto3 = Fixture.descontoCota(new BigDecimal(4), distribuidor, cota, fornecedores3, usuario, new Date());
 		
 		save(desconto1,desconto2,desconto3);
 		
@@ -155,6 +159,14 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
 		Integer quantidade = descontoCotaRepository.obterQuantidadeDescontoCota(filtro);
 	    Assert.assertTrue(quantidade > 0);
+	}
+	
+	@Test
+	public void testeObterUltimoDescontoValido(){
+		
+		DescontoCota descontoCota = descontoCotaRepository.buscarUltimoDescontoValido(desconto3.getId(),fornecedor1 , cota);
+		
+		Assert.assertNotNull(descontoCota);
 	}
 	
 }

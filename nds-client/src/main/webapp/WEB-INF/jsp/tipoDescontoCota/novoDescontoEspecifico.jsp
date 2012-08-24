@@ -18,7 +18,7 @@
            		   id="numCotaEspecifico" 
            		   type="text"
            		   maxlength="11"
-           		   style="width:70px;"
+           		   style="width:70px;float:left;"
            		   onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
            	  											descontoCotaController.pesquisarCotaSuccessCallBack, 
            	  											descontoCotaController.pesquisarCotaErrorCallBack);" />
@@ -29,7 +29,7 @@
 		      		 type="text" 
 		      		 class="nome_jornaleiro" 
 		      		 maxlength="255"
-		      		 style="width:200px;"
+		      		 style="width:200px;float:left;"
 		      		 onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaEspecifico');" 
 		      		 onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaEspecifico', '#descricaoCotaEspecifico',true,
 										      			descontoCotaController.pesquisarCotaSuccessCallBack,
