@@ -7,14 +7,11 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -214,7 +211,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	}
 
 	/**
-	 * Insere os dados de desconto relativos ao produto ediÁ„o em quest„o.
+	 * Insere os dados de desconto relativos ao produto edi√ß√£o em quest√£o.
 	 * 
 	 * @param produtoEdicao
 	 * @param indNovoProdutoEdicao
@@ -230,7 +227,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedoresDeProduto(produto.getCodigo(), null);
 		
 		if(fornecedores == null || fornecedores.isEmpty()) {
-			throw new IllegalStateException("N„o h· fornecedor associado ao produto.");
+			throw new IllegalStateException("N√£o h√° fornecedor associado ao produto.");
 		}
 
 		if(fornecedores.size()!=1) {
