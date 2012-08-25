@@ -58,7 +58,31 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 						"NAO ENCONTROU Lancamento");
 					return;
 			}
-		
+			
+			Estudo estudo = lancamento.getEstudo();
+			if (estudo == null) {
+				
+				// Cadastrar novo estudo:
+				estudo = new Estudo();
+				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
+				estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
+				estudo.setProdutoEdicao(produtoEdicao);
+				getSession().persist(estudo);
+				
+				// Associar novo estudo com o lançamento existente:
+				lancamento.setEstudo(estudo);
+				getSession().merge(lancamento);
+			} else {
+				
+				// Atualizar o valor total do reparte:
+				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
+				getSession().merge(estudo);
+			}
+			
+			
+			/*
+			 * TODO: Posteriormente remover o trecho comentado:
+			
 			List<Estudo> listaEstudos = 
 				this.getEstudosSalvos(
 					lancamento.getProdutoEdicao().getId(), 
@@ -85,9 +109,9 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 					getSession().persist(estudo);
 				}
-*/
+
 			}
-			
+*/			
 		} else {
 			this.ndsiLoggerFactory.getLogger().logError(
 				message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
