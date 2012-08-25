@@ -7,7 +7,7 @@ var edicoesFechadasController = $.extend(true, {
 		this.initGridDetalheEdicoesFechadas();
 		this.bindButtons();
 
-		$("#dataDe").datepicker({
+		$("#dataDe", edicoesFechadasController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
@@ -15,9 +15,9 @@ var edicoesFechadasController = $.extend(true, {
 			defaultDate : new Date()
 		});
 
-		$("#dataDe").mask("99/99/9999");
+		$("#dataDe", edicoesFechadasController.workspace).mask("99/99/9999");
 
-		$("#dataAte").datepicker({
+		$("#dataAte", edicoesFechadasController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
@@ -25,17 +25,17 @@ var edicoesFechadasController = $.extend(true, {
 			defaultDate : new Date()
 		});
 
-		$("#dataAte").mask("99/99/9999");
+		$("#dataAte", edicoesFechadasController.workspace).mask("99/99/9999");
 	
 	},
 	bindButtons : function() {
-		$("#btnPesquisar").click(function() {
+		$("#btnPesquisar", edicoesFechadasController.workspace).click(function() {
 			edicoesFechadasController.pesquisar();
-			$(".grids").show();
+			$(".grids", edicoesFechadasController.workspace).show();
 		});
 	},
 	initGridEdicoesFechadasGrid : function() {
-		$(".consultaEdicoesFechadasGrid").flexigrid({
+		$(".consultaEdicoesFechadasGrid", edicoesFechadasController.workspace).flexigrid({
 			preProcess : edicoesFechadasController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
@@ -104,7 +104,7 @@ var edicoesFechadasController = $.extend(true, {
 		});
 	},
 	initGridDetalheEdicoesFechadas : function() {
-		$(".detalheEdicoesFechadasGrid").flexigrid({
+		$(".detalheEdicoesFechadasGrid", edicoesFechadasController.workspace).flexigrid({
 			preProcess: edicoesFechadasController.executarPreProcessamentoPopUp,
 			dataType : 'json',
 			colModel : [ {
@@ -168,11 +168,11 @@ var edicoesFechadasController = $.extend(true, {
 		}
 		
 		if(destacarValorSaldoTotal == "S") {
-			$("#saldoEstoque").css("color", "red");
-			$("#saldoEstoque").html(saldoTotalExtratoEdicao); 
+			$("#saldoEstoque", edicoesFechadasController.workspace).css("color", "red");
+			$("#saldoEstoque", edicoesFechadasController.workspace).html(saldoTotalExtratoEdicao); 
 		} else {
-			$("#saldoEstoque").css("color", "black");
-			$("#saldoEstoque").html(saldoTotalExtratoEdicao); 
+			$("#saldoEstoque", edicoesFechadasController.workspace).css("color", "black");
+			$("#saldoEstoque", edicoesFechadasController.workspace).html(saldoTotalExtratoEdicao); 
 		}
 		return dadosPesquisa;
 	},
@@ -192,11 +192,11 @@ var edicoesFechadasController = $.extend(true, {
 		if (typeof resultado.mensagens == "object") {
 			exibirMensagem(resultado.mensagens.tipoMensagem,
 					resultado.mensagens.listaMensagens);
-			$(".grids").hide();
+			$(".grids", edicoesFechadasController.workspace).hide();
 			return resultado;
 		}
 
-		$("#totalEdicoesFechadasSaldo").html(resultado.saldoTotal);
+		$("#totalEdicoesFechadasSaldo", edicoesFechadasController.workspace).html(resultado.saldoTotal);
 
 		var tableModel = resultado.tableModel;
 
@@ -213,12 +213,12 @@ var edicoesFechadasController = $.extend(true, {
 			row.cell.acao = linkAcao;
 		});
 
-		$(".grids").show();
+		$(".grids", edicoesFechadasController.workspace).show();
 		return tableModel;
 
 	},
 	abrirPopUpSaldoEdicoesFechadas : function(codigoProduto, edicaoProduto) {
-		$(".detalheEdicoesFechadasGrid").flexOptions({
+		$(".detalheEdicoesFechadasGrid", edicoesFechadasController.workspace).flexOptions({
 			url: contextPath + '/estoque/extratoEdicao/pesquisaExtratoEdicao',
 			params: [
 		         {name:'codigoProduto', value: codigoProduto},
@@ -230,15 +230,15 @@ var edicoesFechadasController = $.extend(true, {
 		    newp: 1,
 		});
 		
-		$(".detalheEdicoesFechadasGrid").flexReload();
+		$(".detalheEdicoesFechadasGrid", edicoesFechadasController.workspace).flexReload();
 		edicoesFechadasController.popup_detalhes();			
 	},
 	pesquisar : function() {
-		var dataDe = $("#dataDe").val();
-		var dataAte = $("#dataAte").val();
-		var selectFornecedor = $("select#fornecedor").val();
+		var dataDe = $("#dataDe", edicoesFechadasController.workspace).val();
+		var dataAte = $("#dataAte", edicoesFechadasController.workspace).val();
+		var selectFornecedor = $("select#fornecedor", edicoesFechadasController.workspace).val();
 
-		$(".consultaEdicoesFechadasGrid").flexOptions({
+		$(".consultaEdicoesFechadasGrid", edicoesFechadasController.workspace).flexOptions({
 			url : contextPath + '/estoque/edicoesFechadas/pesquisar',
 			params : [ {
 				name : 'dataDe',
@@ -252,10 +252,10 @@ var edicoesFechadasController = $.extend(true, {
 			} ],
 			dataType : 'json'
 		});
-		$(".consultaEdicoesFechadasGrid").flexReload();
+		$(".consultaEdicoesFechadasGrid", edicoesFechadasController.workspace).flexReload();
 	},
 	popup_detalhes : function() {
-		$("#dialog-detalhes").dialog({
+		$("#dialog-detalhes", edicoesFechadasController.workspace).dialog({
 			resizable : false,
 			height : 440,
 			width : 750,
@@ -264,7 +264,8 @@ var edicoesFechadasController = $.extend(true, {
 				"Fechar" : function() {
 					$(this).dialog("close");
 				},
-			}
+			},
+			form: $("#dialog-detalhes", this.workspace).parents("form")
 		});
 	}
 }, BaseController);

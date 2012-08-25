@@ -1,7 +1,9 @@
 <head>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/controleAprovacao.js"></script>
 <script>
-
+$(function(){
+	controleAprovacaoController.inicializar();
+});
 </script>
 
 </head>
