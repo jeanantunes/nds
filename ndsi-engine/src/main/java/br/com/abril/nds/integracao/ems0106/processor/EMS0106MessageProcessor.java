@@ -162,13 +162,12 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		Query query = getSession().createQuery(sql.toString());
 		
-		query.setMaxResults(1);
-		query.setFetchSize(1);
-		
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
-		
 		query.setParameter("produtoEdicao", produtoEdicao);
 		query.setDate("dataOperacao", dataOperacao);
+		
+		query.setMaxResults(1);
+		query.setFetchSize(1);
 		
 		return (Lancamento) query.uniqueResult();
 	}
