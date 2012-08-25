@@ -41,17 +41,17 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			String codigoPublicacao = input.getCodigoPublicacao();
 			Long edicao = input.getEdicao();
 			
-			List<ProdutoEdicao> listaProdutoEdicao =
-				this.obterProdutoEdicaoPor(codigoPublicacao, edicao);
-			if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
+			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(
+					codigoPublicacao, edicao);
+			if (produtoEdicao == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.HIERARQUIA,
 					"NAO ENCONTROU ProdutoEdicao");
 				return;
 			}
 			
-			Lancamento lancamento = 
-				this.getLancamento(codigoPublicacao, edicao);
+			Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
+					produtoEdicao);
 			if (lancamento == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.HIERARQUIA,
@@ -94,22 +94,30 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<ProdutoEdicao> obterProdutoEdicaoPor(String codigoPublicacao, Long edicao) {
-		
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
+			Long edicao) {
+
 		try {
-			
-			Criteria criteria = 
-				this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
-			
+
 			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
 			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
 
-			return criteria.list();
-			
+			return (ProdutoEdicao) criteria.uniqueResult();
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -135,29 +143,33 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		return query.list();
 	}
 	*/
-	private Lancamento getLancamento(String codigoPublicacao, Long edicao) {
+	/**
+	 * Obtém o Lançamento com data de lançamento mais próximo do dia corrente.
+	 *  
+	 * @param produtoEdicao
+	 * @return
+	 */
+	private Lancamento getLancamentoPrevistoMaisProximo(
+			ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("SELECT lcto FROM Lancamento lcto ");
-		sql.append("			JOIN FETCH lcto.produtoEdicao pe ");
-		sql.append("			JOIN FETCH pe.produto p ");
-		sql.append("WHERE ");
-		sql.append("	pe.numeroEdicao = :numeroEdicao ");
-		sql.append("	AND p.codigo = :codigoProduto ");
-		sql.append("	AND lcto.dataLancamentoPrevista >= :dataAtual ");
-		sql.append("ORDER BY lcto.dataLancamentoPrevista DESC");
-
+		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
+		sql.append("    WHERE pe = :produtoEdicao ");
+		sql.append("      AND lcto.dataLancamentoPrevista >= :dataOperacao ");
+		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
+		
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setMaxResults(1);
-
-		query.setParameter("numeroEdicao", edicao);
-		query.setParameter("codigoProduto", codigoPublicacao);
+		query.setFetchSize(1);
 		
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
-		query.setParameter("dataAtual", dataOperacao);
-
+		
+		query.setParameter("produtoEdicao", produtoEdicao);
+		query.setDate("dataOperacao", dataOperacao);
+		
 		return (Lancamento) query.uniqueResult();
 	}
 	
