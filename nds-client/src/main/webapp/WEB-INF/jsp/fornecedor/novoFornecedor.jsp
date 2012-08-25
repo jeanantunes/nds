@@ -1,3 +1,4 @@
+<form id="form-dialogNovoFornecedor">
 <div id="fornecedorController-dialogNovoFornecedor" title="Novo Fornecedor" style="display:none">
 
 	<jsp:include page="../messagesDialog.jsp" />
@@ -45,6 +46,7 @@
 	</div>
 
 </div>
+</form>
 
 <script type="text/javascript">
 $(function(){
