@@ -35,53 +35,59 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	public void processMessage(Message message) {
 		
 		EMS0106Input input = (EMS0106Input) message.getBody();
-
-		if (input != null) {
-		
-			String codigoPublicacao = input.getCodigoPublicacao();
-			Long edicao = input.getEdicao();
+		if (input == null) {
 			
-			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(
-					codigoPublicacao, edicao);
-			if (produtoEdicao == null) {
-				this.ndsiLoggerFactory.getLogger().logError(message,
+			this.ndsiLoggerFactory.getLogger().logError(
+					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
+		}
+		
+		String codigoPublicacao = input.getCodigoPublicacao();
+		Long edicao = input.getEdicao();
+			
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.HIERARQUIA,
 					"NAO ENCONTROU ProdutoEdicao");
-				return;
-			}
+			return;
+		}
 			
-			Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
-					produtoEdicao);
-			if (lancamento == null) {
-				this.ndsiLoggerFactory.getLogger().logError(message,
-						EventoExecucaoEnum.HIERARQUIA,
-						"NAO ENCONTROU Lancamento");
-					return;
-			}
+		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
+				produtoEdicao);
+		if (lancamento == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"NAO ENCONTROU Lancamento");
+			return;
+		}
+		
+		Estudo estudo = lancamento.getEstudo();
+		if (estudo == null) {
 			
-			Estudo estudo = lancamento.getEstudo();
-			if (estudo == null) {
-				
-				// Cadastrar novo estudo:
-				estudo = new Estudo();
-				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
-				estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-				estudo.setProdutoEdicao(produtoEdicao);
-				getSession().persist(estudo);
-				
-				// Associar novo estudo com o lançamento existente:
-				lancamento.setEstudo(estudo);
-				getSession().merge(lancamento);
-			} else {
-				
-				// Atualizar o valor total do reparte:
-				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
-				getSession().merge(estudo);
-			}
+			// Cadastrar novo estudo:
+			estudo = new Estudo();
+			estudo.setQtdeReparte(BigInteger.valueOf(
+					input.getReparteDistribuir()));
+			estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
+			estudo.setProdutoEdicao(produtoEdicao);
+			getSession().persist(estudo);
+			
+			// Associar novo estudo com o lançamento existente:
+			lancamento.setEstudo(estudo);
+			getSession().merge(lancamento);
+		} else {
+			
+			// Atualizar o valor total do reparte:
+			estudo.setQtdeReparte(BigInteger.valueOf(
+					input.getReparteDistribuir()));
+			getSession().merge(estudo);
+		}
 			
 			
-			/*
-			 * TODO: Posteriormente remover o trecho comentado:
+		/*
+		 * TODO: Posteriormente remover o trecho comentado:
 			
 			List<Estudo> listaEstudos = 
 				this.getEstudosSalvos(
@@ -98,24 +104,19 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 				getSession().persist(estudo);
 				///FIXME Comentado para verificação posterios junto a Eduardo "PunkRock" Castro em 08/08
-/*		
-				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-					
-					estudo = new Estudo();
-					
-					estudo.setProdutoEdicao(produtoEdicao);
-					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-					estudo.setQtdeReparte(BigInteger.valueOf( input.getReparteDistribuir() ));
-		
-					getSession().persist(estudo);
-				}
+//				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
+//					
+//					estudo = new Estudo();
+//					
+//					estudo.setProdutoEdicao(produtoEdicao);
+//					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
+//					estudo.setQtdeReparte(BigInteger.valueOf( input.getReparteDistribuir() ));
+//		
+//					getSession().persist(estudo);
+//				}
 
 			}
-*/			
-		} else {
-			this.ndsiLoggerFactory.getLogger().logError(
-				message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
-		}
+		 */			
 	}
 	
 	/**
