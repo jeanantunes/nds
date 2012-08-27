@@ -2,7 +2,6 @@ package br.com.abril.nds.integracao.ems0106.processor;
 
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -86,39 +85,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 					input.getReparteDistribuir()));
 			getSession().merge(estudo);
 		}
-			
-			
-		/*
-		 * TODO: Posteriormente remover o trecho comentado:
-			
-			List<Estudo> listaEstudos = 
-				this.getEstudosSalvos(
-					lancamento.getProdutoEdicao().getId(), 
-					lancamento.getDataLancamentoPrevista());
-			
-			if (listaEstudos.isEmpty()) {
-				
-				Estudo estudo = new Estudo();
 		
-				estudo.setProdutoEdicao(lancamento.getProdutoEdicao());
-				estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
-		
-				getSession().persist(estudo);
-				///FIXME Comentado para verificação posterios junto a Eduardo "PunkRock" Castro em 08/08
-//				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-//					
-//					estudo = new Estudo();
-//					
-//					estudo.setProdutoEdicao(produtoEdicao);
-//					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-//					estudo.setQtdeReparte(BigInteger.valueOf( input.getReparteDistribuir() ));
-//		
-//					getSession().persist(estudo);
-//				}
-
-			}
-		 */			
 	}
 	
 	/**
@@ -149,27 +116,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			throw new RuntimeException(e);
 		}
 	}
-	/*
-	@SuppressWarnings("unchecked")
-	private List<EMS0107Input> getListaCotaPublicacao(String codigoPublicacao, Long edicao) {
-
-		// Obter a cota
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append("SELECT e ");
-		sql.append("FROM EMS0107Input e JOIN FETCH e.cota ");
-		sql.append("WHERE ");
-		sql.append("     e.codigoPublicacao = :codigoProduto ");
-		sql.append("     AND e.edicao = :numeroEdicao ");
-
-		Query query = getSession().createQuery(sql.toString());
-
-		query.setParameter("codigoProduto", codigoPublicacao);
-		query.setParameter("numeroEdicao", edicao);
-
-		return query.list();
-	}
-	*/
+	
 	/**
 	 * Obtém o Lançamento com data de lançamento mais próximo do dia corrente.
 	 *  
@@ -197,25 +144,6 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		query.setFetchSize(1);
 		
 		return (Lancamento) query.uniqueResult();
-	}
-	
-	@SuppressWarnings("unchecked")
-	private List<Estudo> getEstudosSalvos(Long idProdutoEdicao, Date dataLancamentoPrevista) {
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT e ");
-		sql.append("FROM Estudo e ");
-		sql.append("	JOIN FETCH e.produtoEdicao pe ");
-		sql.append("WHERE ");
-		sql.append("	pe.id = :produtoEdicaoId ");
-		sql.append("	AND e.dataLancamento = :dataLancamento ");
-
-		Query query = getSession().createQuery(sql.toString());
-
-		query.setParameter("produtoEdicaoId", idProdutoEdicao);
-		query.setParameter("dataLancamento", dataLancamentoPrevista);
-
-		return query.list();
 	}
 	
 }
