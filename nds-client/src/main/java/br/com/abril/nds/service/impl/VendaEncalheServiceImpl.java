@@ -64,6 +64,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 /**
  * 
@@ -945,9 +946,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				vendaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
 				vendaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 				
-				//TODO: verificar o desconto a ser aplicado sem a informação da cota
+				//TODO: Considerar a cota no cálculo do desconto, requer refactor na tela
+				// pois após o grid populado com os produtos, pode ser informada uma cota diferente
+				// Esta alteração será considerada nos ajustes previstos desta funcionalidade 
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-                BigDecimal percentualDesconto = produtoEdicao.getProduto().getDesconto();
+                BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDesconto(), BigDecimal.ZERO);
                 BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 				
 				vendaEncalheDTO.setPrecoCapa(precoVenda.subtract(valorDesconto));				

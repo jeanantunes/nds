@@ -202,13 +202,13 @@ public class ProdutoEdicao implements Serializable {
 		this.precoVenda = precoVenda;
 	}
 	
-	public BigDecimal getDesconto() {
-		return desconto;
-	}
-	
-	public void setDesconto(BigDecimal desconto) {
-		this.desconto = desconto;
-	}
+//	public BigDecimal getDesconto() {
+//		return desconto;
+//	}
+//	
+//	public void setDesconto(BigDecimal desconto) {
+//		this.desconto = desconto;
+//	}
 	
 	public int getPacotePadrao() {
 		return pacotePadrao;

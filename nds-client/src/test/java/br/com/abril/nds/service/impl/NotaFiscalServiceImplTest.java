@@ -253,7 +253,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"798765431", 1L, produto, null, false);
-		produtoEdicaoVeja.setDesconto(null);
 		save(produtoEdicaoVeja);
 		// ////
 
@@ -267,7 +266,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"798765431", 2L, produtoComDesconto, null, false);
-		produtoEdicaoComDesconto.setDesconto(new BigDecimal(19));
 		save(produtoEdicaoComDesconto);
 		// ////
 
