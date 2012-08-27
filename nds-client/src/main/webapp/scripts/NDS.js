@@ -7,6 +7,7 @@ $(document).ready(function(){
 	if (document.all) {
 		$("#nav-one li").hoverClass ("sfHover");
 	}
+	
 });
 
 $.fn.hoverClass = function(c) {
