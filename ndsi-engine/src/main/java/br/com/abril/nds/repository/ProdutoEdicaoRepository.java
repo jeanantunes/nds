@@ -39,18 +39,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz);
 	
 	/**
-	 * Obtem o percentual de comissionamento (fatorDesconto) de acordo com os parâmetros
-	 * de idProdutoEdicao, numerCota e idDistribuidor;
-	 * 
-	 * @param idProdutoEdicao
-	 * @param numeroCota
-	 * @param idDistribuidor
-	 * 
-	 * @return BigDecimal
-	 */
-	public BigDecimal obterFatorDesconto(Long idProdutoEdicao, Integer numeroCota, Long idDistribuidor);
-	
-	/**
 	 * Obtém produtos edição de acordo com o nome do produto.
 	 * 
 	 * @param nomeProduto - nome do produto

@@ -197,7 +197,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		edicao.setCodigoDeBarras(input.getCodBarra());
 		edicao.setNumeroEdicao(input.getEdicaoProd());
-		edicao.setDesconto(input.getTipoDesconto());
 		edicao.setPacotePadrao(input.getPactPadrao());
 		edicao.setPeb(input.getPeb());
 		edicao.setPeso(input.getPesoUni());
@@ -359,15 +358,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
 							"Atualizacao Possui Brinde para: "
 									+ input.isContemBrinde());
-		}
-		if (!edicao.getDesconto().equals(input.getTipoDesconto())) {
-
-			edicao.setDesconto(input.getTipoDesconto());
-			this.ndsiLoggerFactory.getLogger().logInfo(
-					message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao do Tipo Desconto para: "
-							+ input.getTipoDesconto());
 		}
 		if (!edicao.getCodigoDeBarras().equals(input.getCodBarra())) {
 

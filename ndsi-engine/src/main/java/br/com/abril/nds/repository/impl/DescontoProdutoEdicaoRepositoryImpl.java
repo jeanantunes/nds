@@ -1,11 +1,15 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -189,5 +193,25 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	
 		return criteria.list();
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public BigDecimal obterDescontoPorCotaProdutoEdicao(Long idCota,
+            Long idProdutoEdicao, Long idFornecedor) {
+        
+        StringBuilder hql = new StringBuilder("select view.desconto ");
+        hql.append("from ViewDesconto view ")
+           .append("where view.cotaId = :idCota ")
+           .append("and view.produtoEdicaoId  :idProdutoEdicao ")
+           .append("and view.fornecedorId = :idFornecedor ");
+        Query query = getSession().createQuery(hql.toString());
+        query.setParameter("idCota", idCota);
+        query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        query.setParameter("idFornecedor", idFornecedor);
+        
+        return (BigDecimal) query.uniqueResult();
+    }
 
 }
