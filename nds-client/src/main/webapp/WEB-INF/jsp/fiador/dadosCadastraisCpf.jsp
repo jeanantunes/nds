@@ -27,7 +27,7 @@
 		</td>
 		<td>Orgão Emissor:</td>
 		<td width="59">
-			<input type="text" style="width: 50px" id="${param.prefix}orgaoEmissorFiadorCpf" name="orgaoEmissorFiadorCpf" maxlength="255"/>
+			<input type="text" style="width: 50px" id="${param.prefix}orgaoEmissorFiadorCpf" class="justLetter" name="orgaoEmissorFiadorCpf" maxlength="255"/>
 		</td>
 		<td width="31">UF:</td>
 		<td width="135">

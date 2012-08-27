@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
@@ -29,9 +30,9 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	@Export(label = "Edição", exhibitionOrder = 3)
 	private Long edicaoProduto;
 
-	private BigDecimal reparte;
+	private BigInteger reparte;
 
-	private BigDecimal vendaExemplares;
+	private BigInteger vendaExemplares;
 
 	private BigDecimal porcentagemVenda;
 
@@ -53,8 +54,8 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	}
 
 	public RegistroCurvaABCCotaDTO(String numeroProduto, String codigoProduto,
-			Long numeroEdicao, BigDecimal reparte,
-			BigDecimal vendaExemplares, BigDecimal faturamento) {
+			Long numeroEdicao, BigInteger reparte,
+			BigInteger vendaExemplares, BigDecimal faturamento) {
 		this.codigoProduto = numeroProduto;
 		this.nomeProduto = codigoProduto;
 		this.edicaoProduto = numeroEdicao;
@@ -72,19 +73,19 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 		this.nomeProduto = nomeProduto;
 	}
 
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 
-	public BigDecimal getVendaExemplares() {
+	public BigInteger getVendaExemplares() {
 		return vendaExemplares;
 	}
 
-	public void setVendaExemplares(BigDecimal vendaExemplares) {
+	public void setVendaExemplares(BigInteger vendaExemplares) {
 		this.vendaExemplares = vendaExemplares;
 	}
 
