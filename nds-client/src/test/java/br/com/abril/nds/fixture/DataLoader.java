@@ -1627,7 +1627,6 @@ public class DataLoader {
 				new Long(50), new BigDecimal(100), new BigDecimal(100), "3333", 0L, cromoBrasileirao, null, false,"Cromo Brasileirão");
 		cromoBrasileiraoEd1.setParcial(true);
 		cromoBrasileiraoEd1.setOrigemInterface(false);
-		cromoBrasileiraoEd1.setDesconto(new BigDecimal(10));
 		
 		ProdutoEdicao guiaViagemEd1 = Fixture.produtoEdicao("COD_GG", 1L, 5, 30,
 				new Long(50), new BigDecimal(100), new BigDecimal(100), "2231", 0L, guiaViagem, null, false,"Guia Viagem");
@@ -2501,56 +2500,83 @@ public class DataLoader {
 
 
 
-	private static BigDecimal getTotalEncalhe(List<MovimentoFinanceiroCota> movimentosF){
-        Double totalD=0d;
-		List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
-		for (MovimentoFinanceiroCota movF:movimentosF){
-			if (  ((TipoMovimentoFinanceiro) movF.getTipoMovimento()).getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.ENVIO_ENCALHE){
-				movimentosE = movF.getMovimentos();
-				for (MovimentoEstoqueCota movE:movimentosE){
-					if (  ((TipoMovimentoEstoque) movE.getTipoMovimento()).getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.ENVIO_ENCALHE){
-					    Double totalItem = (movE.getQtde().doubleValue())*movE.getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda().doubleValue() - movE.getEstoqueProdutoCota().getProdutoEdicao().getDesconto().doubleValue();
-					    totalD+=totalItem;
-				    }
-				}
-		    }
-		}
-		return (new BigDecimal(totalD));
-	}
+    private static BigDecimal getTotalEncalhe(
+            List<MovimentoFinanceiroCota> movimentosF) {
+        Double totalD = 0d;
+        List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
+        for (MovimentoFinanceiroCota movF : movimentosF) {
+            if (((TipoMovimentoFinanceiro) movF.getTipoMovimento())
+                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.ENVIO_ENCALHE) {
+                movimentosE = movF.getMovimentos();
+                for (MovimentoEstoqueCota movE : movimentosE) {
+                    if (((TipoMovimentoEstoque) movE.getTipoMovimento())
+                            .getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.ENVIO_ENCALHE) {
+                        Double totalItem = (movE.getQtde().doubleValue())
+                                * movE.getEstoqueProdutoCota()
+                                        .getProdutoEdicao().getPrecoVenda()
+                                        .doubleValue()
+                                - movE.getEstoqueProdutoCota()
+                                        .getProdutoEdicao().getProduto()
+                                        .getDesconto().doubleValue();
+                        totalD += totalItem;
+                    }
+                }
+            }
+        }
+        return (new BigDecimal(totalD));
+    }
 
-    private static BigDecimal getTotalConsignado(List<MovimentoFinanceiroCota> movimentosF){
-        Double totalD=0d;
-		List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
-		for (MovimentoFinanceiroCota movF:movimentosF){
-			if (  ((TipoMovimentoFinanceiro) movF.getTipoMovimento()).getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE){
-				movimentosE = movF.getMovimentos();
-				for (MovimentoEstoqueCota movE:movimentosE){
-					if (  ((TipoMovimentoEstoque) movE.getTipoMovimento()).getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.ENVIO_JORNALEIRO){
-						Double totalItem = (movE.getQtde().doubleValue())*(movE.getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda().doubleValue() - movE.getEstoqueProdutoCota().getProdutoEdicao().getDesconto().doubleValue());
-					    totalD+=totalItem;
-				    }
-				}
-		    }
-		}
-		return (new BigDecimal(totalD));
-	}
+    private static BigDecimal getTotalConsignado(
+            List<MovimentoFinanceiroCota> movimentosF) {
+        Double totalD = 0d;
+        List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
+        for (MovimentoFinanceiroCota movF : movimentosF) {
+            if (((TipoMovimentoFinanceiro) movF.getTipoMovimento())
+                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE) {
+                movimentosE = movF.getMovimentos();
+                for (MovimentoEstoqueCota movE : movimentosE) {
+                    if (((TipoMovimentoEstoque) movE.getTipoMovimento())
+                            .getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.ENVIO_JORNALEIRO) {
+                        Double totalItem = (movE.getQtde().doubleValue())
+                                * (movE.getEstoqueProdutoCota()
+                                        .getProdutoEdicao().getPrecoVenda()
+                                        .doubleValue() - movE
+                                        .getEstoqueProdutoCota()
+                                        .getProdutoEdicao().getProduto()
+                                        .getDesconto().doubleValue());
+                        totalD += totalItem;
+                    }
+                }
+            }
+        }
+        return (new BigDecimal(totalD));
+    }
 
-    private static BigDecimal getTotalVendaEncalhe(List<MovimentoFinanceiroCota> movimentosF){
-        Double totalD=0d;
-		List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
-		for (MovimentoFinanceiroCota movF:movimentosF){
-			if (  ((TipoMovimentoFinanceiro) movF.getTipoMovimento()).getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE){
-				movimentosE = movF.getMovimentos();
-				for (MovimentoEstoqueCota movE:movimentosE){
-					if (  ((TipoMovimentoEstoque) movE.getTipoMovimento()).getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.VENDA_ENCALHE){
-						Double totalItem = (movE.getQtde().doubleValue())*(movE.getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda().doubleValue() - movE.getEstoqueProdutoCota().getProdutoEdicao().getDesconto().doubleValue());
-					    totalD+=totalItem;
-				    }
-				}
-		    }
-		}
-		return (new BigDecimal(totalD));
-	}
+    private static BigDecimal getTotalVendaEncalhe(
+            List<MovimentoFinanceiroCota> movimentosF) {
+        Double totalD = 0d;
+        List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
+        for (MovimentoFinanceiroCota movF : movimentosF) {
+            if (((TipoMovimentoFinanceiro) movF.getTipoMovimento())
+                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE) {
+                movimentosE = movF.getMovimentos();
+                for (MovimentoEstoqueCota movE : movimentosE) {
+                    if (((TipoMovimentoEstoque) movE.getTipoMovimento())
+                            .getGrupoMovimentoEstoque() == GrupoMovimentoEstoque.VENDA_ENCALHE) {
+                        Double totalItem = (movE.getQtde().doubleValue())
+                                * (movE.getEstoqueProdutoCota()
+                                        .getProdutoEdicao().getPrecoVenda()
+                                        .doubleValue() - movE
+                                        .getEstoqueProdutoCota()
+                                        .getProdutoEdicao().getProduto()
+                                        .getDesconto().doubleValue());
+                        totalD += totalItem;
+                    }
+                }
+            }
+        }
+        return (new BigDecimal(totalD));
+    }
 
 
 
@@ -5791,17 +5817,12 @@ public class DataLoader {
 		produtoEdicao91 = Fixture.produtoEdicao("COD_KK", 91L, 10, 7,
 				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ZZ3", 26L, produto91, null, false);
 
-		produtoEdicao91.setDesconto(BigDecimal.ZERO);
-
 
 		produtoEdicao92 = Fixture.produtoEdicao("COD_LL", 92L, 10, 7,
 				new Long(100), BigDecimal.TEN, new BigDecimal(18), "ZZ4", 27L, produto92, null, false);
-		produtoEdicao92.setDesconto(BigDecimal.ONE);
-
 
 		produtoEdicao93 = Fixture.produtoEdicao("COD_MM", 93L, 10, 7,
 				new Long(100), BigDecimal.TEN, new BigDecimal(90), "ZZ5", 28L, produto93, null, false);
-		produtoEdicao93.setDesconto(BigDecimal.ONE);
 
 
 		save(session, produtoEdicao91, produtoEdicao92, produtoEdicao93);
@@ -6370,8 +6391,6 @@ public class DataLoader {
 
 		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
 				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial, descProduto + numeroEdicao);
-		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
-
 		save(session, produtoEdicaoCE);
 
 		/**
@@ -6513,18 +6532,14 @@ public class DataLoader {
 
 		produtoEdicaoCE = Fixture.produtoEdicao("COD_NN", 84L, 10, 7,
 				new Long(100), BigDecimal.TEN, new BigDecimal(15), "EZ7", 29L, produtoCE, null, false, "Produto CE 1");
-		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 
 		produtoEdicaoCE_2 = Fixture.produtoEdicao("COD_OO", 85L, 10, 7,
 				new Long(100), BigDecimal.TEN, new BigDecimal(18), "EZ8", 30L, produtoCE_2, null, false, "Produto CE 2");
-		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
 
 
 		produtoEdicaoCE_3 = Fixture.produtoEdicao("COD_PP", 86L, 10, 7,
 				new Long(100), BigDecimal.TEN, new BigDecimal(90), "EZ8", 31L, produtoCE_3, null, false, "Produto CE 3");
-		produtoEdicaoCE.setDesconto(BigDecimal.ONE);
-
 
 		save(session, produtoEdicaoCE, produtoEdicaoCE_2, produtoEdicaoCE_3);
 
@@ -7041,13 +7056,18 @@ public class DataLoader {
 
 	}
 
-	private static BigDecimal obterValorMovimentosEstoque(List<MovimentoEstoqueCota> movimentosE){
-		Double total = 0d;
-		for (MovimentoEstoqueCota movE:movimentosE){
-			total+=( movE.getQtde().doubleValue() * (movE.getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda().doubleValue() - movE.getEstoqueProdutoCota().getProdutoEdicao().getDesconto().doubleValue()));
-		}
-		return new BigDecimal(total);
-	}
+    private static BigDecimal obterValorMovimentosEstoque(
+            List<MovimentoEstoqueCota> movimentosE) {
+        Double total = 0d;
+        for (MovimentoEstoqueCota movE : movimentosE) {
+            total += (movE.getQtde().doubleValue() * (movE
+                    .getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda()
+                    .doubleValue() - movE.getEstoqueProdutoCota()
+                    .getProdutoEdicao().getProduto().getDesconto()
+                    .doubleValue()));
+        }
+        return new BigDecimal(total);
+    }
 
 	private static void criarMovimentosFinanceiroCota(Session session) {
 
@@ -11013,7 +11033,6 @@ public class DataLoader {
 			session.save(produtoCE);
 			produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
 					peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial,descProduto);
-			produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 			session.save(produtoEdicaoCE);
 			
 

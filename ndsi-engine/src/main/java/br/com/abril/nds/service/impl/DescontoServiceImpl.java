@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoCotaRepository;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
+import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
@@ -41,6 +43,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -73,6 +76,9 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Autowired
 	private DescontoComponent descontoComponent;
+	
+	@Autowired
+	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
 
 	@Override
 	@Transactional(readOnly=true)
@@ -721,4 +727,26 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		processarDesconto(TipoDesconto.GERAL, fornecedores,cotas,null,valorDescontoProduto, null);
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    public BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota,
+            ProdutoEdicao produtoEdicao) {
+        Validate.notNull(cota, "Cota não deve ser nula!");
+        Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
+        BigDecimal percentual = null;
+        if (produtoEdicao.getProduto().isPublicacao()) {
+            //Neste caso, o produto possui apenas um fornecedor
+            //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
+            Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
+            percentual = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(cota.getId(), produtoEdicao.getId(), fornecedor.getId());
+        } else {
+            //Produto possivelmente com mais de um fornecedor, seguindo
+            // a instrução passada, utilizar o desconto do produto
+            percentual = produtoEdicao.getProduto().getDesconto();
+        }
+        return Util.nvl(percentual, BigDecimal.ZERO);
+    }
 }

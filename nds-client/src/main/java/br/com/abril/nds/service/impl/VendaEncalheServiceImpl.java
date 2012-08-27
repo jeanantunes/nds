@@ -56,11 +56,13 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.repository.VendaProdutoEncalheRepository;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
 /**
@@ -112,6 +114,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	
 	@Autowired
 	private ControleNumeracaoSlipService controleNumeracaoSlipServiceImpl;
+	
+	@Autowired
+	private DescontoService descontoService;
 	
 	private SlipVendaEncalheDTO obterDadosSlipVenda(VendaProduto... vendas){
 		
@@ -182,7 +187,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		item.setProduto(itemVE.getProdutoEdicao().getProduto().getNome());
 		item.setEdicao(itemVE.getProdutoEdicao().getNumeroEdicao().toString());
 		item.setQuantidade(itemVE.getQntProduto().toString());
-		item.setPreco( CurrencyUtil.formatarValor(itemVE.getProdutoEdicao().getPrecoVenda().subtract(itemVE.getProdutoEdicao().getDesconto())));
+		
+		BigDecimal precoVenda = itemVE.getProdutoEdicao().getPrecoVenda();
+		BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(itemVE.getCota(), itemVE.getProdutoEdicao());
+		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+		
+		item.setPreco(CurrencyUtil.formatarValor(precoVenda.subtract(valorDesconto)));
 		item.setTotal(CurrencyUtil.formatarValor(itemVE.getValorTotalVenda()));
 		
 		return item;
@@ -595,7 +605,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		venda.setHorarioVenda(new Date());
 		venda.setQntProduto(vendaDTO.getQntProduto());
 		venda.setTipoVenda(vendaDTO.getTipoVendaEncalhe());
-		venda.setValorTotalVenda( produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(new BigDecimal(vendaDTO.getQntProduto())));
+		
+		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+		BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(venda.getCota(), produtoEdicao);
+		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+		
+        venda.setValorTotalVenda(precoVenda.subtract(valorDesconto).multiply(new BigDecimal(vendaDTO.getQntProduto())));
 		
 		return venda;
 	}
@@ -704,7 +719,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		BigInteger qntNovaProduto = vendaEncalheDTO.getQntProduto();
 		
 		BigDecimal valorVendaAtual = vendaProduto.getValorTotalVenda();
-		BigDecimal valorVendaNovo = produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply( new BigDecimal(qntNovaProduto) );
+	
+		
+		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+		BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(vendaProduto.getCota(), produtoEdicao);
+	    BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+		
+        BigDecimal valorVendaNovo = precoVenda.subtract(valorDesconto).multiply( new BigDecimal(qntNovaProduto) );
 		
 		if(qntAtualProduto.compareTo(qntNovaProduto) != 0){
 			
@@ -923,7 +944,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				vendaEncalheDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 				vendaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
 				vendaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-				vendaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()));				
+				
+				//TODO: verificar o desconto a ser aplicado sem a informação da cota
+				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+                BigDecimal percentualDesconto = produtoEdicao.getProduto().getDesconto();
+                BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+				
+				vendaEncalheDTO.setPrecoCapa(precoVenda.subtract(valorDesconto));				
 				vendaEncalheDTO.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
 				
 				if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)){
