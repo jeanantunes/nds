@@ -354,15 +354,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO 	as numeroEdicao,  ");
 		sql.append("	PRODUTO_EDICAO.PRECO_VENDA 		as precoVenda,    ");
 		
-		sql.append("	(PRODUTO_EDICAO.PRECO_VENDA - PRODUTO_EDICAO.DESCONTO ) as precoComDesconto,  ");
+		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) ");
+		sql.append("	as precoComDesconto,  ");
 
 		sql.append("	ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA 	as reparte,  	");
 		sql.append("	sum(MOVIMENTO_ESTOQUE_COTA.QTDE) 	as encalhe,     ");
 		sql.append(" 	PESSOA.RAZAO_SOCIAL 				as fornecedor,  ");
 		
 		sql.append("	sum(		");
-		sql.append("	    MOVIMENTO_ESTOQUE_COTA.QTDE * (PRODUTO_EDICAO.PRECO_VENDA -  PRODUTO_EDICAO.DESCONTO)      		");
-		sql.append("	) as total, ");
+		sql.append("	    MOVIMENTO_ESTOQUE_COTA.QTDE * ( PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100) ");
+		sql.append("	) ) as total, ");
 		
 		sql.append("	((TO_DAYS(MOVIMENTO_ESTOQUE_COTA.DATA) - TO_DAYS(CHAMADA_ENCALHE.DATA_RECOLHIMENTO)) + 1) as recolhimento ");
 
@@ -373,6 +374,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	inner join ESTOQUE_PRODUTO_COTA on                                         ");
 		sql.append("	( MOVIMENTO_ESTOQUE_COTA.ESTOQUE_PROD_COTA_ID = ESTOQUE_PRODUTO_COTA.ID )  ");
+		
+		sql.append("	inner join COTA on                                         ");
+		sql.append("	( MOVIMENTO_ESTOQUE_COTA.COTA_ID = COTA.ID )  ");
+		
 		
 		sql.append("	inner join CHAMADA_ENCALHE_COTA on ");
 		sql.append("	( CHAMADA_ENCALHE_COTA.ID = CONFERENCIA_ENCALHE.CHAMADA_ENCALHE_COTA_ID ) ");
@@ -1358,4 +1363,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		return result;
 	}
+	
+	private String obterSQLDescontoObterResumoConsignadosParaChamadao(){
+			
+			StringBuilder hql = new StringBuilder("COALESCE((select view.DESCONTO ");
+			hql.append(" from VIEW_DESCONTO view ")
+			   .append(" where view.COTA_ID = COTA.ID ")
+			   .append(" and view.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ")
+			   .append(" and view.FORNECEDOR_ID = PRODUTO_FORNECEDOR.fornecedores_ID),0) ");
+			
+			return hql.toString();
+		}
+		
 }
