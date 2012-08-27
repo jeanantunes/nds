@@ -202,7 +202,8 @@ var boxController = $.extend(true, {
 					text:"Cancelar",click : function() {
 					$(this).dialog("close");
 				}
-			}]
+			}],
+			form: $("#dialog-excluir", this.workspace).parents("form")
 		});
 	},
 	remove : function(id) {
@@ -277,7 +278,8 @@ var boxController = $.extend(true, {
 				click: function() {
 					$( this ).dialog( "close" );
 				}
-			}]
+			}],
+			form: $("#dialog-box", this.workspace).parents("form")			
 		});
 	},
 	detalhe:function(id){		
