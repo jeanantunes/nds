@@ -120,7 +120,7 @@ var fornecedorController = $.extend(true,{
 
 				$( "#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog({
 					resizable: false,
-					height:610,
+					height:570,
 					width:840,
 					modal: true,
 					buttons: {
