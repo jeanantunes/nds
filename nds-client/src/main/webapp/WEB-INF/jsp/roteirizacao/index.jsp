@@ -325,11 +325,21 @@ label{ vertical-align:super;}
           </table>
 
       </fieldset>
+      
       <div class="linha_separa_fields">&nbsp;</div>
+      
       <div class="grids" style="display:none;">
+	  
 	      <fieldset class="fieldGrid">
-	       	  <legend>Rotas / Roteiros Cadastrados</legend>
+	      	
+	      	<legend>Rotas / Roteiros Cadastrados</legend>
+	       	  	
+	       	<div class="gridWrapper">
+	        
 	        	<table class="rotaRoteirosGrid"></table>
+	        
+	        </div>
+	        	
 	      </fieldset>
       </div>
 <script>
