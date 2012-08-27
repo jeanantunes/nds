@@ -14,6 +14,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -167,49 +168,6 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		criteria.addOrder(Order.asc("baiNo"));
 		return criteria.list();  
 	}
-	
-	@Override
-	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults){
-		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
-		criteria.createAlias("rota", "rota") ;
-		criteria.createAlias("rota.roteiro", "roteiro") ;
-		criteria.createAlias("roteiro.box", "box") ;
-		criteria.createAlias("pdv", "pdv") ;
-		criteria.createAlias("pdv.cota", "cota") ;
-		criteria.createAlias("cota.pessoa", "pessoa") ;
-		if (boxId != null) { 
-			criteria.add(Restrictions.eq("roteiro.box.id", boxId));
-		}
-		
-		if (roteiroId != null) { 
-			criteria.add(Restrictions.eq("roteiro.id", roteiroId));
-		}
-		
-		if (rotaId != null) { 
-			criteria.add(Restrictions.eq("rota.id", rotaId));
-		}
-		criteria.add(Restrictions.eq("roteiro.tipoRoteiro", tipoRoteiro));
-		
-		criteria.setProjection(Projections.distinct(Projections.projectionList()
-				.add(Projections.property("box.nome"), "nomeBox")
-				.add(Projections.property("roteiro.descricaoRoteiro"), "descricaoRoteiro")
-				.add(Projections.property("rota.descricaoRota"), "descricaoRota")
-				.add(Projections.property("cota.numeroCota"), "numeroCota")
-				.add(Projections.property("pessoa.nome"), "nome")));
-
-		if(Ordenacao.ASC ==  ordenacao){
-			criteria.addOrder(Order.asc(orderBy));
-		}else if(Ordenacao.DESC ==  ordenacao){
-			criteria.addOrder(Order.desc(orderBy));
-		}
-		
-		criteria.setFirstResult(initialResult);
-		criteria.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
-		return criteria.list();  
-	}
-
-
-
 
 	@Override
 	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
@@ -314,6 +272,188 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			return lista.get(0);
 		}
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select box.codigo ||' - '|| box.nome as nomeBox ," )
+			.append(" rota.codigoRota || ' - ' || rota.descricaoRota as descricaoRota , ")
+			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
+			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome , ")
+			.append(" cota.numeroCota as numeroCota ");
+			
+		hql.append( getHqlWhere(filtro));
+	
+		hql.append(getOrdenacaoConsulta(filtro));
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		getParameterConsulta(filtro, query);
+		
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list();  
+	}
+
+	private StringBuilder getOrdenacaoConsulta(FiltroConsultaRoteirizacaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		if (filtro == null || filtro.getOrdenacaoColuna() == null) {
+			return hql; 
+		}
+
+		switch (filtro.getOrdenacaoColuna()) {
+			
+			case BOX:
+				hql.append(" order by nomeBox ");
+				break;
+				
+			case NOME_COTA:
+				hql.append(" order by nome  ");
+				break;
+					
+			case NUMERO_COTA:
+				hql.append(" order by numeroCota ");
+				break;
+			
+			case ROTA:
+				hql.append(" order by descricaoRota ");
+				break;
+				
+			case ROTEIRO:
+				hql.append(" order by descricaoRoteiro ");
+				break;	
+				
+			case QNT_COTA:
+				hql.append(" order by qntCotas ");
+				break;		
+				
+			default:
+				hql.append(" order by nomeBox ");
+		}
+
+		if (filtro.getPaginacao()!= null && filtro.getPaginacao().getOrdenacao() != null) {
+			hql.append(filtro.getPaginacao().getOrdenacao().toString());
+		}
+		
+		return hql;
+	}
+
+	private void getParameterConsulta(FiltroConsultaRoteirizacaoDTO filtro, Query query) {
+		
+		if(filtro.getIdBox()!= null){
+			query.setParameter("idBox", filtro.getIdBox());
+		}
+		
+		if(filtro.getIdRoteiro()!= null){
+			query.setParameter("idRoteiro",filtro.getIdRoteiro());
+		}
+		
+		if(filtro.getIdRota()!= null){
+			query.setParameter("idRota",  filtro.getIdRota());
+		}
+		
+		if(filtro.getNumeroCota()!= null){
+			query.setParameter("numeroCota",filtro.getNumeroCota());
+		}
+	}
+
+	private StringBuilder getHqlWhere(FiltroConsultaRoteirizacaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("from Roteirizacao roteirizacao ")
+			.append(" join roteirizacao.pdv pdv " )
+			.append(" join pdv.cota cota " )
+			.append(" Join cota.pessoa pessoa ")
+			.append(" join roteirizacao.rota rota " )
+			.append(" join rota.roteiro roteiro ")
+			.append(" join roteiro.box box ")
+			.append(" where roteiro.box.id = box.id "); 
+			
+		if(filtro.getIdBox()!= null){
+			hql.append(" and box.id =:idBox ");
+		}
+		
+		if(filtro.getIdRoteiro()!= null){
+			hql.append(" and roteiro.id =:idRoteiro ");
+		}
+		
+		if(filtro.getIdRota()!= null){
+			hql.append(" and rota.id =:idRota ");
+		}
+		
+		if(filtro.getNumeroCota()!= null){
+			hql.append(" and cota.numeroCota =:numeroCota ");
+		}
+		return hql;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select box.codigo ||' - '|| box.nome as nomeBox ," )
+			.append(" rota.codigoRota || ' - ' || rota.descricaoRota as descricaoRota , ")
+			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
+			.append(" count (cota.numeroCota) as qntCotas ");
+			
+		hql.append( getHqlWhere(filtro));
+	
+		hql.append(" group by box.codigo , rota.codigoRota , roteiro.descricaoRoteiro ");
+		
+		hql.append(getOrdenacaoConsulta(filtro));
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		getParameterConsulta(filtro, query);
+		
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list(); 
+	}
+	
+	@Override
+	public Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(box.codigo) ");
+			
+		hql.append( getHqlWhere(filtro));
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		getParameterConsulta(filtro, query);
+		
+		return ((Long) query.uniqueResult()).intValue();
+	}
+	
+	@Override
+	public Integer buscarQuantidadeRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro) {
+	
+		filtro.setPaginacao(null);
+		
+		return buscarRoteirizacaoSumarizadoPorCota(filtro).size(); 
 	}
 
 }

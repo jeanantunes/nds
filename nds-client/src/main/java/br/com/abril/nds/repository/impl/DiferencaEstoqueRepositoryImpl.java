@@ -180,9 +180,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 				+ "("+ this.obterHQLDesconto() +") as desconto, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto() +") / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto() +") / 100))) "
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
 					
@@ -350,9 +350,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 				+ " ("+ this.obterHQLDesconto() +") as desconto, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto() +") / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto() +") / 100))) "
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
 		

@@ -15,6 +15,7 @@ import br.com.abril.nds.integracao.ems0106.inbound.EMS0106Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -26,30 +27,68 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	@Override
 	public void processMessage(Message message) {
 		
 		EMS0106Input input = (EMS0106Input) message.getBody();
-
-		if (input != null) {
+		if (input == null) {
+			
+			this.ndsiLoggerFactory.getLogger().logError(
+					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
+		}
 		
-			String codigoPublicacao = input.getCodigoPublicacao();
-			Long edicao = input.getEdicao();
+		String codigoPublicacao = input.getCodigoPublicacao();
+		Long edicao = input.getEdicao();
 			
-			List<ProdutoEdicao> listaProdutoEdicao =
-				this.obterProdutoEdicaoPor(codigoPublicacao, edicao);
-			
-			if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
-				this.ndsiLoggerFactory.getLogger().logError(message,
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.HIERARQUIA,
-					"NAO ENCONTROU ProdutoEdicao OU Lancamento");
-				return;
-			}
+					"NAO ENCONTROU ProdutoEdicao");
+			return;
+		}
 			
-			Lancamento lancamento = 
-				this.getLancamento(codigoPublicacao, edicao);
+		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
+				produtoEdicao);
+		if (lancamento == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"NAO ENCONTROU Lancamento");
+			return;
+		}
 		
+		Estudo estudo = lancamento.getEstudo();
+		if (estudo == null) {
+			
+			// Cadastrar novo estudo:
+			estudo = new Estudo();
+			estudo.setQtdeReparte(BigInteger.valueOf(
+					input.getReparteDistribuir()));
+			estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
+			estudo.setProdutoEdicao(produtoEdicao);
+			getSession().persist(estudo);
+			
+			// Associar novo estudo com o lançamento existente:
+			lancamento.setEstudo(estudo);
+			getSession().merge(lancamento);
+		} else {
+			
+			// Atualizar o valor total do reparte:
+			estudo.setQtdeReparte(BigInteger.valueOf(
+					input.getReparteDistribuir()));
+			getSession().merge(estudo);
+		}
+			
+			
+		/*
+		 * TODO: Posteriormente remover o trecho comentado:
+			
 			List<Estudo> listaEstudos = 
 				this.getEstudosSalvos(
 					lancamento.getProdutoEdicao().getId(), 
@@ -65,42 +104,45 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 				getSession().persist(estudo);
 				///FIXME Comentado para verificação posterios junto a Eduardo "PunkRock" Castro em 08/08
-/*		
-				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-					
-					estudo = new Estudo();
-					
-					estudo.setProdutoEdicao(produtoEdicao);
-					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-					estudo.setQtdeReparte(BigInteger.valueOf( input.getReparteDistribuir() ));
-		
-					getSession().persist(estudo);
-				}
-*/
+//				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
+//					
+//					estudo = new Estudo();
+//					
+//					estudo.setProdutoEdicao(produtoEdicao);
+//					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
+//					estudo.setQtdeReparte(BigInteger.valueOf( input.getReparteDistribuir() ));
+//		
+//					getSession().persist(estudo);
+//				}
+
 			}
-			
-		} else {
-			this.ndsiLoggerFactory.getLogger().logError(
-				message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
-		}
+		 */			
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<ProdutoEdicao> obterProdutoEdicaoPor(String codigoPublicacao, Long edicao) {
-		
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
+			Long edicao) {
+
 		try {
-			
-			Criteria criteria = 
-				this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
-			
+
 			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
 			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
 
-			return criteria.list();
-			
+			return (ProdutoEdicao) criteria.uniqueResult();
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -126,27 +168,32 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		return query.list();
 	}
 	*/
-	private Lancamento getLancamento(String codigoPublicacao, Long edicao) {
+	/**
+	 * Obtém o Lançamento com data de lançamento mais próximo do dia corrente.
+	 *  
+	 * @param produtoEdicao
+	 * @return
+	 */
+	private Lancamento getLancamentoPrevistoMaisProximo(
+			ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("SELECT lcto FROM Lancamento lcto ");
-		sql.append("			JOIN FETCH lcto.produtoEdicao pe ");
-		sql.append("			JOIN FETCH pe.produto p ");
-		sql.append("WHERE ");
-		sql.append("	pe.numeroEdicao = :numeroEdicao ");
-		sql.append("	AND p.codigo = :codigoProduto ");
-		sql.append("	AND lcto.dataLancamentoPrevista >= :dataAtual ");
-		sql.append("ORDER BY lcto.dataLancamentoPrevista DESC");
-
+		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
+		sql.append("    WHERE pe = :produtoEdicao ");
+		sql.append("      AND lcto.dataLancamentoPrevista >= :dataOperacao ");
+		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
+		
 		Query query = getSession().createQuery(sql.toString());
 		
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		query.setParameter("produtoEdicao", produtoEdicao);
+		query.setDate("dataOperacao", dataOperacao);
+		
 		query.setMaxResults(1);
-
-		query.setParameter("numeroEdicao", edicao);
-		query.setParameter("codigoProduto", codigoPublicacao);
-		query.setParameter("dataAtual", new Date(2012, 07, 27));
-
+		query.setFetchSize(1);
+		
 		return (Lancamento) query.uniqueResult();
 	}
 	

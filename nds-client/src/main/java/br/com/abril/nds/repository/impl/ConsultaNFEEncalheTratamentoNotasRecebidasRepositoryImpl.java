@@ -241,8 +241,8 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append("conf.qtde as qtdRecebida, ");
 		hql.append("conf.precoCapaInformado as precoCapa, ");
 		hql.append(" ("+ getSubSqlQueryValorDesconto() +") as desconto, ");
-		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * desconto / 100)) AS precoDesconto, ");
-		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * desconto / 100) * conf.qtdeInformada) AS totalDoItem, ");
+		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * ("+ getSubSqlQueryValorDesconto() +") / 100)) AS precoDesconto, ");
+		hql.append(" (conf.precoCapaInformado - (conf.precoCapaInformado * ("+ getSubSqlQueryValorDesconto() +") / 100) * conf.qtdeInformada) AS totalDoItem, ");
 		hql.append("conf.qtde as qtdRecebida, ");
 		hql.append("conf.data as dataConferenciaEncalhe, ");
 		hql.append("chamadaEncalhe.dataRecolhimento as dataChamadaEncalhe ");

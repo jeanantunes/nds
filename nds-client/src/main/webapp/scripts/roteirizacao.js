@@ -1198,10 +1198,9 @@ roteiroEspecialNovo : function() {
 
 
 iniciarPesquisaRoteirizacaoGrid : function () {
-	$(".rotaRoteirosGrid", roteirizacao.workspace).clear();
-		
+			
 		$(".rotaRoteirosGrid", roteirizacao.workspace).flexigrid({
-		preProcess: roteirizacao.callBackPesquisaRoteirizacaoGrid,
+			preProcess: roteirizacao.callBackPesquisaRoteirizacaoGrid,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Box',
@@ -1260,13 +1259,9 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 
 			return data;
 		}
+		
 		$.each(data.rows, function(index, value) {
 			
-//			value.cell.box = value.cell.rota.roteiro.box.nome
-//        	value.cell.roteiro = value.cell.rota.roteiro.descricaoRoteiro;
-//			value.cell.rota = value.cell.rota.descricaoRota;
-//			value.cell.cota = value.cell.pdv.cota.numeroCota;
-//			value.cell.nome = value.cell.pdv.cota.pessoa.nome;
 		});
 		
 		$(".grids", roteirizacao.workspace).show();
@@ -1274,19 +1269,12 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		return data;
 	},
 	
-
 	pesquisarRoteirizacao: function () {
-		$('#nomeCotaPesquisa', roteirizacao.workspace).html('');
-		var tipoRoteiro = "NORMAL";
-		 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
-			 tipoRoteiro = "ESPECIAL";
-		 }
-		 pesquisaRoteizicaoPorCota = false;
 		
 		roteirizacao.iniciarPesquisaRoteirizacaoGrid();
-		$(".rotaRoteirosGrid", roteirizacao.workspace).clear();
-			$(".rotaRoteirosGrid", roteirizacao.workspace).flexOptions({
-				"url" : contextPath + '/cadastro/roteirizacao/pesquisarRoteirizacao',
+					
+		$(".rotaRoteirosGrid", roteirizacao.workspace).flexOptions({
+				url : contextPath + '/cadastro/roteirizacao/pesquisarRoteirizacao',
 				params : [{
 					name : "boxId",
 					value : $('#boxPesquisa', roteirizacao.workspace).val()
@@ -1298,21 +1286,16 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 					value : $('#rotaPesquisa', roteirizacao.workspace).val()
 				},
 				{
-					name : "tipoRoteiro",
-					value : tipoRoteiro
+					name : "numeroCota",
+					value : $('#cotaPesquisa', roteirizacao.workspace).val()
 				}],
 				
-				
 				newp:1
-			});
+		});
 			
-			$(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
+		$(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
 	},
 	
-	
-	
-	
-
 	buscarRoteirizacaoPorCota: function () {
 		var tipoRoteiro = "NORMAL";
 		 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {

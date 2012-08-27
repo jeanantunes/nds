@@ -25,6 +25,7 @@
 <script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.justLetter.js"></script>
 
 <script type="text/javascript" src="scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
 <script type="text/javascript" src="scripts/jquery.formatCurrency-1.4.0.min.js"></script>
@@ -34,6 +35,8 @@
 <script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
 
 <link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 
 <base href="<c:url value="/"/>" />
 
@@ -303,7 +306,7 @@
 							</script> </label>
 						
 							<label>
-								<a href="javascript:;" onclick="logout()" title="Sair do Sistema" class="sair">Sair</a>
+								<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
 							</label>
 			
 						</div>
