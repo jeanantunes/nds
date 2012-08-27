@@ -73,13 +73,13 @@ $(function(){
 	
 	<form action="/cadastro/box/" id="pesquisar_box_form">
 	<div class="areaBts">
-	
+		<div class="area">
 			<span class="bt_novos" title="Novo">
 				<a href="javascript:;" id="btnNovo" rel="tipsy" title="Incluir Novo Box">
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
 				</a>
 			</span>
-			<div id="fileExport" style="display: none;">
+			<div id="fileExport" style="display: none; float:right;">
 				<span class="bt_arq">
 					<a href="${pageContext.request.contextPath}/cadastro/box/exportarConsulta?fileType=PDF" rel="tipsy" title="Imprimir">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
@@ -92,8 +92,7 @@ $(function(){
 					</a>
 				</span>
 			</div>
-  		  		
-  		  		
+		</div>  		  		
 	</div>
   	<div class="linha_separa_fields">&nbsp;</div>
 	

@@ -25,7 +25,7 @@ public class DescontoComponentImpl implements DescontoComponent {
 	
 	@Override
 	@Transactional
-	public void persistirDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Set<ProdutoEdicao> produtos, BigDecimal valorDesconto){
+	public void persistirDesconto(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota, Set<ProdutoEdicao> produtos, BigDecimal valorDesconto, Boolean descontoPredominante){
 		
 		DescontoProdutoEdicao descontoProdutoEdicao = null;
 		
@@ -33,11 +33,19 @@ public class DescontoComponentImpl implements DescontoComponent {
 			
 			descontoProdutoEdicao =  descontoProdutoEdicaoRepository.buscarDescontoProdutoEdicao(null, fornecedor,cota,produto);
 			
-			if(descontoProdutoEdicao == null){
+			if (!this.aplicarDesconto(
+					valorDesconto, descontoProdutoEdicao, descontoPredominante)) {
+					
+				continue;
+			}
+			
+			if (descontoProdutoEdicao == null) {
+				
 				descontoProdutoEdicao = new DescontoProdutoEdicao();
 				descontoProdutoEdicao.setCota(cota);
 				descontoProdutoEdicao.setFornecedor(fornecedor);
 				descontoProdutoEdicao.setProdutoEdicao(produto);
+			
 			}
 			
 			descontoProdutoEdicao.setDesconto(valorDesconto);
@@ -45,6 +53,38 @@ public class DescontoComponentImpl implements DescontoComponent {
 			
 			descontoProdutoEdicaoRepository.merge(descontoProdutoEdicao);
 		}
+	}
+	
+	/*
+	 * Verifica se o dever ser aplicado o desconto de acordo com o valor do desconto e a predominância.
+	 */
+	private boolean aplicarDesconto(BigDecimal novoDesconto,
+									DescontoProdutoEdicao descontoProdutoEdicao,
+									Boolean descontoPredominante) {
+		
+		if (descontoPredominante == null || descontoPredominante) {
+			
+			return true;
+		}
+		
+		if (descontoProdutoEdicao == null) {
+		
+			return true;
+		}
+		
+		if (descontoProdutoEdicao.getTipoDesconto().equals(TipoDesconto.PRODUTO)) {
+			
+			return true;
+		}
+		
+		BigDecimal descontoExistente = descontoProdutoEdicao.getDesconto();
+		
+		if (descontoExistente.compareTo(novoDesconto) <= 0) {
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	@Override

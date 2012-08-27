@@ -2418,9 +2418,9 @@ public class DataLoader {
 
 	private static void criarPDVsCota(Session session){
 
-		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, null, tipoPontoPDVResidencial, null);
+		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVResidencial, null);
 		
-		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, null, tipoPontoPDV2Comercial, null);
+		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDV2Comercial, null);
 		
 		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
 		pdvJose.setSegmentacao(segmentacaoPDV);
@@ -2470,7 +2470,10 @@ public class DataLoader {
 
 		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
 		session.save(roteirizacao);
-
+	
+		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota,1);
+		session.save(roteirizacao);
+		
 		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
 		session.save(roteiro);
 
@@ -2479,6 +2482,9 @@ public class DataLoader {
 		session.save(rota);
 
 		roteirizacao = Fixture.criarRoteirizacao(pdvJose, rota,1);
+		session.save(roteirizacao);
+		
+		roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
 		session.save(roteirizacao);
 
 		rota = Fixture.rota("006", "Rota 006");
@@ -2495,6 +2501,7 @@ public class DataLoader {
 
 		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
 		session.save(roteirizacao);
+
 
 	}
 
@@ -10742,15 +10749,19 @@ public class DataLoader {
 		UnidadeFederacao minasGerais = Fixture.criarUnidadeFederacao("MG");
 		save(session, saoPaulo, minasGerais);
 
-		Localidade mococa = Fixture.criarLocalidade(14L, "Mococa", 555L, saoPaulo);
+		Localidade casaBranca = Fixture.criarLocalidade(14L, "Casa Branca", 555L, saoPaulo);
 		Localidade arceburgo = Fixture.criarLocalidade(15L, "Arceburgo", 556L, minasGerais);
-		save(session, mococa, arceburgo);
+		Localidade ribeirao = Fixture.criarLocalidade(16L, "Ribeirão Preto", 231L, saoPaulo);
+		Localidade saoJose = Fixture.criarLocalidade(17L, "São Jose do Rio Pardo", 486L, saoPaulo);
+		Localidade saoPauloLoc = Fixture.criarLocalidade(18L, "São Paulo", 465L, saoPaulo);
+		
+		save(session, casaBranca, arceburgo,ribeirao,saoJose,saoPauloLoc);
 
-		Bairro vilaCarvalho = Fixture.criarBairro(1L, "Vila Carvalho", mococa);
+		Bairro vilaCarvalho = Fixture.criarBairro(1L, "Vila Carvalho", casaBranca);
 		Bairro centro = Fixture.criarBairro(2L, "Centro", arceburgo);
 		save(session, vilaCarvalho, centro);
 
-		Logradouro joseCristovam = Fixture.criarLogradouro(1L, "Capitão José Cristovam de Lima", "13735430", 1L, mococa, "Rua");
+		Logradouro joseCristovam = Fixture.criarLogradouro(1L, "Capitão José Cristovam de Lima", "13735430", 1L, casaBranca, "Rua");
 		Logradouro avenidaBrasil = Fixture.criarLogradouro(2L, "Brasil", "37820000", 2L, arceburgo, "Avenida");
 		save(session, joseCristovam, avenidaBrasil);
 	}

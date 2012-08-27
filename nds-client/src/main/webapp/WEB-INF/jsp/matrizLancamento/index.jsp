@@ -43,7 +43,7 @@ $(function() {
 		}, {
 			display : 'Edição',
 			name : 'numeroEdicao',
-			width : 35,
+			width : 30,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -55,19 +55,19 @@ $(function() {
 		}, {
 			display : 'Reparte',
 			name : 'repartePrevisto',
-			width : 43,
+			width : 38,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Lançamento',
 			name : 'descricaoLancamento',
-			width : 68,
+			width : 63,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Recolhimento',
 			name : 'dataRecolhimentoPrevista',
-			width : 76,
+			width : 70,
 			sortable : true,
 			align : 'center'
 		},{
@@ -85,19 +85,19 @@ $(function() {
 		}, {
 			display : 'Distribuição',
 			name : 'distribuicao',
-			width : 65,
+			width : 60,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Previsto',
 			name : 'dataLancamentoPrevista',
-			width : 60,
+			width : 55,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Matriz/Distrib.',
 			name : 'novaData',
-			width : 107,
+			width : 97,
 			sortable : false,
 			align : 'center'
 		},{
@@ -286,27 +286,60 @@ function reprogramarSelecionados() {
 		     </fieldset>
 		</div>
 		
-		<div class="corpo">
-		   
-		     <div class="container">	
-		   
 		   	<jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialog-novo" name="messageDialog"/>
 			</jsp:include>
 		     
-		   
-		      <fieldset class="classFieldset">
+			  <div class="areaBts">
+			  		<div class="area">
+			  			<span class="bt_novos" title="Voltar Configuração Inicial">
+		        			<!-- Voltar Configuração Inicial -->
+		        			<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
+		        		</span>
+			  			
+			  			<span class="bt_novos" title="Reprogramar">
+			  				<!-- Reprogramar -->
+			  				<a id="linkReprogramar" href="javascript:;" onclick="reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
+		                </span>
+		                
+		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;" title="Confirmar">
+		                    <!-- CONFIRMAR -->	
+		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
+		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
+		                    </a>
+		                </span>
+			  			
+			  			
+			  			
+			  			 <span class="bt_arq" title="Gerar Arquivo">
+							<!-- ARQUIVO -->
+							<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+							    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+						    </a>
+						</span>
+		            
+					
+						<span class="bt_arq" title="Imprimir">
+							<!-- IMPRIMIR -->	
+							<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						    </a>
+						</span>
+			  		</div>
+			  </div>
+			  <div class="linha_separa_fields">&nbsp;</div>
+		      <fieldset class="fieldFiltro">
 		   	    <legend>Pesquisar Balanceamento da Matriz de Lançamento
 		        </legend>
 		   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		   	      <tr>
-		   	        <td width="68">Fornecedor:</td>
+		   	        <td width="68">Fornecedor:&nbsp;</td>
 		   	        <td width="228">
 		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
 
-<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+							<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
 
 							<label for="selTodos1">Selecionar Todos</label></span>
 		                    <br clear="all" />
@@ -322,70 +355,26 @@ function reprogramarSelecionados() {
 		   	        <td width="109"><input class="campoDePesquisa" type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
 		   	        <td width="47" align="center">&nbsp;</td>
 		   	        <td width="112">&nbsp;</td>
-		   	        <td width="104"><span class="bt_pesquisar" title="Pesquisar">
-		   	        
-<!-- Pesquisar -->
-<a class="botaoPesquisar" id="linkPesquisar" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);">Pesquisar</a></span></td>
-
-
-
+		   	        <td width="104"><span class="bt_novos" title="Pesquisar">   
+						<!-- Pesquisar -->
+						<a id="linkPesquisar" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+					</td>
 		          </tr>
 		        </table>
 		      </fieldset>
-		          <div class="linha_separa_fields">&nbsp;</div>
-		      <fieldset class="classFieldset">
+		      <div class="linha_separa_fields">&nbsp;</div>
+		      <fieldset class="fieldGrid">
 		       	  <legend>Balanceamento da Matriz de Lançamento Cadastrados</legend>
 		        <div class="grids" style="display:none;">
-		        <span class="bt_configura_inicial" title="Voltar Configuração Inicial">
-		        
-		        
-		              
-<!-- Voltar Configuração Inicial -->
-<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" />Voltar Configuração Inicial</a></span>
-
-		
-		           <br clear="all" />
 		       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
-		          
-		            
-		                <span class="bt_novos" title="Gerar Arquivo">
-							<!-- ARQUIVO -->
-							<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS">
-							    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-							    Arquivo
-						    </a>
-						</span>
-		            
-					
-						<span class="bt_novos" title="Imprimir">
-							<!-- IMPRIMIR -->	
-							<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF">
-							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							    Imprimir
-						    </a>
-						</span>
-		             
-		                <span class="bt_novos" title="Reprogramar">
-		                    
-		                    
-<!-- Reprogramar -->              
-<a id="linkReprogramar" href="javascript:;" onclick="reprogramarSelecionados();"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" />Reprogramar</a>
-
-		                    
-		                    
-		                </span>
-		                
-		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;" title="Confirmar">
-		                    <!-- CONFIRMAR -->	
-		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();">
-		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
-		                        Confirmar
-		                    </a>
-		                </span>
 		         	  
 		         	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
-		          
-		              <span class="bt_sellAll" style="float:right; margin-right:60px;"><label for="selTodos">Selecionar Todos</label><input type="checkbox" id="selTodos" name="Todos" onclick="balanceamentoLancamento.checkUncheckLancamentos()"/></span>
+						<table width="175" border="0" align="right" cellpadding="0" cellspacing="0">
+						    <tr>
+						        <td width="110" align="right"><label for="selTodos">Selecionar Todos</label></td>
+						        <td width="65" align="left" valign="top"><span class="bt_sellAll"><input type="checkbox" id="selTodos" name="Todos" onclick="balanceamentoLancamento.checkUncheckLancamentos()"/></span></td>
+						    </tr>
+						</table>
 		        </div>
 		      </fieldset>
 		      <div class="linha_separa_fields">&nbsp;</div>      
@@ -396,8 +385,6 @@ function reprogramarSelecionados() {
 		        </table>
 		        </div>
 		      </fieldset>
-		    </div>
-		</div>
 		
         <div id="dialog-detalhe-produto" title="Detalhes do Produto" style="display:none;">
 		    <jsp:include page="../produtoEdicao/detalheProduto.jsp" />

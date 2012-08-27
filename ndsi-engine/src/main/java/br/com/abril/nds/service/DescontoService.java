@@ -98,9 +98,9 @@ public interface DescontoService {
 	
 	void processarDescontoCota(Cota cota,BigDecimal valorDesconto);
 	
-	void processarDescontoProduto(Set<ProdutoEdicao> produtos,Set<Cota> cotas, BigDecimal valorDesconto);
+	void processarDescontoProduto(Set<ProdutoEdicao> produtos,Set<Cota> cotas, BigDecimal valorDesconto, Boolean descontoPredominante);
 	
-	void processarDescontoProduto(ProdutoEdicao produto,BigDecimal valorDesconto);
+	void processarDescontoProduto(ProdutoEdicao produto,BigDecimal valorDesconto, Boolean descontoPredominante);
 	
 	/**
 	 * Método que retorna uma coleção de dados referentes aos tipos de desconto por produto cadastrados

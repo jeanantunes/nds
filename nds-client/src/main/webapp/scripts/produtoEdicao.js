@@ -269,7 +269,7 @@ var produtoEdicaoController =$.extend(true,  {
 					align : 'left'
 				}],
 				width : 200,
-				height : 350,
+				height : 300,
 				singleSelect : true
 			});
 			
@@ -286,7 +286,7 @@ var produtoEdicaoController =$.extend(true,  {
 				}, {
 					display : 'Nome Comercial',
 					name : 'nomeProduto',
-					width : 180,
+					width : 197,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -333,7 +333,7 @@ var produtoEdicaoController =$.extend(true,  {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255,
+				height : 'auto',
 				singleSelect : true
 			});
 			
@@ -420,12 +420,12 @@ var produtoEdicaoController =$.extend(true,  {
 			var cProduto = '';
 			$.each(resultado.rows, function(index, row) {
 
-				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
-				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
+				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
+				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
 				'</a>';
 
 				var linkExcluir = '<a href="javascript:;" onclick="produtoEdicaoController.removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
-				'<img title="Excluir" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+				'<img title="Excluir" src="' + contextPath + '/images/ico_excluir.gif" border="0px" />' +
 				'</a>';
 
 				row.cell.acao = linkAprovar + linkExcluir;
@@ -605,7 +605,7 @@ var produtoEdicaoController =$.extend(true,  {
 
 			$( "#produtoEdicaoController-dialog-novo" ).dialog({
 				resizable: false,
-				height:615,
+				height:540,
 				width:960,
 				modal: true,
 				buttons: {

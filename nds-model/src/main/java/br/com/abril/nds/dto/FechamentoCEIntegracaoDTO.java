@@ -11,7 +11,7 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class FechamentoCEIntegracaoDTO {
 	
-	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 1)
+	@Export(label = "Sequencial", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private Integer sequencial;
 	
 	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2)

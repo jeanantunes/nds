@@ -26,8 +26,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			  },
 			dataType : 'json',
 			colModel : [ {
-				display : 'Qtde',
-				name : 'qtde',
+				display : 'Seq',
+				name : 'sequencial',
 				width : 30,
 				sortable : true,
 				align : 'left'

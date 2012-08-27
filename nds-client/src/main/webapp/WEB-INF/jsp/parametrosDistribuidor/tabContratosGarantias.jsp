@@ -1,8 +1,9 @@
 <div id="tabContratos">
+ <br/>
   <table width="420" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td valign="top">
-        <fieldset style="width: 420px !important; margin-bottom: 5px;">
+        <fieldset style="width: 420px !important; margin-bottom: 5px; margin-left:10px;">
           <legend>Condições de Contratação:</legend>
           <table width="392" border="0" cellspacing="1" cellpadding="1">
             <tr>
@@ -39,7 +40,7 @@
             </tr>
           </table>
         </fieldset>
-        <fieldset style="width: 420px !important; margin-bottom: 5px; float: left">
+        <fieldset style="width: 420px !important; margin-bottom: 5px; float: left; margin-left:10px;">
           <legend>Garantia</legend>
           <table width="335" border="0" cellspacing="0" cellpadding="0">
             <tr>

@@ -13,6 +13,7 @@
 
 <body>
 
+<form id="form-detalhes">
 <div id="dialog-detalhes" title="Saldo de Edições Fechadas com Saldo">
 <fieldset>
 	<legend>Extrato da Edição</legend>
@@ -29,6 +30,7 @@
     </table>
 </fieldset>
 </div>
+</form>
 <div class="corpo">
     <div class="container">
    <fieldset class="classFieldset">

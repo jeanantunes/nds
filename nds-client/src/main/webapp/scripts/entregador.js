@@ -118,7 +118,7 @@ var entregadorController = $.extend(true, {
 
 		$( "#dialog-novoEntregador", this.workspace ).dialog({
 			resizable: false,
-			height:610,
+			height:570,
 			width:840,
 			modal: true,
 			buttons: {
@@ -478,13 +478,13 @@ var entregadorController = $.extend(true, {
 		return '<a href="javascript:;" onclick="entregadorController.editarEntregador('
 				+ idEntregador
 				+ ')" '
-				+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar entregador">'
-				+ '<img src="'  + contextPath + '/images/ico_editar.gif" border="0px"/>'
+				+ ' style="cursor:pointer;border:0px;" title="Editar entregador">'
+				+ '<img src="'  + contextPath + '/images/ico_editar.gif" border="0px" style="margin-right:10px;"/>'
 				+ '</a>'
 				+ '<a href="javascript:;" onclick="entregadorController.confirmarExclusaoEntregador('
 				+ idEntregador
 				+ ')" '
-				+ ' style="cursor:pointer;border:0px;margin:5px" title="Excluir entregador">'
+				+ ' style="cursor:pointer;border:0px;" title="Excluir entregador">'
 				+ '<img src="' + contextPath + '/images/ico_excluir.gif" border="0px"/>'
 				+ '</a>';
 	},
@@ -519,9 +519,9 @@ var entregadorController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Apelido/Nome Fantasia',
+				display : 'Apelido / Nome Fantasia',
 				name : 'apelidoNomeFantasia',
-				width : 110,
+				width : 135,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -539,7 +539,7 @@ var entregadorController = $.extend(true, {
 			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 60,
+				width : 40,
 				sortable : false,
 				align : 'center'
 			} ],
@@ -550,7 +550,7 @@ var entregadorController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 255, 
+			height : 'auto', 
 			singleSelect: true
 		});
 	},

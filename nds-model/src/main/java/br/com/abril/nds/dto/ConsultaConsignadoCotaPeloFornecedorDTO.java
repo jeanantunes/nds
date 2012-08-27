@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
@@ -20,7 +21,7 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 	private String nomeCota;
 	
 	@Export(label = "Reparte" , alignment= Alignment.CENTER, exhibitionOrder = 3)
-	private BigDecimal reparte;
+	private BigInteger reparte;
 	
 	private BigDecimal total;
 	private BigDecimal totalDesconto;
@@ -35,7 +36,7 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 	public ConsultaConsignadoCotaPeloFornecedorDTO() { }
 	
 	public ConsultaConsignadoCotaPeloFornecedorDTO(Integer numeroCota,
-			String nomeCota, BigDecimal reparte, BigDecimal total,
+			String nomeCota, BigInteger reparte, BigDecimal total,
 			BigDecimal totalDesconto, String nomeFornecedor, Long idFornecedor) {
 		super();
 		this.numeroCota = numeroCota;
@@ -66,11 +67,11 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 		this.nomeCota = nomeCota;
 	}
 
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 

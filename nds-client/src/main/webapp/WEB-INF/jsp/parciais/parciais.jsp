@@ -10,12 +10,12 @@
 </script>
 		
 <style type="text/css">
-#dialog-detalhes fieldset{width:900px!important;}
+#dialog-detalhes fieldset{width:880px!important;}
 
 #dialog-detalhes fieldset ul{}
 
 #dialog-detalhes fieldset li{float:left; margin-right:10px; margin-left:0px; margin-bottom:5px; line-height:20px;}
-
+#dialog-detalhes .flexigrid{width:880px!important;}
 #dialog-novo fieldset{width:250px!important;}
 
 #dialog-edit-produto, #dialog-detalhe-venda{display:none;}
@@ -126,11 +126,11 @@
 	<br clear="all" />
 	<br />
 	
-	<fieldset>
+	<fieldset style="margin-bottom:5px;">
 		<legend>Parciais</legend>
-		<div class="flexigrid" style="width: 900px; ">
+		
 	    	<table class="parciaisPopGrid"></table>
-	    </div>
+
 	</fieldset>
 	
 	
@@ -141,7 +141,7 @@
 		<span class="bt_novos" title="Gerar Arquivo">
 		            
 		<!-- ARQUIVO EXCEL -->
-		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
+		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				
 				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
 		</span>
@@ -149,7 +149,7 @@
 		<span class="bt_novos" title="Imprimir">
 			
 		<!-- IMPRIMIR PDF -->	
-		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF" rel="tipsy" title="Imprimir">
 		
 				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
 				</span>

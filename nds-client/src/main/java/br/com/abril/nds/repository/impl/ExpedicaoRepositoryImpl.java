@@ -99,7 +99,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 						.append("produto.nome,")
 						.append("produtoEd.numeroEdicao,")
 						.append("produtoEd.precoVenda,")
-						.append("produtoEd.desconto,")
+						.append("("+ this.getHQLDesconto() +") as desconto,")
 						.append("estudo.qtdeReparte,")
 						.append(" SUM (( case ")
 							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
@@ -144,6 +144,17 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append("estudo.qtdeReparte,")
 			.append("produtoEd.precoVenda*estudo.qtdeReparte ");
 
+		return hql.toString();
+	}
+	
+	private String getHQLDesconto(){
+		
+		StringBuilder hql = new StringBuilder("select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = cota.id ")
+		   .append(" and view.produtoEdicaoId = produtoEd.id ")
+		   .append(" and view.fornecedorId = fornecedor.id ");
+		
 		return hql.toString();
 	}
 	

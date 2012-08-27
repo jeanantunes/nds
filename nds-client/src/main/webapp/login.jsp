@@ -3,6 +3,22 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
 <link rel="stylesheet" type="text/css" href="css/NDS.css" />
+
+<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+	$(document).keydown(function (e) {
+		if(e.which == 13) {
+			$('#btEntrar')[0].click();
+		}
+	});
+
+	$(document).ready(function() {
+		$('input:visible:enabled:first').focus();
+	});
+	
+</script>
+
 </head>
 
 <body>
@@ -50,7 +66,7 @@
               </tr>
               <tr>
                 <td height="38">&nbsp;</td>
-                <td align="right" class="bt"><a href="javascript:;" onclick="form.submit();">ENTRAR</a></td>
+                <td align="right" class="bt"><a id="btEntrar" href="javascript:;" onclick="form.submit();">ENTRAR</a></td>
               </tr>
               <tr>
                 <td>&nbsp;</td>
