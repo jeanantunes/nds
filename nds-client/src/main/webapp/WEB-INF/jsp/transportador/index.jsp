@@ -12,7 +12,8 @@
 		
 		#tabs-4 .especialidades fieldset {
 			width: 220px !important;
-			margin-left: -16px;
+			margin-left: 4px;
+			margin-bottom:5px;
 			width: 258px !important;
 		}
 		
@@ -29,8 +30,9 @@
 		}
 		
 		.associacao {
-			width: 818px !important;
-			margin-left: -11px !important;
+			width: 835px !important;
+			margin-left: 7px !important;
+			margin-bottom:5px;
 		}
 	</style>
 </head>
@@ -142,88 +144,103 @@
 				<li><a href="#tabs-4" onclick="transportadorController.carregarGrids();">Veículos / Motoristas</a></li>
 			</ul>
 			<div id="tabs-1">
-				<table width="730" cellpadding="2" cellspacing="2" style="text-align: left;">
-					<tr>
-						<td width="98">Razão Social:</td>
-						<td width="248"><input type="text" style="width: 230px" id="razaoSocial" maxlength="255" /></td>
-						<td width="113">Nome Fantasia:</td>
-						<td width="243"><input type="text" style="width: 230px" id="nomeFantasia" maxlength="255" /></td>
-					</tr>
-					<tr>
-						<td>E-mail:</td>
-						<td><input type="text" style="width: 230px" id="email" maxlength="255" /></td>
-						<td>Responsável:</td>
-						<td><input type="text" style="width: 230px" id="responsavel" maxlength="255" /></td>
-					</tr>
-					<tr>
-						<td>CNPJ:</td>
-						<td><input type="text" style="width: 150px" id="cnpj" onblur="transportadorController.buscarPessoaCNPJ(this.value);" /></td>
-						<td>Insc. Estadual:</td>
-						<td><input type="text" style="width: 150px" id="inscEstadual" maxlength="255" /></td>
-					</tr>
-				</table>
+			<br clear="all" />
+				<fieldset>
+					<legend>Dados Cadastrais</legend>
+					<table width="730" cellpadding="2" cellspacing="2" style="text-align: left;">
+						<tr>
+							<td width="98">Razão Social:</td>
+							<td width="248"><input type="text" style="width: 230px" id="razaoSocial" maxlength="255" /></td>
+							<td width="113">Nome Fantasia:</td>
+							<td width="243"><input type="text" style="width: 230px" id="nomeFantasia" maxlength="255" /></td>
+						</tr>
+						<tr>
+							<td>E-mail:</td>
+							<td><input type="text" style="width: 230px" id="email" maxlength="255" /></td>
+							<td>Responsável:</td>
+							<td><input type="text" style="width: 230px" id="responsavel" maxlength="255" /></td>
+						</tr>
+						<tr>
+							<td>CNPJ:</td>
+							<td><input type="text" style="width: 150px" id="cnpj" onblur="transportadorController.buscarPessoaCNPJ(this.value);" /></td>
+							<td>Insc. Estadual:</td>
+							<td><input type="text" style="width: 150px" id="inscEstadual" maxlength="255" /></td>
+						</tr>
+					</table>
+				</fieldset>
+				<br clear="all" />
 			</div>
 			<div id="tabs-2">
-				<jsp:include page="../endereco/index.jsp">
-					<jsp:param value="ENDERECO_TRANSPORTADOR" name="telaEndereco"/>
-					<jsp:param value="idModalCadastroTransportador" name="message"/>
-				</jsp:include>
+			<br clear="all" />
+				<fieldset>
+					<legend>Endereço</legend>
+					<jsp:include page="../endereco/index.jsp">
+						<jsp:param value="ENDERECO_TRANSPORTADOR" name="telaEndereco"/>
+						<jsp:param value="idModalCadastroTransportador" name="message"/>
+					</jsp:include>
+				</fieldset>
+				<br clear="all" />
 			</div>
 			<div id="tabs-3">
-				<jsp:include page="../telefone/index.jsp">
-					<jsp:param value="TRANSPORTADOR" name="tela"/>
-					<jsp:param value="idModalCadastroTransportador" name="message"/>
-				</jsp:include>
+			<br clear="all" />
+				<fieldset>
+					<legend>Telefone</legend>
+					<jsp:include page="../telefone/index.jsp">
+						<jsp:param value="TRANSPORTADOR" name="tela"/>
+						<jsp:param value="idModalCadastroTransportador" name="message"/>
+					</jsp:include>
+				</fieldset>
+				<br clear="all" />
 			</div>
 
 			<div id="tabs-4">
-				<table border="0" cellpadding="2" cellspacing="2">
-					<tr class="especialidades">
-						<td valign="top">
-							<fieldset>
-								<legend>Veículos</legend>
-								<table class="veiculosGrid"></table>
-							</fieldset>
-						</td>
-						<td valign="top">
-							<fieldset>
-								<legend>Motoristas</legend>
-								<table class="motoristasGrid"></table>
-							</fieldset>
-						</td>
-						<td valign="top">
-							<fieldset>
-								<legend>Rota / Roteiro</legend>
-								<table class="boxRotaGrid"></table>
-							</fieldset>
-						</td>
-					</tr>
-					<tr class="especialidades">
-						<td valign="top">
-							<span class="bt_novos" title="Novo">
-								<a href="javascript:;" onclick="transportadorController.popup_incluir_veiculo();">
-									<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo Veículo
-								</a>
-							</span>
-						</td>
-						<td valign="top">
-							<span class="bt_novos" title="Novo">
-								<a href="javascript:;" onclick="transportadorController.popup_incluir_motorista();">
-									<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo Motorista
-								</a>
-							</span>
-						</td>
-						<td valign="top">
-							<span class="bt_confirmar_novo"	title="Confirmar">
-								<a href="javascript:;" onclick="transportadorController.confirmarAssociacao();">
-									<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar Associação
-								</a>
-							</span>
-						</td>
-					</tr>
-				</table>
+			<br clear="all" />
+					<table border="0" cellpadding="2" cellspacing="2" align="center" width="700">
+						<tr class="especialidades">
+							<td valign="top">
+								<fieldset>
+									<legend>Veículos</legend>
+									<table class="veiculosGrid"></table>
+								</fieldset>
+							</td>
+							<td valign="top">
+								<fieldset>
+									<legend>Motoristas</legend>
+									<table class="motoristasGrid"></table>
+								</fieldset>
+							</td>
+							<td valign="top">
+								<fieldset>
+									<legend>Rota / Roteiro</legend>
+									<table class="boxRotaGrid"></table>
+								</fieldset>
+							</td>
+						</tr>
+						<tr class="especialidades">
+							<td valign="top">
+								<span class="bt_novos" title="Novo">
+									<a href="javascript:;" onclick="transportadorController.popup_incluir_veiculo();" rel="tipsy" title="Incluir Novo Veículo">
+										<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
+									</a>
+								</span>
+							</td>
+							<td valign="top">
+								<span class="bt_novos" title="Novo">
+									<a href="javascript:;" onclick="transportadorController.popup_incluir_motorista();" rel="tipsy" title="Incluir Novo Motorista">
+										<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
+									</a>
+								</span>
+							</td>
+							<td valign="top">
+								<span class="bt_novos"	title="Confirmar">
+									<a href="javascript:;" onclick="transportadorController.confirmarAssociacao();" rel="tipsy" title="Confirmar Associação">
+										<img border="0" src="${pageContext.request.contextPath}/images/ico_check.gif">
+									</a>
+								</span>
+							</td>
+						</tr>
+					</table>
 				<br clear="all" />
-
 				<fieldset class="associacao">
 					<legend>Veículos / Motoristas / Rota / Roteiro</legend>
 					<table class="associacaoGrid"></table>
@@ -234,43 +251,41 @@
 	</div>
 	</form>
 	
-	<div class="corpo">
-		<div class="container">
-
-			<fieldset class="classFieldset">
-				<legend> Pesquisar Transportador </legend>
-				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-					<tr>
-						<td width="85">Razão Social:</td>
-						<td colspan="3"><input type="text" id="razaoSocialPesquisa" style="width: 190px;" maxlength="255" /></td>
-						<td width="104">Nome Fantasia:</td>
-						<td width="192"><input type="text" id="nomeFantasiaPesquisa" style="width: 190px;" maxlength="255" /></td>
-						<td width="42">CNPJ:</td>
-						<td width="179"><input type="text" id="cnpjPesquisa" style="width: 110px;" maxlength="255" /></td>
-						<td width="109"><span class="bt_pesquisar">
-							<a href="javascript:;" onclick="transportadorController.pesquisarTransportadores();">Pesquisar</a></span>
-						</td>
-					</tr>
-				</table>
-
-			</fieldset>
-			<div class="linha_separa_fields">&nbsp;</div>
-			<fieldset class="classFieldset">
-				<legend>Transportadores Cadastrados</legend>
-				<div class="divTransportadoraGrid" style="display: none;">
-					<table class="transportadoraGrid"></table>
-				</div>
-
-				<span class="bt_novos" title="Novo">
-					<a href="javascript:;" onclick="transportadorController.limparCamposCadastroTransportador();transportadorController.popup_novo_transportador();">
-						<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"	hspace="5" border="0" />Novo
-					</a>
-				</span>
-
-			</fieldset>
-			<div class="linha_separa_fields">&nbsp;</div>
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_novos" title="Novo">
+				<a href="javascript:;" onclick="transportadorController.limparCamposCadastroTransportador();transportadorController.popup_novo_transportador();" rel="tipsy" title="Incluir Novo Transportador">
+					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"	hspace="5" border="0" />
+			</a>
+		</span>
 		</div>
 	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldFiltro">
+		<legend> Pesquisar Transportador </legend>
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			<tr>
+				<td width="85">Razão Social:</td>
+				<td colspan="3"><input type="text" id="razaoSocialPesquisa" style="width: 190px;" maxlength="255" /></td>
+				<td width="104">Nome Fantasia:</td>
+				<td width="192"><input type="text" id="nomeFantasiaPesquisa" style="width: 190px;" maxlength="255" /></td>
+				<td width="42">CNPJ:</td>
+				<td width="179"><input type="text" id="cnpjPesquisa" style="width: 110px;" maxlength="255" /></td>
+				<td width="109"><span class="bt_novos">
+					<a href="javascript:;" onclick="transportadorController.pesquisarTransportadores();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+				</td>
+			</tr>
+		</table>
+
+	</fieldset>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldGrid">
+		<legend>Transportadores Cadastrados</legend>
+		<div class="divTransportadoraGrid" style="display: none;">
+			<table class="transportadoraGrid"></table>
+		</div>
+	</fieldset>
+			
 </body>
 
 <script type="text/javascript">

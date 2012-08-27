@@ -46,7 +46,7 @@
 				}, {
 					display : 'Descrição',
 					name : 'descricao',
-					width : 345,
+					width : 365,
 					sortable : true,
 					align : 'left'
 				}],
@@ -57,7 +57,7 @@
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 			});
 		}
 
@@ -352,8 +352,16 @@
 </head>
 <body>
 <input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_novos" title="Novo">
+				<a href="javascript:;" onclick="novo();" rel="tipsy" title="Incluir Novo Status"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a>
+			</span>
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
 	<!-- Filtro da Pesquisa -->
-	<fieldset class="classFieldset">
+	<fieldset class="fieldFiltro">
 	
 		<legend>Pesquisar Manutenção de Status</legend>
 		
@@ -418,8 +426,8 @@
 				</td>
 				<td>&nbsp;</td>
 				<td>
-					<span class="bt_pesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="pesquisarHistoricoStatusCota();">Pesquisar</a>
+					<span class="bt_novos" title="Pesquisar">
+						<a href="javascript:;" onclick="pesquisarHistoricoStatusCota();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					</span>
 				</td>
 				<td>&nbsp;</td>
@@ -430,17 +438,13 @@
 	<div class="linha_separa_fields">&nbsp;</div>
 	
 	<!-- Grid de Resultados da Pesquisa -->
-	<fieldset class="classFieldset">
+	<fieldset class="fieldGrid">
 	
 		<legend>Históricos de Status</legend>
 		
 		<div class="grids" style="display: none;">
 			<table class="manutencaoStatusCotaGrid"></table>
 		</div>
-		
-		<span class="bt_novo" title="Novo">
-			<a href="javascript:;" onclick="novo();">Novo</a>
-		</span>
 	</fieldset>
 	
 	<jsp:include page="novo.jsp" />

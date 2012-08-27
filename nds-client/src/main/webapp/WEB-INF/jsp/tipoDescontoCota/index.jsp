@@ -112,7 +112,7 @@ $(function() {
 	                
                 </div>
                 </td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="tipoDescontoController.pesquisar();">Pesquisar</a></span></td>
+              <td width="104"><span class="bt_novos"><a href="javascript:;" onclick="tipoDescontoController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>
           </table>
 
