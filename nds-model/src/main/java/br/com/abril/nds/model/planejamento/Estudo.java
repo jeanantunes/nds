@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.planejamento;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
@@ -8,6 +9,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -34,9 +37,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 		"DATA_LANCAMENTO", "PRODUTO_EDICAO_ID" }) })
 @SequenceGenerator(name = "ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
 public class Estudo implements Serializable {
-
-	private static final long serialVersionUID = -1896990365355368745L;
-
+	
+	private static final long serialVersionUID = -6789370916662533013L;
+	
 	@Id
 	@GeneratedValue(generator = "ESTUDO_SEQ")
 	@Column(name = "ID")
@@ -55,6 +58,12 @@ public class Estudo implements Serializable {
 	
 	@OneToMany(mappedBy = "estudo", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
+	
+	/** Status do Estudo. */
+	@Column(name = "STATUS", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private StatusLancamento status;
+	
 	
 	public Long getId() {
 		return id;
@@ -104,6 +113,14 @@ public class Estudo implements Serializable {
 	 */
 	public void setEstudoCotas(Set<EstudoCota> estudoCotas) {
 		this.estudoCotas = estudoCotas;
+	}
+
+	public StatusLancamento getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusLancamento status) {
+		this.status = status;
 	}
 
 }
