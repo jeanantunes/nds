@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.LogBairro;
@@ -34,11 +36,13 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
-import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -66,6 +70,11 @@ public class RoteirizacaoController {
 		
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private HttpSession session;
+
+	private static final String FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE="filtroPesquisa";
 
 
 	@Path("/")
@@ -107,15 +116,6 @@ public class RoteirizacaoController {
 	public void carregarComboRoteiroEspecial() {
 		List<Roteiro> roteiros = roteirizacaoService.buscarRoteiroEspecial();
 		result.use(Results.json()).from(roteiros, "result").serialize();
-	}
-	
-	
-	
-	@Path("/pesquisar")
-	public void pesquisar(Long idBox, Long idRoteiro, Long idRota,
-			String sortname, String sortorder, int rp, int page) {
-		
-		//TODO alteração de roteirização - foi deletado do sistema a entidade RotaRoteiroOperacao
 	}
 	
 	@Path("/incluirRoteiro")
@@ -397,16 +397,51 @@ public class RoteirizacaoController {
 		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
 	}
 	
+	@Post
 	@Path("/pesquisarRoteirizacao")
-	public void pesquisarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String sortname, String sortorder, int rp, int page) {
-		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
-		//String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults
-		int quantidade = lista.size();
-		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
+	public void pesquisarRoteirizacao(Long boxId, Long roteiroId, Long rotaId,Integer numeroCota, String sortname,String sortorder, int rp, int page) {
+		
+		FiltroConsultaRoteirizacaoDTO filtro = 
+				prepararFiltroConsulta(boxId,roteiroId, rotaId, numeroCota, sortname, sortorder, rp, page);
+		
+		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.buscarRoteirizacao(filtro);
+		
+		if(lista == null || lista.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		Integer totalRegistros  = roteirizacaoService.buscarQuantidadeRoteirizacao(filtro);
+		
+		result.use(FlexiGridJson.class).from(lista).total(totalRegistros).page(page).serialize();	
+	}
+
+	private FiltroConsultaRoteirizacaoDTO prepararFiltroConsulta(Long boxId,Long roteiroId, Long rotaId, Integer numeroCota, String sortname,
+																 String sortorder, int rp, int page) {
+		FiltroConsultaRoteirizacaoDTO filtro = new FiltroConsultaRoteirizacaoDTO(boxId,roteiroId,rotaId, numeroCota);
+			
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			
+		filtro.setPaginacao(paginacao);
+		
+		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), sortname)));
+		
+		FiltroConsultaRoteirizacaoDTO filtroSessao = (FiltroConsultaRoteirizacaoDTO) 
+				this.session.getAttribute(FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE);
+
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+				
+		session.setAttribute(FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE, filtro);
+		
+		return filtro;
 	}
 	
 	@Path("/pesquisarRoteirizacaoPorCota")
-	public void pesquisarRoteirizacaoPorCota(Integer numeroCota, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro,  String sortname, String sortorder, int rp, int page) {
+	public void pesquisarRoteirizacaoPorCota(Integer numeroCota, Long roteiroId, Long rotaId, 
+											 TipoRoteiro tipoRoteiro,  String sortname, String sortorder, 
+											 int rp, int page) {
+		
 		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 		if (lista == null || lista.isEmpty() ) {
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado."),"result").recursive().serialize();
@@ -479,15 +514,13 @@ public class RoteirizacaoController {
 			if (pesquisaRoteizicaoPorCota)	{
 				lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 			} else {
-				lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+				//FIXME alterar a consulta
+				//lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 				
 			}
 			
 			FileExporter.to("roteirizacao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista,ConsultaRoteirizacaoDTO.class, this.response);
-			
 
-			
-			
 		} catch (Exception e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
 		}
@@ -508,7 +541,8 @@ public class RoteirizacaoController {
 			if (pesquisaRoteizicaoPorCota)	{
 				lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 			} else {
-				lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+				//FIXME alterar a consult
+				//lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 				
 			}
 			

@@ -6,17 +6,9 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
 
-
 @Exportable
 public class ConsultaRoteirizacaoDTO  implements Serializable{
 
-	public ConsultaRoteirizacaoDTO() {
-	
-	}
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3737578545975332770L;
 
 	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 1)
@@ -33,6 +25,27 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 	
 	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private String nome ;
+	
+	private Long qntCotas;
+	
+	public ConsultaRoteirizacaoDTO() {}
+		
+	
+	/**
+	 * @return the qntCotas
+	 */
+	public Long getQntCotas() {
+		return qntCotas;
+	}
+
+	/**
+	 * @param qntCotas the qntCotas to set
+	 */
+	public void setQntCotas(Long qntCotas) {
+		this.qntCotas = qntCotas;
+	}
+
+
 
 	public String getNomeBox() {
 		return nomeBox;
@@ -73,8 +86,4 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
-	
-	
-	
 }

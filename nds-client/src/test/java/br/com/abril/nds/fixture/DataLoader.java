@@ -2469,7 +2469,10 @@ public class DataLoader {
 
 		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
 		session.save(roteirizacao);
-
+	
+		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota,1);
+		session.save(roteirizacao);
+		
 		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
 		session.save(roteiro);
 
@@ -2478,6 +2481,9 @@ public class DataLoader {
 		session.save(rota);
 
 		roteirizacao = Fixture.criarRoteirizacao(pdvJose, rota,1);
+		session.save(roteirizacao);
+		
+		roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
 		session.save(roteirizacao);
 
 		rota = Fixture.rota("006", "Rota 006");
@@ -2494,6 +2500,7 @@ public class DataLoader {
 
 		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
 		session.save(roteirizacao);
+
 
 	}
 
