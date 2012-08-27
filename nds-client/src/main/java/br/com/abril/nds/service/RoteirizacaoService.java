@@ -6,6 +6,7 @@ import org.hibernate.criterion.MatchMode;
 
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -85,7 +86,7 @@ public interface RoteirizacaoService {
 	
 	List<Roteiro> buscarRoteiroEspecial();
 	
-	List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
+	List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 	
 	List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
 	
@@ -96,6 +97,8 @@ public interface RoteirizacaoService {
 	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
 	
 	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao);
+
+	Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 
 }
 	
