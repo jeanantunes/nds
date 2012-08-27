@@ -162,13 +162,13 @@
 		</fieldset>
 	
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();">
-			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo</a>
+			<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" Title="Incluir Novo Feriado">
+			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /></a>
 		</span>
 		
 		<span class="bt_novos" title="Imprimir">
-			<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/gerarRelatorioCalendario?fileType=PDF&tipoPesquisaFeriado=FERIADO_MENSAL">
-				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
+			<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/gerarRelatorioCalendario?fileType=PDF&tipoPesquisaFeriado=FERIADO_MENSAL" rel="tipsy" Title="Imprimir">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 			</a>
 		</span>
 	
@@ -185,7 +185,7 @@
 		<fieldset style="width: 650px;">
 			<legend>Dados do Feriado</legend>
 
-			<table width="365" border="0" cellpadding="2" cellspacing="1">
+			<table width="365" border="0" cellpadding="2" cellspacing="2">
 				<tr>
 					
 					<td width="114">Data:</td>
@@ -266,35 +266,37 @@
 	</div>
 	</form>
 
-	<div class="corpo">
-	
-		<br clear="all" /> <br />
 
-		<div class="container">
 
-			<div id="effect" style="padding: 0 .7em; z-index: 1;"
-				class="ui-state-highlight ui-corner-all">
-				<p>
-					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info"></span> <b>Feriado < evento > com
-						< status >.</b>
-				</p>
+			<div class="areaBts">
+				<div class="area">
+					<span class="bt_novos" title="Novo">
+						<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" title="Incluir Novo Feriado">
+							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
+						</a>
+					</span>
+					
+					<span class="bt_arq" title="Imprimir">
+						<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/gerarRelatorioCalendario?fileType=PDF&tipoPesquisaFeriado=FERIADO_ANUAL" rel="tipsy" title="Imprimir">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+						</a>
+					</span>				
+				</div>
 			</div>
-
-			<fieldset class="classFieldset"> 
+			<div class="linha_separa_fields">&nbsp;</div>
+			<fieldset class="fieldFiltro"> 
 				
 				<legend>Pesquisar</legend>
 				
 				<table>
 					<tr>
-						<td><input type="text" id="anoVigenciaPesquisa" value="${anoCorrente}"/></td>
+						<td><strong>Digite o Ano:</strong>&nbsp;</td>
+						<td><input type="text" id="anoVigenciaPesquisa" value="${anoCorrente}" style="width:30px;"/></td>
 						<td>
-							<span class="bt_pesquisar"><a href="javascript:;"
-							onclick="CadastroCalendario.recarregarPainelCalendarioFeriado();">Pesquisar</a>
+							<span class="bt_novos"><a href="javascript:;"
+							onclick="CadastroCalendario.recarregarPainelCalendarioFeriado();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 							</span>
 						</td>
-						<td></td>
-						<td></td>
 					</tr>
 				</table>
 				
@@ -303,15 +305,12 @@
 				
 				 
 			</fieldset>
-		
+		<div class="linha_separa_fields">&nbsp;</div>
 
 
-			<fieldset class="classFieldset">
+			<fieldset class="fieldGrid">
 			
 				<legend>Calendário de Feriados</legend>
-				
-				
-				<br clear="all" /> <br />
 				
 				<div id="feriadosWrapper">
 					
@@ -321,31 +320,10 @@
 
 				<div class="linha_separa_fields">&nbsp;</div>
 
-				<div class="linha_separa_fields">&nbsp;</div>
-
-					<span class="bt_novos" title="Novo">
-						<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();">
-						<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />Novo</a>
-					</span>
-					
-					<span class="bt_novos" title="Imprimir">
-						<a href="${pageContext.request.contextPath}/administracao/cadastroCalendario/gerarRelatorioCalendario?fileType=PDF&tipoPesquisaFeriado=FERIADO_ANUAL">
-							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-							Imprimir
-						</a>
-					</span>
-				
-				<div class="linha_separa_fields">&nbsp;</div>
-
 
 			</fieldset>
 			<div class="linha_separa_fields">&nbsp;</div>
 			<div class="linha_separa_fields">&nbsp;</div>
 			<div class="linha_separa_fields">&nbsp;</div>
-
-		</div>
-
-
-	</div>
 
 </body>

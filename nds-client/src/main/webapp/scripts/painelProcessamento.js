@@ -111,7 +111,7 @@ var painelProcessamentoController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 920,
-			height : 250
+			height : 'auto'
 		});
 	},
 	initGridPainelInterfaceGrid : function() {
@@ -162,7 +162,7 @@ var painelProcessamentoController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 920,
-			height : 250
+			height : 'auto'
 		});
 	},
 	popup : function() {

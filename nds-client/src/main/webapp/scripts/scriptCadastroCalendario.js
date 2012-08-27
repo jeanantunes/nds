@@ -315,7 +315,7 @@ var CadastroCalendario = $.extend(true, {
 				var parametros = [ dtFeriado, tipoFeriado, idLocalidade, indRepeteAnualmente, indOpera, indEfetuaCobranca, descricaoFeriado ];
 				
 				var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
-				cell.acao = '<a href="javascript:;" onclick="CadastroCalendario.editarFeriado('+ parametros +');">' + imgDetalhar + '</a>';
+				cell.acao = '<a href="javascript:;" onclick="CadastroCalendario.editarFeriado('+ parametros +');" style="margin-right:10px;">' + imgDetalhar + '</a>';
 				
 				var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
 				cell.acao += '<a href="javascript:;" onclick="CadastroCalendario.excluirFeriado(' + parametros + ');">' + imgExclusao + '</a>';
@@ -353,7 +353,7 @@ var CadastroCalendario = $.extend(true, {
 				
 				resizable: false,
 				
-				height:580,
+				height:480,
 				
 				width:700,
 				
@@ -487,7 +487,7 @@ var CadastroCalendario = $.extend(true, {
 			$( "#dialog-novo", CadastroCalendario.workspace ).dialog({
 				
 				resizable: false,
-				height:370,
+				height:300,
 				width:430,
 				modal: true,
 				buttons: {
