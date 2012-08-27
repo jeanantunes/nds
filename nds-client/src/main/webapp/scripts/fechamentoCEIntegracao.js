@@ -51,7 +51,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Tipo',
-				name : 'tipo',
+				name : 'tipoFormatado',
 				width : 50,
 				sortable : true,
 				align : 'center'

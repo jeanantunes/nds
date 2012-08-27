@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.Projections;
@@ -35,9 +36,9 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			.add(Projections.property("p.nome"), "produto")
 			.add(Projections.property("pe.numeroEdicao"), "edicao")
 			.add(Projections.property("pe.precoVenda"), "precoCapa")
-			.add(Projections.property("pe.id"), "produtoEdicao")
 			.add(Projections.property("ce.qtdeInformada"), "reparte")
 			.add(Projections.property("ce.qtde"), "encalhe")
+			.add(Projections.property("cec.fechado"), "tipo")
 			.add(Projections.groupProperty("p.codigo"))
 			.add(Projections.groupProperty("p.nome"))
 			.add(Projections.groupProperty("pe.numeroEdicao"))
@@ -51,6 +52,9 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
 		criteria.setFetchMode("ccec", FetchMode.JOIN);
 		
+		criteria.createAlias("ce.chamadaEncalheCota", "cec");
+		criteria.setFetchMode("cec", FetchMode.JOIN);
+		
 		criteria.createAlias("mec.produtoEdicao", "pe");
 		criteria.setFetchMode("pe", FetchMode.JOIN);
 		
@@ -62,7 +66,9 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		criteria.setFetchMode("pf", FetchMode.JOIN);
 		
 		
-		//criteria.add(Restrictions.eq("ccec.dataOperacao", filtro.getDataEncalhe()));		
+		if(filtro.getData() != null){
+			criteria.add(Restrictions.between("ce.data", filtro.getData(), DateUtils.addDays(filtro.getData(),7) ));			
+		}
 		
 		if (filtro.getIdFornecedor() != -1) {
 			criteria.add(Restrictions.eq("pf.id", filtro.getIdFornecedor()));
