@@ -46,8 +46,10 @@ import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -1312,9 +1314,12 @@ public class RecebimentoFisicoController {
 			if(produtoEdicao!=null) {
 				
 				RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
-				
-				recFisicoDTO.setPrecoDesconto(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()));
-				recFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
+				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+				BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDesconto(), BigDecimal.ZERO);
+				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+                recFisicoDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));
+
+                recFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
 				
 				result.use(Results.json()).from(recFisicoDTO, "result").serialize();
 			}

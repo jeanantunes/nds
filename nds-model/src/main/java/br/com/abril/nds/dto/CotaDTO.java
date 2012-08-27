@@ -108,6 +108,8 @@ public class CotaDTO implements Serializable {
 	
 	private Collection<CotaProprietarioDTO> proprietarios = new ArrayList<CotaProprietarioDTO>();
 	
+	private boolean alteracaoTitularidade;
+	
 	public String getNumeroRG() {
 		return numeroRG;
 	}
@@ -604,6 +606,18 @@ public class CotaDTO implements Serializable {
     public void setProprietarios(Collection<CotaProprietarioDTO> proprietarios) {
         this.proprietarios = proprietarios;
     }
-	
-	
+
+	/**
+	 * @return the isAlteracaoTitularidade
+	 */
+	public boolean isAlteracaoTitularidade() {
+		return alteracaoTitularidade;
+	}
+
+	/**
+	 * @param isAlteracaoTitularidade the isAlteracaoTitularidade to set
+	 */
+	public void setAlteracaoTitularidade(boolean isAlteracaoTitularidade) {
+		this.alteracaoTitularidade = isAlteracaoTitularidade;
+	}
 }

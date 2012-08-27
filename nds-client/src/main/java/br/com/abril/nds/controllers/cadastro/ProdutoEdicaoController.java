@@ -28,6 +28,7 @@ import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -148,14 +149,19 @@ public class ProdutoEdicaoController {
 			dto.setNumeroEdicao(pe.getNumeroEdicao());
 			dto.setPacotePadrao(pe.getPacotePadrao());
 			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
-			dto.setPrecoVenda(pe.getPrecoVenda());
+			BigDecimal precoVenda = pe.getPrecoVenda();
+            dto.setPrecoVenda(precoVenda);
 			dto.setExpectativaVenda(pe.getExpectativaVenda());
 			dto.setCodigoDeBarras(pe.getCodigoDeBarras());
 			dto.setCodigoDeBarrasCorporativo(pe.getCodigoDeBarraCorporativo());
 			dto.setChamadaCapa(pe.getChamadaCapa());
 			dto.setParcial(pe.isParcial());
 			dto.setPossuiBrinde(pe.isPossuiBrinde());
-			dto.setDesconto(pe.getDesconto());
+			
+			BigDecimal percentualDesconto = Util.nvl(pe.getProduto().getDesconto(), BigDecimal.ZERO);
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+			dto.setDesconto(valorDesconto);
+
 			dto.setPeso(pe.getPeso());
 			dto.setBoletimInformativo(pe.getBoletimInformativo());
 			dto.setOrigemInterface(pe.getOrigemInterface());
@@ -436,15 +442,17 @@ public class ProdutoEdicaoController {
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
 		
 		if (produtoEdicao!=null){
+		    
+		    BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+		    BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDesconto(), BigDecimal.ZERO);
+            BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			
-			BigDecimal precoComDesconto = BigDecimal.ZERO;
-			
-			precoComDesconto = precoComDesconto.add(produtoEdicao.getPrecoVenda()).subtract(produtoEdicao.getDesconto());
-			
-		    produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
+			BigDecimal precoComDesconto = precoVenda.subtract(valorDesconto);
+
+			produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
 													   produtoEdicao.getProduto().getNome(),
 													   produtoEdicao.getCodigo(),
-										               (produtoEdicao.getPrecoVenda()!=null?CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()):""),
+										               (precoVenda!=null?CurrencyUtil.formatarValor(precoVenda):""),
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),

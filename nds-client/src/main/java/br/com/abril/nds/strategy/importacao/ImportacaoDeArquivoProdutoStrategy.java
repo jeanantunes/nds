@@ -1,9 +1,6 @@
 package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -317,7 +314,6 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 			    
 			    produtoEdicao.setNumeroEdicao(input.getEdicao());
 			    produtoEdicao.setCodigo(input.getCodigoDaPublicacao());
-			    produtoEdicao.setDesconto(input.getDesconto());
 			    produtoEdicao.setPacotePadrao(input.getPacotePadrao());
 			    produtoEdicao.setNomeComercial(input.getNomeComercial());
 			    produtoEdicao.setAtivo(input.getStatusDaPublicacao());
@@ -329,7 +325,6 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 				if (//(produtoEdicao.getProduto()!=produto)||
 					//(produtoEdicao.getNumeroEdicao()!=input.getEdicao())||
 					(produtoEdicao.getCodigo()!=input.getCodigoDaPublicacao())||
-					(produtoEdicao.getDesconto()!=input.getDesconto())||
 					(produtoEdicao.getPacotePadrao()!=input.getPacotePadrao())||
 					(produtoEdicao.getNomeComercial()!=input.getNomeComercial())||
 					(produtoEdicao.isAtivo()!=input.getStatusDaPublicacao())){
@@ -338,7 +333,6 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 				    
 				    //produtoEdicao.setNumeroEdicao(input.getEdicao());
 				    produtoEdicao.setCodigo(input.getCodigoDaPublicacao());
-				    produtoEdicao.setDesconto(input.getDesconto());
 				    produtoEdicao.setPacotePadrao(input.getPacotePadrao());
 				    produtoEdicao.setNomeComercial(input.getNomeComercial());
 				    produtoEdicao.setAtivo(input.getStatusDaPublicacao());

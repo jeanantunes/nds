@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
@@ -38,9 +37,6 @@ public class DiferencaVO implements Serializable {
 	
 	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
 	private String precoVenda;
-	
-	@Export(label = "Preço Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
-	private String precoDesconto;
 	
 	private String pacotePadrao;
 	
@@ -156,20 +152,6 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setPrecoVenda(String precoVenda) {
 		this.precoVenda = precoVenda;
-	}
-
-	/**
-	 * @return the precoDesconto
-	 */
-	public String getPrecoDesconto() {
-		return precoDesconto;
-	}
-
-	/**
-	 * @param precoDesconto the precoDesconto to set
-	 */
-	public void setPrecoDesconto(String precoDesconto) {
-		this.precoDesconto = precoDesconto;
 	}
 
 	/**

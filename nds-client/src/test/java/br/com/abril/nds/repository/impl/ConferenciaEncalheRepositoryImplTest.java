@@ -128,25 +128,19 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 
 		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
 				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", 1L, veja, null, false);
-		
-		veja1.setDesconto(BigDecimal.TEN);
 
 		quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
 				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPZ", 2L,
 				quatroRodas, null, false);
-		quatroRoda2.setDesconto(BigDecimal.ZERO);
 
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
 				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPA", 3L, infoExame, null, false);
-		infoExame3.setDesconto(BigDecimal.ZERO);
 
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
 				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", 4L, capricho, null, false);
-		capricho1.setDesconto(BigDecimal.ZERO);
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
 				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOB", 5L, cromoReiLeao, null, false);
-		cromoReiLeao1.setDesconto(BigDecimal.ZERO);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		

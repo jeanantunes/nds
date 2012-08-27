@@ -213,7 +213,7 @@ var fiadorController = {
 			$('#fiadorController-dataNascimentoConjugeCpf,#fiadorController-socio-dataNascimentoConjugeCpf').mask("99/99/9999");
 			$('#fiadorController-selectUfOrgaoEmiCpf,#fiadorController-socio-selectUfOrgaoEmiConjugeCpf').mask("aa");
 			
-			
+			$('.justLetter').justLetter();
 			
 			$(".fiadorController-sociosGrid").flexigrid({
 				preProcess:function(data){return _this.processarResultadoSocios(data);},

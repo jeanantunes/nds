@@ -47,7 +47,6 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
-import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 
 public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -111,25 +110,21 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 
 		veja1 = Fixture.produtoEdicao("1", 1L, 10, 7,
 				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPA", 1L, veja, null, false);
-		
-		veja1.setDesconto(BigDecimal.ZERO);
 
 		quatroRoda2 = Fixture.produtoEdicao("1", 2L, 15, 30,
 				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPB", 2L,
 				quatroRodas, null, false);
-		quatroRoda2.setDesconto(BigDecimal.ZERO);
+
 
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao("1", 3L, 5, 30,
 				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", 3L, infoExame, null, false);
-		infoExame3.setDesconto(BigDecimal.ZERO);
 
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao("1", 1L, 10, 15,
 				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", 4L, capricho, null, false);
-		capricho1.setDesconto(BigDecimal.ZERO);
+
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao("1", 1L, 100, 60,
 				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", 5L, cromoReiLeao, null, false);
-		cromoReiLeao1.setDesconto(BigDecimal.ZERO);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		

@@ -31,7 +31,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.TipoRegistroCobranca;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -136,7 +135,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		save(produto);
 
 		produtoEdicaoVeja = Fixture.produtoEdicao("1", 1L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produto, null, false);
-		produtoEdicaoVeja.setDesconto(null);
 		save(produtoEdicaoVeja);
 		//////
 		
@@ -147,7 +145,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		save(produtoComDesconto);
 
 		produtoEdicaoComDesconto = Fixture.produtoEdicao("1", 2L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 2L, produtoComDesconto, null, false);
-		produtoEdicaoComDesconto.setDesconto(new BigDecimal(19));
 		save(produtoEdicaoComDesconto);
 		//////
 		
@@ -160,41 +157,6 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		Estudo estudo = 
 				Fixture.estudo(BigInteger.TEN, new Date(), produtoEdicaoVeja);
 		save(estudo);
-	}
-	
-	@Test
-	public void testObterPercentualComissionamento() {
-
-		Long 	idDistribuidor 	= distribuidor.getId();
-		
-		//////////////////////
-
-		Long 	idProdutoEdicao = produtoEdicaoComDesconto.getId();
-		Integer numeroCota 		= cotaComDesconto.getNumeroCota();
-
-		BigDecimal fatorDesconto = produtoEdicaoRepository.obterFatorDesconto(idProdutoEdicao, numeroCota, idDistribuidor);
-		Assert.assertEquals(19, fatorDesconto.intValue());
-
-		//////////////////////
-		
-		idProdutoEdicao = produtoEdicaoVeja.getId();
-		numeroCota = cotaComDesconto.getNumeroCota();
-		
-		fatorDesconto = produtoEdicaoRepository.obterFatorDesconto(idProdutoEdicao, numeroCota, idDistribuidor);
-		Assert.assertEquals(25, fatorDesconto.intValue());
-		
-		//////////////////////
-		
-		idProdutoEdicao = produtoEdicaoVeja.getId();
-		numeroCota = cotaManoel.getNumeroCota();
-		
-		fatorDesconto = produtoEdicaoRepository.obterFatorDesconto(idProdutoEdicao, numeroCota, idDistribuidor);
-		Assert.assertEquals(10, fatorDesconto.intValue());
-
-		//////////////////////
-
-		
-		
 	}
 	
 	@Test

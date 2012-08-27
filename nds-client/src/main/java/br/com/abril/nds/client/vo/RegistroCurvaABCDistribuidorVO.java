@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -31,7 +32,7 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	@Export(label = "Municipio", exhibitionOrder = 4)
 	private String municipio;
 
-	private BigDecimal vendaExemplares;
+	private BigInteger vendaExemplares;
 
 	private BigDecimal faturamentoCapa;
 
@@ -45,7 +46,7 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	}
 
 	public RegistroCurvaABCDistribuidorVO(Integer numeroCota, String nomeCota,
-			Integer quantidadePdvs, String municipio, BigDecimal vendaExemplares, BigDecimal faturamento) {
+			Integer quantidadePdvs, String municipio, BigInteger vendaExemplares, BigDecimal faturamento) {
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.quantidadePdvs = quantidadePdvs;
@@ -87,11 +88,11 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 		this.municipio = municipio;
 	}
 
-	public BigDecimal getVendaExemplares() {
+	public BigInteger getVendaExemplares() {
 		return vendaExemplares;
 	}
 
-	public void setVendaExemplares(BigDecimal vendaExemplares) {
+	public void setVendaExemplares(BigInteger vendaExemplares) {
 		this.vendaExemplares = vendaExemplares;
 	}
 
