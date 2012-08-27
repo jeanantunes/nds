@@ -19,7 +19,7 @@ var bancoController = $.extend(true, {
 				}, {
 					display : 'Nome',
 					name : 'nome',
-					width : 120,
+					width : 148,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -71,7 +71,7 @@ var bancoController = $.extend(true, {
 				useRp : true,
 				rp : 15,
 				showTableToggleBtn : true,
-				width : 950,
+				width : 960,
 				height : 'auto'
 			});
 		
@@ -227,7 +227,7 @@ var bancoController = $.extend(true, {
 			$.each(dadosPesquisa.rows, 
 					function(index, row) {
 
-						 var linkEditar = '<a href="javascript:;" onclick="bancoController.editarBanco(' + row.cell[0] + ');" style="margin-right:5px; ">' +
+						 var linkEditar = '<a href="javascript:;" onclick="bancoController.editarBanco(' + row.cell[0] + ');" style="margin-right:10px; ">' +
 	                                      '<img src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" title="Altera banco" />' +
 		                                  '</a>';			
 					

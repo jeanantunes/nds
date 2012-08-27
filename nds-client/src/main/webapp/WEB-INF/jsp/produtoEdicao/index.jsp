@@ -70,7 +70,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);">Incluir Novo</a></span>
+					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -80,7 +80,7 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="181"><strong>C&oacute;digo:</strong></td>
+									<td width="181">C&oacute;digo:</td>
 									<td width="100" colspan="3"><input type="text" name="codigoProdutoEdicao" id="produtoEdicaoController-codigoProdutoEdicao" style="width:100px;" /></td>
 									
 									<td width="90">&nbsp;</td>
@@ -98,32 +98,32 @@ fieldset {
 									</td>
 								</tr>
 								<tr>
-									<td><strong>Nome Publica&ccedil;&atilde;o:</strong></td>
+									<td>Nome Publica&ccedil;&atilde;o:</td>
 									<td colspan="5"><input type="text" name="nomePublicacao" id="produtoEdicaoController-nomePublicacao" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
-									<td><strong>Nome Comercial Produto:</strong></td>
+									<td>Nome Comercial Produto:</td>
 									<td colspan="5"><input type="text" name="nomeComercialProduto" id="produtoEdicaoController-nomeComercialProduto" style="width:340px;" /></td>
 								</tr>
 								<tr>
-									<td><strong>Fornecedor:</strong></td>
+									<td>Fornecedor:</td>
 									<td colspan="5"><input type="text" name="nomeFornecedor" id="produtoEdicaoController-nomeFornecedor" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
-									<td><strong>Situa&ccedil;&atilde;o:</strong></td>
+									<td>Situa&ccedil;&atilde;o:</td>
 									<td colspan="5"><input type="text" name="situacao" id="produtoEdicaoController-situacao" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
-									<td><strong>Edi&ccedil;&atilde;o:</strong></td>
+									<td>Edi&ccedil;&atilde;o:</td>
 									<td><input type="text" name="numeroEdicao" id="produtoEdicaoController-numeroEdicao" style="width:50px;" /></td>
-									<td><strong>PED:</strong></td>
+									<td>PED:</td>
 									<td><input type="text" name="ped" id="produtoEdicaoController-ped" style="width:50px;" /></td>
-									<td><strong>Pct. Padr&atilde;o:</strong></td>
+									<td>Pct. Padr&atilde;o:</td>
 									<td><input type="text" name="pacotePadrao" id="produtoEdicaoController-pacotePadrao" style="width:50px;" /></td>
 								</tr>
 							
 								<tr>
-									<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
+									<td>Tipo de Lan&ccedil;amento:</td>
 									<td colspan="3">
 										<select name="tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" >
 											<option value="">Selecione...</option>
@@ -134,11 +134,11 @@ fieldset {
 											<option value="SUPLEMENTAR">Supl. Compuls</option>
 										</select>
 									</td>
-									<td><strong>N&ordm; Lancto:</strong></td>
+									<td>N&ordm; Lancto:</td>
 									<td><input type="text" name="numeroLancamento" id="produtoEdicaoController-numeroLancamento" style="width:50px;" maxlength="9" /></td>
 								</tr>
 								<tr>
-									<td><strong>Capa da Edi&ccedil;&atilde;o:</strong></td>
+									<td>Capa da Edi&ccedil;&atilde;o:</td>
 									<td colspan="5"><input type="file" name="imagemCapa" id="produtoEdicaoController-imagemCapa" style="width:340px;" /></td>
 								</tr>
 							</tbody>
@@ -146,19 +146,19 @@ fieldset {
 					</fieldset>
 					<fieldset style="width:220px!important; margin-bottom:2px; float:right; margin-right:0px;">
 						<legend>Reparte</legend>
-						<table width="190" border="0" cellspacing="1" cellpadding="1">
+						<table width="190" border="0" cellspacing="1" cellpadding="2">
 							<thead />
 							<tbody>
 								<tr>
-									<td width="103"><strong>Previsto:</strong></td>
+									<td width="103">Previsto:</td>
 									<td width="80"><input type="text" name="repartePrevisto" id="produtoEdicaoController-repartePrevisto" style="width:80px; float:left;" /></td>
 								</tr>
 								<tr>
-									<td><strong>Exp. Venda(%):</strong></td>
+									<td>Exp. Venda(%):</td>
 									<td><input type="text" name="expectativaVenda" id="produtoEdicaoController-expectativaVenda" style="width:80px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
-									<td><strong>Promocional:</strong></td>
+									<td>Promocional:</td>
 									<td><input type="text" name="repartePromocional" id="produtoEdicaoController-repartePromocional" style="width:80px; float:left;" /></td>
 								</tr>
 							</tbody>
@@ -166,28 +166,28 @@ fieldset {
 					</fieldset>
 					<fieldset style="width:350px!important; margin-bottom:2px; float:left;">
 						<legend>Pre&ccedil;o da Capa</legend>
-						<table width="309" border="0" cellspacing="1" cellpadding="1">
+						<table width="300" border="0" cellspacing="1" cellpadding="1">
 							<thead />
 							<tbody>
 								<tr>
-									<td width="76"><strong>Previsto:</strong></td>
-									<td width="99"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; float:left;" /></td>
-									<td width="51"><strong>Real:</strong></td>
-									<td width="70"><input type="text" name="precoVenda" id="produtoEdicaoController-precoVenda" style="width:70px; text-align:right;" /></td>
+									<td width="60">Previsto:</td>
+									<td width="90"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; float:left;" /></td>
+									<td width="30">Real:</td>
+									<td width="120"><input type="text" name="precoVenda" id="produtoEdicaoController-precoVenda" style="width:70px; text-align:right;" /></td>
 								</tr>
 							</tbody>
 						</table>
 					</fieldset>
 					<fieldset style="width:350px!important; margin-bottom:2px; float:left;">
 						<legend>Data Lan&ccedil;amento</legend>
-						<table width="309" border="0" cellspacing="1" cellpadding="1">
+						<table width="300" border="0" cellspacing="1" cellpadding="1">
 							<thead />
 							<tbody>
 								<tr>
-									<td width="76"><strong>Previsto:</strong></td>
-									<td width="99"><input type="text" name="dataLancamentoPrevisto" id="produtoEdicaoController-dataLancamentoPrevisto" style="width:70px; float:left;" /></td>
-									<td width="51"><strong>Real:</strong></td>
-									<td width="70"><input type="text" name="dataLancamento" id="produtoEdicaoController-dataLancamento" style="width:70px; text-align:right;" disabled="disabled" /></td>
+									<td width="60">Previsto:</td>
+									<td width="90"><input type="text" name="dataLancamentoPrevisto" id="produtoEdicaoController-dataLancamentoPrevisto" style="width:70px;" /></td>
+									<td width="30">Real:</td>
+									<td width="120"><input type="text" name="dataLancamento" id="produtoEdicaoController-dataLancamento" style="width:70px; text-align:center;" disabled="disabled" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -197,11 +197,11 @@ fieldset {
 					   	<table border="0" cellSpacing="1" cellPadding="1" width="562">
 					      <tbody><tr>
 					        <td width="60">Previsto:</td>
-					        <td width="91"><input style="width: 70px; float: left;" id="produtoEdicaoController-dataRecolhimentoPrevisto" name="dataRecolhimentoPrevisto" type="text"></td>
-					        <td width="48" align="right">Real:</td>
-					        <td width="79"><input style="width: 70px; text-align: right;" id="produtoEdicaoController-dataRecolhimentoReal" disabled="disabled" name="dataRecolhimentoReal" type="text"></td>
-					        <td width="180" align="right">Semana de Recolhimento:</td>
-					        <td width="85"><input style="width: 70px; float: left;" id="produtoEdicaoController-semanaRecolhimento" disabled="disabled" name="semanaRecolhimento" type="text"></td>
+					        <td width="90"><input style="width: 70px; float: left;" id="produtoEdicaoController-dataRecolhimentoPrevisto" name="dataRecolhimentoPrevisto" type="text"></td>
+					        <td width="30" align="right">Real:</td>
+					        <td width="90"><input style="width: 70px; text-align: right;" id="produtoEdicaoController-dataRecolhimentoReal" disabled="disabled" name="dataRecolhimentoReal" type="text"></td>
+					        <td width="170" align="right">Semana de Recolhimento:</td>
+					        <td width="180"><input style="width: 70px; float: left;" id="produtoEdicaoController-semanaRecolhimento" disabled="disabled" name="semanaRecolhimento" type="text"></td>
 					      </tr>
 					      </tbody>
 					    </table>
@@ -217,7 +217,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="produtoEdicaoController.salvaUmaEdicao();">Incluir Novo</a></span>
+					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvaUmaEdicao();" rel="tipsy" title="Incluir Novo Produto"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -262,16 +262,16 @@ fieldset {
 					</fieldset>
 					<fieldset style="width:250px!important; float:right; margin-bottom:5px;">
 						<legend>Caracter&iacute;stica F&iacute;sica</legend>
-						<table width="152" border="0" cellspacing="1" cellpadding="1">
+						<table width="202" border="0" cellspacing="1" cellpadding="1">
 							<thead />
 							<tbody>
 								<tr>
-									<td width="59">Peso:</td>
-									<td width="86"><input type="text" name="peso" id="produtoEdicaoController-peso" style="width:80px;" /></td>
+									<td width="139">Peso:</td>
+									<td><input type="text" name="peso" id="produtoEdicaoController-peso" style="width:80px;" /></td>
 								</tr>
 								<tr>
-									<td width="59">Descri&ccedil;&atilde;o Produto:</td>
-									<td width="86"><input type="text" name="descricaoProduto" id="produtoEdicaoController-descricaoProduto" style="width:80px;" /></td>
+									<td>Descri&ccedil;&atilde;o Produto:</td>
+									<td><input type="text" name="descricaoProduto" id="produtoEdicaoController-descricaoProduto" style="width:80px;" /></td>
 								</tr>							
 							</tbody>
 						</table>
@@ -328,7 +328,7 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_add"><a href="javascript:;" onclick="produtoEdicaoController.salvaUmaEdicao();">Incluir Novo</a></span>
+					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvaUmaEdicao();" rel="tipsy" title="Incluir Novo Produto"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a></span>
 				</div>
 				
 				<div class="ldForm">
@@ -338,7 +338,7 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="112"><strong>Classe Social:</strong></td>
+									<td width="112">Classe Social:</td>
 									<td width="281">
 										<select name="select4" id="produtoEdicaoController-select7" style="width:250px;" disabled="disabled">
 											<option selected="selected">Selecione...</option>
@@ -346,7 +346,7 @@ fieldset {
 									</td>
 								</tr>
 								<tr>
-									<td><strong>Sexo:</strong></td>
+									<td>Sexo:</td>
 									<td>
 										<select name="select4" id="produtoEdicaoController-select8" style="width:250px;" disabled="disabled">
 											<option selected="selected">Selecione...</option>
@@ -354,7 +354,7 @@ fieldset {
 									</td>
 								</tr>
 								<tr>
-									<td><strong>Faixa-Et&aacute;ria:</strong></td>
+									<td>Faixa-Et&aacute;ria:</td>
 									<td>
 										<select name="select4" id="produtoEdicaoController-select10" style="width:250px;" disabled="disabled">
 											<option selected="selected">Selecione...</option>
@@ -370,7 +370,7 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="112"><strong>Tema Principal:</strong></td>
+									<td width="112">Tema Principal:</td>
 									<td width="281">
 										<select name="select" id="produtoEdicaoController-select5" style="width:250px;" disabled="disabled">
 											<option selected="selected">Selecione...</option>
@@ -378,7 +378,7 @@ fieldset {
 									</td>
 								</tr>
 								<tr>
-									<td><strong>Tema Secund&aacute;rio:</strong></td>
+									<td>Tema Secund&aacute;rio:</td>
 									<td>
 										<select name="select" id="produtoEdicaoController-select6" style="width:250px;" disabled="disabled">
 											<option selected="selected">Selecione...</option>

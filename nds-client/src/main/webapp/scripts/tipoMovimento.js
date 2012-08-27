@@ -40,7 +40,7 @@ function TipoMovimento(pathTela,obj) {
 		var styleOpacity = cell.permiteAlteracao == false 	  ? ('style="opacity: 0.5"') : '';
 		
 		cell.acao = 			
-			'<a href="javascript:;" onclick="'+ onClickAlteracao +'">' +
+			'<a href="javascript:;" onclick="'+ onClickAlteracao +'" style="margin-right:10px;">' +
 			'<img src="'+pathTela+'/images/ico_editar.gif" border="0" hspace="5" ' + styleOpacity + ' />' +
 			'</a>'+
 			'<a href="javascript:;" onclick="' + onClickExclusao + '">' +
