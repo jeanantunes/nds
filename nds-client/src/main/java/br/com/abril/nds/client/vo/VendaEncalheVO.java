@@ -34,9 +34,6 @@ public class VendaEncalheVO implements Serializable {
 	@Export(label = "Edição", alignment = Alignment.CENTER)
 	private String numeroEdicao;
 	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT)
-	private String precoCapa;
-	
 	@Export(label = "Quantidade", alignment = Alignment.CENTER)
 	private String qntProduto;
 	
@@ -209,20 +206,6 @@ public class VendaEncalheVO implements Serializable {
 	 */
 	public void setNumeroEdicao(String numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
-	}
-
-	/**
-	 * @return the precoCapa
-	 */
-	public String getPrecoCapa() {
-		return precoCapa;
-	}
-
-	/**
-	 * @param precoCapa the precoCapa to set
-	 */
-	public void setPrecoCapa(String precoCapa) {
-		this.precoCapa = precoCapa;
 	}
 
 	/**

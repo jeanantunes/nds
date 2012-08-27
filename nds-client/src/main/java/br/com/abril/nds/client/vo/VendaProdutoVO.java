@@ -25,7 +25,7 @@ public class VendaProdutoVO implements Serializable{
 	
 	private Long numeroEdicao;
 	
-	private String precoCapa;
+	private String precoDesconto;
 	
 	private Integer qntDisponivel;
 	
@@ -246,17 +246,17 @@ public class VendaProdutoVO implements Serializable{
 	}
 
 	/**
-	 * @return the precoCapa
+	 * @return the precoDesconto
 	 */
-	public String getPrecoCapa() {
-		return precoCapa;
+	public String getPrecoDesconto() {
+		return precoDesconto;
 	}
 
 	/**
-	 * @param precoCapa the precoCapa to set
+	 * @param precoDesconto the precoDesconto to set
 	 */
-	public void setPrecoCapa(String precoCapa) {
-		this.precoCapa = precoCapa;
+	public void setPrecoDesconto(String precoDesconto) {
+		this.precoDesconto = precoDesconto;
 	}
 
 	/**
