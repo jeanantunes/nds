@@ -37,7 +37,7 @@ var parametroCobrancaController = $.extend(true,
 				}, {
 					display : 'Banco',
 					name : 'banco',
-					width : 50,
+					width : 60,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -67,7 +67,7 @@ var parametroCobrancaController = $.extend(true,
 				}, {
 					display : 'Envia E-Mail',
 					name : 'envioEmail',
-					width : 60,
+					width : 70,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -102,7 +102,7 @@ var parametroCobrancaController = $.extend(true,
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 			});
 		},		
 		
@@ -141,12 +141,12 @@ var parametroCobrancaController = $.extend(true,
 			
 			$.each(resultado.rows, function(index, row) {
 				
-				var linkEditar = '<a href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer">' +
+				var linkEditar = '<a href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
 						     	  	'<img title="Aprovar" src="'+contextPath+'/images/ico_editar.gif" hspace="5" border="0px" />' +
 						  		  '</a>';
 				
 				var linkExcluir = '<a href="javascript:;" id="bt_excluir" onclick="parametroCobrancaController.popup_excluir(' + row.cell.idPolitica + ');" style="cursor:pointer">' +
-								   	 '<img title="Rejeitar" src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0px" />' +
+								   	 '<img title="Rejeitar" src="'+contextPath+'/images/ico_excluir.gif" border="0px" />' +
 								   '</a>';
 				
 				row.cell.acao = linkEditar + linkExcluir;
@@ -197,13 +197,13 @@ var parametroCobrancaController = $.extend(true,
 	
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
-				height:560,
+				height:530,
 				width:890,
 				modal: true,
 				buttons:[ 
 				          {
 					           id:"bt_confirmar",
-					           text:"Confirmar", 
+					           text:"Con4firmar", 
 					           click: function() {
 					        	   parametroCobrancaController.postarParametro();
 					           }

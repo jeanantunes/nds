@@ -46,8 +46,10 @@ import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -1312,9 +1314,12 @@ public class RecebimentoFisicoController {
 			if(produtoEdicao!=null) {
 				
 				RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
-				
-				recFisicoDTO.setPrecoDesconto(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()));
-				recFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
+				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+				BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDesconto(), BigDecimal.ZERO);
+				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+                recFisicoDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));
+
+                recFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
 				
 				result.use(Results.json()).from(recFisicoDTO, "result").serialize();
 			}
@@ -1477,7 +1482,7 @@ public class RecebimentoFisicoController {
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());
 		notaFiscal.setDataExpedicao(nota.getDataEntrada());
-		notaFiscal.setValorLiquido(CurrencyUtil.converterValor(nota.getValorTotal()));
+		notaFiscal.setValorLiquido(new BigDecimal(getValorSemMascara( nota.getValorTotal() )));
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
 		
 		
@@ -1491,18 +1496,18 @@ public class RecebimentoFisicoController {
 		
 		
 		//OBTEM CAMPOS OBRIGATORIOS PARA OS ITENS DA NOTA E TOTAL PARA VERIFICACAO COM O VALOR DA NOTA
-		Double totalItem = 0d;
+		BigDecimal totalItem = BigDecimal.ZERO;
 		ProdutoEdicao pe = null;
-		for (RecebimentoFisicoDTO item : itens){
-		    pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigoProduto(), Long.toString(item.getEdicao()));
-		    item.setIdProdutoEdicao(pe.getId());
-		    item.setOrigemItemNota(Origem.MANUAL);
-            item.setTipoLancamento(TipoLancamento.LANCAMENTO); 
+		for (int i = 0; i<itens.size(); i++){
+		    pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(itens.get(i).getCodigoProduto(), Long.toString(itens.get(i).getEdicao()));
+		    itens.get(i).setIdProdutoEdicao(pe.getId());
+		    itens.get(i).setOrigemItemNota(Origem.MANUAL);
+		    itens.get(i).setTipoLancamento(TipoLancamento.LANCAMENTO); 
             
-            totalItem+=(item.getValorTotal().doubleValue());
+		    totalItem = totalItem.add(itens.get(i).getValorTotal());
 	    }
 		
-		if (notaFiscal.getValorLiquido().floatValue() != totalItem.floatValue()){
+		if (notaFiscal.getValorLiquido().compareTo(totalItem)!=0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Valor total da [Nota] não confere com o valor total dos [Itens]!");
 		}
 
@@ -1516,6 +1521,21 @@ public class RecebimentoFisicoController {
 		List<String> listaMensagens = new ArrayList<String>();
 		listaMensagens.add("Nota fiscal cadastrada com sucesso.");
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
+	}
+	
+	private String getValorSemMascara(String valor) {
+
+		String chr = String.valueOf(valor.charAt(valor.length()-3));
+		if (",".equals(chr)){
+		    valor = valor.replaceAll("\\.", "");
+		    valor = valor.replaceAll(",", "\\.");
+		}
+		
+		if (".".equals(chr)){
+		    valor = valor.replaceAll(",", "");
+		}
+
+		return valor;
 	}
 	
 }

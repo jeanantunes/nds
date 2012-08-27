@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -16,7 +17,7 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 
 	private TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel;
 	
-	private BigDecimal totalVendaExemplares;
+	private BigInteger totalVendaExemplares;
 	
 	private BigDecimal totalFaturamento;
 
@@ -26,7 +27,7 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 	@Export(label = "Faturamento Total", exhibitionOrder = 2)
 	private String totalFaturamentoFormatado;
 	
-	public ResultadoCurvaABCCotaDTO(BigDecimal totalVendaExemplares, BigDecimal totalFaturamento) {
+	public ResultadoCurvaABCCotaDTO(BigInteger totalVendaExemplares, BigDecimal totalFaturamento) {
 		this.totalVendaExemplares = totalVendaExemplares;
 		this.totalFaturamento = totalFaturamento;
 		formatarCampos();
@@ -41,11 +42,11 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 		this.tableModel = tableModel;
 	}
 
-	public BigDecimal getTotalVendaExemplares() {
+	public BigInteger getTotalVendaExemplares() {
 		return totalVendaExemplares;
 	}
 
-	public void setTotalVendaExemplares(BigDecimal totalVendaExemplares) {
+	public void setTotalVendaExemplares(BigInteger totalVendaExemplares) {
 		this.totalVendaExemplares = totalVendaExemplares;
 	}
 

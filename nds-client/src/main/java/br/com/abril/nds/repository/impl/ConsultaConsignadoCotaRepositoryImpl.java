@@ -39,10 +39,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append("movimento.data as dataLancamento, ");
 		hql.append("pe.precoVenda as precoCapa, ");
 		hql.append("("+ this.getHQLDesconto() +") as desconto, ");
-		hql.append("(pe.precoVenda - (pe.precoVenda * desconto / 100)) as precoDesconto, ");
+		hql.append("(pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ");
 		hql.append(" movimento.qtde as reparte, ");		
 		hql.append(" (pe.precoVenda * movimento.qtde) as total, ");
-		hql.append(" ( (pe.precoVenda - (pe.precoVenda * desconto / 100)) * movimento.qtde)  as totalDesconto ");
+		hql.append(" ( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)  as totalDesconto ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -263,11 +263,11 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	
 	private String getHQLDesconto(){
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = cota.id ")
 		   .append(" and view.produtoEdicaoId = pe.id ")
-		   .append(" and view.fornecedorId = fornecedor.id ");
+		   .append(" and view.fornecedorId = fornecedor.id),0) ");
 		
 		return hql.toString();
 	}

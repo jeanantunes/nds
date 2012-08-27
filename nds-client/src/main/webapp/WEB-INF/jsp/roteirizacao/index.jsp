@@ -138,17 +138,17 @@ label{ vertical-align:super;}
      <fieldset style="width:895px; float:left; margin-bottom:10px;">
 		<legend>Roteiros</legend>
         <input name="lstRoteiros" type="text" id="lstRoteiros" style="width:240px; float:left;"  onkeyup="roteirizacao.autoCompletarRoteiroPorNome('#lstRoteiros',roteirizacao.populaDadosRoteiro)" onblur="roteirizacao.buscaRoteiroPorNome('#lstRoteiros')" />
-	<span class="bt_novos" title="Nova Roteiro"><a href="javascript:;" onclick="roteirizacao.abrirTelaRoteiro();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo Roteiro</a></span>
+	<span class="bt_novos" title="Nova Roteiro"><a href="javascript:;" onclick="roteirizacao.abrirTelaRoteiro();" rel="tipsy" title="Novo Roteiro"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a></span>
     <span style="float:right; margin-top:12px; margin-left:20px;" id="spanDadosRoteiro"><strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;</span>
    <input type="hidden" id="idRoteiroSelecionado" name="idRoteiroSelecionado"  >   
     </fieldset>
 	<br clear="all" />
-	<fieldset style="width:270px; float:left;">
+	<fieldset style="width:270px; float:left; margin-right:17px!important;">
 		<legend>Rotas</legend>
         
 
-        <input name="nomeRota" type="text" id="nomeRota" readonly="readonly" style="width:240px; float:left; margin-bottom:5px;" onkeyup="roteirizacao.filtroGridRotasPorNome()"  />
-        <a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);" id="botaoNovaRotaNome" >
+        <input name="nomeRota" type="text" id="nomeRota" readonly="readonly" style="width:210px; float:left; margin-bottom:5px;" onkeyup="roteirizacao.filtroGridRotasPorNome()"  />
+        <a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);" id="botaoNovaRotaNome" rel="tipsy" title="Nova Rota" >
         	<img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" />
         </a> 
         <br />
@@ -160,16 +160,16 @@ label{ vertical-align:super;}
     
     
     
-    <fieldset style="width:596px; float:left; margin-left:3px; overflow:hidden;">
+    <fieldset style="width:596px; float:left; overflow:hidden;">
 		<legend>Cotas da Rota </legend>
 		
         <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;" id="spanDadosRota"><strong> Rota Selecionada:</strong>&nbsp;&nbsp;&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;</span>
         <input name="rotaSelecionada" type="hidden"  id="rotaSelecionada" style="width:240px; float:left; margin-bottom:5px;"  />
         
 		<table class="cotasRotaGrid"></table>
-        <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" id="botaoCotaAusentes"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/>Adicionar</a></span>
-        <span class="bt_novos" title="Transfer&ecirc;ncia de Roteiro"><a href="javascript:;" id="botaoTransferenciaRoteiro"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
-        <span class="bt_novos" title="Excluir Roteiriza&ccedil;&atilde;o"><a href="javascript:;"  id="botaoExcluirRoteirizacao"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a></span>
+        <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" id="botaoCotaAusentes"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/> Adicionar</a></span>
+        <span class="bt_novos" title="Transfer&ecirc;ncia de Roteiro"><a href="javascript:;" id="botaoTransferenciaRoteiro"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/> Transferir</a></span>
+        <span class="bt_novos" title="Excluir Roteiriza&ccedil;&atilde;o"><a href="javascript:;"  id="botaoExcluirRoteirizacao"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/> Excluir</a></span>
 	</fieldset>
     
     
@@ -240,7 +240,7 @@ label{ vertical-align:super;}
               </select></td>
               <td width="36">CEP:</td>
               <td width="87"><input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" /></td>
-              <td width="79"><span class="bt_pesquisar"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();">Pesquisar</a></span></td>
+              <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>
           </table>
 	</fieldset>
@@ -248,7 +248,12 @@ label{ vertical-align:super;}
     <fieldset style="width:800px; float:left; margin-top:5px;">
 		<legend>Cotas Dispon&icirc;veis</legend>
 		<table class="cotasDisponiveisGrid"></table>
-        <span class="bt_sellAll" style="float:right; margin-right:25px;"><label for="sel" id="textoCheckAllCotas" >Marcar todos</label><input type="checkbox" name="selecionaTodos" id="selecionaTodos" onclick="roteirizacao.checarTodasCotasGrid();" style="float:left;"/></span>
+        <table width="121" border="0" align="right" cellpadding="0" cellspacing="0">
+		  <tr>
+		    <td width="151" align="right"><label for="selecionaTodos" id="textoCheckAllCotas" >Marcar todos</label></td>
+		    <td width="31"><input type="checkbox" name="selecionaTodos" id="selecionaTodos" onclick="roteirizacao.checarTodasCotasGrid();"/></td>
+		  </tr>
+		</table>
         
 	</fieldset>
 	<br clear="all" />
@@ -274,8 +279,8 @@ label{ vertical-align:super;}
    	    <legend> Pesquisar Rota / Roteiro</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
-              <td width="34">Box:</td>
-              <td width="121">
+              <td width="33">Box:</td>
+              <td width="120">
 	               <select name="boxPesquisa" id="boxPesquisa"   onchange="roteirizacao.carregarComboRoteiro()" style="width: 100px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="box" items="${listaBox}">
@@ -283,8 +288,8 @@ label{ vertical-align:super;}
 						</c:forEach>
 				  </select>
               </td>
-                <td width="55">Roteiro:</td>
-                <td width="277">
+                <td width="54">Roteiro:</td>
+                <td width="209">
                 	<select name="roteiroPesquisa" id="roteiroPesquisa"  onchange="roteirizacao.carregarComboRota()" style="width: 200px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="roteiro" items="${listaRoteiro}">
@@ -293,8 +298,8 @@ label{ vertical-align:super;}
 				    </select>
                  
                 </td>
-                <td width="27">Rota:</td>
-                <td width="296">
+                <td width="54">Rota:</td>
+                <td width="207">
 					<select name="rotaPesquisa" id="rotaPesquisa" style="width: 190px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="rota" items="${listaRota}">
@@ -302,7 +307,7 @@ label{ vertical-align:super;}
 						</c:forEach>
 				    </select>
                 </td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="roteirizacao.pesquisarRoteirizacao();">Pesquisar</a></span></td>
+              <td width="237">&nbsp;</td>
             </tr>
             <tr>
               <td>Cota:</td>
@@ -315,16 +320,26 @@ label{ vertical-align:super;}
               	<label>Roteiro Especial:</label>
         		<input type="checkbox" name="tipoRoteiroPesquisa" value="Especial" id="tipoRoteiroPesquisa" onclick="roteirizacao.pesquisaComRoteiroEspecial()" />
         	 </td>	
-              <td>&nbsp;</td>
+              <td><span class="bt_novos"><a href="javascript:;" onclick="roteirizacao.pesquisarRoteirizacao();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>
           </table>
 
       </fieldset>
+      
       <div class="linha_separa_fields">&nbsp;</div>
+      
       <div class="grids" style="display:none;">
+	  
 	      <fieldset class="fieldGrid">
-	       	  <legend>Rotas / Roteiros Cadastrados</legend>
+	      	
+	      	<legend>Rotas / Roteiros Cadastrados</legend>
+	       	  	
+	       	<div class="gridWrapper">
+	        
 	        	<table class="rotaRoteirosGrid"></table>
+	        
+	        </div>
+	        	
 	      </fieldset>
       </div>
 <script>

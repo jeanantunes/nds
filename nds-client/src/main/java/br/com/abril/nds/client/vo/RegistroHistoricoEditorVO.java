@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
@@ -33,7 +34,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 
 	private BigDecimal reparte;
 
-	private BigDecimal vendaExemplares;
+	private BigInteger vendaExemplares;
 
 	private BigDecimal porcentagemVenda;
 
@@ -47,7 +48,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	private String porcentagemVendaFormatado;
 		
 	public RegistroHistoricoEditorVO(String nomeEditor, String codigoProduto, String nomeProduto,
-			Long edicaoProduto, BigDecimal reparte, BigDecimal vendaExemplares) {
+			Long edicaoProduto, BigDecimal reparte, BigInteger vendaExemplares) {
 		this.nomeEditor=nomeEditor;
 		this.codigoProduto=codigoProduto;
 		this.nomeProduto=nomeProduto;
@@ -73,7 +74,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 		this.edicaoProduto = edicaoProduto;
 	}
 
-	public BigDecimal getVendaExemplares() {
+	public BigInteger getVendaExemplares() {
 		return vendaExemplares;
 	}
 
@@ -86,7 +87,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 		this.porcentagemVenda = porcentagemVenda;
 	}
 
-	public void setVendaExemplares(BigDecimal vendaExemplares) {
+	public void setVendaExemplares(BigInteger vendaExemplares) {
 		this.vendaExemplares = vendaExemplares;
 	}
 

@@ -6,17 +6,9 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
 
-
 @Exportable
 public class ConsultaRoteirizacaoDTO  implements Serializable{
 
-	public ConsultaRoteirizacaoDTO() {
-	
-	}
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3737578545975332770L;
 
 	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 1)
@@ -33,48 +25,188 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 	
 	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private String nome ;
+	
+	private Long qntCotas;
 
+	private Long idBox;
+	
+	private Long idRoteiro;
+	
+	private Long idRota;
+	
+	private Long idCota;
+	
+	public ConsultaRoteirizacaoDTO() {}
+
+	/**
+	 * Obtém nomeBox
+	 *
+	 * @return String
+	 */
 	public String getNomeBox() {
 		return nomeBox;
 	}
 
+	/**
+	 * Atribuí nomeBox
+	 * @param nomeBox 
+	 */
 	public void setNomeBox(String nomeBox) {
 		this.nomeBox = nomeBox;
 	}
 
+	/**
+	 * Obtém descricaoRoteiro
+	 *
+	 * @return String
+	 */
 	public String getDescricaoRoteiro() {
 		return descricaoRoteiro;
 	}
 
+	/**
+	 * Atribuí descricaoRoteiro
+	 * @param descricaoRoteiro 
+	 */
 	public void setDescricaoRoteiro(String descricaoRoteiro) {
 		this.descricaoRoteiro = descricaoRoteiro;
 	}
 
+	/**
+	 * Obtém descricaoRota
+	 *
+	 * @return String
+	 */
 	public String getDescricaoRota() {
 		return descricaoRota;
 	}
 
+	/**
+	 * Atribuí descricaoRota
+	 * @param descricaoRota 
+	 */
 	public void setDescricaoRota(String descricaoRota) {
 		this.descricaoRota = descricaoRota;
 	}
 
+	/**
+	 * Obtém numeroCota
+	 *
+	 * @return Integer
+	 */
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
+	/**
+	 * Atribuí numeroCota
+	 * @param numeroCota 
+	 */
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
+	/**
+	 * Obtém nome
+	 *
+	 * @return String
+	 */
 	public String getNome() {
 		return nome;
 	}
 
+	/**
+	 * Atribuí nome
+	 * @param nome 
+	 */
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
-	
+
+	/**
+	 * Obtém qntCotas
+	 *
+	 * @return Long
+	 */
+	public Long getQntCotas() {
+		return qntCotas;
+	}
+
+	/**
+	 * Atribuí qntCotas
+	 * @param qntCotas 
+	 */
+	public void setQntCotas(Long qntCotas) {
+		this.qntCotas = qntCotas;
+	}
+
+	/**
+	 * Obtém idBox
+	 *
+	 * @return Long
+	 */
+	public Long getIdBox() {
+		return idBox;
+	}
+
+	/**
+	 * Atribuí idBox
+	 * @param idBox 
+	 */
+	public void setIdBox(Long idBox) {
+		this.idBox = idBox;
+	}
+
+	/**
+	 * Obtém idRoteiro
+	 *
+	 * @return Long
+	 */
+	public Long getIdRoteiro() {
+		return idRoteiro;
+	}
+
+	/**
+	 * Atribuí idRoteiro
+	 * @param idRoteiro 
+	 */
+	public void setIdRoteiro(Long idRoteiro) {
+		this.idRoteiro = idRoteiro;
+	}
+
+	/**
+	 * Obtém idRota
+	 *
+	 * @return Long
+	 */
+	public Long getIdRota() {
+		return idRota;
+	}
+
+	/**
+	 * Atribuí idRota
+	 * @param idRota 
+	 */
+	public void setIdRota(Long idRota) {
+		this.idRota = idRota;
+	}
+
+	/**
+	 * Obtém idCota
+	 *
+	 * @return Long
+	 */
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	/**
+	 * Atribuí idCota
+	 * @param idCota 
+	 */
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
 	
 	
 }

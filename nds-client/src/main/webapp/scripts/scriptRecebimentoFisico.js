@@ -66,35 +66,18 @@ var recebimentoFisicoController = $.extend(true, {
 			 decimal:',', 
 			 precision:2
 		});
-		
-		$("#itensRecebimento.qtdNotaItem", this.workspace).maskMoney({
-			 thousands:'.', 
-			 decimal:',', 
-			 precision:2
-		});
-		
-		$("#itensRecebimento.qtdPacoteItem", this.workspace).maskMoney({
-			 thousands:'.', 
-			 decimal:',', 
-			 precision:2
-		});
-		
-		$("#itensRecebimento.qtdExemplarItem", this.workspace).maskMoney({
-			 thousands:'.', 
-			 decimal:',', 
-			 precision:2
-		});
-		
-		$("#itensRecebimento.codigoItem", this.workspace).numeric();
-		$("#itensRecebimento.edicaoItem", this.workspace).numeric();
+			
 		$("#novoNumeroNota", this.workspace).numeric();
 		$("#novoSerieNota", this.workspace).numeric();
-		
+
 		$("#produto", this.workspace).autocomplete({source: ""});
 		
+		this.formatItemNota();
+
 		this.inicializarGridPopUpNota();
 		
 	},
+	
 	
 	indNotaFiscalInterface : false,
 
@@ -1107,12 +1090,24 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	//------------------------- NOVO POPUP DE NOTA ---------------------------
 	
+    formatItemNota : function(){
+		
+		$(".number").numeric({
+			decimal:''
+		});
+
+    	$(".money").maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+	},
 	
-	/*NOVO POPUP DE LANÇAMENTO DE NOTA*/
 	inicializarGridPopUpNota : function() {
 	
 		$(".novoItemNotaGrid", this.workspace).flexigrid({
 			preProcess: recebimentoFisicoController.getDataFromResultItem,
+			onSuccess: recebimentoFisicoController.formatItemNota,
 			dataType : 'json',
 			colModel : [
 			{
@@ -1282,6 +1277,11 @@ var recebimentoFisicoController = $.extend(true, {
 		$.postJSON(this.path + 'obterDadosEdicao', "codigo=" + codigo + "&edicao="+edicao, 
 			function(result) { 
 				$("#precoDescontoItem"+index, this.workspace).val(result.precoDesconto);
+			    $("#precoDescontoItem"+index, this.workspace).priceFormat({
+					allowNegative: true,
+					centsSeparator: ',',
+				    thousandsSeparator: '.'
+				});
 			},
 			function(result) {
 				$("#precoDescontoItem"+index, this.workspace).val("");	   
@@ -1306,13 +1306,13 @@ var recebimentoFisicoController = $.extend(true, {
 		}
 		
         var valor = intValue(preco) * intValue(quantidade);
-        
+
         $("#valorItem"+index, this.workspace).val(valor);
         
         $("#valorItem"+index, this.workspace).priceFormat({
 			allowNegative: true,
-			centsSeparator: '.',
-		    thousandsSeparator: ''
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
 		});
 
         var diferenca = 0;
@@ -1322,13 +1322,15 @@ var recebimentoFisicoController = $.extend(true, {
         else{
         	diferenca = intValue(quantidadeExemp) - intValue(quantidade);
         }
+
+        if (isNaN(diferenca)){
+        	diferenca = 0;
+        }
         
-		$("#diferencaItem"+index, this.workspace).val(diferenca);
-		
-	    $("#diferencaItem"+index, this.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: '',
-		    thousandsSeparator: '.'
+        $("#diferencaItem"+index, this.workspace).val(diferenca);
+        
+	    $("#diferencaItem"+index, this.workspace).numeric({
+			decimal:''
 		});
 	    
 	    recebimentoFisicoController.obterValorTotalItens();
@@ -1371,7 +1373,7 @@ var recebimentoFisicoController = $.extend(true, {
 
     montaGridItens : function() {
 		$(".novoItemNotaGrid", this.workspace).flexOptions({url: contextPath + '/estoque/recebimentoFisico/montaGridItemNota'});
-		$(".novoItemNotaGrid", this.workspace).flexReload();
+		$(".novoItemNotaGrid", this.workspace).flexReload();	
 	},	
 	
 	getDataFromResultItem : function(resultado) {
@@ -1432,23 +1434,23 @@ var recebimentoFisicoController = $.extend(true, {
 				 valueValor = row.cell.valorTotal;
 			 }
 
-        	 var codigo =       '<input maxlength="28" value="'+valueCodigo+'" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
+        	 var codigo =       '<input class="number" maxlength="28" value="'+valueCodigo+'" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
 	         			 					     
 	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
 				             
-			 var edicao =       '<input maxlength="18" value="'+valueEdicao+'" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
+			 var edicao =       '<input class="number" maxlength="18" value="'+valueEdicao+'" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 			
-			 var precoDesconto ='<input maxlength="17" value="'+valuePrecoDesconto+'" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
+			 var precoDesconto ='<input class="money" maxlength="17" value="'+valuePrecoDesconto+'" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
 			 
-			 var qtdNota =      '<input maxlength="17" value="'+valueQtdNota+'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
+			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
 			     
-	         var qtdPacote =    '<input maxlength="17" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
+	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
 				             
-			 var qtdExemplar ='<input maxlength="17" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
+			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
 				
-			 var diferenca =    '<input maxlength="17" value="'+valueDiferenca+'" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+			 var diferenca =    '<input class="number" maxlength="10" value="'+valueDiferenca+'" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 				 
-			 var valor =        '<input maxlength="17" value="'+valueValor+'" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+			 var valor =        '<input class="money" maxlength="17" value="'+valueValor+'" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 						 
 			 var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +'"/>';
 
@@ -1481,6 +1483,25 @@ var recebimentoFisicoController = $.extend(true, {
 
 			return true;
 		}
+	},
+	
+	replaceAll : function(string, token, newtoken) {
+		while (string.indexOf(token) != -1) {
+	 		string = string.replace(token, newtoken);
+		}
+		return string;
+	},
+	
+	preparaValor : function(vr){
+		
+		if(vr.substr(vr.length-3,1)==","){
+			vr = this.replaceAll(vr,".","");
+			vr = this.replaceAll(vr,",",".");
+		}
+		if(vr.substr(vr.length-3,1)=="."){
+			vr = this.replaceAll(vr,",","");
+		}
+		return vr;
 	},
 	
 	obterListaItens : function() {
@@ -1530,6 +1551,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			var valor =
 				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val();
+			
 
 			if (!recebimentoFisicoController.isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar)) {
 
@@ -1538,12 +1560,12 @@ var recebimentoFisicoController = $.extend(true, {
 			    var dataRecolhimento = $("#novoDataEmissao", this.workspace).val();
 	
 				var lancamento = 'itens[' + index + '].codigoProduto=' + codigo + '&';
-	
+
 				lancamento += 'itens[' + index + '].nomeProduto=' + produto + '&';
 	
 				lancamento += 'itens[' + index + '].edicao=' + edicao + '&';
 				
-				lancamento += 'itens[' + index + '].precoDesconto=' + precoDesconto + '&';
+				lancamento += 'itens[' + index + '].precoDesconto=' + recebimentoFisicoController.preparaValor(precoDesconto) + '&';
 				
 				lancamento += 'itens[' + index + '].repartePrevisto=' + qtdNota + '&';
 	
@@ -1555,7 +1577,7 @@ var recebimentoFisicoController = $.extend(true, {
 				
 				lancamento += 'itens[' + index + '].diferenca=' + diferenca + '&';
 				
-				lancamento += 'itens[' + index + '].valorTotal=' + valor + '&';
+				lancamento += 'itens[' + index + '].valorTotal=' + recebimentoFisicoController.preparaValor(valor) + '&';
 	
 				lancamento += 'itens[' + index + '].dataLancamento=' + dataLancamento + '&';
 				
@@ -1601,8 +1623,6 @@ var recebimentoFisicoController = $.extend(true, {
     
     replicarQuantidadeItem : function(index){
     	
-    		
-    	
     	if ( $("#checkbox"+index, this.workspace).attr('checked') == 'checked' || 
     		 $("#novoReplicarQtde", this.workspace).attr('checked') == 'checked' ) {
     		
@@ -1610,29 +1630,29 @@ var recebimentoFisicoController = $.extend(true, {
     	    
     	}    
     },
-    
+
     //PREPARA NOVA LINHA DA GRID
     adicionarNovaLinha : function(index){
 
     	var row;
 
-    	var codigo =       '<input maxlength="28" type="number" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
+    	var codigo =       '<input class="number" maxlength="28" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
 	     
         var produto =      '<input maxlength="200" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
 			             
-		var edicao =       '<input maxlength="18" type="number" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
+		var edicao =       '<input class="number" maxlength="18" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 		
-		var precoDesconto ='<input maxlength="17" type="number" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
+		var precoDesconto ='<input class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
 		 
-		var qtdNota =      '<input maxlength="17" type="number" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
+		var qtdNota =      '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
 		     
-        var qtdPacote =    '<input maxlength="17" type="number" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
+        var qtdPacote =    '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
 			             
-		var qtdExemplar ='<input maxlength="17" type="number" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
+		var qtdExemplar =  '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
 			
-		var diferenca =    '<input maxlength="17" type="number" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+		var diferenca =    '<input class="number" maxlength="10" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 			 
-		var valor =        '<input maxlength="17" type="number" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+		var valor =        '<input class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 					 
 		var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +'"/>';
 
@@ -1739,6 +1759,8 @@ var recebimentoFisicoController = $.extend(true, {
 
     	//RETORNA OS DADOS DIGITADOS PARA AS LINHAS ATUAIS
     	recebimentoFisicoController.recuperaValoresDigitados(dataValores);
+    	
+    	this.formatItemNota();
 	},
     
     //RECUPERA VALORES DIGITADOS ANTES DA INSERÇÃO DA NOVA LINHA

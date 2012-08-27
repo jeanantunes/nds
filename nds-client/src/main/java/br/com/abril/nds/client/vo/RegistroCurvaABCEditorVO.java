@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,9 +26,9 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	@Export(label = "Cota", exhibitionOrder = 2)
 	private String nomeEditor;
 
-	private BigDecimal reparte;
+	private BigInteger reparte;
 
-	private BigDecimal vendaExemplares;
+	private BigInteger vendaExemplares;
 
 	private BigDecimal porcentagemVendaExemplares;
 
@@ -56,7 +57,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	}
 
 	public RegistroCurvaABCEditorVO(Long codigoEditor, String nomeEditor,
-			BigDecimal reparte, BigDecimal vendaExemplares, BigDecimal faturamentoCapa) {
+			BigInteger reparte, BigInteger vendaExemplares, BigDecimal faturamentoCapa) {
 		this.codigoEditor = codigoEditor;
 		this.nomeEditor = nomeEditor;
 		this.reparte = reparte;
@@ -73,11 +74,11 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		this.nomeEditor = nomeEditor;
 	}
 
-	public BigDecimal getVendaExemplares() {
+	public BigInteger getVendaExemplares() {
 		return vendaExemplares;
 	}
 
-	public void setVendaExemplares(BigDecimal vendaExemplares) {
+	public void setVendaExemplares(BigInteger vendaExemplares) {
 		this.vendaExemplares = vendaExemplares;
 	}
 
@@ -106,11 +107,11 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		this.codigoEditor = codigoEditor;
 	}
 
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 

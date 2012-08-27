@@ -27,9 +27,16 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		hql.append("SELECT cota.numeroCota as numeroCota, ");
 		hql.append("pessoa.nome as nomeJornaleiro, ");
-		hql.append("sum((produtoEdicao.precoVenda - produtoEdicao.desconto) * (estoqueProdCota.qtdeRecebida - estoqueProdCota.qtdeDevolvida)) as valorTotalConsignado,  ");
+		hql.append("sum((produtoEdicao.precoVenda - ");
+		
+		hql.append(" ( "+obterHQLDesconto("cota.id","produto.id","fornecedor.id")+" )");
+		
+		hql.append(") * (estoqueProdCota.qtdeRecebida - estoqueProdCota.qtdeDevolvida)) as valorTotalConsignado,  ");
 		hql.append("lancamento.dataRecolhimentoPrevista as dataProgramadoChamadao, ");
 		hql.append("historico.dataEdicao as dataHistoricoEdicao");
+		
+		hql.append("  join produtoEdicao.produto produto ");
+		hql.append("  join produto.fornecedores fornecedor ");
 		
 		hql.append(getSqlFromEWhereChamadao(filtro));
 		
@@ -91,4 +98,29 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		return param;
    }	
+   
+   
+   private String obterHQLDesconto(String cota, String produto, String fornecedor){
+   	
+        String auxC = " where ";
+	    StringBuilder hql = new StringBuilder("select view.desconto from ViewDesconto view ");
+		
+   	    if (cota!=null && !"".equals(cota)){
+		   hql.append(auxC+" view.cotaId = "+cota);
+		   auxC = " and ";
+   	    }
+
+        if (produto!=null && !"".equals(produto)){
+	       hql.append(auxC+" view.produtoId = "+produto);
+	 	   auxC = " and ";
+	    }
+
+	    if (fornecedor!=null && !"".equals(fornecedor)){
+	 	   hql.append(auxC+" view.fornecedorId = "+fornecedor);
+	 	   auxC = " and ";
+	    }	 
+
+	    return hql.toString();
+	}
+   
 }

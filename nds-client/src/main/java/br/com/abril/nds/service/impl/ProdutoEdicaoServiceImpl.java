@@ -42,7 +42,6 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.DescontoService;
-import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.DateUtil;
@@ -77,9 +76,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private CapaService capaService;
-	
-	@Autowired
-	private MatrizLancamentoService matrizLancamentoService;
 	
 	@Autowired
 	private DescontoService descontoService;
@@ -497,9 +493,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			// Características do lançamento:
 			// TODO: !!!colocar o select da categoria aqui!!!
 			produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
-			
-			// Tipos de desconto:
-			produtoEdicao.setDesconto(dto.getDesconto());
 			
 			// Outros:
 			produtoEdicao.setChamadaCapa(dto.getChamadaCapa());

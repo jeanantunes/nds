@@ -36,6 +36,8 @@
 
 <link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
+
 <base href="<c:url value="/"/>" />
 
 <script type="text/javascript">
@@ -291,7 +293,7 @@
 					</div>
 					<br clear="all"/>
 					<div class="bts_header">
-						<span class="bt_novos">
+						<span class="bt_novos" style="display:none;">
 							<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
 						</span>
 					
@@ -304,7 +306,7 @@
 							</script> </label>
 						
 							<label>
-								<a href="javascript:;" onclick="logout()" title="Sair do Sistema" class="sair">Sair</a>
+								<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
 							</label>
 			
 						</div>

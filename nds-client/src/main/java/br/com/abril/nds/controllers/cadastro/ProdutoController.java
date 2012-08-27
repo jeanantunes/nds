@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -73,7 +75,7 @@ public class ProdutoController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private DescontoService tipoDescontoService;
+	private DescontoService descontoService;
 	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
@@ -297,7 +299,6 @@ public class ProdutoController {
 		listaCombos.add(parseComboFornecedor(this.fornecedorService.obterFornecedores()));
 
 		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
-		
 		
 		//TODO:Entidade TipoDesconto excluída
 		//listaCombos.add(parseComboTipoDesconto(this.tipoDescontoService.obterTodosTiposDescontos()));

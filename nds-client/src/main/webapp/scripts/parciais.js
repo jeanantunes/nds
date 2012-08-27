@@ -280,7 +280,7 @@ var ParciaisController = $.extend(true, {
 					row.cell.dataRecolhimento +
 			        ' \')"')+
 			        
-			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0"  style="margin-right:5px;" /></a>' +
+			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0"  style="margin-right:10px;" /></a>' +
 			'<a href="javascript:;" '+
 			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':' onclick="ParciaisController.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" ')+
 			'><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
@@ -541,7 +541,7 @@ var ParciaisController = $.extend(true, {
 			$( "#dialog-detalhes", this.workspace).dialog({
 				resizable: false,
 				height:480,
-				width:940,
+				width:935,
 				modal: true,
 				buttons: {
 					"Fechar": function() {
@@ -728,13 +728,13 @@ var ParciaisController = $.extend(true, {
 				colModel : [ {
 					display : 'Lcto',
 					name : 'dataLancamento',
-					width : 70,
+					width : 55,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Rcto',
 					name : 'dataRecolhimento',
-					width : 70,
+					width : 55,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -746,7 +746,7 @@ var ParciaisController = $.extend(true, {
 				}, {
 					display : 'Suplementação',
 					name : 'suplementacao',
-					width : 80,
+					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -804,7 +804,7 @@ var ParciaisController = $.extend(true, {
 				useRp : true,
 				rp : 15,
 				showTableToggleBtn : true,
-				width : 900,
+				width : 880,
 				height : 200
 			}); 
 			

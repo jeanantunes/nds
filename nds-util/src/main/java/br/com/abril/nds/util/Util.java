@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.Validate;
+
 public abstract class Util {
 	
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -338,5 +340,22 @@ public abstract class Util {
 		}		
 		return cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 	}
+	
+	
+	
+    /**
+     * Utilitário para tratamento de valor "null" utilizando
+     * um valor "padrão"
+     * @param value valor para verificação de nulo
+     * @param safeValue valor padrao para utilização caso o valor seja nulo
+     * @return value caso não seja nulo, safeValue caso value seja nulo
+     */
+    public static <T> T nvl(T value, T safeValue) {
+        Validate.notNull(safeValue, "Valor padrão não deve ser nulo!");
+        if (value == null) {
+            return safeValue;
+        }
+        return value;
+    }
 
 }

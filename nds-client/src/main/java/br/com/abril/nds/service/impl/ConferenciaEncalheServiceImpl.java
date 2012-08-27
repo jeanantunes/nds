@@ -104,6 +104,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -116,6 +117,7 @@ import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
 @Service
@@ -209,6 +211,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ControleNumeracaoSlipService controleNumeracaoSlipService;
+	
+	@Autowired
+	private DescontoService descontoService;
 	
 	/*
 	 * (non-Javadoc)
@@ -447,42 +452,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Obtém o valor total de débito ou crédito da cota.
-	 * 
-	 * @param listaDebitoCredito
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorDebitoCreditoCota(List<DebitoCreditoCotaDTO> listaDebitoCredito) {
-		
-		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
-		
-		for (DebitoCreditoCotaDTO debitoCreditoCotaDTO : listaDebitoCredito){
-			
-			if(debitoCreditoCotaDTO.getValor() == null) {
-				continue;
-			}
-			
-			if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
-
-				valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
-				
-			}
-			
-			if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
-				
-				valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
-				
-			}
-			
-		}
-		
-		return valorDebitoCredito;
-		
-	}
-	
-	
 	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
 		
@@ -605,15 +574,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-		
-		carregarValorDesconto(produtoEdicao, numeroCota);
 		
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 		
-		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
+		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+        conferenciaEncalheDTO.setPrecoCapa(precoVenda);
 		
-		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
+		BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+
+		conferenciaEncalheDTO.setDesconto(valorDesconto);
 		
 		conferenciaEncalheDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 		
@@ -628,27 +600,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 		return conferenciaEncalheDTO;
-		
-	}
-	
-	private void carregarValorDesconto(ProdutoEdicao produtoEdicao, Integer numeroCota) {
-		
-		BigDecimal hundred = new BigDecimal(100.0);
-		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		BigDecimal fatorDesconto = produtoEdicaoRepository.obterFatorDesconto(produtoEdicao.getId(), numeroCota, distribuidor.getId());
-		
-		if( fatorDesconto!=null && produtoEdicao.getPrecoVenda()!=null ) {
-			
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			
-			BigDecimal valorDesconto = fatorDesconto.divide(hundred).multiply(precoVenda);
-			
-			produtoEdicao.setDesconto(valorDesconto);
-			
-		}
-		
 		
 	}
 
@@ -692,6 +643,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
 		ProdutoEdicaoDTO produtoEdicaoDTO = null;
 		
@@ -701,15 +653,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 			
-			carregarValorDesconto(produtoEdicao, numeroCota);
-			
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
 			produtoEdicaoDTO.setId(produtoEdicao.getId());
 			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-			produtoEdicaoDTO.setPrecoVenda(produtoEdicao.getPrecoVenda());
-			produtoEdicaoDTO.setDesconto(produtoEdicao.getDesconto());
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+            produtoEdicaoDTO.setPrecoVenda(precoVenda);
+			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+            BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+			produtoEdicaoDTO.setDesconto(valorDesconto);
+			
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
 			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
@@ -751,20 +705,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ProdutoEdicaoDTO produtoEdicaoDTO = null;
 		
 		if (produtoEdicao != null){
+		    
+		    Cota cota = cotaRepository.obterPorNumerDaCotaAtiva(numeroCota);
 			
 			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao);
 
 			Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
-			
-			carregarValorDesconto(produtoEdicao, numeroCota);
 			
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
 			produtoEdicaoDTO.setId(produtoEdicao.getId());
 			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-			produtoEdicaoDTO.setPrecoVenda(produtoEdicao.getPrecoVenda());
-			produtoEdicaoDTO.setDesconto(produtoEdicao.getDesconto());
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+            produtoEdicaoDTO.setPrecoVenda(precoVenda);
+			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+            
+            produtoEdicaoDTO.setDesconto(valorDesconto);
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
 			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
@@ -806,20 +764,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ProdutoEdicaoDTO produtoEdicaoDTO = null;
 		
 		if (produtoEdicao != null){
+		    
+		    Cota cota = cotaRepository.obterPorNumerDaCotaAtiva(numeroCota);
 		
 			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(numeroCota, produtoEdicao);
 
 			Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
-			
-			carregarValorDesconto(produtoEdicao, numeroCota);
 			
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
 			produtoEdicaoDTO.setId(produtoEdicao.getId());
 			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-			produtoEdicaoDTO.setPrecoVenda(produtoEdicao.getPrecoVenda());
-			produtoEdicaoDTO.setDesconto(produtoEdicao.getDesconto());
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+            produtoEdicaoDTO.setPrecoVenda(precoVenda);
+			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+			produtoEdicaoDTO.setDesconto(valorDesconto);
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
 			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());

@@ -114,17 +114,19 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 			
 			.append(" sum( estoqueProdutoCota.qtdeRecebida * ")
 			
-			.append(" ( produtoEdicao.precoVenda - ( produtoEdicao.precoVenda  *  ( ")
+			.append(" ( produtoEdicao.precoVenda - ( produtoEdicao.precoVenda  *  (( ")
 			
 			.append( subQueryConsultaValorComissionamento )
 			
-			.append(" / 100 ) ) ) ) ")
+			.append(") / 100 ) ) ) ) ")
 			
 			.append(" from EstoqueProdutoCota estoqueProdutoCota ")
 			
 			.append(" join estoqueProdutoCota.cota cota ")
 			
 			.append(" join estoqueProdutoCota.produtoEdicao produtoEdicao ")
+			
+			.append(" left join produtoEdicao.produto.fornecedores fornecedor ")
 			
 			.append(" where ")
 			
@@ -138,8 +140,6 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		query.setParameterList("listaIdProdutoEdicao", listaIdProdutoEdicao);
 		
 		query.setParameter("numeroCota", numeroCota);
-
-		query.setParameter("idDistribuidor", idDistribuidor);
 		
 		return (BigDecimal) query.uniqueResult();
 	}
@@ -147,31 +147,17 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 	
 	/**
 	 * Retorna String referente a uma subquery que obtém o valor comissionamento 
-	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idDistribuidor. 
+	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idFornecedor. 
 	 * 
 	 * @return String
 	 */
 	private static String getSubQueryConsultaValorComissionamento() {
 		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" ( select case when ( pe.desconto is not null ) then pe.desconto else ");
-		
-		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto  else  ");
-		
-		hql.append(" ( case when ( distribuidor.fatorDesconto is not null ) then distribuidor.fatorDesconto else 0 end ) end  ");
-		
-		hql.append(" ) end ");
-		
-		hql.append(" from ProdutoEdicao pe, Cota ct, Distribuidor distribuidor ");
-		
-		hql.append(" where ");
-		
-		hql.append(" ct.id = cota.id and ");
-
-		hql.append(" pe.id = produtoEdicao.id and ");
-
-		hql.append(" distribuidor.id = :idDistribuidor ) ");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = cota.id ")
+		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
+		   .append(" and view.fornecedorId = fornecedor.id),0) ");
 		
 		return hql.toString();
 		
@@ -210,11 +196,12 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 				
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" SELECT sum((epc.qtdeRecebida - epc.qtdeDevolvida) * (produtoEdicao.precoVenda - produtoEdicao.desconto))")
+		hql.append(" SELECT sum((epc.qtdeRecebida - epc.qtdeDevolvida) * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+ getSubQueryConsultaValorComissionamento() +") / 100) ))")
 		
 		.append(" FROM EstoqueProdutoCota AS epc ")
 		.append(" JOIN epc.cota as cota ")
-		.append(" JOIN epc.produtoEdicao as produtoEdicao ");
+		.append(" JOIN epc.produtoEdicao as produtoEdicao ")
+		.append(" JOIN produtoEdicao.produto.fornecedores as fornecedor ");
 		
 		
 		hql.append(" WHERE cota.id = :idCota ");
@@ -224,6 +211,13 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		query.setParameter("idCota",idCota);
 		
-		return ((BigDecimal) query.uniqueResult()).doubleValue();
+		BigDecimal retorno = (BigDecimal) query.uniqueResult();
+		
+		if (retorno == null){
+			
+			return 0D;
+		}
+		
+		return retorno.doubleValue();
 	}
 }

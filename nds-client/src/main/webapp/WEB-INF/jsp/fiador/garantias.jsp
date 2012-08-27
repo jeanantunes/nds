@@ -17,7 +17,7 @@
 		<td>&nbsp;</td>
 		<td>
 			<span class="bt_add">
-				<a href="javascript:fiadorController-adicionarEditarGarantia();" id="fiadorController-garantia-botaoAddEditarGarantia">Incluir Novo</a>
+				<a href="javascript:fiadorController.adicionarEditarGarantia();" id="fiadorController-garantia-botaoAddEditarGarantia">Incluir Novo</a>
 			</span>
 		</td>
 	</tr>
