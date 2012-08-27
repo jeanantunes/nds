@@ -6,53 +6,46 @@ var painelOperacionalController = $.extend(true, {
 	},
 	
 	mostrarIndicadores:function(estado) {
-		$(".grupoIndicadorEstado").hide();
-		$("#div_" + estado).show();
+		$(".grupoIndicadorEstado", painelOperacionalController.workspace).hide();
+		$("#div_" + estado, painelOperacionalController.workspace).show();
 	},
 	
 	openDistrib:function(idDistrib) {
-		$("#detalhe_" + idDistrib).fadeIn('slow');
+		$("#detalhe_" + idDistrib, painelOperacionalController.workspace).fadeIn('slow');
 	},
 	
 	closeDistrib:function(idDistrib) {
-		$("#detalhe_" + idDistrib).fadeOut('slow');
+		$("#detalhe_" + idDistrib, painelOperacionalController.workspace).fadeOut('slow');
 	},
 	
 	bindButtons:function() {
 		
 		var _this = this;
 		
-		$("#map > li").click(function() {  
-			var estado = $(this).attr("estado").toUpperCase(); 
+		$("#map > li", painelOperacionalController.workspace).click(function() {  
+			var estado = $(this, painelOperacionalController.workspace).attr("estado").toUpperCase(); 
 			_this.mostrarIndicadores(estado);
 		});
 		
 		
-		$(".linkPainel a").click(function() {
-			var idDistrib = $(this).attr("id");
+		$(".linkPainel a", painelOperacionalController.workspace).click(function() {
+			var idDistrib = $(this, painelOperacionalController.workspace).attr("id");
 			_this.openDistrib(idDistrib);
 		});
 		
-		$(".detalhesPainel a").click(function() {
-			var idDistrib = $(this).attr("id");
+		$(".detalhesPainel a", painelOperacionalController.workspace).click(function() {
+			var idDistrib = $(this, painelOperacionalController.workspace).attr("id");
 			_this.closeDistrib(idDistrib);
 		});
 	},
 	
 	initAccordion : function() {
-		$(".accordion").accordion({
+		$(".accordion", painelOperacionalController.workspace).accordion({
 			autoHeight : false,
 			navigation : true
 		});
 	}
-}
-/** FIXME: remover comentarios quando alterar o layout
- *
- * ,BoxController
- * 
- * 
- **/
-);
+} ,BaseController);
 
 $(function() {
 	painelOperacionalController.init();

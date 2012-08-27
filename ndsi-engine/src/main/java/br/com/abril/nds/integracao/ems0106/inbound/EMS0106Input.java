@@ -1,8 +1,6 @@
 package br.com.abril.nds.integracao.ems0106.inbound;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
@@ -15,10 +13,16 @@ public class EMS0106Input implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/** Código da publicação. */
 	private String codigoPublicacao;
+	
+	/** Número da Edição. */
 	private Long edicao;
+	
+	/** Quantidade total do reparte desta edição. */
 	private Long reparteDistribuir;
-
+	
+	
 	@Field(offset = 1, length = 8)
 	public String getCodigoPublicacao() {
 		return codigoPublicacao;

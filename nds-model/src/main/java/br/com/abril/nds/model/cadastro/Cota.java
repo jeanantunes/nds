@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 
 @Entity
 @Table(name = "COTA")
@@ -146,6 +147,12 @@ public class Cota implements Serializable {
 
 	@ManyToMany(mappedBy="cotas", targetEntity=GrupoCota.class)
 	private Set<GrupoCota> grupos;
+	
+	/**
+	 * Histórico de titulares da cota
+	 */
+	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
+	private Set<HistoricoTitularidadeCota> titularesCota;
 	
 	public Set<HistoricoNumeroCota> getHistoricoNumeroCota() {
 		return historicoNumeroCota;
@@ -433,6 +440,20 @@ public class Cota implements Serializable {
 	public void setGrupos(Set<GrupoCota> grupos) {
 		this.grupos = grupos;
 	}
+
+    /**
+     * @return the titularesCota
+     */
+    public Set<HistoricoTitularidadeCota> getTitularesCota() {
+        return titularesCota;
+    }
+
+    /**
+     * @param titularesCota the titularesCota to set
+     */
+    public void setTitularesCota(Set<HistoricoTitularidadeCota> titularesCota) {
+        this.titularesCota = titularesCota;
+    }
 
 
 }

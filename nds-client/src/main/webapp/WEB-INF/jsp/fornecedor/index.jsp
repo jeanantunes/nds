@@ -14,9 +14,11 @@ $(function(){
 
 <body>
 
+	<form id="form-dialog-excluir">
 	<div id="fornecedorController-dialog-excluir" title="Excluir Fornecedor">
 		<p>Confirma a exclusão deste Fornecedor?</p>
 	</div>
+	</form>
 	
     
 	<div id="fornecedorController-effect" style="padding: 0 .7em;"

@@ -59,6 +59,12 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 
 		query.setResultTransformer(resultTransformer);
 		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
 		return query.list();
 	}
 	

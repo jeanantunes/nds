@@ -6,7 +6,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 public interface ProdutoRepository extends Repository<Produto, Long> {
 	
 	/**
-	 * Obtém o Grupo ao qual o produto pertence.
+	 * ObtÃ©m o Grupo ao qual o produto pertence.
 	 * 
 	 * @param codigoProduto
 	 * 

@@ -11,7 +11,7 @@
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.jdbc.fetch_size" value="10000" />
 			<property name="hibernate.jdbc.batch_size" value="100" />
-			<property name="hibernate.query.substitutions">true 1, false 0</property>
+			<property name="hibernate.query.substitutions" value="true 1, false 0"/>
 		</properties>
 	</persistence-unit>
 </persistence>

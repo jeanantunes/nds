@@ -256,7 +256,8 @@ public class DescontoServiceImpl implements DescontoService {
 			produtosEdicao.addAll(listaProdutoEdicao);
 		}
 		
-		processarDescontoProduto(produtosEdicao, cotas, desconto.getDescontoProduto());
+		processarDescontoProduto(produtosEdicao, cotas, desconto.getDescontoProduto(),
+								 desconto.isDescontoPredominante());
 	}
 
 	@Override
@@ -324,7 +325,7 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional
 	public void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
 		
-		this.processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto);
+		this.processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto, null);
 	}
 	
 
@@ -351,27 +352,28 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		cotas.add(cota);
 		
-		this.processarDesconto(TipoDesconto.ESPECIFICO, fornecedores, cotas , null, valorDesconto);
+		this.processarDesconto(TipoDesconto.ESPECIFICO, fornecedores, cotas , null, valorDesconto, null);
 	}
 	
 	@Override
 	@Transactional
-	public void processarDescontoProduto(ProdutoEdicao produto, BigDecimal valorDesconto) {
+	public void processarDescontoProduto(ProdutoEdicao produto, BigDecimal valorDesconto, Boolean descontoPredominante) {
 		
 		Set<ProdutoEdicao> produtos = new HashSet<ProdutoEdicao>();
 		
 		produtos.add(produto);
 		
-		this.processarDescontoProduto(produtos, null, valorDesconto); 
+		this.processarDescontoProduto(produtos, null, valorDesconto, descontoPredominante); 
 	}
 	
 	@Override
 	@Transactional
 	public void processarDescontoProduto(Set<ProdutoEdicao> produtos, 
 										 Set<Cota> cotas, 
-										 BigDecimal valorDesconto) {
+										 BigDecimal valorDesconto,
+										 Boolean descontoPredominante) {
 		
-		this.processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto);
+		this.processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto, descontoPredominante);
 	}
 	
 	/*
@@ -382,12 +384,14 @@ public class DescontoServiceImpl implements DescontoService {
 	 * @param cotas - list de cotas
 	 * @param produtos - lista de produtos
 	 * @param valorDesconto - valor do desconto
+	 * @param descontoPredominante - desconto predominante
 	 */
 	private void processarDesconto(TipoDesconto tipoDesconto, 
 								   Set<Fornecedor> fornecedores, 
 								   Set<Cota> cotas, 
 								   Set<ProdutoEdicao> produtos, 
-								   BigDecimal valorDesconto) {
+								   BigDecimal valorDesconto,
+								   Boolean descontoPredominante) {
 
 		boolean obterFornecedores = fornecedores == null || fornecedores.isEmpty();
 		
@@ -446,7 +450,8 @@ public class DescontoServiceImpl implements DescontoService {
 						tipoDesconto, fornecedor,cota ,produtosParaDesconto);
 				
 				this.descontoComponent.persistirDesconto(
-					tipoDesconto, fornecedor, cota, produtosParaInclusao, valorDesconto);
+					tipoDesconto, fornecedor, cota,
+					produtosParaInclusao, valorDesconto, descontoPredominante);
 			}
 		}
 	}
@@ -651,7 +656,7 @@ public class DescontoServiceImpl implements DescontoService {
 					Set<Cota> cotas = new HashSet<Cota>();
 					cotas.add(cota);
 					
-					processarDescontoProduto(produtosEdicao, cotas, ultimoDescontoProduto.getDesconto());
+					processarDescontoProduto(produtosEdicao, cotas, ultimoDescontoProduto.getDesconto(), null);
 				}
  			} else {
 				
@@ -714,6 +719,6 @@ public class DescontoServiceImpl implements DescontoService {
 		BigDecimal valorDescontoProduto = (ultimoDescontoDistribuidor!= null)
 				?ultimoDescontoDistribuidor.getDesconto():BigDecimal.ZERO; 
 		
-		processarDesconto(TipoDesconto.GERAL, fornecedores,cotas,null,valorDescontoProduto);
+		processarDesconto(TipoDesconto.GERAL, fornecedores,cotas,null,valorDescontoProduto, null);
 	}
 }

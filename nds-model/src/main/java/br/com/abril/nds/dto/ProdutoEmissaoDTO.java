@@ -150,8 +150,18 @@ public class ProdutoEmissaoDTO implements Serializable{
 	 * @param precoComDesconto the precoComDesconto to set
 	 */
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
-		this.vlrPrecoComDesconto= precoComDesconto.doubleValue(); 
-		this.precoComDesconto = CurrencyUtil.formatarValor(precoComDesconto);
+		
+		if (precoComDesconto != null){
+			
+			this.vlrPrecoComDesconto= precoComDesconto.doubleValue(); 
+			this.precoComDesconto = CurrencyUtil.formatarValor(precoComDesconto);
+		} else {
+			
+			this.vlrPrecoComDesconto= 0d;
+			this.precoComDesconto = "0.00";
+		}
+		
+		
 	}
 	/**
 	 * @return the reparte

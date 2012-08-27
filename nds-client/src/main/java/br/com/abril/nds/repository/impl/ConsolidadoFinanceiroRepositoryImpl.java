@@ -106,8 +106,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");
 		hql.append(" ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaEncalhe() +") as desconto, ");
-		hql.append(" (pe.precoVenda - (pe.precoVenda * desconto / 100)) as precoComDesconto, ");
-		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * desconto / 100))) as total, ");
+		hql.append(" (pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaEncalhe() +") / 100)) as precoComDesconto, ");
+		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaEncalhe() +") / 100))) as total, ");
 		hql.append(" sum(mec.qtde) as encalhe ");
 
 		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
@@ -223,8 +223,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");
 		hql.append(" ("+ this.obterSQLDescontoObterMovimentoVendaEncalhe() +") as desconto, ");
-		hql.append(" (pe.precoVenda - (pe.precoVenda * desconto / 100)) as precoComDesconto, ");
-		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * desconto / 100))) as total, ");
+		hql.append(" (pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoVendaEncalhe() +") / 100)) as precoComDesconto, ");
+		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoVendaEncalhe() +") / 100))) as total, ");
 		hql.append(" box.codigo as box,");
 		hql.append(" mec.qtde as exemplares");
 
@@ -312,12 +312,12 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");
 		hql.append(" ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaConsignado() +") as desconto, ");
-		hql.append(" (pe.precoVenda - (pe.precoVenda * desconto / 100)) as precoComDesconto, ");
+		hql.append(" (pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaConsignado() +") / 100)) as precoComDesconto, ");
 		hql.append(" ec.qtdePrevista as reparteSugerido, ");
 		hql.append(" ec.qtdeEfetiva as reparteFinal, ");
 		hql.append(" (ec.qtdePrevista - ec.qtdeEfetiva) as diferenca, ");
 		hql.append(" d.tipoDiferenca as motivo, ");		
-		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * desconto / 100))) as total ");
+		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaConsignado() +") / 100))) as total ");
 
 		hql.append(" FROM ConsolidadoFinanceiroCota consolidado ");
 		

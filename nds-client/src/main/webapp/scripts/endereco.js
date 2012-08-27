@@ -4,10 +4,6 @@ function Endereco(paramTela, paramMessage) {
 
 	var _this = this;
     
-	this.init = function(workspace) {
-		this.workspace = workspace
-	}
-	
 	$(function() {
 		
 		var _this = this;
@@ -34,6 +30,10 @@ function Endereco(paramTela, paramMessage) {
 		});
 	});
 
+	this.init = function(workspace) {
+		this.workspace = workspace;
+	},
+	
 	this.confirmarExclusaoEndereco = function (idEndereco) {
 		
 		var _this = this;
@@ -56,7 +56,7 @@ function Endereco(paramTela, paramMessage) {
 	},
 	
 	this.processarResultadoConsultaEndereco = function (data) {
-                                                                                                                                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                                                                                                               
 		if (data.mensagens) {
 
 			exibirMensagemDialog(
@@ -81,7 +81,6 @@ function Endereco(paramTela, paramMessage) {
 
 			data.rows[i].cell[lastIndex] = _this.getAction(data.rows[i].id);
 			
-			console.log(data);
 		}
 
 		if ($("."+paramTela+"enderecosGrid", Endereco.workspace).css('display') == 'none') {
@@ -142,6 +141,7 @@ function Endereco(paramTela, paramMessage) {
 			contextPath+'/cadastro/endereco/incluirNovoEndereco',
 			formData,
 			function(result) {
+				
 				$("."+paramTela+"enderecosGrid", Endereco.workspace).flexAddData({
 					page: result.page, total: result.total, rows: result.rows
 				});	
@@ -154,8 +154,7 @@ function Endereco(paramTela, paramMessage) {
 				
 				_this.processarResultadoConsultaEndereco(result);
 			},
-			true,
-			paramMessage
+			true
 		);
 	},
 
@@ -316,7 +315,7 @@ function Endereco(paramTela, paramMessage) {
 			null,
 			isFromModal
 		);
-	}
+	},
 
 	this.autoCompletarCep = function() {
 		var cep = $("#"+paramTela+"cep", Endereco.workspace).val().replace("_","");
