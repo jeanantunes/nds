@@ -151,16 +151,73 @@
 
 	</form>
 
+			<div class="areaBts">
+				<div class="area">
+					<div id="botaoNovoProdutoOpaco">
+							<span class="bt_incluir_novo" id="bt_novo_produtoOpaco" title="Incluir Nova Linha"> 
+								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Novo Produto 
+								</a> 
+							</span>
+					</div>
 
-	<div class="corpo">
+					<div id="botaoAdicionarOpaco">
+							<span class="bt_incluir_novo" id="bt_adicionarOpaco" title="Adicionar Nota Fiscal"> 
+								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Adicionar Nota Fiscal 
+								</a> 
+							</span>
+					</div>
 
-		<br clear="all" /> <br />
-
-		<div class="container">
-
+					<div id="botaoNovoProduto">
+							<span class="bt_incluir_novo" id="bt_novo_produto" title="Incluir Nova Linha"> 
+								<a href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();"> 
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Novo Produto 
+								</a> 
+							</span>
+					</div>	
+					
+					<div id="botaoAdicionar">
+							<span class="bt_incluir_novo" id="bt_adicionar" title="Adicionar Nota Fiscal"> 
+								<a href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();">  
+									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
+									Adicionar Nota Fiscal 
+								</a> 
+							</span>
+					</div>
+					
+					<div id="botoesNormais">	
+														
+						<span class="bt_novos" title="Salvar"> 
+							<a href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()">
+								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+								Salvar 
+							</a> 
+						</span>
+						
+						<span class="bt_novos" title="Cancelar"> 
+							<a href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()">
+								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
+								Cancelar 
+							</a> 
+						</span>
+						
+						<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
+							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()">
+								<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
+								Confirmar
+							</a>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="linha_separa_fields">&nbsp;</div>
 			<form id="pesquisa_recebimento_fisico_form">
 
-				<fieldset class="classFieldset">
+				<fieldset class="fieldFiltro">
 				
 					<legend> Pesquisar Recebimento Físico</legend>
 					
@@ -227,11 +284,11 @@
 			
 			<div class="linha_separa_fields">&nbsp;</div>
 
-			<fieldset class="classFieldset">
+			<fieldset class="fieldGrid">
 			
 				<legend>Recebimentos Físico Cadastrados</legend>
 				
-				<div class="grids" style="display: none;">
+				<div class="grids" style="display: block;">
 				
 					<div class="gridWrapper">
 					
@@ -239,64 +296,7 @@
 					
 					</div>
 					
-					<div id="botaoNovoProdutoOpaco">
-							<span class="bt_incluir_novo" id="bt_novo_produtoOpaco" title="Incluir Nova Linha"> 
-								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
-									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-									Novo Produto 
-								</a> 
-							</span>
-					</div>
-
-					<div id="botaoAdicionarOpaco">
-							<span class="bt_incluir_novo" id="bt_adicionarOpaco" title="Adicionar Nota Fiscal"> 
-								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
-									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-									Adicionar Nota Fiscal 
-								</a> 
-							</span>
-					</div>
-
-					<div id="botaoNovoProduto">
-							<span class="bt_incluir_novo" id="bt_novo_produto" title="Incluir Nova Linha"> 
-								<a href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();"> 
-									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-									Novo Produto 
-								</a> 
-							</span>
-					</div>	
 					
-					<div id="botaoAdicionar">
-							<span class="bt_incluir_novo" id="bt_adicionar" title="Adicionar Nota Fiscal"> 
-								<a href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();">  
-									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-									Adicionar Nota Fiscal 
-								</a> 
-							</span>
-					</div>
-					
-					<div id="botoesNormais">	
-														
-						<span class="bt_novos" title="Salvar"> 
-							<a href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()">
-								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
-								Salvar 
-							</a> 
-						</span>
-						
-						<span class="bt_novos" title="Cancelar"> 
-							<a href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()">
-								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
-								Cancelar 
-							</a> 
-						</span>
-						
-						<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
-							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()">
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
-								Confirmar
-							</a>
-						</span>
 					</div>	
 					
 					<div id="botoesOpacos">
@@ -333,12 +333,8 @@
 
 			</fieldset>
 
-			<div class="linha_separa_fields">&nbsp;</div>
+			
 
-		</div>
-
-	</div>
-	
 	
 	
 

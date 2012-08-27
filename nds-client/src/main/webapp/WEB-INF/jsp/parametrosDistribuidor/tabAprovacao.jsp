@@ -1,7 +1,8 @@
 <div id="tabAprovacao" style="font-size: 11px;">
-	<fieldset style="width: 470px !important; margin-bottom: 5px;">
+	<br/>
+	<fieldset style="width: 470px !important; margin-bottom: 5px; margin-left:10px;">
 		<legend>Aprovação</legend>
-		<table width="450" border="0" cellspacing="0" cellpadding="0">
+		<table width="450" border="0" cellspacing="2" cellpadding="2">
 			<tr>
 				<td width="23"><input
 					name="parametrosDistribuidor.utilizaControleAprovacao"
@@ -18,7 +19,7 @@
 				<td>&nbsp;</td>
 			</tr>
 		</table>
-		<table width="451" border="0" cellspacing="0" cellpadding="0" id="controlesAprovacao">
+		<table width="451" border="0" cellspacing="2" cellpadding="2" id="controlesAprovacao">
 			<tr>
 				<td colspan="6">Para as Funcionalidades:</td>
 			</tr>
@@ -50,9 +51,9 @@
 	</fieldset>
 	<fieldset style="width: 390px !important; margin-bottom: 5px;">
 		<legend>Prazo de Follow up</legend>
-		<table width="280" border="0" cellspacing="0" cellpadding="0">
+		<table width="320" border="0" cellspacing="2" cellpadding="2">
 			<tr>
-				<td width="240">Aviso prévio para vencímento de contratos
+				<td width="280">Aviso prévio para vencímento de contratos
 					(dias)</td>
 				<td width="40"><input
 					name="parametrosDistribuidor.prazoFollowUp" type="text"
@@ -63,9 +64,9 @@
 	</fieldset>
 	<fieldset style="width: 390px !important; margin-bottom: 5px;">
 		<legend>Aviso Prévio para Validade de Garantia</legend>
-		<table width="280" border="0" cellspacing="0" cellpadding="0">
+		<table width="320" border="0" cellspacing="2" cellpadding="2">
 			<tr>
-				<td width="240">Aviso prévio para vencimento de garantias (dias).</td>
+				<td width="280">Aviso prévio para vencimento de garantias (dias).</td>
 				<td width="40"><input
 					name="parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia"
 					type="text" id="prazoAvisoPrevioValidadeGarantia"

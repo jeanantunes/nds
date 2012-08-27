@@ -1,22 +1,23 @@
 <div id="tabEmissao">
-	<fieldset style="width: 390px !important;">
+	<br/>
+	<fieldset style="width: 390px !important; margin-left:10px;">
 		<legend>Emissão de Documentos</legend>
-		<table width="430" border="0" cellspacing="0" cellpadding="0">
-			<tr>
+		<table width="380" border="0" cellspacing="2" cellpadding="2">
+			<tr class="header_table">
 				<td>Utiliza:</td>
 				<td align="center">Impressão</td>
 				<td align="center">E-mail</td>
 			</tr>
-			<tr>
-				<td width="203">Slip</td>
-				<td width="120" align="center"><input
+			<tr class="class_linha_1">
+				<td width="173">Slip</td>
+				<td width="100" align="center"><input
 					name="parametrosDistribuidor.slipImpressao" id="slipImpressao"
 					type="checkbox" ${parametrosDistribuidor.slipImpressao ? "checked" : ""}/></td>
 				<td width="107" align="center"><input
 					name="parametrosDistribuidor.slipEmail" id="slipEmail"
 					type="checkbox" ${parametrosDistribuidor.slipEmail ? "checked" : ""}/></td>
 			</tr>
-			<tr>
+			<tr class="class_linha_2">
 				<td>Boleto</td>
 				<td align="center"><input
 					name="parametrosDistribuidor.boletoImpressao" id="boletoImpressao"
@@ -25,7 +26,7 @@
 					name="parametrosDistribuidor.boletoEmail" id="boletoEmail"
 					type="checkbox" ${parametrosDistribuidor.boletoEmail ? "checked" : ""}/></td>
 			</tr>
-			<tr>
+			<tr class="class_linha_1">
 				<td>Boleto + Slip</td>
 				<td align="center"><input
 					name="parametrosDistribuidor.boletoSlipImpressao"
@@ -34,7 +35,7 @@
 					name="parametrosDistribuidor.boletoSlipEmail" id="boletoSlipEmail"
 					type="checkbox" ${parametrosDistribuidor.boletoSlipEmail ? "checked" : ""}/></td>
 			</tr>
-			<tr>
+			<tr class="class_linha_2">
 				<td>Recibo</td>
 				<td align="center"><input
 					name="parametrosDistribuidor.reciboImpressao" id="reciboImpressao"
@@ -43,7 +44,7 @@
 					name="parametrosDistribuidor.reciboEmail" id="reciboEmail"
 					type="checkbox" ${parametrosDistribuidor.reciboEmail ? "checked" : ""}/></td>
 			</tr>
-			<tr>
+			<tr class="class_linha_1">
 				<td>Nota de Envio</td>
 				<td align="center"><input
 					name="parametrosDistribuidor.notaEnvioImpressao"
@@ -52,7 +53,7 @@
 					name="parametrosDistribuidor.notaEnvioEmail" id="notaEnvioEmail"
 					type="checkbox" ${parametrosDistribuidor.notaEnvioEmail ? "checked" : ""}/></td>
 			</tr>
-			<tr>
+			<tr class="class_linha_2">
 				<td>Chamada de Encalhe</td>
 				<td align="center"><input
 					name="parametrosDistribuidor.chamadaEncalheImpressao"

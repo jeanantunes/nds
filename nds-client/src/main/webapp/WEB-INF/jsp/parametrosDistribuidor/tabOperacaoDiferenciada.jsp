@@ -1,13 +1,11 @@
 <div id="tabDiferenciada">
-            
-
-   <br clear="all" />
-   <fieldset style="width:800px;">
+   <br />
+   <fieldset style="width:800px; margin-left:10px;">
    	<legend>Grupos</legend>
 
        <table class="gruposGrid"></table>
        
-       <span class="bt_novos" title="Incluir Novo"><a href="javascript:;" onclick="OperacaoDiferenciadaController.novoGrupo();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir Novo</a></span>
+       <span class="bt_novos" title="Incluir Novo"><a href="javascript:;" onclick="OperacaoDiferenciadaController.novoGrupo();" rel="tipsy" title="Incluir Novo Grupo"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" /></a></span>
        
    </fieldset>
    <br clear="all" />

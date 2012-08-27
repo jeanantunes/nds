@@ -112,7 +112,7 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Tipo Produto',
 				name : 'tipoProdutoDescricao',
-				width : 80,
+				width : 93,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -142,7 +142,7 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Desconto %',
 				name : 'percentualDesconto',
-				width : 65,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -450,7 +450,7 @@ var produtoController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 			
 			var linkAprovar = '<a href="javascript:;" onclick="produtoController.editarProduto(' + row.cell.id + ');" style="cursor:pointer">' +
-					     	  	'<img title="Editar" src="' + contextPath +'/images/ico_editar.gif" style="margin-right:5px" border="0px" />' +
+					     	  	'<img title="Editar" src="' + contextPath +'/images/ico_editar.gif" style="margin-right:10px" border="0px" />' +
 					  		  '</a>';
 			
 			var linkExcluir = '<a href="javascript:;" onclick="produtoController.removerProduto(' + row.cell.id + ');" style="cursor:pointer">' +

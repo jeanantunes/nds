@@ -16,7 +16,7 @@ var boxController = $.extend(true, {
 				} else {
 					$.each(data.rows, function(index, value) {
 						var idBox = value.cell.id;
-						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-left:5px;" />';
+						var acao = '<a href="javascript:;" onclick="boxController.editar(' + idBox + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-right:10px;" />';
 						acao += '</a> <a href="javascript:;" onclick="boxController.excluir(' + idBox + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
 
 						value.cell.acao = acao;						
@@ -39,7 +39,7 @@ var boxController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nome',
-				width : 350,
+				width : 380,
 				sortable : true,
 				align : 'left'
 			}, {

@@ -20,7 +20,7 @@
 		}
 		
 		.ui-tabs .ui-tabs-panel {
-		   padding: 6px!important;
+		   /*padding: 6px!important;*/
 		}
 	</style>
 
@@ -48,7 +48,7 @@
 			<table width="800" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="135"><strong>C&oacute;digo:</strong></td>
-					<td width="260"><input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:130px;" maxlength="30" /></td>
+					<td width="260"><input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>
 					<td width="142"><strong>Produto:</strong></td>
 					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
 				</tr>
@@ -66,12 +66,12 @@
 				</tr>
 				<tr>
 					<td><strong> Slogan do Produto:</strong></td>
-					<td colspan="3"><input type="text" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:657px;" /></td>
+					<td colspan="3"><input type="text" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:652px;" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Produto:</strong></td>
 					<td>
-						<select name="comboTipoProdutoCadastro" id="comboTipoProdutoCadastro" style="width:210px;" >
+						<select name="comboTipoProdutoCadastro" id="comboTipoProdutoCadastro" style="width:200px;" >
 						</select>
 					</td>
 					<td><strong>Forma Comercializa&ccedil;&atilde;o:</strong></td>
@@ -95,7 +95,7 @@
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
 					<td>
-						<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:210px;" onchange="produtoController.carregarPercentualDesconto();" >
+						<select name="comboTipoDesconto" id="comboTipoDesconto" style="width:200px;" onchange="produtoController.carregarPercentualDesconto();" >
 						</select>
 					</td>
 					<td><strong>% Desconto:</strong></td>
@@ -116,8 +116,8 @@
 										
 									<table>
 										<tr>									
-											<td width="105">Periodicidade: </td>
-											<td width="209">
+											<td width="120">Periodicidade: </td>
+											<td width="210">
 												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" >
 													<option value="" selected="selected"></option>
 													<option value="SEMANAL" >Semanal</option>

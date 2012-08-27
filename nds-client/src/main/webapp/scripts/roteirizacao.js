@@ -214,7 +214,7 @@ var roteirizacao = $.extend(true, {
 				}],
 				sortname : "codigo",
 				width : 270,
-				height : 280
+				height : 220
 			});
 		},
 		
@@ -339,7 +339,7 @@ var roteirizacao = $.extend(true, {
 		$("#roteiroTranferenciaNome", roteirizacao.workspace).val('');
 		$("#dialog-transfere-rota", roteirizacao.workspace ).dialog({
 			resizable: false,
-			height:320,
+			height:'auto',
 			width:410,
 			modal: true,
 			buttons: {
@@ -463,9 +463,9 @@ var roteirizacao = $.extend(true, {
 				colModel : [ {
 					display : '',
 					name : 'selecione',
-					width : 15,
+					width : 20,
 					sortable : true,
-					align : 'center'
+					align : 'left'
 				},{
 					display : 'Ordem',
 					name : 'ordem',
@@ -511,7 +511,7 @@ var roteirizacao = $.extend(true, {
 				}],
 				sortname : "ordem",
 				width : 590,
-				height : 284
+				height : 220
 			});
 		},
 	
@@ -521,13 +521,13 @@ var roteirizacao = $.extend(true, {
 			$.each(data.rows, function(index, value) {
 	
 				if ( tamanhoLista == 1 ){
-					value.cell.ordenar = '<a href="javascript:;" style="cursor:default;"><img src="'+contextPath+'/images/seta_sobe_desab.gif" border="0" alt="Sobe" hspace="3" /></a><a href="javascript:;" style="cursor:default;"><img src="'+contextPath+'/images/seta_desce_desab.gif" border="0" alt="Desce" hspace="5"  /></a>';
+					value.cell.ordenar = '<a href="javascript:;" style="cursor:default; margin-right:5px;"><img src="'+contextPath+'/images/seta_sobe_desab.gif" border="0" alt="Sobe" /></a><a href="javascript:;" style="cursor:default;margin-right:5px;"><img src="'+contextPath+'/images/seta_desce_desab.gif" border="0" alt="Desce"  /></a>';
 				} else if ( index == 0 ){
-					value.cell.ordenar = '<a href="javascript:;"  style="cursor:default;"><img src="'+contextPath+'/images/seta_sobe_desab.gif" border="0" alt="Sobe" hspace="3" /></a><a href="javascript:;" onclick="roteirizacao.atualizaOrdenacaoDesc('+value.cell.idRoteirizacao+','+value.cell.ordem+','+value.cell.idPontoVenda+' )"><img src="'+contextPath+'/images/seta_desce.gif" border="0" alt="Desce" hspace="5" /></a>';
+					value.cell.ordenar = '<a href="javascript:;"  style="cursor:default; margin-right:5px;"><img src="'+contextPath+'/images/seta_sobe_desab.gif" border="0" alt="Sobe"  /></a><a href="javascript:;" onclick="roteirizacao.atualizaOrdenacaoDesc('+value.cell.idRoteirizacao+','+value.cell.ordem+','+value.cell.idPontoVenda+' )"><img src="'+contextPath+'/images/seta_desce.gif" border="0" alt="Desce"  /></a>';
 				}  else if ( index == (tamanhoLista-1)  ){
-					value.cell.ordenar = '<a href="javascript:;" onclick="roteirizacao.atualizaOrdenacaoAsc('+value.cell.idRoteirizacao+','+value.cell.ordem+','+value.cell.idPontoVenda+' )"><img src="'+contextPath+'/images/seta_sobe.gif" border="0" alt="Sobe" hspace="3" /></a><a href="javascript:;"   style="cursor:default;"><img src="'+contextPath+'/images/seta_desce_desab.gif" border="0" alt="Desce" hspace="5" /></a>';
+					value.cell.ordenar = '<a href="javascript:;" onclick="roteirizacao.atualizaOrdenacaoAsc('+value.cell.idRoteirizacao+','+value.cell.ordem+','+value.cell.idPontoVenda+' )" style=" margin-right:5px;"><img src="'+contextPath+'/images/seta_sobe.gif" border="0" alt="Sobe" style=" margin-right:10px;" /></a><a href="javascript:;"   style="cursor:default;"><img src="'+contextPath+'/images/seta_desce_desab.gif" border="0" alt="Desce" /></a>';
 				} else {
-					value.cell.ordenar = '<a href="javascript:;" onclick="roteirizacao.atualizaOrdenacaoAsc('+value.cell.idRoteirizacao+','+value.cell.ordem+','+value.cell.idPontoVenda+' )"><img src="'+contextPath+'/images/seta_sobe.gif" border="0" alt="Sobe" hspace="3" /></a><a href="javascript:;" onclick="roteirizacao.atualizaOrdenacaoDesc('+value.cell.idRoteirizacao+','+value.cell.ordem+','+value.cell.idPontoVenda+' )"><img src="'+contextPath+'/images/seta_desce.gif" border="0" alt="Desce" hspace="5" /></a>';
+					value.cell.ordenar = '<a href="javascript:;" onclick="roteirizacao.atualizaOrdenacaoAsc('+value.cell.idRoteirizacao+','+value.cell.ordem+','+value.cell.idPontoVenda+' )" style=" margin-right:5px;"><img src="'+contextPath+'/images/seta_sobe.gif" border="0" alt="Sobe" /></a><a href="javascript:;" onclick="roteirizacao.atualizaOrdenacaoDesc('+value.cell.idRoteirizacao+','+value.cell.ordem+','+value.cell.idPontoVenda+' )"><img src="'+contextPath+'/images/seta_desce.gif" border="0" alt="Desce"  /></a>';
 				}
 				
 				
@@ -590,7 +590,7 @@ var roteirizacao = $.extend(true, {
 			            roteirizacao.iniciaCotasDisponiveisGrid();
 						$( "#dialog-cotas-disponiveis", roteirizacao.workspace ).dialog({
 							resizable: false,
-							height:515,
+							height:470,
 							width:870,
 							modal: true,
 							buttons: {
@@ -1224,7 +1224,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			}, {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 78,
 				sortable : true,
 				align : 'left',
 			}, {
@@ -1241,7 +1241,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 255,
+			height : 'auto',
 			singleSelect : true
 			
 		});
@@ -1380,8 +1380,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		roteirizacao.reiniciaTelaRoteirizacao();
 	    $( "#dialog-roteirizacao", roteirizacao.workspace ).dialog({
 				resizable: false,
-				height:590,
-				width:955,
+				height:510,
+				width:940,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {

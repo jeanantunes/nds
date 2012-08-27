@@ -42,13 +42,17 @@
             	<fieldset style="width:700px!important; margin-bottom:5px;">
             		<legend>Selecione as Cotas:</legend>
                     <table class="selCotasGrid"></table>
-                    <span class="bt_sellAll" style="float:right; margin-right:23px;"><label for="sel">Selecionar Todos</label>
-                    
-<!-- SELECIONAR TODOS COTAS -->
-<input type="checkbox" name="Todos" id="sel" onclick="OperacaoDiferenciadaController.selecionarTodasCotas(this);"/>
-					
-					
-					</span>                    
+                    <table width="150" border="0" align="right" cellpadding="0" cellspacing="0">
+					    <tr>
+					        <td width="115" align="right"><label for="sel">Selecionar Todos</label></td>
+					        <td width="35" align="left" valign="top">
+					        <span class="bt_sellAll" style="float:right; margin-right:23px;">
+								<!-- SELECIONAR TODOS COTAS -->
+								<input type="checkbox" name="Todos" id="sel" onclick="OperacaoDiferenciadaController.selecionarTodasCotas(this);"/>
+							</span> 
+							</td>
+					    </tr>
+					</table>                   
                     <br clear="all" />
 					
                     
@@ -61,13 +65,16 @@
             	<fieldset style="width:700px!important; margin-bottom:5px;">
             		<legend>Selecione os Municipios:</legend>
                     <table class="selMunicipiosGrid"></table>
-                    <span class="bt_sellAll" style="float:right; margin-right:20px"><label for="sel">Selecionar Todos</label>
-                    
+                    <table width="150" border="0" align="right" cellpadding="0" cellspacing="0">
+					    <tr>
+					        <td width="115" align="right"><label for="sel">Selecionar Todos</label></td>
+					        <td width="35" align="left" valign="top">
+					        	<span class="bt_sellAll" style="float:right; margin-right:20px">
 <!-- SELECIONAR TODOS MUNICIPIOS -->
-<input type="checkbox" name="Todos" id="selecionarTodosID" onclick="OperacaoDiferenciadaController.selecionarTodosMunicipios(this);" />
-
-						
-						</span>
+<input type="checkbox" name="Todos" id="selecionarTodosID" onclick="OperacaoDiferenciadaController.selecionarTodosMunicipios(this);" />							</span>
+							</td>
+					    </tr>
+					</table>
                     
                     <br clear="all" />
 					

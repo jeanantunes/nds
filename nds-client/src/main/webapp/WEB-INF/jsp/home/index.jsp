@@ -290,7 +290,7 @@
 					</div>
 					<br clear="all"/>
 					<div class="bts_header">
-						<span class="bt_novos">
+						<span class="bt_novos" style="display:none;">
 							<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
 						</span>
 					
