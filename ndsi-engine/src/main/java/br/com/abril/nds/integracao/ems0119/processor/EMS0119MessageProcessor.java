@@ -3,8 +3,6 @@ package br.com.abril.nds.integracao.ems0119.processor;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -48,12 +46,6 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 		if (null != produtoEdicao) {
 
-			if (produtoEdicao.getDesconto() != input.getDesconto()) {
-				produtoEdicao.setDesconto(input.getDesconto());
-				ndsiLoggerFactory.getLogger().logInfo(message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Desconto para: " + input.getDesconto());
-			}
 			if (!produtoEdicao.getProduto().getNome()
 					.equals(input.getNomeDaPublicacao())) {
 				produtoEdicao.getProduto().setNome(input.getNomeDaPublicacao());

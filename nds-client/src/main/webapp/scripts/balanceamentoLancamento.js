@@ -213,7 +213,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento) {
 	
 	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado, index) {
 		
-		return '<input id="inputNovaData' + index + '" onchange="' + T.instancia + '.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:80px; float:left;" value="' + dataMatrizDistrib + '" ' + 
+		return '<input id="inputNovaData' + index + '" onchange="' + T.instancia + '.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:60px; float:left;" value="' + dataMatrizDistrib + '" ' + 
 			   (isBloqueado? ' disabled="disabled" ' : '') +  
 			   '/>' +
 		       '<span class="bt_atualizarIco" title="Reprogramar" ' +

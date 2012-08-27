@@ -265,14 +265,16 @@ function Endereco(paramTela, paramMessage) {
 			contextPath+'/cadastro/endereco/obterEnderecoPorCep',
 			{ "cep": cep },			 
 			function(result) {
-				$("#"+paramTela+"idEndereco", Endereco.workspace).val(result.id);
-				$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val(result.tipoLogradouro);
-				$("#"+paramTela+"logradouro", Endereco.workspace).val(result.logradouro);
-				$("#"+paramTela+"codigoBairro", Endereco.workspace).val(result.codigoBairro);
-				$("#"+paramTela+"bairro", Endereco.workspace).val(result.bairro);
-				$("#"+paramTela+"uf", Endereco.workspace).val(result.uf);
-				$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(result.codigoCidadeIBGE);
-				$("#"+paramTela+"cidade", Endereco.workspace).val(result.localidade);
+				
+					$("#"+paramTela+"idEndereco", Endereco.workspace).val(result.id);
+					$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val(result.tipoLogradouro);
+					$("#"+paramTela+"logradouro", Endereco.workspace).val(result.logradouro);
+					$("#"+paramTela+"codigoBairro", Endereco.workspace).val(result.codigoBairro);
+					$("#"+paramTela+"bairro", Endereco.workspace).val(result.bairro);
+					$("#"+paramTela+"uf", Endereco.workspace).val(result.uf);
+					$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(result.codigoCidadeIBGE);
+					$("#"+paramTela+"cidade", Endereco.workspace).val(result.localidade);
+				
 			},
 			null, 
 			isFromModal,
@@ -354,15 +356,18 @@ function Endereco(paramTela, paramMessage) {
 				function(result) {
 
 					if (isOnBlur) {
+						
+						if(result[0]) {
+						
+							var valor = result[0].value;
 
-						var valor = result[0] ? result[0].value : "";
+							var codigoIBGE = result[0].chave.$;
 
-						var codigoIBGE = result[0] ? result[0].chave.$ : "";
+							$(idCampoCidade, Endereco.workspace).val(valor);
 
-						$(idCampoCidade, Endereco.workspace).val(valor);
-
-						$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(codigoIBGE);
-
+							$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(codigoIBGE);
+						}
+						
 					} else {
 
 						$(idCampoCidade, Endereco.workspace).autocomplete({
@@ -400,15 +405,18 @@ function Endereco(paramTela, paramMessage) {
 				function(result) {
 
 					if (isOnBlur) {
+						
+						if (result[0]) {
+						
+							var nome = result[0].value;
 
-						var nome = result[0] ? result[0].value : "";
+							var codigoBairro = result[0].chave.$;
+						
+							$("#"+paramTela+"bairro", Endereco.workspace).val(nome);
 
-						var codigoBairro = result[0] ? result[0].chave.$ : "";
-
-						$("#"+paramTela+"bairro", Endereco.workspace).val(nome);
-
-						$("#"+paramTela+"codigoBairro", Endereco.workspace).val(codigoBairro);
-
+							$("#"+paramTela+"codigoBairro", Endereco.workspace).val(codigoBairro);
+						}
+						
 					} else {
 
 						$("#"+paramTela+"bairro", Endereco.workspace).autocomplete({
@@ -446,11 +454,13 @@ function Endereco(paramTela, paramMessage) {
 				function(result) {
 
 					if (isOnBlur) {
+						
+						if (result[0]) {
+						
+							var nome = result[0].value;
 
-						var nome = result[0] ? result[0].value : nomeLogradouros;
-
-						$("#"+paramTela+"logradouro", Endereco.workspace).val(nome);
-
+							$("#"+paramTela+"logradouro", Endereco.workspace).val(nome);
+						}
 					} else {
 
 						$("#"+paramTela+"logradouro", Endereco.workspace).autocomplete({

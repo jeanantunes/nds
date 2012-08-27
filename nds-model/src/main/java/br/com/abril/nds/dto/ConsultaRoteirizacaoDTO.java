@@ -27,63 +27,186 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 	private String nome ;
 	
 	private Long qntCotas;
+
+	private Long idBox;
+	
+	private Long idRoteiro;
+	
+	private Long idRota;
+	
+	private Long idCota;
 	
 	public ConsultaRoteirizacaoDTO() {}
-		
-	
+
 	/**
-	 * @return the qntCotas
+	 * Obtém nomeBox
+	 *
+	 * @return String
+	 */
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	/**
+	 * Atribuí nomeBox
+	 * @param nomeBox 
+	 */
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+
+	/**
+	 * Obtém descricaoRoteiro
+	 *
+	 * @return String
+	 */
+	public String getDescricaoRoteiro() {
+		return descricaoRoteiro;
+	}
+
+	/**
+	 * Atribuí descricaoRoteiro
+	 * @param descricaoRoteiro 
+	 */
+	public void setDescricaoRoteiro(String descricaoRoteiro) {
+		this.descricaoRoteiro = descricaoRoteiro;
+	}
+
+	/**
+	 * Obtém descricaoRota
+	 *
+	 * @return String
+	 */
+	public String getDescricaoRota() {
+		return descricaoRota;
+	}
+
+	/**
+	 * Atribuí descricaoRota
+	 * @param descricaoRota 
+	 */
+	public void setDescricaoRota(String descricaoRota) {
+		this.descricaoRota = descricaoRota;
+	}
+
+	/**
+	 * Obtém numeroCota
+	 *
+	 * @return Integer
+	 */
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	/**
+	 * Atribuí numeroCota
+	 * @param numeroCota 
+	 */
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	/**
+	 * Obtém nome
+	 *
+	 * @return String
+	 */
+	public String getNome() {
+		return nome;
+	}
+
+	/**
+	 * Atribuí nome
+	 * @param nome 
+	 */
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	/**
+	 * Obtém qntCotas
+	 *
+	 * @return Long
 	 */
 	public Long getQntCotas() {
 		return qntCotas;
 	}
 
 	/**
-	 * @param qntCotas the qntCotas to set
+	 * Atribuí qntCotas
+	 * @param qntCotas 
 	 */
 	public void setQntCotas(Long qntCotas) {
 		this.qntCotas = qntCotas;
 	}
 
-
-
-	public String getNomeBox() {
-		return nomeBox;
+	/**
+	 * Obtém idBox
+	 *
+	 * @return Long
+	 */
+	public Long getIdBox() {
+		return idBox;
 	}
 
-	public void setNomeBox(String nomeBox) {
-		this.nomeBox = nomeBox;
+	/**
+	 * Atribuí idBox
+	 * @param idBox 
+	 */
+	public void setIdBox(Long idBox) {
+		this.idBox = idBox;
 	}
 
-	public String getDescricaoRoteiro() {
-		return descricaoRoteiro;
+	/**
+	 * Obtém idRoteiro
+	 *
+	 * @return Long
+	 */
+	public Long getIdRoteiro() {
+		return idRoteiro;
 	}
 
-	public void setDescricaoRoteiro(String descricaoRoteiro) {
-		this.descricaoRoteiro = descricaoRoteiro;
+	/**
+	 * Atribuí idRoteiro
+	 * @param idRoteiro 
+	 */
+	public void setIdRoteiro(Long idRoteiro) {
+		this.idRoteiro = idRoteiro;
 	}
 
-	public String getDescricaoRota() {
-		return descricaoRota;
+	/**
+	 * Obtém idRota
+	 *
+	 * @return Long
+	 */
+	public Long getIdRota() {
+		return idRota;
 	}
 
-	public void setDescricaoRota(String descricaoRota) {
-		this.descricaoRota = descricaoRota;
+	/**
+	 * Atribuí idRota
+	 * @param idRota 
+	 */
+	public void setIdRota(Long idRota) {
+		this.idRota = idRota;
 	}
 
-	public Integer getNumeroCota() {
-		return numeroCota;
+	/**
+	 * Obtém idCota
+	 *
+	 * @return Long
+	 */
+	public Long getIdCota() {
+		return idCota;
 	}
 
-	public void setNumeroCota(Integer numeroCota) {
-		this.numeroCota = numeroCota;
+	/**
+	 * Atribuí idCota
+	 * @param idCota 
+	 */
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+	
+	
 }

@@ -118,7 +118,7 @@ var entregadorController = $.extend(true, {
 
 		$( "#dialog-novoEntregador", this.workspace ).dialog({
 			resizable: false,
-			height:610,
+			height:570,
 			width:840,
 			modal: true,
 			buttons: {
@@ -479,7 +479,7 @@ var entregadorController = $.extend(true, {
 				+ idEntregador
 				+ ')" '
 				+ ' style="cursor:pointer;border:0px;" title="Editar entregador">'
-				+ '<img src="'  + contextPath + '/images/ico_editar.gif" border="0px" style="margin-right:5px;"/>'
+				+ '<img src="'  + contextPath + '/images/ico_editar.gif" border="0px" style="margin-right:10px;"/>'
 				+ '</a>'
 				+ '<a href="javascript:;" onclick="entregadorController.confirmarExclusaoEntregador('
 				+ idEntregador

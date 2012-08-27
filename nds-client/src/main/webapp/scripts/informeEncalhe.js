@@ -127,7 +127,7 @@ InformeEncalhe.prototype.initGrid = function() {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180,
+				height : 'auto',
 				onChangeSort:function(sortname, sortorder){
 					console.log("sort");
 					_this.imprimirParans.sortname = sortname;

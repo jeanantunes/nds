@@ -1,5 +1,6 @@
 <div id="tabCadastroFiscal">
-	<fieldset style="width: 380px !important; float: left">
+	<br/>
+	<fieldset style="width: 380px !important; float: left; margin-left:10px;">
 		<legend>Cadastro Distribuidor</legend>
 		<table width="370" border="0" cellpadding="2" cellspacing="1"
 			class="filtro">

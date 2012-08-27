@@ -526,12 +526,12 @@ Imovel.prototype.initGrid = function() {
 															+ idImovel
 															+ ');" ><img src="'
 															+ contextPath
-															+ '/images/ico_editar.gif" border="0" hspace="5" /></a>';
+															+ '/images/ico_editar.gif" border="0" style="margin-right:10px;" /></a>';
 													acao += '<a href="javascript:;" onclick="tipoCotaGarantia.controller.remove('
 															+ idImovel
 															+ ');" ><img src="'
 															+ contextPath
-															+ '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+															+ '/images/ico_excluir.gif" border="0" /></a>';
 
 													value.cell.acao = acao;
 												});

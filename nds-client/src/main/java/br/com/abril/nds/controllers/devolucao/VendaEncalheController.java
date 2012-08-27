@@ -299,7 +299,7 @@ public class VendaEncalheController {
 		produtoVO.setFormaVenda(tratarValor(venda.getFormaVenda()));
 		produtoVO.setNomeProduto(venda.getNomeProduto());
 		produtoVO.setNumeroEdicao(venda.getNumeroEdicao());
-		produtoVO.setPrecoCapa(CurrencyUtil.formatarValor(venda.getPrecoCapa()));
+		produtoVO.setPrecoDesconto(CurrencyUtil.formatarValor(venda.getPrecoDesconto()));
 		produtoVO.setTotal(CurrencyUtil.formatarValor(venda.getValoTotalProduto()));
 		produtoVO.setQntSolicitada(venda.getQntProduto());
 		produtoVO.setDataVenda(DateUtil.formatarDataPTBR(venda.getDataVenda()));
@@ -408,7 +408,6 @@ public class VendaEncalheController {
 		vendaEncalheVO.setNomeProduto(tratarValor(dto.getNomeProduto()));
 		vendaEncalheVO.setNumeroCota(tratarValor(dto.getNumeroCota()));
 		vendaEncalheVO.setNumeroEdicao(tratarValor(dto.getNumeroEdicao()));
-		vendaEncalheVO.setPrecoCapa(CurrencyUtil.formatarValor(( dto.getPrecoCapa())));
 		vendaEncalheVO.setPrecoDesconto(CurrencyUtil.formatarValor((dto.getPrecoDesconto())));
 		vendaEncalheVO.setQntProduto( tratarValor(dto.getQntProduto()));
 		vendaEncalheVO.setTipoVendaEncalhe( (dto.getTipoVendaEncalhe()!= null)?dto.getTipoVendaEncalhe().getVenda():"");

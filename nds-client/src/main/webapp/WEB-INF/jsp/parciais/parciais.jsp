@@ -10,12 +10,12 @@
 </script>
 		
 <style type="text/css">
-#dialog-detalhes fieldset{width:900px!important;}
+#dialog-detalhes fieldset{width:880px!important;}
 
 #dialog-detalhes fieldset ul{}
 
 #dialog-detalhes fieldset li{float:left; margin-right:10px; margin-left:0px; margin-bottom:5px; line-height:20px;}
-
+#dialog-detalhes .flexigrid{width:880px!important;}
 #dialog-novo fieldset{width:250px!important;}
 
 #dialog-edit-produto, #dialog-detalhe-venda{display:none;}
@@ -126,11 +126,11 @@
 	<br clear="all" />
 	<br />
 	
-	<fieldset>
+	<fieldset style="margin-bottom:5px;">
 		<legend>Parciais</legend>
-		<div class="flexigrid" style="width: 900px; ">
+		
 	    	<table class="parciaisPopGrid"></table>
-	    </div>
+
 	</fieldset>
 	
 	

@@ -39,44 +39,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		super(ProdutoEdicao.class);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterPercentualComissionamento(java.lang.Long, java.lang.Integer, java.lang.Long)
-	 */
-	public BigDecimal obterFatorDesconto(Long idProdutoEdicao, Integer numeroCota, Long idDistribuidor) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select case when ( pe.desconto is not null ) then pe.desconto else ");
-		
-		hql.append(" ( case when ( ct.fatorDesconto is not null ) then ct.fatorDesconto  else  ");
-		
-		hql.append(" ( case when ( distribuidor.fatorDesconto is not null ) then distribuidor.fatorDesconto else 0 end ) end  ");
-		
-		hql.append(" ) end ");
-		
-		hql.append(" from ProdutoEdicao pe, Cota ct, Distribuidor distribuidor ");
-		
-		hql.append(" where ");
-		
-		hql.append(" ct.numeroCota = :numeroCota and ");
-
-		hql.append(" pe.id = :idProdutoEdicao and ");
-
-		hql.append(" distribuidor.id = :idDistribuidor ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("idProdutoEdicao", idProdutoEdicao);
-		
-		query.setParameter("numeroCota", numeroCota);
-		
-		query.setParameter("idDistribuidor", idDistribuidor);
-		
-		return (BigDecimal) query.uniqueResult();
-		
-	}
-	
 	
 	@SuppressWarnings("unchecked")
 	@Override

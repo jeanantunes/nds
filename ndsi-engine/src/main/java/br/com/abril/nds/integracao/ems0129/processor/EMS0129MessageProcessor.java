@@ -1,6 +1,6 @@
 package br.com.abril.nds.integracao.ems0129.processor;
 
-import java.io.FileWriter; 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -13,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0129.data.SomaRegistro;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking1Detalhe;
@@ -34,11 +32,14 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
+import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.util.MathUtil;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -55,6 +56,9 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private DescontoService descontoService;
 
 	@Override
 	public void processMessage(Message message) {
@@ -278,16 +282,21 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 			outdetalhe.setCodigoCota(numeroCota);
 			outdetalhe.setQuantidade(moviEstCota.getQtde());
-			outdetalhe.setCodigoProduto(moviEstCota.getProdutoEdicao().getProduto().getCodigo());
-			outdetalhe.setEdicao(moviEstCota.getProdutoEdicao().getNumeroEdicao());
-			outdetalhe.setNomePublicacao(moviEstCota.getProdutoEdicao().getProduto().getNome());
-			outdetalhe.setPrecoCusto(moviEstCota.getProdutoEdicao().getPrecoCusto());
-			outdetalhe.setPrecoVenda(moviEstCota.getProdutoEdicao().getPrecoVenda());
-			outdetalhe.setDesconto(moviEstCota.getProdutoEdicao().getDesconto());
+			ProdutoEdicao produtoEdicao = moviEstCota.getProdutoEdicao();
+            outdetalhe.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+			outdetalhe.setEdicao(produtoEdicao.getNumeroEdicao());
+			outdetalhe.setNomePublicacao(produtoEdicao.getProduto().getNome());
+			outdetalhe.setPrecoCusto(produtoEdicao.getPrecoCusto());
+			
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+			outdetalhe.setPrecoVenda(precoVenda);
+			BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(moviEstCota.getCota(), produtoEdicao);
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+			outdetalhe.setDesconto(valorDesconto);
 
-			if (!moviEstCota.getProdutoEdicao().getLancamentos().isEmpty()) {
+			if (!produtoEdicao.getLancamentos().isEmpty()) {
 
-				for (Lancamento lanc : moviEstCota.getProdutoEdicao().getLancamentos()) {
+				for (Lancamento lanc : produtoEdicao.getLancamentos()) {
 
 					outdetalhe.setSequenciaNotaEnvio(lanc.getSequenciaMatriz());
 
@@ -318,16 +327,21 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 			outdetalhe.setCodigoCota(numeroCota);
 			outdetalhe.setQuantidade(moviEstCota.getQtde());
-			outdetalhe.setCodigoProduto(moviEstCota.getProdutoEdicao().getProduto().getCodigo());
-			outdetalhe.setEdicao(moviEstCota.getProdutoEdicao().getNumeroEdicao());
-			outdetalhe.setNomePublicacao(moviEstCota.getProdutoEdicao().getProduto().getNome());
-			outdetalhe.setPrecoCusto(moviEstCota.getProdutoEdicao().getPrecoCusto());
-			outdetalhe.setPrecoVenda(moviEstCota.getProdutoEdicao().getPrecoVenda());
-			outdetalhe.setDesconto(moviEstCota.getProdutoEdicao().getDesconto());
+			ProdutoEdicao produtoEdicao = moviEstCota.getProdutoEdicao();
+            outdetalhe.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+			outdetalhe.setEdicao(produtoEdicao.getNumeroEdicao());
+			outdetalhe.setNomePublicacao(produtoEdicao.getProduto().getNome());
+			outdetalhe.setPrecoCusto(produtoEdicao.getPrecoCusto());
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+            outdetalhe.setPrecoVenda(precoVenda);
+            
+            BigDecimal percentualDesconto = descontoService.obterDescontoPorCotaProdutoEdicao(moviEstCota.getCota(), produtoEdicao);
+            BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+			outdetalhe.setDesconto(valorDesconto);
 			
-			if (!moviEstCota.getProdutoEdicao().getLancamentos().isEmpty()) {
+			if (!produtoEdicao.getLancamentos().isEmpty()) {
 
-				for (Lancamento lanc : moviEstCota.getProdutoEdicao().getLancamentos()) {
+				for (Lancamento lanc : produtoEdicao.getLancamentos()) {
 
 					outdetalhe.setSequenciaNotaEnvio(lanc.getSequenciaMatriz());
 
@@ -345,8 +359,8 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 			}
 			
-			somaRegistros.addValorTotalBruto(moviEstCota.getProdutoEdicao().getPrecoCusto());
-			somaRegistros.addValorTotalDesconto(moviEstCota.getProdutoEdicao().getPrecoVenda());
+			somaRegistros.addValorTotalBruto(produtoEdicao.getPrecoCusto());
+			somaRegistros.addValorTotalDesconto(precoVenda);
 			
 		}
 		

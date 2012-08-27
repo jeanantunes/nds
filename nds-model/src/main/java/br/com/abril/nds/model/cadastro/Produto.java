@@ -572,5 +572,14 @@ public class Produto implements Serializable {
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
+	
+    /**
+     * Verifica se o produto é um publicação
+     * 
+     * @return true se o produto é uma publicação, false caso contrário
+     */
+	public boolean isPublicacao() {
+	    return !GrupoProduto.OUTROS.equals(tipoProduto.getGrupoProduto());
+	}
 
 }
