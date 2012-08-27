@@ -167,11 +167,11 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	
 	private String getHQLDesconto(){
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
 		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id ");
+		   .append(" and view.fornecedorId = fornecedores.id),0) ");
 		
 		return hql.toString();
 	}
