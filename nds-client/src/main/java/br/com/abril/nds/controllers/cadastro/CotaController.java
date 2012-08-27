@@ -474,7 +474,7 @@ public class CotaController {
 		validarFormatoData();
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
-		
+
 		cotaDTO = salvarDadosCota(cotaDTO);
 		
 		cotaDTO.setNumeroCnpj(Util.adicionarMascaraCNPJ(cotaDTO.getNumeroCnpj()));
@@ -483,6 +483,8 @@ public class CotaController {
 		
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
+	
+
 	
 	/**
 	 * Salva os dados de uma cota do tipo CPF
@@ -519,9 +521,16 @@ public class CotaController {
 		if(cotaDTO.getDataInclusao() == null){
 			cotaDTO.setDataInclusao(new Date());
 		}
-		
+
+		if (cotaDTO.isAlteracaoTitularidade()) {
+
+			cotaDTO = this.cotaService.criarCotaTitularidade(cotaDTO);
+
+			return cotaDTO;
+		}
+
 		Long idCota = cotaService.salvarCota(cotaDTO);
-		
+
 		return cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 	}
 	
