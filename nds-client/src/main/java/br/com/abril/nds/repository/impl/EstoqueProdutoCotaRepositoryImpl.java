@@ -153,11 +153,11 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 	 */
 	private static String getSubQueryConsultaValorComissionamento() {
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = cota.id ")
 		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedor.id ");
+		   .append(" and view.fornecedorId = fornecedor.id),0) ");
 		
 		return hql.toString();
 		

@@ -5,11 +5,12 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptRecebimentoFisico.js"></script>
 
-<script type="text/javascript">
+<script language="javascript" type="text/javascript">
 
-	var pesquisaProdutoRecebimentoFisico = new PesquisaProduto(recebimentoFisicoController.workspace);
-
-	recebimentoFisicoController.init();
+    var pesquisaProdutoRecebimentoFisico = new PesquisaProduto(recebimentoFisicoController.workspace);
+	$(function(){
+		recebimentoFisicoController.init();	
+    });
 	
 </script>
 
