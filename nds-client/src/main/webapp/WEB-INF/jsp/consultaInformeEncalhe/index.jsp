@@ -141,13 +141,22 @@ fieldset label {
 			</fieldset>
 		</form>
 	</div>
-
-	<fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_arq" title="Imprimir"><a href="javascript:;"
+				id="btnImprimir" rel="tipsy" title="Imprimir"><img
+					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+					hspace="5" border="0" alt="" /></a>
+			</span>
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldFiltro">
 		<legend> Pesquisar Informe de Recolhimento</legend>
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
 			class="filtro">
 			<tr>
-				<td width="68">Fornecedor:</td>
+				<td width="74">Fornecedor:</td>
 				<td width="210"><select name="select" id="idFornecdorSelect"
 					style="width: 200px;">
 						<option value="" selected="selected">Todos</option>
@@ -163,31 +172,26 @@ fieldset label {
 
 				<td colspan="3">Data Recolhimento:</td>
 
-				<td width="272"><input type="text" id="dataRecolhimentoBox"
+				<td width="109"><input type="text" id="dataRecolhimentoBox"
 					style="width: 70px;" /></td>
 
-				<td width="104"><span class="bt_pesquisar"><a
-						href="javascript:;" id="btnPesquisar">Pesquisar</a></span></td>
+				<td width="284"><span class="bt_novos"><a
+						href="javascript:;" id="btnPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 
 			</tr>
 		</table>
 	</fieldset>
 
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="classFieldset">
+	<fieldset class="fieldGrid">
 
 		<legend>Informe de Recolhimentos Cadastrados</legend>
 
 		<div class="grids" style="display: none;">
 
 			<div id="consultaInformeEncalheGrid"></div>
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"
-				id="btnImprimir"><img
-					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-					hspace="5" border="0" alt="" />Imprimir</a></span>
+			
 		</div>
 	</fieldset>
-	<div class="linha_separa_fields">&nbsp;</div>
-	<div></div>
 </body>
 </html>

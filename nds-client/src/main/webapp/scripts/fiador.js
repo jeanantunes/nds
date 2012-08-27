@@ -33,7 +33,7 @@ var fiadorController = {
 			
 			$("#fiadorController-dialog-fiador").dialog({
 				resizable: false,
-				height:610,
+				height:560,
 				width:840,
 				modal: true,
 				buttons: {
