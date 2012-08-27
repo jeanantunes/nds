@@ -20,18 +20,24 @@
 		<p>Confirma a exclusão deste Entregador?</p>
 	</div>
 
-	<div class="container">
 
-		<div id="effect" style="padding: 0 .7em;"
-			class="ui-state-highlight ui-corner-all">
-			<p>
-				<span style="float: left; margin-right: .3em;"
-					class="ui-icon ui-icon-info">
-				</span> 
-			</p>
+		<div class="areaBts">
+			<div class="area">
+				<span class="bt_novos" title="Novo">
+		           	<a href="javascript:;" id="linkBtnNovoEntregadorPF" rel="tipsy" title="Incluir Novo Entregador Pessoa Física">
+		           		<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
+		           	</a>
+		        </span>
+
+		        <span class="bt_novos" title="Novo">
+		        	<a href="javascript:;" id="linkBtnNovoEntregadorPJ" rel="tipsy" title="Incluir Novo Entregador Pessoa Juridica">
+		        		<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/>
+		        	</a>
+		        </span>
+			</div>
 		</div>
-    
-      <fieldset class="classFieldset" title="Capataz, Entregador, Mula, Carreteiro">
+    <div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldFiltro" title="Capataz, Entregador, Mula, Carreteiro">
    	    <legend> Pesquisar Entregador</legend>
    	    
    	    <form id="formularioPesquisaEntregadores">
@@ -51,8 +57,8 @@
               	<input type="text" name="filtroEntregador.cpfCnpj" id="textfield" style="width:150px;"/>
               </td>
               <td width="106">
-              	<span class="bt_pesquisar" id="btnPesquisar">
-              		<a href="javascript:;" id="linkBtnPesquisar">Pesquisar</a>
+              	<span class="bt_novos" id="btnPesquisar">
+              		<a href="javascript:;" id="linkBtnPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
               	</span>
               </td>
             </tr>
@@ -61,26 +67,14 @@
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="classFieldset">
-       	  <legend title="Capataz, Entregador, Mula, Carreteiro">Entregadores Cadastrados</legend>
-        <div class="grids" style="display:none;">
-        	<table class="pessoasGrid"></table>
-        </div>
-        <span class="bt_novos" title="Novo">
-           	<a href="javascript:;" id="linkBtnNovoEntregadorPF">
-           		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF
-           	</a>
-        </span>
+      
+      <div class="grids" style="display:none;">
+	      <fieldset class="fieldGrid">
+	       	  <legend title="Capataz, Entregador, Mula, Carreteiro">Entregadores Cadastrados</legend>
+	        	<table class="pessoasGrid"></table>
+	      </fieldset>
+      </div>
 
-        <span class="bt_novos" title="Novo">
-        	<a href="javascript:;" id="linkBtnNovoEntregadorPJ">
-        		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ
-        	</a>
-        </span>
-           
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-	</div>
 	
 	<jsp:include page="novoEntregador.jsp" />
 </body>

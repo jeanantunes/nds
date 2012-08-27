@@ -1,19 +1,145 @@
-var CadastroCalendario = {
+var CadastroCalendario = $.extend(true, {
 
-		mesPesquisaFeriados : null,
+	mesPesquisaFeriados : null,
+	
+	datasDestacar :  {},
+
+	init : function() {
+
+		$("#dtFeriadoNovo", CadastroCalendario.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: 'dd/mm/yy',
+		});
+		$("#dtFeriadoNovo", CadastroCalendario.workspace).mask("99/99/9999");	
 		
-		datasDestacar :  {},
+		CadastroCalendario.recarregarPainelCalendarioFeriado();
+		
+		$(".diaFeriadoGrid", CadastroCalendario.workspace).flexigrid({
+			colModel : [ {
+				display : 'Dia',
+				name : 'dataFeriado',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Tipo Feriado',
+				name : 'tipoFeriado',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Cidade',
+				name : 'nomeCidade',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Descrição',
+				name : 'descricaoFeriado',
+				width : 180,
+				sortable : true,
+				align : 'left',
+			}, {
+				display : 'Opera',
+				name : 'indOpera',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Cobrança',
+				name : 'indEfetuaCobranca',
+				width : 45,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Anual',
+				name : 'indRepeteAnualmente',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 650,
+			height : 120
+		});
+		
+		
+		$(".mesFeriadoGrid", CadastroCalendario.workspace).flexigrid({
+			colModel : [ {
+				display : 'Dia',
+				name : 'dataFeriado',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Tipo Feriado',
+				name : 'tipoFeriado',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Cidade',
+				name : 'nomeCidade',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Descrição',
+				name : 'descricaoFeriado',
+				width : 220,
+				sortable : true,
+				align : 'left',
+			}, {
+				display : 'Opera',
+				name : 'indOpera',
+				width : 35,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Cobrança',
+				name : 'indEfetuaCobranca',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Anual',
+				name : 'indRepeteAnualmente',
+				width : 35,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 650,
+			height : 120
+		});
+		
+	$("#anoVigenciaPesquisa", CadastroCalendario.workspace).keyup(function (e){
+			
+			if (e.keyCode == 13) {
+				CadastroCalendario.recarregarPainelCalendarioFeriado();
+			}
+		});
+		
+		
+		
+	},	
 
 		recarregarDiaFeriadoGrid : function(dataFeriado) {
 			
-			$(".diaFeriadoGrid").flexOptions({
+			$(".diaFeriadoGrid", CadastroCalendario.workspace).flexOptions({
 				preProcess: CadastroCalendario.preProcessarFeriados,
 				url: contextPath + '/administracao/cadastroCalendario/obterListaCalendarioFeriado',
 				dataType : 'json',
 				params:[{name:'data', value: dataFeriado}]
 			});
 			
-			$(".diaFeriadoGrid").flexReload();			
+			$(".diaFeriadoGrid", CadastroCalendario.workspace).flexReload();			
 		},
 		
 		carregarPopUpFeriadosMes : function(mes) {
@@ -23,7 +149,7 @@ var CadastroCalendario = {
 			}
 			CadastroCalendario.recarregarMesFeriadoGrid();
 			
-			$( "#dialog-feriado-mes" ).dialog({
+			$( "#dialog-feriado-mes", CadastroCalendario.workspace ).dialog({
 				
 				resizable: false,
 				
@@ -37,7 +163,8 @@ var CadastroCalendario = {
 						CadastroCalendario.mesPesquisaFeriados = null;
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-feriado-mes", this.workspace).parents("form")
 			});
 		},
 		
@@ -56,20 +183,20 @@ var CadastroCalendario = {
 			var indRepeteAnualmente = feriadoDefault.indRepeteAnualmente;
 			var indEfetuaCobranca = feriadoDefault.indEfetuaCobranca;
 			
-			$("#dtFeriado").val(dtFeriado);
-			$("#tipos_feriado_dialog_editar").val(tipoFeriado);
-			$("#descricao").val(descricaoFeriado);
+			$("#dtFeriado", CadastroCalendario.workspace).val(dtFeriado);
+			$("#tipos_feriado_dialog_editar", CadastroCalendario.workspace).val(tipoFeriado);
+			$("#descricao", CadastroCalendario.workspace).val(descricaoFeriado);
 			
-			$("#indOpera").attr('checked', indOpera);
-			$("#indRepeteAnualmente").attr('checked', indRepeteAnualmente);
-			$("#indEfetuaCobranca").attr('checked', indEfetuaCobranca);
+			$("#indOpera", CadastroCalendario.workspace).attr('checked', indOpera);
+			$("#indRepeteAnualmente", CadastroCalendario.workspace).attr('checked', indRepeteAnualmente);
+			$("#indEfetuaCobranca", CadastroCalendario.workspace).attr('checked', indEfetuaCobranca);
 			
 			if(tipoFeriado == 'MUNICIPAL') {
-				$("#cidades_dialog_editar").removeAttr('disabled');
-				$("#cidades_dialog_editar").val(idLocalidade);
+				$("#cidades_dialog_editar", CadastroCalendario.workspace).removeAttr('disabled');
+				$("#cidades_dialog_editar", CadastroCalendario.workspace).val(idLocalidade);
 			} else {
-				$("#cidades_dialog_editar").val('');
-				$("#cidades_dialog_editar").attr('disabled', 'disabled');
+				$("#cidades_dialog_editar", CadastroCalendario.workspace).val('');
+				$("#cidades_dialog_editar", CadastroCalendario.workspace).attr('disabled', 'disabled');
 			}
 			
 			
@@ -84,15 +211,15 @@ var CadastroCalendario = {
 				indEfetuaCobranca, 
 				descricaoFeriado) {
 						
-			$("#dtFeriado").val(dtFeriado);
-			$("#tipos_feriado_dialog_editar").val(tipoFeriado);
-			$("#cidades_dialog_editar").val(idLocalidade);
+			$("#dtFeriado", CadastroCalendario.workspace).val(dtFeriado);
+			$("#tipos_feriado_dialog_editar", CadastroCalendario.workspace).val(tipoFeriado);
+			$("#cidades_dialog_editar", CadastroCalendario.workspace).val(idLocalidade);
 			
-			$("#descricao").val(descricaoFeriado);
+			$("#descricao", CadastroCalendario.workspace).val(descricaoFeriado);
 			
-			$("#indOpera").attr("checked", indOpera );
-			$("#indEfetuaCobranca").attr("checked", indEfetuaCobranca);
-			$("#indRepeteAnualmente").attr("checked", indRepeteAnualmente);
+			$("#indOpera", CadastroCalendario.workspace).attr("checked", indOpera );
+			$("#indEfetuaCobranca", CadastroCalendario.workspace).attr("checked", indEfetuaCobranca);
+			$("#indRepeteAnualmente", CadastroCalendario.workspace).attr("checked", indRepeteAnualmente);
 			
 		},
 		
@@ -207,12 +334,12 @@ var CadastroCalendario = {
 		
 		limparCamposEdicaoCadastroFeriado : function() {
 			
-			$("#tipos_feriado_dialog_editar").val('');
-			$("#descricao").val('');
+			$("#tipos_feriado_dialog_editar", CadastroCalendario.workspace).val('');
+			$("#descricao", CadastroCalendario.workspace).val('');
 			
-			$("#indOpera").attr('checked', false);
-			$("#indRepeteAnualmente").attr('checked', false);
-			$("#indEfetuaCobranca").attr('checked', false);
+			$("#indOpera", CadastroCalendario.workspace).attr('checked', false);
+			$("#indRepeteAnualmente", CadastroCalendario.workspace).attr('checked', false);
+			$("#indEfetuaCobranca", CadastroCalendario.workspace).attr('checked', false);
 			
 		},
 		
@@ -222,7 +349,7 @@ var CadastroCalendario = {
 			
 			CadastroCalendario.recarregarDiaFeriadoGrid(date);
 			
-			$( "#dialog-editar" ).dialog({
+			$( "#dialog-editar", CadastroCalendario.workspace ).dialog({
 				
 				resizable: false,
 				
@@ -243,7 +370,8 @@ var CadastroCalendario = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-editar", this.workspace).parents("form")
 			});
 			
 			$( "#dtFeriado" ).val(date);
@@ -252,22 +380,22 @@ var CadastroCalendario = {
 		
 		bloquearComboMunicipio : function() {
 			
-			var tipoFeriado = $("#tipos_feriado_dialog_editar").val(); 
+			var tipoFeriado = $("#tipos_feriado_dialog_editar", CadastroCalendario.workspace).val(); 
 			
 			if(tipoFeriado == 'MUNICIPAL') {
-				$("#cidades_dialog_editar").removeAttr('disabled');
+				$("#cidades_dialog_editar", CadastroCalendario.workspace).removeAttr('disabled');
 			} else {
-				$("#cidades_dialog_editar").val('');
-				$("#cidades_dialog_editar").attr('disabled', 'disabled');
+				$("#cidades_dialog_editar", CadastroCalendario.workspace).val('');
+				$("#cidades_dialog_editar", CadastroCalendario.workspace).attr('disabled', 'disabled');
 			}
 
-			tipoFeriado = $("#tipos_feriado_dialog_novo").val(); 
+			tipoFeriado = $("#tipos_feriado_dialog_novo", CadastroCalendario.workspace).val(); 
 			
 			if(tipoFeriado == 'MUNICIPAL') {
-				$("#cidades_dialog_novo").removeAttr('disabled');
+				$("#cidades_dialog_novo", CadastroCalendario.workspace).removeAttr('disabled');
 			} else {
-				$("#cidades_dialog_novo").val('');
-				$("#cidades_dialog_novo").attr('disabled', 'disabled');
+				$("#cidades_dialog_novo", CadastroCalendario.workspace).val('');
+				$("#cidades_dialog_novo", CadastroCalendario.workspace).attr('disabled', 'disabled');
 			}
 			
 		},
@@ -285,25 +413,25 @@ var CadastroCalendario = {
 			
 			if(fromPopUpNovoFeriado) {
 				
-				dtFeriado = $("#dtFeriadoNovo").val();
-				tipoFeriado = $("#tipos_feriado_dialog_novo").val();
-				idLocalidade = $("#cidades_dialog_novo").val();
-				descricao = $("#descricaoNovo").val();
-				indOpera = $("#indOperaNovo").is(":checked");
-				indEfetuaCobranca = $("#indEfetuaCobrancaNovo").is(":checked");
-				indRepeteAnualmente = $("#indRepeteAnualmenteNovo").is(":checked");
+				dtFeriado = $("#dtFeriadoNovo", CadastroCalendario.workspace).val();
+				tipoFeriado = $("#tipos_feriado_dialog_novo", CadastroCalendario.workspace).val();
+				idLocalidade = $("#cidades_dialog_novo", CadastroCalendario.workspace).val();
+				descricao = $("#descricaoNovo", CadastroCalendario.workspace).val();
+				indOpera = $("#indOperaNovo", CadastroCalendario.workspace).is(":checked");
+				indEfetuaCobranca = $("#indEfetuaCobrancaNovo", CadastroCalendario.workspace).is(":checked");
+				indRepeteAnualmente = $("#indRepeteAnualmenteNovo", CadastroCalendario.workspace).is(":checked");
 				
 			
 				
 			} else {
 
-				dtFeriado = $("#dtFeriado").val();
-				tipoFeriado = $("#tipos_feriado_dialog_editar").val();
-				idLocalidade = $("#cidades_dialog_editar").val();
-				descricao = $("#descricao").val();
-				indOpera = $("#indOpera").is(":checked");
-				indEfetuaCobranca = $("#indEfetuaCobranca").is(":checked");
-				indRepeteAnualmente = $("#indRepeteAnualmente").is(":checked");
+				dtFeriado = $("#dtFeriado", CadastroCalendario.workspace).val();
+				tipoFeriado = $("#tipos_feriado_dialog_editar", CadastroCalendario.workspace).val();
+				idLocalidade = $("#cidades_dialog_editar", CadastroCalendario.workspace).val();
+				descricao = $("#descricao", CadastroCalendario.workspace).val();
+				indOpera = $("#indOpera", CadastroCalendario.workspace).is(":checked");
+				indEfetuaCobranca = $("#indEfetuaCobranca", CadastroCalendario.workspace).is(":checked");
+				indRepeteAnualmente = $("#indRepeteAnualmente", CadastroCalendario.workspace).is(":checked");
 				
 			}
 			
@@ -329,7 +457,7 @@ var CadastroCalendario = {
 						
 						if(fromPopUpNovoFeriado) {
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
-							$( "#dialog-novo" ).dialog( "close" );
+							$( "#dialog-novo", CadastroCalendario.workspace ).dialog( "close" );
 							CadastroCalendario.recarregarMesFeriadoGrid();
 						} else {
 							CadastroCalendario.recarregarDiaFeriadoGrid(dtFeriado);
@@ -343,7 +471,7 @@ var CadastroCalendario = {
 		},
 		
 		recarregarMesFeriadoGrid: function() {
-			$(".mesFeriadoGrid").flexOptions({
+			$(".mesFeriadoGrid", CadastroCalendario.workspace).flexOptions({
 				preProcess: CadastroCalendario.preProcessarMesFeriado,
 				url: contextPath + '/administracao/cadastroCalendario/obterFeriadosDoMes',
 				dataType : 'json',
@@ -351,12 +479,12 @@ var CadastroCalendario = {
 			
 			});
 			
-			$(".mesFeriadoGrid").flexReload();
+			$(".mesFeriadoGrid", CadastroCalendario.workspace).flexReload();
 		},
 		
 		popupNovoCadastroFeriado: function() {
 		
-			$( "#dialog-novo" ).dialog({
+			$( "#dialog-novo", CadastroCalendario.workspace ).dialog({
 				
 				resizable: false,
 				height:370,
@@ -373,7 +501,8 @@ var CadastroCalendario = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-novo", this.workspace).parents("form")
 			});
 		},
 		
@@ -381,7 +510,7 @@ var CadastroCalendario = {
 		popup_excluir : function() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		
-			$( "#dialog-excluir" ).dialog({
+			$( "#dialog-excluir", CadastroCalendario.workspace ).dialog({
 				resizable: false,
 				height:'auto',
 				width:300,
@@ -395,7 +524,8 @@ var CadastroCalendario = {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-excluir", this.workspace).parents("form")
 			});
 		},
 		
@@ -428,11 +558,11 @@ var CadastroCalendario = {
 	     
 	     recarregarPainelCalendarioFeriado : function() {
 	    	 
-	    	 $("#feriadosWrapper").empty();
+	    	 $("#feriadosWrapper", CadastroCalendario.workspace).empty();
 	 		
-	 		 $("#feriadosWrapper").append($("<div>").attr("id", "feriados"));
+	 		 $("#feriadosWrapper", CadastroCalendario.workspace).append($("<div>").attr("id", "feriados"));
 	    	 
-	    	 var anoVigencia = $('#anoVigenciaPesquisa').val();
+	    	 var anoVigencia = $('#anoVigenciaPesquisa', CadastroCalendario.workspace).val();
 	    	 
 	    	 parametroPesquisa = [{name: "anoVigencia", value: anoVigencia}];
 	    	 
@@ -446,7 +576,7 @@ var CadastroCalendario = {
 	    					
 	    					var dataFinalCalendario = new Date(conteudo.anoVigencia, 11, 31);
 	    					
-	    					$( "#feriados" ).datepicker({
+	    					$( "#feriados", CadastroCalendario.workspace ).datepicker({
 	    						
 	    						numberOfMonths: 12,
 	    						minDate: dataInicialCalendario, 
@@ -486,123 +616,4 @@ var CadastroCalendario = {
 	    	 
 	     }
 		
-};
-
-$(document).ready(function() {
-	
-	
-	CadastroCalendario.recarregarPainelCalendarioFeriado();
-	
-	$(".diaFeriadoGrid").flexigrid({
-		colModel : [ {
-			display : 'Dia',
-			name : 'dataFeriado',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Tipo Feriado',
-			name : 'tipoFeriado',
-			width : 70,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Cidade',
-			name : 'nomeCidade',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Descrição',
-			name : 'descricaoFeriado',
-			width : 180,
-			sortable : true,
-			align : 'left',
-		}, {
-			display : 'Opera',
-			name : 'indOpera',
-			width : 30,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Cobrança',
-			name : 'indEfetuaCobranca',
-			width : 45,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Anual',
-			name : 'indRepeteAnualmente',
-			width : 30,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Ação',
-			name : 'acao',
-			width : 60,
-			sortable : true,
-			align : 'center'
-		}],
-		width : 650,
-		height : 120
-	});
-	
-	
-	$(".mesFeriadoGrid").flexigrid({
-		colModel : [ {
-			display : 'Dia',
-			name : 'dataFeriado',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Tipo Feriado',
-			name : 'tipoFeriado',
-			width : 70,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Cidade',
-			name : 'nomeCidade',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Descrição',
-			name : 'descricaoFeriado',
-			width : 220,
-			sortable : true,
-			align : 'left',
-		}, {
-			display : 'Opera',
-			name : 'indOpera',
-			width : 35,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Cobrança',
-			name : 'indEfetuaCobranca',
-			width : 50,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Anual',
-			name : 'indRepeteAnualmente',
-			width : 35,
-			sortable : true,
-			align : 'center'
-		}],
-		width : 650,
-		height : 120
-	});
-	
-$("#anoVigenciaPesquisa").keyup(function (e){
-		
-		if (e.keyCode == 13) {
-			CadastroCalendario.recarregarPainelCalendarioFeriado();
-		}
-	});
-	
-	
-	
-});	
+}, BaseController);

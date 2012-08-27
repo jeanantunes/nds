@@ -19,7 +19,7 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
 
 
 
-#workspace{  width:100%;  min-height:550px; height:auto; overflow:hidden;}
+#workspace{  width:100%;  min-height:600px!important; height:100%; overflow-x:hidden; overflow-y:auto}
 .breadCrumb{ line-height:23px; padding:5px 18px; background:#CCC;}
 
 .classROLE_HOME{ background:url(../images/bt_home.gif) no-repeat 2px 3px; width:21px; height:21px; float:left; margin-top:-4px; margin-right:3px;} 
