@@ -3,15 +3,8 @@
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js"></script>
 
 	<script type="text/javascript">
-		
 		$(function() {
-			$("#dtFeriadoNovo").datepicker({
-				showOn: "button",
-				buttonImage: "${pageContext.request.contextPath}/images/calendar.gif",
-				buttonImageOnly: true,
-				dateFormat: 'dd/mm/yy',
-			});
-			$("#dtFeriadoNovo").mask("99/99/9999");	
+			CadastroCalendario.init();
 		});
 	</script>
 <style type="text/css">
@@ -63,11 +56,13 @@
 
 	<input type="hidden" id="alternate" />
 
+	<form id="form-excluir">
 	<div id="dialog-excluir" title="Excluir Feriado">
 		<p>Confirma a exclusão deste Feriado?</p>
 	</div>
+	</form>
 
-
+	<form id="form-novo">
 	<div id="dialog-novo" title="Novo Feriado">
 	
 		<jsp:include page="../messagesDialog.jsp">
@@ -153,7 +148,9 @@
 			</table>
 		</fieldset>
 	</div>
+	</form>
 
+	<form id="form-feriado-mes">
 	<div id="dialog-feriado-mes" title="Feriado do mês">
 	
 		<fieldset style="width: 650px; margin-top: 10px;">
@@ -176,7 +173,9 @@
 		</span>
 	
 	</div>
+	</form>
 
+	<form id="form-editar">
 	<div id="dialog-editar" title="Editar Feriado">
 
 		<jsp:include page="../messagesDialog.jsp">
@@ -265,6 +264,7 @@
 		</fieldset>
 
 	</div>
+	</form>
 
 	<div class="corpo">
 	

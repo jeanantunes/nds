@@ -1,3 +1,4 @@
+<form id="form-salvar">
 <div id="dialog-salvar" title="Salvar Conferência" style="display: none;">
 	
 	<div class="message-dialog-encalhe">
@@ -13,9 +14,11 @@
 		<p>Confima a Conferência de Encalhe?</p>
 	</fieldset>
 </div>
+</form>
 
 <iframe src="" id="download-iframe" style="display:none;"></iframe>
 
+<form id="form-notaFiscal">
 <div id="dialog-notaFiscal" title="Dados da Nota Fiscal" style="display: none;">
 
 	<jsp:include page="../messagesDialog.jsp">
@@ -86,7 +89,9 @@
 		</tr>
 	</table>
 </div>
+</form>
 
+<form id="form-logado">
 <div id="dialog-logado" title="Box de Encalhe" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -103,22 +108,27 @@
 	    </select>
 	</fieldset>
 </div>
+</form>
 
-
+<form id="form-alert">
 <div id="dialog-alert" title="Nota Fiscal">
 	<fieldset style="width: 410px;">
 		<legend>Nota Fiscal</legend>
 		<p>Existe Nota Fiscal para esta Cota?</p>
 	</fieldset>
 </div>
+</form>
 
+<form id="form-finaliza-conferencia">
 <div id="dialog-finaliza-conferencia" title="Finalizar Conferência" style="display: none;">
 	<fieldset style="width: 410px;">
 		<legend>Conferência Finalizada</legend>
 		<p>Confirma a Conferência do Encalhe?</p>
 	</fieldset>
 </div>
+</form>
 
+<form id="form-outros-valores">
 <div id="dialog-outros-valores" title="Outros Valores"
 	style="display: none;">
 	<fieldset>
@@ -126,7 +136,9 @@
 		<table class="outrosVlrsGrid"></table>
 	</fieldset>
 </div>
+</form>
 
+<form id="form-encalhe">
 <div id="dialog-encalhe" title="Novo Encalhe" >
 	
 	<div class="message-dialog-encalhe">
@@ -184,11 +196,15 @@
 	
 	<br />
 </div>
+</form>
 
+<form id="form-novo">
 <div id="dialog-novo" title="Conferência de Encalhe">
 	<p>Confirma o Encalhe?</p>
 </div>
+</form>
 
+<form id="form-reabertura">
 <div id="dialog-reabertura" title="Reabertura" style="display: none;">
 	<fieldset style="width: 310px;">
 		<legend>Nota Fiscal</legend>
@@ -196,7 +212,9 @@
 	    Efetuar reabertura?</p>
 	</fieldset>
 </div>
+</form>
 
+<form id="form-dadosNotaFiscal">
 <div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -263,10 +281,13 @@
 	</fieldset>
 
 </div>
+</form>
 
+<form id="form-excluir-conferencia">
 <div id="dialog-excluir-conferencia" title="Conferência" style="display: none;">
 	<fieldset style="width: 350px;">
 		<legend>Excluir Conferência</legend>
 	    <p>Confirma a exclusão dessa conferência?</p>
 	</fieldset>
 </div>
+</id>
