@@ -70,7 +70,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			estudo = new Estudo();
 			estudo.setQtdeReparte(BigInteger.valueOf(
 					input.getReparteDistribuir()));
-			estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
+			estudo.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
 			estudo.setProdutoEdicao(produtoEdicao);
 			getSession().persist(estudo);
 			
@@ -182,8 +182,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		sql.append("SELECT lcto FROM Lancamento lcto ");
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
-		sql.append("      AND lcto.dataLancamentoPrevista >= :dataOperacao ");
-		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
+		sql.append("      AND lcto.dataLancamentoDistribuidor >= :dataOperacao ");
+		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor ASC");
 		
 		Query query = getSession().createQuery(sql.toString());
 		
