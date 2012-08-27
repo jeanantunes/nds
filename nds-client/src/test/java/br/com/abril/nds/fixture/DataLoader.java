@@ -201,6 +201,7 @@ import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 
 public class DataLoader {
 
@@ -2522,9 +2523,9 @@ public class DataLoader {
                                 * movE.getEstoqueProdutoCota()
                                         .getProdutoEdicao().getPrecoVenda()
                                         .doubleValue()
-                                - movE.getEstoqueProdutoCota()
+                                - Util.nvl(movE.getEstoqueProdutoCota()
                                         .getProdutoEdicao().getProduto()
-                                        .getDesconto().doubleValue();
+                                        .getDesconto(), BigDecimal.ZERO).doubleValue();
                         totalD += totalItem;
                     }
                 }
@@ -2547,10 +2548,10 @@ public class DataLoader {
                         Double totalItem = (movE.getQtde().doubleValue())
                                 * (movE.getEstoqueProdutoCota()
                                         .getProdutoEdicao().getPrecoVenda()
-                                        .doubleValue() - movE
+                                        .doubleValue() - Util.nvl(movE
                                         .getEstoqueProdutoCota()
                                         .getProdutoEdicao().getProduto()
-                                        .getDesconto().doubleValue());
+                                        .getDesconto(), BigDecimal.ZERO).doubleValue());
                         totalD += totalItem;
                     }
                 }
@@ -2573,10 +2574,10 @@ public class DataLoader {
                         Double totalItem = (movE.getQtde().doubleValue())
                                 * (movE.getEstoqueProdutoCota()
                                         .getProdutoEdicao().getPrecoVenda()
-                                        .doubleValue() - movE
+                                        .doubleValue() - Util.nvl(movE
                                         .getEstoqueProdutoCota()
                                         .getProdutoEdicao().getProduto()
-                                        .getDesconto().doubleValue());
+                                        .getDesconto(), BigDecimal.ZERO).doubleValue());
                         totalD += totalItem;
                     }
                 }
@@ -7069,8 +7070,8 @@ public class DataLoader {
         for (MovimentoEstoqueCota movE : movimentosE) {
             total += (movE.getQtde().doubleValue() * (movE
                     .getEstoqueProdutoCota().getProdutoEdicao().getPrecoVenda()
-                    .doubleValue() - movE.getEstoqueProdutoCota()
-                    .getProdutoEdicao().getProduto().getDesconto()
+                    .doubleValue() - Util.nvl(movE.getEstoqueProdutoCota()
+                    .getProdutoEdicao().getProduto().getDesconto(), BigDecimal.ZERO)
                     .doubleValue()));
         }
         return new BigDecimal(total);
