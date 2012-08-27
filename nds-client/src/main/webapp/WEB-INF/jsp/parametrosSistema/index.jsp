@@ -34,7 +34,7 @@ $(function(){
 		<div class="linha_separa_fields">&nbsp;</div>
 		<fieldset class="fieldFiltro">
 			<legend>Par&acirc;metros do Sistema</legend>
-			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			<table width="950" border="0" cellpadding="2" cellspacing="2">
 				<thead />
 				<tbody>
 					<tr>

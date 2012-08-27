@@ -23,7 +23,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	gerarAcao : function(index,row) {
 				
 		row.cell.acao = 
-			'<a href="javascript:;" onclick="OperacaoDiferenciadaController.editarGrupo(' + index + ');">' +
+			'<a href="javascript:;" onclick="OperacaoDiferenciadaController.editarGrupo(' + index + ');" style="margin-right:10px;">' +
 			'<img src="' + contextPath + '/images/ico_editar.gif" border="0" alt="Editar" hspace="5" />' +
 			'</a>' +
 			
@@ -347,7 +347,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 		$( "#dialog-novo-grupo", this.workspace ).dialog({
 			resizable: false,
-			height:500,
+			height:450,
 			width:750,
 			modal: true,
 			buttons: {
@@ -431,19 +431,19 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			},{
 				display : 'Nome',
 				name : 'nome',
-				width : 160,
+				width : 130,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Município',
 				name : 'municipio',
-				width : 90,
+				width : 170,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Endereço',
 				name : 'endereco',
-				width : 300,
+				width : 250,
 				sortable : true,
 				align : 'left'
 			}, {

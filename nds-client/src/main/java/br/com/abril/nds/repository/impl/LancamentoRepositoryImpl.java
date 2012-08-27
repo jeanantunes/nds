@@ -13,13 +13,10 @@ import java.util.TreeMap;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.Type;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
@@ -28,7 +25,6 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -50,13 +46,13 @@ public class LancamentoRepositoryImpl extends
 		super(Lancamento.class);
 	}
 
-	private String getHQLDesconto(){
+	private String getHQLDesconto() {
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedor.id ");
+		StringBuilder hql = new StringBuilder(" coalesce((select view.desconto ");
+        hql.append(" from ViewDesconto view ")
+           .append(" where view.cotaId = cota.id ")
+           .append(" and view.produtoEdicaoId = produtoEdicao.id ")
+           .append(" and view.fornecedorId = fornecedores.id),0) ");
 		
 		return hql.toString();
 	}
@@ -770,11 +766,11 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" produtoEdicao.codigoDeBarras as codigoDeBarras, ");
 		hql.append(" produtoEdicao.precoVenda as precoVenda, 		");
 		
-		hql.append(" produto.desconto as desconto, 	");
+		hql.append(" coalesce(produto.desconto, 0) as desconto, 	");
 		
 		hql.append(" ( produtoEdicao.precoVenda -  ");
 		
-		hql.append(" ( produtoEdicao.precoVenda * ( produto.desconto / 100 ) ) ) as precoDesconto, ");
+		hql.append(" ( produtoEdicao.precoVenda * ( coalesce(produto.desconto, 0) / 100 ) ) ) as precoDesconto, ");
 		
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, 		");
 		
@@ -995,9 +991,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.NUMERO_REPROGRAMACOES as numeroReprogramacoes, ");
 		
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
-		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - produto.DESCONTO) ");
+		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - coalesce(produto.desconto, 0)) ");
 		sql.append(" else ");
-		sql.append(" lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - produto.DESCONTO) ");
+		sql.append(" lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - coalesce(produto.desconto, 0)) ");
 		sql.append(" end as valorTotal, ");
 		
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
