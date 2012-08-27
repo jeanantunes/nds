@@ -228,7 +228,7 @@ var suspensaoCotaController = $.extend(true, {
 		
 		$.postJSON(contextPath + "/suspensaoCota/selecionarItem", 
 				"idCota="+id +"&selecionado="+check.checked, 
-				retornoSemAcao);				
+				suspensaoCotaController.retornoSemAcao);				
 	},
 	
 	retornoSemAcao : function(data) {
@@ -282,7 +282,7 @@ var suspensaoCotaController = $.extend(true, {
 		a.setAttribute("onclick",", suspensaoCotaController.getDetalhes("+idCota+",'"+nome+"');");
 		
 		var img =document.createElement("IMG");
-		img.src="${pageContext.request.contextPath}/images/ico_detalhes.png";
+		img.src=contextPath + "/images/ico_detalhes.png";
 		img.border="0";
 		img.hspace="5";
 		img.title="Detalhes";		
@@ -292,7 +292,7 @@ var suspensaoCotaController = $.extend(true, {
 	},
 	
 	gerarTabelaDetalhes : function(dividas, nome) {
-		var div = document.getElementById("dialog-detalhes");
+		var div = $("#dialog-detalhes", suspensaoCotaController.workspace);
 		
 		div.innerHTML="";
 		
