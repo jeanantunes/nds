@@ -30,6 +30,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -143,6 +144,9 @@ public class Cota implements Serializable {
 	
 	@OneToMany(mappedBy="cota", cascade={CascadeType.REMOVE})
 	private Set<HistoricoNumeroCota> historicoNumeroCota;
+	
+	@OneToMany(mappedBy="cota", cascade={CascadeType.REMOVE})
+	private Set<DescontoProdutoEdicao> descontosProdutoEdicao;
 
 	@ManyToMany(mappedBy="cotas", targetEntity=GrupoCota.class)
 	private Set<GrupoCota> grupos;
@@ -153,6 +157,21 @@ public class Cota implements Serializable {
 
 	public void setHistoricoNumeroCota(Set<HistoricoNumeroCota> historicoNumeroCota) {
 		this.historicoNumeroCota = historicoNumeroCota;
+	}
+	
+	/**
+	 * @return the descontosProdutoEdicao
+	 */
+	public Set<DescontoProdutoEdicao> getDescontosProdutoEdicao() {
+		return descontosProdutoEdicao;
+	}
+
+	/**
+	 * @param descontosProdutoEdicao the descontosProdutoEdicao to set
+	 */
+	public void setDescontosProdutoEdicao(
+			Set<DescontoProdutoEdicao> descontosProdutoEdicao) {
+		this.descontosProdutoEdicao = descontosProdutoEdicao;
 	}
 
 	public Long getId() {

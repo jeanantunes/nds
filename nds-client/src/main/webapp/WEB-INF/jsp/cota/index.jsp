@@ -120,13 +120,13 @@
 		</div>
 		
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="COTA_CPF.novoCPF();">
+			<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCPF();">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CPF
 			</a>
 		</span>
 		
 		<span class="bt_novos" title="Novo">
-			<a href="javascript:;" onclick="COTA_CNPJ.novoCNPJ();">
+			<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCNPJ();">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />CNPJ
 			</a>
 		</span>

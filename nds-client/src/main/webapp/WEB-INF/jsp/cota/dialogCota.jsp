@@ -33,13 +33,13 @@
               <fieldset>
                   <legend>Novo Titular</legend>
                   <span class="bt_novos" title="Novo">
-                      <a href="javascript:;">
+                      <a href="javascript:;" onclick="MANTER_COTA.alterarTitular(true);">
                         <img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
                         CPF
                       </a>
                   </span>
                   <span class="bt_novos" title="Novo" style="margin-left:10px;">
-                    <a href="javascript:;">
+                    <a href="javascript:;" onclick="MANTER_COTA.alterarTitular()">
                       <img src="${pageContext.request.contextPath}/images/ico_usuarios.gif" border="0"/>
                       CNPJ
                      </a>
