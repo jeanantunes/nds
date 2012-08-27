@@ -148,6 +148,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("statusFuro", StatusLancamento.FURO);
 		
 		if (nomeProduto != null && !nomeProduto.isEmpty()){
+			
 			query.setParameter("nomeProduto", nomeProduto);
 		}
 		
