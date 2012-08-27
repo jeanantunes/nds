@@ -1,16 +1,22 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
+import org.lightcouch.CouchDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -21,6 +27,7 @@ import br.com.abril.nds.repository.BairroRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.LocalidadeRepository;
 import br.com.abril.nds.repository.LogradouroRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.util.TipoMensagem;
@@ -41,6 +48,21 @@ public class EnderecoServiceImpl implements EnderecoService {
 	
 	@Autowired
 	private LocalidadeRepository localidadeRepository;
+	
+	
+	private static final String DB_NAME  =  "correios";
+
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+
+
+	private CouchDbClient couchDbClient;
+	
+	@PostConstruct
+	public void initCouchDbClient() {
+		this.couchDbClient = new CouchDbClient(DB_NAME,true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), couchDbProperties.getPort(), couchDbProperties.getUsername(), couchDbProperties.getPassword());
+	}
+
 	
 	@Override
 	@Transactional
@@ -229,8 +251,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "O CEP é obrigatório para a pesquisa.");
 		}
-		
-		return this.enderecoRepository.obterEnderecoPorCep(cep);
+		return couchDbClient.find(EnderecoVO.class,cep);
 	}
 
 	/**

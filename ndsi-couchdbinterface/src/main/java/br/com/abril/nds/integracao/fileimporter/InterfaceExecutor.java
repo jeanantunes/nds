@@ -235,7 +235,7 @@ public class InterfaceExecutor {
 	private void executarInterfaceCorreios() {
 		
 		String diretorio = parametroSistemaDAO.getParametro("CORREIOS_DIR");
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("cep");
+		CouchDbClient couchDbClient = this.getCouchDbClientInstance("correios");
 		
 		try {
 			
