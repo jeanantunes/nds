@@ -283,6 +283,10 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" select box.codigo ||' - '|| box.nome as nomeBox ," )
 			.append(" rota.codigoRota || ' - ' || rota.descricaoRota as descricaoRota , ")
 			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
+			.append(" box.id as idBox, 			")
+			.append(" rota.id as idRota, 		")
+			.append(" roteiro.id as idRoteiro, 	")
+			.append(" cota.id as idCota,		")			
 			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome , ")
 			.append(" cota.numeroCota as numeroCota ");
 			
@@ -409,11 +413,14 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" select box.codigo ||' - '|| box.nome as nomeBox ," )
 			.append(" rota.codigoRota || ' - ' || rota.descricaoRota as descricaoRota , ")
 			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
+			.append(" box.id as idBox, 			")
+			.append(" rota.id as idRota, 		")
+			.append(" roteiro.id as idRoteiro, 	")
 			.append(" count (cota.numeroCota) as qntCotas ");
 			
 		hql.append( getHqlWhere(filtro));
 	
-		hql.append(" group by box.codigo , rota.codigoRota , roteiro.descricaoRoteiro ");
+		hql.append(" group by box.codigo, box.id, rota.codigoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
 		
 		hql.append(getOrdenacaoConsulta(filtro));
 		
