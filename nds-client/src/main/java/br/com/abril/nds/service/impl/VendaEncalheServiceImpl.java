@@ -953,7 +953,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
                 BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDesconto(), BigDecimal.ZERO);
                 BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 				
-				vendaEncalheDTO.setPrecoCapa(precoVenda.subtract(valorDesconto));				
+				vendaEncalheDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));				
 				vendaEncalheDTO.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
 				
 				if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)){

@@ -204,7 +204,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
         StringBuilder hql = new StringBuilder("select view.desconto ");
         hql.append("from ViewDesconto view ")
            .append("where view.cotaId = :idCota ")
-           .append("and view.produtoEdicaoId  :idProdutoEdicao ")
+           .append("and view.produtoEdicaoId = :idProdutoEdicao ")
            .append("and view.fornecedorId = :idFornecedor ");
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("idCota", idCota);
