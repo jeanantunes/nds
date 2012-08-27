@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -371,13 +372,34 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults ){
-		return roteirizacaoRepository.buscarRoteirizacao(boxId, roteiroId, rotaId, tipoRoteiro, orderBy, ordenacao, initialResult,  maxResults);
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro){
+		
+		if(filtro.getIdRota()!= null || filtro.getNumeroCota()!= null){
+			
+			return roteirizacaoRepository.buscarRoteirizacao(filtro);
+		}
+		
+		return roteirizacaoRepository.buscarRoteirizacaoSumarizadoPorCota(filtro);
 	}
 	
 	@Override
 	@Transactional(readOnly=true)
-	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults) {
+	public Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro) {
+		
+		if(filtro.getIdRota()!= null || filtro.getNumeroCota()!= null){
+			
+			return roteirizacaoRepository.buscarQuantidadeRoteirizacao(filtro);
+		}
+		
+		return roteirizacaoRepository.buscarQuantidadeRoteirizacaoSumarizadoPorCota(filtro);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, 
+																		 String  orderBy, Ordenacao ordenacao, 
+																		 int initialResult, int maxResults) {
+		
 		return roteirizacaoRepository.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro,  orderBy,  ordenacao,  initialResult,  maxResults);
 	}
 
