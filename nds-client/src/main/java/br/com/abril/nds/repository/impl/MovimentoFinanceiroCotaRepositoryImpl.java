@@ -499,11 +499,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    
 	    hql.append("              (COALESCE(epc.produtoEdicao.precoVenda,0) - ");
 	    
-	    hql.append("               COALESCE(epc.produtoEdicao.desconto,0)) ");
+	    hql.append("               COALESCE(("+obterHQLDesconto("c.id","epc.produtoEdicao.id","fornecedor.id")+"),0)) ");
 	    
 	    hql.append("         ),0 ) as faturamentoLiquido ");
 	    
 		hql.append(" from Cota c, MovimentoEstoqueCota mec, EstoqueProdutoCota epc");
+		
+		hql.append(" left join mec.produtoEdicao.produto.fornecedores fornecedor ");
 		
 		hql.append(" where epc = mec.estoqueProdutoCota  ");
 		
@@ -528,5 +530,28 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 
+
+	private String obterHQLDesconto(String cota, String produto, String fornecedor){
+	   	
+        String auxC = " where ";
+	    StringBuilder hql = new StringBuilder("select view.desconto from ViewDesconto view ");
+		
+   	    if (cota!=null && !"".equals(cota)){
+		   hql.append(auxC+" view.cotaId = "+cota);
+		   auxC = " and ";
+   	    }
+
+        if (produto!=null && !"".equals(produto)){
+	       hql.append(auxC+" view.produtoId = "+produto);
+	 	   auxC = " and ";
+	    }
+
+	    if (fornecedor!=null && !"".equals(fornecedor)){
+	 	   hql.append(auxC+" view.fornecedorId = "+fornecedor);
+	 	   auxC = " and ";
+	    }	 
+
+	    return hql.toString();
+	}
 	
 }
