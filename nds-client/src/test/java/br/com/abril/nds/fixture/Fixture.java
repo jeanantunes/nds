@@ -2943,7 +2943,7 @@ public class Fixture {
 		
 		Localidade localidade = new Localidade();
 		
-		localidade.setId(id);
+		localidade.set_id(id.toString());
 		localidade.setNome(nome);
 		localidade.setUnidadeFederacao(unidadeFederacao);
 		localidade.setCodigoMunicipioIBGE(codigoMunicipioIBGE);
@@ -2955,7 +2955,7 @@ public class Fixture {
 		
 		Bairro bairro = new Bairro();
 		
-		bairro.setId(id);
+		bairro.set_id(id.toString());
 		bairro.setNome(nome);
 		bairro.setLocalidade(localidade);
 		
@@ -2970,7 +2970,7 @@ public class Fixture {
 		
 		logradouro.setCep(cep);
 		logradouro.setChaveBairroInicial(chaveBairroInicial);
-		logradouro.setId(id);
+		logradouro.set_id(id.toString());
 		logradouro.setLocalidade(localidade);
 		logradouro.setNome(nome);
 		logradouro.setTipoLogradouro(tipoLogradouro);
@@ -3321,7 +3321,7 @@ public class Fixture {
 		grupo.setCotas(cotas);
 		grupo.setDiasRecolhimento(diasRecolhimento);
 		grupo.setId(id);
-		grupo.setMunicipios(municipios);
+//		grupo.setMunicipios(municipios);
 		grupo.setNome(nome);
 		grupo.setTipoCota(tipoCota);
 		grupo.setTipoGrupo(tipoGrupo);

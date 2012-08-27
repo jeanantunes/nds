@@ -184,5 +184,22 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.7.RC1</version>
 		</dependency>
+		<dependency>
+		  <groupId>com.healthmarketscience</groupId>
+		  <artifactId>jackcess</artifactId>
+		  <version>1.2.8</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-model</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>nexus</id>
+			<url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url>
+		</repository>	
+	</repositories>	
 </project>

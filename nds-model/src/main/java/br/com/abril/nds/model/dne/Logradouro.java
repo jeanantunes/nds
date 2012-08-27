@@ -2,79 +2,45 @@ package br.com.abril.nds.model.dne;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 
 
 /**
  * @author Discover Technology
  *
  */
-@Entity
-@Table(name="LOG_LOGRADOURO")
-public class Logradouro implements Serializable {
+public class Logradouro  extends IntegracaoDocument implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3210879486950002174L;
 
-	@Id
-	@Column(name="LOG_NU", unique=true, nullable=false)
-	private Long id;
 
-	@Column(name="LOG_NO_ABREV", length=72)
 	private String abreviatura;
 
-	@Column(name="CEP", length=16)
 	private String cep;
 
-	@Column(name="BAI_NU_FIM")
 	private Long chaveBairroFinal;
 
-	@Column(name="BAI_NU_INI")
 	private Long chaveBairroInicial;
 
-	@Column(name="LOG_STA_TLO", length=2)
 	private String status;
 	
-	@Column(name="LOG_NO", length=144)
 	private String nome;
 
-	@Column(name="LOG_COMPLEMENTO", length=200)
 	private String complemento;
 
-	@Column(name="UFE_SG", length=4)
 	private String uf;
 
-	@Column(name="TLO_TX", length=72)
 	private String tipoLogradouro;
 
-    @ManyToOne
-	@JoinColumn(name="LOC_NU", nullable=false)
 	private Localidade localidade;
 
     public Logradouro() {
     }
 
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+	
 	/**
 	 * @return the abreviatura
 	 */

@@ -13,8 +13,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -22,6 +24,7 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.CouchDbException;
 import org.lightcouch.NoDocumentException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -36,9 +39,18 @@ import br.com.abril.nds.integracao.persistence.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.persistence.model.LogExecucao;
 import br.com.abril.nds.integracao.persistence.model.LogExecucaoArquivo;
 import br.com.abril.nds.integracao.persistence.model.enums.StatusExecucaoEnum;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.dne.Bairro;
+import br.com.abril.nds.model.dne.Localidade;
+import br.com.abril.nds.model.dne.Logradouro;
+import br.com.abril.nds.model.dne.UnidadeFederacao;
+import br.com.abril.nds.vo.EnderecoVO;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
+import com.healthmarketscience.jackcess.Cursor;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.Table;
 
 /**
  * Realiza a execução das interfaces de integração. <br>
@@ -174,7 +186,7 @@ public class InterfaceExecutor {
 	private void executarInterfaceImagem() {
 		
 		String diretorio = parametroSistemaDAO.getParametro("IMAGE_DIR");
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
+		CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
 				
 		File[] imagens = new File(diretorio).listFiles(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
@@ -223,67 +235,182 @@ public class InterfaceExecutor {
 	private void executarInterfaceCorreios() {
 		
 		String diretorio = parametroSistemaDAO.getParametro("CORREIOS_DIR");
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
+		CouchDbClient couchDbClient = this.getCouchDbClientInstance("cep");
 		
 		try {
-/*
-			Scanner scan = new Scanner(System.in);
-			String line;
-			String unixCommand = "/usr/bin/mdb-export " + diretorio + "data/dnecom.mdb LOG_BAIRRO"; 
-			ProcessBuilder builder = new ProcessBuilder(new String [] { "/bin/csh", "-c", unixCommand} );
-			builder.redirectErrorStream(true);
-			Process process = builder.start();
 			
-			
-			OutputStream stdin = process.getOutputStream ();
-			InputStream stderr = process.getErrorStream ();
-			InputStream stdout = process.getInputStream ();
-
-			BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
-			
-
-			while (scan.hasNext()) {
-			    String input = scan.nextLine();
-			    if (input.trim().equals("exit")) {
-			        // Putting 'exit' amongst the echo --EOF--s below doesn't work.
-			        writer.write("exit\n");
-			    } else {
-			        writer.write("((" + input + ") && echo --EOF--) || echo --EOF--\n");
-			    }
-			    writer.flush();
-
-			    line = reader.readLine();
-			    while (line != null && ! line.trim().equals("--EOF--")) {
-			        System.out.println ("Stdout: " + line);
-			        line = reader.readLine();
-			    }
-			    if (line == null) {
-			        break;
-			    }
-			}
-			
-			writer.close();
-*/
-			Process process = Runtime.getRuntime().exec(diretorio + "bin/cep-export");
-			int retorno = process.waitFor();
-			
-			if (retorno != 0) {
-				throw new RuntimeException("ERRO");
+			Database db = Database.open(new File(diretorio + "dnecom.mdb"));
+			/*
+			Table tblBairro = db.getTable("LOG_BAIRRO");
+			for(Map<String, Object> row : tblBairro) {
+				
+				System.out.println(
+						  row.get("BAI_NU").toString() 
+						  + row.get("UFE_SG").toString() 
+						  + row.get("LOC_NU").toString() 
+						  + row.get("BAI_NO").toString()  
+						  + row.get("BAI_NO_ABREV")
+				);
+				  
+				Bairro doc = new Bairro();
+				doc.setTipoDocumento("CEP");					
+				doc.setSubTipoDocumento("BAIRRO");
+				doc.set_id(row.get("BAI_NU").toString());
+				doc.setNome(row.get("BAI_NO").toString());
+				doc.setUf(row.get("UFE_SG").toString());
+				Localidade l = new Localidade();
+				l.set_id(row.get("LOC_NU").toString());
+				doc.setLocalidade(l);
+				try {
+					couchDbClient.save(doc);
+				} catch (CouchDbException ce) {
+					
+				}
+				
 			}
 
-			IntegracaoDocument doc = new IntegracaoDocument();
-			doc.set_id("AtualizacaoCep");
+			Table tblLogradouro = db.getTable("LOG_LOGRADOURO");
+			for(Map<String, Object> row : tblLogradouro) {
+				
+				System.out.println(
+					  row.get("LOG_NU").toString() 
+					  + row.get("UFE_SG").toString() 
+					  + row.get("LOC_NU").toString() 
+					  + row.get("BAI_NU_INI").toString()  
+					  + row.get("BAI_NU_FIM").toString()
+					  + row.get("LOG_NO").toString()
+					  + row.get("LOG_COMPLEMENTO").toString()
+					  + row.get("CEP").toString()
+					  + row.get("TLO_TX").toString()
+					  + row.get("LOG_STA_TLO").toString()
+					  + row.get("LOG_NO_ABREV").toString()
+					  );
+				
+				Logradouro doc = new Logradouro();
+				
+				doc.setTipoDocumento("CEP");					
+				doc.setSubTipoDocumento("LOGRADOURO");
+				doc.set_id(row.get("LOG_NU").toString());
+				doc.setNome(row.get("LOG_NO").toString());
+				doc.setComplemento(row.get("LOG_COMPLEMENTO").toString());
+				doc.setCep(row.get("CEP").toString());
+				doc.setUf(row.get("UFE_SG").toString());				
+				doc.setAbreviatura(row.get("LOG_NO_ABREV").toString());
+				
+				Localidade l = new Localidade();
+				l.set_id(row.get("LOC_NU").toString());
+				doc.setLocalidade(l);
+				try {
+					couchDbClient.save(doc);
+				} catch (CouchDbException ce) {
+					
+				}
+			}
 			
-			try {
-				doc = couchDbClient.find(IntegracaoDocument.class, doc.get_id());
-			} catch (NoDocumentException e) {
-				doc.setTipoDocumento("AtualizacaoCep");
-				couchDbClient.save(doc);
+			Table tblLocalidade = db.getTable("LOG_LOCALIDADE");
+			for(Map<String, Object> row : tblLocalidade) {
+				 
+				System.out.println(
+					  row.get("LOC_NU").toString() 
+					  + row.get("UFE_SG").toString() 
+					  + row.get("LOC_NO").toString() 
+					  + row.get("CEP").toString()  
+					  + row.get("LOC_IN_SIT").toString()
+					  + row.get("LOC_IN_TIPO_LOC").toString()
+					  + row.get("LOC_NU_SUB").toString()
+					  + row.get("LOC_NO_ABREV").toString()
+					  + row.get("MUN_NU").toString()
+					  );
+				
+				Localidade doc = new Localidade();
+				
+				doc.setTipoDocumento("CEP");					
+				doc.setSubTipoDocumento("LOCALIDADE");
+				doc.set_id(row.get("LOC_NU").toString());
+				doc.setNome(row.get("LOG_NO").toString());
+				doc.setCep(row.get("CEP").toString());
+				doc.setAbreviatura(row.get("LOG_NO_ABREV").toString());
+				
+				UnidadeFederacao u = new UnidadeFederacao();
+				u.set_id(row.get("UFE_SG").toString());
+				doc.setUnidadeFederacao(u);
+				try {
+					couchDbClient.save(doc);
+				} catch (CouchDbException ce) {
+					
+				}
 			}
 
-			FileInputStream in = new FileInputStream(new File(diretorio + "data/dnecom.tar.gz"));
-			couchDbClient.saveAttachment(in, "dnecom", "application/x-gzip-compressed", doc.get_id(), doc.get_rev());
+			Table tblUf = db.getTable("LOG_FAIXA_UF");
+			for(Map<String, Object> row : tblUf) {
+				
+				System.out.println(						
+					  row.get("UFE_SG").toString() 
+					  + row.get("UFE_CEP_INI").toString() 
+					  + row.get("UFE_CEP_FIM").toString() 						  
+					  );
+				
+				UnidadeFederacao doc = new UnidadeFederacao();
+				
+				doc.setTipoDocumento("CEP");					
+				doc.setSubTipoDocumento("LOCALIDADE");
+				doc.set_id(row.get("UFE_SG").toString());
+				doc.setFaixaCepInicial(row.get("UFE_CEP_INI").toString() );
+				doc.setFaixaCepFinal(row.get("UFE_CEP_FIM").toString() );
+				try {
+					couchDbClient.save(doc);
+				} catch (CouchDbException ce) {
+					
+				}
+			}
+			*/
+			
+			Table tblBairro = db.getTable("LOG_BAIRRO");
+			Table tblLogradouro = db.getTable("LOG_LOGRADOURO");
+			Table tblLocalidade = db.getTable("LOG_LOCALIDADE");
+			Table tblUf = db.getTable("LOG_FAIXA_UF");
+			
+			
+			for(Map<String, Object> rowLog : tblLogradouro) {
+				
+				if(rowLog != null && !rowLog.isEmpty()) {
+				
+					
+					EnderecoVO doc = new EnderecoVO();
+										
+					if ( rowLog.get("LOC_NU") != null ) {
+						
+						Map<String, Object> rowLoc = Cursor.findRow(tblLocalidade, Collections.singletonMap("LOC_NU", rowLog.get("LOC_NU")));
+						
+						doc.setLocalidade((rowLoc != null && rowLoc.get("LOC_NO") != null ? rowLoc.get("LOC_NO").toString() : "" ));
+						doc.setCodigoCidadeIBGE((rowLoc != null && rowLoc.get("MUN_NU") != null ? Long.valueOf( rowLoc.get("MUN_NU").toString()) : null ));
+						
+					}
+					
+					if ( rowLog.get("BAI_NU_INI") != null ) {
+						
+						Map<String, Object> rowBai = Cursor.findRow(tblBairro, Collections.singletonMap("BAI_NU", rowLog.get("BAI_NU_INI")));
+						doc.setBairro((rowBai != null ? rowBai.get("BAI_NO").toString() : "" ));
+						
+					}
+					
+									
+					doc.setTipoDocumento("CEP");					
+					doc.setSubTipoDocumento("CEP");
+					doc.setCep((rowLog.get("CEP") != null ? rowLog.get("CEP").toString() : "" ));
+					doc.setIdLocalidade((rowLog.get("LOC_NU") != null ? Long.valueOf( rowLog.get("LOC_NU").toString() ) : null ));										
+					doc.setUf((rowLog.get("UFE_SG") != null ? rowLog.get("UFE_SG").toString() : "" ));
+					doc.setComplemento((rowLog.get("LOG_COMPLEMENTO") != null ? rowLog.get("LOG_COMPLEMENTO").toString() : "" ));
+					doc.setLogradouro((rowLog.get("LOG_NO") != null ? rowLog.get("LOG_NO").toString() : "" ));
+					doc.setTipoLogradouro((rowLog.get("TLO_TX") != null ? rowLog.get("TLO_TX").toString() : "" ));
+				
+					try {
+						couchDbClient.save(doc);
+					} catch (CouchDbException ce) {
+						System.out.println(ce);
+					}
+				}
+			}
 
 		} catch (Throwable e) {
 			throw new RuntimeException(e);

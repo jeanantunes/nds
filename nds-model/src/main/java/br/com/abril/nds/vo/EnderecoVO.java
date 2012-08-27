@@ -1,11 +1,12 @@
-package br.com.abril.nds.client.endereco.vo;
+package br.com.abril.nds.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 
 
-public class EnderecoVO implements Serializable {
+public class EnderecoVO extends IntegracaoDocument implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -59,6 +60,7 @@ public class EnderecoVO implements Serializable {
 	 */
 	public void setCep(String cep) {
 		this.cep = cep;
+		this.set_id(cep);
 	}
 
 	/**
