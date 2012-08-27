@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
@@ -72,6 +73,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 					input.getReparteDistribuir()));
 			estudo.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
 			estudo.setProdutoEdicao(produtoEdicao);
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 			getSession().persist(estudo);
 			
 			// Associar novo estudo com o lançamento existente:
