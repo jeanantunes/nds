@@ -250,4 +250,11 @@ public interface CotaService {
 	 */
 	List<Cota> obterCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao);
 
+	/**
+	 * Cria uma nova cota, através do processo de alteração de titularidade.
+	 * 
+	 * @param cotaDTO
+	 */
+	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
+	
 }
