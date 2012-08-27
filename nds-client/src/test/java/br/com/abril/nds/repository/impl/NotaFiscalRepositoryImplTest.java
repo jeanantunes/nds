@@ -337,7 +337,6 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 
 		produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
 				peso, precoCusto, precoVenda, codigoDeBarras, null, produtoCE, expectativaVenda, parcial);
-		produtoEdicaoCE.setDesconto(BigDecimal.ZERO);
 
 		save(produtoEdicaoCE);
 		

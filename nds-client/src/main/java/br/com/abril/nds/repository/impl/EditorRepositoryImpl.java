@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 
@@ -231,12 +232,14 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	 */
 	private List<RegistroCurvaABCEditorVO> complementarCurvaABCEditor(List<RegistroCurvaABCEditorVO> lista, FiltroCurvaABCEditorDTO filtro) {
 
-		BigDecimal participacaoTotal = new BigDecimal(0);
-		BigDecimal vendaTotal = new BigDecimal(0);
+		BigDecimal participacaoTotal = BigDecimal.ZERO;
+		BigInteger vendaTotal = BigInteger.ZERO;
 
 		// Soma todos os valores de participacao
 		for (RegistroCurvaABCEditorVO registro : lista) {
-			participacaoTotal.add(registro.getFaturamentoCapa());
+			if (registro.getFaturamentoCapa()!=null) {
+				participacaoTotal.add(registro.getFaturamentoCapa());
+			}
 			vendaTotal.add(registro.getVendaExemplares());
 		}
 
@@ -279,6 +282,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.repository.EditorRepository#obterHistoricoEditor(br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro) {
 
@@ -320,7 +324,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	 */
 	private List<RegistroHistoricoEditorVO> complementarHistoricoEditor(List<RegistroHistoricoEditorVO> lista, FiltroPesquisarHistoricoEditorDTO filtro) {
 
-		BigDecimal vendaTotal = new BigDecimal(0);
+		BigInteger vendaTotal = BigInteger.ZERO;
 
 		// Soma todos os valores de participacao
 		for (RegistroHistoricoEditorVO registro : lista) {

@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.HistoricoNumeroCota;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCotaPK;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -46,6 +47,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -1081,7 +1083,16 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	private Pessoa persistePessoaCota(Cota cota, CotaDTO cotaDto){
 		
-		Pessoa pessoa = getPessoa(cotaDto, cota.getPessoa()) ;
+		Pessoa pessoa = null;
+		
+		if (cotaDto.isAlteracaoTitularidade()) {
+			
+			pessoa = getPessoa(cotaDto, null) ;
+		
+		} else {
+		
+			pessoa = getPessoa(cotaDto, cota.getPessoa()) ;
+		}
 	    
 	    pessoa.setEmail(cotaDto.getEmail());
 	    
@@ -1543,6 +1554,42 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public CotaDTO criarCotaTitularidade(CotaDTO cotaDTO) {
+
+		Cota cotaAntiga = this.cotaRepository.buscarPorId(cotaDTO.getIdCota());
+
+		List<PDV> pdvs = cotaAntiga.getPdvs();
+		Set<Fornecedor> fornecedores = cotaAntiga.getFornecedores();
+		Set<DescontoProdutoEdicao> descontosProdutoEdicao = cotaAntiga.getDescontosProdutoEdicao();
+		ParametroCobrancaCota parametrosCobrancaCota = cotaAntiga.getParametroCobranca();
+		ParametroDistribuicaoCota parametroDistribuicaoCota = cotaAntiga.getParametroDistribuicao();
+
+//		TODO: aguardando resposta do Francivaldo.
+//		ContratoCota contratoCota = cotaAntiga.getContratoCota();
+//		boolean possuiContrato = cotaAntiga.isPossuiContrato();
+
+		Long idCotaNova = this.salvarCota(cotaDTO);
+
+		Cota cotaNova = this.cotaRepository.buscarPorId(idCotaNova);
+
+		cotaNova.setPdvs(pdvs);
+		cotaNova.setFornecedores(fornecedores);
+		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
+		cotaNova.setParametroCobranca(parametrosCobrancaCota);
+		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
+
+//		TODO: aguardando resposta do Francivaldo.
+//		cotaNova.setContratoCota(contratoCota);
+//		cotaNova.setPossuiContrato(possuiContrato);
+
+		return cotaDTO;
+	}
+	
+	/**
 	 * Valida se a lista de endereços pertencentes a uma cota, 
 	 * tem pelo menos um e somente um endereço principal
 	 * 
@@ -1605,4 +1652,6 @@ public class CotaServiceImpl implements CotaService {
 		
 		return enderecoAssociacaoCadastrado;
 	}
+
+	
 }
