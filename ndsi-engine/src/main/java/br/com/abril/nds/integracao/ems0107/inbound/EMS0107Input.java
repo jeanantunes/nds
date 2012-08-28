@@ -1,22 +1,8 @@
 package br.com.abril.nds.integracao.ems0107.inbound;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.ForeignKey;
-
-import br.com.abril.nds.model.cadastro.Cota;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
-import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
