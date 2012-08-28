@@ -74,6 +74,14 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 		
+		Estudo estudo = lancamento.getEstudo();
+		if (estudo == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"NAO ENCONTROU Estudo");
+			return;
+		}
+		
 		Integer numeroCota = input.getCodigoCota();
 
 			Cota cota = obterCota(numeroCota);
