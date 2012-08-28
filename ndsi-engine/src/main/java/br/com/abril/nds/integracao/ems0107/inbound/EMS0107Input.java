@@ -15,14 +15,19 @@ public class EMS0107Input implements Serializable {
 
 	private Integer id;
 
+	/** Código da publicação. */
 	private String codigoPublicacao;
 
+	/** Número da Edição. */
 	private Long edicao;
 
+	/** Código da Cota. */
 	private Integer codigoCota;
 
+	/** Quantidade do reparte desta Edição destinada para esta Cota. */
 	private Long quantidadeReparte;
 
+	/** Indica se é um repartePDV (S/N). */
 	private String repartePDV;
 
 	@Field(offset = 1, length = 8)
