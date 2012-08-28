@@ -64,7 +64,7 @@ var cadastroTipoNotaController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 950,
-			height : 315
+			height : 'auto'
 		});
 	}, 
 	bindButtons : function() {

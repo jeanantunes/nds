@@ -247,13 +247,11 @@
       </fieldset>
       
       <div class="linha_separa_fields">&nbsp;</div>
-      
+      <div class="grids" style="display:none;">
 	       <fieldset class="classFieldset">
 	       
 	       	  <legend>Boletos Cadastrados</legend>
-	       	  
-	          <div class="grids" style="display:none;">
-		       	  
+
 		       	<table class="boletosCotaGrid"></table>
 		        
 				<span class="bt_novos" title="Gerar Arquivo">
@@ -269,10 +267,8 @@
 						Imprimir
 					</a>
 				</span>
-			  
-			  </div>
 	      </fieldset>
-	      
+	    </div>  
 	  <div class="linha_separa_fields">&nbsp;</div>
 
   </div>

@@ -117,13 +117,12 @@ $(function(){
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="fieldGrid">
-       	  <legend>Boxes Cadastrados</legend>
-        <div class="grids" style="display:none;">
-        	<table class="boxGrid"></table>
-        </div>
-
-      </fieldset>
+      <div class="grids" style="display:none;">
+	      <fieldset class="fieldGrid">
+	       	  <legend>Boxes Cadastrados</legend>
+	        	<table class="boxGrid"></table>	
+	      </fieldset>
+      </div>
     </form>
 
 </body>
