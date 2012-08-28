@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -88,6 +86,8 @@ public class ProdutoController {
 	private static List<ItemDTO<TipoLancamento,String>> listaTipoLancamento =  new ArrayList<ItemDTO<TipoLancamento,String>>();
 	
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
+	
+	private static List<ItemDTO<Long,String>> listaDescontoLogistica =  new ArrayList<ItemDTO<Long,String>>();
 	
 	public ProdutoController(Result result) {
 		this.result = result;
@@ -300,9 +300,7 @@ public class ProdutoController {
 
 		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
 		
-		//TODO:Entidade TipoDesconto excluída
-		//listaCombos.add(parseComboTipoDesconto(this.tipoDescontoService.obterTodosTiposDescontos()));
-		
+		listaCombos.add(getComboDescontoLogistica());
 		
 		this.result.use(Results.json()).from(listaCombos, "result").recursive().serialize();
 	}
@@ -591,6 +589,32 @@ public class ProdutoController {
 			listaBaseComboVO.add(new BaseComboVO(editor.getId(), editor.getNome()));
 		}
 		
+		return listaBaseComboVO;
+	}
+	
+	/**
+	 * Popular combo.
+	 * 
+	 * @param listaDescontoLogistica
+	 * @return List<BaseComboVO>
+	 */
+	private List<BaseComboVO> getComboDescontoLogistica() {
+		
+		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+		
+		listaBaseComboVO.add(getDefaultBaseComboVO());
+		
+		listaBaseComboVO.add(new BaseComboVO(1l,"NORMAL"));                       
+		listaBaseComboVO.add(new BaseComboVO(2l,"PRODUTOS TRIBUTADOS"));          
+		listaBaseComboVO.add(new BaseComboVO(3l,"VIDEO PRINT DE 1/1/96 A 1/1/97"));
+		listaBaseComboVO.add(new BaseComboVO(4l,"CROMOS - NORMAL EXC. JUIZ E BH"));
+		listaBaseComboVO.add(new BaseComboVO(5l,"IMPORTADAS - ELETROLIBER"));     
+		listaBaseComboVO.add(new BaseComboVO(6l,"PROMOCOES"));
+		listaBaseComboVO.add(new BaseComboVO(7l,"ESPECIAL GLOBO"));
+		listaBaseComboVO.add(new BaseComboVO(8l,"MAGALI FOME ZERO"));
+		listaBaseComboVO.add(new BaseComboVO(9l,"IMPORTADAS MAG"));
+		listaBaseComboVO.add(new BaseComboVO(11l,"IMPORTADAS MAGEXPRESS"));
+
 		return listaBaseComboVO;
 	}
 	
