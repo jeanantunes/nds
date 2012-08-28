@@ -2,10 +2,11 @@ package br.com.abril.nds.model.cadastro;
 
 public enum ClassificacaoEspectativaFaturamento {
 	
-	AA ("AA -Faturamento - Mais de 1 PDV"),
-	A  ("A - Faturamento Acima de R$ 3.500,00"),
-	B  ("B - Faturamento entre R$ 1.500,00 - R$ 3.499"),
-	C  ("C - Faturamento Abaixo R$ 1.499,00");
+	AA ("AA -R$ 4.000,00 a R$ 999999,99 (mais de 1 PDV)"),
+	A  ("A - R$ 4.000,00 a R$ 999999,99"),
+	B  ("B - R$ 2.000,00 a R$ 3.999,99"),
+	C  ("C - R$ 1.000,00 a R$ 1.999,99"),
+	D  ("D - R$ 0.01 a R$ 999,99");
 	
 	private String descricao;
 	
