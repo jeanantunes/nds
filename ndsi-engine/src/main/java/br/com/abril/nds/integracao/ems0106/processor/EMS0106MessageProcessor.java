@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0106.processor;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -18,6 +19,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
@@ -80,6 +82,14 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			lancamento.setEstudo(estudo);
 			this.getSession().merge(lancamento);
 		} else {
+			
+			// Remoção dos EstudoCotas que ficaram desatualizados:
+			Set<EstudoCota> eCotas = estudo.getEstudoCotas();
+			if (eCotas != null && !eCotas.isEmpty()) {
+				for (EstudoCota eCota : eCotas) {
+					this.getSession().delete(eCota);
+				}
+			}
 			
 			// Atualizar os dados do Estudo:
 			estudo.setQtdeReparte(BigInteger.valueOf(
