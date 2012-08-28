@@ -381,6 +381,16 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		return roteirizacaoRepository.buscarRoteirizacaoSumarizadoPorCota(filtro);
 	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro){
+		
+		return roteirizacaoRepository.obterCotasParaBoxRotaRoteiro(idBox, idRota, idRoteiro);
+		
+	}
+	
+	
 	
 	@Override
 	@Transactional(readOnly=true)
