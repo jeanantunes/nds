@@ -171,23 +171,4 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		return (Lancamento) query.uniqueResult();
 	}
 		
-	@SuppressWarnings("unchecked")
-	private List<Estudo> getEstudosSalvos(Long idProdutoEdicao, Date dataLancamentoPrevista) {
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT e ");
-		sql.append("FROM Estudo e ");
-		sql.append("	JOIN FETCH e.produtoEdicao pe ");
-		sql.append("WHERE ");
-		sql.append("	pe.id = :produtoEdicaoId ");
-		sql.append("	AND e.dataLancamento = :dataLancamento ");
-
-		Query query = getSession().createQuery(sql.toString());
-
-		query.setParameter("produtoEdicaoId", idProdutoEdicao);
-		query.setParameter("dataLancamento", dataLancamentoPrevista);
-
-		return query.list();
-	}
-	
 }
