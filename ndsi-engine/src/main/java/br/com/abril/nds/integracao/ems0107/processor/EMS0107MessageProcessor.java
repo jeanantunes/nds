@@ -43,9 +43,13 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	public void processMessage(Message message) {
 		
 		EMS0107Input input = (EMS0107Input) message.getBody();
+		if (input == null) {
+			this.ndsiLoggerFactory.getLogger().logError(
+					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
+		}
 		
-		if (input != null) {
-			
+		
 			String codigoPublicacao = input.getCodigoPublicacao();
 			Long edicao = input.getEdicao();
 			Integer numeroCota = input.getCodigoCota();
@@ -85,10 +89,6 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				}
 			}
 			
-		} else {
-			this.ndsiLoggerFactory.getLogger().logError(
-				message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
-		}
 	}	
 	
 	@SuppressWarnings("unchecked")
