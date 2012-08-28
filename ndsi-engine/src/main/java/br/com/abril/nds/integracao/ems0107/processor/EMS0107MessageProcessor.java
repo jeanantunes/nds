@@ -82,33 +82,18 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 		
+		// Novo EstudoCota:
+		BigInteger qtdReparte = BigInteger.valueOf(input.getQuantidadeReparte());
 		Integer numeroCota = input.getCodigoCota();
 		Cota cota = this.obterCota(numeroCota);
-
-
-			List<Estudo> listaEstudos = 
-				this.getEstudosSalvos(
-					lancamento.getProdutoEdicao().getId(), 
-					lancamento.getDataLancamentoPrevista());
-			
-			if (listaEstudos == null || listaEstudos.isEmpty()) {
-				this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.HIERARQUIA, "NAO ENCONTROU Produto/Edição e Estudos");
-			} else {
-				
-				for (Estudo _estudo : listaEstudos) {
-					
-					EstudoCota estudoCota = new EstudoCota();
-					
-					estudoCota.setCota(cota);
-					estudoCota.setEstudo(_estudo);
-					estudoCota.setQtdeEfetiva( BigInteger.valueOf(input.getQuantidadeReparte()) );
-					estudoCota.setQtdePrevista( BigInteger.valueOf(input.getQuantidadeReparte()) );
-					
-					this.getSession().persist(estudoCota);
-				}
-			}
-			
+		
+		EstudoCota eCota = new EstudoCota();
+		eCota.setEstudo(estudo);
+		eCota.setCota(cota);
+		eCota.setQtdePrevista(qtdReparte);
+		eCota.setQtdeEfetiva(qtdReparte);
+		
+		this.getSession().persist(eCota);
 	}	
 	
 	/**
