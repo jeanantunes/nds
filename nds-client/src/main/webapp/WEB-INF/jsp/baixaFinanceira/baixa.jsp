@@ -5,7 +5,6 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/data.holder.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/baixaFinanceira.js"></script>
 
 	<script type="text/javascript">
 		var pesquisaCotaBaixaFinanceira = new PesquisaCota();

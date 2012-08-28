@@ -1,18 +1,26 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/impressaoBoletos.js"></script>
 	<script language="javascript" type="text/javascript">
 
+	$(function() {
 		var pesquisaCotaImpressaoBoletos = new PesquisaCota();
-	
+		impressaoBoletosController.init();
+	});
+
 	</script>
 </head>
 
 <body>
-	<div style="display: none;" id="aguarde">Aguarde...</div>
-	<div style="display: none;heigth:200px;  min-height:0px;" id="pesquisaInvalida">
-		Não foi feita a Geração de Dívidas para esta data.
-	</div>	
+	<form id="formAguarde">
+		<div style="display: none;" id="aguarde">Aguarde...</div>
+	</form>
+	<form id="formPesquisaInvalida">
+		<div style="display: none;heigth:200px;  min-height:0px;" id="pesquisaInvalida">
+			Não foi feita a Geração de Dívidas para esta data.
+		</div>	
+	</form>
 		<form id="pesquisaDividasForm"
 				name="pesquisaDividasForm" 
 				method="post">

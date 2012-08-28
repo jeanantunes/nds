@@ -188,7 +188,8 @@ var impressaoBoletosController = $.extend(true, {
 			modal: true,
 			open: function (){
 					$(this).parent().children().children('.ui-dialog-titlebar-close').remove();
-				  }
+				  },
+			form: $("#aguarde", this.workspace).parents("form")
 		});
 		
 		$("#aguarde", impressaoBoletosController.workspace).show();
@@ -256,7 +257,8 @@ var impressaoBoletosController = $.extend(true, {
 				"Fechar" : function() {
 					$(this).dialog("close");
 				}
-			}
+			},
+			form: $("#pesquisaInvalida", this.workspace).parents("form")			
 		});
 	},
 	

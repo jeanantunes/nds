@@ -1,5 +1,6 @@
 <head>
 
+<script type="text/javascript" src="scripts/suspensaoCota.js"></script>
 
 <script type="text/javascript">
 $(function(){
