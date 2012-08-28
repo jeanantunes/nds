@@ -83,8 +83,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		Integer numeroCota = input.getCodigoCota();
+		Cota cota = this.obterCota(numeroCota);
 
-			Cota cota = obterCota(numeroCota);
 
 			List<Estudo> listaEstudos = 
 				this.getEstudosSalvos(
