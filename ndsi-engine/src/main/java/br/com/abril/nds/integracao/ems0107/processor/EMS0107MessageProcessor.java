@@ -96,12 +96,12 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 					message, EventoExecucaoEnum.HIERARQUIA, "NAO ENCONTROU Produto/Edição e Estudos");
 			} else {
 				
-				for (Estudo estudo : listaEstudos) {
+				for (Estudo _estudo : listaEstudos) {
 					
 					EstudoCota estudoCota = new EstudoCota();
 					
 					estudoCota.setCota(cota);
-					estudoCota.setEstudo(estudo);
+					estudoCota.setEstudo(_estudo);
 					estudoCota.setQtdeEfetiva( BigInteger.valueOf(input.getQuantidadeReparte()) );
 					estudoCota.setQtdePrevista( BigInteger.valueOf(input.getQuantidadeReparte()) );
 					
