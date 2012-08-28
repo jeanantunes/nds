@@ -80,11 +80,18 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 		
-		// Novo EstudoCota:
-		BigInteger qtdReparte = BigInteger.valueOf(input.getQuantidadeReparte());
 		Integer numeroCota = input.getCodigoCota();
 		Cota cota = this.obterCota(numeroCota);
+		boolean hasEstudoCota = this.hasEstudoCota(estudo, cota);
+		if (hasEstudoCota) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"JA EXISTE EstudoCota para a numero de Cota: " + numeroCota);
+			return;
+		}
 		
+		// Novo EstudoCota:
+		BigInteger qtdReparte = BigInteger.valueOf(input.getQuantidadeReparte());
 		EstudoCota eCota = new EstudoCota();
 		eCota.setEstudo(estudo);
 		eCota.setCota(cota);
@@ -163,6 +170,29 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		query.setFetchSize(1);
 		
 		return (Lancamento) query.uniqueResult();
+	}
+	
+	/**
+	 * Verifica se já existe EstudoCota cadastrado.
+	 * 
+	 * @param estudo
+	 * @param cota
+	 * @return true: Já existe pelo menos 1 EstudoCota cadastrado;<br>
+	 * false: Não existe nenhum EstudoCota para o Estudo e Cota passado;
+	 */
+	private boolean hasEstudoCota(Estudo estudo, Cota cota) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT COUNT(ec) FROM EstudoCota ec " );
+		hql.append("  WHERE ec.estudo = :estudo AND ec.cota = :cota");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("estudo", estudo);
+		query.setParameter("cota", cota);
+		
+		Long qtd = (Long) query.uniqueResult();
+		return (qtd != null && qtd.intValue() > 0);
+		
 	}
 		
 }
