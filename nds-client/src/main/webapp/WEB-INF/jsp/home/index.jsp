@@ -36,6 +36,8 @@
 
 <link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
 
+<script type="text/javascript" src="scripts/fornecedor.js"></script>
+
 <base href="<c:url value="/"/>" />
 
 <script type="text/javascript">

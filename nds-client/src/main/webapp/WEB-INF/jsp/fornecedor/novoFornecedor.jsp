@@ -1,7 +1,9 @@
-<form id="form-dialogNovoFornecedor">
+<form id="fornecedorController-formNovoFornecedor">
 <div id="fornecedorController-dialogNovoFornecedor" title="Novo Fornecedor" style="display:none">
 
-	<jsp:include value="fornecedorController-dialogNovoFornecedor" page="../messagesDialog.jsp" />
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="fornecedorController-dialogNovoFornecedor" name="messageDialog"/>
+	</jsp:include>
 
 	<div id="fornecedorController-tabFornecedores">
 	
