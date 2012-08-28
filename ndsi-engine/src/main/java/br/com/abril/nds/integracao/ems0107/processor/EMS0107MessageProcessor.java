@@ -192,7 +192,6 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		Long qtd = (Long) query.uniqueResult();
 		return (qtd != null && qtd.intValue() > 0);
-		
 	}
 		
 }
