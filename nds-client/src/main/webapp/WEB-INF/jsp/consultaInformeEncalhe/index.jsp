@@ -1,4 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 
@@ -38,15 +37,13 @@ fieldset label {
 	type="text/javascript"></script>
 <script type="text/javascript">
 	$(function() {
-		$("#checkTipoImpressaoDados").button();
-		$("#buttonsetTipoImpressaoCapas").buttonset();
 		var informeEncalhe = new InformeEncalhe();
 	});
 </script>
 </head>
 <body>
+	<form id="form-imprimir">
 	<div id="dialog-imprimir" title="Imprimir Informe de Encalhe">
-		<form id="form-imprimir">
 			<input type="hidden" name="idFornecedor"/>
 			<input type="hidden" name="semanaRecolhimento"/>
 			<input type="hidden" name="dataRecolhimento"/>
@@ -139,7 +136,6 @@ fieldset label {
 					</tr>
 				</table>
 			</fieldset>
-		</form>
 	</div>
 	<div class="areaBts">
 		<div class="area">

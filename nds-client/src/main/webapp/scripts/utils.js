@@ -30,7 +30,7 @@ $(document).ready(function(){
 
 function exibirMensagem(tipoMensagem, mensagens) {
 
-	clearMessageTimeout();
+	//clearMessageTimeout();
 	
 	var divSuccess = $("#effectSuccess");
 	var divWarning = $("#effectWarning");
@@ -77,7 +77,8 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divSuccess).show(0, esconde(isFromDialog, divSuccess));
+		$(divSuccess).show(0);
+		//$(divSuccess).show(0, esconde(isFromDialog, divSuccess));
 		
 	} else if (tipoMensagem == "WARNING") {
 		
@@ -85,7 +86,8 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divWarning).show(0, esconde(isFromDialog, divWarning));
+		$(divWarning).show(0);
+		//$(divWarning).show(0, esconde(isFromDialog, divWarning));
 		
 	} else if (tipoMensagem == "ERROR") {
 		
@@ -93,7 +95,8 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 		
-		$(divError).show(0, esconde(isFromDialog, divError));
+		$(divError).show(0);
+		//$(divError).show(0, esconde(isFromDialog, divError));
 	}
 }
 
@@ -122,14 +125,16 @@ function esconde(isFromDialog, div) {
 		messageDialogTimeout =
 			setTimeout(function() {
 				$(div).fadeOut("slow");
-			}, 5000);
+			}, 0);
+			//}, 5000);
 		
 	} else {
 		
 		messageTimeout = 
 			setTimeout(function() {
 				$(div).fadeOut("slow");
-			}, 5000);	
+			}, 0);	
+			//}, 5000);	
 	}
 }
 
