@@ -3,6 +3,7 @@
  */
 
 function InformeEncalhe() {
+	
 	this.initDialogImprimir();
 	this.initGrid();
 	this.bindEvents();
@@ -12,13 +13,16 @@ function InformeEncalhe() {
 		'sortname':'nomeProduto',
 		'sortorder':'asc'
 		};
+	$("#checkTipoImpressaoDados", this.workspace).button();
+	$("#buttonsetTipoImpressaoCapas", this.workspace).buttonset();
 
 };
 InformeEncalhe.prototype.path = contextPath + "/devolucao/informeEncalhe/";
 
 InformeEncalhe.prototype.initGrid = function() {
+	var workspace = "#this.workspace div.ui-tabs-panel:not(.ui-tabs-hide)";
 	var _this = this;
-	$("#consultaInformeEncalheGrid").flexigrid(
+	$("#consultaInformeEncalheGrid", this.workspace).flexigrid(
 			{
 				preProcess : function(data) {
 					if (typeof data.mensagens == "object") {
@@ -26,7 +30,7 @@ InformeEncalhe.prototype.initGrid = function() {
 						exibirMensagem(data.mensagens.tipoMensagem,
 								data.mensagens.listaMensagens);
 						
-						$("#consultaInformeEncalheGrid").children().remove();
+						$("#consultaInformeEncalheGrid", this.workspace).children().remove();
 						
 					} else {
 						$.each(data.rows, function(index, value) {
@@ -128,23 +132,23 @@ InformeEncalhe.prototype.initGrid = function() {
 					console.log("sort");
 					_this.imprimirParans.sortname = sortname;
 					_this.imprimirParans.sortorder = sortorder;
-					$("input[name='sortname']").val(sortname);
-					$("input[name='sortorder']").val(sortorder);
+					$("input[name='sortname']", this.workspace).val(sortname);
+					$("input[name='sortorder']", this.workspace).val(sortorder);
 					$(this).flexReload();
 				}
 			});
 
-	$("#consultaInformeEncalheGrid").flexOptions({
+	$("#consultaInformeEncalheGrid", this.workspace).flexOptions({
 		"url" : this.path + 'busca.json',
 		params : [ {
 			name : "idFornecedor",
-			value : $("#idFornecdorSelect").val()
+			value : $("#idFornecdorSelect", this.workspace).val()
 		}, {
 			name : "semanaRecolhimento",
-			value : $("#semanaRecolhimentoBox").val()
+			value : $("#semanaRecolhimentoBox", this.workspace).val()
 		}, {
 			name : "dataRecolhimento",
-			value : $("#dataRecolhimentoBox").val()
+			value : $("#dataRecolhimentoBox", this.workspace).val()
 		} ]
 	});
 
@@ -152,7 +156,7 @@ InformeEncalhe.prototype.initGrid = function() {
 
 InformeEncalhe.prototype.processAcao = function(tdDiv, pid) {
 	var capaPopup = new CapaPopup(tdDiv.innerHTML);
-	$(tdDiv).empty();
+	$(tdDiv, this.workspace).empty();
 	tdDiv.appendChild(capaPopup.panel);
 };
 
@@ -161,21 +165,21 @@ InformeEncalhe.prototype.busca = function() {
 		"url" : this.path + 'busca.json',
 		params : [ {
 			name : "idFornecedor",
-			value : $("#idFornecdorSelect").val()
+			value : $("#idFornecdorSelect", this.workspace).val()
 		}, {
 			name : "semanaRecolhimento",
-			value : $("#semanaRecolhimentoBox").val()
+			value : $("#semanaRecolhimentoBox", this.workspace).val()
 		}, {
 			name : "dataRecolhimento",
-			value : $("#dataRecolhimentoBox").val()
+			value : $("#dataRecolhimentoBox", this.workspace).val()
 		} ],
 		newp : 1
 	});
-	$("#consultaInformeEncalheGrid").flexReload();
+	$("#consultaInformeEncalheGrid", this.workspace).flexReload();
 	
-	this.imprimirParans.idFornecedor = $("#idFornecdorSelect").val();
-	this.imprimirParans.semanaRecolhimento = $("#semanaRecolhimentoBox").val();
-	this.imprimirParans.dataRecolhimento = $("#dataRecolhimentoBox").val();
+	this.imprimirParans.idFornecedor = $("#idFornecdorSelect", this.workspace).val();
+	this.imprimirParans.semanaRecolhimento = $("#semanaRecolhimentoBox", this.workspace).val();
+	this.imprimirParans.dataRecolhimento = $("#dataRecolhimentoBox", this.workspace).val();
 	
 	
 };
@@ -183,9 +187,9 @@ InformeEncalhe.prototype.busca = function() {
 InformeEncalhe.prototype.bindEvents = function() {
 	var _this = this;
 
-	$("#semanaRecolhimento").mask("99");
-	$("#dataRecolhimentoBox").mask("99/99/9999");
-	$("#dataRecolhimentoBox")
+	$("#semanaRecolhimento", this.workspace).mask("99");
+	$("#dataRecolhimentoBox", this.workspace).mask("99/99/9999");
+	$("#dataRecolhimentoBox", this.workspace)
 			.datepicker(
 					{
 						showOn : "button",
@@ -194,14 +198,14 @@ InformeEncalhe.prototype.bindEvents = function() {
 						buttonImageOnly : true
 					});
 
-	$("#btnPesquisar").click(function() {
+	$("#btnPesquisar", this.workspace).click(function() {
 		_this.busca();
-		$(".grids").show();
+		$(".grids", this.workspace).show();
 	});
-	$("#btnImprimir").click(function() {
+	$("#btnImprimir", this.workspace).click(function() {
 		_this.$dialogImprimir.dialog('open');
 	});
-	$('#dataRecolhimentoBox,#semanaRecolhimentoBox').bind('keypress', function(e) {
+	$('#dataRecolhimentoBox,#semanaRecolhimentoBox', this.workspace).bind('keypress', function(e) {
 		if(e.keyCode == 13) {
 			_this.busca();
 			$(".grids").show();
@@ -214,7 +218,7 @@ InformeEncalhe.prototype.bindEvents = function() {
 InformeEncalhe.prototype.initDialogImprimir = function() {
 	
 	var _this = this;
-	this.$dialogImprimir = $( "#dialog-imprimir" ).dialog({
+	this.$dialogImprimir = $( "#dialog-imprimir", this.workspace ).dialog({
 		autoOpen : false,
 		resizable: false,
 		height:'auto',
@@ -223,21 +227,22 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 		buttons: {
 			"Imprimir": function() {
 				
-				$("input[name='idFornecedor']").val($("#idFornecdorSelect").val());
-				$("input[name='semanaRecolhimento']").val($("#semanaRecolhimentoBox").val());
-				$("input[name='dataRecolhimento']").val($("#dataRecolhimentoBox").val());
+				$("input[name='idFornecedor']", this.workspace).val($("#idFornecdorSelect").val());
+				$("input[name='semanaRecolhimento']", this.workspace).val($("#semanaRecolhimentoBox").val());
+				$("input[name='dataRecolhimento']", this.workspace).val($("#dataRecolhimentoBox").val());
 				
 				$( this ).dialog( "close" );
-				$("#form-imprimir").attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');
-				$("#form-imprimir").attr("method", "POST");
-				$("#form-imprimir").attr("target", "_blank");
-				$("#form-imprimir").submit();
+				$("#form-imprimir", this.workspace).attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');
+				$("#form-imprimir", this.workspace).attr("method", "POST");
+				$("#form-imprimir", this.workspace).attr("target", "_blank");
+				$("#form-imprimir", this.workspace).submit();
 
 			},
 			"Fechar": function() {
 				$( this ).dialog( "close" );
 			}
-		}
+		},
+		form: $("#dialog-imprimir", this.workspace).parents("form")
 	});
 };
 
@@ -307,7 +312,7 @@ function CapaPopup(idProdutoEdicao) {
 	this.img.height = 15;
 	this.anchor.appendChild(this.img);
 	this.changeStatus(this.statusEnum.LOADING);
-	this.$dialogCapa = $('<div></div>').dialog({
+	this.$dialogCapa = $('<div></div>', this.workspace).dialog({
 		autoOpen : false,
 		title : 'Visualizando Produto',
 		resizable : false,
@@ -321,19 +326,19 @@ function CapaPopup(idProdutoEdicao) {
 }
 
 CapaPopup.prototype.changeStatus = function(newStatus) {
-	$(this.img).unbind();
+	$(this.img, this.workspace).unbind();
 	var _this = this;
 	var eventObj;
 	this.anchor.title = newStatus.title;
 	if (newStatus.events) {
 		for ( var i in newStatus.events) {
 			eventObj = newStatus.events[i];
-			$(this.img).bind(eventObj.event, {
+			$(this.img, this.workspace).bind(eventObj.event, {
 				CapaPopup : _this
 			}, eventObj.handler);
 		}
 	}
-	$(this.img).attr('src', newStatus.img);
+	$(this.img, this.workspace).attr('src', newStatus.img);
 };
 
 CapaPopup.prototype.openDialogCapa = function(event) {
@@ -350,7 +355,7 @@ CapaPopup.prototype.loadCapa = function() {
 	img = $("<img />")
 			.load(
 					function() {						
-						$(_this.$dialogCapa).append(img);
+						$(_this.$dialogCapa, this.workspace).append(img);
 						_this.changeStatus(_this.statusEnum.CAPA);				
 					}).error(function() {
 				_this.changeStatus(_this.statusEnum.NO_CAPA);
@@ -399,7 +404,7 @@ function CapaUpload(idProdutoEdicao, callBack) {
 	this.panel.innerHTML = "<p>Este Produto esta sem capa no momento, deseja incluir uma?</p><p><strong>Selecione a imagem desejada:</strong></p>";
 
 	var inputUpload = $('<input type="file" name="image"/>');	
-	$(this.panel).append(inputUpload);
+	$(this.panel, this.workspace).append(inputUpload);
 
 	var loadingPanel = document.createElement("div");
 	loadingPanel.style.display = 'none';
@@ -421,8 +426,8 @@ function CapaUpload(idProdutoEdicao, callBack) {
 
 						},
 						done : function(e, data) {
-							$(loadingPanel).hide();
-							$(inputUpload).show();
+							$(loadingPanel, this.workspace).hide();
+							$(inputUpload, this.workspace).show();
 
 							if (callBack) {
 								callBack(data.result);
@@ -436,8 +441,8 @@ function CapaUpload(idProdutoEdicao, callBack) {
 						},
 						send : function(e, data) {
 
-							$(loadingPanel).show();
-							$(inputUpload).hide();
+							$(loadingPanel, this.workspace).show();
+							$(inputUpload, this.workspace).hide();
 
 						}
 

@@ -69,6 +69,13 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		$("#novoNumeroNota", this.workspace).numeric();
 		$("#novoSerieNota", this.workspace).numeric();
+		
+		$("#codigo", this.workspace).numeric();
+		$("#edicao", this.workspace).numeric();
+		$("#precoCapa", this.workspace).numeric();
+		$("#peso", this.workspace).numeric();
+		$("#pacotePadrao", this.workspace).numeric();
+		$("#repartePrevisto", this.workspace).numeric();
 
 		$("#produto", this.workspace).autocomplete({source: ""});
 		

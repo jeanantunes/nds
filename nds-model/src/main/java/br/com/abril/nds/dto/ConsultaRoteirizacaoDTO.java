@@ -24,7 +24,7 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 	private Integer numeroCota;
 	
 	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 5)
-	private String nome ;
+	private String nome;
 	
 	private Long qntCotas;
 

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -19,11 +20,15 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.repository.RoteirizacaoRepository;
 
 public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 
 	@Autowired
 	private RotaRepository rotaRepository;
+	
+	@Autowired
+	private RoteirizacaoRepository roteirizacaoRepository;
 	
 	private Box box1;
 	private PDV pdvManoel;
@@ -31,6 +36,8 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 	private PessoaFisica manoel;
 	private Rota rota;
 	private Rota rota10;
+	private Roteiro roteiro;
+	private Roteiro roteiroTCD;
 	
 	@Before
 	public void setUp() {
@@ -48,7 +55,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
-		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
 		save(roteiro);
 
 		rota = Fixture.rota("005", "Rota 005");
@@ -61,7 +68,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
 		save(roteiro);
 		
-		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",box1,TipoRoteiro.NORMAL);
+		roteiroTCD = Fixture.criarRoteiro("TCD",box1,TipoRoteiro.NORMAL);
 		save(roteiroTCD);
 		
 		rota10 = Fixture.rota("001", "Rota 001");
@@ -80,4 +87,16 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Assert.assertTrue(rotas.get(0).getId().equals(rota10.getId()));
 		Assert.assertTrue(rotas.get(1).getId().equals(rota.getId()));
 	}
+	
+
+	@Test
+	public void obterCotasPorBoxRotaRoteiro() {
+		
+		List<ConsultaRoteirizacaoDTO> rotas = roteirizacaoRepository.obterCotasParaBoxRotaRoteiro(box1.getId(), rota10.getId(), roteiroTCD.getId());
+		
+		Assert.assertTrue(rotas!=null);
+		
+	}
+
+	
 }

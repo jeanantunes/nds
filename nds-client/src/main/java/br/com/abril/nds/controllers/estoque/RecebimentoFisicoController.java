@@ -1487,7 +1487,6 @@ public class RecebimentoFisicoController {
 		
 		
 		notaFiscal.setEmitente(fornecedor.getJuridica());
-		notaFiscal.setCfop(cfopService.buscarPorCodigo("5917"));//OUTRAS SAIDAS DE MERCADORIA
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
 		notaFiscal.setValorBruto(CurrencyUtil.converterValor(nota.getValorTotal()));
         notaFiscal.setValorDesconto(notaFiscal.getValorBruto().subtract(notaFiscal.getValorLiquido()));
