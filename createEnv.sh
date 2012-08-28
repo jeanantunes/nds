@@ -24,3 +24,4 @@ cd /opt/ndistrib/ndsi-couchdbinterface
 tar -zxvf ndsi-couchdbinterface-0.0.1-SNAPSHOT-standalone.tar.gz
 
 cp /mnt/HDU_84646/Projetos/NDS/NDS/integracao.sh /opt
+cp /mnt/HDU_84646/Projetos/NDS/NDS/createEnv.sh /opt
