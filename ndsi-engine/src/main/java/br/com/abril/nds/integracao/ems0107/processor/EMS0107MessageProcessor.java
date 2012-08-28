@@ -2,7 +2,6 @@ package br.com.abril.nds.integracao.ems0107.processor;
 
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -55,7 +54,6 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		String codigoPublicacao = input.getCodigoPublicacao();
 		Long edicao = input.getEdicao();
-		
 		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
 				edicao);
 		if (produtoEdicao == null) {
@@ -128,16 +126,12 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	private Cota obterCota(Integer numeroCota) {
 		
 		StringBuilder sql = new StringBuilder();
-		
 		sql.append("SELECT co FROM Cota co ");
-		sql.append("WHERE ");
-		sql.append("	co.numeroCota = :numeroCota ");
+		sql.append(" WHERE co.numeroCota = :numeroCota ");
 
 		Query query = getSession().createQuery(sql.toString());
-		
-		query.setMaxResults(1);
-		
 		query.setParameter("numeroCota", numeroCota);
+		query.setMaxResults(1);
 
 		return (Cota) query.uniqueResult();		
 	}
