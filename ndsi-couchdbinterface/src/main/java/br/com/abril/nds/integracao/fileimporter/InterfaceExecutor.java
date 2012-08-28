@@ -254,11 +254,11 @@ public class InterfaceExecutor {
 					Bairro doc = new Bairro();
 					doc.setTipoDocumento("CEP");					
 					doc.setSubTipoDocumento("BAIRRO");
-					doc.set_id((row.get("BAI_NU") != null ? row.get("BAI_NU").toString() : "" ));
+					doc.set_id( "BAI" + (row.get("BAI_NU") != null ? row.get("BAI_NU").toString() : "" ));
 					doc.setNome((row.get("BAI_NO") != null ? row.get("BAI_NO").toString() : "" ));
 					doc.setUf((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 					Localidade l = new Localidade();
-					l.set_id((row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+					l.set_id( "LOC" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 					doc.setLocalidade(l);
 					try {
 						couchDbClient.save(doc);
@@ -276,7 +276,7 @@ public class InterfaceExecutor {
 				
 				doc.setTipoDocumento("CEP");					
 				doc.setSubTipoDocumento("LOGRADOURO");
-				doc.set_id((row.get("LOG_NU") != null ? row.get("LOG_NU").toString() : "" ));
+				doc.set_id("LOG" + (row.get("LOG_NU") != null ? row.get("LOG_NU").toString() : "" ));
 				doc.setNome((row.get("LOG_NO") != null ? row.get("LOG_NO").toString() : "" ));
 				doc.setComplemento((row.get("LOG_COMPLEMENTO") != null ? row.get("LOG_COMPLEMENTO").toString() : "" ));
 				doc.setCep((row.get("CEP") != null ? row.get("CEP").toString() : "" ));
@@ -284,7 +284,7 @@ public class InterfaceExecutor {
 				doc.setAbreviatura((row.get("LOG_NO_ABREV") != null ? row.get("LOG_NO_ABREV").toString() : "" ));
 				
 				Localidade l = new Localidade();
-				l.set_id((row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+				l.set_id("LOC" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 				doc.setLocalidade(l);
 				try {
 					couchDbClient.save(doc);
@@ -300,14 +300,14 @@ public class InterfaceExecutor {
 				
 				doc.setTipoDocumento("CEP");					
 				doc.setSubTipoDocumento("LOCALIDADE");
-				doc.set_id((row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+				doc.set_id("LOC" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 				doc.setNome((row.get("LOG_NO") != null ? row.get("LOG_NO").toString() : "" ));
 				doc.setCep((row.get("CEP") != null ? row.get("CEP").toString() : "" ));
 				doc.setAbreviatura((row.get("LOG_NO_ABREV") != null ? row.get("LOG_NO_ABREV").toString() : "" ));
 				doc.setCodigoMunicipioIBGE((row.get("MUN_NU") != null ? Long.valueOf( row.get("MUN_NU").toString() ) : null ));
 				
 				UnidadeFederacao u = new UnidadeFederacao();
-				u.set_id((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+				u.set_id("UF" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setUnidadeFederacao(u);
 				try {
 					couchDbClient.save(doc);
@@ -324,7 +324,7 @@ public class InterfaceExecutor {
 				
 				doc.setTipoDocumento("CEP");					
 				doc.setSubTipoDocumento("LOCALIDADE");
-				doc.set_id((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+				doc.set_id("UF" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setFaixaCepInicial((row.get("UFE_CEP_INI") != null ? row.get("UFE_CEP_INI").toString() : "" ));
 				doc.setFaixaCepFinal((row.get("UFE_CEP_FIM") != null ? row.get("UFE_CEP_FIM").toString() : "" ));
 				try {
