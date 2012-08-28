@@ -38,7 +38,7 @@
 					<td>Código:</td>
 					<td width="202">
 						<input 
-						type="number"
+						type="text"
 						id="codigo"
 						maxlength="255"
 						style="width: 80px; float: left; margin-right: 5px;"
@@ -63,7 +63,7 @@
 				<tr>
 					<td>Edição:</td>
 					<td><input 
-						type="number" 
+						type="text" 
 						id="edicao" maxlength="20"
 						style="width: 80px;" 
 						onchange="pesquisaProdutoRecebimentoFisico.validarNumEdicao('#codigo', '#edicao', true, recebimentoFisicoController.exibirDetalhesProdutoEdicao);"/>
@@ -89,7 +89,7 @@
 					<td>Preço R$:</td>
 					<td><input 	
 								disabled="disabled"
-								type="number" 
+								type="text" 
 								id="precoCapa"
 								style="width: 80px;" />
 					</td>
@@ -97,7 +97,7 @@
 				<tr>
 					<td>Peso:</td>
 					<td><input 	disabled="disabled"
-								type="number" 
+								type="text" 
 								id="peso"
 								style="width: 80px;" />
 					</td>
@@ -105,14 +105,14 @@
 				<tr>
 					<td>Pacote Padrão:</td>
 					<td><input 	disabled="disabled"
-								type="number" 
+								type="text" 
 								id="pacotePadrao"
 								style="width: 200px;" />
 					</td>
 				</tr>
 				<tr>
 					<td>Reparte Previsto:</td>
-					<td><input 	type="number" 
+					<td><input 	type="text" 
 								id="repartePrevisto"
 								style="width: 80px;" />
 					</td>
