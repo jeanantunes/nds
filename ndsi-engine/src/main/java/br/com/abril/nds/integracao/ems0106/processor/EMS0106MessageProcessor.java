@@ -64,6 +64,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		Estudo estudo = lancamento.getEstudo();
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		if (estudo == null) {
 			
 			// Cadastrar novo estudo:
@@ -73,6 +74,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			estudo.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+			estudo.setDataCadastro(dataOperacao);
 			getSession().persist(estudo);
 			
 			// Associar novo estudo com o lançamento existente:
@@ -83,6 +85,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			// Atualizar o valor total do reparte:
 			estudo.setQtdeReparte(BigInteger.valueOf(
 					input.getReparteDistribuir()));
+			estudo.setDataAlteracao(dataOperacao);
 			getSession().merge(estudo);
 		}
 		
