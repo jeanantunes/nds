@@ -49,17 +49,19 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 		
+		String codigoPublicacao = input.getCodigoPublicacao();
+		Long edicao = input.getEdicao();
 		
-			String codigoPublicacao = input.getCodigoPublicacao();
-			Long edicao = input.getEdicao();
-			Integer numeroCota = input.getCodigoCota();
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"NAO ENCONTROU ProdutoEdicao");
+			return;
+		}
 			
-			List<ProdutoEdicao> listaProdutoEdicao = 
-				this.obterProdutoEdicaoPor(codigoPublicacao, edicao);
-			
-			if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
-				return;
-			}
+		Integer numeroCota = input.getCodigoCota();
 
 			Cota cota = obterCota(numeroCota);
 
@@ -91,22 +93,30 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			
 	}	
 	
-	@SuppressWarnings("unchecked")
-	private List<ProdutoEdicao> obterProdutoEdicaoPor(String codigoPublicacao, Long edicao) {
-		
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
+			Long edicao) {
+
 		try {
-			
-			Criteria criteria = 
-				this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
-			
+
 			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
 			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
 
-			return criteria.list();
-			
+			return (ProdutoEdicao) criteria.uniqueResult();
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
