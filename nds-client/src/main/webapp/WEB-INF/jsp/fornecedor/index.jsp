@@ -1,4 +1,5 @@
 <head>
+<script type="text/javascript" src="scripts/fornecedor.js"></script>
 <script language="javascript" type="text/javascript">
 $(function(){
 	fornecedorController.init();
