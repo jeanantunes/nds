@@ -50,13 +50,13 @@
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos" title="Novo">
-				<a href="javascript:;" onclick="COTA_CPF.novoCPF();" rel="tipsy" title="Incluir Nova Cota Pessoa Física">
+				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCPF();" rel="tipsy" title="Incluir Nova Cota Pessoa Física">
 					<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
 				</a>
 			</span>
 			
 			<span class="bt_novos" title="Novo">
-				<a href="javascript:;" onclick="COTA_CNPJ.novoCNPJ();" rel="tipsy" title="Incluir Nova Cota Pessoa Jurídica">
+				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCNPJ();" rel="tipsy" title="Incluir Nova Cota Pessoa Jurídica">
 					<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/>
 				</a>
 			</span>

@@ -75,7 +75,7 @@ public class ProdutoController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private DescontoService tipoDescontoService;
+	private DescontoService descontoService;
 	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  

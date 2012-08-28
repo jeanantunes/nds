@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,6 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -43,7 +40,6 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -174,29 +170,6 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setPrecoVenda(
 				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
-			
-			valorDesconto = BigDecimal.ZERO;
-			
-			if (diferenca.getProdutoEdicao().getDesconto() != null) {
-				
-				valorDesconto = diferenca.getProdutoEdicao().getDesconto();
-			}
-			
-			consultaDiferencaVO.setPrecoDesconto(
-				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
-					.subtract(valorDesconto)));
-
-			if (diferenca.getProdutoEdicao().getPrecoVenda() != null
-					&& diferenca.getProdutoEdicao().getDesconto() != null) {
-				
-				consultaDiferencaVO.setPrecoDesconto(
-					CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
-						.subtract(diferenca.getProdutoEdicao().getDesconto())));
-			
-			} else {
-				
-				consultaDiferencaVO.setPrecoDesconto("");
-			}
 			
 			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
@@ -953,17 +926,6 @@ public class DiferencaEstoqueController {
 			
 			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
 			
-			valorDesconto = BigDecimal.ZERO;
-			
-			if (diferenca.getProdutoEdicao().getDesconto() != null) {
-				
-				valorDesconto = diferenca.getProdutoEdicao().getDesconto();
-			}
-			
-			lancamentoDiferenca.setPrecoDesconto(
-				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
-					.subtract(valorDesconto)));
-			
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
 			lancamentoDiferenca.setQuantidade(diferenca.getQtde());
 			lancamentoDiferenca.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
@@ -1046,17 +1008,6 @@ public class DiferencaEstoqueController {
 			lancamentoDiferenca.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
 			
 			lancamentoDiferenca.setPrecoVenda(CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda()));
-			
-			valorDesconto = BigDecimal.ZERO;
-			
-			if (diferenca.getProdutoEdicao().getDesconto() != null) {
-				
-				valorDesconto = diferenca.getProdutoEdicao().getDesconto();
-			}
-			
-			lancamentoDiferenca.setPrecoDesconto(
-				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
-					.subtract(valorDesconto)));
 			
 			lancamentoDiferenca.setPacotePadrao(String.valueOf(produtoEdicao.getPacotePadrao()));
 			lancamentoDiferenca.setQuantidade(diferenca.getQtde());
@@ -1144,17 +1095,6 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setPrecoVenda(
 				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
-			
-			valorDesconto = BigDecimal.ZERO;
-			
-			if (diferenca.getProdutoEdicao().getDesconto() != null) {
-				
-				valorDesconto = diferenca.getProdutoEdicao().getDesconto();
-			}
-			
-			consultaDiferencaVO.setPrecoDesconto(
-				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()
-					.subtract(valorDesconto)));
 			
 			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			

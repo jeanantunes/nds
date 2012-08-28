@@ -108,8 +108,8 @@
       <td width="424" valign="top" class="antigosProp">
       <strong>Antigos Proprietários</strong><br />
       <table class="antigosProprietariosGridCPF"></table>
-      <span class="bt_novos" title="Alterar Titularidade">
-        <a href="javascript:;" onclick="MANTER_COTA.alterarTitular();">
+      <span class="bt_novos" title="Alterar Titularidade" id="btnAlterarTitularidadeCPF">
+        <a href="javascript:;" style="opacity: 0.6">
           <img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0" />Alterar Titularidade
         </a>
       </span>

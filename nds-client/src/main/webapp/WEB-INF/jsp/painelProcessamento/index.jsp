@@ -39,9 +39,14 @@
     </fieldset>
 </div>
 
-<div class="corpo">
-    <div class="container">
-      <fieldset class="classFieldset">
+	  <div class="areaBts">
+	  	<div class="area">
+	  		<span class="bt_arq" title="Gerar Arquivo"><a href="javascript:;" id="btnGerarXLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+			<span class="bt_arq" title="Imprimir"><a href="javascript:;" id="btnGerarPDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a></span>
+	  	</div>
+	  </div>
+	        <div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldFiltro">
        	  <legend>Painel de Processamentos</legend>
           <div class="grids" style="display:block;">
         	<div id="tabPainel">
@@ -76,11 +81,8 @@
                 </div>                
             </div>
         </div>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="btnGerarXLS"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;" id="btnGerarPDF"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        
       </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-    </div>
-</div> 
+
 </body>
 </html>

@@ -103,7 +103,7 @@ var bancoController = $.extend(true, {
 		
 	    	bancoController.limparTelaCadastroBanco();
 			
-			$( "#dialog-novo").dialog({
+			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
 				height:350,
 				width:655,
@@ -125,7 +125,7 @@ var bancoController = $.extend(true, {
 		
 		popup_alterar : function() {
 		
-			$( "#dialog-alterar").dialog({
+			$( "#dialog-alterar", this.workspace).dialog({
 				resizable: false,
 				height:350,
 				width:655,

@@ -51,5 +51,16 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 
 	Integer buscarQuantidadeRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro); 
+	
+	/**
+	 * Obtém lista com dados de cotas relativas a determinado box, rota e roteiro.
+	 * 
+	 * @param idBox
+	 * @param idRota
+	 * @param idRoteiro
+	 * 
+	 * @return List<ConsultaRoteirizacaoDTO>
+	 */
+	List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro);
 }
 

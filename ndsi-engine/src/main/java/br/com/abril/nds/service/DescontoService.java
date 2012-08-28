@@ -111,5 +111,15 @@ public interface DescontoService {
 	 * @return - List<TipoDescontoProdutoDTO>.
 	 */
 	List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota, String sortorder, String sortname);
+	
+	/**
+	 * Recupera o percentual de desconto a ser aplicado para o produto edição de acordo com o 
+	 * tipo de produto
+	 * 
+	 * @param cota Cota para recuperação do percentual de desconto
+	 * @param produtoEdicao produto edição para recuperação do percentual de desconto
+	 * @return percentual de desconto a ser utilizado
+	 */
+	BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao);
 }
 	

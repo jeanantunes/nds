@@ -99,6 +99,8 @@ public interface RoteirizacaoService {
 	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao);
 
 	Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
+	
+	List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro);
 
 }
 	

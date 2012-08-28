@@ -163,10 +163,6 @@ public abstract class NotaFiscal implements Serializable {
 	protected BigDecimal valorDesconto;	
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "CFOP_ID")
-	protected CFOP cfop;
-	
-	@ManyToOne(optional = false)
 	@JoinColumn(name = "PJ_ID")
 	protected PessoaJuridica emitente;
 	
@@ -244,14 +240,6 @@ public abstract class NotaFiscal implements Serializable {
 	
 	public void setChaveAcesso(String chaveAcesso) {
 		this.chaveAcesso = chaveAcesso;
-	}
-	
-	public CFOP getCfop() {
-		return cfop;
-	}
-
-	public void setCfop(CFOP cfop) {
-		this.cfop = cfop;
 	}
 
 	public PessoaJuridica getEmitente() {

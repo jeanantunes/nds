@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,7 +21,7 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private Long edicao;
 	
-	private BigDecimal quantidadeExemplares;
+	private BigInteger quantidadeExemplares;
 	
 	private String novaData;
 	
@@ -30,7 +31,7 @@ public class FuroProdutoDTO implements Serializable {
 	
 	private Long idProdutoEdicao;
 	
-	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, BigDecimal qtdExemplaresEstudo, BigDecimal qtdExemplaresLancamento, 
+	public FuroProdutoDTO(String codigoProduto, String nomeProduto, Long edicao, BigInteger qtdExemplaresEstudo, BigInteger qtdExemplaresLancamento, 
 			Date dataLancamento, Long idLancamento, Long idProdutoEdicao){
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -72,11 +73,11 @@ public class FuroProdutoDTO implements Serializable {
 		this.edicao = edicao;
 	}
 
-	public BigDecimal getQuantidadeExemplares() {
+	public BigInteger getQuantidadeExemplares() {
 		return quantidadeExemplares;
 	}
 
-	public void setQuantidadeExemplares(BigDecimal quantidadeExemplares) {
+	public void setQuantidadeExemplares(BigInteger quantidadeExemplares) {
 		this.quantidadeExemplares = quantidadeExemplares;
 	}
 

@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
@@ -283,6 +284,10 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" select box.codigo ||' - '|| box.nome as nomeBox ," )
 			.append(" rota.codigoRota || ' - ' || rota.descricaoRota as descricaoRota , ")
 			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
+			.append(" box.id as idBox, 			")
+			.append(" rota.id as idRota, 		")
+			.append(" roteiro.id as idRoteiro, 	")
+			.append(" cota.id as idCota,		")			
 			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome , ")
 			.append(" cota.numeroCota as numeroCota ");
 			
@@ -400,6 +405,57 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		return hql;
 	}
 	
+	
+	public List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.numeroCota as numeroCota, ")
+		.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome ")
+		.append(" from Roteirizacao roteirizacao 	")
+		.append(" join roteirizacao.pdv pdv 		")
+		.append(" join pdv.cota cota 				")
+		.append(" Join cota.pessoa pessoa 			")
+		.append(" join roteirizacao.rota rota 		")
+		.append(" join rota.roteiro roteiro 		")
+		.append(" join roteiro.box box 				")
+		
+		.append(" where roteiro.box.id = box.id 	"); 
+			
+		if(idBox!= null){
+			hql.append(" and box.id =:idBox ");
+		}
+		
+		if(idRoteiro!= null){
+			hql.append(" and roteiro.id =:idRoteiro ");
+		}
+		
+		if(idRota!= null){
+			hql.append(" and rota.id =:idRota ");
+		}
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
+
+		
+		if(idBox!= null){
+			query.setParameter("idBox", idBox);
+		}
+		
+		if(idRota!= null){
+			query.setParameter("idRota",idRota);
+		}
+		
+		if(idRoteiro!= null){
+			query.setParameter("idRoteiro",  idRoteiro);
+		}
+		
+		return query.list();
+		
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro){
@@ -409,11 +465,14 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" select box.codigo ||' - '|| box.nome as nomeBox ," )
 			.append(" rota.codigoRota || ' - ' || rota.descricaoRota as descricaoRota , ")
 			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
+			.append(" box.id as idBox, 			")
+			.append(" rota.id as idRota, 		")
+			.append(" roteiro.id as idRoteiro, 	")
 			.append(" count (cota.numeroCota) as qntCotas ");
 			
 		hql.append( getHqlWhere(filtro));
 	
-		hql.append(" group by box.codigo , rota.codigoRota , roteiro.descricaoRoteiro ");
+		hql.append(" group by box.codigo, box.id, rota.codigoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
 		
 		hql.append(getOrdenacaoConsulta(filtro));
 		

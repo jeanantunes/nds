@@ -1242,7 +1242,23 @@ roteiroEspecialNovo : function() {
 
 
 iniciarPesquisaRoteirizacaoGrid : function () {
-			
+	
+	$(".gridWrapper", this.workspace).empty();
+	
+	$(".gridWrapper", this.workspace).append($("<table>").attr("class", "rotaRoteirosGrid"));
+	
+	var indGridPorRotaOuCota = false;
+	
+	var rotaPesquisa 	= $('#rotaPesquisa', roteirizacao.workspace).val();
+	
+	var cotaPesquisa 	= $('#cotaPesquisa', roteirizacao.workspace).val();
+	
+	if(rotaPesquisa != "" || cotaPesquisa != "") {
+		indGridPorRotaOuCota = true;
+	} 
+	
+	if(indGridPorRotaOuCota) {
+		
 		$(".rotaRoteirosGrid", roteirizacao.workspace).flexigrid({
 			preProcess: roteirizacao.callBackPesquisaRoteirizacaoGrid,
 			dataType : 'json',
@@ -1273,9 +1289,15 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			}, {
 				display : 'Nome',
 				name : 'nome',
-				width : 360,
+				width : 180,
 				sortable : true,
 				align : 'left'
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 78,
+				sortable : true,
+				align : 'center'
 			}],
 			sortname : "nomeBox",
 			sortorder : "asc",
@@ -1288,7 +1310,52 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			singleSelect : true
 			
 		});
-	},
+		
+	} else {
+		
+		$(".rotaRoteirosGrid", roteirizacao.workspace).flexigrid({
+			preProcess: roteirizacao.callBackPesquisaRoteirizacaoGridCotasSumarizadas,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Box',
+				name : 'nomeBox',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Roteiro',
+				name : 'descricaoRoteiro',
+				width : 180,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Rota',
+				name : 'descricaoRota',
+				width : 180,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Qtd. Cotas',
+				name : 'qntCotas',
+				width : 78,
+				sortable : true,
+				align : 'left',
+			}],
+			sortname : "nomeBox",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 'auto',
+			singleSelect : true
+			
+		});
+		
+	}
+		
+},
 
 	callBackPesquisaRoteirizacaoGrid: function (data) {
 		
@@ -1304,13 +1371,77 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			return data;
 		}
 		
+		var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
+
+		
 		$.each(data.rows, function(index, value) {
+			
+			var idBox 		= value.cell.idBox;
+			var idCota 		= value.cell.idCota;
+			var idRota 		= value.cell.idRota;
+			var idRoteiro 	= value.cell.idRoteiro;
+			
+			var parametros = idBox + ',' + idCota + ',' + idRota + ',' + idRoteiro;
+			
+			value.cell.acao =  '<a href="javascript:;" onclick="roteirizacao.detalharRotaRoteiro(' + parametros + ');">' + imgEdicao + '</a>';
+			
 			
 		});
 		
 		$(".grids", roteirizacao.workspace).show();
 		
 		return data;
+	},
+
+	callBackPesquisaRoteirizacaoGridCotasSumarizadas: function (data) {
+		
+		if (data.mensagens) {
+
+			exibirMensagem(
+				data.mensagens.tipoMensagem, 
+				data.mensagens.listaMensagens
+			);
+			
+			$(".grids", roteirizacao.workspace).hide();
+
+			return data;
+		}
+
+		
+		$.each(data.rows, function(index, value) {
+			
+			var qntCotas = value.cell.qntCotas;
+
+			var idBox 		= value.cell.idBox;
+			var idRota 		= value.cell.idRota;
+			var idRoteiro 	= value.cell.idRoteiro;
+			
+			var parametros = idBox + ',' + idRota + ',' + idRoteiro;
+
+			
+			value.cell.qntCotas =  '<a href="javascript:;" onclick="roteirizacao.detalharRotaRoteiroCotasSumarizadas('+parametros+');">' + qntCotas + '</a>';
+		});
+		
+		$(".grids", roteirizacao.workspace).show();
+		
+		return data;
+	},
+
+	
+	detalharRotaRoteiro : function(idBox, idCota, idRota, idRoteiro) {
+		
+		//TODO: implementar js
+		
+		alert('Detalhando rota roteiro');
+		
+	},
+	
+	detalharRotaRoteiroCotasSumarizadas : function(idBox, idCota, idRota, idRoteiro) {
+		
+		//TODO: implementar js
+		
+		alert('Detalhando rota roteiro cotas sumarizadas');
+		
 	},
 	
 	pesquisarRoteirizacao: function () {
@@ -1620,3 +1751,5 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 	  
 		
 }, BaseController);
+
+//@ sourceURL=meuScriptRoteirizacao.js

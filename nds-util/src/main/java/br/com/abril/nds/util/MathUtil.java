@@ -15,6 +15,8 @@ public abstract class MathUtil {
 	
 	private static final int TOTAL_CASAS_DECIMAIS = 20;
 	
+	private static final BigDecimal HUNDRED = new BigDecimal(100);
+	
 	/**
 	 * Efetua o arredondamento de um BigDecimal.
 	 * 
@@ -67,5 +69,23 @@ public abstract class MathUtil {
 		
 		return value;
 	}
+	
+    /**
+     * Calcula o valor percentual do valor recebido como parâmetro
+     * 
+     * @param value
+     *            valor para cálculo do percentual
+     * @param percentage
+     *            percentual a ser calculado
+     * @return valor calculado à partir da valor e porcentagem recebida
+     */
+    public static BigDecimal calculatePercentageValue(BigDecimal value,
+            BigDecimal percentage) {
+        if (value == null || percentage == null) {
+            return null;
+        }
+        return value.multiply(percentage).divide(HUNDRED);
+    }
+  
 
 }
