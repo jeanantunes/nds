@@ -19,6 +19,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.google.common.collect.Sets;
+
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -34,6 +36,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -1007,7 +1010,8 @@ public class DataLoader {
 		gerarDescontoCota(session);
 		
 		gerarGrupos(session);
-
+		
+		criarDescontoLogistica(session);
 	}
 
 	
@@ -11150,4 +11154,13 @@ public class DataLoader {
 		);
 	}
 	
+	private static void criarDescontoLogistica(Session session){
+		
+        Set<Produto> produtos = new LinkedHashSet<Produto>();
+		
+        produtos.add(produtoVeja);
+		
+		DescontoLogistica dl = Fixture.descontoLogistica(new Date(), 25f, 25f, new Integer(1),produtos);
+	    save(session,dl);
+	}
 }
