@@ -216,6 +216,26 @@ var roteirizacao = $.extend(true, {
 				width : 270,
 				height : 220
 			});
+			
+			$("#cotasGrid",roteirizacao.workspace).flexigrid({
+				dataType : 'json',
+				colModel : [ {
+					display : 'Cota',
+					name : 'numeroCota',
+					width : 35,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nome',
+					name : 'nomeCota',
+					width : 160,
+					sortable : true,
+					align : 'left'
+				}],
+				sortname : "numeroCota",
+				width : 270,
+				height : 140
+			});
 		},
 		
 		callBackRotaGrid :  function (data){
@@ -334,6 +354,30 @@ var roteirizacao = $.extend(true, {
 		});	
 		      
 	},
+	
+	popupDetalhesCota : function() {
+		
+		$('#legendDetalhesCota').val('Ahh - teste');
+		
+		$( "#dialog-detalhes" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:420,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-detalhes", this.workspace).parents("form")
+		});
+	},
+	
+	
 	popupTransferirRota : function() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		$("#roteiroTranferenciaNome", roteirizacao.workspace).val('');
@@ -575,7 +619,7 @@ var roteirizacao = $.extend(true, {
 		cotaSelecionada : function(rotaId) {
 			 roteirizacao.populaDadosCota(rotaId);
 	         roteirizacao.populaCotasRotaGrid(rotaId);
-	         roteirizacao.habilitaBotao('botaoCotaAusentes', function(){roteirizacao.abrirTelaCotas()}) // desabilitaBotao('botaoCotaAusentes');
+	         roteirizacao.habilitaBotao('botaoCotaAusentes', function(){roteirizacao.abrirTelaCotas();}); // desabilitaBotao('botaoCotaAusentes');
 	       
 		},
 		
@@ -758,7 +802,7 @@ var roteirizacao = $.extend(true, {
 		
 		pesquisarPvsPorCota : function(){
 			$('#cotaDisponivelPesquisa', roteirizacao.workspace).html('');
-			roteirizacao.carregarNomeCotasPesquisa('cotaDisponivelPesquisa',  $('#numeroCotaPesquisa', roteirizacao.workspace).val(), function(){roteirizacao.buscarPvsPorCota()} );
+			roteirizacao.carregarNomeCotasPesquisa('cotaDisponivelPesquisa',  $('#numeroCotaPesquisa', roteirizacao.workspace).val(), function(){roteirizacao.buscarPvsPorCota();} );
 		
 		},
 		
