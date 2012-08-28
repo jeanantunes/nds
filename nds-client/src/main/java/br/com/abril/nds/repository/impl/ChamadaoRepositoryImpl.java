@@ -296,11 +296,11 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	
 	private String obterSQLDescontoObterResumoConsignadosParaChamadao(){
 		
-		StringBuilder hql = new StringBuilder("select view.DESCONTO");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.DESCONTO");
 		hql.append(" from VIEW_DESCONTO view ")
 		   .append(" where view.COTA_ID = cota.ID ")
 		   .append(" and view.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
-		   .append(" and view.FORNECEDOR_ID = produtoFornecedor.fornecedores_ID ");
+		   .append(" and view.FORNECEDOR_ID = produtoFornecedor.fornecedores_ID),0) ");
 		
 		return hql.toString();
 	}

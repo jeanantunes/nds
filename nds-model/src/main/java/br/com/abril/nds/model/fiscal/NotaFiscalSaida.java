@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -25,6 +27,10 @@ public abstract class NotaFiscalSaida extends NotaFiscal {
 	@Column(name = "ID")
 	protected Long id;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "CFOP_ID")
+	protected CFOP cfop;
+	
 	public Long getId() {
 		return id;
 	}
@@ -32,6 +38,13 @@ public abstract class NotaFiscalSaida extends NotaFiscal {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
 
+	public CFOP getCfop() {
+		return cfop;
+	}
+
+	public void setCfop(CFOP cfop) {
+		this.cfop = cfop;
+	}
+	
 }

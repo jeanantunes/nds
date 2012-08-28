@@ -32,8 +32,8 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Preço Capa R$',
-			name : 'precoCapa',
+			display : 'Preço c/ Desc. R$',
+			name : 'precoDesconto',
 			width : 80,
 			sortable : true,
 			align : 'center'

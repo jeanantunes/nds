@@ -28,13 +28,37 @@
 	</fieldset>
 </div>
 </form>
-
-<div class="corpo">  
-    <br clear="all"/>
-    <br />
-   
-    <div class="container">	
-     <fieldset class="classFieldset">
+	 <div class="areaBts">
+	 	<div class="area">
+	 		<div class="pesqTodos" style="display:none;">
+		 		<span class="bt_arq" title="Gerar Arquivo">
+					<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_arq" title="Imprimir">
+					<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					</a>
+				</span>
+	 		</div>
+	 		
+	 		<div class="pesqCota" style="display:none;">
+	 			<span class="bt_arq" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>
+			<span class="bt_arq" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+	 		</div>
+	 	</div>
+	 </div>
+	 <div class="linha_separa_fields">&nbsp;</div>
+     <fieldset class="fieldFiltro">
    	    <legend>Pesquisar Consignados Cota
         </legend><table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
@@ -58,26 +82,17 @@
 	    <div id="detalhes" style="display:none;">
 	    <label><input name="opcaoDetalhe" id="opcaoDetalhe" type="checkbox" />Detalhar</label></div>
 	</td>
-    <td width="104"><span class="bt_pesquisar"><a href="javascript:;"  onclick="consultaConsignadoCotaController.pesquisar();">Pesquisar</a></span></td>
+    <td width="104"><span class="bt_novos"><a href="javascript:;"  onclick="consultaConsignadoCotaController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
   </tr>
   </table>
       </fieldset>
-          <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="classFieldset">
+      <div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldGrid">
       	<div class="pesqCota" style="display:none;">
        	  <legend><span name="numeroNomeCota" id="numeroNomeCota"></span></legend>
         <div class="grids">
        	  <table class="consignadosCotaGrid"></table>
-			<span class="bt_novos" title="Gerar Arquivo">
-				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=XLS">
-					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
-				</a>
-			</span>
-			<span class="bt_novos" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=PDF">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-				</a>
-			</span>
+			
 			<span name="totalGeralCota" id="totalGeralCota" ></span>        
          </div>
          </div>
@@ -88,16 +103,7 @@
          </div>
           <br />
          
-         <span class="bt_novos" title="Gerar Arquivo">
-				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=XLS">
-					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
-				</a>
-			</span>
-			<span class="bt_novos" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/financeiro/consultaConsignadoCota/exportar?fileType=PDF">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-				</a>
-			</span>
+         
 			<div class="tabelaGeralDetalhado" style="display:none;">
 				<span name="totalGeralDetalhado" id="totalGeralDetalhado" ></span>
 			</div>
@@ -108,9 +114,7 @@
 
 
       </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
       
-    </div>
-</div> 
+      
 </body>
 </html>

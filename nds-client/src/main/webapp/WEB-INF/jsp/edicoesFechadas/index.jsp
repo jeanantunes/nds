@@ -31,9 +31,14 @@
 </fieldset>
 </div>
 </form>
-<div class="corpo">
-    <div class="container">
-   <fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_arq" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/estoque/edicoesFechadas/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+			<span class="bt_arq" title="Imprimir"><a href="${pageContext.request.contextPath}/estoque/edicoesFechadas/exportar?fileType=PDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+   <fieldset class="fieldFiltro">
     <legend>Pesquisar Edições Fechadas com Saldo</legend>
 	<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
         <tr>
@@ -41,28 +46,27 @@
    	        <td width="123"><input type="text" name="filtro.dataDe" value="filtro.dataDe" id="dataDe" style="width:80px;" /></td>
    	        <td width="28" align="center">Até</td>
    	        <td width="123"><input type="text" name="filtro.dataAte" value="filtro.dataAte" id="dataAte" style="width:80px;" /></td>
-   	        <td width="81">Fornecedor:</td>
-   	        <td width="389"><select name="filtro.fornecedor" id="fornecedor" style="width:280px;">
-   	          <option selected="selected"></option>
+   	        <td width="76">Fornecedor:</td>
+   	        <td width="211"><select name="filtro.fornecedor" id="fornecedor" style="width:200px;">
+   	          <option selected="selected">Selecionar...</option>
    	          <option value="Todos">Todos</option>
 			  <c:forEach items="${fornecedores}" var="fornecedor">
 					<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
 			  </c:forEach> 
             </select></td>
-   	        <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar">Pesquisar</a></span></td>
+   	        <td width="287"><span class="bt_novos"><a href="javascript:;" id="btnPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
          </tr>
     </table>
    </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-       <fieldset class="classFieldset">
+       <fieldset class="fieldGrid">
        	  <legend>Edições Fechadas com Saldo</legend>
         <div class="grids" style="display:none;">
 		  	<table class="consultaEdicoesFechadasGrid"></table>
             <table width="100%" border="0" cellspacing="2" cellpadding="2">
 			  <tr>
 			    <td width="70%">
-			    <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/estoque/edicoesFechadas/exportar?fileType=XLS"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-			    <span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/estoque/edicoesFechadas/exportar?fileType=PDF"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+			    &nbsp;
 			    </td>
 			    <td width="5%">&nbsp;</td>
 			    <td width="9%" align="right"><strong>Total:</strong></td>
@@ -72,8 +76,6 @@
 			</table>
 		</div>
       </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-    </div>
-</div>
+      
 </body>
 </html>

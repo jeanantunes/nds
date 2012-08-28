@@ -309,7 +309,7 @@ var VENDA_PRODUTO = {
 			
 			var inputNumEdicao='<input type="text" id="numEdicao0" value="'+row.cell.numeroEdicao+'"  name="numEdicao" style="width:40px; text-align: center;" maxlenght="20" disabled="disabled" />';
 			
-			var inputPrecoCapa='<input type="text" id="precCapa0" value="'+row.cell.precoCapa+'" name="precCapa" style="width:65px; text-align: center;" disabled="disabled" />';
+			var inputPrecoDesconto='<input type="text" id="precoDesconto0" value="'+row.cell.precoDesconto+'" name="precoDesconto" style="width:65px; text-align: center;" disabled="disabled" />';
 			
 			var inputQntDisponivel='<input type="text" id="qntDisponivel0" name="qntDisponivel" style="width:65px; text-align: center;" maxlenght="20" value="'+row.cell.qntDisponivel+'" disabled="disabled" />';
 			
@@ -331,7 +331,7 @@ var VENDA_PRODUTO = {
 			row.cell.codigoProduto = inputCodProduto;
 			row.cell.nomeProduto = inputNomeProduto;
 			row.cell.numeroEdicao = inputNumEdicao;
-			row.cell.precoCapa = inputPrecoCapa;
+			row.cell.precoDesconto = inputPrecoDesconto;
 			row.cell.qntDisponivel = inputQntDisponivel;
 			row.cell.qntSolicitada = inputQntSolicitada;
 			row.cell.total =inputTotal + inputHiddenTotal;
@@ -382,7 +382,7 @@ var VENDA_PRODUTO = {
 			
 			var inputNumEdicao='<input type="text" id="numEdicao' + index + '"  name="numEdicao" style="width:40px;text-align: center;" maxlenght="20" onchange="pesquisaProdutoVendaEncalhe.validarNumEdicao(' + parametroValidacaoEdicao + ');" disabled="disabled" />';
 			
-			var inputPrecoCapa='<input type="text" id="precCapa'+index+'" name="precCapa" value="" style="width:65px;text-align: center;" disabled="disabled" />';
+			var inputPrecoDesconto='<input type="text" id="precoDesconto'+index+'" name="precoDesconto" value="" style="width:65px;text-align: center;" disabled="disabled" />';
 			
 			var inputQntDisponivel='<input type="text" id="qntDisponivel'+index+'" name="qntDisponivel" style="width:65px;text-align: center;" maxlenght="20" value="" disabled="disabled" />';
 			
@@ -411,7 +411,7 @@ var VENDA_PRODUTO = {
 			row.cell.codigoProduto = inputCodProduto;
 			row.cell.nomeProduto = inputNomeProduto;
 			row.cell.numeroEdicao = inputNumEdicao;
-			row.cell.precoCapa = inputPrecoCapa;
+			row.cell.precoDesconto = inputPrecoDesconto;
 			row.cell.qntDisponivel = inputQntDisponivel;
 			row.cell.qntSolicitada = inputQntSolicitada;
 			row.cell.total =inputTotal + inputHiddenTotal;
@@ -429,7 +429,7 @@ var VENDA_PRODUTO = {
 		if($("#qntSolicitada"+indiceLinha).val().trim().length > 0){
 			
 			var data = [
-			            {name:"precoProduto", value:$("#precCapa"+indiceLinha).val()},
+			            {name:"precoProduto", value:$("#precoDesconto"+indiceLinha).val()},
 			            {name:"qntSolicitada", value:$("#qntSolicitada"+indiceLinha).val()},
 			            {name:"qntDisponivel", value:$("#qntDisponivel"+indiceLinha).val()}];
 			
@@ -523,7 +523,7 @@ var VENDA_PRODUTO = {
  		
  		$("#codBarras"+indiceLinha).val("");
 		$("#numEdicao"+indiceLinha).val("");
-		$("#precCapa"+indiceLinha).val("");
+		$("#precoDesconto"+indiceLinha).val("");
 		$("#qntDisponivel"+indiceLinha).val("");
 		$("#qntSolicitada"+indiceLinha).val("");
 		$("#hiddenTotal" + indiceLinha).val("");
@@ -583,7 +583,7 @@ var VENDA_PRODUTO = {
  		$("#codProduto"+index).val(resultado.produto.codigoProduto);
 		$("#nmProduto"+index).val(resultado.produto.nomeProduto);
 		$("#numEdicao"+index).val(resultado.produto.numeroEdicao);
-		$("#precCapa"+index).val(resultado.produto.precoCapa);
+		$("#precoDesconto"+index).val(resultado.produto.precoDesconto);
 		$("#qntDisponivel"+index).val(resultado.produto.qntDisponivelProduto);
 		$("#qntSolicitada"+index).val(resultado.produto.qntProduto);
 		$("#hiddenTotal"+index).val(resultado.produto.valoTotalProduto);
@@ -597,7 +597,7 @@ var VENDA_PRODUTO = {
  		$("#codProduto"+index).val("");
 		$("#nmProduto"+index).val("");
 		$("#numEdicao"+index).val("");
-		$("#precCapa"+index).val("");
+		$("#precoDesconto"+index).val("");
 		$("#qntDisponivel"+index).val("");
 		$("#qntSolicitada"+index).val("");
 		$("#hiddenTotal"+index).val("");
@@ -855,12 +855,6 @@ $(function() {
 			display : 'Edição',
 			name : 'numeroEdicao',
 			width : 50,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Preço Capa R$',
-			name : 'precoCapa',
-			width : 75,
 			sortable : true,
 			align : 'center'
 		}, {

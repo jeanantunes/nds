@@ -210,12 +210,12 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 
 	private String obterHQLDesconto() {
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view, RateioDiferenca rateio ")
 		   .append(" where view.cotaId = rateio.cota.id ")
 		   .append(" and rateio.diferenca.id = diferenca.id ")
 		   .append(" and view.produtoEdicaoId = diferenca.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedor.id ");
+		   .append(" and view.fornecedorId = fornecedor.id),0) ");
 		
 		return hql.toString();
 	}
