@@ -18,7 +18,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	public boolean isDistribuidor(Integer codigo) {
-		if (obter().getCodigo().equals(codigo))
+		if (obter().getCodigoDistribuidorDinap().equals(codigo))
 			return true;
 		return false;
 	}
