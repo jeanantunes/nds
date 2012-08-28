@@ -15,6 +15,7 @@ import br.com.abril.nds.integracao.ems0107.inbound.EMS0107Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
@@ -31,6 +32,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	public static EMS0107MessageProcessor getInstance() {
 		return instance;
 	}
@@ -61,12 +65,18 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 			
+		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
+				produtoEdicao);
+		if (lancamento == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"NAO ENCONTROU Lancamento");
+			return;
+		}
+		
 		Integer numeroCota = input.getCodigoCota();
 
 			Cota cota = obterCota(numeroCota);
-
-			Lancamento lancamento = 
-				this.getLancamento(codigoPublicacao, edicao);
 
 			List<Estudo> listaEstudos = 
 				this.getEstudosSalvos(
@@ -139,29 +149,35 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		return (Cota) query.uniqueResult();		
 	}
 
-	private Lancamento getLancamento(String codigoPublicacao, Long edicao) {
+	/**
+	 * Obtém o Lançamento com data de lançamento mais próximo do dia corrente.
+	 *  
+	 * @param produtoEdicao
+	 * @return
+	 */
+	private Lancamento getLancamentoPrevistoMaisProximo(
+			ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("SELECT lcto FROM Lancamento lcto ");
-		sql.append("			JOIN FETCH lcto.produtoEdicao pe ");
-		sql.append("			JOIN FETCH pe.produto p ");
-		sql.append("WHERE ");
-		sql.append("	pe.numeroEdicao = :numeroEdicao ");
-		sql.append("	AND p.codigo = :codigoProduto ");
-		sql.append("	AND lcto.dataLancamentoPrevista >= current_date() ");
-		sql.append("ORDER BY lcto.dataLancamentoPrevista DESC");
-
+		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
+		sql.append("    WHERE pe = :produtoEdicao ");
+		sql.append("      AND lcto.dataLancamentoPrevista >= :dataOperacao ");
+		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
+		
 		Query query = getSession().createQuery(sql.toString());
 		
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		query.setParameter("produtoEdicao", produtoEdicao);
+		query.setDate("dataOperacao", dataOperacao);
+		
 		query.setMaxResults(1);
-
-		query.setParameter("numeroEdicao", edicao);
-		query.setParameter("codigoProduto", codigoPublicacao);
-
+		query.setFetchSize(1);
+		
 		return (Lancamento) query.uniqueResult();
 	}
-	
+		
 	@SuppressWarnings("unchecked")
 	private List<Estudo> getEstudosSalvos(Long idProdutoEdicao, Date dataLancamentoPrevista) {
 		
