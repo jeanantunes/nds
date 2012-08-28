@@ -64,6 +64,16 @@ public class Estudo implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private StatusLancamento status;
 	
+	/** Data de cadastro do Estudo no sistema. */
+	@Column(name = "DATA_CADASTRO", nullable = false)
+	@Temporal(TemporalType.DATE)
+	private Date dataCadastro;
+	
+	/** Data de alteração do Estudo no sistema. */
+	@Column(name = "DATA_ALTERACAO")
+	@Temporal(TemporalType.DATE)
+	private Date dataAlteracao;
+	
 	
 	public Long getId() {
 		return id;
@@ -121,6 +131,22 @@ public class Estudo implements Serializable {
 
 	public void setStatus(StatusLancamento status) {
 		this.status = status;
+	}
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
 	}
 
 }
