@@ -44,6 +44,10 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
 	protected StatusNotaFiscalEntrada statusNotaFiscal;
 	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "CFOP_ID")
+	protected CFOP cfop;
+	
 	public Long getId() {
 		return id;
 	}
@@ -76,4 +80,12 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 		this.statusNotaFiscal = statusNotaFiscal;
 	}
 
+	public CFOP getCfop() {
+		return cfop;
+	}
+
+	public void setCfop(CFOP cfop) {
+		this.cfop = cfop;
+	}
+	
 }
