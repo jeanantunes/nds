@@ -20,16 +20,24 @@
 
 <body>
 	
+	<form id="form-dialog-excluir-fiador">
 	<div id="fiadorController-dialog-excluir-fiador" class="dialog-excluir-fiador" title="Fiadores" style="display: none;">
 		<p>Confirma esta Exclusão?</p>
 	</div>
+	</form>
 	
+	<form id="form-dialog-cancelar-cadastro-fiador">
 	<div id="fiadorController-dialog-cancelar-cadastro-fiador" title="Fiadores" style="display: none;">
 		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
 	</div>
+	</form>
+	
+	<div id="workspaceFiador">
 	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none;">
 	
 		<jsp:include page="../messagesDialog.jsp" />
+			<jsp:param value="dialog-fiador" name="messageDialog"/>
+		</jsp:include>
 	
 		<div id="fiadorController-tabs">
 			<ul>
@@ -73,6 +81,7 @@
 	        		<legend>Telefones</legend>
 					<jsp:include page="../endereco/index.jsp">
 						<jsp:param value="ENDERECO_FIADOR" name="telaEndereco"/>
+						<jsp:param value="dialog-fiador" name="message"/>
 					</jsp:include>
 				</fieldset>
 	    	</div>
@@ -83,6 +92,7 @@
 	        		<legend>Garantias</legend>
 		        	<jsp:include page="../telefone/index.jsp">
 		        		<jsp:param value="FIADOR" name="tela"/>
+						<jsp:param value="dialog-fiador" name="message"/>
 		        	</jsp:include>
 	        	</fieldset>
 			</div>
@@ -104,6 +114,7 @@
 	    	</div>
 	    	<br clear="all" />
 		</div>
+	</div>
 	</div>
 	<div class="areaBts">
 		<div class="area">
