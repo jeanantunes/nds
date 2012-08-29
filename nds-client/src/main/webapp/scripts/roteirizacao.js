@@ -347,7 +347,7 @@ var roteirizacao = $.extend(true, {
 			width:420,
 			modal: true,
 			buttons: {
-				"Cancelar": function() {
+				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
 			},

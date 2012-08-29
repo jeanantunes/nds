@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
@@ -20,7 +23,6 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
@@ -39,10 +41,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Autowired
 	private RotaRepository rotaRepository;
 	
-	@Autowired
-	private CotaRepository cotaRepository;
-
-
 	@Override
 	@Transactional(readOnly=true)
 	public List<Roteiro> buscarRoteiro(String sortname, Ordenacao ordenacao) {
@@ -442,5 +440,23 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public void atualizaOrdenacaoDesc(Roteirizacao roteirizacao ){
 		roteirizacaoRepository.atualizaOrdenacaoDesc(roteirizacao);
 	}
+
+	@Override
+	public List<BoxRoteirizacaoDTO> obterBoxesPorNome(String nome) {
+		return roteirizacaoRepository.obterBoxesPorNome(nome);
+	}
+
+	@Override
+	public List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxes(String nome,
+			List<Long> idsBoxes) {
+		return roteirizacaoRepository.obterRoteirosPorNomeEBoxes(nome, idsBoxes);
+	}
+
+	@Override
+	public List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome,
+			List<Long> idsRoteiros) {
+		return roteirizacaoRepository.obterRotasPorNomeERoteiros(nome, idsRoteiros);
+	}
+
 
 }
