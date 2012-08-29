@@ -31,6 +31,8 @@ var roteirizacao = $.extend(true, {
 					   null,
 					   true
 				);
+			
+			this.init();
 
 		},
 		
@@ -216,26 +218,7 @@ var roteirizacao = $.extend(true, {
 				width : 270,
 				height : 220
 			});
-			
-			$("#cotasGrid",roteirizacao.workspace).flexigrid({
-				dataType : 'json',
-				colModel : [ {
-					display : 'Cota',
-					name : 'numeroCota',
-					width : 35,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Nome',
-					name : 'nomeCota',
-					width : 160,
-					sortable : true,
-					align : 'left'
-				}],
-				sortname : "numeroCota",
-				width : 270,
-				height : 140
-			});
+		
 		},
 		
 		callBackRotaGrid :  function (data){
@@ -246,7 +229,6 @@ var roteirizacao = $.extend(true, {
 				var detalhe ='<a href="javascript:roteirizacao.cotaSelecionada('+idRota+');" ><img src="'+contextPath+'/images/ico_detalhes.png" border="0" alt="Detalhes" /></a>';
 				value.cell.selecione = selecione;
 				value.cell.detalhe = detalhe;
-	        	
 			});
 			
 			$(".grids", roteirizacao.workspace).show();
@@ -355,9 +337,9 @@ var roteirizacao = $.extend(true, {
 		      
 	},
 	
-	popupDetalhesCota : function() {
+	popupDetalhesCota : function(title, box, roteiro, rota) {
 		
-		$('#legendDetalhesCota').val('Ahh - teste');
+		$('#legendDetalhesCota').html(title);
 		
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
@@ -365,10 +347,6 @@ var roteirizacao = $.extend(true, {
 			width:420,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
@@ -1389,12 +1367,12 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		});
 		
 		$(".grids", roteirizacao.workspace).show();
-		
+				
 		return data;
 	},
 
 	callBackPesquisaRoteirizacaoGridCotasSumarizadas: function (data) {
-		
+				
 		if (data.mensagens) {
 
 			exibirMensagem(
@@ -1415,11 +1393,11 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			var idBox 		= value.cell.idBox;
 			var idRota 		= value.cell.idRota;
 			var idRoteiro 	= value.cell.idRoteiro;
-			
-			var parametros = idBox + ',' + idRota + ',' + idRoteiro;
 
+			var title = value.cell.descricaoRota + ' - ' + value.cell.descricaoRoteiro;			
 			
-			value.cell.qntCotas =  '<a href="javascript:;" onclick="roteirizacao.detalharRotaRoteiroCotasSumarizadas('+parametros+');">' + qntCotas + '</a>';
+			value.cell.qntCotas =  '<a href="javascript:;" ' + 
+				'onclick="roteirizacao.detalharRotaRoteiroCotasSumarizadas(\''+title+'\','+idBox+','+idRota+','+idRoteiro+');">' + qntCotas + '</a>';
 		});
 		
 		$(".grids", roteirizacao.workspace).show();
@@ -1436,12 +1414,18 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		
 	},
 	
-	detalharRotaRoteiroCotasSumarizadas : function(idBox, idCota, idRota, idRoteiro) {
+	detalharRotaRoteiroCotasSumarizadas : function(title, idBox, idRota, idRoteiro) {
 		
-		//TODO: implementar js
+		var data = [];
 		
-		alert('Detalhando rota roteiro cotas sumarizadas');
+		data.push({name:'idBox',		value: idBox });
+		data.push({name:'idRota',		value: idRota });
+		data.push({name:'idRoteiro',	value: idRoteiro });
 		
+		$("#cotasGrid", this.workspace).flexOptions({ params:data });		
+		$("#cotasGrid", this.workspace).flexReload();
+		
+		roteirizacao.popupDetalhesCota(title, idBox, idRoteiro, idRota);		
 	},
 	
 	pesquisarRoteirizacao: function () {
@@ -1697,7 +1681,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 					true
 				);
 			
-			return  result
+			return  result;
 
 		},
 		 gerarArquivoRoteirizacao : function(fileType) {
@@ -1747,9 +1731,38 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 				"&fileType=" + fileType;
 
 			return false;
+		},
+		
+		init : function() {
+			
+			$("#cotasGrid",roteirizacao.workspace).flexigrid({
+				autoload : false,
+				url : contextPath + '/cadastro/roteirizacao/obterCotasSumarizadas',
+				dataType : 'json',
+				colModel : [ {
+					display : 'Cota',
+					name : 'numeroCota',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nome',
+					name : 'nome',
+					width : 250,
+					sortable : true,
+					align : 'left'
+				}],
+				sortname : "numeroCota",
+				width : 380,
+				height : 140
+			});
 		}
 	  
 		
 }, BaseController);
+
+$(function() {
+	roteirizacao.init();
+});
 
 //@ sourceURL=meuScriptRoteirizacao.js
