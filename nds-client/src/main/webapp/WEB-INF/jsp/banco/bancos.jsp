@@ -78,7 +78,7 @@ label {
 					</td>
 					<td>Juros %:</td>
 					<td><input maxlength="17" type="text" name="newJuros" id="newJuros"
-						style="width: 80px;" />
+						style="width: 80px; text-align:right;" />
 					</td>
 				</tr>
 				<tr>

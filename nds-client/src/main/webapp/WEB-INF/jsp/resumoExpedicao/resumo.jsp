@@ -30,7 +30,7 @@
 		<div class="linha_separa_fields">&nbsp;</div>
 		<fieldset class="fieldFiltro">
 		  
-		  <legend id="idFiledResumo"> Pesquisar Resumo Expedição por Box </legend>
+		  <legend id="idFiledResumo"> Pesquisar Resumo Expedição</legend>
 		  
 		  	 <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			  <tr>
