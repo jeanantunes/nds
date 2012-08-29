@@ -491,12 +491,10 @@
 	</fieldset>
 	
 	<div class="linha_separa_fields">&nbsp;</div>
-	      
-	<fieldset class="classFieldset">
-		<legend>Chamadão</legend>
+	<div class="grids" style="display:none;">
+		<fieldset class="classFieldset">
+			<legend>Chamadão</legend>
 	    
-	    <div class="grids" style="display:none;">
-			
 			<table class="chamadaoGrid"></table>
 	        
 	        <table width="949" border="0" cellspacing="1" cellpadding="1">
@@ -571,8 +569,8 @@
 	       			</td>
 	      		</tr>
 	 		</table>
-		</div>
-	</fieldset>
+		</fieldset>
+	</div>
 	
 	<div class="linha_separa_fields">&nbsp;</div>
 

@@ -756,7 +756,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select ");
 		
-		hql.append(" lancamento.id as id, ");
+		hql.append(" lancamento.id as idLancamento, ");
 		hql.append(" lancamento.produtoEdicao.id as idProdutoEdicao, 		  	");
 		hql.append(" lancamento.sequenciaMatriz as sequenciaMatriz,			  	");
 		hql.append(" produto.codigo as codigoProduto, 	");
