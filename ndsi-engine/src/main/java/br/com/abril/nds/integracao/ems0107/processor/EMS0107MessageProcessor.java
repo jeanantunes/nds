@@ -15,6 +15,7 @@ import br.com.abril.nds.integracao.ems0107.inbound.EMS0107Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
@@ -31,6 +32,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	public static EMS0107MessageProcessor getInstance() {
 		return instance;
 	}
@@ -43,70 +47,85 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	public void processMessage(Message message) {
 		
 		EMS0107Input input = (EMS0107Input) message.getBody();
-		
-		if (input != null) {
-			
-			String codigoPublicacao = input.getCodigoPublicacao();
-			Long edicao = input.getEdicao();
-			Integer numeroCota = input.getCodigoCota();
-			
-			List<ProdutoEdicao> listaProdutoEdicao = 
-				this.obterProdutoEdicaoPor(codigoPublicacao, edicao);
-			
-			if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
-				return;
-			}
-
-			Cota cota = obterCota(numeroCota);
-
-			Lancamento lancamento = 
-				this.getLancamento(codigoPublicacao, edicao);
-
-			List<Estudo> listaEstudos = 
-				this.getEstudosSalvos(
-					lancamento.getProdutoEdicao().getId(), 
-					lancamento.getDataLancamentoPrevista());
-			
-			if (listaEstudos == null || listaEstudos.isEmpty()) {
-				this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.HIERARQUIA, "NAO ENCONTROU Produto/Edição e Estudos");
-			} else {
-				
-				for (Estudo estudo : listaEstudos) {
-					
-					EstudoCota estudoCota = new EstudoCota();
-					
-					estudoCota.setCota(cota);
-					estudoCota.setEstudo(estudo);
-					estudoCota.setQtdeEfetiva( BigInteger.valueOf(input.getQuantidadeReparte()) );
-					estudoCota.setQtdePrevista( BigInteger.valueOf(input.getQuantidadeReparte()) );
-					
-					this.getSession().persist(estudoCota);
-				}
-			}
-			
-		} else {
+		if (input == null) {
 			this.ndsiLoggerFactory.getLogger().logError(
-				message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
 		}
+		
+		String codigoPublicacao = input.getCodigoPublicacao();
+		Long edicao = input.getEdicao();
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"NAO ENCONTROU ProdutoEdicao");
+			return;
+		}
+			
+		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
+				produtoEdicao);
+		if (lancamento == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"NAO ENCONTROU Lancamento");
+			return;
+		}
+		
+		Estudo estudo = lancamento.getEstudo();
+		if (estudo == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"NAO ENCONTROU Estudo");
+			return;
+		}
+		
+		Integer numeroCota = input.getCodigoCota();
+		Cota cota = this.obterCota(numeroCota);
+		boolean hasEstudoCota = this.hasEstudoCota(estudo, cota);
+		if (hasEstudoCota) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.HIERARQUIA,
+					"JA EXISTE EstudoCota para a numero de Cota: " + numeroCota);
+			return;
+		}
+		
+		// Novo EstudoCota:
+		BigInteger qtdReparte = BigInteger.valueOf(input.getQuantidadeReparte());
+		EstudoCota eCota = new EstudoCota();
+		eCota.setEstudo(estudo);
+		eCota.setCota(cota);
+		eCota.setQtdePrevista(qtdReparte);
+		eCota.setQtdeEfetiva(qtdReparte);
+		
+		this.getSession().persist(eCota);
 	}	
 	
-	@SuppressWarnings("unchecked")
-	private List<ProdutoEdicao> obterProdutoEdicaoPor(String codigoPublicacao, Long edicao) {
-		
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
+			Long edicao) {
+
 		try {
-			
-			Criteria criteria = 
-				this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
-			
+
 			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
 			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
 
-			return criteria.list();
-			
+			return (ProdutoEdicao) criteria.uniqueResult();
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -115,60 +134,95 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	private Cota obterCota(Integer numeroCota) {
 		
 		StringBuilder sql = new StringBuilder();
-		
 		sql.append("SELECT co FROM Cota co ");
-		sql.append("WHERE ");
-		sql.append("	co.numeroCota = :numeroCota ");
+		sql.append(" WHERE co.numeroCota = :numeroCota ");
 
 		Query query = getSession().createQuery(sql.toString());
-		
-		query.setMaxResults(1);
-		
 		query.setParameter("numeroCota", numeroCota);
+		query.setMaxResults(1);
 
 		return (Cota) query.uniqueResult();		
 	}
 
-	private Lancamento getLancamento(String codigoPublicacao, Long edicao) {
+	/**
+	 * Obtém o Lançamento com data de lançamento mais próximo do dia corrente.
+	 *  
+	 * @param produtoEdicao
+	 * @return
+	 */
+	private Lancamento getLancamentoPrevistoMaisProximo(
+			ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("SELECT lcto FROM Lancamento lcto ");
-		sql.append("			JOIN FETCH lcto.produtoEdicao pe ");
-		sql.append("			JOIN FETCH pe.produto p ");
-		sql.append("WHERE ");
-		sql.append("	pe.numeroEdicao = :numeroEdicao ");
-		sql.append("	AND p.codigo = :codigoProduto ");
-		sql.append("	AND lcto.dataLancamentoPrevista >= current_date() ");
-		sql.append("ORDER BY lcto.dataLancamentoPrevista DESC");
-
+		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
+		sql.append("    WHERE pe = :produtoEdicao ");
+		sql.append("      AND lcto.dataLancamentoPrevista >= :dataOperacao ");
+		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
+		
 		Query query = getSession().createQuery(sql.toString());
 		
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		query.setParameter("produtoEdicao", produtoEdicao);
+		query.setDate("dataOperacao", dataOperacao);
+		
 		query.setMaxResults(1);
-
-		query.setParameter("numeroEdicao", edicao);
-		query.setParameter("codigoProduto", codigoPublicacao);
-
+		query.setFetchSize(1);
+		
 		return (Lancamento) query.uniqueResult();
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<Estudo> getEstudosSalvos(Long idProdutoEdicao, Date dataLancamentoPrevista) {
+	/**
+	 * Verifica se já existe EstudoCota cadastrado.
+	 * 
+	 * @param estudo
+	 * @param cota
+	 * @return true: Já existe pelo menos 1 EstudoCota cadastrado;<br>
+	 * false: Não existe nenhum EstudoCota para o Estudo e Cota passado;
+	 */
+	private boolean hasEstudoCota(Estudo estudo, Cota cota) {
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT e ");
-		sql.append("FROM Estudo e ");
-		sql.append("	JOIN FETCH e.produtoEdicao pe ");
-		sql.append("WHERE ");
-		sql.append("	pe.id = :produtoEdicaoId ");
-		sql.append("	AND e.dataLancamento = :dataLancamento ");
-
-		Query query = getSession().createQuery(sql.toString());
-
-		query.setParameter("produtoEdicaoId", idProdutoEdicao);
-		query.setParameter("dataLancamento", dataLancamentoPrevista);
-
-		return query.list();
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT COUNT(ec) FROM EstudoCota ec " );
+		hql.append("  WHERE ec.estudo = :estudo AND ec.cota = :cota");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("estudo", estudo);
+		query.setParameter("cota", cota);
+		
+		Long qtd = (Long) query.uniqueResult();
+		return (qtd != null && qtd.intValue() > 0);
 	}
 	
+	/**
+	 * Realiza as validações após o processamento do arquivo.
+	 * 
+	 * TODO: Ver como incluir esta validação posteriormente.
+	 */
+	public void validarProcessamento() {
+		
+		// 01) Verificar se existe algum Estudo sem EstudoCota;
+		StringBuilder hqlEstudoSemEstudoCota = new StringBuilder();
+		hqlEstudoSemEstudoCota.append(" SELECT e FROM Estudo e " );
+		hqlEstudoSemEstudoCota.append("  WHERE NOT EXISTS( FROM EstudoCota ec WHERE ec.estudo = e)");
+		
+		Query query = getSession().createQuery(hqlEstudoSemEstudoCota.toString());
+		List<Estudo> lstEstudos = query.list();
+		if (lstEstudos != null && !lstEstudos.isEmpty()) {
+			for (Estudo estudo : lstEstudos) {
+				
+				// TODO: Gravar no log qual Estudo esta sem EstudoCota
+				
+				this.getSession().delete(estudo);
+			}
+		}
+		
+		
+		
+		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
+		// EstudoCota batem com a qtdeReparte do respectivo Estudo
+		
+	}
+		
 }

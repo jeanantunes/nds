@@ -1,22 +1,8 @@
 package br.com.abril.nds.integracao.ems0107.inbound;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.ForeignKey;
-
-import br.com.abril.nds.model.cadastro.Cota;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
-import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
@@ -29,14 +15,19 @@ public class EMS0107Input implements Serializable {
 
 	private Integer id;
 
+	/** Código da publicação. */
 	private String codigoPublicacao;
 
+	/** Número da Edição. */
 	private Long edicao;
 
+	/** Código da Cota. */
 	private Integer codigoCota;
 
+	/** Quantidade do reparte desta Edição destinada para esta Cota. */
 	private Long quantidadeReparte;
 
+	/** Indica se é um repartePDV (S/N). */
 	private String repartePDV;
 
 	@Field(offset = 1, length = 8)
