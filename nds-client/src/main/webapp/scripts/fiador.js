@@ -58,7 +58,7 @@ var fiadorController = $.extend(true, {
 					
 					return _this.fecharModalCadastroFiador;
 				},
-				form: $("#workspaceFiador", fiadorController.workspace).parents("form")
+				form: $("#workspaceFiador", fiadorController.workspace)
 			});
 		
 			$(".fiadorController-trSocioPrincipal", fiadorController.workspace).hide();
@@ -327,7 +327,8 @@ var fiadorController = $.extend(true, {
 
 				exibirMensagemDialog(
 					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					data.mensagens.listaMensagens,
+					"fiadorController-dialog-fiador"
 				);
 				
 				return;
@@ -717,7 +718,8 @@ var fiadorController = $.extend(true, {
 
 				exibirMensagemDialog(
 					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					data.mensagens.listaMensagens,
+					"fiadorController-dialog-fiador"
 				);
 				
 				return;
@@ -932,7 +934,8 @@ var fiadorController = $.extend(true, {
 
 				exibirMensagemDialog(
 					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					data.mensagens.listaMensagens,
+					"fiadorController-dialog-fiador"
 				);
 				
 				return;
@@ -1053,7 +1056,8 @@ var fiadorController = $.extend(true, {
 
 				exibirMensagemDialog(
 					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					data.mensagens.listaMensagens,
+					"fiadorController-dialog-fiador"
 				);
 				
 				return;
