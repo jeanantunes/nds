@@ -146,15 +146,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
     //MODOS DE EXIBIÇÃO 
-	exibe_botao_contrato : function(contrato){
-		if (contrato){
-			$('#botaoContrato', this.workspace).show();
-		}
-		else{
-			$('#botaoContrato', this.workspace).hide();
-		}
+	exibe_form_contrato : function(exibir){
+		$(".form-contrato-hidden-class").toggle(exibir);
 	},
-
+	
+	exibe_form_suspencao : function(exibir) {
+		$(".form-suspensao-hidden-class").toggle(exibir);
+	},
+	
 	opcaoPagto : function(op){
 		
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
@@ -242,7 +241,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		//document.formFinanceiro.contrato.checked = resultado.contrato;
 		
-		parametroCobrancaCotaController.exibe_botao_contrato(resultado.contrato);
+		parametroCobrancaCotaController.exibe_form_contrato(resultado.contrato);
 
 		$("#valorMinimo", this.workspace).val(resultado.valorMinimo);
 		$("#comissao", this.workspace).val(resultado.comissao);
