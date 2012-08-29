@@ -35,7 +35,7 @@
 <script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
 
 <link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
-    
+
 <base href="<c:url value="/"/>" />
 
 <script type="text/javascript">
@@ -317,27 +317,18 @@
 						<p>
 							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 							<b id="idTextSuccess"></b>
-							<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
-								<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
-							</span>					
 						</p>
 					</div>
 					<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
 						<p>
 							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 							<b id="idTextWarning"></b>
-							<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
-								<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
-							</span>					
 						</p>
 					</div>
 					<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
 						<p>
 							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 							<b id="idTextError"></b>
-							<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
-								<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
-							</span>					
 						</p>
 					</div>
 				</div>			
