@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,22 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.fixture.Fixture;
-import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
-import br.com.abril.nds.repository.BancoRepository;
-import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 
