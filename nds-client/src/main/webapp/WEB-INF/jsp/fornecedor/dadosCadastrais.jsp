@@ -1,5 +1,4 @@
 <div id="fornecedorController-tabpj-1">
-<form id="fornecedorController-formNovoFornecedor">
 	<input type="hidden" name="fornecedorDTO.idFornecedor" id="fornecedorController-idFornecedor" style="width:100px" />
     <table width="754" cellpadding="2" cellspacing="2" style="text-align:left;">
     <tr>
@@ -69,5 +68,4 @@
     </tr>
     </table>
     <br />
-</form>
 </div>

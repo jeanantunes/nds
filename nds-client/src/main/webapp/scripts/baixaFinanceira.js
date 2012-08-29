@@ -17,7 +17,7 @@ var baixaFinanceiraController = $.extend(true, {
 
 	
 		var options = {
-			success: tratarRespostaBaixaAutomatica,
+			success: baixaFinanceiraController.tratarRespostaBaixaAutomatica,
 	    };
 		
 		$('#formBaixaAutomatica', baixaFinanceiraController.workspace).ajaxForm(options);
@@ -51,7 +51,8 @@ var baixaFinanceiraController = $.extend(true, {
 				        	   $( this ).dialog( "close" );
 				           }
 			           }
-	        ]
+	        ],
+			form: $("#dialog-detalhes-divida", this.workspace).parents("form")
 		});
 	},
 	
@@ -80,7 +81,8 @@ var baixaFinanceiraController = $.extend(true, {
 	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout();
-		    }
+		    },
+		    form: $("#dialog-baixa-divida", this.workspace).parents("form")
 		});
 	},
 
@@ -110,7 +112,8 @@ var baixaFinanceiraController = $.extend(true, {
 	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout();
-		    }
+		    },
+		    form: $("#dialog-confirma-baixa", this.workspace).parents("form")
 		});
 	},
 	
@@ -142,7 +145,8 @@ var baixaFinanceiraController = $.extend(true, {
 	        ],
 			beforeClose: function() {
 				clearMessageDialogTimeout();
-		    }
+		    },
+		    form: $("#dialog-confirma-pendente", this.workspace).parents("form")
 		});
 	},
 	
@@ -169,7 +173,8 @@ var baixaFinanceiraController = $.extend(true, {
 				        	   $( this ).dialog( "close" );
 				           }
 			           }
-	        ]
+	        ],
+	        form: $("#dialog-confirma-baixa-numero", this.workspace).parents("form")
 		});
 	},
 
@@ -332,7 +337,7 @@ var baixaFinanceiraController = $.extend(true, {
 		}
 		
 		$("#selTodos", baixaFinanceiraController.workspace).attr("checked", false);
-		selecionarTodos(false);
+		baixaFinanceiraController.selecionarTodos(false);
 		
 		var totalDividas=0;
 		$.each(resultado.rows, function(index, row) {
@@ -375,7 +380,7 @@ var baixaFinanceiraController = $.extend(true, {
 	    //GRADE DE DETALHES DA DIVIDA
 		$(function() {
 			$(".dadosDividaGrid", baixaFinanceiraController.workspace).flexigrid({
-				preProcess: getDataFromResultDivida,
+				preProcess: baixaFinanceiraController.getDataFromResultDivida,
 				dataType : 'json',
 				colModel : [ {
 					display : 'Data',
@@ -426,7 +431,7 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		var saldoDivida=0;
 		$.each(resultado.rows, function(index, row) {
-			saldoDivida = saldoDivida + intValue(baixaFinanceiraController.removeMascaraPriceFormat(row.cell.valor));
+			saldoDivida = saldoDivida + intValue(removeMascaraPriceFormat(row.cell.valor));
 		});
 		
 		$("#saldoDividaHidden", baixaFinanceiraController.workspace).val(saldoDivida);
@@ -587,17 +592,17 @@ var baixaFinanceiraController = $.extend(true, {
 	obterCobrancasDividasMarcadas : function(){
 
 		var dividasMarcadas='';
-		var table = $("#tabelaDividas", baixaFinanceiraController.workspace);
+		var table = $("#tabelaDividas tr", baixaFinanceiraController.workspace);
 		
-		for(i = 0; i < table.rows.length; i++){   
+		for(i = 0; i < table.length; i++){   
 			
 			/*if (document.getElementById("checkbox_"+table.rows[i].cells[0].textContent).checked){
 			    table.rows[i].cells[0].textContent; 
 			    dividasMarcadas+='idCobrancas='+ table.rows[i].cells[0].textContent + '&';
 		    }*/
-			if ($("#checkbox_"+table.rows[i].cells[0].textContent, baixaFinanceiraController.workspace).is("checked")) {
-				table.rows[i].cells[0].textContent; 
-				dividasMarcadas+='idCobrancas='+ table.rows[i].cells[0].textContent + '&';
+			if ($("#checkbox_"+table[i].cells[0].textContent, baixaFinanceiraController.workspace).attr("checked") == "checked") {
+				table[i].cells[0].textContent; 
+				dividasMarcadas+='idCobrancas='+ table[i].cells[0].textContent + '&';
 			}
 
 		} 
@@ -887,7 +892,7 @@ var baixaFinanceiraController = $.extend(true, {
 							} 
 
 							if (!tipoMensagem) {
-								postergarDivida();
+								baixaFinanceiraController.postergarDivida();
 								$("#ecargosPostergacao", baixaFinanceiraController.workspace).val(result)
 							}	
 						}							
@@ -922,9 +927,10 @@ var baixaFinanceiraController = $.extend(true, {
 			           }
 	        ],
 			beforeClose: function() {
-				limparModalPostergacao();
+				baixaFinanceiraController.limparModalPostergacao();
 				clearMessageDialogTimeout('dialogMensagemNovo');
-			}
+			},
+			form: $("#dialog-postergar", this.workspace).parents("form")
 		});
 	},
 

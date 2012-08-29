@@ -52,9 +52,10 @@
 	
 		<div class="linha_separa_fields">&nbsp;</div>
 	
-		<fieldset class="classFieldset">
+		<div class="grids" style="display: noneA;">
+			<fieldset class="classFieldset">
 			<legend>Encalhes Cadastrados</legend>
-			<div class="grids" style="display: noneA;">
+			
 				<table class="conferenciaEncalheContGrid"></table>
 				
 				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
@@ -93,8 +94,8 @@
 						<td width="17">&nbsp;</td>
 					</tr>
 				</table>
-			</div>
-		</fieldset>
+			</fieldset>
+		</div>
 	
 		<div class="linha_separa_fields">&nbsp;</div>
 	
