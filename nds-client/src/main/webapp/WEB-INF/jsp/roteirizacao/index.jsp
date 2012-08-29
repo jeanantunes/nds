@@ -113,6 +113,15 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
 	      </fieldset>
       </div>
       
+      <div id="dialog-detalhes" title="Cotas" style="width: auto; min-height: 60.40000009536743px; height: auto; " class="ui-dialog-content ui-widget-content" scrolltop="0" scrollleft="0">
+		<fieldset>
+	    	<legend id="legendDetalhesCota"></legend>
+	        
+	        <table id="cotasGrid" width="347" border="0" cellspacing="1" cellpadding="1"> </table>
+	
+	  </fieldset>
+	</div>
+      
 </form>
 
 </body>
