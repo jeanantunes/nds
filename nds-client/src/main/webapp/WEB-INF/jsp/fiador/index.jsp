@@ -20,13 +20,19 @@
 
 <body>
 	
+	<form id="form-dialog-excluir-fiador">
 	<div id="fiadorController-dialog-excluir-fiador" class="dialog-excluir-fiador" title="Fiadores" style="display: none;">
 		<p>Confirma esta Exclusão?</p>
 	</div>
+	</form>
 	
+	<form id="form-dialog-cancelar-cadastro-fiador">
 	<div id="fiadorController-dialog-cancelar-cadastro-fiador" title="Fiadores" style="display: none;">
 		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
 	</div>
+	</form>
+	
+	<div id="workspaceFiador">
 	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none;">
 	
 		<jsp:include page="../messagesDialog.jsp" />
@@ -108,6 +114,7 @@
 	    	</div>
 	    	<br clear="all" />
 		</div>
+	</div>
 	</div>
 	<div class="areaBts">
 		<div class="area">
