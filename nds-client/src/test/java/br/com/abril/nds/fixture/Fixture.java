@@ -754,7 +754,7 @@ public class Fixture {
 		estudo.setDataLancamento(data);
 
 		estudo.setProdutoEdicao(produtoEdicao);
-
+		estudo.setDataCadastro(new Date());
 		return estudo;
 	}
 

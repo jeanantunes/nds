@@ -172,6 +172,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setQtdeReparte(BigInteger.valueOf(i));
+			estudo.setDataCadastro(new Date());
 			save(estudo);
 		}
 		
