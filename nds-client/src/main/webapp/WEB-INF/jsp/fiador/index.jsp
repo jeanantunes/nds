@@ -30,6 +30,8 @@
 	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none;">
 	
 		<jsp:include page="../messagesDialog.jsp" />
+			<jsp:param value="dialog-fiador" name="messageDialog"/>
+		</jsp:include>
 	
 		<div id="fiadorController-tabs">
 			<ul>
@@ -73,6 +75,7 @@
 	        		<legend>Telefones</legend>
 					<jsp:include page="../endereco/index.jsp">
 						<jsp:param value="ENDERECO_FIADOR" name="telaEndereco"/>
+						<jsp:param value="dialog-fiador" name="message"/>
 					</jsp:include>
 				</fieldset>
 	    	</div>
@@ -83,6 +86,7 @@
 	        		<legend>Garantias</legend>
 		        	<jsp:include page="../telefone/index.jsp">
 		        		<jsp:param value="FIADOR" name="tela"/>
+						<jsp:param value="dialog-fiador" name="message"/>
 		        	</jsp:include>
 	        	</fieldset>
 			</div>
