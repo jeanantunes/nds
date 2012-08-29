@@ -604,4 +604,18 @@ public class RoteirizacaoController {
 		return usuario;
 	}
 	
+	/**
+	 * Obtém dados das cotas sumarizados (Detalhamento)
+	 * 
+	 * @param idBox
+	 * @param idRota
+	 * @param idRoteiro
+	 */
+	public void obterCotasSumarizadas(Long idBox, Long idRota, Long idRoteiro) {
+		
+		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.obterCotasParaBoxRotaRoteiro(idBox,idRota,idRoteiro);
+		
+		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
+	}
+	
 }

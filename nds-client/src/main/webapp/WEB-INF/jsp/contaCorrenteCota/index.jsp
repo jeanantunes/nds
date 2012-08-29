@@ -224,49 +224,49 @@ function carregarItemContaCorrenteCotaGrid() {
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'Vlr. Postergado',
+			display : 'Vlr. Postergado R$',
 			name : 'vlrpostergado',
-			width : 90,
+			width : 100,
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'NA',
+			display : 'NA R$',
 			name : 'na',
-			width : 70,
+			width : 77,
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Consignado',
+			display : 'Consignado R$',
 			name : 'consignadoaVencer',
-			width : 90,
+			width : 95,
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Encalhe',
+			display : 'Encalhe R$',
 			name : 'encalhe	',
-			width : 70,
+			width : 75,
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Venda Encalhe',
+			display : 'Venda Encalhe R$',
 			name : 'vendaEncalhe',
-			width : 90,
+			width : 95,
 			sortable : true,
 			align : 'right',
 		}, {
-			display : 'Déb/Cred.',
+			display : 'Déb/Cred. R$',
 			name : 'debCred',
-			width : 80,
+			width : 85,
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Encargos',
+			display : 'Encargos R$',
 			name : 'encargos',
 			width : 80,
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Pendente',
+			display : 'Pendente R$',
 			name : 'pendente',
 			width : 70,
 			sortable : true,
@@ -274,7 +274,7 @@ function carregarItemContaCorrenteCotaGrid() {
 		}, {
 			display : 'Total R$',
 			name : 'total',
-			width : 105,
+			width : 90,
 			sortable : true,
 			align : 'right'
 		}],
@@ -285,7 +285,7 @@ function carregarItemContaCorrenteCotaGrid() {
 		rp : 15,
 		showTableToggleBtn : true,
 		width : 960,
-		height : 255
+		height : 'auto'
 	});
 }
 
@@ -341,7 +341,7 @@ function montarColunaEncalheCota(){
 		}, {
 			display : 'Total R$',
 			name : 'total',
-			width : 75,
+			width : 80,
 			sortable : true,
 			align : 'right'
 		}],
@@ -567,17 +567,15 @@ $(function() {
         
         	<table class="consignadoCotaGrid"></table>
         
-        	<span class="bt_novos" title="Gerar Arquivo">
-				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarConsignadoCota?fileType=XLS">
+        	<span class="bt_novos">
+				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarConsignadoCota?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-					Arquivo
 				</a>
 			</span>
 			
-			<span class="bt_novos" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarConsignadoCota?fileType=PDF">
+			<span class="bt_novos">
+				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarConsignadoCota?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-					Imprimir
 				</a>
 			</span>
 				     
@@ -607,17 +605,15 @@ $(function() {
         
 	        <table class="encalheCotaGrid"></table>
 	        
-	        <span class="bt_novos" title="Gerar Arquivo">
-				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarEncalhe?fileType=XLS">
+	        <span class="bt_novos">
+				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarEncalhe?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-					Arquivo
 				</a>
 			</span>
 			
-			<span class="bt_novos" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarEncalhe?fileType=PDF">
+			<span class="bt_novos">
+				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarEncalhe?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-					Imprimir
 				</a>
 			</span>
 			
@@ -646,17 +642,15 @@ $(function() {
     	<legend><span id="datacotanome-venda-encalhe"></span></legend>
         
         <table class="vendaEncalheGrid"></table>
-        <span class="bt_novos" title="Gerar Arquivo">
-			<a id="dialog-venda-encalhe-export-xls" href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarVendaEncalhe?fileType=XLS">
+        <span class="bt_novos">
+			<a id="dialog-venda-encalhe-export-xls" href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarVendaEncalhe?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-				Arquivo
 			</a>
 		</span>
 			
-		<span class="bt_novos" title="Imprimir">
-			<a id="dialog-venda-encalhe-export-pdf" href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarVendaEncalhe?fileType=PDF">
+		<span class="bt_novos">
+			<a id="dialog-venda-encalhe-export-pdf" href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportarVendaEncalhe?fileType=PDF" rel="tipsy" title="Imprimir">
 				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-				Imprimir
 			</a>
 		</span>
        	<div align="right">								
@@ -670,70 +664,57 @@ $(function() {
     </fieldset>
 </div>
 
-<div class="corpo">
- 
-     <div class="container">
     
      <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 				<b>Pessoa < evento > com < status >.</b></p>
 	</div>
-    	
-      <fieldset class="classFieldset">
+		<div class="areaBts">
+			<div class="area">
+				<span class="bt_novos">
+					<a href="javascript:;" rel="tipsy" title="Negociar Divida">
+						<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
+					</a>
+				</span>
+				
+				<span class="bt_arq">
+					<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportar?fileType=XLS" rel="tipsy"  title="Gerar Arquivo">
+						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					</a>
+				</span>
+				
+				<span class="bt_arq">
+					<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					</a>
+				</span>
+				
+			</div>
+		</div>
+	
+		<div class="linha_separa_fields">&nbsp;</div>	
+      <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Conta-Corrente</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
-              <td width="32">Cota:</td>
-              <td colspan="3"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              <td width="33">Cota:</td>
+              <td width="92"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
               </td>
-              <td width="36">Nome:</td>
-              <td width="263"><input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
-              <td width="72">&nbsp;</td>
-              <td width="283">&nbsp;</td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisarItemContaCorrenteCota();">Pesquisar</a></span></td>
+              <td width="41">Nome:</td>
+              <td width="240"><input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
+              <td width="518"><span class="bt_novos"><a href="javascript:;" onclick="pesquisarItemContaCorrenteCota();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>
           </table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="classFieldset">
-       	  <legend>Conta-Corrente Selecionado</legend>
-       
-       <div class="grids" style="display: none;">
-      
-          <strong><span id="cotanome"></span></strong>
-          <br />
-			
-       	  <table class="itemContaCorrenteCotaGrid"></table>
-        
-			<span class="bt_novos" title="Negociar Divida">
-				<a href="javascript:;">
-					<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
-					Negociar Divida
-				</a>
-			</span>
-			
-			<span class="bt_novos" title="Gerar Arquivo">
-				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportar?fileType=XLS">
-					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-					Arquivo
-				</a>
-			</span>
-			
-			<span class="bt_novos" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportar?fileType=PDF">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-					Imprimir
-				</a>
-			</span>
-		</div>
-            
-           
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-       
-    </div>
-</div> 
+      <div class="grids" style="display: none;">
+	      <fieldset class="fieldGrid">
+	       	  <legend>Conta-Corrente Selecionado: <span id="cotanome"></span></legend>
+	       	  <table class="itemContaCorrenteCotaGrid"></table>
+	      </fieldset>
+      </div>
+
 <script>
 
 </script>
