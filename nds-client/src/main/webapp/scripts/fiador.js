@@ -57,7 +57,8 @@ var fiadorController = $.extend(true, {
 					}
 					
 					return _this.fecharModalCadastroFiador;
-				}
+				},
+				form: $("#dialog-novo", "#workspaceFiador").parents("form")
 			});
 		
 			$(".fiadorController-trSocioPrincipal", fiadorController.workspace).hide();
