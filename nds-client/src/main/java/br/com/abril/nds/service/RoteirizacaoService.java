@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.hibernate.criterion.MatchMode;
 
+import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
@@ -101,6 +104,32 @@ public interface RoteirizacaoService {
 	Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 	
 	List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro);
+	
+	/**
+	 * Obtém Boxes por nome
+	 * 
+	 * @param nome
+	 * @return
+	 */
+	List<BoxRoteirizacaoDTO> obterBoxesPorNome(String nome);
+
+	/**
+	 * Filtra Roteiros por nome e boxes
+	 * 
+	 * @param nome
+	 * @param idsBoxes
+	 * @return
+	 */
+	List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxes(String nome, List<Long> idsBoxes);
+	
+	/**
+	 * Filtra Rotas por nome e Roteiros
+	 * 
+	 * @param nome
+	 * @param idsRoteiros
+	 * @return
+	 */
+	List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome, List<Long> idsRoteiros);
 
 }
 	

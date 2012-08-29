@@ -13,11 +13,15 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
-import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
@@ -513,6 +517,72 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		filtro.setPaginacao(null);
 		
 		return buscarRoteirizacaoSumarizadoPorCota(filtro).size(); 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BoxRoteirizacaoDTO> obterBoxesPorNome(String nome) {
+		
+		Criteria criteria  = getSession().createCriteria(Box.class, "box");
+		criteria.add(Restrictions.ilike("box.nome", nome.toLowerCase() + "%"));
+		
+		criteria.setProjection(Projections.projectionList()
+				.add(Projections.property("box.id"), "id")
+				.add(Projections.property("box.nome"), "nome")
+		//		.add(Projections.property("box.ordem"), "ordem")
+				);
+		
+		//criteria.addOrder(Order.asc("box.ordem"));
+		
+		criteria.setResultTransformer(Transformers.aliasToBean(BoxRoteirizacaoDTO.class));
+		
+		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxes(String nome,
+			List<Long> idsBoxes) {
+		
+		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
+		criteria.createAlias("roteiro.box","box");
+		criteria.add(Restrictions.ilike("roteiro.descricaoRoteiro", nome.toLowerCase() + "%"));
+		criteria.add(Restrictions.in("box.id", idsBoxes));
+		
+		criteria.setProjection(Projections.projectionList()
+				.add(Projections.property("roteiro.id"), "id")
+				.add(Projections.property("roteiro.descricaoRoteiro"), "nome")
+				.add(Projections.property("roteiro.ordem"), "ordem")
+				);
+		
+		criteria.addOrder(Order.asc("roteiro.ordem"));
+		
+		criteria.setResultTransformer(Transformers.aliasToBean(RoteiroRoteirizacaoDTO.class));
+		
+		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome,
+			List<Long> idsRoteiros) {
+		
+		Criteria criteria  = getSession().createCriteria(Rota.class, "rota");
+		criteria.createAlias("rota.roteiro","roteiro");
+		criteria.add(Restrictions.ilike("rota.descricaoRota", nome.toLowerCase() + "%"));
+		criteria.add(Restrictions.in("roteiro.id", idsRoteiros));
+		
+		criteria.setProjection(Projections.projectionList()
+				.add(Projections.property("rota.id"), "id")
+				.add(Projections.property("rota.descricaoRota"), "nome")
+				.add(Projections.property("rota.ordem"), "ordem")
+				);
+		
+		criteria.addOrder(Order.asc("rota.ordem"));
+		
+		criteria.setResultTransformer(Transformers.aliasToBean(RotaRoteirizacaoDTO.class));
+		
+		return criteria.list();
 	}
 
 }
