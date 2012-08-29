@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0107.processor;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -202,6 +203,22 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	public void validarProcessamento() {
 		
 		// 01) Verificar se existe algum Estudo sem EstudoCota;
+		StringBuilder hqlEstudoSemEstudoCota = new StringBuilder();
+		hqlEstudoSemEstudoCota.append(" SELECT e FROM Estudo e " );
+		hqlEstudoSemEstudoCota.append("  WHERE NOT EXISTS( FROM EstudoCota ec WHERE ec.estudo = e)");
+		
+		Query query = getSession().createQuery(hqlEstudoSemEstudoCota.toString());
+		List<Estudo> lstEstudos = query.list();
+		if (lstEstudos != null && !lstEstudos.isEmpty()) {
+			for (Estudo estudo : lstEstudos) {
+				
+				// TODO: Gravar no log qual Estudo esta sem EstudoCota
+				
+				this.getSession().delete(estudo);
+			}
+		}
+		
+		
 		
 		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
 		// EstudoCota batem com a qtdeReparte do respectivo Estudo
