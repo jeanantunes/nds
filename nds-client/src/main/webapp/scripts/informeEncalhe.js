@@ -60,7 +60,7 @@ InformeEncalhe.prototype.initGrid = function() {
 
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 80,
+					width : 120,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -74,7 +74,7 @@ InformeEncalhe.prototype.initGrid = function() {
 
 					display : 'Chamada de Capa',
 					name : 'chamadaCapa',
-					width : 105,
+					width : 85,
 					sortable : true,
 					align : 'left'
 				}, {
