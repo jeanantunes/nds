@@ -13,29 +13,7 @@ $(function() {
 
 
 <style type="text/css">
-.separar{margin-right:5px; margin-left:7px;}
-.box_home{
-	float:left;
-	border-radius: 8px 8px 8px 8px;
-    box-shadow:0px 0px 7px 1px rgba(0, 0, 0, 0.2);
-    padding:5px;
- }
- .box_home p{font-size:11px!important; }
-.box_home h1{font-size:16px; color:#000000; margin-top:23px; margin-left:10px;}
-.box_home h2{font-size:16px; color:#666666; background-color:#f2f2f2;border-radius: 4px 4px 4px 4px; box-shadow:0px 3px 1px rgba(0, 0, 0, 0.2); padding:5px;}	
-.box_home .logoHome{ float:left; background:none!important; margin-left:10px; margin-right:10px;}
-.box_home ul{}
-.box_home li{list-style:none; line-height:25px;}
-.box_home li a{}
-.tamanho_1{width:368px!important; margin-top:20px;}
-.tamanho_2{width:150px!important; margin-top:20px;}
 
-
-
-.follow{width:240px; margin-left:20px; margin-right:15px;}
-.saudacao{width:420px!important; margin-left:20px; text-align:center;}
-.suporte{width:200px;}
-.feriados{width:466px;margin-left:20px;margin-top:20px;  }
 </style>
 
 </head>
@@ -48,7 +26,7 @@ $(function() {
 <div class="area">
 	
 		<div class="box_home saudacao">
-		   	<img src="images/logo_sistema.png" alt="Novo Distrib" class="logoHome" />
+		   	<img src="${pageContext.request.contextPath}/images/logo_sistema.png" alt="Novo Distrib" class="logoHome" />
 		
 		    <h1>Bom Dia Treelog, seja bem-vindo ao NOVO DISTRIB</h1>
 		    
@@ -61,8 +39,21 @@ $(function() {
 		<div class="box_home follow">
 		    <h2>Follow Up do Sistema</h2>
 		    <br clear="all" />
-		    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		    
+		    <p>
+		    	Negociação <span style="float:right; margin-right:5px;"><a href="javascript:;">R$ 2.340,00</a></span>
+		    </p>
+		    <p>
+		    	Chamadão <span style="float:right; margin-right:5px;"><a href="javascript:;">R$ 2.340,00</a></span>
+		    </p>
+		    <p>
+		    	Alteração Status Cota <span style="float:right; margin-right:5px;"><a href="javascript:;">200</a></span>
+		    </p>
+		    <p>
+		    	Atualização Cadastral <span style="float:right; margin-right:5px;"><a href="javascript:;">120</a></span>
+		    </p>
+		    <p>
+		    	Pendências NF-e Encalhe <span style="float:right; margin-right:5px;"><a href="javascript:;">250</a></span>
+		    </p>
 		    <br clear="all" />
 		</div>
 		
@@ -72,7 +63,7 @@ $(function() {
 		    <br clear="all" />
 		    <img src="${pageContext.request.contextPath}/images/ico_email.gif" border="0" align="left" style="margin-right:10px;" />
 		    <h3>E-mail</h3>
-		    <p>E-mail: contatos@dgb.com.br</p>
+		    <p>E-mail: <a href="mailto:contatos@dgb.com.br">contatos@dgb.com.br</a></p>
 		    
 		    <br clear="all" />
 		    <img src="${pageContext.request.contextPath}/images/ico_telefone.gif" border="0" align="left" style="margin-right:10px;" />
@@ -89,12 +80,39 @@ $(function() {
 		
 		<div class="box_home feriados">
 	    	
-		    <h2>Acesso Rápido</h2>
+		    <h2>Feriados do Mês: Agosto/2012</h2>
 		    <br clear="all" />
-		    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
 		    
-		    <br clear="all" />
-		
+		    <div class="feriados_home separar">
+			    <div class="dia_feriado">10</div>
+			    <p>Estadual<br />
+			    Dia de todos os Mortos</p>
+			    <span>São Paulo - Opera - Cobrança</span>
+		    </div>
+		    
+		    <div class="feriados_home">
+			    <div class="dia_feriado">15</div>
+			    <p>Estadual<br />
+			    Dia de todos os Vivos</p>
+			    <span>São Paulo - Opera - Cobrança</span>
+		    </div>
+		    
+		    <div class="linha_separa_fields">&nbsp;</div>
+		    
+		    <div class="feriados_home separar">
+			    <div class="dia_feriado">18</div>
+			    <p>Estadual<br />
+			    Dia de todos os Mortos</p>
+			    <span>São Paulo - Opera - Cobrança</span>
+		    </div>
+		    
+		    <div class="feriados_home">
+			    <div class="dia_feriado">26</div>
+			    <p>Estadual<br />
+			    Dia de todos os Vivos</p>
+			    <span>São Paulo - Opera - Cobrança</span>
+		    </div>
+			<div class="linha_separa_fields">&nbsp;</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
 </div>

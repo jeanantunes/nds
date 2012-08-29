@@ -1,6 +1,12 @@
 <head>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/suspensaoCota.js"></script>
+<script type="text/javascript" src="scripts/suspensaoCota.js"></script>
+
+<script type="text/javascript">
+$(function(){
+	suspensaoCotaController.init();
+});
+</script>
 
 </head>
 

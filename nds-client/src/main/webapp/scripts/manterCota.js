@@ -241,7 +241,8 @@ var MANTER_COTA = $.extend(true, {
 				"Cancelar": function() {
 					$( this, this.workspace ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#workspaceCota", this.workspace)			
 		});
 	},
 	
@@ -443,7 +444,8 @@ var MANTER_COTA = $.extend(true, {
 					MANTER_COTA.fecharModalCadastroCota = false;
 					$(this, this.workspace).dialog("close");
 				}
-			}
+			},
+			form: $("#workspaceCota", this.workspace)			
 		});
 	},
 	
@@ -1227,7 +1229,8 @@ var SOCIO_COTA = $.extend(true, {
 					"Cancelar": function() {
 						$( this, SOCIO_COTA._workspace ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#workspaceCota", this.workspace)
 			});
 		},
 		
@@ -1543,7 +1546,8 @@ var SOCIO_COTA = $.extend(true, {
 					"Cancelar": function() {
 						$(this, SOCIO_COTA._workspace).dialog("close");
 					}
-				}
+				},
+				form: $("#workspaceCota", this.workspace)				
 			});
 		},
 		

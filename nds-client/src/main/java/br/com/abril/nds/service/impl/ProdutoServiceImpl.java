@@ -3,7 +3,9 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -187,27 +189,22 @@ public class ProdutoServiceImpl implements ProdutoService {
 			produto = this.produtoRepository.merge(produto);
 			
 			if (codigoTipoDesconto != null && codigoTipoDesconto.intValue() > 0) {
+
+				DescontoLogistica descontoLogistica = this.descontoLogisticaRepository.obterPorTipoDesconto(codigoTipoDesconto.intValue());
+				if (descontoLogistica!=null){
+					
+					Set<Produto> produtos = new LinkedHashSet<Produto>();
+						
+				    produtos.add(produto);
+				    
+				    descontoLogistica.setProdutos(produtos);
+					
+				    descontoLogistica = this.descontoLogisticaRepository.merge(descontoLogistica);
 				
+				    produto.setDescontoLogistica(descontoLogistica);
 				
-				//TODO:Entidade TipoDesconto excluída
-				//TipoDesconto tipoDesconto = this.tipoDescontoRepository.buscarPorId(codigoTipoDesconto);
-	            Float porcentagem = 0F;
-	            Integer tipoDesconto = 0;
-	            
-				
-				DescontoLogistica descontoLogistica = new DescontoLogistica();
-				
-				descontoLogistica.setPercentualDesconto(porcentagem);
-				descontoLogistica.setTipoDesconto(tipoDesconto);
-				descontoLogistica.getProdutos().add(produto);
-				descontoLogistica.setDataInicioVigencia(Calendar.getInstance().getTime());
-				descontoLogistica.setPercentualPrestacaoServico(porcentagem);
-				
-				descontoLogistica = this.descontoLogisticaRepository.merge(descontoLogistica);
-				
-				produto.setDescontoLogistica(descontoLogistica);
-				
-				this.produtoRepository.merge(produto);
+				    this.produtoRepository.merge(produto);
+				}
 			}
 			
 		} catch (Exception e) {
