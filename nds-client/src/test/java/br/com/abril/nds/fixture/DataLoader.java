@@ -5117,6 +5117,7 @@ public class DataLoader {
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setQtdeReparte(BigInteger.valueOf(i));
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 			estudo.setDataCadastro(new Date());
 			session.save(estudo);
 		}
@@ -5673,6 +5674,7 @@ public class DataLoader {
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setQtdeReparte(BigInteger.valueOf(10));
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 			estudo.setDataCadastro(new Date());
 			save(session,estudo);
 

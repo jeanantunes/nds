@@ -256,6 +256,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			estudoAtualizar.setDataLancamento(estudoAgrupar.getDataLancamento());
 			estudoAtualizar.setProdutoEdicao(estudoAgrupar.getProdutoEdicao());
 			estudoAtualizar.setQtdeReparte(estudoAgrupar.getQtdeReparte());
+			estudoAtualizar.setStatus(StatusLancamento.ESTUDO_FECHADO);
 			estudoAtualizar.setDataCadastro(new Date());
 		}
 		
