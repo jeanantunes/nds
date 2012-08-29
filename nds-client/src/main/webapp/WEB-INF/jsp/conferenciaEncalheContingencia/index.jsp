@@ -23,18 +23,21 @@
 	</jsp:include>
 
 	<jsp:include page="dialogs.jsp" />
-
-	<div class="container">
-	
-		<fieldset class="classFieldset">
+		<div class="areaBts">
+			<div class="area">
+				<br />
+			</div>
+		</div>
+		<div class="linha_separa_fields">&nbsp;</div>
+		<fieldset class="fieldFiltro">
 			<legend> Pesquisar Encalhe </legend>
 			<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
 				<tr>
 					<td width="40" height="25">Cota:</td>
-					<td width="121">
+					<td width="161">
 						<input type="text" id="numeroCota" style="width: 80px; float: left; margin-right: 5px;" maxlength="255" /> 
-						<span class="classPesquisar">
-							<a href="javascript:;" onclick="ConferenciaEncalheCont.pesquisarCota();">&nbsp;</a>
+						<span class="bt_novos">
+							<a href="javascript:;" onclick="ConferenciaEncalheCont.pesquisarCota();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 						</span>
 					</td>
 					<td colspan="2"><span class="dadosFiltro" id="nomeCota"/></td>
@@ -53,7 +56,7 @@
 		<div class="linha_separa_fields">&nbsp;</div>
 	
 		<div class="grids" style="display: noneA;">
-			<fieldset class="classFieldset">
+			<fieldset class="fieldGrid">
 			<legend>Encalhes Cadastrados</legend>
 			
 				<table class="conferenciaEncalheContGrid"></table>
@@ -112,7 +115,5 @@
 				</tr>
 			</table>
 		</fieldset>
-		<div class="linha_separa_fields">&nbsp;</div>
-	
-	</div>
+
 </body>
