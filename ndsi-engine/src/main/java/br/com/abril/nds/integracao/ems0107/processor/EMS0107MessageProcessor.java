@@ -193,5 +193,19 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		Long qtd = (Long) query.uniqueResult();
 		return (qtd != null && qtd.intValue() > 0);
 	}
+	
+	/**
+	 * Realiza as validações após o processamento do arquivo.
+	 * 
+	 * TODO: Ver como incluir esta validação posteriormente.
+	 */
+	public void validarProcessamento() {
+		
+		// 01) Verificar se existe algum Estudo sem EstudoCota;
+		
+		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
+		// EstudoCota batem com a qtdeReparte do respectivo Estudo
+		
+	}
 		
 }
