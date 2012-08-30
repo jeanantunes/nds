@@ -1,6 +1,6 @@
 package br.com.abril.nds.model.planejamento;
+
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
@@ -9,6 +9,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -35,9 +37,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 		"DATA_LANCAMENTO", "PRODUTO_EDICAO_ID" }) })
 @SequenceGenerator(name = "ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
 public class Estudo implements Serializable {
-
-	private static final long serialVersionUID = -1896990365355368745L;
-
+	
+	private static final long serialVersionUID = -6789370916662533013L;
+	
 	@Id
 	@GeneratedValue(generator = "ESTUDO_SEQ")
 	@Column(name = "ID")
@@ -56,6 +58,22 @@ public class Estudo implements Serializable {
 	
 	@OneToMany(mappedBy = "estudo", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
+	
+	/** Status do Estudo. */
+	@Column(name = "STATUS", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private StatusLancamento status;
+	
+	/** Data de cadastro do Estudo no sistema. */
+	@Column(name = "DATA_CADASTRO", nullable = false)
+	@Temporal(TemporalType.DATE)
+	private Date dataCadastro;
+	
+	/** Data de alteração do Estudo no sistema. */
+	@Column(name = "DATA_ALTERACAO")
+	@Temporal(TemporalType.DATE)
+	private Date dataAlteracao;
+	
 	
 	public Long getId() {
 		return id;
@@ -105,6 +123,30 @@ public class Estudo implements Serializable {
 	 */
 	public void setEstudoCotas(Set<EstudoCota> estudoCotas) {
 		this.estudoCotas = estudoCotas;
+	}
+
+	public StatusLancamento getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusLancamento status) {
+		this.status = status;
+	}
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
 	}
 
 }

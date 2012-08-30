@@ -134,6 +134,8 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setQtdeReparte(BigInteger.valueOf(10));
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+			estudo.setDataCadastro(new Date());
 			save(estudo);
 			
 			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "01" + i, "ie"+i, "email"+i, "99.999-9");

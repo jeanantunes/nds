@@ -1,0 +1,132 @@
+package br.com.abril.nds.repository.impl;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
+import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
+import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.repository.RoteirizacaoRepository;
+
+public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
+
+	@Autowired
+	private RoteirizacaoRepository roteirizacaoRepository;
+
+	private Box box;
+	private Box box1;
+	private Box box2;
+	private Box box3;
+	private Box box4;
+	private Box box5;
+	private Box box6;
+
+	private Roteiro roteiro;
+	private Roteiro roteiro1;
+	private Roteiro roteiro2;
+	private Roteiro roteiro3;
+
+	private Rota rota;
+	private Rota rota1;
+	private Rota rota2;
+	private Rota rota3;
+	
+	
+	@Before
+	public void setup() {
+
+		box = Fixture.criarBox(0, "BOX00", TipoBox.LANCAMENTO);
+		save(box);
+
+		box1 = Fixture.criarBox(1, "BOX01", TipoBox.LANCAMENTO);
+		save(box1);
+
+		box2 = Fixture.criarBox(2, "BOX02", TipoBox.LANCAMENTO);
+		save(box2);
+
+		box3 = Fixture.criarBox(3, "BOX03", TipoBox.LANCAMENTO);
+		save(box3);
+
+		box4 = Fixture.criarBox(4, "BX-04", TipoBox.LANCAMENTO);
+		save(box4);
+
+		box5 = Fixture.criarBox(5, "BX-05", TipoBox.LANCAMENTO);
+		save(box5);
+
+		box6 = Fixture.criarBox(6, "BX-06", TipoBox.LANCAMENTO);
+		save(box6);
+
+		roteiro = Fixture.criarRoteiro("RT00", box, TipoRoteiro.NORMAL);
+		save(roteiro);
+
+		roteiro1 = Fixture.criarRoteiro("RT01", box, TipoRoteiro.NORMAL);
+		save(roteiro1);
+
+		roteiro2 = Fixture.criarRoteiro("R02", box, TipoRoteiro.NORMAL);
+		save(roteiro2);
+
+		roteiro3 = Fixture.criarRoteiro("RT03", box1, TipoRoteiro.NORMAL);
+		save(roteiro3);
+		
+		rota = Fixture.rota("0", "ROTA00");
+		rota.setRoteiro(roteiro);
+		save(rota);
+		
+		rota1 = Fixture.rota("1", "ROTA01");
+		rota1.setRoteiro(roteiro);
+		save(rota1);
+		
+		rota2 = Fixture.rota("2", "OTA02");
+		rota2.setRoteiro(roteiro);
+		save(rota2);
+		
+		rota3 = Fixture.rota("3", "ROTA03");
+		rota3.setRoteiro(roteiro1);
+		save(rota3);
+
+	}
+
+	@Test
+	public void obterBoxesPorNome() {
+
+		List<BoxRoteirizacaoDTO> lista = roteirizacaoRepository.obterBoxesPorNome("BOX");
+
+		Assert.assertTrue(lista.get(3) != null);
+
+		Assert.assertEquals(lista.size(), 4);
+	}
+
+	@Test
+  	public void obterRoteirosPorNomeEBoxes() {
+  		
+  		List<RoteiroRoteirizacaoDTO> lista = roteirizacaoRepository.obterRoteirosPorNomeEBoxes("RT", 
+  				Collections.singletonList(box.getId()));
+  		
+  		Assert.assertTrue(lista.get(1) != null);
+  		
+  		Assert.assertEquals(lista.size(), 2);
+  	}
+
+	@Test
+	public void obterRotasPorNomeERoteiros() {
+
+		List<RotaRoteirizacaoDTO> lista = roteirizacaoRepository.obterRotasPorNomeERoteiros("ROTA",
+						Collections.singletonList(roteiro.getId()));
+
+		Assert.assertTrue(lista.get(1) != null);
+
+		Assert.assertEquals(lista.size(), 2);
+	}
+
+}

@@ -5117,6 +5117,8 @@ public class DataLoader {
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setQtdeReparte(BigInteger.valueOf(i));
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+			estudo.setDataCadastro(new Date());
 			session.save(estudo);
 		}
 	}
@@ -5672,6 +5674,8 @@ public class DataLoader {
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setQtdeReparte(BigInteger.valueOf(10));
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+			estudo.setDataCadastro(new Date());
 			save(session,estudo);
 
 			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i,"99.999-9");
