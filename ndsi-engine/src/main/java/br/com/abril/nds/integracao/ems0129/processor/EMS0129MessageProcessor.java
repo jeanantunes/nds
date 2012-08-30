@@ -60,6 +60,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DescontoService descontoService;
 
+	
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
 	@Override
 	public void processMessage(Message message) {
 		
@@ -369,4 +375,10 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		return somaRegistros;
 
 	}
+
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }
