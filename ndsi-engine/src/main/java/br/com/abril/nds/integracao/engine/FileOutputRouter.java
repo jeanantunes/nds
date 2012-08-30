@@ -23,6 +23,13 @@ public class FileOutputRouter implements ContentBasedRouter {
 		// PASTA DE SAIDA
 		message.getHeader().put(MessageHeaderProperties.OUTBOUND_FOLDER.getValue(), fileOutputRoute.getOutboundFolder());
 		
+		// Processamento a ser executado ANTES do processamento principal:
+		route.getMessageProcessor().preProcess();
+		
+		// Processamento principal:
 		route.getMessageProcessor().processMessage(message);
+		
+		// Processamento a ser executado APÓS o processamento principal:
+		route.getMessageProcessor().posProcess();
 	}
 }
