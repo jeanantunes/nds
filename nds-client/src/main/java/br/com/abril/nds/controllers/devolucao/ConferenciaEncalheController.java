@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -997,6 +998,18 @@ public class ConferenciaEncalheController {
 	@Post
 	public void verificarValorTotalCE(BigDecimal valorCEInformado){
 
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+			
+			this.comparValorTotalCEMonetario(valorCEInformado);
+			
+		} else {
+
+			this.comparValorTotalCEQuantidade(valorCEInformado);
+			
+		}
+		
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
 		if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
@@ -1025,6 +1038,16 @@ public class ConferenciaEncalheController {
 	
 	
 	
+	private void comparValorTotalCEQuantidade(BigDecimal valorTotalCEQuantidade) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void comparValorTotalCEMonetario(BigDecimal valorTotalCEMonetario) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	@Post
 	public void pesquisarProdutoEdicaoPorId(Long idProdutoEdicao){
 		
