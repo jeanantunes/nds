@@ -19,6 +19,9 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
 </head>
 
 <body>
+
+<jsp:include page="roteirizacao.jsp"/>
+
 <form action="" method="get" id="form1" name="form1">
 	
 	<div class="areaBts">
