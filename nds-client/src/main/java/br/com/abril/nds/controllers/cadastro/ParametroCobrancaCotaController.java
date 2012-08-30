@@ -146,7 +146,6 @@ public class ParametroCobrancaCotaController {
 			
 		    parametroCobranca = new ParametroCobrancaCotaDTO();
 		    parametroCobranca.setIdCota(idCota);
-		    parametroCobranca.setComissao(BigDecimal.ZERO);
 		    parametroCobranca.setContrato(false);
 		    parametroCobranca.setFatorVencimento(0);
 		    parametroCobranca.setQtdDividasAberto(0);

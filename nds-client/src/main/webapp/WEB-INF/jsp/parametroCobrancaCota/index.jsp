@@ -92,9 +92,9 @@ $(function(){
                </select> 
              </td>  
              
-             <td>Comissão %:</td>
+             <td></td>
 		     <td>
-		         <input maxlength="15" name="comissao" id="comissao" type="text" style="width:60px;" />
+		        
 		     </td>
 		     
 		   </tr>
