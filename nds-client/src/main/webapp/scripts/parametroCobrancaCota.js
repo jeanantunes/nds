@@ -56,6 +56,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#conta", this.workspace).numeric();
 	    $("#contaDigito", this.workspace).numeric();
 	    $("#diaDoMes", this.workspace).numeric();
+	    
+	    $(".dataInputMask").mask("99/99/9999");
+	    
+	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
 
 	},
 	
@@ -152,6 +156,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 	
 	exibe_form_suspencao : function(exibir) {
 		$(".form-suspensao-hidden-class").toggle(exibir);
+	},
+	
+	exibe_form_upload : function(exibir) {
+		$("#parametroCobrancaFileField").toggle(exibir);
 	},
 	
 	opcaoPagto : function(op){

@@ -30,7 +30,7 @@ $(function(){
 	width: 430px !important;
 }
 
-.form-suspensao-hidden-class, .form-contrato-hidden-class {
+#parametroCobrancaFileField, .form-suspensao-hidden-class, .form-contrato-hidden-class {
 	display: none;
 }
 
@@ -61,7 +61,7 @@ $(function(){
 	<table width="100%" border="0" cellspacing="1" cellpadding="1">
 		<tbody>
 			<tr>
-				<td width="159">Fator Vencimento de Cobrança em D+:</td>
+				<td width="175">Fator Vencimento de Cobrança em D+:</td>
 				<td width="175"><select id="fatorVencimento"
 					name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
 						<option>1</option>
@@ -89,13 +89,13 @@ $(function(){
 				<td width="60">Contrato:</td>
 				<td width="20"><input id="contrato" name="contrato"
 					type="checkbox" style="float: left;"
-					onclick="parametroCobrancaCotaController.exibe_form_contrato();" />
+					onclick="parametroCobrancaCotaController.exibe_form_contrato(this.checked);" />
 				</td>
 				<td width="373">
 					<div class="form-contrato-hidden-class">
 						<span name="botaoContrato" id="botaoContrato" class="bt_imprimir">
 							<a href="javascript:;"
-							onclick="parametroCobrancaCotaController.imprimeContrato()">Contrato</a>
+							onclick="parametroCobrancaCotaController.imprimeContrato()" target="_blank">Contrato</a>
 						</span>
 					</div>
 				</td>
@@ -113,22 +113,26 @@ $(function(){
 							<tbody>
 								<tr>
 									<td width="20%">Dt. Início:</td>
-									<td width="19%"><input type="text" name="dateInicio"
-										id="dateInicio" style="width: 60px;"></td>
+									<td width="19%">
+									<input type="text" name="dateInicio" class="dataInputMask"
+										id="parametroCobrancaDateInicio" style="width: 70px;"></td>
 									<td width="23%">Dt. Término:</td>
-									<td width="38%"><input type="text" name="dateTermino"
-										id="dateTermino" style="width: 60px;"></td>
+									<td width="38%"><input type="text" name="dateTermino" class="dataInputMask"
+										id="parametroCobrancaDateTermino" style="width: 70px;"></td>
 								</tr>
 								<tr>
 									<td>Recebido?</td>
-									<td><input type="checkbox" name="checkbox" id="checkbox"></td>
+									<td>
+										<input type="checkbox" name="checkbox" id="checkbox" 
+												onclick="parametroCobrancaCotaController.exibe_form_upload(this.checked)">
+									</td>
 									<td>&nbsp;</td>
 									<td>&nbsp;</td>
 								</tr>
 								<tr>
 									<td>Procurar:</td>
-									<td colspan="3"><input name="fileField" type="file"
-										id="fileField" size="30"></td>
+									<td colspan="3">
+										<input name="fileField" type="file"	id="parametroCobrancaFileField" size="30"></td>
 								</tr>
 							</tbody>
 						</table>
@@ -172,7 +176,7 @@ $(function(){
 			<tr>
 				<td width="126">Sugere Suspensão:</td>
 				<td width="24"><input id="sugereSuspensao"
-					name="sugereSuspensao" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao();" /></td>
+					name="sugereSuspensao" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao(this.checked);" /></td>
 				<td colspan="3">
 					<div class="form-suspensao-hidden-class">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
