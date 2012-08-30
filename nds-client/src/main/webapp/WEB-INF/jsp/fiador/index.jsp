@@ -99,10 +99,10 @@
 			
 			<div id="fiadorController-tab-5">
 				<br />
-				<fieldset style="margin-left:10px;"
+				<fieldset style="margin-left:10px;">
 	        		<legend>Dados Cadastrais</legend>
 					<jsp:include page="garantias.jsp"></jsp:include>
-				
+				</fieldset>
 	    	</div>
 	    
 			<div id="fiadorController-tab-6">
