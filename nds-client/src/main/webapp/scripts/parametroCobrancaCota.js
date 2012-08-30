@@ -45,7 +45,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		$("#fatorVencimento", this.workspace).numeric();
 		$("#valorMinimo", this.workspace).numeric();
-		$("#comissao", this.workspace).numeric();
 		$("#qtdDividasAberto", this.workspace).numeric();
 		$("#vrDividasAberto", this.workspace).numeric();
 		
@@ -252,7 +251,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		parametroCobrancaCotaController.exibe_form_contrato(resultado.contrato);
 
 		$("#valorMinimo", this.workspace).val(resultado.valorMinimo);
-		$("#comissao", this.workspace).val(resultado.comissao);
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto", this.workspace).val(resultado.vrDividasAberto);
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
@@ -284,7 +282,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var contrato = $("#contrato", this.workspace).val();
 	 
 		var valorMinimo = $("#valorMinimo", this.workspace).val();
-		var comissao = $("#comissao", this.workspace).val();
 		var qtdDividasAberto = $("#qtdDividasAberto", this.workspace).val();
 		var vrDividasAberto = $("#vrDividasAberto", this.workspace).val();
 		var tipoCota = $("#tipoCota", this.workspace).val();
@@ -296,8 +293,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   "&parametroCobranca.fatorVencimento="+fatorVencimento+    
 				   "&parametroCobranca.sugereSuspensao="+sugereSuspensao+    
 				   "&parametroCobranca.contrato="+contrato+          
-				   "&parametroCobranca.valorMinimo="+valorMinimo+        
-				   "&parametroCobranca.comissao="+comissao+          
+				   "&parametroCobranca.valorMinimo="+valorMinimo+    
 				   "&parametroCobranca.qtdDividasAberto="+qtdDividasAberto+   
 				   "&parametroCobranca.vrDividasAberto="+vrDividasAberto+
 				   "&parametroCobranca.tipoCota="+tipoCota,
