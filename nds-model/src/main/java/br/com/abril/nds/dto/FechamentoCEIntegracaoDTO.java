@@ -40,8 +40,9 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 10)
 	private String valorVendaFormatado;
 	
-
 	private Boolean tipo;
+	
+	private BigDecimal desconto;
 	
 	private String tipoFormatado;
 	
@@ -125,6 +126,14 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 		}else{
 			tipoFormatado = "Parcial";
 		}
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
 	}
 	
 }

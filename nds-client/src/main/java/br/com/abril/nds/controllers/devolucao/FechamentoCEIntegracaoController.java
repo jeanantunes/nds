@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -61,6 +63,9 @@ public class FechamentoCEIntegracaoController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private BoletoService boletoService;
+	
 	
 	public FechamentoCEIntegracaoController(Result result) {
 		 this.result = result;
@@ -88,6 +93,7 @@ public class FechamentoCEIntegracaoController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
+	
 	
 	private TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
@@ -134,6 +140,33 @@ public class FechamentoCEIntegracaoController {
 			lista.add(dto);
 		}
 		return lista;		
+	}
+	
+	public void buscarTotalDaPesquisa(){
+		
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
+		
+	}
+	
+	@Get
+	@Path("/imprimeBoleto")
+	public void imprimeBoleto(String nossoNumero) throws Exception{
+
+
+		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
+
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(b);
+
+//		//CONTROLE DE VIAS IMPRESSAS
+//		boletoService.incrementarVia(nossoNumero);
+		
+		httpResponse.flushBuffer();
 	}
 	
 	@Get

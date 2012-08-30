@@ -61,10 +61,11 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		criteria.createAlias("pe.produto", "p");
 		criteria.setFetchMode("p", FetchMode.JOIN);
 		
-		
 		criteria.createAlias("p.fornecedores", "pf");
 		criteria.setFetchMode("pf", FetchMode.JOIN);
 		
+		criteria.createAlias("mec.cota", "cota");
+		criteria.setFetchMode("cota", FetchMode.JOIN);
 		
 		if(filtro.getData() != null){
 			criteria.add(Restrictions.between("ce.data", filtro.getData(), DateUtils.addDays(filtro.getData(),7) ));			
@@ -85,6 +86,13 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoCEIntegracaoDTO.class));
 			
 		return criteria.list();
+	}
+
+	@Override
+	public Long obterDesconto(Long idCota, Long idProdutoEdica,
+			Long idFornecedor) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

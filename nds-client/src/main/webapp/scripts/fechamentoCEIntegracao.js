@@ -111,6 +111,35 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		});
 		
 		$(".fechamentoCeGrid").flexReload();
+		fechamentoCEIntegracaoController.popularTotal();
+	},
+	
+	popularTotal : function(){
+		alert("POPULAR TOTAL");
+//		$.postJSON(
+//				contextPath + '/devolucao/fechamentoCEIntegracao/buscarTotalGeralCota',
+//				[{name:'filtro.idCota', value:$('#codigoCota', consultaConsignadoCotaController.workspace).val()},
+//				{name:'filtro.idFornecedor', value:$('#idFornecedor', consultaConsignadoCotaController.workspace).val()}],
+//				function(result) {
+//					var idFornecedor = $('#idFornecedor', consultaConsignadoCotaController.workspace).val();				
+//					if( idFornecedor != "0"){
+//						$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).hide();
+//						$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).show();
+//						$("#totalGeralPorFornecedor", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
+//								"<tr> <td style='border-top:1px solid #000;''><strong>Total Geral:</strong></td>" +
+//	        						" <td style='border-top:1px solid #000;'>&nbsp;</td> "+
+//	        						" <td style='border-top:1px solid #000;' align='right'><strong>"+result+"</strong></td></tr>");
+//					}else{					
+//						$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
+//													"<tr> <td style='border-top:1px solid #000;''><strong>Total Geral:</strong></td>" +
+//				                						" <td style='border-top:1px solid #000;'>&nbsp;</td> "+
+//				                						" <td style='border-top:1px solid #000;' align='right'><strong>"+result+"</strong></td></tr>");					
+//					} 
+//					
+//				},
+//				null,
+//				true
+//			);
 	}
 	
 	

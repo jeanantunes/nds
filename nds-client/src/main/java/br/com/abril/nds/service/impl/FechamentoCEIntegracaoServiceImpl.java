@@ -23,4 +23,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalhe(filtro);
 	}
 
+	@Transactional
+	public Long obterDesconto(Long idCota, Long idProdutoEdica,	Long idFornecedor) {		 
+		return null;
+	}
+
 }

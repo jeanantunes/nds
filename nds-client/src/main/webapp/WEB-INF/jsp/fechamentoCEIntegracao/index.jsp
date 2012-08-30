@@ -66,11 +66,9 @@
 			<table width="950" border="0" cellspacing="1" cellpadding="1">
 			  <tr>
 			    <td width="472" valign="top">
-			      <span class="bt_novos" title="Fechamento"><a href="javascript:;"><img src="../images/ico_check.gif" hspace="5" border="0" />Fechamento</a></span>
+			      <span class="bt_novos" title="Fechamento"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Fechamento</a></span>
 			      
-			      <span class="bt_novos" title="Reabertura"><a href="javascript:;"><img src="../images/ico_expedicao_box.gif" hspace="5" border="0" />Reabertura</a></span>
-			      
-			      <!--<span class="bt_novos" title="Resumo CE"><a href="resumo_ce.htm" target="_blank"><img src="../images/bt_expedicao.png" hspace="5" border="0" />Resumo CE</a></span>-->
+			      <span class="bt_novos" title="Reabertura"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" />Reabertura</a></span>
 			      
 					<span class="bt_novos" title="Gerar Arquivo">
 					  	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS">
@@ -87,9 +85,14 @@
 	    				Imprimir
 	    			</a>
 	    		</span>
-			       <span class="bt_novos" title="Imprimir Boleto"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Boleto</a></span>
+			       <span class="bt_novos" title="Imprimir Boleto"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Boleto</a></span>
 			       
-			       <span class="bt_novos" title="Imprimir Boleto"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Boleto em Branco</a></span>
+			       <span class="bt_novos" title="Imprimir Boleto">
+			       	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/imprimeBoleto?nossoNumero='123456789'">
+			       		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+			       		Boleto em Branco
+			       	</a>
+			       </span>
 			    </td>
 			    <td width="88" valign="top"><strong>Total Bruto R$:</strong></td>
 			    <td width="50" valign="top">3.014,00</td>

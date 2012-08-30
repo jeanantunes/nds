@@ -8,5 +8,7 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 public interface FechamentoCEIntegracaoRepository {
 	
 	List<FechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro);
+	
+	Long obterDesconto(Long idCota, Long idProdutoEdica, Long idFornecedor);
 
 }

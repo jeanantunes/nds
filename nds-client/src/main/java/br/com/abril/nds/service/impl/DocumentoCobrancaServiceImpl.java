@@ -253,7 +253,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		 URL url = Thread.currentThread().getContextClassLoader()
 				 	.getResource("/reports/cobranca.jasper");
 		 //Executa o decode do path do arquivo
-		 String path = url.toURI().getPath();
+		 //String path = url.toURI().getPath();
+		 String path = "/nds-client/reports/cobranca.jasper";
 		 
 		 return  JasperRunManager.runReportToPdf(path, map, jrDataSource);
 	}
