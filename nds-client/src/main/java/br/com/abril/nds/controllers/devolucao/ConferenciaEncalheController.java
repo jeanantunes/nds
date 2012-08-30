@@ -996,55 +996,102 @@ public class ConferenciaEncalheController {
 	 * @param valorCEInformado
 	 */
 	@Post
-	public void verificarValorTotalCE(BigDecimal valorCEInformado){
+	public void verificarValorTotalCE(BigDecimal valorCEInformado) {
 
-		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
-		
-		if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
-			
-			this.comparValorTotalCEMonetario(valorCEInformado);
-			
-		} else {
-
-			this.comparValorTotalCEQuantidade(valorCEInformado);
-			
-		}
-		
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
 		if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
+			
 			resultadoValidacao.put("valorCEInformadoValido", false);
+			
 			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido, Deseja continuar?");
+			
 			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
-			return;
+
+		} else {
+
+			TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+			
+			if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+				
+				this.comparValorTotalCEMonetario(valorCEInformado);
+				
+			} else {
+				
+				this.comparValorTotalCEQuantidade(valorCEInformado);
+				
+			}
+			
 		}
+		
+	}
+	
+	
+	/**
+	 * Compara se o valor de qtde de itens de encalhe apontado pelo jornaleiro
+	 * é igual ao contabilizado na operação de conferência de encalhe.
+	 * 
+	 * @param valorTotalCEQuantidade
+	 */
+
+	private void comparValorTotalCEQuantidade(BigDecimal valorTotalCEQuantidade) {
+		
+		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
+		
+		BigInteger qtde = BigInteger.valueOf(valorTotalCEQuantidade.longValue());
+		
+		BigInteger qtdeItensConferenciaEncalhe = obterQtdeItensConferenciaEncalhe();
+
+		if (qtdeItensConferenciaEncalhe.compareTo(qtde)!=0){
+
+			resultadoValidacao.put("valorCEInformadoValido", false);
+			
+			resultadoValidacao.put("mensagemConfirmacao", "Qtde total do encalhe difere da quantidade CE jornaleiro informado, Deseja continuar?");
+			
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			
+		} else {
+
+			resultadoValidacao.put("valorCEInformadoValido", true);
+			
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+
+		}
+		
+	}
+
+	
+	/**
+	 * Compara se o valor monetario de encalhe apontado pelo jornaleiro
+	 * é igual ao contabilizado na operação de conferência de encalhe.
+	 * 
+	 * @param valorTotalCEMonetario
+	 */
+	private void comparValorTotalCEMonetario(BigDecimal valorTotalCEMonetario) {
+		
+		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
 		Map<String, Object> valoresMonetarios = new HashMap<String, Object>();
-		this.calcularValoresMonetarios(valoresMonetarios);
-		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe"));
 		
-		if (valorEncalhe.compareTo(valorCEInformado)!=0){
+		this.calcularValoresMonetarios(valoresMonetarios);
+		
+		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe"));
+
+		if (valorEncalhe.compareTo(valorTotalCEMonetario)!=0){
 
 			resultadoValidacao.put("valorCEInformadoValido", false);
+			
 			resultadoValidacao.put("mensagemConfirmacao", "Valor total do encalhe difere do valor CE jornaleiro informado, Deseja continuar?");
+			
 			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
-			return;
-		}
-		
-		resultadoValidacao.put("valorCEInformadoValido", true);
-		this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
-		
-	}
-	
-	
-	
-	private void comparValorTotalCEQuantidade(BigDecimal valorTotalCEQuantidade) {
-		// TODO Auto-generated method stub
-		
-	}
+			
+		} else {
 
-	private void comparValorTotalCEMonetario(BigDecimal valorTotalCEMonetario) {
-		// TODO Auto-generated method stub
+			resultadoValidacao.put("valorCEInformadoValido", true);
+			
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+
+		}
 		
 	}
 
@@ -1093,6 +1140,31 @@ public class ConferenciaEncalheController {
 		return (InfoConferenciaEncalheCota) this.session.getAttribute(INFO_CONFERENCIA);
 	}
 
+	private BigInteger obterQtdeItensConferenciaEncalhe() {
+	
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		BigInteger qtdItens = BigInteger.ZERO;
+		
+		if (info != null){
+			
+			if (info.getListaConferenciaEncalhe() != null){
+				
+				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
+					
+					BigInteger qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() ==  null ? BigInteger.ZERO : conferenciaEncalheDTO.getQtdExemplar();
+					
+					qtdItens = qtdItens.add(qtdExemplar);
+					
+				}
+				
+			}
+		}
+				
+		return qtdItens;
+		
+	}
+	
 	/**
 	 * Carrega o mapa passado como parâmetro com o seguinte valores:
 	 * 
