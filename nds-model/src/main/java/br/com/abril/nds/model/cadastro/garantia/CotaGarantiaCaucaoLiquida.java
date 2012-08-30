@@ -6,12 +6,16 @@ package br.com.abril.nds.model.cadastro.garantia;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
+import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 
 /**
  * @author Diego Fernandes
@@ -20,19 +24,20 @@ import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 @Entity
 public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2374130596840933128L;
 	
-	
-
 	@OneToMany(cascade={CascadeType.ALL},orphanRemoval=true)
 	@OrderBy("atualizacao DESC")
 	@JoinColumn(name="COTA_GARANTIA_CAUCAO_LIQUIDA_ID")
 	private List<CaucaoLiquida> caucaoLiquidas;
 
-
+	@Embedded
+	private ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida;
+	
+	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
+	@JoinColumn(name="PAGAMENTO_CAUCAO_LIQUIDA_ID")
+	private PagamentoCaucaoLiquida formaPagamento;
+	
 	/**
 	 * @return the caucaoLiquidas
 	 */
@@ -47,8 +52,38 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	public void setCaucaoLiquidas(List<CaucaoLiquida> caucaoLiquidas) {
 		this.caucaoLiquidas = caucaoLiquidas;
 	}
-	
-	
-	
 
+
+	/**
+	 * @return the contaDepositoCaucaoLiquida
+	 */
+	public ContaDepositoCaucaoLiquida getContaDepositoCaucaoLiquida() {
+		return contaDepositoCaucaoLiquida;
+	}
+
+
+	/**
+	 * @param contaDepositoCaucaoLiquida the contaDepositoCaucaoLiquida to set
+	 */
+	public void setContaDepositoCaucaoLiquida(
+			ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida) {
+		this.contaDepositoCaucaoLiquida = contaDepositoCaucaoLiquida;
+	}
+
+
+	/**
+	 * @return the formaPagamento
+	 */
+	public PagamentoCaucaoLiquida getFormaPagamento() {
+		return formaPagamento;
+	}
+
+
+	/**
+	 * @param formaPagamento the formaPagamento to set
+	 */
+	public void setFormaPagamento(PagamentoCaucaoLiquida formaPagamento) {
+		this.formaPagamento = formaPagamento;
+	}
+	
 }
