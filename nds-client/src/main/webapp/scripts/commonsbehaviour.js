@@ -1,9 +1,10 @@
 	// tooltip for buttons
 	$(function() {
-		$('.bt_novos a').tipsy({gravity: 'nw'}); 
+		$('.bt_novos a').tipsy({live: true, gravity: 'nw'}); 
+		//$('a').tipsy({live: true, gravity: 'nw'}); 
 	});
 	$(function() {
-		$('.bt_arq a').tipsy({gravity: 'ne'}); 
+		$('.bt_arq a').tipsy({live: true, gravity: 'ne'}); 
 	});
 	
 	//workspace : "#workspace div.ui-tabs-panel:not(.ui-tabs-hide)";

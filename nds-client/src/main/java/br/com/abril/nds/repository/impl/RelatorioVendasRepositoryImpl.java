@@ -10,8 +10,11 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Repository
 public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distribuidor, Long> implements RelatorioVendasRepository {
@@ -29,7 +32,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCDistribuidor.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 
@@ -59,7 +62,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		.append("   case when sum(pdv) is null then 0 else sum(pdv) end, " )
 		.append("   endereco.cidade, " )
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 		hql.append(getGroupQueryObterCurvaABCDistribuidor(filtro));
@@ -205,10 +208,16 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	private List<RegistroCurvaABCDistribuidorVO> complementarCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
 
 		BigDecimal participacaoTotal = new BigDecimal(0);
-
+		
+		if (lista==null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
+		}
+		
 		// Soma todos os valores de participacao
 		for (RegistroCurvaABCDistribuidorVO registro : lista) {
-			participacaoTotal.add(registro.getFaturamentoCapa());
+			if (registro.getFaturamentoCapa()!=null) {
+				participacaoTotal.add(registro.getFaturamentoCapa());
+			}
 		}
 
 		BigDecimal participacaoRegistro = new BigDecimal(0);
@@ -238,4 +247,14 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		return lista;
 	}
 
+	private String obterSQLDesconto(){
+		
+		StringBuilder hql = new StringBuilder("select view.desconto ");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
+		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
+		   .append(" and view.fornecedorId = fornecedores.id ");
+		
+		return hql.toString();
+	}	
 }

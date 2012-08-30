@@ -82,7 +82,7 @@ var painelProcessamentoController = $.extend(true, {
 			colModel : [ {
 				display : 'Processos',
 				name : 'nome',
-				width : 519,
+				width : 539,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -111,7 +111,7 @@ var painelProcessamentoController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 920,
-			height : 250
+			height : 'auto'
 		});
 	},
 	initGridPainelInterfaceGrid : function() {
@@ -133,25 +133,25 @@ var painelProcessamentoController = $.extend(true, {
 			}, {
 				display : 'Status',
 				name : 'status',
-				width : 70,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Data Processamento',
 				name : 'dataProcessmento',
-				width : 130,
+				width : 120,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Hora Processamento',
 				name : 'horaProcessamento',
-				width : 130,
+				width : 140,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reprocessar',
 				name : 'reprocessar',
-				width : 100,
+				width : 110,
 				sortable : false,
 				align : 'center'
 			}],
@@ -162,7 +162,7 @@ var painelProcessamentoController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 920,
-			height : 250
+			height : 'auto'
 		});
 	},
 	popup : function() {
@@ -240,8 +240,8 @@ var painelProcessamentoController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 
-			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.nome + "\")'><img src= " + contextPath + "/images/bt_devolucao.png /></href>";
-			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ")'><img src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.nome + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
+			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 			row.cell.reprocessar = btReprocessamento + brDetalhes;
 
 			row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";

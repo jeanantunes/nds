@@ -93,7 +93,7 @@ var suspensaoCotaController = $.extend(true, {
 	},	
 	
 	getDetalhes : function(idCota, nome) {
-		this.nomeCota = nome;
+		suspensaoCotaController.nomeCota = nome;
 		$.postJSON(contextPath + "/suspensaoCota/getInadinplenciasDaCota", 
 				"idCota="+idCota+"&method='get'", 
 				suspensaoCotaController.popupDetalhes);	
@@ -101,7 +101,7 @@ var suspensaoCotaController = $.extend(true, {
 	
 	popupDetalhes : function(result) {
 				
-		suspensaoCotaController.gerarTabelaDetalhes(result, nomeCota);
+		suspensaoCotaController.gerarTabelaDetalhes(result, suspensaoCotaController.nomeCota);
 		
 		$( "#dialog-detalhes", suspensaoCotaController.workspace ).dialog({
 			resizable: false,
@@ -152,7 +152,7 @@ var suspensaoCotaController = $.extend(true, {
 					
 					$.postJSON(contextPath + "/suspensaoCota/suspenderCotas", 
 							"", 
-							popupRelatorio);	
+							suspensaoCotaController.popupRelatorio);	
 					
 					$( this ).dialog( "close" );
 					
@@ -228,7 +228,7 @@ var suspensaoCotaController = $.extend(true, {
 		
 		$.postJSON(contextPath + "/suspensaoCota/selecionarItem", 
 				"idCota="+id +"&selecionado="+check.checked, 
-				retornoSemAcao);				
+				suspensaoCotaController.retornoSemAcao);				
 	},
 	
 	retornoSemAcao : function(data) {
@@ -266,7 +266,7 @@ var suspensaoCotaController = $.extend(true, {
 		input.name=name;
 		input.style.cssText = "float:left;" + input.style.cssText;
 		input.type="checkbox";
-		input.setAttribute("onclick","adicionarSelecao("+idCota+",this);");
+		input.setAttribute("onclick","suspensaoCotaController.adicionarSelecao("+idCota+",this);");
 		
 		if(selecionado==true) {
 			input.checker=true;
@@ -279,10 +279,10 @@ var suspensaoCotaController = $.extend(true, {
 		
 		var a = document.createElement("A");
 		a.href = "javascript:;";
-		a.setAttribute("onclick",", suspensaoCotaController.getDetalhes("+idCota+",'"+nome+"');");
+		a.setAttribute("onclick","suspensaoCotaController.getDetalhes("+idCota+",'"+nome+"');");
 		
 		var img =document.createElement("IMG");
-		img.src="${pageContext.request.contextPath}/images/ico_detalhes.png";
+		img.src=contextPath + "/images/ico_detalhes.png";
 		img.border="0";
 		img.hspace="5";
 		img.title="Detalhes";		
@@ -292,15 +292,17 @@ var suspensaoCotaController = $.extend(true, {
 	},
 	
 	gerarTabelaDetalhes : function(dividas, nome) {
-		var div = document.getElementById("dialog-detalhes");
+		var div = $("#dialog-detalhes", suspensaoCotaController.workspace);
 		
-		div.innerHTML="";
+		$(div).html("");
+		//div.innerHTML="";
 		
 		var fieldset  = document.createElement("FIELDSET");
 		
 		fieldset.style.cssText = "width:330px;" + fieldset.style.cssText;
 		
-		div.appendChild(fieldset);
+		$(div).append(fieldset);
+		//div.appendChild(fieldset);
 		
 		var legend = document.createElement("LEGEND");
 		legend.innerHTML = "Cota: ".bold() + " - " + nome;
@@ -375,7 +377,8 @@ var suspensaoCotaController = $.extend(true, {
 		
 		var tbody = document.createElement("TBODY");
 		
-		table.appendChild(tbody);
+		//table.appendChild(tbody);
+		$(table).append(tbody);
 		
 	 	var cabecalho = document.createElement("TR");
 	 	cabecalho.className="header_table";
@@ -456,8 +459,8 @@ var suspensaoCotaController = $.extend(true, {
 			
 			total += parseFloat(cell.dividaAcumulada.replace(".","").replace(",","."));
 			
-			cell.acao = gerarAcoes(cell.idCota,cell.dividas,cell.nome);
-			cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
+			cell.acao = suspensaoCotaController.gerarAcoes(cell.idCota,cell.dividas,cell.nome);
+			cell.selecionado = suspensaoCotaController.gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
 		}
 		
 		/*document.getElementById("total").innerHTML  = total.toFixed(2).replace(".",",");

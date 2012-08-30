@@ -35,7 +35,17 @@
 		<p>Confirma a Atualiza&ccedil;&atilde;o de Arquivo de Retorno NF-e?</p>
 	</div>
 	
-	<fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_novos">
+          		<a id="retornoNFEConfirmar" href="javascript:;" rel="tipsy" title="Confirmar Integração do Arquivo">
+         		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
+            </span>
+          
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldFiltro">
    	
    	<legend> Integra&ccedil;&atilde;o do Arquivo de Retorno NF-e</legend>
     
@@ -53,8 +63,8 @@
 		</td>
        
         <td width="688">
-        	<span class="bt_pesquisar">
-        		<a  id="retornoNFEPesquisar" href="javascript:;">Pesquisar</a>
+        	<span class="bt_novos">
+        		<a  id="retornoNFEPesquisar" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
         	</span>
         </td>
 	</tr>
@@ -65,45 +75,35 @@
 
 	<div class="linha_separa_fields">&nbsp;</div>
 	
-	<fieldset class="classFieldset">
-    
-    <legend> Integra&ccedil;&atilde;o do Arquivo de Retorno NF-e</legend>
-    
-        <div class="grids" style="">
-        	<!-- 
-			<p><strong>Dados do Arquivo:</strong> Encontrados <strong>XXXX</strong> Respostas</p>
-        	-->  
-        	<br>
-         
-          	<table width="600" border="0" align="center" cellpadding="2" cellspacing="2">
-            <tbody>
-            <tr>
-                <td><b>Totais Lidos</b></td>
-                <td align="center">&nbsp;</td>
-                <td align="center">&nbsp;</td>
-            </tr>
-            	<tr class="header_table">
-                <td width="189" align="center">Num. Total de Arquivos</td>
-                <td width="202" align="center">Num. NF-e</td>
-                <td width="189" align="center">Erros Consis.</td>
-            </tr>
-            <tr class="class_linha_1">
-            	<td id="numeroArquivos" align="center">0</td>
-                <td id="notasAprovadas" align="center">0</td>
-                <td id="notasRejeitadas" align="center">0</td>
-            </tr>
-        	</tbody>
-        	</table>
-        <br>
-		<br clear="all">
-          
-          <span class="bt_confirmar_novo" title="Confirmar">
-          	<a id="retornoNFEConfirmar" href="javascript:;">
-         	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirma</a>
-          </span>
-          
-		</div>
-        
-      </fieldset>
+	<div class="grids" style="display:none;">
+		<fieldset class="fieldGrid">
+	    
+	    <legend> Integra&ccedil;&atilde;o do Arquivo de Retorno NF-e</legend>
+	        	<!-- 
+				<p><strong>Dados do Arquivo:</strong> Encontrados <strong>XXXX</strong> Respostas</p>
+	        	-->  
+	        	<br>
+	         
+	          	<table width="600" border="0" cellpadding="2" cellspacing="2">
+	            <tbody>
+	            <tr>
+	                <td><b>Totais Lidos</b></td>
+	                <td align="center">&nbsp;</td>
+	                <td align="center">&nbsp;</td>
+	            </tr>
+	            	<tr class="header_table">
+	                <td width="189" align="center">Num. Total de Arquivos</td>
+	                <td width="202" align="center">Num. NF-e</td>
+	                <td width="189" align="center">Erros Consis.</td>
+	            </tr>
+	            <tr class="class_linha_1">
+	            	<td id="numeroArquivos" align="center">0</td>
+	                <td id="notasAprovadas" align="center">0</td>
+	                <td id="notasRejeitadas" align="center">0</td>
+	            </tr>
+	        	</tbody>
+	        	</table>	        
+	      </fieldset>
+      </div>
 
 </body>	

@@ -867,7 +867,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCCotaDTO.class.getCanonicalName())
 		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 
@@ -895,7 +895,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
 		.append("   (sum(movimentos.qtde)) , ")
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - estoqueProdutoCota.produtoEdicao.desconto)) ) ) ");
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 		hql.append(getGroupQueryObterCurvaABCCota(filtro));
@@ -1040,12 +1040,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	private List<RegistroCurvaABCCotaDTO> complementarCurvaABCCota(List<RegistroCurvaABCCotaDTO> lista) {
 
-		BigDecimal participacaoTotal = new BigDecimal(0);
-		BigDecimal vendaTotal = new BigDecimal(0);
+		BigDecimal participacaoTotal = BigDecimal.ZERO;
+		BigInteger vendaTotal = BigInteger.ZERO;
 
 		// Soma todos os valores de participacao
 		for (RegistroCurvaABCCotaDTO registro : lista) {
-			participacaoTotal.add(registro.getFaturamento());
+			if (registro.getFaturamento()!=null) {
+				participacaoTotal.add(registro.getFaturamento());
+			} 
 			vendaTotal.add(registro.getVendaExemplares());
 		}
 
@@ -1059,13 +1061,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		for (int i=0; i<lista.size(); i++) {
 
 			registro = (RegistroCurvaABCCotaDTO) lista.get(i);
-
-			// Partipacao do registro em relacao a participacao total no periodo
-			if ( participacaoTotal.doubleValue() != 0 ) {
-				participacaoRegistro = new BigDecimal((registro.getFaturamento().doubleValue()*100)/participacaoTotal.doubleValue());
+			if (registro.getFaturamento() != null) {
+				// Partipacao do registro em relacao a participacao total no periodo
+				if ( participacaoTotal.doubleValue() != 0 ) {
+					participacaoRegistro = new BigDecimal((registro.getFaturamento().doubleValue()*100)/participacaoTotal.doubleValue());
+				}
+			} else {
+				participacaoRegistro = BigDecimal.ZERO;
 			}
-			registro.setParticipacao(participacaoRegistro);
-
+				registro.setParticipacao(participacaoRegistro);
+			
 			if (vendaTotal.doubleValue() != 0) {
 				porcentagemVendaRegistro = new BigDecimal(registro.getVendaExemplares().doubleValue()*100/vendaTotal.doubleValue());
 			}
@@ -1331,4 +1336,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		return ((Long)query.uniqueResult()).intValue();
 	}
+	
+	private String obterSQLDesconto(){
+		
+		StringBuilder hql = new StringBuilder("select view.desconto ");
+		hql.append(" from ViewDesconto view ")
+		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
+		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
+		   .append(" and view.fornecedorId = fornecedores.id ");
+		
+		return hql.toString();
+	}	
 }

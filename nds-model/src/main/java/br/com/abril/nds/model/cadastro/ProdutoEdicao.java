@@ -80,9 +80,6 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "REPARTE_DISTRIBUIDO", nullable = true)
 	protected BigInteger reparteDistribuido;
 	
-	@Column(name = "DESCONTO")
-	protected BigDecimal desconto = BigDecimal.ZERO;
-	
 	@Column(name = "PACOTE_PADRAO", nullable = false)
 	protected int pacotePadrao;
 	
@@ -200,14 +197,6 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
-	}
-	
-	public BigDecimal getDesconto() {
-		return desconto;
-	}
-	
-	public void setDesconto(BigDecimal desconto) {
-		this.desconto = desconto;
 	}
 	
 	public int getPacotePadrao() {

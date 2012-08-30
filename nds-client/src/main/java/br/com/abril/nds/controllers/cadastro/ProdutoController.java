@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.FormatoProduto;
@@ -23,11 +23,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -75,7 +75,10 @@ public class ProdutoController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private DescontoService tipoDescontoService;
+	private DescontoService descontoService;
+	
+	@Autowired
+	private DescontoLogisticaService descontoLogisticaService;
 	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
@@ -88,6 +91,8 @@ public class ProdutoController {
 	private static List<ItemDTO<TipoLancamento,String>> listaTipoLancamento =  new ArrayList<ItemDTO<TipoLancamento,String>>();
 	
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
+	
+	private static List<ItemDTO<Long,String>> listaDescontoLogistica =  new ArrayList<ItemDTO<Long,String>>();
 	
 	public ProdutoController(Result result) {
 		this.result = result;
@@ -300,9 +305,7 @@ public class ProdutoController {
 
 		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
 		
-		//TODO:Entidade TipoDesconto excluída
-		//listaCombos.add(parseComboTipoDesconto(this.tipoDescontoService.obterTodosTiposDescontos()));
-		
+		listaCombos.add(getComboDescontoLogistica());
 		
 		this.result.use(Results.json()).from(listaCombos, "result").recursive().serialize();
 	}
@@ -381,26 +384,17 @@ public class ProdutoController {
 	 * @param codigoTipoDesconto
 	 */
 	@Post
-	public void carregarPercentualDesconto(Long codigoTipoDesconto) {
+	public void carregarPercentualDesconto(Integer codigoTipoDesconto) {
 	
-		
-		//TODO:Entidade TipoDesconto excluída
-		
-		
-		/*
-		TipoDesconto tipoDesconto = 
-			this.tipoDescontoService.obterTipoDescontoPorID(codigoTipoDesconto);
-		*/
-		
-		BigDecimal porcentagem = BigDecimal.ZERO;
-		
-		/*
-		if (tipoDesconto != null) {
-			porcentagem = tipoDesconto.getPorcentagem();
+	    DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterPorTipoDesconto(codigoTipoDesconto);
+			
+		Float porcentagem = 0f;
+
+		if (descontoLogistica != null) {
+			porcentagem = descontoLogistica.getPercentualDesconto();
 		}
-		*/
 		
-		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
+		this.result.use(Results.json()).from(new BigDecimal(porcentagem), "result").recursive().serialize();
 	}
 
 	/**
@@ -591,6 +585,32 @@ public class ProdutoController {
 			listaBaseComboVO.add(new BaseComboVO(editor.getId(), editor.getNome()));
 		}
 		
+		return listaBaseComboVO;
+	}
+	
+	/**
+	 * Popular combo.
+	 * 
+	 * @param listaDescontoLogistica
+	 * @return List<BaseComboVO>
+	 */
+	private List<BaseComboVO> getComboDescontoLogistica() {
+		
+		List<BaseComboVO> listaBaseComboVO = new ArrayList<BaseComboVO>();
+		
+		listaBaseComboVO.add(getDefaultBaseComboVO());
+		
+		listaBaseComboVO.add(new BaseComboVO(1l,"NORMAL"));                       
+		listaBaseComboVO.add(new BaseComboVO(2l,"PRODUTOS TRIBUTADOS"));          
+		listaBaseComboVO.add(new BaseComboVO(3l,"VIDEO PRINT DE 1/1/96 A 1/1/97"));
+		listaBaseComboVO.add(new BaseComboVO(4l,"CROMOS - NORMAL EXC. JUIZ E BH"));
+		listaBaseComboVO.add(new BaseComboVO(5l,"IMPORTADAS - ELETROLIBER"));     
+		listaBaseComboVO.add(new BaseComboVO(6l,"PROMOCOES"));
+		listaBaseComboVO.add(new BaseComboVO(7l,"ESPECIAL GLOBO"));
+		listaBaseComboVO.add(new BaseComboVO(8l,"MAGALI FOME ZERO"));
+		listaBaseComboVO.add(new BaseComboVO(9l,"IMPORTADAS MAG"));
+		listaBaseComboVO.add(new BaseComboVO(11l,"IMPORTADAS MAGEXPRESS"));
+
 		return listaBaseComboVO;
 	}
 	

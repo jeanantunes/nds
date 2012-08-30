@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -753,7 +754,9 @@ public class Fixture {
 		estudo.setDataLancamento(data);
 
 		estudo.setProdutoEdicao(produtoEdicao);
-
+		
+		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+		estudo.setDataCadastro(new Date());
 		return estudo;
 	}
 
@@ -3339,5 +3342,17 @@ public class Fixture {
 		descontoP.setTipoDesconto(tipoDesconto);
 		
 		return descontoP;
+	}
+	
+    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, Float percentualDesconto, Float percentualPrestacaoServico, Integer tipoDesconto, Set<Produto> produtos){
+		
+    	DescontoLogistica descontoL = new DescontoLogistica();
+		descontoL.setDataInicioVigencia(dataInicioVigencia);
+		descontoL.setPercentualDesconto(percentualDesconto);
+		descontoL.setPercentualPrestacaoServico(percentualPrestacaoServico);
+		descontoL.setTipoDesconto(tipoDesconto);
+		descontoL.setProdutos(produtos);
+		
+		return descontoL;
 	}
 }

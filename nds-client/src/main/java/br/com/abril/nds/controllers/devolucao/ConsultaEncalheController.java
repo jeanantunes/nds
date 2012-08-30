@@ -30,6 +30,7 @@ import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -376,32 +377,10 @@ public class ConsultaEncalheController {
 	 * 
 	 * @return String
 	 */
-	private String getValorQtdeBigDecimalFormatado(BigDecimal qtde) {
-		return (qtde != null) ? qtde.toString() : "";
-	}
-	
-	/**
-	 * Obtém valor qtde formatada.
-	 * 
-	 * @param qtde
-	 * 
-	 * @return String
-	 */
 	private String getValorQtdeIntegerFormatado(Integer qtde) {
 		return (qtde != null) ? qtde.toString() : "";
 	}
-	
-	/**
-	 * Obtém valor monetário formatado.
-	 * 
-	 * @param valor
-	 * 
-	 * @return String
-	 */
-	private String getValorMonetarioFormatado(BigDecimal valor) {
-		return (valor != null) ? valor.toString() : "";
-	}
-	
+		
 	/**
 	 * Obtém lista de ConsultaEncalheVO a partir de um lista de ConsultaEncalheDTO
 	 * 
@@ -432,12 +411,12 @@ public class ConsultaEncalheController {
 			codigoProduto 		= (consultaEncalheDTO.getCodigoProduto() != null) ? consultaEncalheDTO.getCodigoProduto() : "";
 			nomeProduto 		= (consultaEncalheDTO.getNomeProduto() != null) ? consultaEncalheDTO.getNomeProduto() : "";
 			numeroEdicao 		= (consultaEncalheDTO.getNumeroEdicao() != null) ? consultaEncalheDTO.getNumeroEdicao().toString() : "";
-			precoVenda 			= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoVenda());
-			precoComDesconto 	= getValorMonetarioFormatado(consultaEncalheDTO.getPrecoComDesconto());
+			precoVenda 			= CurrencyUtil.formatarValor(consultaEncalheDTO.getPrecoVenda());
+			precoComDesconto 	= CurrencyUtil.formatarValor(consultaEncalheDTO.getPrecoComDesconto());
 			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte().intValue());
 			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe().intValue());
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
-			total 				= getValorMonetarioFormatado(consultaEncalheDTO.getTotal());
+			total 				= CurrencyUtil.formatarValor(consultaEncalheDTO.getTotal());
 			
 			if(consultaEncalheDTO.getRecolhimento()<=0) {
 				recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());

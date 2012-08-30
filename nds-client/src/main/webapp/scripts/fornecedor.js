@@ -173,7 +173,7 @@ var fornecedorController = $.extend(true,{
 					function(result) {
 						exibirMensagemDialog(
 							result.mensagens.tipoMensagem, 
-							result.mensagens.listaMensagens, ""
+							result.mensagens.listaMensagens, "fornecedorController-dialogNovoFornecedor"
 						);
 					},
 					true

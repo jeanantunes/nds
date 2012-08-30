@@ -202,11 +202,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	
 	private String obterSQLDescontoObterMovimentoEstoqueCotaEncalhe(){
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = c.id ")
 		   .append(" and view.produtoEdicaoId = pe.id ")
-		   .append(" and view.fornecedorId = f.id ");
+		   .append(" and view.fornecedorId = f.id),0) ");
 		
 		return hql.toString();
 	}
@@ -288,11 +288,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	
 	private String obterSQLDescontoObterMovimentoVendaEncalhe(){
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = cota.id ")
 		   .append(" and view.produtoEdicaoId = pe.id ")
-		   .append(" and view.fornecedorId = f.id ");
+		   .append(" and view.fornecedorId = f.id),0) ");
 		
 		return hql.toString();
 	}
@@ -427,11 +427,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	
 	private String obterSQLDescontoObterMovimentoEstoqueCotaConsignado(){
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = c.id ")
 		   .append(" and view.produtoEdicaoId = pe.id ")
-		   .append(" and view.fornecedorId = f.id ");
+		   .append(" and view.fornecedorId = f.id),0) ");
 		
 		return hql.toString();
 	}

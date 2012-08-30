@@ -1,7 +1,9 @@
-<form id="form-dialogNovoFornecedor">
+<form id="fornecedorController-formNovoFornecedor">
 <div id="fornecedorController-dialogNovoFornecedor" title="Novo Fornecedor" style="display:none">
 
-	<jsp:include page="../messagesDialog.jsp" />
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="fornecedorController-dialogNovoFornecedor" name="messageDialog"/>
+	</jsp:include>
 
 	<div id="fornecedorController-tabFornecedores">
 	
@@ -28,6 +30,7 @@
 				<legend>Endereços</legend>
 				<jsp:include page="../endereco/index.jsp">
 					<jsp:param value="ENDERECO_FORNECEDOR" name="telaEndereco"/>
+					<jsp:param value="fornecedorController-dialogNovoFornecedor" name="message"/>
 				</jsp:include>
 			</fieldset>
 			<br clear="all"/>
@@ -39,6 +42,7 @@
 				<legend>Telefones</legend>
 				<jsp:include page="../telefone/index.jsp">
 					<jsp:param value="FORNECEDOR" name="tela"/>
+					<jsp:param value="fornecedorController-dialogNovoFornecedor" name="message"/>
 				</jsp:include>
 			</fieldset>
 			<br clear="all"/>

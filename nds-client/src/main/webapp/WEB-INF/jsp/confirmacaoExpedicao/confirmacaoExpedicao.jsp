@@ -322,32 +322,24 @@
 
 			</fieldset>
 			<div class="linha_separa_fields">&nbsp;</div>
-
-			<fieldset class="classFieldset">
-				<legend>Expedi&ccedil;&otilde;es Cadastradas</legend>
-				
-				<div class="grids" style="display: none;">
+			<div class="grids" style="display: none;">
+				<fieldset class="classFieldset">
+					<legend>Expedi&ccedil;&otilde;es Cadastradas</legend>
 					
-					<table class="confirmaExpedicaoGrid"></table>
-
-					<span class="bt_confirmar">
-<!-- CONFIRMAR -->						
-						<a href="javascript:popupConfirmar();">Confirmar</a> 
-					</span> 
-					
-					<span class="bt_sellAll" style="float: right;">
-					<label for="sel">Selecionar Todos</label>					
-<!-- SELECIONAR TODOS -->	
-						<input type="checkbox" name="Todos" id="selecionarTodosID"onclick="selecionarTodos(this);" style="float: left;" /> </span>
-				
-				</div>
-
-
-
-
-
-
-			</fieldset>
+						<table class="confirmaExpedicaoGrid"></table>
+	
+						<span class="bt_confirmar">
+	<!-- CONFIRMAR -->						
+							<a href="javascript:popupConfirmar();">Confirmar</a> 
+						</span> 
+						
+						<span class="bt_sellAll" style="float: right;">
+						<label for="sel">Selecionar Todos</label>					
+	<!-- SELECIONAR TODOS -->	
+							<input type="checkbox" name="Todos" id="selecionarTodosID"onclick="selecionarTodos(this);" style="float: left;" /> </span>
+	
+				</fieldset>
+			</div>
 			<div class="linha_separa_fields">&nbsp;</div>
 
 

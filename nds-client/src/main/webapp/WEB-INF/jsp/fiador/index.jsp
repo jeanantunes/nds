@@ -20,16 +20,24 @@
 
 <body>
 	
+	<form id="form-dialog-excluir-fiador">
 	<div id="fiadorController-dialog-excluir-fiador" class="dialog-excluir-fiador" title="Fiadores" style="display: none;">
 		<p>Confirma esta Exclusão?</p>
 	</div>
+	</form>
 	
+	<form id="form-dialog-cancelar-cadastro-fiador">
 	<div id="fiadorController-dialog-cancelar-cadastro-fiador" title="Fiadores" style="display: none;">
 		<p>Dados não salvos serão perdidos. Confirma o cancelamento?</p>
 	</div>
+	</form>
+	
+	<div id="workspaceFiador">
 	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none;">
 	
 		<jsp:include page="../messagesDialog.jsp" />
+			<jsp:param value="dialog-fiador" name="messageDialog"/>
+		</jsp:include>
 	
 		<div id="fiadorController-tabs">
 			<ul>
@@ -42,52 +50,80 @@
 			</ul>
 			
 	        <div id="fiadorController-tab-1">
-	        	<div id="fiadorController-cadastroCnpj" style="display: none;">
-					<jsp:include page="dadosCadastraisCnpj.jsp"></jsp:include>
-				</div>
+	        	<br />
+	        	<fieldset style="margin-left:10px;">
+	        		<legend>Dados Cadastrais</legend>
+		        	<div id="fiadorController-cadastroCnpj" style="display: none;">
+						<jsp:include page="dadosCadastraisCnpj.jsp"></jsp:include>
+					</div>
 				
 				<div id="fiadorController-cadastroCpf" style="display: none;">
 					<jsp:include page="dadosCadastraisCpf.jsp">
 						<jsp:param value="fiadorController-" name="prefix"/>
 					</jsp:include>
 				</div>
+				</fieldset>
 	        </div>
 	        
 	        <div id="fiadorController-tab-2">
-	        	<div id='fiadorController-tab-socios'>
-				<jsp:include page="socios.jsp"></jsp:include>
-				</div>
+	        	<br />
+	        	<fieldset style="margin-left:10px;">
+	        		<legend>Endereços</legend>
+		        	<div id='fiadorController-tab-socios'>
+						<jsp:include page="socios.jsp"></jsp:include>
+					</div>
+				</fieldset>
 			</div>
 	        
 			<div id="fiadorController-tab-3">
-				<jsp:include page="../endereco/index.jsp">
-					<jsp:param value="ENDERECO_FIADOR" name="telaEndereco"/>
-				</jsp:include>
+				<br />
+				<fieldset style="margin-left:10px;">
+	        		<legend>Telefones</legend>
+					<jsp:include page="../endereco/index.jsp">
+						<jsp:param value="ENDERECO_FIADOR" name="telaEndereco"/>
+						<jsp:param value="dialog-fiador" name="message"/>
+					</jsp:include>
+				</fieldset>
 	    	</div>
 	    	
 	        <div id="fiadorController-tab-4">
-	        	<jsp:include page="../telefone/index.jsp">
-	        		<jsp:param value="FIADOR" name="tela"/>
-	        	</jsp:include>
+	        	<br />
+	        	<fieldset style="margin-left:10px;">
+	        		<legend>Garantias</legend>
+		        	<jsp:include page="../telefone/index.jsp">
+		        		<jsp:param value="FIADOR" name="tela"/>
+						<jsp:param value="dialog-fiador" name="message"/>
+		        	</jsp:include>
+	        	</fieldset>
 			</div>
 			
 			<div id="fiadorController-tab-5">
-				<jsp:include page="garantias.jsp"></jsp:include>
+				<br />
+				<fieldset style="margin-left:10px;"
+	        		<legend>Dados Cadastrais</legend>
+					<jsp:include page="garantias.jsp"></jsp:include>
+				
 	    	</div>
 	    
 			<div id="fiadorController-tab-6">
-				<jsp:include page="cotasAssociadas.jsp"></jsp:include>
+				<br />
+				<fieldset style="margin-left:10px;">
+	        		<legend>Dados Cadastrais</legend>
+					<jsp:include page="cotasAssociadas.jsp"></jsp:include>
+				</fieldset>
 	    	</div>
+	    	<br clear="all" />
 		</div>
+	</div>
 	</div>
 	<div class="areaBts">
 		<div class="area">
             <span class="bt_novos" title="Novo">
-            	<a href="javascript:;" onclick='$(".fiadorController-inicioAtividadeNovo").show();$(".fiadorController-inicioAtividadeEdicao").hide();fiadorController.popupCadastroFiadorCPF();'><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CPF</a>
+            	<a href="javascript:;" onclick='$(".fiadorController-inicioAtividadeNovo").show();$(".fiadorController-inicioAtividadeEdicao").hide();fiadorController.popupCadastroFiadorCPF();' rel="tipsy" title="Incluir Novo Fiador Pessoa Física"><img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/></a>
             </span>
         	
         	<span class="bt_novos" title="Novo">
-        		<a href="javascript:;" onclick="fiadorController.popupCadastroFiadorCNPJ();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>CNPJ</a>
+        		<a href="javascript:;" onclick="fiadorController.popupCadastroFiadorCNPJ();" rel="tipsy" title="Incluir Novo Fiador Pessoa Jurídica"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/></a>
         	</span>
 		</div>
 	</div>
@@ -105,7 +141,7 @@
                 		<input type="text" name="textfield" id="fiadorController-cpfCnpjFiadorPesquisa" style="width:130px;" maxlength="255"/>
                 	</td>
               		<td width="480">
-              			<span class="bt_pesquisar"><a href="javascript:fiadorController.exibirGridFiadoresCadastrados();">Pesquisar</a></span>
+              			<span class="bt_novos"><a href="javascript:fiadorController.exibirGridFiadoresCadastrados();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
               		</td>
             	</tr>
           	</table>

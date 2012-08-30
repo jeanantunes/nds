@@ -1,9 +1,8 @@
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fornecedor.js"></script>
+<script type="text/javascript" src="scripts/fornecedor.js"></script>
 <script language="javascript" type="text/javascript">
 $(function(){
 	fornecedorController.init();
-	
 });
 </script>
 <style>

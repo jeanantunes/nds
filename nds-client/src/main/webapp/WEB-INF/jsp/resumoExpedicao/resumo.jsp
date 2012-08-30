@@ -13,10 +13,24 @@
 <body>
 	
 	<form action="/expedicao/resumo" id="resumo_expedicao_form">
-	
-		<fieldset class="classFieldset">
+		<div class="areaBts">
+			<div class="area">
+				<span class="bt_arq">
+			    	<a href="javascript:;" onclick="resumoExpedicaoController.exportar('XLS');" rel="tipsy" Title="Gerar Arquivo">
+			    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			    	</a>
+			    </span>
+			    <span class="bt_arq">
+			    	<a href="javascript:;" onclick="resumoExpedicaoController.exportar('PDF');" rel="tipsy" Title="Imprimir">
+			    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+				    </a>
+				</span>
+			</div>
+		</div>
+		<div class="linha_separa_fields">&nbsp;</div>
+		<fieldset class="fieldFiltro">
 		  
-		  <legend id="idFiledResumo"> Pesquisar Resumo  Expedição por Box </legend>
+		  <legend id="idFiledResumo"> Pesquisar Resumo Expedição</legend>
 		  
 		  	 <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			  <tr>
@@ -27,15 +41,15 @@
 			    <td width="91">Tipo Consulta:</td>
 			    <td width="180">
 			        <select name="tipoPesquisa" id="tipoPesquisa" style="width: 200px;" onchange="resumoExpedicaoController.mudarLegendaFielsSet('idFiledResumo','pesquisar')">
-						<option selected="selected"></option>
+						<option selected="selected">Selecione...</option>
 						<c:forEach var="tipoResumo" items="${listaTipoResumo}">
 							<option value="${tipoResumo.key}">${tipoResumo.value}</option>
 						</c:forEach>
 					</select>
 			     </td>
 			    <td width="375">
-			    	<span class="bt_pesquisar">
-			    		<a href="javascript:;" onclick="resumoExpedicaoController.pesquisar();">Pesquisar</a>
+			    	<span class="bt_novos">
+			    		<a href="javascript:;" onclick="resumoExpedicaoController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 			    	</span>
 			    </td>
 			  </tr>
@@ -46,11 +60,11 @@
 	
 		<div id="grid" style="display:none;">
 		
-			<fieldset class="classFieldset">
+			<fieldset class="fieldGrid">
 			    
 			    <legend id="idFiledResultResumo">Resumo  Expedição por Box</legend>
 			
-				    <div id="gridProduto" style="display:none;">
+				<div id="gridProduto" style="display:none;">
 			    	<table id="resumoExpedicaoGridProduto" class="resumoExpedicaoGridProduto"></table>
 			    </div> 
 			    
@@ -61,18 +75,7 @@
 				<table width="950" border="0" cellspacing="1" cellpadding="1">
 					  <tr>
 					  	<td width="658">
-						    <span class="bt_novos" title="Gerar Arquivo">
-						    	<a href="javascript:;" onclick="resumoExpedicaoController.exportar('XLS');">
-						    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-						    		Arquivo
-						    	</a>
-						    </span>
-						    <span class="bt_novos" title="Imprimir">
-						    	<a href="javascript:;" onclick="resumoExpedicaoController.exportar('PDF');">
-						    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-							    		Imprimir
-							    	</a>
-							    </span>
+						    &nbsp;
 						    </td>
 						    <td width="86"><strong>Total:</strong></td>
 						    <td width="70" id="totalReparte"></td>

@@ -286,11 +286,11 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	
 	private String getSubSqlQueryValorDesconto() {
 		
-		StringBuilder hql = new StringBuilder("select view.desconto");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = confCota.cota.id ")
 		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id ");
+		   .append(" and view.fornecedorId = fornecedores.id),0) ");
 		
 		return hql.toString();
 		

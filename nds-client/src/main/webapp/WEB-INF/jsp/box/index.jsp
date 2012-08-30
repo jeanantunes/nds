@@ -25,12 +25,12 @@ $(function(){
 	  
   		  		<span class="bt_novos">
 					<a href="${pageContext.request.contextPath}/cadastro/box/exportarDetalhes?fileType=XLS">
-						<img src="/nds-client/images/bt_excel.png" border="0" />
+						<img src="${pageContext.request.contextPath}/images/bt_excel.png" border="0" />
 					</a>
 				</span>
   		  		<span class="bt_novos">
 					<a href="${pageContext.request.contextPath}/cadastro/box/exportarDetalhes?fileType=PDF">
-						<img src="/nds-client/images/bt_imprimir.png" border="0" />
+						<img src="${pageContext.request.contextPath}/images/bt_imprimir.png" border="0" />
 					</a>
 				</span>
 		 </fieldset>
@@ -117,13 +117,12 @@ $(function(){
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="fieldGrid">
-       	  <legend>Boxes Cadastrados</legend>
-        <div class="grids" style="display:none;">
-        	<table class="boxGrid"></table>
-        </div>
-
-      </fieldset>
+      <div class="grids" style="display:none;">
+	      <fieldset class="fieldGrid">
+	       	  <legend>Boxes Cadastrados</legend>
+	        	<table class="boxGrid"></table>	
+	      </fieldset>
+      </div>
     </form>
 
 </body>

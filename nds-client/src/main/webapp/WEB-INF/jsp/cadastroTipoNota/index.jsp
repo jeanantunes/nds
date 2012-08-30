@@ -41,14 +41,12 @@ $(function(){
    		</table>
 	</fieldset>
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="fieldGrid">
- 	  	<legend>Tipos de Notas Cadastradas</legend>
-  	<div class="grids" style="display:none;">
-  		<table class="tiposNotasGrid"></table>
-      	
- 			
-  	</div>
-	</fieldset>
+	<div class="grids" style="display:none;">
+		<fieldset class="fieldGrid">
+	 	  	<legend>Tipos de Notas Cadastradas</legend>
+	  		<table class="tiposNotasGrid"></table>
+		</fieldset>
+	</div>
    </form>
 </body>
 </html>
