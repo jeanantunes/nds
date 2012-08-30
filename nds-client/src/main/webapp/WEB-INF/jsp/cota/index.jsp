@@ -9,7 +9,7 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pessoa.js"></script>
+
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
 
