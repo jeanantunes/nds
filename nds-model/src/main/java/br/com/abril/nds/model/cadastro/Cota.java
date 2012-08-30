@@ -71,13 +71,7 @@ public class Cota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
-	
-	/**
-	 *Assumido como 'comissão' no 'cadastro cota cobrança'
-	 */
-	@Column(name  ="FATOR_DESCONTO")
-	private BigDecimal fatorDesconto;
-	
+		
 	@OneToMany(mappedBy = "cota")
 	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
 	
@@ -240,15 +234,7 @@ public class Cota implements Serializable {
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-	
-	public BigDecimal getFatorDesconto() {
-		return fatorDesconto;
-	}
-	
-	public void setFatorDesconto(BigDecimal fatorDesconto) {
-		this.fatorDesconto = fatorDesconto;
-	}
-	
+		
 	public Set<EnderecoCota> getEnderecos() {
 		return enderecos;
 	}
