@@ -909,7 +909,6 @@ public class DataLoader {
 		criarEditores(session);		
 		criarProdutos(session);
 		criarProdutosEdicao(session);
-		criarTiposMovimento(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
@@ -1133,6 +1132,8 @@ public class DataLoader {
 		criarFeriado(session);		
 		
 		criarUsuarioAdministrador(session); 
+		
+		criarTiposMovimento(session);
 		
 	}
 
