@@ -15,12 +15,12 @@
 	<form action="/expedicao/resumo" id="resumo_expedicao_form">
 		<div class="areaBts">
 			<div class="area">
-				<span class="bt_arq" title="Gerar Arquivo">
+				<span class="bt_arq">
 			    	<a href="javascript:;" onclick="resumoExpedicaoController.exportar('XLS');" rel="tipsy" Title="Gerar Arquivo">
 			    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 			    	</a>
 			    </span>
-			    <span class="bt_arq" title="Imprimir">
+			    <span class="bt_arq">
 			    	<a href="javascript:;" onclick="resumoExpedicaoController.exportar('PDF');" rel="tipsy" Title="Imprimir">
 			    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 				    </a>
@@ -30,7 +30,7 @@
 		<div class="linha_separa_fields">&nbsp;</div>
 		<fieldset class="fieldFiltro">
 		  
-		  <legend id="idFiledResumo"> Pesquisar Resumo Expedição por Box </legend>
+		  <legend id="idFiledResumo"> Pesquisar Resumo Expedição</legend>
 		  
 		  	 <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			  <tr>

@@ -4,10 +4,10 @@
 	
 	<input type="hidden" id="grupoMovimentoHidden" />
 
-	<table width="760" border="0" cellspacing="2" cellpadding="2">
+	<table width="816" border="0" cellspacing="2" cellpadding="2">
 	  <tr>
-	    <td width="119">Tipo de Lançamento:</td>
-	    <td width="517">
+	    <td width="112">Tipo de Lançamento:</td>
+	    <td colspan="7">
 			<select onchange="configuraTelaLancamento(this.value);" name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:300px;">
 		  		<option selected="selected"></option>
 				<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
@@ -16,91 +16,49 @@
 		    </select>
 	    </td>
 	  </tr>
-	</table>   
-	  
-	<table name="tabelaFaturamento" id="tabelaFaturamento" width="760" border="0">  
+	  <tr name="tabelaFaturamento" id="tabelaFaturamento">
+	    <td>Percentual(%):</td>
+	    <td width="110"><input type="text" maxlength="3" style="width:30px;height:15px;" name="debitoCredito.percentual" id="novoPercentual" /></td>
+	    <td width="72">Base de Cálculo:</td>
+	    <td width="133"><select name="debitoCredito.baseCalculo.id" id="novoBaseCalculo" style="width:130px;">
+	      <option selected="selected"></option>
+	      <c:forEach items="${basesCalculo}" var="base">
+	        <option value="${base}">${base.value}</option>
+          </c:forEach>
+        </select></td>
+	    <td width="88">Período para Cálculo:</td>
+	    <td width="116"><input type="text" name="debitoCredito.dataPeriodoDe" id="novoDataPeriodoDe" style="width:70px;height:15px;" /></td>
+	    <td width="32">Até</td>
+	    <td width="103"><input type="text" name="debitoCredito.dataPeriodoAte" id="novoDataPeriodoAte" style="width:70px;height:15px;" /></td>
+  </tr>
 	  <tr>
-	    <td width="40">Percentual(%):</td>
-	    <td width="30">
-			 <input type="text" maxlength="3" style="width:30px;height:15px;" name="debitoCredito.percentual" id="novoPercentual" />
-	    </td>
-	    
-	    <td width="80">Base de Cálculo:</td>
-	    <td width="120">
-			<select name="debitoCredito.baseCalculo.id" id="novoBaseCalculo" style="width:120px;">
-			
-		  		<option selected="selected"></option>
-				<c:forEach items="${basesCalculo}" var="base">
-					<option value="${base}">${base.value}</option>
-				</c:forEach>
-				
-		    </select>
-	    </td>
-	    
-	    <td width="100">Período para Cálculo:</td>
-	    <td width="70">
-			<input type="text" name="debitoCredito.dataPeriodoDe" id="novoDataPeriodoDe" style="width:70px;height:15px;" />
-	    </td>
-	    
-	    <td width="20">até</td>
-	    <td width="70">
-			<input type="text" name="debitoCredito.dataPeriodoAte" id="novoDataPeriodoAte" style="width:70px;height:15px;" />
-	    </td>
-	  </tr>
-   </table>	  
-	  
-   <table width="760" border="0">  	  
+	    <td>Box:</td>
+	    <td><select name="debitoCredito.box.id" id="novoBox" onchange="carregarRoteiros(this.value,0);carregarRotas(0,0);" style="width:110px;">
+	      <option value="0" selected="selected"></option>
+	      <c:forEach items="${boxes}" var="box">
+	        <option value="${box.id}">${box.nome}</option>
+          </c:forEach>
+        </select></td>
+	    <td>Roteiro:</td>
+	    <td><div id="roteirosBox"/></div></td>
+	    <td>Rota:</td>
+	    <td colspan="3"><div id="rotasRoteiro"/></div></td>
+  </tr>
 	  <tr>
-	    <td width="20">Box:</td>
-	    <td width="120">
-			<select name="debitoCredito.box.id" id="novoBox" onchange="carregarRoteiros(this.value,0);carregarRotas(0,0);" style="width:120px;">
-			
-		  		<option value="0" selected="selected"></option>
-				<c:forEach items="${boxes}" var="box">
-					<option value="${box.id}">${box.nome}</option>
-				</c:forEach>
-				
-		    </select>
-	    </td>
-	    
-	    <td width="40" id="tituloNovoRoteiro">Roteiro:</td>
-	    <td width="180">
-		    <div id="roteirosBox"/>
-	    </td>
-	    
-	    <td width="30" id="tituloNovoRota">Rota:</td>
-	    <td width="180">
-			<div id="rotasRoteiro"/>
-	    </td>
-	  </tr>
-   </table>	  
-	  
-   <table width="760" border="0">   	  
+	    <td>Data Vencimento:</td>
+	    <td><input type="text" name="debitoCredito.dataVencimento" id="novoDataVencimento" style="width:70px;height:15px;" /></td>
+	    <td width="72" id="tituloNovoValor">Valor(R$):</td>
+	    <td><input maxlength="16" type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" /></td>
+	    <td>&nbsp;</td>
+	    <td>&nbsp;</td>
+	    <td>&nbsp;</td>
+	    <td>&nbsp;</td>
+  </tr>
 	  <tr>
-	    <td width="100">Data Vencimento:</td>
-	    <td width="100">
-			<input type="text" name="debitoCredito.dataVencimento" id="novoDataVencimento" style="width:70px;height:15px;" />
-	    </td>
-	    
-	    <td width="40" id="tituloNovoValor">Valor(R$):</td>
-	    <td width="70">
-			 <input maxlength="16" type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" />
-	    </td>
-	    
-	    <td width="30">Observação:</td>
-	    <td width="300">
-			 <input maxlength="150" type="text" style="width:300px;height:15px;" name="debitoCredito.observacao" id="novoObservacao" />
-	    </td>
-	    
-	    <td width="20">
-	        <span>
-	            <a href="javascript:;" onclick="obterInformacoesParaLancamento();" style="width:20px;">
-	                <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" hspace="5" border="0" />
-	            </a>
-	        </span>
-	    </td>
-	    
-	  </tr>
+	    <td>Observação:</td>
+	    <td colspan="6"><input maxlength="150" type="text" style="width:310px;" name="debitoCredito.observacao" id="novoObservacao" /></td>
+	    <td><a href="javascript:;" onclick="obterInformacoesParaLancamento();" style="width:20px;"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" hspace="5" border="0" /></a></td>
+  </tr>
 	</table>
 	
 	
@@ -202,7 +160,7 @@
 			}],
 			disableSelect : true,
 			width : 770,
-			height : 300
+			height : 270
 		});
 		
 		function configurarCampos() {
@@ -273,7 +231,7 @@
 			$("#dialog-novo").dialog({
 				resizable: false,
 				height:600,
-				width:800,
+				width:860,
 				modal: true,
 				buttons:[ 
 				          {
