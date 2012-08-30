@@ -55,6 +55,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#conta", this.workspace).numeric();
 	    $("#contaDigito", this.workspace).numeric();
 	    $("#diaDoMes", this.workspace).numeric();
+	    
+	    $(".dataInputMask").mask("99/99/9999");
+	    
+	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
 
 	},
 	
@@ -145,15 +149,18 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
     //MODOS DE EXIBIÇÃO 
-	exibe_botao_contrato : function(contrato){
-		if (contrato){
-			$('#botaoContrato', this.workspace).show();
-		}
-		else{
-			$('#botaoContrato', this.workspace).hide();
-		}
+	exibe_form_contrato : function(exibir){
+		$(".form-contrato-hidden-class").toggle(exibir);
 	},
-
+	
+	exibe_form_suspencao : function(exibir) {
+		$(".form-suspensao-hidden-class").toggle(exibir);
+	},
+	
+	exibe_form_upload : function(exibir) {
+		$("#parametroCobrancaFileField").toggle(exibir);
+	},
+	
 	opcaoPagto : function(op){
 		
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
@@ -241,7 +248,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		//document.formFinanceiro.contrato.checked = resultado.contrato;
 		
-		parametroCobrancaCotaController.exibe_botao_contrato(resultado.contrato);
+		parametroCobrancaCotaController.exibe_form_contrato(resultado.contrato);
 
 		$("#valorMinimo", this.workspace).val(resultado.valorMinimo);
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
@@ -365,14 +372,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 	
 	
 	obterFornecedoresUnificados : function(unificados) {
-		$("input[name='checkGroupFornecedores']:checked", this.workspace).each(function(i) {
-			$("#fornecedor_"+$(this), this.workspace).attr("checked", false);
-			//document.getElementById("fornecedor_"+$(this).val()).checked = false;
+		$("input[name='checkGroupFornecedores']:checked", parametroCobrancaCotaController.workspace).each(function(i) {
+			//$("#fornecedor_"+$(this).val(), this.workspace).attr("checked", false);
+			document.getElementById("fornecedor_"+$(this).val(), parametroCobrancaCotaController.workspace).checked = false;
 		});
 		var i;
 		for(i=0;i<unificados.length;i++){
-			$("#fornecedor_"+unificados[i], this.workspace).attr("checked", false);
-			//document.getElementById("fornecedor_"+unificados[i]).checked = true;
+			//$("#fornecedor_"+unificados[i], this.workspace).attr("checked", false);
+			document.getElementById("fornecedor_"+unificados[i], parametroCobrancaCotaController.workspace).checked = true;
 		}
 	},
 	
@@ -451,59 +458,43 @@ var parametroCobrancaCotaController = $.extend(true, {
 	obterFormaCobrancaDefault : function(){
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterFormaCobrancaDefault",
 				   null,
-				   function(result){
-				       if (result.mensagens){
-					       var tipoMensagem = result.mensagens.tipoMensagem;
-					       var listaMensagens = result.mensagens.listaMensagens;
-					       if (tipoMensagem && listaMensagens) {
-					           exibirMensagem(tipoMensagem, listaMensagens);
-				           }
-	     	           }
-				       else{
-			               parametroCobrancaCotaController.sucessCallbackFormaCobrancaDefault(result);
-				       }    
+				   function(resultado){
+			            
+			           if (resultado){
+			
+						   //hidden
+						   $("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
+						
+						   $("#tipoCobranca", this.workspace).val(resultado.tipoCobranca);
+						   $("#tipoFormaCobranca", this.workspace).val(resultado.tipoFormaCobranca);
+						   $("#banco", this.workspace).val(resultado.idBanco);
+						   $("#numBanco", this.workspace).val(resultado.numBanco);
+						   $("#nomeBanco", this.workspace).val(resultado.nomeBanco);
+						   $("#agencia", this.workspace).val(resultado.agencia);
+						   $("#agenciaDigito", this.workspace).val(resultado.agenciaDigito);
+						   $("#conta", this.workspace).val(resultado.conta);
+						   $("#contaDigito", this.workspace).val(resultado.contaDigito);
+						   $("#diaDoMes", this.workspace).val(resultado.diaDoMes);
+						
+						   $("#recebeEmail", this.workspace).attr("checked", resultado.envioEmail);
+						   $("#PS", this.workspace).attr("checked", resultado.segunda);
+						   $("#PT", this.workspace).attr("checked", resultado.terca);
+						   $("#PQ", this.workspace).attr("checked", resultado.quarta);
+						   $("#PQu", this.workspace).attr("checked", resultado.quinta);
+						   $("#PSex", this.workspace).attr("checked", resultado.sexta);
+						   $("#PSab", this.workspace).attr("checked", resultado.sabado);
+						   $("#PDom", this.workspace).attr("checked", resultado.domingo);
+			
+						   parametroCobrancaCotaController.opcaoPagto(resultado.tipoCobranca);
+						   parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
+						   parametroCobrancaCotaController.obterFornecedoresUnificados(resultado.fornecedoresId);
+			           }
+			           
 		           },
-		           function(mensagens) {
-		        	   if (mensagens){
-						   var tipoMensagem = mensagens.tipoMensagem;
-						   var listaMensagens = mensagens.listaMensagens;
-						   if (tipoMensagem && listaMensagens) {
-						       exibirMensagem(tipoMensagem, listaMensagens);
-					       }
-		        	   }
-		           },
+		           null,
 				   true);
 	},
-	
-    sucessCallbackFormaCobrancaDefault : function(resultado) {
-		
-		//hidden
-		$("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
-		
-		$("#tipoCobranca", this.workspace).val(resultado.tipoCobranca);
-		$("#tipoFormaCobranca", this.workspace).val(resultado.tipoFormaCobranca);
-		$("#banco", this.workspace).val(resultado.idBanco);
-		$("#numBanco", this.workspace).val(resultado.numBanco);
-		$("#nomeBanco", this.workspace).val(resultado.nomeBanco);
-		$("#agencia", this.workspace).val(resultado.agencia);
-		$("#agenciaDigito", this.workspace).val(resultado.agenciaDigito);
-		$("#conta", this.workspace).val(resultado.conta);
-	    $("#contaDigito", this.workspace).val(resultado.contaDigito);
-	    $("#diaDoMes", this.workspace).val(resultado.diaDoMes);
-		
-		$("#recebeEmail", this.workspace).attr("checked", resultado.recebeEmail);
-		$("#PS", this.workspace).attr("checked", resultado.segunda);
-		$("#PT", this.workspace).attr("checked", resultado.terca);
-		$("#PQ", this.workspace).attr("checked", resultado.quarta);
-		$("#PQu", this.workspace).attr("checked", resultado.quinta);
-		$("#PSex", this.workspace).attr("checked", resultado.sexta);
-		$("#PSab", this.workspace).attr("checked", resultado.sabado);
-		$("#PDom", this.workspace).attr("checked", resultado.domingo);
 
-		parametroCobrancaCotaController.opcaoPagto(resultado.tipoCobranca);
-		parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
-		parametroCobrancaCotaController.obterFornecedoresUnificados(resultado.fornecedoresId);
-	},
 	
 	
 	
