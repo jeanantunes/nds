@@ -519,5 +519,9 @@ public class HistoricoTitularidadeCota implements Serializable {
     public void setSocios(Collection<HistoricoTitularidadeCotaSocio> socios) {
         this.socios = socios;
     }
+    
+    public HistoricoTitularidadeCotaPessoa getPessoa() {
+        return pessoaFisica == null ? pessoaJuridica : pessoaFisica;
+    }
 
 }

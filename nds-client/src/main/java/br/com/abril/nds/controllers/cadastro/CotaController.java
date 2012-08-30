@@ -85,6 +85,8 @@ public class CotaController {
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
 	
+	private static final String CADASTRO_COTA_MODO_TELA_SESSION_KEY = "cadastroCotaModoTela";
+	
 	@Autowired
 	private Result result;
 	
@@ -133,6 +135,7 @@ public class CotaController {
 		this.financeiroController.preCarregamento();
 		this.pdvController.preCarregamento();
 		this.limparDadosSession();
+		definirModoTela(ModoTela.CADASTRO_COTA);
 	}
 	
 	/**
@@ -151,6 +154,17 @@ public class CotaController {
 		obterEndereco(idCota);
 		obterTelefones(idCota);
 	}
+	
+	
+	public void historicoTitularidade(Long idCota, Long idHistorico) {
+	    CotaDTO cotaDTO = cotaService.obterHistoricoTitularidade(idCota, idHistorico);
+	    definirModoTela(ModoTela.HISTORICO_TITULARIDADE);
+	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+	}
+
+   private void definirModoTela(ModoTela modoTela) {
+        session.setAttribute(CADASTRO_COTA_MODO_TELA_SESSION_KEY, modoTela);
+    }
 
 	@SuppressWarnings("unchecked")
 	/**
@@ -1183,6 +1197,19 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.session.removeAttribute(FILTRO_SESSION_ATTRIBUTE);
+	}
+	
+	/**
+	 * Enum os modos de operação da tela de cadastro de cota
+	 * @author francisco.garcia
+	 *
+	 */
+	public static enum ModoTela {
+	     
+	    CADASTRO_COTA, 
+	     
+	     HISTORICO_TITULARIDADE;
+	     
 	}
 }
 

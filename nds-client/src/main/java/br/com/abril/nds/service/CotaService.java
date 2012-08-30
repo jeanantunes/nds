@@ -256,5 +256,14 @@ public interface CotaService {
 	 * @param cotaDTO
 	 */
 	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
+
+    /**
+     * Obtém o histórico de titularidade da cota de acordo com o identificador
+     * da cota e o identificador do histórico
+     * @param idCota identificador da cota
+     * @param idHistorico identificador da cota
+     * @return {@link CotaDTO} com as informações do histórico de titularidade da cota
+     */
+    CotaDTO obterHistoricoTitularidade(Long idCota, Long idHistorico);
 	
 }

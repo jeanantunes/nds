@@ -1,3 +1,8 @@
+var ModoTela = {
+  CADASTRO_COTA : {value: 'CADASTRO_COTA'}, 
+  HISTORICO_TITULARIDADE : {value: 'HISTORICO_TITULARIDADE'} 
+};
+
 var TAB_COTA = new TabCota('tabCota');
 
 var MANTER_COTA = $.extend(true, {
@@ -10,9 +15,12 @@ var MANTER_COTA = $.extend(true, {
     fecharModalCadastroCota:false,
     isAlteracaoTitularidade: false,
     _workspace: this.workspace,
+	 modoTela: null,
+    idHistorico:"",
     
     init: function() {
-    	
+    	this.modoTela = ModoTela.CADASTRO_COTA;
+		
     	$( "#tabpdv", this.workspace ).tabs();
 
 		$("#descricaoPessoa", this.workspace).autocomplete({source: ""});
@@ -384,12 +392,13 @@ var MANTER_COTA = $.extend(true, {
 			dateFormat: "dd/mm/yy"
 		});
 		
-		$( "#dialog-cota", this.workspace ).dialog({
-			resizable: false,
-			height:590,
-			width:950,
-			modal: true,
-			buttons: [
+		if (MANTER_COTA.modoTela == ModoTela.CADASTRO_COTA) {
+			$( "#dialog-cota", this.workspace ).dialog({
+				resizable: false,
+				height:590,
+				width:950,
+				modal: true,
+				buttons: [
 			         {id:"btn_confirmar_cota",text:"Confirmar",
 		        	  click: function() {
 								if(TAB_COTA.funcaoSalvar)
@@ -402,25 +411,41 @@ var MANTER_COTA = $.extend(true, {
 		        				$( this, this.workspace ).dialog( "close" );
 		        		}	  
 		        	}  
-			],
-			beforeClose: function(event, ui) {
+				],
+				beforeClose: function(event, ui) {
 				
-				clearMessageDialogTimeout();
+					clearMessageDialogTimeout();
 				
-				if (!MANTER_COTA.fecharModalCadastroCota){
+					if (!MANTER_COTA.fecharModalCadastroCota){
 					
-					MANTER_COTA.cancelarCadastro();
+						MANTER_COTA.cancelarCadastro();
 					
+						return MANTER_COTA.fecharModalCadastroCota;
+					}
+				
+					MANTER_COTA.limparFormsTabs();
+				
 					return MANTER_COTA.fecharModalCadastroCota;
-				}
 				
-				MANTER_COTA.limparFormsTabs();
-				
-				return MANTER_COTA.fecharModalCadastroCota;
-				
-			},
-			form: $("#workspaceCota", this.workspace)		
-		});
+				},
+				form: $("#workspaceCota", this.workspace)		
+			});
+		} else {
+			$( "#dialog-cota", this.workspace ).dialog({
+				resizable: false,
+				height:590,
+				width:950,
+				modal: true,
+				buttons: [
+			         {id:"btn_fechar_historico_titularidade_cota", text:"Fechar",
+		        	  click: function() {
+							MANTER_COTA.modoTela = ModoTela.CADASTRO_COTA;
+							MANTER_COTA.editar(MANTER_COTA.numeroCota, MANTER_COTA.idCota);
+		        	  	}
+			         }],
+				form: $("#workspaceCota", this.workspace)		
+			});
+		}
 	},
 	
 	cancelarCadastro:function(){
@@ -584,6 +609,34 @@ var MANTER_COTA = $.extend(true, {
 
 		$( "#dialog-titular", this.workspace ).dialog("close");
 	},
+	
+	visualizarHistoricoTitularidade : function(idHistorico) {
+		MANTER_COTA.modoTela = ModoTela.HISTORICO_TITULARIDADE;
+		MANTER_COTA.idHistorico = idHistorico;
+		
+		MANTER_COTA.fecharModalCadastroCota = true;
+		$("#dialog-cota", this.workspace).dialog("close");
+		
+		$("#dialog-cota", this.workspace).find(':input:not(:disabled)').prop('disabled',true);
+		
+		
+		var data = [{name:"idCota", value: MANTER_COTA.idCota },
+		            {name:"idHistorico", value:MANTER_COTA.idHistorico}];
+		$.postJSON(contextPath + "/cadastro/cota/historicoTitularidade", data, 
+				function(result){
+					if(result){
+						if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){	
+							//MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
+							COTA_CPF.editarCPF(result);
+						}
+						else {
+							//MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
+							COTA_CNPJ.editarCNPJ(result);
+						}
+					}
+			}
+		);
+	}
 
 }, BaseController);
 
@@ -1036,7 +1089,11 @@ var COTA_CPF = $.extend(true, {
 		
 		MANTER_COTA.popupCota();
 		
-		MANTER_COTA.mudarNomeModalCadastro("Cota - " + result.numeroCota);
+		if (MANTER_COTA.modoTela == ModoTela.CADASTRO_COTA) {
+			MANTER_COTA.mudarNomeModalCadastro("Cota - " + result.numeroCota);
+		} else {
+			MANTER_COTA.mudarNomeModalCadastro("Histórico Titularidade Cota- " +  result.numeroCota);
+		}
 	},
 	
 	carregarDadosCpf:function(result){
@@ -1616,14 +1673,9 @@ function GridAntigosProprietarios(element, workspace) {
 			preProcess: function(data) {
 				if (data.rows) {
 					$.each(data.rows, function(index, row) {
-						if (row.cell.fim) {
-							row.cell.periodo = row.cell.inicio + ' a ' + row.cell.fim ;
-						} else {
-							row.cell.periodo = 'Desde ' + row.cell.inicio;
-						}
-						
-						var acao = '<a href="javascript:;" onclick="">';
-						acao += '<img src="' + contextPath + '/images/ico_detalhes.png" alt="Alterar Titularidade" border="0" /></a>';
+						row.cell.periodo = row.cell.inicio.$ + ' a ' + row.cell.fim.$;
+						var acao = '<a href="javascript:;" onclick="MANTER_COTA.visualizarHistoricoTitularidade('+ row.cell.id +');" style="cursor:pointer">';
+						acao += '<img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>';
 						row.cell.acao = acao;
 					});
 					return data;

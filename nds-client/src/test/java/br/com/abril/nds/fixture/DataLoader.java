@@ -19,8 +19,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.google.common.collect.Sets;
-
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -4435,6 +4433,8 @@ public class DataLoader {
 
 
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
+		cotaManoel.setInicioAtividade(DateUtil.adicionarDias(cotaManoel.getInicioAtividade(), -360));
+		
 		parametroCotaNotaFiscalEletronicaManoel = Fixture.parametrosCotaNotaFiscalEletronica(false, "manoel@email.com");
 		cotaManoel.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaManoel);
 		
@@ -4603,8 +4603,8 @@ public class DataLoader {
 		formaTransferenciBancaria.setParametroCobrancaCota(parametroCobrancaConta4);
 		formaTransferenciBancaria.setPrincipal(true);
 		save(session, formaTransferenciBancaria);
-
-
+		
+		Fixture.historicoTitularidade(cotaManoel);
 	}
 
 	private static void criarDistribuicaoCota(Session session) {

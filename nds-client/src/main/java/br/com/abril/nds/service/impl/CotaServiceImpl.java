@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -52,6 +53,7 @@ import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -727,6 +729,13 @@ public class CotaServiceImpl implements CotaService {
 		
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
+		
+        for (HistoricoTitularidadeCota historico : cota.getTitularesCota()) {
+            cotaDTO.addProprietario(new TitularidadeCotaDTO(historico.getId(),
+                    cota.getId(), historico.getInicio(), historico.getFim(),
+                    historico.getPessoa().getNome(), historico.getPessoa()
+                            .getDocumento()));
+        }
 		
 		return cotaDTO;
 	}
@@ -1652,6 +1661,13 @@ public class CotaServiceImpl implements CotaService {
 		
 		return enderecoAssociacaoCadastrado;
 	}
+
+    @Override
+    @Transactional(readOnly = true)
+    public CotaDTO obterHistoricoTitularidade(Long idCota, Long idHistorico) {
+        //TODO: apenas para testes no controller/tela, refatorar
+        return obterDadosCadastraisCota(idCota);
+    }
 
 	
 }

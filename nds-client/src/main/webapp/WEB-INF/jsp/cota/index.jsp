@@ -22,7 +22,6 @@
 <script language="javascript" type="text/javascript">
 	
 	$(function() {
-		
 		MANTER_COTA.init();	
 	});
 </script>

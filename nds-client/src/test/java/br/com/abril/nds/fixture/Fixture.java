@@ -31,6 +31,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
@@ -64,6 +65,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
@@ -194,6 +196,9 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
+import br.com.abril.nds.util.DateUtil;
 
 
 public class Fixture {
@@ -3353,4 +3358,25 @@ public class Fixture {
 		
 		return descontoL;
 	}
+    
+    
+    
+    public static HistoricoTitularidadeCota historicoTitularidade(Cota cota) {
+        HistoricoTitularidadeCota historico = new HistoricoTitularidadeCota();
+        historico.setCota(cota);
+        historico.setInicio(cota.getInicioAtividade());
+        historico.setFim(DateUtil.adicionarDias(cota.getInicioAtividade(), 60));
+        historico.setEmail("aristoteles@mail.com");
+        historico.setNumeroCota(cota.getNumeroCota());
+        historico.setClassificacaoExpectativaFaturamento(cota.getClassificacaoEspectativaFaturamento());
+        historico.setSituacaoCadastro(cota.getSituacaoCadastro());
+
+        HistoricoTitularidadeCotaPessoaFisica htcpf = new HistoricoTitularidadeCotaPessoaFisica(
+                    "Aristoteles da Silva", "862.243.913-51", "30.887.357-9",
+                    "SSP", "SP", criarData(10, Calendar.APRIL, 1974), EstadoCivil.SOLTEIRO, Sexo.MASCULINO,
+                    "Brasileira", "Mococa", "Ari");
+        historico.setPessoaFisica(htcpf);
+        cota.addTitularCota(historico);
+        return historico;
+    }
 }
