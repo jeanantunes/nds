@@ -19,7 +19,7 @@ var MANTER_COTA = $.extend(true, {
     idHistorico:"",
     
     init: function() {
-    	this.modoTela = ModoTela.CADASTRO_COTA;
+    	this.definirModoTelaCadastroCota();
 		
     	$( "#tabpdv", this.workspace ).tabs();
 
@@ -106,7 +106,7 @@ var MANTER_COTA = $.extend(true, {
     },
 
     formDataPesquisa: function(){
-		
+
 		var formData = [ {name:"numCota",value:$("#numCota", this.workspace).val()},
 		                 {name:"nomeCota",value:$("#descricaoPessoa", this.workspace).val()},
 			             {name:"numeroCpfCnpj",value:$("#txtCPF_CNPJ", this.workspace).val()},
@@ -118,14 +118,19 @@ var MANTER_COTA = $.extend(true, {
 	},
 	
 	 carregarDadosCadastrais:function(){
-	    
-		 TAB_COTA.funcaoSalvar = MANTER_COTA.salvarDadosCadastrais;
+
+         if (MANTER_COTA.isModoTelaCadastroCota()) {
+             TAB_COTA.funcaoSalvar = MANTER_COTA.salvarDadosCadastrais;
+         }
+
 	 },
 	
     carregarTelefones:function(){
-    	
-    	TAB_COTA.funcaoSalvar = MANTER_COTA.salvarTelefone;
-    
+        COTA.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
+
+        if (MANTER_COTA.isModoTelaCadastroCota()) {
+    	    TAB_COTA.funcaoSalvar = MANTER_COTA.salvarTelefone;
+        }
 		$.postJSON(contextPath + "/cadastro/cota/recarregarTelefone",
 				   "idCota="+MANTER_COTA.idCota,function(){
 			COTA.carregarTelefones();
@@ -133,14 +138,20 @@ var MANTER_COTA = $.extend(true, {
     },
     
     carregaFinanceiroCota:function (){
-    	
-    	TAB_COTA.funcaoSalvar = parametroCobrancaCotaController.postarParametroCobranca;
+        parametroCobrancaCotaController.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
+        if (MANTER_COTA.isModoTelaCadastroCota()) {
+    	    TAB_COTA.funcaoSalvar = parametroCobrancaCotaController.postarParametroCobranca;
+        }
     	parametroCobrancaCotaController.carregaFinanceiro(MANTER_COTA.idCota);
     },
     
     carregarEnderecos: function(){
-    	TAB_COTA.funcaoSalvar = MANTER_COTA.salvarEndereco;
-    	
+        ENDERECO_COTA.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
+        if (MANTER_COTA.isModoTelaCadastroCota()) {
+               TAB_COTA.funcaoSalvar = MANTER_COTA.salvarEndereco;
+        }
+
+
     	$.postJSON(contextPath + "/cadastro/cota/recarregarEndereco",
     			"idCota="+MANTER_COTA.idCota,function(){
     		
@@ -158,26 +169,29 @@ var MANTER_COTA = $.extend(true, {
     },
     
     carregarDistribuicao:function(){
-    	
-    	TAB_COTA.funcaoSalvar = DISTRIB_COTA.salvar;
+        if (MANTER_COTA.isModoTelaCadastroCota()) {
+    	    TAB_COTA.funcaoSalvar = DISTRIB_COTA.salvar;
+        }
     	DISTRIB_COTA.carregarDadosDistribuicaoCota(MANTER_COTA.idCota);
     },
     
     carregarDadosSocio:function(){
-    	
-    	TAB_COTA.funcaoSalvar = SOCIO_COTA.salvarSocios;
+        if (MANTER_COTA.isModoTelaCadastroCota()) {
+    	    TAB_COTA.funcaoSalvar = SOCIO_COTA.salvarSocios;
+        }
     	SOCIO_COTA.carregarSociosCota();
     },
     
 	carregarPDV : function (){
-		
+        PDV.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
 		PDV.idCota = MANTER_COTA.idCota;
 		PDV.pesquisarPdvs(MANTER_COTA.idCota);
 	},
 	
 	carregarFornecedores:function(){
-		
-		TAB_COTA.funcaoSalvar = COTA_FORNECEDOR.salvarFornecedores;
+        if (MANTER_COTA.isModoTelaCadastroCota()) {
+		    TAB_COTA.funcaoSalvar = COTA_FORNECEDOR.salvarFornecedores;
+        }
 		COTA_FORNECEDOR.carregarFornecedores();
 	},
 	
@@ -258,8 +272,10 @@ var MANTER_COTA = $.extend(true, {
 		
 		MANTER_COTA.numeroCota = numeroCota;
 		MANTER_COTA.idCota = idCota;
+
+        MANTER_COTA.definirModoTelaCadastroCota();
 		
-		MANTER_COTA.mudarNomeModalCadastro("Cota- " +  numeroCota);
+		MANTER_COTA.mudarNomeModalCadastro("Cota - " +  numeroCota);
 		
 		MANTER_COTA.fecharModalCadastroCota = false;
 		
@@ -392,7 +408,7 @@ var MANTER_COTA = $.extend(true, {
 			dateFormat: "dd/mm/yy"
 		});
 		
-		if (MANTER_COTA.modoTela == ModoTela.CADASTRO_COTA) {
+		if (MANTER_COTA.isModoTelaCadastroCota()) {
 			$( "#dialog-cota", this.workspace ).dialog({
 				resizable: false,
 				height:590,
@@ -439,11 +455,12 @@ var MANTER_COTA = $.extend(true, {
 				buttons: [
 			         {id:"btn_fechar_historico_titularidade_cota", text:"Fechar",
 		        	  click: function() {
-							MANTER_COTA.modoTela = ModoTela.CADASTRO_COTA;
-							MANTER_COTA.editar(MANTER_COTA.numeroCota, MANTER_COTA.idCota);
+                          $(this).dialog("close");
+                          MANTER_COTA.definirModoTelaCadastroCota();
+                          MANTER_COTA.editar(MANTER_COTA.numeroCota, MANTER_COTA.idCota);
 		        	  	}
 			         }],
-				form: $("#workspaceCota", this.workspace)		
+				form: $("#workspaceCota", this.workspace)
 			});
 		}
 	},
@@ -562,8 +579,8 @@ var MANTER_COTA = $.extend(true, {
 		$(idCampo, this.workspace).autocomplete({
 			source: result,
 			minLength: 4,
-			delay : 0,
-		});
+			delay : 0
+        });
 	}, 
 	
 	popupAlterarTitular : function() {
@@ -611,14 +628,10 @@ var MANTER_COTA = $.extend(true, {
 	},
 	
 	visualizarHistoricoTitularidade : function(idHistorico) {
-		MANTER_COTA.modoTela = ModoTela.HISTORICO_TITULARIDADE;
 		MANTER_COTA.idHistorico = idHistorico;
-		
-		MANTER_COTA.fecharModalCadastroCota = true;
-		$("#dialog-cota", this.workspace).dialog("close");
-		
-		$("#dialog-cota", this.workspace).find(':input:not(:disabled)').prop('disabled',true);
-		
+
+		this.fecharDialogExibicaoHistoricoTitularidade();
+		this.definirModoTelaHistoricoTitularidade();
 		
 		var data = [{name:"idCota", value: MANTER_COTA.idCota },
 		            {name:"idHistorico", value:MANTER_COTA.idHistorico}];
@@ -626,16 +639,55 @@ var MANTER_COTA = $.extend(true, {
 				function(result){
 					if(result){
 						if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){	
-							//MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
 							COTA_CPF.editarCPF(result);
 						}
 						else {
-							//MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
 							COTA_CNPJ.editarCNPJ(result);
 						}
 					}
 			}
 		);
+	}, 
+	
+	definirModoTelaCadastroCota : function() {
+		this.definirModoTela(ModoTela.CADASTRO_COTA);
+	},
+	
+	definirModoTelaHistoricoTitularidade : function() {
+		this.definirModoTela(ModoTela.HISTORICO_TITULARIDADE);
+	},
+	
+	definirModoTela : function(modoTela) {
+		this.modoTela = modoTela;
+		this.atualizarEstadoTela();
+	},
+	
+	isModoTelaCadastroCota : function() {
+		return this.modoTela == ModoTela.CADASTRO_COTA;
+	},
+	
+	fecharDialogExibicaoHistoricoTitularidade : function() {
+		this.fecharModalCadastroCota = true;
+		$("#dialog-cota", this._workspace).dialog("close");
+	},
+	
+	atualizarEstadoTela : function() {
+		if (this.isModoTelaCadastroCota()) {
+			this.mudarNomeModalCadastro("Cota - " +  MANTER_COTA.idCota);
+			$("#dialog-cota", this._workspace).find(':input(:disabled)').prop('disabled', false);
+            $("#dialog-cota", this._workspace).find('input[name="cotaDTO.status"]').prop('disabled', true);
+			$("#dialog-cota", this._workspace).find('.antigosProp').show();
+			$("#dialog-cota", this._workspace).find('.ui-datepicker-trigger').show();	
+			$("#dialog-cota", this._workspace).find('span[id^="btnAlterarTitularidade"]').show();
+            $("#dialog-cota", this._workspace).find('.classPesquisar').show();
+		} else {
+			this.mudarNomeModalCadastro("Histórico Titularidade Cota - " +  MANTER_COTA.idCota);
+			$("#dialog-cota", this._workspace).find(':input:not(:disabled)').prop('disabled', true);
+			$("#dialog-cota", this._workspace).find('.antigosProp').hide();	
+			$("#dialog-cota", this._workspace).find('.ui-datepicker-trigger').hide();	
+			$("#dialog-cota", this._workspace).find('span[id^="btnAlterarTitularidade"]').hide();
+            $("#dialog-cota", this._workspace).find('.classPesquisar').hide();
+		}
 	}
 
 }, BaseController);
@@ -1088,20 +1140,19 @@ var COTA_CPF = $.extend(true, {
 		MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
 		
 		MANTER_COTA.popupCota();
+
+        if (MANTER_COTA.isModoTelaCadastroCota()) {
+            MANTER_COTA.mudarNomeModalCadastro("Cota - " +  MANTER_COTA.idCota);
+        } else {
+            MANTER_COTA.mudarNomeModalCadastro("Histórico Titularidade Cota - " +  MANTER_COTA.idCota);
+        }
 		
-		if (MANTER_COTA.modoTela == ModoTela.CADASTRO_COTA) {
-			MANTER_COTA.mudarNomeModalCadastro("Cota - " + result.numeroCota);
-		} else {
-			MANTER_COTA.mudarNomeModalCadastro("Histórico Titularidade Cota- " +  result.numeroCota);
-		}
 	},
 	
 	carregarDadosCpf:function(result){
 		
 		COTA_CPF.limparCampos();
-		
-		MANTER_COTA.mudarNomeModalCadastro("Cota - " + result.numeroCota);
-		
+
 		$( "#tabCota", this.workspace ).tabs({ selected:0 });
 		TAB_COTA.possuiDadosObrigatorios = true;
 		

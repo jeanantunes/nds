@@ -1,6 +1,9 @@
 var parametroCobrancaCotaController = $.extend(true, {
 	init : function () {
 
+        //Flag indicando se tela irá operar em modo cadastro/consulta
+        readonly: false,
+
 		//GRID DE FORMAS DE COBRANÇA
 		$(".boletosUnificadosGrid", this.workspace).flexigrid({
 			preProcess: parametroCobrancaCotaController.getDataFromResult,
@@ -61,6 +64,21 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
 
 	},
+
+    //Define a tela como operação de edição/consulta
+    definirReadonly : function(readonly) {
+        parametroCobrancaCotaController.readonly = readonly;
+        if (parametroCobrancaCotaController.readonly) {
+            $('#FINANCEIRObtnNovaFormaPagamento', this.workspace).hide();
+            $('#popupNovaFormaPagamentoIncluirNova', this.workspace).hide();
+            $("#dialog-unificacao", this.workspace).find(':input:not(:disabled)').prop('disabled', true);
+        } else {
+            $('#FINANCEIRObtnNovaFormaPagamento', this.workspace).show();
+            $('#popupNovaFormaPagamentoIncluirNova', this.workspace).show();
+            $("#dialog-unificacao", this.workspace).find(':input(:disabled)').prop('disabled', false);
+
+        }
+    },
 	
 	//PRÉ CARREGAMENTO DA PAGINA
 	carregaFinanceiro : function(idCota){
@@ -101,6 +119,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 	sucessCallbackCarregarFornecedores : function(result) {
 	    var radioBoxes =  parametroCobrancaCotaController.montarTrRadioBox(result,"checkGroupFornecedores","fornecedor_");
 		$("#fornecedoresCota", this.workspace).html(radioBoxes);
+        //Desabilita os checkboxes gerados dinamicamente, caso seja necessário
+        if(parametroCobrancaCotaController.readonly) {
+            $("#fornecedoresCota", this.workspace).find(':input:not(:disabled)').prop('disabled', true);
+        }
 	},
 	
     mostrarGrid : function(idCota) {
@@ -132,14 +154,17 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}	
 		
 		$.each(resultado.rows, function(index, row) {
-			var linkEditar = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_editar_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
-					     	  	'<img title="Aprovar" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
+            var title = parametroCobrancaCotaController.readonly ? 'Visualizar Forma Pagamento' : 'Editar Forma Pagamento';
+
+            var linkEditar = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_editar_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
+					     	  	'<img title="'+ title +'" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
 					  		  '</a>';
-			
-			var linkExcluir = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_excluir_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
-							   	 '<img title="Rejeitar" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
-							   '</a>';
-			
+            var linkExcluir = '';
+            if (!parametroCobrancaCotaController.readonly) {
+                linkExcluir = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_excluir_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
+                    '<img title="Excluir Forma Pagamento" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+                    '</a>';
+            }
 			row.cell.acao = linkEditar + linkExcluir;
 		});
 			
@@ -722,28 +747,45 @@ var parametroCobrancaCotaController = $.extend(true, {
     popup_editar_unificacao : function(idFormaCobranca) {
     	
     	parametroCobrancaCotaController.obterFormaCobranca(idFormaCobranca);
-		
-		$( "#dialog-unificacao", this.workspace ).dialog({
-			resizable: false,
-			height:630,
-			width:500,
-			modal: true,
-			disabled: false,
-			buttons: {
-				"Confirmar": function() {
-					
-					parametroCobrancaCotaController.postarFormaCobranca(false,false);
 
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
-			beforeClose: function() {
-				clearMessageDialogTimeout("idModalUnificacao");
-		    },
-			form: $("#workspaceCota", this.workspace)
-		});
+        if (parametroCobrancaCotaController.readonly) {
+            $( "#dialog-unificacao", this.workspace ).dialog({
+                resizable: false,
+                height:630,
+                width:500,
+                modal: true,
+                disabled: false,
+                buttons: {
+                   "Fechar": function() {
+                        $( this ).dialog( "close" );
+                    }
+                },
+                form: $("#workspaceCota", this.workspace)
+            });
+
+        } else {
+            $( "#dialog-unificacao", this.workspace ).dialog({
+                resizable: false,
+                height:630,
+                width:500,
+                modal: true,
+                disabled: false,
+                buttons: {
+                    "Confirmar": function() {
+
+                        parametroCobrancaCotaController.postarFormaCobranca(false,false);
+
+                    },
+                    "Cancelar": function() {
+                        $( this ).dialog( "close" );
+                    }
+                },
+                beforeClose: function() {
+                    clearMessageDialogTimeout("idModalUnificacao");
+                },
+                form: $("#workspaceCota", this.workspace)
+            });
+        }
     },
     
     popup_excluir_unificacao : function(idFormaCobranca) {

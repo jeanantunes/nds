@@ -4,6 +4,8 @@ var PDV =  $.extend(true, {
 		idCota:"",
 		fecharModalCadastroPDV:false,
 		diasFuncionamento:[],
+        //Flag indicando se tela irá operar em modo cadastro/consulta
+        readonly: false,
 		
 		
 		init : function() {
@@ -14,6 +16,29 @@ var PDV =  $.extend(true, {
 			PDV.inicializarGeradorFluxo();
 			PDV.inicializarMap();
 		},
+
+         //Define a tela como operação de edição/consulta
+         definirReadonly : function(readonly) {
+             PDV.readonly = readonly;
+             ENDERECO_PDV.definirReadonly(PDV.readonly);
+             TELEFONE_PDV.definirReadonly(PDV.readonly);
+              if (PDV.readonly) {
+                 $('#PDVbtnNovo', this.workspace).hide();
+                 $('#PDVbtnAdicionarDiasFuncionamento', this.workspace).hide();
+                 $('#idBtnExcluir', this.workspace).hide();
+                 $('#PDVbtnUploadImagem', this.workspace).hide();
+                 $("#dialog-pdv", this.workspace).find(':input:not(:disabled)').prop('disabled', true);
+                 PDV.fecharModalCadastroPDV = true;
+
+             } else {
+                 $('#PDVbtnNovo', this.workspace).show();
+                 $('#PDVbtnAdicionarDiasFuncionamento', this.workspace).show();
+                 $('#idBtnExcluir', this.workspace).show();
+                 $('#PDVbtnUploadImagem', this.workspace).show();
+                 $("#dialog-pdv", this.workspace).find(':input(:disabled)').prop('disabled', false);
+                 PDV.fecharModalCadastroPDV = false;
+             }
+         },
 		
 		inicializarMap : function() {
 			$("select[name='selectMap']", this.workspace).multiSelect("select[name='selectMaterialPromocional']", {trigger: "#linkMapVoltarTodos"});
@@ -36,7 +61,7 @@ var PDV =  $.extend(true, {
 			$("#numerolicenca", this.workspace).numeric();	
 			
 			var options = {
-					success: PDV.tratarRetornoUploadImagem,
+					success: PDV.tratarRetornoUploadImagem
 				};
 				
 				$('#formBaixaAutomatica', this.workspace).ajaxForm(options);	
@@ -60,14 +85,20 @@ var PDV =  $.extend(true, {
 			$.each(resultado.rows, function(index, row) {
 				
 				var param = '\'' + row.cell.idPdv +'\','+'\''+ row.cell.idCota +'\'';
-				
+
+                var title = PDV.readonly ? 'Visualizar PDV' : 'Editar Endereço';
+
 				var linkEdicao = '<a href="javascript:;" onclick="PDV.editarPDV('+ param +');" style="cursor:pointer">' +
-					 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar PDV" />' +
-					 '</a>';			
-				 
-				var linkExclusao ='<a href="javascript:;" onclick="PDV.exibirDialogExclusao('+param +' );" style="cursor:pointer">' +
-	                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir PDV" />' +
-	                  '</a>';		 					 
+					 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="'+title+'" />' +
+					 '</a>';
+
+                var linkExclusao = '';
+                if (!PDV.readonly) {
+                    linkExclusao ='<a href="javascript:;" onclick="PDV.exibirDialogExclusao('+param +' );" style="cursor:pointer">' +
+                        '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir PDV" />' +
+                        '</a>';
+                }
+
 				
 				var colunaprincipal = "";
 				
@@ -241,7 +272,7 @@ var PDV =  $.extend(true, {
 			
 			$.postJSON(contextPath + "/cadastro/pdv/excluir",
 					[{name:"idPdv",value:idPdv},
-					 {name:"idCota",value:idCota},
+					 {name:"idCota",value:idCota}
 					 ], function(result){
 				
 				PDV.pesquisarPdvs(idCota);
@@ -630,84 +661,101 @@ var PDV =  $.extend(true, {
 		},
 		
 		popup_novoPdv : function() {
-			$( "#dialog-pdv", this.workspace ).dialog({
-				resizable: false,
-				height:600,
-				width:890,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						if ($("#ptoPrincipal", this.workspace).attr("checked")){
-							
-							data = "idCota=" + PDV.idCota + 
-							       "&" + "idPdv=" + $("#idPDV").val();
-							
-							$.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal", 
-									data, 
-									function(result){
-										
-										if (result){
-											
-											$("#dialog-confirmaPontoPrincipal", this.workspace).dialog({
-												resizable : false,
-												height : 200,
-												width : 360,
-												modal : true,
-												buttons : {
-													"Confirmar" : function() {
-														
-														$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
-														PDV.fecharModalCadastroPDV = true;
-														PDV.salvarPDV();
-													},
-													"Cancelar" : function() {
-														
-														$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
-														PDV.fecharModalCadastroPDV = true;
-													}
+			if (PDV.readonly) {
 
-												}
-											});
-										} else {
-											$("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
-											PDV.fecharModalCadastroPDV = true;
-											PDV.salvarPDV();
-										}
-									},
-									null,
-									true,
-									"idModalPDV"
-							);
-						} else {
-							
-							PDV.fecharModalCadastroPDV = true;
-							PDV.salvarPDV();
-						}
-					},
-					"Cancelar": function() {
-						PDV.fecharModalCadastroPDV = false;
-						$( this ).dialog( "close" );
-					}
-				},
-				beforeClose: function(event, ui) {
-				
-					clearMessageDialogTimeout("idModalPDV");
-					clearMessageDialogTimeout();
-						
-					if (!PDV.fecharModalCadastroPDV){
-						
-						PDV.cancelarCadastro();
-						
-						return PDV.fecharModalCadastroPDV;
-					}
-						
-					return PDV.fecharModalCadastroPDV;
-					
-				},
-				form: $("#workspaceCota", this.workspace)	
-			});
+                $( "#dialog-pdv", this.workspace ).dialog({
+                    resizable: false,
+                    height:600,
+                    width:890,
+                    modal: true,
+                    buttons: {
+                        "Fechar": function() {
+                            PDV.fecharModalCadastroPDV = true;
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    form: $("#workspaceCota", this.workspace)
+                });
 
+            } else {
+                $( "#dialog-pdv", this.workspace ).dialog({
+                    resizable: false,
+                    height:600,
+                    width:890,
+                    modal: true,
+                    buttons: {
+                        "Confirmar": function() {
+
+                            if ($("#ptoPrincipal", this.workspace).attr("checked")){
+
+                                data = "idCota=" + PDV.idCota +
+                                    "&" + "idPdv=" + $("#idPDV").val();
+
+                                $.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal",
+                                    data,
+                                    function(result){
+
+                                        if (result){
+
+                                            $("#dialog-confirmaPontoPrincipal", this.workspace).dialog({
+                                                resizable : false,
+                                                height : 200,
+                                                width : 360,
+                                                modal : true,
+                                                buttons : {
+                                                    "Confirmar" : function() {
+
+                                                        $("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
+                                                        PDV.fecharModalCadastroPDV = true;
+                                                        PDV.salvarPDV();
+                                                    },
+                                                    "Cancelar" : function() {
+
+                                                        $("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
+                                                        PDV.fecharModalCadastroPDV = true;
+                                                    }
+
+                                                }
+                                            });
+                                        } else {
+                                            $("#dialog-confirmaPontoPrincipal", this.workspace).dialog("close");
+                                            PDV.fecharModalCadastroPDV = true;
+                                            PDV.salvarPDV();
+                                        }
+                                    },
+                                    null,
+                                    true,
+                                    "idModalPDV"
+                                );
+                            } else {
+
+                                PDV.fecharModalCadastroPDV = true;
+                                PDV.salvarPDV();
+                            }
+                        },
+                        "Cancelar": function() {
+                            PDV.fecharModalCadastroPDV = false;
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    beforeClose: function(event, ui) {
+
+                        clearMessageDialogTimeout("idModalPDV");
+                        clearMessageDialogTimeout();
+
+                        if (!PDV.fecharModalCadastroPDV){
+
+                            PDV.cancelarCadastro();
+
+                            return PDV.fecharModalCadastroPDV;
+                        }
+
+                        return PDV.fecharModalCadastroPDV;
+
+                    },
+                    form: $("#workspaceCota", this.workspace)
+                });
+            }
 		},
 		
 		enviarFluxoPrincipal: function (){

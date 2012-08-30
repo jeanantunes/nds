@@ -53,7 +53,7 @@
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
-				<td><span class="bt_add"><a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar">Incluir Novo</a></span></td>
+				<td><span id="${param.tela}btnIncluirNovoTelefone" class="bt_add"><a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar">Incluir Novo</a></span></td>
 			</tr>
 		</table>
 		
