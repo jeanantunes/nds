@@ -146,7 +146,6 @@ public class ParametroCobrancaCotaController {
 			
 		    parametroCobranca = new ParametroCobrancaCotaDTO();
 		    parametroCobranca.setIdCota(idCota);
-		    parametroCobranca.setComissao(BigDecimal.ZERO);
 		    parametroCobranca.setContrato(false);
 		    parametroCobranca.setFatorVencimento(0);
 		    parametroCobranca.setQtdDividasAberto(0);
@@ -230,15 +229,15 @@ public class ParametroCobrancaCotaController {
 	@Path("/obterFormaCobrancaDefault")
 	public void obterFormaCobrancaDefault(){
 
-    	//PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+    	PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
-    	//if (politicaPrincipal==null){
-    		result.nothing();
-    	//}
+    	if (politicaPrincipal==null){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma forma de cobrança default encontrada.");
+    	}
 		
-    	//ParametroCobrancaDTO parametroCobrancaDistribuidor = this.politicaCobrancaService.obterDadosPoliticaCobranca(politicaPrincipal.getId());
+    	ParametroCobrancaDTO parametroCobrancaDistribuidor = this.politicaCobrancaService.obterDadosPoliticaCobranca(politicaPrincipal.getId());
 
-		//result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
+		result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
     }
 
     

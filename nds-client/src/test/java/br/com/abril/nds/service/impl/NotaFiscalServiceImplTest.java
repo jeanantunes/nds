@@ -225,7 +225,6 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 
 		cotaComDesconto = Fixture.cota(456, manoel, SituacaoCadastro.ATIVO,
 				box1);
-		cotaComDesconto.setFatorDesconto(new BigDecimal(25));
 		save(cotaComDesconto);
 
 		Editor abril = Fixture.editoraAbril();

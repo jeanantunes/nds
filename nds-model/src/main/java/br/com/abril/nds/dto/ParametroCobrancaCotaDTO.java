@@ -15,7 +15,6 @@ public class ParametroCobrancaCotaDTO {
 	boolean contrato;
 	
 	BigDecimal valorMinimo;
-	BigDecimal comissao;
 	Integer qtdDividasAberto;
 	BigDecimal vrDividasAberto;
 	
@@ -34,7 +33,7 @@ public class ParametroCobrancaCotaDTO {
 			boolean sugereSuspensao, boolean contrato, boolean domingo,
 			boolean segunda, boolean terca, boolean quarta, boolean quinta,
 			boolean sexta, boolean sabado, BigDecimal valorMinimo,
-			BigDecimal comissao, Integer qtdDividasAberto,
+			Integer qtdDividasAberto,
 			BigDecimal vrDividasAberto,TipoCota tipoCota) {
 		super();
 		this.numCota = numCota;
@@ -42,7 +41,6 @@ public class ParametroCobrancaCotaDTO {
 		this.sugereSuspensao = sugereSuspensao;
 		this.contrato = contrato;
 		this.valorMinimo = valorMinimo;
-		this.comissao = comissao;
 		this.qtdDividasAberto = qtdDividasAberto;
 		this.vrDividasAberto = vrDividasAberto;
 		this.tipoCota=tipoCota;
@@ -118,17 +116,6 @@ public class ParametroCobrancaCotaDTO {
 		this.valorMinimo = valorMinimo;
 	}
 
-
-	public BigDecimal getComissao() {
-		return comissao;
-	}
-
-
-	public void setComissao(BigDecimal comissao) {
-		this.comissao = comissao;
-	}
-
-
 	public Integer getQtdDividasAberto() {
 		return qtdDividasAberto;
 	}
@@ -159,12 +146,13 @@ public class ParametroCobrancaCotaDTO {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((comissao == null) ? 0 : comissao.hashCode());
 		result = prime * result + (contrato ? 1231 : 1237);
 		result = prime * result
 				+ (int) (fatorVencimento ^ (fatorVencimento >>> 32));
@@ -188,6 +176,9 @@ public class ParametroCobrancaCotaDTO {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -197,11 +188,6 @@ public class ParametroCobrancaCotaDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		ParametroCobrancaCotaDTO other = (ParametroCobrancaCotaDTO) obj;
-		if (comissao == null) {
-			if (other.comissao != null)
-				return false;
-		} else if (!comissao.equals(other.comissao))
-			return false;
 		if (contrato != other.contrato)
 			return false;
 		if (fatorVencimento != other.fatorVencimento)
@@ -242,6 +228,8 @@ public class ParametroCobrancaCotaDTO {
 			return false;
 		return true;
 	}
+
+
 
 
 }

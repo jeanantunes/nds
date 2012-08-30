@@ -162,7 +162,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 			parametroCobrancaDTO.setIdCota(cota.getId());
 			parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
-			parametroCobrancaDTO.setComissao((cota.getFatorDesconto()!=null?cota.getFatorDesconto():BigDecimal.ZERO));
 			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
 			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
 			
@@ -363,7 +362,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			
 			cota.setParametroCobranca(parametroCobranca);
-			cota.setFatorDesconto((parametroCobrancaDTO.getComissao()!=null?parametroCobrancaDTO.getComissao():BigDecimal.ZERO));
 			cota.setSugereSuspensao(parametroCobrancaDTO.isSugereSuspensao());
 			cota.setPossuiContrato(parametroCobrancaDTO.isContrato());
 			
