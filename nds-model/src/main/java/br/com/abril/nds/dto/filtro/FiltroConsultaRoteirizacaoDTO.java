@@ -2,17 +2,34 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
 public class FiltroConsultaRoteirizacaoDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = -9092440426651299469L;
 	
 	private Long idBox;
 	
-	private Long idRota;
+	@Export(label = "Box", exhibitionOrder = 1)
+	private String nomeBox;
 	
 	private Long idRoteiro;
 	
+	@Export(label = "Roteiro", exhibitionOrder = 2)
+	private String nomeRoteiro;
+	
+	private Long idRota;
+	
+	@Export(label = "Rota", exhibitionOrder = 3)
+	private String nomeRota;
+	
+	@Export(label = "Cota", exhibitionOrder = 4)
 	private Integer numeroCota;
+	
+	@Export(label = "Nome", exhibitionOrder = 5)
+	private String nomeCota;
 	
 	private OrdenacaoColunaConsulta ordenacaoColuna;
 	
@@ -39,16 +56,6 @@ public class FiltroConsultaRoteirizacaoDTO extends FiltroDTO implements Serializ
 		}
 	}
 	
-	public FiltroConsultaRoteirizacaoDTO() {}
-
-	public FiltroConsultaRoteirizacaoDTO(Long boxId, Long idRoteiro,Long rotaId, Integer numeroCota) {
-		
-		this.numeroCota = numeroCota;
-		this.idBox = boxId;
-		this.idRoteiro = idRoteiro;
-		this.idRota = rotaId;
-	}
-
 	/**
 	 * @return the idBox
 	 */
@@ -64,17 +71,17 @@ public class FiltroConsultaRoteirizacaoDTO extends FiltroDTO implements Serializ
 	}
 
 	/**
-	 * @return the idRota
+	 * @return the nomeBox
 	 */
-	public Long getIdRota() {
-		return idRota;
+	public String getNomeBox() {
+		return nomeBox;
 	}
 
 	/**
-	 * @param idRota the idRota to set
+	 * @param nomeBox the nomeBox to set
 	 */
-	public void setIdRota(Long idRota) {
-		this.idRota = idRota;
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
 	}
 
 	/**
@@ -89,6 +96,48 @@ public class FiltroConsultaRoteirizacaoDTO extends FiltroDTO implements Serializ
 	 */
 	public void setIdRoteiro(Long idRoteiro) {
 		this.idRoteiro = idRoteiro;
+	}
+
+	/**
+	 * @return the nomeRoteiro
+	 */
+	public String getNomeRoteiro() {
+		return nomeRoteiro;
+	}
+
+	/**
+	 * @param nomeRoteiro the nomeRoteiro to set
+	 */
+	public void setNomeRoteiro(String nomeRoteiro) {
+		this.nomeRoteiro = nomeRoteiro;
+	}
+
+	/**
+	 * @return the idRota
+	 */
+	public Long getIdRota() {
+		return idRota;
+	}
+
+	/**
+	 * @param idRota the idRota to set
+	 */
+	public void setIdRota(Long idRota) {
+		this.idRota = idRota;
+	}
+	
+	/**
+	 * @return the nomeRota
+	 */
+	public String getNomeRota() {
+		return nomeRota;
+	}
+
+	/**
+	 * @param nomeRota the nomeRota to set
+	 */
+	public void setNomeRota(String nomeRota) {
+		this.nomeRota = nomeRota;
 	}
 
 	/**
@@ -118,4 +167,19 @@ public class FiltroConsultaRoteirizacaoDTO extends FiltroDTO implements Serializ
 	public void setOrdenacaoColuna(OrdenacaoColunaConsulta ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
+
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+	
 }

@@ -1,13 +1,10 @@
 <head>
 	
-	
+	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/fiador.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 	
-	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/fiador.js"></script>
-		
-		
 	<script language="javascript" type="text/javascript">
 		$(function(){
 			fiadorController.init();
@@ -35,7 +32,7 @@
 	<div id="workspaceFiador">
 	<div id="fiadorController-dialog-fiador" title="Novo Fiador" style="display: none;">
 	
-		<jsp:include page="../messagesDialog.jsp" />
+		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialog-fiador" name="messageDialog"/>
 		</jsp:include>
 	
@@ -99,10 +96,10 @@
 			
 			<div id="fiadorController-tab-5">
 				<br />
-				<fieldset style="margin-left:10px;"
+				<fieldset style="margin-left:10px;">
 	        		<legend>Dados Cadastrais</legend>
 					<jsp:include page="garantias.jsp"></jsp:include>
-				
+				</fieldset>
 	    	</div>
 	    
 			<div id="fiadorController-tab-6">
