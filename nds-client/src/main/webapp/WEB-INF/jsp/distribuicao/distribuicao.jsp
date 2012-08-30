@@ -62,8 +62,8 @@
 			        </tr>
     			</table>
     			<!-- Entrega de Reparte de Venda -->
-        		<input type="checkbox" id="${param.tela}entregaReparteVenda" />
-        		<label for="${param.tela}entregaReparteVenda">Entrega de Reparte de Venda</label>
+        		<input type="checkbox" id="${param.tela}repPorPontoVenda" />
+        		<label for="${param.tela}repPorPontoVenda">Entrega de Reparte de Venda</label>
 				
          		<br clear="all" />
         		
@@ -119,18 +119,30 @@
       					</tr>
     					<tr>
 							<td>Boleto</td>
-							<td align="center"><input type="checkbox" name="checkbox3" id="checkbox3" /></td>
-							<td align="center"><input type="checkbox" name="checkbox6" id="checkbox6" /></td>
+							<td align="center">
+								<input id="${param.tela}boletoImpresso" type="checkbox" />
+							</td>
+							<td align="center">
+								<input id="${param.tela}boletoEmail" type="checkbox" />
+							</td>
       					</tr>
     					<tr>
 							<td>Boleto + Slip</td>
-							<td align="center"><input type="checkbox" name="checkbox4" id="checkbox4" /></td>
-							<td align="center"><input type="checkbox" name="checkbox" id="checkbox" /></td>
+							<td align="center">
+								<input id="${param.tela}boletoSlipImpresso" type="checkbox" />
+							</td>
+							<td align="center">
+								<input id="${param.tela}boletoSlipEmail" type="checkbox" />
+							</td>
       					</tr>
     					<tr>
 							<td>Recibo</td>
-							<td align="center"><input type="checkbox" name="checkbox7" id="checkbox7" /></td>
-							<td align="center"><input type="checkbox" name="checkbox12" id="checkbox12" /></td>
+							<td align="center">
+								<input id="${param.tela}reciboImpresso" type="checkbox" />
+							</td>
+							<td align="center">
+								<input id="${param.tela}reciboEmail" type="checkbox" />
+							</td>
       					</tr>
 					    <tr>
 					      	<td>Note de Envio</td>
