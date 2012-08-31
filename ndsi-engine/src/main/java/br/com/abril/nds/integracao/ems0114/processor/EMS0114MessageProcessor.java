@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.ems0114.processor;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.List;
@@ -8,8 +7,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -35,11 +32,6 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
 	@Override
 	public void processMessage(Message message) {
 
@@ -205,11 +197,6 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void posProcess() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	
