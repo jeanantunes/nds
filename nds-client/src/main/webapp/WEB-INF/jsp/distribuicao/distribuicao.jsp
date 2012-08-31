@@ -99,6 +99,8 @@
 						</td>
 					</tr>
 				</table>
+								
+				<jsp:include page="entregaEmBanca.jsp"/>
 				
 				<fieldset style="width:390px;">
 					<legend>Emissão de Documentos</legend>

@@ -1,5 +1,8 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -36,13 +41,16 @@ import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -66,6 +74,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
@@ -123,6 +132,9 @@ public class CotaController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private ServletContext servletContext;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
@@ -1184,5 +1196,15 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.session.removeAttribute(FILTRO_SESSION_ATTRIBUTE);
 	}
+	
+	@Post
+	public void uploadTermoAdesao(UploadedFile uploadedFile, Integer numCota) {		
+
+		session.setAttribute("termoDeAdesao", uploadedFile);					
+		
+		this.result.use(PlainJSONSerialization.class)
+			.from("", "result").recursive().serialize();
+	}
+	
 }
 

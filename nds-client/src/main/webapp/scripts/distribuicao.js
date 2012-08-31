@@ -54,6 +54,8 @@ function Distribuicao(tela) {
 				
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
+				
+		$('#numCotaUpload').val(dto.numCota);
 		
 		D.set('numCota',			dto.numCota);
 		D.set('qtdePDV',			dto.qtdePDV ? dto.qtdePDV.toString() : '' );
