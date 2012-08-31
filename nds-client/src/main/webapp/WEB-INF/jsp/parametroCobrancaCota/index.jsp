@@ -224,132 +224,182 @@ $(function(){
 		</jsp:include>
 
 		<fieldset>
+		
 			<legend>Unificar Boletos</legend>
 
-			<div name="formularioFormaCobranca" id="formularioFormaCobranca">
+			<div name="formularioFormaCobranca" id="formularioFormaCobranca">		
+                           
+			    <table width="434" height="25" border="0" cellpadding="1" cellspacing="1">
+				    
+				     <tr class="header_table">
+				         <td align="left">Fornecedores</td>
+				         <td align="left">&nbsp;</td>
+				         <td align="left">Concentração de Pagamentos</td>
+				     </tr>
+				     
+			         <tr>
+			             <td width="170" align="left" valign="top" style="border:1px solid #ccc;">
 
-				<table width="434" height="25" border="0" cellpadding="1"
-					cellspacing="1">
+			                 <table width="168" border="0" cellspacing="1" cellpadding="1">
 
-					<tr class="header_table">
-						<td align="left">Fornecedores</td>
-						<td align="left">&nbsp;</td>
-						<td align="left">Concentração de Pagamentos</td>
-					</tr>
-
-					<tr>
-						<td width="170" align="left" valign="top"
-							style="border: 1px solid #ccc;">
-
-							<table width="168" border="0" cellspacing="1" cellpadding="1">
-
-								<div id="fornecedoresCota" />
-
-							</table>
-
-							<p>
-								<br clear="all" /> <br clear="all" /> <br clear="all" /> <br
-									clear="all" />
-							</p>
-
-						</td>
-
-						<td width="21" align="left" valign="top">&nbsp;</td>
-						<td width="233" align="left" valign="top"
-							style="border: 1px solid #ccc;">
-
-
-							<table width="100%" border="0" cellspacing="1" cellpadding="1">
-								<tr>
-									<td width="20"><input type="radio" name="mensal"
-										id="mensal" value="radio"
-										onclick="parametroCobrancaCotaController.mostraMensal();" /></td>
-									<td width="173">Mensal</td>
-									<td width="20"><input type="radio" name="semanal"
-										id="semanal" value="radio"
-										onclick="parametroCobrancaCotaController.mostraSemanal();" /></td>
-									<td width="173">Semanal</td>
-								</tr>
-							</table>
-
-
-							<table width="100%" border="0" cellspacing="1" cellpadding="1"
-								class="mensal">
-								<tr>
-									<td width="68">Todo dia:</td>
-									<td width="156"><input maxlength="2" type="text"
-										name="diaDoMes" id="diaDoMes" style="width: 60px;" /></td>
-								</tr>
-							</table>
-
-
-							<table width="100%" border="0" cellspacing="1" cellpadding="1"
-								class="semanal">
-
-								<tr>
-									<td><input type="checkbox" name="PS" id="PS" /></td>
-									<td><label for="PS">Segunda-feira</label></td>
-								</tr>
-
-								<tr>
-									<td><input type="checkbox" name="PT" id="PT" /></td>
-									<td><label for="PT">Terça-feira</label></td>
-								</tr>
-
-								<tr>
-									<td><input type="checkbox" name="PQ" id="PQ" /></td>
-									<td><label for="PQ">Quarta-feira</label></td>
-								</tr>
-
-								<tr>
-									<td><input type="checkbox" name="PQu" id="PQu" /></td>
-									<td><label for="PQu">Quinta-feira</label></td>
-								</tr>
-
-								<tr>
-									<td><input type="checkbox" name="PSex" id="PSex" /></td>
-									<td><label for="PSex">Sexta-feira</label></td>
-								</tr>
-
-								<tr>
-									<td><input type="checkbox" name="PSab" id="PSab" /></td>
-									<td><label for="PSab">Sábado</label></td>
-								</tr>
-
-								<tr>
-									<td><input type="checkbox" name="PDom" id="PDom" /></td>
-									<td><label for="PDom">Domingo</label></td>
-								</tr>
-
-							</table>
-
-						</td>
-
-					</tr>
-
-					<tr>
-						<td valign="top">&nbsp;</td>
-						<td valign="top">&nbsp;</td>
-						<td valign="top">&nbsp;</td>
-					</tr>
-
-					<tr>
-						<td valign="top"><strong>Tipo de Pagamento:</strong></td>
-						<td valign="top">&nbsp;</td>
-						<td valign="top"><select name="tipoCobranca"
-							id="tipoCobranca" style="width: 150px;"
-							onchange="parametroCobrancaCotaController.opcaoPagto(this.value);">
-								<option value="">Selecione</option>
-								<c:forEach varStatus="counter" var="itemTipoCobranca"
-									items="${listaTiposCobranca}">
-									<option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
-								</c:forEach>
-						</select></td>
-					</tr>
-
+                                <div id="fornecedoresCota"/>
+ 
+				             </table>
+				             
+			                 <p><br clear="all" />
+				                 <br clear="all" />
+				                 <br clear="all" />
+				                 <br clear="all" />
+			                 </p>
+			                 
+		                 </td>
+		                 
+					     <td width="21" align="left" valign="top">&nbsp;</td>
+					     <td width="233" align="left" valign="top"style="border:1px solid #ccc;">
+	
+	
+					         <table width="100%" border="0" cellspacing="1" cellpadding="1">
+						         <tr>
+						             <td width="20"><input type="radio" name="diario" id="diario" value="radio" onclick="parametroCobrancaCotaController.mostraDiario();" /></td>
+						             <td width="173">Diário</td>
+						             <td width="20"><input type="radio" name="semanal" id="semanal" value="radio" onclick="parametroCobrancaCotaController.mostraSemanal();" /></td>
+						             <td width="173">Semanal</td>
+						             <td width="20"><input type="radio" name="quinzenal" id="quinzenal" value="radio" onclick="parametroCobrancaCotaController.mostraQuinzenal();" /></td>
+						             <td width="173">Quinzenal</td>
+						             <td width="20"><input type="radio" name="mensal" id="mensal" value="radio" onclick="parametroCobrancaCotaController.mostraMensal();" /></td>
+						             <td width="173">Mensal</td>
+						         </tr>
+						     </table>
+						     
+						     
+						     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="diario">
+						         <tr>
+						             <td width="68"></td>
+						             <td width="156"></td>
+						         </tr>
+						     </table>
+						     
+						     
+						     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="quinzenal">
+						         <tr>
+						             <td width="68">Todo dia:</td>
+						             <td width="320">
+						                 <input maxlength="2" type="text" name="primeiroDiaQuinzenal" id="primeiroDiaQuinzenal" style="width:60px;"/>
+						                 e 
+						                 <input maxlength="2" type="text" name="segundoDiaQuinzenal" id="segundoDiaQuinzenal" style="width:60px;"/>
+						             </td>
+						         </tr>
+						     </table>
+						    
+						    
+						     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
+						         <tr>
+						             <td width="68">Todo dia:</td>
+						             <td width="156"><input maxlength="2" type="text" name="diaDoMes" id="diaDoMes" style="width:60px;"/></td>
+						         </tr>
+						     </table>
+					     
+ 			        
+		                     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="semanal">
+							        
+					             <tr>
+					                 <td>
+					                     <input type="checkbox" name="PS" id="PS" />
+					                 </td>    
+					                 <td>
+					                     <label for="PS">Segunda-feira</label>
+					                 </td>
+					             </tr>
+							            
+							     <tr>
+					                 <td>           
+							             <input type="checkbox" name="PT" id="PT" />
+							         </td>    
+					                 <td>    
+							             <label for="PT">Terça-feira</label>
+							         </td>
+					             </tr>
+					             
+					             <tr>
+					                 <td>            
+							             <input type="checkbox" name="PQ" id="PQ" />
+							         </td>    
+					                 <td>      
+							             <label for="PQ">Quarta-feira</label>
+							         </td>
+					              </tr>    
+							                          
+							      <tr>
+					                 <td>          
+							             <input type="checkbox" name="PQu" id="PQu" />
+							          </td>    
+					                  <td>  
+							             <label for="PQu">Quinta-feira</label>
+							          </td>
+					              </tr>
+							                  
+							      <tr>
+					                 <td>          
+							             <input type="checkbox" name="PSex" id="PSex" />
+							         </td>    
+					                 <td>      
+							             <label for="PSex">Sexta-feira</label>
+							         </td>
+					              </tr>    
+							               
+							      <tr>
+					                 <td>    
+							             <input type="checkbox" name="PSab" id="PSab" />
+							             </td>    
+					                 <td>  
+							             <label for="PSab">Sábado</label>
+							         </td>
+					              </tr>
+							                   
+							      <tr>
+					                  <td>
+							             <input type="checkbox" name="PDom" id="PDom" />
+							             </td>    
+					                 <td>  
+							             <label for="PDom">Domingo</label>
+							         </td>
+					              </tr>
+							
+							 </table>
+							 
+						 	
+							 
+					     </td>
+	   
+		             </tr>  
+	
+		         
+					 <tr>
+					    <td valign="top">&nbsp;</td>
+					    <td valign="top">&nbsp;</td>
+					    <td valign="top">&nbsp;</td>
+					 </tr>
+		
+					  
+					 <tr>
+				        <td valign="top"><strong>Tipo de Pagamento:</strong></td>
+					    <td valign="top">&nbsp;</td>
+					    <td valign="top">
+		
+					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="parametroCobrancaCotaController.opcaoPagto(this.value);">
+		                        <option value="">Selecione</option>
+		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
+				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
+				                </c:forEach>
+		                    </select> 
+		
+				        </td>    
+				     </tr>
+	
 				</table>
 
 			</div>
+
 
 
 			<div id="divComboBanco" style="display: none;">
