@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro.garantia.pagamento;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,21 +13,21 @@ import javax.persistence.Enumerated;
 @Entity
 @DiscriminatorValue(value="Boleto")
 public class PagamentoBoleto extends PagamentoCaucaoLiquida {
-	
+
 	private static final long serialVersionUID = 2519203333658295852L;
 
 	@Column(name="QNT_PARCELAS")
 	private Integer quantidadeParcelas;
-	
+
 	@Column(name="VALOR_PARECELA")
 	private BigDecimal valorParcela;
-	
+
 	@ElementCollection
-	private List<Integer> diasDoMes; 
-	
+	private List<Integer> diasDoMes;
+
 	@ElementCollection
 	private List<Integer> diasSemana;
-	
+
 	/**
 	 * @return the diasDoMes
 	 */
@@ -99,6 +100,6 @@ public class PagamentoBoleto extends PagamentoCaucaoLiquida {
 	public void setPeriodoCobranca(PeriodoCobranca periodoCobranca) {
 		this.periodoCobranca = periodoCobranca;
 	}
-	
-	
+
+
 }
