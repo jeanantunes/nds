@@ -119,5 +119,17 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
+
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
