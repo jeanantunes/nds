@@ -14,48 +14,48 @@ import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.service.vo.RetornoImportacaoArquivoVO;
 
 /**
- * 
+ *
  * Classe que abstrai a leitura e geração de log dos arquivos importados
- * 
+ *
  * @author Discover Technology
  *
  */
 public abstract class ImportacaoAbstractStrategy {
 
 	private static final Logger logger = Logger.getLogger(ImportacaoAbstractStrategy.class);
-	
+
 	protected static final String MENSAGEM_ERRO_PARSE_DADOS = "Parse das informações contidas na linha do arquivo inválida!";
-	
+
 	protected static final String MENSAGEM_ERRO_FORMATO_DADOS="Formato das informações contidas na linha do arquivo inválida!";
-	
+
 	protected Date dataCriacaoArquivo;
 
 	/**
 	 * Efetua o processamento do dados referente ao arquivo
-	 * 
+	 *
 	 * @param input -input de dados referente a leitura da linha do arquivo
 	 */
 	protected abstract void processarDados(Object input);
-	
+
 	/**
-	 * 
+	 *
 	 * Efetua o parse da linha do arquivo em um objeto
-	 * 
-	 * @param linha - linha do arquivo 
+	 *
+	 * @param linha - linha do arquivo
 	 * @return Object
 	 */
 	protected abstract Object parseDados(String linha);
-	
+
 	/**
 	 * Efetua o processamento do arquivo informado
-	 * 
+	 *
 	 * @param arquivo - arquivo a ser importado
 	 * @return RetornoImportacaoArquivoVO
 	 */
 	protected RetornoImportacaoArquivoVO processarArquivo(File arquivo){
-		
+
 		dataCriacaoArquivo = new Date(arquivo.lastModified());
-		
+
 		FileReader in = null;
 		try {
 			in = new FileReader(arquivo);
@@ -63,7 +63,7 @@ public abstract class ImportacaoAbstractStrategy {
 			logger.fatal("Erro na leitura de arquivo", ex);
 			throw new ImportacaoException(ex.getMessage());
 		}
-		
+
 		Scanner scanner = new Scanner(in);
 		int linhaArquivo = 0;
 
@@ -71,33 +71,33 @@ public abstract class ImportacaoAbstractStrategy {
 
 			String linha = scanner.nextLine();
 			linhaArquivo++;
-			
+
 			// Ignora linha vazia e aquele caracter estranho em formato de seta para direita
 			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
 				continue;
-			} 
-			
+			}
+
 			try {
-				
+
 				Object  input = parseDados(linha);
-				
+
 				processarDados(input);
-				
+
 			} catch (ImportacaoException e) {
-				
+
 				RetornoImportacaoArquivoVO retorno = new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
 				logger.error(retorno.toString());
-				return retorno; 
+				return retorno;
 			}
 		}
-		
+
 		try {
 			in.close();
 		} catch (IOException e) {
 			logger.fatal("Erro na leitura de arquivo", e);
 			throw new ImportacaoException(e.getMessage());
 		}
-		
+
 		return new RetornoImportacaoArquivoVO(true) ;
 	}
 }

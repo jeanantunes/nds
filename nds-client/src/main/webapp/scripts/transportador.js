@@ -349,6 +349,55 @@ var transportadorController = $.extend(true, {
 			});
 			$(".boxRotaGrid", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarRotas"});
 			
+			$("#gridCotasAssociadas", transportadorController.workspace).flexigrid({
+				dataType : 'json',
+				//preProcess: function(data){},
+				colModel : [ {
+					display : 'Cota',
+					name : 'numeroCota',
+					width : 60,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Jornaleiro',
+					name : 'nomeCota',
+					width : 222,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Box',
+					name : 'box',
+					width : 130,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Roteiro',
+					name : 'roteiro',
+					width : 130,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Rota',
+					name : 'rota',
+					width : 130,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Valor R$ / %',
+					name : 'valor',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}],
+				sortname : "numeroCota",
+				sortorder : "asc",
+				showTableToggleBtn : true,
+				width : 850,
+				height : 200,
+				disableSelect: true
+			});
+			$("#gridCotasAssociadas", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarCotasAssociadas"});
+			
 			$("#cnpj", transportadorController.workspace).mask("99.999.999/9999-99");
 	},
 	
@@ -819,7 +868,7 @@ var transportadorController = $.extend(true, {
 					$("#inscEstadual", transportadorController.workspace).val(result[5]);
 				}
 			
-				popup_novo_transportador();
+				transportadorController.popup_novo_transportador();
 			}
 		);
 	},
@@ -1014,6 +1063,26 @@ var transportadorController = $.extend(true, {
 			},
 			form: $("#dialog-excluir-associacao", this.workspace).parents("form")
 		});
+	},
+	
+	mostrarOpcaoTaxaFixa : function(){
+		
+		$(".transpTaxaFixa", this.workspace).show();
+		$(".transpPercentual", this.workspace).hide();
+	}, 
+	
+	mostrarOpcaoPercentual : function(){
+		
+		$(".transpTaxaFixa", this.workspace).hide();
+		$(".transpPercentual", this.workspace).show();
 	}
 
 }, BaseController);
+
+$(function() {
+	transportadorController.init();
+	//ENDERECO_TRANSPORTADOR.init(transportadorController.workspace);
+	//TRANSPORTADOR.init(transportadorController.workspace);
+	
+	
+} );

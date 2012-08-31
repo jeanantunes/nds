@@ -18,16 +18,16 @@ public class ParametroDistribuicaoCota implements Serializable {
 	@Column(name = "ASSISTENTE_COMERCIAL", nullable = true)
 	private String assistenteComercial;
 	
+	@Column(name = "GERENTE_COMERCIAL", nullable = true)
+	private String gerenteComercial;
+	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "TIPO_ENTREGA_ID")
 	private TipoEntrega tipoEntrega;
 	
 	@Column(name = "OBSERVACAO", nullable = true)
 	private String observacao;
-	
-	@Column(name = "ARRENDATARIO", nullable = true)
-	private Boolean arrendatario;
-	
+		
 	@Column(name = "REPARTE_POR_PONTO_VENDA", nullable = true)
 	private Boolean repartePorPontoVenda;
 	
@@ -55,6 +55,24 @@ public class ParametroDistribuicaoCota implements Serializable {
 	@Column(name = "SLIP_EMAIL", nullable = true)
 	private Boolean slipEmail;
 	
+	@Column(name = "BOLETO_IMPRESSO", nullable = true)
+	private Boolean boletoImpresso;
+	
+	@Column(name = "BOLETO_EMAIL", nullable = true)
+	private Boolean boletoEmail;
+	
+	@Column(name = "BOLETO_SLIP_IMPRESSO", nullable = true)
+	private Boolean boletoSlipImpresso;
+	
+	@Column(name = "BOLETO_SLIP_EMAIL", nullable = true)
+	private Boolean boletoSlipEmail;
+	
+	@Column(name = "RECIBO_IMPRESSO", nullable = true)
+	private Boolean reciboImpresso;
+	
+	@Column(name = "RECIBO_EMAIL", nullable = true)
+	private Boolean reciboEmail;
+	
 	@Column(name = "PROCURACAO_ASSINADA")
 	private boolean procuracaoAssinada;
 
@@ -65,7 +83,7 @@ public class ParametroDistribuicaoCota implements Serializable {
 	
 	public ParametroDistribuicaoCota(Integer qtdePDV,
 			String assistenteComercial, TipoEntrega tipoEntrega,
-			String observacao, Boolean arrendatario,
+			String observacao,
 			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
 			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
 			Boolean notaEnvioEmail, Boolean chamadaEncalheImpresso,
@@ -75,7 +93,6 @@ public class ParametroDistribuicaoCota implements Serializable {
 		this.assistenteComercial = assistenteComercial;
 		this.tipoEntrega = tipoEntrega;
 		this.observacao = observacao;
-		this.arrendatario = arrendatario;
 		this.repartePorPontoVenda = repartePorPontoVenda;
 		this.solicitaNumAtras = solicitaNumAtras;
 		this.recebeRecolheParcias = recebeRecolheParcias;
@@ -115,6 +132,14 @@ public class ParametroDistribuicaoCota implements Serializable {
 		this.assistenteComercial = assistenteComercial;
 	}
 
+	public String getGerenteComercial() {
+		return gerenteComercial;
+	}
+
+	public void setGerenteComercial(String gerenteComercial) {
+		this.gerenteComercial = gerenteComercial;
+	}
+
 	/**
 	 * @return the tipoEntrega
 	 */
@@ -144,19 +169,6 @@ public class ParametroDistribuicaoCota implements Serializable {
 	}
 
 	/**
-	 * @return the arrendatario
-	 */
-	public Boolean getArrendatario() {
-		return arrendatario;
-	}
-
-	/**
-	 * @param arrendatario the arrendatario to set
-	 */
-	public void setArrendatario(Boolean arrendatario) {
-		this.arrendatario = arrendatario;
-	}
-
 	/**
 	 * @return the repartePorPontoVenda
 	 */
@@ -289,5 +301,53 @@ public class ParametroDistribuicaoCota implements Serializable {
 
 	public void setProcuracaoAssinada(boolean procuracaoAssinada) {
 		this.procuracaoAssinada = procuracaoAssinada;
+	}
+
+	public Boolean getBoletoImpresso() {
+		return boletoImpresso;
+	}
+
+	public void setBoletoImpresso(Boolean boletoImpresso) {
+		this.boletoImpresso = boletoImpresso;
+	}
+
+	public Boolean getBoletoEmail() {
+		return boletoEmail;
+	}
+
+	public void setBoletoEmail(Boolean boletoEmail) {
+		this.boletoEmail = boletoEmail;
+	}
+
+	public Boolean getBoletoSlipImpresso() {
+		return boletoSlipImpresso;
+	}
+
+	public void setBoletoSlipImpresso(Boolean boletoSlipImpresso) {
+		this.boletoSlipImpresso = boletoSlipImpresso;
+	}
+
+	public Boolean getBoletoSlipEmail() {
+		return boletoSlipEmail;
+	}
+
+	public void setBoletoSlipEmail(Boolean boletoSlipEmail) {
+		this.boletoSlipEmail = boletoSlipEmail;
+	}
+
+	public Boolean getReciboImpresso() {
+		return reciboImpresso;
+	}
+
+	public void setReciboImpresso(Boolean reciboImpresso) {
+		this.reciboImpresso = reciboImpresso;
+	}
+
+	public Boolean getReciboEmail() {
+		return reciboEmail;
+	}
+
+	public void setReciboEmail(Boolean reciboEmail) {
+		this.reciboEmail = reciboEmail;
 	}
 }

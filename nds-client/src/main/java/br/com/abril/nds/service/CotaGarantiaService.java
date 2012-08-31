@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
@@ -17,6 +18,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 
 /**
  * Interface que define os serviços referentes ao cadastro de garantias da cota.
@@ -173,4 +175,6 @@ public interface CotaGarantiaService {
 	 */
 	public abstract NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(
 			long idCota);
+	
+	CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida conta) throws ValidacaoException, InstantiationException, IllegalAccessException ;
 }

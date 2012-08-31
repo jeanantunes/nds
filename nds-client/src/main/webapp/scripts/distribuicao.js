@@ -29,6 +29,7 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.qtdePDV',				value: D.get("qtdePDV")});
 		data.push({name:'distribuicao.box',					value: D.get("box")});
 		data.push({name:'distribuicao.assistComercial',		value: D.get("assistComercial")});
+		data.push({name:'distribuicao.gerenteComercial',    value: D.get("gerenteComercial")});
 		data.push({name:'distribuicao.tipoEntrega',			value: D.get("tipoEntrega")});
 		data.push({name:'distribuicao.observacao',			value: D.get("observacao")});
 		data.push({name:'distribuicao.arrendatario',		value: D.get("arrendatario")});
@@ -41,6 +42,12 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.ceEmail',				value: D.get("ceEmail")});
 		data.push({name:'distribuicao.slipImpresso',		value: D.get("slipImpresso")});
 		data.push({name:'distribuicao.slipEmail',			value: D.get("slipEmail")});
+		data.push({name:'distribuicao.boletoImpresso',		value: D.get("boletoImpresso")});
+		data.push({name:'distribuicao.boletoEmail',			value: D.get("boletoEmail")});
+		data.push({name:'distribuicao.boletoSlipImpresso',	value: D.get("boletoSlipImpresso")});
+		data.push({name:'distribuicao.boletoSlipEmail',		value: D.get("boletoSlipEmail")});
+		data.push({name:'distribuicao.reciboImpresso',		value: D.get("reciboImpresso")});
+		data.push({name:'distribuicao.reciboEmail',			value: D.get("reciboEmail")});
 				
 		return data;
 	},
@@ -59,6 +66,7 @@ function Distribuicao(tela) {
 		D.set('qtdePDV',			dto.qtdePDV ? dto.qtdePDV.toString() : '' );
 		D.set('box',				dto.box);
 		D.set('assistComercial',	dto.assistComercial);
+		D.set('gerenteComercial',	dto.gerenteComercial);
 		D.set('tipoEntrega',		dto.tipoEntrega);
 		D.set('arrendatario',		dto.arrendatario);
 		D.set('observacao',			dto.observacao);
@@ -71,7 +79,12 @@ function Distribuicao(tela) {
 		D.set('ceEmail',			dto.ceEmail);
 		D.set('slipImpresso',		dto.slipImpresso);
 		D.set('slipEmail',			dto.slipEmail);
-		
+		D.set('boletoImpresso',		dto.boletoImpresso);
+		D.set('boletoEmail',		dto.boletoEmail);
+		D.set('boletoSlipImpresso',	dto.boletoSlipImpresso);
+		D.set('boletoSlipEmail',	dto.boletoSlipEmail);
+		D.set('reciboImpresso',		dto.reciboImpresso);
+		D.set('reciboEmail',		dto.reciboEmail);		
 		
 		if(dto.qtdeAutomatica) {
 			D.$('qtdePDV').attr('disabled','disabled');
