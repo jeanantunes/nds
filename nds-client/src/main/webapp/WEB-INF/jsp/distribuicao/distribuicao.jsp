@@ -100,6 +100,72 @@
 					</tr>
 				</table>
 				
+				<div id="entregadorPf" style="display: none;">
+					<table width="399" border="0" cellspacing="1" cellpadding="1">
+						<tr>
+							<td>Utiliza Procuração?</td>
+							<td width="20">
+								<input type="checkbox" name="checkbox15"
+									   id="checkbox15" onclick="mostraProcuracaoPf();" />
+								
+							<td width="201" class="procuracaoPf">
+								<span class="bt_imprimir" style="display: block;">
+									<a href="../procuracao.htm" target="_blank">Procuração</a>
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td>Procuração Recebida?</td>
+							<td colspan="2">
+								<input type="checkbox" name="checkbox2" id="checkbox2" />
+							</td>
+						</tr>
+						<tr>
+							<td>Arquivo:</td>
+							<td colspan="2">
+								<input name="fileField" type="file"
+									   id="fileField" size="15" />
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td colspan="2">
+								<a href="javascript:;">nome_do_arquivo</a>
+								<a href="javascript:;">
+									<img src="../images/ico_excluir.gif"
+								   		 alt="Excluir arquivo" width="15" height="15" border="0" />
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td width="145">Percentual Faturamento:</td>
+							<td colspan="2">
+								<input id="${param.tela}percentualFaturamento" type="text"
+									   style="width: 70px; text-align: right;" />
+							</td>
+						</tr>
+						<tr>
+							<td>Período Carência:</td>
+							<td colspan="2">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td width="43%">
+											<input id="${param.tela}inicioPeriodoCarencia" 
+												   name="inicioPeriodoCarencia" type="text" style="width: 70px" />
+										</td>
+										<td width="14%">Até</td>
+										<td width="43%">
+											<input id="${param.tela}fimPeriodoCarencia"
+												   name="fimPeriodoCarencia" type="text" style="width: 70px" />
+										</td>
+									</tr>
+								</table></td>
+						</tr>
+					</table>
+				</div>
+				
+				<br />
+				
 				<fieldset style="width:390px;">
 					<legend>Emissão de Documentos</legend>
 					<table width="373" border="0" cellspacing="1" cellpadding="0">
