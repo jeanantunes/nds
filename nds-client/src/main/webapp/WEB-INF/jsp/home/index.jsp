@@ -261,6 +261,7 @@
 .ui-tabs .ui-tabs-panel {
     padding: 0px;
 }
+
 </style>
 </head>
 <body>
