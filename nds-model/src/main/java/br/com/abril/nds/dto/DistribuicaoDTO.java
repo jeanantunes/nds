@@ -36,6 +36,10 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean reciboImpresso;
 	private Boolean reciboEmail;
 	private String gerenteComercial;
+	private String taxaFixa;
+	private String percentualFaturamento;
+	private String inicioPeriodoCarencia;
+	private String fimPeriodoCarencia;
 	
 	private List<ItemDTO<Long, String>> tiposEntrega;
 	
@@ -336,4 +340,61 @@ public class DistribuicaoDTO implements Serializable  {
 	public void setReciboEmail(Boolean reciboEmail) {
 		this.reciboEmail = reciboEmail;
 	}	
+
+	/**
+	 * @return the taxaFixa
+	 */
+	public String getTaxaFixa() {
+		return taxaFixa;
+	}
+
+	/**
+	 * @param taxaFixa the taxaFixa to set
+	 */
+	public void setTaxaFixa(String taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+
+	/**
+	 * @return the percentualFaturamento
+	 */
+	public String getPercentualFaturamento() {
+		return percentualFaturamento;
+	}
+
+	/**
+	 * @param percentualFaturamento the percentualFaturamento to set
+	 */
+	public void setPercentualFaturamento(String percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
+	}
+
+	/**
+	 * @return the inicioPeriodoCarencia
+	 */
+	public String getInicioPeriodoCarencia() {
+		return inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @param inicioPeriodoCarencia the inicioPeriodoCarencia to set
+	 */
+	public void setInicioPeriodoCarencia(String inicioPeriodoCarencia) {
+		this.inicioPeriodoCarencia = inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @return the fimPeriodoCarencia
+	 */
+	public String getFimPeriodoCarencia() {
+		return fimPeriodoCarencia;
+	}
+
+	/**
+	 * @param fimPeriodoCarencia the fimPeriodoCarencia to set
+	 */
+	public void setFimPeriodoCarencia(String fimPeriodoCarencia) {
+		this.fimPeriodoCarencia = fimPeriodoCarencia;
+	}
+	
 }
