@@ -207,6 +207,11 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void posProcess(Message message) {
 		
 		/*
 		 * Regras de validação para EMS-107:
@@ -238,11 +243,6 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
 		// EstudoCota batem com a qtdeReparte do respectivo Estudo
 		
-	}
-	
-	@Override
-	public void posProcess(Message message) {
-		// TODO Auto-generated method stub
 	}
 	
 }
