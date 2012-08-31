@@ -34,6 +34,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void processMessage(Message message) {
 		// OBTEM DETALHES
 		List<EMS0127Detalhe> detalhes = obterEncalhe(null);
@@ -96,6 +101,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

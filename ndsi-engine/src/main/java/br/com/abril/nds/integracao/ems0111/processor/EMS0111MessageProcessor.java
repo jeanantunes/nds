@@ -53,6 +53,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	}
 
 	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void processMessage(Message message) {
 
 		EMS0111Input input = (EMS0111Input) message.getBody();
@@ -199,6 +204,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

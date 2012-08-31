@@ -10,6 +10,14 @@ public interface MessageProcessor {
 	 */
 	void preProcess();
 	
+	/**
+	 * Método a ser chamado para realizar as ações de pré-processamento (antes 
+	 * do processamento principal).
+	 * 
+	 * @param message
+	 */
+	void preProcess(Message message);
+	
 	public void processMessage(Message message);
 	
 	/**
@@ -17,4 +25,12 @@ public interface MessageProcessor {
 	 * o processamento principal).
 	 */
 	void posProcess();
+	
+	/**
+	 * Método a ser chamado para realizar as ações de pós-processamento (após
+	 * o processamento principal).
+	 * 
+	 * @param message
+	 */
+	void posProcess(Message message);
 }
