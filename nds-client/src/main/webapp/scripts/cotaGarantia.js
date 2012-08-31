@@ -867,8 +867,10 @@ Fiador.prototype.getFiador = function(idFiador, documento) {
 			exibirMensagemDialog(data.tipoMensagem, data.listaMensagens,"");
 			_this.toggleDados(false);
 			_this.fiador = null;
+			_this.enderecoFiador = null;
 		} else {
-			_this.fiador = data;
+			_this.fiador = data.fiador;
+			_this.enderecoFiador =data.endereco;
 			_this.bindData();
 			_this.toggleDados(true);
 		}
@@ -898,7 +900,7 @@ Fiador.prototype.bindData = function() {
 	$("#cotaGarantiaFiadorNome").html(nome);
 	$("#cotaGarantiaFiadorDoc").html(doc);
 
-	var endereco = this.fiador.pessoa.enderecos[0];
+	var endereco = this.enderecoFiador;
 	var strEndereco = endereco.tipoLogradouro + ' ' + endereco.logradouro
 			+ ', ' + endereco.numero + ' - ' + endereco.bairro + ' - '
 			+ endereco.cidade + '/' + endereco.uf;
