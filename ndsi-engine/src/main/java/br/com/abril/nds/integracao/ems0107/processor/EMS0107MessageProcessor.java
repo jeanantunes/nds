@@ -200,12 +200,18 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		return (qtd != null && qtd.intValue() > 0);
 	}
 	
-	/**
-	 * Realiza as validações após o processamento do arquivo.
-	 * 
-	 * TODO: Ver como incluir esta validação posteriormente.
-	 */
-	public void validarProcessamento() {
+	@Override
+	public void posProcess() {
+		
+		/*
+		 * Regras de validação para EMS-107:
+		 * 
+		 * 01) Não deve existir Estudo sem EstudoCota:
+		 * Todo Estudo deve possuir pelo menos um (ou mais) EstudoCota;
+		 * 
+		 * 02) A soma de todos os EstudoCota de um Estudo deve ser igual ao 
+		 * valor contido na "quantidade Efetiva" do respectivo Estudo.
+		 */
 		
 		// 01) Verificar se existe algum Estudo sem EstudoCota;
 		StringBuilder hqlEstudoSemEstudoCota = new StringBuilder();
@@ -227,12 +233,6 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
 		// EstudoCota batem com a qtdeReparte do respectivo Estudo
-		
-	}
-		
-	@Override
-	public void posProcess() {
-		// TODO Auto-generated method stub
 	}
 	
 }
