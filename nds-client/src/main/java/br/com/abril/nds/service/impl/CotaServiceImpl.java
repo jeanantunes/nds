@@ -633,8 +633,8 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		dto.setAssistComercial(parametro.getAssistenteComercial());
+		dto.setGerenteComercial(parametro.getGerenteComercial());
 		dto.setTipoEntrega( (parametro.getTipoEntrega()==null) ? null : parametro.getTipoEntrega().getId());
-		dto.setArrendatario(parametro.getArrendatario());
 		dto.setObservacao(parametro.getObservacao());
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
@@ -645,6 +645,12 @@ public class CotaServiceImpl implements CotaService {
 		dto.setCeEmail(parametro.getChamadaEncalheEmail());
 		dto.setSlipImpresso(parametro.getSlipImpresso());
 		dto.setSlipEmail(parametro.getSlipEmail());
+		dto.setBoletoImpresso(parametro.getBoletoImpresso());
+		dto.setBoletoEmail(parametro.getBoletoEmail());
+		dto.setBoletoSlipImpresso(parametro.getBoletoSlipImpresso());
+		dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
+		dto.setReciboImpresso(parametro.getReciboImpresso());
+		dto.setReciboEmail(parametro.getReciboEmail());
 		
 		return dto;
 	}
@@ -678,11 +684,11 @@ public class CotaServiceImpl implements CotaService {
 		ParametroDistribuicaoCota parametros = new ParametroDistribuicaoCota();
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
+		parametros.setGerenteComercial(dto.getGerenteComercial());
 		if(dto.getTipoEntrega() == null)
 			parametros.setTipoEntrega(null);
 		else
 			parametros.setTipoEntrega(tipoEntregaRepository.buscarPorId(dto.getTipoEntrega()));
-		parametros.setArrendatario(dto.getArrendatario());
 		parametros.setObservacao(dto.getObservacao());
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
@@ -693,6 +699,12 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setChamadaEncalheEmail(dto.getCeEmail());
 		parametros.setSlipImpresso(dto.getSlipImpresso());
 		parametros.setSlipEmail(dto.getSlipEmail());
+		parametros.setBoletoImpresso(dto.getBoletoImpresso());
+		parametros.setBoletoEmail(dto.getBoletoEmail());
+		parametros.setBoletoSlipImpresso(dto.getBoletoSlipImpresso());
+		parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
+		parametros.setReciboImpresso(dto.getReciboImpresso());
+		parametros.setReciboEmail(dto.getReciboEmail());
 		
 		cota.setParametroDistribuicao(parametros);
 		
