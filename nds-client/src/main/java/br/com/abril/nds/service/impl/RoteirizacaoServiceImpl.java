@@ -370,14 +370,16 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro){
-		
-		if(filtro.getIdRota()!= null || filtro.getNumeroCota()!= null){
-			
-			return roteirizacaoRepository.buscarRoteirizacao(filtro);
-		}
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro){
 		
 		return roteirizacaoRepository.buscarRoteirizacaoSumarizadoPorCota(filtro);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro){
+		
+		return roteirizacaoRepository.buscarRoteirizacao(filtro);
 	}
 
 	@Override
