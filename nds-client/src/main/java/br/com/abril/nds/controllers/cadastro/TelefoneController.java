@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
@@ -172,11 +173,11 @@ public class TelefoneController {
 		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = this.obterTelefonesSalvarSessao();
 		
 		TelefoneAssociacaoDTO telefoneAssociacaoDTO = null;
-		Telefone telefone = null;
+		TelefoneDTO telefone = null;
 		
 		if (referencia == null){
 			telefoneAssociacaoDTO = new TelefoneAssociacaoDTO();
-			telefone = new Telefone();
+			telefone = new TelefoneDTO();
 			
 			int referenciaTelefone = (int) (new Date()).getTime();
 			
@@ -190,7 +191,7 @@ public class TelefoneController {
 		
 		if (telefoneAssociacaoDTO == null){
 			
-			Telefone tel = this.telefoneService.buscarTelefonePorId(referencia.longValue());
+			TelefoneDTO tel = TelefoneDTO.fromTelefone(this.telefoneService.buscarTelefonePorId(referencia.longValue()));
 			
 			telefoneAssociacaoDTO = new TelefoneAssociacaoDTO();
 			telefoneAssociacaoDTO.setReferencia(referencia);

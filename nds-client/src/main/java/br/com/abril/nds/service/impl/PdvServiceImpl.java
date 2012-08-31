@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -473,15 +474,20 @@ public class PdvServiceImpl implements PdvService {
 			
 		}
 
+		Pessoa pessoa = pdv.getCota().getPessoa();
+
 		List<Telefone> listaTelefones = new ArrayList<Telefone>();
+		
 		if (pdvDTO.getTelefonesAdicionar() != null){
 			for (TelefoneAssociacaoDTO telefoneAssociacaoDTO : pdvDTO.getTelefonesAdicionar()){
-				listaTelefones.add(telefoneAssociacaoDTO.getTelefone());
+				TelefoneDTO dto = telefoneAssociacaoDTO.getTelefone();
+				Telefone telefone = new Telefone(dto.getId(), dto.getNumero(), dto.getRamal(), dto.getDdd(), pessoa);
+                listaTelefones.add(telefone);
 			}
 		}
 		
 		if (!listaTelefones.isEmpty()){
-			pdv.getCota().getPessoa().setTelefones(listaTelefones);
+            pessoa.setTelefones(listaTelefones);
 		}	
 		
 		this.salvarTelefonesPdv(pdv, pdvDTO.getTelefonesAdicionar());
@@ -491,25 +497,33 @@ public class PdvServiceImpl implements PdvService {
 
 	private void salvarTelefonesPdv(PDV pdv, List<TelefoneAssociacaoDTO> listaTelefones) {
 		
-		this.telefoneService.cadastrarTelefone(listaTelefones, pdv.getCota().getPessoa());
+		Pessoa pessoa = pdv.getCota().getPessoa();
+        
+		this.telefoneService.cadastrarTelefone(listaTelefones, pessoa);
 		
 		if (listaTelefones != null){
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefones){
 				
-				TelefonePDV telefonePdv = this.telefonePdvRepository.obterTelefonePorTelefonePdv(dto.getTelefone().getId(), pdv.getId());
+				TelefoneDTO telefoneDTO = dto.getTelefone();
+                TelefonePDV telefonePdv = this.telefonePdvRepository.obterTelefonePorTelefonePdv(telefoneDTO.getId(), pdv.getId());
 				
 				if (telefonePdv == null){
 					telefonePdv = new TelefonePDV();
 					
 					telefonePdv.setPdv(pdv);
 					telefonePdv.setPrincipal(dto.isPrincipal());
-					telefonePdv.setTelefone(dto.getTelefone());
+					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
+					telefonePdv.setTelefone(telefone);
 					telefonePdv.setTipoTelefone(dto.getTipoTelefone());
 					
 					this.telefonePdvRepository.adicionar(telefonePdv);
 				} else {
 					
+				    Telefone telefone = telefonePdv.getTelefone();
+				    telefone.setDdd(telefoneDTO.getDdd());
+				    telefone.setNumero(telefoneDTO.getNumero());
+				    telefone.setRamal(telefoneDTO.getRamal());
 					telefonePdv.setPrincipal(dto.isPrincipal());
 					telefonePdv.setTipoTelefone(dto.getTipoTelefone());
 					

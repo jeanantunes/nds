@@ -33,6 +33,12 @@ public class HistoricoTitularidadeCotaTelefone implements Serializable {
     private String ramal;
     
     /**
+     * DDD do telefone
+     */
+    @Column(name = "DDD")
+    private String ddd;
+    
+    /**
      * Tipo do telefone
      */
     @Column(name = "TELEFONE_TIPO_TELEFONE", nullable = false)
@@ -71,6 +77,20 @@ public class HistoricoTitularidadeCotaTelefone implements Serializable {
      */
     public void setRamal(String ramal) {
         this.ramal = ramal;
+    }
+    
+    /**
+     * @return the ddd
+     */
+    public String getDdd() {
+        return ddd;
+    }
+
+    /**
+     * @param ddd the ddd to set
+     */
+    public void setDdd(String ddd) {
+        this.ddd = ddd;
     }
 
     /**

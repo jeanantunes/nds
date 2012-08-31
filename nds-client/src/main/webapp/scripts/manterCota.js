@@ -131,8 +131,10 @@ var MANTER_COTA = $.extend(true, {
         if (MANTER_COTA.isModoTelaCadastroCota()) {
     	    TAB_COTA.funcaoSalvar = MANTER_COTA.salvarTelefone;
         }
-		$.postJSON(contextPath + "/cadastro/cota/recarregarTelefone",
-				   "idCota="+MANTER_COTA.idCota,function(){
+        var data = [{name:"idCota", value: MANTER_COTA.idCota },
+		            {name:"idHistorico", value:MANTER_COTA.idHistorico},
+		            {name:"modoTela", value:MANTER_COTA.modoTela.value}];
+		$.postJSON(contextPath + "/cadastro/cota/recarregarTelefone", data, function(){
 			COTA.carregarTelefones();
 		},null,true,null);
     },
@@ -150,11 +152,11 @@ var MANTER_COTA = $.extend(true, {
         if (MANTER_COTA.isModoTelaCadastroCota()) {
                TAB_COTA.funcaoSalvar = MANTER_COTA.salvarEndereco;
         }
-
-
-    	$.postJSON(contextPath + "/cadastro/cota/recarregarEndereco",
-    			"idCota="+MANTER_COTA.idCota,function(){
-    		
+        	
+        var data = [{name:"idCota", value: MANTER_COTA.idCota },
+		            {name:"idHistorico", value:MANTER_COTA.idHistorico},
+		            {name:"modoTela", value:MANTER_COTA.modoTela.value}];
+    	$.postJSON(contextPath + "/cadastro/cota/recarregarEndereco", data, function(){
     		ENDERECO_COTA.popularGridEnderecos();
     	},null,true,null);
     },

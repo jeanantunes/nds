@@ -84,8 +84,7 @@ public class CotaController {
 	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecoRemoverSessaoCota";
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
-	
-	private static final String CADASTRO_COTA_MODO_TELA_SESSION_KEY = "cadastroCotaModoTela";
+
 	
 	@Autowired
 	private Result result;
@@ -135,7 +134,6 @@ public class CotaController {
 		this.financeiroController.preCarregamento();
 		this.pdvController.preCarregamento();
 		this.limparDadosSession();
-		definirModoTela(ModoTela.CADASTRO_COTA);
 	}
 	
 	/**
@@ -157,19 +155,23 @@ public class CotaController {
 	
 	
 	public void historicoTitularidade(Long idCota, Long idHistorico) {
-	    definirModoTela(ModoTela.HISTORICO_TITULARIDADE);
-	    
 	    CotaDTO cotaDTO = cotaService.obterHistoricoTitularidade(idCota, idHistorico);
-	    List<EnderecoAssociacaoDTO> enderecos = cotaService.obterEnderecosHistoricoTitularidade(idCota, idHistorico);
-	    session.setAttribute(LISTA_ENDERECOS_EXIBICAO, enderecos);
-	    
-	    
+	    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
+	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 
-   private void definirModoTela(ModoTela modoTela) {
-        session.setAttribute(CADASTRO_COTA_MODO_TELA_SESSION_KEY, modoTela);
+    private void carregarEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
+        List<EnderecoAssociacaoDTO> enderecos = cotaService.obterEnderecosHistoricoTitularidade(idCota, idHistorico);
+	    session.setAttribute(LISTA_ENDERECOS_EXIBICAO, enderecos);
     }
+    
+    private void carregarTelefonesHistoricoTitularidade(Long idCota, Long idHistorico) {
+        List<TelefoneAssociacaoDTO> telefones = cotaService.obterTelefonesHistoricoTitularidade(idCota, idHistorico);
+        session.setAttribute(LISTA_TELEFONES_EXIBICAO, telefones);
+    }
+    
+    
 
 	@SuppressWarnings("unchecked")
 	/**
@@ -1143,12 +1145,16 @@ public class CotaController {
 	 * Recarrega os dados de endereço referente a cota.
 	 * 
 	 * @param idCota - identificador da cota
+	 * @param idHistorico - identificador do histórico de titularidade da cota
+	 * @param modoTela - Modo em que a tela está operando
 	 */
 	@Post
-	public void recarregarEndereco(Long idCota){
-		
-		obterEndereco(idCota);
-		
+	public void recarregarEndereco(Long idCota, Long idHistorico, ModoTela modoTela){
+		if (modoTela == ModoTela.CADASTRO_COTA) {
+		    obterEndereco(idCota);
+		} else {
+		    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
+		}
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
@@ -1156,11 +1162,16 @@ public class CotaController {
 	 * Recarrega os dados de telefone referente a cota.
 	 * 
 	 * @param idCota - identificador da cota
+	 * @param idHistorico - identificador do histórico de titularidade da cota
+	 * @param modoTela - Modo em que a tela está operando
 	 */
 	@Post
-	public void recarregarTelefone(Long idCota){
-		
-		obterTelefones(idCota);
+	public void recarregarTelefone(Long idCota, Long idHistorico, ModoTela modoTela){
+		if (modoTela == ModoTela.CADASTRO_COTA) {
+		    obterTelefones(idCota);
+		} else {
+		    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
+		}
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}

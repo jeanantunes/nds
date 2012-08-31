@@ -31,12 +31,11 @@ public class EnderecoAssociacaoDTO implements Serializable {
 		}
 	}
 
-    public EnderecoAssociacaoDTO(Long id, boolean enderecoPrincipal, Endereco endereco,
+    public EnderecoAssociacaoDTO(Long id, Endereco endereco, boolean enderecoPrincipal,
             TipoEndereco tipoEndereco) {
         this(enderecoPrincipal, endereco, tipoEndereco, null);
         this.id = id;
     }
-	
 	
 
 	private Long id;

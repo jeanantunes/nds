@@ -13,8 +13,6 @@ public interface TelefoneService {
 	
 	void cadastrarTelefone(List<TelefoneAssociacaoDTO> listaTelefones, Pessoa pessoa);
 	
-	void cadastrarTelefone(TelefoneAssociacaoDTO associacaoTelefone);
-	
 	void removerTelefones(Collection<Long> listaTelefones);
 	
 	/**

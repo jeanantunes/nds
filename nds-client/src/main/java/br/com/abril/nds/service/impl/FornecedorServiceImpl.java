@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -24,6 +25,7 @@ import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
@@ -544,13 +546,16 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		if (listaTelefoneFornecedor != null && !listaTelefoneFornecedor.isEmpty()){
 			
-			this.telefoneService.cadastrarTelefone(listaTelefoneFornecedor, fornecedor.getJuridica());
+			PessoaJuridica juridica = fornecedor.getJuridica();
+            this.telefoneService.cadastrarTelefone(listaTelefoneFornecedor, juridica);
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefoneFornecedor){
 				
-				TelefoneFornecedor telefoneFornecedor =
+				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+                TelefoneFornecedor telefoneFornecedor =
 					this.telefoneFornecedorRepository.obterTelefoneFornecedor(
-						dto.getTelefone().getId(), fornecedor.getId());
+						telefoneDTO.getId(), fornecedor.getId());
 				
 				if (telefoneFornecedor == null){
 					
@@ -558,13 +563,17 @@ public class FornecedorServiceImpl implements FornecedorService {
 					
 					telefoneFornecedor.setFornecedor(fornecedor);
 					telefoneFornecedor.setPrincipal(dto.isPrincipal());
-					telefoneFornecedor.setTelefone(dto.getTelefone());
+					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), juridica);
+					telefoneFornecedor.setTelefone(telefone);
 					telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
 					
 					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
 					
 				} else {
-					
+					Telefone telefone = telefoneFornecedor.getTelefone();
+					telefone.setDdd(telefoneDTO.getDdd());
+					telefone.setNumero(telefoneDTO.getNumero());
+					telefone.setRamal(telefoneDTO.getRamal());
 					telefoneFornecedor.setPrincipal(dto.isPrincipal());
 					telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
 					

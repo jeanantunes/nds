@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -353,28 +354,35 @@ public class TransportadorServiceImpl implements TransportadorService {
 		
 		if (listaTelefoneAdicionar != null && !listaTelefoneAdicionar.isEmpty()){
 			
-			this.telefoneService.cadastrarTelefone(listaTelefoneAdicionar, transportador.getPessoaJuridica());
+			PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
+            this.telefoneService.cadastrarTelefone(listaTelefoneAdicionar, pessoaJuridica);
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefoneAdicionar){
 				
-				TelefoneTransportador telefoneTransportador = 
+				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+			
+                TelefoneTransportador telefoneTransportador = 
 						this.telefoneTransportadorRepositoty.buscarTelefonePorTelefoneTransportador(
-								dto.getTelefone().getId(), 
+								telefoneDTO.getId(), 
 								transportador.getId());
 				
 				if (telefoneTransportador == null){
 					
 					telefoneTransportador = new TelefoneTransportador();
 					telefoneTransportador.setPrincipal(dto.isPrincipal());
-					telefoneTransportador.setTelefone(dto.getTelefone());
+					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoaJuridica);
+					telefoneTransportador.setTelefone(telefone);
 					telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
 					telefoneTransportador.setTransportador(transportador);
 					
 					this.telefoneTransportadorRepositoty.adicionar(telefoneTransportador);
 				} else {
-					
+					Telefone telefone = telefoneTransportador.getTelefone();
+					telefone.setDdd(telefoneDTO.getDdd());
+					telefone.setNumero(telefoneDTO.getNumero());
+					telefone.setRamal(telefoneDTO.getRamal());
 					telefoneTransportador.setPrincipal(dto.isPrincipal());
-					telefoneTransportador.setTelefone(dto.getTelefone());
 					telefoneTransportador.setTipoTelefone(dto.getTipoTelefone());
 					
 					this.telefoneTransportadorRepositoty.alterar(telefoneTransportador);

@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -421,7 +422,9 @@ public class CotaServiceImpl implements CotaService {
 		List<Telefone> listaTelefone = new ArrayList<Telefone>();
 		
 		for (TelefoneAssociacaoDTO telefoneCota : listaTelefonesAdicionar){
-			listaTelefone.add(telefoneCota.getTelefone());
+		    TelefoneDTO dto = telefoneCota.getTelefone();
+		    Telefone telefone = new Telefone(dto.getId(), dto.getNumero(), dto.getRamal(), dto.getDdd(), cota.getPessoa());
+            listaTelefone.add(telefone);
 		}
 		
 		cota.getPessoa().setTelefones(listaTelefone);
@@ -432,7 +435,9 @@ public class CotaServiceImpl implements CotaService {
 
 	private void salvarTelefonesCota(Cota cota, List<TelefoneAssociacaoDTO> listaTelefonesCota) {
 		
-		this.telefoneService.cadastrarTelefone(listaTelefonesCota, cota.getPessoa());
+		Pessoa pessoa = cota.getPessoa();
+        
+		this.telefoneService.cadastrarTelefone(listaTelefonesCota, pessoa);
 		
 		if (listaTelefonesCota != null){
 			
@@ -440,17 +445,19 @@ public class CotaServiceImpl implements CotaService {
 					
 				TelefoneCota telefoneCota = null;
 				
-				if(dto.getTelefone()!= null && dto.getTelefone().getId()!= null){
-					telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(dto.getTelefone().getId(), cota.getId());
+				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+                if(telefoneDTO!= null && telefoneDTO.getId()!= null){
+					telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(telefoneDTO.getId(), cota.getId());
 				}
 				
 				if(telefoneCota == null){
 					telefoneCota = new TelefoneCota();
 					telefoneCota.setCota(cota);
 				}
-			
+				Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
 				telefoneCota.setPrincipal(dto.isPrincipal());
-				telefoneCota.setTelefone(dto.getTelefone());
+				telefoneCota.setTelefone(telefone);
 				telefoneCota.setTipoTelefone(dto.getTipoTelefone());
 				
 				this.telefoneCotaRepository.merge(telefoneCota);
@@ -1697,14 +1704,19 @@ public class CotaServiceImpl implements CotaService {
         return dto;
     }
     
+    @Override
     @Transactional(readOnly = true)
     public List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(
             Long idCota, Long idHistorico) {
-        HistoricoTitularidadeCota historico = cotaRepository
-                .obterHistoricoTitularidade(idCota, idHistorico);
-        return new ArrayList<EnderecoAssociacaoDTO>(
-                CotaDTOAssembler.toEnderecoAssociacaoDTOCollcetion(historico
-                        .getEnderecos()));
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<EnderecoAssociacaoDTO>(CotaDTOAssembler.toEnderecoAssociacaoDTOCollcetion(historico.getEnderecos()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico) {
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollcetion(historico.getTelefones()));
     }
 
 	

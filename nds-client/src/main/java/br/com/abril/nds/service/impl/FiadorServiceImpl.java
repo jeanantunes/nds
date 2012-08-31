@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -529,23 +530,31 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		if (listaTelefones != null && !listaTelefones.isEmpty()){
 			
-			this.telefoneService.cadastrarTelefone(listaTelefones, fiador.getPessoa());
+			Pessoa pessoa = fiador.getPessoa();
+			
+            this.telefoneService.cadastrarTelefone(listaTelefones, pessoa);
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefones){
 				
-				TelefoneFiador telefoneFiador = this.telefoneFiadorRepository.obterTelefonePorTelefoneFiador(dto.getTelefone().getId(), fiador.getId());
+				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+                TelefoneFiador telefoneFiador = this.telefoneFiadorRepository.obterTelefonePorTelefoneFiador(telefoneDTO.getId(), fiador.getId());
 				
 				if (telefoneFiador == null){
 					telefoneFiador = new TelefoneFiador();
 					
 					telefoneFiador.setFiador(fiador);
 					telefoneFiador.setPrincipal(dto.isPrincipal());
-					telefoneFiador.setTelefone(dto.getTelefone());
+					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
+					telefoneFiador.setTelefone(telefone);
 					telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
 					
 					this.telefoneFiadorRepository.adicionar(telefoneFiador);
 				} else {
-					
+					Telefone telefone = telefoneFiador.getTelefone();
+					telefone.setDdd(telefoneDTO.getDdd());
+					telefone.setNumero(telefoneDTO.getNumero());
+					telefone.setRamal(telefone.getRamal());
 					telefoneFiador.setPrincipal(dto.isPrincipal());
 					telefoneFiador.setTipoTelefone(dto.getTipoTelefone());
 					

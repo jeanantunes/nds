@@ -25,6 +25,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.repository.EnderecoEntregadorRepository;
@@ -224,9 +225,12 @@ public class EntregadorServiceImpl implements EntregadorService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
 		}
 		
+		Pessoa pessoa = entregador.getPessoa();
+
 		for (TelefoneEntregador telefoneEntregador : listaTelefonesAdicionar){
 			
 			telefoneEntregador.setEntregador(entregador);
+			telefoneEntregador.getTelefone().setPessoa(pessoa);
 		}
 		
 		this.telefoneService.salvarTelefonesEntregador(listaTelefonesAdicionar);

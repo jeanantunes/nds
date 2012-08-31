@@ -8,10 +8,13 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 
 
 /**
@@ -70,6 +73,19 @@ public class CotaDTOAssembler {
             dto.setEnderecoPrincipal(endereco.isPrincipal());
             dto.setTipoEndereco(endereco.getTipoEndereco());
             dto.setEndereco(toEnderecoDTO(endereco));
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+    
+    public static Collection<TelefoneAssociacaoDTO> toTelefoneAssociacaoDTOCollcetion(Collection<HistoricoTitularidadeCotaTelefone> telefones) {
+        List<TelefoneAssociacaoDTO> dtos = new ArrayList<TelefoneAssociacaoDTO>(telefones.size());
+        for (HistoricoTitularidadeCotaTelefone telefone : telefones) {
+            TelefoneAssociacaoDTO dto = new TelefoneAssociacaoDTO();
+            dto.setPrincipal(telefone.isPrincipal());
+            dto.setTipoTelefone(telefone.getTipoTelefone());
+            dto.setTelefone(toTelefoneDTO(telefone));
+            dtos.add(dto);
         }
         return dtos;
     }
@@ -87,6 +103,14 @@ public class CotaDTOAssembler {
         dto.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());
         dto.setCodigoUf(endereco.getCodigoUf());
         dto.setUf(endereco.getUf());
+        return dto;
+    }
+    
+    public static TelefoneDTO toTelefoneDTO(HistoricoTitularidadeCotaTelefone telefone) {
+        TelefoneDTO dto = new TelefoneDTO();
+        dto.setDdd(telefone.getDdd());
+        dto.setNumero(telefone.getNumero());
+        dto.setRamal(telefone.getRamal());
         return dto;
     }
 
