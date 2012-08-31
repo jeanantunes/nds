@@ -235,9 +235,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		
-		
 		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
 		// EstudoCota batem com a qtdeReparte do respectivo Estudo
+		
 	}
 	
 	@Override
