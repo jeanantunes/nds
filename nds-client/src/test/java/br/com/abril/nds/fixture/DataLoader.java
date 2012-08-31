@@ -909,7 +909,6 @@ public class DataLoader {
 		criarEditores(session);		
 		criarProdutos(session);
 		criarProdutosEdicao(session);
-		criarTiposMovimento(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
@@ -1133,6 +1132,8 @@ public class DataLoader {
 		criarFeriado(session);		
 		
 		criarUsuarioAdministrador(session); 
+		
+		criarTiposMovimento(session);
 		
 	}
 
@@ -4611,11 +4612,11 @@ public class DataLoader {
 
 		ParametroDistribuicaoCota parametroGuilherme = 	Fixture.criarParametroDistribuidor(
 				100, "Joao da Silva", tipoEntregador, "Muito importante isso aeh!",
-				true, true, true, true, true, true, true, true, true, true);
+				true, true, true, true, true, true, true, true, true);
 
 		ParametroDistribuicaoCota parametroJoao = 	Fixture.criarParametroDistribuidor(
 				120, "Maria da Silva", tipoEntregaEmBanca, "Muito importante isso aeh também!",
-				false, false, false, false, false, false, false, false, false, false);
+				false, false, false, false, false, false, false, false, false);
 
 		cotaJoao.setParametroDistribuicao(parametroJoao);
 		cotaGuilherme.setParametroDistribuicao(parametroGuilherme);

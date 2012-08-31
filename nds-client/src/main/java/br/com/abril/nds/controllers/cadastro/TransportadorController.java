@@ -1092,6 +1092,20 @@ public class TransportadorController {
 		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 	}
 	
+	@Post
+	public void carregarCotasAssociadas(Long idTransportador){
+		
+		
+		
+		if (idTransportador == null){
+			
+			
+		} else {
+			
+			
+		}
+	}
+	
 	private TableModel<CellModelKeyValue<Veiculo>> getTableModelVeiculos(List<Veiculo> listaVeiculos) {
 		
 		TableModel<CellModelKeyValue<Veiculo>> tableModel = new TableModel<CellModelKeyValue<Veiculo>>();
