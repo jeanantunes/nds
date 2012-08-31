@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,16 +18,22 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
@@ -66,6 +73,15 @@ public class FechamentoCEIntegracaoController {
 	@Autowired
 	private BoletoService boletoService;
 	
+	@Autowired
+	private DescontoService descontoService;
+	
+	@Autowired
+	private CotaService cotaService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
+	
 	
 	public FechamentoCEIntegracaoController(Result result) {
 		 this.result = result;
@@ -98,55 +114,71 @@ public class FechamentoCEIntegracaoController {
 	private TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> efetuarConsultaFechamentoCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		if(filtro.getSemana() != null){
-			filtro.setData(obterDataDaSemana(filtro));
+			filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro));
 		}
 		
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
 		
-		listaFechamento = calcularVenda(listaFechamento);
+		if(listaFechamento.size() == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+		}
+		
+		listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
 		
 		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
-//		
-//		Integer totalRegistros = this.romaneioService.buscarTotalDeRomaneios(filtro);
-//		if(totalRegistros == 0){
-//			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-//		}
-//
+
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFechamento));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(15);
+		tableModel.setTotal(listaFechamento.size());
 		
 		return tableModel;
 	}
 	
-	private Date obterDataDaSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
+	private Intervalo<Date> obterDataDaSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-		Distribuidor dist = this.distribuidorService.obter();
-		 
-		return DateUtil.obterDataDaSemanaNoAno(filtro.getSemana().intValue(), dist.getInicioSemana().getCodigoDiaSemana(), null);
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		Date dataInicioSemana = 
+				DateUtil.obterDataDaSemanaNoAno(
+					filtro.getSemana().intValue(), distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		
+		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		
+		return periodoRecolhimento;
+		
 	}
 
-	private List<FechamentoCEIntegracaoDTO> calcularVenda(List<FechamentoCEIntegracaoDTO> listaFechamento) {
-		List<FechamentoCEIntegracaoDTO> lista = new ArrayList<FechamentoCEIntegracaoDTO>();
-		int sequencial = 1;
-		for(FechamentoCEIntegracaoDTO dto: listaFechamento){
-			dto.setVenda(dto.getReparte().subtract(dto.getEncalhe()));
-			double valorDaVenda = dto.getVenda().doubleValue() * dto.getPrecoCapa().doubleValue();
-			dto.setvalorVendaFormatado(CurrencyUtil.formatarValor(valorDaVenda));
-			dto.setSequencial(sequencial);
-			sequencial++;
-			lista.add(dto);
-		}
-		return lista;		
-	}
-	
+	@Post
 	public void buscarTotalDaPesquisa(){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
+		
+		listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
+		double totalBruto = 0;
+		BigDecimal desconto = new BigDecimal(0);
+		for(FechamentoCEIntegracaoDTO dto: listaFechamento){
+			double valorDaVenda =  dto.getVenda().doubleValue() * dto.getPrecoCapa().doubleValue();
+			totalBruto = totalBruto + valorDaVenda;
+			Cota cota = this.cotaService.obterPorId(dto.getIdCota());
+			ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicao(dto.getIdProdutoEdicao());
+			desconto.add(this.descontoService.obterDescontoPorCotaProdutoEdicao(cota, pe));
+			
+		}		
+		
+		StringBuilder html = new StringBuilder();
+		html.append("<td width='88' valign='top'><strong>Total Bruto R$:</strong></td>");
+		html.append("<td width='50 valign='top'>"+  (CurrencyUtil.formatarValor(totalBruto)) +"</td>");
+		html.append(" <td width='106' valign='top'><strong>Total Desconto R$:</strong></td>");
+		html.append(" <td width='49' valign='top'>"+(CurrencyUtil.formatarValor(desconto))+"</td>");
+		html.append(" <td width='93' valign='top'><strong>Total Líquido R$:</strong></td>");
+		html.append(" <td width='70' valign='top'>"+(CurrencyUtil.formatarValor(totalBruto - desconto.doubleValue()))+"</td>");
+		
+		this.result.use(Results.json()).from(html.toString(), "result").recursive().serialize();
 		
 	}
 	
@@ -176,7 +208,7 @@ public class FechamentoCEIntegracaoController {
 		
 		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
 		
-		listaFechamento = calcularVenda(listaFechamento);
+		listaFechamento = this.fechamentoCEIntegracaoService.calcularVenda(listaFechamento);
 		
 		if(listaFechamento.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

@@ -10,5 +10,7 @@ public interface FechamentoCEIntegracaoService {
 	List<FechamentoCEIntegracaoDTO> buscarFechamentoEncalhe(FiltroFechamentoCEIntegracaoDTO filtro);
 	
 	Long obterDesconto(Long idCota, Long idProdutoEdica, Long idFornecedor);
+	
+	List<FechamentoCEIntegracaoDTO> calcularVenda(List<FechamentoCEIntegracaoDTO> listaFechamento);
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -20,7 +21,7 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private ColunaOrdenacaoRomaneio ordenacaoColuna;
 	
-	private Date data;
+	private Intervalo<Date> periodoRecolhimento;
 	
 	public enum ColunaOrdenacaoFechamentoCEIntegracao {
 
@@ -78,12 +79,12 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
-	public Date getData() {
-		return data;
+	public Intervalo<Date> getPeriodoRecolhimento() {
+		return periodoRecolhimento;
 	}
 
-	public void setData(Date data) {
-		this.data = data;
+	public void setPeriodoRecolhimento(Intervalo<Date> periodoRecolhimento) {
+		this.periodoRecolhimento = periodoRecolhimento;
 	}
 
 }

@@ -93,16 +93,12 @@
 			       		Boleto em Branco
 			       	</a>
 			       </span>
-			    </td>
-			    <td width="88" valign="top"><strong>Total Bruto R$:</strong></td>
-			    <td width="50" valign="top">3.014,00</td>
-			    <td width="106" valign="top"><strong>Total Desconto R$:</strong></td>
-			    <td width="49" valign="top">753,99</td>
-			    <td width="93" valign="top"><strong>Total Líquido R$:</strong></td>
-			    <td width="70" valign="top">2.260,00</td>
+			    </td>			    
 			  </tr>
 			</table>
-
+			<div class="tabelaTotal" style="display:none;">
+					<span name="total" id="total" ></span>
+				</div>
 			</div>
 		
       		</fieldset>

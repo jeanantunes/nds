@@ -46,6 +46,10 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	
 	private String tipoFormatado;
 	
+	private Long idCota;
+	
+	private Long idProdutoEdicao;
+	
 	@Export(label = "Tipo", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	public String getTipoFormatado() {
 		return tipoFormatado;
@@ -134,6 +138,22 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 	
 }

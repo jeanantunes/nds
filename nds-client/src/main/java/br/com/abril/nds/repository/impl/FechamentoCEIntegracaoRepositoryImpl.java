@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.Projections;
@@ -39,6 +38,8 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			.add(Projections.property("ce.qtdeInformada"), "reparte")
 			.add(Projections.property("ce.qtde"), "encalhe")
 			.add(Projections.property("cec.fechado"), "tipo")
+			.add(Projections.property("cota.id"), "idCota")
+			.add(Projections.property("pe.id"), "idProdutoEdicao")
 			.add(Projections.groupProperty("p.codigo"))
 			.add(Projections.groupProperty("p.nome"))
 			.add(Projections.groupProperty("pe.numeroEdicao"))
@@ -67,8 +68,8 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		criteria.createAlias("mec.cota", "cota");
 		criteria.setFetchMode("cota", FetchMode.JOIN);
 		
-		if(filtro.getData() != null){
-			criteria.add(Restrictions.between("ce.data", filtro.getData(), DateUtils.addDays(filtro.getData(),7) ));			
+		if(filtro.getPeriodoRecolhimento() != null){
+			criteria.add(Restrictions.between("ce.data", filtro.getPeriodoRecolhimento().getDe(), filtro.getPeriodoRecolhimento().getAte()));			
 		}
 		
 		if (filtro.getIdFornecedor() != -1) {
