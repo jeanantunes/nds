@@ -233,8 +233,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		if (lstEstudos != null && !lstEstudos.isEmpty()) {
 			for (Estudo estudo : lstEstudos) {
 				
-				// TODO: Gravar no log qual Estudo esta sem EstudoCota
-				
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"NAO EXISTE EstudoCota para a publicacao: " + estudo.getProdutoEdicao());
 				this.getSession().delete(estudo);
 			}
 		}
