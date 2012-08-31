@@ -1,11 +1,15 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Embeddable
 public class ParametroDistribuicaoCota implements Serializable {
@@ -75,6 +79,20 @@ public class ParametroDistribuicaoCota implements Serializable {
 	
 	@Column(name = "PROCURACAO_ASSINADA")
 	private boolean procuracaoAssinada;
+
+    @Column(name = "TAXA_FIXA", precision = 16, scale = 4)
+    private BigDecimal taxaFixa;
+    
+    @Column(name = "PERCENTUAL_FATURAMENTO", precision = 16, scale = 4)
+    private BigDecimal percentualFaturamento;
+
+    @Column(name = "INICIO_PERIODO_CARENCIA")
+    @Temporal(TemporalType.DATE)
+    private Date inicioPeriodoCarencia;
+    
+    @Column(name = "FIM_PERIODO_CARENCIA")
+    @Temporal(TemporalType.DATE)
+    private Date fimPeriodoCarencia;
 
 	
 	public ParametroDistribuicaoCota(){
@@ -350,4 +368,61 @@ public class ParametroDistribuicaoCota implements Serializable {
 	public void setReciboEmail(Boolean reciboEmail) {
 		this.reciboEmail = reciboEmail;
 	}
+
+	/**
+	 * @return the taxaFixa
+	 */
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
+	}
+
+	/**
+	 * @param taxaFixa the taxaFixa to set
+	 */
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+
+	/**
+	 * @return the percentualFaturamento
+	 */
+	public BigDecimal getPercentualFaturamento() {
+		return percentualFaturamento;
+	}
+
+	/**
+	 * @param percentualFaturamento the percentualFaturamento to set
+	 */
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
+	}
+
+	/**
+	 * @return the inicioPeriodoCarencia
+	 */
+	public Date getInicioPeriodoCarencia() {
+		return inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @param inicioPeriodoCarencia the inicioPeriodoCarencia to set
+	 */
+	public void setInicioPeriodoCarencia(Date inicioPeriodoCarencia) {
+		this.inicioPeriodoCarencia = inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @return the fimPeriodoCarencia
+	 */
+	public Date getFimPeriodoCarencia() {
+		return fimPeriodoCarencia;
+	}
+
+	/**
+	 * @param fimPeriodoCarencia the fimPeriodoCarencia to set
+	 */
+	public void setFimPeriodoCarencia(Date fimPeriodoCarencia) {
+		this.fimPeriodoCarencia = fimPeriodoCarencia;
+	}
+	
 }
