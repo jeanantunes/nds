@@ -54,6 +54,17 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	 */
 	private static final String CODIGO_LANP = "LANP";
 	
+	
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
 	@Override
 	public void processMessage(Message message) {
 
@@ -203,6 +214,16 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	private Distribuidor obterDistribuidor() {
 		
 		return this.distribuidorService.obter();
+	}
+	
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void posProcess(Message message) {
+		// TODO Auto-generated method stub
 	}
 	
 }

@@ -40,7 +40,7 @@ function TabCota(tabName) {
 			T.funcaoSalvar = function(callBack){
 				return tipoCotaGarantia.salva(callBack);
 			};
-			tipoCotaGarantia.onOpen();
+			tipoCotaGarantia.onOpen(MANTER_COTA.tipoCotaSelecionada);
 			break;
 		
 		/**Fornecedor**/
@@ -126,3 +126,5 @@ function TabCota(tabName) {
 	});
 		
 }
+
+//@ sourceURL=scriptTabCota.js

@@ -15,15 +15,22 @@
 </script>
 
 
-<table width="755" cellpadding="2" cellspacing="2"
+<table width="780" cellpadding="4" cellspacing="4"
 	style="text-align: left;">
 	<tr>
-		<td width="112">Tipo de Garantia:</td>
-		<td width="631"><select id="tipoGarantiaSelect"
+	
+		<td width="180">Tipo de Garantia:</td>
+		<td width="180"><select id="tipoGarantiaSelect"
 			onchange="tipoCotaGarantia.onChange($(this).val());"
 			style="width: 250px;">
 				<option value="" selected="selected">Selecione...</option>
 		</select></td>
+		
+		<td width="180">Classificação da Cota:</td>
+	    <td width="180" colspan="2">
+     	    <input disabled="disabled" name="cotaGarantiaClassificacaoCota" id="cotaGarantiaClassificacaoCota" style="width:300px;border: 0px; background-color: inherit; border-color: inherit;">
+        </td>
+		
 	</tr>
 </table>
 
@@ -277,6 +284,7 @@
 </div>
 
 <div id="cotaGarantiaCaucaoLiquida" style="display: none;">
+
 	
 	<div id="dialog-confirma-resgate" title="Confirmar Resgate Caução Líquida" style="display:none;" >
 		<fieldset style="width: 380px;">
@@ -287,33 +295,158 @@
 	<fieldset>
 	   	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
         <table width="755" cellpadding="2" cellspacing="2" style="text-align:left;">
-        <tbody>
-        	<tr>
-               <td width="110">Valor Inicial R$:</td>
-            
-               <td width="150">
-                	<input type="text" name="cotaGarantiaCaucaoLiquidaValor" id="cotaGarantiaCaucaoLiquidaValor" style="width:150px; text-align:right;">
-                </td>
-               
-                <td width="270">
-                	<a id="cotaGarantiaCaucaoLiquidaIncluir" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Incluir" width="16" height="16" border="0"></a>
-                </td>
+            <tbody>
+
+                 <table width="40%" border="0" cellspacing="1" cellpadding="1">
+                     <tr>
+				        <td valign="top"><strong>Forma de Pagamento:</strong></td>
+					    <td valign="top">&nbsp;</td>
+					    <td valign="top">
+		
+					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="tipoCotaGarantia.opcaoPagto(this.value);">
+		                        <option value="">Selecione</option>
+		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
+				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
+				                </c:forEach>
+		                    </select> 
+		
+				        </td>    
+				     </tr>
+                 </table> 
+                 
+                 <div name="divFormaBoleto" id="divFormaBoleto">
+    
+	                 <table width="50%" border="0" cellspacing="1" cellpadding="1">
+				         <tr>
+				             <td width="20"><input type="radio" name="diario" id="diario" value="radio" onclick="tipoCotaGarantia.mostraDiario();" /></td>
+				             <td width="173">Diário</td>
+				             <td width="20"><input type="radio" name="semanal" id="semanal" value="radio" onclick="tipoCotaGarantia.mostraSemanal();" /></td>
+				             <td width="173">Semanal</td>
+				             <td width="20"><input type="radio" name="quinzenal" id="quinzenal" value="radio" onclick="tipoCotaGarantia.mostraQuinzenal();" /></td>
+				             <td width="173">Quinzenal</td>
+				             <td width="20"><input type="radio" name="mensal" id="mensal" value="radio" onclick="tipoCotaGarantia.mostraMensal();" /></td>
+				             <td width="173">Mensal</td>
+				         </tr>
+				     </table>
+							     
+	                 <table width="100%">
+	                    
+	                     <tr>
+	                         <td>
+	                            
+							     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="diario">
+							         <tr>
+							             <td width="68"></td>
+							             <td width="156"></td>
+							         </tr>
+							     </table>
+							     
+							     
+							     <table width="60%" border="0" cellspacing="1" cellpadding="1" class="quinzenal">
+							         <tr>
+							             <td width="68">Todo dia:</td>
+							             <td width="320">
+							                 <input maxlength="2" type="text" name="primeiroDiaQuinzenal" id="primeiroDiaQuinzenal" style="width:60px;"/>
+							                 e 
+							                 <input maxlength="2" type="text" name="segundoDiaQuinzenal" id="segundoDiaQuinzenal" style="width:60px;"/>
+							             </td>
+							         </tr>
+							     </table>
+							    
+							    
+							     <table width="60%" border="0" cellspacing="1" cellpadding="1" class="mensal">
+							         <tr>
+							             <td width="68">Todo dia:</td>
+							             <td width="156"><input maxlength="2" type="text" name="diaDoMes" id="diaDoMes" style="width:60px;"/></td>
+							         </tr>
+							     </table>
+						     
+	 			        
+			                     <table width="80%" border="0" cellspacing="1" cellpadding="1" class="semanal">
+	
+			                        <tr>
+									    <td width="20"><input type="checkbox" name="PS" id="PS" /></td>
+									    <td width="70">Segunda-feira  </td>
+									    <td width="20"><input type="checkbox" name="PT" id="PT" /></td>
+									    <td width="50">Terça-feira  </td>
+									    <td width="20"><input type="checkbox" name="PQ" id="PQ" /></td>
+									    <td width="50">Quarta-feira  </td>
+									    <td width="20"><input type="checkbox" name="PQu" id="PQu" /></td>
+									    <td width="50">Quinta-feira  </td>
+									    <td width="20"><input type="checkbox" name="PSex" id="PSex" /></td>
+									    <td width="50">Sexta-feira  </td>
+									    <td width="20"><input type="checkbox" name="PSab" id="PSab" /></td>
+									    <td width="50">Sábado  </td>
+									    <td width="20"><input type="checkbox" name="PDom" id="PDom" /></td>
+									    <td width="50">Domingo  </td>
+									</tr>
+	
+								 </table>
+								 
+						     </td>
+			             </tr>  
+	                 </table>   
+	                 
+	                 
+	                 <table width="100%" border="0" cellspacing="1" cellpadding="1">
+						  <tr>
+						    <td width="9%">Valor R$:</td>
+						    <td width="15%"><input name="valorBoleto" type="text" style="width:80px; text-align:right;" /></td>
+						    <td width="14%">Qtde. Parcelas </td>
+						    <td width="11%"><input name="qtdParcelaBoleto" type="text" style="width:50px; text-align:center;" /></td>
+						    <td width="16%">Valor Parcela R$:</td>
+						    <td width="35%"><input name="valorParcelaBoleto" type="text" style="width:80px; text-align:right;" /></td>
+						  </tr>
+					 </table>
+	                 
+	                 
+                 </div>
+                 
+                 
+                 
+                 <div name="divFormaDeposito" id="divFormaDeposito">
+                 </div>
+                 
+                 
+                 <div name="divFormaDinheiro" id="divFormaDinheiro">
+                 </div>
+                 
+                 
+                 <div name="divFormaDesconto" id="divFormaDesconto">
+                 </div>
+                 
                 
-                <td width="203">
-                	<span class="bt_confirmar_novo" title="Confirmar">
-                		<a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;">
-                			<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_negociar.png">Resgatar Valor Cau&ccedil;&atilde;o
-                		</a>
-                	</span>
-                </td>
-              </tr>
-        </tbody>
+            </tbody>
+            
         </table>
 	</fieldset>
+	
 	
     <br clear="all">
     
     <br>
+    
+    
+    <tr>
+       <td width="110">Valor Inicial R$:</td>
+    
+       <td width="150">
+          <input type="text" name="cotaGarantiaCaucaoLiquidaValor" id="cotaGarantiaCaucaoLiquidaValor" style="width:150px; text-align:right;">
+       </td>
+       
+       <td width="270">
+          <a id="cotaGarantiaCaucaoLiquidaIncluir" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Incluir" width="16" height="16" border="0"></a>
+       </td>
+        
+       <td width="203">
+           <span class="bt_confirmar_novo" title="Confirmar">
+        	   <a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;">
+        		   <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_negociar.png">Resgatar Valor Cau&ccedil;&atilde;o
+        	   </a>
+           </span>
+       </td>
+    </tr>
+            
     
     <fieldset>
     	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>

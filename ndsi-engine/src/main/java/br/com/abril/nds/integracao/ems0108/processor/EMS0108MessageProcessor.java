@@ -26,6 +26,16 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	}
 
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
 	/**
 	 * Processa as linhas do arquivo da interface EMS0108
 	 */
@@ -144,4 +154,15 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento.setProdutoEdicao(produtoEdicao);
 		}
 	}
+
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void posProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
 }
