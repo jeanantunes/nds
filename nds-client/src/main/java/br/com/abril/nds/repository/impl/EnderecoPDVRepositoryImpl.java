@@ -129,4 +129,21 @@ public class EnderecoPDVRepositoryImpl extends AbstractRepositoryModel<EnderecoP
 		
 		return (Endereco) query.uniqueResult();
 	}
+	
+	@Override
+	public Endereco buscarEnderecoPrincipal(Long idPdv){
+		
+		StringBuilder hql  = new StringBuilder();
+		
+		hql.append(" select endereco from ")
+			.append(" PDV pdv join pdv.enderecos enderecoPDV join enderecoPDV.endereco endereco ")
+			.append(" where pdv.caracteristicas.pontoPrincipal = true ")
+			.append(" and pdv.id = :idPdv ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idPdv", idPdv);
+		query.setMaxResults(1);
+		
+		return (Endereco) query.uniqueResult();
+	}
 }
