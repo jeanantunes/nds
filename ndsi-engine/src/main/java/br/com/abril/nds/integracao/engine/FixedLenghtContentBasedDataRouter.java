@@ -188,8 +188,17 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			
 			FileUtils.moveFile(processingFile, archiveFile);
 			
+			final Message posMessage = new Message();
+			posMessage.getHeader().putAll(fileRouteTemplate.getParameters());
+			posMessage.getHeader().put(MessageHeaderProperties.URI.getValue(), fileRouteTemplate.getUri());
+			posMessage.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), null);
+			posMessage.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), file.getName());
+			posMessage.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), new Date(file.lastModified()));
+			posMessage.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), Long.valueOf(0));
+			posMessage.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), fileRouteTemplate.getUserName());
+			
 			// Processamento a ser executado APÓS o processamento principal:
-			messageProcessor.posProcess();
+			messageProcessor.posProcess(posMessage);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
