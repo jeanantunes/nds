@@ -35,6 +35,16 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	private PeriodicidadeProdutoService periodicidadeProdutoService;
 
 	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void processMessage(Message message) {
 
 		// Distribuidor unico para todo sistema
@@ -399,4 +409,15 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 
 	}
+
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void posProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
 }

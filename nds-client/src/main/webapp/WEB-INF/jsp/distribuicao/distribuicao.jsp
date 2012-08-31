@@ -62,8 +62,8 @@
 			        </tr>
     			</table>
     			<!-- Entrega de Reparte de Venda -->
-        		<input type="checkbox" id="${param.tela}entregaReparteVenda" />
-        		<label for="${param.tela}entregaReparteVenda">Entrega de Reparte de Venda</label>
+        		<input type="checkbox" id="${param.tela}repPorPontoVenda" />
+        		<label for="${param.tela}repPorPontoVenda">Entrega de Reparte de Venda</label>
 				
          		<br clear="all" />
         		
@@ -102,6 +102,72 @@
 								
 				<jsp:include page="entregaEmBanca.jsp"/>
 				
+				<div id="entregadorPf" style="display: none;">
+					<table width="399" border="0" cellspacing="1" cellpadding="1">
+						<tr>
+							<td>Utiliza Procuração?</td>
+							<td width="20">
+								<input type="checkbox" name="checkbox15"
+									   id="checkbox15" onclick="mostraProcuracaoPf();" />
+								
+							<td width="201" class="procuracaoPf">
+								<span class="bt_imprimir" style="display: block;">
+									<a href="../procuracao.htm" target="_blank">Procuração</a>
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td>Procuração Recebida?</td>
+							<td colspan="2">
+								<input type="checkbox" name="checkbox2" id="checkbox2" />
+							</td>
+						</tr>
+						<tr>
+							<td>Arquivo:</td>
+							<td colspan="2">
+								<input name="fileField" type="file"
+									   id="fileField" size="15" />
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td colspan="2">
+								<a href="javascript:;">nome_do_arquivo</a>
+								<a href="javascript:;">
+									<img src="../images/ico_excluir.gif"
+								   		 alt="Excluir arquivo" width="15" height="15" border="0" />
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td width="145">Percentual Faturamento:</td>
+							<td colspan="2">
+								<input id="${param.tela}percentualFaturamento" type="text"
+									   style="width: 70px; text-align: right;" />
+							</td>
+						</tr>
+						<tr>
+							<td>Período Carência:</td>
+							<td colspan="2">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td width="43%">
+											<input id="${param.tela}inicioPeriodoCarencia" 
+												   name="inicioPeriodoCarencia" type="text" style="width: 70px" />
+										</td>
+										<td width="14%">Até</td>
+										<td width="43%">
+											<input id="${param.tela}fimPeriodoCarencia"
+												   name="fimPeriodoCarencia" type="text" style="width: 70px" />
+										</td>
+									</tr>
+								</table></td>
+						</tr>
+					</table>
+				</div>
+				
+				<br />
+				
 				<fieldset style="width:390px;">
 					<legend>Emissão de Documentos</legend>
 					<table width="373" border="0" cellspacing="1" cellpadding="0">
@@ -121,18 +187,30 @@
       					</tr>
     					<tr>
 							<td>Boleto</td>
-							<td align="center"><input type="checkbox" name="checkbox3" id="checkbox3" /></td>
-							<td align="center"><input type="checkbox" name="checkbox6" id="checkbox6" /></td>
+							<td align="center">
+								<input id="${param.tela}boletoImpresso" type="checkbox" />
+							</td>
+							<td align="center">
+								<input id="${param.tela}boletoEmail" type="checkbox" />
+							</td>
       					</tr>
     					<tr>
 							<td>Boleto + Slip</td>
-							<td align="center"><input type="checkbox" name="checkbox4" id="checkbox4" /></td>
-							<td align="center"><input type="checkbox" name="checkbox" id="checkbox" /></td>
+							<td align="center">
+								<input id="${param.tela}boletoSlipImpresso" type="checkbox" />
+							</td>
+							<td align="center">
+								<input id="${param.tela}boletoSlipEmail" type="checkbox" />
+							</td>
       					</tr>
     					<tr>
 							<td>Recibo</td>
-							<td align="center"><input type="checkbox" name="checkbox7" id="checkbox7" /></td>
-							<td align="center"><input type="checkbox" name="checkbox12" id="checkbox12" /></td>
+							<td align="center">
+								<input id="${param.tela}reciboImpresso" type="checkbox" />
+							</td>
+							<td align="center">
+								<input id="${param.tela}reciboEmail" type="checkbox" />
+							</td>
       					</tr>
 					    <tr>
 					      	<td>Note de Envio</td>

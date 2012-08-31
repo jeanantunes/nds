@@ -29,7 +29,6 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 
 @Component
-
 public class EMS0120MessageProcessor extends AbstractRepository implements MessageProcessor {
 
 	
@@ -47,9 +46,21 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
 	public void processMessage(Message message) {
 	
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		
 		StringBuilder sql = new  StringBuilder();
 		sql.append("SELECT mec ");
 		sql.append("FROM MovimentoEstoqueCota mec ");
@@ -59,15 +70,11 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 		sql.append("JOIN FETCH p.fornecedores fs ");
 		sql.append("WHERE mec.data = :dataOperacao ");
 		sql.append("AND mec.tipoMovimento.grupoMovimentoEstoque = :recebimentoReparte ");
-
-		
-		
 	
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("dataOperacao", distribuidorService.obter().getDataOperacao());
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("recebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
-		@SuppressWarnings("unchecked")
 		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.list();
 
 		Date data = new Date();
@@ -82,7 +89,7 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 			outheader.setHoraMovimento(data);
 			outheader.setQtdeRegistrosDetalhe(mecs.size());
 
-			print.println(fixedFormatManager.export(outheader));
+			//print.println(fixedFormatManager.export(outheader));
 			
 			
 			for (MovimentoEstoqueCota mec : mecs){
@@ -100,20 +107,30 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 				outdetalhe.setDataLancamento(mec.getData());
 				
 				 
-				print.println(fixedFormatManager.export(outdetalhe));
+				//print.println(fixedFormatManager.export(outdetalhe));
 
 			}
 			EMS0120Trailer outtrailer = new EMS0120Trailer();
-			print.println(fixedFormatManager.export(outtrailer));
+			//print.println(fixedFormatManager.export(outtrailer));
 			print.flush();
 			print.close();
 			
 		} catch (IOException e) {
-			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
+			//ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 		}
 				
 		
 		
 	}
 
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void posProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
 }

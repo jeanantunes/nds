@@ -211,15 +211,7 @@ public class ParametroCobrancaCotaController {
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     /**
    	 * Método responsável por obter os dados default da forma de cobranca principal dos parametros de cobrança do distribuidor.
@@ -240,16 +232,7 @@ public class ParametroCobrancaCotaController {
 		result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
 
-    
 	/**
 	 * Método responsável por postar os dados do parametro de cobrança da cota.
 	 * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou alterados pelo usuário
@@ -283,6 +266,8 @@ public class ParametroCobrancaCotaController {
 		
 		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 			formaCobranca.setDiaDoMes(null);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
 		}
 		
 		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
@@ -293,6 +278,32 @@ public class ParametroCobrancaCotaController {
 			formaCobranca.setQuinta(false);
 			formaCobranca.setSexta(false);
 			formaCobranca.setSabado(false);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.DIARIA){
+			formaCobranca.setDomingo(false);
+			formaCobranca.setSegunda(false);
+			formaCobranca.setTerca(false);
+			formaCobranca.setQuarta(false);
+			formaCobranca.setQuinta(false);
+			formaCobranca.setSexta(false);
+			formaCobranca.setSabado(false);
+			formaCobranca.setDiaDoMes(null);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+			formaCobranca.setDomingo(false);
+			formaCobranca.setSegunda(false);
+			formaCobranca.setTerca(false);
+			formaCobranca.setQuarta(false);
+			formaCobranca.setQuinta(false);
+			formaCobranca.setSexta(false);
+			formaCobranca.setSabado(false);
+			formaCobranca.setDiaDoMes(null);
 		}
 		
 		if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)){
@@ -431,6 +442,18 @@ public class ParametroCobrancaCotaController {
 			}
 			else{
 				if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+				}
+			}
+			
+		}
+		
+		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+			if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
+			}
+			else{
+				if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
 					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
 				}
 			}

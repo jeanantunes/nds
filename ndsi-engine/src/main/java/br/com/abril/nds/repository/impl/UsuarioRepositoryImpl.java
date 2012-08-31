@@ -2,6 +2,8 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import javax.persistence.Column;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.LogicalExpression;
@@ -31,6 +33,8 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 		usuario.setLogin("usuarioImportacao");
 		usuario.setNome("Usuário de Importação");
 		usuario.setSenha("usuarioImportacao");
+		usuario.setEmail("usuarioImportacao");
+		usuario.setContaAtiva(true);
 		
 		return merge(usuario);
 	}

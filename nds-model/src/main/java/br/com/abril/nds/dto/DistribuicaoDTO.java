@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -20,7 +21,6 @@ public class DistribuicaoDTO implements Serializable  {
 	private String assistComercial;
 	private Long tipoEntrega;
 	private String observacao;
-	private Boolean arrendatario;
 	private Boolean repPorPontoVenda;
 	private Boolean solNumAtras;
 	private Boolean recebeRecolhe;
@@ -30,6 +30,17 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean ceEmail;
 	private Boolean slipImpresso;
 	private Boolean slipEmail;
+	private Boolean boletoImpresso;
+	private Boolean boletoEmail;
+	private Boolean boletoSlipImpresso;
+	private Boolean boletoSlipEmail;
+	private Boolean reciboImpresso;
+	private Boolean reciboEmail;
+	private String gerenteComercial;
+	private BigDecimal taxaFixa;
+	private BigDecimal percentualFaturamento;
+	private String inicioPeriodoCarencia;
+	private String fimPeriodoCarencia;
 	
 	private List<ItemDTO<Long, String>> tiposEntrega;
 	
@@ -119,20 +130,6 @@ public class DistribuicaoDTO implements Serializable  {
 	 */
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
-	}
-
-	/**
-	 * @return the arrendatario
-	 */
-	public Boolean getArrendatario() {
-		return arrendatario;
-	}
-
-	/**
-	 * @param arrendatario the arrendatario to set
-	 */
-	public void setArrendatario(Boolean arrendatario) {
-		this.arrendatario = arrendatario;
 	}
 	
 	/**
@@ -287,5 +284,118 @@ public class DistribuicaoDTO implements Serializable  {
 	 */
 	public void setQtdeAutomatica(Boolean qtdeAutomatica) {
 		this.qtdeAutomatica = qtdeAutomatica;
+	}
+
+	public String getGerenteComercial() {
+		return gerenteComercial;
+	}
+
+	public void setGerenteComercial(String gerenteComercial) {
+		this.gerenteComercial = gerenteComercial;
+	}
+
+	public Boolean getBoletoImpresso() {
+		return boletoImpresso;
+	}
+
+	public void setBoletoImpresso(Boolean boletoImpresso) {
+		this.boletoImpresso = boletoImpresso;
+	}
+
+	public Boolean getBoletoEmail() {
+		return boletoEmail;
+	}
+
+	public void setBoletoEmail(Boolean boletoEmail) {
+		this.boletoEmail = boletoEmail;
+	}
+
+	public Boolean getBoletoSlipImpresso() {
+		return boletoSlipImpresso;
+	}
+
+	public void setBoletoSlipImpresso(Boolean boletoSlipImpresso) {
+		this.boletoSlipImpresso = boletoSlipImpresso;
+	}
+
+	public Boolean getBoletoSlipEmail() {
+		return boletoSlipEmail;
+	}
+
+	public void setBoletoSlipEmail(Boolean boletoSlipEmail) {
+		this.boletoSlipEmail = boletoSlipEmail;
+	}
+
+	public Boolean getReciboImpresso() {
+		return reciboImpresso;
+	}
+
+	public void setReciboImpresso(Boolean reciboImpresso) {
+		this.reciboImpresso = reciboImpresso;
+	}
+
+	public Boolean getReciboEmail() {
+		return reciboEmail;
+	}
+
+	public void setReciboEmail(Boolean reciboEmail) {
+		this.reciboEmail = reciboEmail;
 	}	
+
+	/**
+	 * @return the taxaFixa
+	 */
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
+	}
+
+	/**
+	 * @param taxaFixa the taxaFixa to set
+	 */
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+
+	/**
+	 * @return the percentualFaturamento
+	 */
+	public BigDecimal getPercentualFaturamento() {
+		return percentualFaturamento;
+	}
+
+	/**
+	 * @param percentualFaturamento the percentualFaturamento to set
+	 */
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
+	}
+
+	/**
+	 * @return the inicioPeriodoCarencia
+	 */
+	public String getInicioPeriodoCarencia() {
+		return inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @param inicioPeriodoCarencia the inicioPeriodoCarencia to set
+	 */
+	public void setInicioPeriodoCarencia(String inicioPeriodoCarencia) {
+		this.inicioPeriodoCarencia = inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @return the fimPeriodoCarencia
+	 */
+	public String getFimPeriodoCarencia() {
+		return fimPeriodoCarencia;
+	}
+
+	/**
+	 * @param fimPeriodoCarencia the fimPeriodoCarencia to set
+	 */
+	public void setFimPeriodoCarencia(String fimPeriodoCarencia) {
+		this.fimPeriodoCarencia = fimPeriodoCarencia;
+	}
+	
 }
