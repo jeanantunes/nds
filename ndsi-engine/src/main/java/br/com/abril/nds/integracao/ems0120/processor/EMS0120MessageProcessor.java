@@ -41,8 +41,16 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	public EMS0120MessageProcessor() {
+
+	}
 	
-	@Override	
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public void processMessage(Message message) {
 	
@@ -110,4 +118,9 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }

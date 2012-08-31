@@ -38,6 +38,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 	private static final String INDICE_PESSOA_JURIDICA = "J";
 	private static final String INDICE_PESSOA_FISICA = "F";
 
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void processMessage(Message message) {
@@ -481,4 +486,10 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);
 		}
 	}
+
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }
