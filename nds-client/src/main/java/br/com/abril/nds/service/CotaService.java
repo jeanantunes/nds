@@ -265,5 +265,15 @@ public interface CotaService {
      * @return {@link CotaDTO} com as informações do histórico de titularidade da cota
      */
     CotaDTO obterHistoricoTitularidade(Long idCota, Long idHistorico);
+    
+    /**
+     * Obtém a lista de endereços associados ao histórico de titularidade 
+     * da cota
+     * @param idCota identificador da cota
+     * @param idHistorico identificador da cota
+     * @return {@link List<EnderecoAssociacaoDTO>} com os endereços associados ao 
+     * histórico de titularidade da cota
+     */
+    List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(Long idCota, Long idHistorico);
 	
 }

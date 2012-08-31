@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
@@ -278,7 +279,16 @@ public class EntregadorServiceImpl implements EntregadorService {
 				enderecoEntregador.setEntregador(entregador);
 			}
 
-			enderecoEntregador.setEndereco(enderecoAssociacao.getEndereco());
+            EnderecoDTO dto = enderecoAssociacao.getEndereco();
+            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+                    dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
+                    dto.getCidade(), dto.getComplemento(),
+                    dto.getTipoLogradouro(), dto.getLogradouro(),
+                    dto.getNumero(), dto.getUf(), dto.getCodigoUf(),
+                    entregador.getPessoa());
+            endereco.setId(dto.getId());
+
+            enderecoEntregador.setEndereco(endereco);
 
 			enderecoEntregador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
@@ -294,7 +304,7 @@ public class EntregadorServiceImpl implements EntregadorService {
 	private void removerEnderecosEntregador(Entregador entregador, 
 			   								List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
 		
 		List<Long> idsEndereco = new ArrayList<Long>();
 

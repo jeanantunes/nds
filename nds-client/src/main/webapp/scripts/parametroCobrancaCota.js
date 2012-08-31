@@ -332,13 +332,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 
 	
-	
-	
-	
-	
-	
-	
-	
 	//FORMAS DE COBRANÇA
 	preparaNovaFormaCobranca : function(){
 		

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
@@ -968,7 +970,9 @@ public class PdvServiceImpl implements PdvService {
 	
 	private void salvarEnderecosPDV(PDV pdv, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
-		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao,pdv.getCota().getPessoa());
+		Pessoa pessoa = pdv.getCota().getPessoa();
+		
+        this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
 		
 		if (listaEnderecoAssociacao != null){
 		
@@ -980,9 +984,17 @@ public class PdvServiceImpl implements PdvService {
 				if (enderecoPDV == null) {
 					enderecoPDV = new EnderecoPDV();
 				} 
-				
+				EnderecoDTO dto = enderecoAssociacao.getEndereco();
+                Endereco endereco = new Endereco(dto.getCodigoBairro(),
+                        dto.getBairro(), dto.getCep(),
+                        dto.getCodigoCidadeIBGE(), dto.getCidade(),
+                        dto.getComplemento(), dto.getTipoLogradouro(),
+                        dto.getLogradouro(), dto.getNumero(), dto.getUf(),
+                        dto.getCodigoUf(), pessoa);
+                endereco.setId(dto.getId());
+                
+                enderecoPDV.setEndereco(endereco);
 				enderecoPDV.setPdv(pdv);
-				enderecoPDV.setEndereco(enderecoAssociacao.getEndereco());
 				enderecoPDV.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 				enderecoPDV.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
 				

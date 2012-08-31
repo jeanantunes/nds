@@ -8,18 +8,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.controllers.expedicao.ConfirmacaoExpedicaoController;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -33,9 +38,11 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -43,6 +50,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.Intervalo;
 
@@ -56,6 +64,8 @@ import br.com.abril.nds.util.Intervalo;
 @Repository
 public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		implements CotaRepository {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(CotaRepositoryImpl.class);
 
 	@Value("#{queries.suspensaoCota}")
 	protected String querySuspensaoCota;
@@ -138,8 +148,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		Query query = getSession().createQuery(hql.toString());
 
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(
-				EnderecoAssociacaoDTO.class);
+		ResultTransformer resultTransformer = null; 
+		
+		try {
+		    resultTransformer = new AliasToBeanConstructorResultTransformer(
+		            EnderecoAssociacaoDTO.class.getConstructor(Long.class, Endereco.class, boolean.class, TipoEndereco.class));
+		} catch (Exception e) {
+            String message = "Erro criando result transformer para classe: "
+                    + EnderecoAssociacaoDTO.class.getName();
+            LOG.error(message, e);
+            throw new RuntimeException(message, e);
+        }
 
 		query.setResultTransformer(resultTransformer);
 
@@ -1346,5 +1365,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		   .append(" and view.fornecedorId = fornecedores.id ");
 		
 		return hql.toString();
-	}	
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HistoricoTitularidadeCota obterHistoricoTitularidade(Long idCota,
+            Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da cota não deve ser nulo!");
+        Validate.notNull(idHistorico, "Identificador do histórico de titularidade não deve ser nulo!"); 
+        String hql = "from HistoricoTitularidadeCota historico where historico.id = :idHistorico and historico.cota.id = :idCota";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("idHistorico", idHistorico);
+        query.setParameter("idCota", idCota);
+        return (HistoricoTitularidadeCota) query.uniqueResult();
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -460,7 +461,17 @@ public class FornecedorServiceImpl implements FornecedorService {
 				enderecoFornecedor.setFornecedor(fornecedor);
 			}
 
-			enderecoFornecedor.setEndereco(enderecoAssociacao.getEndereco());
+			EnderecoDTO dto = enderecoAssociacao.getEndereco();
+			
+            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+                    dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
+                    dto.getCidade(), dto.getComplemento(),
+                    dto.getTipoLogradouro(), dto.getLogradouro(),
+                    dto.getNumero(), dto.getUf(), dto.getCodigoUf(),
+                    fornecedor.getJuridica());
+            endereco.setId(dto.getId());
+			
+            enderecoFornecedor.setEndereco(endereco);
 
 			enderecoFornecedor.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
@@ -476,7 +487,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	private void removerEnderecosFornecedor(Fornecedor fornecedor, 
 			   								List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
 		
 		List<Long> idsEndereco = new ArrayList<Long>();
 

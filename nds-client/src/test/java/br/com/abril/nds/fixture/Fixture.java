@@ -3366,6 +3366,14 @@ public class Fixture {
     public static HistoricoTitularidadeCota historicoTitularidade(Cota cota) {
         HistoricoTitularidadeCota historico = new HistoricoTitularidadeCota();
         historico.setCota(cota);
+        historico.setDataInclusao(cota.getInicioAtividade());
+        
+        ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica();
+        if(paramNFE != null) {
+            historico.setEmiteNfe(paramNFE.getEmiteNotaFiscalEletronica());
+            historico.setEmailNfe(paramNFE.getEmailNotaFiscalEletronica());
+        }
+
         historico.setInicio(cota.getInicioAtividade());
         historico.setFim(DateUtil.adicionarDias(cota.getInicioAtividade(), 60));
         historico.setEmail("aristoteles@mail.com");

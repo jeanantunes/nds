@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
@@ -394,7 +395,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 		
 		if (listaEnderecosAdicionar != null && !listaEnderecosAdicionar.isEmpty()){
 			
-			this.enderecoService.cadastrarEnderecos(listaEnderecosAdicionar, transportador.getPessoaJuridica());
+			PessoaJuridica pessoaJuridica = transportador.getPessoaJuridica();
+			
+            this.enderecoService.cadastrarEnderecos(listaEnderecosAdicionar, pessoaJuridica);
 			
 			for (EnderecoAssociacaoDTO dto : listaEnderecosAdicionar){
 				
@@ -403,10 +406,22 @@ public class TransportadorServiceImpl implements TransportadorService {
 								dto.getId(), 
 								transportador.getId());
 				
-				if (enderecoTransportador == null){
+				EnderecoDTO enderecoDTO = dto.getEndereco();
+                Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
+                        enderecoDTO.getBairro(), enderecoDTO.getCep(),
+                        enderecoDTO.getCodigoCidadeIBGE(),
+                        enderecoDTO.getCidade(), enderecoDTO.getComplemento(),
+                        enderecoDTO.getTipoLogradouro(),
+                        enderecoDTO.getLogradouro(), enderecoDTO.getNumero(),
+                        enderecoDTO.getUf(), enderecoDTO.getCodigoUf(),
+                        pessoaJuridica);
+                endereco.setId(enderecoDTO.getId());
+				
+				
+                if (enderecoTransportador == null){
 					
 					enderecoTransportador = new EnderecoTransportador();
-					enderecoTransportador.setEndereco(dto.getEndereco());
+					enderecoTransportador.setEndereco(endereco);
 					enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
 					enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
 					enderecoTransportador.setTransportador(transportador);
@@ -414,7 +429,7 @@ public class TransportadorServiceImpl implements TransportadorService {
 					this.enderecoTransportadorRepository.adicionar(enderecoTransportador);
 				} else {
 					
-					enderecoTransportador.setEndereco(dto.getEndereco());
+					enderecoTransportador.setEndereco(endereco);
 					enderecoTransportador.setPrincipal(dto.isEnderecoPrincipal());
 					enderecoTransportador.setTipoEndereco(dto.getTipoEndereco());
 					

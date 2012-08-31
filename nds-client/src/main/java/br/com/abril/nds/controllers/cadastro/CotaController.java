@@ -157,8 +157,13 @@ public class CotaController {
 	
 	
 	public void historicoTitularidade(Long idCota, Long idHistorico) {
-	    CotaDTO cotaDTO = cotaService.obterHistoricoTitularidade(idCota, idHistorico);
 	    definirModoTela(ModoTela.HISTORICO_TITULARIDADE);
+	    
+	    CotaDTO cotaDTO = cotaService.obterHistoricoTitularidade(idCota, idHistorico);
+	    List<EnderecoAssociacaoDTO> enderecos = cotaService.obterEnderecosHistoricoTitularidade(idCota, idHistorico);
+	    session.setAttribute(LISTA_ENDERECOS_EXIBICAO, enderecos);
+	    
+	    
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 

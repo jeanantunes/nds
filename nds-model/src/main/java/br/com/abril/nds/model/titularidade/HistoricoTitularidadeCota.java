@@ -52,6 +52,10 @@ public class HistoricoTitularidadeCota implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "COTA_ID")
     private Cota cota;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DATA_INCLUSAO")
+    private Date dataInclusao;
 
     /**
      * Início da titularidade para a cota
@@ -85,6 +89,18 @@ public class HistoricoTitularidadeCota implements Serializable {
      */
     @Column(name = "EMAIL")
     private String email;
+    
+    /**
+     * Flag indicando se a cota emite NFE
+     */
+    @Column(name = "EMITE_NFE")
+    private boolean emiteNfe;
+    
+    /**
+     * Email de utilização da NFE
+     */
+    @Column(name = "EMAIL_NFE")
+    private String emailNfe;
 
     /**
      * Pessoa Física titular da cota do histórico de titularidade 
@@ -214,6 +230,20 @@ public class HistoricoTitularidadeCota implements Serializable {
     public void setCota(Cota cota) {
         this.cota = cota;
     }
+    
+    /**
+     * @return the dataInclusao
+     */
+    public Date getDataInclusao() {
+        return dataInclusao;
+    }
+
+    /**
+     * @param dataInclusao the dataInclusao to set
+     */
+    public void setDataInclusao(Date dataInclusao) {
+        this.dataInclusao = dataInclusao;
+    }
 
     /**
      * @return the inicio
@@ -288,6 +318,34 @@ public class HistoricoTitularidadeCota implements Serializable {
      */
     public void setEmail(String email) {
         this.email = email;
+    }
+    
+    /**
+     * @return the emiteNfe
+     */
+    public boolean isEmiteNfe() {
+        return emiteNfe;
+    }
+
+    /**
+     * @param emiteNfe the emiteNfe to set
+     */
+    public void setEmiteNfe(boolean emiteNfe) {
+        this.emiteNfe = emiteNfe;
+    }
+
+    /**
+     * @return the emailNfe
+     */
+    public String getEmailNfe() {
+        return emailNfe;
+    }
+
+    /**
+     * @param emailNfe the emailNfe to set
+     */
+    public void setEmailNfe(String emailNfe) {
+        this.emailNfe = emailNfe;
     }
 
     /**
@@ -521,7 +579,11 @@ public class HistoricoTitularidadeCota implements Serializable {
     }
     
     public HistoricoTitularidadeCotaPessoa getPessoa() {
-        return pessoaFisica == null ? pessoaJuridica : pessoaFisica;
+        return isPessoaFisica() ? pessoaFisica : pessoaJuridica;
+    }
+    
+    public boolean isPessoaFisica() {
+        return pessoaFisica != null;
     }
 
 }

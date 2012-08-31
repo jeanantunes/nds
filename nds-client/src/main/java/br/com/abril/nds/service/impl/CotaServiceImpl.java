@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.assembler.CotaDTOAssembler;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
@@ -295,7 +297,9 @@ public class CotaServiceImpl implements CotaService {
 
 		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao, cota);
 		
-		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, cota.getPessoa());
+		Pessoa pessoa = cota.getPessoa();
+        
+		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
 		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
@@ -308,7 +312,18 @@ public class CotaServiceImpl implements CotaService {
 				enderecoCota.setCota(cota);
 			}
 
-			enderecoCota.setEndereco(enderecoAssociacao.getEndereco());
+			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
+			
+            Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
+                    enderecoDTO.getBairro(), enderecoDTO.getCep(),
+                    enderecoDTO.getCodigoCidadeIBGE(), enderecoDTO.getCidade(),
+                    enderecoDTO.getComplemento(),
+                    enderecoDTO.getTipoLogradouro(),
+                    enderecoDTO.getLogradouro(), enderecoDTO.getNumero(),
+                    enderecoDTO.getUf(), enderecoDTO.getCodigoUf(), pessoa);
+            endereco.setId(enderecoDTO.getId());
+			
+            enderecoCota.setEndereco(endereco);
 
 			enderecoCota.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
@@ -321,7 +336,7 @@ public class CotaServiceImpl implements CotaService {
 	private void removerEnderecosCota(Cota cota,
 									  List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
 		
 		List<Long> idsEndereco = new ArrayList<Long>();
 
@@ -1651,7 +1666,7 @@ public class CotaServiceImpl implements CotaService {
 				
 				EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
 				
-				enderecoAssociacao.setEndereco(enderecoCota.getEndereco());
+				enderecoAssociacao.setEndereco(EnderecoDTO.fromEndereco(enderecoCota.getEndereco()));
 				enderecoAssociacao.setEnderecoPrincipal(enderecoCota.isPrincipal());
 				enderecoAssociacao.setTipoEndereco(enderecoCota.getTipoEndereco());
 				
@@ -1665,8 +1680,19 @@ public class CotaServiceImpl implements CotaService {
     @Override
     @Transactional(readOnly = true)
     public CotaDTO obterHistoricoTitularidade(Long idCota, Long idHistorico) {
-        //TODO: apenas para testes no controller/tela, refatorar
-        return obterDadosCadastraisCota(idCota);
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        CotaDTO dto = CotaDTOAssembler.toCotaDTO(historico);
+        return dto;
+    }
+    
+    @Transactional(readOnly = true)
+    public List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(
+            Long idCota, Long idHistorico) {
+        HistoricoTitularidadeCota historico = cotaRepository
+                .obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<EnderecoAssociacaoDTO>(
+                CotaDTOAssembler.toEnderecoAssociacaoDTOCollcetion(historico
+                        .getEnderecos()));
     }
 
 	

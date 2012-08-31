@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaFiadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFiadorDTO.OrdenacaoColunaFiador;
@@ -448,26 +449,37 @@ public class FiadorServiceImpl implements FiadorService {
 
 	private void salvarEnderecosFiador(Fiador fiador, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
-		this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, fiador.getPessoa());
+		Pessoa pessoa = fiador.getPessoa();
+		
+        this.enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
 		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
 			EnderecoFiador enderecoFiador = 
 					this.enderecoFiadorRepository.buscarEnderecoPorEnderecoFiador(enderecoAssociacao.getId(), fiador.getId());
 
-			if (enderecoFiador == null) {
+			EnderecoDTO dto = enderecoAssociacao.getEndereco();
+			
+            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+                    dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
+                    dto.getCidade(), dto.getComplemento(),
+                    dto.getTipoLogradouro(), dto.getLogradouro(),
+                    dto.getNumero(), dto.getUf(), dto.getCodigoUf(), pessoa);
+            endereco.setId(dto.getId());        
+			
+            if (enderecoFiador == null) {
 
 				enderecoFiador = new EnderecoFiador();
 				enderecoFiador.setFiador(fiador);
 				
-				enderecoFiador.setEndereco(enderecoAssociacao.getEndereco());
+				enderecoFiador.setEndereco(endereco);
 				enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 				enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
 				
 				this.enderecoFiadorRepository.adicionar(enderecoFiador);
 			} else {
 				
-				enderecoFiador.setEndereco(enderecoAssociacao.getEndereco());
+				enderecoFiador.setEndereco(endereco);
 				enderecoFiador.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 				enderecoFiador.setTipoEndereco(enderecoAssociacao.getTipoEndereco());
 				
