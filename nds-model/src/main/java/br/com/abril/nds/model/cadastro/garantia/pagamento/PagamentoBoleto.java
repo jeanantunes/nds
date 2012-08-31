@@ -2,11 +2,11 @@ package br.com.abril.nds.model.cadastro.garantia.pagamento;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 
 @Entity
@@ -54,6 +54,9 @@ public class PagamentoBoleto extends PagamentoCaucaoLiquida {
 	public void setDiasSemana(List<Integer> diasSemana) {
 		this.diasSemana = diasSemana;
 	}
+	@Column(name="PERIODO_COBRANCA",nullable=true)
+	@Enumerated(EnumType.STRING)
+	private PeriodoCobranca periodoCobranca;
 
 	/**
 	 * @return the quantidadeParcelas
@@ -82,5 +85,20 @@ public class PagamentoBoleto extends PagamentoCaucaoLiquida {
 	public void setValorParcela(BigDecimal valorParcela) {
 		this.valorParcela = valorParcela;
 	}
+
+	/**
+	 * @return the periodoCobranca
+	 */
+	public PeriodoCobranca getPeriodoCobranca() {
+		return periodoCobranca;
+	}
+
+	/**
+	 * @param periodoCobranca the periodoCobranca to set
+	 */
+	public void setPeriodoCobranca(PeriodoCobranca periodoCobranca) {
+		this.periodoCobranca = periodoCobranca;
+	}
+	
 	
 }
