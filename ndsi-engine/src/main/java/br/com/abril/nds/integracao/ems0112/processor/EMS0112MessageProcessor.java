@@ -37,7 +37,11 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorService distribuidorService;
 	
 	@Override
-	
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	public void processMessage(Message message) {
 
 		EMS0112Input input = (EMS0112Input) message.getBody();
@@ -486,7 +490,9 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 		
-		
-		
-
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }

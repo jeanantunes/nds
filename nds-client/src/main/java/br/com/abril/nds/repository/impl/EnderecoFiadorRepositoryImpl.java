@@ -4,7 +4,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -119,5 +122,19 @@ public class EnderecoFiadorRepositoryImpl extends
 		query.setMaxResults(1);
 		
 		return query.uniqueResult() != null;
+	}
+	
+	@Override
+	public Endereco buscaPrincipal(Long idFiador){
+		Criteria criteria = getSession().createCriteria(EnderecoFiador.class);
+		criteria.createAlias("fiador", "fiador");
+		
+		criteria.add(Restrictions.eq("fiador.id", idFiador));
+		criteria.add(Restrictions.eq("principal", true));
+		
+		criteria.setProjection(Projections.property("endereco"));
+		
+		return (Endereco)criteria.uniqueResult();
+		
 	}
 }

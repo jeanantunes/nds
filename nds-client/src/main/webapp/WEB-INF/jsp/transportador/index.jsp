@@ -1,10 +1,5 @@
 <head>
 	<script type="text/javascript" src="scripts/transportador.js"></script>
-	<script language="javascript" type="text/javascript">
-		$(function() {
-			transportadorController.init();
-		} );
-	</script>
 	<style>
 		.diasFunc label,.finceiro label {
 			vertical-align: super;
@@ -147,7 +142,7 @@
 			<br clear="all" />
 				<fieldset>
 					<legend>Dados Cadastrais</legend>
-					<table width="730" cellpadding="2" cellspacing="2" style="text-align: left;">
+					<table width="850" cellpadding="2" cellspacing="2" style="text-align: left;">
 						<tr>
 							<td width="98">Razão Social:</td>
 							<td width="248"><input type="text" style="width: 230px" id="razaoSocial" maxlength="255" /></td>
@@ -166,7 +161,32 @@
 							<td>Insc. Estadual:</td>
 							<td><input type="text" style="width: 150px" id="inscEstadual" maxlength="255" /></td>
 						</tr>
+						<tr>
+							<td>Cobrança</td>
+							<td>
+								<select style="width: 100px;">
+									<option onclick="transportadorController.mostrarOpcaoTaxaFixa();">Taxa Fixa</option>
+									<option onclick="transportadorController.mostrarOpcaoPercentual()">Percentual</option>
+								</select>
+							</td>
+							<td class="transpTaxaFixa">Valor R$:</td>
+							<td class="transpTaxaFixa">
+								<input type="text"/>
+							</td>
+							
+							<td class="transpPercentual" style="display: none;">Percentual (%):</td>
+							<td class="transpPercentual" style="display: none;">
+								<input type="text" />
+							</td>
+						</tr>
 					</table>
+					<br/>
+					
+					<fieldset>
+						<legend>Cotas Atendidas</legend>
+						<table id="gridCotasAssociadas"></table>
+					</fieldset>
+					
 				</fieldset>
 				<br clear="all" />
 			</div>
@@ -287,10 +307,3 @@
 	</fieldset>
 			
 </body>
-
-<script type="text/javascript">
-$(function(){
-	ENDERECO_TRANSPORTADOR.init(transportadorController.workspace);
-	TRANSPORTADOR.init(transportadorController.workspace);
-});
-</script>

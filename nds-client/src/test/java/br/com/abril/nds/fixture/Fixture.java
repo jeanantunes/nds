@@ -2810,7 +2810,7 @@ public class Fixture {
 
 	public static ParametroDistribuicaoCota criarParametroDistribuidor(Integer qtdePDV,
 			String assistenteComercial, TipoEntrega tipoEntrega,
-			String observacao, Boolean arrendatario,
+			String observacao,
 			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
 			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
 			Boolean notaEnvioEmail, Boolean chamadaEncalheImpresso,
@@ -2821,7 +2821,6 @@ public class Fixture {
 		parametroDistribuicaoCota.setQtdePDV(qtdePDV);
 		parametroDistribuicaoCota.setAssistenteComercial(assistenteComercial);
 		parametroDistribuicaoCota.setTipoEntrega(tipoEntrega);
-		parametroDistribuicaoCota.setArrendatario(arrendatario);
 		parametroDistribuicaoCota.setObservacao(observacao);
 		parametroDistribuicaoCota.setRepartePorPontoVenda(repartePorPontoVenda);
 		parametroDistribuicaoCota.setSolicitaNumAtras(solicitaNumAtras);

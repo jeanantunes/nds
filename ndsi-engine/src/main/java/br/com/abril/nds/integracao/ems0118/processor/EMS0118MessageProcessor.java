@@ -30,6 +30,11 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
 	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	public void processMessage(Message message) {
 
 		EMS0118Input input = (EMS0118Input) message.getBody();
@@ -83,4 +88,9 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 
 	}
 
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }
