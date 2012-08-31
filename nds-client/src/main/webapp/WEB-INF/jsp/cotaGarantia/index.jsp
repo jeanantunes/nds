@@ -1,5 +1,7 @@
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
+<script language="text/javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
@@ -8,7 +10,7 @@
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 <script type="text/javascript">
-	var tipoCotaGarantia = new TipoCotaGarantia();
+	var tipoCotaGarantia = new TipoCotaGarantia(MANTER_COTA.workspace);
 		
 </script>
 

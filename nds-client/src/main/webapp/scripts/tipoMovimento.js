@@ -1,10 +1,135 @@
-function TipoMovimento(pathTela,obj) {
+function TipoMovimento(pathTela,obj, workspace) {
+	
+	var _workspace = workspace;
 	
 	var T = this;
 	
 	this.tiposMovimento = []; 
 	this.tipoMovimento = null;
 	
+	this.init = function() {
+
+		$(".movimentosGrid", _workspace).flexigrid($.extend({},{
+			colModel : [ {
+					display : 'Código',
+					name : 'codigo',
+					width : 95,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Descrição',
+					name : 'descricao',
+					width : 300,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Grupo de Operação',
+					name : 'grupoOperacao',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Operação',
+					name : 'operacao',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Aprovação',
+					name : 'aprovacao',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Incide na Dívida',
+					name : 'incideDivida',
+					width : 100,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Ação',
+					name : 'acao',
+					width : 60,
+					sortable : false,
+					align : 'center'
+				}],
+				sortname : "codigo",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 'auto'
+		})); 	
+		
+		$(".grids", _workspace).show();	
+
+		$("#codigo").numeric();
+
+	},
+	
+	this.popup = function() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-novo", _workspace ).dialog({
+			resizable: false,
+			height:280,
+			width:460,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					TM.salvarTipoMovimento();					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-novo", this.workspace).parents("form")
+		});
+	},
+	
+	this.popup_alterar = function() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-novo", _workspace ).dialog({
+			resizable: false,
+			height:280,
+			width:460,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					TM.alterarTipoMovimento();
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-novo", this.workspace).parents("form")
+		});	
+		      
+	},
+	
+	this.popup_excluir = function() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-excluir", _workspace ).dialog({
+			resizable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					TM.excluirTipoMovimento();
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-excluir", this.workspace).parents("form")
+		});
+	},
+
 	this.cliquePesquisar = function() {
 		
 		var data = [];
@@ -12,14 +137,14 @@ function TipoMovimento(pathTela,obj) {
 		data.push({name:'filtro.codigo',		value: T.get("codigo")});
 		data.push({name:'filtro.descricao',		value: T.get("descricao")});
 		
-		$(".movimentosGrid").flexOptions({			
+		$(".movimentosGrid", _workspace).flexOptions({			
 			url : pathTela + "/tipoMovimento/pesquisarTipoMovimento",
 			dataType : 'json',
 			preProcess: T.processaRetornoPesquisa,
 			params:data
 		});
 		
-		$(".movimentosGrid").flexReload();
+		$(".movimentosGrid", _workspace).flexReload();
 	},
 	
 	this.processaRetornoPesquisa = function(result) {
@@ -78,11 +203,11 @@ function TipoMovimento(pathTela,obj) {
 		$.postJSON(contextPath + "/tipoMovimento/excluirTipoMovimento",
 				data,
 				function(result){										
-					$(".movimentosGrid").flexReload();
+					$(".movimentosGrid", _workspace).flexReload();
 					exibirMensagem('SUCCESS', ['Tipo de Movimento excluido com sucesso.']);										
 				});		
 		
-		$( "#dialog-excluir" ).dialog( "close" );
+		$( "#dialog-excluir", _workspace ).dialog( "close" );
 	},
 	
 	this.salvarTipoMovimento = function() {
@@ -98,8 +223,8 @@ function TipoMovimento(pathTela,obj) {
 		$.postJSON(contextPath + "/tipoMovimento/salvarTipoMovimento",
 				data,
 				function(result){
-					$( "#dialog-novo" ).dialog( "close" );					
-					$(".movimentosGrid").flexReload();
+					$( "#dialog-novo", _workspace ).dialog( "close" );					
+					$(".movimentosGrid", _workspace).flexReload();
 					exibirMensagem('SUCCESS', ['Tipo de Movimento salvo com sucesso.']);										
 				},	
 				null, 
@@ -121,8 +246,8 @@ function TipoMovimento(pathTela,obj) {
 		$.postJSON(contextPath + "/tipoMovimento/alterarTipoMovimento",
 				data,
 				function(result){		
-					$( "#dialog-novo" ).dialog( "close" );
-					$(".movimentosGrid").flexReload();
+					$( "#dialog-novo", _workspace ).dialog( "close" );
+					$(".movimentosGrid", _workspace).flexReload();
 					exibirMensagem('SUCCESS', ['Tipo de Movimento alterado com sucesso.']);										
 				},
 				null, 
@@ -133,9 +258,9 @@ function TipoMovimento(pathTela,obj) {
 	this.preencherModal = function(codigo, descricao, grupoOperacao, operacao, aprovacao, incideDivida) {
 		
 		if(codigo!=null) {
-			$('#grupoOperacaoModal').disable();
+			$('#grupoOperacaoModal', _workspace).disable();
 		} else {
-			$('#grupoOperacaoModal').enable();
+			$('#grupoOperacaoModal', _workspace).enable();
 		}
 		
 		T.atualizarCombosPorGrupoOperacao(grupoOperacao);
@@ -158,22 +283,22 @@ function TipoMovimento(pathTela,obj) {
 			opcoes.push({value:{$:'Débito'},key:{$:'DEBITO'}});
 			
 			T.set('incideDividaModal','SIM');
-			$('#incideDividaModal').disable();
+			$('#incideDividaModal', _workspace).disable();
 			
 		} else {
 			opcoes.push({value:{$:'Entrada'},key:{$:'ENTRADA'}});
 			opcoes.push({value:{$:'Saída'},key:{$:'SAIDA'}});
 			
-			$('#incideDividaModal').enable();
+			$('#incideDividaModal', _workspace).enable();
 		}
 		
 		var combo =  montarComboBox(opcoes, false);
-		$("#operacaoModal").html(combo);
+		$("#operacaoModal", _workspace).html(combo);
 	},
 		
 	this.carregarExclusao = function(index) {
 		T.tipoMovimento = T.tiposMovimento[index];
-		popup_excluir();
+		T.popup_excluir();
 	},
 	
 	
@@ -186,7 +311,7 @@ function TipoMovimento(pathTela,obj) {
 	 */
 	this.set = function(campo,value) {
 				
-		var elemento = $("#" + campo);
+		var elemento = $("#" + campo, _workspace);
 		
 		if(elemento.attr('type') == 'checkbox') {
 			
@@ -207,7 +332,7 @@ function TipoMovimento(pathTela,obj) {
 	 */
 	this.get = function(campo) {
 		
-		var elemento = $("#" + campo);
+		var elemento = $("#" + campo, _workspace);
 		
 		if(elemento.attr('type') == 'checkbox') {
 			return (elemento.attr('checked') == 'checked') ;
@@ -217,9 +342,4 @@ function TipoMovimento(pathTela,obj) {
 		
 	};
 	
-	$(function() {
-		
-		$("#codigo").numeric();
-
-	});
 }

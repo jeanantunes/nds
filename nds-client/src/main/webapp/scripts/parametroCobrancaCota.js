@@ -56,7 +56,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $("#contaDigito", this.workspace).numeric();
 	    $("#diaDoMes", this.workspace).numeric();
 	    
-	    $(".dataInputMask").mask("99/99/9999");
+	    $(".dataInputMask", this.workspace).mask("99/99/9999");
 	    
 	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
 
