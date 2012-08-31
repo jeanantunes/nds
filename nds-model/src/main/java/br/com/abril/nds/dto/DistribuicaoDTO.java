@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -36,8 +37,8 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean reciboImpresso;
 	private Boolean reciboEmail;
 	private String gerenteComercial;
-	private String taxaFixa;
-	private String percentualFaturamento;
+	private BigDecimal taxaFixa;
+	private BigDecimal percentualFaturamento;
 	private String inicioPeriodoCarencia;
 	private String fimPeriodoCarencia;
 	
@@ -344,28 +345,28 @@ public class DistribuicaoDTO implements Serializable  {
 	/**
 	 * @return the taxaFixa
 	 */
-	public String getTaxaFixa() {
+	public BigDecimal getTaxaFixa() {
 		return taxaFixa;
 	}
 
 	/**
 	 * @param taxaFixa the taxaFixa to set
 	 */
-	public void setTaxaFixa(String taxaFixa) {
+	public void setTaxaFixa(BigDecimal taxaFixa) {
 		this.taxaFixa = taxaFixa;
 	}
 
 	/**
 	 * @return the percentualFaturamento
 	 */
-	public String getPercentualFaturamento() {
+	public BigDecimal getPercentualFaturamento() {
 		return percentualFaturamento;
 	}
 
 	/**
 	 * @param percentualFaturamento the percentualFaturamento to set
 	 */
-	public void setPercentualFaturamento(String percentualFaturamento) {
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
 		this.percentualFaturamento = percentualFaturamento;
 	}
 
