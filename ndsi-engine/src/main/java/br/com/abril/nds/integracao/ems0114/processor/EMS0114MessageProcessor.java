@@ -31,6 +31,16 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
 	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void processMessage(Message message) {
 
 		// Distribuidor unico para todo sistema
@@ -192,4 +202,15 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			return null;
 		}
 	}
+	
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void posProcess(Message message) {
+		// TODO Auto-generated method stub
+	}
+	
 }

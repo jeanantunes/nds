@@ -17,7 +17,7 @@
 		</div>
 		<div class="areaBts">
 			<div class="area">
-				<span style="cursor: pointer;" class="bt_novos" onclick="popup();" rel="tipsy" title="Confirmar Furo de Produto">
+				<span style="cursor: pointer;" class="bt_novos" onclick="furoProdutoController.popup();" rel="tipsy" title="Confirmar Furo de Produto">
 	            	<a href="javascript:;" id="linkConfirmar"><img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /></a>
 	            </span>
 			</div>

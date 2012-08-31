@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -36,6 +37,10 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean reciboImpresso;
 	private Boolean reciboEmail;
 	private String gerenteComercial;
+	private BigDecimal taxaFixa;
+	private BigDecimal percentualFaturamento;
+	private String inicioPeriodoCarencia;
+	private String fimPeriodoCarencia;
 	
 	private List<ItemDTO<Long, String>> tiposEntrega;
 	
@@ -336,4 +341,61 @@ public class DistribuicaoDTO implements Serializable  {
 	public void setReciboEmail(Boolean reciboEmail) {
 		this.reciboEmail = reciboEmail;
 	}	
+
+	/**
+	 * @return the taxaFixa
+	 */
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
+	}
+
+	/**
+	 * @param taxaFixa the taxaFixa to set
+	 */
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+
+	/**
+	 * @return the percentualFaturamento
+	 */
+	public BigDecimal getPercentualFaturamento() {
+		return percentualFaturamento;
+	}
+
+	/**
+	 * @param percentualFaturamento the percentualFaturamento to set
+	 */
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
+	}
+
+	/**
+	 * @return the inicioPeriodoCarencia
+	 */
+	public String getInicioPeriodoCarencia() {
+		return inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @param inicioPeriodoCarencia the inicioPeriodoCarencia to set
+	 */
+	public void setInicioPeriodoCarencia(String inicioPeriodoCarencia) {
+		this.inicioPeriodoCarencia = inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @return the fimPeriodoCarencia
+	 */
+	public String getFimPeriodoCarencia() {
+		return fimPeriodoCarencia;
+	}
+
+	/**
+	 * @param fimPeriodoCarencia the fimPeriodoCarencia to set
+	 */
+	public void setFimPeriodoCarencia(String fimPeriodoCarencia) {
+		this.fimPeriodoCarencia = fimPeriodoCarencia;
+	}
+	
 }

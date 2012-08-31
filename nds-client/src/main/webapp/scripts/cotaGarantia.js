@@ -696,8 +696,16 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 	
 };
 
-TipoCotaGarantia.prototype.onOpen = function() {
+TipoCotaGarantia.prototype.onOpen = function(tipoCotaSelecionada) {
 	this.getData();
+	
+	if (tipoCotaSelecionada == "JURIDICA"){
+		$("#cotaGarantiaClassificacaoCota").val($("#classificacaoSelecionada :selected").text());
+	}
+	else{
+		$("#cotaGarantiaClassificacaoCota").val($("#classificacaoSelecionadaCPF :selected").text());
+	}
+	
 };
 
 TipoCotaGarantia.prototype.bindEvents = function() {
@@ -867,8 +875,10 @@ Fiador.prototype.getFiador = function(idFiador, documento) {
 			exibirMensagemDialog(data.tipoMensagem, data.listaMensagens,"");
 			_this.toggleDados(false);
 			_this.fiador = null;
+			_this.enderecoFiador = null;
 		} else {
-			_this.fiador = data;
+			_this.fiador = data.fiador;
+			_this.enderecoFiador =data.endereco;
 			_this.bindData();
 			_this.toggleDados(true);
 		}
@@ -898,7 +908,7 @@ Fiador.prototype.bindData = function() {
 	$("#cotaGarantiaFiadorNome").html(nome);
 	$("#cotaGarantiaFiadorDoc").html(doc);
 
-	var endereco = this.fiador.pessoa.enderecos[0];
+	var endereco = this.enderecoFiador;
 	var strEndereco = endereco.tipoLogradouro + ' ' + endereco.logradouro
 			+ ', ' + endereco.numero + ' - ' + endereco.bairro + ' - '
 			+ endereco.cidade + '/' + endereco.uf;
@@ -1179,4 +1189,109 @@ CaucaoLiquida.prototype.initGrid = function() {
 	
 };
 
+TipoCotaGarantia.prototype.opcaoPagto = function(op){
+	
+	if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
+		$('#divFormaBoleto').show();
+		$('#divFormaDeposito').hide();
+		$('#divFormaDinheiro').hide();
+		$('#divFormaDesconto').hide();
+    }
+	else if ((op=='DEPOSITO')||(op=='TRANSFERENCIA_BANCARIA')){
+		$('#divFormaBoleto').hide();
+		$('#divFormaDeposito').show();
+		$('#divFormaDinheiro').hide();
+		$('#divFormaDesconto').hide();
+	}    
+	else if (op=='DINHEIRO'){
+		$('#divFormaBoleto').hide();
+		$('#divFormaDeposito').hide();
+		$('#divFormaDinheiro').show();
+		$('#divFormaDesconto').hide();
+	}    
+	else{
+		$('#divFormaBoleto').hide();
+		$('#divFormaDeposito').hide();
+		$('#divFormaDinheiro').hide();
+		$('#divFormaDesconto').show();
+	}
+	
+};
+
+TipoCotaGarantia.prototype.mostraDiario = function(){
+	$("#tipoFormaCobranca").val('DIARIA');
+	$("#semanal").attr("checked", false);
+	$("#quinzenal").attr("checked", false);
+	$("#mensal").attr("checked", false);
+	$( ".semanal" ).hide();
+	$( ".quinzenal" ).hide();
+	$( ".mensal" ).hide();
+	$( ".diario").show();
+};
+
+TipoCotaGarantia.prototype.mostraQuinzenal = function(){
+	$("#tipoFormaCobranca", this.workspace).val('QUINZENAL');
+	$("#diario").attr("checked", false);
+	$("#semanal").attr("checked", false);
+	$("#mensal").attr("checked", false);
+	$( ".diario" ).hide();
+	$( ".semanal" ).hide();
+	$( ".mensal" ).hide();
+	$( ".quinzenal").show();
+};
+
+TipoCotaGarantia.prototype.mostraSemanal = function(){
+	$("#tipoFormaCobranca", this.workspace).val('SEMANAL');
+	$("#diario").attr("checked", false);
+	$("#quinzenal").attr("checked", false);
+	$("#mensal").attr("checked", false);
+	$( ".diario" ).hide();
+	$( ".quinzenal" ).hide();
+	$( ".mensal" ).hide();
+	$( ".semanal" ).show();
+};
+	
+TipoCotaGarantia.prototype.mostraMensal = function(){
+	$("#tipoFormaCobranca", this.workspace).val('MENSAL');
+	$("#diario").attr("checked", false);
+	$("#semanal").attr("checked", false);
+	$("#quinzenal").attr("checked", false);
+	$( ".diario" ).hide();
+	$( ".semanal" ).hide();
+	$( ".quinzenal" ).hide();
+	$( ".mensal" ).show();
+};
+
+TipoCotaGarantia.prototype.opcaoTipoFormaCobranca = function(op){
+	if (op=='SEMANAL'){
+		$("#semanal").attr("checked", true);
+		$("#mensal").attr("checked", false);
+		$("#diario").attr("checked", false);
+		$("#quinzenal").attr("checked", false);
+		this.mostraSemanal();
+    }
+	else if (op=='MENSAL'){
+		$("#semanal").attr("checked", false);
+		$("#mensal").attr("checked", true);
+		$("#diario").attr("checked", false);
+		$("#quinzenal").attr("checked", false);
+		this.mostraMensal();
+	}    
+	else if (op=='DIARIA'){
+		$("#semanal").attr("checked", false);
+		$("#mensal").attr("checked", false);
+		$("#diario").attr("checked", true);
+		$("#quinzenal").attr("checked", false);
+		this.mostraDiario();
+	}    
+	else if (op=='QUINZENAL'){
+		$("#semanal").attr("checked", false);
+		$("#mensal").attr("checked", false);
+		$("#diario").attr("checked", false);
+		$("#quinzenal").attr("checked", true);
+		this.mostraQuinzenal();
+	}    
+};
+
+//@ sourceURL=scriptCotaGarantia.js
 
