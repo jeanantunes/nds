@@ -5,196 +5,13 @@
 	<script type="text/javascript"
 			src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
+	<script type="text/javascript"
+			src="${pageContext.request.contextPath}/scripts/diferencaEstoque.js"></script>
+
 	<script type="text/javascript">
 	
 		var pesquisaProdutoConsultaFaltasSobras = new PesquisaProduto();
 	
-		$(function() {			
-			
-			$('input[id^="data"]').datepicker({
-				showOn: "button",
-				buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-				buttonImageOnly: true,
-				dateFormat: "dd/mm/yy"
-			});
-			
-			$('input[id^="data"]').mask("99/99/9999");
-			
-			$("#edicao").numeric();
-			
-			$("#produto").autocomplete({source: ""});
-		});
-		
-		$(function() {
-			$(".consultaFaltasSobrasGrid").flexigrid({
-				preProcess: executarPreProcessamento,
-				dataType : 'json',
-				colModel : [ {
-					display : 'Data',
-					name : 'dataLancamento',
-					width : 70,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Código',
-					name : 'codigoProduto',
-					width : 50,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Produto',
-					name : 'descricaoProduto',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Edição',
-					name : 'numeroEdicao',
-					width : 50,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Preço Venda R$',
-					name : 'precoVenda',
-					width : 90,
-					sortable : true,
-					align : 'right'
-				}, {
-					display : 'Preço Desconto R$',
-					name : 'precoDesconto',
-					width : 100,
-					sortable : true,
-					align : 'right'
-				}, {
-					display : 'Tipo de Diferença',
-					name : 'tipoDiferenca',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Nota',
-					name : 'numeroNotaFiscal',
-					width : 104,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Exemplar',
-					name : 'quantidade',
-					width : 50,
-					sortable : true,
-					align : 'right'
-				}, {
-					display : 'Status',
-					name : 'statusAprovacao',
-					width : 45,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Total R$',
-					name : 'valorTotalDiferenca',
-					width : 50,
-					sortable : true,
-					align : 'right'
-				} ],
-				sortname : "dataLancamentoNumeroEdicao",
-				sortorder : "asc",
-				usepager : true,
-				useRp : true,
-				rp : 15,
-				showTableToggleBtn : true,
-				width : 960,
-				height : 180
-			});
-		});
-		
-		$(function() {
-			$("#codigo").focus();
-		});
-		
-		function pesquisarProdutosSuccessCallBack() {
-			pesquisarFornecedores();
-		}
-		
-		function pesquisarProdutosErrorCallBack() {
-			pesquisarFornecedores();
-		}
-		
-		function pesquisarFornecedores() {
-			var data = "codigoProduto=" + $("#codigo").val();
-			
-			$.postJSON("${pageContext.request.contextPath}/estoque/diferenca/pesquisarFonecedores",
-					   data, montarComboFornecedores);
-		}
-		
-		function montarComboFornecedores(result) {
-			var comboFornecedores =  montarComboBox(result, true);
-			
-			$("#fornecedor").html(comboFornecedores);
-		}
-		
-		function pesquisar() {
-			var codigoProduto = $("#codigo").val();
-			var numeroEdicao = $("#edicao").val();
-			var idFornecedor = $("#fornecedor").val();
-			var dataInicial = $("#dataInicial").val();
-			var dataFinal = $("#dataFinal").val();
-			var tipoDiferenca = $("#tipoDiferenca").val();
-			
-			$(".consultaFaltasSobrasGrid").flexOptions({
-				url: "${pageContext.request.contextPath}/estoque/diferenca/pesquisarDiferencas",
-				onSuccess: executarAposProcessamento,
-				params: [
-				         {name:'codigoProduto', value:codigoProduto},
-				         {name:'numeroEdicao', value:numeroEdicao},
-				         {name:'idFornecedor', value:idFornecedor},
-				         {name:'dataInicial', value:dataInicial},
-				         {name:'dataFinal', value:dataFinal},
-				         {name:'tipoDiferenca', value:tipoDiferenca}
-				        ] ,
-		        newp: 1
-			});
-			
-			$(".consultaFaltasSobrasGrid").flexReload();
-		}
-		
-		function executarAposProcessamento() {
-			$("span[name='statusAprovacao']").tooltip();
-		}
-		
-		function executarPreProcessamento(resultado) {
-			
-			if (resultado.mensagens) {
-
-				exibirMensagem(
-					resultado.mensagens.tipoMensagem, 
-					resultado.mensagens.listaMensagens
-				);
-				
-				$(".grids").hide();
-
-				return resultado.tableModel;
-			}
-			
-			$("#qtdeTotalDiferencas").html(resultado.qtdeTotalDiferencas);
-			
-			$("#valorTotalDiferencas").html(resultado.valorTotalDiferencas);
-			
-			$.each(resultado.tableModel.rows, function(index, row) {
-				
-				if (row.cell.motivoAprovacao) {
-				
-					var spanAprovacao = "<span name='statusAprovacao' title='" + row.cell.motivoAprovacao + "'>"
-										+ row.cell.statusAprovacao + "</span>";
-					
-					row.cell.statusAprovacao = spanAprovacao;
-				}
-			});
-				
-			$(".grids").show();
-			
-			return resultado.tableModel;
-		}
-				
 	</script>
 </head>
 
@@ -261,7 +78,7 @@
 				</td>
 				<td width="137">
 					<span class="bt_pesquisar" title="Pesquisar">
-						<a href="javascript:;" onclick="pesquisar();">Pesquisar</a>
+						<a href="javascript:;" onclick="diferencaEstoqueController.pesquisar();">Pesquisar</a>
 					</span>
 				</td>
 			</tr>
