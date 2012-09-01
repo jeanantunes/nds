@@ -26,8 +26,8 @@
 					<input type="text" name="codigo" id="codigo"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="pesquisaProdutoConsultaFaltasSobras.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false,
-								   									   pesquisarProdutosSuccessCallBack,
-								   									   pesquisarProdutosErrorCallBack);" />
+								   									   diferencaEstoqueController.pesquisarProdutosSuccessCallBack,
+								   									   diferencaEstoqueController.pesquisarProdutosErrorCallBack);" />
 					
 				</td>
 				<td width="60">Produto:</td>
@@ -35,8 +35,8 @@
 					<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
 					       onkeyup="pesquisaProdutoConsultaFaltasSobras.autoCompletarPorNomeProduto('#produto', false);"
 					       onblur="pesquisaProdutoConsultaFaltasSobras.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false,
-					       											  pesquisarProdutosSuccessCallBack,
-					       											  pesquisarProdutosErrorCallBack);"/>
+					    	   										  diferencaEstoqueController.pesquisarProdutosSuccessCallBack,
+					    	   										  diferencaEstoqueController.pesquisarProdutosErrorCallBack);"/>
 				</td>
 				
 				<td width="50" align="right">Edição:</td>

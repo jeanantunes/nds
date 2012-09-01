@@ -184,7 +184,7 @@ function TipoMovimento(pathTela,obj, workspace) {
 						 T.tipoMovimento.aprovacaoValue, 
 						 T.tipoMovimento.incideDividaValue);
 		
-		popup_alterar();
+		T.popup_alterar();
 		
 	},
 		
@@ -192,7 +192,7 @@ function TipoMovimento(pathTela,obj, workspace) {
 		
 		T.preencherModal(null,'','FINANCEIRO','CREDITO','SIM','SIM');
 		
-		popup();
+		T.popup();
 	},
 	
 	this.excluirTipoMovimento = function() {

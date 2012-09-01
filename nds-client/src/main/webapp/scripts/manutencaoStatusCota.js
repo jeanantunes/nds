@@ -135,7 +135,7 @@ var manutencaoStatusCotaController = $.extend(true, {
 
 	novo : function() {
 
-		var filtro = obterDadosFiltro();
+		var filtro = manutencaoStatusCotaController.obterDadosFiltro();
 		
 		$.postJSON(
 			contextPath + "/financeiro/manutencaoStatusCota/novo", 

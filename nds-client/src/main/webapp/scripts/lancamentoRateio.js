@@ -4,8 +4,8 @@ var lancamentoRateioController = $.extend(true, {
 
 	init : function () {
 		$(".gridRateioDiferencas", lancamentoRateioController.workspace).flexigrid({
-			preProcess: executarPreProcessamentoRateio,
-			onSuccess: formatarCamposRateio,
+			preProcess: lancamentoRateioController.executarPreProcessamentoRateio,
+			onSuccess: lancamentoRateioController.formatarCamposRateio,
 			dataType : 'json',
 			colModel : [{
 				display : 'Cota',

@@ -115,7 +115,7 @@ var diferencaEstoqueController = $.extend(true, {
 	},
 	
 	montarComboFornecedores : function(result) {
-		var comboFornecedores =  diferencaEstoqueController.montarComboBox(result, true);
+		var comboFornecedores =  montarComboBox(result, true);
 		
 		$("#fornecedor", diferencaEstoqueController.workspace).html(comboFornecedores);
 	},

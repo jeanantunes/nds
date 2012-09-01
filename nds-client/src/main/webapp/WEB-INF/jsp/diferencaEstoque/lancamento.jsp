@@ -100,7 +100,7 @@
 					<tr>
 						<td width="459">
 							<span id="btnNovo" class="bt_novo">
-								<a href="javascript:;" onclick="lancamentoController.popupNovasDiferencas();">Novo</a>
+								<a href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();">Novo</a>
 							</span>
 							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
 								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();">Confirmar</a>

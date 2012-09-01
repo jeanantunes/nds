@@ -18,7 +18,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).mask("99/99/9999");
 		
 		$(".lanctoFaltasSobrasCota_3Grid", lancamentoNovoController.workspace).flexigrid({
-			preProcess: executarPreProcessamentoNovo,
+			preProcess: lancamentoNovoController.executarPreProcessamentoNovo,
 			onSuccess: function(){$("[name=diferencaProduto]", lancamentoNovoController.workspace).numeric();},
 			dataType : 'json',
 			colModel : [ {

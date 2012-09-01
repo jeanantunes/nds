@@ -3,6 +3,8 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manutencaoStatusCota.js"></script>
 	
 	<script type="text/javascript">
 
@@ -38,7 +40,7 @@
 						   id="numeroCota"
 						   maxlength="255"
 						   style="width: 80px; margin-right: 5px; float: left;"
-						   onchange="pesquisaCotaManutencaoStatusCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
+						   onchange="pesquisaCotaManutencaoStatusCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, pesquisaCotaManutencaoStatusCota.carregarCodigoBox);" />
 				</td>
 				<td width="42">Nome:</td>
 				<td width="240">
@@ -48,7 +50,7 @@
 						   maxlength="255" 
 						   style="width: 200px;"
 						   onkeyup="pesquisaCotaManutencaoStatusCota.autoCompletarPorNome('#nomeCota');" 
-		      		 	   onblur="pesquisaCotaManutencaoStatusCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, carregarCodigoBox);" />
+		      		 	   onblur="pesquisaCotaManutencaoStatusCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, pesquisaCotaManutencaoStatusCota.carregarCodigoBox);" />
 				</td>
 				<td width="55">Box:</td>
 				<td width="149">
