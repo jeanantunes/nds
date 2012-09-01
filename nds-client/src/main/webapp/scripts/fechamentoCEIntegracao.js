@@ -3,6 +3,28 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	init : function(){
 		fechamentoCEIntegracaoController.initGrid();
 		fechamentoCEIntegracaoController.bindButtons();
+		fechamentoCEIntegracaoController.buscarNumeroSemana();
+	},
+	
+	buscarNumeroSemana : function(){
+		var dataAtual = $.format.date(new Date(), "dd/MM/yyyy");
+		var data = [
+	   				{
+	   					name: 'data', value:dataAtual
+	   				}
+	   			];
+				
+				$.getJSON(
+						contextPath + '/cadastro/distribuidor/obterNumeroSemana', 
+					data,
+					function(result) {
+	
+						if (result) {
+	
+							$("#semana", fechamentoCEIntegracaoController.workspace).val(result.int);
+						}
+					}
+				);
 	},
 	
 	bindButtons : function(){
