@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -22,6 +24,8 @@ import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -402,9 +406,12 @@ public class RoteirizacaoController {
 	public void pesquisarRoteirizacao(Long boxId, Long roteiroId, Long rotaId,Integer numeroCota, String sortname,String sortorder, int rp, int page) {
 		
 		FiltroConsultaRoteirizacaoDTO filtro = 
-				prepararFiltroConsulta(boxId,roteiroId, rotaId, numeroCota, sortname, sortorder, rp, page);
+			this.prepararFiltroConsulta(boxId,roteiroId, rotaId, numeroCota, sortname, sortorder, rp, page);
 		
-		List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.buscarRoteirizacao(filtro);
+		boolean isPesquisaSumarizadaPorCota = this.isPesquisaSumarizadaPorCota(filtro);
+		
+		List<ConsultaRoteirizacaoDTO> lista =
+			this.realizarPesquisaRoteirizacao(filtro, isPesquisaSumarizadaPorCota);
 		
 		if(lista == null || lista.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -415,10 +422,18 @@ public class RoteirizacaoController {
 		result.use(FlexiGridJson.class).from(lista).total(totalRegistros).page(page).serialize();	
 	}
 
-	private FiltroConsultaRoteirizacaoDTO prepararFiltroConsulta(Long boxId,Long roteiroId, Long rotaId, Integer numeroCota, String sortname,
-																 String sortorder, int rp, int page) {
-		FiltroConsultaRoteirizacaoDTO filtro = new FiltroConsultaRoteirizacaoDTO(boxId,roteiroId,rotaId, numeroCota);
-			
+	private FiltroConsultaRoteirizacaoDTO prepararFiltroConsulta(Long boxId, Long roteiroId,
+																 Long rotaId, Integer numeroCota,
+																 String sortname, String sortorder,
+																 int rp, int page) {
+		
+		FiltroConsultaRoteirizacaoDTO filtro = new FiltroConsultaRoteirizacaoDTO();
+
+		filtro.setIdBox(boxId);
+		filtro.setIdRoteiro(roteiroId);
+		filtro.setIdRota(rotaId);
+		filtro.setNumeroCota(numeroCota);
+		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 			
 		filtro.setPaginacao(paginacao);
@@ -429,6 +444,7 @@ public class RoteirizacaoController {
 				this.session.getAttribute(FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE);
 
 		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			
 			filtro.getPaginacao().setPaginaAtual(1);
 		}
 				
@@ -437,6 +453,69 @@ public class RoteirizacaoController {
 		return filtro;
 	}
 	
+	private void carregarDescricoesFiltro(FiltroConsultaRoteirizacaoDTO filtro) {
+
+		if (filtro == null) {
+			
+			return;
+		}
+		
+		if (filtro.getIdBox() != null) {
+			
+			Box box = boxService.buscarPorId(filtro.getIdBox());
+			
+			if (box != null) {
+				
+				filtro.setNomeBox(box.getNome());
+			}
+		}
+		
+		if (filtro.getIdRoteiro() != null) {
+			
+			Roteiro roteiro = roteirizacaoService.buscarRoteiroPorId(filtro.getIdRoteiro());
+			
+			if (roteiro != null) {
+				
+				filtro.setNomeRoteiro(roteiro.getDescricaoRoteiro());
+			}
+		}
+
+		if (filtro.getIdRota() != null) {
+			
+			Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getIdRota());
+			
+			if (rota != null) {
+				
+				filtro.setNomeRota(rota.getDescricaoRota());
+			}
+		}
+		
+		if (filtro.getNumeroCota() != null) {
+			
+			Cota cota = cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
+			
+			if (cota != null) {
+				
+				String nomeCota = null;
+				
+				if (cota.getPessoa() instanceof PessoaJuridica) {
+					
+					PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
+					
+					nomeCota = pessoaJuridica.getRazaoSocial();
+				
+				} else if (cota.getPessoa() instanceof PessoaFisica) {
+					
+					PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
+					
+					nomeCota = pessoaFisica.getNome();
+				}
+				
+				filtro.setNomeCota(nomeCota);
+			}
+		}
+	}
+
 	@Path("/pesquisarRoteirizacaoPorCota")
 	public void pesquisarRoteirizacaoPorCota(Integer numeroCota, Long roteiroId, Long rotaId, 
 											 TipoRoteiro tipoRoteiro,  String sortname, String sortorder, 
@@ -503,33 +582,115 @@ public class RoteirizacaoController {
 
 	}
 	
-	@Get
-	@Path("/exportarArquivo")
-	public void exportarArquivo(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro  tipoRoteiro, Integer numeroCota, Boolean pesquisaRoteizicaoPorCota , String sortname, String sortorder, 
-			int rp, int page, FileType fileType) {
-
-		List<ConsultaRoteirizacaoDTO> lista  = new ArrayList<ConsultaRoteirizacaoDTO>();
-		try {
+	public void exportar(FileType fileType) throws IOException {
+		
+		if (fileType == null) {
 			
-			if (pesquisaRoteizicaoPorCota)	{
-				lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
-			} else {
-				//FIXME alterar a consulta
-				//lista = roteirizacaoService.buscarRoteirizacao( boxId,  roteiroId,  rotaId,  tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
-				
-			}
-			
-			FileExporter.to("roteirizacao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista,ConsultaRoteirizacaoDTO.class, this.response);
-
-		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
-
-		this.result.use(Results.nothing());
+		
+		FiltroConsultaRoteirizacaoDTO filtroSessao = this.obterFiltroParaExportacao();
+		
+		boolean isPesquisaSumarizadaPorCota = this.isPesquisaSumarizadaPorCota(filtroSessao);
+		
+		List<ConsultaRoteirizacaoDTO> lista =
+			this.realizarPesquisaRoteirizacao(filtroSessao, isPesquisaSumarizadaPorCota);
+		
+		if (!isPesquisaSumarizadaPorCota) {
+			
+			FileExporter.to("roteirizacao", fileType)
+				.inHTTPResponse(
+					this.getNDSFileHeader(), filtroSessao, null, 
+					lista, ConsultaRoteirizacaoDTO.class, this.response);
+		
+		} else {
+			
+			List<ConsultaRoteirizacaoSumarizadoPorCotaVO> listaConsultaRoteirizacaoSumarizado =
+				this.getConsultaRoteirizacaoSumarizadoPorCotaVO(lista);
+			
+			FileExporter.to("roteirizacao", fileType)
+				.inHTTPResponse(
+					this.getNDSFileHeader(), filtroSessao, null, 
+					listaConsultaRoteirizacaoSumarizado, ConsultaRoteirizacaoSumarizadoPorCotaVO.class, this.response);
+		}
 	}
 	
+	private List<ConsultaRoteirizacaoSumarizadoPorCotaVO> getConsultaRoteirizacaoSumarizadoPorCotaVO(
+												List<ConsultaRoteirizacaoDTO> listaConsultaRoteirizacao) {
+		
+		ConsultaRoteirizacaoSumarizadoPorCotaVO vo = null;
+		
+		List<ConsultaRoteirizacaoSumarizadoPorCotaVO> listaConsultaRoteirizacaoSumarizado = 
+			new ArrayList<ConsultaRoteirizacaoSumarizadoPorCotaVO>();
+		
+		for (ConsultaRoteirizacaoDTO dto : listaConsultaRoteirizacao) {
+		
+			vo = new ConsultaRoteirizacaoSumarizadoPorCotaVO();
+		
+			vo.setNomeBox(dto.getNomeBox());
+			vo.setDescricaoRoteiro(dto.getDescricaoRoteiro());
+			vo.setDescricaoRota(dto.getDescricaoRota());
+			vo.setQntCotas(dto.getQntCotas());
+			
+			listaConsultaRoteirizacaoSumarizado.add(vo);
+		}
+		
+		return listaConsultaRoteirizacaoSumarizado;
+	}
+
+	private List<ConsultaRoteirizacaoDTO> realizarPesquisaRoteirizacao(
+															FiltroConsultaRoteirizacaoDTO filtroSessao,
+															boolean isPesquisaSumarizadaPorCota) {
+		
+		List<ConsultaRoteirizacaoDTO> lista = null;
+		
+		if (isPesquisaSumarizadaPorCota) {
+			
+			lista = roteirizacaoService.buscarRoteirizacaoSumarizadoPorCota(filtroSessao);
+			
+		} else {
+			
+			lista = roteirizacaoService.buscarRoteirizacao(filtroSessao);
+		}
+		
+		return lista;
+	}
+
+	private boolean isPesquisaSumarizadaPorCota(FiltroConsultaRoteirizacaoDTO filtroSessao) {
+		
+		boolean pesquisaSumarizadaPorCota =
+			(filtroSessao.getIdRota() == null && filtroSessao.getNumeroCota() == null);
+		
+		return pesquisaSumarizadaPorCota;
+	}
 	
-	
+	/**
+	 * Obtém o filtro de pesquisa para exportação.
+	 * 
+	 * @return filtro
+	 */
+	private FiltroConsultaRoteirizacaoDTO obterFiltroParaExportacao() {
+		
+		FiltroConsultaRoteirizacaoDTO filtroSessao =
+			(FiltroConsultaRoteirizacaoDTO)
+				this.session.getAttribute(FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE);
+			
+		if (filtroSessao == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Filtro não encontrado!");
+		}
+		
+		if (filtroSessao.getPaginacao() != null) {
+			
+			filtroSessao.getPaginacao().setPaginaAtual(null);
+			filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+		}
+		
+		this.carregarDescricoesFiltro(filtroSessao);
+		
+		return filtroSessao;
+	}
+
 	@Get
 	@Path("/imprimirArquivo")
 	public void imprimirArquivo(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro  tipoRoteiro, Integer numeroCota, Boolean pesquisaRoteizicaoPorCota , String sortname, String sortorder, 

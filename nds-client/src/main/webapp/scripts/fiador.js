@@ -58,7 +58,7 @@ var fiadorController = $.extend(true, {
 					
 					return _this.fecharModalCadastroFiador;
 				},
-				form: $("#dialog-novo", "#workspaceFiador").parents("form")
+				form: $("#workspaceFiador", fiadorController.workspace)
 			});
 		
 			$(".fiadorController-trSocioPrincipal", fiadorController.workspace).hide();
@@ -89,7 +89,8 @@ var fiadorController = $.extend(true, {
 						$(this).dialog("close");
 						_this.fecharModalCadastroFiador = false;
 					}
-				}
+				},
+				form: $("#fiadorController-dialog-cancelar-cadastro-fiador").parents("form")
 			});
 		},
 	
@@ -107,7 +108,8 @@ var fiadorController = $.extend(true, {
 					"Cancelar": function() {
 						$(this).dialog( "close" );
 					}
-				}
+				},
+				form: $("#fiadorController-dialog-excluir").parents("form")
 			});
 		},
 		
@@ -325,7 +327,8 @@ var fiadorController = $.extend(true, {
 
 				exibirMensagemDialog(
 					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					data.mensagens.listaMensagens,
+					"fiadorController-dialog-fiador"
 				);
 				
 				return;
@@ -459,7 +462,8 @@ var fiadorController = $.extend(true, {
 					"Cancelar": function() {
 						$(this).dialog("close");
 					}
-				}
+				},
+				form: $(".fiadorController-dialog-excluir-fiador").parents("form")
 			});
 			
 			$(".fiadorController-dialog-excluir-fiador", fiadorController.workspace).show();
@@ -714,7 +718,8 @@ var fiadorController = $.extend(true, {
 
 				exibirMensagemDialog(
 					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					data.mensagens.listaMensagens,
+					"fiadorController-dialog-fiador"
 				);
 				
 				return;
@@ -900,7 +905,8 @@ var fiadorController = $.extend(true, {
 					"Cancelar": function() {
 						$(this).dialog("close");
 					}
-				}
+				},
+				form: $("#fiadorController-dialog-excluir-socio").parents("form")
 			});
 			
 			$("#fiadorController-dialog-excluir-socio", fiadorController.workspace).show();
@@ -928,7 +934,8 @@ var fiadorController = $.extend(true, {
 
 				exibirMensagemDialog(
 					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					data.mensagens.listaMensagens,
+					"fiadorController-dialog-fiador"
 				);
 				
 				return;
@@ -1032,7 +1039,8 @@ var fiadorController = $.extend(true, {
 					"Cancelar": function() {
 						$(this).dialog("close");
 					}
-				}
+				},
+				form: $("#fiadorController-dialog-excluir-garantia").parents("form")
 			});
 			
 			$("#fiadorController-dialog-excluir-garantia", fiadorController.workspace).show();
@@ -1048,7 +1056,8 @@ var fiadorController = $.extend(true, {
 
 				exibirMensagemDialog(
 					data.mensagens.tipoMensagem, 
-					data.mensagens.listaMensagens
+					data.mensagens.listaMensagens,
+					"fiadorController-dialog-fiador"
 				);
 				
 				return;
@@ -1141,7 +1150,8 @@ var fiadorController = $.extend(true, {
 					"Cancelar": function() {
 						$(this).dialog("close");
 					}
-				}
+				},
+				form: $(".fiadorController-cotasAssociadas-dialog-excluir").parents("form")
 			});
 			
 			$(".fiadorController-cotasAssociadas-dialog-excluir", fiadorController.workspace).show();
