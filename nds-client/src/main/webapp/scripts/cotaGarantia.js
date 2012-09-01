@@ -480,7 +480,7 @@ Imovel.prototype.remove = function(id) {
 
 	var _this = this;
 
-	$("#dialog-excluir-imovel").dialog({
+	$("#dialog-excluir-imovel", _workspace).dialog({
 		resizable : false,
 		height : 'auto',
 		width : 380,
@@ -678,11 +678,17 @@ TipoCotaGarantia.prototype.getData = function() {
 
 TipoCotaGarantia.prototype.bindData = function(data) {
 	
+	/*var select = $("#tipoGarantiaSelect option", _workspace);
 	
+	$(select).each(function() {
+	    $(this).remove();
+	});*/	
+
 	var select = $("#tipoGarantiaSelect", _workspace);
-	for ( var index = select.options.length; index > 0; index--) {
-		select.remove(index);
-	}
+	
+	/*for ( var index = $(select).length; index > 0; index--) {
+		$(select).remove(index);
+	}*/
 	
 	for ( var index in data) {
 		var tipo = data[index];
@@ -691,10 +697,13 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 		option.text = this.tipo[tipo].label;
 		
 		option.value = tipo;
+
+		//$(select).append('<option value="' + tipo + '">' + this.tipo[tipo].label + '</option>'); 
+		
 		try {
-			select.add(option, select.options[null]);
+			$(select).append(option, select.options[null]);
 		} catch (e) {
-			select.add(option, null);
+			$(select).append(option, null);
 		}
 	}
 	
@@ -704,10 +713,11 @@ TipoCotaGarantia.prototype.onOpen = function(tipoCotaSelecionada) {
 	this.getData();
 	
 	if (tipoCotaSelecionada == "JURIDICA"){
-		$("#cotaGarantiaClassificacaoCota").val($("#classificacaoSelecionada :selected").text());
+		$("#cotaGarantiaClassificacaoCota").val($("#classificacaoSelecionada :selected", _workspace).text());
 	}
 	else{
-		$("#cotaGarantiaClassificacaoCota").val($("#classificacaoSelecionadaCPF :selected").text());
+		$("#cotaGarantiaClassificacaoCota").val($("#classificacaoSelecionadaCPF :selected", _workspace
+				).text());
 	}
 	
 };
@@ -746,7 +756,8 @@ TipoCotaGarantia.prototype.changeController = function(newControllerType) {
 		this.controller = new obj(this.getIdCota(), this.cotaGarantia);
 		this.controllerType = newControllerType;
 	}else{
-		$("#tipoGarantiaSelect", _workspace).val("");
+		//$("#tipoGarantiaSelect", _workspace)[0].selectedIndex;
+		//$("#tipoGarantiaSelect", _workspace).val("");
 		this.controller = null;
 		this.controllerType = null;
 		if (this.cotaGarantia) {

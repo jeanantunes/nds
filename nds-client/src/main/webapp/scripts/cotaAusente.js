@@ -129,9 +129,9 @@ var cotaAusenteController = $.extend(true, {
 		
 		if(idCotaAusente) {
 			return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
-			 "<img src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
+			 "<img src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
 		} else {
-			return  "<img style=\"opacity: 0.5\" src=\"${pageContext.request.contextPath}/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" />";
+			return  "<img style=\"opacity: 0.5\" src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" />";
 		}
 	},
 
@@ -251,7 +251,7 @@ var cotaAusenteController = $.extend(true, {
 			produto.innerHTML = movimento.nomeProd;
 			edicao.innerHTML = movimento.edicaoProd;
 			reparte.innerHTML = movimento.qtdeReparte;
-			botao.innerHTML = "<a onclick=\"gerarGridRateios("+index+");\" href=\"javascript:;\"><img src=\"${pageContext.request.contextPath}/images/ico_negociar.png\" border=\"0\" /></a>";
+			botao.innerHTML = "<a onclick=\"gerarGridRateios("+index+");\" href=\"javascript:;\"><img src=\"" + contextPath + "/images/ico_negociar.png\" border=\"0\" /></a>";
 			
 			novaLinha.append(codigo);
 			novaLinha.append(produto);
