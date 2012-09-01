@@ -3,7 +3,7 @@ var chamadaoController = $.extend(true, {
 	init : function() {
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
-		inicializar();
+		chamadaoController.inicializar();
 		if(followUp != ''){			
 			chamadaoController.pesquisar();
 		}
@@ -54,7 +54,7 @@ var chamadaoController = $.extend(true, {
 	iniciarGrid : function() {
 		
 		$(".chamadaoGrid", chamadaoController.workspace).flexigrid({
-			preProcess: executarPreProcessamento,
+			preProcess: chamadaoController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -142,18 +142,18 @@ var chamadaoController = $.extend(true, {
 	
 	inicializar : function() {
 		
-		iniciarGrid();
+		chamadaoController.iniciarGrid();
 		
-		iniciarData();
+		chamadaoController.iniciarData();
 		
 		$("#numeroCota", chamadaoController.workspace).focus();
 		
 		$("#descricaoCota", chamadaoController.workspace).autocomplete({source: ""});
 
 		
-		if(getQueryString()["carregarGrid"] == true){
-			var numeroCota = getQueryString()["numeroCota"];
-			var dataChamadaoFormatada = getQueryString()["data"];
+		if(chamadaoController.getQueryString()["carregarGrid"] == true){
+			var numeroCota = chamadaoController.getQueryString()["numeroCota"];
+			var dataChamadaoFormatada = chamadaoController.getQueryString()["data"];
 			popularGridPeloFollowUp(numeroCota,dataChamadaoFormatada);
 
 			}
@@ -224,7 +224,7 @@ var chamadaoController = $.extend(true, {
 			var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
 						   + ' name="checkConsignado"'
 						   + ' value="' + row.id + '"'
-						   + ' onclick="calcularParcial()" />';
+						   + ' onclick="chamadaoController.calcularParcial()" />';
 						   
 			row.cell.reparte = spanReparte;
 			row.cell.valorTotal = spanValorTotal;
@@ -243,7 +243,7 @@ var chamadaoController = $.extend(true, {
 			
 		} else {
 			
-			zerarCamposParciais();
+			chamadaoController.zerarCamposParciais();
 		}
 		
 		$(".grids", chamadaoController.workspace).show();
@@ -259,7 +259,7 @@ var chamadaoController = $.extend(true, {
 		
 			var checado = this.checked;
 			
-			chamadaoController.clickLineFlexigrid(this, checado);
+			clickLineFlexigrid(this, checado);
 		});
 		
 		if (input.checked) {
@@ -282,18 +282,18 @@ var chamadaoController = $.extend(true, {
 		
 			var checado = this.checked;
 			
-			chamadaoController.clickLineFlexigrid(this, checado);
+			clickLineFlexigrid(this, checado);
 			
 			if (checado) {
 				
 				qtdProdutosParcial = qtdProdutosParcial + 1;
 				
 				var reparte = $("#reparte" + this.value).html();
-				reparte = chamadaoController.removeMascaraPriceFormat(reparte);
+				reparte = removeMascaraPriceFormat(reparte);
 				qtdExemplaresParcial = qtdExemplaresParcial + intValue(reparte);
 				
 				var valor = $("#valorTotal" + this.value).html();
-				valor = chamadaoController.removeMascaraPriceFormat(valor);
+				valor = removeMascaraPriceFormat(valor);
 				valorParcial = valorParcial + intValue(valor);
 			
 			} else {
@@ -306,7 +306,7 @@ var chamadaoController = $.extend(true, {
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(qtdExemplaresParcial);
 		$("#valorParcial", chamadaoController.workspace).val(valorParcial);
 		
-		aplicarMascaraCampos();
+		chamadaoController.aplicarMascaraCampos();
 	},
 	
 	verifyCheckAll : function() {
@@ -354,7 +354,7 @@ var chamadaoController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
-					realizarChamadao();
+					chamadaoController.realizarChamadao();
 				},
 				"Cancelar": function() {
 					
@@ -375,7 +375,7 @@ var chamadaoController = $.extend(true, {
 		
 		var listaChamadao = "";
 		
-		var checkAllSelected = verifyCheckAll();
+		var checkAllSelected = chamadaoController.verifyCheckAll();
 		
 		if (!checkAllSelected) {
 			
