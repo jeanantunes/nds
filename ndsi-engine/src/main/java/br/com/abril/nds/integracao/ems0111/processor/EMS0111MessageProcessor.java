@@ -165,8 +165,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao do REPARTE PREVISTO do Produto: "
-								+ codigoProduto
-								+ " e Edicao: " + edicao
+								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + lancamento.getReparte() 
 								+ "para: " + repartePrevisto);
 				lancamento.setReparte(repartePrevisto);
@@ -178,8 +177,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao do REPARTE PROMOCIONAL do Produto: "
-								+ codigoProduto
-								+ " e Edicao: " + edicao
+								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + lancamento.getRepartePromocional() 
 								+ "para: " + repartePromocional);
 				lancamento.setRepartePromocional(repartePromocional);
@@ -191,9 +189,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao do TIPO LANCAMENTO do Produto: "
-								+ codigoProduto
-								+ " e Edicao: " + edicao
-								+ " , de: " + lancamento.getTipoLancamento().getDescricao() 
+								+ codigoProduto + " e Edicao: " + edicao
+								+ " , de: " 
+								+ lancamento.getTipoLancamento().getDescricao() 
 								+ "para: " + tipoLancamento.getDescricao());
 				lancamento.setTipoLancamento(tipoLancamento);
 			}
@@ -207,8 +205,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao da DATA LANCAMENTO PREVISTO do Produto: "
-								+ codigoProduto
-								+ " e Edicao: " + edicao
+								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
 										dtLancamentoAtual)
 								+ "para: " + simpleDateFormat.format(
@@ -231,8 +228,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
-								+ codigoProduto
-								+ " e Edicao: " + edicao
+								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + simpleDateFormat.format(
 										dtLancamentoDistribuidor)
 								+ "para: " + simpleDateFormat.format(
