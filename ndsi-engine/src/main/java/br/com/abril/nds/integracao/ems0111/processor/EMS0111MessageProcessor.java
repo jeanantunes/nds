@@ -177,7 +177,20 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setRepartePromocional(repartePromocional);
 			}
 			
-			final String tipoLancamento = input.getTipoLancamento();
+			final TipoLancamento tipoLancamento = 
+					this.parseTipo(input.getTipoLancamento());  
+			if (!lancamento.getTipoLancamento().equals(tipoLancamento)) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao do TIPO LANCAMENTO do Produto: "
+								+ codigoProduto
+								+ " e Edicao: " + edicao
+								+ " , de: " + lancamento.getTipoLancamento().getDescricao() 
+								+ "para: " + tipoLancamento.getDescricao());
+				lancamento.setTipoLancamento(tipoLancamento);
+			}
+			
+		
 			//Date dataLancamento = input.getDataLancamento();
 			
 			
