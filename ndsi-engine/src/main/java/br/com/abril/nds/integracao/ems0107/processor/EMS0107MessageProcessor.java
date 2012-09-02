@@ -59,7 +59,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		EMS0107Input input = (EMS0107Input) message.getBody();
 		if (input == null) {
 			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+					message, EventoExecucaoEnum.ERRO_INFRA,
+					"NAO ENCONTROU o Arquivo");
 			return;
 		}
 		
@@ -69,7 +70,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				edicao);
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.RELACIONAMENTO,
 					"NAO ENCONTROU ProdutoEdicao");
 			return;
 		}
@@ -78,7 +79,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				produtoEdicao);
 		if (lancamento == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.RELACIONAMENTO,
 					"NAO ENCONTROU Lancamento");
 			return;
 		}
@@ -86,7 +87,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.RELACIONAMENTO,
 					"NAO ENCONTROU Estudo");
 			return;
 		}
@@ -96,7 +97,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		boolean hasEstudoCota = this.hasEstudoCota(estudo, cota);
 		if (hasEstudoCota) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
 					"JA EXISTE EstudoCota para a numero de Cota: " + numeroCota);
 			return;
 		}
