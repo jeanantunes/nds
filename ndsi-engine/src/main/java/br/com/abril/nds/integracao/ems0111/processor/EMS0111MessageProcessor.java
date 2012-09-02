@@ -161,7 +161,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 								+ " e Edicao: " + edicao
 								+ " , de: " + lancamento.getReparte() 
 								+ "para: " + repartePrevisto);
-				produtoEdicao.setPrecoPrevisto(precoPrevisto);
+				lancamento.setReparte(repartePrevisto);
 			}
 			
 			
