@@ -40,8 +40,26 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	@Override
 	public void processMessage(Message message) {
 
-		// Distribuidor unico para todo sistema
-		if (verificarDistribuidor(message)) {
+		EMS0114Input input = (EMS0114Input) message.getBody();
+		if (input == null) {
+			this.ndsiLoggerFactory.getLogger().logError(
+					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
+		}
+
+		// Validar Distribuidor:
+		Integer codDistribuidorSistema = (Integer) message.getHeader().get(
+				MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
+		Integer codigoDistribuidorArquivo = Integer.parseInt(
+				input.getCodDistrib());
+		if (codDistribuidorSistema.longValue() != codigoDistribuidorArquivo.longValue()) {
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Distribuidor nao encontrato. Código: " 
+					+ codDistribuidorSistema);
+			return;
+		}
+
 
 			ProdutoEdicao produtoEdicao = this.findProdutoEdicao(message);
 
@@ -49,13 +67,6 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 
 			criarLancamentoConformeInput(lancamento, produtoEdicao, message);
 
-		} else {
-
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor nao encontrato.");
-			throw new RuntimeException("Distribuidor nao encontrado.");
-		}
 	}
 
 	private void criarLancamentoConformeInput(Lancamento lancamento,
@@ -119,20 +130,6 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		}
 	}
 
-	private boolean verificarDistribuidor(Message message) {
-		EMS0114Input input = (EMS0114Input) message.getBody();
-
-		Integer codigoDistribuidorSistema = (Integer) message.getHeader().get(
-				MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
-		Integer codigoDistribuidorArquivo = Integer.parseInt(input
-				.getCodDistrib());
-
-		if (codigoDistribuidorSistema.equals(codigoDistribuidorArquivo)) {
-			return true;
-		}
-
-		return false;
-	}
 
 	private ProdutoEdicao findProdutoEdicao(Message message) {
 		EMS0114Input input = (EMS0114Input) message.getBody();
