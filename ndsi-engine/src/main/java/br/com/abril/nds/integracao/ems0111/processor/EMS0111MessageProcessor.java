@@ -246,8 +246,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 										dtLancamentoDistribuidor)
 								+ "para: " + simpleDateFormat.format(
 										dtGeracaoArquivo));
-				lancamento.setDataLancamentoDistribuidor(
-						lancamento.getDataLancamentoDistribuidor());
+				lancamento.setDataLancamentoDistribuidor(dataGeracaoArquivo);
 			}
 			
 		}
