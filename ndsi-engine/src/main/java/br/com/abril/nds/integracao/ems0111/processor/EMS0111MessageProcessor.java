@@ -195,9 +195,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			
 			// Remover a hora, minuto, segundo e milissegundo para comparação:
-			Date dtLancamentoAtual = this.normalizarDataSemHora(
+			final Date dtLancamentoAtual = this.normalizarDataSemHora(
 					lancamento.getDataLancamentoPrevista());
-			Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
+			final Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
 			if (!dtLancamentoAtual.equals(dtLancamentoNovo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
