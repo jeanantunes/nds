@@ -92,7 +92,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
 		final BigDecimal precoPrevisto = input.getPrecoPrevisto();
 		if (!produtoEdicao.getPrecoPrevisto().equals(precoPrevisto)) {
-			this.ndsiLoggerFactory.getLogger().logError(message,
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteracao do Preco Previsto do Produto: "
 							+ codigoProduto
@@ -154,7 +154,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			final BigInteger repartePrevisto = BigInteger.valueOf(
 					input.getRepartePrevisto());
 			if (!lancamento.getReparte().equals(repartePrevisto)) {
-				this.ndsiLoggerFactory.getLogger().logError(message,
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao do REPARTE PREVISTO do Produto: "
 								+ codigoProduto
@@ -167,7 +167,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			final BigInteger repartePromocional = BigInteger.valueOf(
 					input.getRepartePromocional());
 			if (!lancamento.getRepartePromocional().equals(repartePromocional)) {
-				this.ndsiLoggerFactory.getLogger().logError(message,
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao do REPARTE PROMOCIONAL do Produto: "
 								+ codigoProduto
