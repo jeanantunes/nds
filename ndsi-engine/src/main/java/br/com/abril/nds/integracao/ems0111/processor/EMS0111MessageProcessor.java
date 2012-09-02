@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0111.processor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -32,6 +33,8 @@ import br.com.abril.nds.repository.impl.AbstractRepository;
 @Component
 public class EMS0111MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
+	
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");  
 
 	// METODO PARA AJUSTAR A INTERFACE AO ENUM
 	public TipoLancamento parseTipo(String tipo) {
@@ -190,8 +193,23 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setTipoLancamento(tipoLancamento);
 			}
 			
-		
-			//Date dataLancamento = input.getDataLancamento();
+			
+			// Remover a hora, minuto, segundo e milissegundo para comparação:
+			Date dtLancamentoAtual = this.normalizarDataSemHora(
+					lancamento.getDataLancamentoPrevista());
+			Date dtLancamentoNovo = this.normalizarDataSemHora(dataLancamento);
+			if (!dtLancamentoAtual.equals(dtLancamentoNovo)) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da DATA LANCAMENTO PREVISTO do Produto: "
+								+ codigoProduto
+								+ " e Edicao: " + edicao
+								+ " , de: " + simpleDateFormat.format(
+										dtLancamentoAtual)
+								+ "para: " + simpleDateFormat.format(
+										dtLancamentoNovo));
+				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
+			}
 			
 			
 			// Atualizar lançamento
@@ -319,8 +337,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			throw new RuntimeException(e);
 		}
 	}	
-	
-	
+		
 	/**
 	 * Obtém o Lançamento com a data de lançamento mais próximo da data de 
 	 * lançamento previsto.
@@ -355,7 +372,27 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		return (Lancamento) query.uniqueResult();
 	}
 	
+	/**
+	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
+	 * minuto, segundo e milissendo).
+	 * 
+	 * @param dt
+	 * 
+	 * @return
+	 */
+	private Date normalizarDataSemHora(Date dt) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dt);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		return cal.getTime();
+	}
 	
+		
 	@Override
 	public void posProcess() {
 		// TODO Auto-generated method stub
