@@ -93,7 +93,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		BigDecimal precoPrevisto = input.getPrecoPrevisto();
 		if (!produtoEdicao.getPrecoPrevisto().equals(precoPrevisto)) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.RELACIONAMENTO,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteracao do Preco Previsto do Produto: "
 							+ codigoProduto
 							+ " e Edicao: " + edicao
