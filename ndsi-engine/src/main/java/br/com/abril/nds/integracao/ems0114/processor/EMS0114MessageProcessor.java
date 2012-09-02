@@ -99,20 +99,28 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
 			
 			/*
+			 * TODO:
 			 * update data_rec_prevista, 
 			 * incluir no log a informação Produto, 
 			 * Data Atual (data_rec_prevista da Tabela) e 
 			 * Nova Data (Data Recolhimento - Arquivo). 
 			 */
 			
-		}
-		
-		
-		
+			/*
+			 * TODO 
+			 */
 			
-//			Lancamento lancamento = this.findLancamento(message);
+			StatusLancamento status = lancamento.getStatus();
+			if (!StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(status)
+					&& !StatusLancamento.BALANCEADO.equals(status)) {
+				
+				// update data_rec_distribuidor, 
+				
+			}
+		}
 
-			criarLancamentoConformeInput(lancamento, produtoEdicao, message);
+		
+			//criarLancamentoConformeInput(lancamento, produtoEdicao, message);
 
 	}
 
@@ -199,6 +207,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		return cal.getTime();
 	}
 	
+	// TODO: por enquanto, manter esse método, para discussão posterior:
 	private void criarLancamentoConformeInput(Lancamento lancamento,
 			ProdutoEdicao produtoEdicao, Message message) {
 		EMS0114Input input = (EMS0114Input) message.getBody();
