@@ -153,6 +153,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			 * 01) Atualizar os atributos (e 'logar'):
 			 * - Reparte Previsto; Reparte Promocional; Tipo Lançamento; 
 			 * Data Lançamento Previsto;
+			 * 
+			 * 02) Se da Data Lançamento Distribuidor for diferente da Data de 
+			 * Geração do Arquivo e o Status for diferente de Balanceado ou 
+			 * Balanceado Lançamento, realizar o log e alterar a data 
+			 * Lançamento Distribuidor;
 			 */
 			final BigInteger repartePrevisto = BigInteger.valueOf(
 					input.getRepartePrevisto());
@@ -212,101 +217,32 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			}
 			
 			
-			// Atualizar lançamento
-			final Date dtLancamentoDistribuidor = 
-					lancamento.getDataLancamentoDistribuidor();
-			
-			
-			
+			// Atualizar lançamento Distribuidor:
 			final StatusLancamento status = lancamento.getStatus();
+			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status) 
+					|| StatusLancamento.BALANCEADO_LANCAMENTO.equals(status); 
 			
-			
-		}
-		
-		
-		
-
-		if (null != produtoEdicao) {
-			// SE EXISTIR PRODUTO/EDICAO NA TABELA
-			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
-				
-			produtoEdicao.setPrecoVenda(input.getPrecoPrevisto());			
-			
-			StringBuilder sql = new StringBuilder();
-
-			sql.append("SELECT lcto FROM Lancamento lcto ");
-			sql.append(" WHERE ");
-			sql.append("		lcto.produtoEdicao = :produtoEdicao");
-			sql.append(" AND   ");
-			sql.append(" 		lcto.dataLancamentoPrevista = :dataLancamento   ");
-
-			Query query = getSession().createQuery(sql.toString());
-			query.setParameter("produtoEdicao", produtoEdicao);
-			query.setParameter("dataLancamento", input.getDataLancamento());
-
-//			Lancamento lancamento = (Lancamento) query.uniqueResult();
-			if (null != lancamento) {
-
-				// VERIFICAR SE OS CAMPOS ESTAO DESATUALIZADOS
-				// CASO NECESSARIO, ATUALIZAR OS CAMPOS
-
-				if (!lancamento.getDataLancamentoPrevista().equals(
-						input.getDataLancamento())) {
-					lancamento.setDataLancamentoPrevista(input
-							.getDataLancamento());
-					ndsiLoggerFactory.getLogger().logInfo(
-							message,
-							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao da data de lancamento: "
-									+ input.getDataLancamento());
-				}
-
-				if (!lancamento.getTipoLancamento().equals(
-						parseTipo(input.getTipoLancamento())))
-					;
-				{
-
-					lancamento.setTipoLancamento(parseTipo(input
-							.getTipoLancamento()));
-					ndsiLoggerFactory.getLogger().logInfo(
-							message,
-							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do tipo de lancamento: "
-									+ input.getTipoLancamento());
-
-				}
-
-				if (lancamento.getReparte().longValue() != input.getRepartePrevisto())
-					;
-				{
-					lancamento.setReparte( new BigInteger( input.getRepartePrevisto().toString() ));
-					ndsiLoggerFactory.getLogger().logInfo(
-							message,
-							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do Reparte Previsto: "
-									+ input.getRepartePrevisto());
-
-				}
-
-				if (lancamento.getRepartePromocional().longValue() != input
-						.getRepartePromocional())
-					;
-				{
-					lancamento.setRepartePromocional( new BigInteger( input
-							.getRepartePromocional().toString()));
-
-					ndsiLoggerFactory.getLogger().logInfo(
-							message,
-							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do Reparte Promocional: "
-									+ input.getRepartePromocional());
-
-				}
-
+			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(
+					lancamento.getDataLancamentoDistribuidor());
+			final Date dtGeracaoArquivo = this.normalizarDataSemHora(
+					dataGeracaoArquivo);
+			if (!dtLancamentoDistribuidor.equals(dtGeracaoArquivo) 
+					&& isStatusBalanceado) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
+								+ codigoProduto
+								+ " e Edicao: " + edicao
+								+ " , de: " + simpleDateFormat.format(
+										dtLancamentoDistribuidor)
+								+ "para: " + simpleDateFormat.format(
+										dtGeracaoArquivo));
+				lancamento.setDataLancamentoDistribuidor(
+						lancamento.getDataLancamentoDistribuidor());
 			}
-
+			
 		}
-
+		
 	}
 	
 	/**
