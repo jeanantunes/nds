@@ -4,7 +4,10 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,20 +66,25 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
 			return;
 		}
-
+		
+		
 		// Validar Produto/Edicao
-		StringBuilder cmd = new StringBuilder();
-		cmd.append("SELECT prodEdicao FROM ProdutoEdicao prodEdicao ");
-		cmd.append("			JOIN FETCH prodEdicao.produto prodCod");
-		cmd.append(" WHERE ");
-		cmd.append("	prodCod.codigo = :codigoProduto ");
-		cmd.append(" AND	prodEdicao.numeroEdicao = :numeroEdicao ");
+		String codigoProduto = input.getCodigoProduto();
+		Long edicao = input.getEdicaoProduto();
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+							+ codigoProduto
+							+ " e Edicao: " + edicao
+							+ " na tabela produto_edicao");
+			return;
+		}
+		
+		
 
-		Query consulta = getSession().createQuery(cmd.toString());
-		consulta.setParameter("codigoProduto", input.getCodigoProduto());
-		consulta.setParameter("numeroEdicao", input.getEdicaoProduto());
-
-		ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.uniqueResult();
 		if (null != produtoEdicao) {
 			// SE EXISTIR PRODUTO/EDICAO NA TABELA
 			// VERIFICAR SE EXISTE LANCAMENTO CADASTRADO PARA O PRODUTO/EDICAO
@@ -186,23 +194,39 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 			}
 
-		} else {
-			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
-			// NAO E POSSIVEL REALIZAR INSERT/UPDATE
-			ndsiLoggerFactory
-					.getLogger()
-					.logError(
-							message,
-							EventoExecucaoEnum.RELACIONAMENTO,
-							"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
-									+ input.getCodigoProduto()
-									+ " e Edicao: "
-									+ input.getEdicaoProduto()
-									+ " na tabela produto_edicao");
-
 		}
 
 	}
+	
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
+			Long edicao) {
+
+		try {
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
+
+			criteria.createAlias("produtoEdicao.produto", "produto");
+			criteria.setFetchMode("produto", FetchMode.JOIN);
+
+			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
+			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
+
+			return (ProdutoEdicao) criteria.uniqueResult();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}	
+	
 	
 	@Override
 	public void posProcess() {
