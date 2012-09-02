@@ -79,8 +79,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		// Validar Distribuidor:
 		final Number codDistribuidorSistema = (Number) message.getHeader().get(
 				MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
-		final Number codDistribuidorArquivo = 
-				input.getCodigoDistribuidor().longValue();
+		final Number codDistribuidorArquivo = input.getCodigoDistribuidor();
 		if (codDistribuidorSistema.longValue() != codDistribuidorArquivo.longValue()) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
