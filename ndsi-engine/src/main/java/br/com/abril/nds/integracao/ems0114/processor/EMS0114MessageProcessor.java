@@ -83,6 +83,17 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		final Date dataGeracaoArquivo = input.getDataGeracaoArq();
 		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(
 				produtoEdicao, dataRecolhimento, dataGeracaoArquivo);
+		if (lancamento == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"SEM LANCAMENTOS com RECOLHIMENTO para Produto: "
+							+ codigoProduto
+							+ " e Edicao: " + edicao
+							+ " na tabela produto_edicao");
+			return;
+		}
+		
+		
 			
 //			Lancamento lancamento = this.findLancamento(message);
 
