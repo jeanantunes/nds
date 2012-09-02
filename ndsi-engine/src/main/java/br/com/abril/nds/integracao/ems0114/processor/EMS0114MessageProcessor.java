@@ -73,12 +73,12 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
-							+ codigoProduto
-							+ " e Edicao: " + edicao
+							+ codigoProduto + " e Edicao: " + edicao
 							+ " na tabela produto_edicao");
 			return;
 		}		
 
+		
 		final Date dataRecolhimento = input.getDataRecolhimento();
 		final Date dataGeracaoArquivo = input.getDataGeracaoArq();
 		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(
@@ -87,11 +87,26 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"SEM LANCAMENTOS com RECOLHIMENTO para Produto: "
-							+ codigoProduto
-							+ " e Edicao: " + edicao
-							+ " na tabela produto_edicao");
+							+ codigoProduto + " e Edicao: " + edicao);
 			return;
 		}
+		
+		
+		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(
+				lancamento.getDataRecolhimentoDistribuidor());
+		final Date dtRecolhimentoArquivo = this.normalizarDataSemHora(
+				dataRecolhimento);
+		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
+			
+			/*
+			 * update data_rec_prevista, 
+			 * incluir no log a informação Produto, 
+			 * Data Atual (data_rec_prevista da Tabela) e 
+			 * Nova Data (Data Recolhimento - Arquivo). 
+			 */
+			
+		}
+		
 		
 		
 			
@@ -164,6 +179,25 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		return (Lancamento) query.uniqueResult();
 	}
 	
+	/**
+	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
+	 * minuto, segundo e milissendo).
+	 * 
+	 * @param dt
+	 * 
+	 * @return
+	 */
+	private Date normalizarDataSemHora(Date dt) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dt);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		return cal.getTime();
+	}
 	
 	private void criarLancamentoConformeInput(Lancamento lancamento,
 			ProdutoEdicao produtoEdicao, Message message) {
