@@ -2,9 +2,13 @@ package br.com.abril.nds.integracao.ems0114.processor;
 
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,15 +64,96 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			return;
 		}
 
+		// Validar Produto/Edicao
+		final String codigoProduto = input.getCodProd();
+		final Long edicao = input.getEdicao();
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+							+ codigoProduto
+							+ " e Edicao: " + edicao
+							+ " na tabela produto_edicao");
+			return;
+		}		
 
-			ProdutoEdicao produtoEdicao = this.findProdutoEdicao(message);
-
-			Lancamento lancamento = this.findLancamento(message);
+		final Date dataRecolhimento = input.getDataRecolhimento();
+		final Date dataGeracaoArquivo = input.getDataGeracaoArq();
+		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(
+				produtoEdicao, dataRecolhimento, dataGeracaoArquivo);
+			
+//			Lancamento lancamento = this.findLancamento(message);
 
 			criarLancamentoConformeInput(lancamento, produtoEdicao, message);
 
 	}
 
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
+			Long edicao) {
+
+		try {
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
+
+			criteria.createAlias("produtoEdicao.produto", "produto");
+			criteria.setFetchMode("produto", FetchMode.JOIN);
+
+			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
+			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
+
+			return (ProdutoEdicao) criteria.uniqueResult();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}	
+	
+	/**
+	 * Obtém o Lançamento com a data de recolhimento mais próximo da data de 
+	 * recolhimento desejado.
+	 *  
+	 * @param produtoEdicao
+	 * @param dataRecolhimento Data de Recolhimento da Edição.
+	 * @param dataGeracaoArquivo Data de Geração do Arquivo.
+	 * 
+	 * @return
+	 */
+	private Lancamento getLancamentoRecolhimentoMaisProximo(
+			ProdutoEdicao produtoEdicao, Date dataRecolhimento, 
+			Date dataGeracaoArquivo) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT lcto FROM Lancamento lcto ");
+		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
+		sql.append("    WHERE pe = :produtoEdicao ");
+		sql.append("      AND lcto.dataRecolhimentoPrevista > :dataGeracaoArquivo ");
+		sql.append("      AND lcto.dataRecolhimentoPrevista = :dataRecolhimento ");
+		sql.append(" ORDER BY lcto.dataRecolhimentoPrevista ASC");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("produtoEdicao", produtoEdicao);
+		query.setDate("dataGeracaoArquivo", dataGeracaoArquivo);
+		query.setDate("dataRecolhimento", dataRecolhimento);
+		
+		query.setMaxResults(1);
+		query.setFetchSize(1);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
+	
 	private void criarLancamentoConformeInput(Lancamento lancamento,
 			ProdutoEdicao produtoEdicao, Message message) {
 		EMS0114Input input = (EMS0114Input) message.getBody();
@@ -130,72 +215,6 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		}
 	}
 
-
-	private ProdutoEdicao findProdutoEdicao(Message message) {
-		EMS0114Input input = (EMS0114Input) message.getBody();
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("SELECT pe FROM ProdutoEdicao pe JOIN FETCH pe.produto p ");
-		sql.append("WHERE pe.numeroEdicao = :numeroEdicao ");
-		sql.append("  AND   p.codigo = :codigo ");
-
-		Query query = this.getSession().createQuery(sql.toString());
-
-		query.setParameter("numeroEdicao", input.getEdicao());
-		query.setParameter("codigo", input.getCodProd());
-
-		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
-		if (null != produtoEdicao) {
-			return produtoEdicao;
-
-		} else {
-
-			// Não encontrou o Produto. Realiza Log
-			ndsiLoggerFactory.getLogger().logWarning(
-					message,
-					EventoExecucaoEnum.HIERARQUIA,
-					"Produto " + input.getCodProd()
-							+ " e Produto Edicao nao encontrado.");
-			throw new RuntimeException("Produto Edicao nao encontrado.");
-		}
-	}
-
-	private Lancamento findLancamento(Message message) {
-		EMS0114Input input = (EMS0114Input) message.getBody();
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("SELECT l FROM Lancamento l ");
-		sql.append("WHERE l.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
-
-		Query query = this.getSession().createQuery(sql.toString());
-		query.setParameter("dataRecolhimentoPrevista",
-				input.getDataRecolhimento());
-
-		@SuppressWarnings("unchecked")
-		List<Lancamento> lancamentos = (List<Lancamento>) query.list();
-
-		Lancamento lancamento = null;
-
-		if (!lancamentos.isEmpty()) {
-
-			for (Lancamento lancamento2 : lancamentos) {
-
-				if (lancamento2.getDataRecolhimentoPrevista().equals(
-						input.getDataRecolhimento())) {
-
-					lancamento = lancamento2;
-				}
-			}
-
-			return lancamento;
-
-		} else {
-
-			return null;
-		}
-	}
 	
 	@Override
 	public void posProcess() {
