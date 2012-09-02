@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
@@ -72,6 +73,19 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		if (input == null) {
 			this.ndsiLoggerFactory.getLogger().logError(
 					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
+		}
+		
+		// Validar Distribuidor:
+		final Number codDistribuidorSistema = (Number) message.getHeader().get(
+				MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
+		final Number codDistribuidorArquivo = 
+				input.getCodigoDistribuidor().longValue();
+		if (codDistribuidorSistema.longValue() != codDistribuidorArquivo.longValue()) {
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Distribuidor nao encontrato. Código: " 
+					+ codDistribuidorArquivo);
 			return;
 		}
 		
