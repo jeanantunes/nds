@@ -144,7 +144,38 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			getSession().persist(lancamento);			
 		} else {
 			
+			/*
+			 * Atualizar Lançamento:
+			 * 
+			 * - Campos a serem atualizados e 'logados':
+			 * - Reparte Previsto; Reparte Promocional; Tipo Lançamento; 
+			 * Data Lançamento Previsto;
+			 */
+			BigInteger repartePrevisto = BigInteger.valueOf(
+					input.getRepartePrevisto());
+			if (!lancamento.getReparte().equals(repartePrevisto)) {
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao do REPARTE PREVISTO do Produto: "
+								+ codigoProduto
+								+ " e Edicao: " + edicao
+								+ " , de: " + lancamento.getReparte() 
+								+ "para: " + repartePrevisto);
+				produtoEdicao.setPrecoPrevisto(precoPrevisto);
+			}
+			
+			
+			BigInteger repartePromocional = BigInteger.valueOf(
+					input.getRepartePromocional());
+			String tipoLancamento = input.getTipoLancamento();
+			//Date dataLancamento = input.getDataLancamento();
+			
+			
 			// Atualizar lançamento
+			Date dtLancamentoDistribuidor = 
+					lancamento.getDataLancamentoDistribuidor();
+			
+			
 			
 			StatusLancamento status = lancamento.getStatus();
 			
@@ -300,6 +331,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		return (Lancamento) query.uniqueResult();
 	}
+	
 	
 	@Override
 	public void posProcess() {
