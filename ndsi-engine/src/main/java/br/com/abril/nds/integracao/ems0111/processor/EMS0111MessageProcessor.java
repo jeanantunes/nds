@@ -268,7 +268,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	
 	/**
-	 * Obtém o Lançamento com data de lançamento mais próximo da data de 
+	 * Obtém o Lançamento com a data de lançamento mais próximo da data de 
 	 * lançamento previsto.
 	 *  
 	 * @param produtoEdicao
@@ -287,7 +287,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
 		sql.append("      AND lcto.dataLancamentoPrevista > :dataGeracaoArquivo ");
-		sql.append("      AND lcto.dataLancamentoPrevista = :dataOperacao ");
+		sql.append("      AND lcto.dataLancamentoPrevista = :dataLancamento ");
 		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
 		
 		Query query = getSession().createQuery(sql.toString());
