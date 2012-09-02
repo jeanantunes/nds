@@ -58,6 +58,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	public void processMessage(Message message) {
 
 		EMS0111Input input = (EMS0111Input) message.getBody();
+		if (input == null) {
+			this.ndsiLoggerFactory.getLogger().logError(
+					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
+		}
 
 		// Validar Produto/Edicao
 		StringBuilder cmd = new StringBuilder();
