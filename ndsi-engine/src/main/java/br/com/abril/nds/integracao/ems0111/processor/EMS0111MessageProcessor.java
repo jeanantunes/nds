@@ -74,8 +74,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		
 		// Validar Produto/Edicao
-		String codigoProduto = input.getCodigoProduto();
-		Long edicao = input.getEdicaoProduto();
+		final String codigoProduto = input.getCodigoProduto();
+		final Long edicao = input.getEdicaoProduto();
 		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
 				edicao);
 		if (produtoEdicao == null) {
@@ -90,7 +90,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
-		BigDecimal precoPrevisto = input.getPrecoPrevisto();
+		final BigDecimal precoPrevisto = input.getPrecoPrevisto();
 		if (!produtoEdicao.getPrecoPrevisto().equals(precoPrevisto)) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -104,8 +104,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		}
 		
 		
-		Date dataLancamento = input.getDataLancamento();
-		Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
+		final Date dataLancamento = input.getDataLancamento();
+		final Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
 				produtoEdicao, dataLancamento, dataGeracaoArquivo);
 		if (lancamento == null ) {
@@ -117,10 +117,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			Calendar calRecolhimento = Calendar.getInstance();
 			calRecolhimento.setTime(input.getDataLancamento());
 			calRecolhimento.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-			Date dataRecolhimento = calRecolhimento.getTime();
+			final Date dataRecolhimento = calRecolhimento.getTime();
 
 			// Data da Operação do sistema:
-			Date dataOperacao = distribuidorService.obter().getDataOperacao();
+			final Date dataOperacao = distribuidorService.obter().getDataOperacao();
 			lancamento.setDataStatus(dataOperacao);
 			
 			lancamento.setId(null);
@@ -147,11 +147,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			/*
 			 * Atualizar Lançamento:
 			 * 
-			 * - Campos a serem atualizados e 'logados':
+			 * 01) Atualizar os atributos (e 'logar'):
 			 * - Reparte Previsto; Reparte Promocional; Tipo Lançamento; 
 			 * Data Lançamento Previsto;
 			 */
-			BigInteger repartePrevisto = BigInteger.valueOf(
+			final BigInteger repartePrevisto = BigInteger.valueOf(
 					input.getRepartePrevisto());
 			if (!lancamento.getReparte().equals(repartePrevisto)) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
@@ -164,8 +164,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setReparte(repartePrevisto);
 			}
 			
-			
-			BigInteger repartePromocional = BigInteger.valueOf(
+			final BigInteger repartePromocional = BigInteger.valueOf(
 					input.getRepartePromocional());
 			if (!lancamento.getRepartePromocional().equals(repartePromocional)) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
@@ -178,17 +177,17 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setRepartePromocional(repartePromocional);
 			}
 			
-			String tipoLancamento = input.getTipoLancamento();
+			final String tipoLancamento = input.getTipoLancamento();
 			//Date dataLancamento = input.getDataLancamento();
 			
 			
 			// Atualizar lançamento
-			Date dtLancamentoDistribuidor = 
+			final Date dtLancamentoDistribuidor = 
 					lancamento.getDataLancamentoDistribuidor();
 			
 			
 			
-			StatusLancamento status = lancamento.getStatus();
+			final StatusLancamento status = lancamento.getStatus();
 			
 			
 		}
