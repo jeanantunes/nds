@@ -167,6 +167,17 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			BigInteger repartePromocional = BigInteger.valueOf(
 					input.getRepartePromocional());
+			if (!lancamento.getRepartePromocional().equals(repartePromocional)) {
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao do REPARTE PROMOCIONAL do Produto: "
+								+ codigoProduto
+								+ " e Edicao: " + edicao
+								+ " , de: " + lancamento.getRepartePromocional() 
+								+ "para: " + repartePromocional);
+				lancamento.setRepartePromocional(repartePromocional);
+			}
+			
 			String tipoLancamento = input.getTipoLancamento();
 			//Date dataLancamento = input.getDataLancamento();
 			
