@@ -1812,13 +1812,5 @@ public class CotaServiceImpl implements CotaService {
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(historico.getTelefones()));
     }
-    
-    @Override
-    @Transactional(readOnly = true)
-    public List<PdvDTO> obterPdvsHistoricoTitularidade(Long idCota, Long idHistorico) {
-        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-        return new ArrayList<PdvDTO>(CotaDTOAssembler.toPdvDTOCollection(historico.getPdvs()));
-    }
-
 	
 }

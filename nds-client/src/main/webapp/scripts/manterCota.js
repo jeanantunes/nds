@@ -1,12 +1,12 @@
 var ModoTela = {
-  CADASTRO_COTA : {value: 'CADASTRO_COTA'}, 
-  HISTORICO_TITULARIDADE : {value: 'HISTORICO_TITULARIDADE'} 
+  CADASTRO_COTA : {value: 'CADASTRO_COTA'},
+  HISTORICO_TITULARIDADE : {value: 'HISTORICO_TITULARIDADE'}
 };
 
 var TAB_COTA = new TabCota('tabCota');
 
 var MANTER_COTA = $.extend(true, {
-	
+
     numeroCota:"",
     idCota:"",
     tipoCotaSelecionada:"",
@@ -20,7 +20,7 @@ var MANTER_COTA = $.extend(true, {
     
     init: function() {
     	this.definirModoTelaCadastroCota();
-		
+
     	$( "#tabpdv", this.workspace ).tabs();
 
 		$("#descricaoPessoa", this.workspace).autocomplete({source: ""});
@@ -185,9 +185,10 @@ var MANTER_COTA = $.extend(true, {
     },
     
 	carregarPDV : function (){
-        PDV.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
-		PDV.idCota = MANTER_COTA.idCota;
-		PDV.pesquisarPdvs(MANTER_COTA.idCota);
+        PDV.idCota = MANTER_COTA.idCota;
+        PDV.idHistorico = MANTER_COTA.idHistorico;
+        PDV.definirModoTela(MANTER_COTA.modoTela);
+		PDV.pesquisarPdvs();
 	},
 	
 	carregarFornecedores:function(){

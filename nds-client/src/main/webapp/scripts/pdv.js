@@ -2,10 +2,10 @@
 var PDV =  $.extend(true, {
 	
 		idCota:"",
-		fecharModalCadastroPDV:false,
+        idHistorico:"",
+        fecharModalCadastroPDV:false,
 		diasFuncionamento:[],
-        //Flag indicando se tela irá operar em modo cadastro/consulta
-        readonly: false,
+        modoTela: null,
 		
 		
 		init : function() {
@@ -15,14 +15,17 @@ var PDV =  $.extend(true, {
 			PDV.inicializarAbaDadosBasicos();
 			PDV.inicializarGeradorFluxo();
 			PDV.inicializarMap();
+            PDV.modoTela = ModoTela.CADASTRO_COTA;
+
 		},
 
-         //Define a tela como operação de edição/consulta
-         definirReadonly : function(readonly) {
-             PDV.readonly = readonly;
-             ENDERECO_PDV.definirReadonly(PDV.readonly);
-             TELEFONE_PDV.definirReadonly(PDV.readonly);
-              if (PDV.readonly) {
+         //Define o modo da tela
+         definirModoTela : function(modoTela) {
+        	 PDV.modoTela = modoTela;
+             var readonly = ModoTela.HISTORICO_TITULARIDADE == PDV.modoTela;
+             ENDERECO_PDV.definirReadonly(readonly);
+             TELEFONE_PDV.definirReadonly(readonly);
+              if (readonly) {
                  $('#PDVbtnNovo', this.workspace).hide();
                  $('#PDVbtnAdicionarDiasFuncionamento', this.workspace).hide();
                  $('#idBtnExcluir', this.workspace).hide();
@@ -67,9 +70,11 @@ var PDV =  $.extend(true, {
 				$('#formBaixaAutomatica', this.workspace).ajaxForm(options);	
 		},
 		
-		pesquisarPdvs: function (idCota){
+		pesquisarPdvs: function (){
 			
-			var param = [{name:"idCota",value:idCota}];
+			var param = [{name:"idCota", value: PDV.idCota},
+                {name:"idHistorico", value: PDV.idHistorico},
+                {name:"modoTela", value: PDV.modoTela.value}];
 			
 			$(".PDVsGrid", this.workspace).flexOptions({
 				url: contextPath + "/cadastro/pdv/consultar",
@@ -83,17 +88,18 @@ var PDV =  $.extend(true, {
 			
 			// Monta as colunas com os inputs do grid
 			$.each(resultado.rows, function(index, row) {
-				
+                var readonly = ModoTela.HISTORICO_TITULARIDADE == PDV.modoTela;
+
 				var param = '\'' + row.cell.idPdv +'\','+'\''+ row.cell.idCota +'\'';
 
-                var title = PDV.readonly ? 'Visualizar PDV' : 'Editar Endereço';
+                var title = readonly ? 'Visualizar PDV' : 'Editar Endereço';
 
 				var linkEdicao = '<a href="javascript:;" onclick="PDV.editarPDV('+ param +');" style="cursor:pointer">' +
 					 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="'+title+'" />' +
 					 '</a>';
 
                 var linkExclusao = '';
-                if (!PDV.readonly) {
+                if (!readonly) {
                     linkExclusao ='<a href="javascript:;" onclick="PDV.exibirDialogExclusao('+param +' );" style="cursor:pointer">' +
                         '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir PDV" />' +
                         '</a>';
@@ -269,13 +275,13 @@ var PDV =  $.extend(true, {
 		},
 		
 		excluirPDV:function(idPdv,idCota){
-			
+
 			$.postJSON(contextPath + "/cadastro/pdv/excluir",
 					[{name:"idPdv",value:idPdv},
 					 {name:"idCota",value:idCota}
 					 ], function(result){
 				
-				PDV.pesquisarPdvs(idCota);
+				PDV.pesquisarPdvs();
 				
 			},null,true);
 		},
@@ -311,7 +317,7 @@ var PDV =  $.extend(true, {
 			
 				$("#dialog-pdv", this.workspace).dialog( "close" );
 				PDV.fecharModalCadastroPDV = true;
-				PDV.pesquisarPdvs(PDV.idCota);
+				PDV.pesquisarPdvs();
 				PDV.limparCamposTela();	
 				
 				if(result.listaMensagens){
@@ -661,7 +667,7 @@ var PDV =  $.extend(true, {
 		},
 		
 		popup_novoPdv : function() {
-			if (PDV.readonly) {
+			if (ModoTela.HISTORICO_TITULARIDADE == PDV.modoTela) {
 
                 $( "#dialog-pdv", this.workspace ).dialog({
                     resizable: false,

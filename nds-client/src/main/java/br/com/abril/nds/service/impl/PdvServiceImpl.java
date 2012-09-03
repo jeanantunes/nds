@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.assembler.CotaDTOAssembler;
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
@@ -46,6 +47,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
@@ -1189,4 +1191,11 @@ public class PdvServiceImpl implements PdvService {
 		
 		return enderecoPDVRepository.buscarMunicipioPdvPrincipal();
 	}
+	
+    @Override
+    @Transactional(readOnly = true)
+    public List<PdvDTO> obterPdvsHistoricoTitularidade(Long idCota, Long idHistorico) {
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<PdvDTO>(CotaDTOAssembler.toPdvDTOCollection(historico.getPdvs()));
+    }
 }

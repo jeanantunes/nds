@@ -1310,18 +1310,5 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.session.removeAttribute(FILTRO_SESSION_ATTRIBUTE);
 	}
-	
-	/**
-	 * Enum os modos de operação da tela de cadastro de cota
-	 * @author francisco.garcia
-	 *
-	 */
-	public static enum ModoTela {
-	     
-	    CADASTRO_COTA, 
-	     
-	     HISTORICO_TITULARIDADE;
-	     
-	}
 }
 

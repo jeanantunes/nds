@@ -29,7 +29,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
@@ -256,9 +255,18 @@ public class PdvController {
 		return itens;
 	}
 	
+	/**
+	 * Lista os PDVS associados à cota ou ao Histórico de titularidade da cota
+	 * de acordo com o modo em que a tela está operando
+	 * @param idCota Identificador da cota
+	 * @param idHistorico identificador do histórico
+	 * @param modoTela modo em que a tela está operando
+	 * @param sortname nome da coluna para ordenação 
+	 * @param sortorder sentido da ordenação
+	 */
 	@Post
 	@Path("/consultar")
-	public void consultarPDVs(Long idCota,String sortname, String sortorder){
+	public void consultarPDVs(Long idCota, Long idHistorico, ModoTela modoTela, String sortname, String sortorder){
 		
 		FiltroPdvDTO filtro = new FiltroPdvDTO();
 		filtro.setIdCota(idCota);
@@ -269,7 +277,13 @@ public class PdvController {
 		
 		filtro.setColunaOrdenacao(Util.getEnumByStringValue(FiltroPdvDTO.ColunaOrdenacao.values(),sortname));
 		
-		List<PdvVO>  listaPdvs = getListaPdvs(filtro);
+		List<PdvVO>  listaPdvs = null;
+		
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		   listaPdvs = getListaPdvs(filtro);
+		} else {
+		    listaPdvs = toPdvVO(pdvService.obterPdvsHistoricoTitularidade(idCota, idHistorico));
+		}
 		
 		TableModel<CellModelKeyValue<PdvVO>> tableModel = new TableModel<CellModelKeyValue<PdvVO>>();
 			
@@ -290,17 +304,15 @@ public class PdvController {
 	 * @return List<PdvVO>
 	 */
 	private List<PdvVO> getListaPdvs(FiltroPdvDTO filtro){
-		
 		List<PdvDTO> listDtos = pdvService.obterPDVsPorCota(filtro);
-		
-		List<PdvVO> listaRetorno = new ArrayList<PdvVO>();
-		
-		PdvVO pdvVO = null;
-		
-		for(PdvDTO pdv : listDtos){
-			
-			pdvVO = new PdvVO();
-			
+		return  toPdvVO(listDtos);
+	}
+
+    private List<PdvVO> toPdvVO(List<PdvDTO> dtos) {
+        List<PdvVO> vos = new ArrayList<PdvVO>(dtos.size());
+      
+        for(PdvDTO pdv : dtos){
+			PdvVO pdvVO = new PdvVO();
 			pdvVO.setIdPdv(pdv.getId());
 			pdvVO.setIdCota(pdv.getIdCota());
 			pdvVO.setNomePdv(pdv.getNomePDV());
@@ -312,12 +324,10 @@ public class PdvController {
 			pdvVO.setStatus( tratarCampo(pdv.getStatusPDV()));
 			pdvVO.setFaturamento((pdv.getPorcentagemFaturamento()==null
 									?"":CurrencyUtil.formatarValor(pdv.getPorcentagemFaturamento())));
-		   
-			listaRetorno.add(pdvVO);
+			vos.add(pdvVO);
 		}
-		
-		return listaRetorno;
-	}
+        return vos;
+    }
 	
 	private String tratarCampo(Object valor){
 		

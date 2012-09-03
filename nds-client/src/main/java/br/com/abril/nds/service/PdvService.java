@@ -88,4 +88,14 @@ public interface PdvService {
 	List<TipoPontoPDV> obterTiposPontoPDVPrincipal();
 	
 	TipoPontoPDV obterTipoPontoPDVPrincipal(Long codigoPontoPDV);
+	
+    /**
+     * Obtém a lista de PDV's associados ao histórico de titularidade da cota
+     * @param idCota identificador da cota  
+     * @param idHistorico identificador do histórico de titularidade
+     * @return {@link List<PdvDTO>} com os PDV's associados ao 
+     * histórico de titularidade da cota
+     */
+    List<PdvDTO> obterPdvsHistoricoTitularidade(Long idCota, Long idHistorico);
+    
 }

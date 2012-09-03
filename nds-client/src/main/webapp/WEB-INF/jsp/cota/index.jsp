@@ -15,9 +15,10 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
+
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
 
 <script language="javascript" type="text/javascript">
 	

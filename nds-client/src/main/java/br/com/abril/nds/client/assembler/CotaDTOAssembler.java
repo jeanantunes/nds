@@ -219,6 +219,7 @@ public class CotaDTOAssembler {
                 periodosDTO.add(periodoDTO);
             }
             dto.setPeriodosFuncionamentoDTO(periodosDTO);
+            dtos.add(dto);
         }
         return dtos;
     }
