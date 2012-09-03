@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSession;
 
 import net.vidageek.mirror.dsl.Mirror;
 
+import org.apache.commons.logging.impl.Log4JLogger;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,6 +47,8 @@ public class HomeController {
 
 	private List<MenuDTO> menus;
 
+	private static Logger logger = Logger.getLogger(HomeController.class);	
+	
 	/**
 	 * @param router
 	 * @param result
@@ -81,7 +85,13 @@ public class HomeController {
 	private List<Permissao> getPermissoesUsuario() {
 		List<Permissao> permissoes = new ArrayList<Permissao>();
 		for (GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
-			permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
+			try {
+				permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
+			} catch (IllegalArgumentException e) {
+				// Caso a permissão não exista, prossegue para a próxima permissão
+				logger.warn("Não foi encontrado a seguinte permissao: " + e);
+				continue;
+			}
 		}
 		return permissoes;
 	}
