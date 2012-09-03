@@ -9,6 +9,7 @@ import java.util.Date;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -123,7 +124,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		final Date dataLancamento = input.getDataLancamento();
 		final Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
-				produtoEdicao, dataLancamento, dataGeracaoArquivo);
+				produtoEdicao, dataGeracaoArquivo);
 		if (lancamento == null ) {
 			
 			// Cadastrar novo lançamento
@@ -283,37 +284,27 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	}	
 		
 	/**
-	 * Obtém o Lançamento com a data de lançamento mais próximo da data de 
-	 * lançamento previsto.
+	 * Obtém o Lançamento com a "Data de lançamento Previsto" mais próximo da 
+	 * "Data de Geração do Arquivo".
 	 *  
 	 * @param produtoEdicao
-	 * @param dataLancamento Data de Lançamento da Edição.
 	 * @param dataGeracaoArquivo Data de Geração do Arquivo.
 	 * 
 	 * @return
 	 */
 	private Lancamento getLancamentoPrevistoMaisProximo(
-			ProdutoEdicao produtoEdicao, Date dataLancamento, 
-			Date dataGeracaoArquivo) {
+			ProdutoEdicao produtoEdicao, Date dataGeracaoArquivo) {
 		
-		StringBuilder sql = new StringBuilder();
+		Criteria criteria = this.getSession().createCriteria(Lancamento.class);
+
+		criteria.add(Restrictions.gt("dataLancamentoPrevista", dataGeracaoArquivo));
+		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		criteria.addOrder(Order.asc("dataLancamentoPrevista"));
 		
-		sql.append("SELECT lcto FROM Lancamento lcto ");
-		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
-		sql.append("    WHERE pe = :produtoEdicao ");
-		sql.append("      AND lcto.dataLancamentoPrevista > :dataGeracaoArquivo ");
-		sql.append("      AND lcto.dataLancamentoPrevista = :dataLancamento ");
-		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
+		criteria.setFetchSize(1);
+		criteria.setMaxResults(1);
 		
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("produtoEdicao", produtoEdicao);
-		query.setDate("dataGeracaoArquivo", dataGeracaoArquivo);
-		query.setDate("dataLancamento", dataLancamento);
-		
-		query.setMaxResults(1);
-		query.setFetchSize(1);
-		
-		return (Lancamento) query.uniqueResult();
+		return (Lancamento) criteria.uniqueResult();
 	}
 	
 	/**
