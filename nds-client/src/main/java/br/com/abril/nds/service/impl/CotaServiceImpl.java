@@ -1672,12 +1672,14 @@ public class CotaServiceImpl implements CotaService {
 			
 			PessoaFisica pessoa = (PessoaFisica) cota.getPessoa();
 			
-			dto.setBoxCota(pessoa.getNome());
+			dto.setNomeJornaleiro(pessoa.getNome());
 			dto.setNacionalidade(pessoa.getNacionalidade());
 			dto.setEstadoCivil(pessoa.getEstadoCivil() == null ? "" : pessoa.getEstadoCivil().getDescricao());
 			dto.setRgJornaleiro(pessoa.getRg());
 			dto.setCpfJornaleiro(pessoa.getCpf());
 		}
+		
+		dto.setBoxCota(cota.getBox().getNome());
 		
 		EnderecoCota enderecoDoProcurado = this.enderecoCotaRepository.getPrincipal(cota.getId());
 		
@@ -1708,27 +1710,20 @@ public class CotaServiceImpl implements CotaService {
 		
 		//TODO numero da permissão
 		
-		ProcuracaoImpressaoWrapper wrapper = new ProcuracaoImpressaoWrapper();
 		List<ProcuracaoImpressaoDTO> listaDTO = new ArrayList<ProcuracaoImpressaoDTO>();
-		wrapper.setListaProcuracaoImpressao(listaDTO);
+		listaDTO.add(dto);
 		
-		List<ProcuracaoImpressaoWrapper> list = new ArrayList<ProcuracaoImpressaoWrapper>();
-		list.add(wrapper);
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("cidade", dto.getCidadePDV());
 		
-		 URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
-
-		 Map<String, Object> parameters = new HashMap<String, Object>();
-			
-		 parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
-
-		 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaDTO);
 		
-		 URL url = 
-			Thread.currentThread().getContextClassLoader().getResource("/reports/procuracao.jasper");
+		URL url = 
+			Thread.currentThread().getContextClassLoader().getResource("/reports/procuracao_subreport1.jasper");
+		
+		String path = url.toURI().getPath();
 		 
-		 String path = url.toURI().getPath();
-		 
-		 return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
 	/**
