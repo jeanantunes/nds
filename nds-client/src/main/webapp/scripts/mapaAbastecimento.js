@@ -1,4 +1,6 @@
-function MapaAbastecimento(pathTela, objName) {
+function MapaAbastecimento(pathTela, objName, workspace) {
+	
+	var _workspace = workspace;
 	
 	var T = this;
 	
@@ -7,14 +9,14 @@ function MapaAbastecimento(pathTela, objName) {
 	this.pesquisar = function() {
 		
 
-		$(".mapaAbastecimentoGrid").flexOptions({			
+		$(".mapaAbastecimentoGrid", _workspace).flexOptions({			
 			url : pathTela + "/mapaAbastecimento/pesquisar",
 			dataType : 'json',
 			preProcess: T.processaRetornoPesquisa,
 			params:T.getDadosFiltro()
 		});
 		
-		$(".mapaAbastecimentoGrid").flexReload();
+		$(".mapaAbastecimentoGrid", _workspace).flexReload();
 	},
 	
 	this.processaRetornoPesquisa = function(result) {
@@ -32,14 +34,14 @@ function MapaAbastecimento(pathTela, objName) {
 	
 		var mapa = T.mapas[indice];
 		
-		$('#titleBox').html(mapa.box);
+		$('#titleBox', _workspace).html(mapa.box);
 		
 		var data = [];
 		
 		data.push({name: 'idBox' ,value: mapa.idBox});
 		data.push({name: 'data'  ,value: mapa.data});
 		
-		$(".mapaAbastecimentoDetalheGrid").flexOptions({			
+		$(".mapaAbastecimentoDetalheGrid", _workspace).flexOptions({			
 			url : pathTela + "/mapaAbastecimento/pesquisarDetalhes",
 			dataType : 'json',			
 			preProcess: T.processaRetornoPesquisaDetalhes,
@@ -47,7 +49,7 @@ function MapaAbastecimento(pathTela, objName) {
 		
 		});		
 		
-		$(".mapaAbastecimentoDetalheGrid").flexReload();
+		$(".mapaAbastecimentoDetalheGrid", _workspace).flexReload();
 	},
 	
 	this.processaRetornoPesquisaDetalhes = function(result) {
@@ -88,13 +90,13 @@ function MapaAbastecimento(pathTela, objName) {
 		result[1].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
 		
 		var comboBox =  montarComboBox(result[0], false);
-		$('#box').html(comboBox);
+		$('#box', _workspace).html(comboBox);
 		
 		var comboRota =  montarComboBox(result[1], false);
-		$('#rota').html(comboRota);
+		$('#rota', _workspace).html(comboRota);
 				
 		if(isCotaDefined)
-			$('#rota').enable();
+			$('#rota', _workspace).enable();
 		
 	},
 	
@@ -134,14 +136,14 @@ function MapaAbastecimento(pathTela, objName) {
 	this.bloquearCampos = function() {
 		for(var campo in arguments) {
 
-			$('#' + arguments[campo]).val('');
-			$('#' + arguments[campo]).disable();
+			$('#' + arguments[campo], _workspace).val('');
+			$('#' + arguments[campo], _workspace).disable();
 		}
 	},
 	
 	this.desbloquearCampos = function() {
 		for(var campo in arguments) {
-			$('#' + arguments[campo]).enable();
+			$('#' + arguments[campo], _workspace).enable();
 		}
 	},
 	
@@ -172,7 +174,7 @@ function MapaAbastecimento(pathTela, objName) {
 	 */
 	this.set = function(campo,value) {
 				
-		var elemento = $("#" + campo);
+		var elemento = $("#" + campo, _workspace);
 		
 		if(elemento.attr('type') == 'checkbox') {
 			
@@ -193,7 +195,7 @@ function MapaAbastecimento(pathTela, objName) {
 	 */
 	this.get = function(campo) {
 		
-		var elemento = $("#" + campo);
+		var elemento = $("#" + campo, _workspace);
 		
 		if(elemento.attr('type') == 'checkbox') {
 			return (elemento.attr('checked') == 'checked') ;
@@ -208,9 +210,9 @@ function MapaAbastecimento(pathTela, objName) {
 	 */
 	$(function() {
 				
-		$("#dataLancamento").mask("99/99/9999");
+		$("#dataLancamento", _workspace).mask("99/99/9999");
 		
-		$( "#dataLancamento" ).datepicker({
+		$( "#dataLancamento", _workspace ).datepicker({
 			showOn: "button",
 			buttonImage: pathTela + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true

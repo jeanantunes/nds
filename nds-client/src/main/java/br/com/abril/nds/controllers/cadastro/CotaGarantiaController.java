@@ -13,11 +13,13 @@ import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
@@ -301,7 +303,10 @@ public class CotaGarantiaController {
 	public void getFiador(Long idFiador, String documento) {
 		Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
 		if (fiador != null) {
-			result.use(CustomJson.class).from(fiador).serialize();
+			
+			Endereco endereco = cotaGarantiaService.buscaEnderecoFiadorPrincipal(idFiador);
+			
+			result.use(CustomMapJson.class).put("fiador",fiador).put("endereco", endereco).serialize();
 		} else {
 			result.use(CustomJson.class).from("NotFound").serialize();
 		}

@@ -12,7 +12,9 @@ function Distribuicao(tela) {
 		$.postJSON(contextPath + "/cadastro/cota/salvarDistribuicaoCota",
 				D.getDados(),
 				callback,
-				null, true);
+				null,
+				true,
+				"dialog-cota");
 		
 		return false;		
 	},
@@ -25,30 +27,40 @@ function Distribuicao(tela) {
 	
 		var data = [];
 		
-		data.push({name:'distribuicao.numCota',				value: D.get("numCota")});
-		data.push({name:'distribuicao.qtdePDV',				value: D.get("qtdePDV")});
-		data.push({name:'distribuicao.box',					value: D.get("box")});
-		data.push({name:'distribuicao.assistComercial',		value: D.get("assistComercial")});
-		data.push({name:'distribuicao.gerenteComercial',    value: D.get("gerenteComercial")});
-		data.push({name:'distribuicao.tipoEntrega',			value: D.get("tipoEntrega")});
-		data.push({name:'distribuicao.observacao',			value: D.get("observacao")});
-		data.push({name:'distribuicao.arrendatario',		value: D.get("arrendatario")});
-		data.push({name:'distribuicao.repPorPontoVenda',	value: D.get("repPorPontoVenda")});
-		data.push({name:'distribuicao.solNumAtras',			value: D.get("solNumAtras")});
-		data.push({name:'distribuicao.recebeRecolhe',		value: D.get("recebeRecolhe")});
-		data.push({name:'distribuicao.neImpresso',			value: D.get("neImpresso")});
-		data.push({name:'distribuicao.neEmail',				value: D.get("neEmail")});
-		data.push({name:'distribuicao.ceImpresso',			value: D.get("ceImpresso")});
-		data.push({name:'distribuicao.ceEmail',				value: D.get("ceEmail")});
-		data.push({name:'distribuicao.slipImpresso',		value: D.get("slipImpresso")});
-		data.push({name:'distribuicao.slipEmail',			value: D.get("slipEmail")});
-		data.push({name:'distribuicao.boletoImpresso',		value: D.get("boletoImpresso")});
-		data.push({name:'distribuicao.boletoEmail',			value: D.get("boletoEmail")});
-		data.push({name:'distribuicao.boletoSlipImpresso',	value: D.get("boletoSlipImpresso")});
-		data.push({name:'distribuicao.boletoSlipEmail',		value: D.get("boletoSlipEmail")});
-		data.push({name:'distribuicao.reciboImpresso',		value: D.get("reciboImpresso")});
-		data.push({name:'distribuicao.reciboEmail',			value: D.get("reciboEmail")});
-				
+		data.push({name:'distribuicao.numCota',					value: D.get("numCota")});
+		data.push({name:'distribuicao.qtdePDV',					value: D.get("qtdePDV")});
+		data.push({name:'distribuicao.box',						value: D.get("box")});
+		data.push({name:'distribuicao.assistComercial',			value: D.get("assistComercial")});
+		data.push({name:'distribuicao.gerenteComercial',    	value: D.get("gerenteComercial")});
+		data.push({name:'distribuicao.tipoEntrega',				value: D.get("tipoEntrega")});
+		data.push({name:'distribuicao.observacao',				value: D.get("observacao")});
+		data.push({name:'distribuicao.arrendatario',			value: D.get("arrendatario")});
+		data.push({name:'distribuicao.repPorPontoVenda',		value: D.get("repPorPontoVenda")});
+		data.push({name:'distribuicao.solNumAtras',				value: D.get("solNumAtras")});
+		data.push({name:'distribuicao.recebeRecolhe',			value: D.get("recebeRecolhe")});
+		data.push({name:'distribuicao.neImpresso',				value: D.get("neImpresso")});
+		data.push({name:'distribuicao.neEmail',					value: D.get("neEmail")});
+		data.push({name:'distribuicao.ceImpresso',				value: D.get("ceImpresso")});
+		data.push({name:'distribuicao.ceEmail',					value: D.get("ceEmail")});
+		data.push({name:'distribuicao.slipImpresso',			value: D.get("slipImpresso")});
+		data.push({name:'distribuicao.slipEmail',				value: D.get("slipEmail")});
+		data.push({name:'distribuicao.boletoImpresso',			value: D.get("boletoImpresso")});
+		data.push({name:'distribuicao.boletoEmail',				value: D.get("boletoEmail")});
+		data.push({name:'distribuicao.boletoSlipImpresso',		value: D.get("boletoSlipImpresso")});
+		data.push({name:'distribuicao.boletoSlipEmail',			value: D.get("boletoSlipEmail")});
+		data.push({name:'distribuicao.reciboImpresso',			value: D.get("reciboImpresso")});
+		data.push({name:'distribuicao.reciboEmail',				value: D.get("reciboEmail")});
+		
+		// TODO: mudar o valor do combo; Realizar tratamento para os outros valores
+		if (D.$('tipoEntrega').val() == '3') {
+			
+			data.push({name:'distribuicao.utilizaProcuracao',		value: D.get("utilizaProcuracao")});
+			data.push({name:'distribuicao.procuracaoRecebida',		value: D.get("procuracaoRecebida")});
+			data.push({name:'distribuicao.percentualFaturamento',	value: D.get("percentualFaturamentoEntregador")});
+			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarenciaEntregador")});
+			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarenciaEntregador")});
+		}
+		
 		return data;
 	},
 	
@@ -62,29 +74,39 @@ function Distribuicao(tela) {
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
 		
-		D.set('numCota',			dto.numCota);
-		D.set('qtdePDV',			dto.qtdePDV ? dto.qtdePDV.toString() : '' );
-		D.set('box',				dto.box);
-		D.set('assistComercial',	dto.assistComercial);
-		D.set('gerenteComercial',	dto.gerenteComercial);
-		D.set('tipoEntrega',		dto.tipoEntrega);
-		D.set('arrendatario',		dto.arrendatario);
-		D.set('observacao',			dto.observacao);
-		D.set('repPorPontoVenda',	dto.repPorPontoVenda);
-		D.set('solNumAtras',		dto.solNumAtras);
-		D.set('recebeRecolhe',		dto.recebeRecolhe);
-		D.set('neImpresso',			dto.neImpresso);
-		D.set('neEmail',			dto.neEmail);
-		D.set('ceImpresso',			dto.ceImpresso);
-		D.set('ceEmail',			dto.ceEmail);
-		D.set('slipImpresso',		dto.slipImpresso);
-		D.set('slipEmail',			dto.slipEmail);
-		D.set('boletoImpresso',		dto.boletoImpresso);
-		D.set('boletoEmail',		dto.boletoEmail);
-		D.set('boletoSlipImpresso',	dto.boletoSlipImpresso);
-		D.set('boletoSlipEmail',	dto.boletoSlipEmail);
-		D.set('reciboImpresso',		dto.reciboImpresso);
-		D.set('reciboEmail',		dto.reciboEmail);		
+		D.set('numCota',				dto.numCota);
+		D.set('qtdePDV',				dto.qtdePDV ? dto.qtdePDV.toString() : '' );
+		D.set('box',					dto.box);
+		D.set('assistComercial',		dto.assistComercial);
+		D.set('gerenteComercial',		dto.gerenteComercial);
+		D.set('tipoEntrega',			dto.tipoEntrega);
+		D.set('arrendatario',			dto.arrendatario);
+		D.set('observacao',				dto.observacao);
+		D.set('repPorPontoVenda',		dto.repPorPontoVenda);
+		D.set('solNumAtras',			dto.solNumAtras);
+		D.set('recebeRecolhe',			dto.recebeRecolhe);
+		D.set('neImpresso',				dto.neImpresso);
+		D.set('neEmail',				dto.neEmail);
+		D.set('ceImpresso',				dto.ceImpresso);
+		D.set('ceEmail',				dto.ceEmail);
+		D.set('slipImpresso',			dto.slipImpresso);
+		D.set('slipEmail',				dto.slipEmail);
+		D.set('boletoImpresso',			dto.boletoImpresso);
+		D.set('boletoEmail',			dto.boletoEmail);
+		D.set('boletoSlipImpresso',		dto.boletoSlipImpresso);
+		D.set('boletoSlipEmail',		dto.boletoSlipEmail);
+		D.set('reciboImpresso',			dto.reciboImpresso);
+		D.set('reciboEmail',			dto.reciboEmail);
+		
+		// TODO: mudar o valor do combo; Realizar tratamento para os outros valores
+		if (D.$('tipoEntrega').val() == '3') {
+		
+			D.set('utilizaProcuracao',					dto.utilizaProcuracao);
+			D.set('procuracaoRecebida',					dto.procuracaoRecebida);
+			D.set('percentualFaturamentoEntregador',	dto.percentualFaturamento);
+			D.set('inicioPeriodoCarenciaEntregador',	dto.inicioPeriodoCarencia);
+			D.set('fimPeriodoCarenciaEntregador',		dto.fimPeriodoCarencia);
+		}
 		
 		if(dto.qtdeAutomatica) {
 			D.$('qtdePDV').attr('disabled','disabled');
@@ -176,10 +198,37 @@ function Distribuicao(tela) {
 	this.$ = function(campo) {
 		
 		 return $("#" + tela + campo);
+	},
+	
+	this.imprimeProcuracao = function(){
+		
+	    document.location.assign(contextPath + "/cadastro/cota/imprimeProcuracao?numeroCota="+D.get("numCota"));
 	};
 	
 	$(function() {
 		D.$("numCota").numeric();
 		D.$("qtdePDV").numeric();
+		
+		D.$("inicioPeriodoCarenciaEntregador").datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true,
+			defaultDate: new Date()
+		});
+		
+		D.$("inicioPeriodoCarenciaEntregador").mask("99/99/9999");
+		
+		D.$("fimPeriodoCarenciaEntregador").datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true,
+			defaultDate: new Date()
+		});
+		
+		D.$("fimPeriodoCarenciaEntregador").mask("99/99/9999");
+		
+		D.$("percentualFaturamentoEntregador").mask("99.99");
 	});
 }
+
+//@ sourceURL=distribuicao.js

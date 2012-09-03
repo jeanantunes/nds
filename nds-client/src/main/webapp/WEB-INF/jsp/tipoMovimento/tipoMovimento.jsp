@@ -8,80 +8,24 @@ $(function() {
 	definirAcaoPesquisaTeclaEnter();
 });
 
-
-var TM = new TipoMovimento('${pageContext.request.contextPath}', 'TM');
-
-function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+var TM = new TipoMovimento('${pageContext.request.contextPath}', 'TM', BaseController.workspace);
+TM.init();
 	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:280,
-			width:460,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					TM.salvarTipoMovimento();					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	function popup_alterar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:280,
-			width:460,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					TM.alterarTipoMovimento();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					TM.excluirTipoMovimento();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-
 </script>
 </head>
 
 <body>
 
+<form id="form-excluir">
 <div id="dialog-excluir" title="Excluir Tipo de Movimento">
   <p>Confirma a exclusão deste Tipo de Movimento?</p>
 </div>
+</form>
 
 
 
 
-
+<form id="form-novo">
 <div id="dialog-novo" title="Incluir Tipo de Movimento">
 	
 		
@@ -161,6 +105,7 @@ function popup() {
 	          </table>
     </fieldset>
 </div>
+</form>
    
     
      <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
@@ -214,67 +159,5 @@ function popup() {
            
       </fieldset>
 
-<script>
-
-
-$(function() {	
-	
-	$(".movimentosGrid").flexigrid($.extend({},{
-		colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 95,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Descrição',
-				name : 'descricao',
-				width : 300,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Grupo de Operação',
-				name : 'grupoOperacao',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Operação',
-				name : 'operacao',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Aprovação',
-				name : 'aprovacao',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Incide na Dívida',
-				name : 'incideDivida',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 60,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 'auto'
-	})); 	
-	
-	$(".grids").show();	
-});
-</script>
 </body>
 </html>
