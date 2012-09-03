@@ -1226,34 +1226,7 @@ CaucaoLiquida.prototype.initGrid = function() {
 	
 };
 
-TipoCotaGarantia.prototype.opcaoPagto = function(op){
-	
-	if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
-		$('#divFormaBoleto').show();
-		$('#divFormaDeposito').hide();
-		$('#divFormaDinheiro').hide();
-		$('#divFormaDesconto').hide();
-    }
-	else if ((op=='DEPOSITO')||(op=='TRANSFERENCIA_BANCARIA')){
-		$('#divFormaBoleto').hide();
-		$('#divFormaDeposito').show();
-		$('#divFormaDinheiro').hide();
-		$('#divFormaDesconto').hide();
-	}    
-	else if (op=='DINHEIRO'){
-		$('#divFormaBoleto').hide();
-		$('#divFormaDeposito').hide();
-		$('#divFormaDinheiro').show();
-		$('#divFormaDesconto').hide();
-	}    
-	else{
-		$('#divFormaBoleto').hide();
-		$('#divFormaDeposito').hide();
-		$('#divFormaDinheiro').hide();
-		$('#divFormaDesconto').show();
-	}
-	
-};
+
 //**************** OUTROS PROTOTYPE ********************//
 function Outros(idCota, cotaGarantia) {
 	
@@ -1549,7 +1522,35 @@ Outros.prototype.initGrid = function() {
 	
 };
 
-//@ sourceURL=cotaGarantia.js
+TipoCotaGarantia.prototype.opcaoPagto = function(op){
+	
+	if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
+		$('#divFormaBoleto').show();
+		$('#divFormaDeposito').hide();
+		$('#divFormaDinheiro').hide();
+		$('#divFormaDesconto').hide();
+    }
+	else if ((op=='DEPOSITO')||(op=='TRANSFERENCIA_BANCARIA')){
+		$('#divFormaBoleto').hide();
+		$('#divFormaDeposito').show();
+		$('#divFormaDinheiro').hide();
+		$('#divFormaDesconto').hide();
+	}    
+	else if (op=='DINHEIRO'){
+		$('#divFormaBoleto').hide();
+		$('#divFormaDeposito').hide();
+		$('#divFormaDinheiro').show();
+		$('#divFormaDesconto').hide();
+	}    
+	else{
+		$('#divFormaBoleto').hide();
+		$('#divFormaDeposito').hide();
+		$('#divFormaDinheiro').hide();
+		$('#divFormaDesconto').show();
+	}
+	
+};
+
 TipoCotaGarantia.prototype.mostraDiario = function(){
 	$("#tipoFormaCobranca").val('DIARIA');
 	$("#semanal").attr("checked", false);
