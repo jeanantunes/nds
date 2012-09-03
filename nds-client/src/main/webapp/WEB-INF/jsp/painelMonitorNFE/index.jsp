@@ -3,9 +3,8 @@
 
 <title>Painel Monitor NFe</title>
 
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/PainelMonitorNFE.js'></script>
-
+<script language="javascript" type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
+<script language="javascript" type="text/javascript" src='${pageContext.request.contextPath}/scripts/painelMonitorNFE.js'></script>
 <script type="text/javascript">
 
 $(function() {
