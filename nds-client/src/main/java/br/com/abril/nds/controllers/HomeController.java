@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import javax.servlet.http.HttpSession;
 
 import net.vidageek.mirror.dsl.Mirror;
 
-import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,7 +45,7 @@ public class HomeController {
 
 	private List<MenuDTO> menus;
 
-	private static Logger logger = Logger.getLogger(HomeController.class);	
+	private static Logger LOGGER = Logger.getLogger(HomeController.class);	
 	
 	/**
 	 * @param router
@@ -89,7 +87,7 @@ public class HomeController {
 				permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
 			} catch (IllegalArgumentException e) {
 				// Caso a permissão não exista, prossegue para a próxima permissão
-				logger.warn("Não foi encontrado a seguinte permissao: " + e);
+				LOGGER.warn("Não foi encontrado a seguinte permissao: " + e);
 				continue;
 			}
 		}
