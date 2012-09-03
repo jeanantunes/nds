@@ -648,7 +648,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		dto.setAssistComercial(parametro.getAssistenteComercial());
 		dto.setGerenteComercial(parametro.getGerenteComercial());
-		dto.setTipoEntrega( (parametro.getTipoEntrega()==null) ? null : parametro.getTipoEntrega().getId());
+		dto.setDescricaoTipoEntrega((parametro.getTipoEntrega()==null) ? null : parametro.getTipoEntrega().getDescricaoTipoEntrega());
 		dto.setObservacao(parametro.getObservacao());
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
@@ -705,10 +705,14 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
 		parametros.setGerenteComercial(dto.getGerenteComercial());
-		if(dto.getTipoEntrega() == null)
+		
+		if(dto.getDescricaoTipoEntrega() == null) {
 			parametros.setTipoEntrega(null);
-		else
-			parametros.setTipoEntrega(tipoEntregaRepository.buscarPorId(dto.getTipoEntrega()));
+		} else {
+			parametros.setTipoEntrega(
+				tipoEntregaRepository.buscarPorDescricaoTipoEntrega(dto.getDescricaoTipoEntrega()));
+		}
+			
 		parametros.setObservacao(dto.getObservacao());
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
@@ -729,9 +733,19 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
 		parametros.setTaxaFixa(dto.getTaxaFixa());
 		parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
-		parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
-		parametros.setFimPeriodoCarencia(DateUtil.parseDataPTBR(dto.getFimPeriodoCarencia()));
 		
+		if (dto.getInicioPeriodoCarencia() != null) {
+			parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
+		} else {
+			parametros.setInicioPeriodoCarencia(null);	
+		}
+		
+		if (dto.getFimPeriodoCarencia() != null) {
+			parametros.setFimPeriodoCarencia(DateUtil.parseDataPTBR(dto.getFimPeriodoCarencia()));
+		} else {
+			parametros.setFimPeriodoCarencia(null);			
+		}
+				
 		cota.setParametroDistribuicao(parametros);
 		
 		cotaRepository.merge(cota);
