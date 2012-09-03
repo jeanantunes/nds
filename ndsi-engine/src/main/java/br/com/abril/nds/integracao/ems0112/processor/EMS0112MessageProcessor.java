@@ -1,12 +1,8 @@
 package br.com.abril.nds.integracao.ems0112.processor;
 
-import javax.persistence.Column;
-
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -41,11 +37,6 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
 	@Override
 	public void processMessage(Message message) {
 
@@ -497,11 +488,6 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		
 	@Override
 	public void posProcess() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

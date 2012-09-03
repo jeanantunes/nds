@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -204,6 +205,7 @@ import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.Util;
 
 public class DataLoader {
@@ -1736,9 +1738,9 @@ public class DataLoader {
 
 	private static void gerarTipoEntrega(Session session) {
 
-		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira", Periodicidade.DIARIO);
-		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,"Entrega em Banca", Periodicidade.DIARIO);
-		tipoEntregador = Fixture.criarTipoEntrega(1L,"Entregador", Periodicidade.DIARIO);
+		tipoCotaRetira = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.COTA_RETIRA, Periodicidade.DIARIO);
+		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.ENTREGA_EM_BANCA, Periodicidade.DIARIO);
+		tipoEntregador = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.ENTREGADOR, Periodicidade.DIARIO);
 
 		save(session,tipoCotaRetira,tipoEntregaEmBanca,tipoEntregador);
 	}
@@ -2918,8 +2920,6 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 
-		movimentoEstoqueCota1.setEstudoCota(estudoCotaManoel);
-
 		movimentoEstoqueCota2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
@@ -2970,18 +2970,6 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaInfoExame1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 
-		movimentoEstoqueCota2.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota3.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota4.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota5.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota6.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota7.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota8.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota9.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota10.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota11.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota333.setEstudoCota(estudoCotaManoel);
-
 		//MOVIMENTOS TIPO ENCALHE
 		movimentoEstoqueCota13 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja1,
@@ -3006,7 +2994,6 @@ public class DataLoader {
 		movimentoEstoqueCota18 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelQuatroRodas1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
-
 
 
 		//MOVIMENTOS TIPO CONSIGNADO
@@ -3067,7 +3054,77 @@ public class DataLoader {
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelSuper1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 
+		try {
+			detach(session, estudoCotaManoel);
+			
+			EstudoCota estudoCotaManoel1 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel2 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel3 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel4 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel5 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel6 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel7 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel8 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel9 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel10 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel11 = EntityUtil.clonarSemID(estudoCotaManoel);
 
+			EstudoCota estudoCotaManoel19 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel20 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel21 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel22 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel23 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel24 = EntityUtil.clonarSemID(estudoCotaManoel);
+
+			estudoCotaManoel1.setRateiosDiferenca(null);
+			estudoCotaManoel2.setRateiosDiferenca(null);
+			estudoCotaManoel3.setRateiosDiferenca(null);
+			estudoCotaManoel4.setRateiosDiferenca(null);
+			estudoCotaManoel5.setRateiosDiferenca(null);
+			estudoCotaManoel6.setRateiosDiferenca(null);
+			estudoCotaManoel7.setRateiosDiferenca(null);
+			estudoCotaManoel8.setRateiosDiferenca(null);
+			estudoCotaManoel9.setRateiosDiferenca(null);
+			estudoCotaManoel10.setRateiosDiferenca(null);
+			estudoCotaManoel11.setRateiosDiferenca(null);
+
+			estudoCotaManoel19.setRateiosDiferenca(null);
+			estudoCotaManoel20.setRateiosDiferenca(null);
+			estudoCotaManoel21.setRateiosDiferenca(null);
+			estudoCotaManoel22.setRateiosDiferenca(null);
+			estudoCotaManoel23.setRateiosDiferenca(null);
+			estudoCotaManoel24.setRateiosDiferenca(null);
+
+			movimentoEstoqueCota1.setEstudoCota(estudoCotaManoel1);
+			movimentoEstoqueCota2.setEstudoCota(estudoCotaManoel2);
+			movimentoEstoqueCota3.setEstudoCota(estudoCotaManoel3);
+			movimentoEstoqueCota4.setEstudoCota(estudoCotaManoel4);
+			movimentoEstoqueCota5.setEstudoCota(estudoCotaManoel5);
+			movimentoEstoqueCota6.setEstudoCota(estudoCotaManoel6);
+			movimentoEstoqueCota7.setEstudoCota(estudoCotaManoel7);
+			movimentoEstoqueCota8.setEstudoCota(estudoCotaManoel8);
+			movimentoEstoqueCota9.setEstudoCota(estudoCotaManoel9);
+			movimentoEstoqueCota10.setEstudoCota(estudoCotaManoel10);
+			movimentoEstoqueCota11.setEstudoCota(estudoCotaManoel11);
+
+			movimentoEstoqueCota19.setEstudoCota(estudoCotaManoel19);
+			movimentoEstoqueCota20.setEstudoCota(estudoCotaManoel20);
+			movimentoEstoqueCota21.setEstudoCota(estudoCotaManoel21);
+			movimentoEstoqueCota22.setEstudoCota(estudoCotaManoel22);
+			movimentoEstoqueCota23.setEstudoCota(estudoCotaManoel23);
+			movimentoEstoqueCota24.setEstudoCota(estudoCotaManoel24);
+			
+			save(session, estudoCotaManoel1, estudoCotaManoel2,
+					estudoCotaManoel3, estudoCotaManoel4, estudoCotaManoel5,
+					estudoCotaManoel6, estudoCotaManoel7, estudoCotaManoel8,
+					estudoCotaManoel9, estudoCotaManoel10, estudoCotaManoel11, 
+					estudoCotaManoel19, estudoCotaManoel20, estudoCotaManoel21,
+					estudoCotaManoel22, estudoCotaManoel23, estudoCotaManoel24);
+
+		} catch(Exception exception) {
+			exception.printStackTrace();
+		}
+		movimentoEstoqueCota333.setEstudoCota(estudoCotaManoel);
 
 		MovimentoEstoqueCota movimentoEstoqueCota31 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
@@ -3185,14 +3242,14 @@ public class DataLoader {
 				"C:\\notas\\"));			// windows;
 //				"/opt/interface/notas/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface_mdc/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));	// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface_mdc/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface_mdc/"));		// linux;
 		
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
@@ -4986,6 +5043,12 @@ public class DataLoader {
 		for (Object entidade : entidades) {
 			session.save(entidade);
 			session.flush();
+		}
+	}
+
+	private static void detach(Session session, Object... entidades) {
+		for (Object entidade : entidades) {
+			session.evict(entidade);
 		}
 	}
 

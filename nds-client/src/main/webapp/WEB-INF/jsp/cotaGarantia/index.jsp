@@ -1,5 +1,7 @@
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
+<script language="text/javascript" type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
@@ -8,7 +10,7 @@
 <script language="text/javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 <script type="text/javascript">
-	var tipoCotaGarantia = new TipoCotaGarantia();
+	var tipoCotaGarantia = new TipoCotaGarantia(MANTER_COTA.workspace);
 		
 </script>
 
@@ -389,11 +391,11 @@
 	                 <table width="100%" border="0" cellspacing="1" cellpadding="1">
 						  <tr>
 						    <td width="9%">Valor R$:</td>
-						    <td width="15%"><input name="valorBoleto" type="text" style="width:80px; text-align:right;" /></td>
+						    <td width="15%"><input name="valorBoleto" id="valorBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" /></td>
 						    <td width="14%">Qtde. Parcelas </td>
-						    <td width="11%"><input name="qtdParcelaBoleto" type="text" style="width:50px; text-align:center;" /></td>
+						    <td width="11%"><input name="qtdParcelaBoleto" id="qtdParcelaBoleto" type="text" maxlength="16" style="width:50px; text-align:center;" /></td>
 						    <td width="16%">Valor Parcela R$:</td>
-						    <td width="35%"><input name="valorParcelaBoleto" type="text" style="width:80px; text-align:right;" /></td>
+						    <td width="35%"><input name="valorParcelaBoleto" id="valorParcelaBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" /></td>
 						  </tr>
 					 </table>
 	                 
