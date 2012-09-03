@@ -248,15 +248,11 @@ public class FechamentoCEIntegracaoController {
 	}
 
 	private void validarEntrada(FiltroFechamentoCEIntegracaoDTO filtro) {
-		boolean validar = false;
 		
-		if(filtro.getIdFornecedor() == 0 && filtro.getSemana() == 0){
-			validar = true;
-		}
+		if(filtro.getSemana() == null || filtro.getSemana() == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Todos os filtros devem ser preenchidos!");
+		}		
 		
-		if(validar){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um filtro deve ser preenchido!");
-		}
 		
 	}
 	

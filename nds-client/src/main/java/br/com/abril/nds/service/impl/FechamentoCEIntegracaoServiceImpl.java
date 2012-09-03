@@ -25,11 +25,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalhe(filtro);
 	}
 
-	@Transactional
-	public Long obterDesconto(Long idCota, Long idProdutoEdica,	Long idFornecedor) {		 
-		return null;
-	}
-	
 	@Override
 	public List<FechamentoCEIntegracaoDTO> calcularVenda(List<FechamentoCEIntegracaoDTO> listaFechamento) {
 		List<FechamentoCEIntegracaoDTO> lista = new ArrayList<FechamentoCEIntegracaoDTO>();

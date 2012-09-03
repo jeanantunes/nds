@@ -9,6 +9,4 @@ public interface FechamentoCEIntegracaoRepository {
 	
 	List<FechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro);
 	
-	Long obterDesconto(Long idCota, Long idProdutoEdica, Long idFornecedor);
-
 }

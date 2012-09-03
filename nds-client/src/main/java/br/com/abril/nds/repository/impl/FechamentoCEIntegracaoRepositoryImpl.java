@@ -89,11 +89,4 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		return criteria.list();
 	}
 
-	@Override
-	public Long obterDesconto(Long idCota, Long idProdutoEdica,
-			Long idFornecedor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
