@@ -12,6 +12,7 @@ import net.vidageek.mirror.dsl.Mirror;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -31,6 +32,9 @@ import br.com.caelum.vraptor.resource.ResourceMethod;
 @Path("/")
 public class HomeController {
 
+	@Value("#{properties.version}")
+	protected String version;
+	
 	@Autowired
 	private final Router router;
 
@@ -73,6 +77,7 @@ public class HomeController {
 		result.include("menus", mapaMenus);
 
 		result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
+		result.include("versao", version);
 		
 	}
 
