@@ -100,7 +100,7 @@ public class FechamentoCEIntegracaoController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
-		this.validarEntrada(filtro);
+		//this.validarEntrada(filtro);
 		
 		this.tratarFiltro(filtro);
 		

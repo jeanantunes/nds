@@ -71,6 +71,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		view.limit(couchDbProperties.getBachSize());
 		view.includeDocs(true);
 		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, classLinha);
+
+		// Processamento a ser executado ANTES do processamento principal:
+		messageProcessor.preProcess();
+
 		do {	
 			
 			
@@ -125,6 +129,9 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			view.includeDocs(true);
 			result = view.queryView(String.class, Void.class, classLinha);
 		} while(!result.getRows().isEmpty());
+		
+		// Processamento a ser executado APÓS o processamento principal:
+		messageProcessor.posProcess();
 		
 		couchDbClient.shutdown();
 	}
