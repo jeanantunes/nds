@@ -41,19 +41,6 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
-	public EMS0120MessageProcessor() {
-
-	}
-	
-	@Override
-	public void preProcess() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -103,7 +90,7 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
 				outdetalhe.setNumeroBoxCota(mec.getCota().getBox().getCodigo() + " - "+mec.getCota().getBox().getNome());
 				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
-				outdetalhe.setQuantidadeReparte(mec.getQtde());
+				outdetalhe.setQuantidadeReparte(Long.valueOf( mec.getQtde().toString() ));
 				outdetalhe.setDataLancamento(mec.getData());
 				
 				 
@@ -131,6 +118,18 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void preProcess(Message message) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

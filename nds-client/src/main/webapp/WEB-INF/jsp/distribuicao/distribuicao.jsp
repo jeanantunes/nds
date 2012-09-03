@@ -1,12 +1,12 @@
-<head>	
+<head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-	
+
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicao.js"></script>
-	
-	<script type="text/javascript">		
-		
-		var ${param.tela} = new Distribuicao('${param.tela}');	
-		
+
+	<script type="text/javascript">
+
+		var ${param.tela} = new Distribuicao('${param.tela}');
+
 	</script>
 </head>
 
@@ -17,7 +17,7 @@
 			    	<tr>
 			        	<td>Cota:</td>
 			            <td>
-			            
+
 							<!-- Num Cota -->
 							<input id="${param.tela}numCota" disabled="disabled" type="text" style="width:100px" />
 						</td>
@@ -25,22 +25,22 @@
 			        <tr>
 			        	<td width="120">Box:</td>
 			            <td width="320">
-			            
-							<!-- Box -->           
+
+							<!-- Box -->
 							<input id="${param.tela}box" disabled="disabled" type="text" style="width:100px" />
 						</td>
 					</tr>
 			        <tr>
 						<td>Qtde. PDV:</td>
 			            <td>
-							<!-- Qtde PDV -->            
+							<!-- Qtde PDV -->
 							<input id="${param.tela}qtdePDV" type="text" style="width:100px" />
 						</td>
 			        </tr>
 			        <tr>
 			        	<td width="116">Assist. Comercial:</td>
 			            <td width="171">
-			            
+
 							<!-- Assist. Comercial -->
 							<input id="${param.tela}assistComercial" type="text" style="width:150px" />
 						</td>
@@ -48,7 +48,7 @@
 			        <tr>
 			        	<td width="116">Gerente Comercial:</td>
 			            <td width="171">
-			            
+
 							<!-- Gerente Comercial -->
 							<input id="${param.tela}gerenteComercial" type="text" style="width:150px" />
 						</td>
@@ -62,44 +62,44 @@
 			        </tr>
     			</table>
     			<!-- Entrega de Reparte de Venda -->
-        		<input type="checkbox" id="${param.tela}repPorPontoVenda" />
-        		<label for="${param.tela}repPorPontoVenda">Entrega de Reparte de Venda</label>
-				
+        		<input type="checkbox" id="${param.tela}entregaReparteVenda" />
+        		<label for="${param.tela}entregaReparteVenda">Entrega de Reparte de Venda</label>
+
          		<br clear="all" />
-        		
+
         		<!-- Solicitação Num. Atrasados -->
 				<input id="${param.tela}solNumAtras" name="solNumAtrs" type="checkbox" value=""/>
 				<label for="${param.tela}solNumAtrs">Solicitação Num. Atrasados - Internet</label>
-				
+
          		<br clear="all" />
-         		
-				<!-- Recebe / Recolhe produtos parciais -->        
+
+				<!-- Recebe / Recolhe produtos parciais -->
 				<input id="${param.tela}recebeRecolhe"  name="recebeRecolhe" type="checkbox" value="" />
 				<label for="recebeRecolhe">Recebe / Recolhe produtos parciais</label>
     		</td>
     		<td width="12">
-    		
-    		
+
+
     		</td>
     		<td width="334" valign="top">
     			<table>
 	    			<tr>
 			            <td>Tipo de Entrega:</td>
 			            <td>
-			
+
 							<!-- Tipo de Entrega -->
 							<select id="${param.tela}tipoEntrega" name="select4"  style="width:155px">
 								<option selected="selected">...</option>
-								
+
 								<c:forEach items="${listaTipoEntrega}" var="item">
 									<option value="${item.key}">${item.value}</option>
 								</c:forEach>                            
 							</select>
-						
+
 						</td>
 					</tr>
 				</table>
-				
+
 				<a href="javascript:;" target="_blank" onclick="DISTRIB_COTA.imprimeProcuracao();">TESTE IMPRESSÃO PROCURAÇÃO BROW</a>
 				
 				<div id="entregadorPf" style="display: none;">
@@ -109,7 +109,7 @@
 							<td width="20">
 								<input type="checkbox" name="checkbox15"
 									   id="checkbox15" onclick="mostraProcuracaoPf();" />
-								
+
 							<td width="201" class="procuracaoPf">
 								<span class="bt_imprimir" style="display: block;">
 									<a href="../procuracao.htm" target="_blank">Procuração</a>
@@ -152,7 +152,7 @@
 								<table width="100%" border="0" cellspacing="0" cellpadding="0">
 									<tr>
 										<td width="43%">
-											<input id="${param.tela}inicioPeriodoCarencia" 
+											<input id="${param.tela}inicioPeriodoCarencia"
 												   name="inicioPeriodoCarencia" type="text" style="width: 70px" />
 										</td>
 										<td width="14%">Até</td>
@@ -165,9 +165,9 @@
 						</tr>
 					</table>
 				</div>
-				
+
 				<br />
-				
+
 				<fieldset style="width:390px;">
 					<legend>Emissão de Documentos</legend>
 					<table width="373" border="0" cellspacing="1" cellpadding="0">
