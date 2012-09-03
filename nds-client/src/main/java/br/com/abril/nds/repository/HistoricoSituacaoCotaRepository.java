@@ -54,5 +54,14 @@ public interface HistoricoSituacaoCotaRepository extends Repository<HistoricoSit
 	 * @return Date
 	 */
 	public Date buscarDataUltimaSuspensaoCotas();
+
+	/**
+	 * 
+	 * @param filtro - filtro de pesquisa
+	 * 
+	 * @return List<HistoricoSituacaoCota>
+	 */
+	List<HistoricoSituacaoCota> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro);
 	
+	Long obterTotalUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro);
 }
