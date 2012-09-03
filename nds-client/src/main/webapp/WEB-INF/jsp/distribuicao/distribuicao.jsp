@@ -105,8 +105,6 @@
 					</tr>
 				</table>
 
-				<a href="javascript:;" target="_blank" onclick="DISTRIB_COTA.imprimeProcuracao();">TESTE IMPRESSÃO PROCURAÇÃO BROW</a>
-				
 				<div class="divConteudoEntregador">
 					<table width="399" border="0" cellspacing="1" cellpadding="1">
 						<tr>
@@ -117,7 +115,8 @@
 								<td width="245" height="39" class="procuracaoPf">
 									<div class="divUtilizaProcuracao">
 										<span class="bt_imprimir">
-											<a href="../procuracao.htm" target="_blank">Procuração</a>
+											<a href="javascript:;" target="_blank"
+											   onclick="DISTRIB_COTA.imprimeProcuracao();">Procuração</a>
 										</span>
 									</div>
 								</td>
