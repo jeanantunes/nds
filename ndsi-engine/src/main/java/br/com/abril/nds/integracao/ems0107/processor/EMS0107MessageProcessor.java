@@ -229,6 +229,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		if (lstEstudos != null && !lstEstudos.isEmpty()) {
 			for (Estudo estudo : lstEstudos) {
 				
+				//TODO: Incluir log
 //				this.ndsiLoggerFactory.getLogger().logError(message,
 //						EventoExecucaoEnum.INF_DADO_ALTERADO,
 //						"NAO EXISTE EstudoCota para a publicacao: " + estudo.getProdutoEdicao());
@@ -236,10 +237,33 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			}
 		}
 		
-		
 		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
 		// EstudoCota batem com a qtdeReparte do respectivo Estudo
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT e.id ");
+		sql.append("   FROM estudo e, ");
+		sql.append("       (SELECT ec.estudo_id AS estudo_id, SUM(ec.qtde_prevista) AS qtde ");
+		sql.append("          FROM estudo_cota ec GROUP BY ec.estudo_id ");
+		sql.append("       ) AS c");
+		sql.append("  WHERE e.id = c.estudo_id ");
+		sql.append("    AND e.qtde_reparte <> c.qtde ");
 		
+		Query queryQtdeReparte = getSession().createSQLQuery(sql.toString());
+		List<Object> lstEstudoId = queryQtdeReparte.list();
+		if (lstEstudoId != null && !lstEstudoId.isEmpty()) {
+			for (Object estudoId : lstEstudoId) {
+				
+				Criteria criteriaEstudo = this.getSession().createCriteria(
+						Estudo.class, "estudo");
+				criteriaEstudo.add(Restrictions.eq("estudo.id", estudoId));
+				Estudo estudo = (Estudo) criteriaEstudo.uniqueResult();
+				
+				//TODO: Incluir log
+				
+				this.getSession().delete(estudo);
+			}
+		}
+				
 	}
 	
 	@Override
