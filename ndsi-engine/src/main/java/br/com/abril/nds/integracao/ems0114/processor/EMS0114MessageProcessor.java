@@ -1,14 +1,11 @@
 package br.com.abril.nds.integracao.ems0114.processor;
 
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
