@@ -9,9 +9,11 @@
 	    <br>
 	    <label for="mensagemConfirmacao" id="mensagemConfirmacao" ></label>
 	</div>
-
+	
 	<div id="dialog-novo" title="Alteração de Status">
-
+		
+		<jsp:include page="../messagesDialog.jsp" />
+		
 		<table width="535" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="64">Cota:</td>
