@@ -121,7 +121,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		}
 		
 		
-		final Date dataLancamento = input.getDataLancamento();
 		final Date dataGeracaoArquivo = input.getDataGeracaoArquivo();
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
 				produtoEdicao, dataGeracaoArquivo);
@@ -211,6 +210,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			}
 			
 			
+			final Date dataLancamento = input.getDataLancamento();
+			
 			// Remover a hora, minuto, segundo e milissegundo para comparação:
 			final Date dtLancamentoAtual = this.normalizarDataSemHora(
 					lancamento.getDataLancamentoPrevista());
@@ -235,9 +236,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(
 					lancamento.getDataLancamentoDistribuidor());
-			final Date dtGeracaoArquivo = this.normalizarDataSemHora(
-					dataGeracaoArquivo);
-			if (!dtLancamentoDistribuidor.equals(dtGeracaoArquivo) 
+			if (!dtLancamentoDistribuidor.equals(dtLancamentoNovo) 
 					&& isStatusBalanceado) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -246,8 +245,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 								+ " , de: " + simpleDateFormat.format(
 										dtLancamentoDistribuidor)
 								+ "para: " + simpleDateFormat.format(
-										dtGeracaoArquivo));
-				lancamento.setDataLancamentoDistribuidor(dataGeracaoArquivo);
+										dtLancamentoNovo));
+				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
 			}
 			
 		}
