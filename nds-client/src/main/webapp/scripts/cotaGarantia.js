@@ -1162,6 +1162,25 @@ CaucaoLiquida.prototype.bindEvents = function() {
 		centsSeparator : ',',
 		thousandsSeparator : '.'
 	});
+
+	$("#valorBoleto").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#qtdParcelaBoleto").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#valorParcelaBoleto").priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+
 };
 
 CaucaoLiquida.prototype.destroy = function() {
