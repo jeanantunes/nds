@@ -1,12 +1,19 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +25,8 @@ import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -56,6 +65,7 @@ import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
+import br.com.abril.nds.repository.EnderecoPDVRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
@@ -75,6 +85,7 @@ import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -145,6 +156,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private DividaService dividaService;
+	
+	@Autowired
+	private EnderecoPDVRepository enderecoPDVRepository;
 	
 	@Autowired
 	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
@@ -651,6 +665,12 @@ public class CotaServiceImpl implements CotaService {
 		dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
 		dto.setReciboImpresso(parametro.getReciboImpresso());
 		dto.setReciboEmail(parametro.getReciboEmail());
+		dto.setUtilizaProcuracao(parametro.getUtilizaProcuracao());
+		dto.setProcuracaoRecebida(parametro.getProcuracaoRecebida());
+		dto.setTaxaFixa(MathUtil.round(parametro.getTaxaFixa(), 2));
+		dto.setPercentualFaturamento(MathUtil.round(parametro.getPercentualFaturamento(), 2));
+		dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getInicioPeriodoCarencia()));
+		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
 		
 		return dto;
 	}
@@ -705,6 +725,12 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
 		parametros.setReciboImpresso(dto.getReciboImpresso());
 		parametros.setReciboEmail(dto.getReciboEmail());
+		parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
+		parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
+		parametros.setTaxaFixa(dto.getTaxaFixa());
+		parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
+		parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
+		parametros.setFimPeriodoCarencia(DateUtil.parseDataPTBR(dto.getFimPeriodoCarencia()));
 		
 		cota.setParametroDistribuicao(parametros);
 		
@@ -1599,6 +1625,78 @@ public class CotaServiceImpl implements CotaService {
 //		cotaNova.setPossuiContrato(possuiContrato);
 
 		return cotaDTO;
+	}
+	
+	@Override
+	@Transactional
+	public byte[] getDocumentoProcuracao(Integer numeroCota, String nomeProcurador, String rgProcurador,
+			String estadoCivilProcurador, String nacionalidadeProcurador) throws Exception {
+
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		ProcuracaoImpressaoDTO dto = new ProcuracaoImpressaoDTO();
+		
+		if (cota.getPessoa() instanceof PessoaFisica){
+			
+			PessoaFisica pessoa = (PessoaFisica) cota.getPessoa();
+			
+			dto.setBoxCota(pessoa.getNome());
+			dto.setNacionalidade(pessoa.getNacionalidade());
+			dto.setEstadoCivil(pessoa.getEstadoCivil() == null ? "" : pessoa.getEstadoCivil().getDescricao());
+			dto.setRgJornaleiro(pessoa.getRg());
+			dto.setCpfJornaleiro(pessoa.getCpf());
+		}
+		
+		EnderecoCota enderecoDoProcurado = this.enderecoCotaRepository.getPrincipal(cota.getId());
+		
+		if (enderecoDoProcurado != null){
+			
+			dto.setEnderecoDoProcurado(enderecoDoProcurado.getEndereco().getLogradouro());
+			dto.setBairroProcurado(enderecoDoProcurado.getEndereco().getBairro());
+		}
+		
+		PDV pdv = this.pdvRepository.obterPDVPrincipal(cota.getId());
+		
+		if (pdv != null){
+			
+			Endereco enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
+			
+			if (enderecoPDV != null){
+				
+				dto.setEnderecoPDV(enderecoPDV.getLogradouro());
+				dto.setCidadePDV(enderecoPDV.getCidade());
+			}
+		}
+		
+		dto.setNomeProcurador(nomeProcurador);
+		dto.setRgProcurador(rgProcurador);
+		dto.setEstadoCivilProcurador(estadoCivilProcurador);
+		dto.setNacionalidadeProcurador(nacionalidadeProcurador);
+		
+		
+		//TODO numero da permissão
+		
+		ProcuracaoImpressaoWrapper wrapper = new ProcuracaoImpressaoWrapper();
+		List<ProcuracaoImpressaoDTO> listaDTO = new ArrayList<ProcuracaoImpressaoDTO>();
+		wrapper.setListaProcuracaoImpressao(listaDTO);
+		
+		List<ProcuracaoImpressaoWrapper> list = new ArrayList<ProcuracaoImpressaoWrapper>();
+		list.add(wrapper);
+		
+		 URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+
+		 Map<String, Object> parameters = new HashMap<String, Object>();
+			
+		 parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
+
+		 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		
+		 URL url = 
+			Thread.currentThread().getContextClassLoader().getResource("/reports/procuracao.jasper");
+		 
+		 String path = url.toURI().getPath();
+		 
+		 return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
 	/**

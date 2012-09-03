@@ -16,7 +16,7 @@ public class EMS0120Detalhe {
 	private String codPublicacao;
 	private Long edicao;
 	private Integer codigoCota;
-	private BigInteger quantidadeReparte;
+	private Long quantidadeReparte;
 	private BigDecimal precoCapa;
 	private Date dataLancamento;
 	private String numeroBoxCota;
@@ -76,11 +76,11 @@ public class EMS0120Detalhe {
 	}
 	
 	@Field(offset=26, length=8)
-	public BigInteger getQuantidadeReparte() {
+	public Long getQuantidadeReparte() {
 		return quantidadeReparte;
 	}
 
-	public void setQuantidadeReparte(BigInteger quantidadeReparte) {
+	public void setQuantidadeReparte(Long quantidadeReparte) {
 		this.quantidadeReparte = quantidadeReparte;
 	}
 

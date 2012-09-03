@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -1110,10 +1112,104 @@ public class CotaController {
 	@Post
 	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) {
 		
+		this.validarDadosDistribuicaoCota(distribuicao);
+		
 		cotaService.salvarDistribuicaoCota(distribuicao);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Get
+	@Path("/imprimeProcuracao")
+	public void imprimeProcuracao(Integer numeroCota) throws Exception{
+		
+		//TODO dados procurador
+		byte[] arquivo = this.cotaService.getDocumentoProcuracao(numeroCota, "nomeProcurador", "rgProcurador",
+				"estadoCivilProcurador", "nacionalidadeProcurador");
+
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=procuracao.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(arquivo);
+
+		httpResponse.flushBuffer();
+	}
+
+	/**
+	 * Valida os dados de Distribuição da cota.
+	 * 
+	 * @param distribuicao - DTO que representa os dados de distribuição da cota
+	 */
+	private void validarDadosDistribuicaoCota(DistribuicaoDTO distribuicao) {
+		
+		// TODO: mudar o valor do combo; Realizar tratamento para os outros valores
+		if (distribuicao.getTipoEntrega().equals(3L)) {
+			
+			BigDecimal percentualFaturamento = distribuicao.getPercentualFaturamento();
+			
+			if (percentualFaturamento == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"O Percentual de Faturamento deve ser preenchido!");
+			}
+			
+			this.validarPeriodoCarencia(
+				distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
+		}
+	}
+
+	/**
+	 * Valida o período de carência informado.
+	 * 
+	 * @param inicioPeriodoCarenciaFormatado - início do período de carência formatado
+	 * @param fimPeriodoCarenciaFormatado - fim do período de carência formatado
+	 */
+	private void validarPeriodoCarencia(String inicioPeriodoCarenciaFormatado,
+									   	String fimPeriodoCarenciaFormatado) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (inicioPeriodoCarenciaFormatado == null || inicioPeriodoCarenciaFormatado.trim().isEmpty()) {
+			
+			listaMensagens.add("O início do Período de Carência deve ser preenchido!");
+		}
+		
+		if (fimPeriodoCarenciaFormatado == null || fimPeriodoCarenciaFormatado.trim().isEmpty()) {
+			
+			listaMensagens.add("O fim do Período de Carência deve ser preenchido!");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);	
+		}
+		
+		if (!DateUtil.isValidDatePTBR(inicioPeriodoCarenciaFormatado)) {
+			
+			listaMensagens.add("Início do Período de Carência inválido!");
+		}
+		
+		if (!DateUtil.isValidDatePTBR(fimPeriodoCarenciaFormatado)) {
+			
+			listaMensagens.add("Fim do Período de Carência inválido!");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);	
+		}
+		
+		Date inicioPeriodoCarencia = DateUtil.parseDataPTBR(inicioPeriodoCarenciaFormatado);
+		Date fimPeriodoCarencia = DateUtil.parseDataPTBR(fimPeriodoCarenciaFormatado);
+		
+		if (DateUtil.isDataInicialMaiorDataFinal(
+				inicioPeriodoCarencia, fimPeriodoCarencia)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"O início do Período de Carência deve ser menor que o fim do Período de Carência!");
+		}
 	}
 
 	/**
