@@ -1,3 +1,4 @@
+<form id="form-salvar">
 <div id="dialog-salvar" title="Salvar Conferência" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -10,16 +11,20 @@
     </fieldset>
 
 </div>
+</form>
 
 <iframe src="" id="download-iframe" style="display:none;"></iframe>
 
+<form id="form-outros-valores">
 <div id="dialog-outros-valores" title="Outros Valores" style="display:none;">
 	<fieldset>
         <legend>Outros Valores</legend>
         <table class="outrosVlrsGrid"></table>
     </fieldset>
 </div>
+</form>
 
+<form id="form-detalhe-publicacao">
 <div id="dialog-detalhe-publicacao" title="Box de Encalhe" style="display:none;">
 	<fieldset>
 		<legend>Detalhes do Produto</legend>
@@ -88,7 +93,9 @@
 		</table>
 	</fieldset>
 </div>
+</form>
 
+<form id="form-logado">
 <div id="dialog-logado" title="Box de Encalhe" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -105,7 +112,9 @@
 	    </select>
 	</fieldset>
 </div>
+</form>
 
+<form id="form-pesquisar">
 <div id="dialog-pesquisar" title="Pesquisa de Produtos" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -127,7 +136,9 @@
         </table>
     </fieldset>
 </div>
+</form>
 
+<form id="form-dadosNotaFiscal">
 <div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -194,7 +205,9 @@
 	</fieldset>
 
 </div>
+</form>
 
+<form id="form-notaFiscal">
 <div id="dialog-notaFiscal" title="Dados da Nota Fiscal" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -251,14 +264,18 @@
     	</tr>
 	</table>
 </div>
+</form>
 
+<form id="form-alert">
 <div id="dialog-alert" title="Nota Fiscal">
 	<fieldset style="width: 410px;">
 		<legend>Nota Fiscal</legend>
 	    <p>Existe Nota Fiscal para esta Cota?</p>
 	</fieldset>
 </div>
+</form>
 
+<form id="form-reabertura">
 <div id="dialog-reabertura" title="Reabertura" style="display: none;">
 	<fieldset style="width: 310px;">
 		<legend>Nota Fiscal</legend>
@@ -266,10 +283,13 @@
 	    Efetuar reabertura?</p>
 	</fieldset>
 </div>
+</form>
 
+<form id="form-excluir-conferencia">
 <div id="dialog-excluir-conferencia" title="Conferência" style="display: none;">
 	<fieldset style="width: 350px;">
 		<legend>Excluir Conferência</legend>
 	    <p>Confirma a exclusão dessa conferência?</p>
 	</fieldset>
 </div>
+</form>

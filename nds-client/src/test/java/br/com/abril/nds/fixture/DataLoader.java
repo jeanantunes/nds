@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -1742,9 +1743,9 @@ public class DataLoader {
 
 	private static void gerarTipoEntrega(Session session) {
 
-		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira", Periodicidade.DIARIO);
-		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,"Entrega em Banca", Periodicidade.DIARIO);
-		tipoEntregador = Fixture.criarTipoEntrega(1L,"Entregador", Periodicidade.DIARIO);
+		tipoCotaRetira = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.COTA_RETIRA, Periodicidade.DIARIO);
+		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.ENTREGA_EM_BANCA, Periodicidade.DIARIO);
+		tipoEntregador = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.ENTREGADOR, Periodicidade.DIARIO);
 
 		save(session,tipoCotaRetira,tipoEntregaEmBanca,tipoEntregador);
 	}
