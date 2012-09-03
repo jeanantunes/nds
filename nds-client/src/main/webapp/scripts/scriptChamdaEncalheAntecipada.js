@@ -994,7 +994,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			chamdaEncalheAnteipadaController.pesquisaCota = pesquisaCota;
 			
-		    definirAcaoPesquisaTeclaEnter();	
+		    definirAcaoPesquisaTeclaEnter(this.workspace);	
 
 			$("#dataAntecipacao",this.workspace).datepicker({
 				showOn: "button",
