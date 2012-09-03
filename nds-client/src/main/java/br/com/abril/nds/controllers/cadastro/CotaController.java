@@ -36,6 +36,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -1132,8 +1133,8 @@ public class CotaController {
 	 */
 	private void validarDadosDistribuicaoCota(DistribuicaoDTO distribuicao) {
 		
-		// TODO: mudar o valor do combo; Realizar tratamento para os outros valores
-		if (distribuicao.getTipoEntrega().equals(3L)) {
+		// TODO: Realizar tratamento para os outros tipos
+		if (DescricaoTipoEntrega.ENTREGADOR.equals(distribuicao.getDescricaoTipoEntrega())) {
 			
 			BigDecimal percentualFaturamento = distribuicao.getPercentualFaturamento();
 			
@@ -1203,14 +1204,16 @@ public class CotaController {
 	/**
 	 * Gera combos de Tipo de Entrega
 	 * 
-	 * @return List<ItemDTO<Long, String>> 
+	 * @return List<ItemDTO<DescricaoTipoEntrega, String>> 
 	 */
-	private List<ItemDTO<Long, String>> gerarTiposEntrega() {
+	private List<ItemDTO<DescricaoTipoEntrega, String>> gerarTiposEntrega() {
 		
-		List<ItemDTO<Long, String>> itens = new ArrayList<ItemDTO<Long,String>>();
+		List<ItemDTO<DescricaoTipoEntrega, String>> itens =
+			new ArrayList<ItemDTO<DescricaoTipoEntrega,String>>();
 				
 		for(TipoEntrega item: tipoEntregaService.obterTodos()) {
-			itens.add(new ItemDTO<Long, String>(item.getId(), item.getDescricao()));
+			itens.add(new ItemDTO<DescricaoTipoEntrega, String>(
+				item.getDescricaoTipoEntrega(), item.getDescricaoTipoEntrega().getValue()));
 		}
 		
 		return itens;

@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -2792,12 +2793,12 @@ public class Fixture {
 		return parametroContratoCota;
 	}
 
-	public static TipoEntrega criarTipoEntrega(Long id, String descricao, Periodicidade periodicidade) {
+	public static TipoEntrega criarTipoEntrega(Long id, DescricaoTipoEntrega descricaoTipoEntrega, Periodicidade periodicidade) {
 		
 		TipoEntrega tipoEntrega = new TipoEntrega();
 		
 		tipoEntrega.setId(id);
-		tipoEntrega.setDescricao(descricao);
+		tipoEntrega.setDescricaoTipoEntrega(descricaoTipoEntrega);
 		tipoEntrega.setPeriodicidade(periodicidade);
 		
 		return tipoEntrega;
