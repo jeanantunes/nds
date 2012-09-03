@@ -8,15 +8,19 @@ import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.CotaGarantiaDTO;
+import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
@@ -30,9 +34,11 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -42,6 +48,9 @@ public class CotaGarantiaController {
 		
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
+	
+	@Autowired
+	private Validator validator;
 	
 	private Result result;
 
@@ -152,6 +161,21 @@ public class CotaGarantiaController {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * @param caucaoLiquida para ser validado
 	 */
@@ -172,6 +196,211 @@ public class CotaGarantiaController {
 					"Parametros inválidos"));
 		}	
 	}
+	
+	/**
+	 * Método responsável pela validação dos dados da Forma de Cobranca.
+	 * @param formaCobranca
+	 */
+	public void validarFormaCobranca(FormaCobrancaDTO formaCobranca){
+		
+		validar();
+		
+		if(formaCobranca.getTipoCobranca()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
+		}
+		
+		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+			if (formaCobranca.getDiaDoMes()==null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
+			}
+			else{
+				if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+				}
+			}
+			
+		}
+		
+		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+			if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
+			}
+			else{
+				if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+				}
+			}
+			
+		}
+		
+		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+			if((!formaCobranca.isDomingo())&&
+			   (!formaCobranca.isSegunda())&&
+			   (!formaCobranca.isTerca())&&
+			   (!formaCobranca.isQuarta())&&
+			   (!formaCobranca.isQuinta())&&
+			   (!formaCobranca.isSexta())&&
+			   (!formaCobranca.isSabado())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
+			}
+		}
+		
+		if (formaCobranca.getIdBanco()==null){
+		    if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||
+		    	(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
+		    	(formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
+		    	(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
+		    	(formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO)){
+		    	throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
+		    }
+		}
+		
+		if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
+		    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+			
+			if((formaCobranca.getNomeBanco()==null) || ("".equals(formaCobranca.getNomeBanco()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
+			}
+			if((formaCobranca.getNumBanco()==null) || ("".equals(formaCobranca.getNumBanco()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
+			}
+			
+			if((formaCobranca.getConta()==null) || ("".equals(formaCobranca.getConta()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
+			}
+			if((formaCobranca.getContaDigito()==null) || ("".equals(formaCobranca.getContaDigito()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
+			}
+			
+			if((formaCobranca.getAgencia()==null) || ("".equals(formaCobranca.getAgencia()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
+			}
+			if((formaCobranca.getAgenciaDigito()==null) || ("".equals(formaCobranca.getAgenciaDigito()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
+			}
+		}
+
+	}
+	
+	 /**
+	 *Formata os dados de FormaCobranca, apagando valores que não são compatíveis com o Tipo de Cobranca escolhido.
+	 * @param formaCobranca
+	 */
+	private FormaCobrancaDTO formatarFormaCobranca(FormaCobrancaDTO formaCobranca){
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+			formaCobranca.setDiaDoMes(null);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+			formaCobranca.setDomingo(false);
+			formaCobranca.setSegunda(false);
+			formaCobranca.setTerca(false);
+			formaCobranca.setQuarta(false);
+			formaCobranca.setQuinta(false);
+			formaCobranca.setSexta(false);
+			formaCobranca.setSabado(false);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.DIARIA){
+			formaCobranca.setDomingo(false);
+			formaCobranca.setSegunda(false);
+			formaCobranca.setTerca(false);
+			formaCobranca.setQuarta(false);
+			formaCobranca.setQuinta(false);
+			formaCobranca.setSexta(false);
+			formaCobranca.setSabado(false);
+			formaCobranca.setDiaDoMes(null);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+			formaCobranca.setDomingo(false);
+			formaCobranca.setSegunda(false);
+			formaCobranca.setTerca(false);
+			formaCobranca.setQuarta(false);
+			formaCobranca.setQuinta(false);
+			formaCobranca.setSexta(false);
+			formaCobranca.setSabado(false);
+			formaCobranca.setDiaDoMes(null);
+		}
+		
+		if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)){
+	    	formaCobranca.setNumBanco("");
+			formaCobranca.setNomeBanco("");
+			formaCobranca.setAgencia(null);
+			formaCobranca.setAgenciaDigito("");
+			formaCobranca.setConta(null);
+		    formaCobranca.setContaDigito("");
+	    }
+		else if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+			formaCobranca.setRecebeEmail(false);
+		}    
+		else if (formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO){
+			formaCobranca.setRecebeEmail(false);
+			formaCobranca.setNumBanco("");
+			formaCobranca.setNomeBanco("");
+			formaCobranca.setAgencia(null);
+			formaCobranca.setAgenciaDigito("");
+			formaCobranca.setConta(null);
+		    formaCobranca.setContaDigito("");
+		}    
+		else{
+			formaCobranca.setRecebeEmail(false);
+			formaCobranca.setNumBanco("");
+			formaCobranca.setNomeBanco("");
+			formaCobranca.setAgencia(null);
+			formaCobranca.setAgenciaDigito("");
+			formaCobranca.setConta(null);
+		    formaCobranca.setContaDigito("");
+		    formaCobranca.setIdBanco(null);
+		}
+		return formaCobranca;
+	}
+	
+	/**
+	 * Método responsável pela validação dos dados e rotinas.
+	 */
+	public void validar(){
+		
+		if (validator.hasErrors()) {
+			List<String> mensagens = new ArrayList<String>();
+			for (Message message : validator.getErrors()) {
+				mensagens.add(message.getMessage());
+			}
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
+			throw new ValidacaoException(validacao);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * @param notaPromissoria para ser validado
 	 */

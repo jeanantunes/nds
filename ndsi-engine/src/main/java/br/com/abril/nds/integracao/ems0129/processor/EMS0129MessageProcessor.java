@@ -337,7 +337,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		for (MovimentoEstoqueCota moviEstCota : movimentoEstoqueCotas) {
 			
 			outdetalhe.setCodigoCota(numeroCota);
-			outdetalhe.setQuantidade(moviEstCota.getQtde());
+			outdetalhe.setQuantidade(Long.valueOf(moviEstCota.getQtde().toString()));
 			ProdutoEdicao produtoEdicao = moviEstCota.getProdutoEdicao();
             outdetalhe.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 			outdetalhe.setEdicao(produtoEdicao.getNumeroEdicao());

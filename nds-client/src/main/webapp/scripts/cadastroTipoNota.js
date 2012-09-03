@@ -76,7 +76,7 @@ var cadastroTipoNotaController = $.extend(true, {
 	init : function() {
 		this.initGrid();
 		this.bindButtons();
-		definirAcaoPesquisaTeclaEnter();
+		definirAcaoPesquisaTeclaEnter(this.worspace);
 	}		
 }, BaseController);
 

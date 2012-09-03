@@ -85,6 +85,7 @@ import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -664,6 +665,12 @@ public class CotaServiceImpl implements CotaService {
 		dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
 		dto.setReciboImpresso(parametro.getReciboImpresso());
 		dto.setReciboEmail(parametro.getReciboEmail());
+		dto.setUtilizaProcuracao(parametro.getUtilizaProcuracao());
+		dto.setProcuracaoRecebida(parametro.getProcuracaoRecebida());
+		dto.setTaxaFixa(MathUtil.round(parametro.getTaxaFixa(), 2));
+		dto.setPercentualFaturamento(MathUtil.round(parametro.getPercentualFaturamento(), 2));
+		dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getInicioPeriodoCarencia()));
+		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
 		
 		return dto;
 	}
@@ -718,6 +725,12 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
 		parametros.setReciboImpresso(dto.getReciboImpresso());
 		parametros.setReciboEmail(dto.getReciboEmail());
+		parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
+		parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
+		parametros.setTaxaFixa(dto.getTaxaFixa());
+		parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
+		parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
+		parametros.setFimPeriodoCarencia(DateUtil.parseDataPTBR(dto.getFimPeriodoCarencia()));
 		
 		cota.setParametroDistribuicao(parametros);
 		
