@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0114.processor;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,8 @@ import br.com.abril.nds.repository.impl.AbstractRepository;
 @Component
 public class EMS0114MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
+
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");  
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -74,10 +78,9 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		}		
 
 		
-		final Date dataRecolhimento = input.getDataRecolhimento();
 		final Date dataGeracaoArquivo = input.getDataGeracaoArq();
 		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(
-				produtoEdicao, dataRecolhimento, dataGeracaoArquivo);
+				produtoEdicao, dataGeracaoArquivo);
 		if (lancamento == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -90,33 +93,41 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(
 				lancamento.getDataRecolhimentoDistribuidor());
 		final Date dtRecolhimentoArquivo = this.normalizarDataSemHora(
-				dataRecolhimento);
+				input.getDataRecolhimento());
 		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
 			
-			/*
-			 * TODO:
-			 * update data_rec_prevista, 
-			 * incluir no log a informação Produto, 
-			 * Data Atual (data_rec_prevista da Tabela) e 
-			 * Nova Data (Data Recolhimento - Arquivo). 
-			 */
+			final Date dtRecolhimentoPrevista = this.normalizarDataSemHora(
+					lancamento.getDataRecolhimentoPrevista());
+			if (!dtRecolhimentoPrevista.equals(dtRecolhimentoArquivo)) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da DATA RECOLHIMENTO PREVISTA do Produto: "
+								+ codigoProduto + " e Edicao: " + edicao
+								+ " , de: " + simpleDateFormat.format(
+										dtRecolhimentoPrevista)
+								+ "para: " + simpleDateFormat.format(
+										dtRecolhimentoArquivo));
+				lancamento.setDataRecolhimentoPrevista(dtRecolhimentoArquivo);
+			}
 			
-			/*
-			 * TODO 
-			 */
 			
 			StatusLancamento status = lancamento.getStatus();
 			if (!StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(status)
 					&& !StatusLancamento.BALANCEADO.equals(status)) {
 				
-				// update data_rec_distribuidor, 
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da DATA RECOLHIMENTO DISTRIBUIDOR do Produto: "
+								+ codigoProduto + " e Edicao: " + edicao
+								+ " , de: " + simpleDateFormat.format(
+										lancamento.getDataRecolhimentoDistribuidor())
+								+ "para: " + simpleDateFormat.format(
+										dtRecolhimentoArquivo));
+				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
 				
 			}
 		}
-
 		
-			//criarLancamentoConformeInput(lancamento, produtoEdicao, message);
-
 	}
 
 	/**
@@ -153,33 +164,23 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	 * recolhimento desejado.
 	 *  
 	 * @param produtoEdicao
-	 * @param dataRecolhimento Data de Recolhimento da Edição.
 	 * @param dataGeracaoArquivo Data de Geração do Arquivo.
 	 * 
 	 * @return
 	 */
 	private Lancamento getLancamentoRecolhimentoMaisProximo(
-			ProdutoEdicao produtoEdicao, Date dataRecolhimento, 
-			Date dataGeracaoArquivo) {
+			ProdutoEdicao produtoEdicao, Date dataGeracaoArquivo) {
 		
-		StringBuilder sql = new StringBuilder();
+		Criteria criteria = this.getSession().createCriteria(Lancamento.class);
+
+		criteria.add(Restrictions.gt("dataRecolhimentoPrevista", dataGeracaoArquivo));
+		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		criteria.addOrder(Order.asc("dataRecolhimentoPrevista"));
 		
-		sql.append("SELECT lcto FROM Lancamento lcto ");
-		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
-		sql.append("    WHERE pe = :produtoEdicao ");
-		sql.append("      AND lcto.dataRecolhimentoPrevista > :dataGeracaoArquivo ");
-//		sql.append("      AND lcto.dataRecolhimentoPrevista = :dataRecolhimento ");
-		sql.append(" ORDER BY lcto.dataRecolhimentoPrevista ASC");
+		criteria.setFetchSize(1);
+		criteria.setMaxResults(1);
 		
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("produtoEdicao", produtoEdicao);
-		query.setDate("dataGeracaoArquivo", dataGeracaoArquivo);
-//		query.setDate("dataRecolhimento", dataRecolhimento);
-		
-		query.setMaxResults(1);
-		query.setFetchSize(1);
-		
-		return (Lancamento) query.uniqueResult();
+		return (Lancamento) criteria.uniqueResult();
 	}
 	
 	/**
@@ -202,68 +203,6 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		return cal.getTime();
 	}
 	
-	// TODO: por enquanto, manter esse método, para discussão posterior:
-	private void criarLancamentoConformeInput(Lancamento lancamento,
-			ProdutoEdicao produtoEdicao, Message message) {
-		EMS0114Input input = (EMS0114Input) message.getBody();
-
-		if (lancamento != null) {
-
-			if (!lancamento.getProdutoEdicao().getNumeroEdicao()
-					.equals(produtoEdicao.getNumeroEdicao())) {
-
-				lancamento.setProdutoEdicao(produtoEdicao);
-				ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Produto Edicao para "
-								+ produtoEdicao.getNumeroEdicao());
-			}
-
-			if (!lancamento.getDataRecolhimentoDistribuidor().equals(
-					input.getDataRecolhimento())) {
-
-				lancamento.setDataRecolhimentoPrevista(input
-						.getDataRecolhimento());
-				ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao da Data de Recolhimento Distribuidor para "
-								+ input.getDataRecolhimento());
-			}
-
-		} else {
-
-//			Calendar data = Calendar.getInstance();
-//
-//			lancamento = new Lancamento();
-//			lancamento.setDataCriacao(data.getTime());
-//			lancamento.setDataStatus(data.getTime());
-//			lancamento.setReparte(BigInteger.valueOf(0));
-//			lancamento.setDataLancamentoDistribuidor(data.getTime());
-//			lancamento.setDataLancamentoPrevista(data.getTime());
-//			lancamento.setStatus(StatusLancamento.EXPEDIDO);
-//			lancamento.setProdutoEdicao(produtoEdicao);
-//
-//			if (produtoEdicao.isParcial()) {
-//
-//				lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-//
-//			} else {
-//
-//				lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
-//			}
-//
-//			data.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-//			lancamento.setDataRecolhimentoDistribuidor(data.getTime());
-//
-//			lancamento.setProdutoEdicao(produtoEdicao);
-//			lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-//
-//			getSession().persist(lancamento);
-		}
-	}
-
 	
 	@Override
 	public void posProcess() {
