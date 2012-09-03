@@ -93,18 +93,20 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	public void processFile(FileRouteTemplate fileRouteTemplate, File file) {
 		try {
 			
+			final MessageProcessor messageProcessor = fileRouteTemplate.getMessageProcessor();
+			
+			// Processamento a ser executado ANTES do processamento principal:
+			messageProcessor.preProcess();
+			
+			
 			File processingFile = new File(normalizeFileName(file.getParent()), file.getName() + ".processing");
 			
 			// RENOMEIA O ARQUIVO PARA PROCESSANDO
-			
 			file.renameTo(processingFile);
-			
 			FileReader in = new FileReader(processingFile);
 			
-			Scanner scanner = new Scanner(in);
-			
 			int lineNumber = 0;
-			
+			Scanner scanner = new Scanner(in);
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				lineNumber++;
@@ -133,9 +135,6 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), fileRouteTemplate.getUserName());
 					
 					message.setBody(bean);
-
-					final MessageProcessor messageProcessor = fileRouteTemplate
-							.getMessageProcessor();
 
 					if (messageProcessor != null) {
 						if (!fileRouteTemplate.isCommitAtEnd()) {
@@ -188,6 +187,18 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			}
 			
 			FileUtils.moveFile(processingFile, archiveFile);
+			
+			final Message posMessage = new Message();
+			posMessage.getHeader().putAll(fileRouteTemplate.getParameters());
+			posMessage.getHeader().put(MessageHeaderProperties.URI.getValue(), fileRouteTemplate.getUri());
+			posMessage.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), null);
+			posMessage.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), file.getName());
+			posMessage.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), new Date(file.lastModified()));
+			posMessage.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), Long.valueOf(0));
+			posMessage.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), fileRouteTemplate.getUserName());
+			
+			// Processamento a ser executado APÓS o processamento principal:
+			messageProcessor.posProcess(posMessage);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);

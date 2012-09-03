@@ -61,7 +61,8 @@ public class NFEImportUtil {
 		
 		JAXBContext context;
 		Unmarshaller unmarshaller;
-		SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+//		SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.DEFAULT_NS_PREFIX);
 		File xsdNFe;
 		Schema schema;
 		

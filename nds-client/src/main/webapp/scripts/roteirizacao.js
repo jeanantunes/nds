@@ -4,7 +4,7 @@ var transferirRoteirizacaoComNovaRota= false;
 var pesquisaPorCota = false;
 
 var roteirizacao = $.extend(true, {
-
+	
 		abrirTelaRoteiro : function () {
 			
 			$.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaRoteiro',null,
@@ -347,7 +347,7 @@ var roteirizacao = $.extend(true, {
 			width:420,
 			modal: true,
 			buttons: {
-				"Cancelar": function() {
+				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
 			},
@@ -1225,15 +1225,11 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 	
 	$(".gridWrapper", this.workspace).append($("<table>").attr("class", "rotaRoteirosGrid"));
 	
-	var indGridPorRotaOuCota = false;
-	
 	var rotaPesquisa 	= $('#rotaPesquisa', roteirizacao.workspace).val();
 	
 	var cotaPesquisa 	= $('#cotaPesquisa', roteirizacao.workspace).val();
 	
-	if(rotaPesquisa != "" || cotaPesquisa != "") {
-		indGridPorRotaOuCota = true;
-	} 
+	var indGridPorRotaOuCota = (rotaPesquisa != "" || cotaPesquisa != "");
 	
 	if(indGridPorRotaOuCota) {
 		
@@ -1346,6 +1342,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			
 			$(".grids", roteirizacao.workspace).hide();
 
+			roteirizacao.esconderBotoesExportacao();
+			
 			return data;
 		}
 		
@@ -1367,6 +1365,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		});
 		
 		$(".grids", roteirizacao.workspace).show();
+		
+		roteirizacao.mostrarBotoesExportacao();
 				
 		return data;
 	},
@@ -1382,6 +1382,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			
 			$(".grids", roteirizacao.workspace).hide();
 
+			roteirizacao.esconderBotoesExportacao();
+			
 			return data;
 		}
 
@@ -1401,6 +1403,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		});
 		
 		$(".grids", roteirizacao.workspace).show();
+		
+		roteirizacao.mostrarBotoesExportacao();
 		
 		return data;
 	},
@@ -1455,34 +1459,6 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		$(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
 	},
 	
-	buscarRoteirizacaoPorCota: function () {
-		var tipoRoteiro = "NORMAL";
-		 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
-			 tipoRoteiro = "ESPECIAL";
-		 }
-		 pesquisaRoteizicaoPorCota = true;
-		roteirizacao.iniciarPesquisaRoteirizacaoGrid();
-		$(".rotaRoteirosGrid", roteirizacao.workspace).clear();
-			$(".rotaRoteirosGrid", roteirizacao.workspace).flexOptions({
-				"url" : contextPath + '/cadastro/roteirizacao/pesquisarRoteirizacaoPorCota',
-				params : [{
-					name : "numeroCota",
-					value : $('#cotaPesquisa', roteirizacao.workspace).val()
-				}, 
-				{
-					name : "tipoRoteiro",
-					value : tipoRoteiro
-				}],
-				
-				
-				newp:1
-			});
-			
-			$(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
-	},
-	
-	
-	
 	carregarNomeCotas : function (campoExibicao, numeroCota, callBack) {
 		$('#'+campoExibicao).html('');
 		var result = false;
@@ -1510,11 +1486,6 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 				true
 			);
 		 return result;	
-
-	},
-	
-	pesquisarRoteirizacaoPorCota : function(){
-		roteirizacao.carregarNomeCotas('nomeCotaPesquisa',  $('#cotaPesquisa', roteirizacao.workspace).val(), function(){roteirizacao.buscarRoteirizacaoPorCota()});
 
 	},
 	
@@ -1684,55 +1655,33 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			return  result;
 
 		},
-		 gerarArquivoRoteirizacao : function(fileType) {
+		
+		exportar : function(fileType) {
+			 
+			 //TODO:
 			 var tipoRoteiro = "NORMAL";
+			 
 			 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
 				 tipoRoteiro = "ESPECIAL";
 			 }
 			 
 			window.location = 
 				contextPath + 
-				"/cadastro/roteirizacao/imprimirArquivo?" + 
-				"boxId=" +  $('#boxPesquisa', roteirizacao.workspace).val() +
-				"&roteiroId=" + $('#roteiroPesquisa', roteirizacao.workspace).val() + 
-				"&rotaId=" + $('#rotaPesquisa', roteirizacao.workspace).val() +
-				"&tipoRoteiro=" + tipoRoteiro +
-				"&numeroCota=" + $('#cotaPesquisa', roteirizacao.workspace).val() +
-				"&pesquisaRoteizicaoPorCota=" +pesquisaRoteizicaoPorCota +
-				"&sortname=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetSortName() +
-				"&sortorder=" + $(".rotaRoteirosGrid", roteirizacao.workspace).getSortOrder() +
-				"&rp=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetRowsPerPage() +
-				"&page=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetPageNumber() +
-				"&fileType=" + fileType;
-
+				"/cadastro/roteirizacao/exportar?fileType=" + fileType;
 
 			return false;
 		},
 		
-		imprimirArquivo : function (fileType) {
-			 var tipoRoteiro = "NORMAL";
-			 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
-				 tipoRoteiro = "ESPECIAL";
-			 }
-			 
-			window.location = 
-				contextPath + 
-				"/cadastro/roteirizacao/imprimirArquivo?" + 
-				"boxId=" +  $('#boxPesquisa', roteirizacao.workspace).val() +
-				"&roteiroId=" + $('#roteiroPesquisa', roteirizacao.workspace).val() + 
-				"&rotaId=" + $('#rotaPesquisa', roteirizacao.workspace).val() +
-				"&tipoRoteiro=" + tipoRoteiro +
-				"&numeroCota=" + $('#cotaPesquisa', roteirizacao.workspace).val() +
-				"&pesquisaRoteizicaoPorCota=" +pesquisaRoteizicaoPorCota +
-				"&sortname=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetSortName() +
-				"&sortorder=" + $(".rotaRoteirosGrid", roteirizacao.workspace).getSortOrder() +
-				"&rp=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetRowsPerPage() +
-				"&page=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetPageNumber() +
-				"&fileType=" + fileType;
-
-			return false;
+		mostrarBotoesExportacao : function() {
+			
+			$("#botoesExportacao").show();
 		},
 		
+		esconderBotoesExportacao : function() {
+			
+			$("#botoesExportacao", roteirizacao.workspace).hide();
+		},
+				
 		init : function() {
 			
 			$("#cotasGrid",roteirizacao.workspace).flexigrid({

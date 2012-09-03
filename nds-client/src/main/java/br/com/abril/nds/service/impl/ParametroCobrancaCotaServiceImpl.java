@@ -162,7 +162,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 			parametroCobrancaDTO.setIdCota(cota.getId());
 			parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
-			parametroCobrancaDTO.setComissao((cota.getFatorDesconto()!=null?cota.getFatorDesconto():BigDecimal.ZERO));
 			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
 			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
 			
@@ -216,12 +215,18 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			Set<ConcentracaoCobrancaCota> concentracoesCobranca=null;
 			Integer diaDoMes=null;
+			Integer primeiroDiaQuinzenal=null;
+			Integer segundoDiaQuinzenal=null;
 			
 			if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL){
 			    concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
 			}
 			if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.MENSAL){		
-			    diaDoMes = formaCobranca.getDiasDoMes().get(0);
+			    diaDoMes = (formaCobranca.getDiasDoMes().size()>0)?formaCobranca.getDiasDoMes().get(0):null;
+			}
+			if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.QUINZENAL){		
+				primeiroDiaQuinzenal = (formaCobranca.getDiasDoMes().size()>0)?formaCobranca.getDiasDoMes().get(0):null;
+				segundoDiaQuinzenal = (formaCobranca.getDiasDoMes().size()>1)?formaCobranca.getDiasDoMes().get(1):null;
 			}
 
 			
@@ -244,6 +249,14 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			if  (diaDoMes!=null){
 			    formaCobrancaDTO.setDiaDoMes(diaDoMes);
+			}
+			
+			if  (primeiroDiaQuinzenal!=null){
+			    formaCobrancaDTO.setPrimeiroDiaQuinzenal(primeiroDiaQuinzenal);
+			}
+			
+			if  (segundoDiaQuinzenal!=null){
+			    formaCobrancaDTO.setSegundoDiaQuinzenal(segundoDiaQuinzenal);
 			}
 			
 			
@@ -363,7 +376,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			
 			cota.setParametroCobranca(parametroCobranca);
-			cota.setFatorDesconto((parametroCobrancaDTO.getComissao()!=null?parametroCobrancaDTO.getComissao():BigDecimal.ZERO));
 			cota.setSugereSuspensao(parametroCobrancaDTO.isSugereSuspensao());
 			cota.setPossuiContrato(parametroCobrancaDTO.isContrato());
 			
@@ -498,6 +510,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		List<Integer> diasdoMes = new ArrayList<Integer>();
 		diasdoMes.add(formaCobrancaDTO.getDiaDoMes());
+		diasdoMes.add(formaCobrancaDTO.getPrimeiroDiaQuinzenal());
+		diasdoMes.add(formaCobrancaDTO.getSegundoDiaQuinzenal());
 		formaCobranca.setDiasDoMes(diasdoMes);
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
@@ -591,7 +605,13 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			}
 			else if (formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
 				strConcentracoes = "Todo dia "+formaCobrancaItem.getDiasDoMes().get(0);
-			}				
+			}	
+			else if (formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+				strConcentracoes = "Todo dia "+formaCobrancaItem.getDiasDoMes().get(0)+" e "+formaCobrancaItem.getDiasDoMes().get(1);
+			}
+			else if (formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.DIARIA){
+				strConcentracoes = "Diariamente";
+			}
 			
 			if ((fornecedores!=null)&&(!fornecedores.isEmpty())){
 				for (Fornecedor itemFornecedor:fornecedores){

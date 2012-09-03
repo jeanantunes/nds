@@ -32,7 +32,6 @@ label {
 
         <jsp:include page="../messagesDialog.jsp" />
 
-        <form name="formularioNovoBanco" id="formularioNovoBanco"> 
 			<fieldset>
 			<legend>Dados de Bancos</legend>
 
@@ -78,7 +77,7 @@ label {
 					</td>
 					<td>Juros %:</td>
 					<td><input maxlength="17" type="text" name="newJuros" id="newJuros"
-						style="width: 80px;" />
+						style="width: 80px; text-align:right;" />
 					</td>
 				</tr>
 				<tr>
@@ -102,7 +101,6 @@ label {
 				</tr>
 			</table>
 			</fieldset>
-		</form>
 		
 	</div>
 	</form>

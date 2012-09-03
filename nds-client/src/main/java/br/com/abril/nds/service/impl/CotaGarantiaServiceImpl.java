@@ -15,8 +15,10 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ChequeImage;
+import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fiador;
@@ -30,11 +32,13 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
+import br.com.abril.nds.repository.EnderecoFiadorRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
@@ -61,6 +65,10 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 	@Autowired
 	private FiadorRepository fiadorRepository;
+	
+	@Autowired
+	private EnderecoFiadorRepository enderecoFiadorRepository;
+	
 	@Autowired
 	private ChequeImageRepository chequeImageRepository;
 	
@@ -294,7 +302,17 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 * @see br.com.abril.nds.service.CotaGarantiaService#salvarCaucaoLiquida(br.com.abril.nds.model.cadastro.CaucaoLiquida, java.lang.Long)
 	 */
 	@Transactional
+	@Deprecated
 	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException {
+		
+		//TODO retirar esse metodo após a alteração de Front End
+		
+		return mergeCaucaoLiquida(listaCaucaoLiquida, idCota,null,null);
+	}
+
+	private CotaGarantiaCaucaoLiquida mergeCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota,
+														PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida) 
+														throws InstantiationException, IllegalAccessException {
 		
 		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = prepareCotaGarantia(idCota, CotaGarantiaCaucaoLiquida.class);
 		
@@ -306,7 +324,20 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());		
 		
+		cotaGarantiaCaucaoLiquida.setContaDepositoCaucaoLiquida(contaDepositoCaucaoLiquida);
+		
+		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamento);
+		
 		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#salvarCaucaoLiquida(br.com.abril.nds.model.cadastro.CaucaoLiquida, java.lang.Long)
+	 */
+	@Transactional
+	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida conta) throws ValidacaoException, InstantiationException, IllegalAccessException {
+	
+		return mergeCaucaoLiquida(listaCaucaoLiquida, idCota,pagamento,conta);
 	}
 
 	/**
@@ -374,6 +405,17 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		dto.setPracaPagamento(enderecoDistribuidor.getEndereco().getCidade());
 		
 		return dto;
+	}
+
+	/**
+	 * @param idFiador
+	 * @return
+	 * @see br.com.abril.nds.repository.EnderecoFiadorRepository#buscaPrincipal(java.lang.Long)
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Endereco buscaEnderecoFiadorPrincipal(Long idFiador) {
+		return enderecoFiadorRepository.buscaPrincipal(idFiador);
 	}
 	
 	

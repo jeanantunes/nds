@@ -11,19 +11,19 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 
 	private static final long serialVersionUID = -3737578545975332770L;
 
-	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 1)
+	@Export(label = "Box", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private String nomeBox;
 	
-	@Export(label = "Roteiro", alignment = Alignment.CENTER, exhibitionOrder = 2)
+	@Export(label = "Roteiro", alignment = Alignment.LEFT, exhibitionOrder = 2)
 	private String descricaoRoteiro;
 	
-	@Export(label = "Rota", alignment = Alignment.CENTER, exhibitionOrder = 3)
+	@Export(label = "Rota", alignment = Alignment.LEFT, exhibitionOrder = 3)
 	private String descricaoRota;
 	
-	@Export(label = "Cota", alignment = Alignment.CENTER, exhibitionOrder = 4)
+	@Export(label = "Cota", alignment = Alignment.LEFT, exhibitionOrder = 4)
 	private Integer numeroCota;
 	
-	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Nome", alignment = Alignment.LEFT, exhibitionOrder = 5)
 	private String nome;
 	
 	private Long qntCotas;
