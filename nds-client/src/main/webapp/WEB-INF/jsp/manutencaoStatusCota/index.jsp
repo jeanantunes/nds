@@ -17,15 +17,22 @@
 	</script>
 </head>
 <body>
-<input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
+
+<form id="frm-mantencao-status-cota-corpo-tela-consulta">
+
+	<input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
+	
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Novo">
+
+			<span class="bt_novos" title="Novo" id="botao-novo-status-cota">
 				<a href="javascript:;" onclick="manutencaoStatusCotaController.novo();" rel="tipsy" title="Incluir Novo Status"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a>
 			</span>
 		</div>
 	</div>
+	
 	<div class="linha_separa_fields">&nbsp;</div>
+	
 	<!-- Filtro da Pesquisa -->
 	<fieldset class="fieldFiltro">
 	
@@ -35,30 +42,31 @@
 			<tr>
 				<td width="47">Cota:</td>
 				<td colspan="3">
-					<input name="numeroCota" 
+					<input name="numeroCota"  class="campoDePesquisa"
 						   type="text"
 						   id="numeroCota"
 						   maxlength="255"
 						   style="width: 80px; margin-right: 5px; float: left;"
-						   onchange="pesquisaCotaManutencaoStatusCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, pesquisaCotaManutencaoStatusCota.carregarCodigoBox);" />
+						   onchange="pesquisaCotaManutencaoStatusCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, manutencaoStatusCotaController.callBackSuccess,manutencaoStatusCotaController.callBackErro);" />
+
 				</td>
 				<td width="42">Nome:</td>
 				<td width="240">
-					<input name="nomeCota" 
+					<input name="nomeCota" class="campoDePesquisa"
 						   type="text"
 						   id="nomeCota" 
 						   maxlength="255" 
 						   style="width: 200px;"
 						   onkeyup="pesquisaCotaManutencaoStatusCota.autoCompletarPorNome('#nomeCota');" 
-		      		 	   onblur="pesquisaCotaManutencaoStatusCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, pesquisaCotaManutencaoStatusCota.carregarCodigoBox);" />
+		      		 	   onblur="pesquisaCotaManutencaoStatusCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, manutencaoStatusCotaController.callBackSuccess,manutencaoStatusCotaController.callBackErro);" />
 				</td>
 				<td width="55">Box:</td>
 				<td width="149">
-					<input type="text" name="box" id="box" style="width: 100px;" disabled="disabled" />
+					<input type="text" class="campoDePesquisa" name="box" id="box" style="width: 100px;" disabled="disabled" />
 				</td>
 				<td width="49">Status:</td>
 				<td width="154">
-					<select name="statusCota" id="statusCota" style="width: 100px;">
+					<select name="statusCota" id="statusCota" style="width: 100px;" class="campoDePesquisa">
 						<option value="Todos" selected="selected">Todos</option>
 						<c:forEach var="statusCota" items="${listaSituacoesStatusCota}">
 							<option value="${statusCota.key}">${statusCota.value}</option>
@@ -72,18 +80,18 @@
 				<td colspan="3">
 					<input name="dataInicialStatusCota" 
 						   type="text" id="dataInicialStatusCota" 
-						   style="width: 80px; float: left; margin-right: 5px;" />
+						   style="width: 80px; float: left; margin-right: 5px;" class="campoDePesquisa" />
 				</td>
 				<td>Até:</td>
 				<td>
 					<input name="dataFinalStatusCota" 
 						   type="text" 
 						   id="dataFinalStatusCota" 
-						   style="width: 80px; float: left; margin-right: 5px;" />
+						   style="width: 80px; float: left; margin-right: 5px;" class="campoDePesquisa" />
 				</td>
 				<td>Motivo:</td>
 				<td>
-					<select name="motivo" id="motivo" style="width: 150px;">
+					<select name="motivo" id="motivo" style="width: 150px;" class="campoDePesquisa">
 						<option value="Todos" selected="selected">Todos</option>
 						<c:forEach var="motivoStatusCota" items="${listaMotivosStatusCota}">
 							<option value="${motivoStatusCota.key}">${motivoStatusCota.value}</option>
@@ -93,7 +101,7 @@
 				<td>&nbsp;</td>
 				<td>
 					<span class="bt_novos" title="Pesquisar">
-						<a href="javascript:;" onclick="manutencaoStatusCotaController.pesquisarHistoricoStatusCota();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
+						<a class="botaoPesquisar" href="javascript:;" onclick="manutencaoStatusCotaController.pesquisarHistoricoStatusCota();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					</span>
 				</td>
 				<td>&nbsp;</td>
@@ -112,6 +120,8 @@
 			<table class="manutencaoStatusCotaGrid"></table>
 		</div>
 	</fieldset>
+</form>
 	
-	<jsp:include page="novo.jsp" />
+<jsp:include page="novo.jsp" />
+
 </body>

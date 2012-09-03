@@ -39,11 +39,6 @@ public class EMS0130MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
 	public void processMessage(Message message) {
 		
 		StringBuilder sql = new  StringBuilder();
@@ -114,10 +109,5 @@ public class EMS0130MessageProcessor extends AbstractRepository implements Messa
 	public void posProcess() {
 		// TODO Auto-generated method stub
 	}
-	
-	@Override
-	public void posProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
+		
 }

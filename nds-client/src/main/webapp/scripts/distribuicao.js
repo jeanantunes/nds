@@ -32,7 +32,7 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.box',						value: D.get("box")});
 		data.push({name:'distribuicao.assistComercial',			value: D.get("assistComercial")});
 		data.push({name:'distribuicao.gerenteComercial',    	value: D.get("gerenteComercial")});
-		data.push({name:'distribuicao.tipoEntrega',				value: D.get("tipoEntrega")});
+		data.push({name:'distribuicao.descricaoTipoEntrega',	value: D.get("tipoEntrega")});
 		data.push({name:'distribuicao.observacao',				value: D.get("observacao")});
 		data.push({name:'distribuicao.arrendatario',			value: D.get("arrendatario")});
 		data.push({name:'distribuicao.repPorPontoVenda',		value: D.get("repPorPontoVenda")});
@@ -51,8 +51,8 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.reciboImpresso',			value: D.get("reciboImpresso")});
 		data.push({name:'distribuicao.reciboEmail',				value: D.get("reciboEmail")});
 		
-		// TODO: mudar o valor do combo; Realizar tratamento para os outros valores
-		if (D.$('tipoEntrega').val() == '3') {
+		// TODO: Realizar tratamento para os outros tipos
+		if (D.$('tipoEntrega').val() == 'ENTREGADOR') {
 			
 			data.push({name:'distribuicao.utilizaProcuracao',		value: D.get("utilizaProcuracao")});
 			data.push({name:'distribuicao.procuracaoRecebida',		value: D.get("procuracaoRecebida")});
@@ -79,7 +79,7 @@ function Distribuicao(tela) {
 		D.set('box',					dto.box);
 		D.set('assistComercial',		dto.assistComercial);
 		D.set('gerenteComercial',		dto.gerenteComercial);
-		D.set('tipoEntrega',			dto.tipoEntrega);
+		D.set('tipoEntrega',			dto.descricaoTipoEntrega);
 		D.set('arrendatario',			dto.arrendatario);
 		D.set('observacao',				dto.observacao);
 		D.set('repPorPontoVenda',		dto.repPorPontoVenda);
@@ -98,8 +98,8 @@ function Distribuicao(tela) {
 		D.set('reciboImpresso',			dto.reciboImpresso);
 		D.set('reciboEmail',			dto.reciboEmail);
 		
-		// TODO: mudar o valor do combo; Realizar tratamento para os outros valores
-		if (D.$('tipoEntrega').val() == '3') {
+		// TODO: Realizar tratamento para os outros tipos
+		if (D.$('tipoEntrega').val() == 'ENTREGADOR') {
 		
 			D.set('utilizaProcuracao',					dto.utilizaProcuracao);
 			D.set('procuracaoRecebida',					dto.procuracaoRecebida);
@@ -203,6 +203,37 @@ function Distribuicao(tela) {
 	this.imprimeProcuracao = function(){
 		
 	    document.location.assign(contextPath + "/cadastro/cota/imprimeProcuracao?numeroCota="+D.get("numCota"));
+	};
+	
+	this.mostrarEsconderDiv = function(classDiv, exibir){
+		
+		$("." + classDiv).toggle(exibir);
+	};
+	
+	this.carregarConteudoTipoEntrega = function(value) {
+		
+		if (value == "COTA_RETIRA") {
+			
+			// TODO:
+			
+			$(".divConteudoEntregador").toggle(false);
+			
+		} else if (value == "ENTREGA_EM_BANCA") {
+			
+			// TODO:
+			
+			$(".divConteudoEntregador").toggle(false);
+			
+		} else if (value == "ENTREGADOR") {
+			
+			$(".divConteudoEntregador").toggle(true);
+			
+		} else {
+			
+			// TODO:
+			
+			$(".divConteudoEntregador").toggle(false);
+		}
 	};
 	
 	$(function() {

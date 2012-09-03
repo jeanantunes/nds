@@ -657,18 +657,21 @@ function mostraHeader(){
  * 
  * Ex: tipoMovimento/tipoMovimento.jsp
  */
-function definirAcaoPesquisaTeclaEnter() {
+function definirAcaoPesquisaTeclaEnter(workspace) {
 	
-	$(".campoDePesquisa").bind("keydown", function(event) {
-		  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
-	      if (keycode == 13) { 	    	  
-	    	  $('.botaoPesquisar').click();
-	    	  return false;
-	      } else  {
-	    	  return true;
-	      }
+	if(workspace){
 		
-	});
+		$(".campoDePesquisa",workspace).bind("keydown", function(event) {
+			  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
+		      if (keycode == 13) { 	    	  
+		    	  $('.botaoPesquisar',workspace).click();
+		    	  return false;
+		      } else  {
+		    	  return true;
+		      }
+			
+		});
+	}
 }
 
 function logout() {
