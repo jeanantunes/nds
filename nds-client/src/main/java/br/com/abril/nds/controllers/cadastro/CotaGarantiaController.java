@@ -14,6 +14,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -86,6 +87,18 @@ public class CotaGarantiaController {
 				.serialize();
 	}
 
+	@Post("/salvaOutros.json")
+	public void salvaOutros(List<GarantiaCotaOutros> listaOutros, Long idCota) throws Exception  {
+
+		cotaGarantiaService.salvaOutros(listaOutros, idCota);
+
+		result.use(Results.json())
+				.from(new ValidacaoVO(TipoMensagem.SUCCESS,
+						"Outras garantias salvas com Sucesso."), "result").recursive()
+				.serialize();
+	}
+
+	
 	@Post("/salvaCaucaoLiquida.json")
 	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws Exception {
 		
@@ -140,13 +153,23 @@ public class CotaGarantiaController {
 				.serialize();
 	}
 
-
 	@Post("/incluirImovel.json")
 	public void incluirImovel(Imovel imovel) {
 		validaImovel(imovel);
 						
 		result.use(Results.json()).from(imovel, "imovel").serialize();
 	}
+
+	@Post("/incluirOutro.json")
+	public void incluirOutro(GarantiaCotaOutros garantiaCotaOutros) {
+		
+		validaGarantiaCotaOutros(garantiaCotaOutros);
+						
+		result.use(Results.json()).from(garantiaCotaOutros, "outro").serialize();
+	}
+
+	
+	
 	
 	
 	
@@ -259,6 +282,36 @@ public class CotaGarantiaController {
 		}
 	}
 
+	/**
+	 * @param outra garantia para ser validada.
+	 */
+	private void validaGarantiaCotaOutros(GarantiaCotaOutros garantiaCotaOutros) {
+
+		List<String> listaMensagens = new ArrayList<String>();
+
+		if (StringUtil.isEmpty(garantiaCotaOutros.getDescricao())) {
+			listaMensagens
+					.add("O preenchimento do campo [Descrição] é obrigatório");
+		}
+
+		if (garantiaCotaOutros.getValor() == null) {
+			listaMensagens
+					.add("O preenchimento do campo [Valor] é obrigatório");
+		}
+
+		if (garantiaCotaOutros.getValidade() == null) {
+			listaMensagens
+					.add("O preenchimento do campo [Validade] é obrigatório");
+		}
+
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+			
+		}
+	}
+
+	
 	/**
 	 * @param imóvel para ser validado.
 	 */
