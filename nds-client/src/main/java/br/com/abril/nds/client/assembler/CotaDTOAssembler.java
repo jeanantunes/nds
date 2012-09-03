@@ -4,17 +4,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
+import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
+import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
 
 
@@ -81,7 +91,7 @@ public class CotaDTOAssembler {
      * da coleção de {@link EnderecoAssociacaoDTO}
      * @return coleção de {@link EnderecoAssociacaoDTO}
      */
-    public static Collection<EnderecoAssociacaoDTO> toEnderecoAssociacaoDTOCollcetion(Collection<HistoricoTitularidadeCotaEndereco> enderecos) {
+    public static Collection<EnderecoAssociacaoDTO> toEnderecoAssociacaoDTOCollection(Collection<HistoricoTitularidadeCotaEndereco> enderecos) {
         List<EnderecoAssociacaoDTO> dtos = new ArrayList<EnderecoAssociacaoDTO>(enderecos.size());
         for (HistoricoTitularidadeCotaEndereco endereco : enderecos) {
             EnderecoAssociacaoDTO dto = new EnderecoAssociacaoDTO();
@@ -101,7 +111,7 @@ public class CotaDTOAssembler {
      * da coleção {@link TelefoneAssociacaoDTO}
      * @return coleção de {@link TelefoneAssociacaoDTO}
      */
-    public static Collection<TelefoneAssociacaoDTO> toTelefoneAssociacaoDTOCollcetion(Collection<HistoricoTitularidadeCotaTelefone> telefones) {
+    public static Collection<TelefoneAssociacaoDTO> toTelefoneAssociacaoDTOCollection(Collection<HistoricoTitularidadeCotaTelefone> telefones) {
         List<TelefoneAssociacaoDTO> dtos = new ArrayList<TelefoneAssociacaoDTO>(telefones.size());
         for (HistoricoTitularidadeCotaTelefone telefone : telefones) {
             TelefoneAssociacaoDTO dto = new TelefoneAssociacaoDTO();
@@ -154,6 +164,63 @@ public class CotaDTOAssembler {
         dto.setRamal(telefone.getRamal());
         dto.setId(Util.generateObjectId(dto));
         return dto;
+    }
+
+    /**
+     * Cria a coleção de {@link PdvDTO} com as informações da coleção de
+     * {@link HistoricoTitularidadeCotaPDV} 
+     * @param pdvs coleção de {@link HistoricoTitularidadeCotaPDV} para criação
+     * da coleção de {@link PdvDTO}
+     * @return coleção de {@link PdvDTO}
+     */
+    public static Collection<PdvDTO> toPdvDTOCollection(Collection<HistoricoTitularidadeCotaPDV> pdvs) {
+        List<PdvDTO> dtos = new ArrayList<PdvDTO>(pdvs.size());
+        for (HistoricoTitularidadeCotaPDV pdv : pdvs) {
+            PdvDTO dto = new PdvDTO();
+            dto.setStatusPDV(pdv.getStatus());
+            dto.setDataInicio(pdv.getDataInclusao());
+            dto.setNomePDV(pdv.getNome());
+            dto.setContato(pdv.getContato());
+            dto.setSite(pdv.getSite());
+            dto.setEmail(pdv.getEmail());
+            dto.setPontoReferencia(pdv.getPontoReferencia());
+            dto.setDentroOutroEstabelecimento(pdv.isDentroOutroEstabelecimento());
+            dto.setArrendatario(pdv.isArrendatario());
+            dto.setTamanhoPDV(pdv.getTamanhoPDV());
+            dto.setSistemaIPV(pdv.isPossuiSistemaIPV());
+            dto.setQtdeFuncionarios(pdv.getQtdeFuncionarios());
+            dto.setPorcentagemFaturamento(pdv.getPorcentagemFaturamento());
+            HistoricoTitularidadeCotaCodigoDescricao tipoLicencaMunicipal = pdv.getTipoLicencaMunicipal();
+            if (tipoLicencaMunicipal != null) {
+                dto.setTipoLicencaMunicipal(new TipoLicencaMunicipalDTO(tipoLicencaMunicipal.getCodigo(), tipoLicencaMunicipal
+                                .getDescricao()));
+                dto.setNomeLicenca(pdv.getNomeLicencaMunicipal());
+                dto.setNumeroLicenca(pdv.getNumeroLicencaMunicipal());
+            }
+            CaracteristicasPDV caracteristicas = pdv.getCaracteristicas();
+            if (caracteristicas != null) {
+                CaracteristicaDTO caracteristicaDTO = new CaracteristicaDTO();
+                dto.setPrincipal(caracteristicas.isPontoPrincipal());
+                caracteristicaDTO.setBalcaoCentral(caracteristicas.isBalcaoCentral());
+                caracteristicaDTO.setTemComputador(caracteristicas.isPossuiComputador());
+                caracteristicaDTO.setLuminoso(caracteristicas.isPossuiLuminoso());
+                caracteristicaDTO.setTextoLuminoso(caracteristicas.getTextoLuminoso());
+                caracteristicaDTO.setPossuiCartao(caracteristicas.isPossuiCartaoCredito());
+                dto.setCaracteristicaDTO(caracteristicaDTO);
+            }
+            
+            Collection<HistoricoTitularidadeCotaFuncionamentoPDV> periodos = pdv.getPeriodos();
+            List<PeriodoFuncionamentoDTO> periodosDTO = new ArrayList<PeriodoFuncionamentoDTO>(periodos.size());
+            for (HistoricoTitularidadeCotaFuncionamentoPDV periodo : periodos) {
+                String inicio = DateUtil.formatarHoraMinuto(periodo.getHorarioInicio());
+                String fim = DateUtil.formatarHoraMinuto(periodo.getHorarioFim());
+                TipoPeriodoFuncionamentoPDV tipo = periodo.getTipoPeriodoFuncionamentoPDV();
+                PeriodoFuncionamentoDTO periodoDTO = new PeriodoFuncionamentoDTO(tipo, inicio, fim);
+                periodosDTO.add(periodoDTO);
+            }
+            dto.setPeriodosFuncionamentoDTO(periodosDTO);
+        }
+        return dtos;
     }
 
 }

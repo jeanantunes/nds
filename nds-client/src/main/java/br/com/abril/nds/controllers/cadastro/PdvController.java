@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
@@ -358,7 +359,7 @@ public class PdvController {
 			}
 			
 			if(dto.getTipoLicencaMunicipal()== null){
-				dto.setTipoLicencaMunicipal(new TipoLicencaMunicipal());
+				dto.setTipoLicencaMunicipal(new TipoLicencaMunicipalDTO());
 			}
 			
 			if(dto.getTipoPontoPDV() == null){

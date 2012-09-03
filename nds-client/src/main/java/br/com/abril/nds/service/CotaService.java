@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -288,6 +289,15 @@ public interface CotaService {
      * histórico de titularidade da cota
      */
     List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico);
+    
+    /**
+     * Obtém a lista de PDV's associados ao histórico de titularidade da cota
+     * @param idCota identificador da cota  
+     * @param idHistorico identificador do histórico de titularidade
+     * @return {@link List<PdvDTO>} com os PDV's associados ao 
+     * histórico de titularidade da cota
+     */
+    List<PdvDTO> obterPdvsHistoricoTitularidade(Long idCota, Long idHistorico);
 
     
     

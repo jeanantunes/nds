@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
@@ -58,7 +57,7 @@ public class PdvDTO implements Serializable {
 	
 	private BigDecimal porcentagemFaturamento;
 	
-	private TipoLicencaMunicipal tipoLicencaMunicipal;
+	private TipoLicencaMunicipalDTO tipoLicencaMunicipal;
 
 	private String numeroLicenca;
 	
@@ -355,14 +354,14 @@ public class PdvDTO implements Serializable {
 	/**
 	 * @return the tipoLicencaMunicipal
 	 */
-	public TipoLicencaMunicipal getTipoLicencaMunicipal() {
+	public TipoLicencaMunicipalDTO getTipoLicencaMunicipal() {
 		return tipoLicencaMunicipal;
 	}
 
 	/**
 	 * @param tipoLicencaMunicipal the tipoLicencaMunicipal to set
 	 */
-	public void setTipoLicencaMunicipal(TipoLicencaMunicipal tipoLicencaMunicipal) {
+	public void setTipoLicencaMunicipal(TipoLicencaMunicipalDTO tipoLicencaMunicipal) {
 		this.tipoLicencaMunicipal = tipoLicencaMunicipal;
 	}
 

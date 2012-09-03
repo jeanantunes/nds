@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
@@ -1807,14 +1808,21 @@ public class CotaServiceImpl implements CotaService {
     public List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(
             Long idCota, Long idHistorico) {
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-        return new ArrayList<EnderecoAssociacaoDTO>(CotaDTOAssembler.toEnderecoAssociacaoDTOCollcetion(historico.getEnderecos()));
+        return new ArrayList<EnderecoAssociacaoDTO>(CotaDTOAssembler.toEnderecoAssociacaoDTOCollection(historico.getEnderecos()));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico) {
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-        return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollcetion(historico.getTelefones()));
+        return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(historico.getTelefones()));
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<PdvDTO> obterPdvsHistoricoTitularidade(Long idCota, Long idHistorico) {
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<PdvDTO>(CotaDTOAssembler.toPdvDTOCollection(historico.getPdvs()));
     }
 
 	

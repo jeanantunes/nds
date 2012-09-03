@@ -620,4 +620,16 @@ public class HistoricoTitularidadeCota implements Serializable {
        telefones.add(telefone);
     }
 
+    /**
+     * Adiciona um pdv ao histórico de titularidade da cota
+     * @param pdv para inclusão
+     */
+    public void addPdv(HistoricoTitularidadeCotaPDV pdv) {
+        if (pdvs == null) {
+            pdvs = new ArrayList<HistoricoTitularidadeCotaPDV>();
+        }
+        pdv.setHistoricoTitularidadeCota(this);
+        pdvs.add(pdv);
+    }
+
 }

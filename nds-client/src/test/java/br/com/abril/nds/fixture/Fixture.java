@@ -197,7 +197,10 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
@@ -3407,6 +3410,39 @@ public class Fixture {
         HistoricoTitularidadeCotaTelefone telefone2 = new HistoricoTitularidadeCotaTelefone(
                 "9899-4321-", null, "19", TipoTelefone.CELULAR, false);
         historico.addTelefone(telefone2);
+        
+        HistoricoTitularidadeCotaPDV pdv = new HistoricoTitularidadeCotaPDV();
+        pdv.setStatus(StatusPDV.ATIVO);
+        pdv.setDataInclusao(cota.getInicioAtividade());
+        pdv.setNome("Super PDV");
+        pdv.setContato("Aristóteles Da Silva");
+        pdv.setSite("www.superpdvdoaristoteles.com");
+        pdv.setEmail("emaildosuperpdvdoaristotles@localhost");
+        pdv.setPontoReferencia("Logo ali");
+        pdv.setDentroOutroEstabelecimento(true);
+        CaracteristicasPDV caracteristicas = new CaracteristicasPDV();
+        caracteristicas.setPontoPrincipal(true);
+        caracteristicas.setPossuiComputador(true);
+        caracteristicas.setPossuiLuminoso(true);
+        caracteristicas.setTextoLuminoso("Super PDV do Aristóteles");
+        pdv.setCaracteristicas(caracteristicas);
+        pdv.setTamanhoPDV(TamanhoPDV.G);
+        pdv.setQtdeFuncionarios(2);
+        pdv.setPossuiSistemaIPV(true);
+        pdv.setPorcentagemFaturamento(BigDecimal.valueOf(100));
+        
+        HistoricoTitularidadeCotaCodigoDescricao tipoLicenca = new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(10), "Alvará");
+        pdv.setTipoLicencaMunicipal(tipoLicenca);
+        pdv.setNumeroLicencaMunicipal("100");
+        pdv.setNomeLicencaMunicipal("Alvará de Funcionamento");
+        
+        HistoricoTitularidadeCotaFuncionamentoPDV periodo = new HistoricoTitularidadeCotaFuncionamentoPDV(
+                TipoPeriodoFuncionamentoPDV.DIARIA, DateUtil.parseData("08:00",
+                        DateUtil.PADRAO_HORA_MINUTO), DateUtil.parseData(
+                        "17:00", DateUtil.PADRAO_HORA_MINUTO));
+        pdv.addPeriodoFuncionamento(periodo);
+        historico.addPdv(pdv);
         
         cota.addTitularCota(historico);
         return historico;

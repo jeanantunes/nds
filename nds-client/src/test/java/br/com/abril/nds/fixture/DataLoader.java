@@ -17,6 +17,8 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
@@ -201,11 +203,14 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.impl.CotaRepositoryImpl;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.Util;
 
 public class DataLoader {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DataLoader.class);
 
 	private static final String PARAM_SKIP_DATA = "skipData";
 	private static final String PARAM_CLEAN_DATA = "cleanData";
@@ -852,10 +857,11 @@ public class DataLoader {
 		Transaction tx = null;
 		boolean commit = false;
 
+		LOG.info("==== INICIANDO EXECUÇÃO DATALOADER ====");
 		List<String> parans =  Arrays.asList(args);
 		if(!parans.contains(PARAM_SKIP_DATA)){
 			try {
-				sf = ctx.getBean(SessionFactory.class);
+			    sf = ctx.getBean(SessionFactory.class);
 				session = sf.openSession();
 				tx = session.beginTransaction();				
 				
@@ -882,6 +888,7 @@ public class DataLoader {
 				}
 			}
 		}
+		LOG.info("==== EXECUÇÃO DATALOADER CONCLUÍDA ====");
 	}
 
 	private static void gerarCotasAusentes(Session session) {

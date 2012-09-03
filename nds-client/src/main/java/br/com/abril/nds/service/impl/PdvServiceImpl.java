@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
+import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -729,7 +730,12 @@ public class PdvServiceImpl implements PdvService {
 		if(licencaMunicipal!= null){
 			pdvDTO.setNumeroLicenca(licencaMunicipal.getNumeroLicenca());
 			pdvDTO.setNomeLicenca(licencaMunicipal.getNomeLicenca());
-			pdvDTO.setTipoLicencaMunicipal(licencaMunicipal.getTipoLicencaMunicipal());
+			TipoLicencaMunicipal tipoLicencaMunicipal = licencaMunicipal.getTipoLicencaMunicipal();
+            TipoLicencaMunicipalDTO tipoLicencaDTO = new TipoLicencaMunicipalDTO(
+                    tipoLicencaMunicipal.getId(),
+                    tipoLicencaMunicipal.getCodigo(),
+                    tipoLicencaMunicipal.getDescricao());
+            pdvDTO.setTipoLicencaMunicipal(tipoLicencaDTO);
 		}
 		
 		Set<PeriodoFuncionamentoPDV>periodos = pdv.getPeriodos();

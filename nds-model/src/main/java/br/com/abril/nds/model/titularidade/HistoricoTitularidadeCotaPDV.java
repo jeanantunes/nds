@@ -2,6 +2,7 @@ package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -23,7 +24,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
@@ -163,8 +163,17 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
      * Licença municipal do PDV
      */
     @Embedded
-    private LicencaMunicipal licencaMunicipal;
-
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_TIPO_LICENCA_MUNICIPAL")),
+            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_TIPO_LICENCA_MUNICIPAL")) })
+    private HistoricoTitularidadeCotaCodigoDescricao tipoLicencaMunicipal;
+    
+    @Column(name = "NUMERO_LICENCA_MUNICIPAL")
+    private String numeroLicencaMunicipal;
+    
+    @Column(name = "NOME_LICENCA_LICENCA_MUNICIPAL")
+    private String nomeLicencaMunicipal;
+    
     /**
      * Características do PDV
      */
@@ -515,18 +524,46 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
     }
 
     /**
-     * @return the licencaMunicipal
+     * @return the tipoLicencaMunicipal
      */
-    public LicencaMunicipal getLicencaMunicipal() {
-        return licencaMunicipal;
+    public HistoricoTitularidadeCotaCodigoDescricao getTipoLicencaMunicipal() {
+        return tipoLicencaMunicipal;
     }
 
     /**
-     * @param licencaMunicipal
-     *            the licencaMunicipal to set
+     * @param tipoLicencaMunicipal the tipoLicencaMunicipal to set
      */
-    public void setLicencaMunicipal(LicencaMunicipal licencaMunicipal) {
-        this.licencaMunicipal = licencaMunicipal;
+    public void setTipoLicencaMunicipal(
+            HistoricoTitularidadeCotaCodigoDescricao tipoLicencaMunicipal) {
+        this.tipoLicencaMunicipal = tipoLicencaMunicipal;
+    }
+
+    /**
+     * @return the numeroLicencaMunicipal
+     */
+    public String getNumeroLicencaMunicipal() {
+        return numeroLicencaMunicipal;
+    }
+
+    /**
+     * @param numeroLicencaMunicipal the numeroLicencaMunicipal to set
+     */
+    public void setNumeroLicencaMunicipal(String numeroLicencaMunicipal) {
+        this.numeroLicencaMunicipal = numeroLicencaMunicipal;
+    }
+
+    /**
+     * @return the nomeLicencaMunicipal
+     */
+    public String getNomeLicencaMunicipal() {
+        return nomeLicencaMunicipal;
+    }
+
+    /**
+     * @param nomeLicencaMunicipal the nomeLicencaMunicipal to set
+     */
+    public void setNomeLicencaMunicipal(String nomeLicencaMunicipal) {
+        this.nomeLicencaMunicipal = nomeLicencaMunicipal;
     }
 
     /**
@@ -637,6 +674,20 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
     public void setGeradoresFluxoSecundarios(
             Collection<HistoricoTitularidadeCotaCodigoDescricao> geradoresFluxoSecundarios) {
         this.geradoresFluxoSecundarios = geradoresFluxoSecundarios;
+    }
+
+    /**
+     * Adiciona um período de funcionamento ao PDV
+     * 
+     * @param periodo
+     *            período de funcionamento para inclusão
+     */
+    public void addPeriodoFuncionamento(
+            HistoricoTitularidadeCotaFuncionamentoPDV periodo) {
+        if (periodos == null) {
+            periodos = new ArrayList<HistoricoTitularidadeCotaFuncionamentoPDV>();
+        }
+        periodos.add(periodo);
     }
 
 }
