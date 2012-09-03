@@ -182,6 +182,11 @@ function Distribuicao(tela) {
 	this.$ = function(campo) {
 		
 		 return $("#" + tela + campo);
+	},
+	
+	this.imprimeProcuracao = function(){
+		
+	    document.location.assign(contextPath + "/cadastro/cota/imprimeProcuracao?numeroCota="+D.get("numCota"));
 	};
 	
 	$(function() {

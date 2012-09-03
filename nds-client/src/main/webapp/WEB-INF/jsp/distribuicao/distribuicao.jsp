@@ -93,13 +93,15 @@
 
 								<c:forEach items="${listaTipoEntrega}" var="item">
 									<option value="${item.key}">${item.value}</option>
-								</c:forEach>
+								</c:forEach>                            
 							</select>
 
 						</td>
 					</tr>
 				</table>
 
+				<a href="javascript:;" target="_blank" onclick="DISTRIB_COTA.imprimeProcuracao();">TESTE IMPRESSÃO PROCURAÇÃO BROW</a>
+				
 				<div id="entregadorPf" style="display: none;">
 					<table width="399" border="0" cellspacing="1" cellpadding="1">
 						<tr>

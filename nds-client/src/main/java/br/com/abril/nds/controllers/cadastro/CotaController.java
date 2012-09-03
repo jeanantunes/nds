@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -23,6 +24,8 @@ import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
+import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -45,6 +48,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -1102,6 +1106,23 @@ public class CotaController {
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Get
+	@Path("/imprimeProcuracao")
+	public void imprimeProcuracao(Integer numeroCota) throws Exception{
+		
+		//TODO dados procurador
+		byte[] arquivo = this.cotaService.getDocumentoProcuracao(numeroCota, "nomeProcurador", "rgProcurador",
+				"estadoCivilProcurador", "nacionalidadeProcurador");
+
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=procuracao.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(arquivo);
+
+		httpResponse.flushBuffer();
 	}
 
 	/**
