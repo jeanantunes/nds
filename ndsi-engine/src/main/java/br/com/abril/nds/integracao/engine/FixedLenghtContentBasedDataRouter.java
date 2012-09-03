@@ -11,10 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -93,18 +91,20 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	public void processFile(FileRouteTemplate fileRouteTemplate, File file) {
 		try {
 			
+			final MessageProcessor messageProcessor = fileRouteTemplate.getMessageProcessor();
+			
+			// Processamento a ser executado ANTES do processamento principal:
+			messageProcessor.preProcess();
+			
+			
 			File processingFile = new File(normalizeFileName(file.getParent()), file.getName() + ".processing");
 			
 			// RENOMEIA O ARQUIVO PARA PROCESSANDO
-			
 			file.renameTo(processingFile);
-			
 			FileReader in = new FileReader(processingFile);
 			
-			Scanner scanner = new Scanner(in);
-			
 			int lineNumber = 0;
-			
+			Scanner scanner = new Scanner(in);
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				lineNumber++;
@@ -133,9 +133,6 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), fileRouteTemplate.getUserName());
 					
 					message.setBody(bean);
-
-					final MessageProcessor messageProcessor = fileRouteTemplate
-							.getMessageProcessor();
 
 					if (messageProcessor != null) {
 						if (!fileRouteTemplate.isCommitAtEnd()) {
@@ -188,6 +185,9 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			}
 			
 			FileUtils.moveFile(processingFile, archiveFile);
+			
+			// Processamento a ser executado APÓS o processamento principal:
+			messageProcessor.posProcess();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);

@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.ChequeImage;
 import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fiador;
@@ -39,6 +40,7 @@ import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
+import br.com.abril.nds.repository.EnderecoFiadorRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.util.StringUtil;
@@ -65,6 +67,10 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 	@Autowired
 	private FiadorRepository fiadorRepository;
+	
+	@Autowired
+	private EnderecoFiadorRepository enderecoFiadorRepository;
+	
 	@Autowired
 	private ChequeImageRepository chequeImageRepository;
 	
@@ -427,6 +433,17 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		dto.setPracaPagamento(enderecoDistribuidor.getEndereco().getCidade());
 		
 		return dto;
+	}
+
+	/**
+	 * @param idFiador
+	 * @return
+	 * @see br.com.abril.nds.repository.EnderecoFiadorRepository#buscaPrincipal(java.lang.Long)
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Endereco buscaEnderecoFiadorPrincipal(Long idFiador) {
+		return enderecoFiadorRepository.buscaPrincipal(idFiador);
 	}
 
 	/*

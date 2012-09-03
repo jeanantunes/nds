@@ -30,7 +30,7 @@ var furoProdutoController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$(this).dialog("close");
-					confirmar();
+					furoProdutoController.confirmar();
 				},
 				"Cancelar": function() {
 					$(this).dialog("close");

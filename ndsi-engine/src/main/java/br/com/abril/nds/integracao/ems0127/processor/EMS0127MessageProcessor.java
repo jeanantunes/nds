@@ -6,8 +6,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Header;
 import br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe;
@@ -27,6 +25,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
 
 	@Override
 	public void processMessage(Message message) {
@@ -88,4 +91,10 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 
 		return query.list();
 	}
+	
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }

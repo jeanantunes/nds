@@ -34,13 +34,18 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorService distribuidorService;
 
 	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void processMessage(Message message) {
 		
 		EMS0106Input input = (EMS0106Input) message.getBody();
 		if (input == null) {
-			
 			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+					message, EventoExecucaoEnum.ERRO_INFRA, 
+					"NAO ENCONTROU o Arquivo");
 			return;
 		}
 		
@@ -51,7 +56,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 				edicao);
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.RELACIONAMENTO,
 					"NAO ENCONTROU ProdutoEdicao");
 			return;
 		}
@@ -60,7 +65,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 				produtoEdicao);
 		if (lancamento == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.RELACIONAMENTO,
 					"NAO ENCONTROU Lancamento");
 			return;
 		}
@@ -156,6 +161,11 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		query.setFetchSize(1);
 		
 		return (Lancamento) query.uniqueResult();
+	}
+
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
 	}
 	
 }

@@ -1,7 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 
 /**
  * Representação de Campos da tela de Distribuição (Cadastro de Cota)
@@ -18,7 +21,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean qtdeAutomatica;
 	private String box;
 	private String assistComercial;
-	private Long tipoEntrega;
+	private DescricaoTipoEntrega descricaoTipoEntrega;
 	private String observacao;
 	private Boolean repPorPontoVenda;
 	private Boolean solNumAtras;
@@ -36,8 +39,14 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean reciboImpresso;
 	private Boolean reciboEmail;
 	private String gerenteComercial;
+	private Boolean utilizaProcuracao;
+	private Boolean procuracaoRecebida;
+	private BigDecimal taxaFixa;
+	private BigDecimal percentualFaturamento;
+	private String inicioPeriodoCarencia;
+	private String fimPeriodoCarencia;
 	
-	private List<ItemDTO<Long, String>> tiposEntrega;
+	private List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega;
 	
 	public DistribuicaoDTO(){
 		
@@ -100,17 +109,17 @@ public class DistribuicaoDTO implements Serializable  {
 	}
 
 	/**
-	 * @return the tipoEntrega
+	 * @return the descricaoTipoEntrega
 	 */
-	public Long getTipoEntrega() {
-		return tipoEntrega;
+	public DescricaoTipoEntrega getDescricaoTipoEntrega() {
+		return descricaoTipoEntrega;
 	}
 
 	/**
-	 * @param tipoEntrega the tipoEntrega to set
+	 * @param descricaoTipoEntrega the descricaoTipoEntrega to set
 	 */
-	public void setTipoEntrega(Long tipoEntrega) {
-		this.tipoEntrega = tipoEntrega;
+	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
+		this.descricaoTipoEntrega = descricaoTipoEntrega;
 	}
 
 	/**
@@ -228,14 +237,14 @@ public class DistribuicaoDTO implements Serializable  {
 	/**
 	 * @return the tiposEntrega
 	 */
-	public List<ItemDTO<Long, String>> getTiposEntrega() {
+	public List<ItemDTO<DescricaoTipoEntrega, String>> getTiposEntrega() {
 		return tiposEntrega;
 	}
 
 	/**
 	 * @param tiposEntrega the tiposEntrega to set
 	 */
-	public void setTiposEntrega(List<ItemDTO<Long, String>> tiposEntrega) {
+	public void setTiposEntrega(List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega) {
 		this.tiposEntrega = tiposEntrega;
 	}
 
@@ -336,4 +345,89 @@ public class DistribuicaoDTO implements Serializable  {
 	public void setReciboEmail(Boolean reciboEmail) {
 		this.reciboEmail = reciboEmail;
 	}	
+
+	/**
+	 * @return the utilizaProcuracao
+	 */
+	public Boolean getUtilizaProcuracao() {
+		return utilizaProcuracao;
+	}
+
+	/**
+	 * @param utilizaProcuracao the utilizaProcuracao to set
+	 */
+	public void setUtilizaProcuracao(Boolean utilizaProcuracao) {
+		this.utilizaProcuracao = utilizaProcuracao;
+	}
+
+	/**
+	 * @return the procuracaoRecebida
+	 */
+	public Boolean getProcuracaoRecebida() {
+		return procuracaoRecebida;
+	}
+
+	/**
+	 * @param procuracaoRecebida the procuracaoRecebida to set
+	 */
+	public void setProcuracaoRecebida(Boolean procuracaoRecebida) {
+		this.procuracaoRecebida = procuracaoRecebida;
+	}
+
+	/**
+	 * @return the taxaFixa
+	 */
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
+	}
+
+	/**
+	 * @param taxaFixa the taxaFixa to set
+	 */
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+
+	/**
+	 * @return the percentualFaturamento
+	 */
+	public BigDecimal getPercentualFaturamento() {
+		return percentualFaturamento;
+	}
+
+	/**
+	 * @param percentualFaturamento the percentualFaturamento to set
+	 */
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
+	}
+
+	/**
+	 * @return the inicioPeriodoCarencia
+	 */
+	public String getInicioPeriodoCarencia() {
+		return inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @param inicioPeriodoCarencia the inicioPeriodoCarencia to set
+	 */
+	public void setInicioPeriodoCarencia(String inicioPeriodoCarencia) {
+		this.inicioPeriodoCarencia = inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @return the fimPeriodoCarencia
+	 */
+	public String getFimPeriodoCarencia() {
+		return fimPeriodoCarencia;
+	}
+
+	/**
+	 * @param fimPeriodoCarencia the fimPeriodoCarencia to set
+	 */
+	public void setFimPeriodoCarencia(String fimPeriodoCarencia) {
+		this.fimPeriodoCarencia = fimPeriodoCarencia;
+	}
+	
 }

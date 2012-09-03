@@ -9,6 +9,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -24,14 +25,14 @@ import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida
 
 /**
  * Interface que define os serviços referentes ao cadastro de garantias da cota.
- * 
+ *
  * @author Discover Technology
  */
 public interface CotaGarantiaService {
 
 	/**
 	 * Recupera a garantia da cota.
-	 * 
+	 *
 	 * @param idCota
 	 *            Id da cota.
 	 * @return
@@ -40,7 +41,7 @@ public interface CotaGarantiaService {
 
 	/**
 	 * Salva no repositorio de dados a garantia de nota promissoria.
-	 * 
+	 *
 	 * @param notaPromissoria
 	 *            Nota Promissoria
 	 * @param idCota
@@ -62,7 +63,7 @@ public interface CotaGarantiaService {
 
 	/**
 	 * Salva no repositorio de dados a garantia de imóvel.
-	 * 
+	 *
 	 * @param listaImovel
 	 *            lista de imóveis
 	 * @param idCota
@@ -77,7 +78,7 @@ public interface CotaGarantiaService {
 
 	/**
 	 * Salva no repositorio de dados a garantia de um cheque caução.
-	 * 
+	 *
 	 * @param cheque
 	 *            Cheque
 	 * @param idCota
@@ -102,7 +103,7 @@ public interface CotaGarantiaService {
 
 	/**
 	 * Recupera o fiador por id
-	 * 
+	 *
 	 * @param idFiador
 	 * @param doc
 	 *            Documento de identificação do Fiador
@@ -113,7 +114,7 @@ public interface CotaGarantiaService {
 
 	/**
 	 * Salva no repositorio de dados a garantia de um fiador.
-	 * 
+	 *
 	 * @param idFiador
 	 * @param idCota
 	 * @return
@@ -125,7 +126,7 @@ public interface CotaGarantiaService {
 
 	/**
 	 * Salva no repositorio de dados a garantia Caução Líquida.
-	 * 
+	 *
 	 * @param listaCaucaoLiquida
 	 *            Caução Liquida
 	 * @param idCota
@@ -147,7 +148,7 @@ public interface CotaGarantiaService {
 
 	/**
 	 * Salva a imagem do cheque
-	 * 
+	 *
 	 * @param idCheque
 	 * @param image
 	 */
@@ -170,15 +171,17 @@ public interface CotaGarantiaService {
 	 * <li>Data de Emissão: Data do dia que o cadastro está sendo realizado
 	 * (default do sistema).</li>
 	 * </ul>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param idCota
 	 * @return
 	 */
 	public abstract NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(
 			long idCota);
-	
+
 	CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida conta) throws ValidacaoException, InstantiationException, IllegalAccessException ;
+
+	public abstract Endereco buscaEnderecoFiadorPrincipal(Long idFiador);
 	
 	/**
 	 * Salva no repositorio de dados a garantia outros.

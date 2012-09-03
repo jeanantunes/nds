@@ -38,7 +38,12 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	@SuppressWarnings("unchecked")
 	public List<HistoricoSituacaoCota> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
-		String hql = this.criarQueryHistoricoStatusCota(filtro, false);
+		return obterHistorico(filtro,false,false);
+	}
+
+	private List<HistoricoSituacaoCota> obterHistorico(FiltroStatusCotaDTO filtro,boolean totalizarResultados  ,boolean filtrarUltimaDataHistorico) {
+		
+		String hql = this.criarQueryHistoricoStatusCota(filtro, totalizarResultados,filtrarUltimaDataHistorico);
 		
 		hql = this.adicionarOrdenacaoQueryHistoricoStatusCota(hql, filtro);
 		
@@ -57,7 +62,12 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 */
 	public Long obterTotalHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
-		String hql = this.criarQueryHistoricoStatusCota(filtro, true);
+		return obterTotalHistorico(filtro,true,false);
+	}
+
+	private Long obterTotalHistorico(FiltroStatusCotaDTO filtro,boolean totalizarResultados  ,boolean filtrarUltimaDataHistorico) {
+		
+		String hql = this.criarQueryHistoricoStatusCota(filtro, totalizarResultados,filtrarUltimaDataHistorico);
 		
 		hql = this.adicionarOrdenacaoQueryHistoricoStatusCota(hql, filtro);
 		
@@ -76,7 +86,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 * 
 	 * @return Query string
 	 */
-	private String criarQueryHistoricoStatusCota(FiltroStatusCotaDTO filtro, boolean totalizarResultados) {
+	private String criarQueryHistoricoStatusCota(FiltroStatusCotaDTO filtro, boolean totalizarResultados, boolean filtrarUltimaDataHistorico) {
 		
 		String hql = "select ";
 		
@@ -140,6 +150,15 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 				hql += useWhere ? " where " : " and ";
 				
 				hql += " hsc.motivo = :motivo ";
+				
+				useWhere = false;
+			}
+			
+			if(filtrarUltimaDataHistorico){
+				
+				hql += useWhere ? " where " : " and ";
+				
+				hql += " hsc.dataInicioValidade = ( select max(hs.dataInicioValidade) from HistoricoSituacaoCota hs where hs.cota.numeroCota = hsc.cota.numeroCota )  ";
 				
 				useWhere = false;
 			}
@@ -302,5 +321,19 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		criteria.setProjection(Projections.max("dataEdicao"));
 		return (Date) criteria.uniqueResult();
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<HistoricoSituacaoCota> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
+		
+		return obterHistorico(filtro, false, true);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Long obterTotalUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
+		
+		return obterTotalHistorico(filtro, true, true);
+	}
 }

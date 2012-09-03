@@ -27,11 +27,50 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	
 	private String descricao;
 	
+	private String nomeCota;
+	
+	private Integer numeroCota;
+	
 	/**
 	 * Construtor padrão.
 	 */
 	public HistoricoSituacaoCotaVO() {
 		
+	}
+	
+	
+
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+    
+
+	/**
+	 * @return the numeroCota
+	 */
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+
+
+	/**
+	 * @param numeroCota the numeroCota to set
+	 */
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 
 	/**

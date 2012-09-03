@@ -74,7 +74,7 @@ public class RetornoNFEController {
 		List<File> listaNotas = null;
 		
 		try {
-		
+			
 			listaNotas = FileImportUtil.importArquivosModificadosEm( pathNFEImportacao.getValor(), dataReferencia, FileType.XML);
 		
 		} catch (FileNotFoundException e) {
