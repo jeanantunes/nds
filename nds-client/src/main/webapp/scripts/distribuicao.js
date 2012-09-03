@@ -98,14 +98,19 @@ function Distribuicao(tela) {
 		D.set('reciboImpresso',			dto.reciboImpresso);
 		D.set('reciboEmail',			dto.reciboEmail);
 		
+		var tipoEntrega = D.$('tipoEntrega').val();
+		
 		// TODO: Realizar tratamento para os outros tipos
-		if (D.$('tipoEntrega').val() == 'ENTREGADOR') {
+		
+		if (tipoEntrega == 'ENTREGADOR') {
 		
 			D.set('utilizaProcuracao',					dto.utilizaProcuracao);
 			D.set('procuracaoRecebida',					dto.procuracaoRecebida);
 			D.set('percentualFaturamentoEntregador',	dto.percentualFaturamento);
 			D.set('inicioPeriodoCarenciaEntregador',	dto.inicioPeriodoCarencia);
 			D.set('fimPeriodoCarenciaEntregador',		dto.fimPeriodoCarencia);
+			
+			D.carregarConteudoTipoEntrega(tipoEntrega);
 		}
 		
 		if(dto.qtdeAutomatica) {
@@ -205,7 +210,7 @@ function Distribuicao(tela) {
 	    document.location.assign(contextPath + "/cadastro/cota/imprimeProcuracao?numeroCota="+D.get("numCota"));
 	};
 	
-	this.mostrarEsconderDiv = function(classDiv, exibir){
+	this.mostrarEsconderDiv = function(classDiv, exibir) {
 		
 		$("." + classDiv).toggle(exibir);
 	};
@@ -216,24 +221,62 @@ function Distribuicao(tela) {
 			
 			// TODO:
 			
-			$(".divConteudoEntregador").toggle(false);
+			D.esconderConteudoEntregador();
 			
 		} else if (value == "ENTREGA_EM_BANCA") {
 			
 			// TODO:
 			
-			$(".divConteudoEntregador").toggle(false);
+			D.esconderConteudoEntregador();
 			
 		} else if (value == "ENTREGADOR") {
 			
-			$(".divConteudoEntregador").toggle(true);
+			D.exibirConteudoEntregador();
 			
 		} else {
 			
 			// TODO:
 			
-			$(".divConteudoEntregador").toggle(false);
+			D.esconderConteudoEntregador();
 		}
+	};
+	
+	this.exibirConteudoEntregador = function() {
+		
+		$(".divConteudoEntregador").toggle(true);
+		
+		var utilizaProcuracao = D.get("utilizaProcuracao");
+		
+		if (utilizaProcuracao) {
+			
+			D.mostrarEsconderDivUtilizaProcuracao();
+		}
+	};
+	
+	this.esconderConteudoEntregador = function() {
+		
+		$(".divConteudoEntregador").toggle(false);
+	};
+	
+	this.mostrarEsconderDivUtilizaProcuracao = function() {
+		
+		var exibirDiv = D.get("utilizaProcuracao");
+		
+		D.mostrarEsconderDiv('divUtilizaProcuracao', exibirDiv);
+		
+		if (!exibirDiv) {
+			
+			D.set('procuracaoRecebida',	false);
+		}
+		
+		D.mostrarEsconderDivProcuracaoRecebida();
+	};
+	
+	this.mostrarEsconderDivProcuracaoRecebida = function() {
+		
+		var exibirDiv = D.get("procuracaoRecebida");
+		
+		D.mostrarEsconderDiv('divProcuracaoRecebida', exibirDiv);
 	};
 	
 	$(function() {
