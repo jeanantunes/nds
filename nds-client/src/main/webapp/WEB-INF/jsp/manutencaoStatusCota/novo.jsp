@@ -1,4 +1,5 @@
 
+<form id="form-aviso">
 <div id="dialog-aviso" name="dialog-aviso" title="AVISO:">
     <br>
     <b><label for="mensagemAviso" id="mensagemAviso" ></label></b>
@@ -6,7 +7,9 @@
     <br>
     <label for="mensagemConfirmacao" id="mensagemConfirmacao" ></label>
 </div>
+</form>
 
+<form id="form-novo">
 <div id="dialog-novo" title="Alteração de Status">
 
 	<jsp:include page="../messagesDialog.jsp" />
@@ -23,7 +26,7 @@
 			<td id="novoNomeCota"></td>
 			<td>Status:</td>
 			<td>
-				<select name="novoStatusCota" id="novoStatusCota" style="width: 230px;" onchange="ifInativo(this.value); dividasAbertoCota(this.value);">
+				<select name="novoStatusCota" id="novoStatusCota" style="width: 230px;" onchange="manutencaoStatusCotaController.ifInativo(this.value); manutencaoStatusCotaController.dividasAbertoCota(this.value);">
 					<option selected="selected">Selecione...</option>
 					<c:forEach var="statusCota" items="${listaSituacoesStatusCota}">
 						<option value="${statusCota.key}">${statusCota.value}</option>
@@ -66,3 +69,4 @@
 		</tr>
 	</table>
 </div>
+</form>

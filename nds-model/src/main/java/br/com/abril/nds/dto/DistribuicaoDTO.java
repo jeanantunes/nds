@@ -37,6 +37,8 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean reciboImpresso;
 	private Boolean reciboEmail;
 	private String gerenteComercial;
+	private Boolean utilizaProcuracao;
+	private Boolean procuracaoRecebida;
 	private BigDecimal taxaFixa;
 	private BigDecimal percentualFaturamento;
 	private String inicioPeriodoCarencia;
@@ -341,6 +343,34 @@ public class DistribuicaoDTO implements Serializable  {
 	public void setReciboEmail(Boolean reciboEmail) {
 		this.reciboEmail = reciboEmail;
 	}	
+
+	/**
+	 * @return the utilizaProcuracao
+	 */
+	public Boolean getUtilizaProcuracao() {
+		return utilizaProcuracao;
+	}
+
+	/**
+	 * @param utilizaProcuracao the utilizaProcuracao to set
+	 */
+	public void setUtilizaProcuracao(Boolean utilizaProcuracao) {
+		this.utilizaProcuracao = utilizaProcuracao;
+	}
+
+	/**
+	 * @return the procuracaoRecebida
+	 */
+	public Boolean getProcuracaoRecebida() {
+		return procuracaoRecebida;
+	}
+
+	/**
+	 * @param procuracaoRecebida the procuracaoRecebida to set
+	 */
+	public void setProcuracaoRecebida(Boolean procuracaoRecebida) {
+		this.procuracaoRecebida = procuracaoRecebida;
+	}
 
 	/**
 	 * @return the taxaFixa

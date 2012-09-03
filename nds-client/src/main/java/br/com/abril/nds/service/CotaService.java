@@ -257,7 +257,10 @@ public interface CotaService {
 	 */
 	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
 
-    /**
+	byte[] getDocumentoProcuracao(Integer numeroCota, String nomeProcurador, String rgProcurador,
+	        String estadoCivilProcurador, String nacionalidadeProcurador) throws Exception;
+
+	/**
      * Obtém o histórico de titularidade da cota de acordo com o identificador
      * da cota e o identificador do histórico
      * @param idCota identificador da cota
@@ -275,8 +278,7 @@ public interface CotaService {
      * histórico de titularidade da cota
      */
     List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(Long idCota, Long idHistorico);
-	
-    
+
     /**
      * Obtém a lista de telefones associados ao histórico de titularidade 
      * da cota
@@ -286,4 +288,7 @@ public interface CotaService {
      * histórico de titularidade da cota
      */
     List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico);
+
+    
+    
 }

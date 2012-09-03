@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +38,15 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(codigoProduto, numeroEdicao, StatusAprovacao.APROVADO);
 		
-		BigInteger saldoTotalEdicao = BigInteger.ZERO;
+		BigDecimal saldoTotalEdicao = new BigDecimal(0.0D);
 		
-		BigInteger saldoParcialEdicao = null;
+		BigDecimal saldoParcialEdicao = null;
 		
 		for( ExtratoEdicaoDTO extratoEdicao :  listaExtratoEdicao ) {
 			
-			BigInteger qtdEdicaoEntrada = extratoEdicao.getQtdEdicaoEntrada();
+			BigDecimal qtdEdicaoEntrada = extratoEdicao.getQtdEdicaoEntrada();
 			
-			BigInteger qtdEdicaoSaida = extratoEdicao.getQtdEdicaoSaida();
+			BigDecimal qtdEdicaoSaida = extratoEdicao.getQtdEdicaoSaida();
 				
 			saldoParcialEdicao = qtdEdicaoEntrada.subtract(qtdEdicaoSaida);
 			
@@ -59,7 +58,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = new InfoGeralExtratoEdicaoDTO();
 		
-		infoGeralExtratoEdicao.setSaldoTotalExtratoEdicao( BigDecimal.valueOf( saldoTotalEdicao.doubleValue() ) );
+		infoGeralExtratoEdicao.setSaldoTotalExtratoEdicao(saldoTotalEdicao);
 	
 		infoGeralExtratoEdicao.setListaExtratoEdicao(listaExtratoEdicao);
 		
