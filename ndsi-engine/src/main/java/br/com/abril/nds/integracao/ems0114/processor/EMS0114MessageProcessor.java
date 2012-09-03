@@ -173,13 +173,13 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
 		sql.append("      AND lcto.dataRecolhimentoPrevista > :dataGeracaoArquivo ");
-		sql.append("      AND lcto.dataRecolhimentoPrevista = :dataRecolhimento ");
+//		sql.append("      AND lcto.dataRecolhimentoPrevista = :dataRecolhimento ");
 		sql.append(" ORDER BY lcto.dataRecolhimentoPrevista ASC");
 		
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("produtoEdicao", produtoEdicao);
 		query.setDate("dataGeracaoArquivo", dataGeracaoArquivo);
-		query.setDate("dataRecolhimento", dataRecolhimento);
+//		query.setDate("dataRecolhimento", dataRecolhimento);
 		
 		query.setMaxResults(1);
 		query.setFetchSize(1);
@@ -239,33 +239,33 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 
 		} else {
 
-			Calendar data = Calendar.getInstance();
-
-			lancamento = new Lancamento();
-			lancamento.setDataCriacao(data.getTime());
-			lancamento.setDataStatus(data.getTime());
-			lancamento.setReparte(BigInteger.valueOf(0));
-			lancamento.setDataLancamentoDistribuidor(data.getTime());
-			lancamento.setDataLancamentoPrevista(data.getTime());
-			lancamento.setStatus(StatusLancamento.EXPEDIDO);
-			lancamento.setProdutoEdicao(produtoEdicao);
-
-			if (produtoEdicao.isParcial()) {
-
-				lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-
-			} else {
-
-				lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
-			}
-
-			data.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-			lancamento.setDataRecolhimentoDistribuidor(data.getTime());
-
-			lancamento.setProdutoEdicao(produtoEdicao);
-			lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-
-			getSession().persist(lancamento);
+//			Calendar data = Calendar.getInstance();
+//
+//			lancamento = new Lancamento();
+//			lancamento.setDataCriacao(data.getTime());
+//			lancamento.setDataStatus(data.getTime());
+//			lancamento.setReparte(BigInteger.valueOf(0));
+//			lancamento.setDataLancamentoDistribuidor(data.getTime());
+//			lancamento.setDataLancamentoPrevista(data.getTime());
+//			lancamento.setStatus(StatusLancamento.EXPEDIDO);
+//			lancamento.setProdutoEdicao(produtoEdicao);
+//
+//			if (produtoEdicao.isParcial()) {
+//
+//				lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
+//
+//			} else {
+//
+//				lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+//			}
+//
+//			data.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
+//			lancamento.setDataRecolhimentoDistribuidor(data.getTime());
+//
+//			lancamento.setProdutoEdicao(produtoEdicao);
+//			lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
+//
+//			getSession().persist(lancamento);
 		}
 	}
 
