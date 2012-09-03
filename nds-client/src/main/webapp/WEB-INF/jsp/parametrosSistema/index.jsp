@@ -24,8 +24,8 @@ $(function(){
 
 		<div class="areaBts">
 			<div class="area">
-				<span class="bt_novos" title="Salvar">
-					<a onclick="parametroSistemaController.salvar();" href="javascript:;">
+				<span class="bt_novos">
+					<a onclick="parametroSistemaController.salvar();" href="javascript:;" rel="tipsy" title="Salvar">
 					<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 					</a>
 				</span>

@@ -237,6 +237,10 @@
 	
 </script>
 
+<script
+	src="scripts/informeEncalhe.js"
+	type="text/javascript"></script>
+
 <style>
 #workspace {
 	margin-top: 0px;
