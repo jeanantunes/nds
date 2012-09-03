@@ -50,6 +50,18 @@ public class HistoricoTitularidadeCotaTelefone implements Serializable {
      */
     @Column(name = "TELEFONE_PRINCIPAL", nullable = false)
     private boolean principal;
+    
+    public HistoricoTitularidadeCotaTelefone() {
+    }
+
+    public HistoricoTitularidadeCotaTelefone(String numero, String ramal,
+            String ddd, TipoTelefone tipoTelefone, boolean principal) {
+        this.numero = numero;
+        this.ramal = ramal;
+        this.ddd = ddd;
+        this.tipoTelefone = tipoTelefone;
+        this.principal = principal;
+    }
 
     /**
      * @return the numero

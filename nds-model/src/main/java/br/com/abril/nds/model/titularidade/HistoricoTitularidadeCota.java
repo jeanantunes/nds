@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -582,8 +583,41 @@ public class HistoricoTitularidadeCota implements Serializable {
         return isPessoaFisica() ? pessoaFisica : pessoaJuridica;
     }
     
+    /**
+     * Verifica se a pessoa associada ao histórico de titularidade é uma pessoa
+     * física
+     * 
+     * @return true se o pessoa associada for uma pessoa física, false caso
+     *         contrário
+     */
     public boolean isPessoaFisica() {
         return pessoaFisica != null;
+    }
+    
+    /**
+     * Adiciona um endereço ao histórico de titularidade da cota
+     * 
+     * @param endereco
+     *            endereço para inclusão
+     */
+    public void addEndereco(HistoricoTitularidadeCotaEndereco endereco) {
+        if (enderecos == null) {
+            enderecos = new ArrayList<HistoricoTitularidadeCotaEndereco>();
+        }
+        enderecos.add(endereco);
+    }
+
+    /**
+     * Adiciona um telefone ao histórico de titularidade da cota
+     * 
+     * @param telefone
+     *            telefone para inclusão
+     */
+    public void addTelefone(HistoricoTitularidadeCotaTelefone telefone) {
+       if (telefones == null) {
+           telefones = new ArrayList<HistoricoTitularidadeCotaTelefone>();
+       }
+       telefones.add(telefone);
     }
 
 }

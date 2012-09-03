@@ -38,6 +38,12 @@ public class TelefoneAssociacaoDTO implements Serializable {
 			this.referencia = telefonePessoa.getId().intValue();
 		}
 	}
+	
+    public TelefoneAssociacaoDTO(Integer referencia, Telefone telefone, boolean principal,
+            TipoTelefone tipoTelefone) {
+        this(principal, telefone, tipoTelefone, null);
+        this.referencia = referencia;
+    }
 
 	public TelefoneDTO getTelefone() {
 		return telefone;

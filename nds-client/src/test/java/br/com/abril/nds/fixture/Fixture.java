@@ -197,7 +197,9 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
 
 
@@ -3385,6 +3387,27 @@ public class Fixture {
                     "SSP", "SP", criarData(10, Calendar.APRIL, 1974), EstadoCivil.SOLTEIRO, Sexo.MASCULINO,
                     "Brasileira", "Mococa", "Ari");
         historico.setPessoaFisica(htcpf);
+        
+        HistoricoTitularidadeCotaEndereco endereco1 = new HistoricoTitularidadeCotaEndereco(
+                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Treze de Maio", "13", "SP", 15, TipoEndereco.COMERCIAL,
+                true);
+        historico.addEndereco(endereco1);
+        
+        HistoricoTitularidadeCotaEndereco endereco2 = new HistoricoTitularidadeCotaEndereco(
+                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Nove de Julho", "100", "SP", 15, TipoEndereco.RESIDENCIAL,
+                false);
+        historico.addEndereco(endereco2);
+        
+        HistoricoTitularidadeCotaTelefone telefone1 = new HistoricoTitularidadeCotaTelefone(
+                "3681-6669-", null, "19", TipoTelefone.COMERCIAL, true);
+        historico.addTelefone(telefone1);
+        
+        HistoricoTitularidadeCotaTelefone telefone2 = new HistoricoTitularidadeCotaTelefone(
+                "9899-4321-", null, "19", TipoTelefone.CELULAR, false);
+        historico.addTelefone(telefone2);
+        
         cota.addTitularCota(historico);
         return historico;
     }

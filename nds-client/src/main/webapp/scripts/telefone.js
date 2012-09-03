@@ -1,7 +1,7 @@
 function Telefone(paramTela,message) {
 
 	this.workspace = "";
-    //Flag indicando se tela irá operar em modo readonly
+    //Flag indicando se tela irá operar em modo cadastro/consulta
     this.readonly = false;
 	
 	this.init = function(workspace) {
@@ -14,7 +14,7 @@ function Telefone(paramTela,message) {
 
 	};
 
-    //Define a tela como operação de edição/readonly
+    //Define a tela como operação de cadastro/consulta
     this.definirReadonly = function(readonly) {
         this.readonly = readonly;
         var idBotaoIncluir = '#'+ paramTela + 'btnIncluirNovoTelefone';

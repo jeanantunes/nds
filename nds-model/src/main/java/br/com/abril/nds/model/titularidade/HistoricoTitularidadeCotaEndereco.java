@@ -98,6 +98,29 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
      */
     @Column(name = "ENDERECO_PRINCIPAL", nullable = false)
     private boolean principal;
+    
+    public HistoricoTitularidadeCotaEndereco() {
+    }
+
+    public HistoricoTitularidadeCotaEndereco(Integer codigoBairro,
+            String bairro, String cep, Integer codigoCidadeIBGE, String cidade,
+            String complemento, String tipoLogradouro, String logradouro,
+            String numero, String uf, Integer codigoUf,
+            TipoEndereco tipoEndereco, boolean principal) {
+        this.codigoBairro = codigoBairro;
+        this.bairro = bairro;
+        this.cep = cep;
+        this.codigoCidadeIBGE = codigoCidadeIBGE;
+        this.cidade = cidade;
+        this.complemento = complemento;
+        this.tipoLogradouro = tipoLogradouro;
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.uf = uf;
+        this.codigoUf = codigoUf;
+        this.tipoEndereco = tipoEndereco;
+        this.principal = principal;
+    }
 
     /**
      * @return the codigoBairro

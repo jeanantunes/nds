@@ -15,6 +15,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
+import br.com.abril.nds.util.Util;
 
 
 /**
@@ -30,6 +31,13 @@ public class CotaDTOAssembler {
     }
     
     
+    /**
+     * Cria a instâcia de {@link CotaDTO} com as informações
+     * da instância de {@link HistoricoTitularidadeCota}
+     * @param cota instância de {@link HistoricoTitularidadeCota} para a criação
+     * da instância de {@link CotaDTO}
+     * @return instância de {@link CotaDTO}
+     */
     public static CotaDTO toCotaDTO(HistoricoTitularidadeCota cota) {
         CotaDTO dto = new CotaDTO();
         
@@ -66,6 +74,13 @@ public class CotaDTOAssembler {
         return dto;
     }
     
+    /**
+     * Cria a coleção de {@link EnderecoAssociacaoDTO} com informações
+     * da coleção de {@link HistoricoTitularidadeCotaEndereco}
+     * @param enderecos coleção de {@link HistoricoTitularidadeCotaEndereco} para criação
+     * da coleção de {@link EnderecoAssociacaoDTO}
+     * @return coleção de {@link EnderecoAssociacaoDTO}
+     */
     public static Collection<EnderecoAssociacaoDTO> toEnderecoAssociacaoDTOCollcetion(Collection<HistoricoTitularidadeCotaEndereco> enderecos) {
         List<EnderecoAssociacaoDTO> dtos = new ArrayList<EnderecoAssociacaoDTO>(enderecos.size());
         for (HistoricoTitularidadeCotaEndereco endereco : enderecos) {
@@ -73,11 +88,19 @@ public class CotaDTOAssembler {
             dto.setEnderecoPrincipal(endereco.isPrincipal());
             dto.setTipoEndereco(endereco.getTipoEndereco());
             dto.setEndereco(toEnderecoDTO(endereco));
+            dto.setId(Util.generateObjectId(dto));
             dtos.add(dto);
         }
         return dtos;
     }
     
+    /**
+     * Cria a coleção de {@link TelefoneAssociacaoDTO} com as informações do
+     * {@link HistoricoTitularidadeCotaTelefone} 
+     * @param telefones coleção de {@link HistoricoTitularidadeCotaTelefone} para criação
+     * da coleção {@link TelefoneAssociacaoDTO}
+     * @return coleção de {@link TelefoneAssociacaoDTO}
+     */
     public static Collection<TelefoneAssociacaoDTO> toTelefoneAssociacaoDTOCollcetion(Collection<HistoricoTitularidadeCotaTelefone> telefones) {
         List<TelefoneAssociacaoDTO> dtos = new ArrayList<TelefoneAssociacaoDTO>(telefones.size());
         for (HistoricoTitularidadeCotaTelefone telefone : telefones) {
@@ -85,11 +108,21 @@ public class CotaDTOAssembler {
             dto.setPrincipal(telefone.isPrincipal());
             dto.setTipoTelefone(telefone.getTipoTelefone());
             dto.setTelefone(toTelefoneDTO(telefone));
+            Long id = Util.generateObjectId(dto);
+            dto.setId(id);
+            dto.setReferencia(id.intValue());
             dtos.add(dto);
         }
         return dtos;
     }
     
+    /**
+     * Cria a instância de {@link EnderecoDTO} com as informações
+     * da instância de {@link HistoricoTitularidadeCotaEndereco} 
+     * @param endereco {@link HistoricoTitularidadeCotaEndereco} com as informações
+     * do endereço para a criação do {@link EnderecoDTO}
+     * @return Instância criada de {@link EnderecoDTO}
+     */
     public static EnderecoDTO toEnderecoDTO(HistoricoTitularidadeCotaEndereco endereco) {
         EnderecoDTO dto = new EnderecoDTO();
         dto.setTipoLogradouro(endereco.getTipoLogradouro());
@@ -103,14 +136,23 @@ public class CotaDTOAssembler {
         dto.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());
         dto.setCodigoUf(endereco.getCodigoUf());
         dto.setUf(endereco.getUf());
+        dto.setId(Util.generateObjectId(dto));
         return dto;
     }
     
+    /**
+     * Cria a instância de {@link TelefoneDTO} com as informações
+     * da instância de {@link HistoricoTitularidadeCotaTelefone} 
+     * @param telefone {@link HistoricoTitularidadeCotaTelefone} com as informações
+     * do telefone para a criação do {@link TelefoneDTO}
+     * @return Instância criada de {@link TelefoneDTO}
+     */
     public static TelefoneDTO toTelefoneDTO(HistoricoTitularidadeCotaTelefone telefone) {
         TelefoneDTO dto = new TelefoneDTO();
         dto.setDdd(telefone.getDdd());
         dto.setNumero(telefone.getNumero());
         dto.setRamal(telefone.getRamal());
+        dto.setId(Util.generateObjectId(dto));
         return dto;
     }
 
