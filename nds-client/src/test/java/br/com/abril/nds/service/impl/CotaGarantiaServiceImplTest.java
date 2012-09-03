@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoBoleto;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDepositoTransferencia;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDescontoCota;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PeriodoCobranca;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.CotaGarantiaService;
 
@@ -196,6 +197,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		PagamentoBoleto pagamentoBoleto = new PagamentoBoleto();
 		pagamentoBoleto.setValor(BigDecimal.TEN);
+		pagamentoBoleto.setPeriodoCobranca(PeriodoCobranca.DIARIO);
 		pagamentoBoleto.setQuantidadeParcelas(10);
 		pagamentoBoleto.setValorParcela(BigDecimal.ONE);
 		
