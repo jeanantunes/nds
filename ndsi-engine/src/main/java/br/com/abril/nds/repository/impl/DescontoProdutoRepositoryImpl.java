@@ -177,7 +177,13 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		    hql.append(" where cota.id = :idCota ");
 		}
 		
-		hql.append(" order by "+sortname+" "+sortorder);
+		if (sortname != null && !sortname.isEmpty()) { 
+		
+			hql.append(" order by ");
+			hql.append(sortname);
+			hql.append(" ");
+			hql.append(sortorder != null ? sortorder : "");
+		}
 
 		Query query = getSession().createQuery(hql.toString());
 		

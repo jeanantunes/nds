@@ -519,5 +519,4 @@ public class HistoricoTitularidadeCota implements Serializable {
     public void setSocios(Collection<HistoricoTitularidadeCotaSocio> socios) {
         this.socios = socios;
     }
-
 }

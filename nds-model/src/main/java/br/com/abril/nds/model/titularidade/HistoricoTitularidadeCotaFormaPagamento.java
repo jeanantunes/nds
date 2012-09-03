@@ -64,7 +64,7 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
      */
     @OneToMany
     @JoinColumn(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_ID")
-    private Collection<HistoricoTitularidadeCotaConcentracaoCobranca> concentracoesCobranca;
+    private HistoricoTitularidadeCotaConcentracaoCobranca concentracaoCobranca;
 
     /**
      * @return the id
@@ -123,19 +123,18 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
         this.banco = banco;
     }
 
-    /**
-     * @return the concentracoesCobranca
-     */
-    public Collection<HistoricoTitularidadeCotaConcentracaoCobranca> getConcentracoesCobranca() {
-        return concentracoesCobranca;
-    }
+	/**
+	 * @return the concentracaoCobranca
+	 */
+	public HistoricoTitularidadeCotaConcentracaoCobranca getConcentracaoCobranca() {
+		return concentracaoCobranca;
+	}
 
-    /**
-     * @param concentracoesCobranca the concentracoesCobranca to set
-     */
-    public void setConcentracoesCobranca(
-            Collection<HistoricoTitularidadeCotaConcentracaoCobranca> concentracoesCobranca) {
-        this.concentracoesCobranca = concentracoesCobranca;
-    }
-
+	/**
+	 * @param concentracaoCobranca the concentracaoCobranca to set
+	 */
+	public void setConcentracaoCobranca(
+			HistoricoTitularidadeCotaConcentracaoCobranca concentracaoCobranca) {
+		this.concentracaoCobranca = concentracaoCobranca;
+	}
 }

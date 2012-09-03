@@ -47,12 +47,6 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    /**
-     * Identificador do pdv de origem
-     */
-    @Column(name = "ID_ORIGEM")
-    private Long idOrigem;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     private HistoricoTitularidadeCota historicoTitularidadeCota;
@@ -238,21 +232,6 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
-    }
-
-    /**
-     * @return the idOrigem
-     */
-    public Long getIdOrigem() {
-        return idOrigem;
-    }
-
-    /**
-     * @param idOrigem
-     *            the idOrigem to set
-     */
-    public void setIdOrigem(Long idOrigem) {
-        this.idOrigem = idOrigem;
     }
 
     /**
