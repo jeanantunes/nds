@@ -12,7 +12,9 @@ function Distribuicao(tela) {
 		$.postJSON(contextPath + "/cadastro/cota/salvarDistribuicaoCota",
 				D.getDados(),
 				callback,
-				null, true);
+				null,
+				true,
+				"dialog-cota");
 		
 		return false;		
 	},
@@ -48,10 +50,17 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.boletoSlipEmail',			value: D.get("boletoSlipEmail")});
 		data.push({name:'distribuicao.reciboImpresso',			value: D.get("reciboImpresso")});
 		data.push({name:'distribuicao.reciboEmail',				value: D.get("reciboEmail")});
-		data.push({name:'distribuicao.percentualFaturamento',	value: D.get("percentualFaturamento")});
-		data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarencia")});
-		data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarencia")});
-				
+		
+		// TODO: mudar o valor do combo; Realizar tratamento para os outros valores
+		if (D.$('tipoEntrega').val() == '3') {
+			
+			data.push({name:'distribuicao.utilizaProcuracao',		value: D.get("utilizaProcuracao")});
+			data.push({name:'distribuicao.procuracaoRecebida',		value: D.get("procuracaoRecebida")});
+			data.push({name:'distribuicao.percentualFaturamento',	value: D.get("percentualFaturamentoEntregador")});
+			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarenciaEntregador")});
+			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarenciaEntregador")});
+		}
+		
 		return data;
 	},
 	
@@ -88,9 +97,16 @@ function Distribuicao(tela) {
 		D.set('boletoSlipEmail',		dto.boletoSlipEmail);
 		D.set('reciboImpresso',			dto.reciboImpresso);
 		D.set('reciboEmail',			dto.reciboEmail);
-		D.set('percentualFaturamento',	dto.percentualFaturamento);
-		D.set('inicioPeriodoCarencia',	dto.inicioPeriodoCarencia);
-		D.set('fimPeriodoCarencia',		dto.fimPeriodoCarencia);
+		
+		// TODO: mudar o valor do combo; Realizar tratamento para os outros valores
+		if (D.$('tipoEntrega').val() == '3') {
+		
+			D.set('utilizaProcuracao',					dto.utilizaProcuracao);
+			D.set('procuracaoRecebida',					dto.procuracaoRecebida);
+			D.set('percentualFaturamentoEntregador',	dto.percentualFaturamento);
+			D.set('inicioPeriodoCarenciaEntregador',	dto.inicioPeriodoCarencia);
+			D.set('fimPeriodoCarenciaEntregador',		dto.fimPeriodoCarencia);
+		}
 		
 		if(dto.qtdeAutomatica) {
 			D.$('qtdePDV').attr('disabled','disabled');
@@ -192,6 +208,26 @@ function Distribuicao(tela) {
 	$(function() {
 		D.$("numCota").numeric();
 		D.$("qtdePDV").numeric();
+		
+		D.$("inicioPeriodoCarenciaEntregador").datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true,
+			defaultDate: new Date()
+		});
+		
+		D.$("inicioPeriodoCarenciaEntregador").mask("99/99/9999");
+		
+		D.$("fimPeriodoCarenciaEntregador").datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true,
+			defaultDate: new Date()
+		});
+		
+		D.$("fimPeriodoCarenciaEntregador").mask("99/99/9999");
+		
+		D.$("percentualFaturamentoEntregador").mask("99.99");
 	});
 }
 

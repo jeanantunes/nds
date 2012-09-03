@@ -107,8 +107,8 @@
 						<tr>
 							<td>Utiliza Procuração?</td>
 							<td width="20">
-								<input type="checkbox" name="checkbox15"
-									   id="checkbox15" onclick="mostraProcuracaoPf();" />
+								<input type="checkbox" id="${param.tela}utilizaProcuracao"
+									   onclick="" />
 
 							<td width="201" class="procuracaoPf">
 								<span class="bt_imprimir" style="display: block;">
@@ -119,7 +119,8 @@
 						<tr>
 							<td>Procuração Recebida?</td>
 							<td colspan="2">
-								<input type="checkbox" name="checkbox2" id="checkbox2" />
+								<input type="checkbox" id="${param.tela}procuracaoRecebida"
+									   onclick="" />
 							</td>
 						</tr>
 						<tr>
@@ -133,16 +134,12 @@
 							<td>&nbsp;</td>
 							<td colspan="2">
 								<a href="javascript:;">nome_do_arquivo</a>
-								<a href="javascript:;">
-									<img src="../images/ico_excluir.gif"
-								   		 alt="Excluir arquivo" width="15" height="15" border="0" />
-								</a>
 							</td>
 						</tr>
 						<tr>
 							<td width="145">Percentual Faturamento:</td>
 							<td colspan="2">
-								<input id="${param.tela}percentualFaturamento" type="text"
+								<input id="${param.tela}percentualFaturamentoEntregador" type="text"
 									   style="width: 70px; text-align: right;" />
 							</td>
 						</tr>
@@ -152,13 +149,13 @@
 								<table width="100%" border="0" cellspacing="0" cellpadding="0">
 									<tr>
 										<td width="43%">
-											<input id="${param.tela}inicioPeriodoCarencia"
-												   name="inicioPeriodoCarencia" type="text" style="width: 70px" />
+											<input id="${param.tela}inicioPeriodoCarenciaEntregador"
+												   name="inicioPeriodoCarenciaEntregador" type="text" style="width: 70px" />
 										</td>
 										<td width="14%">Até</td>
 										<td width="43%">
-											<input id="${param.tela}fimPeriodoCarencia"
-												   name="fimPeriodoCarencia" type="text" style="width: 70px" />
+											<input id="${param.tela}fimPeriodoCarenciaEntregador"
+												   name="fimPeriodoCarenciaEntregador" type="text" style="width: 70px" />
 										</td>
 									</tr>
 								</table></td>
