@@ -373,4 +373,11 @@ public class EntregadorServiceImpl implements EntregadorService {
 		return this.entregadorRepository.buscarCotasAtendidas(idEntregador, pagina, resultadosPorPagina,
 				sortname, sortorder);
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean verificarEntregador(Long idCota) {
+		
+		return this.entregadorRepository.verificarEntregador(idCota);
+	}
 }

@@ -584,6 +584,27 @@ var MANTER_COTA = $.extend(true, {
 
 		$( "#dialog-titular", this.workspace ).dialog("close");
 	},
+	
+	verificarEntregador : function(){
+		
+		if (MANTER_COTA.idCota && MANTER_COTA.idCota != ""){
+			$.postJSON(contextPath + "/cota/parametroCobrancaCota/verificarEntregador",
+				{name:"idCota", value: MANTER_COTA.idCota},
+				function (result){
+					if (result && result.boolean){
+						
+						$("#cotaTemEntregador").show();
+					} else {
+						
+						$("#cotaTemEntregador").hide();
+					}
+				},
+				null,
+				true,
+				"dialog-cota"
+			);
+		}
+	}
 
 }, BaseController);
 

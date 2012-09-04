@@ -1,9 +1,12 @@
 package br.com.abril.nds.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
@@ -178,7 +181,7 @@ public interface CotaService {
 	 *
 	 * @param distribuicao - DTO que representa os dados de Distribuição da cota
 	 */
-	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao);
+	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) throws FileNotFoundException, IOException ;
 
 
 	/**
@@ -257,7 +260,8 @@ public interface CotaService {
 	 */
 	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
 
-	byte[] getDocumentoProcuracao(Integer numeroCota, String nomeProcurador, String rgProcurador,
-			String estadoCivilProcurador, String nacionalidadeProcurador) throws Exception;
+	byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
+
+	void atualizaTermoAdesao(String numCota) throws FileNotFoundException, IOException ;
 	
 }

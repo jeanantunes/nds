@@ -61,6 +61,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $("#segundoDiaQuinzenal", this.workspace).numeric();
 	},
 	
+		
 	//PRÉ CARREGAMENTO DA PAGINA
 	carregaFinanceiro : function(idCota){
 		$("#_idParametroCobranca", this.workspace).val("");
@@ -68,6 +69,20 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#_numCota", this.workspace).val("");
 		parametroCobrancaCotaController.obterParametroCobranca(idCota);
 		parametroCobrancaCotaController.mostrarGrid(idCota);	
+		
+		var _this = this;
+	    
+	    var options = {
+				success: _this.tratarRespostaUploadAnexoContrato,
+		};
+	    
+	    $('#parametroCobrancaFormUpload', this.workspace).ajaxForm(options);
+	    
+	    $(".dataInputMask").mask("99/99/9999");
+	    
+	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
+	    this.calcularDataTermino();
+	    this.carregarArquivoContrato();
 	},
 	
 	montarTrRadioBox : function(result,name,nameItemIdent) {
@@ -149,7 +164,12 @@ var parametroCobrancaCotaController = $.extend(true, {
 	
     //MODOS DE EXIBIÇÃO 
 	exibe_form_contrato : function(exibir){
-		$(".form-contrato-hidden-class").toggle(exibir);
+		
+		if(exibir) {
+			$(".form-contrato-hidden-class").css("visibility", "visible");
+		}else{
+			$(".form-contrato-hidden-class").css("visibility", "hidden");
+		}
 	},
 	
 	exibe_form_suspencao : function(exibir) {
@@ -157,7 +177,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	exibe_form_upload : function(exibir) {
-		$("#parametroCobrancaFileField").toggle(exibir);
+		$(".parametroCobrancaFileField").toggle(exibir);
+		if(!exibir) {
+			this.removerUpload();
+			 $("#parametroCobrancaFormUploadFile").val("");
+		} else {
+			$("#parametroCobrancaNumeroCota", this.workspace).val(MANTER_COTA.numeroCota);
+		}
 	},
 	
 	opcaoPagto : function(op){
@@ -358,6 +384,20 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   },
 				   true);
 	},
+	calcularDataTermino : function() {
+			
+		var dataInicio = $("#parametroCobrancaDateInicio").val();
+		
+		var params = {"dataInicio":dataInicio};
+		
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/calcularDataTermino.json", params, 
+				function(result) {
+					
+					$("#parametroCobrancaDateTermino").val(result.dataTermino);
+					
+				}
+		);
+	},
 	
 	//FORMAS DE COBRANÇA
 	preparaNovaFormaCobranca : function(){
@@ -415,6 +455,71 @@ var parametroCobrancaCotaController = $.extend(true, {
 		parametroCobrancaCotaController.obterFormaCobrancaDefault();
 	}, 
 
+	
+	tratarRespostaUploadAnexoContrato : function(data) {
+		
+		data = replaceAll(data, "<pre>", "");
+		data = replaceAll(data, "</pre>", "");
+		
+		data = replaceAll(data, "<PRE>", "");
+		data = replaceAll(data, "</PRE>", "");
+		
+		var responseJson = jQuery.parseJSON(data);
+		
+		if (responseJson.mensagens) {
+			exibirMensagemDialog(
+				responseJson.mensagens.tipoMensagem, 
+				responseJson.mensagens.listaMensagens, "dialog-cota"
+			);
+			
+		} else {
+			$("#parametroCobrancaArquivo > *").remove();
+			
+			var fileName = '<span id="parametroCobrancaFileName">'+responseJson.fileName+'</span>';
+			
+			$("#parametroCobrancaArquivo", this.workspace).append(fileName);
+		}			
+	},
+	
+	carregarArquivoContrato : function() {
+
+		var idCota = MANTER_COTA.idCota;
+		
+		var params = {idCota:idCota};
+		
+		var _this = this;
+		
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/carregarArquivoContrato", params,
+				function(data){
+					if(data.isRecebido) {
+						_this.exibe_form_upload(true);
+						$("#parametroCobrancaIsRecebidoCheckBox").attr("checked", true);
+						$("#parametroCobrancaFileName").html(data.fileName);
+					}
+		});
+	},
+	
+	removerUpload : function() {
+		var fileName =  $("#parametroCobrancaFileName").html();
+		
+		if (!fileName) return;
+		
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/removerUpload.json", null,
+			null,  
+			function(data) {
+			
+				var mensagens = data.mensagens? data.mensagens:data;
+				var tipoMensagem = mensagens.tipoMensagem;
+				var listaMensagens = mensagens.listaMensagens;
+
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagemDialog(tipoMensagem, listaMensagens,"dialog-cota");
+				}
+		},true);
+		
+		$("#parametroCobrancaArquivo > *").remove();
+	},
+	
 	obterFornecedoresUnificados : function(unificados) {
 		$("input[name='checkGroupFornecedores']:checked", parametroCobrancaCotaController.workspace).each(function(i) {
 			//$("#fornecedor_"+$(this).val(), this.workspace).attr("checked", false);
@@ -808,10 +913,30 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 	//IMPRESSÃO DO CONTRATO
 	imprimeContrato : function(){
+		
+		var fileName =  $("#parametroCobrancaFileName",this.workspace).html();
+		
+		if (!fileName) return;
+		
 		var idCota = $("#_idCota", this.workspace).val();
-	    document.location.assign(contextPath + "/cota/parametroCobrancaCota/imprimeContrato?idCota="+idCota);
+		var dataInicio = $("#parametroCobrancaDateInicio",this.workspace).val();
+		var dataTermino = $("#parametroCobrancaDateTermino",this.workspace).val();
+		var isRecebido = $("#parametroCobrancaIsRecebidoCheckBox").is(":checked");
+		
+	    document.location.assign(
+	    		contextPath + "/cota/parametroCobrancaCota/imprimeContrato?" +
+	    				"idCota="+idCota+"&dataInicio="+dataInicio+"&dataTermino="+dataTermino+"&isRecebido="+isRecebido);
 	},
-
+	
+	uploadContratoAnexo : function() {
+		var selectedFile = $("#parametroCobrancaFormUploadFile").val();
+		
+		if(!selectedFile) return;
+		
+		$('#parametroCobrancaFormUpload', this.workspace).submit();
+	},
+	
+	
 	//INCLUSÃO DE NOVA UNIFICAÇÃO SEM SAIR DO POPUP
 	incluirNovaUnificacao : function(){
 		parametroCobrancaCotaController.postarFormaCobranca(false,true);
