@@ -2,7 +2,6 @@ package br.com.abril.nds.integracao.ems0135.processor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -45,11 +44,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
 	@Override
 	public void processMessage(Message message) {
 		
@@ -95,19 +89,19 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notaFiscalEntradaFornecedor.setValorBruto(valorBruto);
 		
 		double desconto = (input.getDesconto() / 100);
-		Double valorLiquido =  (valorBruto.doubleValue()  + (desconto * input.getPreco())) * input.getQtdExemplar();		
-		notaFiscalEntradaFornecedor.setValorLiquido(new BigDecimal(valorLiquido));
+		Double valorLiquido =  (valorBruto.doubleValue()  + (desconto * input.getPreco())) * input.getQtdExemplar();
 		
-		notaFiscalEntradaFornecedor.setValorDesconto(new BigDecimal(input.getDesconto()));
+		notaFiscalEntradaFornecedor.setValorLiquido(new BigDecimal(valorLiquido));		
+		notaFiscalEntradaFornecedor.setValorDesconto(new BigDecimal(input.getDesconto()));		
+		notaFiscalEntradaFornecedor.setEmitente(obterPessoaJuridica("10000000000100"));		
+		notaFiscalEntradaFornecedor.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
+		notaFiscalEntradaFornecedor.setEmitida(true);	
 		
-		notaFiscalEntradaFornecedor.setEmitente(obterPessoaJuridica("10000000000100"));
+		//Implementado pela regra assistida pelo Sr. Eduardo "Punk Rock" Castro em 03/09 devido a informação necessaria na consulta de Notas
 		
-		notaFiscalEntradaFornecedor.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));
+		notaFiscalEntradaFornecedor.setFornecedor(produtoEdicao.getProduto().getFornecedor());
 		
-		notaFiscalEntradaFornecedor.setEmitida(true);
-		
-		this.getSession().persist(notaFiscalEntradaFornecedor);
-		
+		this.getSession().persist(notaFiscalEntradaFornecedor);		
 		salvarItemNota(notaFiscalEntradaFornecedor, input, produtoEdicao);
 	}
 	
@@ -232,11 +226,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void posProcess() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

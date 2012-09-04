@@ -655,7 +655,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		dto.setAssistComercial(parametro.getAssistenteComercial());
 		dto.setGerenteComercial(parametro.getGerenteComercial());
-		dto.setTipoEntrega( (parametro.getTipoEntrega()==null) ? null : parametro.getTipoEntrega().getId());
+		dto.setDescricaoTipoEntrega((parametro.getTipoEntrega()==null) ? null : parametro.getTipoEntrega().getDescricaoTipoEntrega());
 		dto.setObservacao(parametro.getObservacao());
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
@@ -712,10 +712,14 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
 		parametros.setGerenteComercial(dto.getGerenteComercial());
-		if(dto.getTipoEntrega() == null)
+		
+		if(dto.getDescricaoTipoEntrega() == null) {
 			parametros.setTipoEntrega(null);
-		else
-			parametros.setTipoEntrega(tipoEntregaRepository.buscarPorId(dto.getTipoEntrega()));
+		} else {
+			parametros.setTipoEntrega(
+				tipoEntregaRepository.buscarPorDescricaoTipoEntrega(dto.getDescricaoTipoEntrega()));
+		}
+			
 		parametros.setObservacao(dto.getObservacao());
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
@@ -735,12 +739,20 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
 		parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
 		parametros.setTaxaFixa(dto.getTaxaFixa());
+		parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
 		
-		//TODO
-		//parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
-		//parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
-		//parametros.setFimPeriodoCarencia(DateUtil.parseDataPTBR(dto.getFimPeriodoCarencia()));
+		if (dto.getInicioPeriodoCarencia() != null) {
+			parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
+		} else {
+			parametros.setInicioPeriodoCarencia(null);	
+		}
 		
+		if (dto.getFimPeriodoCarencia() != null) {
+			parametros.setFimPeriodoCarencia(DateUtil.parseDataPTBR(dto.getFimPeriodoCarencia()));
+		} else {
+			parametros.setFimPeriodoCarencia(null);			
+		}
+				
 		cota.setParametroDistribuicao(parametros);
 		
 		cotaRepository.merge(cota);		
@@ -1697,12 +1709,14 @@ public class CotaServiceImpl implements CotaService {
 			
 			PessoaFisica pessoa = (PessoaFisica) cota.getPessoa();
 			
-			dto.setBoxCota(pessoa.getNome());
+			dto.setNomeJornaleiro(pessoa.getNome());
 			dto.setNacionalidade(pessoa.getNacionalidade());
 			dto.setEstadoCivil(pessoa.getEstadoCivil() == null ? "" : pessoa.getEstadoCivil().getDescricao());
 			dto.setRgJornaleiro(pessoa.getRg());
 			dto.setCpfJornaleiro(pessoa.getCpf());
 		}
+		
+		dto.setBoxCota(cota.getBox().getNome());
 		
 		EnderecoCota enderecoDoProcurado = this.enderecoCotaRepository.getPrincipal(cota.getId());
 		
@@ -1733,27 +1747,20 @@ public class CotaServiceImpl implements CotaService {
 		
 		//TODO numero da permissão
 		
-		ProcuracaoImpressaoWrapper wrapper = new ProcuracaoImpressaoWrapper();
 		List<ProcuracaoImpressaoDTO> listaDTO = new ArrayList<ProcuracaoImpressaoDTO>();
-		wrapper.setListaProcuracaoImpressao(listaDTO);
+		listaDTO.add(dto);
 		
-		List<ProcuracaoImpressaoWrapper> list = new ArrayList<ProcuracaoImpressaoWrapper>();
-		list.add(wrapper);
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("cidade", dto.getCidadePDV());
 		
-		 URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
-
-		 Map<String, Object> parameters = new HashMap<String, Object>();
-			
-		 parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
-
-		 JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaDTO);
 		
-		 URL url = 
-			Thread.currentThread().getContextClassLoader().getResource("/reports/procuracao.jasper");
+		URL url = 
+			Thread.currentThread().getContextClassLoader().getResource("/reports/procuracao_subreport1.jasper");
+		
+		String path = url.toURI().getPath();
 		 
-		 String path = url.toURI().getPath();
-		 
-		 return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
 	/**
