@@ -1192,3 +1192,5 @@ var ConferenciaEncalhe = $.extend(true, {
 	}
 
 }, BaseController);
+
+//@ sourceURL=scriptConferenciaEncalhe.js

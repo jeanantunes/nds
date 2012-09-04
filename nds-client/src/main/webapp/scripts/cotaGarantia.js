@@ -1093,8 +1093,88 @@ CaucaoLiquida.prototype.popularGrid = function() {
 CaucaoLiquida.prototype.salva = function(callBack) {
 	
 	var postData = serializeArrayToPost('listaCaucaoLiquida', this.listNovosCalcao);
-		
 	postData['idCota'] = this.idCota;
+	
+	//FORMA PAGAMENTO
+	var tipoCobranca        = $("#tipoCobranca", this.workspace).val();
+	var tipoFormaCobranca   = $("#tipoFormaCobranca", this.workspace).val();
+	var numBanco            = $("#numBanco", this.workspace).val();
+	var nomeBanco           = $("#nomeBanco", this.workspace).val();
+	var agencia             = $("#agencia", this.workspace).val();
+	var agenciaDigito       = $("#agenciaDigito", this.workspace).val();
+	var conta               = $("#conta", this.workspace).val();
+	var contaDigito         = $("#contaDigito", this.workspace).val();
+	var diaDoMes            = $("#diaDoMes", this.workspace).val();
+	var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenal", this.workspace).val();
+	var segundoDiaQuinzenal = $("#segundoDiaQuinzenal", this.workspace).val();
+	var valor               = $("#valorBoleto", this.workspace).val();
+	var qtdeParcelas        = $("#qtdParcelaBoleto", this.workspace).val();
+	var valorParcela        = $("#valorParcelaBoleto", this.workspace).val();
+	
+	$("#PS", this.workspace).val(0);
+	if ($("#PS", this.workspace).is(":checked")) {
+		$("#PS", this.workspace).val(1);
+	}
+	var segunda = $("#PS", this.workspace).val();
+	
+	$("#PT", this.workspace).val(0);
+	if ($("#PT", this.workspace).is(":checked")) {
+		$("#PT", this.workspace).val(1);
+	}
+	var terca = $("#PT", this.workspace).val();
+	
+	$("#PQ", this.workspace).val(0);
+	if ($("#PQ", this.workspace).is(":checked")) {
+		$("#PQ", this.workspace).val(1);
+	}
+	var quarta = $("#PQ", this.workspace).val();
+	
+	$("#PQu", this.workspace).val(0);
+	if ($("#PQu", this.workspace).is(":checked")) {
+		$("#PQu", this.workspace).val(1);
+	}
+	var quinta = $("#PQu", this.workspace).val();
+	
+	$("#PSex", this.workspace).val(0);
+	if ($("#PSex", this.workspace).is(":checked")) {
+		$("#PSex", this.workspace).val(1);
+	}
+	var sexta  = $("#PSex", this.workspace).val();
+	
+	$("#PSab", this.workspace).val(0);
+	if ($("#PSab", this.workspace).is(":checked")) {
+		$("#PSab", this.workspace).val(1);
+	}
+	var sabado = $("#PSab", this.workspace).val();
+	
+	$("#PDom", this.workspace).val(0);
+	if ($("#PDom", this.workspace).is(":checked")) {
+		$("#PDom", this.workspace).val(1);
+	}
+	var domingo  = $("#PDom", this.workspace).val();
+	
+	postData['formaCobranca.tipoCobranca'] = tipoCobranca;    
+	postData['formaCobranca.tipoFormaCobranca'] = tipoFormaCobranca;
+	postData['formaCobranca.numBanco'] = numBanco;        
+	postData['formaCobranca.nomeBanco'] = nomeBanco;          
+	postData['formaCobranca.agencia'] = agencia;            
+	postData['formaCobranca.agenciaDigito'] = agenciaDigito;     
+	postData['formaCobranca.conta'] = conta;              
+	postData['formaCobranca.contaDigito'] = contaDigito;        
+	postData['formaCobranca.domingo'] = domingo;    
+	postData['formaCobranca.segunda'] = segunda;            
+	postData['formaCobranca.terca'] = terca;            
+	postData['formaCobranca.quarta'] = quarta;            
+	postData['formaCobranca.quinta'] = quinta;            
+	postData['formaCobranca.sexta'] = sexta;            
+	postData['formaCobranca.sabado'] = sabado;
+	postData['formaCobranca.diaDoMes'] = diaDoMes;
+	postData['formaCobranca.primeiroDiaQuinzenal'] = primeiroDiaQuinzenal;
+	postData['formaCobranca.segundoDiaQuinzenal'] = segundoDiaQuinzenal;
+	postData['formaCobranca.valor'] = valor;
+	postData['formaCobranca.qtdeParcelas'] = qtdeParcelas;
+	postData['formaCobranca.valorParcela'] = valorParcela;
+	
 	
 	$.postJSON(this.path + 'salvaCaucaoLiquida.json', postData,
 			function(data) {
@@ -1171,11 +1251,7 @@ CaucaoLiquida.prototype.bindEvents = function() {
 		thousandsSeparator : '.'
 	});
 	
-	$("#qtdParcelaBoleto").priceFormat({
-		allowNegative : true,
-		centsSeparator : ',',
-		thousandsSeparator : '.'
-	});
+	$("#qtdParcelaBoleto").numeric();
 	
 	$("#valorParcelaBoleto").priceFormat({
 		allowNegative : true,

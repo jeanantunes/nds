@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
@@ -25,16 +26,16 @@ public class ExtratoEdicaoDTO implements Serializable {
 	private String descMovimento;
 	
 	@Export(label = "Entrada", alignment = Alignment.CENTER)
-	private BigDecimal qtdEdicaoEntrada ;
+	private BigInteger qtdEdicaoEntrada ;
 	
 	@Export(label = "Saída", alignment = Alignment.CENTER)
-	private BigDecimal qtdEdicaoSaida ;
+	private BigInteger qtdEdicaoSaida ;
 	
 	@Export(label = "Parcial", alignment = Alignment.CENTER)
-	private BigDecimal qtdParcial;
+	private BigInteger qtdParcial;
 	
 	public ExtratoEdicaoDTO(Long idMovimento, Date dataMovimento,
-			String descMovimento, BigDecimal qtdEdicaoEntrada, BigDecimal qtdEdicaoSaida) {
+			String descMovimento, BigInteger qtdEdicaoEntrada, BigInteger qtdEdicaoSaida) {
 		super();
 		this.idMovimento = idMovimento;
 		this.dataMovimento = dataMovimento;
@@ -54,7 +55,7 @@ public class ExtratoEdicaoDTO implements Serializable {
 	 *
 	 * @return BigDecimal
 	 */
-	public BigDecimal getQtdEdicaoEntrada() {
+	public BigInteger getQtdEdicaoEntrada() {
 		return qtdEdicaoEntrada;
 	}
 
@@ -62,7 +63,7 @@ public class ExtratoEdicaoDTO implements Serializable {
 	 * Atribuí qtdEdicaoEntrada
 	 * @param qtdEdicaoEntrada 
 	 */
-	public void setQtdEdicaoEntrada(BigDecimal qtdEdicaoEntrada) {
+	public void setQtdEdicaoEntrada(BigInteger qtdEdicaoEntrada) {
 		this.qtdEdicaoEntrada = qtdEdicaoEntrada;
 	}
 
@@ -71,7 +72,7 @@ public class ExtratoEdicaoDTO implements Serializable {
 	 *
 	 * @return BigDecimal
 	 */
-	public BigDecimal getQtdEdicaoSaida() {
+	public BigInteger getQtdEdicaoSaida() {
 		return qtdEdicaoSaida;
 	}
 
@@ -79,7 +80,7 @@ public class ExtratoEdicaoDTO implements Serializable {
 	 * Atribuí qtdEdicaoSaida
 	 * @param qtdEdicaoSaida 
 	 */
-	public void setQtdEdicaoSaida(BigDecimal qtdEdicaoSaida) {
+	public void setQtdEdicaoSaida(BigInteger qtdEdicaoSaida) {
 		this.qtdEdicaoSaida = qtdEdicaoSaida;
 	}
 
@@ -88,7 +89,7 @@ public class ExtratoEdicaoDTO implements Serializable {
 	 *
 	 * @return BigDecimal
 	 */
-	public BigDecimal getQtdParcial() {
+	public BigInteger getQtdParcial() {
 		return qtdParcial;
 	}
 
@@ -96,7 +97,7 @@ public class ExtratoEdicaoDTO implements Serializable {
 	 * Atribuí qtdParcial
 	 * @param qtdParcial 
 	 */
-	public void setQtdParcial(BigDecimal qtdParcial) {
+	public void setQtdParcial(BigInteger qtdParcial) {
 		this.qtdParcial = qtdParcial;
 	}
 

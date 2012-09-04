@@ -65,5 +65,7 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	 * @return Lista de Rotas
 	 */
 	List<Rota> obterRotasPorCota(Integer numeroCota);
+	
+	Rota obterRotaPorPDV(Long idPDV, Long idCota);
 
 }
