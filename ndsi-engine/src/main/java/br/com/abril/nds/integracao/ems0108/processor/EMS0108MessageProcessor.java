@@ -1,14 +1,11 @@
 package br.com.abril.nds.integracao.ems0108.processor;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -31,11 +28,6 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
 	/**
 	 * Processa as linhas do arquivo da interface EMS0108
 	 */
@@ -157,11 +149,6 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	@Override
 	public void posProcess() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

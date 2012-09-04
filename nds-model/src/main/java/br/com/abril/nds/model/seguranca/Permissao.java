@@ -94,7 +94,6 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO("Painel de Processamento",							  		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_GRUPOS_ACESSO("Grupos de Acesso",											  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CALENDARIO("Calendario",													  		   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_TIPO_MOVIMENTO("Tipo de Movimento",										  		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipo da Nota",													  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_INICIAR_DIA("Iniciar o Dia",												  		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_FECHAR_DIA("Fechar o Dia",													  	   Permissao.ROLE_ADMINISTRACAO),

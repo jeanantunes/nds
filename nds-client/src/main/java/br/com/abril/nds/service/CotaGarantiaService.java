@@ -11,6 +11,7 @@ import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -19,6 +20,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 
 /**
@@ -180,4 +182,15 @@ public interface CotaGarantiaService {
 	CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida conta) throws ValidacaoException, InstantiationException, IllegalAccessException ;
 
 	public abstract Endereco buscaEnderecoFiadorPrincipal(Long idFiador);
+	
+	/**
+	 * Salva no repositorio de dados a garantia outros.
+	 * 
+	 * @param listaOutros
+	 * @param idCota
+	 * 
+	 * @return CotaGarantiaOutros
+	 */
+	public abstract CotaGarantiaOutros salvaOutros(List<GarantiaCotaOutros> listaOutros,
+			Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException;
 }

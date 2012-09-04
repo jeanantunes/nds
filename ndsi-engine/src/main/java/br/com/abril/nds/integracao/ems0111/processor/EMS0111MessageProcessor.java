@@ -4,12 +4,9 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.beanutils.converters.BigIntegerConverter;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -52,11 +49,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
 	@Override
 	public void processMessage(Message message) {
 
@@ -204,11 +196,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void posProcess() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

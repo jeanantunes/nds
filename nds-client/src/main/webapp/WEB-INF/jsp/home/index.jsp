@@ -296,6 +296,9 @@
 						</span>
 					
 						<div class="usuario">
+										 
+							Versão: ${versao}
+						
 							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 										
 							<label> <script type="text/javascript"
