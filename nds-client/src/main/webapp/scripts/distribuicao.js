@@ -52,7 +52,7 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.reciboEmail',				value: D.get("reciboEmail")});
 		
 		// TODO: Realizar tratamento para os outros tipos
-		if (D.$('tipoEntrega').val() == 'ENTREGADOR') {
+		if (D.get('tipoEntrega') == 'ENTREGADOR') {
 			
 			data.push({name:'distribuicao.utilizaProcuracao',		value: D.get("utilizaProcuracao")});
 			data.push({name:'distribuicao.procuracaoRecebida',		value: D.get("procuracaoRecebida")});
@@ -80,6 +80,7 @@ function Distribuicao(tela) {
 		D.set('assistComercial',		dto.assistComercial);
 		D.set('gerenteComercial',		dto.gerenteComercial);
 		D.set('tipoEntrega',			dto.descricaoTipoEntrega);
+		D.set('tipoEntregaHidden',		dto.descricaoTipoEntrega);
 		D.set('arrendatario',			dto.arrendatario);
 		D.set('observacao',				dto.observacao);
 		D.set('repPorPontoVenda',		dto.repPorPontoVenda);
@@ -98,14 +99,19 @@ function Distribuicao(tela) {
 		D.set('reciboImpresso',			dto.reciboImpresso);
 		D.set('reciboEmail',			dto.reciboEmail);
 		
+		var tipoEntrega = D.get('tipoEntrega');
+		
 		// TODO: Realizar tratamento para os outros tipos
-		if (D.$('tipoEntrega').val() == 'ENTREGADOR') {
+		
+		if (tipoEntrega == 'ENTREGADOR') {
 		
 			D.set('utilizaProcuracao',					dto.utilizaProcuracao);
 			D.set('procuracaoRecebida',					dto.procuracaoRecebida);
 			D.set('percentualFaturamentoEntregador',	dto.percentualFaturamento);
 			D.set('inicioPeriodoCarenciaEntregador',	dto.inicioPeriodoCarencia);
 			D.set('fimPeriodoCarenciaEntregador',		dto.fimPeriodoCarencia);
+			
+			D.carregarConteudoTipoEntrega(tipoEntrega);
 		}
 		
 		if(dto.qtdeAutomatica) {
@@ -135,7 +141,7 @@ function Distribuicao(tela) {
 				function(result) {
 					D.setDados(result);
 				},
-				null, true); 
+				null, true);
 	},
 	
 	/**
@@ -205,9 +211,52 @@ function Distribuicao(tela) {
 	    document.location.assign(contextPath + "/cadastro/cota/imprimeProcuracao?numeroCota="+D.get("numCota"));
 	};
 	
-	this.mostrarEsconderDiv = function(classDiv, exibir){
+	this.mostrarEsconderDiv = function(classDiv, exibir) {
 		
 		$("." + classDiv).toggle(exibir);
+	};
+	
+	this.mostarPopUpAteracaoTipoEntrega = function(value) {
+		
+		var tipoEntregaHidden = D.get('tipoEntregaHidden');
+		
+		if (tipoEntregaHidden == "" || tipoEntregaHidden == 'COTA_RETIRA') {
+			
+			D.set('tipoEntregaHidden', value);
+			
+			return ;
+		}
+		
+		$("#dialogMudancaTipoEntrega").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "mudancaTipoEntregaBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
+					
+			    		D.set('tipoEntregaHidden', value);
+						
+						D.carregarConteudoTipoEntrega(value);
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "mudancaTipoEntregaBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		D.set("tipoEntrega", D.get("tipoEntregaHidden"));
+						
+						$(this).dialog("close");
+			    	}
+				}
+			]
+		});
 	};
 	
 	this.carregarConteudoTipoEntrega = function(value) {
@@ -216,24 +265,66 @@ function Distribuicao(tela) {
 			
 			// TODO:
 			
-			$(".divConteudoEntregador").toggle(false);
+			D.mostrarEsconderConteudoEntregador(false);
 			
 		} else if (value == "ENTREGA_EM_BANCA") {
 			
 			// TODO:
 			
-			$(".divConteudoEntregador").toggle(false);
+			D.mostrarEsconderConteudoEntregador(false);
 			
 		} else if (value == "ENTREGADOR") {
 			
-			$(".divConteudoEntregador").toggle(true);
+			D.mostrarEsconderConteudoEntregador(true);
 			
 		} else {
 			
 			// TODO:
 			
-			$(".divConteudoEntregador").toggle(false);
+			D.mostrarEsconderConteudoEntregador(false);
 		}
+	};
+	
+	this.mostrarEsconderConteudoEntregador = function(exibirDiv) {
+		
+		D.mostrarEsconderDiv('divConteudoEntregador', exibirDiv);
+		
+		if (!exibirDiv) {
+			
+			D.set('utilizaProcuracao', false);
+			
+			D.limparCamposEntregador();
+		}
+		
+		D.mostrarEsconderDivUtilizaProcuracao();
+	};
+	
+	this.mostrarEsconderDivUtilizaProcuracao = function() {
+		
+		var exibirDiv = D.get("utilizaProcuracao");
+		
+		D.mostrarEsconderDiv('divUtilizaProcuracao', exibirDiv);
+		
+		if (!exibirDiv) {
+			
+			D.set('procuracaoRecebida',	false);
+		}
+		
+		D.mostrarEsconderDivProcuracaoRecebida();
+	};
+	
+	this.mostrarEsconderDivProcuracaoRecebida = function() {
+		
+		var exibirDiv = D.get("procuracaoRecebida");
+		
+		D.mostrarEsconderDiv('divProcuracaoRecebida', exibirDiv);
+	};
+	
+	this.limparCamposEntregador = function() {
+		
+		D.set('percentualFaturamentoEntregador',	"");
+		D.set('inicioPeriodoCarenciaEntregador',	"");
+		D.set('fimPeriodoCarenciaEntregador',		"");
 	};
 	
 	$(function() {

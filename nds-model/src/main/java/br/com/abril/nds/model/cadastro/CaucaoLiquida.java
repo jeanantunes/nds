@@ -35,7 +35,6 @@ public class CaucaoLiquida implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	
 	@Column(name="VALOR")
 	private Double valor;
 	
@@ -45,7 +44,7 @@ public class CaucaoLiquida implements Serializable {
 	
 	@Column(name="INDICE_REAJUSTE")
 	private Double indiceReajuste;
-
+	
 	/**
 	 * @return the id
 	 */
