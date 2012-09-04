@@ -73,6 +73,8 @@ function Distribuicao(tela) {
 				
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
+				
+		$('#numCotaUpload').val(dto.numCota);
 		
 		D.set('numCota',				dto.numCota);
 		D.set('qtdePDV',				dto.qtdePDV ? dto.qtdePDV.toString() : '' );
@@ -156,6 +158,25 @@ function Distribuicao(tela) {
 		
 		D.$("tipoEntrega").html(combo);
 		D.$("tipoEntrega").sortOptions();
+	},
+	
+	this.submitForm = function(idForm) {
+		
+		$('#' + idForm).submit();
+		
+		$("#uploadTermo").empty();
+		
+		$("#uploadTermo").append(
+				'<input name="uploadedFile" type="file" id="uploadedFile" size="40" onchange="DISTRIB_COTA.submitForm(\'formUploadTermoAdesao\')" />');
+	},
+	
+	this.downloadTermo = function(idCota) {
+		
+		document.location.assign(contextPath + "/cadastro/cota/downloadTermo?numeroCota=" + MANTER_COTA.numeroCota);
+	},
+	
+	this.tratarRetornoUploadTermoAdesao = function(result) {
+		//alert('Retornado com sucesso');
 	},
 	
 	/**
@@ -350,6 +371,12 @@ function Distribuicao(tela) {
 		D.$("fimPeriodoCarenciaEntregador").mask("99/99/9999");
 		
 		D.$("percentualFaturamentoEntregador").mask("99.99");
+		
+		var options = {
+				success: D.tratarRetornoUploadTermoAdesao,
+		    };
+		
+		$('#formUploadTermoAdesao').ajaxForm(options);
 	});
 }
 
