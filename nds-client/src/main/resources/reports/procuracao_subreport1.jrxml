@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="procuracao_subreport1" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
-	<property name="ireport.zoom" value="1.0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="procuracao_subreport1" pageWidth="555" pageHeight="802" columnWidth="515" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="220"/>
 	<parameter name="cidade" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="data" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="nomeDistribuidor" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="enderecoDistribuidor" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="telefoneDistribuidor" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="infoComp" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -74,7 +75,7 @@
 	<pageHeader>
 		<band height="35" splitType="Stretch">
 			<image>
-				<reportElement x="34" y="0" width="68" height="35"/>
+				<reportElement x="0" y="0" width="68" height="35"/>
 				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_login.png").toURI().getPath()]]></imageExpression>
 			</image>
 		</band>
@@ -82,7 +83,7 @@
 	<columnHeader>
 		<band height="61" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="32" width="555" height="29"/>
+				<reportElement x="0" y="32" width="515" height="29"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="20" isBold="true" isUnderline="true"/>
 				</textElement>
@@ -91,29 +92,34 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="125" splitType="Stretch">
+		<band height="505" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="555" height="125"/>
+				<reportElement x="0" y="0" width="515" height="372"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new String(
-    new String(
-        "Pelo presente instrumento particular de procuração, " + ("".equals($F{nomeJornaleiro}) ? "" : $F{nomeJornaleiro} + ",") + "\n" +
-        "Box Cota: " + ("".equals($F{boxCota}) ? "" : $F{boxCota} + ", ") + ("".equals($F{nacionalidade}) ? "" : $F{nacionalidade} + "," ) + ("".equals($F{estadoCivil}) ? "" : $F{estadoCivil} + ",") + " jornaleiro estabelecido à " + ("".equals($F{enderecoPDV}) ? "" : $F{enderecoPDV} + ",") + ("".equals($F{bairroPDV}) ? "" : $F{bairroPDV} + ",") + ("".equals($F{cidadePDV}) ? "" : $F{cidadePDV} + ".") + "\n" +
-        "TPU (Termo de Permissão de Uso da Prefeitura Municipal), sob o n° " + ("".equals($F{numeroPermissao}) ? "" : $F{numeroPermissao} + ",") + "\n" +
-        "portador da cédula de identidade ( RG ) n° " + ("".equals($F{rgJornaleiro}) ? "" : $F{rgJornaleiro}) + " e inscrito no CPF sob o n° " + ("".equals($F{cpfJornaleiro}) ? "" : $F{cpfJornaleiro} + ",") + "\n" +
-        "nomeia e constitui seu bastante procurador " + ("".equals($F{nomeProcurador}) ? "" : $F{nomeProcurador} + ",") + " portador da cédula de identidade ( RG ) n° " + ("".equals($F{rgProcurador}) ? "" : $F{rgProcurador} + ", ") + ("".equals($F{estadoCivilProcurador}) ? "" : $F{estadoCivilProcurador} + ", ") + ("".equals($F{nacionalidadeProcurador}) ? "" : $F{nacionalidadeProcurador} + ",") + " residente e domiciliado " + ("".equals($F{enderecoDoProcurado}) ? "" : $F{enderecoDoProcurado} + ",") + ("".equals($F{bairroProcurado}) ? "" : $F{bairroProcurado} + ",") + ("".equals($F{cidadeProcurado}) ? "" : $F{cidadeProcurado} + ",") + "\n" +
-        "\npara o qual confere poderes de representa-lo perante a TREELOG SA - LOGISTICA E DISTRIBUICAO, exclusivamente para retirar e conferir o seu reparte, o material de numeros atrasados, compra de encalhe e zona azul, conferir e entregar o seu encalhe e retirar o boleto para pagamento das publicacoes vendidas e praticar todos os atos inerentes as atividades do titular da banca de jornais e revistas junto a distribuidora acima citada. " +
-        " Esta procuracao tera vigencia por prazo indeterminado ou ate que seja substituida por outra."
-).getBytes("ISO-8859-1"),"UTF-8")]]></textFieldExpression>
+new String(
+"Pelo presente instrumento particular de procuração, " + ("".equals($F{nomeJornaleiro}) ? "" : $F{nomeJornaleiro} + ",") + "\n" +
+"Box Cota: " + ("".equals($F{boxCota}) ? "" : $F{boxCota} + ", ") + ("".equals($F{nacionalidade}) ? "" : $F{nacionalidade} + "," ) + ("".equals($F{estadoCivil}) ? "" : $F{estadoCivil} + ",") + " jornaleiro estabelecido à " + ("".equals($F{enderecoPDV}) ? "" : $F{enderecoPDV} + ",") + ("".equals($F{bairroPDV}) ? "" : $F{bairroPDV} + ",") + ("".equals($F{cidadePDV}) ? "" : $F{cidadePDV} + ".") + "\n" +
+"TPU (Termo de Permissão de Uso da Prefeitura Municipal), sob o n° " + ("".equals($F{numeroPermissao}) ? "" : $F{numeroPermissao} + ",") + "\n" +
+"portador da cédula de identidade (RG) n° " + ("".equals($F{rgJornaleiro}) ? "" : $F{rgJornaleiro}) + " e inscrito no CPF sob o n° " + ("".equals($F{cpfJornaleiro}) ? "" : $F{cpfJornaleiro} + ",") + "\n" +
+"nomeia e constitui seu bastante procurador " + ("".equals($F{nomeProcurador}) ? "" : $F{nomeProcurador} + ",") + " portador da cédula de identidade (RG) n° " + ("".equals($F{rgProcurador}) ? "" : $F{rgProcurador} + ", ") + ("".equals($F{estadoCivilProcurador}) ? "" : $F{estadoCivilProcurador} + ", ") + ("".equals($F{nacionalidadeProcurador}) ? "" : $F{nacionalidadeProcurador} + ",") + " residente e domiciliado " + ("".equals($F{enderecoDoProcurado}) ? "" : $F{enderecoDoProcurado} + ",") + ("".equals($F{bairroProcurado}) ? "" : $F{bairroProcurado} + ",") + ("".equals($F{cidadeProcurado}) ? "" : $F{cidadeProcurado} + ",") + "\n" +
+"\npara o qual confere poderes de representa-lo perante a TREELOG SA - LOGISTICA E DISTRIBUICAO, exclusivamente para retirar e conferir o seu reparte, o material de numeros atrasados, compra de encalhe e zona azul, conferir e entregar o seu encalhe e retirar o boleto para pagamento das publicacoes vendidas e praticar todos os atos inerentes as atividades do titular da banca de jornais e revistas junto a distribuidora acima citada." +
+"\nEsta procuração terá vigência por prazo indeterminado ou até que seja substituída por outra."
+).getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="372" width="513" height="133"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA[$P{infoComp}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch">
+		<band height="23" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="3" width="555" height="20"/>
+				<reportElement x="0" y="0" width="515" height="23"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
