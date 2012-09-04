@@ -233,7 +233,27 @@
 		}
 	});	
 	
-	var contextPath = "${pageContext.request.contextPath}";	
+	var contextPath = "${pageContext.request.contextPath}";
+	
+	//Changelog
+	
+	$(document).ready(function() {		
+		$("#changes").dialog({
+			resizable : false,
+			height : 230,
+			width : 400
+		});
+		$("#changes").dialog("close");
+		
+		$("#btnVersao").click(function() {
+			$("#changes")
+			.dialog( "option" ,  "title", "Changelog" )
+			.dialog( "open" );
+		});
+		
+		
+	});
+	
 	
 </script>
 
@@ -296,6 +316,10 @@
 						</span>
 					
 						<div class="usuario">
+							<a href="javascript:;" id="btnVersao">
+								<label title="versao">Versão: ${versao}</label>								
+							</a>
+													
 							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 										
 							<label> <script type="text/javascript"
@@ -349,7 +373,8 @@
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
 		
-
+		<div id="changes" title="Changelog">${changes}</div>
+		
 		<div id="workspace">
 			<ul></ul>
 		</div>

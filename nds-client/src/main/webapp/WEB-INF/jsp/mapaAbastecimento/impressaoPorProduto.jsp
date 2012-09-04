@@ -22,7 +22,7 @@ p{margin:0px; padding:0px; font-size:11px;}
 </style>
 <script language="javascript" type="text/javascript">
 function imprimir(){
-	$( "#btImpressao" ).hide();
+	$( "#btImpressao", BaseController.workspace ).hide();
 	window.print();
 }
 </script>

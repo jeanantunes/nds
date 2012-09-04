@@ -1,14 +1,14 @@
 package br.com.abril.nds.service;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -92,9 +92,11 @@ public interface ParametroCobrancaCotaService {
 	/**
 	 * Obtém o contrato em forma de array de bytes
 	 * @param idCota
+	 * @param dataInicio
+	 * @param dataTermino
 	 * @return Array de bytes do contrato
 	 */
-	byte[] geraImpressaoContrato(Long idCota);
+	byte[] geraImpressaoContrato(Long idCota, Date dataInicio, Date dataTermino);
 	
 	
 	/**
@@ -153,5 +155,21 @@ public interface ParametroCobrancaCotaService {
 	 */
 	 boolean validarFormaCobrancaSemanal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado);
 		 	 
-	 
+	 /**
+	  * Salva o contrato da cota
+	  * 
+	 * @param idCota
+	 * @param isRecebido
+	 * @param dataInicio
+	 * @param dataTermino
+	 */
+	void salvarContrato(Long idCota, boolean isRecebido, Date dataInicio, Date dataTermino); 
+	
+	/**
+	 * obtém um arquivo de contrato anexo.
+	 * 
+	 * @param idCota
+	 * @return ContratoVO quando o anexo for encontrato ou null quando o arquivo não existir
+	 */
+	ContratoVO obterArquivoContratoRecebido(Long idCota);
 }

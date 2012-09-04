@@ -1,7 +1,12 @@
 package br.com.abril.nds.controllers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +16,12 @@ import javax.servlet.http.HttpSession;
 
 import net.vidageek.mirror.dsl.Mirror;
 
+import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -31,6 +41,9 @@ import br.com.caelum.vraptor.resource.ResourceMethod;
 @Path("/")
 public class HomeController {
 
+	@Value("#{properties.version}")
+	protected String version;
+	
 	@Autowired
 	private final Router router;
 
@@ -42,9 +55,13 @@ public class HomeController {
 
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	private String changes;
 
 	private List<MenuDTO> menus;
 
+	private static Logger LOGGER = Logger.getLogger(HomeController.class);	
+	
 	/**
 	 * @param router
 	 * @param result
@@ -71,7 +88,27 @@ public class HomeController {
 		result.include("menus", mapaMenus);
 
 		result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
+		result.include("versao", version);
 		
+		
+		result.include("changes", readJenkins());
+		
+		
+	}
+
+	private String readJenkins() {
+		StringBuilder builder = new StringBuilder();
+		
+		Document doc = null;
+		try {
+			doc = Jsoup.connect("http://177.71.255.76:8080/jenkins/job/deploy%20nds-client%20homolog/changes").get();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Elements newsHeadlines = doc.select("#main-panel");
+		
+		return newsHeadlines.html();
 	}
 
 	/**
@@ -81,7 +118,13 @@ public class HomeController {
 	private List<Permissao> getPermissoesUsuario() {
 		List<Permissao> permissoes = new ArrayList<Permissao>();
 		for (GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
-			permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
+			try {
+				permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
+			} catch (IllegalArgumentException e) {
+				// Caso a permissão não exista, prossegue para a próxima permissão
+				LOGGER.warn("Não foi encontrado a seguinte permissao: " + e);
+				continue;
+			}
 		}
 		return permissoes;
 	}

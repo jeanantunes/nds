@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+
 /**
  * Representação de Campos da tela de Distribuição (Cadastro de Cota)
  * 
@@ -19,7 +21,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean qtdeAutomatica;
 	private String box;
 	private String assistComercial;
-	private Long tipoEntrega;
+	private DescricaoTipoEntrega descricaoTipoEntrega;
 	private String observacao;
 	private Boolean repPorPontoVenda;
 	private Boolean solNumAtras;
@@ -43,8 +45,9 @@ public class DistribuicaoDTO implements Serializable  {
 	private BigDecimal percentualFaturamento;
 	private String inicioPeriodoCarencia;
 	private String fimPeriodoCarencia;
+	private String nomeTermoAdesao;
 	
-	private List<ItemDTO<Long, String>> tiposEntrega;
+	private List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega;
 	
 	public DistribuicaoDTO(){
 		
@@ -107,17 +110,17 @@ public class DistribuicaoDTO implements Serializable  {
 	}
 
 	/**
-	 * @return the tipoEntrega
+	 * @return the descricaoTipoEntrega
 	 */
-	public Long getTipoEntrega() {
-		return tipoEntrega;
+	public DescricaoTipoEntrega getDescricaoTipoEntrega() {
+		return descricaoTipoEntrega;
 	}
 
 	/**
-	 * @param tipoEntrega the tipoEntrega to set
+	 * @param descricaoTipoEntrega the descricaoTipoEntrega to set
 	 */
-	public void setTipoEntrega(Long tipoEntrega) {
-		this.tipoEntrega = tipoEntrega;
+	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
+		this.descricaoTipoEntrega = descricaoTipoEntrega;
 	}
 
 	/**
@@ -235,14 +238,14 @@ public class DistribuicaoDTO implements Serializable  {
 	/**
 	 * @return the tiposEntrega
 	 */
-	public List<ItemDTO<Long, String>> getTiposEntrega() {
+	public List<ItemDTO<DescricaoTipoEntrega, String>> getTiposEntrega() {
 		return tiposEntrega;
 	}
 
 	/**
 	 * @param tiposEntrega the tiposEntrega to set
 	 */
-	public void setTiposEntrega(List<ItemDTO<Long, String>> tiposEntrega) {
+	public void setTiposEntrega(List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega) {
 		this.tiposEntrega = tiposEntrega;
 	}
 
@@ -428,4 +431,18 @@ public class DistribuicaoDTO implements Serializable  {
 		this.fimPeriodoCarencia = fimPeriodoCarencia;
 	}
 	
+
+	/**
+	 * @return the nomeTermoAdesao
+	 */
+	public String getNomeTermoAdesao() {
+		return nomeTermoAdesao;
+	}
+
+	/**
+	 * @param nomeTermoAdesao the nomeTermoAdesao to set
+	 */
+	public void setNomeTermoAdesao(String nomeTermoAdesao) {
+		this.nomeTermoAdesao = nomeTermoAdesao;
+	}
 }

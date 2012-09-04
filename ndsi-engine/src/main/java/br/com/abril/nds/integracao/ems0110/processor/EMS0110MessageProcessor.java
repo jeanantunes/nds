@@ -55,11 +55,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	}
 
 	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
 	public void processMessage(Message message) {
 
 		if (verificarDistribuidor(message)) {
@@ -424,11 +419,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void posProcess() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

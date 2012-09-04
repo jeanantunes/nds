@@ -10,9 +10,13 @@ import java.util.Set;
  */
 public enum TipoParametroSistema {
 
+	PATH_SERVER_ROOT,
+	
 	PATH_IMAGENS_CAPA,
 
 	PATH_IMAGENS_PDV,
+	
+	PATH_TERMO_ADESAO,
 
 	/**
 	 * Número de dias permitido para lançamento de uma diferença de estoque do

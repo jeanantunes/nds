@@ -1,15 +1,15 @@
 package br.com.abril.nds.integracao.ems0114.processor;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Date;
 
-import org.hibernate.Query;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -20,12 +20,13 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
 public class EMS0114MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
+
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");  
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -36,180 +37,171 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	}
 
 	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
 	public void processMessage(Message message) {
 
-		// Distribuidor unico para todo sistema
-		if (verificarDistribuidor(message)) {
+		EMS0114Input input = (EMS0114Input) message.getBody();
+		if (input == null) {
+			this.ndsiLoggerFactory.getLogger().logError(
+					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
+		}
 
-			ProdutoEdicao produtoEdicao = this.findProdutoEdicao(message);
-
-			Lancamento lancamento = this.findLancamento(message);
-
-			criarLancamentoConformeInput(lancamento, produtoEdicao, message);
-
-		} else {
-
+		// Validar Distribuidor:
+		Integer codDistribuidorSistema = (Integer) message.getHeader().get(
+				MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
+		Integer codigoDistribuidorArquivo = Integer.parseInt(
+				input.getCodDistrib());
+		if (codDistribuidorSistema.longValue() != codigoDistribuidorArquivo.longValue()) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor nao encontrato.");
-			throw new RuntimeException("Distribuidor nao encontrado.");
-		}
-	}
-
-	private void criarLancamentoConformeInput(Lancamento lancamento,
-			ProdutoEdicao produtoEdicao, Message message) {
-		EMS0114Input input = (EMS0114Input) message.getBody();
-
-		if (lancamento != null) {
-
-			if (!lancamento.getProdutoEdicao().getNumeroEdicao()
-					.equals(produtoEdicao.getNumeroEdicao())) {
-
-				lancamento.setProdutoEdicao(produtoEdicao);
-				ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Produto Edicao para "
-								+ produtoEdicao.getNumeroEdicao());
-			}
-
-			if (!lancamento.getDataRecolhimentoDistribuidor().equals(
-					input.getDataRecolhimento())) {
-
-				lancamento.setDataRecolhimentoPrevista(input
-						.getDataRecolhimento());
-				ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao da Data de Recolhimento Distribuidor para "
-								+ input.getDataRecolhimento());
-			}
-
-		} else {
-
-			Calendar data = Calendar.getInstance();
-
-			lancamento = new Lancamento();
-			lancamento.setDataCriacao(data.getTime());
-			lancamento.setDataStatus(data.getTime());
-			lancamento.setReparte(BigInteger.valueOf(0));
-			lancamento.setDataLancamentoDistribuidor(data.getTime());
-			lancamento.setDataLancamentoPrevista(data.getTime());
-			lancamento.setStatus(StatusLancamento.EXPEDIDO);
-			lancamento.setProdutoEdicao(produtoEdicao);
-
-			if (produtoEdicao.isParcial()) {
-
-				lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
-
-			} else {
-
-				lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
-			}
-
-			data.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-			lancamento.setDataRecolhimentoDistribuidor(data.getTime());
-
-			lancamento.setProdutoEdicao(produtoEdicao);
-			lancamento.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-
-			getSession().persist(lancamento);
-		}
-	}
-
-	private boolean verificarDistribuidor(Message message) {
-		EMS0114Input input = (EMS0114Input) message.getBody();
-
-		Integer codigoDistribuidorSistema = (Integer) message.getHeader().get(
-				MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
-		Integer codigoDistribuidorArquivo = Integer.parseInt(input
-				.getCodDistrib());
-
-		if (codigoDistribuidorSistema.equals(codigoDistribuidorArquivo)) {
-			return true;
+					"Distribuidor nao encontrato. Código: " 
+					+ codDistribuidorSistema);
+			return;
 		}
 
-		return false;
-	}
+		// Validar Produto/Edicao
+		final String codigoProduto = input.getCodProd();
+		final Long edicao = input.getEdicao();
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+							+ codigoProduto + " e Edicao: " + edicao
+							+ " na tabela produto_edicao");
+			return;
+		}		
 
-	private ProdutoEdicao findProdutoEdicao(Message message) {
-		EMS0114Input input = (EMS0114Input) message.getBody();
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("SELECT pe FROM ProdutoEdicao pe JOIN FETCH pe.produto p ");
-		sql.append("WHERE pe.numeroEdicao = :numeroEdicao ");
-		sql.append("  AND   p.codigo = :codigo ");
-
-		Query query = this.getSession().createQuery(sql.toString());
-
-		query.setParameter("numeroEdicao", input.getEdicao());
-		query.setParameter("codigo", input.getCodProd());
-
-		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
-		if (null != produtoEdicao) {
-			return produtoEdicao;
-
-		} else {
-
-			// Não encontrou o Produto. Realiza Log
-			ndsiLoggerFactory.getLogger().logWarning(
-					message,
-					EventoExecucaoEnum.HIERARQUIA,
-					"Produto " + input.getCodProd()
-							+ " e Produto Edicao nao encontrado.");
-			throw new RuntimeException("Produto Edicao nao encontrado.");
+		
+		final Date dataGeracaoArquivo = input.getDataGeracaoArq();
+		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(
+				produtoEdicao, dataGeracaoArquivo);
+		if (lancamento == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"SEM LANCAMENTOS com RECOLHIMENTO para Produto: "
+							+ codigoProduto + " e Edicao: " + edicao);
+			return;
 		}
-	}
-
-	private Lancamento findLancamento(Message message) {
-		EMS0114Input input = (EMS0114Input) message.getBody();
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("SELECT l FROM Lancamento l ");
-		sql.append("WHERE l.dataRecolhimentoPrevista = :dataRecolhimentoPrevista ");
-
-		Query query = this.getSession().createQuery(sql.toString());
-		query.setParameter("dataRecolhimentoPrevista",
+		
+		
+		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(
+				lancamento.getDataRecolhimentoDistribuidor());
+		final Date dtRecolhimentoArquivo = this.normalizarDataSemHora(
 				input.getDataRecolhimento());
-
-		@SuppressWarnings("unchecked")
-		List<Lancamento> lancamentos = (List<Lancamento>) query.list();
-
-		Lancamento lancamento = null;
-
-		if (!lancamentos.isEmpty()) {
-
-			for (Lancamento lancamento2 : lancamentos) {
-
-				if (lancamento2.getDataRecolhimentoPrevista().equals(
-						input.getDataRecolhimento())) {
-
-					lancamento = lancamento2;
-				}
+		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
+			
+			final Date dtRecolhimentoPrevista = this.normalizarDataSemHora(
+					lancamento.getDataRecolhimentoPrevista());
+			if (!dtRecolhimentoPrevista.equals(dtRecolhimentoArquivo)) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da DATA RECOLHIMENTO PREVISTA do Produto: "
+								+ codigoProduto + " e Edicao: " + edicao
+								+ " , de: " + simpleDateFormat.format(
+										dtRecolhimentoPrevista)
+								+ "para: " + simpleDateFormat.format(
+										dtRecolhimentoArquivo));
+				lancamento.setDataRecolhimentoPrevista(dtRecolhimentoArquivo);
 			}
-
-			return lancamento;
-
-		} else {
-
-			return null;
+			
+			
+			StatusLancamento status = lancamento.getStatus();
+			if (!StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(status)
+					&& !StatusLancamento.BALANCEADO.equals(status)) {
+				
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da DATA RECOLHIMENTO DISTRIBUIDOR do Produto: "
+								+ codigoProduto + " e Edicao: " + edicao
+								+ " , de: " + simpleDateFormat.format(
+										lancamento.getDataRecolhimentoDistribuidor())
+								+ "para: " + simpleDateFormat.format(
+										dtRecolhimentoArquivo));
+				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
+				
+			}
 		}
+		
 	}
+
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
+			Long edicao) {
+
+		try {
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
+
+			criteria.createAlias("produtoEdicao.produto", "produto");
+			criteria.setFetchMode("produto", FetchMode.JOIN);
+
+			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
+			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
+
+			return (ProdutoEdicao) criteria.uniqueResult();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}	
+	
+	/**
+	 * Obtém o Lançamento com a data de recolhimento mais próximo da data de 
+	 * recolhimento desejado.
+	 *  
+	 * @param produtoEdicao
+	 * @param dataGeracaoArquivo Data de Geração do Arquivo.
+	 * 
+	 * @return
+	 */
+	private Lancamento getLancamentoRecolhimentoMaisProximo(
+			ProdutoEdicao produtoEdicao, Date dataGeracaoArquivo) {
+		
+		Criteria criteria = this.getSession().createCriteria(Lancamento.class);
+
+		criteria.add(Restrictions.gt("dataRecolhimentoPrevista", dataGeracaoArquivo));
+		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		criteria.addOrder(Order.asc("dataRecolhimentoPrevista"));
+		
+		criteria.setFetchSize(1);
+		criteria.setMaxResults(1);
+		
+		return (Lancamento) criteria.uniqueResult();
+	}
+	
+	/**
+	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
+	 * minuto, segundo e milissendo).
+	 * 
+	 * @param dt
+	 * 
+	 * @return
+	 */
+	private Date normalizarDataSemHora(Date dt) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dt);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		return cal.getTime();
+	}
+	
 	
 	@Override
 	public void posProcess() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

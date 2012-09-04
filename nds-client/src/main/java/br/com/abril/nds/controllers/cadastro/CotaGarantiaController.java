@@ -8,6 +8,7 @@ import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.CotaGarantiaDTO;
+import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -15,8 +16,11 @@ import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
@@ -30,9 +34,11 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -42,6 +48,9 @@ public class CotaGarantiaController {
 		
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
+	
+	@Autowired
+	private Validator validator;
 	
 	private Result result;
 
@@ -88,15 +97,35 @@ public class CotaGarantiaController {
 				.serialize();
 	}
 
+	@Post("/salvaOutros.json")
+	public void salvaOutros(List<GarantiaCotaOutros> listaOutros, Long idCota) throws Exception  {
+
+		cotaGarantiaService.salvaOutros(listaOutros, idCota);
+
+		result.use(Results.json())
+				.from(new ValidacaoVO(TipoMensagem.SUCCESS,
+						"Outras garantias salvas com Sucesso."), "result").recursive()
+				.serialize();
+	}
+
+	
 	@Post("/salvaCaucaoLiquida.json")
-	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws Exception {
+	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobranca) throws Exception {
+		
+		if (listaCaucaoLiquida == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Nenhum valor informado."));
+		}	
 		
 		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
-			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+		    caucaoLiquida.setAtualizacao(Calendar.getInstance());
 			validaCaucaoLiquida(caucaoLiquida);
 		}
 		
-		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota);
+		validarFormaCobranca(formaCobranca);
+		
+		formaCobranca = formatarFormaCobranca(formaCobranca);
+		
+		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota, formaCobranca);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 				"Caução Líquida salva com Sucesso."), "result").recursive()
@@ -142,13 +171,38 @@ public class CotaGarantiaController {
 				.serialize();
 	}
 
-
 	@Post("/incluirImovel.json")
 	public void incluirImovel(Imovel imovel) {
 		validaImovel(imovel);
 						
 		result.use(Results.json()).from(imovel, "imovel").serialize();
 	}
+
+	@Post("/incluirOutro.json")
+	public void incluirOutro(GarantiaCotaOutros garantiaCotaOutros) {
+		
+		validaGarantiaCotaOutros(garantiaCotaOutros);
+						
+		result.use(Results.json()).from(garantiaCotaOutros, "outro").serialize();
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -172,6 +226,154 @@ public class CotaGarantiaController {
 					"Parametros inválidos"));
 		}	
 	}
+	
+	/**
+	 * Método responsável pela validação dos dados da Forma de Cobranca.
+	 * @param formaCobranca
+	 */
+	public void validarFormaCobranca(FormaCobrancaCaucaoLiquidaDTO formaCobranca){
+
+		if(formaCobranca.getTipoCobranca()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
+		}
+		
+		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+			if (formaCobranca.getDiaDoMes()==null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
+			}
+			else{
+				if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+				}
+			}
+			
+		}
+		
+		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+			if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
+			}
+			else{
+				if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+				}
+			}
+			
+		}
+		
+		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+			if((!formaCobranca.isDomingo())&&
+			   (!formaCobranca.isSegunda())&&
+			   (!formaCobranca.isTerca())&&
+			   (!formaCobranca.isQuarta())&&
+			   (!formaCobranca.isQuinta())&&
+			   (!formaCobranca.isSexta())&&
+			   (!formaCobranca.isSabado())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
+			}
+		}
+		
+		if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
+		    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+			
+			if((formaCobranca.getNomeBanco()==null) || ("".equals(formaCobranca.getNomeBanco()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
+			}
+			if((formaCobranca.getNumBanco()==null) || ("".equals(formaCobranca.getNumBanco()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
+			}
+			
+			if((formaCobranca.getConta()==null) || ("".equals(formaCobranca.getConta()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
+			}
+			if((formaCobranca.getContaDigito()==null) || ("".equals(formaCobranca.getContaDigito()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
+			}
+			
+			if((formaCobranca.getAgencia()==null) || ("".equals(formaCobranca.getAgencia()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
+			}
+			if((formaCobranca.getAgenciaDigito()==null) || ("".equals(formaCobranca.getAgenciaDigito()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
+			}
+		}
+
+	}
+	
+	 /**
+	 *Formata os dados de FormaCobranca, apagando valores que não são compatíveis com o Tipo de Cobranca escolhido.
+	 * @param formaCobranca
+	 */
+	private FormaCobrancaCaucaoLiquidaDTO formatarFormaCobranca(FormaCobrancaCaucaoLiquidaDTO formaCobranca){
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+			formaCobranca.setDiaDoMes(null);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+			formaCobranca.setDomingo(false);
+			formaCobranca.setSegunda(false);
+			formaCobranca.setTerca(false);
+			formaCobranca.setQuarta(false);
+			formaCobranca.setQuinta(false);
+			formaCobranca.setSexta(false);
+			formaCobranca.setSabado(false);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.DIARIA){
+			formaCobranca.setDomingo(false);
+			formaCobranca.setSegunda(false);
+			formaCobranca.setTerca(false);
+			formaCobranca.setQuarta(false);
+			formaCobranca.setQuinta(false);
+			formaCobranca.setSexta(false);
+			formaCobranca.setSabado(false);
+			formaCobranca.setDiaDoMes(null);
+			formaCobranca.setPrimeiroDiaQuinzenal(null);
+			formaCobranca.setSegundoDiaQuinzenal(null);
+		}
+		
+		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+			formaCobranca.setDomingo(false);
+			formaCobranca.setSegunda(false);
+			formaCobranca.setTerca(false);
+			formaCobranca.setQuarta(false);
+			formaCobranca.setQuinta(false);
+			formaCobranca.setSexta(false);
+			formaCobranca.setSabado(false);
+			formaCobranca.setDiaDoMes(null);
+		}
+		
+		return formaCobranca;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * @param notaPromissoria para ser validado
 	 */
@@ -261,6 +463,36 @@ public class CotaGarantiaController {
 		}
 	}
 
+	/**
+	 * @param outra garantia para ser validada.
+	 */
+	private void validaGarantiaCotaOutros(GarantiaCotaOutros garantiaCotaOutros) {
+
+		List<String> listaMensagens = new ArrayList<String>();
+
+		if (StringUtil.isEmpty(garantiaCotaOutros.getDescricao())) {
+			listaMensagens
+					.add("O preenchimento do campo [Descrição] é obrigatório");
+		}
+
+		if (garantiaCotaOutros.getValor() == null) {
+			listaMensagens
+					.add("O preenchimento do campo [Valor] é obrigatório");
+		}
+
+		if (garantiaCotaOutros.getValidade() == null) {
+			listaMensagens
+					.add("O preenchimento do campo [Validade] é obrigatório");
+		}
+
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, listaMensagens));
+			
+		}
+	}
+
+	
 	/**
 	 * @param imóvel para ser validado.
 	 */

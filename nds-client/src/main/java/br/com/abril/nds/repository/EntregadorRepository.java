@@ -78,4 +78,8 @@ public interface EntregadorRepository extends Repository<Entregador, Long> {
 	 * @return
 	 */
 	public abstract boolean hasEntregador(Long codigo, Long id);
+	
+	Entregador obterEntregadorPorRota(Long idRota);
+
+	boolean verificarEntregador(Long idCota);
 }

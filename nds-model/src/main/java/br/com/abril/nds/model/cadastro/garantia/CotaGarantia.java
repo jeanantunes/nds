@@ -34,7 +34,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 @SequenceGenerator(name="COTA_GARANTIA_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
-public abstract class CotaGarantia implements Serializable{
+public abstract class CotaGarantia implements Serializable {
 	
 	
 	/**
