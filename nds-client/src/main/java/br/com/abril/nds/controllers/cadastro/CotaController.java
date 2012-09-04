@@ -1363,6 +1363,22 @@ public class CotaController {
 
 		httpResponse.flushBuffer();
 		
-	}		
+	}
+	
+	@Post
+	public void excluirArquivo(Integer numCota) {		
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema pathTermoAdesao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);		
+				
+		String path = (raiz + pathTermoAdesao.getValor() + numCota.toString() ).replace("\\", "/");
+		
+		fileService.esvaziarTemp(path);
+			
+		this.result.use(PlainJSONSerialization.class)
+			.from("", "result").recursive().serialize();
+	}
 }
 
