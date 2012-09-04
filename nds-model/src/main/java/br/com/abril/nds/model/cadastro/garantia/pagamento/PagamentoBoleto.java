@@ -1,12 +1,15 @@
 package br.com.abril.nds.model.cadastro.garantia.pagamento;
 
 import java.math.BigDecimal;
-import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+import br.com.abril.nds.model.cadastro.FormaCobrancaCaucaoLiquida;
 
 
 @Entity
@@ -14,46 +17,17 @@ import javax.persistence.Entity;
 public class PagamentoBoleto extends PagamentoCaucaoLiquida {
 
 	private static final long serialVersionUID = 2519203333658295852L;
-
+	
 	@Column(name="QNT_PARCELAS")
 	private Integer quantidadeParcelas;
 
-	@Column(name="VALOR_PARECELA")
+	@Column(name="VALOR_PARCELA")
 	private BigDecimal valorParcela;
 
-	@ElementCollection
-	private List<Integer> diasDoMes;
-
-	@ElementCollection
-	private List<Integer> diasSemana;
-
-	/**
-	 * @return the diasDoMes
-	 */
-	public List<Integer> getDiasDoMes() {
-		return diasDoMes;
-	}
-
-	/**
-	 * @param diasDoMes the diasDoMes to set
-	 */
-	public void setDiasDoMes(List<Integer> diasDoMes) {
-		this.diasDoMes = diasDoMes;
-	}
-
-	/**
-	 * @return the diasSemana
-	 */
-	public List<Integer> getDiasSemana() {
-		return diasSemana;
-	}
-
-	/**
-	 * @param diasSemana the diasSemana to set
-	 */
-	public void setDiasSemana(List<Integer> diasSemana) {
-		this.diasSemana = diasSemana;
-	}
+	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
+	@JoinColumn(name="FORMA_COBRANCA_CAUCAO_LIQUIDA_ID")
+	private FormaCobrancaCaucaoLiquida formaCobrancaCaucaoLiquida;
+	
 
 	/**
 	 * @return the quantidadeParcelas
@@ -81,6 +55,21 @@ public class PagamentoBoleto extends PagamentoCaucaoLiquida {
 	 */
 	public void setValorParcela(BigDecimal valorParcela) {
 		this.valorParcela = valorParcela;
+	}
+
+	/**
+	 * @return the formaCobrancaCaucaoLiquida
+	 */
+	public FormaCobrancaCaucaoLiquida getFormaCobrancaCaucaoLiquida() {
+		return formaCobrancaCaucaoLiquida;
+	}
+
+	/**
+	 * @param formaCobrancaCaucaoLiquida the formaCobrancaCaucaoLiquida to set
+	 */
+	public void setFormaCobrancaCaucaoLiquida(
+			FormaCobrancaCaucaoLiquida formaCobrancaCaucaoLiquida) {
+		this.formaCobrancaCaucaoLiquida = formaCobrancaCaucaoLiquida;
 	}
 
 }
