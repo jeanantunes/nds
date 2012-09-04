@@ -237,12 +237,20 @@
 	
 	//Changelog
 	
-	$(document).ready(function() {
-		
-		$("label [title=versao]").click(function() {
-			console.log($(this).html());
-			//$("#changes").load("http://177.71.255.76:8080/jenkins/job/deploy%20nds-client%20homolog/")
+	$(document).ready(function() {		
+		$("#changes").dialog({
+			resizable : false,
+			height : 230,
+			width : 400
 		});
+		$("#changes").dialog("close");
+		
+		$("#btnVersao").click(function() {
+			$("#changes")
+			.dialog( "option" ,  "title", "Changelog" )
+			.dialog( "open" );
+		});
+		
 		
 	});
 	
@@ -308,10 +316,10 @@
 						</span>
 					
 						<div class="usuario">
-							
-							<label title="versao">Versão: ${versao}</label>
-							<div id="changes"></div>
-						
+							<a href="javascript:;" id="btnVersao">
+								<label title="versao">Versão: ${versao}</label>								
+							</a>
+													
 							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 										
 							<label> <script type="text/javascript"
@@ -365,7 +373,8 @@
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
 		
-
+		<div id="changes" title="Changelog">${changes}</div>
+		
 		<div id="workspace">
 			<ul></ul>
 		</div>
