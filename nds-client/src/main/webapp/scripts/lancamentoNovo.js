@@ -174,7 +174,7 @@ var lancamentoNovoController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					cadastrarNovasDiferencas();
+					lancamentoNovoController.cadastrarNovasDiferencas();
 				},
 				"Cancelar": function() {
 					$("#gridNovasDiferencas", lancamentoNovoController.workspace).flexAddData({rows:[]});
