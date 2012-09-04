@@ -1139,7 +1139,7 @@ public class CotaController {
 	@Post
 	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) throws FileNotFoundException, IOException {
 		
-		//TODO this.validarDadosDistribuicaoCota(distribuicao);
+		this.validarDadosDistribuicaoCota(distribuicao);
 		
 		cotaService.salvarDistribuicaoCota(distribuicao);
 		
