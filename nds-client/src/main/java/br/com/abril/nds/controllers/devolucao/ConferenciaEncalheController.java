@@ -1189,10 +1189,13 @@ public class ConferenciaEncalheController {
 			
 				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
-					valorEncalhe = valorEncalhe.add(
-							conferenciaEncalheDTO.getPrecoCapa()
-							.subtract(conferenciaEncalheDTO.getDesconto())
-							.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdExemplar())));
+					BigDecimal precoCapa = conferenciaEncalheDTO.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoCapa();
+					
+					BigDecimal desconto = conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto();
+					
+					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar()); 
+					
+					valorEncalhe = valorEncalhe.add(precoCapa.subtract(desconto).multiply(qtdExemplar));
 				}
 			}
 			
