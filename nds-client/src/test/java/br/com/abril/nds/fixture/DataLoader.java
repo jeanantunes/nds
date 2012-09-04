@@ -3174,6 +3174,11 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_PDV,
 //				"\\images\\pdv\\"));	// windows;
 				"/images/pdv/"));		// linux;
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_TERMO_ADESAO,
+				"\\termo_adesao\\"));	// windows;
+//				"/termo_adesao/"));		// linux;
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));

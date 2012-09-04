@@ -21,16 +21,16 @@
 <form action="<c:url value='/cadastro/cota/uploadTermoAdesao' />" id="formUploadTermoAdesao"
 		  method="post" enctype="multipart/form-data" >		
 				
-		<input type="hidden" id="numCotaUpload" name="numCota" value="1" />
 		<input type="hidden" name="formUploadAjax" value="true" />
-		<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
+		<input type="hidden" id="numCotaUpload" name="numCota" value="true" />
+		<input name="uploadedFile" type="file" id="uploadedFile" size="40" onchange="DISTRIB_COTA.submitForm('formUploadTermoAdesao')" />
 </form>
     
     
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td colspan="2"><a href="javascript:;">nome_do_arquivo</a> <a href="javascript:;"><img src="../images/ico_excluir.gif" alt="Excluir arquivo" width="15" height="15" border="0" /></a></td>
+    <td colspan="2"><a href="javascript:;" onclick="DISTRIB_COTA.downloadTermo()">nome_do_arquivo</a> <a href="javascript:;"><img src="../images/ico_excluir.gif" alt="Excluir arquivo" width="15" height="15" border="0" /></a></td>
   </tr>
   <tr>
     <td>Percentual Faturamento:</td>

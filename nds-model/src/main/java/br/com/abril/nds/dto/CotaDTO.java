@@ -105,7 +105,7 @@ public class CotaDTO implements Serializable {
 	private String natural;
 	
 	private String descricaoBox;
-	
+		    	
 	private Collection<CotaProprietarioDTO> proprietarios = new ArrayList<CotaProprietarioDTO>();
 	
 	private boolean alteracaoTitularidade;
@@ -620,4 +620,5 @@ public class CotaDTO implements Serializable {
 	public void setAlteracaoTitularidade(boolean isAlteracaoTitularidade) {
 		this.alteracaoTitularidade = isAlteracaoTitularidade;
 	}
+
 }

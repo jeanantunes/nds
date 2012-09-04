@@ -154,6 +154,20 @@ function Distribuicao(tela) {
 		D.$("tipoEntrega").sortOptions();
 	},
 	
+	this.submitForm = function(idForm) {
+		
+		$('#' + idForm).submit();
+	},
+	
+	this.downloadTermo = function(idCota) {
+		
+		document.location.assign(contextPath + "/cadastro/cota/downloadFoto?numeroCota=" + MANTER_COTA.numeroCota);
+	},
+	
+	this.tratarRetornoUploadTermoAdesao = function(result) {
+		alert('Retornado com sucesso');
+	},
+	
 	/**
 	 * Atribui valor a um campo da tela
 	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false
@@ -230,6 +244,12 @@ function Distribuicao(tela) {
 		D.$("fimPeriodoCarenciaEntregador").mask("99/99/9999");
 		
 		D.$("percentualFaturamentoEntregador").mask("99.99");
+		
+		var options = {
+				success: D.tratarRetornoUploadTermoAdesao,
+		    };
+		
+		$('#formUploadTermoAdesao').ajaxForm(options);
 	});
 }
 

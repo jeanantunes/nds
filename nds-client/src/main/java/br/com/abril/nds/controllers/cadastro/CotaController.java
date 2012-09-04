@@ -2,8 +2,9 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,6 +27,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
+import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.DistribuicaoDTO;
@@ -39,6 +42,7 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -76,6 +80,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
@@ -95,6 +101,8 @@ public class CotaController {
 	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecoRemoverSessaoCota";
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
+	
+	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
 	@Autowired
 	private Result result;
@@ -137,6 +145,9 @@ public class CotaController {
 	
 	@Autowired
 	private ServletContext servletContext;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService; 
 
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
@@ -542,9 +553,9 @@ public class CotaController {
 
 			return cotaDTO;
 		}
-
+		
 		Long idCota = cotaService.salvarCota(cotaDTO);
-
+						
 		return cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 	}
 	
@@ -1112,7 +1123,9 @@ public class CotaController {
 	@Post
 	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) {
 		
-		this.validarDadosDistribuicaoCota(distribuicao);
+		//TODO this.validarDadosDistribuicaoCota(distribuicao);
+		
+		distribuicao.setTermoAdesao((ArquivoDTO) session.getAttribute(TERMO_ADESAO));		
 		
 		cotaService.salvarDistribuicaoCota(distribuicao);
 		
@@ -1295,12 +1308,79 @@ public class CotaController {
 	
 	@Post
 	public void uploadTermoAdesao(UploadedFile uploadedFile, Integer numCota) {		
-
-		session.setAttribute("termoDeAdesao", uploadedFile);					
 		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema pathTermoAdesao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
+		
+		String path = (raiz + pathTermoAdesao.getValor() + "/" + numCota.toString() ).replace("\\", "/");
+		
+		ArquivoDTO arquivo = new ArquivoDTO(
+				uploadedFile.getFile(), 
+				uploadedFile.getFileName(), 
+				path);
+		
+		session.setAttribute(TERMO_ADESAO,  arquivo);					
+			
 		this.result.use(PlainJSONSerialization.class)
-			.from("", "result").recursive().serialize();
+			.from(" ", "result").recursive().serialize();
 	}
 	
+	@Get
+	@Rules(Permissao.ROLE_CADASTRO_COTA)
+	public void downloadFoto(Integer numeroCota) throws Exception {
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema pathTermoAdesao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);		
+				
+		String path = (raiz + pathTermoAdesao.getValor() + numeroCota.toString() ).replace("\\", "/");
+		
+		File pasta =  new File(path);
+		
+		File arquivo = pasta.listFiles()[0];
+		
+		String contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(arquivo);
+		
+		byte[] b = IOUtils.toByteArray(new FileInputStream(arquivo));
+
+		this.httpResponse.setContentType(contentType);
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + arquivo.getName());
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(b);
+
+		httpResponse.flushBuffer();
+		
+	}
+	
+	public Download getImageCheque(Integer numeroCota) throws FileNotFoundException, IOException {	
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema pathTermoAdesao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);		
+				
+		String path = (raiz + pathTermoAdesao.getValor() + "/" + numeroCota.toString() ).replace("\\", "/");
+		
+		File pasta =  new File(path);
+		
+		File arquivo = pasta.listFiles()[0];
+		
+		String contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(arquivo);
+		
+		byte[] buff;
+		
+		buff = IOUtils.toByteArray(new FileInputStream(arquivo));
+		
+		if (buff == null) {
+			buff = new byte[0];			
+		}
+		
+		return new ByteArrayDownload(buff, contentType, arquivo.getName());
+	}
+		
 }
 

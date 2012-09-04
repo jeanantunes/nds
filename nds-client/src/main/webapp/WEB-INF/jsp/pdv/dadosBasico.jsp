@@ -8,7 +8,8 @@
 	<br />
 	
 		
-		<input type="hidden" name="formUploadAjax" value="true" />			
+			<input type="hidden" name="formUploadAjax" value="true" />
+			
 		<input name="uploadedFile" type="file" id="uploadedFile" size="40" />
 										
 	

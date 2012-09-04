@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,10 +17,12 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -69,6 +73,7 @@ import br.com.abril.nds.repository.EnderecoPDVRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
@@ -166,6 +171,8 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
+	@Autowired
+	ParametroSistemaRepository parametroSistemaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -728,13 +735,18 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
 		parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
 		parametros.setTaxaFixa(dto.getTaxaFixa());
-		parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
-		parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
-		parametros.setFimPeriodoCarencia(DateUtil.parseDataPTBR(dto.getFimPeriodoCarencia()));
+		
+		//TODO
+		//parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
+		//parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
+		//parametros.setFimPeriodoCarencia(DateUtil.parseDataPTBR(dto.getFimPeriodoCarencia()));
 		
 		cota.setParametroDistribuicao(parametros);
 		
-		cotaRepository.merge(cota);
+		cotaRepository.merge(cota);		
+
+		if(dto.getTermoAdesao() != null)
+			atualizaTermoAdesao(dto.getTermoAdesao());
 	}
 	
 
@@ -923,10 +935,55 @@ public class CotaServiceImpl implements CotaService {
 	    if(incluirPDV){
 	    	persisteDadosPDV(cota, cotaDto);
 	    }
-	
+	   
 	    return cota.getId();
 	}
 	
+	@Transactional
+	public void atualizaTermoAdesao(ArquivoDTO arquivo) {
+		
+		File fileDir = new File(arquivo.getPath());		
+		
+
+		if(fileDir.exists()) {
+			
+		 	for (String temp : fileDir.list()) {
+		 		(new File(fileDir, temp)).delete();
+		 	}
+
+			fileDir.delete();
+		}
+
+		fileDir.mkdirs();
+
+		File fileArquivo = new File(fileDir, arquivo.getNomeArquivo());				
+		
+		FileOutputStream fos = null;
+		
+		try {
+						
+			fos = new FileOutputStream(fileArquivo);
+			
+			IOUtils.copyLarge(arquivo.getArquivo(), fos);
+			
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+				"Falha ao gravar o arquivo em disco!");
+		
+		} finally {
+			try { 
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (Exception e) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+					"Falha ao fechar gravação de arquivo em disco!");
+			}
+		}
+		
+	}
+
 	/**
 	 * Valida os dados referente histórico cota base
 	 * @param cotaDto
@@ -1762,6 +1819,5 @@ public class CotaServiceImpl implements CotaService {
 		
 		return enderecoAssociacaoCadastrado;
 	}
-
 	
 }

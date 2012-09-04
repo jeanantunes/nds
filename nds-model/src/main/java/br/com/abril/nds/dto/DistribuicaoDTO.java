@@ -43,6 +43,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private BigDecimal percentualFaturamento;
 	private String inicioPeriodoCarencia;
 	private String fimPeriodoCarencia;
+	private ArquivoDTO termoAdesao;
 	
 	private List<ItemDTO<Long, String>> tiposEntrega;
 	
@@ -428,4 +429,18 @@ public class DistribuicaoDTO implements Serializable  {
 		this.fimPeriodoCarencia = fimPeriodoCarencia;
 	}
 	
+
+	/**
+	 * @return the termoAdesao
+	 */
+	public ArquivoDTO getTermoAdesao() {
+		return termoAdesao;
+	}
+
+	/**
+	 * @param termoAdesao the termoAdesao to set
+	 */
+	public void setTermoAdesao(ArquivoDTO termoAdesao) {
+		this.termoAdesao = termoAdesao;
+	}
 }

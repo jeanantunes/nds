@@ -162,6 +162,8 @@
 						</tr>
 					</table>
 				</div>
+				
+				<jsp:include page="entregaEmBanca.jsp"/>
 
 				<br />
 

@@ -1,9 +1,12 @@
 package br.com.abril.nds.service;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
@@ -259,5 +262,7 @@ public interface CotaService {
 
 	byte[] getDocumentoProcuracao(Integer numeroCota, String nomeProcurador, String rgProcurador,
 			String estadoCivilProcurador, String nacionalidadeProcurador) throws Exception;
+
+	void atualizaTermoAdesao(ArquivoDTO arquivo);
 	
 }
