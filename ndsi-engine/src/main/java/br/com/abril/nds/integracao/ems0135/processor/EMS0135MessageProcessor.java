@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,21 +50,37 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		EMS0135Input input = (EMS0135Input) message.getBody();
 		if (input == null) {
-			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
 			return;
 		}
 		
-		validarDistribuidor(message, input);
 		
-		ProdutoEdicao produtoEdicao = obterProdutoEdicao(input);
-		
-		if(produtoEdicao == null){			
-			
-			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Produto não encontrado.");
-
-			throw new RuntimeException("Produto não encontrado.");
+		// Validar código do distribuidor:
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		if(!distribuidor.getCodigoDistribuidorDinap().equals(
+				input.getDistribuidor().toString())){			
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
+			return;
 		}
+		
+		
+		// Validar Produto/Edicao
+		final Integer codigoProduto = input.getCodigoProduto();
+		final Integer edicao = input.getEdicao();
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+							+ codigoProduto + " e Edicao: " + edicao
+							+ " na tabela produto_edicao");
+			return;
+		}
+
 		
 		NotaFiscalEntrada notafiscalEntrada = obterNotaFiscal(input.getNotaFiscal());
 		
@@ -168,22 +185,33 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
-	private ProdutoEdicao obterProdutoEdicao(EMS0135Input input) {
-		
-		String hql = "from ProdutoEdicao produtoEdicao " 
-				   + " join fetch produtoEdicao.produto " 
-				   + " where produtoEdicao.produto.codigo = :codigoProduto "
-				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao";
-		
-		Query query = super.getSession().createQuery(hql);
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(Integer codigoPublicacao,
+			Integer edicao) {
 
-		query.setParameter("codigoProduto", input.getCodigoProduto().toString());
-		query.setParameter("numeroEdicao", new Long(input.getEdicao()));
-		
-		query.setMaxResults(1);
-		
-		return (ProdutoEdicao) query.uniqueResult();
-		
+		try {
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
+
+			criteria.createAlias("produtoEdicao.produto", "produto");
+			criteria.setFetchMode("produto", FetchMode.JOIN);
+
+			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
+			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
+
+			return (ProdutoEdicao) criteria.uniqueResult();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
@@ -217,17 +245,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		return (CFOP) criteria.uniqueResult();
 	}
 
-	private void validarDistribuidor(Message message, EMS0135Input input) {
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getDistribuidor().toString())){			
-		
-			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código do distribuidor do arquivo não é o mesmo do arquivo.");
-
-			throw new RuntimeException("Distribuidor incorreto.");
-		}
-		
-	}
 
 	@Override
 	public void posProcess() {
