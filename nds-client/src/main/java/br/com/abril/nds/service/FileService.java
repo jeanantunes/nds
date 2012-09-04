@@ -3,8 +3,11 @@ package br.com.abril.nds.service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import br.com.abril.nds.dto.ArquivoDTO;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 public interface FileService {
 
@@ -51,4 +54,17 @@ public interface FileService {
 	 * Obtém nome do arquivo temporario salvo
 	 */
 	String obterNomeArquivoTemp(String dirBase);
+	
+	/**
+	 * Valida o tamanho e o tipo do arquivo de acordo com os parametros.
+	 * Quando arquivo for inválido lança uma ValidacaoException
+	 * 
+	 * @param maxSize - tamanho maximo em Megabytes (MB)
+	 * @param extensoes - lista de extensões permitidas
+	 * @param file - arquivo
+	 * 
+	 * @throws IOException 
+	 * 
+	 */
+	void validarArquivo(int maxSize, UploadedFile file, FileType... extensoes) throws IOException;
 }

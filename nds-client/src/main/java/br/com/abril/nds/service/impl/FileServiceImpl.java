@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -13,13 +14,20 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.dto.ArquivoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 @Service
 public class FileServiceImpl implements FileService {
 
 	private static final String TEMP_DIR = "temp";
 	private static final String REAL_DIR = "real";
+	private final static int MB =  1024 * 1024;
+	
 	
 	@Override
 	public void resetTemp(String dirBase) throws IOException {
@@ -171,4 +179,34 @@ public class FileServiceImpl implements FileService {
 		else
 			return arquivo.getName();
 	}
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.FileService#validarArquivo(int, java.util.List, br.com.caelum.vraptor.interceptor.multipart.UploadedFile)
+	 */
+	@Override
+	public void validarArquivo(int maxSize, UploadedFile file, FileType... extensoes) throws IOException {
+
+		InputStream inputStream = file.getFile();
+		int tamanhoArquivo = inputStream.available();
+		
+		int tamanhoMaximo = maxSize*MB;
+		
+		if (tamanhoMaximo < tamanhoArquivo) 
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Arquivo excedeu o tamanho limite de "+tamanhoMaximo+"MB"));
+		
+		boolean valido = false;
+		
+		for(FileType extensao : extensoes) {
+			
+			if(extensao.getContentType().equals(file.getContentType())) {
+				valido = true;
+				break;
+			}
+		}
+		
+		if(!valido)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Formato de arquivo inválido"));
+		
+		
+	}
+
 }
