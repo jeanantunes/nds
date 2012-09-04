@@ -48,6 +48,11 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	public void processMessage(Message message) {
 		
 		EMS0135Input input = (EMS0135Input) message.getBody();
+		if (input == null) {
+			this.ndsiLoggerFactory.getLogger().logError(
+					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
+		}
 		
 		validarDistribuidor(message, input);
 		
