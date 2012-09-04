@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -60,6 +63,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -85,6 +89,7 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -174,6 +179,9 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	ParametroSistemaRepository parametroSistemaRepository;
 	
+	@Autowired
+	FileService fileService;
+		
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaDTO> obterCotas(FiltroCotaDTO filtro) {
@@ -696,7 +704,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional
-	public void salvarDistribuicaoCota(DistribuicaoDTO dto) {
+	public void salvarDistribuicaoCota(DistribuicaoDTO dto) throws FileNotFoundException, IOException {
 		
 		if(dto==null || dto.getNumCota()==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
@@ -757,8 +765,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		cotaRepository.merge(cota);		
 
-		if(dto.getTermoAdesao() != null)
-			atualizaTermoAdesao(dto.getTermoAdesao());
+		atualizaTermoAdesao(cota.getNumeroCota().toString());
 	}
 	
 
@@ -952,9 +959,20 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	@Transactional
-	public void atualizaTermoAdesao(ArquivoDTO arquivo) {
+	public void atualizaTermoAdesao(String numCota) throws FileNotFoundException, IOException {
 		
-		File fileDir = new File(arquivo.getPath());		
+		
+		ParametroSistema raiz = 
+				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_SERVER_ROOT);					
+		
+		ParametroSistema pathTermoAdesao = 
+				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
+		
+		String path = (raiz.getValor() + pathTermoAdesao.getValor() + numCota).replace("\\", "/");
+		
+		fileService.persistirTemporario(path);
+		
+		/*File fileDir = new File(arquivo.getPath());		
 		
 
 		if(fileDir.exists()) {
@@ -992,7 +1010,7 @@ public class CotaServiceImpl implements CotaService {
 				throw new ValidacaoException(TipoMensagem.ERROR,
 					"Falha ao fechar gravação de arquivo em disco!");
 			}
-		}
+		}*/
 		
 	}
 
@@ -1826,5 +1844,6 @@ public class CotaServiceImpl implements CotaService {
 		
 		return enderecoAssociacaoCadastrado;
 	}
+
 	
 }

@@ -1,10 +1,8 @@
 package br.com.abril.nds.controllers.cadastro;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -60,6 +57,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -81,8 +79,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
-import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
@@ -150,6 +146,9 @@ public class CotaController {
 	@Autowired
 	private ParametroSistemaService parametroSistemaService; 
 
+	@Autowired
+	private FileService fileService;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
 	@Path("/")
@@ -1106,13 +1105,27 @@ public class CotaController {
 	 * Carrega dados de Distribuição da cota
 	 * 
 	 * @param idCota - Código da cota
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 	@Post
-	public void carregarDistribuicaoCota(Long idCota) {
+	public void carregarDistribuicaoCota(Long idCota) throws FileNotFoundException, IOException {
 		
 		DistribuicaoDTO dto = cotaService.obterDadosDistribuicaoCota(idCota);
 		
 		dto.setTiposEntrega(gerarTiposEntrega());
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema pathTermoAdesao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
+		
+		String path = (raiz + pathTermoAdesao.getValor() + dto.getNumCota().toString() ).replace("\\", "/");
+				
+		fileService.resetTemp(path);
+		
+		dto.setNomeTermoAdesao(fileService.obterNomeArquivoTemp(path));
+		
 		
 		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
@@ -1120,13 +1133,13 @@ public class CotaController {
 	/**
 	 * Persiste no banco os dados de Distribuição da cota
 	 * @param distribuicao - DTO que representa os dados de distribuição da cota
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 	@Post
-	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) {
+	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) throws FileNotFoundException, IOException {
 		
 		//TODO this.validarDadosDistribuicaoCota(distribuicao);
-		
-		distribuicao.setTermoAdesao((ArquivoDTO) session.getAttribute(TERMO_ADESAO));		
 		
 		cotaService.salvarDistribuicaoCota(distribuicao);
 		
@@ -1310,29 +1323,26 @@ public class CotaController {
 	}
 	
 	@Post
-	public void uploadTermoAdesao(UploadedFile uploadedFile, Integer numCota) {		
+	public void uploadTermoAdesao(UploadedFile uploadedFile, Integer numCota) throws IOException {		
+		
+		if(uploadedFile==null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Nenhum arquivo foi selecionado."));
 		
 		String raiz = servletContext.getRealPath("") ;
 		
 		ParametroSistema pathTermoAdesao = 
 				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
 		
-		String path = (raiz + pathTermoAdesao.getValor() + "/" + numCota.toString() ).replace("\\", "/");
+		String path = (raiz + pathTermoAdesao.getValor() + numCota.toString() ).replace("\\", "/");
 		
-		ArquivoDTO arquivo = new ArquivoDTO(
-				uploadedFile.getFile(), 
-				uploadedFile.getFileName(), 
-				path);
-		
-		session.setAttribute(TERMO_ADESAO,  arquivo);					
+		fileService.setArquivoTemp(path, uploadedFile.getFileName(), uploadedFile.getFile());
 			
 		this.result.use(PlainJSONSerialization.class)
-			.from(" ", "result").recursive().serialize();
+			.from(uploadedFile.getFileName(), "result").recursive().serialize();
 	}
 	
 	@Get
-	@Rules(Permissao.ROLE_CADASTRO_COTA)
-	public void downloadFoto(Integer numeroCota) throws Exception {
+	public void downloadTermo(Integer numeroCota) throws Exception {
 		
 		String raiz = servletContext.getRealPath("") ;
 		
@@ -1340,50 +1350,21 @@ public class CotaController {
 				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);		
 				
 		String path = (raiz + pathTermoAdesao.getValor() + numeroCota.toString() ).replace("\\", "/");
+				
+		ArquivoDTO dto = fileService.obterArquivoTemp(path);
 		
-		File pasta =  new File(path);
-		
-		File arquivo = pasta.listFiles()[0];
-		
-		String contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(arquivo);
-		
-		byte[] b = IOUtils.toByteArray(new FileInputStream(arquivo));
+		byte[] b = IOUtils.toByteArray(dto.getArquivo());
 
-		this.httpResponse.setContentType(contentType);
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + arquivo.getName());
+		((FileInputStream)dto.getArquivo()).close();
+		
+		this.httpResponse.setContentType(dto.getContentType());
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + dto.getNomeArquivo());
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);
 
 		httpResponse.flushBuffer();
 		
-	}
-	
-	public Download getImageCheque(Integer numeroCota) throws FileNotFoundException, IOException {	
-		
-		String raiz = servletContext.getRealPath("") ;
-		
-		ParametroSistema pathTermoAdesao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);		
-				
-		String path = (raiz + pathTermoAdesao.getValor() + "/" + numeroCota.toString() ).replace("\\", "/");
-		
-		File pasta =  new File(path);
-		
-		File arquivo = pasta.listFiles()[0];
-		
-		String contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(arquivo);
-		
-		byte[] buff;
-		
-		buff = IOUtils.toByteArray(new FileInputStream(arquivo));
-		
-		if (buff == null) {
-			buff = new byte[0];			
-		}
-		
-		return new ByteArrayDownload(buff, contentType, arquivo.getName());
-	}
-		
+	}		
 }
 

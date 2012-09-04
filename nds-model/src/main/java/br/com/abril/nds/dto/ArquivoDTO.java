@@ -3,23 +3,25 @@ package br.com.abril.nds.dto;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import javax.activation.MimetypesFileTypeMap;
+
 public class ArquivoDTO implements Serializable {
 
 	private static final long serialVersionUID = 2355174705466848188L;
 
 	private InputStream arquivo;
 	private String nomeArquivo;	
-	private String path;
+	private String contentType;
 	
 	public ArquivoDTO() {
 		
 	}
 	
-	public ArquivoDTO(InputStream arquivo, String nomeArquivo, String path) {
+	public ArquivoDTO(InputStream arquivo, String nomeArquivo, String contentType) {
 		super();
 		this.arquivo = arquivo;
 		this.nomeArquivo = nomeArquivo;
-		this.path = path;
+		this.contentType = contentType;
 	}
 	/**
 	 * @return the arquivo
@@ -45,18 +47,18 @@ public class ArquivoDTO implements Serializable {
 	public void setNomeArquivo(String nomeArquivo) {
 		this.nomeArquivo = nomeArquivo;
 	}
+
 	/**
-	 * @return the path
+	 * @return the contentType
 	 */
-	public String getPath() {
-		return path;
+	public String getContentType() {
+		return contentType;
 	}
+
 	/**
-	 * @param path the path to set
+	 * @param contentType the contentType to set
 	 */
-	public void setPath(String path) {
-		this.path = path;
-	}
-	
-		
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}		
 }

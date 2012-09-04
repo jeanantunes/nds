@@ -3224,7 +3224,11 @@ public class DataLoader {
 		merge(session, Fixture.parametroSistema(3L, TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com"));
 		merge(session, Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10"));
 		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
-
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_SERVER_ROOT,
+				"C:\\WORKSPACE_NDS\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\nds-client"));	// windows;
+//				"???"));					// linux;
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA,
 //				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
 				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;

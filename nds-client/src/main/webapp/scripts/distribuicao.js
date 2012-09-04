@@ -162,15 +162,20 @@ function Distribuicao(tela) {
 	this.submitForm = function(idForm) {
 		
 		$('#' + idForm).submit();
+		
+		$("#uploadTermo").empty();
+		
+		$("#uploadTermo").append(
+				'<input name="uploadedFile" type="file" id="uploadedFile" size="40" onchange="DISTRIB_COTA.submitForm(\'formUploadTermoAdesao\')" />');
 	},
 	
 	this.downloadTermo = function(idCota) {
 		
-		document.location.assign(contextPath + "/cadastro/cota/downloadFoto?numeroCota=" + MANTER_COTA.numeroCota);
+		document.location.assign(contextPath + "/cadastro/cota/downloadTermo?numeroCota=" + MANTER_COTA.numeroCota);
 	},
 	
 	this.tratarRetornoUploadTermoAdesao = function(result) {
-		alert('Retornado com sucesso');
+		//alert('Retornado com sucesso');
 	},
 	
 	/**
