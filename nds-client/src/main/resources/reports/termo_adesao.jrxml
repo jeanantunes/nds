@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="termo_adesao" pageWidth="555" pageHeight="802" columnWidth="515" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="151"/>
+	<parameter name="infoComp" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Projetos\\Abril\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="porcentagemDebito" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[porcentagemDebito]]></fieldDescription>
+	</field>
+	<field name="cidadeEntrega" class="java.lang.String">
+		<fieldDescription><![CDATA[cidadeEntrega]]></fieldDescription>
+	</field>
+	<field name="logradouroEntrega" class="java.lang.String">
+		<fieldDescription><![CDATA[logradouroEntrega]]></fieldDescription>
+	</field>
+	<field name="valorDebito" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorDebito]]></fieldDescription>
+	</field>
+	<field name="numeroCota" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
+	</field>
+	<field name="nomeCota" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeCota]]></fieldDescription>
+	</field>
+	<field name="referenciaEndereco" class="java.lang.String">
+		<fieldDescription><![CDATA[referenciaEndereco]]></fieldDescription>
+	</field>
+	<field name="bairroEntrega" class="java.lang.String">
+		<fieldDescription><![CDATA[bairroEntrega]]></fieldDescription>
+	</field>
+	<field name="CEPEntrega" class="java.lang.String">
+		<fieldDescription><![CDATA[CEPEntrega]]></fieldDescription>
+	</field>
+	<field name="nomeDistribuidor" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeDistribuidor]]></fieldDescription>
+	</field>
+	<field name="horariosFuncionamento" class="java.util.Set">
+		<fieldDescription><![CDATA[horariosFuncionamento]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="68" height="35"/>
+				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_login.png").toURI().getPath()]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="515" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="20" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TERMO DE ADESÃO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="420" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="515" height="240"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="html">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new String(
+new String(
+"Cota: "+ $F{numeroCota} + " - " + $F{nomeCota} +"<br/><br/><br/>"+
+"Eu, <b>" + $F{nomeCota}.toUpperCase() + "</b>, proprietário da cota acima na Distribuidora "+ $F{nomeDistribuidor} +", concordo em receber meu " +
+"reparte e devolver meu encalhe diretamente na banca - Serviço de Entrega da Distribuidora - e autorizo o lançamento do débito <u>semanal</u> "+
+"em minha conta no valor " + ($F{valorDebito} != null ? "<b><u>R$ " + $F{valorDebito} + "</u></b>": "referente à <b><u>" + $F{porcentagemDebito} +
+"%</u></b>") + " do meu faturamento <u>com base em cálculo no faturamento preço capa</u>.<br/><br/><br/>"+
+"O Serviço de Entrega contrato será realizado no endereço abaixo:<br/> Rua"+
+$F{logradouroEntrega} + "," + $F{bairroEntrega} + " - " + $F{cidadeEntrega} + " - CEP: " + $F{CEPEntrega} + ".<br/>" +
+"Referência de Entrega: "+ $F{referenciaEndereco} +"."
+).getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="326" width="513" height="94"/>
+				<textElement markup="html">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{infoComp}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="240" width="515" height="86"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{horariosFuncionamento})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "termo_adesao_horarios.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="16" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="0" width="216" height="32"/>
+				<textElement/>
+				<text><![CDATA[_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _            Local e data]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="264" y="0" width="251" height="32"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n Assinatura " + $F{nomeCota}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1110,13 +1110,26 @@ public class CotaController {
 	}
 	
 	@Get
-	@Path("/imprimeProcuracao")
 	public void imprimeProcuracao(Integer numeroCota) throws Exception{
 		
 		byte[] arquivo = this.cotaService.getDocumentoProcuracao(numeroCota);
 
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=procuracao.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(arquivo);
+
+		httpResponse.flushBuffer();
+	}
+	
+	@Get
+	public void imprimeTermoAdesao(Integer numeroCota, BigDecimal taxa, BigDecimal percentual) throws Exception{
+		
+		byte[] arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, taxa, percentual);
+
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=termo_adesao.pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(arquivo);

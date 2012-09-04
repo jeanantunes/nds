@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -258,5 +259,6 @@ public interface CotaService {
 	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
 
 	byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
-	
+
+	byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception;
 }
