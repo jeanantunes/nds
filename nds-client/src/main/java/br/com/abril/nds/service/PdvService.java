@@ -91,10 +91,21 @@ public interface PdvService {
 	
     /**
      * Obtém a lista de PDV's associados ao histórico de titularidade da cota
-     * @param filtro filtro com os parâmetros para consulta dos PDV's  
-     * @return {@link List<PdvDTO>} com os PDV's associados ao 
-     * histórico de titularidade da cota
+     * 
+     * @param filtro
+     *            filtro com os parâmetros para consulta dos PDV's
+     * @return {@link List<PdvDTO>} com os PDV's associados ao histórico de
+     *         titularidade da cota
      */
     List<PdvDTO> obterPdvsHistoricoTitularidade(FiltroPdvDTO filtro);
     
+    /**
+     * Obtém o PDV associado ao histórico de titularidade da cota
+     * @param idPdv
+     *            identificador do PDV associado ao histórico de titularidade da
+     *            cota
+     * @return {@link PdvDTO} com as informações do PDV associado ao histórico
+     *         de titularidade da cota
+     */
+    PdvDTO obterPdvHistoricoTitularidade(Long idPdv);
 }

@@ -9,7 +9,6 @@ import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -258,10 +257,6 @@ public interface CotaService {
 	 */
 	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
 
-<<<<<<< HEAD
-	byte[] getDocumentoProcuracao(Integer numeroCota, String nomeProcurador, String rgProcurador,
-	        String estadoCivilProcurador, String nacionalidadeProcurador) throws Exception;
-
 	/**
      * Obtém o histórico de titularidade da cota de acordo com o identificador
      * da cota e o identificador do histórico
@@ -290,13 +285,7 @@ public interface CotaService {
      * histórico de titularidade da cota
      */
     List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico);
-    
 
-
-    
-    
-=======
 	byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
 	
->>>>>>> DGBti/master
 }

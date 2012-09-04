@@ -3421,6 +3421,10 @@ public class Fixture {
         pdv.setEmail("emaildosuperpdvdoaristotles@localhost");
         pdv.setPontoReferencia("Logo ali");
         pdv.setDentroOutroEstabelecimento(true);
+        
+        pdv.setTipoEstabelecimentoPDV(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(10), "Supermercado"));
+        
         CaracteristicasPDV caracteristicas = new CaracteristicasPDV();
         caracteristicas.setPontoPrincipal(true);
         caracteristicas.setPossuiComputador(true);

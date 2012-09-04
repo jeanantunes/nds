@@ -189,6 +189,10 @@ function montarComboBoxCustomJson(result, incluirTodos) {
 	return options;
 }
 
+function newOption(value, label) {
+    return "<option value='" + value + "'>" + label + "</option>"
+}
+
 function replaceAll(string, token, newtoken) {
 	while (string.indexOf(token) != -1) {
  		string = string.replace(token, newtoken);

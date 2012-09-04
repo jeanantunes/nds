@@ -53,4 +53,14 @@ public interface PdvRepository extends Repository<PDV, Long> {
      *         titularidade da cota
      */
 	List<HistoricoTitularidadeCotaPDV> obterPDVsHistoricoTitularidade(FiltroPdvDTO filtro);
+
+    /**
+     * Recupera o PDV associado ao histórico de titularidade da cota
+     * 
+     * @param idPdv
+     *            identificador do PDV associado ao histórico de titularidade da cota
+     * @return {@link HistoricoTitularidadeCotaPDV} associado ao histórico de
+     *         titularidade da cota
+     */
+	HistoricoTitularidadeCotaPDV obterPDVHistoricoTitularidade(Long idPdv);
 }

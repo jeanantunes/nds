@@ -16,16 +16,14 @@ var PDV =  $.extend(true, {
 			PDV.inicializarGeradorFluxo();
 			PDV.inicializarMap();
             PDV.modoTela = ModoTela.CADASTRO_COTA;
-
 		},
 
          //Define o modo da tela
          definirModoTela : function(modoTela) {
         	 PDV.modoTela = modoTela;
-             var readonly = ModoTela.HISTORICO_TITULARIDADE == PDV.modoTela;
-             ENDERECO_PDV.definirReadonly(readonly);
-             TELEFONE_PDV.definirReadonly(readonly);
-              if (readonly) {
+             ENDERECO_PDV.definirReadonly(PDV.isReadOnly());
+             TELEFONE_PDV.definirReadonly(PDV.isReadOnly());
+              if (PDV.isReadOnly()) {
                  $('#PDVbtnNovo', this.workspace).hide();
                  $('#PDVbtnAdicionarDiasFuncionamento', this.workspace).hide();
                  $('#idBtnExcluir', this.workspace).hide();
@@ -42,6 +40,14 @@ var PDV =  $.extend(true, {
                  PDV.fecharModalCadastroPDV = false;
              }
          },
+         
+     	isModoTelaCadastroCota : function() {
+    		return PDV.modoTela == ModoTela.CADASTRO_COTA;
+    	},
+    	
+    	isReadOnly : function() {
+    		return !PDV.isModoTelaCadastroCota();
+    	},
 		
 		inicializarMap : function() {
 			$("select[name='selectMap']", this.workspace).multiSelect("select[name='selectMaterialPromocional']", {trigger: "#linkMapVoltarTodos"});
@@ -88,18 +94,16 @@ var PDV =  $.extend(true, {
 			
 			// Monta as colunas com os inputs do grid
 			$.each(resultado.rows, function(index, row) {
-                var readonly = ModoTela.HISTORICO_TITULARIDADE == PDV.modoTela;
-
 				var param = '\'' + row.cell.idPdv +'\','+'\''+ row.cell.idCota +'\'';
 
-                var title = readonly ? 'Visualizar PDV' : 'Editar Endereço';
+                var title = PDV.isReadOnly() ? 'Visualizar PDV' : 'Editar Endereço';
 
 				var linkEdicao = '<a href="javascript:;" onclick="PDV.editarPDV('+ param +');" style="cursor:pointer">' +
 					 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="'+title+'" />' +
 					 '</a>';
 
                 var linkExclusao = '';
-                if (!readonly) {
+                if (!PDV.isReadOnly()) {
                     linkExclusao ='<a href="javascript:;" onclick="PDV.exibirDialogExclusao('+param +' );" style="cursor:pointer">' +
                         '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir PDV" />' +
                         '</a>';
@@ -142,8 +146,14 @@ var PDV =  $.extend(true, {
 			$("#sitePDV", this.workspace).val(result.pdvDTO.site);
 			$("#emailPDV", this.workspace).val(result.pdvDTO.email);
 			$("#pontoReferenciaPDV", this.workspace).val(result.pdvDTO.pontoReferencia);
-			$("#selectTipoEstabelecimento", this.workspace).val(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo);
-			$("#selectTamanhoPDV", this.workspace).val(result.pdvDTO.tamanhoPDV);
+			if (PDV.isModoTelaCadastroCota()) {
+                PDV.carregarTiposEstabelecimento(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo);
+            }else {
+                var option =  newOption(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo,
+                    result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.descricao);
+                $("#selectTipoEstabelecimento", this.workspace).html(option);
+            }
+            $("#selectTamanhoPDV", this.workspace).val(result.pdvDTO.tamanhoPDV);
 			$("#qntFuncionarios", this.workspace).val(result.pdvDTO.qtdeFuncionarios);
 			$("#sistemaIPV", this.workspace).attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
 			$("#porcentagemFaturamento", this.workspace).val(result.pdvDTO.porcentagemFaturamento);
@@ -260,14 +270,14 @@ var PDV =  $.extend(true, {
 			PDV.mostra_expositor("#expositor");
 		},
 		
-		editarPDV:function (idPdv,idCota,index){
+		editarPDV:function (idPdv,idCota){
 			
 			PDV.limparCamposTela();
 			
 			$.postJSON(contextPath + "/cadastro/pdv/editar",
-					[{name:"idPdv",value:idPdv},
-					 {name:"idCota",value:idCota}
-					 ], function(result){
+					[{name:"idPdv", value:idPdv},
+					 {name:"idCota", value:idCota},
+					 {name:"modoTela", value: PDV.modoTela.value}], function(result){
 				PDV.fecharModalCadastroPDV = false;
 				PDV.carregarDadosEdicao(result);
 				
@@ -535,10 +545,15 @@ var PDV =  $.extend(true, {
 				 var as = (row.descTipoPeriodo == '24 horas' ? '':' as ');
 				 tr.append("<td width='100'>"+ row.inicio + as + row.fim +"</td>");
 								 
-				 tr.append("<td width='227'>"+
-				 			"<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent(),"+index+");'" +
-				 			" href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
-				 			"width='15' height='15' border='0'/></a></td>");
+				 if (PDV.isModoTelaCadastroCota()) {
+					 tr.append("<td width='227'>"+
+							 "<a onclick='PDV.removerDiasFuncionamento($(this).parent().parent(),"+index+");'" +
+							 " href='javascript:;'><img src='"+contextPath+"/images/ico_excluir.gif' alt='Excluir'" +
+					 "width='15' height='15' border='0'/></a></td>");
+				 } else {
+                     tr.append("<td width='227'/>");
+                 }
+				 
 			      
 				 $('#listaDiasFuncionais', this.workspace).append(tr);
 			});
@@ -886,7 +901,20 @@ var PDV =  $.extend(true, {
 							$("#selectMap", this.workspace).html(combo);
 							$("#selectMap", this.workspace).sortOptions();
 			},null,true,"idModalPDV");
-		},				
+		},
+
+        carregarTiposEstabelecimento:function(selected){
+            $.postJSON(contextPath + "/cadastro/pdv/carregarTiposEstabelecimento",
+                null,
+                function(result){
+                    var combo =  montarComboBox(result, false);
+                    $("#selectTipoEstabelecimento", this.workspace).html(combo);
+                    $("#selectTipoEstabelecimento", this.workspace).sortOptions();
+                    if (selected) {
+                        $("#selectTipoEstabelecimento", this.workspace).val(selected);
+                    }
+                },null,true,"idModalPDV");
+        },
 		
 		carregarGeradorFluxoNotIn:function(data){
 			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxoNotIn",

@@ -260,4 +260,16 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 	    }
 	    return query.list();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HistoricoTitularidadeCotaPDV obterPDVHistoricoTitularidade(Long idPdv) {
+        Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
+        String hql = "from HistoricoTitularidadeCotaPDV pdv where pdv.id = :idPdv ";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("idPdv", idPdv);
+        return (HistoricoTitularidadeCotaPDV) query.uniqueResult();
+    }
 }

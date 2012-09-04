@@ -158,7 +158,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void testobterPDVsHistoricoTitularidadeOrdernacaoNome() {
+	public void testObterPDVsHistoricoTitularidadeOrdernacaoNome() {
 	    FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
 	    HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
 	    
@@ -170,7 +170,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-    public void testobterPDVsHistoricoTitularidadeOrdernacaoContato() {
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoContato() {
         FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
         HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
     
@@ -182,7 +182,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
     }
 	
 	@Test
-    public void testobterPDVsHistoricoTitularidadeOrdernacaoEndereco() {
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoEndereco() {
         FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
         HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
     
@@ -194,7 +194,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
     }
 	
 	@Test
-    public void testobterPDVsHistoricoTitularidadeOrdernacaoTelefone() {
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoTelefone() {
         FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
         HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
     
@@ -206,7 +206,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
     }
 	
 	@Test
-    public void testobterPDVsHistoricoTitularidadeOrdernacaoFaturamento() {
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoFaturamento() {
         FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
         HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
     
@@ -218,7 +218,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
     }
 	
 	@Test
-    public void testobterPDVsHistoricoTitularidadeOrdernacaoStatus() {
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoStatus() {
         FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
         HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
     
@@ -230,7 +230,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
     }
 	
 	@Test
-    public void testobterPDVsHistoricoTitularidadeOrdernacaoTipoPonto() {
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoTipoPonto() {
         FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
         HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
     
@@ -242,7 +242,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
     }
 	
 	@Test
-    public void testobterPDVsHistoricoTitularidadeOrdernacaoPrincipal() {
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoPrincipal() {
         FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
         HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
     
@@ -251,6 +251,16 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
         Assert.assertNotNull(pdvs);
         Assert.assertTrue(pdvs.size() == 1);
         Assert.assertEquals(expected, pdvs.get(0));
+    }
+	
+	
+	@Test
+    public void testObterPDVHistoricoTitularidade() {
+	    HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+	    
+        HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(expected.getId());
+        Assert.assertNotNull(pdv);
+        Assert.assertEquals(expected, pdv);
     }
 
 }

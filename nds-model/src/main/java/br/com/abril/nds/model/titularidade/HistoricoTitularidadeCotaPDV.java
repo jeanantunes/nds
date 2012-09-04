@@ -120,6 +120,15 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
      */
     @Column(name = "DENTRO_OUTRO_ESTABELECIMENTO")
     private boolean dentroOutroEstabelecimento;
+    
+    /**
+     *  Tipo de estabelecimento ao qual o PDV está inserido
+     */
+    @Embedded
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_TIPO_ESTABELECIMENTO_PDV")),
+            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_TIPO_ESTABELECIMENTO_PDV")) })
+    private HistoricoTitularidadeCotaCodigoDescricao tipoEstabelecimentoPDV;
 
     /**
      * Flag indicando se o pdv possui arrendatário
@@ -430,6 +439,21 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
      */
     public void setDentroOutroEstabelecimento(boolean dentroOutroEstabelecimento) {
         this.dentroOutroEstabelecimento = dentroOutroEstabelecimento;
+    }
+    
+    /**
+     * @return the tipoEstabelecimentoPDV
+     */
+    public HistoricoTitularidadeCotaCodigoDescricao getTipoEstabelecimentoPDV() {
+        return tipoEstabelecimentoPDV;
+    }
+
+    /**
+     * @param tipoEstabelecimentoPDV the tipoEstabelecimentoPDV to set
+     */
+    public void setTipoEstabelecimentoPDV(
+            HistoricoTitularidadeCotaCodigoDescricao tipoEstabelecimentoPDV) {
+        this.tipoEstabelecimentoPDV = tipoEstabelecimentoPDV;
     }
 
     /**

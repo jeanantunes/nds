@@ -23,8 +23,6 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
-import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
-import br.com.abril.nds.dto.TipoPontoPDVDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
@@ -34,7 +32,6 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -165,6 +162,12 @@ public class PdvController {
 	public void carregarPeriodoFuncionamento(){
 		
 		result.use(Results.json()).from(gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV.values()), "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/carregarTiposEstabelecimento")
+	public void carregarTipoEstabelecimento() {
+	    result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoEstabelecimentoAssociacaoPDV()), "result").recursive().serialize();
 	}
 
 	/**
@@ -347,36 +350,24 @@ public class PdvController {
 		
 	@Post
 	@Path("/editar")
-	public void editarPDV(Long idPdv, Long idCota){
-		
+	public void editarPDV(Long idPdv, Long idCota, ModoTela modoTela){
 		limparDadosSessao();
 
-		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
+	    PdvDTO dto = null;
 		
-		carregarTelefonesPDV(idPdv, idCota);
-		
-		carregarEndercosPDV(idPdv, idCota);
-		
-		tratarPathImagem(dto);
-		
-		if(dto!= null){
-			
-			if(dto.getTamanhoPDV() == null){
-				dto.setTipoPontoPDV(new TipoPontoPDVDTO());
-			}
-			
-			if(dto.getTipoEstabelecimentoAssociacaoPDV() == null){
-				dto.setTipoEstabelecimentoAssociacaoPDV(new TipoEstabelecimentoAssociacaoPDV());
-			}
-			
-			if(dto.getTipoLicencaMunicipal()== null){
-				dto.setTipoLicencaMunicipal(new TipoLicencaMunicipalDTO());
-			}
-			
-			if(dto.getTipoPontoPDV() == null){
-				dto.setTipoPontoPDV(new TipoPontoPDVDTO());
-			}
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+		    dto = pdvService.obterPDV(idCota, idPdv);
+		    
+		    carregarTelefonesPDV(idPdv, idCota);
+		    
+		    carregarEndercosPDV(idPdv, idCota);
+		    
+		    tratarPathImagem(dto);
+		    
+		} else {
+		    dto = pdvService.obterPdvHistoricoTitularidade(idPdv);
 		}
+		
 			
 		result.use(Results.json()).from(dto).recursive().serialize();
 	}

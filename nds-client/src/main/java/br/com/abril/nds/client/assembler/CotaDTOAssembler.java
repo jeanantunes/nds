@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
+import br.com.abril.nds.dto.TipoEstabelecimentoAssociacaoPDVDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
 import br.com.abril.nds.dto.TipoPontoPDVDTO;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -180,77 +181,134 @@ public class CotaDTOAssembler {
     public static Collection<PdvDTO> toPdvDTOCollection(Collection<HistoricoTitularidadeCotaPDV> pdvs) {
         List<PdvDTO> dtos = new ArrayList<PdvDTO>(pdvs.size());
         for (HistoricoTitularidadeCotaPDV pdv : pdvs) {
-            PdvDTO dto = new PdvDTO();
-            dto.setStatusPDV(pdv.getStatus());
-            dto.setDataInicio(pdv.getDataInclusao());
-            dto.setNomePDV(pdv.getNome());
-            dto.setContato(pdv.getContato());
-            dto.setSite(pdv.getSite());
-            dto.setEmail(pdv.getEmail());
-            dto.setPontoReferencia(pdv.getPontoReferencia());
-            dto.setDentroOutroEstabelecimento(pdv.isDentroOutroEstabelecimento());
-            dto.setArrendatario(pdv.isArrendatario());
-            dto.setTamanhoPDV(pdv.getTamanhoPDV());
-            dto.setSistemaIPV(pdv.isPossuiSistemaIPV());
-            dto.setQtdeFuncionarios(pdv.getQtdeFuncionarios());
-            dto.setPorcentagemFaturamento(pdv.getPorcentagemFaturamento());
-            HistoricoTitularidadeCotaCodigoDescricao tipoLicencaMunicipal = pdv.getTipoLicencaMunicipal();
-            if (tipoLicencaMunicipal != null) {
-                dto.setTipoLicencaMunicipal(new TipoLicencaMunicipalDTO(tipoLicencaMunicipal.getCodigo(), tipoLicencaMunicipal
-                                .getDescricao()));
-                dto.setNomeLicenca(pdv.getNomeLicencaMunicipal());
-                dto.setNumeroLicenca(pdv.getNumeroLicencaMunicipal());
-            }
-            CaracteristicasPDV caracteristicas = pdv.getCaracteristicas();
-            if (caracteristicas != null) {
-                CaracteristicaDTO caracteristicaDTO = new CaracteristicaDTO();
-                dto.setPrincipal(caracteristicas.isPontoPrincipal());
-                caracteristicaDTO.setBalcaoCentral(caracteristicas.isBalcaoCentral());
-                caracteristicaDTO.setTemComputador(caracteristicas.isPossuiComputador());
-                caracteristicaDTO.setLuminoso(caracteristicas.isPossuiLuminoso());
-                caracteristicaDTO.setTextoLuminoso(caracteristicas.getTextoLuminoso());
-                caracteristicaDTO.setPossuiCartao(caracteristicas.isPossuiCartaoCredito());
-                dto.setCaracteristicaDTO(caracteristicaDTO);
-            }
-            
-            Collection<HistoricoTitularidadeCotaFuncionamentoPDV> periodos = pdv.getPeriodos();
-            List<PeriodoFuncionamentoDTO> periodosDTO = new ArrayList<PeriodoFuncionamentoDTO>(periodos.size());
-            for (HistoricoTitularidadeCotaFuncionamentoPDV periodo : periodos) {
-                String inicio = DateUtil.formatarHoraMinuto(periodo.getHorarioInicio());
-                String fim = DateUtil.formatarHoraMinuto(periodo.getHorarioFim());
-                TipoPeriodoFuncionamentoPDV tipo = periodo.getTipoPeriodoFuncionamentoPDV();
-                PeriodoFuncionamentoDTO periodoDTO = new PeriodoFuncionamentoDTO(tipo, inicio, fim);
-                periodosDTO.add(periodoDTO);
-            }
-            dto.setPeriodosFuncionamentoDTO(periodosDTO);
-            dtos.add(dto);
-            
-            HistoricoTitularidadeCotaEndereco enderecoPrincipal = pdv
-                    .getEnderecoPrincipal();
-            if (enderecoPrincipal != null) {
-                dto.setEndereco(String.format(FORMATO_ENDERECO,
-                        enderecoPrincipal.getLogradouro(),
-                        enderecoPrincipal.getNumero(),
-                        enderecoPrincipal.getBairro(),
-                        enderecoPrincipal.getCidade()));
-            }
-            
-            HistoricoTitularidadeCotaTelefone telefonePrincipal = pdv
-                    .getTelefonePrincipal();
-            if (telefonePrincipal != null) {
-                dto.setTelefone(String.format(FORMATO_TELEFONE,
-                        telefonePrincipal.getDdd(),
-                        telefonePrincipal.getNumero()));
-            }
-            
-            HistoricoTitularidadeCotaCodigoDescricao tipoPonto = pdv.getTipoPonto();
-            if (tipoPonto != null) {
-                TipoPontoPDVDTO tipoPontoDTO = new TipoPontoPDVDTO(tipoPonto.getCodigo(), tipoPonto.getDescricao());
-                dto.setTipoPontoPDV(tipoPontoDTO);
-                dto.setDescricaoTipoPontoPDV(tipoPonto.getDescricao());
-            }
+            dtos.add(toPdvDTO(pdv));
         }
         return dtos;
+    }
+
+
+    /**
+     * Cria o {@link PdvDTO} com as informações da instância de
+     * {@link HistoricoTitularidadeCotaPDV}
+     * 
+     * @param pdv
+     *            {@link HistoricoTitularidadeCotaPDV} para a criação do DTO
+     * @return {@link PdvDTO} com as informações
+     */
+    public static PdvDTO toPdvDTO(HistoricoTitularidadeCotaPDV pdv) {
+        PdvDTO dto = new PdvDTO();
+        dto.setIdCota(pdv.getHistoricoTitularidadeCota().getId());
+        dto.setId(pdv.getId());
+        dto.setStatusPDV(pdv.getStatus());
+        dto.setDataInicio(pdv.getDataInclusao());
+        dto.setNomePDV(pdv.getNome());
+        dto.setContato(pdv.getContato());
+        dto.setSite(pdv.getSite());
+        dto.setEmail(pdv.getEmail());
+        dto.setPontoReferencia(pdv.getPontoReferencia());
+        
+        dto.setDentroOutroEstabelecimento(pdv.isDentroOutroEstabelecimento());
+        HistoricoTitularidadeCotaCodigoDescricao tipoEstabelecimento = pdv.getTipoEstabelecimentoPDV();
+        if (tipoEstabelecimento != null) {
+            TipoEstabelecimentoAssociacaoPDVDTO tipoEstabelecimentoDTO = new TipoEstabelecimentoAssociacaoPDVDTO(
+                    tipoEstabelecimento.getCodigo(),
+                    tipoEstabelecimento.getDescricao());
+            dto.setTipoEstabelecimentoAssociacaoPDV(tipoEstabelecimentoDTO);
+        }
+        
+        dto.setArrendatario(pdv.isArrendatario());
+        dto.setTamanhoPDV(pdv.getTamanhoPDV());
+        dto.setSistemaIPV(pdv.isPossuiSistemaIPV());
+        dto.setQtdeFuncionarios(pdv.getQtdeFuncionarios());
+        dto.setPorcentagemFaturamento(pdv.getPorcentagemFaturamento());
+        HistoricoTitularidadeCotaCodigoDescricao tipoLicencaMunicipal = pdv
+                .getTipoLicencaMunicipal();
+        if (tipoLicencaMunicipal != null) {
+            dto.setTipoLicencaMunicipal(new TipoLicencaMunicipalDTO(
+                    tipoLicencaMunicipal.getCodigo(), tipoLicencaMunicipal
+                            .getDescricao()));
+            dto.setNomeLicenca(pdv.getNomeLicencaMunicipal());
+            dto.setNumeroLicenca(pdv.getNumeroLicencaMunicipal());
+        }
+        
+        HistoricoTitularidadeCotaCodigoDescricao tipoPonto = pdv.getTipoPonto();
+        if (tipoPonto != null) {
+            TipoPontoPDVDTO tipoPontoDTO = new TipoPontoPDVDTO(
+                    tipoPonto.getCodigo(), tipoPonto.getDescricao());
+            dto.setTipoPontoPDV(tipoPontoDTO);
+            dto.setDescricaoTipoPontoPDV(tipoPonto.getDescricao());
+        }
+        
+        CaracteristicasPDV caracteristicas = pdv.getCaracteristicas();
+        if (caracteristicas != null) {
+            CaracteristicaDTO caracteristicaDTO = new CaracteristicaDTO();
+            dto.setPrincipal(caracteristicas.isPontoPrincipal());
+            caracteristicaDTO.setBalcaoCentral(caracteristicas
+                    .isBalcaoCentral());
+            caracteristicaDTO.setTemComputador(caracteristicas
+                    .isPossuiComputador());
+            caracteristicaDTO.setLuminoso(caracteristicas.isPossuiLuminoso());
+            caracteristicaDTO.setTextoLuminoso(caracteristicas
+                    .getTextoLuminoso());
+            caracteristicaDTO.setPossuiCartao(caracteristicas
+                    .isPossuiCartaoCredito());
+            
+            HistoricoTitularidadeCotaCodigoDescricao areaInfluencia = pdv.getAreaInfluencia();
+            if (areaInfluencia != null) {
+                caracteristicaDTO.setAreaInfluencia(areaInfluencia.getCodigo());
+            }
+            if (tipoPonto != null) {
+                caracteristicaDTO.setTipoPonto(tipoPonto.getCodigo());
+            }
+            caracteristicaDTO.setTipoCaracteristicaSegmentacaoPDV(pdv.getTipoCaracteristica());
+            dto.setCaracteristicaDTO(caracteristicaDTO);
+        }
+
+        Collection<HistoricoTitularidadeCotaFuncionamentoPDV> periodos = pdv
+                .getPeriodos();
+        List<PeriodoFuncionamentoDTO> periodosDTO = new ArrayList<PeriodoFuncionamentoDTO>(
+                periodos.size());
+        for (HistoricoTitularidadeCotaFuncionamentoPDV periodo : periodos) {
+            String inicio = DateUtil.formatarHoraMinuto(periodo
+                    .getHorarioInicio());
+            String fim = DateUtil.formatarHoraMinuto(periodo.getHorarioFim());
+            TipoPeriodoFuncionamentoPDV tipo = periodo
+                    .getTipoPeriodoFuncionamentoPDV();
+            PeriodoFuncionamentoDTO periodoDTO = new PeriodoFuncionamentoDTO(
+                    tipo, inicio, fim);
+            periodosDTO.add(periodoDTO);
+        }
+        dto.setPeriodosFuncionamentoDTO(periodosDTO);
+
+        HistoricoTitularidadeCotaEndereco enderecoPrincipal = pdv
+                .getEnderecoPrincipal();
+        if (enderecoPrincipal != null) {
+            dto.setEndereco(String.format(FORMATO_ENDERECO,
+                    enderecoPrincipal.getLogradouro(),
+                    enderecoPrincipal.getNumero(),
+                    enderecoPrincipal.getBairro(),
+                    enderecoPrincipal.getCidade()));
+        }
+
+        HistoricoTitularidadeCotaTelefone telefonePrincipal = pdv
+                .getTelefonePrincipal();
+        if (telefonePrincipal != null) {
+            dto.setTelefone(String.format(FORMATO_TELEFONE,
+                    telefonePrincipal.getDdd(), telefonePrincipal.getNumero()));
+        }
+        
+        HistoricoTitularidadeCotaCodigoDescricao geradorFluxoPrincipal = pdv.getGeradorFluxoPrincipal();
+        if (geradorFluxoPrincipal != null) {
+            dto.setGeradorFluxoPrincipal(geradorFluxoPrincipal.getCodigo());
+        }
+        for (HistoricoTitularidadeCotaCodigoDescricao gfs : pdv.getGeradoresFluxoSecundarios()) {
+            dto.addGeradorFluxoSecundario(gfs.getCodigo());
+        }
+        
+        for (HistoricoTitularidadeCotaCodigoDescricao mp : pdv.getMateriais()) {
+            dto.addMaterialPromocional(mp.getCodigo());
+        }
+        return dto;
     }
  
 }
