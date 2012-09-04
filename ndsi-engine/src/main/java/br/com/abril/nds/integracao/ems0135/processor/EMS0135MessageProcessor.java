@@ -82,8 +82,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		}
 
 		
-		NotaFiscalEntrada notafiscalEntrada = obterNotaFiscal(input.getNotaFiscal());
-		
+		NotaFiscalEntrada notafiscalEntrada = obterNotaFiscal(
+				input.getNotaFiscal());
 		if(notafiscalEntrada == null){
 			salvarNotaFiscalEntrada(input, produtoEdicao);			
 		}else{
@@ -92,7 +92,24 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		
 	}
+	
+	private BigDecimal calcularValorBruto() {
+		return BigDecimal.ZERO;
+	}
+	
+	private BigDecimal calcularValorLiquido() {
+		return BigDecimal.ZERO;
+	}
+	
+	private BigDecimal calcularValorDesconto() {
+		return BigDecimal.ZERO;
+	}
 
+	private BigDecimal calcularValorUnitario() {
+		return BigDecimal.ZERO;
+	}
+	
+	
 	private void salvarNotaFiscalEntrada(EMS0135Input input, ProdutoEdicao produtoEdicao) {
 		
 		
