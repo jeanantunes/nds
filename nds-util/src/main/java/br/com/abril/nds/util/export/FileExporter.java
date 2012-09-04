@@ -132,8 +132,15 @@ public class FileExporter {
 		
 		PDF(".pdf", "application/pdf"),
 		XLS(".xls", "application/vnd.ms-excel"),
-		XML(".xml", "text/xml");
-		
+		XML(".xml", "text/xml"),
+		DOC(".doc", "application/msword"),
+		DOCX(".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+		JPG(".jpg", "image/vnd.sealedmedia.softseal.jpg"),
+		JPEG(".jpeg", "image/jpeg"),
+		PNG(".png", "image/png"),
+		GIF(".gif", "image/gif"),
+		BMP(".bmp", "image/vnd.wap.wbmp");
+
 		private String extension;
 		
 		private String contentType;

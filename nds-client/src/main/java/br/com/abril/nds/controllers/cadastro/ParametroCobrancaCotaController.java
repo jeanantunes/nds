@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -37,6 +39,7 @@ import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
+import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -44,6 +47,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -80,6 +84,9 @@ public class ParametroCobrancaCotaController {
 	private Validator validator;	
 	
 	@Autowired
+	private FileService fileService;
+	
+	@Autowired
 	private EntregadorService entregadorService;
 	
 	@Autowired
@@ -97,6 +104,7 @@ public class ParametroCobrancaCotaController {
     private static List<ItemDTO<Long,String>> listaFornecedores =  new ArrayList<ItemDTO<Long,String>>();
     
     private static List<ItemDTO<TipoCota,String>> listaTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
+    
     
     
     /**
@@ -522,11 +530,15 @@ public class ParametroCobrancaCotaController {
     
 	
 	@Post
-	public void uploadContratoAnexo(UploadedFile uploadedFile, String numeroCota) {
+	public void uploadContratoAnexo(UploadedFile uploadedFile, String numeroCota) throws IOException {
 		
-		if (uploadedFile == null) {
+		if (uploadedFile == null) 
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Falha ao carregar arquivo!"));
-		}
+		
+		this.fileService.validarArquivo(1, 
+				uploadedFile,
+				FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, 
+				FileType.JPEG, FileType.JPG, FileType.PNG);
 		
 		ContratoVO contrato = new ContratoVO();
 		
@@ -593,6 +605,7 @@ public class ParametroCobrancaCotaController {
 			if(arquivo != null && arquivo.delete()) {
 				
 				contrato.setTempFile(null);
+				contrato.setRecebido(false);
 			}
 		}
 		
