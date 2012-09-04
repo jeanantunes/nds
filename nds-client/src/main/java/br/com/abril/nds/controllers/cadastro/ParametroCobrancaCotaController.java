@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -58,6 +59,9 @@ public class ParametroCobrancaCotaController {
 	
 	@Autowired
 	private Validator validator;	
+	
+	@Autowired
+	private EntregadorService entregadorService;
     
     private HttpServletResponse httpResponse;
 	
@@ -543,5 +547,9 @@ public class ParametroCobrancaCotaController {
 		
 	}
 	
-	
+	@Post
+	public void verificarEntregador(Long idCota){
+		
+		result.use(Results.json()).from(this.entregadorService.verificarEntregador(idCota), "result").serialize();
+	}
 }

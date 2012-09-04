@@ -106,49 +106,51 @@
 				</table>
 
 				<div class="divConteudoEntregador">
-					<table width="399" border="0" cellspacing="1" cellpadding="1">
-						<tr>
-							<td width="130">Utiliza Procuração?</td>
-							<td width="20">
-								<input type="checkbox" id="${param.tela}utilizaProcuracao"
-									   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaProcuracao()" />
-								<td width="245" height="39" class="procuracaoPf">
-									<div class="divUtilizaProcuracao">
-										<span class="bt_imprimir">
-											<a href="javascript:;" target="_blank"
-											   onclick="DISTRIB_COTA.imprimeProcuracao();">Procuração</a>
-										</span>
-									</div>
-								</td>
-						</tr>
-					</table>
-						
-					<div class="divUtilizaProcuracao">
+					<div id="cotaTemEntregador" style="display: none;">
 						<table width="399" border="0" cellspacing="1" cellpadding="1">
 							<tr>
-								<td width="130">Procuração Recebida?</td>
-								<td width="265">
-									<input type="checkbox" id="${param.tela}procuracaoRecebida"
-										   onclick="DISTRIB_COTA.mostrarEsconderDivProcuracaoRecebida()" />
-								</td>
+								<td width="130">Utiliza Procuração?</td>
+								<td width="20">
+									<input type="checkbox" id="${param.tela}utilizaProcuracao"
+										   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaProcuracao()" />
+									<td width="245" height="39" class="procuracaoPf">
+										<div class="divUtilizaProcuracao">
+											<span class="bt_imprimir">
+												<a href="javascript:;" target="_blank"
+												   onclick="DISTRIB_COTA.imprimeProcuracao();">Procuração</a>
+											</span>
+										</div>
+									</td>
 							</tr>
 						</table>
-						<div class="divProcuracaoRecebida">
+							
+						<div class="divUtilizaProcuracao">
 							<table width="399" border="0" cellspacing="1" cellpadding="1">
 								<tr>
-									<td width="130">Arquivo:</td>
+									<td width="130">Procuração Recebida?</td>
 									<td width="265">
-										<input name="fileField" type="file"
-											   id="fileField" size="15" />
-									</td>
-								</tr>
-								<tr>
-									<td width="130">&nbsp;</td>
-									<td width="265">
-										<a href="javascript:;">nome_do_arquivo</a>
+										<input type="checkbox" id="${param.tela}procuracaoRecebida"
+											   onclick="DISTRIB_COTA.mostrarEsconderDivProcuracaoRecebida()" />
 									</td>
 								</tr>
 							</table>
+							<div class="divProcuracaoRecebida">
+								<table width="399" border="0" cellspacing="1" cellpadding="1">
+									<tr>
+										<td width="130">Arquivo:</td>
+										<td width="265">
+											<input name="fileField" type="file"
+												   id="fileField" size="15" />
+										</td>
+									</tr>
+									<tr>
+										<td width="130">&nbsp;</td>
+										<td width="265">
+											<a href="javascript:;">nome_do_arquivo</a>
+										</td>
+									</tr>
+								</table>
+							</div>
 						</div>
 					</div>
 					<table width="399" border="0" cellspacing="1" cellpadding="1">
