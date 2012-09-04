@@ -30,9 +30,14 @@ $(function(){
 	width: 430px !important;
 }
 
-#parametroCobrancaFileField, .form-suspensao-hidden-class, .form-contrato-hidden-class {
+.form-contrato-hidden-class {
+	visibility: hidden;
+}
+
+.parametroCobrancaFileField, .form-suspensao-hidden-class {
 	display: none;
 }
+
 
 #dialog-unificacao fieldset {
 	width: 440px !important;
@@ -115,7 +120,8 @@ $(function(){
 									<td width="20%">Dt. Início:</td>
 									<td width="19%">
 									<input type="text" name="dateInicio" class="dataInputMask"
-										id="parametroCobrancaDateInicio" style="width: 70px;"></td>
+										id="parametroCobrancaDateInicio" style="width: 70px;" 
+										onblur="parametroCobrancaCotaController.calcularDataTermino()"></td>
 									<td width="23%">Dt. Término:</td>
 									<td width="38%"><input type="text" name="dateTermino" class="dataInputMask"
 										id="parametroCobrancaDateTermino" style="width: 70px;"></td>
@@ -123,16 +129,35 @@ $(function(){
 								<tr>
 									<td>Recebido?</td>
 									<td>
-										<input type="checkbox" name="checkbox" id="checkbox" 
-												onclick="parametroCobrancaCotaController.exibe_form_upload(this.checked)">
+										
+											<input type="checkbox" name="checkbox" id="parametroCobrancaIsRecebidoCheckBox" 
+													onclick="parametroCobrancaCotaController.exibe_form_upload(this.checked)">
+										
 									</td>
 									<td>&nbsp;</td>
 									<td>&nbsp;</td>
 								</tr>
 								<tr>
-									<td>Procurar:</td>
+									<td> <span class="parametroCobrancaFileField">Procurar:</span></td>
 									<td colspan="3">
-										<input name="fileField" type="file"	id="parametroCobrancaFileField" size="30"></td>
+										<form id="parametroCobrancaFormUpload" 
+											  action="<c:url value='/cota/parametroCobrancaCota/uploadContratoAnexo' />"
+										 	  method="post" 
+										 	  enctype="multipart/form-data">
+										 	  
+										 	  <input type="hidden" name="formUploadAjax" value="true" />
+										 	  
+											  <input id="parametroCobrancaFormUploadFile" name="uploadedFile" type="file" 
+													onchange="parametroCobrancaCotaController.uploadContratoAnexo();" 
+													class="parametroCobrancaFileField" size="30">
+											  
+											  <input id="parametroCobrancaNumeroCota" type="hidden" name="numeroCota" />
+										</form>	
+									</td>
+								</tr>
+								<tr>
+									<td></td>
+									<td id="parametroCobrancaArquivo"></td>
 								</tr>
 							</tbody>
 						</table>
