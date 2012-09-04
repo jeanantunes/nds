@@ -403,8 +403,7 @@
 	                 
 	                 
                  </div>
-                 
-                 
+                        
                  
                  <div name="divFormaDeposito" id="divFormaDeposito">
                  </div>
@@ -416,12 +415,12 @@
                  
                  <div name="divFormaDesconto" id="divFormaDesconto">
                  </div>
-                 
-                
+                        
             </tbody>
             
         </table>
 	</fieldset>
+	
 	
 	
     <br clear="all">
@@ -429,26 +428,29 @@
     <br>
     
     
-    <tr>
-       <td width="110">Valor Inicial R$:</td>
-    
-       <td width="150">
-          <input type="text" name="cotaGarantiaCaucaoLiquidaValor" id="cotaGarantiaCaucaoLiquidaValor" style="width:150px; text-align:right;">
-       </td>
-       
-       <td width="270">
-          <a id="cotaGarantiaCaucaoLiquidaIncluir" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Incluir" width="16" height="16" border="0"></a>
-       </td>
-        
-       <td width="203">
-           <span class="bt_confirmar_novo" title="Confirmar">
-        	   <a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;">
-        		   <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_negociar.png">Resgatar Valor Cau&ccedil;&atilde;o
-        	   </a>
-           </span>
-       </td>
-    </tr>
+    <table>
+	    <tr>
+	       <td width="110">Valor Inicial R$:</td>
+	    
+	       <td width="150">
+	          <input type="text" name="cotaGarantiaCaucaoLiquidaValor" id="cotaGarantiaCaucaoLiquidaValor" style="width:150px; text-align:right;">
+	       </td>
+	       
+	       <td width="270">
+	          <a id="cotaGarantiaCaucaoLiquidaIncluir" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Incluir" width="16" height="16" border="0"></a>
+	       </td>
+	        
+	       <td width="203">
+	           <span class="bt_confirmar_novo" title="Confirmar">
+	        	   <a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;">
+	        		   <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_negociar.png">Resgatar Valor Cau&ccedil;&atilde;o
+	        	   </a>
+	           </span>
+	       </td>
+	    </tr>
+    </table>
             
+     
     
     <fieldset>
     	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
@@ -457,6 +459,62 @@
     		<table id="cotaGarantiaCaucaoLiquidaGrid"></table>
         </div>
 	</fieldset>
+	
+	
+	<br clear="all">
+    
+    <br>
+    
+	
+	<fieldset>
+    	<legend>Cau&ccedil;&atilde;o Depositada na Conta</legend>
+    	
+   	    <div id="divDadosBancarios">
+
+			<div name="formularioDadosDeposito" id="formularioDadosDeposito">
+
+				<table width="558" border="0" cellspacing="2" cellpadding="2">
+
+					<tr>
+						<td colspan="4"><strong>Dados Bancários - Cota:</strong></td>
+					</tr>
+
+					<tr>
+						<td width="88">Num. Banco:</td>
+						<td width="120"><input maxlength="25" type="text"
+							id="numBanco" name="numBanco" style="width: 60px;" /></td>
+						<td width="47">Nome:</td>
+						<td width="277"><input maxlength="40" type="text"
+							id="nomeBanco" name="nomeBanco" style="width: 150px;" /></td>
+					</tr>
+
+					<tr>
+						<td>Agência:</td>
+						<td><input maxlength="17" type="text" id="agencia"
+							name="agencia" style="width: 60px;" /> - <input maxlength="1"
+							type="text" id="agenciaDigito" name="agenciaDigito"
+							style="width: 30px;" /></td>
+						<td>Conta:</td>
+						<td><input maxlength="17" type="text" id="conta"
+							name="conta" style="width: 60px;" /> - <input maxlength="1"
+							type="text" id="contaDigito" name="contaDigito"
+							style="width: 30px;" /></td>
+					</tr>
+
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+
+				</table>
+
+			</div>
+
+		</div>
+	</fieldset>
+	
 
 </div>
 
