@@ -24,6 +24,12 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 * @param idGarantia id da garantia
 	 */
 	public void deleteListaImoveis(Long idGarantia);
+
+	/**
+	 * Deleta as outras garantias
+	 * @param idGarantia id da garantia
+	 */
+	public void deleteListaOutros(Long idGarantia);
 	
 	
 	/**

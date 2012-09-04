@@ -6,8 +6,11 @@ package br.com.abril.nds.model.cadastro.garantia;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -15,6 +18,7 @@ import javax.persistence.OrderBy;
 
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 
 /**
@@ -33,6 +37,10 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 
 	@Embedded
 	private ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COBRANCA", nullable = false)
+	private TipoCobranca tipoCobranca;	
 	
 	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
 	@JoinColumn(name="PAGAMENTO_CAUCAO_LIQUIDA_ID")
@@ -85,5 +93,21 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	public void setFormaPagamento(PagamentoCaucaoLiquida formaPagamento) {
 		this.formaPagamento = formaPagamento;
 	}
-	
+
+
+	/**
+	 * @return the tipoCobranca
+	 */
+	public TipoCobranca getTipoCobranca() {
+		return tipoCobranca;
+	}
+
+
+	/**
+	 * @param tipoCobranca the tipoCobranca to set
+	 */
+	public void setTipoCobranca(TipoCobranca tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
+	}
+
 }

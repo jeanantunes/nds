@@ -48,6 +48,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -1775,6 +1776,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		conferenciaEncalheFromDB.setQtde(conferenciaEncalheDTO.getQtdExemplar());
 		
 		conferenciaEncalheRepository.alterar(conferenciaEncalheFromDB);
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterTipoContabilizacaoCE()
+	 */
+	@Transactional
+	public TipoContabilizacaoCE obterTipoContabilizacaoCE() {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		return distribuidor.getTipoContabilizacaoCE();
 		
 	}
 	
