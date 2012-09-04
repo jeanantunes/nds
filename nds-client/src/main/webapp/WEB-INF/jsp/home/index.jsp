@@ -233,7 +233,19 @@
 		}
 	});	
 	
-	var contextPath = "${pageContext.request.contextPath}";	
+	var contextPath = "${pageContext.request.contextPath}";
+	
+	//Changelog
+	
+	$(document).ready(function() {
+		
+		$("label [title=versao]").click(function() {
+			console.log($(this).html());
+			//$("#changes").load("http://177.71.255.76:8080/jenkins/job/deploy%20nds-client%20homolog/")
+		});
+		
+	});
+	
 	
 </script>
 
@@ -296,8 +308,9 @@
 						</span>
 					
 						<div class="usuario">
-										 
-							Versão: ${versao}
+							
+							<label title="versao">Versão: ${versao}</label>
+							<div id="changes"></div>
 						
 							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 										
