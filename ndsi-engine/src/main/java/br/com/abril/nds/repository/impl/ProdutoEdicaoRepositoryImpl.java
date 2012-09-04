@@ -98,22 +98,26 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
 		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ")
 		   .append(" and   lancamento.status                     != :statusFuro");
-		
+
+		/*
+		 * Comentario da verificacao por nome Eduardo "PunkRock" Castro
 		if (nomeProduto != null && !nomeProduto.isEmpty()){
 			hql.append(" and produto.nome = :nomeProduto ");
 		}
+		*/
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		query.setParameter("codigo", codigo);
 		query.setParameter("edicao", edicao);
 		query.setParameter("dataLancamento", dataLancamento);
 		query.setParameter("statusFuro", StatusLancamento.FURO);
-		
+		/*
+		 * Comentario da verificacao por nome Eduardo "PunkRock" Castro
 		if (nomeProduto != null && !nomeProduto.isEmpty()){
 			
 			query.setParameter("nomeProduto", nomeProduto);
 		}
-		
+		*/
 		query.setMaxResults(1);
 		
 		return (FuroProdutoDTO) query.uniqueResult();

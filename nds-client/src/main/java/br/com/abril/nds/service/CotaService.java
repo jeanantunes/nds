@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
@@ -179,7 +181,7 @@ public interface CotaService {
 	 *
 	 * @param distribuicao - DTO que representa os dados de Distribuição da cota
 	 */
-	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao);
+	void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) throws FileNotFoundException, IOException ;
 
 
 	/**
@@ -260,5 +262,7 @@ public interface CotaService {
 
 	byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
 
+	void atualizaTermoAdesao(String numCota) throws FileNotFoundException, IOException ;
+	
 	byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception;
 }

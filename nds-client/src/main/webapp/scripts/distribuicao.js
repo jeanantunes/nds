@@ -73,6 +73,8 @@ function Distribuicao(tela) {
 				
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
+				
+		$('#numCotaUpload').val(dto.numCota);
 		
 		D.set('numCota',				dto.numCota);
 		D.set('qtdePDV',				dto.qtdePDV ? dto.qtdePDV.toString() : '' );
@@ -110,9 +112,9 @@ function Distribuicao(tela) {
 			D.set('percentualFaturamentoEntregador',	dto.percentualFaturamento);
 			D.set('inicioPeriodoCarenciaEntregador',	dto.inicioPeriodoCarencia);
 			D.set('fimPeriodoCarenciaEntregador',		dto.fimPeriodoCarencia);
-			
-			D.carregarConteudoTipoEntrega(tipoEntrega);
 		}
+		
+		D.carregarConteudoTipoEntrega(tipoEntrega);
 		
 		if(dto.qtdeAutomatica) {
 			D.$('qtdePDV').attr('disabled','disabled');
@@ -156,6 +158,25 @@ function Distribuicao(tela) {
 		
 		D.$("tipoEntrega").html(combo);
 		D.$("tipoEntrega").sortOptions();
+	},
+	
+	this.submitForm = function(idForm) {
+		
+		$('#' + idForm).submit();
+		
+		$("#uploadTermo").empty();
+		
+		$("#uploadTermo").append(
+				'<input name="uploadedFile" type="file" id="uploadedFile" size="40" onchange="DISTRIB_COTA.submitForm(\'formUploadTermoAdesao\')" />');
+	},
+	
+	this.downloadTermo = function(idCota) {
+		
+		document.location.assign(contextPath + "/cadastro/cota/downloadTermo?numeroCota=" + MANTER_COTA.numeroCota);
+	},
+	
+	this.tratarRetornoUploadTermoAdesao = function(result) {
+		//alert('Retornado com sucesso');
 	},
 	
 	/**
@@ -230,6 +251,8 @@ function Distribuicao(tela) {
 			
 			D.set('tipoEntregaHidden', value);
 			
+			D.carregarConteudoTipoEntrega(value);
+			
 			return ;
 		}
 		
@@ -269,68 +292,97 @@ function Distribuicao(tela) {
 		
 		if (value == "COTA_RETIRA") {
 			
-			// TODO:
+			//D.mostrarEsconderConteudoEntregaBanca(false);
 			
 			D.mostrarEsconderConteudoEntregador(false);
 			
 		} else if (value == "ENTREGA_EM_BANCA") {
 			
-			// TODO:
-			
 			D.mostrarEsconderConteudoEntregador(false);
 			
+			//D.mostrarEsconderConteudoEntregaBanca(true);
+			
 		} else if (value == "ENTREGADOR") {
+			
+			//D.mostrarEsconderConteudoEntregaBanca(false);
 			
 			D.mostrarEsconderConteudoEntregador(true);
 			
 		} else {
 			
-			// TODO:
+			//D.mostrarEsconderConteudoEntregaBanca(false);
 			
 			D.mostrarEsconderConteudoEntregador(false);
 		}
 	};
 	
+	this.mostrarEsconderConteudoEntregaBanca = function(exibirDiv) {
+		
+		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregador",
+											 "divUtilizaProcuracao", "divProcuracaoRecebida",
+											 "utilizaProcuracao", "procuracaoRecebida");
+	};
+	
 	this.mostrarEsconderConteudoEntregador = function(exibirDiv) {
 		
-		D.mostrarEsconderDiv('divConteudoEntregador', exibirDiv);
+		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregador",
+											 "divUtilizaProcuracao", "divProcuracaoRecebida",
+											 "utilizaProcuracao", "procuracaoRecebida");
+	};
+	
+	this.mostrarEsconderConteudoTipoEntrega = function(exibirDiv, divConteudoTipoEntrega,
+													   divUtilizaArquivo, divArquivoRecebido,
+													   campoUtilizaArquivo, campoArquivoRecebido) {
+		
+		D.mostrarEsconderDiv(divConteudoTipoEntrega, exibirDiv);
 		
 		if (!exibirDiv) {
 			
-			D.set('utilizaProcuracao', false);
+			D.set(campoUtilizaArquivo, false);
 			
-			D.limparCamposEntregador();
+			D.limparCampos();
 		}
 		
-		D.mostrarEsconderDivUtilizaProcuracao();
+		D.mostrarEsconderDivUtilizaArquivo(divUtilizaArquivo, divArquivoRecebido,
+										   campoUtilizaArquivo, campoArquivoRecebido);
 	};
 	
-	this.mostrarEsconderDivUtilizaProcuracao = function() {
+	this.mostrarEsconderDivUtilizaArquivo = function(divUtilizaArquivo, divArquivoRecebido,
+													 campoUtilizaArquivo, campoArquivoRecebido) {
 		
-		var exibirDiv = D.get("utilizaProcuracao");
+		var exibirDiv = D.get(campoUtilizaArquivo);
 		
-		D.mostrarEsconderDiv('divUtilizaProcuracao', exibirDiv);
+		D.mostrarEsconderDiv(divUtilizaArquivo, exibirDiv);
 		
 		if (!exibirDiv) {
 			
-			D.set('procuracaoRecebida',	false);
+			D.set(campoArquivoRecebido,	false);
 		}
 		
-		D.mostrarEsconderDivProcuracaoRecebida();
+		D.mostrarEsconderDivArquivoRecebido(divArquivoRecebido, campoArquivoRecebido);
 	};
 	
-	this.mostrarEsconderDivProcuracaoRecebida = function() {
+	this.mostrarEsconderDivArquivoRecebido = function(divArquivoRecebido, campoArquivoRecebido) {
 		
-		var exibirDiv = D.get("procuracaoRecebida");
+		var exibirDiv = D.get(campoArquivoRecebido);
 		
-		D.mostrarEsconderDiv('divProcuracaoRecebida', exibirDiv);
+		D.mostrarEsconderDiv(divArquivoRecebido, exibirDiv);
 	};
 	
-	this.limparCamposEntregador = function() {
+	this.limparCampos = function() {
 		
-		D.set('percentualFaturamentoEntregador',	"");
-		D.set('inicioPeriodoCarenciaEntregador',	"");
-		D.set('fimPeriodoCarenciaEntregador',		"");
+		var tipoEntrega = D.get('tipoEntrega');
+		
+		if (tipoEntrega == "ENTREGA_EM_BANCA") {
+			
+			//TODO:
+			
+		} else if (tipoEntrega == "ENTREGADOR") {
+		
+			D.set('percentualFaturamentoEntregador',	"");
+			D.set('inicioPeriodoCarenciaEntregador',	"");
+			D.set('fimPeriodoCarenciaEntregador',		"");
+		}
 	};
 	
 	$(function() {
@@ -356,6 +408,12 @@ function Distribuicao(tela) {
 		D.$("fimPeriodoCarenciaEntregador").mask("99/99/9999");
 		
 		D.$("percentualFaturamentoEntregador").mask("99.99");
+		
+		var options = {
+				success: D.tratarRetornoUploadTermoAdesao,
+		    };
+		
+		$('#formUploadTermoAdesao').ajaxForm(options);
 	});
 }
 
