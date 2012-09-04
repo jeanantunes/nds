@@ -318,6 +318,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			cotaGarantiaRepository.remover(cotaGarantia);
 			cotaGarantia = null;
 		}
+		
 		if (cotaGarantia == null) {			
 			cotaGarantia = type.newInstance();
 			cotaGarantia.setCota(getCota(idCota));			
@@ -453,22 +454,17 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional
 	public CotaGarantiaOutros salvaOutros(List<GarantiaCotaOutros> listaOutros, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException {
-		
-		CotaGarantiaOutros cotaGarantiaOutros = prepareCotaGarantia(idCota,
-				CotaGarantiaOutros.class);
 	
-
-		if (cotaGarantiaOutros.getOutros() != null
-				&& !cotaGarantiaOutros.getOutros().isEmpty()) { 
-			
-			this.cotaGarantiaRepository
-					.deleteListaOutros(cotaGarantiaOutros.getId());
-			
+		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if(cotaGarantia != null){
+			cotaGarantiaRepository.remover(cotaGarantia);
 		}
 		
-		cotaGarantiaOutros.setData(Calendar.getInstance());
+		CotaGarantiaOutros cotaGarantiaOutros = new CotaGarantiaOutros();
 		
-
+		cotaGarantiaOutros.setCota(getCota(idCota));
+		cotaGarantiaOutros.setData(Calendar.getInstance());
 		cotaGarantiaOutros.setOutros(listaOutros);
 		
 		cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantiaRepository
