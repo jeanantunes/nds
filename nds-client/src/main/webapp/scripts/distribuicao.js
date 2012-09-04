@@ -52,7 +52,7 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.reciboEmail',				value: D.get("reciboEmail")});
 		
 		// TODO: Realizar tratamento para os outros tipos
-		if (D.$('tipoEntrega').val() == 'ENTREGADOR') {
+		if (D.get('tipoEntrega') == 'ENTREGADOR') {
 			
 			data.push({name:'distribuicao.utilizaProcuracao',		value: D.get("utilizaProcuracao")});
 			data.push({name:'distribuicao.procuracaoRecebida',		value: D.get("procuracaoRecebida")});
@@ -80,6 +80,7 @@ function Distribuicao(tela) {
 		D.set('assistComercial',		dto.assistComercial);
 		D.set('gerenteComercial',		dto.gerenteComercial);
 		D.set('tipoEntrega',			dto.descricaoTipoEntrega);
+		D.set('tipoEntregaHidden',		dto.descricaoTipoEntrega);
 		D.set('arrendatario',			dto.arrendatario);
 		D.set('observacao',				dto.observacao);
 		D.set('repPorPontoVenda',		dto.repPorPontoVenda);
@@ -98,7 +99,7 @@ function Distribuicao(tela) {
 		D.set('reciboImpresso',			dto.reciboImpresso);
 		D.set('reciboEmail',			dto.reciboEmail);
 		
-		var tipoEntrega = D.$('tipoEntrega').val();
+		var tipoEntrega = D.get('tipoEntrega');
 		
 		// TODO: Realizar tratamento para os outros tipos
 		
@@ -140,7 +141,7 @@ function Distribuicao(tela) {
 				function(result) {
 					D.setDados(result);
 				},
-				null, true); 
+				null, true);
 	},
 	
 	/**
@@ -215,47 +216,87 @@ function Distribuicao(tela) {
 		$("." + classDiv).toggle(exibir);
 	};
 	
+	this.mostarPopUpAteracaoTipoEntrega = function(value) {
+		
+		var tipoEntregaHidden = D.get('tipoEntregaHidden');
+		
+		if (tipoEntregaHidden == "" || tipoEntregaHidden == 'COTA_RETIRA') {
+			
+			D.set('tipoEntregaHidden', value);
+			
+			return ;
+		}
+		
+		$("#dialogMudancaTipoEntrega").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "mudancaTipoEntregaBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
+					
+			    		D.set('tipoEntregaHidden', value);
+						
+						D.carregarConteudoTipoEntrega(value);
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "mudancaTipoEntregaBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		D.set("tipoEntrega", D.get("tipoEntregaHidden"));
+						
+						$(this).dialog("close");
+			    	}
+				}
+			]
+		});
+	};
+	
 	this.carregarConteudoTipoEntrega = function(value) {
 		
 		if (value == "COTA_RETIRA") {
 			
 			// TODO:
 			
-			D.esconderConteudoEntregador();
+			D.mostrarEsconderConteudoEntregador(false);
 			
 		} else if (value == "ENTREGA_EM_BANCA") {
 			
 			// TODO:
 			
-			D.esconderConteudoEntregador();
+			D.mostrarEsconderConteudoEntregador(false);
 			
 		} else if (value == "ENTREGADOR") {
 			
-			D.exibirConteudoEntregador();
+			D.mostrarEsconderConteudoEntregador(true);
 			
 		} else {
 			
 			// TODO:
 			
-			D.esconderConteudoEntregador();
+			D.mostrarEsconderConteudoEntregador(false);
 		}
 	};
 	
-	this.exibirConteudoEntregador = function() {
+	this.mostrarEsconderConteudoEntregador = function(exibirDiv) {
 		
-		$(".divConteudoEntregador").toggle(true);
+		D.mostrarEsconderDiv('divConteudoEntregador', exibirDiv);
 		
-		var utilizaProcuracao = D.get("utilizaProcuracao");
-		
-		if (utilizaProcuracao) {
+		if (!exibirDiv) {
 			
-			D.mostrarEsconderDivUtilizaProcuracao();
+			D.set('utilizaProcuracao', false);
+			
+			D.limparCamposEntregador();
 		}
-	};
-	
-	this.esconderConteudoEntregador = function() {
 		
-		$(".divConteudoEntregador").toggle(false);
+		D.mostrarEsconderDivUtilizaProcuracao();
 	};
 	
 	this.mostrarEsconderDivUtilizaProcuracao = function() {
@@ -277,6 +318,13 @@ function Distribuicao(tela) {
 		var exibirDiv = D.get("procuracaoRecebida");
 		
 		D.mostrarEsconderDiv('divProcuracaoRecebida', exibirDiv);
+	};
+	
+	this.limparCamposEntregador = function() {
+		
+		D.set('percentualFaturamentoEntregador',	"");
+		D.set('inicioPeriodoCarenciaEntregador',	"");
+		D.set('fimPeriodoCarenciaEntregador',		"");
 	};
 	
 	$(function() {
