@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -179,6 +181,39 @@ public class FechamentoCEIntegracaoController {
 		html.append(" <td width='70' valign='top'>"+(CurrencyUtil.formatarValor(totalBruto - desconto.doubleValue()))+"</td>");
 		
 		this.result.use(Results.json()).from(html.toString(), "result").recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("fecharCE")
+	public void fecharCE(String[] listaEncalhe, String[] listaIdProdutoEdicao){
+		String listaEncalhePronta[] = listaEncalhe[0].split(",");		
+		String listaIdProdutoEdicaoPronta[] = listaIdProdutoEdicao[0].split(",");		
+		
+		Long encalhePronto = null;
+		ProdutoEdicao pe = null;
+		
+		for(int cont = 0; cont < listaEncalhePronta.length; cont++){
+			encalhePronto = Long.parseLong(listaEncalhePronta[cont]);			
+			pe = this.produtoEdicaoService.obterProdutoEdicao(Long.parseLong(listaIdProdutoEdicaoPronta[cont]));
+			
+			this.fechamentoCEIntegracaoService.fecharCE(encalhePronto, pe);
+		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
+		
+	}
+	/*
+	 * Esse metodo verifica se a semana está aberta ou fechada.
+	 * Se a semana estiver fechada e a data de fechamento não for a data atual, o botão de reabertura e fechamento deve estar desabilitado.
+	 */	
+	@Post
+	@Path("verificarStatusSemana")
+	public void verificarStatusSemana(){
+		
+		boolean fechada = this.fechamentoCEIntegracaoService.verificarStatusSemana();
+		
+		result.use(Results.json()).from(fechada).serialize();
 		
 	}
 	

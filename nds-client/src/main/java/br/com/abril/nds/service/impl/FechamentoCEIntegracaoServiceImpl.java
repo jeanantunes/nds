@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -24,7 +25,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalhe(filtro);
 	}
-
+	
 	@Override
 	public List<FechamentoCEIntegracaoDTO> calcularVenda(List<FechamentoCEIntegracaoDTO> listaFechamento) {
 		List<FechamentoCEIntegracaoDTO> lista = new ArrayList<FechamentoCEIntegracaoDTO>();
@@ -39,5 +40,20 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		}
 		return lista;		
 	}
+
+	@Override
+	@Transactional
+	public void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao) {
+		this.fechamentoCEIntegracaoRepository.fecharCE(encalhe, produtoEdicao); 
+		
+	}
+
+	@Override
+	@Transactional
+	public boolean verificarStatusSemana() {		 
+		return this.fechamentoCEIntegracaoRepository.verificarStatusSemana();
+	}
+
+	
 	
 }

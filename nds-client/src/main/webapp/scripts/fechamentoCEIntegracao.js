@@ -4,6 +4,27 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		fechamentoCEIntegracaoController.initGrid();
 		fechamentoCEIntegracaoController.bindButtons();
 		fechamentoCEIntegracaoController.buscarNumeroSemana();
+		fechamentoCEIntegracaoController.verificarDataFechamentoCE();
+	},
+	
+	verificarDataFechamentoCE : function(){
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/verificarStatusSemana', 
+			null,
+			function(result) {
+				
+				if (result) {					
+					$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
+						alert('JÁ FECHOU A BAGAÇA');						
+					});
+				}else{
+					$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
+						fechamentoCEIntegracaoController.fecharCE();			
+					});
+				}
+			}
+		);
+		
 	},
 	
 	buscarNumeroSemana : function(){
@@ -32,6 +53,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			fechamentoCEIntegracaoController.pesquisaPrincipal();
 			$(".grids", fechamentoCEIntegracaoController.worspace).show();
 		});
+		
 	},
 	initGrid : function(){	
 		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexigrid({
@@ -41,6 +63,14 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
 					return resultado;
+				}else{
+					$.each(resultado.rows, function(index, value) {
+						var encalhe = value.cell.encalhe;
+						var idProdutoEdicao = value.cell.idProdutoEdicao;
+						var inputEncalhe = '<input type="text" id="inputEncalhe" name="inputEncalhe" value='+encalhe+' /> <input type="hidden" id="codigoProdutoEdicao" name="codigoProdutoEdicao" value='+idProdutoEdicao+' /> '
+						value.cell.encalhe = inputEncalhe;				
+									
+					});
 				}
 				
 				$(".grids", fechamentoCEIntegracaoController.workspace).show();
@@ -150,6 +180,39 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			null,
 			true
 		);
+	},
+	
+	fecharCE : function(){
+		var listaEncalhe = new Array();
+		var listaIdProdutoEdicao = new Array();
+		var cont = 0;
+		var cont2 = 0;
+		$(".fechamentoCeGrid tr", fechamentoCEIntegracaoController.workspace).each(function(){			
+			$("td", this).each(function() {				
+				$("input[name='inputEncalhe']", this).each(function() {
+					listaEncalhe[cont] = $(this).val();
+					cont++;
+				})
+				
+				$("input[name='codigoProdutoEdicao']", this).each(function() {
+					listaIdProdutoEdicao[cont2] = $(this).val();
+					cont2++;
+				})
+			})
+		});
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/fecharCE',
+				[
+				 {name:'listaEncalhe' , value:listaEncalhe},
+				 {name:'listaIdProdutoEdicao' , value:listaIdProdutoEdicao},
+				 ],
+				null,
+				null,
+				true
+			);
+
+		
+		
 	}
 	
 	

@@ -1,9 +1,11 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
@@ -87,6 +90,36 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoCEIntegracaoDTO.class));
 			
 		return criteria.list();
+	}
+
+	@Override
+	public void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao) {
+		 FechamentoEncalhe fe = new FechamentoEncalhe();
+		 fe.setQuantidade(encalhe);
+		 FechamentoEncalhePK pk = new FechamentoEncalhePK();
+		 pk.setProdutoEdicao(produtoEdicao);
+		 pk.setDataEncalhe(new Date());
+		 fe.setFechamentoEncalhePK(pk);
+		 
+		 this.getSession().save(fe);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean verificarStatusSemana() {
+		 
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT fe FROM FechamentoEncalhe fe WHERE fe.fechamentoEncalhePK.dataEncalhe = :dataAtual");
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataAtual", new Date());
+		
+		List<FechamentoEncalhe> fes = query.list();
+		
+		return (fes != null) ? true : false;
 	}
 
 }

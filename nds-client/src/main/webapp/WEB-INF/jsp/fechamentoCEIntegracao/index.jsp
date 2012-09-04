@@ -25,7 +25,7 @@
     <div class="container">    
     	
       <fieldset class="classFieldset">
-		<legend> Pesquisar Fechamento  CE</legend>
+		<legend> Pesquisar Fechamento  CE</legend>			
  	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="72">Fornecedor:</td>    
@@ -66,9 +66,13 @@
 			<table width="950" border="0" cellspacing="1" cellpadding="1">
 			  <tr>
 			    <td width="472" valign="top">
-			      <span class="bt_novos" title="Fechamento"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Fechamento</a></span>
+			      <span class="bt_novos" title="Fechamento" id="btnFechamento" >
+			      	<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Fechamento</a>
+			      </span>
 			      
-			      <span class="bt_novos" title="Reabertura"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" />Reabertura</a></span>
+			      <span class="bt_novos" title="Reabertura" id="btnReabertura">
+			      	<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" />Reabertura</a>
+			      </span>
 			      
 					<span class="bt_novos" title="Gerar Arquivo">
 					  	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS">
