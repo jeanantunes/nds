@@ -10,9 +10,16 @@
 	</script>
 	
 	<style>
-		.divConteudoEntregador, .divProcuracaoRecebida, .divUtilizaProcuracao { display: none; }
+		.divConteudoEntregador, .divProcuracaoRecebida,
+		.divUtilizaProcuracao, #dialogMudancaTipoEntrega { display: none; }
 	</style>
 </head>
+
+	<div id="dialogMudancaTipoEntrega" title="Mudança do Tipo de Entrega">
+				
+		<p>Ao mudar o Tipo de Entrega, informações do Tipo de Entrega anterior serão perdidas. Deseja continuar?</p>
+				   
+	</div>
 
 	<table width="900" cellpadding="2" cellspacing="2" style="text-align:left;">
     	<tr>
@@ -90,15 +97,17 @@
 	    			<tr>
 			            <td>Tipo de Entrega:</td>
 			            <td>
-
+							
+							<input type="hidden" id="${param.tela}tipoEntregaHidden" />
+							
 							<!-- Tipo de Entrega -->
 							<select id="${param.tela}tipoEntrega" name="select4"  style="width:155px"
-									onchange="DISTRIB_COTA.carregarConteudoTipoEntrega(this.value);">
+									onchange="DISTRIB_COTA.mostarPopUpAteracaoTipoEntrega(this.value);">
 								<option selected="selected">...</option>
 
 								<c:forEach items="${listaTipoEntrega}" var="item">
 									<option value="${item.key}">${item.value}</option>
-								</c:forEach>                            
+								</c:forEach>
 							</select>
 
 						</td>
@@ -111,7 +120,7 @@
 							<td width="130">Utiliza Procuração?</td>
 							<td width="20">
 								<input type="checkbox" id="${param.tela}utilizaProcuracao"
-									   onclick="DISTRIB_COTA.mostrarEsconderDiv('divUtilizaProcuracao', this.checked)" />
+									   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaProcuracao()" />
 								<td width="245" height="39" class="procuracaoPf">
 									<div class="divUtilizaProcuracao">
 										<span class="bt_imprimir">
@@ -129,7 +138,7 @@
 								<td width="130">Procuração Recebida?</td>
 								<td width="265">
 									<input type="checkbox" id="${param.tela}procuracaoRecebida"
-										   onclick="DISTRIB_COTA.mostrarEsconderDiv('divProcuracaoRecebida', this.checked)" />
+										   onclick="DISTRIB_COTA.mostrarEsconderDivProcuracaoRecebida()" />
 								</td>
 							</tr>
 						</table>
@@ -145,7 +154,7 @@
 								<tr>
 									<td width="130">&nbsp;</td>
 									<td width="265">
-										<a href="javascript:;">nome_do_arquivo</a>
+										nome_do_arquivo
 									</td>
 								</tr>
 							</table>

@@ -54,7 +54,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		EMS0107Input input = (EMS0107Input) message.getBody();
 		if (input == null) {
 			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+					message, EventoExecucaoEnum.ERRO_INFRA,
+					"NAO ENCONTROU o Arquivo");
 			return;
 		}
 		
@@ -64,7 +65,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				edicao);
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.RELACIONAMENTO,
 					"NAO ENCONTROU ProdutoEdicao");
 			return;
 		}
@@ -73,7 +74,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				produtoEdicao);
 		if (lancamento == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.RELACIONAMENTO,
 					"NAO ENCONTROU Lancamento");
 			return;
 		}
@@ -81,7 +82,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.RELACIONAMENTO,
 					"NAO ENCONTROU Estudo");
 			return;
 		}
@@ -91,7 +92,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		boolean hasEstudoCota = this.hasEstudoCota(estudo, cota);
 		if (hasEstudoCota) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
+					EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
 					"JA EXISTE EstudoCota para a numero de Cota: " + numeroCota);
 			return;
 		}
@@ -200,12 +201,18 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		return (qtd != null && qtd.intValue() > 0);
 	}
 	
-	/**
-	 * Realiza as validações após o processamento do arquivo.
-	 * 
-	 * TODO: Ver como incluir esta validação posteriormente.
-	 */
-	public void validarProcessamento() {
+	@Override
+	public void posProcess() {
+		
+		/*
+		 * Regras de validação para EMS-107:
+		 * 
+		 * 01) Não deve existir Estudo sem EstudoCota:
+		 * Todo Estudo deve possuir pelo menos um (ou mais) EstudoCota;
+		 * 
+		 * 02) A soma de todos os EstudoCota de um Estudo deve ser igual ao 
+		 * valor contido na "quantidade Efetiva" do respectivo Estudo.
+		 */
 		
 		// 01) Verificar se existe algum Estudo sem EstudoCota;
 		StringBuilder hqlEstudoSemEstudoCota = new StringBuilder();
@@ -217,22 +224,41 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		if (lstEstudos != null && !lstEstudos.isEmpty()) {
 			for (Estudo estudo : lstEstudos) {
 				
-				// TODO: Gravar no log qual Estudo esta sem EstudoCota
-				
+				//TODO: Incluir log
+//				this.ndsiLoggerFactory.getLogger().logError(message,
+//						EventoExecucaoEnum.INF_DADO_ALTERADO,
+//						"NAO EXISTE EstudoCota para a publicacao: " + estudo.getProdutoEdicao());
 				this.getSession().delete(estudo);
 			}
 		}
 		
-		
-		
 		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
 		// EstudoCota batem com a qtdeReparte do respectivo Estudo
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT e.id ");
+		sql.append("   FROM estudo e, ");
+		sql.append("       (SELECT ec.estudo_id AS estudo_id, SUM(ec.qtde_prevista) AS qtde ");
+		sql.append("          FROM estudo_cota ec GROUP BY ec.estudo_id ");
+		sql.append("       ) AS c");
+		sql.append("  WHERE e.id = c.estudo_id ");
+		sql.append("    AND e.qtde_reparte <> c.qtde ");
 		
-	}
-		
-	@Override
-	public void posProcess() {
-		// TODO Auto-generated method stub
+		Query queryQtdeReparte = getSession().createSQLQuery(sql.toString());
+		List<Object> lstEstudoId = queryQtdeReparte.list();
+		if (lstEstudoId != null && !lstEstudoId.isEmpty()) {
+			for (Object estudoId : lstEstudoId) {
+				
+				Criteria criteriaEstudo = this.getSession().createCriteria(
+						Estudo.class, "estudo");
+				criteriaEstudo.add(Restrictions.eq("estudo.id", estudoId));
+				Estudo estudo = (Estudo) criteriaEstudo.uniqueResult();
+				
+				//TODO: Incluir log
+				
+				this.getSession().delete(estudo);
+			}
+		}
+				
 	}
 		
 }

@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.util.export.Export;
@@ -17,15 +18,15 @@ public class InfoGeralExtratoEdicaoDTO implements Serializable {
 	private static final long serialVersionUID = 4567167441475999143L;
 
 	@Export(label = "Saldo em Estoque", alignWithHeader = "Parcial", alignment = Alignment.CENTER)
-	private BigDecimal saldoTotalExtratoEdicao;
+	private BigInteger saldoTotalExtratoEdicao;
 	
 	private List<ExtratoEdicaoDTO> listaExtratoEdicao;
 
-	public BigDecimal getSaldoTotalExtratoEdicao() {
+	public BigInteger getSaldoTotalExtratoEdicao() {
 		return saldoTotalExtratoEdicao;
 	}
 
-	public void setSaldoTotalExtratoEdicao(BigDecimal saldoTotalExtratoEdicao) {
+	public void setSaldoTotalExtratoEdicao(BigInteger saldoTotalExtratoEdicao) {
 		this.saldoTotalExtratoEdicao = saldoTotalExtratoEdicao;
 	}
 
