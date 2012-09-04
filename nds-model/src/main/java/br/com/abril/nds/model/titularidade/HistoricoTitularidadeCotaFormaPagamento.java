@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -62,7 +62,7 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
     /**
      * Concentrações de pagamento
      */
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_ID")
     private HistoricoTitularidadeCotaConcentracaoCobranca concentracaoCobranca;
 

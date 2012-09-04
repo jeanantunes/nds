@@ -1,8 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -19,12 +17,10 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -94,6 +90,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.HistoricoTitularidadeService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -194,6 +191,8 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	private HistoricoTitularidadeService historicoTitularidadeService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1700,15 +1699,13 @@ public class CotaServiceImpl implements CotaService {
 
 		Cota cotaAntiga = this.cotaRepository.buscarPorId(cotaDTO.getIdCota());
 
+		this.historicoTitularidadeService.gerarHistoricoTitularidadeCota(cotaAntiga);
+		
 		List<PDV> pdvs = cotaAntiga.getPdvs();
 		Set<Fornecedor> fornecedores = cotaAntiga.getFornecedores();
 		Set<DescontoProdutoEdicao> descontosProdutoEdicao = cotaAntiga.getDescontosProdutoEdicao();
 		ParametroCobrancaCota parametrosCobrancaCota = cotaAntiga.getParametroCobranca();
 		ParametroDistribuicaoCota parametroDistribuicaoCota = cotaAntiga.getParametroDistribuicao();
-
-//		TODO: aguardando resposta do Francivaldo.
-//		ContratoCota contratoCota = cotaAntiga.getContratoCota();
-//		boolean possuiContrato = cotaAntiga.isPossuiContrato();
 
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
@@ -1719,10 +1716,6 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
 		cotaNova.setParametroCobranca(parametrosCobrancaCota);
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
-
-//		TODO: aguardando resposta do Francivaldo.
-//		cotaNova.setContratoCota(contratoCota);
-//		cotaNova.setPossuiContrato(possuiContrato);
 
 		return cotaDTO;
 	}

@@ -122,6 +122,9 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		historicoTitularidadeCota.setCota(
 			cota
 		);
+		historicoTitularidadeCota.setInicio(
+			cota.getInicioAtividade()
+		);
 		historicoTitularidadeCota.setEmail(
 			cota.getPessoa().getEmail()
 		);
@@ -740,33 +743,29 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 
 		HistoricoTitularidadeCotaDistribuicao historicoTitularidadeCotaDistribuicao = new HistoricoTitularidadeCotaDistribuicao();
 //		TODO: Setar os campos devidamente, quando a entidade "ParametroDistribuicaoCota" for atualizada. 
-//		historicoTitularidadeCotaDistribuicao.setInicioPeriodoCarencia(parametroDistribuicaoCota.getInicioPeriodoCarencia());
-//		historicoTitularidadeCotaDistribuicao.setFimPeriodoCarencia(parametroDistribuicaoCota.getFimPeriodoCarencia());
-		historicoTitularidadeCotaDistribuicao.setArrendatario(parametroDistribuicaoCota.getArrendatario());
+//		historicoTitularidadeCotaDistribuicao.setArrendatario(parametroDistribuicaoCota.getTipoEntrega().get);
+		historicoTitularidadeCotaDistribuicao.setInicioPeriodoCarencia(parametroDistribuicaoCota.getInicioPeriodoCarencia());
+		historicoTitularidadeCotaDistribuicao.setFimPeriodoCarencia(parametroDistribuicaoCota.getFimPeriodoCarencia());
 		historicoTitularidadeCotaDistribuicao.setAssistenteComercial(parametroDistribuicaoCota.getAssistenteComercial());
 		historicoTitularidadeCotaDistribuicao.setChamadaEncalheEmail(parametroDistribuicaoCota.getChamadaEncalheEmail());
 		historicoTitularidadeCotaDistribuicao.setChamadaEncalheImpresso(parametroDistribuicaoCota.getChamadaEncalheImpresso());
 		historicoTitularidadeCotaDistribuicao.setNotaEnvioEmail(parametroDistribuicaoCota.getNotaEnvioEmail());
 		historicoTitularidadeCotaDistribuicao.setNotaEnvioImpresso(parametroDistribuicaoCota.getNotaEnvioImpresso());
 		historicoTitularidadeCotaDistribuicao.setObservacao(parametroDistribuicaoCota.getObservacao());
-		historicoTitularidadeCotaDistribuicao.setProcuracaoAssinada(parametroDistribuicaoCota.getProcuracaoAssinada());
+		historicoTitularidadeCotaDistribuicao.setProcuracaoAssinada(parametroDistribuicaoCota.getProcuracaoRecebida());
 		historicoTitularidadeCotaDistribuicao.setQtdePDV(parametroDistribuicaoCota.getQtdePDV());
 		historicoTitularidadeCotaDistribuicao.setRecebeRecolheParcias(parametroDistribuicaoCota.getRecebeRecolheParcias());
 		historicoTitularidadeCotaDistribuicao.setRepartePorPontoVenda(parametroDistribuicaoCota.getRepartePorPontoVenda());
 		historicoTitularidadeCotaDistribuicao.setSlipEmail(parametroDistribuicaoCota.getSlipEmail());
 		historicoTitularidadeCotaDistribuicao.setSlipImpresso(parametroDistribuicaoCota.getSlipImpresso());
 		historicoTitularidadeCotaDistribuicao.setSolicitaNumAtras(parametroDistribuicaoCota.getSolicitaNumAtras());
+		historicoTitularidadeCotaDistribuicao.setTaxaFixaEntrega(parametroDistribuicaoCota.getTaxaFixa());
+		historicoTitularidadeCotaDistribuicao.setPercentualFaturamentoEntrega(parametroDistribuicaoCota.getPercentualFaturamento());
 
 		if (parametroDistribuicaoCota.getTipoEntrega() != null) {
 		
 			historicoTitularidadeCotaDistribuicao.setBaseCalculoEntrega(parametroDistribuicaoCota.getTipoEntrega().getBaseCalculo());
-		}
-
-		if (parametroDistribuicaoCota.getTipoEntrega() != null) {
-			
-			historicoTitularidadeCotaDistribuicao.setTipoEntrega(parametroDistribuicaoCota.getTipoEntrega().getDescricao());
-			historicoTitularidadeCotaDistribuicao.setTaxaFixaEntrega(parametroDistribuicaoCota.getTipoEntrega().getTaxaFixa());
-			historicoTitularidadeCotaDistribuicao.setPercentualFaturamentoEntrega(parametroDistribuicaoCota.getTipoEntrega().getPercentualFaturamento());
+			historicoTitularidadeCotaDistribuicao.setTipoEntrega(parametroDistribuicaoCota.getTipoEntrega().getDescricaoTipoEntrega().getValue());
 		}
 
 		return historicoTitularidadeCotaDistribuicao;
@@ -785,8 +784,18 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 
 		List<HistoricoTitularidadeCotaDesconto> listaDesconto = new ArrayList<HistoricoTitularidadeCotaDesconto>();
 		
-		listaDesconto.addAll(gerarHistoricoTitularidadeCotaDescontoProduto(idCota));
-		listaDesconto.addAll(gerarHistoricoTitularidadeCotaDescontoCota(numeroCota));
+		List<HistoricoTitularidadeCotaDescontoProduto> descontosProduto = gerarHistoricoTitularidadeCotaDescontoProduto(idCota);
+		List<HistoricoTitularidadeCotaDescontoCota> descontosCota = gerarHistoricoTitularidadeCotaDescontoCota(numeroCota);
+		
+		if (descontosProduto != null) {
+		
+			listaDesconto.addAll(descontosProduto);
+		}
+		
+		if (descontosCota != null) {
+		
+			listaDesconto.addAll(descontosCota);
+		}
 		
 		return listaDesconto;
 	}
@@ -902,6 +911,8 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			
 			listaFiador.add(gerarHistoricoTitularidadeCotaFiador(fiador.getFiador()));
 			
+			return listaFiador;
+
 		} else if (cotaGarantia instanceof CotaGarantiaImovel) {
 			
 			CotaGarantiaImovel imovel = (CotaGarantiaImovel) cotaGarantia;
@@ -1064,6 +1075,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		historicoTitularidadeCotaChequeCaucao.setConta(cheque.getConta());
 		historicoTitularidadeCotaChequeCaucao.setCorrentista(cheque.getCorrentista());
 		historicoTitularidadeCotaChequeCaucao.setDvAgencia(cheque.getDvAgencia());
+		historicoTitularidadeCotaChequeCaucao.setDvConta(cheque.getDvConta());
 		historicoTitularidadeCotaChequeCaucao.setNomeBanco(cheque.getNomeBanco());
 		historicoTitularidadeCotaChequeCaucao.setNumeroBanco(cheque.getNumeroBanco());
 		historicoTitularidadeCotaChequeCaucao.setNumeroCheque(cheque.getNumeroCheque());
