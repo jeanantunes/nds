@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fiador;
+import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
@@ -84,23 +86,49 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Override
 	@Transactional(readOnly = true)
 	public CotaGarantiaDTO getByCota(Long idCota) {
+		
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
 		TipoGarantia tipo = null;
+		
 		if (cotaGarantia instanceof CotaGarantiaFiador) {
+			
 			tipo = TipoGarantia.FIADOR;
+		
 			initFiador(((CotaGarantiaFiador) cotaGarantia).getFiador());
+		
 		} else if (cotaGarantia instanceof CotaGarantiaImovel) {
+			
 			tipo = TipoGarantia.IMOVEL;			
+			
 			CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantia;			
+		
 			cotaGarantiaImovel.getImoveis().size();			
+		
 		} else if (cotaGarantia instanceof CotaGarantiaNotaPromissoria) {
+		
 			tipo = TipoGarantia.NOTA_PROMISSORIA;
+		
 		} else if (cotaGarantia instanceof CotaGarantiaCaucaoLiquida) {
+			
 			tipo = TipoGarantia.CAUCAO_LIQUIDA;
+			
 			CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = (CotaGarantiaCaucaoLiquida) cotaGarantia;
+			
 			cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().size();
+			
 		} else if (cotaGarantia instanceof CotaGarantiaChequeCaucao) {
+			
 			tipo = TipoGarantia.CHEQUE_CAUCAO;
+			
+		} else if (cotaGarantia instanceof CotaGarantiaOutros) {
+			
+			tipo = TipoGarantia.OUTROS;			
+			
+			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;			
+		
+			cotaGarantiaOutros.getOutros().size();			
+			
 		}
 
 		return new CotaGarantiaDTO(tipo, cotaGarantia);
@@ -290,6 +318,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			cotaGarantiaRepository.remover(cotaGarantia);
 			cotaGarantia = null;
 		}
+		
 		if (cotaGarantia == null) {			
 			cotaGarantia = type.newInstance();
 			cotaGarantia.setCota(getCota(idCota));			
@@ -416,6 +445,33 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional(readOnly=true)
 	public Endereco buscaEnderecoFiadorPrincipal(Long idFiador) {
 		return enderecoFiadorRepository.buscaPrincipal(idFiador);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.CotaGarantiaService#salvaOutros(java.util.List, java.lang.Long)
+	 */
+	@Override
+	@Transactional
+	public CotaGarantiaOutros salvaOutros(List<GarantiaCotaOutros> listaOutros, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException {
+	
+		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if(cotaGarantia != null){
+			cotaGarantiaRepository.remover(cotaGarantia);
+		}
+		
+		CotaGarantiaOutros cotaGarantiaOutros = new CotaGarantiaOutros();
+		
+		cotaGarantiaOutros.setCota(getCota(idCota));
+		cotaGarantiaOutros.setData(Calendar.getInstance());
+		cotaGarantiaOutros.setOutros(listaOutros);
+		
+		cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantiaRepository
+				.merge(cotaGarantiaOutros);
+		
+		return cotaGarantiaOutros;
+		
 	}
 	
 	

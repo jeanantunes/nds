@@ -47,10 +47,21 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		
 		Query query = getSession().createSQLQuery(" DELETE FROM IMOVEL WHERE GARANTIA_ID = :idGarantia ");
 		query.setParameter("idGarantia", idGarantia).executeUpdate();
+
 	}
 
 	@Override
+	public void deleteListaOutros(Long idGarantia) {
+		
+		Query query = getSession().createSQLQuery(" DELETE FROM GARANTIA_COTA_OUTROS WHERE GARANTIA_ID = :idGarantia ");
+		query.setParameter("idGarantia", idGarantia).executeUpdate();
+		
+	}
+
+	
+	@Override
 	public void deleteByCota(Long idCota) {
+		
 		Query query = getSession().createQuery("DELETE FROM CotaGarantia this_  WHERE this_.cota.id = :idCota");
 		query.setParameter("idCota", idCota).executeUpdate();
 		

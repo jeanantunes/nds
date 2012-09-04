@@ -8,11 +8,15 @@
 		var ${param.tela} = new Distribuicao('${param.tela}');
 
 	</script>
+	
+	<style>
+		.divConteudoEntregador, .divProcuracaoRecebida, .divUtilizaProcuracao { display: none; }
+	</style>
 </head>
 
 	<table width="900" cellpadding="2" cellspacing="2" style="text-align:left;">
     	<tr>
-    		<td width="442">
+    		<td width="442" valign="top">
     			<table>
 			    	<tr>
 			        	<td>Cota:</td>
@@ -77,7 +81,7 @@
 				<input id="${param.tela}recebeRecolhe"  name="recebeRecolhe" type="checkbox" value="" />
 				<label for="recebeRecolhe">Recebe / Recolhe produtos parciais</label>
     		</td>
-    		<td width="12">
+    		<td width="12" style="width:10px;">
 
 
     		</td>
@@ -88,7 +92,8 @@
 			            <td>
 
 							<!-- Tipo de Entrega -->
-							<select id="${param.tela}tipoEntrega" name="select4"  style="width:155px">
+							<select id="${param.tela}tipoEntrega" name="select4"  style="width:155px"
+									onchange="DISTRIB_COTA.carregarConteudoTipoEntrega(this.value);">
 								<option selected="selected">...</option>
 
 								<c:forEach items="${listaTipoEntrega}" var="item">
@@ -100,52 +105,63 @@
 					</tr>
 				</table>
 
-				<a href="javascript:;" target="_blank" onclick="DISTRIB_COTA.imprimeProcuracao();">TESTE IMPRESSÃO PROCURAÇÃO BROW</a>
-				
-				<div id="entregadorPf" style="display: none;">
+				<div class="divConteudoEntregador">
 					<table width="399" border="0" cellspacing="1" cellpadding="1">
 						<tr>
-							<td>Utiliza Procuração?</td>
+							<td width="130">Utiliza Procuração?</td>
 							<td width="20">
 								<input type="checkbox" id="${param.tela}utilizaProcuracao"
-									   onclick="" />
-
-							<td width="201" class="procuracaoPf">
-								<span class="bt_imprimir" style="display: block;">
-									<a href="../procuracao.htm" target="_blank">Procuração</a>
-								</span>
-							</td>
+									   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaProcuracao()" />
+								<td width="245" height="39" class="procuracaoPf">
+									<div class="divUtilizaProcuracao">
+										<span class="bt_imprimir">
+											<a href="javascript:;" target="_blank"
+											   onclick="DISTRIB_COTA.imprimeProcuracao();">Procuração</a>
+										</span>
+									</div>
+								</td>
 						</tr>
+					</table>
+						
+					<div class="divUtilizaProcuracao">
+						<table width="399" border="0" cellspacing="1" cellpadding="1">
+							<tr>
+								<td width="130">Procuração Recebida?</td>
+								<td width="265">
+									<input type="checkbox" id="${param.tela}procuracaoRecebida"
+										   onclick="DISTRIB_COTA.mostrarEsconderDivProcuracaoRecebida()" />
+								</td>
+							</tr>
+						</table>
+						<div class="divProcuracaoRecebida">
+							<table width="399" border="0" cellspacing="1" cellpadding="1">
+								<tr>
+									<td width="130">Arquivo:</td>
+									<td width="265">
+										<input name="fileField" type="file"
+											   id="fileField" size="15" />
+									</td>
+								</tr>
+								<tr>
+									<td width="130">&nbsp;</td>
+									<td width="265">
+										<a href="javascript:;">nome_do_arquivo</a>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<table width="399" border="0" cellspacing="1" cellpadding="1">
 						<tr>
-							<td>Procuração Recebida?</td>
-							<td colspan="2">
-								<input type="checkbox" id="${param.tela}procuracaoRecebida"
-									   onclick="" />
-							</td>
-						</tr>
-						<tr>
-							<td>Arquivo:</td>
-							<td colspan="2">
-								<input name="fileField" type="file"
-									   id="fileField" size="15" />
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td colspan="2">
-								<a href="javascript:;">nome_do_arquivo</a>
-							</td>
-						</tr>
-						<tr>
-							<td width="145">Percentual Faturamento:</td>
-							<td colspan="2">
+							<td width="130">Percentual Faturamento:</td>
+							<td width="265">
 								<input id="${param.tela}percentualFaturamentoEntregador" type="text"
 									   style="width: 70px; text-align: right;" />
 							</td>
 						</tr>
 						<tr>
-							<td>Período Carência:</td>
-							<td colspan="2">
+							<td width="130">Período Carência:</td>
+							<td width="265">
 								<table width="100%" border="0" cellspacing="0" cellpadding="0">
 									<tr>
 										<td width="43%">

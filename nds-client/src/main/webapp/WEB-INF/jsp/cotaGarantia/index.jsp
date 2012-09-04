@@ -258,7 +258,9 @@
 				</tr>
 				<tr>
 					<td>&nbsp;</td>
-					<td><span class="bt_add"> <a href="javascript:;"
+					<td>
+					
+					<span class="bt_add"> <a href="javascript:;"
 							id="cotaGarantiaImovelIncluirNovo">Incluir Novo</a>
 					</span>
 					
@@ -457,5 +459,89 @@
 	</fieldset>
 
 </div>
+
+
+<div id="cotaGarantiaOutros" style="display: none;">
+	
+	<div id="dialog-excluir-outros" title="Excluir Garantia" style="display:none;" >
+	
+		<p>Confirma a exclus&atilde;o dessa garantia?</p>
+	
+	</div>
+	
+	<fieldset>
+
+	<legend>Informe</legend>
+	
+        <table style="text-align: left;" border="0" cellSpacing="2" cellPadding="2" width="755">
+    
+         <tbody><tr>
+           
+           <td width="106">Descrição:</td>
+           
+           <td width="635"><textarea style="width: 450px;" id="descricaoCotaGarantiaOutros" rows="3" name="descricaoCotaGarantiaOutros"></textarea></td>
+         
+         </tr>
+    
+         <tr>
+         
+           <td>Valor R$:</td>
+         
+           <td><input style="width: 100px; text-align: right;" id="valorCotaGarantiaOutros" name="valorCotaGarantiaOutros" type="text"></td>
+         
+         </tr>
+    
+         <tr>
+         
+           <td>Validade:</td>
+         
+           <td><input style="width: 100px; text-align: right;" id="validadeCotaGarantiaOutros" name="validadeCotaGarantiaOutros" type="text"></td>
+         
+         </tr>
+    
+         <tr>
+         
+           <td>&nbsp;</td>
+         
+           <td>
+               
+           		<span class="bt_add"> 
+           			<a href="javascript:;" id="cotaGarantiaOutrosIncluirNovo">Incluir Novo</a>
+				</span>
+				
+				<span class="bt_novos">
+				
+		  			<a href="javascript:;" id="cotaGarantiaOutrosSalvaEdicao" style="display:none;">
+		  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
+		  			
+		  		</span>
+               
+           	</td>
+         
+         </tr>
+    
+    	 </tbody></table>
+
+	</fieldset>
+	
+    <br clear="all">
+    
+    <br>
+    
+    <fieldset>
+    
+    	<legend>Outras Garantias Cadastradas</legend>
+    	
+    	<div class="flexigrid" style="width: 740px; ">
+    	
+    		<table id="cotaGarantiaOutrosGrid"></table>
+        
+        </div>
+        
+	</fieldset>
+
+</div>
+
+
 
 <br clear="all" />
