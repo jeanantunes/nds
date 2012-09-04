@@ -666,6 +666,9 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(parametro == null) {
+			
+			this.obterTaxaPercentual(dto);
+			
 			return dto;
 		}
 		
@@ -700,6 +703,14 @@ public class CotaServiceImpl implements CotaService {
 		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
 		
 		return dto;
+	}
+	
+	public void obterTaxaPercentual(DistribuicaoDTO dto) {
+		
+		//TODO: obter dados do cadastro de transportador
+		
+		dto.setTaxaFixa(null);
+		dto.setPercentualFaturamento(null);
 	}
 
 	@Override
