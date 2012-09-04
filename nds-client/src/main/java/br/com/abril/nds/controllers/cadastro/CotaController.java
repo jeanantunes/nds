@@ -1134,9 +1134,7 @@ public class CotaController {
 	@Path("/imprimeProcuracao")
 	public void imprimeProcuracao(Integer numeroCota) throws Exception{
 		
-		//TODO dados procurador
-		byte[] arquivo = this.cotaService.getDocumentoProcuracao(numeroCota, "nomeProcurador", "rgProcurador",
-				"estadoCivilProcurador", "nacionalidadeProcurador");
+		byte[] arquivo = this.cotaService.getDocumentoProcuracao(numeroCota);
 
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=procuracao.pdf");

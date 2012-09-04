@@ -258,6 +258,7 @@ public interface CotaService {
 	 */
 	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
 
+<<<<<<< HEAD
 	byte[] getDocumentoProcuracao(Integer numeroCota, String nomeProcurador, String rgProcurador,
 	        String estadoCivilProcurador, String nacionalidadeProcurador) throws Exception;
 
@@ -294,4 +295,8 @@ public interface CotaService {
 
     
     
+=======
+	byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
+	
+>>>>>>> DGBti/master
 }

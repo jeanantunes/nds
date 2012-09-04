@@ -689,5 +689,98 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
         }
         periodos.add(periodo);
     }
+    
+    /**
+     * Recupera o endereço principal do PDV
+     * 
+     * @return endereço principal do PDV ou null caso não possua endereços
+     */
+    public HistoricoTitularidadeCotaEndereco getEnderecoPrincipal() {
+        for (HistoricoTitularidadeCotaEndereco endereco : enderecos) {
+            if (endereco.isPrincipal()) {
+                return endereco;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Recupera o telefone principal do PDV
+     * 
+     * @return telefone principal do PDV ou null caso não possua telefones
+     */
+    public HistoricoTitularidadeCotaTelefone getTelefonePrincipal() {
+        for (HistoricoTitularidadeCotaTelefone telefone : telefones) {
+            if (telefone.isPrincipal()) {
+                return telefone;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Adiciona um endereço ao PDV
+     * 
+     * @param endereco
+     *            endereço para inclusão
+     */
+    public void addEndereco(HistoricoTitularidadeCotaEndereco endereco) {
+        if (enderecos == null) {
+            enderecos = new ArrayList<HistoricoTitularidadeCotaEndereco>();
+        }
+        enderecos.add(endereco);
+    }
 
+    /**
+     * Adiciona um telefone ao PDV
+     * 
+     * @param telefone
+     *            para inclusão
+     */
+    public void addTelefone(HistoricoTitularidadeCotaTelefone telefone) {
+        if (telefones == null) {
+            telefones = new ArrayList<HistoricoTitularidadeCotaTelefone>();
+        }
+        telefones.add(telefone);
+        
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        HistoricoTitularidadeCotaPDV other = (HistoricoTitularidadeCotaPDV) obj;
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        return true;
+    }
+
+
+   
 }

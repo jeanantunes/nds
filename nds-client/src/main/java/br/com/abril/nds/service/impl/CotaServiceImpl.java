@@ -29,7 +29,6 @@ import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
-import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -45,6 +44,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCota;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCotaPK;
@@ -57,6 +57,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ReferenciaCota;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -70,8 +71,10 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
+import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
@@ -79,6 +82,7 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
+import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TipoEntregaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -172,6 +176,14 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
+	@Autowired
+	private RotaRepository rotaRepository;
+	
+	@Autowired
+	private EntregadorRepository entregadorRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1675,8 +1687,7 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Override
 	@Transactional
-	public byte[] getDocumentoProcuracao(Integer numeroCota, String nomeProcurador, String rgProcurador,
-			String estadoCivilProcurador, String nacionalidadeProcurador) throws Exception {
+	public byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception {
 
 		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
 		
@@ -1707,6 +1718,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		if (pdv != null){
 			
+			dto.setNumeroPermissao(pdv.getLicencaMunicipal() != null ? 
+					pdv.getLicencaMunicipal().getNumeroLicenca() : "");
+			
 			Endereco enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
 			
 			if (enderecoPDV != null){
@@ -1714,21 +1728,35 @@ public class CotaServiceImpl implements CotaService {
 				dto.setEnderecoPDV(enderecoPDV.getLogradouro());
 				dto.setCidadePDV(enderecoPDV.getCidade());
 			}
+			
+			Rota rota = this.rotaRepository.obterRotaPorPDV(pdv.getId(), cota.getId());
+			
+			if (rota != null){
+				
+				Entregador entregador = this.entregadorRepository.obterEntregadorPorRota(rota.getId());
+				
+				if (entregador != null){
+					
+					if (entregador.getPessoa() instanceof PessoaFisica){
+						
+						PessoaFisica pessoaFisica = (PessoaFisica) entregador.getPessoa();
+						
+						dto.setEstadoCivilProcurador(pessoaFisica.getEstadoCivil() == null ? "" : pessoaFisica.getEstadoCivil().getDescricao());
+						dto.setNacionalidadeProcurador(pessoaFisica.getNacionalidade());
+						dto.setNomeProcurador(pessoaFisica.getNome());
+						dto.setRgProcurador(pessoaFisica.getRg());
+					}
+				}
+			}
 		}
-		
-		dto.setNomeProcurador(nomeProcurador);
-		dto.setRgProcurador(rgProcurador);
-		dto.setEstadoCivilProcurador(estadoCivilProcurador);
-		dto.setNacionalidadeProcurador(nacionalidadeProcurador);
-		
-		
-		//TODO numero da permissão
 		
 		List<ProcuracaoImpressaoDTO> listaDTO = new ArrayList<ProcuracaoImpressaoDTO>();
 		listaDTO.add(dto);
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("cidade", dto.getCidadePDV());
+		
+		parameters.put("infoComp", this.distribuidorRepository.obterInformacoesComplementaresProcuracao());
 		
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaDTO);
 		

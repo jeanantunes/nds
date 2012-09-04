@@ -47,7 +47,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
-import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
@@ -1194,8 +1194,8 @@ public class PdvServiceImpl implements PdvService {
 	
     @Override
     @Transactional(readOnly = true)
-    public List<PdvDTO> obterPdvsHistoricoTitularidade(Long idCota, Long idHistorico) {
-        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-        return new ArrayList<PdvDTO>(CotaDTOAssembler.toPdvDTOCollection(historico.getPdvs()));
+    public List<PdvDTO> obterPdvsHistoricoTitularidade(FiltroPdvDTO filtro) {
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+        return new ArrayList<PdvDTO>(CotaDTOAssembler.toPdvDTOCollection(pdvs));
     }
 }

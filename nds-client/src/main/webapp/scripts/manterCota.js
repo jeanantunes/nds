@@ -630,6 +630,7 @@ var MANTER_COTA = $.extend(true, {
 		$( "#dialog-titular", this.workspace ).dialog("close");
 	},
 	
+<<<<<<< HEAD
 	visualizarHistoricoTitularidade : function(idHistorico) {
 		MANTER_COTA.idHistorico = idHistorico;
 
@@ -690,6 +691,26 @@ var MANTER_COTA = $.extend(true, {
 			$("#dialog-cota", this._workspace).find('.ui-datepicker-trigger').hide();	
 			$("#dialog-cota", this._workspace).find('span[id^="btnAlterarTitularidade"]').hide();
             $("#dialog-cota", this._workspace).find('.classPesquisar').hide();
+=======
+	verificarEntregador : function(){
+		
+		if (MANTER_COTA.idCota && MANTER_COTA.idCota != ""){
+			$.postJSON(contextPath + "/cota/parametroCobrancaCota/verificarEntregador",
+				{name:"idCota", value: MANTER_COTA.idCota},
+				function (result){
+					if (result && result.boolean){
+						
+						$("#cotaTemEntregador").show();
+					} else {
+						
+						$("#cotaTemEntregador").hide();
+					}
+				},
+				null,
+				true,
+				"dialog-cota"
+			);
+>>>>>>> DGBti/master
 		}
 	}
 

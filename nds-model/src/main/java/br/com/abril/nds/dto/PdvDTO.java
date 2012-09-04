@@ -83,7 +83,7 @@ public class PdvDTO implements Serializable {
     
     private List<Long> maps;
     
-    private TipoPontoPDV tipoPontoPDV;
+    private TipoPontoPDVDTO tipoPontoPDV;
     
     private boolean expositor;
     
@@ -495,14 +495,14 @@ public class PdvDTO implements Serializable {
 	/**
 	 * @return the tipoPontoPDV
 	 */
-	public TipoPontoPDV getTipoPontoPDV() {
+	public TipoPontoPDVDTO getTipoPontoPDV() {
 		return tipoPontoPDV;
 	}
 
 	/**
 	 * @param tipoPontoPDV the tipoPontoPDV to set
 	 */
-	public void setTipoPontoPDV(TipoPontoPDV tipoPontoPDV) {
+	public void setTipoPontoPDV(TipoPontoPDVDTO tipoPontoPDV) {
 		this.tipoPontoPDV = tipoPontoPDV;
 	}
 	

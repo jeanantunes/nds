@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
+import br.com.abril.nds.dto.TipoPontoPDVDTO;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
@@ -36,6 +37,9 @@ import br.com.abril.nds.util.Util;
  *
  */
 public class CotaDTOAssembler {
+    
+    private static final String FORMATO_ENDERECO = "%s,%s-%s-%s";
+    private static final String FORMATO_TELEFONE = "%s-%s";
     
     private CotaDTOAssembler() {
     }
@@ -220,8 +224,33 @@ public class CotaDTOAssembler {
             }
             dto.setPeriodosFuncionamentoDTO(periodosDTO);
             dtos.add(dto);
+            
+            HistoricoTitularidadeCotaEndereco enderecoPrincipal = pdv
+                    .getEnderecoPrincipal();
+            if (enderecoPrincipal != null) {
+                dto.setEndereco(String.format(FORMATO_ENDERECO,
+                        enderecoPrincipal.getLogradouro(),
+                        enderecoPrincipal.getNumero(),
+                        enderecoPrincipal.getBairro(),
+                        enderecoPrincipal.getCidade()));
+            }
+            
+            HistoricoTitularidadeCotaTelefone telefonePrincipal = pdv
+                    .getTelefonePrincipal();
+            if (telefonePrincipal != null) {
+                dto.setTelefone(String.format(FORMATO_TELEFONE,
+                        telefonePrincipal.getDdd(),
+                        telefonePrincipal.getNumero()));
+            }
+            
+            HistoricoTitularidadeCotaCodigoDescricao tipoPonto = pdv.getTipoPonto();
+            if (tipoPonto != null) {
+                TipoPontoPDVDTO tipoPontoDTO = new TipoPontoPDVDTO(tipoPonto.getCodigo(), tipoPonto.getDescricao());
+                dto.setTipoPontoPDV(tipoPontoDTO);
+                dto.setDescricaoTipoPontoPDV(tipoPonto.getDescricao());
+            }
         }
         return dtos;
     }
-
+ 
 }

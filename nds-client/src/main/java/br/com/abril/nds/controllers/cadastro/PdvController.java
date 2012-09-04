@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
+import br.com.abril.nds.dto.TipoPontoPDVDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
@@ -35,7 +36,6 @@ import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
@@ -282,7 +282,8 @@ public class PdvController {
 		if (ModoTela.CADASTRO_COTA == modoTela) {
 		   listaPdvs = getListaPdvs(filtro);
 		} else {
-		    listaPdvs = toPdvVO(pdvService.obterPdvsHistoricoTitularidade(idCota, idHistorico));
+		    filtro.setIdHistorico(idHistorico);
+		    listaPdvs = toPdvVO(pdvService.obterPdvsHistoricoTitularidade(filtro));
 		}
 		
 		TableModel<CellModelKeyValue<PdvVO>> tableModel = new TableModel<CellModelKeyValue<PdvVO>>();
@@ -361,7 +362,7 @@ public class PdvController {
 		if(dto!= null){
 			
 			if(dto.getTamanhoPDV() == null){
-				dto.setTipoPontoPDV(new TipoPontoPDV());
+				dto.setTipoPontoPDV(new TipoPontoPDVDTO());
 			}
 			
 			if(dto.getTipoEstabelecimentoAssociacaoPDV() == null){
@@ -373,7 +374,7 @@ public class PdvController {
 			}
 			
 			if(dto.getTipoPontoPDV() == null){
-				dto.setTipoPontoPDV(new TipoPontoPDV());
+				dto.setTipoPontoPDV(new TipoPontoPDVDTO());
 			}
 		}
 			

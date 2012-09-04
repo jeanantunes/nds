@@ -1119,7 +1119,7 @@ var PDV =  $.extend(true, {
 					display : 'Ação',
 					name : 'acao',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				width : 880,

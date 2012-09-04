@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.repository.PdvRepository;
 
 /**
@@ -193,4 +195,69 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.setMaxResults(1);
 		return (PDV) criteria.uniqueResult();
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<HistoricoTitularidadeCotaPDV> obterPDVsHistoricoTitularidade(FiltroPdvDTO filtro) {
+        Validate.notNull(filtro.getIdCota(), "Identificador da cota não deve ser nulo!");
+        Validate.notNull(filtro.getIdHistorico(), "Identificador do histórico não deve ser nulo!");
+	    
+        StringBuilder hql = new StringBuilder("select pdv from HistoricoTitularidadeCotaPDV pdv ");
+        hql.append("left join pdv.enderecos as endereco with endereco.principal is true  ");
+        hql.append("left join pdv.telefones as telefone with telefone.principal is true  ");
+	    hql.append("where pdv.historicoTitularidadeCota.cota.id = :idCota ");
+	    hql.append("and pdv.historicoTitularidadeCota.id = :idHistorico ");
+	    
+        switch (filtro.getColunaOrdenacao()) {
+        case CONTATO:
+            hql.append(" order by pdv.contato ");
+            break;
+        case FATURAMENTO:
+            hql.append(" order by pdv.porcentagemFaturamento ");
+            break;
+        case NOME_PDV:
+            hql.append(" order by  pdv.nome ");
+            break;
+        case STATUS:
+            hql.append(" order by  pdv.status ");
+            break;
+        case PRINCIPAL:
+            hql.append(" order by  pdv.caracteristicas.pontoPrincipal ");
+            break;
+        case TIPO_PONTO:
+            hql.append(" order by  pdv.tipoPonto.descricao ");
+            break;
+        case ENDERECO:
+            hql.append(" order by  (endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade) ");
+            break;
+        case TELEFONE:
+            hql.append(" order by  (telefone.ddd || '-'|| telefone.numero) ");
+            break;
+        default:
+            hql.append(" order by  pdv.nome ");
+        }
+        
+        if (filtro.getPaginacao() != null
+                && filtro.getPaginacao().getOrdenacao() != null) {
+            hql.append(filtro.getPaginacao().getOrdenacao().toString());
+        }
+        
+	    Query query = getSession().createQuery(hql.toString());
+	    query.setParameter("idCota", filtro.getIdCota());
+	    query.setParameter("idHistorico", filtro.getIdHistorico());
+
+	    if (filtro.getPaginacao() != null) {
+	        if (filtro.getPaginacao().getPosicaoInicial() != null) {
+	            query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+	        }
+	        
+	        if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+	            query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+	        }
+	    }
+	    return query.list();
+    }
 }

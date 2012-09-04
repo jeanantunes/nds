@@ -112,4 +112,12 @@ public class DistribuidorRepositoryImpl extends
 		return criteria.list();
 	}
 
+	@Override
+	public String obterInformacoesComplementaresProcuracao() {
+		
+		return (String) 
+				this.getSession().
+				createQuery(
+						"select d.informacoesComplementaresProcuracao from Distribuidor d").uniqueResult();
+	}
 }

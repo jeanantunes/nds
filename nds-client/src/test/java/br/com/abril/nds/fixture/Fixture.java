@@ -3445,6 +3445,20 @@ public class Fixture {
         pdv.addPeriodoFuncionamento(periodo);
         historico.addPdv(pdv);
         
+        HistoricoTitularidadeCotaCodigoDescricao tipoPonto = new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(10), "Comercial");
+        pdv.setTipoPonto(tipoPonto);
+        
+        HistoricoTitularidadeCotaEndereco enderecoPDV = new HistoricoTitularidadeCotaEndereco(
+                10, "Centro", "13720-000", 99, "São José do Rio Pardo", null,
+                "Rua", "Benjamin Constant", "50", "SP", 15, TipoEndereco.COMERCIAL,
+                true);
+        pdv.addEndereco(enderecoPDV);
+        
+        HistoricoTitularidadeCotaTelefone telefonePDV = new HistoricoTitularidadeCotaTelefone(
+                "3681-1234", null, "19", TipoTelefone.COMERCIAL, true);
+        pdv.addTelefone(telefonePDV);
+        
         cota.addTitularCota(historico);
         return historico;
     }
