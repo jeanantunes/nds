@@ -257,7 +257,6 @@ public interface CotaService {
 	 */
 	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
 
-	byte[] getDocumentoProcuracao(Integer numeroCota, String nomeProcurador, String rgProcurador,
-			String estadoCivilProcurador, String nacionalidadeProcurador) throws Exception;
+	byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
 	
 }

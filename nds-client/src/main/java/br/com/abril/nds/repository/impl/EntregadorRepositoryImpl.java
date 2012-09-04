@@ -352,4 +352,16 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		return(Long)criteria.uniqueResult() > 0; 
 	}
+
+	@Override
+	public Entregador obterEntregadorPorRota(Long idRota) {
+		
+		StringBuilder hql = new StringBuilder("select e from Entregador e ");
+		hql.append(" where e.rota.id = :idRota");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idRota", idRota);
+		
+		return (Entregador) query.uniqueResult();
+	}
 }
