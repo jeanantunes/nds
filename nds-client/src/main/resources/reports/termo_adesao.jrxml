@@ -13,35 +13,38 @@
 	<field name="porcentagemDebito" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[porcentagemDebito]]></fieldDescription>
 	</field>
+	<field name="numeroCota" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
+	</field>
+	<field name="CEPEntrega" class="java.lang.String">
+		<fieldDescription><![CDATA[CEPEntrega]]></fieldDescription>
+	</field>
+	<field name="valorDebito" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[valorDebito]]></fieldDescription>
+	</field>
+	<field name="nomeDistribuidor" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeDistribuidor]]></fieldDescription>
+	</field>
+	<field name="bairroEntrega" class="java.lang.String">
+		<fieldDescription><![CDATA[bairroEntrega]]></fieldDescription>
+	</field>
+	<field name="periodicidade" class="java.lang.String">
+		<fieldDescription><![CDATA[periodicidade]]></fieldDescription>
+	</field>
 	<field name="cidadeEntrega" class="java.lang.String">
 		<fieldDescription><![CDATA[cidadeEntrega]]></fieldDescription>
 	</field>
 	<field name="logradouroEntrega" class="java.lang.String">
 		<fieldDescription><![CDATA[logradouroEntrega]]></fieldDescription>
 	</field>
-	<field name="valorDebito" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[valorDebito]]></fieldDescription>
-	</field>
-	<field name="numeroCota" class="java.lang.Integer">
-		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
-	</field>
-	<field name="nomeCota" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeCota]]></fieldDescription>
+	<field name="horariosFuncionamento" class="java.util.Set">
+		<fieldDescription><![CDATA[horariosFuncionamento]]></fieldDescription>
 	</field>
 	<field name="referenciaEndereco" class="java.lang.String">
 		<fieldDescription><![CDATA[referenciaEndereco]]></fieldDescription>
 	</field>
-	<field name="bairroEntrega" class="java.lang.String">
-		<fieldDescription><![CDATA[bairroEntrega]]></fieldDescription>
-	</field>
-	<field name="CEPEntrega" class="java.lang.String">
-		<fieldDescription><![CDATA[CEPEntrega]]></fieldDescription>
-	</field>
-	<field name="nomeDistribuidor" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeDistribuidor]]></fieldDescription>
-	</field>
-	<field name="horariosFuncionamento" class="java.util.Set">
-		<fieldDescription><![CDATA[horariosFuncionamento]]></fieldDescription>
+	<field name="nomeCota" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeCota]]></fieldDescription>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -79,11 +82,11 @@
 new String(
 "Cota: "+ $F{numeroCota} + " - " + $F{nomeCota} +"<br/><br/><br/>"+
 "Eu, <b>" + $F{nomeCota}.toUpperCase() + "</b>, proprietário da cota acima na Distribuidora "+ $F{nomeDistribuidor} +", concordo em receber meu " +
-"reparte e devolver meu encalhe diretamente na banca - Serviço de Entrega da Distribuidora - e autorizo o lançamento do débito <u>semanal</u> "+
+"reparte e devolver meu encalhe diretamente na banca - Serviço de Entrega da Distribuidora - e autorizo o lançamento do débito <u>"+ $F{periodicidade} +"</u> "+
 "em minha conta no valor " + ($F{valorDebito} != null ? "<b><u>R$ " + new java.text.DecimalFormat( "#,##0.00" ).format($F{valorDebito}) + "</u></b>": "referente à <b><u>" +
 String.format("%.2f", $F{porcentagemDebito}) +
 "%</u></b>") + " do meu faturamento <u>com base em cálculo no faturamento preço capa</u>.<br/><br/><br/>"+
-"O Serviço de Entrega contrato será realizado no endereço abaixo:<br/> Rua"+
+"O Serviço de Entrega contrato será realizado no endereço abaixo:<br/> "+
 $F{logradouroEntrega} + "," + $F{bairroEntrega} + " - " + $F{cidadeEntrega} + " - CEP: " + $F{CEPEntrega} + ".<br/>" +
 "Referência de Entrega: "+ $F{referenciaEndereco} +"."
 ).getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>

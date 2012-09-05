@@ -19,6 +19,8 @@ public class TermoAdesaoDTO implements Serializable{
 	
 	private String nomeDistribuidor;
 	
+	private String periodicidade;
+	
 	private BigDecimal valorDebito;
 	
 	private BigDecimal porcentagemDebito;
@@ -57,6 +59,14 @@ public class TermoAdesaoDTO implements Serializable{
 
 	public void setNomeDistribuidor(String nomeDistribuidor) {
 		this.nomeDistribuidor = nomeDistribuidor;
+	}
+
+	public String getPeriodicidade() {
+		return periodicidade;
+	}
+
+	public void setPeriodicidade(String periodicidade) {
+		this.periodicidade = periodicidade;
 	}
 
 	public BigDecimal getValorDebito() {
