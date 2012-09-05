@@ -46,7 +46,7 @@
 						$.ui.dialog.prototype,
 						{
 							_original_init : $.ui.dialog.prototype._init,
-							_original_open : $.ui.dialog.prototype.open,
+							_original_open : $.ui.dialog.prototype.open,				
 							_init : function() {
 								var self = this.element;
 	
@@ -66,6 +66,7 @@
 								this._original_open();
 								self.parent().css("top", "58px");
 							}
+							
 						});
 	})(jQuery);
 
