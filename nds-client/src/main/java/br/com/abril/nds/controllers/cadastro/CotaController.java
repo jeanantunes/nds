@@ -1401,18 +1401,18 @@ public class CotaController {
 	}
 	
 	@Get
-	public void downloadTermoAdesao(Integer numeroCota) throws Exception {
+	public void downloadTermoAdesao(Integer numeroCota, BigDecimal taxa, BigDecimal percentual) throws Exception {
 		
-		download(numeroCota, TipoParametroSistema.PATH_TERMO_ADESAO);		
+		download(numeroCota, TipoParametroSistema.PATH_TERMO_ADESAO, taxa, percentual);		
 	}
 	
 	@Get
 	public void downloadProcuracao(Integer numeroCota) throws Exception {
 		
-		download(numeroCota, TipoParametroSistema.PATH_PROCURACAO);		
+		download(numeroCota, TipoParametroSistema.PATH_PROCURACAO, null, null);		
 	}
 	
-	private void download(Integer numeroCota, TipoParametroSistema parametroPath) throws Exception {
+	private void download(Integer numeroCota, TipoParametroSistema parametroPath, BigDecimal taxa, BigDecimal percentual) throws Exception {
 		
 		String raiz = servletContext.getRealPath("") ;
 		
@@ -1423,17 +1423,27 @@ public class CotaController {
 				
 		ArquivoDTO dto = fileService.obterArquivoTemp(dirBase);
 		
-		//TODO if(dto==null) gerarDocFromReport();
+		byte[] arquivo = null;
 		
-		byte[] b = IOUtils.toByteArray(dto.getArquivo());
-
+		if(dto == null) {
+			
+			if(TipoParametroSistema.PATH_TERMO_ADESAO.equals(parametroPath))
+				arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, taxa, percentual);
+			else
+				arquivo = this.cotaService.getDocumentoProcuracao(numeroCota);
+			
+		} else {
+		
+			arquivo = IOUtils.toByteArray(dto.getArquivo());
+		}
+		
 		((FileInputStream)dto.getArquivo()).close();
 		
 		this.httpResponse.setContentType(dto.getContentType());
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + dto.getNomeArquivo());
 
 		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(b);
+		output.write(arquivo);
 
 		httpResponse.flushBuffer();
 		
