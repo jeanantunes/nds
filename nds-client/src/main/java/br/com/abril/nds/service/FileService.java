@@ -3,7 +3,6 @@ package br.com.abril.nds.service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.util.export.FileExporter.FileType;
