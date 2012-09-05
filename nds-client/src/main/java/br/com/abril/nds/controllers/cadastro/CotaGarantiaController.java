@@ -127,21 +127,45 @@ public class CotaGarantiaController {
 		
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota, formaCobranca);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
-				"Caução Líquida salva com Sucesso."), "result").recursive()
-		.serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Caução Líquida salva com Sucesso."), "result").recursive().serialize();
 	}
 	
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota) {
-		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 		
+		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
+
 		if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
 			result.use(CustomJson.class).from(cotaGarantia).serialize();		
 		}else{			
 			result.use(CustomJson.class).from("OK").serialize();		
 		}	
 	}
+	
+	
+	
+	
+	
+	@Post("/getCaucaoLiquidaByCota.json")
+	public void getCaucaoLiquidaByCota(Long idCota) {
+
+		if (idCota != null) {
+		
+			FormaCobrancaCaucaoLiquidaDTO dadosCaucaoLiquida = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
+			
+			if (dadosCaucaoLiquida != null) {			
+				result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();		
+			}else{			
+				result.use(CustomJson.class).from("OK").serialize();		
+			}	
+		}
+		else{
+			result.use(CustomJson.class).from("OK").serialize();
+		}
+	}
+	
+	
+	
 	
 	@Post("/getTipoGarantiaCadastrada.json")
 	public void getTipoGarantiaCadastrada(Long idCota){
@@ -290,15 +314,13 @@ public class CotaGarantiaController {
 			if((formaCobranca.getConta()==null) || ("".equals(formaCobranca.getConta()))){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
 			}
-			if((formaCobranca.getContaDigito()==null) || ("".equals(formaCobranca.getContaDigito()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
-			}
 			
 			if((formaCobranca.getAgencia()==null) || ("".equals(formaCobranca.getAgencia()))){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
 			}
-			if((formaCobranca.getAgenciaDigito()==null) || ("".equals(formaCobranca.getAgenciaDigito()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
+			
+			if((formaCobranca.getNomeCorrentista()==null) || ("".equals(formaCobranca.getNomeCorrentista()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Correntista.");
 			}
 		}
 
