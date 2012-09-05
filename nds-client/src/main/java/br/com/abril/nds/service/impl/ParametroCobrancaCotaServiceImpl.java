@@ -31,7 +31,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
-import br.com.abril.nds.model.cadastro.ContaBancaria;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -245,7 +245,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			formaCobrancaDTO.setRecebeEmail(formaCobranca.isRecebeCobrancaEmail());
 	
 			
-			ContaBancaria contaBancaria = formaCobranca.getContaBancariaCota();
+			ContaBancariaDeposito contaBancaria = formaCobranca.getContaBancariaCota();
 			if (contaBancaria!=null){
 				formaCobrancaDTO.setNumBanco(contaBancaria.getNumeroBanco());
 				formaCobrancaDTO.setNomeBanco(contaBancaria.getNomeBanco());
@@ -406,7 +406,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		
 		FormaCobranca formaCobranca = null;
-		ContaBancaria contaBancariaCota = null;
+		ContaBancariaDeposito contaBancariaCota = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
 		Banco banco = null;
 		boolean novaFormaCobranca=false;
@@ -530,7 +530,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		contaBancariaCota = formaCobranca.getContaBancariaCota();
 		if(contaBancariaCota==null){
-			contaBancariaCota = new ContaBancaria();
+			contaBancariaCota = new ContaBancariaDeposito();
 		}
 		contaBancariaCota.setNumeroBanco(formaCobrancaDTO.getNumBanco());
 		contaBancariaCota.setNomeBanco(formaCobrancaDTO.getNomeBanco());

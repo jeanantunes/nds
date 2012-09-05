@@ -12,7 +12,7 @@ import javax.persistence.Embeddable;
  *
  */
 @Embeddable
-public class ContaBancaria implements Serializable {
+public class ContaBancariaDeposito implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -33,7 +33,10 @@ public class ContaBancaria implements Serializable {
 	
 	@Column(name = "DV_CONTA_BANCO")
 	private String dvConta;
-
+	
+	@Column(name="CORRENTISTA",nullable=true)
+	private String nomeCorrentista;
+	
 	/**
 	 * @return the numeroBanco
 	 */
@@ -116,6 +119,20 @@ public class ContaBancaria implements Serializable {
 	 */
 	public void setDvConta(String dvConta) {
 		this.dvConta = dvConta;
+	}
+
+	/**
+	 * @return the nomeCorrentista
+	 */
+	public String getNomeCorrentista() {
+		return nomeCorrentista;
+	}
+
+	/**
+	 * @param nomeCorrentista the nomeCorrentista to set
+	 */
+	public void setNomeCorrentista(String nomeCorrentista) {
+		this.nomeCorrentista = nomeCorrentista;
 	}
 
 }
