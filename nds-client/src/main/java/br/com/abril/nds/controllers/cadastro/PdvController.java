@@ -22,6 +22,7 @@ import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MaterialPromocionalDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -124,20 +125,31 @@ public class PdvController {
 	
 	@Post
 	@Path("/carregarMaterialPromocional")
-	public void carregarMaterialPromocional(List<Long> codigos){
-		
+	public void carregarMaterialPromocional(List<Long> codigos, ModoTela modoTela, Long idPdv){
+	    List<ItemDTO<Long, String>> listaDescricao;
 		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterMateriaisPromocionalPDV(cod)), "result").recursive().serialize();
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		    listaDescricao = getListaDescricao(pdvService.obterMateriaisPromocionalPDV(cod));
+		} else {
+		    Set<Long> codigosMateriais = new HashSet<Long>(Arrays.asList(cod));
+            List<MaterialPromocionalDTO> dtos = pdvService.obterMateriaisPromocionaisHistoricoTitularidadePDV(idPdv, codigosMateriais);
+            listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
+            for (MaterialPromocionalDTO materialDTO : dtos) {
+                listaDescricao.add(new ItemDTO<Long, String>(materialDTO.getCodigo(), materialDTO.getDescricao()));
+            }
+		}
+        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/carregarMaterialPromocionalNotIn")
-	public void carregarMaterialPromocionalNotIn(List<Long> codigos){
-		
-		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterMateriaisPromocionalPDVNotIn(cod)), "result").recursive().serialize();
+	public void carregarMaterialPromocionalNotIn(List<Long> codigos, ModoTela modoTela){
+	    List<ItemDTO<Long, String>> listaDescricao = new ArrayList<ItemDTO<Long,String>>();
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+	        listaDescricao = getListaDescricao(pdvService.obterMateriaisPromocionalPDVNotIn(cod));
+	    }
+        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
 	}
 
 	@Post

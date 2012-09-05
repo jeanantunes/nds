@@ -3447,7 +3447,6 @@ public class Fixture {
                         DateUtil.PADRAO_HORA_MINUTO), DateUtil.parseData(
                         "17:00", DateUtil.PADRAO_HORA_MINUTO));
         pdv.addPeriodoFuncionamento(periodo);
-        historico.addPdv(pdv);
         
         HistoricoTitularidadeCotaCodigoDescricao tipoPonto = new HistoricoTitularidadeCotaCodigoDescricao(
                 Long.valueOf(10), "Comercial");
@@ -3473,6 +3472,19 @@ public class Fixture {
         pdv.addGeradorFluxoSecundario(new HistoricoTitularidadeCotaCodigoDescricao(
                 Long.valueOf(3), "Restaurantes")); 
         
+        pdv.addMaterialPromocional(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(1), "Adesivo")); 
+        
+        pdv.addMaterialPromocional(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(2), "Bandeirola")); 
+        
+        pdv.addMaterialPromocional(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(3), "Poster")); 
+        
+        pdv.setExpositor(true);
+        pdv.setTipoExpositor("Tipo Expositor");
+        
+        historico.addPdv(pdv);
         cota.addTitularCota(historico);
         return historico;
     }

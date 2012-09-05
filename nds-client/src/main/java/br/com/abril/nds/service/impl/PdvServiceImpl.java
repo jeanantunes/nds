@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
+import br.com.abril.nds.dto.MaterialPromocionalDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -1393,6 +1394,25 @@ public class PdvServiceImpl implements PdvService {
         for (HistoricoTitularidadeCotaCodigoDescricao gerador : geradores) {
             if (codigos.contains(gerador.getCodigo())) {
                 dtos.add(new GeradorFluxoDTO(gerador.getCodigo(), gerador.getDescricao()));
+            }
+        }
+        return dtos;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<MaterialPromocionalDTO> obterMateriaisPromocionaisHistoricoTitularidadePDV(Long idPdv, Set<Long> codigos) {
+        Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
+        
+        HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
+        List<MaterialPromocionalDTO> dtos = new ArrayList<MaterialPromocionalDTO>();
+        
+        for (HistoricoTitularidadeCotaCodigoDescricao material : pdv.getMateriais()) {
+            if (codigos.contains(material.getCodigo())) {
+                dtos.add(new MaterialPromocionalDTO(material.getCodigo(), material.getDescricao()));
             }
         }
         return dtos;

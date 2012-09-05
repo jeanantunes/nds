@@ -237,6 +237,12 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
             @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_GERADOR_FLUXO")),
             @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_GERADOR_FLUXO")) })
     private Collection<HistoricoTitularidadeCotaCodigoDescricao> geradoresFluxoSecundarios;
+    
+    @Column(name = "EXPOSITOR")    
+    private Boolean expositor;
+        
+    @Column(name = "TIPO_EXPOSITOR")
+    private String tipoExpositor;
 
     /**
      * @return the id
@@ -679,6 +685,34 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
             Collection<HistoricoTitularidadeCotaCodigoDescricao> geradoresFluxoSecundarios) {
         this.geradoresFluxoSecundarios = geradoresFluxoSecundarios;
     }
+    
+    /**
+     * @return the expositor
+     */
+    public Boolean getExpositor() {
+        return expositor;
+    }
+
+    /**
+     * @param expositor the expositor to set
+     */
+    public void setExpositor(Boolean expositor) {
+        this.expositor = expositor;
+    }
+
+    /**
+     * @return the tipoExpositor
+     */
+    public String getTipoExpositor() {
+        return tipoExpositor;
+    }
+
+    /**
+     * @param tipoExpositor the tipoExpositor to set
+     */
+    public void setTipoExpositor(String tipoExpositor) {
+        this.tipoExpositor = tipoExpositor;
+    }
 
     /**
      * Adiciona um período de funcionamento ao PDV
@@ -762,6 +796,20 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
         geradoresFluxoSecundarios.add(geradorFluxoSecundario);
     }
 
+    
+    /**
+     * Adiciona o material promocional ao PDV
+     * 
+     * @param material
+     *            material promocional para inclusão
+     */
+    public void addMaterialPromocional(HistoricoTitularidadeCotaCodigoDescricao material) {
+        if (materiais == null) {
+            materiais = new ArrayList<HistoricoTitularidadeCotaCodigoDescricao>();
+        }
+        materiais.add(material);
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -797,8 +845,5 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
         }
         return true;
     }
-
-
-
    
 }

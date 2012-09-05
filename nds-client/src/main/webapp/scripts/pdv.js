@@ -904,7 +904,12 @@ var PDV =  $.extend(true, {
 		},
 		
 		carregarMaterialPromocional:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocional",
+            if (!data) {
+                data = [];
+            }
+            data.push({name: 'modoTela', value: PDV.modoTela.value});
+            data.push({name: 'idPdv', value: PDV.idPdv});
+            $.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocional",
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);
@@ -914,7 +919,11 @@ var PDV =  $.extend(true, {
 		},
 		
 		carregarMaterialPromocionalNotIn:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocionalNotIn",
+            if (!data) {
+                data = [];
+            }
+            data.push({name: 'modoTela', value: PDV.modoTela.value});
+            $.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocionalNotIn",
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);
@@ -924,7 +933,12 @@ var PDV =  $.extend(true, {
 		},
 		
 		carregarMaterialPromocionalSelecionado:function(data){
-			$.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocional",
+			if (!data) {
+                data = [];
+            }
+            data.push({name: 'modoTela', value: PDV.modoTela.value});
+            data.push({name: 'idPdv', value: PDV.idPdv});
+            $.postJSON(contextPath + "/cadastro/pdv/carregarMaterialPromocional",
 					   data, 
 					   function(result){
 							var combo =  montarComboBox(result, false);

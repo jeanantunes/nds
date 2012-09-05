@@ -310,6 +310,10 @@ public class CotaDTOAssembler {
         for (HistoricoTitularidadeCotaCodigoDescricao mp : pdv.getMateriais()) {
             dto.addMaterialPromocional(mp.getCodigo());
         }
+        
+        dto.setExpositor(Util.nvl(pdv.getExpositor(), Boolean.FALSE));
+        dto.setTipoExpositor(pdv.getTipoExpositor());
+        
         return dto;
     }
  

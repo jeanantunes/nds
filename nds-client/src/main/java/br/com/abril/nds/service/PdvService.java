@@ -5,6 +5,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
+import br.com.abril.nds.dto.MaterialPromocionalDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -144,6 +145,19 @@ public interface PdvService {
      *         de fluxo associados ao PDV do histórico de titularidade da cota
      */
     List<GeradorFluxoDTO> obterGeradoresFluxoHistoricoTitularidadePDV(Long idPdv, Set<Long> codigos);
+
+    /**
+     * Obtém os materiais promocionais do PDV do histórico de titularidade da cota
+     * 
+     * @param idPdv
+     *            identificador do PDV do histórico de titularidade
+     * @param codigos
+     *            códigos dos materiais promocionais
+     * 
+     * @return lista de {@link MaterialPromocionalDTO} com as informações de materiais
+     *         promocionais associados ao PDV do histórico de titularidade da cota
+     */
+    List<MaterialPromocionalDTO> obterMateriaisPromocionaisHistoricoTitularidadePDV(Long idPdv, Set<Long> codigos);
     
 }
 

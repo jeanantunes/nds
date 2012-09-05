@@ -482,6 +482,8 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 					gerarHistoricoTitularidadeCotaGeradorFluxoSecundario(pdv.getGeradorFluxoPDV().getSecundarios())
 				);
 			}
+			historicoTitularidadeCotaPDV.setExpositor(pdv.getExpositor());
+			historicoTitularidadeCotaPDV.setTipoExpositor(pdv.getTipoExpositor());
 
 			historicosTitularidadeCotaPDV.add(historicoTitularidadeCotaPDV);
 		}
