@@ -120,4 +120,21 @@ public class DistribuidorRepositoryImpl extends
 				createQuery(
 						"select d.informacoesComplementaresProcuracao from Distribuidor d").uniqueResult();
 	}
+
+	@Override
+	public String obterRazaoSocialDistribuidor() {
+		
+		return (String)
+				this.getSession().
+				createQuery("select d.juridica.razaoSocial from Distribuidor d").uniqueResult();
+	}
+	
+	@Override
+	public String obterInformacoesComplementaresTermoAdesao() {
+		
+		return (String) 
+				this.getSession().
+				createQuery(
+						"select d.parametroEntregaBanca.complementoTermoAdesao from Distribuidor d").uniqueResult();
+	}
 }
