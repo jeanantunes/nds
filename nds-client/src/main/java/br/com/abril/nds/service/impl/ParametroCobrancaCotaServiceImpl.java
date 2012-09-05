@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -49,6 +51,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
+import br.com.abril.nds.service.ContratoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
@@ -90,7 +93,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	@Autowired
 	private FornecedorService fornecedorService;
 	
-	
+	@Autowired
+	private ContratoService contratoService;
 	
 	/**
 	 * Método responsável por obter bancos para preencher combo da camada view
@@ -653,9 +657,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		contratante.setNome((pessoaJuridica.getNome()!=null?pessoaJuridica.getNome():""));
 		contratante.setDocumento((pessoaJuridica.getDocumento()!=null?pessoaJuridica.getDocumento():""));
 		contratante.setTipoPessoa(TipoPessoa.JURIDICA);
-
-		
-		
 		
 		Endereco endereco = distribuidorRepository.obterEnderecoPrincipal().getEndereco();
 		String descEndereco="";
@@ -731,8 +732,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			ContratoCota contratoCota = cota.getContratoCota();
 			if (contratoCota!=null){
-				contrato.setInicio(cota.getContratoCota().getDataInicio());
-				contrato.setTermino(cota.getContratoCota().getDataTermino());
 				contrato.setPrazo(cota.getContratoCota().getPrazo()!=null?cota.getContratoCota().getPrazo().toString():"");
 			}
 			
@@ -772,17 +771,18 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		return  JasperRunManager.runReportToPdf(path, null, jrDataSource);
 	}
 	
-	
-	
 	@Override
-	@Transactional(readOnly = true)
-	public byte[] geraImpressaoContrato(Long idCota){
+	@Transactional
+	public byte[] geraImpressaoContrato(Long idCota, Date dataInicio, Date dataTermino){
 		
 		byte[] relatorio=null;
 
 		ContratoTransporteDTO contratoDTO = this.obtemContratoTransporte(idCota);
+		contratoDTO.setInicio(dataInicio);
+		contratoDTO.setTermino(dataTermino);
 		List<ContratoTransporteDTO> listaContratos = new ArrayList<ContratoTransporteDTO>();
 		listaContratos.add(contratoDTO);
+		
 		try{
 		    relatorio = this.gerarDocumentoIreport(listaContratos, "/reports/contratoTransporte.jasper");
 		}
@@ -792,7 +792,57 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		return relatorio;
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.ParametroCobrancaCotaService#salvarContrato(java.lang.Long, boolean, java.util.Date, java.util.Date)
+	 */
+	@Transactional
+	public void salvarContrato(Long idCota, boolean isRecebido, Date dataInicio, Date dataTermino) {
+		
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		
+		ContratoTransporteDTO contratoDTO = this.obtemContratoTransporte(idCota);
+		contratoDTO.setInicio(dataInicio);
+		contratoDTO.setTermino(dataTermino);
+		
+		ContratoCota contrato = cota.getContratoCota();
+		
+		if(contrato == null) 
+			contrato = new ContratoCota();
+		
+		contrato.setAvisoPrevioRescisao(Integer.parseInt(contratoDTO.getAvisoPrevio()));
+		contrato.setDataInicio(contratoDTO.getInicio());
+		contrato.setDataTermino(contratoDTO.getTermino());
+		contrato.setExigeDocumentacaoSuspencao(cota.isSugereSuspensao());
+		contrato.setCota(cota);
+		contrato.setPrazo(Integer.parseInt(contratoDTO.getPrazo()));
+		contrato.setRecebido(isRecebido);
+		
+		this.contratoService.salvarContrato(contrato);
+	}
 
+	@Transactional
+	public ContratoVO obterArquivoContratoRecebido(Long idCota) {
+		
+		ContratoVO contratoVO = null;
+		
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		
+		ContratoCota contrato = cota.getContratoCota();
+		
+		if (contrato != null) {
+			
+			//TODO: obter arquivo contrato recebido;
+			
+			contratoVO = new ContratoVO();
+			contratoVO.setIdCota(idCota);
+			contratoVO.setDataTermino(contrato.getDataTermino());
+			contratoVO.setDataInicio(contrato.getDataInicio());
+			contratoVO.setRecebido(true);
+			
+		}
+		
+		return contratoVO;
+	}
 
 	@Override
 	@Transactional(readOnly = true)
