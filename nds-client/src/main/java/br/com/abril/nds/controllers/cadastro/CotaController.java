@@ -101,6 +101,11 @@ public class CotaController {
 	
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
+	public static final int[] vetor =  {1}; 
+	
+	public static final FileType[] extensoesAceitas = 
+		{FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG};
+	
 	@Autowired
 	private Result result;
 	
@@ -1363,6 +1368,8 @@ public class CotaController {
 	}
 	
 	private void upload(UploadedFile uploadedFile, Integer numCota, TipoParametroSistema parametroPath ) throws IOException {		
+		
+		this.fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
 		
 		if(uploadedFile==null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Nenhum arquivo foi selecionado."));
