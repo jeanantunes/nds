@@ -46,8 +46,6 @@
 			border: 1px #88a276 solid !important;
 	}
 
-
-
 </style>
 
 </head>
@@ -175,9 +173,9 @@
 	</div>
 	</form>
 
-	<form id="form-editar">
+<form id="form-editar">
 	<div id="dialog-editar" title="Editar Feriado">
-
+		
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialog-editar" name="messageDialog"/>
 		</jsp:include>
@@ -262,7 +260,7 @@
 			<table class="diaFeriadoGrid"></table>
 		
 		</fieldset>
-
+		
 	</div>
 	</form>
 
