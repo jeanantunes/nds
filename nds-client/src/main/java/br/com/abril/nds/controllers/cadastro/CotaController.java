@@ -1065,7 +1065,7 @@ public class CotaController {
 				&& (bairro == null || bairro.isEmpty())
 				&& (municipio == null || municipio.isEmpty())){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um dos filtros deve ser informado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um dos filtros deve ser informado!");
 		}
 	}
 	/**

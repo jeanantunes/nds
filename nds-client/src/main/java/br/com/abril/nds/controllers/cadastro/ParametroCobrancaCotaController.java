@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -105,6 +103,9 @@ public class ParametroCobrancaCotaController {
     
     private static List<ItemDTO<TipoCota,String>> listaTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
     
+    public static final FileType[] extensoesAceitas = {FileType.DOC, FileType.DOCX, FileType.BMP, 
+    												   FileType.GIF, FileType.PDF, FileType.JPEG, 
+    												   FileType.JPG, FileType.PNG};
     
     
     /**
@@ -405,9 +406,11 @@ public class ParametroCobrancaCotaController {
 	}
 	
 	@Post
-	public void carregarArquivoContrato(Long idCota) {
+	public void carregarArquivoContrato(Long idCota, int numeroCota) {
 		
-		ContratoVO contrato = this.parametroCobrancaCotaService.obterArquivoContratoRecebido(idCota);
+		File tempDir = this.getTemporaryDirUpload(numeroCota);
+		
+		ContratoVO contrato = this.parametroCobrancaCotaService.obterArquivoContratoRecebido(idCota, tempDir);
 		
 		if (contrato != null) {
 			this.session.setAttribute(CONTRATO_UPLOADED, contrato);
@@ -418,6 +421,7 @@ public class ParametroCobrancaCotaController {
 			String fileName = "";
 			
 			if (arquivo != null) {
+				
 				fileName = arquivo.getName();
 				this.result.include("fileName", fileName);
 			}
@@ -536,9 +540,7 @@ public class ParametroCobrancaCotaController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Falha ao carregar arquivo!"));
 		
 		this.fileService.validarArquivo(1, 
-				uploadedFile,
-				FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, 
-				FileType.JPEG, FileType.JPG, FileType.PNG);
+				uploadedFile, extensoesAceitas);
 		
 		ContratoVO contrato = new ContratoVO();
 		
@@ -555,7 +557,7 @@ public class ParametroCobrancaCotaController {
 
 		String fileName = uploadedFile.getFileName();
 		
-		File diretorio = this.getUploadPath(Integer.parseInt(numeroCota));
+		File diretorio = this.getTemporaryDirUpload(Integer.parseInt(numeroCota));
 		
 		diretorio.mkdirs();
 
@@ -618,7 +620,7 @@ public class ParametroCobrancaCotaController {
 	 * @param numeroCota
 	 * @return diretorio temporario
 	 */
-	private File getUploadPath(int numeroCota) {
+	private File getTemporaryDirUpload(int numeroCota) {
 		
 		String pathAplicacao = servletContext.getRealPath("");
 		
@@ -630,8 +632,7 @@ public class ParametroCobrancaCotaController {
 		
 		return new File(diretorioContratos, diretorioCotaTemp);
 	}
-	
-	
+
 	/**
 	 * Método responsável pela validação dos dados e rotinas.
 	 */

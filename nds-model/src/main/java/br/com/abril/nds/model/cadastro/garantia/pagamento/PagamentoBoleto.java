@@ -2,7 +2,6 @@ package br.com.abril.nds.model.cadastro.garantia.pagamento;
 
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -24,8 +23,8 @@ public class PagamentoBoleto extends PagamentoCaucaoLiquida {
 	@Column(name="VALOR_PARCELA")
 	private BigDecimal valorParcela;
 
-	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
-	@JoinColumn(name="FORMA_COBRANCA_CAUCAO_LIQUIDA_ID")
+	@OneToOne
+	@JoinColumn(name = "FORMA_COBRANCA_CAUCAO_LIQUIDA_ID")
 	private FormaCobrancaCaucaoLiquida formaCobrancaCaucaoLiquida;
 	
 

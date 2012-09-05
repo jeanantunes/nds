@@ -343,8 +343,8 @@ var CadastroCalendario = $.extend(true, {
 			
 		},
 		
-		popupEdicaoCadastroFeriado : function(date, dates) {	
-			
+		popupEdicaoCadastroFeriado : function(date, dates) {			
+					
 			CadastroCalendario.limparCamposEdicaoCadastroFeriado();
 			
 			CadastroCalendario.recarregarDiaFeriadoGrid(date);
@@ -462,6 +462,7 @@ var CadastroCalendario = $.extend(true, {
 						} else {
 							CadastroCalendario.recarregarDiaFeriadoGrid(dtFeriado);
 							exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, 'dialog-editar');
+							$( "#dialog-editar", CadastroCalendario.workspace ).dialog( "close" );
 						}
 
 						CadastroCalendario.recarregarPainelCalendarioFeriado();
