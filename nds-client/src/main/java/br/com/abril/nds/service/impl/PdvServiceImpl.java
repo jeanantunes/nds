@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1337,8 +1338,30 @@ public class PdvServiceImpl implements PdvService {
     @Override
     @Transactional(readOnly = true)
     public PdvDTO obterPdvHistoricoTitularidade(Long idPdv) {
-        HistoricoTitularidadeCotaPDV pdv = pdvRepository
-                .obterPDVHistoricoTitularidade(idPdv);
+        Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
+        HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
         return CotaDTOAssembler.toPdvDTO(pdv);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidadePDV(Long idPdv) {
+        Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
+        HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
+        return new ArrayList<EnderecoAssociacaoDTO>(CotaDTOAssembler.toEnderecoAssociacaoDTOCollection(pdv.getEnderecos()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidadePDV(Long idPdv) {
+        Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
+        HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
+        return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(pdv.getTelefones()));
     }
 }

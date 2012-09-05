@@ -621,7 +621,14 @@ public class CotaDTO implements Serializable {
 		this.alteracaoTitularidade = isAlteracaoTitularidade;
 	}
 	
+	/**
+	 * Adiciona um proprietário a cota
+	 * 
+	 * @param proprietario proprietário para inclusão
+	 * 
+	 */
 	public void addProprietario(TitularidadeCotaDTO proprietario) {
 	    proprietarios.add(proprietario);
 	}
+
 }

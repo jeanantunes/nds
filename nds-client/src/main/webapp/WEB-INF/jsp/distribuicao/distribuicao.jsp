@@ -113,6 +113,8 @@
 						</td>
 					</tr>
 				</table>
+				
+				<a href="javascript:;" target="_blank" onclick="DISTRIB_COTA.imprimeTermoAdesao();">teste termo adesão vlw</a>
 
 				<div class="divConteudoEntregador">
 					<div id="cotaTemEntregador" style="display: none;">
@@ -121,7 +123,9 @@
 								<td width="130">Utiliza Procuração?</td>
 								<td width="20">
 									<input type="checkbox" id="${param.tela}utilizaProcuracao"
-										   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaProcuracao()" />
+										   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaArquivo('divUtilizaProcuracao', 'divProcuracaoRecebida',
+											   												  'utilizaProcuracao', 'procuracaoRecebida')" />
+											   												  
 									<td width="245" height="39" class="procuracaoPf">
 										<div class="divUtilizaProcuracao">
 											<span class="bt_imprimir">
@@ -139,7 +143,7 @@
 									<td width="130">Procuração Recebida?</td>
 									<td width="265">
 										<input type="checkbox" id="${param.tela}procuracaoRecebida"
-											   onclick="DISTRIB_COTA.mostrarEsconderDivProcuracaoRecebida()" />
+											   onclick="DISTRIB_COTA.mostrarEsconderDivArquivoRecebido('divProcuracaoRecebida', 'procuracaoRecebida')" />
 									</td>
 								</tr>
 								<tr>
@@ -195,6 +199,8 @@
 						</tr>
 					</table>
 				</div>
+				
+				<jsp:include page="entregaEmBanca.jsp"/>
 
 				<br />
 

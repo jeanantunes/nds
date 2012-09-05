@@ -166,9 +166,15 @@ public class PdvController {
 	
 	@Post
 	@Path("/carregarTiposEstabelecimento")
-	public void carregarTipoEstabelecimento() {
+	public void carregarTiposEstabelecimento() {
 	    result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoEstabelecimentoAssociacaoPDV()), "result").recursive().serialize();
 	}
+	
+	@Post
+    @Path("/carregarTiposLicencaMunicipal")
+    public void carregarTiposLicencaMunicipal() {
+        result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoLicencaMunicipal()), "result").recursive().serialize();
+    }
 
 	/**
 	 * Retorna uma lista de caracteristicas de segmentação do PDV
@@ -360,12 +366,18 @@ public class PdvController {
 		    
 		    carregarTelefonesPDV(idPdv, idCota);
 		    
-		    carregarEndercosPDV(idPdv, idCota);
+		    carregarEnderecosPDV(idPdv, idCota);
 		    
 		    tratarPathImagem(dto);
 		    
 		} else {
 		    dto = pdvService.obterPdvHistoricoTitularidade(idPdv);
+		  
+		    carregarEnderecosHistoricoTitularidadePDV(idPdv);
+		    
+		    carregarTelefonesHistoricoTitularidade(idPdv);
+		    
+		    //TODO: carregar imagem PDV do histórico
 		}
 		
 			
@@ -383,6 +395,7 @@ public class PdvController {
 		if(file.exists()) 
 			dto.setPathImagem(pathPDV.getValor() + "pdv_" + dto.getId() + ".jpeg" );
 	}
+	
 	private void limparDadosSessao() {
 		
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
@@ -793,10 +806,14 @@ public class PdvController {
 		
 		List<TelefoneAssociacaoDTO> lista = this.pdvService.buscarTelefonesPdv(idPdv, idCota);
 		
-		httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
+		armazenarTelefonesSessao(lista);
+	}
+
+    private void armazenarTelefonesSessao(List<TelefoneAssociacaoDTO> lista) {
+        httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
 		httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
 		httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
-	}
+    }
 	
 	/**
 	 * Carrega endereços ligados ao PDV e Cota
@@ -805,13 +822,40 @@ public class PdvController {
 	 * @param idPdv - Id do PDV
 	 * @param idCota - Id da Cota
 	 */
-	private void carregarEndercosPDV(Long idPdv, Long idCota) {
+	private void carregarEnderecosPDV(Long idPdv, Long idCota) {
 		
 		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv,idCota);
 		
-		httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
+		armazenarEnderecosSessao(listaEnderecos);
+	}
+
+    private void armazenarEnderecosSessao(
+            List<EnderecoAssociacaoDTO> listaEnderecos) {
+        httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 		httpSession.setAttribute(LISTA_ENDERECOS_REMOVER_SESSAO, null);
 		httpSession.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, null);
+    }
+	
+    /**
+     * Carrega os endereços do histórico de titularidade do PDV
+     * 
+     * @param idPdv
+     *            identificador do PDV
+     */
+	private void carregarEnderecosHistoricoTitularidadePDV(Long idPdv) {
+	    List<EnderecoAssociacaoDTO> enderecos = pdvService.obterEnderecosHistoricoTitularidadePDV(idPdv);
+	    armazenarEnderecosSessao(enderecos);
+	}
+	
+	 /**
+     * Carrega os telefones do histórico de titularidade do PDV
+     * 
+     * @param idPdv
+     *            identificador do PDV
+     */
+	private void carregarTelefonesHistoricoTitularidade(Long idPdv) {
+	    List<TelefoneAssociacaoDTO> telefones = pdvService.obterTelefonesHistoricoTitularidadePDV(idPdv);
+	    armazenarTelefonesSessao(telefones);
 	}
 		
 	/**
@@ -827,7 +871,7 @@ public class PdvController {
 		
 		carregarTelefonesPDV(null, idCota);
 		
-		carregarEndercosPDV(null,idCota);
+		carregarEnderecosPDV(null,idCota);
 
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}

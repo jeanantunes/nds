@@ -108,4 +108,27 @@ public interface PdvService {
      *         de titularidade da cota
      */
     PdvDTO obterPdvHistoricoTitularidade(Long idPdv);
+    
+    /**
+     * Obtém os endereços do histórico de titularidade do PDV
+     * 
+     * @param idPdv
+     *            identificador do PDV associado ao histórico de titularidade
+     * @return Lista de {@link EnderecoAssociacaoDTO} com as informações dos
+     *         endereços associados ao histórico de titularidade do PDV
+     */
+    List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidadePDV(Long idPdv);
+    
+    
+    /**
+     * Obtém os telefones do histórico de titularidade do PDV
+     * 
+     * @param idPdv
+     *            identificador do PDV associado ao histórico de titularidade
+     * @return Lista de {@link TelefoneAssociacaoDTO} com as informações dos
+     *         telefones associados ao histórico de titularidade do PDV
+     */
+    List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidadePDV(Long idPdv);
+    
 }
+

@@ -243,6 +243,7 @@ public class CotaDTOAssembler {
         if (caracteristicas != null) {
             CaracteristicaDTO caracteristicaDTO = new CaracteristicaDTO();
             dto.setPrincipal(caracteristicas.isPontoPrincipal());
+            caracteristicaDTO.setPontoPrincipal(caracteristicas.isPontoPrincipal());
             caracteristicaDTO.setBalcaoCentral(caracteristicas
                     .isBalcaoCentral());
             caracteristicaDTO.setTemComputador(caracteristicas

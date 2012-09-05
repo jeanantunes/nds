@@ -149,15 +149,21 @@ var PDV =  $.extend(true, {
 			if (PDV.isModoTelaCadastroCota()) {
                 PDV.carregarTiposEstabelecimento(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo);
             }else {
-                var option =  newOption(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo,
+                var optionTipoEstabelecimento =  newOption(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo,
                     result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.descricao);
-                $("#selectTipoEstabelecimento", this.workspace).html(option);
+                $("#selectTipoEstabelecimento", this.workspace).html(optionTipoEstabelecimento);
             }
             $("#selectTamanhoPDV", this.workspace).val(result.pdvDTO.tamanhoPDV);
 			$("#qntFuncionarios", this.workspace).val(result.pdvDTO.qtdeFuncionarios);
 			$("#sistemaIPV", this.workspace).attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
 			$("#porcentagemFaturamento", this.workspace).val(result.pdvDTO.porcentagemFaturamento);
-			$("#selectTipoLicenca", this.workspace).val(result.pdvDTO.tipoLicencaMunicipal.codigo);
+			if (PDV.isModoTelaCadastroCota()) {
+				PDV.carregarTiposLicencaMunicipal(result.pdvDTO.tipoLicencaMunicipal.codigo);
+			} else {
+				var optionTipoLicenca =  newOption(result.pdvDTO.tipoLicencaMunicipal.codigo,
+						result.pdvDTO.tipoLicencaMunicipal.descricao);
+				$("#selectTipoLicenca", this.workspace).html(optionTipoLicenca);
+			}
 			$("#numerolicenca", this.workspace).val(result.pdvDTO.numeroLicenca);
 			$("#nomeLicenca", this.workspace).val(result.pdvDTO.nomeLicenca);
 			$("#arrendatario", this.workspace).attr("checked", result.pdvDTO.arrendatario ? "checked" : null);
@@ -912,6 +918,19 @@ var PDV =  $.extend(true, {
                     $("#selectTipoEstabelecimento", this.workspace).sortOptions();
                     if (selected) {
                         $("#selectTipoEstabelecimento", this.workspace).val(selected);
+                    }
+                },null,true,"idModalPDV");
+        },
+        
+        carregarTiposLicencaMunicipal:function(selected){
+            $.postJSON(contextPath + "/cadastro/pdv/carregarTiposLicencaMunicipal",
+                null,
+                function(result){
+                    var combo =  montarComboBox(result, false);
+                    $("#selectTipoLicenca", this.workspace).html(combo);
+                    $("#selectTipoLicenca", this.workspace).sortOptions();
+                    if (selected) {
+                        $("#selectTipoLicenca", this.workspace).val(selected);
                     }
                 },null,true,"idModalPDV");
         },
