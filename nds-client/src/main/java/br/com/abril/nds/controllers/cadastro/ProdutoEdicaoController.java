@@ -83,7 +83,7 @@ public class ProdutoEdicaoController {
 		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
 		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
-			if(dataLancamentoDe.before(dataLancamentoAte)){
+			if(dataLancamentoDe.after(dataLancamentoAte)){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
 			}
 			
@@ -92,7 +92,7 @@ public class ProdutoEdicaoController {
 		if(precoDe == null ^ precoAte == null ){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
 		}else if(precoDe != null && precoAte != null ){
-			if(precoDe.compareTo(precoAte) <=0){
+			if(precoDe.compareTo(precoAte) > 0){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
@@ -107,9 +107,14 @@ public class ProdutoEdicaoController {
 	
 		// Pesquisar:
 		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
-		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
-		
-		this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
+		if(qtd > 0){			
+			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+			
+			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
+		}else{
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+					"Registros não encontrados."));
+		}
 	}
 	
 	@Post

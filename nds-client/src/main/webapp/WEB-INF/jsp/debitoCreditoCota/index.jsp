@@ -678,10 +678,6 @@
 </div>
 
 
-    <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Débito / Crédito < evento > com < status >.</b></p>
-	</div>
 	<form id="formPesquisaDebitosCreditos">
 	
 	<div class="areaBts">

@@ -349,11 +349,6 @@
    
     <div class="container">
     
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Tipo de Desconto < evento > com < status >.</b></p>
-	</div>
-    	
       <fieldset class="classFieldset">
    	    <legend> Pesquisar Tipo de Desconto Cota</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">

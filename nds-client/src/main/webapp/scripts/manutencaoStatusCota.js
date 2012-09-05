@@ -316,6 +316,8 @@ obterColunasGridPesquisaSemCota:function(){
 
 	pesquisarHistoricoStatusCota : function() {
 
+		var colunas;
+		
 		var followUp = $('#numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
 		var filtro;			
 		if(followUp != ''){			
