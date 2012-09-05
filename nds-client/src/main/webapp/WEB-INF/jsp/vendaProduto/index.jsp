@@ -40,10 +40,6 @@
     <br />
    
     <div class="container">    
-	     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-			<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-			<b>Parcial < evento > com < status >.</b></p>
-		</div>		
 		<fieldset class="classFieldset">
 		  <legend> Pesquisar Produto</legend>
 		  <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
