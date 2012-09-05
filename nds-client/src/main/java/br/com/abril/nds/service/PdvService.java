@@ -1,8 +1,10 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -129,6 +131,19 @@ public interface PdvService {
      *         telefones associados ao histórico de titularidade do PDV
      */
     List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidadePDV(Long idPdv);
+    
+    /**
+     * Obtém os geradores de fluxo do PDV do histórico de titularidade da cota
+     * 
+     * @param idPdv
+     *            identificador do PDV do histórico de titularidade
+     * @param codigos
+     *            códigos dos geradores de fluxo
+     * 
+     * @return lista de {@link GeradorFluxoDTO} com as informações de geradores
+     *         de fluxo associados ao PDV do histórico de titularidade da cota
+     */
+    List<GeradorFluxoDTO> obterGeradoresFluxoHistoricoTitularidadePDV(Long idPdv, Set<Long> codigos);
     
 }
 

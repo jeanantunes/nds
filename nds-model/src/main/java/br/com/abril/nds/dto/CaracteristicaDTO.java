@@ -33,6 +33,8 @@ public class CaracteristicaDTO implements Serializable {
 		
 	private TipoCaracteristicaSegmentacaoPDV tipoCaracteristicaSegmentacaoPDV;
 	
+	private String descricaoTipoCaracteristica;
+	
 
 	/**
 	 * @return the tipoCaracteristicaSegmentacaoPDV
@@ -47,9 +49,27 @@ public class CaracteristicaDTO implements Serializable {
 	public void setTipoCaracteristicaSegmentacaoPDV(
 			TipoCaracteristicaSegmentacaoPDV tipoCaracteristicaSegmentacaoPDV) {
 		this.tipoCaracteristicaSegmentacaoPDV = tipoCaracteristicaSegmentacaoPDV;
+		if (this.tipoCaracteristicaSegmentacaoPDV != null) {
+		    this.descricaoTipoCaracteristica = this.tipoCaracteristicaSegmentacaoPDV.getDescricao();
+		}
 	}
+	
 
 	/**
+     * @return the descricaoTipoCaracteristica
+     */
+    public String getDescricaoTipoCaracteristica() {
+        return descricaoTipoCaracteristica;
+    }
+
+    /**
+     * @param descricaoTipoCaracteristica the descricaoTipoCaracteristica to set
+     */
+    public void setDescricaoTipoCaracteristica(String descricaoTipoCaracteristica) {
+        this.descricaoTipoCaracteristica = descricaoTipoCaracteristica;
+    }
+
+    /**
 	 * @return the pontoPrincipal
 	 */
 	public boolean isPontoPrincipal() {
@@ -160,8 +180,6 @@ public class CaracteristicaDTO implements Serializable {
 	public void setAreaInfluencia(Long areaInfluencia) {
 		this.areaInfluencia = areaInfluencia;
 	}
-	
-	
 
 	/**
      * @return the descricaoAreaInfluencia

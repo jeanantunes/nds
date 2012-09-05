@@ -3463,6 +3463,16 @@ public class Fixture {
                 "3681-1234", null, "19", TipoTelefone.COMERCIAL, true);
         pdv.addTelefone(telefonePDV);
         
+        pdv.setAreaInfluencia(new HistoricoTitularidadeCotaCodigoDescricao(Long.valueOf(10), "Residencial"));
+        pdv.setTipoCaracteristica(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL);
+        
+        pdv.setGeradorFluxoPrincipal(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(1), "Cursinho"));
+        pdv.addGeradorFluxoSecundario(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(2), "Padarias")); 
+        pdv.addGeradorFluxoSecundario(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(3), "Restaurantes")); 
+        
         cota.addTitularCota(historico);
         return historico;
     }

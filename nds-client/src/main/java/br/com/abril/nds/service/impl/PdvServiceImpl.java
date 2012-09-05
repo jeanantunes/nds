@@ -20,6 +20,7 @@ import br.com.abril.nds.client.assembler.CotaDTOAssembler;
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -49,6 +50,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -1363,6 +1365,37 @@ public class PdvServiceImpl implements PdvService {
         Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
         HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
         return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(pdv.getTelefones()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<GeradorFluxoDTO> obterGeradoresFluxoHistoricoTitularidadePDV(Long idPdv, Set<Long> codigos) {
+        Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
+        
+        HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
+        
+        List<HistoricoTitularidadeCotaCodigoDescricao> geradores = new ArrayList<HistoricoTitularidadeCotaCodigoDescricao>();
+        HistoricoTitularidadeCotaCodigoDescricao geradorFluxoPrincipal = pdv.getGeradorFluxoPrincipal();
+        if (geradorFluxoPrincipal != null) {
+            geradores.add(geradorFluxoPrincipal);
+        }
+        
+        Collection<HistoricoTitularidadeCotaCodigoDescricao> geradoresFluxoSecundarios = pdv.getGeradoresFluxoSecundarios();
+        if (geradoresFluxoSecundarios != null) {
+            geradores.addAll(geradoresFluxoSecundarios);
+        }
+        
+        List<GeradorFluxoDTO> dtos = new ArrayList<GeradorFluxoDTO>(geradores.size());
+        
+        for (HistoricoTitularidadeCotaCodigoDescricao gerador : geradores) {
+            if (codigos.contains(gerador.getCodigo())) {
+                dtos.add(new GeradorFluxoDTO(gerador.getCodigo(), gerador.getDescricao()));
+            }
+        }
+        return dtos;
     }
 
 }

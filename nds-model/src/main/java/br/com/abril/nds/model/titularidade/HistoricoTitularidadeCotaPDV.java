@@ -769,6 +769,19 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
         
     }
 
+    /**
+     * Adiciona um gerador de fluxo secundario ao PDV
+     * 
+     * @param geradorFluxoSecundario
+     *            gerador de fluxo secundario para inclusão
+     */
+    public void addGeradorFluxoSecundario(HistoricoTitularidadeCotaCodigoDescricao geradorFluxoSecundario) {
+        if(geradoresFluxoSecundarios == null) {
+            geradoresFluxoSecundarios = new ArrayList<HistoricoTitularidadeCotaCodigoDescricao>();
+        }
+        geradoresFluxoSecundarios.add(geradorFluxoSecundario);
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -804,6 +817,7 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
         }
         return true;
     }
+
 
 
    

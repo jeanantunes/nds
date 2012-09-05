@@ -3,6 +3,7 @@ var PDV =  $.extend(true, {
 	
 		idCota:"",
         idHistorico:"",
+        idPdv:"",
         fecharModalCadastroPDV:false,
 		diasFuncionamento:[],
         modoTela: null,
@@ -217,7 +218,7 @@ var PDV =  $.extend(true, {
                 }
                 if (result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV) {
                     montarComboBoxUnicaOpcao(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV,
-                        result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV, $("#selectCaracteristica", this.workspace));
+                        result.pdvDTO.caracteristicaDTO.descricaoTipoCaracteristica, $("#selectCaracteristica", this.workspace));
                }
                if (result.pdvDTO.caracteristicaDTO.areaInfluencia) {
                    montarComboBoxUnicaOpcao(result.pdvDTO.caracteristicaDTO.areaInfluencia, result.pdvDTO.caracteristicaDTO.descricaoAreaInfluencia,
@@ -257,7 +258,9 @@ var PDV =  $.extend(true, {
 				parametros.push({name:'codigos['+ (parametros.length) +']', value:result.pdvDTO.geradorFluxoPrincipal});
 				PDV.carregarGeradorFluxoNotIn(parametros);
 				
-				var parametro = [ {name:"codigos",value:result.pdvDTO.geradorFluxoPrincipal}];
+				var parametro = [ {name:"codigos",value:result.pdvDTO.geradorFluxoPrincipal}, 
+				                  {name:"modoTela", value: PDV.modoTela.value}, 
+				                  {name: "idPdv", value: PDV.idPdv}];
 				$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
 						parametro, 
 						   function(result){
@@ -295,7 +298,7 @@ var PDV =  $.extend(true, {
 		},
 		
 		editarPDV:function (idPdv,idCota){
-			
+			PDV.idPdv = idPdv;
 			PDV.limparCamposTela();
 			
 			$.postJSON(contextPath + "/cadastro/pdv/editar",
@@ -804,7 +807,10 @@ var PDV =  $.extend(true, {
 		},
 		
 		enviarFluxoPrincipal: function (){
-			
+			if (PDV.isReadOnly()) {
+                return;
+            }
+
 			var txtGeradorFluxoPrincipal ="";
 			var hiddenGeradorFluxoPrincipal=""; 
 			
@@ -953,6 +959,10 @@ var PDV =  $.extend(true, {
         },
 		
 		carregarGeradorFluxoNotIn:function(data){
+			if (!data) {
+                data = [];
+            }
+            data.push({name: 'modoTela', value: PDV.modoTela.value});
 			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxoNotIn",
 					   data, 
 					   function(result){
@@ -963,6 +973,11 @@ var PDV =  $.extend(true, {
 		},
 		
 		carregarGeradorFluxo:function(data){
+			if (!data) {
+                data = [];
+            }
+            data.push({name: 'idPdv', value: PDV.idPdv});
+			data.push({name: 'modoTela', value: PDV.modoTela.value});
 			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
 					   data, 
 					   function(result){
@@ -973,6 +988,11 @@ var PDV =  $.extend(true, {
 		},
 		
 		carregarGeradorFluxoSecundario:function(data){
+            if (!data) {
+                data = [];
+            }
+            data.push({name: 'idPdv', value: PDV.idPdv});
+            data.push({name: 'modoTela', value: PDV.modoTela.value});
 			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
 					   data, 
 					   function(result){

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
@@ -140,20 +142,31 @@ public class PdvController {
 
 	@Post
 	@Path("/carregarGeradorFluxo")
-	public void carregarGeradorFluxo(List<Long> codigos){
-		
-		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposGeradorFluxo(cod)), "result").recursive().serialize();
+	public void carregarGeradorFluxo(List<Long> codigos, ModoTela modoTela, Long idPdv){
+	    List<ItemDTO<Long, String>> listaDescricao;
+	    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));
+	    } else {
+	        Set<Long> codigosGeradores = new HashSet<Long>(Arrays.asList(cod));
+	        List<GeradorFluxoDTO> dtos = pdvService.obterGeradoresFluxoHistoricoTitularidadePDV(idPdv, codigosGeradores);
+	        listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
+	        for (GeradorFluxoDTO geradorFluxoDTO : dtos) {
+                listaDescricao.add(new ItemDTO<Long, String>(geradorFluxoDTO.getCodigo(), geradorFluxoDTO.getDescricao()));
+            }
+	    }
+        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/carregarGeradorFluxoNotIn")
-	public void carregarGeradorFluxoNotIn(List<Long> codigos){
-		
-		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod)), "result").recursive().serialize();
+	public void carregarGeradorFluxoNotIn(List<Long> codigos, ModoTela modoTela){
+	    List<ItemDTO<Long, String>> listaDescricao = new ArrayList<ItemDTO<Long,String>>();
+	    if (ModoTela.CADASTRO_COTA ==  modoTela) {
+	        Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod));
+	    }		
+        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
 	}
 	
 	
