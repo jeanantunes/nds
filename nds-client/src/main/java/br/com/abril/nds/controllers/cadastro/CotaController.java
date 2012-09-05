@@ -1162,9 +1162,9 @@ public class CotaController {
 	}
 	
 	@Get
-	public void imprimeTermoAdesao(Integer numeroCota, BigDecimal taxa, BigDecimal percentual) throws Exception{
+	public void imprimeTermoAdesao(Integer numeroCota, String taxa, String percentual) throws Exception{
 		
-		byte[] arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, taxa, percentual);
+		byte[] arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, new BigDecimal(taxa), new BigDecimal(percentual));
 
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=termo_adesao.pdf");

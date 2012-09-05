@@ -1868,6 +1868,9 @@ public class CotaServiceImpl implements CotaService {
 		//Débito: informação se o desconto é mensal / quinzenal / semanal / diário (informação no Cadastro dos Tipos de Serviços). non ecxiste mais
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DIR",
+				Thread.currentThread().getContextClassLoader().getResource("/reports/"));
+		
 		parameters.put("infoComp", this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao());
 		
 		List<TermoAdesaoDTO> listaDTO = new ArrayList<TermoAdesaoDTO>();
