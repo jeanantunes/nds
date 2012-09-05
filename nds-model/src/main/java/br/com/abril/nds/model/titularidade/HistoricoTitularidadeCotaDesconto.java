@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -53,7 +54,7 @@ public abstract class HistoricoTitularidadeCotaDesconto implements Serializable 
     @Column(name = "DESCONTO", nullable = false)
     protected BigDecimal desconto;
     
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     protected HistoricoTitularidadeCota historicoTitularidadeCota;
     

@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,7 +100,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	
 	@Autowired
 	private DescontoCotaRepository descontoCotaRepository;
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -133,6 +134,9 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		);
 		historicoTitularidadeCota.setNumeroCota(
 			cota.getNumeroCota()
+		);
+		historicoTitularidadeCota.setFim(
+			new Date()
 		);
 		historicoTitularidadeCota.setClassificacaoExpectativaFaturamento(
 			cota.getClassificacaoEspectativaFaturamento()
@@ -1215,6 +1219,11 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	 * @return HistoricoTitularidadeCotaFinanceiro - histórico gerado.
 	 */
 	private HistoricoTitularidadeCotaFinanceiro gerarHistoricoTitularidadeCotaFinanceiro(ParametroCobrancaCota parametroCobrancaCota) {
+		
+		if (parametroCobrancaCota == null) {
+			
+			return null;
+		}
 
 		HistoricoTitularidadeCotaFinanceiro historicoTitularidadeCotaFinanceiro = 
 				new HistoricoTitularidadeCotaFinanceiro();
@@ -1237,6 +1246,11 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	 * @return Set<HistoricoTitularidadeCotaFormaPagamento> - histórico gerado.
 	 */
 	private Set<HistoricoTitularidadeCotaFormaPagamento> gerarHistoricoTitularidadeCotaFormaPagamentos(Set<FormaCobranca> formasCobranca) {
+
+		if (formasCobranca == null) {
+
+			return null;
+		}
 
 		Set<HistoricoTitularidadeCotaFormaPagamento> historicoFormasPagamento =
 				new HashSet<HistoricoTitularidadeCotaFormaPagamento>();
@@ -1266,6 +1280,11 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	 */
 	private HistoricoTitularidadeCotaBanco gerarHistoricoTitularidadeCotaBanco(Banco banco) {
 		
+		if (banco == null) {
+			
+			return null;
+		}
+		
 		HistoricoTitularidadeCotaBanco historicoTitularidadeCotaBanco = new HistoricoTitularidadeCotaBanco();
 		
 		historicoTitularidadeCotaBanco.setAgencia(banco.getAgencia());
@@ -1287,6 +1306,11 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	 */
 	private HistoricoTitularidadeCotaConcentracaoCobranca gerarHistoricoTitularidadeCotaConcentracaoCobranca(
 																	Set<ConcentracaoCobrancaCota> concentracoesCobrancaCota) {
+		
+		if (concentracoesCobrancaCota == null || concentracoesCobrancaCota.isEmpty()) {
+			
+			return null;
+		}
 		
 		HistoricoTitularidadeCotaConcentracaoCobranca historicoConcentracaoCobranca = new HistoricoTitularidadeCotaConcentracaoCobranca();
 		

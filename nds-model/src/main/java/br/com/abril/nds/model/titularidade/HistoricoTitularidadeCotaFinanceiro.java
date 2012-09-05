@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -65,7 +66,7 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     /**
      * Formas de pagamento
      */
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FINANCEIRO_ID")
     private Collection<HistoricoTitularidadeCotaFormaPagamento> formasPagamento;
 

@@ -3,6 +3,7 @@ package br.com.abril.nds.model.titularidade;
 import java.io.Serializable;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -40,7 +41,7 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
     /**
      * Fornecedores associados à forma de pagamento
      */
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(name = "HISTORICO_TITULARIDADE_COTA_FORMA_PAGAMENTO_FORNECEDOR", 
         joinColumns = {@JoinColumn(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_ID")}, 
         inverseJoinColumns = {@JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FORNECEDOR_ID")})
@@ -62,7 +63,7 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
     /**
      * Concentrações de pagamento
      */
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_ID")
     private HistoricoTitularidadeCotaConcentracaoCobranca concentracaoCobranca;
 

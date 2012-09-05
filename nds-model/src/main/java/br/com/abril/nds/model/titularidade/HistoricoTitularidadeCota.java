@@ -124,7 +124,7 @@ public class HistoricoTitularidadeCota implements Serializable {
     /**
      * Fornecedores associados a titularidade da cota
      */
-    @OneToMany
+    @OneToMany(cascade = { CascadeType.ALL })
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     private Collection<HistoricoTitularidadeCotaFornecedor> fornecedores;
 
@@ -168,7 +168,7 @@ public class HistoricoTitularidadeCota implements Serializable {
     @OneToMany(mappedBy = "historicoTitularidadeCota", cascade = { CascadeType.ALL })
     private Collection<HistoricoTitularidadeCotaDesconto> descontos;
     
-    @OneToOne
+    @OneToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FINANCEIRO_ID")
     private HistoricoTitularidadeCotaFinanceiro financeiro;
     
@@ -181,7 +181,7 @@ public class HistoricoTitularidadeCota implements Serializable {
     /**
      * Sócios da cota do histórico de titularidade
      */
-    @OneToMany
+    @OneToMany(cascade = { CascadeType.ALL })
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     private Collection<HistoricoTitularidadeCotaSocio> socios;
 

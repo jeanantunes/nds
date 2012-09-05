@@ -66,6 +66,7 @@ import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -192,6 +193,7 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
 	
+	@Autowired
 	private HistoricoTitularidadeService historicoTitularidadeService;
 	
 	@Transactional(readOnly = true)
@@ -1710,13 +1712,16 @@ public class CotaServiceImpl implements CotaService {
 
 		Cota cotaAntiga = this.cotaRepository.buscarPorId(cotaDTO.getIdCota());
 
-		this.historicoTitularidadeService.gerarHistoricoTitularidadeCota(cotaAntiga);
+		HistoricoTitularidadeCota historicoCota = this.historicoTitularidadeService.gerarHistoricoTitularidadeCota(cotaAntiga);
 		
 		List<PDV> pdvs = cotaAntiga.getPdvs();
 		Set<Fornecedor> fornecedores = cotaAntiga.getFornecedores();
 		Set<DescontoProdutoEdicao> descontosProdutoEdicao = cotaAntiga.getDescontosProdutoEdicao();
 		ParametroCobrancaCota parametrosCobrancaCota = cotaAntiga.getParametroCobranca();
 		ParametroDistribuicaoCota parametroDistribuicaoCota = cotaAntiga.getParametroDistribuicao();
+
+		Set<HistoricoTitularidadeCota> titularesCota = cotaAntiga.getTitularesCota();
+		titularesCota.add(historicoCota);
 
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
@@ -1727,7 +1732,10 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
 		cotaNova.setParametroCobranca(parametrosCobrancaCota);
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
+		cotaNova.setTitularesCota(titularesCota);
 
+		this.cotaRepository.merge(cotaNova);
+		
 		return cotaDTO;
 	}
 	

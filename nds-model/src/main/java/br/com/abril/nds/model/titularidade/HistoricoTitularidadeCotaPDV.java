@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -47,7 +48,7 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     private HistoricoTitularidadeCota historicoTitularidadeCota;
 
