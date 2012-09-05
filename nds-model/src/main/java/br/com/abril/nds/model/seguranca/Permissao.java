@@ -97,8 +97,7 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_INICIAR_DIA("Iniciar o Dia",												  		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_FECHAR_DIA("Fechar o Dia",													  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_SERVICO_ENTREGA("Serviço de Entrega",										  	   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_PARAMETROS_COBRANCA("Parâmetros de Cobrança",	          					 	   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO),	
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros do Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros do Distribuidor", 						 	   Permissao.ROLE_ADMINISTRACAO);
 

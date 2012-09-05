@@ -43,7 +43,7 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 
 	public RegistroEdicoesFechadasVO(String codigoProduto, String nomeProduto,
 			Long edicaoProduto, String nomeFornecedor, Date dataLancamento,
-			boolean parcial, Date dataRecolhimento, BigDecimal saldo) {
+			boolean parcial, Date dataRecolhimento, BigInteger saldo) {
 		this.codigoProduto=codigoProduto;
 		this.nomeProduto=nomeProduto;
 		this.edicaoProduto=edicaoProduto;
@@ -51,7 +51,7 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 		this.dataLancamento=dataLancamento;
 		this.parcial=parcial;
 		this.dataRecolhimento=dataRecolhimento;
-		this.saldo=saldo.toBigInteger();
+		this.saldo=saldo;
 	}
 
 	public String getCodigoProduto() {

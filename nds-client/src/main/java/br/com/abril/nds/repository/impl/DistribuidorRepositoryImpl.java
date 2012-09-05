@@ -112,4 +112,29 @@ public class DistribuidorRepositoryImpl extends
 		return criteria.list();
 	}
 
+	@Override
+	public String obterInformacoesComplementaresProcuracao() {
+		
+		return (String) 
+				this.getSession().
+				createQuery(
+						"select d.informacoesComplementaresProcuracao from Distribuidor d").uniqueResult();
+	}
+
+	@Override
+	public String obterRazaoSocialDistribuidor() {
+		
+		return (String)
+				this.getSession().
+				createQuery("select d.juridica.razaoSocial from Distribuidor d").uniqueResult();
+	}
+	
+	@Override
+	public String obterInformacoesComplementaresTermoAdesao() {
+		
+		return (String) 
+				this.getSession().
+				createQuery(
+						"select d.parametroEntregaBanca.complementoTermoAdesao from Distribuidor d").uniqueResult();
+	}
 }

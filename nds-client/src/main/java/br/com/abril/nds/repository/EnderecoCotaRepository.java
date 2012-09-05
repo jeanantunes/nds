@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 
 public interface EnderecoCotaRepository extends Repository<EnderecoCota, Long> {
 
@@ -15,5 +16,8 @@ public interface EnderecoCotaRepository extends Repository<EnderecoCota, Long> {
 	 * @return <code>null</code> caço não encontre resgistros;
 	 */
 	public abstract EnderecoCota getPrincipal(Long idCota);
+
+	EnderecoCota obterEnderecoPorTipoEndereco(Long idCota,
+			TipoEndereco tipoEndereco);
 	
 }
