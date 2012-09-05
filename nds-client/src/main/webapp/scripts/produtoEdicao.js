@@ -514,6 +514,7 @@ var produtoEdicaoController =$.extend(true,  {
 								$("#produtoEdicaoController-fase").val(result.fase);
 								$("#produtoEdicaoController-numeroLancamento").val(result.numeroLancamento);
 								$("#produtoEdicaoController-pacotePadrao").val(result.pacotePadrao);
+								$("#produtoEdicaoController-situacao").val(result.situacaoLancamento);
 								$("#produtoEdicaoController-tipoLancamento").val(result.tipoLancamento);
 								$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevisto);
 								$("#produtoEdicaoController-precoVenda").val(result.precoVenda);

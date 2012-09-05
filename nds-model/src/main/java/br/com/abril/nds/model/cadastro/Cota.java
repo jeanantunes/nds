@@ -32,6 +32,7 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cascade;
 
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -152,6 +153,12 @@ public class Cota implements Serializable {
 	 */
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
 	private Set<HistoricoTitularidadeCota> titularesCota;
+	
+	/**
+	 * Referente a garantias da cota.
+	 */
+	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
+	private CotaGarantia cotaGarantia;
 	
 	public Set<HistoricoNumeroCota> getHistoricoNumeroCota() {
 		return historicoNumeroCota;
@@ -486,5 +493,17 @@ public class Cota implements Serializable {
         return pessoa instanceof PessoaFisica;
     }
 
+	/**
+	 * @return the cotaGarantia
+	 */
+	public CotaGarantia getCotaGarantia() {
+		return cotaGarantia;
+	}
 
+	/**
+	 * @param cotaGarantia the cotaGarantia to set
+	 */
+	public void setCotaGarantia(CotaGarantia cotaGarantia) {
+		this.cotaGarantia = cotaGarantia;
+	}
 }

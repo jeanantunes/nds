@@ -97,6 +97,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.HistoricoTitularidadeService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -197,6 +198,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private HistoricoTitularidadeService historicoTitularidadeService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1740,15 +1744,16 @@ public class CotaServiceImpl implements CotaService {
 
 		Cota cotaAntiga = this.cotaRepository.buscarPorId(cotaDTO.getIdCota());
 
+		HistoricoTitularidadeCota historicoCota = this.historicoTitularidadeService.gerarHistoricoTitularidadeCota(cotaAntiga);
+		
 		List<PDV> pdvs = cotaAntiga.getPdvs();
 		Set<Fornecedor> fornecedores = cotaAntiga.getFornecedores();
 		Set<DescontoProdutoEdicao> descontosProdutoEdicao = cotaAntiga.getDescontosProdutoEdicao();
 		ParametroCobrancaCota parametrosCobrancaCota = cotaAntiga.getParametroCobranca();
 		ParametroDistribuicaoCota parametroDistribuicaoCota = cotaAntiga.getParametroDistribuicao();
 
-//		TODO: aguardando resposta do Francivaldo.
-//		ContratoCota contratoCota = cotaAntiga.getContratoCota();
-//		boolean possuiContrato = cotaAntiga.isPossuiContrato();
+		Set<HistoricoTitularidadeCota> titularesCota = cotaAntiga.getTitularesCota();
+		titularesCota.add(historicoCota);
 
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
@@ -1759,11 +1764,10 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
 		cotaNova.setParametroCobranca(parametrosCobrancaCota);
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
+		cotaNova.setTitularesCota(titularesCota);
 
-//		TODO: aguardando resposta do Francivaldo.
-//		cotaNova.setContratoCota(contratoCota);
-//		cotaNova.setPossuiContrato(possuiContrato);
-
+		this.cotaRepository.merge(cotaNova);
+		
 		return cotaDTO;
 	}
 	
@@ -2000,6 +2004,6 @@ public class CotaServiceImpl implements CotaService {
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(historico.getTelefones()));
     }
-	
+
 }
 

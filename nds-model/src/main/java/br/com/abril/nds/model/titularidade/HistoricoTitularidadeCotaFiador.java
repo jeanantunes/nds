@@ -6,6 +6,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
@@ -34,18 +35,6 @@ public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGa
     private String cpfCnpj;
     
     /**
-     * Endereço do fiador
-     */
-    @Column(name = "FIADOR_ENDERECO")
-    private String endereco;
-    
-    /**
-     * Telefone do fiador
-     */
-    @Column(name = "FIADOR_TELEFONE")
-    private String telefone;
-    
-    /**
      * Garantias do fiador
      */
     @ElementCollection
@@ -53,6 +42,17 @@ public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGa
         joinColumns = { @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FIADOR_ID")})
     private Collection<HistoricoTitularidadeCotaFiadorGarantia> garantias;
 
+    /**
+     * Endereço do fiador
+     */
+    @Embedded
+    private HistoricoTitularidadeCotaEndereco historicoTitularidadeCotaEndereco;
+    
+    /**
+     * Telefone do fiador
+     */
+    @Embedded
+    private HistoricoTitularidadeCotaTelefone historicoTitularidadeCotaTelefone;
 
     /**
      * @return the nome
@@ -83,34 +83,6 @@ public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGa
     }
 
     /**
-     * @return the endereco
-     */
-    public String getEndereco() {
-        return endereco;
-    }
-
-    /**
-     * @param endereco the endereco to set
-     */
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-
-    /**
-     * @return the telefone
-     */
-    public String getTelefone() {
-        return telefone;
-    }
-
-    /**
-     * @param telefone the telefone to set
-     */
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    /**
      * @return the garantias
      */
     public Collection<HistoricoTitularidadeCotaFiadorGarantia> getGarantias() {
@@ -123,5 +95,34 @@ public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGa
     public void setGarantias(Collection<HistoricoTitularidadeCotaFiadorGarantia> garantias) {
         this.garantias = garantias;
     }
-    
+
+	/**
+	 * @return the historicoTitularidadeCotaEndereco
+	 */
+	public HistoricoTitularidadeCotaEndereco getHistoricoTitularidadeCotaEndereco() {
+		return historicoTitularidadeCotaEndereco;
+	}
+
+	/**
+	 * @param historicoTitularidadeCotaEndereco the historicoTitularidadeCotaEndereco to set
+	 */
+	public void setHistoricoTitularidadeCotaEndereco(
+			HistoricoTitularidadeCotaEndereco historicoTitularidadeCotaEndereco) {
+		this.historicoTitularidadeCotaEndereco = historicoTitularidadeCotaEndereco;
+	}
+
+	/**
+	 * @return the historicoTitularidadeCotaTelefone
+	 */
+	public HistoricoTitularidadeCotaTelefone getHistoricoTitularidadeCotaTelefone() {
+		return historicoTitularidadeCotaTelefone;
+	}
+
+	/**
+	 * @param historicoTitularidadeCotaTelefone the historicoTitularidadeCotaTelefone to set
+	 */
+	public void setHistoricoTitularidadeCotaTelefone(
+			HistoricoTitularidadeCotaTelefone historicoTitularidadeCotaTelefone) {
+		this.historicoTitularidadeCotaTelefone = historicoTitularidadeCotaTelefone;
+	}
 }
