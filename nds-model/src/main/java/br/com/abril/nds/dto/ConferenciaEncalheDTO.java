@@ -25,6 +25,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private boolean possuiBrinde;
 	
+	private boolean parcial;
+	
 	/**
 	 * Quantidade apontada na conferência de encalhe
 	 */	
@@ -254,6 +256,16 @@ public class ConferenciaEncalheDTO implements Serializable {
 	public void setPrecoCapaInformado(BigDecimal precoCapaInformado) {
 		this.precoCapaInformado = precoCapaInformado;
 	}
+
+	public boolean isParcial() {
+		return parcial;
+	}
+
+	public void setParcial(boolean parcial) {
+		this.parcial = parcial;
+	}
+	
+	
 	
 	
 }

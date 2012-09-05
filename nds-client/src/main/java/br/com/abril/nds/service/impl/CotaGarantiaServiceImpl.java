@@ -14,25 +14,32 @@ import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
+import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ChequeImage;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCaucaoLiquida;
-import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fiador;
-import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaCobrancaCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
@@ -357,7 +364,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	}
 
 	private CotaGarantiaCaucaoLiquida mergeCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota,
-														PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida) 
+														PagamentoCaucaoLiquida pagamento, ContaBancariaDeposito contaDepositoCaucaoLiquida) 
 														throws InstantiationException, IllegalAccessException {
 		
 		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = prepareCotaGarantia(idCota, CotaGarantiaCaucaoLiquida.class);
@@ -370,7 +377,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());		
 		
-		cotaGarantiaCaucaoLiquida.setContaDepositoCaucaoLiquida(contaDepositoCaucaoLiquida);
+		cotaGarantiaCaucaoLiquida.setContaBancariaDeposito(contaDepositoCaucaoLiquida);
 		
 		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamento);
 		
@@ -381,7 +388,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 * @see br.com.abril.nds.service.CotaGarantiaService#salvarCaucaoLiquida(br.com.abril.nds.model.cadastro.CaucaoLiquida, java.lang.Long)
 	 */
 	@Transactional
-	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida conta) throws ValidacaoException, InstantiationException, IllegalAccessException {
+	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaBancariaDeposito conta) throws ValidacaoException, InstantiationException, IllegalAccessException {
 	
 		return mergeCaucaoLiquida(listaCaucaoLiquida, idCota,pagamento,conta);
 	}
@@ -506,23 +513,30 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional
 	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO) throws ValidacaoException, InstantiationException, IllegalAccessException {
 		
+
+		//COTA GARANTIA CAUCAO LIQUIDA
+		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida =  cotaGarantiaRepository.getByCota(idCota,CotaGarantiaCaucaoLiquida.class);
+		FormaCobrancaCaucaoLiquida formaCobranca = null;
+		
+        if(cotaGarantiaCaucaoLiquida==null){
         	
-
-
+        	cotaGarantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
+        	Cota cota = cotaRepository.buscarPorId(idCota);
+        	cotaGarantiaCaucaoLiquida.setCota(cota);
+        }
+        else{
+        	
+        	if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobranca.BOLETO)==0){
+        		PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
+        		formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
+        	}
+        }
 		
-		//CONTA DEPOSITO
-		ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida = new ContaDepositoCaucaoLiquida();
-		contaDepositoCaucaoLiquida.setNomebanco(formaCobrancaDTO.getNomeBanco());
-		contaDepositoCaucaoLiquida.setNomeCorrentista(formaCobrancaDTO.getNomeCorrentista());
-		contaDepositoCaucaoLiquida.setNumeroAgencia(formaCobrancaDTO.getAgencia());
-		contaDepositoCaucaoLiquida.setNumeroBanco(formaCobrancaDTO.getNumBanco());
-		contaDepositoCaucaoLiquida.setNumeroContaCorrente(formaCobrancaDTO.getConta());
-	
+        
+        if (formaCobranca == null){
+        	formaCobranca = new FormaCobrancaCaucaoLiquida();
+        }
 		
-		
-
-		
-		FormaCobrancaCaucaoLiquida formaCobranca = new FormaCobrancaCaucaoLiquida();
 		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
 		Set<ConcentracaoCobrancaCaucaoLiquida> concentracoesCobranca = new HashSet<ConcentracaoCobrancaCaucaoLiquida>();
@@ -595,17 +609,21 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		    formaCobranca.setConcentracaoCobrancaCaucaoLiquida(concentracoesCobranca);
 		}
 		
+		
 		List<Integer> diasdoMes = new ArrayList<Integer>();
 		diasdoMes.add(formaCobrancaDTO.getDiaDoMes());
 		diasdoMes.add(formaCobrancaDTO.getPrimeiroDiaQuinzenal());
 		diasdoMes.add(formaCobrancaDTO.getSegundoDiaQuinzenal());
 		formaCobranca.setDiasDoMes(diasdoMes);
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
-		
-		formaCobrancaRepository.merge(formaCobranca);
-		
 
-		
+		if (formaCobranca.getId()==null){
+		    formaCobrancaRepository.adicionar(formaCobranca);
+		}
+		else{
+			formaCobrancaRepository.merge(formaCobranca);
+		}
+
 		
 		//FORMA DE PAGAMENTO
 		PagamentoCaucaoLiquida pagamento = null;
@@ -627,21 +645,19 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			pagamento = new PagamentoCaucaoLiquida();
 			pagamento.setValor(formaCobrancaDTO.getValor());
 		}
-		
-		
-		
-		
-		//COTA GARANTIA CAUCAO LIQUIDA
-		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida =  cotaGarantiaRepository.getByCota(idCota,CotaGarantiaCaucaoLiquida.class);
-	
-        if(cotaGarantiaCaucaoLiquida==null){
-        	cotaGarantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
-        	Cota cota = cotaRepository.buscarPorId(idCota);
-        	cotaGarantiaCaucaoLiquida.setCota(cota);
+
+        
+    	//CONTA DEPOSITO
+        ContaBancariaDeposito contaDeposito = cotaGarantiaCaucaoLiquida.getContaBancariaDeposito();
+        if (cotaGarantiaCaucaoLiquida.getContaBancariaDeposito()==null){
+		    contaDeposito = new ContaBancariaDeposito();
         }
-        
- 
-        
+        contaDeposito.setNomeBanco(formaCobrancaDTO.getNomeBanco());
+        contaDeposito.setNomeCorrentista(formaCobrancaDTO.getNomeCorrentista());
+        contaDeposito.setAgencia(formaCobrancaDTO.getAgencia());
+        contaDeposito.setNumeroBanco(formaCobrancaDTO.getNumBanco());
+        contaDeposito.setConta(formaCobrancaDTO.getConta());
+
         
 		if (cotaGarantiaCaucaoLiquida.getCaucaoLiquidas() == null) {
 			cotaGarantiaCaucaoLiquida.setCaucaoLiquidas(new ArrayList<CaucaoLiquida>(listaCaucaoLiquida.size()));
@@ -651,17 +667,128 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());	
 
-		cotaGarantiaCaucaoLiquida.setContaDepositoCaucaoLiquida(contaDepositoCaucaoLiquida);
+		cotaGarantiaCaucaoLiquida.setContaBancariaDeposito(contaDeposito);
 		
 		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoBoleto!=null?pagamentoBoleto:pagamento);
 		
 		cotaGarantiaCaucaoLiquida.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
-		
-		
-		
-		
+
 		
 		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
+	}
+	
+	/**
+	 * Método responsável por obter os dados de caucao liquida com forma de pagamento Boleto.
+	 * @param idCota: ID da cota
+	 * @return Data Transfer Object com os dados de caucao liquida
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public FormaCobrancaCaucaoLiquidaDTO obterDadosCaucaoLiquida(Long idCota) {
+		
+		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = null;
+		FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO = null;	
+		
+		cotaGarantiaCaucaoLiquida =  cotaGarantiaRepository.getByCota(idCota,CotaGarantiaCaucaoLiquida.class);
+		FormaCobrancaCaucaoLiquida formaCobranca = null;
+		PagamentoBoleto pagamentoBoleto = null;
+		
+		
+		if (cotaGarantiaCaucaoLiquida!=null){
+
+			formaCobrancaDTO = new FormaCobrancaCaucaoLiquidaDTO();
+			
+			formaCobrancaDTO.setTipoCobranca(cotaGarantiaCaucaoLiquida.getTipoCobranca());
+			formaCobrancaDTO.setIdCaucaoLiquida(cotaGarantiaCaucaoLiquida.getId());
+			formaCobrancaDTO.setIdCota(idCota);
+			
+			
+			ContaBancariaDeposito contaDeposito = cotaGarantiaCaucaoLiquida.getContaBancariaDeposito();
+			if(contaDeposito!=null){
+			    formaCobrancaDTO.setAgencia(contaDeposito.getAgencia());
+			    formaCobrancaDTO.setConta(contaDeposito.getConta());
+			    formaCobrancaDTO.setNumBanco(contaDeposito.getNumeroBanco());
+			    formaCobrancaDTO.setNomeBanco(contaDeposito.getNomeBanco());
+			    formaCobrancaDTO.setNomeCorrentista(contaDeposito.getNomeCorrentista());
+			}
+			
+			
+			if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobranca.BOLETO)==0){
+				
+				pagamentoBoleto = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
+				
+				if (pagamentoBoleto!=null){
+					
+					formaCobrancaDTO.setValor(pagamentoBoleto.getValor());
+					formaCobrancaDTO.setQtdeParcelas(pagamentoBoleto.getQuantidadeParcelas());
+					formaCobrancaDTO.setValorParcela(pagamentoBoleto.getValorParcela());
+					
+	    		    formaCobranca = pagamentoBoleto.getFormaCobrancaCaucaoLiquida();
+				}
+	    	}
+			
+			
+			if (formaCobranca!=null){
+
+				Set<ConcentracaoCobrancaCaucaoLiquida> concentracoesCobranca = null;
+				Integer diaDoMes = null;
+				Integer primeiroDiaQuinzenal = null;
+				Integer segundoDiaQuinzenal = null;
+			
+				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL){
+				    concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCaucaoLiquida();
+				}		
+				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.MENSAL){		
+				    diaDoMes = (formaCobranca.getDiasDoMes().size()>0)?formaCobranca.getDiasDoMes().get(0):null;
+				}
+				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.QUINZENAL){		
+					primeiroDiaQuinzenal = (formaCobranca.getDiasDoMes().size()>0)?formaCobranca.getDiasDoMes().get(0):null;
+					segundoDiaQuinzenal = (formaCobranca.getDiasDoMes().size()>1)?formaCobranca.getDiasDoMes().get(1):null;
+				}
+
+				formaCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
+				formaCobrancaDTO.setDiaDoMes(diaDoMes);
+				formaCobrancaDTO.setPrimeiroDiaQuinzenal(primeiroDiaQuinzenal);
+				formaCobrancaDTO.setSegundoDiaQuinzenal(segundoDiaQuinzenal);
+	
+				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
+					for (ConcentracaoCobrancaCaucaoLiquida itemConcentracaoCobranca:concentracoesCobranca){
+						
+						DiaSemana dia = itemConcentracaoCobranca.getDiaSemana();
+						if (dia==DiaSemana.DOMINGO){
+							formaCobrancaDTO.setDomingo(true);
+						}
+		
+						if (dia==DiaSemana.SEGUNDA_FEIRA){
+							formaCobrancaDTO.setSegunda(true);
+						}    
+						
+						if (dia==DiaSemana.TERCA_FEIRA){
+							formaCobrancaDTO.setTerca(true);
+						}    
+						
+						if (dia==DiaSemana.QUARTA_FEIRA){
+							formaCobrancaDTO.setQuarta(true);
+						}
+						
+					    if (dia==DiaSemana.QUINTA_FEIRA){
+					    	formaCobrancaDTO.setQuinta(true);
+					    }    
+					    
+						if (dia==DiaSemana.SEXTA_FEIRA){
+							formaCobrancaDTO.setSexta(true);
+						}    
+						
+						if (dia==DiaSemana.SABADO){
+							formaCobrancaDTO.setSabado(true);
+						}
+						
+					}
+				}
+			}
+		}
+		
+		return formaCobrancaDTO;
 	}
 	
 }

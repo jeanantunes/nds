@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -74,33 +73,28 @@ public class FileServiceImpl implements FileService {
 	public void esvaziarTemp(String dirBase) {
 		
 		File tempDir = new File(dirBase + "/" + TEMP_DIR);	
-		
-		if(tempDir.exists()) {
-			
-		 	for (File file : tempDir.listFiles()) {
-		 		file.delete();
-		 	}
-		
-		} else {
-			tempDir.mkdirs();
-		}		
+		limparDiretorio(tempDir);
 	}
 	
 	public void esvaziarReal(String dirBase) {
 		
 		File realDir = new File(dirBase + "/" + REAL_DIR);	
+		limparDiretorio(realDir);
 		
-		if(realDir.exists()) {
+	}
+	
+	public void limparDiretorio(File diretorio) {
+		if(diretorio.exists()) {
 			
-		 	for (File file : realDir.listFiles()) {
+		 	for (File file : diretorio.listFiles()) {
 		 		file.delete();
 		 	}
 		
 		} else {
-			realDir.mkdirs();
-		}		
+			diretorio.mkdirs();
+		}			
 	}
-
+	
 	@Override
 	public void persistirTemporario(String dirBase) throws FileNotFoundException, IOException {
 		
@@ -204,7 +198,7 @@ public class FileServiceImpl implements FileService {
 		}
 		
 		if(!valido)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Formato de arquivo inv·lido"));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Formato de arquivo inv√°lido"));
 		
 		
 	}

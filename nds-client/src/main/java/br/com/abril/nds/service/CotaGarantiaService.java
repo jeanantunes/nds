@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 import java.util.List;
+
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -7,7 +8,7 @@ import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
@@ -195,7 +196,7 @@ public interface CotaGarantiaService {
 			List<CaucaoLiquida> listaCaucaoLiquida, Long idCota)
 			throws ValidacaoException, InstantiationException, IllegalAccessException;
 	
-    CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida conta) throws ValidacaoException, InstantiationException, IllegalAccessException ;
+    CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaBancariaDeposito conta) throws ValidacaoException, InstantiationException, IllegalAccessException ;
 
 	/**
 	 * Salva Calção Liquida com forma de cobrança Boleto
@@ -209,4 +210,10 @@ public interface CotaGarantiaService {
 	 */
 	CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO) throws ValidacaoException, InstantiationException, IllegalAccessException;
 
+	/**
+	 * Método responsável por obter os dados da forma de cobranca
+	 * @param idFormaCobranca: ID da forma de cobranca
+	 * @return Data Transfer Object com os dados da forma de cobranca
+	 */
+	FormaCobrancaCaucaoLiquidaDTO obterDadosCaucaoLiquida(Long idCota);
 }

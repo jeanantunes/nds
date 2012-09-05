@@ -48,6 +48,16 @@ public interface ConferenciaEncalheService {
 	 */
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
 	
+	/**
+	 * Valida se o produto edicao em questão é relalivo a lancamento parcial.
+	 * 
+	 * @param codigo
+	 * @param numeroEdicao
+	 * 
+	 * @return boolean
+	 */
+	public boolean isLancamentoParcialProdutoEdicao(String codigo, Long numeroEdicao);
+
 	
 	/**
 	 * Obtém o TipoContabilizacaoCE.
