@@ -43,6 +43,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoBoleto;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDepositoTransferencia;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCaucaoLiquidaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
@@ -617,8 +618,11 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			pagamentoBoleto.setValorParcela(formaCobrancaDTO.getValorParcela());
 
 			pagamentoBoleto.setFormaCobrancaCaucaoLiquida(formaCobranca);
-		}
-		else{
+		} else if (formaCobrancaDTO.getTipoCobranca() == TipoCobranca.DEPOSITO){
+			
+			pagamento = new PagamentoDepositoTransferencia();
+			pagamento.setValor(formaCobrancaDTO.getValor());
+		} else{
 			
 			pagamento = new PagamentoCaucaoLiquida();
 			pagamento.setValor(formaCobrancaDTO.getValor());

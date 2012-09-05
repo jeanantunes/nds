@@ -1849,6 +1849,7 @@ public class CotaServiceImpl implements CotaService {
 			
 			if (pdv != null){
 				
+				dto.setReferenciaEndereco(pdv.getPontoReferencia());
 				dto.setHorariosFuncionamento(pdv.getPeriodos());
 				
 				Endereco enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
@@ -1870,9 +1871,6 @@ public class CotaServiceImpl implements CotaService {
 			dto.setPeriodicidade(
 				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade().getDescricao());
 		}
-		
-		//TODO
-		//referencia de entrega? dafuq???
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("SUBREPORT_DIR",

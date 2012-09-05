@@ -299,11 +299,10 @@
         <table width="755" cellpadding="2" cellspacing="2" style="text-align:left;">
             <tbody>
 
-                 <table width="40%" border="0" cellspacing="1" cellpadding="1">
+                 <table width="755" border="0" cellspacing="2" cellpadding="2">
                      <tr>
-				        <td valign="top"><strong>Forma de Pagamento:</strong></td>
-					    <td valign="top">&nbsp;</td>
-					    <td valign="top">
+				        <td valign="top" width="140"><strong>Forma de Pagamento:</strong></td>
+					    <td valign="top" width="232">
 		
 					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="tipoCotaGarantia.opcaoPagto(this.value);">
 		                        <option value="">Selecione</option>
@@ -312,9 +311,16 @@
 				                </c:forEach>
 		                    </select> 
 		
-				        </td>    
+				        </td>
+				        
+				        <td width="361">
+					        <div name="divFormaDeposito" id="divFormaDeposito" style="display: none;">
+								<strong>Valor R$</strong>
+								<input type="text" id="valorFormaPagamentoDeposito" />
+							</div>
+				        </td>
 				     </tr>
-                 </table> 
+                 </table>
                  
                  <div name="divFormaBoleto" id="divFormaBoleto">
     
@@ -403,11 +409,6 @@
 	                 
 	                 
                  </div>
-                        
-                 
-                 <div name="divFormaDeposito" id="divFormaDeposito">
-                 </div>
-                 
                  
                  <div name="divFormaDinheiro" id="divFormaDinheiro">
                  </div>
