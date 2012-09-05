@@ -1201,7 +1201,10 @@ public class CotaController {
 	@Get
 	public void imprimeTermoAdesao(Integer numeroCota, String taxa, String percentual) throws Exception{
 		
-		byte[] arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, new BigDecimal(taxa), new BigDecimal(percentual));
+		BigDecimal valorTaxa = taxa == null || taxa.isEmpty() ? null : new BigDecimal(taxa);
+		BigDecimal valorPercentual = percentual == null || percentual.isEmpty() ? null : new BigDecimal(percentual);
+		
+		byte[] arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, valorTaxa, valorPercentual);
 
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=termo_adesao.pdf");
