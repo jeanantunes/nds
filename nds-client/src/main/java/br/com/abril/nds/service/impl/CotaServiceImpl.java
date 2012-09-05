@@ -1,8 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -19,12 +17,10 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -35,6 +31,7 @@ import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TermoAdesaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -64,6 +61,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -1821,6 +1819,70 @@ public class CotaServiceImpl implements CotaService {
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception {
+		
+		TermoAdesaoDTO dto = new TermoAdesaoDTO();
+		dto.setNumeroCota(numeroCota);
+		
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		dto.setNomeCota(cota.getPessoa().getNome());
+		dto.setNomeDistribuidor(this.distribuidorRepository.obterRazaoSocialDistribuidor());
+		dto.setValorDebito(valorDebito);
+		dto.setPorcentagemDebito(percentualDebito);
+		
+		EnderecoCota enderecoCota = 
+				this.enderecoCotaRepository.obterEnderecoPorTipoEndereco(
+						cota.getId(), TipoEndereco.LOCAL_ENTREGA);
+		
+		if (enderecoCota != null){
+			
+			dto.setLogradouroEntrega(enderecoCota.getEndereco().getLogradouro() + ", nº " + enderecoCota.getEndereco().getNumero());
+			dto.setBairroEntrega(enderecoCota.getEndereco().getBairro());
+			dto.setCEPEntrega(enderecoCota.getEndereco().getCep());
+			dto.setCidadeEntrega(enderecoCota.getEndereco().getCidade());
+		} else {
+			
+			PDV pdv = this.pdvRepository.obterPDVPrincipal(cota.getId());
+			
+			if (pdv != null){
+				
+				dto.setHorariosFuncionamento(pdv.getPeriodos());
+				
+				Endereco enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
+				
+				if (enderecoPDV != null){
+					
+					dto.setLogradouroEntrega(enderecoPDV.getLogradouro() + ", nº " + enderecoPDV.getNumero());
+					dto.setBairroEntrega(enderecoPDV.getBairro());
+					dto.setCEPEntrega(enderecoPDV.getCep());
+					dto.setCidadeEntrega(enderecoPDV.getCidade());
+				}
+			}
+		}
+		
+		//TODO
+		//referencia de entrega? dafuq???
+		//Débito: informação se o desconto é mensal / quinzenal / semanal / diário (informação no Cadastro dos Tipos de Serviços). non ecxiste mais
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("infoComp", this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao());
+		
+		List<TermoAdesaoDTO> listaDTO = new ArrayList<TermoAdesaoDTO>();
+		listaDTO.add(dto);
+		
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaDTO);
+		
+		URL url = 
+			Thread.currentThread().getContextClassLoader().getResource("/reports/termo_adesao.jasper");
+		
+		String path = url.toURI().getPath();
+		 
+		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+	}
+	
 	/**
 	 * Valida se a lista de endereços pertencentes a uma cota, 
 	 * tem pelo menos um e somente um endereço principal
@@ -1884,6 +1946,4 @@ public class CotaServiceImpl implements CotaService {
 		
 		return enderecoAssociacaoCadastrado;
 	}
-
-	
 }

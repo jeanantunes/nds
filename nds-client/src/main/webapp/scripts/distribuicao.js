@@ -232,6 +232,12 @@ function Distribuicao(tela) {
 	    document.location.assign(contextPath + "/cadastro/cota/imprimeProcuracao?numeroCota="+D.get("numCota"));
 	};
 	
+	this.imprimeTermoAdesao = function(){
+		
+	    document.location.assign(
+	    	contextPath + "/cadastro/cota/imprimeTermoAdesao?numeroCota="+D.get("numCota")+"&taxa="+D.get("")+"&percentual="+D.get(""));
+	};
+	
 	this.mostrarEsconderDiv = function(classDiv, exibir) {
 		
 		$("." + classDiv).toggle(exibir);
