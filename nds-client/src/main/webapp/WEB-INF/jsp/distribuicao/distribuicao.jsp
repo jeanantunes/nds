@@ -113,6 +113,8 @@
 						</td>
 					</tr>
 				</table>
+				
+				<a href="javascript:;" target="_blank" onclick="DISTRIB_COTA.imprimeTermoAdesao();">teste termo adesão vlw</a>
 
 				<div class="divConteudoEntregador">
 					<div id="cotaTemEntregador" style="display: none;">

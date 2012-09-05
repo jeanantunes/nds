@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 
 @Repository
@@ -43,6 +44,17 @@ public class EnderecoCotaRepositoryImpl extends AbstractRepositoryModel<Endereco
 		Criteria criteria = getSession().createCriteria(EnderecoCota.class);
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		criteria.add(Restrictions.eq("principal", true));
+		criteria.setMaxResults(1);
+		
+		return (EnderecoCota) criteria.uniqueResult();
+	}
+	
+	@Override
+	public EnderecoCota obterEnderecoPorTipoEndereco(Long idCota, TipoEndereco tipoEndereco){
+		
+		Criteria criteria = getSession().createCriteria(EnderecoCota.class);
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		criteria.add(Restrictions.eq("tipoEndereco", tipoEndereco));
 		criteria.setMaxResults(1);
 		
 		return (EnderecoCota) criteria.uniqueResult();
