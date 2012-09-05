@@ -240,9 +240,9 @@
 	
 	$(document).ready(function() {		
 		$("#changes").dialog({
-			resizable : false,
-			height : 230,
-			width : 400
+			resizable : true,
+			height : 400,
+			width : 800
 		});
 		$("#changes").dialog("close");
 		
@@ -374,7 +374,7 @@
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
 		
-		<div id="changes" title="Changelog">${changes}</div>
+		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
 		
 		<div id="workspace">
 			<ul></ul>
