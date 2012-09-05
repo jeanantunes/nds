@@ -58,10 +58,10 @@ var ContagemDevolucao = $.extend(true, {
 		montarColunas: function (){
 			
 			if(ContagemDevolucao.isRoleOperador()){
-				return montarColunasPerfilOperador();
+				return ContagemDevolucao.montarColunasPerfilOperador();
 			}
 			
-			return montarColunasPerfilAdmin();
+			return ContagemDevolucao.montarColunasPerfilAdmin();
 		},
 		
 		/**
@@ -143,12 +143,12 @@ var ContagemDevolucao = $.extend(true, {
 			
 			valor = (input.checked == false)?"":valor;
 			
-			$('#'+id).val(valor);
+			$('#'+id, ContagemDevolucao.workspace).val(valor);
 			
 			if(input.checked == false) {
-				$('#'+id).prop('disabled', false);
+				$('#'+id, ContagemDevolucao.workspace).prop('disabled', false);
 			} else {
-				$('#'+id).prop('disabled', true);
+				$('#'+id,ContagemDevolucao.workspace).prop('disabled', true);
 			}
 			
 		},

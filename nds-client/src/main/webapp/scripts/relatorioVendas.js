@@ -403,7 +403,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcEditorGrid", relatorioVendasController.workspace).flexReload();
-			mostra_editor();			
+			relatorioVendasController.mostra_editor();			
 			
 		} else if ($('#filtro_produto', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
@@ -422,7 +422,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcProdutoGrid", relatorioVendasController.workspace).flexReload();
-			mostra_produto();
+			relatorioVendasController.mostra_produto();
 			
 		} else if ($('#filtro_cota', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
@@ -441,7 +441,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcCotaGrid", relatorioVendasController.workspace).flexReload();
-			mostra_cota();					
+			relatorioVendasController.mostra_cota();					
 		}
 	},
 	

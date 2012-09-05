@@ -15,7 +15,8 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-novo", this.workspace).dialog("close")
 		});
 	},
 	
@@ -35,7 +36,8 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-confirm", this.workspace).dialog("close")
 		});	
 		      
 	},
@@ -55,7 +57,8 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-rejeitar", this.workspace).dialog("close")
 		});
 	},
 	
@@ -89,7 +92,8 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-dadosNotaFiscal", this.workspace).dialog("close")
 		
 		
 		});	
@@ -111,7 +115,8 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-confirmar-cancelamento", this.workspace).parents("form")
 		});
 	},
 	
@@ -131,13 +136,14 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					cadastrarNota();
+					consultaNFEEncalheTratamentoController.cadastrarNota();
 					$( this ).dialog( "close" );					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-nfe", this.workspace).parents("form")
 		});
 	},
 
@@ -370,9 +376,9 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 		$(".dadosFiltro", consultaNFEEncalheTratamentoController.workspace).show();		
 		var status = $('#situacaoNfe', consultaNFEEncalheTratamentoController.workspace).val();		
 		if(status == 'RECEBIDA'){			
-			pesquisarNotaRecebidas();		
+			consultaNFEEncalheTratamentoController.pesquisarNotaRecebidas();		
 		}else{			
-			pesquisarNotasPendente();
+			consultaNFEEncalheTratamentoController.pesquisarNotasPendente();
 		}
 		
 	},
@@ -439,7 +445,7 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 			
 			$.each(resultado.rows, function(index, row) {					
 				
-				var linkLancamento = '<a href="javascript:;"  onclick="popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
+				var linkLancamento = '<a href="javascript:;"  onclick="consultaNFEEncalheTratamentoController.popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 								   '</a>';
 			   var linkCadastro = '<a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','

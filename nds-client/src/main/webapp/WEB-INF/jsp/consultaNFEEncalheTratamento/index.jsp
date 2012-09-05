@@ -18,7 +18,7 @@ $(function(){
 </head>
 
 <body>
-<form action="" method="get" id="form1" name="form1">
+<form id="form-dadosNotaFiscal">
 <div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal" style="display:none;">
 	<fieldset>
         <legend>Nota Fiscal</legend>
@@ -62,6 +62,8 @@ $(function(){
 </fieldset>
 
 </div>
+</form>
+<form id="form-nfe">
 <div id="dialog-nfe" title="NF-e">
 	<fieldset style="width:310px!important;">
     <legend>Incluir NF-e</legend>
@@ -92,32 +94,39 @@ $(function(){
  
 
 </div>
+</form>
 
 
-
+<form id="form-confirmar-cancelamento">
 <div id="dialog-confirmar-cancelamento" title="Cancelamento de NF-e" style="display:none;">
 	<p>Confirma o cancelamento da NF-e?</p>
  
 
 </div>
+</form>
 
+<form id="form-confirm">
 <div id="dialog-confirm" title="Aprovar Solicitação">
 	<p>Você esta Aprovando uma Solicitação, tem certeza?</p>
  
 
 </div>
+</form>
 
+<form id="form-rejeitar">
 <div id="dialog-rejeitar" title="Rejeitar Solicitação">
 	<p>Tem certeza que deseja Rejeitar esta Solicitação?</p>
  
 
 </div>
+</form>
 
 
-
+<form id="form-novo">
 <div id="dialog-novo" title="Geração arquivos Nf-e">
      <p>Confirma a Geração arquivos Nf-e?</p>
 </div>
+</form>
 
 
 <div class="corpo">   
@@ -138,7 +147,7 @@ $(function(){
     <td width="105"><input name="data" type="text" id="data" style="width:80px;"/></td>
     <td width="42">Status:</td>
     <td width="173">    
-		<select name="situacaoNfe" id="situacaoNfe" style="width:290px;" onchange="consultaNFEEncalheTratamentoController.mostra_status(this.value);">
+		<select name="situacaoNfe" id="situacaoNfe" style="width:290px;" onchange="mostra_status(this.value);">
 		    <option value=""  selected="selected"></option>
 		    <c:forEach items="${comboStatusNota}" var="comboStatusNota">
 		      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
@@ -196,6 +205,5 @@ $(function(){
 
     </div>
 </div> 
-</form>
 </body>
 </html>

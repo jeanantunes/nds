@@ -60,7 +60,7 @@ var jsExtratoEdicao = $.extend(true, {
 		var data = "codigo=" + $("#codigo", jsExtratoEdicao.workspace).val() +
 		  		  "&edicao=" + $("#edicao", jsExtratoEdicao.workspace).val();
 		
-		$.postJSON(contextoPath + '/estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
+		$.postJSON(contextPath + '/estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
 			$("#precoCapa", jsExtratoEdicao.workspace).val(result);
 		});
 		

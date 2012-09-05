@@ -265,9 +265,11 @@ var followUpSistemaController = $.extend(true, {
 	},
 	
 	exPreProcFollowupChamadao : function(resultado) {
-			$.each(resultado.rows, function(index, row) {						
+		$.each(resultado.rows, function(index, row) {						
 			
-			var linkExcluir = '<a href="' + contextPath + '/devolucao/chamadao/popularGridFollowUp?numeroCota='+row.cell.numeroCota+'&data='+row.cell.dataProgramadoChamadao+'"  style="cursor:pointer">' +
+			url = '\'devolucao/chamadao/popularGridFollowUp?numeroCota='+row.cell.numeroCota+'&data='+row.cell.dataProgramadoChamadao + '\'';
+				
+			var linkExcluir = '<a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Chamadão\', ' + url + ')"  style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="' + contextPath + '/images/ico_reprogramar.gif" hspace="5" border="0px" />Programar' +
 							   '</a>';
 			
@@ -281,7 +283,9 @@ var followUpSistemaController = $.extend(true, {
 	exPreProcFollowupStatusCota : function(resultado) {		
 			$.each(resultado.rows, function(index, row) {						
 			
-			var linkExcluir = '<a href="' + contextPath + '/financeiro/manutencaoStatusCota/popularGridFollowUp?numeroCota='+row.cell.numeroCota+'"  style="cursor:pointer">' +
+			url = '\'financeiro/manutencaoStatusCota/popularGridFollowUp?numeroCota='+row.cell.numeroCota + '\'';
+			
+			var linkExcluir = '<a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Manutenção de Status Cota\', ' + url + ')"  style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0px" />Manutenção Status' +
 							   '</a>';
 			

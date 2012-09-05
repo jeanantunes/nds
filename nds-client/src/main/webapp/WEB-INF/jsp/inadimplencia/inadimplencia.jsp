@@ -149,7 +149,7 @@ $(function(){
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
-              <td><span class="bt_pesquisar"><a href="javascript:;" onclick="cliquePesquisar();">Pesquisar</a></span></td>
+              <td><span class="bt_pesquisar"><a href="javascript:;" onclick="inadimplenciaController.cliquePesquisar();">Pesquisar</a></span></td>
             </tr>
           </table>
 

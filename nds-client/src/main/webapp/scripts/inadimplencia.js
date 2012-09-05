@@ -217,13 +217,14 @@ var inadimplenciaController = $.extend(true, {
 		//var div = document.getElementById("dialog-detalhes");
 		var div = $("#dialog-detalhes", inadimplenciaController.workspace);
 		
-		div.innerHTML="";
+		//div.innerHTML="";
+		$(div).html("");
 		
 		var fieldset  = document.createElement("FIELDSET");
 		
 		fieldset.style.cssText = "width:330px;" + fieldset.style.cssText;
 
-		div.append(fieldset);
+		$(div).append(fieldset);
 		//div.appendChild(fieldset);
 		
 		var legend = document.createElement("LEGEND");
