@@ -303,7 +303,7 @@ public class PdvServiceImpl implements PdvService {
         if (pdv.getCaracteristicas() != null
                 && pdv.getCaracteristicas().isPontoPrincipal()) {
             throw new ValidacaoException(TipoMensagem.WARNING,
-                    "PDV não pode ser excluído! Pelomenos um PDV deve ser um Ponto Principal.");
+                    "PDV não pode ser excluído! Pelo menos um PDV deve ser um Ponto Principal.");
         }
 
         if (pdv != null) {
@@ -1218,7 +1218,7 @@ public class PdvServiceImpl implements PdvService {
                 if (tel.getTelefone().getId().equals(idTelefone)
                         && tel.isPrincipal()) {
                     throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Pelomenos um telefone associado ao PDV deve ser principal!");
+                            "Pelo menos um telefone associado ao PDV deve ser principal!");
                 }
             }
         }
@@ -1234,7 +1234,7 @@ public class PdvServiceImpl implements PdvService {
                 if (end.getEndereco().getId().equals(idEndereco)
                         && end.isPrincipal()) {
                     throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Pelomenos um endereço associado ao PDV deve ser principal!");
+                            "Pelo menos um endereço associado ao PDV deve ser principal!");
                 }
             }
         }
@@ -1255,13 +1255,13 @@ public class PdvServiceImpl implements PdvService {
                                 && endereco.isPrincipal()) {
 
                             throw new ValidacaoException(TipoMensagem.WARNING,
-                                    "Pelomenos um endereço associado ao PDV deve ser principal!");
+                                    "Pelo menos um endereço associado ao PDV deve ser principal!");
                         }
                     }
                 }
             } else {
                 throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Pelomenos um endereço associado ao PDV deve ser principal!");
+                        "Pelo menos um endereço associado ao PDV deve ser principal!");
             }
         }
     }
@@ -1288,7 +1288,7 @@ public class PdvServiceImpl implements PdvService {
         if (!this.existeTelefonePrincipal(listaTelefoneAssociacaoSalvar)) {
 
             throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Pelomenos um telefone associado ao PDV deve ser principal!");
+                    "Pelo menos um telefone associado ao PDV deve ser principal!");
         }
     }
 
@@ -1364,4 +1364,5 @@ public class PdvServiceImpl implements PdvService {
         HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
         return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(pdv.getTelefones()));
     }
+
 }

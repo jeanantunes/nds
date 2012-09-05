@@ -257,6 +257,7 @@ public class CotaDTOAssembler {
             HistoricoTitularidadeCotaCodigoDescricao areaInfluencia = pdv.getAreaInfluencia();
             if (areaInfluencia != null) {
                 caracteristicaDTO.setAreaInfluencia(areaInfluencia.getCodigo());
+                caracteristicaDTO.setDescricaoAreaInfluencia(areaInfluencia.getDescricao());
             }
             if (tipoPonto != null) {
                 caracteristicaDTO.setTipoPonto(tipoPonto.getCodigo());

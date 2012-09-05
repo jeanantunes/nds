@@ -175,6 +175,24 @@ public class PdvController {
     public void carregarTiposLicencaMunicipal() {
         result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoLicencaMunicipal()), "result").recursive().serialize();
     }
+	
+	@Post
+    @Path("/carregarTiposPontoPdv")
+    public void carregarTiposPontoPdv() {
+        result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposPontoPDV()), "result").recursive().serialize();
+    }
+	
+	@Post
+	@Path("/carregarCaracteristicasPdv")
+	public void carregarCaracteristicasPdv() {
+	      result.use(Results.json()).from(getListaCaracteristica(), "result").recursive().serialize();
+	}
+	
+	@Post
+    @Path("/carregarAreasInfluenciaPdv")
+    public void carregarAreasInfluenciaPdv() {
+        result.use(Results.json()).from(getListaDescricao(pdvService.obterAreasInfluenciaPDV()), "result").recursive().serialize();
+    }
 
 	/**
 	 * Retorna uma lista de caracteristicas de segmentação do PDV

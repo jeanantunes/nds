@@ -42,11 +42,10 @@
     }
     
 	td.highlight a {
-			background: #99dd73 url(${pageContext.request.contextPath}/images/highlightDate.png) 50% 50% repeat-x !important;  
-			border: 1px #88a276 solid !important;
+			background: #EDB4B4 !important;  
+			border: 1px #AD3737 solid !important;
+			color:black !important;
 	}
-
-
 
 </style>
 
@@ -175,9 +174,9 @@
 	</div>
 	</form>
 
-	<form id="form-editar">
+<form id="form-editar">
 	<div id="dialog-editar" title="Editar Feriado">
-
+		
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialog-editar" name="messageDialog"/>
 		</jsp:include>
@@ -262,7 +261,7 @@
 			<table class="diaFeriadoGrid"></table>
 		
 		</fieldset>
-
+		
 	</div>
 	</form>
 

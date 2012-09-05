@@ -28,6 +28,8 @@ public class CaracteristicaDTO implements Serializable {
 	private Long caracteristica;
 	
 	private Long areaInfluencia;
+	
+	private String descricaoAreaInfluencia;
 		
 	private TipoCaracteristicaSegmentacaoPDV tipoCaracteristicaSegmentacaoPDV;
 	
@@ -158,8 +160,24 @@ public class CaracteristicaDTO implements Serializable {
 	public void setAreaInfluencia(Long areaInfluencia) {
 		this.areaInfluencia = areaInfluencia;
 	}
+	
+	
 
-	public boolean isPossuiCartao() {
+	/**
+     * @return the descricaoAreaInfluencia
+     */
+    public String getDescricaoAreaInfluencia() {
+        return descricaoAreaInfluencia;
+    }
+
+    /**
+     * @param descricaoAreaInfluencia the descricaoAreaInfluencia to set
+     */
+    public void setDescricaoAreaInfluencia(String descricaoAreaInfluencia) {
+        this.descricaoAreaInfluencia = descricaoAreaInfluencia;
+    }
+
+    public boolean isPossuiCartao() {
 		return possuiCartao;
 	}
 

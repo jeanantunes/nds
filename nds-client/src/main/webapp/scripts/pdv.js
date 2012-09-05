@@ -29,6 +29,7 @@ var PDV =  $.extend(true, {
                  $('#idBtnExcluir', this.workspace).hide();
                  $('#PDVbtnUploadImagem', this.workspace).hide();
                  $("#dialog-pdv", this.workspace).find(':input:not(:disabled)').prop('disabled', true);
+                 $("#textoLuminoso", this.workspace).prop("disabled", true);
                  PDV.fecharModalCadastroPDV = true;
 
              } else {
@@ -37,6 +38,7 @@ var PDV =  $.extend(true, {
                  $('#idBtnExcluir', this.workspace).show();
                  $('#PDVbtnUploadImagem', this.workspace).show();
                  $("#dialog-pdv", this.workspace).find(':input(:disabled)').prop('disabled', false);
+                 $("#textoLuminoso", this.workspace).prop("disabled", false);
                  PDV.fecharModalCadastroPDV = false;
              }
          },
@@ -148,23 +150,23 @@ var PDV =  $.extend(true, {
 			$("#pontoReferenciaPDV", this.workspace).val(result.pdvDTO.pontoReferencia);
 			if (PDV.isModoTelaCadastroCota()) {
                 PDV.carregarTiposEstabelecimento(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo);
+                PDV.carregarTiposLicencaMunicipal(result.pdvDTO.tipoLicencaMunicipal.codigo);
             }else {
-                var optionTipoEstabelecimento =  newOption(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo,
-                    result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.descricao);
-                $("#selectTipoEstabelecimento", this.workspace).html(optionTipoEstabelecimento);
+                if (result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo) {
+                    montarComboBoxUnicaOpcao(result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.codigo,
+                        result.pdvDTO.tipoEstabelecimentoAssociacaoPDV.descricao,$("#selectTipoEstabelecimento", this.workspace));
+                }
+
+                if (result.pdvDTO.tipoLicencaMunicipal.codigo) {
+                    montarComboBoxUnicaOpcao(result.pdvDTO.tipoLicencaMunicipal.codigo, result.pdvDTO.tipoLicencaMunicipal.descricao,
+                        $("#selectTipoLicenca"));
+                }
             }
             $("#selectTamanhoPDV", this.workspace).val(result.pdvDTO.tamanhoPDV);
-			$("#qntFuncionarios", this.workspace).val(result.pdvDTO.qtdeFuncionarios);
-			$("#sistemaIPV", this.workspace).attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
-			$("#porcentagemFaturamento", this.workspace).val(result.pdvDTO.porcentagemFaturamento);
-			if (PDV.isModoTelaCadastroCota()) {
-				PDV.carregarTiposLicencaMunicipal(result.pdvDTO.tipoLicencaMunicipal.codigo);
-			} else {
-				var optionTipoLicenca =  newOption(result.pdvDTO.tipoLicencaMunicipal.codigo,
-						result.pdvDTO.tipoLicencaMunicipal.descricao);
-				$("#selectTipoLicenca", this.workspace).html(optionTipoLicenca);
-			}
-			$("#numerolicenca", this.workspace).val(result.pdvDTO.numeroLicenca);
+            $("#qntFuncionarios", this.workspace).val(result.pdvDTO.qtdeFuncionarios);
+            $("#sistemaIPV", this.workspace).attr("checked", result.pdvDTO.sistemaIPV ? "checked" : null);
+            $("#porcentagemFaturamento", this.workspace).val(result.pdvDTO.porcentagemFaturamento);
+            $("#numerolicenca", this.workspace).val(result.pdvDTO.numeroLicenca);
 			$("#nomeLicenca", this.workspace).val(result.pdvDTO.nomeLicenca);
 			$("#arrendatario", this.workspace).attr("checked", result.pdvDTO.arrendatario ? "checked" : null);
 			$("#ptoPrincipal", this.workspace).attr("checked", result.pdvDTO.caracteristicaDTO.pontoPrincipal ? "checked" : null);
@@ -203,15 +205,31 @@ var PDV =  $.extend(true, {
 			PDV.atribuirValorChecked(result.pdvDTO.caracteristicaDTO.possuiCartao,"#possuiCartao");
 			
 			$("#textoLuminoso", this.workspace).val(result.pdvDTO.caracteristicaDTO.textoLuminoso);
-	        $("#selectdTipoPonto", this.workspace).val(result.pdvDTO.caracteristicaDTO.tipoPonto);
-	        $("#selectCaracteristica", this.workspace).val(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV);
-	        $("#selectAreainfluencia", this.workspace).val(result.pdvDTO.caracteristicaDTO.areaInfluencia);
-	        
-	        if(this.isChecked("#luminoso")){
-				$("#textoLuminoso", this.workspace).removeAttr("disabled");
+
+            if (PDV.isModoTelaCadastroCota()) {
+                PDV.carregarTiposPontoPdv(result.pdvDTO.tipoPontoPDV.codigo);
+                PDV.carregarCaracteristicasPdv(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV);
+                PDV.carregarAreasInfluenciaPdv(result.pdvDTO.caracteristicaDTO.areaInfluencia);
+            } else {
+                if (result.pdvDTO.tipoPontoPDV.codigo) {
+                    montarComboBoxUnicaOpcao(result.pdvDTO.tipoPontoPDV.codigo, result.pdvDTO.tipoPontoPDV.descricao,
+                        $("#selectdTipoPonto", this.workspace));
+                }
+                if (result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV) {
+                    montarComboBoxUnicaOpcao(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV,
+                        result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV, $("#selectCaracteristica", this.workspace));
+               }
+               if (result.pdvDTO.caracteristicaDTO.areaInfluencia) {
+                   montarComboBoxUnicaOpcao(result.pdvDTO.caracteristicaDTO.areaInfluencia, result.pdvDTO.caracteristicaDTO.descricaoAreaInfluencia,
+                       $("#selectAreainfluencia", this.workspace));
+               }
+            }
+
+	        if(this.isChecked("#luminoso") && !PDV.isReadOnly()){
+				$("#textoLuminoso", this.workspace).prop("disabled", false);
 			}
 	        else{
-	        	$("#textoLuminoso", this.workspace).attr("disabled","disabled");
+	        	$("#textoLuminoso", this.workspace).prop("disabled", true);
 	        }
 	        
 		},
@@ -910,29 +928,28 @@ var PDV =  $.extend(true, {
 		},
 
         carregarTiposEstabelecimento:function(selected){
-            $.postJSON(contextPath + "/cadastro/pdv/carregarTiposEstabelecimento",
-                null,
-                function(result){
-                    var combo =  montarComboBox(result, false);
-                    $("#selectTipoEstabelecimento", this.workspace).html(combo);
-                    $("#selectTipoEstabelecimento", this.workspace).sortOptions();
-                    if (selected) {
-                        $("#selectTipoEstabelecimento", this.workspace).val(selected);
-                    }
-                },null,true,"idModalPDV");
+            carregarCombo(contextPath + "/cadastro/pdv/carregarTiposEstabelecimento", null,
+                $("#selectTipoEstabelecimento", this.workspace), selected, "idModalPDV" );
         },
-        
+
         carregarTiposLicencaMunicipal:function(selected){
-            $.postJSON(contextPath + "/cadastro/pdv/carregarTiposLicencaMunicipal",
-                null,
-                function(result){
-                    var combo =  montarComboBox(result, false);
-                    $("#selectTipoLicenca", this.workspace).html(combo);
-                    $("#selectTipoLicenca", this.workspace).sortOptions();
-                    if (selected) {
-                        $("#selectTipoLicenca", this.workspace).val(selected);
-                    }
-                },null,true,"idModalPDV");
+            carregarCombo(contextPath + "/cadastro/pdv/carregarTiposLicencaMunicipal", null,
+                $("#selectTipoLicenca", this.workspace), selected, "idModalPDV" );
+        },
+
+        carregarTiposPontoPdv:function(selected){
+            carregarCombo(contextPath + "/cadastro/pdv/carregarTiposPontoPdv", null,
+                $("#selectdTipoPonto", this.workspace), selected, "idModalPDV" );
+        },
+
+        carregarCaracteristicasPdv:function(selected){
+            carregarCombo(contextPath + "/cadastro/pdv/carregarCaracteristicasPdv", null,
+                $("#selectCaracteristica", this.workspace), selected, "idModalPDV" );
+        },
+
+        carregarAreasInfluenciaPdv:function(selected){
+            carregarCombo(contextPath + "/cadastro/pdv/carregarAreasInfluenciaPdv", null,
+                $("#selectAreainfluencia", this.workspace), selected, "idModalPDV" );
         },
 		
 		carregarGeradorFluxoNotIn:function(data){
