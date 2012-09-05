@@ -1115,21 +1115,36 @@ public class CotaController {
 		
 		dto.setTiposEntrega(gerarTiposEntrega());
 		
-		String raiz = servletContext.getRealPath("") ;
-		
-		ParametroSistema pathTermoAdesao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
-		
-		String path = (raiz + pathTermoAdesao.getValor() + dto.getNumCota().toString() ).replace("\\", "/");
+		tratarDocumentoTipoEntrega(dto);
 				
-		fileService.resetTemp(path);
-		
-		dto.setNomeTermoAdesao(fileService.obterNomeArquivoTemp(path));
-		
-		
 		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
+	
+	
+	private void tratarDocumentoTipoEntrega(DistribuicaoDTO dto) throws FileNotFoundException, IOException {
+
+		TipoParametroSistema parametroPath = null;
+		
+		if(DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(dto.getDescricaoTipoEntrega()))
+				parametroPath = TipoParametroSistema.PATH_TERMO_ADESAO;
+		else if(DescricaoTipoEntrega.ENTREGADOR.equals(dto.getDescricaoTipoEntrega()))
+				parametroPath = TipoParametroSistema.PATH_TERMO_ADESAO;
+		else
+			return;
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);								
+		
+		String baseDir = (raiz + path.getValor() + dto.getNumCota().toString() ).replace("\\", "/");
+				
+		fileService.resetTemp(baseDir);		
+		
+		dto.setNomeTermoAdesao(fileService.obterNomeArquivoTemp(baseDir));
+	}
+
 	/**
 	 * Persiste no banco os dados de Distribuição da cota
 	 * @param distribuicao - DTO que representa os dados de distribuição da cota
@@ -1143,8 +1158,25 @@ public class CotaController {
 		
 		cotaService.salvarDistribuicaoCota(distribuicao);
 		
+		processarTipoEntrega(distribuicao);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	private void processarTipoEntrega (DistribuicaoDTO distribuicao) {
+		
+		switch(distribuicao.getDescricaoTipoEntrega()) {
+			case ENTREGA_EM_BANCA:
+				//TODO tratamento
+				//if(!distribuicao.get?TermoAdesaoRecebido?())
+				//	excluirArquivo(distribuicao.getNumCota(), TipoParametroSistema.PATH_TERMO_ADESAO);
+				break;
+			case ENTREGADOR:
+				if(!distribuicao.getProcuracaoRecebida())
+					excluirArquivo(distribuicao.getNumCota(), TipoParametroSistema.PATH_PROCURACAO);
+				break;
+		}	
 	}
 	
 	@Get
@@ -1322,34 +1354,56 @@ public class CotaController {
 	
 	@Post
 	public void uploadTermoAdesao(UploadedFile uploadedFile, Integer numCota) throws IOException {		
+		upload(uploadedFile, numCota, TipoParametroSistema.PATH_TERMO_ADESAO);
+	}
+	
+	@Post
+	public void uploadProcuracao(UploadedFile uploadedFile, Integer numCota) throws IOException {		
+		upload(uploadedFile, numCota, TipoParametroSistema.PATH_PROCURACAO);
+	}
+	
+	private void upload(UploadedFile uploadedFile, Integer numCota, TipoParametroSistema parametroPath ) throws IOException {		
 		
 		if(uploadedFile==null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Nenhum arquivo foi selecionado."));
 		
 		String raiz = servletContext.getRealPath("") ;
 		
-		ParametroSistema pathTermoAdesao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);								
 		
-		String path = (raiz + pathTermoAdesao.getValor() + numCota.toString() ).replace("\\", "/");
+		String dirBase = (raiz + path.getValor() + numCota.toString() ).replace("\\", "/");
 		
-		fileService.setArquivoTemp(path, uploadedFile.getFileName(), uploadedFile.getFile());
+		fileService.setArquivoTemp(dirBase, uploadedFile.getFileName(), uploadedFile.getFile());
 			
 		this.result.use(PlainJSONSerialization.class)
 			.from(uploadedFile.getFileName(), "result").recursive().serialize();
 	}
 	
 	@Get
-	public void downloadTermo(Integer numeroCota) throws Exception {
+	public void downloadTermoAdesao(Integer numeroCota) throws Exception {
+		
+		download(numeroCota, TipoParametroSistema.PATH_TERMO_ADESAO);		
+	}
+	
+	@Get
+	public void downloadProcuracao(Integer numeroCota) throws Exception {
+		
+		download(numeroCota, TipoParametroSistema.PATH_PROCURACAO);		
+	}
+	
+	private void download(Integer numeroCota, TipoParametroSistema parametroPath) throws Exception {
 		
 		String raiz = servletContext.getRealPath("") ;
 		
-		ParametroSistema pathTermoAdesao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);		
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);		
 				
-		String path = (raiz + pathTermoAdesao.getValor() + numeroCota.toString() ).replace("\\", "/");
+		String dirBase = (raiz + path.getValor() + numeroCota.toString() ).replace("\\", "/");
 				
-		ArquivoDTO dto = fileService.obterArquivoTemp(path);
+		ArquivoDTO dto = fileService.obterArquivoTemp(dirBase);
+		
+		//TODO if(dto==null) gerarDocFromReport();
 		
 		byte[] b = IOUtils.toByteArray(dto.getArquivo());
 
@@ -1365,13 +1419,21 @@ public class CotaController {
 		
 	}
 	
-	@Post
-	public void excluirArquivo(Integer numCota) {		
+	public void excluirTermoAdesao(Integer numCota, TipoParametroSistema parametroPath) {		
+		excluirArquivo(numCota, TipoParametroSistema.PATH_TERMO_ADESAO);
+	}
+	
+	
+	public void excluirProcuracao(Integer numCota, TipoParametroSistema parametroPath) {		
+		excluirArquivo(numCota, TipoParametroSistema.PATH_PROCURACAO);
+	}
+	
+	private void excluirArquivo(Integer numCota, TipoParametroSistema parametroPath) {		
 		
 		String raiz = servletContext.getRealPath("") ;
 		
 		ParametroSistema pathTermoAdesao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);		
+				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);		
 				
 		String path = (raiz + pathTermoAdesao.getValor() + numCota.toString() ).replace("\\", "/");
 		

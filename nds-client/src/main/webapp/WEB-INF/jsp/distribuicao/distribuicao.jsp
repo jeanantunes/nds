@@ -115,7 +115,7 @@
 				</table>
 
 				<div class="divConteudoEntregador">
-					<div id="cotaTemEntregador" style="display: none;">
+					<div id="cotaTemEntregador2" style="display: block;">
 						<table width="399" border="0" cellspacing="1" cellpadding="1">
 							<tr>
 								<td width="130">Utiliza Procuração?</td>
