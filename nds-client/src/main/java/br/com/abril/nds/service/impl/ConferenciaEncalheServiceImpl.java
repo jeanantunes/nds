@@ -235,6 +235,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (codigoBoxPadraoUsuario == null){
 			
 			return listaBoxEncalhe;
+			
 		}
 		
 		List<Box> boxes = new ArrayList<Box>();
@@ -367,6 +368,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			return listaChamadaEncalheCota.get(0).getChamadaEncalhe();
 			
 		}
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#isLancamentoParcialProdutoEdicao(java.lang.String, java.lang.Long)
+	 */
+	public boolean isLancamentoParcialProdutoEdicao(String codigo, Long numeroEdicao) {
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, numeroEdicao);
+		
+		return produtoEdicao.isParcial();
 		
 	}
 	
