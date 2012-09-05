@@ -83,6 +83,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
 	    this.calcularDataTermino();
 	    this.carregarArquivoContrato();
+	    
 	},
 	
 	montarTrRadioBox : function(result,name,nameItemIdent) {
@@ -484,8 +485,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 	carregarArquivoContrato : function() {
 
 		var idCota = MANTER_COTA.idCota;
-		
-		var params = {idCota:idCota};
+		var numeroCota = MANTER_COTA.numeroCota;
+		var params = {idCota:idCota, numeroCota:numeroCota};
 		
 		var _this = this;
 		
