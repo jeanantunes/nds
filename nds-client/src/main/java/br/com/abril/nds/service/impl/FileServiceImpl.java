@@ -179,7 +179,6 @@ public class FileServiceImpl implements FileService {
 		else
 			return arquivo.getName();
 	}
-
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.FileService#validarArquivo(int, java.util.List, br.com.caelum.vraptor.interceptor.multipart.UploadedFile)
 	 */

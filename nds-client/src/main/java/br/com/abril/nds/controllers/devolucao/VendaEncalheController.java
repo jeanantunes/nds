@@ -425,7 +425,7 @@ public class VendaEncalheController {
 	private void validarParametrosVenda(List<VendaEncalheDTO> listaVendas,Long numeroCota, Date dataDebito){
 	
 		if(listaVendas == null || listaVendas.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um produto deve ser informado para venda!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um produto deve ser informado para venda!");
 		}
 		
 		validarFormatoData();
