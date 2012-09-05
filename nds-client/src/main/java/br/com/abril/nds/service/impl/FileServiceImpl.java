@@ -204,7 +204,7 @@ public class FileServiceImpl implements FileService {
 		}
 		
 		if(!valido)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Formato de arquivo inv·lido"));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Formato de arquivo inv√°lido"));
 		
 		
 	}
