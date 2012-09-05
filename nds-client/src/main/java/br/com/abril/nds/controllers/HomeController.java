@@ -99,7 +99,7 @@ public class HomeController {
 	private String readJenkins() {
 		StringBuilder builder = new StringBuilder();
 		
-		Document doc = null;
+		/*Document doc = null;
 		try {
 			doc = Jsoup.connect("http://177.71.255.76:8080/jenkins/job/deploy%20nds-client%20homolog/changes").get();
 		} catch (IOException e) {
@@ -108,7 +108,8 @@ public class HomeController {
 		}
 		Elements newsHeadlines = doc.select("#main-panel");
 		
-		return newsHeadlines.html();
+		return newsHeadlines.html();*/
+		return "";
 	}
 
 	/**

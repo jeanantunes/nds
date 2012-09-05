@@ -625,7 +625,7 @@ var fechamentoEncalheController = $.extend(true, {
 					$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0])
 					fechamentoEncalheController.popup_mensagem_consistencia_dados();
 				} else {
-					pesquisar(false);
+					fechamentoEncalheController.pesquisar(false);
 				}
 
     		},
@@ -642,7 +642,7 @@ var fechamentoEncalheController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					pesquisar(true);
+					fechamentoEncalheController.pesquisar(true);
 					$(this).dialog( "close" );
 				},
 				
