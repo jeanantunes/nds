@@ -1,12 +1,16 @@
 package br.com.abril.nds.fixture;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.LeiautePicking;
@@ -3484,8 +3488,19 @@ public class Fixture {
         pdv.setExpositor(true);
         pdv.setTipoExpositor("Tipo Expositor");
         
+        try {
+            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");
+            File fileImagem = new File(urlImagem.toURI());
+            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
+            pdv.setImagem(imagem);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro definindo imagem histórico titularidade PDV", e);
+        }
+        
         historico.addPdv(pdv);
         cota.addTitularCota(historico);
         return historico;
     }
+    
+   
 }

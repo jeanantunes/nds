@@ -313,6 +313,8 @@ public class CotaDTOAssembler {
         
         dto.setExpositor(Util.nvl(pdv.getExpositor(), Boolean.FALSE));
         dto.setTipoExpositor(pdv.getTipoExpositor());
+        boolean possuiImagem = pdv.getImagem() != null;
+        dto.setPossuiImagem(possuiImagem);
         
         return dto;
     }

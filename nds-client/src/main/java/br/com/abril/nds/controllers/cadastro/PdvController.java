@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -54,6 +55,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
@@ -419,12 +422,20 @@ public class PdvController {
 		    carregarEnderecosHistoricoTitularidadePDV(idPdv);
 		    
 		    carregarTelefonesHistoricoTitularidade(idPdv);
-		    
-		    //TODO: carregar imagem PDV do histórico
+
 		}
 		
 			
 		result.use(Results.json()).from(dto).recursive().serialize();
+	}
+	
+	@Path("/imagemPdvHistoricoTitularidade")
+	public Download imagemPdvHistoricoTitularidade(Long idPdv) {
+	    byte[] imagem = pdvService.obterImagemHistoricoTitularidadePDV(idPdv);
+        if (imagem == null) {
+            imagem = new byte[0];
+        }
+	    return new InputStreamDownload(new ByteArrayInputStream(imagem), null, null);
 	}
 	
 	private void tratarPathImagem(PdvDTO dto) {

@@ -158,6 +158,15 @@ public interface PdvService {
      *         promocionais associados ao PDV do histórico de titularidade da cota
      */
     List<MaterialPromocionalDTO> obterMateriaisPromocionaisHistoricoTitularidadePDV(Long idPdv, Set<Long> codigos);
+
+    /**
+     * Obtém a imagem do PDV do histórico de titularidade da cota
+     * 
+     * @param idPdv
+     *            identificador do PDV do histórico de titularidade
+     * @return imagem do PDV do histórico de titularidade da cota
+     */
+    byte[] obterImagemHistoricoTitularidadePDV(Long idPdv);
     
 }
 

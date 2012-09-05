@@ -1418,4 +1418,15 @@ public class PdvServiceImpl implements PdvService {
         return dtos;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public byte[] obterImagemHistoricoTitularidadePDV(Long idPdv) {
+        Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
+        HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
+        return pdv.getImagem();
+    }
+
 }

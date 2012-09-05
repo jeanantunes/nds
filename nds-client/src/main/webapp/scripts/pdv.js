@@ -128,13 +128,21 @@ var PDV =  $.extend(true, {
 		},
 		
 		carregarAbaDadosBasico: function (result){
-			
-			if(result.pdvDTO.pathImagem) {
-				$("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
-			} else {
-				$("#idImagem", this.workspace).attr("src",contextPath + "/images/pdv/no_image.jpeg");
-			}
-			
+
+            if (PDV.isModoTelaCadastroCota()) {
+                if(result.pdvDTO.pathImagem) {
+                    $("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+                } else {
+                    $("#idImagem", this.workspace).attr("src",contextPath + "/images/pdv/no_image.jpeg");
+                }
+            } else {
+                if (result.pdvDTO.possuiImagem) {
+                	$("#idImagem", this.workspace).attr("src",contextPath + "/cadastro/pdv/imagemPdvHistoricoTitularidade?idPdv=" + PDV.idPdv);
+                } else {
+                	$("#idImagem", this.workspace).attr("src",contextPath + "/images/pdv/no_image.jpeg");
+                }
+            }
+
 			$("#idBtnExcluir", this.workspace).click(function() {
 				PDV.excluirImagem(result.pdvDTO.id);
 			});

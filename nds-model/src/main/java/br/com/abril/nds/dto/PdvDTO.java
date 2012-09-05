@@ -94,6 +94,8 @@ public class PdvDTO implements Serializable {
     
     private String pathAplicacao;
     
+    private boolean possuiImagem;
+    
 	/**
 	 * @return the expositor
 	 */
@@ -607,7 +609,21 @@ public class PdvDTO implements Serializable {
 		this.arrendatario = arrendatario;
 	}
 	
-	public void addGeradorFluxoSecundario(Long geradorFluxoSecundario) {
+	/**
+     * @return the possuiImagem
+     */
+    public boolean isPossuiImagem() {
+        return possuiImagem;
+    }
+
+    /**
+     * @param possuiImagem the possuiImagem to set
+     */
+    public void setPossuiImagem(boolean possuiImagem) {
+        this.possuiImagem = possuiImagem;
+    }
+
+    public void addGeradorFluxoSecundario(Long geradorFluxoSecundario) {
 	    if (this.geradorFluxoSecundario == null) {
 	        this.geradorFluxoSecundario = new ArrayList<Long>();
 	    }
