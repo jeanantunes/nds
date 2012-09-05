@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -53,6 +54,7 @@ import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.service.ContratoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -95,6 +97,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	
 	@Autowired
 	private ContratoService contratoService;
+	
+	@Autowired
+	private FileService fileService;
 	
 	/**
 	 * Método responsável por obter bancos para preencher combo da camada view
@@ -821,7 +826,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	}
 
 	@Transactional
-	public ContratoVO obterArquivoContratoRecebido(Long idCota) {
+	public ContratoVO obterArquivoContratoRecebido(Long idCota, File tempDir) {
 		
 		ContratoVO contratoVO = null;
 		
@@ -831,6 +836,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		if (contrato != null) {
 			
+			this.fileService.limparDiretorio(tempDir);
 			//TODO: obter arquivo contrato recebido;
 			
 			contratoVO = new ContratoVO();
