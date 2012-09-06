@@ -9,7 +9,6 @@
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamentoLancamento.js"></script>
 
 <script type="text/javascript">
 
@@ -19,6 +18,8 @@ var pathTela = "${pageContext.request.contextPath}";
 var balanceamento = new Balanceamento(pathTela, "balanceamento");
 
 var balanceamentoLancamento = new BalanceamentoLancamento(pathTela, "balanceamentoLancamento", balanceamento, BaseController.workspace);
+
+balanceamentoLancamento.inicializar();
 
 var lancamentosSelecionados = [];
 
@@ -56,6 +57,7 @@ var lancamentosSelecionados = [];
 <body>
 
 
+<form id="form-confirm">
 <div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">
 			
 			<jsp:include page="../messagesDialog.jsp" />
@@ -63,20 +65,26 @@ var lancamentosSelecionados = [];
 			<p>Existem lançamentos não confirmados. Ao prosseguir com essa ação você perderá os dados. Deseja prosseguir?</p>
 			   
 </div>
+</form>
 
+<form id="formVoltarConfiguracaoOriginal">
 <div id="dialogVoltarConfiguracaoOriginal" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
 			<p>Ao voltar a configuração original, você perdará os dados confirmados. Deseja prosseguir?</p>
 			   
 </div>
+</form>
 
+<form id="form-pagincao-confirmada">
 <div id="dialog-pagincao-confirmada" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
 			<p>As seleções de lançamentos não serão salvas, deseja continuar?</p>
 			   
 </div>
+</form>
 
 	
+		<form id="formReprogramarBalanceamento">
 		<div id="dialogReprogramarBalanceamento" title="Reprogramar Lançamentos">
 		    
 		    <jsp:include page="../messagesDialog.jsp" />
@@ -87,22 +95,26 @@ var lancamentosSelecionados = [];
 			    	   style="width:80px;" id="novaDataLancamento" />
 		    </p>
 		</div>
+		</form>
 
 
-	<form action="" method="get" id="form1" name="form1">
 	
+		<form id="form-reprogramar">
 		<div id="dialog-reprogramar" title="Reprogramar Lançamento">
 			<p><strong>Nova Data Matriz/Distrib:</strong> 
 		      <input name="datepickerDe_1" type="text" style="width:80px;" id="datepickerDe_1" />
 		    </p>
 		</div>
+		</form>
 		
+		<form id="form-novo">
 		<div id="dialog-novo" title="Consulta de Lançamentos Programados">
 		     <fieldset style="width:365px;">
 		     	<legend>988989 - Nome do Fornecedor</legend>
 		        <table class="lancamentoProgFornecedorGrid"></table>
 		     </fieldset>
 		</div>
+		</form>
 		
 		   	<jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialog-novo" name="messageDialog"/>
@@ -204,10 +216,13 @@ var lancamentosSelecionados = [];
 		        </div>
 		      </fieldset>
 		
+		<form id="form-detalhe-produto">
         <div id="dialog-detalhe-produto" title="Detalhes do Produto" style="display:none;">
 		    <jsp:include page="../produtoEdicao/detalheProduto.jsp" />
         </div>
+        </form>
 
+		<form id="form-confirm-balanceamento">
 		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
 		    
 		    <jsp:include page="../messagesDialog.jsp">
@@ -222,7 +237,7 @@ var lancamentosSelecionados = [];
 
 		    </fieldset>
 		</div>
+		</form>
 	
-	</form>
 
 </body>
