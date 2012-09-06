@@ -328,7 +328,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 		
 		if (preco != null) {
-			hql.append("  AND (ln.precoVenda between :precoDe and :precoAte) ");
+			hql.append("  AND (pe.precoVenda between :precoDe and :precoAte) ");
 		}
 		if (statusLancamento != null) {
 			hql.append("  AND ln.status = :situacaoLancamento ");

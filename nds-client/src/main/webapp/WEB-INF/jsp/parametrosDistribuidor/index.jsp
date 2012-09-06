@@ -76,10 +76,6 @@
 	<input type="hidden" id="hasLogotipoHidden"
 		   value="${hasLogotipo}" />
 		   
-    <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Parâmetros do Distribuidor < evento > com < status >.</b></p>
-	</div>
 	<div class="areaBts">
 		<div class="area">
 		    <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="parametrosDistribuidorController.popup_confirm();" rel="tipsy" title="Salvar Parâmetros do Distribuidor"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a></span>

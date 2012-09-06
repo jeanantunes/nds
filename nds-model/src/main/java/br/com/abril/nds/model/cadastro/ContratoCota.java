@@ -25,7 +25,7 @@ public class ContratoCota extends Contrato implements Serializable {
 	@Column(name = "EXIGE_DOC_SUSPENSAO", nullable = false)
 	private boolean exigeDocumentacaoSuspencao;
 	@Column(name="RECEBIDO", nullable = true)
-	private boolean recebido = false;
+	private Boolean recebido = false;
 	
 	public Cota getCota() {
 		return cota;
