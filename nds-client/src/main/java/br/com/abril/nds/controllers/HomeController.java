@@ -97,7 +97,7 @@ public class HomeController {
 	}
 
 	private String readJenkins() {
-		StringBuilder builder = new StringBuilder();
+		/*StringBuilder builder = new StringBuilder();
 		
 		Document doc = null;
 		try {
@@ -108,7 +108,8 @@ public class HomeController {
 		}
 		Elements newsHeadlines = doc.select("#main-panel");
 		
-		return newsHeadlines.html();
+		return newsHeadlines.html();*/
+		return "";
 	}
 
 	/**
