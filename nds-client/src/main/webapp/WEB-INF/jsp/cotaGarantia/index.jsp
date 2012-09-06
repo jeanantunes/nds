@@ -299,22 +299,25 @@
         <table width="755" cellpadding="2" cellspacing="2" style="text-align:left;">
             <tbody>
 
-                 <table width="40%" border="0" cellspacing="1" cellpadding="1">
+                 <table width="755" border="0" cellspacing="2" cellpadding="2">
                      <tr>
-				        <td valign="top"><strong>Forma de Pagamento:</strong></td>
-					    <td valign="top">&nbsp;</td>
-					    <td valign="top">
+				        <td valign="top" width="140"><strong>Forma de Pagamento:</strong></td>
+					    <td valign="top" width="232">
 		
 					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="CaucaoLiquida.prototype.opcaoPagto(this.value);">
 		                        <option value="">Selecione</option>
-		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
-				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
-				                </c:forEach>
 		                    </select> 
 		
-				        </td>    
+				        </td>
+				        
+				        <td width="361">
+					        <div name="divFormaDeposito" id="divFormaDeposito" style="display: none;">
+								<strong>Valor R$</strong>
+								<input type="text" id="valorFormaPagamentoDeposito" style="text-align: right;" />
+							</div>
+				        </td>
 				     </tr>
-                 </table> 
+                 </table>
                  
                  <div name="divFormaBoleto" id="divFormaBoleto">
     
@@ -403,17 +406,35 @@
 	                 
 	                 
                  </div>
-                        
-                 
-                 <div name="divFormaDeposito" id="divFormaDeposito">
-                 </div>
-                 
                  
                  <div name="divFormaDinheiro" id="divFormaDinheiro">
                  </div>
                  
                  
                  <div name="divFormaDesconto" id="divFormaDesconto">
+
+                     <table width="100%" border="0" cellspacing="1" cellpadding="1">
+				        <tr>
+					    	<td colspan="6">Comissão da Cota:</td>
+					    </tr>
+					  	<tr>
+					    	<td width="10%">Valor R$:</td>
+					    	<td width="12%"><input maxlength="16" name="valorDesconto" id="valorDesconto" type="text" style="width:50px; text-align:right;" /></td>
+					    	<td width="15%">Desconto Atual:</td>
+					    	<td width="8%"><input maxlength="16" name="valorDescontoAtual" id="valorDescontoAtual" type="text" style="width:50px; text-align:right;" /></td>
+					    	<td width="3%">%</td>
+					    	<td width="52%">&nbsp;</td>
+					  	</tr>
+					  	<tr>
+						    <td>Utilizar:</td>
+						    <td><input maxlength="16" name="utilizarDesconto" id="utilizarDesconto" type="text" style="width:50px; text-align:right;" /></td>
+						    <td>Desconto da Cota:</td>
+						    <td><input maxlength="16" name="descontoCotaDesconto" id="descontoCotaDesconto" type="text" style="width:50px; text-align:right;" /></td>
+						    <td>&nbsp;</td>
+						    <td>&nbsp;</td>
+					  	</tr>
+				     </table>
+
                  </div>
                         
             </tbody>
@@ -466,7 +487,7 @@
     <br>
     
 	
-	<fieldset>
+	<fieldset width="100%">
 	
    	    <legend>Caução Depositada na conta</legend>
     

@@ -1886,6 +1886,7 @@ public class CotaServiceImpl implements CotaService {
 			
 			if (pdv != null){
 				
+				dto.setReferenciaEndereco(pdv.getPontoReferencia());
 				dto.setHorariosFuncionamento(pdv.getPeriodos());
 				
 				Endereco enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
@@ -1900,11 +1901,18 @@ public class CotaServiceImpl implements CotaService {
 			}
 		}
 		
-		//TODO
-		//referencia de entrega? dafuq???
-		//Débito: informação se o desconto é mensal / quinzenal / semanal / diário (informação no Cadastro dos Tipos de Serviços). non ecxiste mais
+		if (cota.getParametroDistribuicao() != null &&
+				cota.getParametroDistribuicao().getTipoEntrega() != null &&
+				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade() != null){
+		
+			dto.setPeriodicidade(
+				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade().getDescricao());
+		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DIR",
+				Thread.currentThread().getContextClassLoader().getResource("/reports/").getPath());
+		
 		parameters.put("infoComp", this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao());
 		
 		List<TermoAdesaoDTO> listaDTO = new ArrayList<TermoAdesaoDTO>();
