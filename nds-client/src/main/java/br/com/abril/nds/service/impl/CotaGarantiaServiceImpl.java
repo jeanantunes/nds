@@ -14,15 +14,12 @@ import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
-import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ChequeImage;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCaucaoLiquida;
-import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -30,15 +27,12 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Fiador;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaCobrancaCaucaoLiquida;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -525,7 +519,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         }
         else{
         	
-        	if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobranca.BOLETO)==0){
+        	if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobrancaCotaGarantia.BOLETO)==0){
         		PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
         		formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
         	}
@@ -627,7 +621,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		//FORMA DE PAGAMENTO
 		PagamentoCaucaoLiquida pagamento = null;
 		PagamentoBoleto pagamentoBoleto = null;
-		if (formaCobrancaDTO.getTipoCobranca() == TipoCobranca.BOLETO){
+		if (formaCobrancaDTO.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
 			
 			pagamentoBoleto = new PagamentoBoleto();
 			pagamentoBoleto.setQuantidadeParcelas(formaCobrancaDTO.getQtdeParcelas());
@@ -709,7 +703,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			}
 			
 			
-			if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobranca.BOLETO)==0){
+			if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobrancaCotaGarantia.BOLETO)==0){
 				
 				pagamentoBoleto = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
 				

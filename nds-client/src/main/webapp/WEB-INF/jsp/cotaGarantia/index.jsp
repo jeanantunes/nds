@@ -307,9 +307,6 @@
 		
 					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="CaucaoLiquida.prototype.opcaoPagto(this.value);">
 		                        <option value="">Selecione</option>
-		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
-				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
-				                </c:forEach>
 		                    </select> 
 		
 				        </td>    
@@ -414,6 +411,29 @@
                  
                  
                  <div name="divFormaDesconto" id="divFormaDesconto">
+
+                     <table width="100%" border="0" cellspacing="1" cellpadding="1">
+				        <tr>
+					    	<td colspan="6">Comissão da Cota:</td>
+					    </tr>
+					  	<tr>
+					    	<td width="10%">Valor R$:</td>
+					    	<td width="12%"><input maxlength="16" name="valorDesconto" id="valorDesconto" type="text" style="width:50px; text-align:right;" /></td>
+					    	<td width="15%">Desconto Atual:</td>
+					    	<td width="8%"><input maxlength="16" name="valorDescontoAtual" id="valorDescontoAtual" type="text" style="width:50px; text-align:right;" /></td>
+					    	<td width="3%">%</td>
+					    	<td width="52%">&nbsp;</td>
+					  	</tr>
+					  	<tr>
+						    <td>Utilizar:</td>
+						    <td><input maxlength="16" name="utilizarDesconto" id="utilizarDesconto" type="text" style="width:50px; text-align:right;" /></td>
+						    <td>Desconto da Cota:</td>
+						    <td><input maxlength="16" name="descontoCotaDesconto" id="descontoCotaDesconto" type="text" style="width:50px; text-align:right;" /></td>
+						    <td>&nbsp;</td>
+						    <td>&nbsp;</td>
+					  	</tr>
+				     </table>
+
                  </div>
                         
             </tbody>
@@ -466,7 +486,7 @@
     <br>
     
 	
-	<fieldset>
+	<fieldset width="100%">
 	
    	    <legend>Caução Depositada na conta</legend>
     

@@ -19,7 +19,7 @@ import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -34,11 +34,9 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
-import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -49,14 +47,15 @@ public class CotaGarantiaController {
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
 	
-	@Autowired
-	private Validator validator;
 	
 	private Result result;
-
-	public CotaGarantiaController(Result result) {
+	
+	
+    public CotaGarantiaController(Result result) {
+		
 		super();
-		this.result = result;
+		
+		this.result = result;  
 	}
 
 	@Post
@@ -108,7 +107,13 @@ public class CotaGarantiaController {
 				.serialize();
 	}
 
-	
+	/**
+	 * Salva CaucaoLiquida
+	 * @param listaCaucaoLiquida
+	 * @param idCota
+	 * @param formaCobranca
+	 * @throws Exception
+	 */
 	@Post("/salvaCaucaoLiquida.json")
 	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobranca) throws Exception {
 		
@@ -142,10 +147,10 @@ public class CotaGarantiaController {
 		}	
 	}
 	
-	
-	
-	
-	
+	/**
+	 * Obtem Cota garantia do tipo Caução Liquida
+	 * @param idCota
+	 */
 	@Post("/getCaucaoLiquidaByCota.json")
 	public void getCaucaoLiquidaByCota(Long idCota) {
 
@@ -163,10 +168,7 @@ public class CotaGarantiaController {
 			result.use(CustomJson.class).from("OK").serialize();
 		}
 	}
-	
-	
-	
-	
+
 	@Post("/getTipoGarantiaCadastrada.json")
 	public void getTipoGarantiaCadastrada(Long idCota){
 		
@@ -186,6 +188,39 @@ public class CotaGarantiaController {
 		result.use(Results.json()).withoutRoot().from(cotaGarantias)
 				.recursive().serialize();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Método responsável por obter tipos de cobrança de Garantia para preencher combo da camada view
+	 * @return comboTiposPagamento: Tipos de cobrança de Garantia padrão.
+	 */
+	@Get("/getTiposCobrancaCotaGarantia.json")
+	public void getTiposCobrancaCotaGarantia() {
+		List<ItemDTO<TipoCobrancaCotaGarantia,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobrancaCotaGarantia,String>>();
+		for (TipoCobrancaCotaGarantia itemTipoCobranca: TipoCobrancaCotaGarantia.values()){
+			listaTiposCobranca.add(new ItemDTO<TipoCobrancaCotaGarantia,String>(itemTipoCobranca, itemTipoCobranca.getDescTipoCobranca()));
+		}
+		
+		result.use(Results.json()).withoutRoot().from(listaTiposCobranca).recursive().serialize();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@Post("/buscaFiador.json")
 	public void buscaFiador(String nome, int maxResults) {
@@ -210,26 +245,6 @@ public class CotaGarantiaController {
 		result.use(Results.json()).from(garantiaCotaOutros, "outro").serialize();
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * @param caucaoLiquida para ser validado
 	 */
@@ -301,8 +316,7 @@ public class CotaGarantiaController {
 			}
 		}
 		
-		if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-		    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+		if (formaCobranca.getTipoCobranca()==TipoCobrancaCotaGarantia.DEPOSITO_TRANSFERENCIA){
 			
 			if((formaCobranca.getNomeBanco()==null) || ("".equals(formaCobranca.getNomeBanco()))){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
@@ -326,7 +340,7 @@ public class CotaGarantiaController {
 
 	}
 	
-	 /**
+	/**
 	 *Formata os dados de FormaCobranca, apagando valores que não são compatíveis com o Tipo de Cobranca escolhido.
 	 * @param formaCobranca
 	 */
@@ -376,25 +390,6 @@ public class CotaGarantiaController {
 		
 		return formaCobranca;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * @param notaPromissoria para ser validado
