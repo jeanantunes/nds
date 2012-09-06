@@ -727,8 +727,8 @@ var COTA_DESCONTO = $.extend(true,
 	    initDescontos : function(numCota){
 	    	COTA_DESCONTO.initDescontoCota();
 	    	COTA_DESCONTO.initDescontoProduto();
-	    	COTA_DESCONTO.obterDescontoCota(numCota); 
-	    	COTA_DESCONTO.obterDescontoProduto(numCota);
+	    	COTA_DESCONTO.obterDescontoCota();
+	    	COTA_DESCONTO.obterDescontoProduto();
 	    	
 	    },
 	
@@ -750,7 +750,7 @@ var COTA_DESCONTO = $.extend(true,
 					align : 'left'
 				}, {
 					display : 'Edição',
-					name : 'nomeProduto',
+					name : 'numeroEdicao',
 					width : 60,
 					sortable : true,
 					align : 'left'
@@ -810,13 +810,13 @@ var COTA_DESCONTO = $.extend(true,
 			});
 	    },
 	    
-        obterDescontoProduto : function(numCota){
+        obterDescontoProduto : function(){
         	
         	$(".descProdutosGrid", this.workspace).flexOptions({
 				url: contextPath+'/cadastro/cota/obterTiposDescontoProduto',
-				params: [
-				         {name:'numCota', value:numCota}
-				        ] ,
+				params: [{name:'idCota', value:MANTER_COTA.idCota},
+                         {name:'modoTela', value:MANTER_COTA.modoTela.value},
+                         {name:'idHistorico', value:MANTER_COTA.idHistorico}] ,
 				        newp: 1
 			});
 			
@@ -829,9 +829,9 @@ var COTA_DESCONTO = $.extend(true,
 	    	
 			$(".descCotaGrid", this.workspace).flexOptions({
 				url: contextPath+'/cadastro/cota/obterTiposDescontoCota',
-				params: [
-				         {name:'numCota', value:numCota}
-				        ] ,
+				params: [{name:'idCota', value: MANTER_COTA.idCota},
+                         {name:'modoTela', value: MANTER_COTA.modoTela.value},
+                         {name:'idHistorico', value: MANTER_COTA.idHistorico}] ,
 				        newp: 1
 			});
 			

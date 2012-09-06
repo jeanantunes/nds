@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -657,5 +658,55 @@ public class HistoricoTitularidadeCota implements Serializable {
         }
         fornecedores.add(fornecedor);
     }
+
+    /**
+     * Recupera os descontos de produto associados ao histórico de titularidade
+     * da cota
+     * 
+     * @return coleção de descontos de produto associados ao histórico de
+     *         titularidade da cota
+     */
+    public Collection<HistoricoTitularidadeCotaDescontoProduto> getDescontosProduto() {
+        List<HistoricoTitularidadeCotaDescontoProduto> descontosProduto = new ArrayList<HistoricoTitularidadeCotaDescontoProduto>();
+        for (HistoricoTitularidadeCotaDesconto desconto : descontos) {
+            if (desconto instanceof HistoricoTitularidadeCotaDescontoProduto) {
+                descontosProduto.add(HistoricoTitularidadeCotaDescontoProduto.class.cast(desconto));
+            }
+        }
+        return descontosProduto;
+    }
+    
+    /**
+     * Recupera os descontos da cota associados ao histórico de titularidade
+     * da cota
+     * 
+     * @return coleção de descontos da cota associados ao histórico de
+     *         titularidade da cota
+     */
+    public Collection<HistoricoTitularidadeCotaDescontoCota> getDescontosCota() {
+        List<HistoricoTitularidadeCotaDescontoCota> descontosCota = new ArrayList<HistoricoTitularidadeCotaDescontoCota>();
+        for (HistoricoTitularidadeCotaDesconto desconto : descontos) {
+            if (desconto instanceof HistoricoTitularidadeCotaDescontoCota) {
+                descontosCota.add(HistoricoTitularidadeCotaDescontoCota.class.cast(desconto));
+            }
+        }
+        return descontosCota;
+    }
+
+    /**
+     * Adiciona um desconto aos descontos associados ao histórico de
+     * titularidade da cota
+     * 
+     * @param desconto
+     *            desconto para inclusão
+     */
+    public void addDesconto(HistoricoTitularidadeCotaDesconto desconto) {
+        if (descontos == null) {
+            descontos = new ArrayList<HistoricoTitularidadeCotaDesconto>();
+        }
+        desconto.setHistoricoTitularidadeCota(this);
+        descontos.add(desconto);
+    }
+    
 
 }

@@ -37,6 +37,8 @@ import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TermoAdesaoDTO;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -75,6 +77,8 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -2039,6 +2043,42 @@ public class CotaServiceImpl implements CotaService {
         Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         return new ArrayList<FornecedorDTO>(CotaDTOAssembler.toFornecedorDTOCollection(historico.getFornecedores()));
+    }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<TipoDescontoProdutoDTO> obterDescontosProdutoHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+	    Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        List<TipoDescontoProdutoDTO> dtos = new ArrayList<TipoDescontoProdutoDTO>();
+        for (HistoricoTitularidadeCotaDescontoProduto desconto : historico.getDescontosProduto()) {
+            dtos.add(new TipoDescontoProdutoDTO(desconto.getCodigo(), desconto
+                    .getNome(), desconto.getNumeroEdicao(), desconto
+                    .getDesconto(), desconto.getAtualizacao()));
+        }
+	    return dtos;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<TipoDescontoCotaDTO> obterDescontosCotaHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        List<TipoDescontoCotaDTO> dtos = new ArrayList<TipoDescontoCotaDTO>();
+        for (HistoricoTitularidadeCotaDescontoCota desconto : historico.getDescontosCota()) {
+            dtos.add(new TipoDescontoCotaDTO(desconto.getDesconto(), desconto
+                    .getFornecedor(), desconto.getAtualizacao(), desconto
+                    .getTipoDesconto().getDescricao()));
+        }
+        return dtos;
     }
 
 }

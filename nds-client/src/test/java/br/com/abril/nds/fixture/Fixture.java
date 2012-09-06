@@ -95,6 +95,7 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -203,6 +204,8 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
@@ -3430,9 +3433,27 @@ public class Fixture {
         historico.addFornecedor(fornecedor1);
         
         HistoricoTitularidadeCotaFornecedor fornecedor2 = new HistoricoTitularidadeCotaFornecedor();
-        fornecedor2.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Massive Dinamic", "Massive Dinamic", "44.864.479/0001-80", null, null));
+        fornecedor2.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Massive Dynamic", "Massive Dynamic", "44.864.479/0001-80", null, null));
         historico.addFornecedor(fornecedor2);
         
+        HistoricoTitularidadeCotaDescontoCota descontoCota1 = new HistoricoTitularidadeCotaDescontoCota(
+                TipoDesconto.ESPECIFICO, "Acme", new Date(),
+                BigDecimal.valueOf(10));
+        HistoricoTitularidadeCotaDescontoCota descontoCota2 = new HistoricoTitularidadeCotaDescontoCota(
+                TipoDesconto.ESPECIFICO, "Massive Dinamic", new Date(),
+                BigDecimal.valueOf(5));
+        historico.addDesconto(descontoCota1);
+        historico.addDesconto(descontoCota2);
+        
+        HistoricoTitularidadeCotaDescontoProduto descontoProduto1 = new HistoricoTitularidadeCotaDescontoProduto(
+                "123", "Quatro Rodas", Long.valueOf(45), new Date(),
+                BigDecimal.valueOf(10));
+        
+        HistoricoTitularidadeCotaDescontoProduto descontoProduto2 = new HistoricoTitularidadeCotaDescontoProduto(
+                "456", "Super Interessante", Long.valueOf(46), new Date(), BigDecimal.valueOf(5));
+        historico.addDesconto(descontoProduto1);
+        historico.addDesconto(descontoProduto2);
+ 
         HistoricoTitularidadeCotaPDV pdv = new HistoricoTitularidadeCotaPDV();
         pdv.setStatus(StatusPDV.ATIVO);
         pdv.setDataInclusao(cota.getInicioAtividade());

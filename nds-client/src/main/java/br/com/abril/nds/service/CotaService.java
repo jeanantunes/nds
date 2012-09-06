@@ -16,6 +16,8 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -301,7 +303,31 @@ public interface CotaService {
      * @return Lista de fornecedores associados ao histórico de titularidade da
      *         cota
      */
-    public List<FornecedorDTO> obterFornecedoresHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+    List<FornecedorDTO> obterFornecedoresHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+    
+    /**
+     * Recupera os descontos de produto do histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return Lista de {@link TipoDescontoProdutoDTO} com as informações de
+     *         desconto associados ao histórico de titularidade da cota
+     */
+    List<TipoDescontoProdutoDTO> obterDescontosProdutoHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+    
+    /**
+     * Recupera os descontos de cota do histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return Lista de {@link TipoDescontoCotaDTO} com as informações de
+     *         desconto associados ao histórico de titularidade da cota
+     */
+    List<TipoDescontoCotaDTO> obterDescontosCotaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
 
     byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
 

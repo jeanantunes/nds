@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
@@ -74,6 +75,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -752,17 +754,6 @@ public class CotaController {
 	}
 	
 	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * Descontos da cota: Obtem os tipos de desconto por produto relacionados à cota
 	 * @param idCota
@@ -818,65 +809,49 @@ public class CotaController {
 		return descontos;
 	}
 	
-	/**
-	 * Descontos da Cota: Obtem os tipos de desconto por produto associados a cota informada
-	 * @param idCota -identificador da cota
-	 */
 	@Post
 	@Path("/obterTiposDescontoProduto")
-	public void obterTiposDescontoProduto(Integer numCota, String sortorder, String sortname){
-		
-		Cota cota = cotaService.obterPorNumeroDaCota(numCota);
-		
-		if (cota!=null){
-			List<TipoDescontoProdutoDTO> descontosProduto = this.obterDescontosProduto(cota, sortorder, sortname);
-			
-			if (descontosProduto!=null && descontosProduto.size() > 0){
-			    result.use(FlexiGridJson.class).from(descontosProduto).page(1).total(1).serialize();
-			}
-	    }
+	public void obterTiposDescontoProduto(Long idCota, ModoTela modoTela, Long idHistorico, String sortorder, String sortname){
+	    Cota cota = cotaService.obterPorId(idCota);
+	    List<TipoDescontoProdutoDTO> descontosProduto = null;
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		    descontosProduto = obterDescontosProduto(cota, sortorder, sortname);
+		} else {
+	        Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+            descontosProduto = new ArrayList<TipoDescontoProdutoDTO>(
+                    PaginacaoUtil.ordenarEmMemoria(cotaService
+                            .obterDescontosProdutoHistoricoTitularidadeCota(
+                                    idCota, idHistorico), ordenacao, sortname));
+		}
 
-		result.nothing();
+	    result.use(FlexiGridJson.class).from(descontosProduto).page(1).total(1).serialize();
 	}
 	
-	/**
-	 * Descontos da Cota: Obtem os tipos de desconto especificos associados a cota informada
-	 * @param idCota -identificador da cota
-	 */
+	
 	@Post
 	@Path("/obterTiposDescontoCota")
-	public void obterTiposDescontoCota(Integer numCota, String sortorder, String sortname){
-		
-		Cota cota = cotaService.obterPorNumeroDaCota(numCota);
-		
-		if (cota!=null){
-			
-			List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
-			
-			if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
-				result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
-			}
-			else{
-				
-				List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname);
-				
-				if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
-					result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
-			    }
-			}
-		}
-			
-		result.nothing();
+	public void obterTiposDescontoCota(Long idCota, ModoTela modoTela, Long idHistorico, String sortorder, String sortname){
+        Cota cota = cotaService.obterPorId(idCota);
+      
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
+            if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
+                result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
+            } else {
+                List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname);
+                result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
+            }
+        } else {
+            Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+            List<TipoDescontoCotaDTO> descontosCota = new ArrayList<TipoDescontoCotaDTO>(PaginacaoUtil
+                    .ordenarEmMemoria(cotaService
+                            .obterDescontosCotaHistoricoTitularidadeCota(
+                                    idCota, idHistorico), ordenacao, sortname));
+            
+            result.use(FlexiGridJson.class).from(descontosCota).page(1).total(1).serialize();
+        }
+        
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * Valida se o número da cota informada para histórico base é ativo.
