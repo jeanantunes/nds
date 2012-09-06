@@ -32,7 +32,7 @@ import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -520,7 +520,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         }
         else{
         	
-        	if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobranca.BOLETO)==0){
+        	if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobrancaCotaGarantia.BOLETO)==0){
         		PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
         		formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
         	}
@@ -620,14 +620,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	    		}
 	        break;
 	        
-	        case DEPOSITO:
+	        case DEPOSITO_TRANSFERENCIA:
 	        break;
         }
         
 		//FORMA DE PAGAMENTO
 		PagamentoCaucaoLiquida pagamento = null;
 		PagamentoBoleto pagamentoBoleto = null;
-		if (formaCobrancaDTO.getTipoCobranca() == TipoCobranca.BOLETO){
+		if (formaCobrancaDTO.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
 			
 			pagamentoBoleto = new PagamentoBoleto();
 			pagamentoBoleto.setQuantidadeParcelas(formaCobrancaDTO.getQtdeParcelas());
@@ -635,7 +635,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			pagamentoBoleto.setValorParcela(formaCobrancaDTO.getValorParcela());
 
 			pagamentoBoleto.setFormaCobrancaCaucaoLiquida(formaCobranca);
-		} else if (formaCobrancaDTO.getTipoCobranca() == TipoCobranca.DEPOSITO){
+		} else if (formaCobrancaDTO.getTipoCobranca() == TipoCobrancaCotaGarantia.DEPOSITO_TRANSFERENCIA){
 			
 			pagamento = new PagamentoDepositoTransferencia();
 			pagamento.setValor(formaCobrancaDTO.getValorFormaPagamentoDeposito());
@@ -715,33 +715,28 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 			switch (cotaGarantiaCaucaoLiquida.getTipoCobranca()){
 			
-			case BOLETO:
-				pagamentoBoleto = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
-				
-				if (pagamentoBoleto!=null){
+				case BOLETO:
+					pagamentoBoleto = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
 					
-					formaCobrancaDTO.setValor(pagamentoBoleto.getValor());
-					formaCobrancaDTO.setQtdeParcelas(pagamentoBoleto.getQuantidadeParcelas());
-					formaCobrancaDTO.setValorParcela(pagamentoBoleto.getValorParcela());
-					
-	    		    formaCobranca = pagamentoBoleto.getFormaCobrancaCaucaoLiquida();
-				}
-			break;
+					if (pagamentoBoleto!=null){
+						
+						formaCobrancaDTO.setValor(pagamentoBoleto.getValor());
+						formaCobrancaDTO.setQtdeParcelas(pagamentoBoleto.getQuantidadeParcelas());
+						formaCobrancaDTO.setValorParcela(pagamentoBoleto.getValorParcela());
+						
+		    		    formaCobranca = pagamentoBoleto.getFormaCobrancaCaucaoLiquida();
+					}
+				break;
 			
-			case DEPOSITO:
-				pagamentoDepositoTransferencia = (PagamentoDepositoTransferencia) cotaGarantiaCaucaoLiquida.getFormaPagamento();
-				
-				if (pagamentoDepositoTransferencia != null){
+				case DEPOSITO_TRANSFERENCIA:
+					pagamentoDepositoTransferencia = (PagamentoDepositoTransferencia) cotaGarantiaCaucaoLiquida.getFormaPagamento();
 					
-					formaCobrancaDTO.setValor(pagamentoDepositoTransferencia.getValor());
-				}
-			break;
+					if (pagamentoDepositoTransferencia != null){
+						
+						formaCobrancaDTO.setValor(pagamentoDepositoTransferencia.getValor());
+					}
+				break;
 			}
-			
-			if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobranca.BOLETO)==0){
-				
-				
-	    	}
 			
 			
 			if (formaCobranca!=null){

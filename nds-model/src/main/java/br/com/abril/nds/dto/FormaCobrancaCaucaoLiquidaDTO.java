@@ -1,7 +1,7 @@
 package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 public class FormaCobrancaCaucaoLiquidaDTO {
@@ -11,7 +11,7 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	Long idCaucaoLiquida;
 	
 	//DADOS DO FORMULARIO
-	TipoCobranca tipoCobranca;
+	TipoCobrancaCotaGarantia tipoCobranca;
 	TipoFormaCobranca tipoFormaCobranca;
 	
 	String numBanco;
@@ -44,7 +44,7 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	}
 	
 	//CONTRUTOR PARA O FORMULARIO
-	public FormaCobrancaCaucaoLiquidaDTO(long idCota, TipoCobranca tipoCobranca, 
+	public FormaCobrancaCaucaoLiquidaDTO(long idCota, TipoCobrancaCotaGarantia tipoCobranca, 
 			TipoFormaCobranca tipoFormaCobranca,String numBanco, String nomeBanco,String nomeCorrentista,
 			Long agencia, String agenciaDigito, Long conta,
 			String contaDigito, Integer diaDoMes, Integer primeiroDiaQuinzenal, Integer segundoDiaQuinzenal, boolean domingo, boolean segunda,
@@ -97,11 +97,11 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 		this.idCota = idCota;
 	}
 
-	public TipoCobranca getTipoCobranca() {
+	public TipoCobrancaCotaGarantia getTipoCobranca() {
 		return tipoCobranca;
 	}
 
-	public void setTipoCobranca(TipoCobranca tipoCobranca) {
+	public void setTipoCobranca(TipoCobrancaCotaGarantia tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
 	}
 
