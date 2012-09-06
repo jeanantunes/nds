@@ -10,8 +10,6 @@ var diferencaEstoqueController = $.extend(true, {
 		
 		$('input[id^="data"]', diferencaEstoqueController.workspace).mask("99/99/9999");
 		
-		$("#edicao", diferencaEstoqueController.workspace).numeric();
-		
 		$("#produto", diferencaEstoqueController.workspace).autocomplete({source: ""});
 
 		$(".consultaFaltasSobrasGrid", diferencaEstoqueController.workspace).flexigrid({
@@ -121,23 +119,26 @@ var diferencaEstoqueController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
+		
 		var codigoProduto = $("#codigo", diferencaEstoqueController.workspace).val();
-		var numeroEdicao = $("#edicao", diferencaEstoqueController.workspace).val();
 		var idFornecedor = $("#fornecedor", diferencaEstoqueController.workspace).val();
 		var dataInicial = $("#dataInicial", diferencaEstoqueController.workspace).val();
 		var dataFinal = $("#dataFinal", diferencaEstoqueController.workspace).val();
 		var tipoDiferenca = $("#tipoDiferenca", diferencaEstoqueController.workspace).val();
+		var numeroCota = $("#numeroCota", diferencaEstoqueController.workspace).val();
+		var nomeCota = $("#descricaoCota", diferencaEstoqueController.workspace).val();
 		
 		$(".consultaFaltasSobrasGrid", diferencaEstoqueController.workspace).flexOptions({
 			url: contextPath + "/estoque/diferenca/pesquisarDiferencas",
 			onSuccess: diferencaEstoqueController.executarAposProcessamento,
 			params: [
 			         {name:'codigoProduto', value:codigoProduto},
-			         {name:'numeroEdicao', value:numeroEdicao},
 			         {name:'idFornecedor', value:idFornecedor},
 			         {name:'dataInicial', value:dataInicial},
 			         {name:'dataFinal', value:dataFinal},
-			         {name:'tipoDiferenca', value:tipoDiferenca}
+			         {name:'tipoDiferenca', value:tipoDiferenca},
+			         {name:'numeroCota', value:numeroCota},
+			         {name:'nomeCota', value:nomeCota}
 			        ] ,
 	        newp: 1
 		});

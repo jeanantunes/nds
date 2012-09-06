@@ -29,6 +29,9 @@ var parametrosDistribuidorController = $.extend(true, {
 						exibirMensagem(resultado.tipoMensagem, 
 									   resultado.listaMensagens);
 						parametrosDistribuidorController.recarregarDiasDistribuidorFornecedorGrid();
+						$('#selectDiasLancamento', this.workspace).val('');
+						$('#selectFornecedoresLancamento', this.workspace).val('');
+						$('#selectDiasRecolhimento', this.workspace).val('');
 				   });
 	},
 
