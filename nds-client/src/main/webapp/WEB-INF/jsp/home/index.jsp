@@ -34,8 +34,6 @@
 
 <script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
 
-<script type="text/javascript" src="scripts/balanceamentoLancamento.js"></script>
-
 <link rel="stylesheet" type="text/css" href="scripts/tools-1.2.6/css/tools.css" />
 
 <base href="<c:url value="/"/>" />

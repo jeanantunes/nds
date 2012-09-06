@@ -8,6 +8,7 @@
 }
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamentoLancamento.js"></script>
 
 
 <script type="text/javascript">
