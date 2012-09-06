@@ -276,7 +276,7 @@ public class CotaGarantiaController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
 		}
 		
-		if (formaCobranca.getTipoFormaCobranca()==null){
+		if (formaCobranca.getTipoFormaCobranca()==null && formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
 		}
 		
@@ -336,6 +336,13 @@ public class CotaGarantiaController {
 			if((formaCobranca.getNomeCorrentista()==null) || ("".equals(formaCobranca.getNomeCorrentista()))){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Correntista.");
 			}
+		}
+		
+		if (formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.DEPOSITO_TRANSFERENCIA &&
+				formaCobranca.getValorFormaPagamentoDeposito() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+					"Informe o valor do depósito.");
 		}
 
 	}
