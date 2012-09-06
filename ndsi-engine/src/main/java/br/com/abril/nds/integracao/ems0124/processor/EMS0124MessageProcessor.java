@@ -99,7 +99,7 @@ public class EMS0124MessageProcessor extends AbstractRepository implements Messa
 				outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
 				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
 				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
-				outdetalhe.setQuantidadeNivelamento(mec.getQtde());
+				outdetalhe.setQuantidadeNivelamento( Long.valueOf( mec.getQtde().toString() ));
 				outdetalhe.setDataLancamento(mec.getData());
 				if (tipoMovimento.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA))
 					outdetalhe.setTipoNivelamento("E");

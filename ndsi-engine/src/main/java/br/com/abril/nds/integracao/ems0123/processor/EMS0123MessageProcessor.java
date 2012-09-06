@@ -95,7 +95,7 @@ public class EMS0123MessageProcessor extends AbstractRepository implements Messa
 			    outdetalhe.setContextoProduto(mec.getProdutoEdicao().getProduto().getCodigoContexto());
 				outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
 				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
-				outdetalhe.setQuantidadeEncalhe(mec.getQtde());
+				outdetalhe.setQuantidadeEncalhe( Long.valueOf( mec.getQtde().toString() ));
 				outdetalhe.setDataRecolhimento(mec.getData());
 				
 				 
