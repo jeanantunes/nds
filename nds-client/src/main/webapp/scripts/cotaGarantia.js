@@ -719,16 +719,53 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 	
 };
 
+TipoCotaGarantia.prototype.bindTiposCobrancaCotaGarantia = function() {
+
+	$.getJSON(this.path + 'getTiposCobrancaCotaGarantia.json', 
+			null, 
+			function(data) {
+		
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+		
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+				} else {
+					var select = $("#tipoCobranca", _workspace);
+					
+					for ( var index in data) {
+						var tipo = data[index];
+						var option = document.createElement("option");
+							
+						option.text = tipo.value.$;
+						
+						option.value = tipo.key.$;
+
+						try {
+							$(select).append(option, select.options[null]);
+						} catch (e) {
+							$(select).append(option, null);
+						}
+					}
+				}
+			}, 
+			null, 
+			true);
+
+};
+
 TipoCotaGarantia.prototype.onOpen = function(tipoCotaSelecionada) {
+	
 	this.getData();
+	
+	this.bindTiposCobrancaCotaGarantia();
 	
 	if (tipoCotaSelecionada == "JURIDICA"){
 		$("#cotaGarantiaClassificacaoCota", this.workspace).val($("#classificacaoSelecionada :selected", this.workspace).text());
 	}
 	else{
 		$("#cotaGarantiaClassificacaoCota", this.workspace).val($("#classificacaoSelecionadaCPF :selected", this.workspace).text());
-	}
-	
+	}	
 };
 
 TipoCotaGarantia.prototype.bindEvents = function() {
@@ -1288,6 +1325,30 @@ CaucaoLiquida.prototype.bindEvents = function() {
 	$("#numBancoDeposito", _workspace).numeric();
 	$("#agenciaDeposito", _workspace).numeric();
 	$("#contaDeposito", _workspace).numeric();
+	
+	$("#valorDesconto", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#valorDescontoAtual", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#utilizarDesconto", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#descontoCotaDesconto", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
 
 };
 
@@ -1334,13 +1395,13 @@ CaucaoLiquida.prototype.initGrid = function() {
 
 CaucaoLiquida.prototype.opcaoPagto = function(op){
 	
-	if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
+	if (op=='BOLETO'){
 		$('#divFormaBoleto', _workspace).show();
 		$('#divFormaDeposito', _workspace).hide();
 		$('#divFormaDinheiro', _workspace).hide();
 		$('#divFormaDesconto', _workspace).hide();
     }
-	else if ((op=='DEPOSITO')||(op=='TRANSFERENCIA_BANCARIA')){
+	else if (op=='DEPOSITO_TRANSFERENCIA'){
 		$('#divFormaBoleto', _workspace).hide();
 		$('#divFormaDeposito', _workspace).show();
 		$('#divFormaDinheiro', _workspace).hide();
@@ -1352,11 +1413,17 @@ CaucaoLiquida.prototype.opcaoPagto = function(op){
 		$('#divFormaDinheiro', _workspace).show();
 		$('#divFormaDesconto', _workspace).hide();
 	}    
-	else{
+	else if (op=='DESCONTO_COTA'){
 		$('#divFormaBoleto', _workspace).hide();
 		$('#divFormaDeposito', _workspace).hide();
 		$('#divFormaDinheiro', _workspace).hide();
 		$('#divFormaDesconto', _workspace).show();
+	}    
+	else{
+		$('#divFormaBoleto', _workspace).hide();
+		$('#divFormaDeposito', _workspace).hide();
+		$('#divFormaDinheiro', _workspace).hide();
+		$('#divFormaDesconto', _workspace).hide();
 	}
 	
 };
