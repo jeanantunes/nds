@@ -25,6 +25,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionament
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
@@ -63,6 +64,24 @@ public class CotaDTOAssembler {
         dto.setClassificacaoSelecionada(cota.getClassificacaoExpectativaFaturamento());
         dto.setEmiteNFE(cota.isEmiteNfe());
         dto.setEmailNF(cota.getEmailNfe());
+       
+        dto.setInicioPeriodo(cota.getInicioPeriodoCotaBase());
+        dto.setFimPeriodo(cota.getFimPeriodoCotaBase());
+        
+        int i = 0;
+        for (HistoricoTitularidadeCotaReferenciaCota referencia : cota.getReferencias()) {
+            if (i == 0) {
+                dto.setHistoricoPrimeiraCota(referencia.getNumeroCota());
+                dto.setHistoricoPrimeiraPorcentagem(referencia.getPercentual());
+            } else if (i == 1) {
+                dto.setHistoricoSegundaCota(referencia.getNumeroCota());
+                dto.setHistoricoSegundaPorcentagem(referencia.getPercentual());
+            } else if (i == 2) {
+                dto.setHistoricoTerceiraCota(referencia.getNumeroCota());
+                dto.setHistoricoTerceiraPorcentagem(referencia.getPercentual());
+            }
+            i++;
+        }
         
         if (cota.isPessoaFisica()) {
             HistoricoTitularidadeCotaPessoaFisica pf = cota.getPessoaFisica();

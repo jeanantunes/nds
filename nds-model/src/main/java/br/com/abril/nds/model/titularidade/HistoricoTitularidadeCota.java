@@ -631,6 +631,19 @@ public class HistoricoTitularidadeCota implements Serializable {
         pdv.setHistoricoTitularidadeCota(this);
         pdvs.add(pdv);
     }
+    
+    /**
+     * Adiciona um cota referência ao histórico de titularidade da cota
+     * 
+     * @param referencia
+     *            referência para inclusão
+     */
+    public void addCotaReferencia(HistoricoTitularidadeCotaReferenciaCota referencia) {
+        if (referencias == null) {
+            referencias = new ArrayList<HistoricoTitularidadeCotaReferenciaCota>();
+        }
+        referencias.add(referencia);
+    }
 
 
 }

@@ -207,6 +207,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
 
@@ -3389,6 +3390,12 @@ public class Fixture {
         historico.setNumeroCota(cota.getNumeroCota());
         historico.setClassificacaoExpectativaFaturamento(cota.getClassificacaoEspectativaFaturamento());
         historico.setSituacaoCadastro(cota.getSituacaoCadastro());
+        
+        historico.setInicioPeriodoCotaBase(cota.getInicioAtividade());
+        historico.setFimPeriodoCotaBase(DateUtil.adicionarDias(cota.getInicioAtividade(), 60));
+        historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(123), BigDecimal.valueOf(33)));
+        historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(456), BigDecimal.valueOf(33)));
+        historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(789), BigDecimal.valueOf(33)));
 
         HistoricoTitularidadeCotaPessoaFisica htcpf = new HistoricoTitularidadeCotaPessoaFisica(
                     "Aristoteles da Silva", "862.243.913-51", "30.887.357-9",
