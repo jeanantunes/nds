@@ -1138,6 +1138,8 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 	var qtdeParcelas        = $("#qtdParcelaBoleto", _workspace).val();
 	var valorParcela        = $("#valorParcelaBoleto", _workspace).val();
 	
+	var valorFormaPagamentoDeposito = $("#valorFormaPagamentoDeposito", _workspace).val();
+	
 	$("#PS", _workspace).val(0);
 	if ($("#PS", _workspace).is(":checked")) {
 		$("#PS", _workspace).val(1);
@@ -1200,7 +1202,7 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 	postData['formaCobranca.valor'] = this.preparaValor(valor);
 	postData['formaCobranca.qtdeParcelas'] = qtdeParcelas;
 	postData['formaCobranca.valorParcela'] = this.preparaValor(valorParcela);
-	
+	postData['formaCobranca.valorFormaPagamentoDeposito'] = this.preparaValor(valorFormaPagamentoDeposito);
 	
 	$.postJSON(this.path + 'salvaCaucaoLiquida.json', postData,
 			function(data) {
@@ -1288,6 +1290,12 @@ CaucaoLiquida.prototype.bindEvents = function() {
 	$("#numBancoDeposito", _workspace).numeric();
 	$("#agenciaDeposito", _workspace).numeric();
 	$("#contaDeposito", _workspace).numeric();
+	
+	$("#valorFormaPagamentoDeposito", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
 
 };
 
@@ -1478,6 +1486,15 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
 	$("#valorBoleto", _workspace).val(resultado.valor);
 	$("#qtdParcelaBoleto", _workspace).val(resultado.qtdeParcelas);
 	$("#valorParcelaBoleto", _workspace).val(resultado.valorParcela);
+	
+	$("#valorFormaPagamentoDeposito", _workspace).val(resultado.valor);
+	
+	if ($("#valorFormaPagamentoDeposito", _workspace).val().indexOf(".") < 0){
+		
+		$("#valorFormaPagamentoDeposito", _workspace).val($("#valorFormaPagamentoDeposito", _workspace).val() + "00");
+	}
+	
+	$("#valorFormaPagamentoDeposito").priceFormat({centsSeparator : ',',thousandsSeparator : '.'});
 };
 
 

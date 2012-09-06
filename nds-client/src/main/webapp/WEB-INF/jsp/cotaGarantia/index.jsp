@@ -316,7 +316,7 @@
 				        <td width="361">
 					        <div name="divFormaDeposito" id="divFormaDeposito" style="display: none;">
 								<strong>Valor R$</strong>
-								<input type="text" id="valorFormaPagamentoDeposito" />
+								<input type="text" id="valorFormaPagamentoDeposito" style="text-align: right;" />
 							</div>
 				        </td>
 				     </tr>
