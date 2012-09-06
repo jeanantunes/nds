@@ -246,7 +246,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
 		filtro.setCodigoProduto("1");
-		filtro.setNumeroEdicao(1L);
+		
 		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
 		filtro.setPaginacao(paginacao);
@@ -263,7 +263,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
 		filtro.setCodigoProduto("1");
-		filtro.setNumeroEdicao(1L);
+		
 		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
 		Long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro, null);

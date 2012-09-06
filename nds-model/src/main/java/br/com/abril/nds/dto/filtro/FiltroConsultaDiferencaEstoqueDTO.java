@@ -29,18 +29,21 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	@Export(label = "Produto", exhibitionOrder = 2)
 	private String nomeProduto;
 	
-	@Export(label = "Edição", exhibitionOrder = 3)
-	private Long numeroEdicao;
-	
 	private Long idFornecedor;
 	
-	@Export(label = "Fornecedor", exhibitionOrder = 4)
+	@Export(label = "Fornecedor", exhibitionOrder = 3)
 	private String nomeFornecedor;
 	
 	private PeriodoVO periodoVO;
 	
-	@Export(label = "Tipo de Diferença", exhibitionOrder = 7)
+	@Export(label = "Tipo de Diferença", exhibitionOrder = 6)
 	private TipoDiferenca tipoDiferenca;
+	
+	@Export(label = "Cota", exhibitionOrder = 4)
+	private Integer numeroCota;
+	
+	@Export(label="Nome", exhibitionOrder = 5)
+	private String nomeCota;
 	
 	private PaginacaoVO paginacao;
 	
@@ -100,20 +103,6 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	 */
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
-	}
-
-	/**
-	 * @return the numeroEdicao
-	 */
-	public Long getNumeroEdicao() {
-		return numeroEdicao;
-	}
-
-	/**
-	 * @param numeroEdicao the numeroEdicao to set
-	 */
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
 	}
 
 	/**
@@ -214,7 +203,7 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		this.nomeProduto = nomeProduto;
 	}
 	
-	@Export(label = "Data Inicial", exhibitionOrder = 5)
+	@Export(label = "Data Inicial", exhibitionOrder = 7)
 	public String getDataInicial() {
 		
 		if (this.periodoVO == null
@@ -226,7 +215,7 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		return DateUtil.formatarDataPTBR(this.periodoVO.getDataInicial());
 	}
 	
-	@Export(label = "Data Final", exhibitionOrder = 6)
+	@Export(label = "Data Final", exhibitionOrder = 8)
 	public String getDataFinal() {
 		
 		if (this.periodoVO == null
@@ -238,9 +227,22 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		return DateUtil.formatarDataPTBR(this.periodoVO.getDataFinal());
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -250,11 +252,13 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
 		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
 				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
 		result = prime * result
 				+ ((nomeProduto == null) ? 0 : nomeProduto.hashCode());
 		result = prime * result
-				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
@@ -266,9 +270,6 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -288,6 +289,11 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 				return false;
 		} else if (!idFornecedor.equals(other.idFornecedor))
 			return false;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
 		if (nomeFornecedor == null) {
 			if (other.nomeFornecedor != null)
 				return false;
@@ -298,10 +304,10 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 				return false;
 		} else if (!nomeProduto.equals(other.nomeProduto))
 			return false;
-		if (numeroEdicao == null) {
-			if (other.numeroEdicao != null)
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
 				return false;
-		} else if (!numeroEdicao.equals(other.numeroEdicao))
+		} else if (!numeroCota.equals(other.numeroCota))
 			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;
