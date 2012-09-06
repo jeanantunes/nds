@@ -204,9 +204,11 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
@@ -3422,6 +3424,14 @@ public class Fixture {
         HistoricoTitularidadeCotaTelefone telefone2 = new HistoricoTitularidadeCotaTelefone(
                 "9899-4321-", null, "19", TipoTelefone.CELULAR, false);
         historico.addTelefone(telefone2);
+        
+        HistoricoTitularidadeCotaFornecedor fornecedor1 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedor1.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Acme Inc", "Acme", "64.138.131/0001-12", null, null));
+        historico.addFornecedor(fornecedor1);
+        
+        HistoricoTitularidadeCotaFornecedor fornecedor2 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedor2.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Massive Dinamic", "Massive Dinamic", "44.864.479/0001-80", null, null));
+        historico.addFornecedor(fornecedor2);
         
         HistoricoTitularidadeCotaPDV pdv = new HistoricoTitularidadeCotaPDV();
         pdv.setStatus(StatusPDV.ATIVO);

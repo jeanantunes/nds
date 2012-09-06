@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
@@ -336,6 +338,31 @@ public class CotaDTOAssembler {
         dto.setPossuiImagem(possuiImagem);
         
         return dto;
+    }
+
+
+    /**
+     * Cria a coleção de {@link FornecedorDTO} com as informações da coleção de
+     * {@link HistoricoTitularidadeCotaFornecedor} associados ao histórico de
+     * titularidade da cota
+     * 
+     * @param fornecedores
+     *            coleção de {@link HistoricoTitularidadeCotaFornecedor} para
+     *            criação da coleção de {@link FornecedorDTO}
+     * @return coleção de {@link FornecedorDTO}
+     */
+    public static Collection<FornecedorDTO> toFornecedorDTOCollection(Collection<HistoricoTitularidadeCotaFornecedor> fornecedores) {
+        List<FornecedorDTO> dtos = new ArrayList<FornecedorDTO>(fornecedores.size());
+        for (HistoricoTitularidadeCotaFornecedor fornecedor : fornecedores) {
+            FornecedorDTO dto = new FornecedorDTO();
+            dto.setCnpj(fornecedor.getPessoaJuridica().getCnpj());
+            dto.setRazaoSocial(fornecedor.getPessoaJuridica().getRazaoSocial());
+            dto.setNomeFantasia(fornecedor.getPessoaJuridica().getNomeFantasia());
+            dto.setInscricaoEstadual(fornecedor.getPessoaJuridica().getInscricaoEstadual());
+            dto.setIdFornecedor(fornecedor.getId());
+            dtos.add(dto);
+        }
+        return dtos;
     }
  
 }

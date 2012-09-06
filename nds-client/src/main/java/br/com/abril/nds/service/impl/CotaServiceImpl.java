@@ -17,6 +17,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.jsoup.helper.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
@@ -1982,27 +1984,53 @@ public class CotaServiceImpl implements CotaService {
 		return enderecoAssociacaoCadastrado;
 	}
 
-    @Override
+	/**
+    * {@inheritDoc}
+    */
+	@Override
     @Transactional(readOnly = true)
     public CotaDTO obterHistoricoTitularidade(Long idCota, Long idHistorico) {
-        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         CotaDTO dto = CotaDTOAssembler.toCotaDTO(historico);
         return dto;
     }
     
-    @Override
+    /**
+     * {@inheritDoc}
+     */
+	@Override
     @Transactional(readOnly = true)
-    public List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(
-            Long idCota, Long idHistorico) {
-        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+    public List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         return new ArrayList<EnderecoAssociacaoDTO>(CotaDTOAssembler.toEnderecoAssociacaoDTOCollection(historico.getEnderecos()));
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
+	@Override
     @Transactional(readOnly = true)
     public List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(historico.getTelefones()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<FornecedorDTO> obterFornecedoresHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<FornecedorDTO>(CotaDTOAssembler.toFornecedorDTOCollection(historico.getFornecedores()));
     }
 
 }

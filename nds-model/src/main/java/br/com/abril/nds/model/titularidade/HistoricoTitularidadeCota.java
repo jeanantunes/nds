@@ -645,5 +645,17 @@ public class HistoricoTitularidadeCota implements Serializable {
         referencias.add(referencia);
     }
 
+    /**
+     * Adiciona um fornecedor ao histórico de titularidade da cota
+     * 
+     * @param fornecedor
+     *            fornecedor para inclusão
+     */
+    public void addFornecedor(HistoricoTitularidadeCotaFornecedor fornecedor) {
+        if (fornecedores == null) {
+            fornecedores = new ArrayList<HistoricoTitularidadeCotaFornecedor>();
+        }
+        fornecedores.add(fornecedor);
+    }
 
 }

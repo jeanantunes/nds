@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
@@ -289,9 +290,23 @@ public interface CotaService {
      */
     List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico);
 
-	byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
+    /**
+     * Obtém a lista de fornecedores associados ao histórico de titularidade da
+     * cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return Lista de fornecedores associados ao histórico de titularidade da
+     *         cota
+     */
+    public List<FornecedorDTO> obterFornecedoresHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
 
 	void atualizaTermoAdesao(String numCota) throws FileNotFoundException, IOException ;
 	
 	byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception;
+
 }

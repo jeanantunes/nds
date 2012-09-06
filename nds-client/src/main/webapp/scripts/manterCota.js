@@ -887,9 +887,10 @@ var COTA_FORNECEDOR = $.extend(true, {
 		},
 		
 		carregarFornecedores:function(){
-			
+			paramFornecedores = [{name:"idCota", value: MANTER_COTA.idCota},
+                                 {name:"modoTela", value: MANTER_COTA.modoTela.value}];
 			$.postJSON(contextPath + "/cadastro/cota/obterFornecedores",
-					"idCota="+ MANTER_COTA.idCota, 
+					paramFornecedores,
 					function(result){
 						
 						if(result){
@@ -897,9 +898,11 @@ var COTA_FORNECEDOR = $.extend(true, {
 						}
 					},null,true
 			);
-			
+            paramSelecionados = [{name:"idCota", value: MANTER_COTA.idCota},
+                                 {name:"modoTela", value: MANTER_COTA.modoTela.value},
+                                 {name:"idHistorico", value: MANTER_COTA.idHistorico}];
 			$.postJSON(contextPath + "/cadastro/cota/obterFornecedoresSelecionados",
-					"idCota="+ MANTER_COTA.idCota, 
+                    paramSelecionados,
 					function(result){
 					
 						if(result){

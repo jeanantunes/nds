@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -701,11 +702,13 @@ public class CotaController {
 	 */
 	@Post
 	@Path("/obterFornecedores")
-	public void obterFornecedores(Long idCota){
-		
-		List<Fornecedor> fornecedores =   fornecedorService.obterFornecedores(idCota);
-		
-		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
+	public void obterFornecedores(Long idCota, ModoTela modoTela){
+	    List<ItemDTO<Long, String>> dtos = new ArrayList<ItemDTO<Long,String>>();
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(idCota);
+	        dtos = getFornecedores(fornecedores);
+	    } 
+        result.use(Results.json()).from(dtos,"result").recursive().serialize();
 	}
 	
 	/**
@@ -715,12 +718,18 @@ public class CotaController {
 	 */
 	@Post
 	@Path("/obterFornecedoresSelecionados")
-	public void obterFornecedoresSelecionados(Long idCota){
-		
-		List<Fornecedor> fornecedores =   fornecedorService.obterFornecedoresCota(idCota);
-		
-		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
-	
+	public void obterFornecedoresSelecionados(Long idCota, ModoTela modoTela, Long idHistorico){
+	    List<ItemDTO<Long, String>> dtos = new ArrayList<ItemDTO<Long,String>>();
+	    if (ModoTela.CADASTRO_COTA ==  modoTela) {
+	        List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresCota(idCota);
+	        dtos = getFornecedores(fornecedores);
+	    } else {
+	        List<FornecedorDTO> fornecedores = cotaService.obterFornecedoresHistoricoTitularidadeCota(idCota, idHistorico);
+	        for (FornecedorDTO dto : fornecedores) {
+	            dtos.add(new ItemDTO<Long, String>(dto.getIdFornecedor(), dto.getRazaoSocial()));
+	        }
+	    }
+		result.use(Results.json()).from(dtos,"result").recursive().serialize();
 	}
 	
 	/**
