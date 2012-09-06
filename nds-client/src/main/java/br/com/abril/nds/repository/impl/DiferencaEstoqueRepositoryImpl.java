@@ -381,11 +381,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 				hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
 			}
-			
-			if (filtro.getNumeroEdicao() != null) {
-				hql += " and diferenca.produtoEdicao.numeroEdicao = :numeroEdicao ";
-			}
-			
+						
 			if (filtro.getIdFornecedor() != null) {
 				hql += " and fornecedores.id = :idFornecedor ";
 			}
@@ -429,10 +425,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 			query.setParameter("codigoProduto", filtro.getCodigoProduto());
-		}
-		
-		if (filtro.getNumeroEdicao() != null) {
-			query.setParameter("numeroEdicao", filtro.getNumeroEdicao());
 		}
 		
 		if (filtro.getIdFornecedor() != null) {
