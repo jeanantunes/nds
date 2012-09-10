@@ -178,7 +178,7 @@ public class InterfaceExecutor {
 				
 		File[] imagens = new File(diretorio).listFiles(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
-		        return name.toLowerCase().endsWith(".jpg");
+		        return name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg");
 		    }
 		});
 		
