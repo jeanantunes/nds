@@ -3385,4 +3385,18 @@ public class Fixture {
 		
 		return descontoL;
 	}
+    
+    public static RateioDiferenca criarRateioDiferenca(Cota cota, Date dataNotaEnvio, BigInteger qtde, 
+    		EstudoCota estudoCota, Diferenca diferenca) {
+    	
+    	RateioDiferenca rateio = new RateioDiferenca();
+    	
+    	rateio.setCota(cota);
+    	rateio.setDataNotaEnvio(dataNotaEnvio);
+    	rateio.setQtde(qtde);
+    	rateio.setEstudoCota(estudoCota);
+    	rateio.setDiferenca(diferenca);
+    	
+    	return rateio;
+    }
 }
