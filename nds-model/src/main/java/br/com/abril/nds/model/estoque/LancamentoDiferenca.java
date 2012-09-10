@@ -10,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,8 +31,7 @@ public class LancamentoDiferenca implements Serializable {
 	@GeneratedValue(generator = "LANCAMENTO_DIFERENCA_SEQ")
 	private Long id;
 
-	@Column(name = "ID_DIFERENCA")
-	@JoinColumn(name = "DIFERENCA_ID")
+	@OneToOne(mappedBy = "lancamentoDiferenca")
 	private Diferenca diferenca;
 	
 	@Column(name = "DATA_PROCESSAMENTO")
