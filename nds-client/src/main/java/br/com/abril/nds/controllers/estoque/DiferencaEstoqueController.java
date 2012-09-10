@@ -1331,8 +1331,10 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
+			
 			consultaDiferencaVO.setStatusAprovacao(
-				diferenca.getMovimentoEstoque().getStatus().getDescricaoAbreviada());
+					(diferenca.getLancamentoDiferenca() != null) ?
+						diferenca.getLancamentoDiferenca().getStatus().getDescricaoAbreviada() : "");
 			
 			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
 			
