@@ -126,7 +126,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notaFiscalEntradaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
 		
 		BigDecimal valorBruto = new BigDecimal(input.getPreco() * input.getQtdExemplar());
-		notaFiscalEntradaFornecedor.setValorBruto(valorBruto);
+		notaFiscalEntradaFornecedor.setValorBruto(BigDecimal.ZERO);
 		
 		double desconto = (input.getDesconto() / 100);
 		Double valorLiquido =  (valorBruto.doubleValue()  + (desconto * input.getPreco())) * input.getQtdExemplar();
@@ -149,7 +149,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	
 	private void atualizarNotaFiscalEntrada(NotaFiscalEntrada notafiscalEntrada, EMS0135Input input, ProdutoEdicao produtoEdicao) {
 		BigDecimal valorBruto = new BigDecimal((input.getPreco() * input.getQtdExemplar()) + notafiscalEntrada.getValorBruto().floatValue() );
-		notafiscalEntrada.setValorBruto(valorBruto);
 		
 		double desconto = (input.getDesconto() / 100);
 		Double valorLiquido =  (valorBruto.doubleValue()  + (desconto * input.getPreco())) * input.getQtdExemplar();		
@@ -159,15 +158,22 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 //		salvarItemNota((NotaFiscalEntradaFornecedor)notafiscalEntrada, input, produtoEdicao);
 	}
 
-	private void salvarItemNota(NotaFiscalEntrada notaFiscalEntradaFornecedor, EMS0135Input input, ProdutoEdicao produtoEdicao) {
+	private void salvarItemNota(NotaFiscalEntrada nfEntrada, EMS0135Input input, ProdutoEdicao produtoEdicao) {
 		
 		ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
 		item.setQtde(new BigInteger(input.getQtdExemplar().toString()));
-		item.setNotaFiscal(notaFiscalEntradaFornecedor);
+		item.setNotaFiscal(nfEntrada);
 		item.setProdutoEdicao(produtoEdicao);
 		Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
 		item.setDataLancamento(lancamento.getDataLancamentoPrevista());
 		item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
+		
+		
+		// Cálcular os valores "bruto", "liquido" e ":esconto":
+		BigDecimal valorBruto = nfEntrada.getValorBruto();
+		valorBruto = valorBruto.add(BigDecimal.valueOf(input.getPreco() 
+				* input.getQtdExemplar()));
+		nfEntrada.setValorBruto(valorBruto);
 		
 		this.getSession().persist(item);
 	}
