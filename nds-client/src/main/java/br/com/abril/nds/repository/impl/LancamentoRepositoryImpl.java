@@ -984,6 +984,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_LCTO_PREVISTA as dataLancamentoPrevista, ");
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamentoDistribuidor, ");
 		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
+		sql.append(" lancamento.ALTERADO_INTERFACE as alteradoInteface, ");
 
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
 		sql.append(" lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO ");
@@ -1118,7 +1119,8 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("nomeProduto")
 			.addScalar("periodicidadeProduto")
 			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN)
-			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN);		
+			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN)
+			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN);		
 		
 		aplicarParametros(query, periodoDistribuicao, fornecedores);
 		

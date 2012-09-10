@@ -5057,6 +5057,11 @@ public class DataLoader {
 						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
 
 			session.save(diferenca);
+			
+			if (i < 5) {
+				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
+				session.save(rateio);
+			}
 		}
 	}
 

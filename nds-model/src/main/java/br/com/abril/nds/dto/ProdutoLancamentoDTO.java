@@ -74,6 +74,8 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private boolean lancamentoAgrupado;
   	
   	private List<ProdutoLancamentoDTO> produtosLancamentoAgrupados = new ArrayList<ProdutoLancamentoDTO>();
+  	
+  	private boolean alteradoInteface;
 	
 	/**
 	 * Construtor padrão.
@@ -476,6 +478,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setProdutosLancamentoAgrupados(
 			List<ProdutoLancamentoDTO> produtosLancamentoAgrupados) {
 		this.produtosLancamentoAgrupados = produtosLancamentoAgrupados;
+	}
+
+	/**
+	 * @return the alteradoInteface
+	 */
+	public boolean isAlteradoInteface() {
+		return alteradoInteface;
+	}
+
+	/**
+	 * @param alteradoInteface the alteradoInteface to set
+	 */
+	public void setAlteradoInteface(boolean alteradoInteface) {
+		this.alteradoInteface = alteradoInteface;
 	}
 	
 }
