@@ -39,6 +39,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -699,6 +700,8 @@ public class CotaServiceImpl implements CotaService {
 		dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
 		dto.setReciboImpresso(parametro.getReciboImpresso());
 		dto.setReciboEmail(parametro.getReciboEmail());
+		dto.setUtilizaTermoAdesao(parametro.getUtilizaTermoAdesao());
+		dto.setTermoAdesaoRecebido(parametro.getTermoAdesaoRecebido());
 		dto.setUtilizaProcuracao(parametro.getUtilizaProcuracao());
 		dto.setProcuracaoRecebida(parametro.getProcuracaoRecebida());
 		dto.setTaxaFixa(MathUtil.round(parametro.getTaxaFixa(), 2));
@@ -771,6 +774,8 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
 		parametros.setReciboImpresso(dto.getReciboImpresso());
 		parametros.setReciboEmail(dto.getReciboEmail());
+		parametros.setUtilizaTermoAdesao(dto.getUtilizaTermoAdesao());
+		parametros.setTermoAdesaoRecebido(dto.getTermoAdesaoRecebido());
 		parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
 		parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
 		parametros.setTaxaFixa(dto.getTaxaFixa());
@@ -792,7 +797,11 @@ public class CotaServiceImpl implements CotaService {
 		
 		cotaRepository.merge(cota);		
 
-		atualizaTermoAdesao(cota.getNumeroCota().toString());
+		this.atualizaTermoAdesao(
+			cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGA_EM_BANCA);
+		
+		this.atualizaTermoAdesao(
+			cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGADOR);
 	}
 	
 
@@ -986,59 +995,27 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	@Transactional
-	public void atualizaTermoAdesao(String numCota) throws FileNotFoundException, IOException {
+	public void atualizaTermoAdesao(String numCota, DescricaoTipoEntrega descricaoTipoEntrega) throws FileNotFoundException, IOException {
 		
+		ParametroSistema pathDocumento = null;
+		
+		switch(descricaoTipoEntrega) {
+		case ENTREGA_EM_BANCA:
+			pathDocumento = this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
+			break;
+		case ENTREGADOR:
+			pathDocumento = this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_PROCURACAO);								
+			break;
+		default:
+			return;
+		}
 		
 		ParametroSistema raiz = 
-				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_SERVER_ROOT);					
+				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);					
 		
-		ParametroSistema pathTermoAdesao = 
-				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
-		
-		String path = (raiz.getValor() + pathTermoAdesao.getValor() + numCota).replace("\\", "/");
+		String path = (raiz.getValor() + pathDocumento.getValor() + numCota).replace("\\", "/");
 		
 		fileService.persistirTemporario(path);
-		
-		/*File fileDir = new File(arquivo.getPath());		
-		
-
-		if(fileDir.exists()) {
-			
-		 	for (String temp : fileDir.list()) {
-		 		(new File(fileDir, temp)).delete();
-		 	}
-
-			fileDir.delete();
-		}
-
-		fileDir.mkdirs();
-
-		File fileArquivo = new File(fileDir, arquivo.getNomeArquivo());				
-		
-		FileOutputStream fos = null;
-		
-		try {
-						
-			fos = new FileOutputStream(fileArquivo);
-			
-			IOUtils.copyLarge(arquivo.getArquivo(), fos);
-			
-		} catch (Exception e) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR,
-				"Falha ao gravar o arquivo em disco!");
-		
-		} finally {
-			try { 
-				if (fos != null) {
-					fos.close();
-				}
-			} catch (Exception e) {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-					"Falha ao fechar gravação de arquivo em disco!");
-			}
-		}*/
-		
 	}
 
 	/**
