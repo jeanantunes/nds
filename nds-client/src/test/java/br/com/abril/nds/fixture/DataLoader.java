@@ -19,8 +19,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.google.common.collect.Sets;
-
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -3230,8 +3228,8 @@ public class DataLoader {
 		merge(session, Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10"));
 		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
 		
-		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_SERVER_ROOT,
-				"C:\\WORKSPACE_NDS\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\nds-client"));	// windows;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA,
+				"C:\\Servidores\\apache-tomcat-7.0.25\\webapps\\nds-client\\distribuicao\\")); // windows;
 //				"???"));					// linux;
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA,
