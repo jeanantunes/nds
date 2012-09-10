@@ -346,6 +346,7 @@ var ConferenciaEncalhe = $.extend(true, {
 
 		
 	},
+
 	
 	carregarListaConferencia : function(data){
 		
@@ -379,6 +380,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			$.each(modeloConferenciaEncalhe, 
 				function(index, value) {
 					
+					var parcial =  value.parcial;
+				
 					var _class;
 					
 					if (index % 2 == 0){
@@ -428,7 +431,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					var inputCheckBoxJuramentada = '';
 					
-					if(indDistribuidorAceitaJuramentado == true) {
+					if(indDistribuidorAceitaJuramentado == true && parcial == true) {
 						
 						inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 						+ ' onchange="ConferenciaEncalhe.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
@@ -1192,3 +1195,5 @@ var ConferenciaEncalhe = $.extend(true, {
 	}
 
 }, BaseController);
+
+//@ sourceURL=scriptConferenciaEncalhe.js

@@ -8,19 +8,18 @@ import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.CotaGarantiaDTO;
-import br.com.abril.nds.dto.FormaCobrancaDTO;
+import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -35,11 +34,9 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
-import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -50,14 +47,15 @@ public class CotaGarantiaController {
 	@Autowired
 	private CotaGarantiaService cotaGarantiaService;
 	
-	@Autowired
-	private Validator validator;
 	
 	private Result result;
-
-	public CotaGarantiaController(Result result) {
+	
+	
+    public CotaGarantiaController(Result result) {
+		
 		super();
-		this.result = result;
+		
+		this.result = result;  
 	}
 
 	@Post
@@ -109,26 +107,39 @@ public class CotaGarantiaController {
 				.serialize();
 	}
 
-	
+	/**
+	 * Salva CaucaoLiquida
+	 * @param listaCaucaoLiquida
+	 * @param idCota
+	 * @param formaCobranca
+	 * @throws Exception
+	 */
 	@Post("/salvaCaucaoLiquida.json")
-	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota) throws Exception {
+	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobranca) throws Exception {
+		
+		if (listaCaucaoLiquida == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Nenhum valor informado."));
+		}	
 		
 		for(CaucaoLiquida caucaoLiquida: listaCaucaoLiquida){			
-			caucaoLiquida.setAtualizacao(Calendar.getInstance());
+		    caucaoLiquida.setAtualizacao(Calendar.getInstance());
 			validaCaucaoLiquida(caucaoLiquida);
 		}
 		
-		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota);
+		validarFormaCobranca(formaCobranca);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
-				"Caução Líquida salva com Sucesso."), "result").recursive()
-		.serialize();
+		formaCobranca = formatarFormaCobranca(formaCobranca);
+		
+		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota, formaCobranca);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Caução Líquida salva com Sucesso."), "result").recursive().serialize();
 	}
 	
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota) {
-		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 		
+		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
+
 		if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
 			result.use(CustomJson.class).from(cotaGarantia).serialize();		
 		}else{			
@@ -136,6 +147,28 @@ public class CotaGarantiaController {
 		}	
 	}
 	
+	/**
+	 * Obtem Cota garantia do tipo Caução Liquida
+	 * @param idCota
+	 */
+	@Post("/getCaucaoLiquidaByCota.json")
+	public void getCaucaoLiquidaByCota(Long idCota) {
+
+		if (idCota != null) {
+		
+			FormaCobrancaCaucaoLiquidaDTO dadosCaucaoLiquida = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
+			
+			if (dadosCaucaoLiquida != null) {			
+				result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();		
+			}else{			
+				result.use(CustomJson.class).from("OK").serialize();		
+			}	
+		}
+		else{
+			result.use(CustomJson.class).from("OK").serialize();
+		}
+	}
+
 	@Post("/getTipoGarantiaCadastrada.json")
 	public void getTipoGarantiaCadastrada(Long idCota){
 		
@@ -155,6 +188,39 @@ public class CotaGarantiaController {
 		result.use(Results.json()).withoutRoot().from(cotaGarantias)
 				.recursive().serialize();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Método responsável por obter tipos de cobrança de Garantia para preencher combo da camada view
+	 * @return comboTiposPagamento: Tipos de cobrança de Garantia padrão.
+	 */
+	@Get("/getTiposCobrancaCotaGarantia.json")
+	public void getTiposCobrancaCotaGarantia() {
+		List<ItemDTO<TipoCobrancaCotaGarantia,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobrancaCotaGarantia,String>>();
+		for (TipoCobrancaCotaGarantia itemTipoCobranca: TipoCobrancaCotaGarantia.values()){
+			listaTiposCobranca.add(new ItemDTO<TipoCobrancaCotaGarantia,String>(itemTipoCobranca, itemTipoCobranca.getDescTipoCobranca()));
+		}
+		
+		result.use(Results.json()).withoutRoot().from(listaTiposCobranca).recursive().serialize();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@Post("/buscaFiador.json")
 	public void buscaFiador(String nome, int maxResults) {
@@ -179,26 +245,6 @@ public class CotaGarantiaController {
 		result.use(Results.json()).from(garantiaCotaOutros, "outro").serialize();
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * @param caucaoLiquida para ser validado
 	 */
@@ -224,15 +270,13 @@ public class CotaGarantiaController {
 	 * Método responsável pela validação dos dados da Forma de Cobranca.
 	 * @param formaCobranca
 	 */
-	public void validarFormaCobranca(FormaCobrancaDTO formaCobranca){
-		
-		validar();
-		
+	public void validarFormaCobranca(FormaCobrancaCaucaoLiquidaDTO formaCobranca){
+
 		if(formaCobranca.getTipoCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
 		}
 		
-		if (formaCobranca.getTipoFormaCobranca()==null){
+		if (formaCobranca.getTipoFormaCobranca()==null && formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
 		}
 		
@@ -272,18 +316,7 @@ public class CotaGarantiaController {
 			}
 		}
 		
-		if (formaCobranca.getIdBanco()==null){
-		    if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||
-		    	(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
-		    	(formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-		    	(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
-		    	(formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO)){
-		    	throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
-		    }
-		}
-		
-		if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-		    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+		if (formaCobranca.getTipoCobranca()==TipoCobrancaCotaGarantia.DEPOSITO_TRANSFERENCIA){
 			
 			if((formaCobranca.getNomeBanco()==null) || ("".equals(formaCobranca.getNomeBanco()))){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
@@ -295,25 +328,30 @@ public class CotaGarantiaController {
 			if((formaCobranca.getConta()==null) || ("".equals(formaCobranca.getConta()))){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
 			}
-			if((formaCobranca.getContaDigito()==null) || ("".equals(formaCobranca.getContaDigito()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
-			}
 			
 			if((formaCobranca.getAgencia()==null) || ("".equals(formaCobranca.getAgencia()))){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
 			}
-			if((formaCobranca.getAgenciaDigito()==null) || ("".equals(formaCobranca.getAgenciaDigito()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
+			
+			if((formaCobranca.getNomeCorrentista()==null) || ("".equals(formaCobranca.getNomeCorrentista()))){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Correntista.");
 			}
+		}
+		
+		if (formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.DEPOSITO_TRANSFERENCIA &&
+				formaCobranca.getValorFormaPagamentoDeposito() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+					"Informe o valor do depósito.");
 		}
 
 	}
 	
-	 /**
+	/**
 	 *Formata os dados de FormaCobranca, apagando valores que não são compatíveis com o Tipo de Cobranca escolhido.
 	 * @param formaCobranca
 	 */
-	private FormaCobrancaDTO formatarFormaCobranca(FormaCobrancaDTO formaCobranca){
+	private FormaCobrancaCaucaoLiquidaDTO formatarFormaCobranca(FormaCobrancaCaucaoLiquidaDTO formaCobranca){
 		
 		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 			formaCobranca.setDiaDoMes(null);
@@ -357,72 +395,8 @@ public class CotaGarantiaController {
 			formaCobranca.setDiaDoMes(null);
 		}
 		
-		if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)){
-	    	formaCobranca.setNumBanco("");
-			formaCobranca.setNomeBanco("");
-			formaCobranca.setAgencia(null);
-			formaCobranca.setAgenciaDigito("");
-			formaCobranca.setConta(null);
-		    formaCobranca.setContaDigito("");
-	    }
-		else if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
-			formaCobranca.setRecebeEmail(false);
-		}    
-		else if (formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO){
-			formaCobranca.setRecebeEmail(false);
-			formaCobranca.setNumBanco("");
-			formaCobranca.setNomeBanco("");
-			formaCobranca.setAgencia(null);
-			formaCobranca.setAgenciaDigito("");
-			formaCobranca.setConta(null);
-		    formaCobranca.setContaDigito("");
-		}    
-		else{
-			formaCobranca.setRecebeEmail(false);
-			formaCobranca.setNumBanco("");
-			formaCobranca.setNomeBanco("");
-			formaCobranca.setAgencia(null);
-			formaCobranca.setAgenciaDigito("");
-			formaCobranca.setConta(null);
-		    formaCobranca.setContaDigito("");
-		    formaCobranca.setIdBanco(null);
-		}
 		return formaCobranca;
 	}
-	
-	/**
-	 * Método responsável pela validação dos dados e rotinas.
-	 */
-	public void validar(){
-		
-		if (validator.hasErrors()) {
-			List<String> mensagens = new ArrayList<String>();
-			for (Message message : validator.getErrors()) {
-				mensagens.add(message.getMessage());
-			}
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
-			throw new ValidacaoException(validacao);
-		}
-		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * @param notaPromissoria para ser validado

@@ -126,6 +126,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -234,6 +235,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoSobraDe;
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
+	private static TipoMovimentoEstoque tipoMovimentoNivelamentoEntrada;
+	private static TipoMovimentoEstoque tipoMovimentoNivelamentoSaida;
+	
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
 
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe;
@@ -252,6 +256,7 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe;
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalheSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEncalheAntecipado;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalheSuplementar;
 
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
@@ -1921,7 +1926,7 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(session,movimentoEstoque);
 
-		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
+		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
 		save(session,diferenca);
 
 		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN , cotaManoel, diferenca, estudoCota, new Date());
@@ -3224,13 +3229,26 @@ public class DataLoader {
 		merge(session, Fixture.parametroSistema(3L, TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com"));
 		merge(session, Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10"));
 		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
-
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_SERVER_ROOT,
+				"C:\\WORKSPACE_NDS\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\nds-client"));	// windows;
+//				"???"));					// linux;
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA,
 //				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
 				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_PDV,
 //				"\\images\\pdv\\"));	// windows;
 				"/images/pdv/"));		// linux;
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_TERMO_ADESAO,
+				"\\termo_adesao\\"));	// windows;
+//				"/termo_adesao/"));		// linux;
+
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_PROCURACAO,
+				"\\procuracao\\"));	// windows;
+//				"/procuracao/"));		// linux;
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
@@ -4861,11 +4879,15 @@ public class DataLoader {
 		tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
 		tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 
+		tipoMovimentoNivelamentoEntrada = Fixture.tipoMovimentoNivelamentoEntrada();
+		tipoMovimentoNivelamentoSaida = Fixture.tipoMovimentoNivelamentoSaida();
+
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
 
 		tipoMovimentoVendaEncalheSuplementar = Fixture.tipoMovimentoVendaEncalheSuplementar();
+		tipoMovimentoEncalheAntecipado = Fixture.tipoMovimentoEncalheAntecipado();
 		tipoMovimentoEstornoVendaEncalheSuplementar = Fixture.tipoMovimentoEstornoVendaEncalheSuplementar();
 		tipoMovimentoEstoqueCompraSuplementar = Fixture.tipoMovimentoCompraSuplementar();
 		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
@@ -4873,7 +4895,7 @@ public class DataLoader {
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
-					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar);
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, tipoMovimentoEncalheAntecipado);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -5016,7 +5038,7 @@ public class DataLoader {
 			Diferenca diferenca =
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
-						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true);
+						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
 
 			session.save(diferenca);
 		}
@@ -5032,7 +5054,7 @@ public class DataLoader {
 			Diferenca diferenca =
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
-						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
+						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
 
 			session.save(diferenca);
 		}
@@ -5149,7 +5171,7 @@ public class DataLoader {
 				if(indDiferenca > 5){
 
 
-					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true);
+					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
 					session.save(diferenca);
 
 					itemFisico.setDiferenca(diferenca);
@@ -5250,22 +5272,22 @@ public class DataLoader {
 
 		Diferenca diferenca =
 			Fixture.diferenca(BigInteger.valueOf(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
 		session.save(diferenca);
 
 		Diferenca diferenca2 =
 			Fixture.diferenca(BigInteger.valueOf(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true);
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true,TipoEstoque.LANCAMENTO);
 		session.save(diferenca2);
 
 		Diferenca diferenca3 =
 			Fixture.diferenca(BigInteger.valueOf(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true, TipoEstoque.LANCAMENTO);
 		session.save(diferenca3);
 
 		Diferenca diferenca4 =
 			Fixture.diferenca(BigInteger.valueOf(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true);
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true, TipoEstoque.LANCAMENTO);
 		session.save(diferenca4);
 
 		// Fim dos inserts na tabela DIFERENCA

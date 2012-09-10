@@ -1,14 +1,14 @@
 package br.com.abril.nds.service;
-
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaGarantiaDTO;
+import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
@@ -122,22 +122,7 @@ public interface CotaGarantiaService {
 	 */
 	public abstract CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota)
 			throws ValidacaoException, InstantiationException,
-			IllegalAccessException;
-
-	/**
-	 * Salva no repositorio de dados a garantia Caução Líquida.
-	 *
-	 * @param listaCaucaoLiquida
-	 *            Caução Liquida
-	 * @param idCota
-	 *            Id da Cota
-	 * @return CotaGarantiaCaucaoLiquia salva no repositório.
-	 * @throws ValidacaoException
-	 *             Caso ocorra uma violação de relacionamento na entidade.
-	 */
-	public abstract CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(
-			List<CaucaoLiquida> listaCaucaoLiquida, Long idCota)
-			throws ValidacaoException, InstantiationException, IllegalAccessException;
+			IllegalAccessException;	
 
 	/**
 	 * @param idCheque
@@ -179,11 +164,14 @@ public interface CotaGarantiaService {
 	public abstract NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(
 			long idCota);
 
-	CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaDepositoCaucaoLiquida conta) throws ValidacaoException, InstantiationException, IllegalAccessException ;
-
+	/**
+	 * Obtem endereço principal do fiador
+	 * @param idFiador
+	 * @return Endereco
+	 */
 	public abstract Endereco buscaEnderecoFiadorPrincipal(Long idFiador);
 	
-	/**
+	 /**
 	 * Salva no repositorio de dados a garantia outros.
 	 * 
 	 * @param listaOutros
@@ -193,4 +181,39 @@ public interface CotaGarantiaService {
 	 */
 	public abstract CotaGarantiaOutros salvaOutros(List<GarantiaCotaOutros> listaOutros,
 			Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException;
+     
+	/** Salva no repositorio de dados a garantia Caução Líquida.
+	 *
+	 * @param listaCaucaoLiquida
+	 *            Caução Liquida
+	 * @param idCota
+	 *            Id da Cota
+	 * @return CotaGarantiaCaucaoLiquia salva no repositório.
+	 * @throws ValidacaoException
+	 *             Caso ocorra uma violação de relacionamento na entidade.
+	 */
+	public abstract CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(
+			List<CaucaoLiquida> listaCaucaoLiquida, Long idCota)
+			throws ValidacaoException, InstantiationException, IllegalAccessException;
+	
+    CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, PagamentoCaucaoLiquida pagamento, ContaBancariaDeposito conta) throws ValidacaoException, InstantiationException, IllegalAccessException ;
+
+	/**
+	 * Salva Calção Liquida com forma de cobrança Boleto
+	 * @param listaCaucaoLiquida
+	 * @param idCota
+	 * @param formaCobrancaDTO
+	 * @return CotaGarantiaCaucaoLiquida
+	 * @throws ValidacaoException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO) throws ValidacaoException, InstantiationException, IllegalAccessException;
+
+	/**
+	 * Método responsável por obter os dados da forma de cobranca
+	 * @param idFormaCobranca: ID da forma de cobranca
+	 * @return Data Transfer Object com os dados da forma de cobranca
+	 */
+	FormaCobrancaCaucaoLiquidaDTO obterDadosCaucaoLiquida(Long idCota);
 }

@@ -48,7 +48,6 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		Banco banco = Fixture.hsbc(); 
 		save(banco);
 		
-		
 		PessoaJuridica pj = Fixture.pessoaJuridica("Distrib", "01.001.001/001-00",
 				"000.000.000.00", "distrib@mail.com", "99.999-9");
 		
@@ -93,8 +92,6 @@ public class FinanceiroServiceImplTest extends AbstractRepositoryImplTest {
 		
 		EnderecoCota enderecoCota = Fixture.enderecoCota(cota, enderecoDaCota, true, TipoEndereco.COBRANCA);
 		save(enderecoDaCota,enderecoCota);
-		
-		
 		
 		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
 		formasCobranca.add(formaBoleto);

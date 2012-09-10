@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -11,15 +13,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
+import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.DistribuicaoDTO;
@@ -34,20 +39,25 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
@@ -69,6 +79,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
@@ -87,6 +98,13 @@ public class CotaController {
 	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecoRemoverSessaoCota";
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
+	
+	public static final String TERMO_ADESAO = "imgTermoAdesao";
+	
+	public static final int[] vetor =  {1}; 
+	
+	public static final FileType[] extensoesAceitas = 
+		{FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG};
 	
 	@Autowired
 	private Result result;
@@ -126,7 +144,16 @@ public class CotaController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private ServletContext servletContext;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService; 
 
+	@Autowired
+	private FileService fileService;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
 	@Path("/")
@@ -531,9 +558,9 @@ public class CotaController {
 
 			return cotaDTO;
 		}
-
+		
 		Long idCota = cotaService.salvarCota(cotaDTO);
-
+						
 		return cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 	}
 	
@@ -1038,7 +1065,7 @@ public class CotaController {
 				&& (bairro == null || bairro.isEmpty())
 				&& (municipio == null || municipio.isEmpty())){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelomenos um dos filtros deve ser informado!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um dos filtros deve ser informado!");
 		}
 	}
 	/**
@@ -1083,42 +1110,104 @@ public class CotaController {
 	 * Carrega dados de Distribuição da cota
 	 * 
 	 * @param idCota - Código da cota
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 	@Post
-	public void carregarDistribuicaoCota(Long idCota) {
+	public void carregarDistribuicaoCota(Long idCota) throws FileNotFoundException, IOException {
 		
 		DistribuicaoDTO dto = cotaService.obterDadosDistribuicaoCota(idCota);
 		
 		dto.setTiposEntrega(gerarTiposEntrega());
 		
+		tratarDocumentoTipoEntrega(dto);
+				
 		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
 	
+	
+	
+	private void tratarDocumentoTipoEntrega(DistribuicaoDTO dto) throws FileNotFoundException, IOException {
+
+		TipoParametroSistema parametroPath = null;
+		
+		if(DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(dto.getDescricaoTipoEntrega()))
+				parametroPath = TipoParametroSistema.PATH_TERMO_ADESAO;
+		else if(DescricaoTipoEntrega.ENTREGADOR.equals(dto.getDescricaoTipoEntrega()))
+				parametroPath = TipoParametroSistema.PATH_TERMO_ADESAO;
+		else
+			return;
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);								
+		
+		String baseDir = (raiz + path.getValor() + dto.getNumCota().toString() ).replace("\\", "/");
+				
+		fileService.resetTemp(baseDir);		
+		
+		dto.setNomeTermoAdesao(fileService.obterNomeArquivoTemp(baseDir));
+	}
+
 	/**
 	 * Persiste no banco os dados de Distribuição da cota
 	 * @param distribuicao - DTO que representa os dados de distribuição da cota
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 	@Post
-	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) {
+	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) throws FileNotFoundException, IOException {
 		
 		this.validarDadosDistribuicaoCota(distribuicao);
 		
 		cotaService.salvarDistribuicaoCota(distribuicao);
 		
+		processarTipoEntrega(distribuicao);
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+	private void processarTipoEntrega (DistribuicaoDTO distribuicao) {
+		
+		switch(distribuicao.getDescricaoTipoEntrega()) {
+			case ENTREGA_EM_BANCA:
+				//TODO tratamento
+				//if(!distribuicao.get?TermoAdesaoRecebido?())
+				//	excluirArquivo(distribuicao.getNumCota(), TipoParametroSistema.PATH_TERMO_ADESAO);
+				break;
+			case ENTREGADOR:
+				if(!distribuicao.getProcuracaoRecebida())
+					excluirArquivo(distribuicao.getNumCota(), TipoParametroSistema.PATH_PROCURACAO);
+				break;
+		}	
+	}
+	
 	@Get
-	@Path("/imprimeProcuracao")
 	public void imprimeProcuracao(Integer numeroCota) throws Exception{
 		
-		//TODO dados procurador
-		byte[] arquivo = this.cotaService.getDocumentoProcuracao(numeroCota, "nomeProcurador", "rgProcurador",
-				"estadoCivilProcurador", "nacionalidadeProcurador");
+		byte[] arquivo = this.cotaService.getDocumentoProcuracao(numeroCota);
 
 		this.httpResponse.setContentType("application/pdf");
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=procuracao.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(arquivo);
+
+		httpResponse.flushBuffer();
+	}
+	
+	@Get
+	public void imprimeTermoAdesao(Integer numeroCota, String taxa, String percentual) throws Exception{
+		
+		BigDecimal valorTaxa = taxa == null || taxa.isEmpty() ? null : new BigDecimal(taxa);
+		BigDecimal valorPercentual = percentual == null || percentual.isEmpty() ? null : new BigDecimal(percentual);
+		
+		byte[] arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, valorTaxa, valorPercentual);
+
+		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=termo_adesao.pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(arquivo);
@@ -1282,6 +1371,109 @@ public class CotaController {
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.session.removeAttribute(FILTRO_SESSION_ATTRIBUTE);
+	}
+	
+	@Post
+	public void uploadTermoAdesao(UploadedFile uploadedFile, Integer numCota) throws IOException {		
+		upload(uploadedFile, numCota, TipoParametroSistema.PATH_TERMO_ADESAO);
+	}
+	
+	@Post
+	public void uploadProcuracao(UploadedFile uploadedFile, Integer numCota) throws IOException {		
+		upload(uploadedFile, numCota, TipoParametroSistema.PATH_PROCURACAO);
+	}
+	
+	private void upload(UploadedFile uploadedFile, Integer numCota, TipoParametroSistema parametroPath ) throws IOException {		
+		
+		this.fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
+		
+		if(uploadedFile==null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Nenhum arquivo foi selecionado."));
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);								
+		
+		String dirBase = (raiz + path.getValor() + numCota.toString() ).replace("\\", "/");
+		
+		fileService.setArquivoTemp(dirBase, uploadedFile.getFileName(), uploadedFile.getFile());
+			
+		this.result.use(PlainJSONSerialization.class)
+			.from(uploadedFile.getFileName(), "result").recursive().serialize();
+	}
+	
+	@Get
+	public void downloadTermoAdesao(Integer numeroCota, BigDecimal taxa, BigDecimal percentual) throws Exception {
+		
+		download(numeroCota, TipoParametroSistema.PATH_TERMO_ADESAO, taxa, percentual);		
+	}
+	
+	@Get
+	public void downloadProcuracao(Integer numeroCota) throws Exception {
+		
+		download(numeroCota, TipoParametroSistema.PATH_PROCURACAO, null, null);		
+	}
+	
+	private void download(Integer numeroCota, TipoParametroSistema parametroPath, BigDecimal taxa, BigDecimal percentual) throws Exception {
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema path = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);		
+				
+		String dirBase = (raiz + path.getValor() + numeroCota.toString() ).replace("\\", "/");
+				
+		ArquivoDTO dto = fileService.obterArquivoTemp(dirBase);
+		
+		byte[] arquivo = null;
+		
+		if(dto == null) {
+			
+			if(TipoParametroSistema.PATH_TERMO_ADESAO.equals(parametroPath))
+				arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, taxa, percentual);
+			else
+				arquivo = this.cotaService.getDocumentoProcuracao(numeroCota);
+			
+		} else {
+		
+			arquivo = IOUtils.toByteArray(dto.getArquivo());
+		}
+		
+		((FileInputStream)dto.getArquivo()).close();
+		
+		this.httpResponse.setContentType(dto.getContentType());
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + dto.getNomeArquivo());
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		output.write(arquivo);
+
+		httpResponse.flushBuffer();
+		
+	}
+	
+	public void excluirTermoAdesao(Integer numCota, TipoParametroSistema parametroPath) {		
+		excluirArquivo(numCota, TipoParametroSistema.PATH_TERMO_ADESAO);
+	}
+	
+	
+	public void excluirProcuracao(Integer numCota, TipoParametroSistema parametroPath) {		
+		excluirArquivo(numCota, TipoParametroSistema.PATH_PROCURACAO);
+	}
+	
+	private void excluirArquivo(Integer numCota, TipoParametroSistema parametroPath) {		
+		
+		String raiz = servletContext.getRealPath("") ;
+		
+		ParametroSistema pathTermoAdesao = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);		
+				
+		String path = (raiz + pathTermoAdesao.getValor() + numCota.toString() ).replace("\\", "/");
+		
+		fileService.esvaziarTemp(path);
+			
+		this.result.use(PlainJSONSerialization.class)
+			.from("", "result").recursive().serialize();
 	}
 }
 

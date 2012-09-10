@@ -1,5 +1,11 @@
 package br.com.abril.nds.controllers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +17,9 @@ import javax.servlet.http.HttpSession;
 import net.vidageek.mirror.dsl.Mirror;
 
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -46,6 +55,8 @@ public class HomeController {
 
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	private String changes;
 
 	private List<MenuDTO> menus;
 
@@ -79,6 +90,25 @@ public class HomeController {
 		result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
 		result.include("versao", version);
 		
+		
+		//result.include("changes", readJenkins());
+		
+		
+	}
+
+	private String readJenkins() {
+		StringBuilder builder = new StringBuilder();
+		
+		Document doc = null;
+		try {
+			doc = Jsoup.connect("http://177.71.255.76:8080/jenkins/job/deploy%20nds-client%20homolog/changes").get();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Elements newsHeadlines = doc.select("#main-panel");
+		
+		return newsHeadlines.html();
 	}
 
 	/**

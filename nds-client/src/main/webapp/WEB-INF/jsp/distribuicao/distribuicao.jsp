@@ -10,9 +10,16 @@
 	</script>
 	
 	<style>
-		.divConteudoEntregador, .divProcuracaoRecebida, .divUtilizaProcuracao { display: none; }
+		.divConteudoEntregador, .divProcuracaoRecebida,
+		.divUtilizaProcuracao, #dialogMudancaTipoEntrega { display: none; }
 	</style>
 </head>
+
+	<div id="dialogMudancaTipoEntrega" title="Mudança do Tipo de Entrega">
+				
+		<p>Ao mudar o Tipo de Entrega, informações do Tipo de Entrega anterior serão perdidas. Deseja continuar?</p>
+				   
+	</div>
 
 	<table width="900" cellpadding="2" cellspacing="2" style="text-align:left;">
     	<tr>
@@ -90,65 +97,79 @@
 	    			<tr>
 			            <td>Tipo de Entrega:</td>
 			            <td>
-
+							
+							<input type="hidden" id="${param.tela}tipoEntregaHidden" />
+							
 							<!-- Tipo de Entrega -->
 							<select id="${param.tela}tipoEntrega" name="select4"  style="width:155px"
-									onchange="DISTRIB_COTA.carregarConteudoTipoEntrega(this.value);">
+									onchange="DISTRIB_COTA.mostarPopUpAteracaoTipoEntrega(this.value);">
 								<option selected="selected">...</option>
 
 								<c:forEach items="${listaTipoEntrega}" var="item">
 									<option value="${item.key}">${item.value}</option>
-								</c:forEach>                            
+								</c:forEach>
 							</select>
 
 						</td>
 					</tr>
 				</table>
+				
+				<a href="javascript:;" target="_blank" onclick="DISTRIB_COTA.imprimeTermoAdesao();">teste termo adesão vlw</a>
 
 				<div class="divConteudoEntregador">
-					<table width="399" border="0" cellspacing="1" cellpadding="1">
-						<tr>
-							<td width="130">Utiliza Procuração?</td>
-							<td width="20">
-								<input type="checkbox" id="${param.tela}utilizaProcuracao"
-									   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaProcuracao()" />
-								<td width="245" height="39" class="procuracaoPf">
-									<div class="divUtilizaProcuracao">
-										<span class="bt_imprimir">
-											<a href="javascript:;" target="_blank"
-											   onclick="DISTRIB_COTA.imprimeProcuracao();">Procuração</a>
-										</span>
-									</div>
-								</td>
-						</tr>
-					</table>
-						
-					<div class="divUtilizaProcuracao">
+					<div id="cotaTemEntregador2" style="display: block;">
 						<table width="399" border="0" cellspacing="1" cellpadding="1">
 							<tr>
-								<td width="130">Procuração Recebida?</td>
-								<td width="265">
-									<input type="checkbox" id="${param.tela}procuracaoRecebida"
-										   onclick="DISTRIB_COTA.mostrarEsconderDivProcuracaoRecebida()" />
-								</td>
+								<td width="130">Utiliza Procuração?</td>
+								<td width="20">
+									<input type="checkbox" id="${param.tela}utilizaProcuracao"
+										   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaArquivo('divUtilizaProcuracao', 'divProcuracaoRecebida',
+											   												  'utilizaProcuracao', 'procuracaoRecebida')" />
+											   												  
+									<td width="245" height="39" class="procuracaoPf">
+										<div class="divUtilizaProcuracao">
+											<span class="bt_imprimir">
+												<a href="javascript:;" target="_blank"
+												   onclick="DISTRIB_COTA.imprimeProcuracao();">Procuração</a>
+											</span>
+										</div>
+									</td>
 							</tr>
 						</table>
-						<div class="divProcuracaoRecebida">
+							
+						<div class="divUtilizaProcuracao">
 							<table width="399" border="0" cellspacing="1" cellpadding="1">
 								<tr>
-									<td width="130">Arquivo:</td>
+									<td width="130">Procuração Recebida?</td>
 									<td width="265">
-										<input name="fileField" type="file"
-											   id="fileField" size="15" />
+										<input type="checkbox" id="${param.tela}procuracaoRecebida"
+											   onclick="DISTRIB_COTA.mostrarEsconderDivArquivoRecebido('divProcuracaoRecebida', 'procuracaoRecebida')" />
 									</td>
 								</tr>
 								<tr>
 									<td width="130">&nbsp;</td>
 									<td width="265">
-										<a href="javascript:;">nome_do_arquivo</a>
+										nome_do_arquivo
 									</td>
 								</tr>
 							</table>
+							<div class="divProcuracaoRecebida">
+								<table width="399" border="0" cellspacing="1" cellpadding="1">
+									<tr>
+										<td width="130">Arquivo:</td>
+										<td width="265">
+											<input name="fileField" type="file"
+												   id="fileField" size="15" />
+										</td>
+									</tr>
+									<tr>
+										<td width="130">&nbsp;</td>
+										<td width="265">
+											<a href="javascript:;">nome_do_arquivo</a>
+										</td>
+									</tr>
+								</table>
+							</div>
 						</div>
 					</div>
 					<table width="399" border="0" cellspacing="1" cellpadding="1">
@@ -178,6 +199,8 @@
 						</tr>
 					</table>
 				</div>
+				
+				<jsp:include page="entregaEmBanca.jsp"/>
 
 				<br />
 

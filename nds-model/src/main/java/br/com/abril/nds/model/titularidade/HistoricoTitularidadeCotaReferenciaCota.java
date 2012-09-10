@@ -32,7 +32,7 @@ public class HistoricoTitularidadeCotaReferenciaCota implements Serializable {
 
     /**
      * @return the numeroCota
-     */
+     */ 
     public Integer getNumeroCota() {
         return numeroCota;
     }

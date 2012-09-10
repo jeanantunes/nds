@@ -6,15 +6,20 @@ package br.com.abril.nds.model.cadastro.garantia;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
-import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 
 /**
@@ -32,7 +37,11 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	private List<CaucaoLiquida> caucaoLiquidas;
 
 	@Embedded
-	private ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida;
+	private ContaBancariaDeposito contaBancariaDeposito;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COBRANCA", nullable = false)
+	private TipoCobrancaCotaGarantia tipoCobranca;	
 	
 	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
 	@JoinColumn(name="PAGAMENTO_CAUCAO_LIQUIDA_ID")
@@ -52,22 +61,21 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	public void setCaucaoLiquidas(List<CaucaoLiquida> caucaoLiquidas) {
 		this.caucaoLiquidas = caucaoLiquidas;
 	}
-
+	
 
 	/**
-	 * @return the contaDepositoCaucaoLiquida
+	 * @return the contaBancariaDeposito
 	 */
-	public ContaDepositoCaucaoLiquida getContaDepositoCaucaoLiquida() {
-		return contaDepositoCaucaoLiquida;
+	public ContaBancariaDeposito getContaBancariaDeposito() {
+		return contaBancariaDeposito;
 	}
 
 
 	/**
-	 * @param contaDepositoCaucaoLiquida the contaDepositoCaucaoLiquida to set
+	 * @param contaBancariaDeposito the contaBancariaDeposito to set
 	 */
-	public void setContaDepositoCaucaoLiquida(
-			ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida) {
-		this.contaDepositoCaucaoLiquida = contaDepositoCaucaoLiquida;
+	public void setContaBancariaDeposito(ContaBancariaDeposito contaBancariaDeposito) {
+		this.contaBancariaDeposito = contaBancariaDeposito;
 	}
 
 
@@ -85,5 +93,21 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	public void setFormaPagamento(PagamentoCaucaoLiquida formaPagamento) {
 		this.formaPagamento = formaPagamento;
 	}
-	
+
+
+	/**
+	 * @return the tipoCobranca
+	 */
+	public TipoCobrancaCotaGarantia getTipoCobranca() {
+		return tipoCobranca;
+	}
+
+
+	/**
+	 * @param tipoCobranca the tipoCobranca to set
+	 */
+	public void setTipoCobranca(TipoCobrancaCotaGarantia tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
+	}
+
 }

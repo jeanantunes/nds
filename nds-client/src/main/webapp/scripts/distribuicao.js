@@ -52,7 +52,7 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.reciboEmail',				value: D.get("reciboEmail")});
 		
 		// TODO: Realizar tratamento para os outros tipos
-		if (D.$('tipoEntrega').val() == 'ENTREGADOR') {
+		if (D.get('tipoEntrega') == 'ENTREGADOR') {
 			
 			data.push({name:'distribuicao.utilizaProcuracao',		value: D.get("utilizaProcuracao")});
 			data.push({name:'distribuicao.procuracaoRecebida',		value: D.get("procuracaoRecebida")});
@@ -73,6 +73,8 @@ function Distribuicao(tela) {
 				
 		if(dto.tiposEntrega)
 			D.montarComboTipoEntrega(dto.tiposEntrega);
+				
+		$('#numCotaUpload').val(dto.numCota);
 		
 		D.set('numCota',				dto.numCota);
 		D.set('qtdePDV',				dto.qtdePDV ? dto.qtdePDV.toString() : '' );
@@ -80,6 +82,7 @@ function Distribuicao(tela) {
 		D.set('assistComercial',		dto.assistComercial);
 		D.set('gerenteComercial',		dto.gerenteComercial);
 		D.set('tipoEntrega',			dto.descricaoTipoEntrega);
+		D.set('tipoEntregaHidden',		dto.descricaoTipoEntrega);
 		D.set('arrendatario',			dto.arrendatario);
 		D.set('observacao',				dto.observacao);
 		D.set('repPorPontoVenda',		dto.repPorPontoVenda);
@@ -98,7 +101,7 @@ function Distribuicao(tela) {
 		D.set('reciboImpresso',			dto.reciboImpresso);
 		D.set('reciboEmail',			dto.reciboEmail);
 		
-		var tipoEntrega = D.$('tipoEntrega').val();
+		var tipoEntrega = D.get('tipoEntrega');
 		
 		// TODO: Realizar tratamento para os outros tipos
 		
@@ -109,9 +112,9 @@ function Distribuicao(tela) {
 			D.set('percentualFaturamentoEntregador',	dto.percentualFaturamento);
 			D.set('inicioPeriodoCarenciaEntregador',	dto.inicioPeriodoCarencia);
 			D.set('fimPeriodoCarenciaEntregador',		dto.fimPeriodoCarencia);
-			
-			D.carregarConteudoTipoEntrega(tipoEntrega);
 		}
+		
+		D.carregarConteudoTipoEntrega(tipoEntrega);
 		
 		if(dto.qtdeAutomatica) {
 			D.$('qtdePDV').attr('disabled','disabled');
@@ -140,7 +143,7 @@ function Distribuicao(tela) {
 				function(result) {
 					D.setDados(result);
 				},
-				null, true); 
+				null, true);
 	},
 	
 	/**
@@ -155,6 +158,25 @@ function Distribuicao(tela) {
 		
 		D.$("tipoEntrega").html(combo);
 		D.$("tipoEntrega").sortOptions();
+	},
+	
+	this.submitForm = function(idForm) {
+		
+		$('#' + idForm).submit();
+		
+		$("#uploadTermo").empty();
+		
+		$("#uploadTermo").append(
+				'<input name="uploadedFile" type="file" id="uploadedFile" size="40" onchange="DISTRIB_COTA.submitForm(\'formUploadTermoAdesao\')" />');
+	},
+	
+	this.downloadTermo = function(idCota) {
+		
+		document.location.assign(contextPath + "/cadastro/cota/downloadTermo?numeroCota=" + MANTER_COTA.numeroCota);
+	},
+	
+	this.tratarRetornoUploadTermoAdesao = function(result) {
+		//alert('Retornado com sucesso');
 	},
 	
 	/**
@@ -210,73 +232,157 @@ function Distribuicao(tela) {
 	    document.location.assign(contextPath + "/cadastro/cota/imprimeProcuracao?numeroCota="+D.get("numCota"));
 	};
 	
+	this.imprimeTermoAdesao = function(){
+		
+	    document.location.assign(
+	    	contextPath + "/cadastro/cota/imprimeTermoAdesao?numeroCota="+D.get("numCota")+"&taxa="+D.get("percentualFaturamentoEntregador")+"&percentual="+D.get("percentualFaturamentoEntregador"));
+	};
+	
 	this.mostrarEsconderDiv = function(classDiv, exibir) {
 		
 		$("." + classDiv).toggle(exibir);
+	};
+	
+	this.mostarPopUpAteracaoTipoEntrega = function(value) {
+		
+		var tipoEntregaHidden = D.get('tipoEntregaHidden');
+		
+		if (tipoEntregaHidden == "" || tipoEntregaHidden == 'COTA_RETIRA') {
+			
+			D.set('tipoEntregaHidden', value);
+			
+			D.carregarConteudoTipoEntrega(value);
+			
+			return ;
+		}
+		
+		$("#dialogMudancaTipoEntrega").dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "mudancaTipoEntregaBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
+					
+			    		D.set('tipoEntregaHidden', value);
+						
+						D.carregarConteudoTipoEntrega(value);
+						
+						$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "mudancaTipoEntregaBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		D.set("tipoEntrega", D.get("tipoEntregaHidden"));
+						
+						$(this).dialog("close");
+			    	}
+				}
+			]
+		});
 	};
 	
 	this.carregarConteudoTipoEntrega = function(value) {
 		
 		if (value == "COTA_RETIRA") {
 			
-			// TODO:
+			//D.mostrarEsconderConteudoEntregaBanca(false);
 			
-			D.esconderConteudoEntregador();
+			D.mostrarEsconderConteudoEntregador(false);
 			
 		} else if (value == "ENTREGA_EM_BANCA") {
 			
-			// TODO:
+			D.mostrarEsconderConteudoEntregador(false);
 			
-			D.esconderConteudoEntregador();
+			//D.mostrarEsconderConteudoEntregaBanca(true);
 			
 		} else if (value == "ENTREGADOR") {
 			
-			D.exibirConteudoEntregador();
+			//D.mostrarEsconderConteudoEntregaBanca(false);
+			
+			D.mostrarEsconderConteudoEntregador(true);
 			
 		} else {
 			
-			// TODO:
+			//D.mostrarEsconderConteudoEntregaBanca(false);
 			
-			D.esconderConteudoEntregador();
+			D.mostrarEsconderConteudoEntregador(false);
 		}
 	};
 	
-	this.exibirConteudoEntregador = function() {
+	this.mostrarEsconderConteudoEntregaBanca = function(exibirDiv) {
 		
-		$(".divConteudoEntregador").toggle(true);
-		
-		var utilizaProcuracao = D.get("utilizaProcuracao");
-		
-		if (utilizaProcuracao) {
-			
-			D.mostrarEsconderDivUtilizaProcuracao();
-		}
+		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregador",
+											 "divUtilizaProcuracao", "divProcuracaoRecebida",
+											 "utilizaProcuracao", "procuracaoRecebida");
 	};
 	
-	this.esconderConteudoEntregador = function() {
+	this.mostrarEsconderConteudoEntregador = function(exibirDiv) {
 		
-		$(".divConteudoEntregador").toggle(false);
+		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregador",
+											 "divUtilizaProcuracao", "divProcuracaoRecebida",
+											 "utilizaProcuracao", "procuracaoRecebida");
 	};
 	
-	this.mostrarEsconderDivUtilizaProcuracao = function() {
+	this.mostrarEsconderConteudoTipoEntrega = function(exibirDiv, divConteudoTipoEntrega,
+													   divUtilizaArquivo, divArquivoRecebido,
+													   campoUtilizaArquivo, campoArquivoRecebido) {
 		
-		var exibirDiv = D.get("utilizaProcuracao");
-		
-		D.mostrarEsconderDiv('divUtilizaProcuracao', exibirDiv);
+		D.mostrarEsconderDiv(divConteudoTipoEntrega, exibirDiv);
 		
 		if (!exibirDiv) {
 			
-			D.set('procuracaoRecebida',	false);
+			D.set(campoUtilizaArquivo, false);
+			
+			D.limparCampos();
 		}
 		
-		D.mostrarEsconderDivProcuracaoRecebida();
+		D.mostrarEsconderDivUtilizaArquivo(divUtilizaArquivo, divArquivoRecebido,
+										   campoUtilizaArquivo, campoArquivoRecebido);
 	};
 	
-	this.mostrarEsconderDivProcuracaoRecebida = function() {
+	this.mostrarEsconderDivUtilizaArquivo = function(divUtilizaArquivo, divArquivoRecebido,
+													 campoUtilizaArquivo, campoArquivoRecebido) {
 		
-		var exibirDiv = D.get("procuracaoRecebida");
+		var exibirDiv = D.get(campoUtilizaArquivo);
 		
-		D.mostrarEsconderDiv('divProcuracaoRecebida', exibirDiv);
+		D.mostrarEsconderDiv(divUtilizaArquivo, exibirDiv);
+		
+		if (!exibirDiv) {
+			
+			D.set(campoArquivoRecebido,	false);
+		}
+		
+		D.mostrarEsconderDivArquivoRecebido(divArquivoRecebido, campoArquivoRecebido);
+	};
+	
+	this.mostrarEsconderDivArquivoRecebido = function(divArquivoRecebido, campoArquivoRecebido) {
+		
+		var exibirDiv = D.get(campoArquivoRecebido);
+		
+		D.mostrarEsconderDiv(divArquivoRecebido, exibirDiv);
+	};
+	
+	this.limparCampos = function() {
+		
+		var tipoEntrega = D.get('tipoEntrega');
+		
+		if (tipoEntrega == "ENTREGA_EM_BANCA") {
+			
+			//TODO:
+			
+		} else if (tipoEntrega == "ENTREGADOR") {
+		
+			D.set('percentualFaturamentoEntregador',	"");
+			D.set('inicioPeriodoCarenciaEntregador',	"");
+			D.set('fimPeriodoCarenciaEntregador',		"");
+		}
 	};
 	
 	$(function() {
@@ -302,6 +408,12 @@ function Distribuicao(tela) {
 		D.$("fimPeriodoCarenciaEntregador").mask("99/99/9999");
 		
 		D.$("percentualFaturamentoEntregador").mask("99.99");
+		
+		var options = {
+				success: D.tratarRetornoUploadTermoAdesao,
+		    };
+		
+		$('#formUploadTermoAdesao').ajaxForm(options);
 	});
 }
 

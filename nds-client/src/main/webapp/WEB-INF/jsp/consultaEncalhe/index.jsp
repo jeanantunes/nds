@@ -3,172 +3,19 @@
 
 <title>Consulta Encalhe</title>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 
-<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
+<script language="javascript" type="text/javascript" src='scripts/jquery.numeric.js'></script>
+
+<script language="javascript" type="text/javascript" src='scripts/consultaEncalhe.js'></script>
+
 
 <script type="text/javascript">
 
 var pesquisaCotaConsultaEncalhe = new PesquisaCota();
 
-var ConsultaEncalhe = {
-	
-		pesquisar: function() {
-			
-			var dataRecolhimento 	= $("#dataRecolhimento").val();
-			var idFornecedor		= $("#idFornecedor").val();
-			var numeroCota			= $("#cota").val();
-			
-			var formData = [
-			        
-			        {name:'dataRecolhimento', value: dataRecolhimento},
-			        {name:'idFornecedor', value: idFornecedor},
-			        {name:'numeroCota', value: numeroCota }
-			];
-			
-			$("#gridConsultaEncalhe").flexOptions({
-				url: "<c:url value='/devolucao/consultaEncalhe/pesquisar'/>",
-				params: formData
-			});
-			
-			$("#gridConsultaEncalhe").flexReload();
-
-		},
-	
-		executarPreProcessamento: function(resultado) {
-			
-			//Verifica mensagens de erro do retorno da chamada ao controller.
-			if (resultado.mensagens) {
-
-				exibirMensagem(
-					resultado.mensagens.tipoMensagem, 
-					resultado.mensagens.listaMensagens
-				);
-				
-				$(".grids").hide();
-
-				return resultado.tableModel;
-			}
-			
-			$(".grids").show();
-			
-			$("#qtdExemplarDemaisRecolhimentos").val(resultado.qtdExemplarDemaisRecolhimentos);
-			
-			$("#qtdExemplarPrimeiroRecolhimento").val(resultado.qtdExemplarPrimeiroRecolhimento);
-			
-			$("#qtdProdutoDemaisRecolhimentos").val(resultado.qtdProdutoDemaisRecolhimentos);
-			
-			$("#qtdProdutoPrimeiroRecolhimento").val(resultado.qtdProdutoPrimeiroRecolhimento);
-			
-			return resultado.tableModel;
-			
-		},
-		
-		obterColModel : function() {
-
-
-				var colModel = [ {
-					display : 'Código',
-					name : 'codigoProduto',
-					width : 60,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Produto',
-					name : 'nomeProduto',
-					width : 100,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Edição',
-					name : 'numeroEdicao',
-					width : 60,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Preço Capa R$',
-					name : 'precoVenda',
-					width : 80,
-					sortable : true,
-					align : 'right'
-				}, {
-					display : 'Preço com Desc. R$',
-					name : 'precoComDesconto',
-					width : 110,
-					sortable : true,
-					align : 'right'
-				}, {
-					display : 'Reparte',
-					name : 'reparte',
-					width : 60,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Encalhe',
-					name : 'encalhe',
-					width : 60,
-					sortable : true,
-					align : 'center'
-				}, {
-					display : 'Fornecedor',
-					name : 'fornecedor',
-					width : 120,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Total R$',
-					name : 'total',
-					width : 90,
-					sortable : true,
-					align : 'right'
-				}, {
-					display : 'Recolhimento',
-					name : 'recolhimento',
-					width : 80,
-					sortable : true,
-					align : 'center'
-				}];	
-				
-				return colModel;
-		}
-	
-		
-
-		
-}
-	
-	
-$(function() {
-	
-	var colunas = ConsultaEncalhe.obterColModel();
-	
-	$("#cota").numeric();
-	
-	$("#gridConsultaEncalhe").flexigrid({
-		
-		dataType : 'json',
-		preProcess:ConsultaEncalhe.executarPreProcessamento,
-		//onSuccess:function(){$('input[id^="valorExemplarNota"]').numeric();},
-		colModel : colunas,
-		sortname : "codigoProduto",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 960,
-		height : 180
-	});
-	
-	$('#dataRecolhimento').datepicker({
-		showOn: "button",
-		buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-		buttonImageOnly: true,
-		dateFormat: "dd/mm/yy"
-	});
-	
-	$('#dataRecolhimento').mask("99/99/9999");
-	
+$(function(){
+	ConsultaEncalhe.init();
 });
 
 </script>

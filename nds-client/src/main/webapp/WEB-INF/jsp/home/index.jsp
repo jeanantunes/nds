@@ -46,7 +46,7 @@
 						$.ui.dialog.prototype,
 						{
 							_original_init : $.ui.dialog.prototype._init,
-							_original_open : $.ui.dialog.prototype.open,
+							_original_open : $.ui.dialog.prototype.open,				
 							_init : function() {
 								var self = this.element;
 	
@@ -66,6 +66,7 @@
 								this._original_open();
 								self.parent().css("top", "58px");
 							}
+							
 						});
 	})(jQuery);
 
@@ -233,7 +234,27 @@
 		}
 	});	
 	
-	var contextPath = "${pageContext.request.contextPath}";	
+	var contextPath = "${pageContext.request.contextPath}";
+	
+	//Changelog
+	
+	$(document).ready(function() {		
+		$("#changes").dialog({
+			resizable : true,
+			height : 400,
+			width : 800
+		});
+		$("#changes").dialog("close");
+		
+		$("#btnVersao").click(function() {
+			$("#changes")
+			.dialog( "option" ,  "title", "Changelog" )
+			.dialog( "open" );
+		});
+		
+		
+	});
+	
 	
 </script>
 
@@ -296,9 +317,10 @@
 						</span>
 					
 						<div class="usuario">
-										 
-							Versão: ${versao}
-						
+							<a href="javascript:;" id="btnVersao">
+								<label title="versao">Versão: ${versao}</label>								
+							</a>
+													
 							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 										
 							<label> <script type="text/javascript"
@@ -352,7 +374,8 @@
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
 		
-
+		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
+		
 		<div id="workspace">
 			<ul></ul>
 		</div>

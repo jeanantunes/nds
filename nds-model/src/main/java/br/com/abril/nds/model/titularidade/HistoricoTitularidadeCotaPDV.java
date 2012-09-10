@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -47,13 +48,7 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    /**
-     * Identificador do pdv de origem
-     */
-    @Column(name = "ID_ORIGEM")
-    private Long idOrigem;
-
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     private HistoricoTitularidadeCota historicoTitularidadeCota;
 
@@ -238,21 +233,6 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
-    }
-
-    /**
-     * @return the idOrigem
-     */
-    public Long getIdOrigem() {
-        return idOrigem;
-    }
-
-    /**
-     * @param idOrigem
-     *            the idOrigem to set
-     */
-    public void setIdOrigem(Long idOrigem) {
-        this.idOrigem = idOrigem;
     }
 
     /**

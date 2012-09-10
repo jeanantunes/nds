@@ -6,6 +6,7 @@ import java.util.Date;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 /**
@@ -20,7 +21,7 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String codDistrib;
-	private String dataGeracaoArq;
+	private Date dataGeracaoArq;
 	private String horaGeracaoArq;
 	private String mnemonicoTab;
 	private String contextoProd;
@@ -33,20 +34,20 @@ public class EMS0114Input extends IntegracaoDocument implements Serializable {
 	private String tipoDesconto;
 	private String statusRecolhimento;
 	
-	@Field(offset = 1, length = 8)
+	@Field(offset = 1, length = 7)
 	public String getCodDistrib() {
 		return codDistrib;
 	}
-	
 	public void setCodDistrib(String codDistrib) {
 		this.codDistrib = codDistrib;
 	}
 	
-	public String getDataGeracaoArq() {
+	@Field(offset = 8, length = 8)
+	@FixedFormatPattern("yyyyMMdd")
+	public Date getDataGeracaoArq() {
 		return dataGeracaoArq;
 	}
-	
-	public void setDataGeracaoArq(String dataGeracaoArq) {
+	public void setDataGeracaoArq(Date dataGeracaoArq) {
 		this.dataGeracaoArq = dataGeracaoArq;
 	}
 	

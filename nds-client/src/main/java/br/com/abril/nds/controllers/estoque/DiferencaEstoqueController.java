@@ -52,6 +52,7 @@ import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -96,6 +97,9 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Autowired
 	private EstudoCotaService estudoCotaService; 
@@ -463,18 +467,19 @@ public class DiferencaEstoqueController {
 	
 	@Post
 	@Path("/pesquisarDiferencas")
-	public void pesquisarDiferencas(String codigoProduto, Long numeroEdicao,
+	public void pesquisarDiferencas(String codigoProduto, 
 									Long idFornecedor, String dataInicial,
-									String dataFinal, TipoDiferenca tipoDiferenca,
+									String dataFinal, TipoDiferenca tipoDiferenca, 
+									Integer numeroCota, String nomeCota,
 									String sortorder, String sortname,
 									int page, int rp) {
 		
-		this.validarEntradaDadosPesquisa(codigoProduto, numeroEdicao, idFornecedor,
+		this.validarEntradaDadosPesquisa(codigoProduto, idFornecedor,
 										 dataInicial, dataFinal, tipoDiferenca);
 		
 		FiltroConsultaDiferencaEstoqueDTO filtro =
-			this.carregarFiltroPesquisa(codigoProduto, numeroEdicao, idFornecedor,
-										dataInicial, dataFinal, tipoDiferenca,
+			this.carregarFiltroPesquisa(codigoProduto, idFornecedor,
+										dataInicial, dataFinal, tipoDiferenca, numeroCota, nomeCota,
 										sortorder, sortname, page, rp);
 		
 		List<Diferenca> listaDiferencas =
@@ -861,16 +866,13 @@ public class DiferencaEstoqueController {
 				filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
 			}
 			
-			if (filtroSessao.getCodigoProduto() != null
-				&& filtroSessao.getNumeroEdicao() != null) {
+			if (filtroSessao.getCodigoProduto() != null) {
 		
-				ProdutoEdicao produtoEdicao =
-					this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-						filtroSessao.getCodigoProduto(), filtroSessao.getNumeroEdicao().toString());
+				Produto produto = this.produtoService.obterProdutoPorCodigo(filtroSessao.getCodigoProduto());
 				
-				if (produtoEdicao != null) {
+				if (produto != null) {
 					
-					filtroSessao.setNomeProduto(produtoEdicao.getProduto().getNome());
+					filtroSessao.setNomeProduto(produto.getNome());
 				}
 			}
 			
@@ -1115,7 +1117,14 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
 			
+			consultaDiferencaVO.setTipoEstoque(diferenca.getTipoEstoque().getDescricao());
+			
 			listaConsultaDiferenca.add(consultaDiferencaVO);
+			
+			Fornecedor fornecedor = fornecedorService.obterFornecedorUnico(diferenca.getProdutoEdicao().getProduto().getCodigo());
+			
+			if(fornecedor != null)
+				consultaDiferencaVO.setFornecedor(fornecedor.getJuridica().getNomeFantasia());
 			
 			qtdeTotalDiferencas = 
 				qtdeTotalDiferencas.add(diferenca.getQtde());
@@ -1184,11 +1193,11 @@ public class DiferencaEstoqueController {
 	 * Carrega o filtro da pesquisa de consulta de diferenças.
 	 * 
 	 * @param codigoProduto - código do produto
-	 * @param numeroEdicao - número da edição
 	 * @param idFornecedor - identificador do fornecedor
 	 * @param dataInicial - data de movimento inicial
 	 * @param dataFinal - data de movimento final
 	 * @param tipoDiferenca - tipo de diferença
+	 * @param numeroCota - numero da cota
 	 * @param sortorder - ordenação
 	 * @param sortname - coluna para ordenação
 	 * @param page - página atual
@@ -1196,17 +1205,19 @@ public class DiferencaEstoqueController {
 	 * 
 	 * @return Filtro
 	 */
-	private FiltroConsultaDiferencaEstoqueDTO carregarFiltroPesquisa(String codigoProduto, Long numeroEdicao,
+	private FiltroConsultaDiferencaEstoqueDTO carregarFiltroPesquisa(String codigoProduto, 
 																	 Long idFornecedor, String dataInicial,
-																	 String dataFinal, TipoDiferenca tipoDiferenca,
+																	 String dataFinal, TipoDiferenca tipoDiferenca, 
+																	 Integer numeroCota, String nomeCota,
 																	 String sortorder, String sortname,
 																	 int page, int rp) {
 		
 		FiltroConsultaDiferencaEstoqueDTO filtroAtual =  new FiltroConsultaDiferencaEstoqueDTO();
 		
 		filtroAtual.setCodigoProduto(codigoProduto);
-		filtroAtual.setNumeroEdicao(numeroEdicao);
 		filtroAtual.setIdFornecedor(idFornecedor);
+		filtroAtual.setNumeroCota(numeroCota);
+		filtroAtual.setNomeCota(nomeCota);
 		
 		if (!dataInicial.trim().isEmpty() && dataFinal.isEmpty()) {
 			
@@ -1316,7 +1327,7 @@ public class DiferencaEstoqueController {
 	 * @param tipoDiferenca
 	 * 
 	 */
-	private void validarEntradaDadosPesquisa(String codigoProduto, Long numeroEdicao,
+	private void validarEntradaDadosPesquisa(String codigoProduto, 
 											 Long idFornecedor, String dataInicial,
 											 String dataFinal, TipoDiferenca tipoDiferenca) {
 			
@@ -1354,7 +1365,7 @@ public class DiferencaEstoqueController {
 				TipoMensagem.WARNING, "O campo [Data Incial] não deve ser maior que o campo [Data Final]!");
 		}
 		
-		if ((codigoProduto == null || codigoProduto.trim().isEmpty()) && numeroEdicao == null 
+		if ((codigoProduto == null || codigoProduto.trim().isEmpty())  
 				&& (dataInicial == null || dataInicial.trim().isEmpty())
 				&& (dataFinal == null || dataFinal.trim().isEmpty())
 				&& idFornecedor == null && tipoDiferenca == null) {
@@ -1901,5 +1912,10 @@ public class DiferencaEstoqueController {
 		prods.add(diferencaVO);
 		
 		result.use(FlexiGridJson.class).from(prods).total(prods.size()).page(1).serialize();
+	}
+	
+	@Post
+	public void obterDetalhes(Long idDiferenca) {
+		result.use(Results.json()).from("", "result").serialize();
 	}
 }

@@ -470,7 +470,11 @@ public class ConferenciaEncalheController {
 						dto.setPrecoCapa(valorCapa);
 					}
 					
-					dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply( new BigDecimal( dto.getQtdExemplar() )));
+					BigDecimal precoCapa = dto.getPrecoCapa() == null ? BigDecimal.ZERO : dto.getPrecoCapa();
+					BigDecimal desconto = dto.getDesconto() == null ? BigDecimal.ZERO : dto.getDesconto();
+					BigDecimal qtdExemplar = dto.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(dto.getQtdExemplar()); 
+					
+					dto.setValorTotal(precoCapa.subtract(desconto).multiply( qtdExemplar ));
 					
 					conf = dto;
 					
@@ -965,7 +969,7 @@ public class ConferenciaEncalheController {
 	 * 
 	 */
 	@Post
-	public void verificarValorTotalNotaFiscal(){
+	public void verificarValorTotalNotaFiscal() {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
@@ -1025,7 +1029,6 @@ public class ConferenciaEncalheController {
 		}
 		
 	}
-	
 	
 	/**
 	 * Compara se o valor de qtde de itens de encalhe apontado pelo jornaleiro
@@ -1189,10 +1192,13 @@ public class ConferenciaEncalheController {
 			
 				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
-					valorEncalhe = valorEncalhe.add(
-							conferenciaEncalheDTO.getPrecoCapa()
-							.subtract(conferenciaEncalheDTO.getDesconto())
-							.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdExemplar())));
+					BigDecimal precoCapa = conferenciaEncalheDTO.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoCapa();
+					
+					BigDecimal desconto = conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto();
+					
+					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar()); 
+					
+					valorEncalhe = valorEncalhe.add(precoCapa.subtract(desconto).multiply(qtdExemplar));
 				}
 			}
 			
@@ -1295,6 +1301,8 @@ public class ConferenciaEncalheController {
 		
 		conferenciaEncalheDTO.setTipoChamadaEncalhe(produtoEdicao.getTipoChamadaEncalhe().name());
 		conferenciaEncalheDTO.setDataRecolhimento(produtoEdicao.getDataRecolhimentoDistribuidor());
+		
+		conferenciaEncalheDTO.setParcial(produtoEdicao.isParcial());
 		
 		
 		if (quantidade != null){
