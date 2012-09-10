@@ -9,7 +9,9 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -17,11 +19,14 @@ import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TipoEstabelecimentoAssociacaoPDVDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
 import br.com.abril.nds.dto.TipoPontoPDVDTO;
+import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
@@ -361,6 +366,45 @@ public class CotaDTOAssembler {
             dto.setInscricaoEstadual(fornecedor.getPessoaJuridica().getInscricaoEstadual());
             dto.setIdFornecedor(fornecedor.getId());
             dtos.add(dto);
+        }
+        return dtos;
+    }
+
+
+    /**
+     * Cria o {@link ParametroCobrancaCotaDTO} com as informações da 
+     * instância de {@link HistoricoTitularidadeCotaFinanceiro}
+     * 
+     * @param financeiro
+     *            {@link HistoricoTitularidadeCotaFinanceiro} para a criação do DTO
+     * @return {@link ParametroCobrancaCotaDTO} com as informações
+     */
+    public static ParametroCobrancaCotaDTO toParametroCobrancaCotaDTO(HistoricoTitularidadeCotaFinanceiro financeiro) {
+        ParametroCobrancaCotaDTO dto = new ParametroCobrancaCotaDTO();
+        if (financeiro != null) {
+            dto.setFatorVencimento(financeiro.getFatorVencimento());
+            dto.setValorMinimo(financeiro.getValorMininoCobranca());
+            PoliticaSuspensao politicaSuspensao = financeiro.getPoliticaSuspensao();
+            if (politicaSuspensao != null) {
+                dto.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
+                dto.setVrDividasAberto(politicaSuspensao.getValor());
+                dto.setSugereSuspensao(true);
+            }
+            dto.setContrato(financeiro.isPossuiContrato());
+            dto.setInicioContrato(financeiro.getDataInicioContrato());
+            dto.setTerminoContrato(financeiro.getDataTerminoContrato());
+            dto.setContratoRecebido(financeiro.isContratoRecebido());
+            dto.setTipoCota(financeiro.getTipoCota());
+        }
+        return dto;
+    }
+
+
+    public static Collection<FormaCobrancaDTO> toFormaCobrancaDTOCollection(
+            Collection<HistoricoTitularidadeCotaFormaPagamento> formasPagamento) {
+        List<FormaCobrancaDTO> dtos = new ArrayList<FormaCobrancaDTO>(formasPagamento.size());
+        for (HistoricoTitularidadeCotaFormaPagamento formaPagto : formasPagamento) {
+            
         }
         return dtos;
     }

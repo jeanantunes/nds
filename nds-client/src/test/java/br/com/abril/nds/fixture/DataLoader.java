@@ -204,7 +204,6 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.impl.CotaRepositoryImpl;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.Util;

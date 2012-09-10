@@ -207,6 +207,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescri
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
@@ -3553,6 +3554,20 @@ public class Fixture {
         
         pdv.setExpositor(true);
         pdv.setTipoExpositor("Tipo Expositor");
+        
+        HistoricoTitularidadeCotaFinanceiro financeiro = new HistoricoTitularidadeCotaFinanceiro();
+        financeiro.setPossuiContrato(true);
+        financeiro.setDataInicioContrato(cota.getInicioAtividade());
+        financeiro.setDataTerminoContrato(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
+        financeiro.setContratoRecebido(true);
+        financeiro.setFatorVencimento(2);
+        financeiro.setTipoCota(TipoCota.CONSIGNADO);
+        financeiro.setValorMininoCobranca(BigDecimal.valueOf(500));
+        PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
+        politicaSuspensao.setValor(BigDecimal.valueOf(1000));
+        politicaSuspensao.setNumeroAcumuloDivida(3);
+        financeiro.setPoliticaSuspensao(politicaSuspensao);
+        historico.setFinanceiro(financeiro);
         
         try {
             URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");

@@ -140,7 +140,7 @@ var MANTER_COTA = $.extend(true, {
     },
     
     carregaFinanceiroCota:function (){
-        parametroCobrancaCotaController.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
+        parametroCobrancaCotaController.definirModoTela(MANTER_COTA.modoTela, MANTER_COTA.idHistorico);
         if (MANTER_COTA.isModoTelaCadastroCota()) {
     	    TAB_COTA.funcaoSalvar = parametroCobrancaCotaController.postarParametroCobranca;
         }

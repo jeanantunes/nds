@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,10 +17,12 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.jsoup.helper.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.assembler.CotaDTOAssembler;
 import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
@@ -46,6 +49,8 @@ import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -938,6 +943,37 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 		return res;
 	}
+
+
+    /**
+     * {@inheritDoc}
+     * 
+     **/
+	@Transactional(readOnly = true)
+	@Override
+	public ParametroCobrancaCotaDTO obterParametrosCobrancaHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!"); 
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return CotaDTOAssembler.toParametroCobrancaCotaDTO(historico.getFinanceiro());
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+	@Transactional(readOnly = true)
+	@Override
+    public List<FormaCobrancaDTO> obterFormasCobrancaHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!"); 
+        
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        HistoricoTitularidadeCotaFinanceiro financeiro = historico.getFinanceiro();
+        
+        List<FormaCobrancaDTO> empty = Collections.emptyList();
+        return financeiro == null ? empty : new ArrayList<FormaCobrancaDTO>(
+                CotaDTOAssembler.toFormaCobrancaDTOCollection(financeiro
+                        .getFormasPagamento()));
+    }
 
 	
 }

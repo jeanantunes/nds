@@ -174,4 +174,30 @@ public interface ParametroCobrancaCotaService {
 	 * @return ContratoVO quando o anexo for encontrato ou null quando o arquivo não existir
 	 */
 	public ContratoVO obterArquivoContratoRecebido(Long idCota, File tempDir);
+	
+	
+    /**
+     * Recupera as informações de parametrização de cobrança do histórico de
+     * titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da Cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return {@link ParametroCobrancaCotaDTO} com as informações de parâmetros
+     *         de cobrança associados ao histórico de titularidade da cota
+     */
+	ParametroCobrancaCotaDTO obterParametrosCobrancaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    /**
+     * Obtém as formas de cobrança do histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da Cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return Lista de {@link FormaCobrancaDTO} com as informações de forma de
+     *         cobrança do histórico de titularidade da cota
+     */
+	List<FormaCobrancaDTO> obterFormasCobrancaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
 }

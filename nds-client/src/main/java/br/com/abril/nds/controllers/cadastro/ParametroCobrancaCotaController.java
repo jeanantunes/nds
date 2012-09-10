@@ -171,7 +171,7 @@ public class ParametroCobrancaCotaController {
 	 */
 	@Post
 	@Path("/obterParametroCobranca")
-	public void obterParametroCobranca(Long idCota){
+	public void obterParametroCobranca(Long idCota, ModoTela modoTela, Long idHistorico){
 		
 		validar();
 		
@@ -179,24 +179,26 @@ public class ParametroCobrancaCotaController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O código da cota informado náo é válido.");
 		} 
 
-		ParametroCobrancaCotaDTO parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
-		
-		
-		if (parametroCobranca==null){
-			
-		    parametroCobranca = new ParametroCobrancaCotaDTO();
-		    parametroCobranca.setIdCota(idCota);
-		    parametroCobranca.setContrato(false);
-		    parametroCobranca.setFatorVencimento(0);
-		    parametroCobranca.setQtdDividasAberto(0);
-		    parametroCobranca.setSugereSuspensao(false);
-		    parametroCobranca.setValorMinimo(BigDecimal.ZERO);
-		    parametroCobranca.setVrDividasAberto(BigDecimal.ZERO);
+		ParametroCobrancaCotaDTO parametroCobranca;
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		    parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
 		    
-            this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		    if (parametroCobranca==null){
+		        parametroCobranca = new ParametroCobrancaCotaDTO();
+		        parametroCobranca.setIdCota(idCota);
+		        parametroCobranca.setContrato(false);
+		        parametroCobranca.setFatorVencimento(0);
+		        parametroCobranca.setQtdDividasAberto(0);
+		        parametroCobranca.setSugereSuspensao(false);
+		        parametroCobranca.setValorMinimo(BigDecimal.ZERO);
+		        parametroCobranca.setVrDividasAberto(BigDecimal.ZERO);
+		        
+		        this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		    }
+		    parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
+		} else {
+		    parametroCobranca = parametroCobrancaCotaService.obterParametrosCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
 		}
-		parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
-		
 		
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
@@ -233,21 +235,29 @@ public class ParametroCobrancaCotaController {
      */
     @Post
 	@Path("/obterFormasCobranca")
-	public void obterFormasCobranca(Long idCota){
-		
-		//VALIDACOES
-		validar();	
-		
-		//BUSCA FORMAS DE COBRANCA DA COTA
-		List<FormaCobrancaDTO> listaFormasCobranca = this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(idCota);
-		int qtdRegistros = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(idCota);
+	public void obterFormasCobranca(Long idCota, ModoTela modoTela, Long idHistorico){
+        List<FormaCobrancaDTO> listaFormasCobranca = null;
+        int qtdeRegistros;
+        
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            //VALIDACOES
+            validar();	
+            
+            //BUSCA FORMAS DE COBRANCA DA COTA
+            listaFormasCobranca = this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(idCota);
+            qtdeRegistros = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(idCota);
+            
+        } else {
+            listaFormasCobranca = parametroCobrancaCotaService.obterFormasCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
+            qtdeRegistros = listaFormasCobranca.size();
+        }
 				
 		TableModel<CellModelKeyValue<FormaCobrancaDTO>> tableModel =
 				new TableModel<CellModelKeyValue<FormaCobrancaDTO>>();
 			
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFormasCobranca));
 		tableModel.setPage(1);
-		tableModel.setTotal(qtdRegistros);
+		tableModel.setTotal(qtdeRegistros);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }

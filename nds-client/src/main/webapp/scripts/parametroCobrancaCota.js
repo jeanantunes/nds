@@ -1,8 +1,8 @@
 var parametroCobrancaCotaController = $.extend(true, {
 	init : function () {
 
-        //Flag indicando se tela irá operar em modo cadastro/consulta
-        readonly: false,
+        idHistorico: "";
+        modoTela: null,
 
 		//GRID DE FORMAS DE COBRANÇA
 		$(".boletosUnificadosGrid", this.workspace).flexigrid({
@@ -64,22 +64,30 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $("#segundoDiaQuinzenal", this.workspace).numeric();
 	},
 
-    //Define a tela como operação de edição/consulta
-    definirReadonly : function(readonly) {
-        parametroCobrancaCotaController.readonly = readonly;
-        if (parametroCobrancaCotaController.readonly) {
+    definirModoTela : function(modoTela, idHistorico) {
+        parametroCobrancaCotaController.modoTela = modoTela;
+        parametroCobrancaCotaController.idHistorico = idHistorico;
+        if (parametroCobrancaCotaController.isReadOnly()) {
             $('#FINANCEIRObtnNovaFormaPagamento', this.workspace).hide();
             $('#popupNovaFormaPagamentoIncluirNova', this.workspace).hide();
             $("#dialog-unificacao", this.workspace).find(':input:not(:disabled)').prop('disabled', true);
+            $("#botaoContrato", this.workspace).hide();
         } else {
             $('#FINANCEIRObtnNovaFormaPagamento', this.workspace).show();
             $('#popupNovaFormaPagamentoIncluirNova', this.workspace).show();
             $("#dialog-unificacao", this.workspace).find(':input(:disabled)').prop('disabled', false);
-
+            $("#botaoContrato", this.workspace).show();
         }
     },
-	
-		
+
+    isModoTelaCadastroCota : function() {
+        return parametroCobrancaCotaController.modoTela == ModoTela.CADASTRO_COTA;
+    },
+
+    isReadOnly : function() {
+        return !parametroCobrancaCotaController.isModoTelaCadastroCota();
+    },
+
 	//PRÉ CARREGAMENTO DA PAGINA
 	carregaFinanceiro : function(idCota){
 		$("#_idParametroCobranca", this.workspace).val("");
@@ -91,7 +99,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var _this = this;
 	    
 	    var options = {
-				success: _this.tratarRespostaUploadAnexoContrato,
+				success: _this.tratarRespostaUploadAnexoContrato
 		};
 	    
 	    $('#parametroCobrancaFormUpload', this.workspace).ajaxForm(options);
@@ -135,7 +143,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    var radioBoxes =  parametroCobrancaCotaController.montarTrRadioBox(result,"checkGroupFornecedores","fornecedor_");
 		$("#fornecedoresCota", this.workspace).html(radioBoxes);
         //Desabilita os checkboxes gerados dinamicamente, caso seja necessário
-        if(parametroCobrancaCotaController.readonly) {
+        if(parametroCobrancaCotaController.isReadOnly()) {
             $("#fornecedoresCota", this.workspace).find(':input:not(:disabled)').prop('disabled', true);
         }
 	},
@@ -169,13 +177,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}	
 		
 		$.each(resultado.rows, function(index, row) {
-            var title = parametroCobrancaCotaController.readonly ? 'Visualizar Forma Pagamento' : 'Editar Forma Pagamento';
+            var title = parametroCobrancaCotaController.isReadOnly() ? 'Visualizar Forma Pagamento' : 'Editar Forma Pagamento';
 
             var linkEditar = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_editar_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
 					     	  	'<img title="'+ title +'" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
 					  		  '</a>';
             var linkExcluir = '';
-            if (!parametroCobrancaCotaController.readonly) {
+            if (!parametroCobrancaCotaController.isReadOnly()) {
                 linkExcluir = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_excluir_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
                     '<img title="Excluir Forma Pagamento" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
                     '</a>';
@@ -326,7 +334,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 	//PARAMETROS DE COBRANÇA
 	obterParametroCobranca : function(idCota){
-		var data = [{name: 'idCota', value: idCota}];
+		var data = [{name: 'idCota', value: idCota},
+                    {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value},
+                    {name: 'idHistorico', value: parametroCobrancaCotaController.idHistorico}];
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterParametroCobranca",
 				   data,
 				   parametroCobrancaCotaController.sucessCallbackParametroCobranca, 
@@ -346,20 +356,24 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#sugereSuspensao", this.workspace).val(resultado.sugereSuspensao);
 		$("#sugereSuspensao").attr("checked", resultado.sugereSuspensao);
 
-		//document.formFinanceiro.sugereSuspensao.checked = resultado.sugereSuspensao;
-		
 		$("#contrato", this.workspace).val(resultado.contrato);
 		$("#contrato").attr("checked", resultado.contrato);
 
-		//document.formFinanceiro.contrato.checked = resultado.contrato;
-		
 		parametroCobrancaCotaController.exibe_form_contrato(resultado.contrato);
 
 		$("#valorMinimo", this.workspace).val(resultado.valorMinimo);
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto", this.workspace).val(resultado.vrDividasAberto);
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
-		
+
+        if (resultado.inicioContrato) {
+            $("#parametroCobrancaDateInicio", this.workspace).val(resultado.inicioContrato.$);
+        }
+        if (resultado.terminoContrato) {
+            $("#parametroCobrancaDateTermino", this.workspace).val(resultado.terminoContrato.$);
+        }
+
+
 		parametroCobrancaCotaController.carregarFornecedoresRelacionados(resultado.idCota);
 	},
 
@@ -411,18 +425,19 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   true);
 	},
 	calcularDataTermino : function() {
-			
-		var dataInicio = $("#parametroCobrancaDateInicio").val();
-		
-		var params = {"dataInicio":dataInicio};
-		
-		$.postJSON(contextPath + "/cota/parametroCobrancaCota/calcularDataTermino.json", params, 
-				function(result) {
-					
-					$("#parametroCobrancaDateTermino").val(result.dataTermino);
-					
-				}
-		);
+		if(parametroCobrancaCotaController.isModoTelaCadastroCota()) {
+            var dataInicio = $("#parametroCobrancaDateInicio").val();
+
+            var params = {"dataInicio":dataInicio};
+
+            $.postJSON(contextPath + "/cota/parametroCobrancaCota/calcularDataTermino.json", params,
+                function(result) {
+
+                    $("#parametroCobrancaDateTermino").val(result.dataTermino);
+
+                }
+            );
+        }
 	},
 	
 	//FORMAS DE COBRANÇA
@@ -888,7 +903,7 @@ var parametroCobrancaCotaController = $.extend(true, {
     	
     	parametroCobrancaCotaController.obterFormaCobranca(idFormaCobranca);
 
-        if (parametroCobrancaCotaController.readonly) {
+        if (parametroCobrancaCotaController.isReadOnly()) {
             $( "#dialog-unificacao", this.workspace ).dialog({
                 resizable: false,
                 height:630,
