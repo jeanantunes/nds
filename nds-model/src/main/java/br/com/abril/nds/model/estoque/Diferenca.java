@@ -56,6 +56,10 @@ public class Diferenca implements Serializable {
 	private TipoDiferenca tipoDiferenca;
 	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_ESTOQUE", nullable = false)
+	private TipoEstoque tipoEstoque;
+	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_CONFIRMACAO", nullable = false)
 	private StatusConfirmacao statusConfirmacao;
 	
@@ -84,6 +88,7 @@ public class Diferenca implements Serializable {
 		this.statusConfirmacao = diferenca.statusConfirmacao;
 		this.movimentoEstoque = diferenca.movimentoEstoque;
 		this.automatica = diferenca.automatica;
+		this.tipoEstoque = diferenca.tipoEstoque;
 		
 		this.valorTotalDiferenca = valorTotalDiferenca;
 	}
@@ -197,6 +202,20 @@ public class Diferenca implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the tipoEstoque
+	 */
+	public TipoEstoque getTipoEstoque() {
+		return tipoEstoque;
+	}
+
+	/**
+	 * @param tipoEstoque the tipoEstoque to set
+	 */
+	public void setTipoEstoque(TipoEstoque tipoEstoque) {
+		this.tipoEstoque = tipoEstoque;
 	}
 
 }
