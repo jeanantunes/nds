@@ -307,6 +307,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					enderecoCota.setEndereco(endereco);
 					enderecoCota.setCota(cota);
 					getSession().persist(enderecoCota);
+					
 
 				} else {
 
@@ -362,10 +363,12 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 							"Atualizacao do  Endereco Cota "
 									+ enderecoCota.getId());
 
-					enderecoCota.setPrincipal(true);
+					// Alteração para falso no principal, todos os dados de importacao se tornavam enderecos principais Eduardo "PunkRock" Castro
+					enderecoCota.setPrincipal(false);
 					enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
 					enderecoCota.setEndereco(endereco);
 					enderecoCota.setCota(cota);
+
 				}
 			} else {
 
@@ -399,13 +402,15 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					telefone.setDdd(input.getDdd());
 					telefone.setNumero(input.getTelefone());
 					getSession().persist(telefone);
-
+					
 					telefoneCota = new TelefoneCota();
+					
 					telefoneCota.setPrincipal(true);
 					telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
 					telefoneCota.setTelefone(telefone);
 					telefoneCota.setCota(cota);
 					getSession().persist(telefoneCota);
+
 
 				} else {
 
@@ -454,10 +459,14 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 							"Atualizacao do Telefone Cota "
 									+ telefoneCota.getId());
 
-					telefoneCota.setPrincipal(true);
+
+					// Alteração para falso no principal, todos os dados de importacao se tornavam telefones principais Eduardo "PunkRock" Castro
+
+					telefoneCota.setPrincipal(false);
 					telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
 					telefoneCota.setTelefone(telefone);
 					telefoneCota.setCota(cota);
+
 				}
 			} else {
 

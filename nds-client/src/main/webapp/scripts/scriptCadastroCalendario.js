@@ -232,27 +232,46 @@ var CadastroCalendario = $.extend(true, {
 				indEfetuaCobranca, 
 				descricaoFeriado) {
 			
-					var parametrosPesquisa = 
-						[ {name : "dtFeriado", value : dtFeriado},
-						  {name : "descTipoFeriado", value : tipoFeriado},
-						  {name : "idLocalidade", value : idLocalidade},
-						  {name : "indRepeteAnualmente", value : indRepeteAnualmente}];
+			
+			$( "#dialog-excluir", CadastroCalendario.workspace ).dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						var parametrosPesquisa = 
+							[ {name : "dtFeriado", value : dtFeriado},
+							  {name : "descTipoFeriado", value : tipoFeriado},
+							  {name : "idLocalidade", value : idLocalidade},
+							  {name : "indRepeteAnualmente", value : indRepeteAnualmente}];
+						
+						$.postJSON(
+								
+								contextPath + '/administracao/cadastroCalendario/excluirCadastroFeriado', 
+								
+								parametrosPesquisa,
+								
+								function(result) {
+									
+									CadastroCalendario.limparCamposEdicaoCadastroFeriado();
+									
+									CadastroCalendario.recarregarDiaFeriadoGrid(dtFeriado);
+									
+									CadastroCalendario.recarregarPainelCalendarioFeriado();
+									
+								}, null, true, 'dialog-editar');
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialog-excluir", this.workspace).parents("form")
+			});
+			
 					
-					$.postJSON(
-							
-							contextPath + '/administracao/cadastroCalendario/excluirCadastroFeriado', 
-							
-							parametrosPesquisa,
-							
-							function(result) {
-								
-								CadastroCalendario.limparCamposEdicaoCadastroFeriado();
-								
-								CadastroCalendario.recarregarDiaFeriadoGrid(dtFeriado);
-								
-								CadastroCalendario.recarregarPainelCalendarioFeriado();
-								
-							}, null, true, 'dialog-editar');
 					
 				},
 		
@@ -504,29 +523,6 @@ var CadastroCalendario = $.extend(true, {
 					}
 				},
 				form: $("#dialog-novo", this.workspace).parents("form")
-			});
-		},
-		
-		
-		popup_excluir : function() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-		
-			$( "#dialog-excluir", CadastroCalendario.workspace ).dialog({
-				resizable: false,
-				height:'auto',
-				width:300,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").show("highlight", {}, 1000, callback);
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				},
-				form: $("#dialog-excluir", this.workspace).parents("form")
 			});
 		},
 		
