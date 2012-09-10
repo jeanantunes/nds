@@ -36,6 +36,8 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	BigDecimal valor;
 	Integer qtdeParcelas;
 	BigDecimal valorParcela;
+	
+	BigDecimal valorFormaPagamentoDeposito;
 
 	public FormaCobrancaCaucaoLiquidaDTO(){
 		
@@ -269,5 +271,14 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 
 	public void setValorParcela(BigDecimal valorParcela) {
 		this.valorParcela = valorParcela;
+	}
+
+	public BigDecimal getValorFormaPagamentoDeposito() {
+		return valorFormaPagamentoDeposito;
+	}
+
+	public void setValorFormaPagamentoDeposito(
+			BigDecimal valorFormaPagamentoDeposito) {
+		this.valorFormaPagamentoDeposito = valorFormaPagamentoDeposito;
 	}
 }

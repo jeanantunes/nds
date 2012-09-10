@@ -121,7 +121,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    		$(this).dialog("close");
 			    	}
 				}
-			]
+			],
+			form: $("#dialog-pagincao-confirmada", this.workspace).parents("form")
 		});	
 		
 		return false;
@@ -398,6 +399,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    	}
 				}
 			],
+			form: $("#dialog-confirm-balanceamento", this.workspace).parents("form"),
 			beforeClose: function() {
 				clearMessageDialogTimeout("dialog-confirmar");
 		    }
@@ -430,7 +432,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    		$(this).dialog("close");
 			    	}
 				}
-			]
+			],
+			form: $("#dialog-confirm", this.workspace).parents("form")
 		});	
 	},
 	
@@ -538,7 +541,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    		$(this).dialog("close");
 			    	}
 				}
-			]
+			],
+			form: $("#dialogVoltarConfiguracaoOriginal", this.workspace).parents("form")
 		});
 	};
 	
@@ -655,22 +659,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			disableSelect : true
 			});
 
-		$( "#dialog-reprogramar", _workspace ).dialog({
-			resizable: false,
-			height:160,
-			width:320,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-
 		$( "#datepickerDe", _workspace ).datepicker({
 			showOn: "button",
 			dateFormat: 'dd/mm/yy',
@@ -699,6 +687,25 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 	}
 
+	this.popup_reprogramar = function() {
+		$( "#dialog-reprogramar", _workspace ).dialog({
+			resizable: false,
+			height:160,
+			width:320,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-reprogramar", this.workspace).parents("form")
+		});
+	}
+	
 	this.reprogramarSelecionados = function() {
 		
 		$("#dialogReprogramarBalanceamento", _workspace).dialog({
@@ -729,9 +736,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				$("#novaDataLancamento", _workspace).val("");
 				
 				clearMessageDialogTimeout();
-			}
+			},
+			form: $("#dialogReprogramarBalanceamento", this.workspace).parents("form")			
 		});
 	}
-	
 	
 }

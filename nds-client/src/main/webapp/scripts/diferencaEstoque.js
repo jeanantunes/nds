@@ -1,5 +1,7 @@
 var diferencaEstoqueController = $.extend(true, {
 	
+	detalhes : [],
+	
 	init : function () {
 		$('input[id^="data"]', diferencaEstoqueController.workspace).datepicker({
 			showOn: "button",
@@ -9,8 +11,6 @@ var diferencaEstoqueController = $.extend(true, {
 		});
 		
 		$('input[id^="data"]', diferencaEstoqueController.workspace).mask("99/99/9999");
-		
-		$("#edicao", diferencaEstoqueController.workspace).numeric();
 		
 		$("#produto", diferencaEstoqueController.workspace).autocomplete({source: ""});
 
@@ -22,64 +22,52 @@ var diferencaEstoqueController = $.extend(true, {
 				name : 'dataLancamento',
 				width : 70,
 				sortable : true,
-				align : 'center'
+				align : 'left'
 			}, {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 50,
+				width : 80,
 				sortable : true,
-				align : 'center'
+				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'descricaoProduto',
-				width : 100,
+				width : 200,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 50,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Preço Venda R$',
-				name : 'precoVenda',
-				width : 90,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Preço Desconto R$',
-				name : 'precoDesconto',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
 				display : 'Tipo de Diferença',
 				name : 'tipoDiferenca',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nota',
-				name : 'numeroNotaFiscal',
-				width : 104,
+				width : 130,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Exemplar',
 				name : 'quantidade',
-				width : 50,
+				width : 80,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			}, {
 				display : 'Status',
 				name : 'statusAprovacao',
-				width : 45,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotalDiferenca',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Detalhes',
+				name : 'detalhes',
 				width : 50,
 				sortable : true,
 				align : 'right'
@@ -128,23 +116,26 @@ var diferencaEstoqueController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
+		
 		var codigoProduto = $("#codigo", diferencaEstoqueController.workspace).val();
-		var numeroEdicao = $("#edicao", diferencaEstoqueController.workspace).val();
 		var idFornecedor = $("#fornecedor", diferencaEstoqueController.workspace).val();
 		var dataInicial = $("#dataInicial", diferencaEstoqueController.workspace).val();
 		var dataFinal = $("#dataFinal", diferencaEstoqueController.workspace).val();
 		var tipoDiferenca = $("#tipoDiferenca", diferencaEstoqueController.workspace).val();
+		var numeroCota = $("#numeroCota", diferencaEstoqueController.workspace).val();
+		var nomeCota = $("#descricaoCota", diferencaEstoqueController.workspace).val();
 		
 		$(".consultaFaltasSobrasGrid", diferencaEstoqueController.workspace).flexOptions({
 			url: contextPath + "/estoque/diferenca/pesquisarDiferencas",
 			onSuccess: diferencaEstoqueController.executarAposProcessamento,
 			params: [
 			         {name:'codigoProduto', value:codigoProduto},
-			         {name:'numeroEdicao', value:numeroEdicao},
 			         {name:'idFornecedor', value:idFornecedor},
 			         {name:'dataInicial', value:dataInicial},
 			         {name:'dataFinal', value:dataFinal},
-			         {name:'tipoDiferenca', value:tipoDiferenca}
+			         {name:'tipoDiferenca', value:tipoDiferenca},
+			         {name:'numeroCota', value:numeroCota},
+			         {name:'nomeCota', value:nomeCota}
 			        ] ,
 	        newp: 1
 		});
@@ -174,7 +165,11 @@ var diferencaEstoqueController = $.extend(true, {
 		
 		$("#valorTotalDiferencas", diferencaEstoqueController.workspace).html(resultado.valorTotalDiferencas);
 		
+		diferencaEstoqueController.detalhes = [];
+		
 		$.each(resultado.tableModel.rows, function(index, row) {
+			
+			diferencaEstoqueController.detalhes.push(row.cell);
 			
 			if (row.cell.motivoAprovacao) {
 			
@@ -182,19 +177,21 @@ var diferencaEstoqueController = $.extend(true, {
 									+ row.cell.statusAprovacao + "</span>";
 				
 				row.cell.statusAprovacao = spanAprovacao;
+			
 			}
-
-			row.cell.detalhes = '<a href="javascript:;" onclick="diferencaEstoqueController.obterDetalhesDiferencaCota('
-							  + row.cell.id
-							  + ')" '
-							  + ' style="cursor:pointer;border:0px" title="Visualizar Detalhes">'
-							  + '<img src="' + contextPath + '/images/ico_detalhes.png" border="0px"/>'
-							  + '</a>';
+			
+			row.cell.detalhes = diferencaEstoqueController.gerarBotaoDetalhe(index);
 		});
 
 		$(".grids", diferencaEstoqueController.workspace).show();
 
 		return resultado.tableModel;
+	},
+	
+	gerarBotaoDetalhe : function(index) {
+		return '<a href="javascript:;" onclick="diferencaEstoqueController.carregarDetalhes(' + index + ');">' +
+			   '<img src="'+ contextPath +'/images/ico_detalhes.png" border="0"></a>';
+	},
 	},
 	
 	initDetalhesCotaGrid: function() {
@@ -311,6 +308,42 @@ var diferencaEstoqueController = $.extend(true, {
 		});
 	}
 
+	carregarDetalhes : function(index) {
+
+		diferencaEstoqueController.popupDetalhe(diferencaEstoqueController.detalhes[index]);
+		
+	},
+
+	popupDetalhe : function(result) {
+		
+		$('#detalheCodigo', diferencaEstoqueController.workspace)		.html(result.codigoProduto);
+		$('#detalheNome', diferencaEstoqueController.workspace)			.html(result.descricaoProduto);
+		$('#detalheEdicao', diferencaEstoqueController.workspace)		.html(result.numeroEdicao);
+		$('#detalheFornecedor', diferencaEstoqueController.workspace)	.html(result.fornecedor);
+		$('#detalheTipo', diferencaEstoqueController.workspace)			.html(result.tipoDiferenca);
+		$('#detalheQtde', diferencaEstoqueController.workspace)			.html(result.quantidade);
+		$('#detalheEstoque', diferencaEstoqueController.workspace)		.html(result.tipoEstoque);
+		
+			$( "#dialog-detalhe-1", diferencaEstoqueController.workspace ).dialog({
+				resizable: false,
+				height:370,
+				width:350,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+						
+					},
+				},
+			    form: $("#dialog-detalhe-1", this.workspace).parents("form")
+			});
+		}
+
 }, BaseController);
 
-//@ sourceURL=diferenca.js
+$(function() {
+	
+	diferencaEstoqueController.init();
+				
+});
+

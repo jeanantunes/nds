@@ -1,6 +1,8 @@
 var lancamentoNovoController = $.extend(true, {
 
 	ultimaLinhaPreenchida : "",
+	valorDiferencaDirecionadaEstoque:0,
+	idDiferenca:null,
 
 	init : function () {
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).datepicker({
@@ -101,9 +103,12 @@ var lancamentoNovoController = $.extend(true, {
 		if (idDiferenca){
 			
 			$("#checkboxLancCota", lancamentoNovoController.workspace).attr("disabled", "disabled");
+			
 		} else {
 			
 			$("#checkboxLancCota", lancamentoNovoController.workspace).removeAttr("disabled");
+			
+			lancamentoNovoController.paraEstoque(true);
 		}
 		
 		$.postJSON(
@@ -167,6 +172,11 @@ var lancamentoNovoController = $.extend(true, {
 			true
 		);
 		
+		lancamentoNovoController.openModalDiferenca();
+	},
+	
+	openModalDiferenca:function(){
+		
 		$("#dialogNovasDiferencas", lancamentoNovoController.workspace).dialog({
 			resizable: false,
 			height:570,
@@ -174,7 +184,9 @@ var lancamentoNovoController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					lancamentoNovoController.cadastrarNovasDiferencas();
+					
+					lancamentoNovoController.processarNovaDiferenca();
+					
 				},
 				"Cancelar": function() {
 					$("#gridNovasDiferencas", lancamentoNovoController.workspace).flexAddData({rows:[]});
@@ -232,13 +244,13 @@ var lancamentoNovoController = $.extend(true, {
 			
 			row.cell.valorTotalDiferenca = 
 				'<input type="text" name="diferencaProduto" style="width:50px; value="0" text-align: center; margin-right:10px;" maxlenght="255" '+
-				' id="inputDiferencaProduto'+ index +'" onchange="alterarReparteAtual('+ index +');" />';
+				' id="inputDiferencaProduto'+ index +'" onchange="lancamentoNovoController.alterarReparteAtual('+ index +');" />';
 		});
 		
 		return resultado;
 	},
 
-	cadastrarNovasDiferencas : function() {
+	cadastrarNovasDiferencas : function(isBotaoIncluirNovo) {
 		
 		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
 		
@@ -269,45 +281,61 @@ var lancamentoNovoController = $.extend(true, {
 				 {name: "numeroCota", value: numeroCota},
 				 
 		 ];
-		 
-		var _numerosCotas = $("[name=cotaInput]", lancamentoNovoController.workspace);
 		
-		$.each(_numerosCotas, function(index, row) {
+		var linhasDaGrid = $('#grid_1 tr',this.workspace);
+		
+		$.each(linhasDaGrid, function(index, value) {
+
+			var linha = $(value);
 			
-			if (row.value != ""){
+			var numeroCota = $(linha.find("td")[0],this.workspace).find('input[name="cotaInput"]').val();
+			
+			var nomeCota = $(linha.find("td")[1],this.workspace).find('input[name="nomeInput"]').val();
+			
+			var reparte = $(linha.find("td")[2],this.workspace).html();
+			
+			var diferenca = $(linha.find("td")[3],this.workspace).find('input[name="diferencaInput"]').val();
+			
+			var reparteAtual = $(linha.find("td")[4],this.workspace).html();
+			
+			if( numeroCota == undefined || numeroCota == '' 
+					|| diferenca == undefined || diferenca == ''){
 				
-				data.push({name: "listaNumeroCota", value: row.value});
+				return;
 			}
+			
+			data.push({name: "rateioCotas["+index+"].id", value: index});
+			data.push({name: "rateioCotas["+index+"].idDiferenca", value:lancamentoNovoController.idDiferenca});
+			data.push({name: "rateioCotas["+index+"].numeroCota", value: numeroCota });
+			data.push({name: "rateioCotas["+index+"].nomeCota", value: nomeCota});
+			data.push({name: "rateioCotas["+index+"].reparteCota", value: reparte });
+			data.push({name: "rateioCotas["+index+"].quantidade", value: diferenca});
+			data.push({name: "rateioCotas["+index+"].reparteAtualCota", value: reparteAtual});
 		});
 		
-		var _diferencas = $("[name=diferencaInput]", lancamentoNovoController.workspace);
+		var linhasDaGrid = $('.lanctoFaltasSobrasCota_3Grid tr',this.workspace);
 		
-		$.each(_diferencas, function(index, row) {
+		$.each(linhasDaGrid, function(index, value) {
+
+			var linha = $(value);
 			
-			if (row.value != ""){
-				
-				data.push({name: "diferencas", value: row.value});
-			}
-		});
-		
-		var _codigoProdutoProduto = $("[name=codigoProdutoNota]", lancamentoNovoController.workspace);
-		
-		$.each(_codigoProdutoProduto, function(index, row) {
+			var codigoProduto = $(linha.find("td")[0],this.workspace).find("div").find('div[name="codigoProdutoNota"]').html();
 			
-			if (row.textContent != ""){
-				
-				data.push({name: "listaCodigoProduto", value: row.textContent});
-			}
-		});
-		
-		var _diferencasProdutosNota = $("[name=diferencaProduto]", lancamentoNovoController.workspace);
-		
-		$.each(_diferencasProdutosNota, function(index, row) {
+			var numeroEdicao = $(linha.find("td")[2],this.workspace).find("div").html();
 			
-			if (row.value != ""){
+			var diferenca = $(linha.find("td")[5],this.workspace).find("div").find('input[name="diferencaProduto"]').val();
+			
+			if( codigoProduto == undefined || codigoProduto == '' 
+					|| diferenca == undefined || diferenca == ''
+						|| numeroEdicao == undefined || numeroEdicao == ''){
 				
-				data.push({name: "valorDiferencasProdNota", value: row.value});
+				return;
 			}
+			
+			data.push({name: "diferencasProdutos["+index+"].index", value: index});
+			data.push({name: "diferencasProdutos["+index+"].codigo", value: codigoProduto});
+			data.push({name: "diferencasProdutos["+index+"].numeroEdicao", value: numeroEdicao});
+			data.push({name: "diferencasProdutos["+index+"].diferenca", value: diferenca});
 		});
 		
 		$.postJSON(
@@ -321,10 +349,19 @@ var lancamentoNovoController = $.extend(true, {
 				});
 				
 				$("#gridLancamentos", lancamentoNovoController.workspace).flexReload();
-
-				$("#dialogNovasDiferencas", lancamentoNovoController.workspace).dialog("close");
+				
+				if(!isBotaoIncluirNovo){
+					$("#dialogNovasDiferencas", lancamentoNovoController.workspace).dialog("close");
+				}
+				else{
+					lancamentoNovoController.popupNovasDiferencas();
+				}
+				
+				$("#dialogConfirmacaoDirecionamentoDiferencaProdutoCota", lancamentoNovoController.workspace).dialog("close");
 			},
-			 
+			function(result){
+				lancamentoNovoController.tratarErroCadastroNovasDiferencas(result);
+			},
 			true
 		);
 	},
@@ -338,7 +375,7 @@ var lancamentoNovoController = $.extend(true, {
 
 		var dadosValidacao = jsonData.mensagens.dados;
 		
-		var linhasDaGrid = $(".gridNovasDiferencas tr", lancamentoNovoController.workspace);
+		var linhasDaGrid = $("#grid_1 tr", lancamentoNovoController.workspace);
 
 		$.each(linhasDaGrid, function(index, value) {
 
@@ -442,16 +479,30 @@ var lancamentoNovoController = $.extend(true, {
 		}
 	},
 	
+	erroPesquisaCota:function(indiceLinha){
+		
+		var linhaGrid = $('#grid_1 tr',this.workspace)[indiceLinha];
+		
+		var linha = $(linhaGrid);
+		
+		$(linha.find("td")[2],this.workspace).html("");
+		
+		$(linha.find("td")[3],this.workspace).find('input[name="diferencaInput"]').val("");
+		
+		$(linha.find("td")[4],this.workspace).html("");
+		
+	},
+	
 	adicionarLinhaCota : function(linhaAtual){
 		
 		if ($('#trCota' + (linhaAtual + 1), lancamentoNovoController.workspace).length == 0 && $('#cotaInput' + (linhaAtual)).val() != ""){
 			
 			var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
-					'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual + 1) +'));" style="width:60px;" /></td>' +
+					'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual + 1) +'),lancamentoNovoController.erroPesquisaCota('+(linhaAtual + 1)+'));" style="width:60px;" /></td>' +
 					'<td>'+
 					     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:180px;" '+
 					         ' onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
-					         ' onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual + 1) +'));" ' +
+					         ' onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual + 1) +'),lancamentoNovoController.erroPesquisaCota('+(linhaAtual + 1)+'));" ' +
 					     '/>'+
 					'</td>' +
 					'<td align="center" id="reparteText'+ (linhaAtual + 1) +'"></td>' +
@@ -489,8 +540,7 @@ var lancamentoNovoController = $.extend(true, {
 							true
 						);
 					}
-				}, 
-				500
+				}
 		);
 	},
 	
@@ -556,6 +606,97 @@ var lancamentoNovoController = $.extend(true, {
 				parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text()) - parseInt($("#inputDiferencaProduto" + indexDiv, lancamentoNovoController.workspace).val())
 			);
 		}
-	}
+	},
+	
+	tratarVisualizacaoOpcaoEstoque:function(value){
+		
+		if(value == 'FALTA_EM'){
+			 $(".view-estouque",this.workspace).hide();
+		}
+		else{
+			$(".view-estouque",this.workspace).show();
+		}
+	},
+	
+	incluirNovo:function(){
+		
+		lancamentoNovoController.processarNovaDiferenca(true);
+	},
+	
+	processarNovaDiferenca:function(isBotaoNovaDiferenca){
+		
+		if($("#paraCota").is(":checked")){
+			
+			if (lancamentoNovoController.validarDirecionamentoDiferencaProdutoCotas()){
+				
+				lancamentoNovoController.openDialogDirecionamentoDiferencaProdutoCota(isBotaoNovaDiferenca);
+			}
+			else{
+				
+				lancamentoNovoController.cadastrarNovasDiferencas(isBotaoNovaDiferenca);
+			}
+			
+		}
+		else{
+			
+			lancamentoNovoController.cadastrarNovasDiferencas(isBotaoNovaDiferenca);
+		}
+		
+	},
+	
+	validarDirecionamentoDiferencaProdutoCotas:function(){
+	
+		var qntDiferencaProdutos = eval( $("#diferencaProdutoInput", this.workspace).val());	
+		
+		var qntDiferencasCota = 0;
+		
+		var linhasDaGrid = $('#grid_1 tr',this.workspace);
+		
+		$.each(linhasDaGrid, function(index, value) {
+
+			var linha = $(value);
+			
+			var numeroCota = $(linha.find("td")[0],this.workspace).find('input[name="cotaInput"]').val();
+			
+			var diferenca = $(linha.find("td")[3],this.workspace).find('input[name="diferencaInput"]').val();
+			
+			if( numeroCota == undefined || numeroCota == '' 
+					|| diferenca == undefined || diferenca == ''){
+				
+				return;
+			}
+			
+			qntDiferencasCota += eval(diferenca);
+		});
+		
+		return (qntDiferencaProdutos > qntDiferencasCota);
+		
+	},
+	
+	openDialogDirecionamentoDiferencaProdutoCota:function(isBotaoIncluirNovo){
+		
+		$("#dialogConfirmacaoDirecionamentoDiferencaProdutoCota", lancamentoNovoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: 
+			{
+				"Confirmar": function() {
+					
+					lancamentoNovoController.cadastrarNovasDiferencas(isBotaoIncluirNovo);
+					
+				}, "Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			form: $("#dialogConfirmacaoDirecionamentoDiferencaProdutoCota", this.workspace).parents("form")
+		});
+		
+		$("#dialogConfirmacaoDirecionamentoDiferencaProdutoCota", lancamentoNovoController.workspace).show();
+	},
 	
 }, BaseController);
+
+//@ sourceURL=lancamentoNovo.js

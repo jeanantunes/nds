@@ -16,7 +16,7 @@ public class EMS0122Detalhe {
 	private String codPublicacao;
 	private Long edicao;
 	private Integer codigoCota;
-	private BigInteger quantidadeSuplementar;
+	private Long quantidadeSuplementar;
 	private BigDecimal precoCapa;
 
 
@@ -76,11 +76,11 @@ public class EMS0122Detalhe {
 	
 	@Field(offset=26, length=8)
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
-	public BigInteger getQuantidadeSuplementar() {
+	public Long getQuantidadeSuplementar() {
 		return quantidadeSuplementar;
 	}
 
-	public void setQuantidadeSuplementar(BigInteger quantidadeSuplementar) {
+	public void setQuantidadeSuplementar(Long quantidadeSuplementar) {
 		this.quantidadeSuplementar = quantidadeSuplementar;
 	}
 

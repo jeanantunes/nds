@@ -6,7 +6,6 @@ var lancamentoController = $.extend(true, {
 
 		$(".grids", lancamentoController.workspace).hide();
 		$("#btnConfirmar", lancamentoController.workspace).hide();
-		$("#btnNovo", lancamentoController.workspace).hide();
 		$("#labelTotalGeral", lancamentoController.workspace).hide();
 		$("#qtdeTotalDiferencas", lancamentoController.workspace).hide();
 		$("#valorTotalDiferencas", lancamentoController.workspace).hide();
@@ -37,8 +36,7 @@ var lancamentoController = $.extend(true, {
 			data,
 			function(result) {
 				
-				//popupRateioDiferenca(idDiferenca);
-				lancamentoController.popupNovasDiferencas(idDiferenca);
+				lancamentoNovoController.popupNovasDiferencas(idDiferenca);
 			},
 			null
 		);
@@ -94,16 +92,18 @@ var lancamentoController = $.extend(true, {
 			var linkRateioDiferenca = '<a id="ratearDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
 									     '<img src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 									  '</a>';
-
+			
+			var linkExclusaoDiferenca;
+			
 			if (row.cell.automatica) {
 				
-				var linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);">' +
+				linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);">' +
 												'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 											'</a>';
 				
 			} else {
 
-				var linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
+				linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
 												'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 											'</a>';
 			}
@@ -220,18 +220,6 @@ var lancamentoController = $.extend(true, {
 		
 		$("#dialog-excluir", lancamentoController.workspace).show();
 	},
-
-	exibirBotaoNovo : function(tipoDiferenca) {
-
-		if (tipoDiferenca) {
-		
-			$("#btnNovo", lancamentoController.workspace).show();
-			
-		} else {
-			
-			$("#btnNovo", lancamentoController.workspace).hide();
-		}
-	},
 	
 	popupConfirmar : function(){
 		$("#dialog-confirmar-lancamentos", lancamentoController.workspace).dialog({
@@ -273,7 +261,7 @@ var lancamentoController = $.extend(true, {
 			colModel : [{
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 50,
+				width : 60,
 				sortable : true,
 				align : 'left'
 			},{
@@ -285,7 +273,7 @@ var lancamentoController = $.extend(true, {
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 60,
+				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -295,33 +283,27 @@ var lancamentoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Preço Desconto R$',
-				name : 'precoDesconto',
-				width : 110,
-				sortable : true,
-				align : 'right'
-			}, {
 				display : 'Pacote Padrão',
 				name : 'pacotePadrao',
-				width : 100,
+				width : 110,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Exemplares',
 				name : 'quantidade',
-				width : 90,
+				width : 110,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Tipo de Diferença',
 				name : 'tipoDiferenca',
-				width : 110,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotalDiferenca',
-				width : 50,
+				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
