@@ -34,7 +34,7 @@ import com.google.gson.JsonObject;
 public class CapaServiceImpl implements CapaService {	
 	private static final String DEFAULT_EXTENSION = ".jpg";
 
-	private static final String DB_NAME  =  "db_integracao";
+	private static final String DB_NAME  =  "capas";
 
 	@Autowired
 	private CouchDbProperties couchDbProperties;
