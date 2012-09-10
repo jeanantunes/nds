@@ -1117,7 +1117,14 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
 			
+			consultaDiferencaVO.setTipoEstoque(diferenca.getTipoEstoque().getDescricao());
+			
 			listaConsultaDiferenca.add(consultaDiferencaVO);
+			
+			Fornecedor fornecedor = fornecedorService.obterFornecedorUnico(diferenca.getProdutoEdicao().getProduto().getCodigo());
+			
+			if(fornecedor != null)
+				consultaDiferencaVO.setFornecedor(fornecedor.getJuridica().getNomeFantasia());
 			
 			qtdeTotalDiferencas = 
 				qtdeTotalDiferencas.add(diferenca.getQtde());
@@ -1905,5 +1912,10 @@ public class DiferencaEstoqueController {
 		prods.add(diferencaVO);
 		
 		result.use(FlexiGridJson.class).from(prods).total(prods.size()).page(1).serialize();
+	}
+	
+	@Post
+	public void obterDetalhes(Long idDiferenca) {
+		result.use(Results.json()).from("", "result").serialize();
 	}
 }
