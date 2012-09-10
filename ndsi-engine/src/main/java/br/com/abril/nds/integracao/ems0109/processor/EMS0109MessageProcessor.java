@@ -202,7 +202,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		Produto produto = new Produto();
 
 		PeriodicidadeProduto periodicidadeProduto = this
-				.findPeriodicidadeProduto(input.getPeriodicidade());
+				.findPeriodicidadeProduto(input.getPeb());
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
@@ -243,7 +243,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
 		PeriodicidadeProduto periodicidadeProduto = this
-				.findPeriodicidadeProduto(input.getPeriodicidade());
+				.findPeriodicidadeProduto(input.getPeb());
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this

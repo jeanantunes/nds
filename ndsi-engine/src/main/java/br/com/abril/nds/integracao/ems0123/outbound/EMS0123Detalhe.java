@@ -17,7 +17,7 @@ public class EMS0123Detalhe {
 	private String codPublicacao;
 	private Long edicao;
 	private Integer codigoCota;
-	private BigInteger quantidadeEncalhe;
+	private Long quantidadeEncalhe;
 	private Date dataRecolhimento;
 
 
@@ -76,12 +76,11 @@ public class EMS0123Detalhe {
 	}
 	
 	@Field(offset=26, length=8)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
-	public BigInteger getQuantidadeEncalhe() {
+	public Long getQuantidadeEncalhe() {
 		return quantidadeEncalhe;
 	}
 
-	public void setQuantidadeEncalhe(BigInteger quantidadeEncalhe) {
+	public void setQuantidadeEncalhe(Long quantidadeEncalhe) {
 		this.quantidadeEncalhe = quantidadeEncalhe;
 	}
 

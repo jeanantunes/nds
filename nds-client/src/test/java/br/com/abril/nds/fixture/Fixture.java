@@ -882,7 +882,25 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
+		
+	public static TipoMovimentoEstoque tipoMovimentoNivelamentoEntrada() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Nivelamento Entrada");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA);
+		return tipoMovimento;
+	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoNivelamentoSaida() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Nivelamento Saida");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.NIVELAMENTO_SAIDA);
+		return tipoMovimento;
+	}
+		
 	public static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -995,6 +1013,16 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEncalheAntecipado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Encalhe Antecipado");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+	
+		return tipoMovimento;
+	}	
 	
 	public static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
