@@ -67,11 +67,15 @@
 			  <tr>
 			    <td width="472" valign="top">
 			      <span class="bt_novos" title="Fechamento" id="btnFechamento" >
-			      	<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Fechamento</a>
+			      	<a href="javascript:;">
+			      		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" id="imagemFechamento" />
+			      		Fechamento
+			      	</a>
 			      </span>
 			      
 			      <span class="bt_novos" title="Reabertura" id="btnReabertura">
-			      	<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" />Reabertura</a>
+			      	<a href="javascript:;">
+			      		<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" id="imagemReabertura" />Reabertura</a>
 			      </span>
 			      
 					<span class="bt_novos" title="Gerar Arquivo">

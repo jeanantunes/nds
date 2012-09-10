@@ -50,8 +50,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Override
 	@Transactional
-	public boolean verificarStatusSemana() {		 
-		return this.fechamentoCEIntegracaoRepository.verificarStatusSemana();
+	public boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro) {		 
+		return this.fechamentoCEIntegracaoRepository.verificarStatusSemana(filtro);
 	}
 
 	

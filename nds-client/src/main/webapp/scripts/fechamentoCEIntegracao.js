@@ -3,23 +3,24 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	init : function(){
 		fechamentoCEIntegracaoController.initGrid();
 		fechamentoCEIntegracaoController.bindButtons();
-		fechamentoCEIntegracaoController.buscarNumeroSemana();
-		fechamentoCEIntegracaoController.verificarDataFechamentoCE();
+		fechamentoCEIntegracaoController.buscarNumeroSemana();		
 	},
 	
 	verificarDataFechamentoCE : function(){
 		
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/verificarStatusSemana', 
 			null,
-			function(result) {
-				
-				if (result) {					
-					$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
-						alert('JÁ FECHOU A BAGAÇA');						
-					});
+			function(result) {				
+				if (result.boolean) {					
+					$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
+					$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "0.5");
+					$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
+					$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.5");
 				}else{
+					$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
 					$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
-						fechamentoCEIntegracaoController.fecharCE();			
+						fechamentoCEIntegracaoController.fecharCE();
+						fechamentoCEIntegracaoController.verificarDataFechamentoCE();
 					});
 				}
 			}
@@ -38,10 +39,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				$.getJSON(
 						contextPath + '/cadastro/distribuidor/obterNumeroSemana', 
 					data,
-					function(result) {
-	
-						if (result) {
-	
+					function(result) {	
+						if (result) {	
 							$("#semana", fechamentoCEIntegracaoController.workspace).val(result.int);
 						}
 					}
@@ -52,8 +51,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		$("#btnPesquisar", fechamentoCEIntegracaoController.workspace).click(function() {
 			fechamentoCEIntegracaoController.pesquisaPrincipal();
 			$(".grids", fechamentoCEIntegracaoController.worspace).show();
-		});
-		
+		});		
 	},
 	initGrid : function(){	
 		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexigrid({
@@ -64,13 +62,24 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
 					return resultado;
 				}else{
-					$.each(resultado.rows, function(index, value) {
-						var encalhe = value.cell.encalhe;
-						var idProdutoEdicao = value.cell.idProdutoEdicao;
-						var inputEncalhe = '<input type="text" id="inputEncalhe" name="inputEncalhe" value='+encalhe+' /> <input type="hidden" id="codigoProdutoEdicao" name="codigoProdutoEdicao" value='+idProdutoEdicao+' /> '
-						value.cell.encalhe = inputEncalhe;				
-									
-					});
+					
+					$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/verificarStatusSemana', 
+							null,
+							function(result) {				
+								if (!result.boolean) {	
+									$.each(resultado.rows, function(index, value) {
+										var encalhe = value.cell.encalhe;
+										var idProdutoEdicao = value.cell.idProdutoEdicao;
+										var inputEncalhe = '<input type="text" id="inputEncalhe" name="inputEncalhe" value='+encalhe+' /> <input type="hidden" id="codigoProdutoEdicao" name="codigoProdutoEdicao" value='+idProdutoEdicao+' /> '
+										value.cell.encalhe = inputEncalhe;				
+													
+									});							
+								}
+							}
+						);
+					
+					
+					
 				}
 				
 				$(".grids", fechamentoCEIntegracaoController.workspace).show();
@@ -163,7 +172,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		});
 		
 		$(".fechamentoCeGrid").flexReload();
-		fechamentoCEIntegracaoController.popularTotal(idFornecedor, semana);
+		fechamentoCEIntegracaoController.popularTotal(idFornecedor, semana);		
+		fechamentoCEIntegracaoController.verificarDataFechamentoCE();
+		
 	},
 	
 	popularTotal : function(idFornecedor, semana){

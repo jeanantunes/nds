@@ -107,19 +107,20 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean verificarStatusSemana() {
+	public boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT fe FROM FechamentoEncalhe fe WHERE fe.fechamentoEncalhePK.dataEncalhe = :dataAtual");
+		hql.append("SELECT fe FROM FechamentoEncalhe fe WHERE fe.fechamentoEncalhePK.dataEncalhe BETWEEN :dataInicioSemana AND :dataFimSemana");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		query.setParameter("dataAtual", new Date());
+		query.setParameter("dataInicioSemana", filtro.getPeriodoRecolhimento().getDe());
+		query.setParameter("dataFimSemana", filtro.getPeriodoRecolhimento().getAte());
 		
 		List<FechamentoEncalhe> fes = query.list();
 		
-		return (fes != null) ? true : false;
+		return (fes.size() != 0) ? true : false;
 	}
 
 }

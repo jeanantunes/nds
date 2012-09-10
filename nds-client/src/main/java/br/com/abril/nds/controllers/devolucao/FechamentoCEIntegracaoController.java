@@ -211,7 +211,12 @@ public class FechamentoCEIntegracaoController {
 	@Path("verificarStatusSemana")
 	public void verificarStatusSemana(){
 		
-		boolean fechada = this.fechamentoCEIntegracaoService.verificarStatusSemana();
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		if(filtro.getSemana() != null){
+			filtro.setPeriodoRecolhimento(this.obterDataDaSemana(filtro));
+		}
+		
+		boolean fechada = this.fechamentoCEIntegracaoService.verificarStatusSemana(filtro);
 		
 		result.use(Results.json()).from(fechada).serialize();
 		

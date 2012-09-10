@@ -12,6 +12,6 @@ public interface FechamentoCEIntegracaoRepository {
 	
 	void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao);
 
-	boolean verificarStatusSemana();
+	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
 	
 }
