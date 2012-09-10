@@ -104,6 +104,12 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	 */
 	private void calcularValores(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
 		
+		BigDecimal valorBruto = this.calcularValorBruto(nfEntrada, input);
+		
+		nfEntrada.setValorBruto(valorBruto);
+		
+		
+		this.getSession().update(nfEntrada);
 	}
 	
 	/**
