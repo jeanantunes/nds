@@ -228,7 +228,6 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		pagamentoDescontoCota.setDescontoAtual(BigDecimal.ONE);
 		pagamentoDescontoCota.setDescontoCota(BigDecimal.TEN);
 		pagamentoDescontoCota.setValor(BigDecimal.TEN);
-		pagamentoDescontoCota.setValorUtilizado(BigDecimal.TEN);
 		
 		cotaGarantiaCaucaoLiquida = this.cotaGarantiaService.salvarCaucaoLiquida(getListaCaucaoLiquida(), cota.getId(),pagamentoDescontoCota,getCotaCaucaoLiquida());
 		

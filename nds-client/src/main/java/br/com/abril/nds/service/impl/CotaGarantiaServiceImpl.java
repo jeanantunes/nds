@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ChequeImage;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -45,6 +46,8 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaOutros;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoBoleto;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDepositoTransferencia;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDescontoCota;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCaucaoLiquidaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
@@ -526,15 +529,39 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         	}
         }
 		
+        
+        //FORMA DE PAGAMENTO
+        PagamentoCaucaoLiquida pagamento = null;
+		PagamentoBoleto pagamentoBoleto = null;
+		PagamentoDescontoCota pagamentoDescontoCota = null;
+		
         switch (formaCobrancaDTO.getTipoCobranca()){
+        
 	        case BOLETO:
-	        	if (formaCobranca == null){
+	        	
+	        	Set<ConcentracaoCobrancaCaucaoLiquida> concentracoesCobranca = null;
+	        	boolean novaForma=false;
+	        	
+	        	if (formaCobranca != null){
+	        		novaForma=false;
+	        		concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCaucaoLiquida();
+	        		
+	        		//APAGA CONCENTRACOES COBRANCA DA FORMA DE COBRANCA
+					if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
+						formaCobranca.setConcentracaoCobrancaCaucaoLiquida(null);
+						for(ConcentracaoCobrancaCaucaoLiquida itemConcentracaoCobranca:concentracoesCobranca){
+							this.concentracaoCobrancaRepository.remover(itemConcentracaoCobranca);
+						}
+					}  
+	        	
+	        	}
+	            else{
+	            	novaForma=true;
 	            	formaCobranca = new FormaCobrancaCaucaoLiquida();
 	            }
 	    		
-	    		
 	    		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
-	    		Set<ConcentracaoCobrancaCaucaoLiquida> concentracoesCobranca = new HashSet<ConcentracaoCobrancaCaucaoLiquida>();
+	    		concentracoesCobranca = new HashSet<ConcentracaoCobrancaCaucaoLiquida>();
 	    		ConcentracaoCobrancaCaucaoLiquida concentracaoCobranca;
 	    		if (formaCobrancaDTO.isDomingo()){
 	    			
@@ -604,7 +631,6 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	    		    formaCobranca.setConcentracaoCobrancaCaucaoLiquida(concentracoesCobranca);
 	    		}
 	    		
-	    		
 	    		List<Integer> diasdoMes = new ArrayList<Integer>();
 	    		diasdoMes.add(formaCobrancaDTO.getDiaDoMes());
 	    		diasdoMes.add(formaCobrancaDTO.getPrimeiroDiaQuinzenal());
@@ -612,40 +638,47 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	    		formaCobranca.setDiasDoMes(diasdoMes);
 	    		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
 
-	    		if (formaCobranca.getId()==null){
+	    		if(novaForma){
 	    		    formaCobrancaRepository.adicionar(formaCobranca);
 	    		}
 	    		else{
 	    			formaCobrancaRepository.merge(formaCobranca);
 	    		}
+	    		
+	    		pagamentoBoleto = new PagamentoBoleto();
+				pagamentoBoleto.setValor(formaCobrancaDTO.getValor());
+				pagamentoBoleto.setQuantidadeParcelas(formaCobrancaDTO.getQtdeParcelas());
+				pagamentoBoleto.setValorParcela(formaCobrancaDTO.getValorParcela());
+				pagamentoBoleto.setFormaCobrancaCaucaoLiquida(formaCobranca);
+				
 	        break;
 	        
-	        case DEPOSITO_TRANSFERENCIA:
-	        break;
+            case DESCONTO_COTA:
+				
+				pagamentoDescontoCota = new PagamentoDescontoCota();
+				pagamentoDescontoCota.setValor(formaCobrancaDTO.getValor());
+				pagamentoDescontoCota.setDescontoAtual(formaCobrancaDTO.getValorDescontoAtual());
+				pagamentoDescontoCota.setPorcentagemUtilizada(formaCobrancaDTO.getUtilizarDesconto());
+				pagamentoDescontoCota.setDescontoCota(formaCobrancaDTO.getDescontoCotaDesconto());
+				
+			break;
+			
+			case DINHEIRO:
+				
+				pagamento = new PagamentoCaucaoLiquida();
+				pagamento.setValor(formaCobrancaDTO.getValor());
+				
+			break;
+			
+            case DEPOSITO_TRANSFERENCIA:
+				
+				pagamento = new PagamentoCaucaoLiquida();
+				pagamento.setValor(formaCobrancaDTO.getValor());
+				
+			break;
         }
-        
-		//FORMA DE PAGAMENTO
-		PagamentoCaucaoLiquida pagamento = null;
-		PagamentoBoleto pagamentoBoleto = null;
-		if (formaCobrancaDTO.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
-			
-			pagamentoBoleto = new PagamentoBoleto();
-			pagamentoBoleto.setQuantidadeParcelas(formaCobrancaDTO.getQtdeParcelas());
-			pagamentoBoleto.setValor(formaCobrancaDTO.getValor());
-			pagamentoBoleto.setValorParcela(formaCobrancaDTO.getValorParcela());
 
-			pagamentoBoleto.setFormaCobrancaCaucaoLiquida(formaCobranca);
-		} else if (formaCobrancaDTO.getTipoCobranca() == TipoCobrancaCotaGarantia.DEPOSITO_TRANSFERENCIA){
-			
-			pagamento = new PagamentoDepositoTransferencia();
-			pagamento.setValor(formaCobrancaDTO.getValorFormaPagamentoDeposito());
-		} else{
-			
-			pagamento = new PagamentoCaucaoLiquida();
-			pagamento.setValor(formaCobrancaDTO.getValor());
-		}
-
-        
+		
     	//CONTA DEPOSITO
         ContaBancariaDeposito contaDeposito = cotaGarantiaCaucaoLiquida.getContaBancariaDeposito();
         if (cotaGarantiaCaucaoLiquida.getContaBancariaDeposito()==null){
@@ -668,7 +701,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 		cotaGarantiaCaucaoLiquida.setContaBancariaDeposito(contaDeposito);
 		
-		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoBoleto!=null?pagamentoBoleto:pagamento);
+		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoBoleto!=null?pagamentoBoleto:pagamentoDescontoCota!=null?pagamentoDescontoCota:pagamento);
 		
 		cotaGarantiaCaucaoLiquida.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
 
@@ -685,13 +718,14 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional(readOnly = true)
 	public FormaCobrancaCaucaoLiquidaDTO obterDadosCaucaoLiquida(Long idCota) {
 		
-		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = null;
+		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = cotaGarantiaRepository.getByCota(idCota,CotaGarantiaCaucaoLiquida.class);
 		FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO = null;	
 		
-		cotaGarantiaCaucaoLiquida =  cotaGarantiaRepository.getByCota(idCota,CotaGarantiaCaucaoLiquida.class);
 		FormaCobrancaCaucaoLiquida formaCobranca = null;
 		PagamentoBoleto pagamentoBoleto = null;
 		PagamentoDepositoTransferencia pagamentoDepositoTransferencia = null;
+		PagamentoDinheiro pagamentoDinheiro = null;
+		PagamentoDescontoCota pagamentoDescontoCota = null;
 		
 		
 		if (cotaGarantiaCaucaoLiquida!=null){
@@ -716,6 +750,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			switch (cotaGarantiaCaucaoLiquida.getTipoCobranca()){
 			
 				case BOLETO:
+					
 					pagamentoBoleto = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
 					
 					if (pagamentoBoleto!=null){
@@ -725,78 +760,106 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 						formaCobrancaDTO.setValorParcela(pagamentoBoleto.getValorParcela());
 						
 		    		    formaCobranca = pagamentoBoleto.getFormaCobrancaCaucaoLiquida();
+		    		    
+		    		    if (formaCobranca!=null){
+
+		    				Set<ConcentracaoCobrancaCaucaoLiquida> concentracoesCobranca = null;
+		    				Integer diaDoMes = null;
+		    				Integer primeiroDiaQuinzenal = null;
+		    				Integer segundoDiaQuinzenal = null;
+		    			
+		    				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL){
+		    				    concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCaucaoLiquida();
+		    				}		
+		    				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.MENSAL){		
+		    				    diaDoMes = (formaCobranca.getDiasDoMes().size()>0)?formaCobranca.getDiasDoMes().get(0):null;
+		    				}
+		    				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.QUINZENAL){		
+		    					primeiroDiaQuinzenal = (formaCobranca.getDiasDoMes().size()>0)?formaCobranca.getDiasDoMes().get(0):null;
+		    					segundoDiaQuinzenal = (formaCobranca.getDiasDoMes().size()>1)?formaCobranca.getDiasDoMes().get(1):null;
+		    				}
+
+		    				formaCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
+		    				formaCobrancaDTO.setDiaDoMes(diaDoMes);
+		    				formaCobrancaDTO.setPrimeiroDiaQuinzenal(primeiroDiaQuinzenal);
+		    				formaCobrancaDTO.setSegundoDiaQuinzenal(segundoDiaQuinzenal);
+		    	
+		    				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
+		    					for (ConcentracaoCobrancaCaucaoLiquida itemConcentracaoCobranca:concentracoesCobranca){
+		    						
+		    						DiaSemana dia = itemConcentracaoCobranca.getDiaSemana();
+		    						if (dia==DiaSemana.DOMINGO){
+		    							formaCobrancaDTO.setDomingo(true);
+		    						}
+		    		
+		    						if (dia==DiaSemana.SEGUNDA_FEIRA){
+		    							formaCobrancaDTO.setSegunda(true);
+		    						}    
+		    						
+		    						if (dia==DiaSemana.TERCA_FEIRA){
+		    							formaCobrancaDTO.setTerca(true);
+		    						}    
+		    						
+		    						if (dia==DiaSemana.QUARTA_FEIRA){
+		    							formaCobrancaDTO.setQuarta(true);
+		    						}
+		    						
+		    					    if (dia==DiaSemana.QUINTA_FEIRA){
+		    					    	formaCobrancaDTO.setQuinta(true);
+		    					    }    
+		    					    
+		    						if (dia==DiaSemana.SEXTA_FEIRA){
+		    							formaCobrancaDTO.setSexta(true);
+		    						}    
+		    						
+		    						if (dia==DiaSemana.SABADO){
+		    							formaCobrancaDTO.setSabado(true);
+		    						}
+		    						
+		    					}
+		    				}
+		    			}
 					}
+					
 				break;
 			
 				case DEPOSITO_TRANSFERENCIA:
+					
 					pagamentoDepositoTransferencia = (PagamentoDepositoTransferencia) cotaGarantiaCaucaoLiquida.getFormaPagamento();
 					
 					if (pagamentoDepositoTransferencia != null){
 						
 						formaCobrancaDTO.setValor(pagamentoDepositoTransferencia.getValor());
 					}
+					
+				break;
+				
+				case DINHEIRO:
+					
+					pagamentoDinheiro = (PagamentoDinheiro) cotaGarantiaCaucaoLiquida.getFormaPagamento();
+					
+					if (pagamentoDinheiro != null){
+						
+						formaCobrancaDTO.setValor(pagamentoDinheiro.getValor());
+					}
+					
+				break;
+				
+				case DESCONTO_COTA:
+	
+					pagamentoDescontoCota = (PagamentoDescontoCota) cotaGarantiaCaucaoLiquida.getFormaPagamento();
+					
+					if (pagamentoDescontoCota != null){
+						
+						formaCobrancaDTO.setValor(pagamentoDescontoCota.getValor());
+						formaCobrancaDTO.setValorDescontoAtual(pagamentoDescontoCota.getDescontoAtual());
+						formaCobrancaDTO.setUtilizarDesconto(pagamentoDescontoCota.getPorcentagemUtilizada());
+						formaCobrancaDTO.setDescontoCotaDesconto(pagamentoDescontoCota.getDescontoCota());
+					}
+					
 				break;
 			}
 			
-			
-			if (formaCobranca!=null){
-
-				Set<ConcentracaoCobrancaCaucaoLiquida> concentracoesCobranca = null;
-				Integer diaDoMes = null;
-				Integer primeiroDiaQuinzenal = null;
-				Integer segundoDiaQuinzenal = null;
-			
-				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL){
-				    concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCaucaoLiquida();
-				}		
-				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.MENSAL){		
-				    diaDoMes = (formaCobranca.getDiasDoMes().size()>0)?formaCobranca.getDiasDoMes().get(0):null;
-				}
-				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.QUINZENAL){		
-					primeiroDiaQuinzenal = (formaCobranca.getDiasDoMes().size()>0)?formaCobranca.getDiasDoMes().get(0):null;
-					segundoDiaQuinzenal = (formaCobranca.getDiasDoMes().size()>1)?formaCobranca.getDiasDoMes().get(1):null;
-				}
-
-				formaCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
-				formaCobrancaDTO.setDiaDoMes(diaDoMes);
-				formaCobrancaDTO.setPrimeiroDiaQuinzenal(primeiroDiaQuinzenal);
-				formaCobrancaDTO.setSegundoDiaQuinzenal(segundoDiaQuinzenal);
-	
-				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
-					for (ConcentracaoCobrancaCaucaoLiquida itemConcentracaoCobranca:concentracoesCobranca){
-						
-						DiaSemana dia = itemConcentracaoCobranca.getDiaSemana();
-						if (dia==DiaSemana.DOMINGO){
-							formaCobrancaDTO.setDomingo(true);
-						}
-		
-						if (dia==DiaSemana.SEGUNDA_FEIRA){
-							formaCobrancaDTO.setSegunda(true);
-						}    
-						
-						if (dia==DiaSemana.TERCA_FEIRA){
-							formaCobrancaDTO.setTerca(true);
-						}    
-						
-						if (dia==DiaSemana.QUARTA_FEIRA){
-							formaCobrancaDTO.setQuarta(true);
-						}
-						
-					    if (dia==DiaSemana.QUINTA_FEIRA){
-					    	formaCobrancaDTO.setQuinta(true);
-					    }    
-					    
-						if (dia==DiaSemana.SEXTA_FEIRA){
-							formaCobrancaDTO.setSexta(true);
-						}    
-						
-						if (dia==DiaSemana.SABADO){
-							formaCobrancaDTO.setSabado(true);
-						}
-						
-					}
-				}
-			}
 		}
 		
 		return formaCobrancaDTO;

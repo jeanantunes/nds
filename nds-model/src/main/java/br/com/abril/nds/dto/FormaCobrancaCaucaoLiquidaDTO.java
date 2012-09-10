@@ -33,11 +33,14 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	boolean sexta;
 	boolean sabado;
 	
-	BigDecimal valor;
 	Integer qtdeParcelas;
 	BigDecimal valorParcela;
 	
-	BigDecimal valorFormaPagamentoDeposito;
+	BigDecimal valorDescontoAtual;
+	BigDecimal utilizarDesconto;
+	BigDecimal descontoCotaDesconto;
+	
+	BigDecimal valor;
 
 	public FormaCobrancaCaucaoLiquidaDTO(){
 		
@@ -45,32 +48,11 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	
 	//CONTRUTOR PARA O FORMULARIO
 	public FormaCobrancaCaucaoLiquidaDTO(long idCota, TipoCobrancaCotaGarantia tipoCobranca, 
-			TipoFormaCobranca tipoFormaCobranca,String numBanco, String nomeBanco,String nomeCorrentista,
-			Long agencia, String agenciaDigito, Long conta,
-			String contaDigito, Integer diaDoMes, Integer primeiroDiaQuinzenal, Integer segundoDiaQuinzenal, boolean domingo, boolean segunda,
-			boolean terca, boolean quarta, boolean quinta, boolean sexta,
-			boolean sabado) {
+			TipoFormaCobranca tipoFormaCobranca) {
 		super();
 		this.idCota = idCota;
 		this.tipoCobranca = tipoCobranca;
 		this.tipoFormaCobranca = tipoFormaCobranca;
-		this.numBanco = numBanco;
-		this.nomeBanco = nomeBanco;
-		this.nomeCorrentista = nomeCorrentista;
-		this.agencia = agencia;
-		this.agenciaDigito = agenciaDigito;
-		this.conta = conta;
-		this.contaDigito = contaDigito;
-		this.diaDoMes = diaDoMes;
-		this.primeiroDiaQuinzenal = primeiroDiaQuinzenal;
-		this.segundoDiaQuinzenal = segundoDiaQuinzenal;
-		this.domingo = domingo;
-		this.segunda = segunda;
-		this.terca = terca;
-		this.quarta = quarta;
-		this.quinta = quinta;
-		this.sexta = sexta;
-		this.sabado = sabado;
 	}
 
 	public Long getIdFormaCobrancaCaucaoLiquida() {
@@ -273,12 +255,27 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 		this.valorParcela = valorParcela;
 	}
 
-	public BigDecimal getValorFormaPagamentoDeposito() {
-		return valorFormaPagamentoDeposito;
+	public BigDecimal getValorDescontoAtual() {
+		return valorDescontoAtual;
 	}
 
-	public void setValorFormaPagamentoDeposito(
-			BigDecimal valorFormaPagamentoDeposito) {
-		this.valorFormaPagamentoDeposito = valorFormaPagamentoDeposito;
+	public void setValorDescontoAtual(BigDecimal valorDescontoAtual) {
+		this.valorDescontoAtual = valorDescontoAtual;
+	}
+
+	public BigDecimal getUtilizarDesconto() {
+		return utilizarDesconto;
+	}
+
+	public void setUtilizarDesconto(BigDecimal utilizarDesconto) {
+		this.utilizarDesconto = utilizarDesconto;
+	}
+
+	public BigDecimal getDescontoCotaDesconto() {
+		return descontoCotaDesconto;
+	}
+
+	public void setDescontoCotaDesconto(BigDecimal descontoCotaDesconto) {
+		this.descontoCotaDesconto = descontoCotaDesconto;
 	}
 }
