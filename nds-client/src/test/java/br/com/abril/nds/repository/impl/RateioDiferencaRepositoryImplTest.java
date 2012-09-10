@@ -32,6 +32,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -134,7 +135,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(movimentoEstoque);
 		
 		diferenca = 
-				Fixture.diferenca(BigInteger.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
+				Fixture.diferenca(BigInteger.TEN, usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
 		
 		save(diferenca);
 		

@@ -13,7 +13,7 @@
 			<tr>
 				<td width="122">Tipo de Diferença:</td>
     			<td width="239">
-					<select id="tipoDiferenca" style="width:200px;">
+					<select id="tipoDiferenca" style="width:200px;" onchange="lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(this.value)">
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 							<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 						</c:forEach>
@@ -83,8 +83,8 @@
         	
         	<table width="220" border="0" cellspacing="1" cellpadding="1">
 				<tr>
-					<td width="20"><input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/></td>
-					<td width="72">Estoque</td>
+					<td width="20" class="view-estouque"><input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/></td>
+					<td width="72" class="view-estouque" >Estoque</td>
 					<td width="20"><input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" /></td>
 					<td width="95">Cota</td>
 				</tr>
@@ -119,12 +119,12 @@
 						<tr id="trCota1">
 							<td>
 								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="255"
-									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, buscarReparteAtualCota(1));"/>
+									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota(1));"/>
 							</td>
 							<td>
 								<input type="text" name="nomeInput" id="nomeInput1" style="width:180px;" maxlength="255"
 									onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput1);" 
-									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1, buscarReparteAtualCota(1));"/>
+									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota(1));"/>
 							</td>
 							<td align="center" id="reparteText1"></td>
 							<td align="center">
@@ -184,6 +184,10 @@
 	</div>
 
 	<br />
+	
+	<span class="bt_add">
+		<a href="javascript:;" onclick="lancamentoNovoController.incluirNovo();">Incluir Novo</a>
+	</span>
 	
 	<script language="javascript" type="text/javascript">
 		$(function(){
