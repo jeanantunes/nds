@@ -85,12 +85,13 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		NotaFiscalEntrada notafiscalEntrada = obterNotaFiscal(
 				input.getNotaFiscal());
 		if(notafiscalEntrada == null){
-			salvarNotaFiscalEntrada(input, produtoEdicao);			
+			notafiscalEntrada = salvarNotaFiscalEntrada(input, produtoEdicao);			
 		}else{
 			atualizarNotaFiscalEntrada(notafiscalEntrada, input, produtoEdicao);
 		}
 		
 		
+		salvarItemNota(notafiscalEntrada, input, produtoEdicao);
 	}
 	
 	private BigDecimal calcularValorBruto() {
@@ -110,7 +111,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	
-	private void salvarNotaFiscalEntrada(EMS0135Input input, ProdutoEdicao produtoEdicao) {
+	private NotaFiscalEntradaFornecedor salvarNotaFiscalEntrada(EMS0135Input input, ProdutoEdicao produtoEdicao) {
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
@@ -141,7 +142,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notaFiscalEntradaFornecedor.setFornecedor(produtoEdicao.getProduto().getFornecedor());
 		
 		this.getSession().persist(notaFiscalEntradaFornecedor);		
-		salvarItemNota(notaFiscalEntradaFornecedor, input, produtoEdicao);
+//		salvarItemNota(notaFiscalEntradaFornecedor, input, produtoEdicao);
+		
+		return notaFiscalEntradaFornecedor;
 	}
 	
 	private void atualizarNotaFiscalEntrada(NotaFiscalEntrada notafiscalEntrada, EMS0135Input input, ProdutoEdicao produtoEdicao) {
@@ -153,12 +156,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notafiscalEntrada.setValorLiquido(new BigDecimal(valorLiquido));
 		
 		this.getSession().update(notafiscalEntrada);
-		
-		salvarItemNota((NotaFiscalEntradaFornecedor)notafiscalEntrada, input, produtoEdicao);
-		
+//		salvarItemNota((NotaFiscalEntradaFornecedor)notafiscalEntrada, input, produtoEdicao);
 	}
 
-	private void salvarItemNota(NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor, EMS0135Input input, ProdutoEdicao produtoEdicao) {
+	private void salvarItemNota(NotaFiscalEntrada notaFiscalEntradaFornecedor, EMS0135Input input, ProdutoEdicao produtoEdicao) {
 		
 		ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
 		item.setQtde(new BigInteger(input.getQtdExemplar().toString()));
@@ -169,7 +170,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
 		
 		this.getSession().persist(item);
-		
 	}
 	
 	private Lancamento obterLancamentoProdutoEdicao(Long idProdutoEdicao) {
