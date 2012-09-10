@@ -26,6 +26,8 @@ import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
+import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.DetalheDiferencaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoColunaConsulta;
@@ -1902,4 +1904,120 @@ public class DiferencaEstoqueController {
 		
 		result.use(FlexiGridJson.class).from(prods).total(prods.size()).page(1).serialize();
 	}
+	
+	@Post
+	@Path("/obterDetalhesDiferencaCota")
+	public void obterDetalhesDiferencaCota(Long idDiferenca) {
+
+		DetalheDiferencaCotaDTO detalheDiferencaCota = obterDetalheDiferencaCotaDTO(idDiferenca);
+
+		result.use(Results.json()).from(detalheDiferencaCota, "result").recursive().serialize();
+	}
+	
+	@Get
+	public void exportarDetalhesEstoqueCota(FileType fileType, Long idDiferenca) {
+		
+		if (fileType == null) {
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+		}
+
+		DetalheDiferencaCotaDTO detalhes = obterDetalheDiferencaCotaDTO(idDiferenca);
+		
+//		FileExporter.to("diferenca-detalhe-estoque-cota", fileType)
+//			.inHTTPResponse(this.getNDSFileHeader(), null, null, 
+//					detalhes.getDetalhesDiferenca(), DetalheDiferencaCotaDTO.class, this.httpServletResponse);
+
+	}
+	
+	private DetalheDiferencaCotaDTO obterDetalheDiferencaCotaDTO(Long idDiferenca) {
+
+		List<DetalheDiferencaDTO> detalhesDiferenca = new ArrayList<DetalheDiferencaDTO>();
+		
+		DetalheDiferencaDTO detalheDiferenca = new DetalheDiferencaDTO();
+		detalheDiferenca.setCodigoBox(123);
+		detalheDiferenca.setData(new Date());
+		detalheDiferenca.setExemplares(new BigInteger("1"));
+		detalheDiferenca.setNomeCota("cota");
+		detalheDiferenca.setNumeroCota(12);
+		detalheDiferenca.setPrecoDesconto(new BigDecimal(20));
+		detalheDiferenca.setTotalRejeitadas(new BigDecimal("12"));
+		detalheDiferenca.setValorTotal(new BigDecimal("33"));
+		detalhesDiferenca.add(detalheDiferenca);
+		
+		detalheDiferenca = new DetalheDiferencaDTO();
+		detalheDiferenca.setCodigoBox(123);
+		detalheDiferenca.setData(new Date());
+		detalheDiferenca.setExemplares(new BigInteger("1"));
+		detalheDiferenca.setNomeCota("cota");
+		detalheDiferenca.setNumeroCota(12);
+		detalheDiferenca.setPrecoDesconto(new BigDecimal(20));
+		detalheDiferenca.setTotalRejeitadas(new BigDecimal("12"));
+		detalheDiferenca.setValorTotal(new BigDecimal("33"));
+		detalhesDiferenca.add(detalheDiferenca);
+		
+		detalheDiferenca = new DetalheDiferencaDTO();
+		detalheDiferenca.setCodigoBox(123);
+		detalheDiferenca.setData(new Date());
+		detalheDiferenca.setExemplares(new BigInteger("1"));
+		detalheDiferenca.setNomeCota("cota");
+		detalheDiferenca.setNumeroCota(12);
+		detalheDiferenca.setPrecoDesconto(new BigDecimal(20));
+		detalheDiferenca.setTotalRejeitadas(new BigDecimal("12"));
+		detalheDiferenca.setValorTotal(new BigDecimal("33"));
+		detalhesDiferenca.add(detalheDiferenca);
+		
+		detalheDiferenca = new DetalheDiferencaDTO();
+		detalheDiferenca.setCodigoBox(123);
+		detalheDiferenca.setData(new Date());
+		detalheDiferenca.setExemplares(new BigInteger("1"));
+		detalheDiferenca.setNomeCota("cota");
+		detalheDiferenca.setNumeroCota(12);
+		detalheDiferenca.setPrecoDesconto(new BigDecimal(20));
+		detalheDiferenca.setTotalRejeitadas(new BigDecimal("12"));
+		detalheDiferenca.setValorTotal(new BigDecimal("33"));
+		detalhesDiferenca.add(detalheDiferenca);
+		
+		detalheDiferenca = new DetalheDiferencaDTO();
+		detalheDiferenca.setCodigoBox(123);
+		detalheDiferenca.setData(new Date());
+		detalheDiferenca.setExemplares(new BigInteger("1"));
+		detalheDiferenca.setNomeCota("cota");
+		detalheDiferenca.setNumeroCota(12);
+		detalheDiferenca.setPrecoDesconto(new BigDecimal(20));
+		detalheDiferenca.setTotalRejeitadas(new BigDecimal("12"));
+		detalheDiferenca.setValorTotal(new BigDecimal("33"));
+		detalhesDiferenca.add(detalheDiferenca);
+		
+		List<CellModelKeyValue<DetalheDiferencaDTO>> lista = new ArrayList<CellModelKeyValue<DetalheDiferencaDTO>>();
+		
+		for (DetalheDiferencaDTO detalheDiferencaDTO : detalhesDiferenca) {
+			
+			CellModelKeyValue<DetalheDiferencaDTO> cellModel = new CellModelKeyValue<DetalheDiferencaDTO>(0, detalheDiferencaDTO);
+			
+			lista.add(cellModel);
+		}
+		
+		TableModel<CellModelKeyValue<DetalheDiferencaDTO>> tableModel = 
+				new TableModel<CellModelKeyValue<DetalheDiferencaDTO>>();
+		
+		tableModel.setPage(1);
+		tableModel.setTotal(detalhesDiferenca.size());
+		tableModel.setRows(lista);
+
+		DetalheDiferencaCotaDTO detalheDiferencaCota = new DetalheDiferencaCotaDTO();
+		
+		detalheDiferencaCota.setCodigoProduto("123");
+		detalheDiferencaCota.setDetalhesDiferenca(tableModel);
+		detalheDiferencaCota.setNomeFornecedor("Fornecedor");
+		detalheDiferencaCota.setNomeProduto("Produto");
+		detalheDiferencaCota.setNumeroEdicao(33L);
+		detalheDiferencaCota.setQuantidadeDiferenca(new BigInteger("10"));
+		detalheDiferencaCota.setTipoDiferenca("Diferenca");
+		detalheDiferencaCota.setTotalExemplares(new BigInteger("50"));
+		detalheDiferencaCota.setValorTotal(new BigDecimal("100"));
+		
+		return detalheDiferencaCota;
+	}
 }
+ 

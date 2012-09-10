@@ -12,6 +12,11 @@
 	
 		var pesquisaProdutoConsultaFaltasSobras = new PesquisaProduto();
 	
+		$(function() {
+			
+			diferencaEstoqueController.init();
+		});
+		
 	</script>
 </head>
 
@@ -117,4 +122,6 @@
 
 	</fieldset>
 	<div class="linha_separa_fields">&nbsp;</div>
+	
+	<jsp:include page="detalhesEncalheCota.jsp"></jsp:include>
 </body>
