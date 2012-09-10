@@ -13,6 +13,15 @@
 		var pesquisaProdutoConsultaFaltasSobras = new PesquisaProduto();
 	
 	</script>
+	
+	<style type="text/css">
+	#dialog-detalhe-1 label{width:135px; float:left; font-weight:bold;}
+	#dialog-detalhe-1 div{float:left; margin-top:5px;}
+	
+	#dialog-detalhe-2 .linha_separa_fields{width:600px;}
+	</style>
+
+	
 </head>
 
 <body>
@@ -117,4 +126,43 @@
 
 	</fieldset>
 	<div class="linha_separa_fields">&nbsp;</div>
+	
+	<form id="formDetalheConsultaFaltasSobras">
+		<div id="dialog-detalhe-1" title="Detalhes Estoque" style="display:none;">
+			<fieldset style="width:300px!important;">
+				<legend>Detalhes do Estoque</legend>
+			    
+			    <label>Código:</label>
+			    	<div id="detalheCodigo"></div>
+			    <br clear="all" />
+			
+			    <label>Produto:</label>
+			    	<div id="detalheNome"></div>
+			    <br clear="all" />
+			    
+			    <label>Edição:</label>
+			    	<div id="detalheEdicao"></div>
+			    <br clear="all" />
+			    
+			    <label>Fornecedor:</label>
+			    	<div id="detalheFornecedor"></div>
+			    <br clear="all" />
+			    
+			    <label>Tipo de Diferença:</label>
+			    	<div id="detalheTipo"></div>
+			    <br clear="all" />
+			    
+			    <label>Qtde. Diferença:</label>
+			    	<div id="detalheQtde"></div>
+			    <br clear="all" />
+			    
+			    <label>Destinado ao Estoque:</label>
+			  		<div id="detalheEstoque"></div>
+			    <br clear="all" />
+			        
+			</fieldset>		
+		</div>
+	</form>
+
+	
 </body>
