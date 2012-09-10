@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -120,6 +121,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -861,7 +863,25 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
+		
+	public static TipoMovimentoEstoque tipoMovimentoNivelamentoEntrada() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Nivelamento Entrada");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA);
+		return tipoMovimento;
+	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoNivelamentoSaida() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Nivelamento Saida");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.NIVELAMENTO_SAIDA);
+		return tipoMovimento;
+	}
+		
 	public static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -974,6 +994,16 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEncalheAntecipado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Encalhe Antecipado");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+	
+		return tipoMovimento;
+	}	
 	
 	public static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -1784,7 +1814,7 @@ public class Fixture {
 									  StatusConfirmacao statusConfirmacao,
 									  ItemRecebimentoFisico itemRecebimentoFisico,
 									  MovimentoEstoque movimentoEstoque,
-									  Boolean automatica) {
+									  Boolean automatica, TipoEstoque tipoEstoque) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -1796,6 +1826,7 @@ public class Fixture {
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		diferenca.setMovimentoEstoque(movimentoEstoque);
 		diferenca.setAutomatica(automatica);
+		diferenca.setTipoEstoque(tipoEstoque);
 		
 		return diferenca;
 	}
@@ -2792,12 +2823,12 @@ public class Fixture {
 		return parametroContratoCota;
 	}
 
-	public static TipoEntrega criarTipoEntrega(Long id, String descricao, Periodicidade periodicidade) {
+	public static TipoEntrega criarTipoEntrega(Long id, DescricaoTipoEntrega descricaoTipoEntrega, Periodicidade periodicidade) {
 		
 		TipoEntrega tipoEntrega = new TipoEntrega();
 		
 		tipoEntrega.setId(id);
-		tipoEntrega.setDescricao(descricao);
+		tipoEntrega.setDescricaoTipoEntrega(descricaoTipoEntrega);
 		tipoEntrega.setPeriodicidade(periodicidade);
 		
 		return tipoEntrega;

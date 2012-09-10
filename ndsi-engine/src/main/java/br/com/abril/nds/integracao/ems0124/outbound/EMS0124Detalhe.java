@@ -19,7 +19,7 @@ public class EMS0124Detalhe {
 	private Long edicao;
 	private Integer codigoCota;
 	private String tipoNivelamento;
-	private BigInteger quantidadeNivelamento;
+	private Long quantidadeNivelamento;
 	private BigDecimal precoCapa;
 	private Date dataLancamento;
 
@@ -88,12 +88,11 @@ public class EMS0124Detalhe {
 	}
 
 	@Field(offset=27, length =8) 
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
-	public BigInteger getQuantidadeNivelamento() {
+	public Long getQuantidadeNivelamento() {
 		return quantidadeNivelamento;
 	}
 
-	public void setQuantidadeNivelamento(BigInteger quantidadeNivelamento) {
+	public void setQuantidadeNivelamento(Long quantidadeNivelamento) {
 		this.quantidadeNivelamento = quantidadeNivelamento;
 	}
 	

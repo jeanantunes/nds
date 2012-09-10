@@ -111,8 +111,6 @@ public class ManutencaoStatusCotaController {
 	@Path("/pesquisar")
 	public void pesquisar(FiltroStatusCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 		
-		this.validarDadosCota(filtro);
-		
 		this.validarPeriodoHistoricoStatusCota(filtro.getPeriodo());
 		
 		this.configurarFiltroPesquisa(filtro, sortorder, sortname, page, rp);
@@ -284,7 +282,11 @@ public class ManutencaoStatusCotaController {
 			historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
 			
 			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao().toString());
-		
+			
+			historicoSituacaoCotaVO.setNomeCota(historicoSituacaoCota.getCota().getPessoa().getNome());
+			
+			historicoSituacaoCotaVO.setNumeroCota(historicoSituacaoCota.getCota().getNumeroCota());
+			
 			listaHistoricoSituacaoCotaVO.add(historicoSituacaoCotaVO);
 		}
 		

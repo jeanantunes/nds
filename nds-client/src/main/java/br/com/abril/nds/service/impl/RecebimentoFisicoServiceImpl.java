@@ -323,6 +323,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 */
 	private void atualizarDadosNotaFiscalExistente(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
+		
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);		
+		
+		notaFiscalRepository.merge(notaFiscal);
+		
 		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
 		
 		if(recebimentoFisico == null){

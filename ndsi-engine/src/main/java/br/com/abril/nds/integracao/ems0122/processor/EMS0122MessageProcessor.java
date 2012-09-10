@@ -9,12 +9,11 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Detalhe;
 import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Header;
 import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Trailer;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
@@ -51,11 +50,6 @@ public class EMS0122MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@Override
-	public void preProcess(Message message) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
 	public void processMessage(Message message) {
 	
 		StringBuilder sql = new  StringBuilder();
@@ -82,7 +76,7 @@ public class EMS0122MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get("PATH_INTERFACE_MDC_EXPORTACAO")+"/SUPLEMEN.NEW"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/SUPLEMEN.NEW"));	
 			
 			EMS0122Header outheader = new EMS0122Header();
 			
@@ -102,7 +96,7 @@ public class EMS0122MessageProcessor extends AbstractRepository implements Messa
 			    outdetalhe.setContextoProduto(mec.getProdutoEdicao().getProduto().getCodigoContexto());
 				outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
 				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
-				outdetalhe.setQuantidadeSuplementar(mec.getQtde());
+				outdetalhe.setQuantidadeSuplementar( Long.valueOf( mec.getQtde().toString() ) );
 				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
 				
 				 
@@ -124,11 +118,6 @@ public class EMS0122MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void posProcess() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void posProcess(Message message) {
 		// TODO Auto-generated method stub
 	}
 	

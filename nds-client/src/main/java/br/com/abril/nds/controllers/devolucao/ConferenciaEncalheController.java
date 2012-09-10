@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -469,7 +470,11 @@ public class ConferenciaEncalheController {
 						dto.setPrecoCapa(valorCapa);
 					}
 					
-					dto.setValorTotal(dto.getPrecoCapa().subtract(dto.getDesconto()).multiply( new BigDecimal( dto.getQtdExemplar() )));
+					BigDecimal precoCapa = dto.getPrecoCapa() == null ? BigDecimal.ZERO : dto.getPrecoCapa();
+					BigDecimal desconto = dto.getDesconto() == null ? BigDecimal.ZERO : dto.getDesconto();
+					BigDecimal qtdExemplar = dto.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(dto.getQtdExemplar()); 
+					
+					dto.setValorTotal(precoCapa.subtract(desconto).multiply( qtdExemplar ));
 					
 					conf = dto;
 					
@@ -964,7 +969,7 @@ public class ConferenciaEncalheController {
 	 * 
 	 */
 	@Post
-	public void verificarValorTotalNotaFiscal(){
+	public void verificarValorTotalNotaFiscal() {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Map<String, Object> dadosNotaFiscal = (Map) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
@@ -995,36 +1000,104 @@ public class ConferenciaEncalheController {
 	 * @param valorCEInformado
 	 */
 	@Post
-	public void verificarValorTotalCE(BigDecimal valorCEInformado){
+	public void verificarValorTotalCE(BigDecimal valorCEInformado) {
 
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
 		if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
+			
 			resultadoValidacao.put("valorCEInformadoValido", false);
+			
 			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido, Deseja continuar?");
+			
 			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
-			return;
-		}
-		
-		Map<String, Object> valoresMonetarios = new HashMap<String, Object>();
-		this.calcularValoresMonetarios(valoresMonetarios);
-		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe"));
-		
-		if (valorEncalhe.compareTo(valorCEInformado)!=0){
 
-			resultadoValidacao.put("valorCEInformadoValido", false);
-			resultadoValidacao.put("mensagemConfirmacao", "Valor total do encalhe difere do valor CE jornaleiro informado, Deseja continuar?");
-			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
-			return;
+		} else {
+
+			TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+			
+			if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+				
+				this.comparValorTotalCEMonetario(valorCEInformado);
+				
+			} else {
+				
+				this.comparValorTotalCEQuantidade(valorCEInformado);
+				
+			}
+			
 		}
-		
-		resultadoValidacao.put("valorCEInformadoValido", true);
-		this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
 		
 	}
 	
+	/**
+	 * Compara se o valor de qtde de itens de encalhe apontado pelo jornaleiro
+	 * é igual ao contabilizado na operação de conferência de encalhe.
+	 * 
+	 * @param valorTotalCEQuantidade
+	 */
+
+	private void comparValorTotalCEQuantidade(BigDecimal valorTotalCEQuantidade) {
+		
+		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
+		
+		BigInteger qtde = BigInteger.valueOf(valorTotalCEQuantidade.longValue());
+		
+		BigInteger qtdeItensConferenciaEncalhe = obterQtdeItensConferenciaEncalhe();
+
+		if (qtdeItensConferenciaEncalhe.compareTo(qtde)!=0){
+
+			resultadoValidacao.put("valorCEInformadoValido", false);
+			
+			resultadoValidacao.put("mensagemConfirmacao", "Qtde total do encalhe difere da quantidade CE jornaleiro informado, Deseja continuar?");
+			
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			
+		} else {
+
+			resultadoValidacao.put("valorCEInformadoValido", true);
+			
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+
+		}
+		
+	}
+
 	
-	
+	/**
+	 * Compara se o valor monetario de encalhe apontado pelo jornaleiro
+	 * é igual ao contabilizado na operação de conferência de encalhe.
+	 * 
+	 * @param valorTotalCEMonetario
+	 */
+	private void comparValorTotalCEMonetario(BigDecimal valorTotalCEMonetario) {
+		
+		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
+		
+		Map<String, Object> valoresMonetarios = new HashMap<String, Object>();
+		
+		this.calcularValoresMonetarios(valoresMonetarios);
+		
+		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe"));
+
+		if (valorEncalhe.compareTo(valorTotalCEMonetario)!=0){
+
+			resultadoValidacao.put("valorCEInformadoValido", false);
+			
+			resultadoValidacao.put("mensagemConfirmacao", "Valor total do encalhe difere do valor CE jornaleiro informado, Deseja continuar?");
+			
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+			
+		} else {
+
+			resultadoValidacao.put("valorCEInformadoValido", true);
+			
+			this.result.use(CustomMapJson.class).put("result", resultadoValidacao).serialize();
+
+		}
+		
+	}
+
 	@Post
 	public void pesquisarProdutoEdicaoPorId(Long idProdutoEdicao){
 		
@@ -1070,6 +1143,31 @@ public class ConferenciaEncalheController {
 		return (InfoConferenciaEncalheCota) this.session.getAttribute(INFO_CONFERENCIA);
 	}
 
+	private BigInteger obterQtdeItensConferenciaEncalhe() {
+	
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		BigInteger qtdItens = BigInteger.ZERO;
+		
+		if (info != null){
+			
+			if (info.getListaConferenciaEncalhe() != null){
+				
+				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
+					
+					BigInteger qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() ==  null ? BigInteger.ZERO : conferenciaEncalheDTO.getQtdExemplar();
+					
+					qtdItens = qtdItens.add(qtdExemplar);
+					
+				}
+				
+			}
+		}
+				
+		return qtdItens;
+		
+	}
+	
 	/**
 	 * Carrega o mapa passado como parâmetro com o seguinte valores:
 	 * 
@@ -1094,10 +1192,13 @@ public class ConferenciaEncalheController {
 			
 				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
-					valorEncalhe = valorEncalhe.add(
-							conferenciaEncalheDTO.getPrecoCapa()
-							.subtract(conferenciaEncalheDTO.getDesconto())
-							.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdExemplar())));
+					BigDecimal precoCapa = conferenciaEncalheDTO.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoCapa();
+					
+					BigDecimal desconto = conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto();
+					
+					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar()); 
+					
+					valorEncalhe = valorEncalhe.add(precoCapa.subtract(desconto).multiply(qtdExemplar));
 				}
 			}
 			
@@ -1200,6 +1301,8 @@ public class ConferenciaEncalheController {
 		
 		conferenciaEncalheDTO.setTipoChamadaEncalhe(produtoEdicao.getTipoChamadaEncalhe().name());
 		conferenciaEncalheDTO.setDataRecolhimento(produtoEdicao.getDataRecolhimentoDistribuidor());
+		
+		conferenciaEncalheDTO.setParcial(produtoEdicao.isParcial());
 		
 		
 		if (quantidade != null){

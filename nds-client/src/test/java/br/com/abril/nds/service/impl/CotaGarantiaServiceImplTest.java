@@ -18,7 +18,7 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
@@ -33,7 +33,6 @@ import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoBoleto;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDepositoTransferencia;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDescontoCota;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
-import br.com.abril.nds.model.cadastro.garantia.pagamento.PeriodoCobranca;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.CotaGarantiaService;
 
@@ -153,14 +152,14 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		salvarCaucaoLiquidaPagamentoTransferencia(cotaGarantiaCaucaoLiquida);
 	}
 
-	private ContaDepositoCaucaoLiquida getCotaCaucaoLiquida() {
+	private ContaBancariaDeposito getCotaCaucaoLiquida() {
 		
-		ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida = new ContaDepositoCaucaoLiquida();
-		contaDepositoCaucaoLiquida.setNomebanco("Nome Banco");
+		ContaBancariaDeposito contaDepositoCaucaoLiquida = new ContaBancariaDeposito();
+		contaDepositoCaucaoLiquida.setNomeBanco("Nome Banco");
 		contaDepositoCaucaoLiquida.setNomeCorrentista("Correntista");
-		contaDepositoCaucaoLiquida.setNumeroAgencia(123);
-		contaDepositoCaucaoLiquida.setNumeroBanco(12);
-		contaDepositoCaucaoLiquida.setNumeroContaCorrente(12345898);
+		contaDepositoCaucaoLiquida.setAgencia(123l);
+		contaDepositoCaucaoLiquida.setNumeroBanco("12");
+		contaDepositoCaucaoLiquida.setConta(12345898l);
 		return contaDepositoCaucaoLiquida;
 	}
 
@@ -197,7 +196,6 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		
 		PagamentoBoleto pagamentoBoleto = new PagamentoBoleto();
 		pagamentoBoleto.setValor(BigDecimal.TEN);
-		pagamentoBoleto.setPeriodoCobranca(PeriodoCobranca.DIARIO);
 		pagamentoBoleto.setQuantidadeParcelas(10);
 		pagamentoBoleto.setValorParcela(BigDecimal.ONE);
 		

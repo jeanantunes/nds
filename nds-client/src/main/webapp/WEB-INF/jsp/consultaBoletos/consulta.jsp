@@ -191,12 +191,7 @@
 
 <body>
 
-    
-    <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Baixa de Divida < evento > com < status >.</b></p>
-	</div>
-	
+
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_arq">

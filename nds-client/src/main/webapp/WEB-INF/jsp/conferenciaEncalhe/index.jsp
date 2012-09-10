@@ -16,6 +16,13 @@
 		}
 	</style>
 	
+	<script type="text/javascript">
+	
+	$(function(){
+		ConferenciaEncalhe.init();
+	});
+	</script>
+	
 </head>
 
 <body>

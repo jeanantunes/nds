@@ -4,9 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
-import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
-import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
@@ -142,4 +140,6 @@ public interface EntregadorService {
 
 	EntregadorCotaProcuracaoPaginacaoVO buscarCotasAtendidas(Long idEntregador,
 			int pagina, int resultadosPorPagina, String sortname, String sortorder);
+	
+	boolean verificarEntregador(Long idCota);
 }

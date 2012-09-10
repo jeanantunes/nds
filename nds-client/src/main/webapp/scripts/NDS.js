@@ -327,6 +327,35 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
   if (restore) selObj.selectedIndex=0;
 }
 
+
+/**
+ * Função para reproduzir som
+ * 
+ * @param audioFile - path do arquivo de audio.
+ *  
+ * Ex: 
+ * 		arquivo - webapp/sound/audio.mp3
+ * 		use     - playSound("/sound/audio.mp3");
+ *
+ * Caso não seja passado um parametro será reproduzido o arquivo - webapp/sound/error.mp3
+ * 
+ */
+function playSound(audioFile) {
+	
+	if(!audioFile)
+		audioFile = contextPath+"/sound/error.mp3";
+	
+	var sourceAudio = document.createElement("source");
+		sourceAudio.setAttribute("src", audioFile);
+	
+	var tagAudio = document.createElement("audio");
+		tagAudio.className = "sound-error";
+		tagAudio.appendChild(sourceAudio);
+		
+	tagAudio.play();
+	
+}
+
 /*
  * Função responsável por efetuar uma chamada Ajax via JQuery.
  * 
@@ -343,7 +372,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
  * @param data - dados a serem enviados no formato 'dado1=x&dado2=y'
  */
 function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, dataType, method, isFromDialog,idDialog) {
-
+	
 	$.ajax({
 		type: method,
 		url: url,
@@ -395,6 +424,10 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 						sucessCallBackFunction(json.result);
 					}
 				} else {
+					
+					if (url.indexOf("devolucao/conferenciaEncalhe") > 0){
+						playSound();
+					}
 					
 					if (isFromDialog) {
 						
@@ -657,18 +690,21 @@ function mostraHeader(){
  * 
  * Ex: tipoMovimento/tipoMovimento.jsp
  */
-function definirAcaoPesquisaTeclaEnter() {
+function definirAcaoPesquisaTeclaEnter(workspace) {
 	
-	$(".campoDePesquisa").bind("keydown", function(event) {
-		  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
-	      if (keycode == 13) { 	    	  
-	    	  $('.botaoPesquisar').click();
-	    	  return false;
-	      } else  {
-	    	  return true;
-	      }
+	if(workspace){
 		
-	});
+		$(".campoDePesquisa",workspace).bind("keydown", function(event) {
+			  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
+		      if (keycode == 13) { 	    	  
+		    	  $('.botaoPesquisar',workspace).click();
+		    	  return false;
+		      } else  {
+		    	  return true;
+		      }
+			
+		});
+	}
 }
 
 function logout() {
@@ -683,3 +719,5 @@ function limparCache() {
 function redimensionarWorkspace() {
 	$("#workspace").innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
 }
+
+//@ sourceURL=NDS.js
