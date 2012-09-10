@@ -94,7 +94,10 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" 0 AS qtdExemplar, 		");
 		hql.append(" 0 AS qtdInformada, 	");
 		hql.append(" 0 AS valorTotal, 		");
-		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapaInformado,                   ");
+		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapaInformado,          ");
+		
+		hql.append(" PROD_EDICAO.PARCIAL AS parcial,						 ");
+		
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
 		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
 		hql.append(" PROD.CODIGO AS codigo,");
@@ -155,6 +158,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("nomeProduto");
 		((SQLQuery)query).addScalar("numeroEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("precoCapa");
+		((SQLQuery)query).addScalar("parcial");
 		((SQLQuery)query).addScalar("desconto");
 		
 		query.setParameter("numeroCota", numeroCota);
@@ -199,6 +203,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD.NOME AS nomeProduto,                               ");
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");
+		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
 		hql.append("          SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)"	);		
@@ -250,6 +255,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("observacao");
 		((SQLQuery)query).addScalar("numeroEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("precoCapa");
+		((SQLQuery)query).addScalar("parcial");
 		((SQLQuery)query).addScalar("desconto");
 		((SQLQuery)query).addScalar("valorTotal");
 		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
@@ -362,7 +368,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 
 		 if (produto!=null && !"".equals(produto)){
-	 	     hql.append(auxC+" view.produtoId = "+produto);
+	 	     hql.append(auxC+" view.produtoEdicaoId = "+produto);
 	 	     auxC = " and ";
 	     }
 

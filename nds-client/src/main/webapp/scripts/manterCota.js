@@ -557,11 +557,17 @@ var MANTER_COTA = $.extend(true, {
 
 		var idCota = MANTER_COTA.idCota;
 		var campoNumeroCota;
+		var numeroCota = "";
 		
-		var numeroCota = $("#numeroCotaCPF", this.workspace).val() ?
-								$("#numeroCotaCPF", this.workspace).val() :
-								$("#numeroCota", this.workspace).val();
+		if (MANTER_COTA.tipoCotaSelecionada == MANTER_COTA.tipoCota_CNPJ){
 
+			numeroCota = $("#numeroCota", this.workspace).val(); 
+
+		} else {
+			
+			numeroCota = $("#numeroCotaCPF", this.workspace).val();
+		}
+		
 		if (isPessoaFisica) {
 
 			campoNumeroCota = $("#numeroCotaCPF", this.workspace);
@@ -859,6 +865,8 @@ var COTA_CNPJ = $.extend(true, {
 					MANTER_COTA.popupCota();
 				}
 		);
+
+		MANTER_COTA.numeroCota = $("#numeroCota", this.workspace).val();
 	},
 	
 	editarCNPJ:function(result){
@@ -1042,6 +1050,8 @@ var COTA_CPF = $.extend(true, {
 					MANTER_COTA.popupCota();
 				}
 		);
+		
+		MANTER_COTA.numeroCota = $("#numeroCotaCPF", this.workspace).val();
 	},
 
 	editarCPF:function(result){

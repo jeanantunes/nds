@@ -20,6 +20,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -79,7 +80,7 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 			outheader.setHoraMovimento(data);
 			outheader.setQtdeRegistrosDetalhe(mecs.size());
 
-			//print.println(fixedFormatManager.export(outheader));
+			print.println(fixedFormatManager.export(outheader));
 			
 			
 			for (MovimentoEstoqueCota mec : mecs){
@@ -97,16 +98,16 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 				outdetalhe.setDataLancamento(mec.getData());
 				
 				 
-				//print.println(fixedFormatManager.export(outdetalhe));
+				print.println(fixedFormatManager.export(outdetalhe));
 
 			}
 			EMS0120Trailer outtrailer = new EMS0120Trailer();
-			//print.println(fixedFormatManager.export(outtrailer));
+			print.println(fixedFormatManager.export(outtrailer));
 			print.flush();
 			print.close();
 			
 		} catch (IOException e) {
-			//ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
+			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Não foi possível gerar o arquivo");
 		}
 				
 		

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -169,7 +170,8 @@ public interface ParametroCobrancaCotaService {
 	 * obtém um arquivo de contrato anexo.
 	 * 
 	 * @param idCota
+	 * @param tempDir diretorio temporario
 	 * @return ContratoVO quando o anexo for encontrato ou null quando o arquivo não existir
 	 */
-	ContratoVO obterArquivoContratoRecebido(Long idCota);
+	public ContratoVO obterArquivoContratoRecebido(Long idCota, File tempDir);
 }

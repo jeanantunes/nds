@@ -58,7 +58,6 @@ NotaPromissoria.prototype.get = function() {
 			_this.notaPromissoria = data.cotaGarantia.notaPromissoria;
 			_this.dataBind();
 		}
-
 	}, null, true);
 };
 
@@ -671,6 +670,9 @@ TipoCotaGarantia.prototype.getData = function() {
 			_this.cotaGarantia.controllerType = data.tipo;
 			_this.changeController(data.tipo);
 			$("#tipoGarantiaSelect", _workspace).val(data.tipo);
+			
+			_this.configTipoCotaGarantia(data.tipo,_this.getIdCota());
+			
 		} else if (!data || !data.cotaGarantia) {
 			_this.changeController(null);
 		}
@@ -678,8 +680,14 @@ TipoCotaGarantia.prototype.getData = function() {
 	}, null, true);
 };
 
+TipoCotaGarantia.prototype.configTipoCotaGarantia = function(tipo,idCota) {
+	if (tipo=="CAUCAO_LIQUIDA"){
+		CaucaoLiquida.prototype.obterCaucaoLiquida(idCota);
+	}
+};
+
 TipoCotaGarantia.prototype.bindData = function(data) {
-	
+
 	/*var select = $("#tipoGarantiaSelect option", _workspace);
 	
 	$(select).each(function() {
@@ -711,17 +719,53 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 	
 };
 
+TipoCotaGarantia.prototype.bindTiposCobrancaCotaGarantia = function() {
+
+	$.getJSON(this.path + 'getTiposCobrancaCotaGarantia.json', 
+			null, 
+			function(data) {
+		
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+		
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+				} else {
+					var select = $("#tipoCobranca", _workspace);
+					
+					for ( var index in data) {
+						var tipo = data[index];
+						var option = document.createElement("option");
+							
+						option.text = tipo.value.$;
+						
+						option.value = tipo.key.$;
+
+						try {
+							$(select).append(option, select.options[null]);
+						} catch (e) {
+							$(select).append(option, null);
+						}
+					}
+				}
+			}, 
+			null, 
+			true);
+
+};
+
 TipoCotaGarantia.prototype.onOpen = function(tipoCotaSelecionada) {
+	
 	this.getData();
 	
+	this.bindTiposCobrancaCotaGarantia();
+	
 	if (tipoCotaSelecionada == "JURIDICA"){
-		$("#cotaGarantiaClassificacaoCota").val($("#classificacaoSelecionada :selected", _workspace).text());
+		$("#cotaGarantiaClassificacaoCota", this.workspace).val($("#classificacaoSelecionada :selected", this.workspace).text());
 	}
 	else{
-		$("#cotaGarantiaClassificacaoCota").val($("#classificacaoSelecionadaCPF :selected", _workspace
-				).text());
-	}
-	
+		$("#cotaGarantiaClassificacaoCota", this.workspace).val($("#classificacaoSelecionadaCPF :selected", this.workspace).text());
+	}	
 };
 
 TipoCotaGarantia.prototype.bindEvents = function() {
@@ -1090,77 +1134,98 @@ CaucaoLiquida.prototype.popularGrid = function() {
 	
 };
 
+CaucaoLiquida.prototype.replaceAll = function(string, token, newtoken) {
+	while (string.indexOf(token) != -1) {
+ 		string = string.replace(token, newtoken);
+	}
+	return string;
+};
+
+CaucaoLiquida.prototype.preparaValor = function(vr){
+	
+	if(vr.substr(vr.length-3,1)==","){
+		vr = this.replaceAll(vr,".","");
+		vr = this.replaceAll(vr,",",".");
+	}
+	if(vr.substr(vr.length-3,1)=="."){
+		vr = this.replaceAll(vr,",","");
+	}
+	return vr;
+};
+
 CaucaoLiquida.prototype.salva = function(callBack) {
 	
 	var postData = serializeArrayToPost('listaCaucaoLiquida', this.listNovosCalcao);
 	postData['idCota'] = this.idCota;
 	
 	//FORMA PAGAMENTO
-	var tipoCobranca        = $("#tipoCobranca", this.workspace).val();
-	var tipoFormaCobranca   = $("#tipoFormaCobranca", this.workspace).val();
-	var numBanco            = $("#numBanco", this.workspace).val();
-	var nomeBanco           = $("#nomeBanco", this.workspace).val();
-	var agencia             = $("#agencia", this.workspace).val();
-	var agenciaDigito       = $("#agenciaDigito", this.workspace).val();
-	var conta               = $("#conta", this.workspace).val();
-	var contaDigito         = $("#contaDigito", this.workspace).val();
-	var diaDoMes            = $("#diaDoMes", this.workspace).val();
-	var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenal", this.workspace).val();
-	var segundoDiaQuinzenal = $("#segundoDiaQuinzenal", this.workspace).val();
-	var valor               = $("#valorBoleto", this.workspace).val();
-	var qtdeParcelas        = $("#qtdParcelaBoleto", this.workspace).val();
-	var valorParcela        = $("#valorParcelaBoleto", this.workspace).val();
+	var tipoCobranca        = $("#tipoCobranca", _workspace).val();
+	var tipoFormaCobranca   = $("#tipoFormaCobranca", _workspace).val();
 	
-	$("#PS", this.workspace).val(0);
-	if ($("#PS", this.workspace).is(":checked")) {
-		$("#PS", this.workspace).val(1);
-	}
-	var segunda = $("#PS", this.workspace).val();
+	var numBanco            = $("#numBancoDeposito", _workspace).val();
+	var nomeBanco           = $("#nomeBancoDeposito", _workspace).val();
+	var agencia             = $("#agenciaDeposito", _workspace).val();
+	var conta               = $("#contaDeposito", _workspace).val();
+	var nomeCorrentista     = $("#nomeCorrentistaDeposito", _workspace).val();
 	
-	$("#PT", this.workspace).val(0);
-	if ($("#PT", this.workspace).is(":checked")) {
-		$("#PT", this.workspace).val(1);
-	}
-	var terca = $("#PT", this.workspace).val();
+	var diaDoMes            = $("#diaDoMes", _workspace).val();
+	var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenal", _workspace).val();
+	var segundoDiaQuinzenal = $("#segundoDiaQuinzenal", _workspace).val();
+	var valor               = $("#valorBoleto", _workspace).val();
+	var qtdeParcelas        = $("#qtdParcelaBoleto", _workspace).val();
+	var valorParcela        = $("#valorParcelaBoleto", _workspace).val();
 	
-	$("#PQ", this.workspace).val(0);
-	if ($("#PQ", this.workspace).is(":checked")) {
-		$("#PQ", this.workspace).val(1);
-	}
-	var quarta = $("#PQ", this.workspace).val();
+	var valorFormaPagamentoDeposito = $("#valorFormaPagamentoDeposito", _workspace).val();
 	
-	$("#PQu", this.workspace).val(0);
-	if ($("#PQu", this.workspace).is(":checked")) {
-		$("#PQu", this.workspace).val(1);
+	$("#PS", _workspace).val(0);
+	if ($("#PS", _workspace).is(":checked")) {
+		$("#PS", _workspace).val(1);
 	}
-	var quinta = $("#PQu", this.workspace).val();
+	var segunda = $("#PS", _workspace).val();
 	
-	$("#PSex", this.workspace).val(0);
-	if ($("#PSex", this.workspace).is(":checked")) {
-		$("#PSex", this.workspace).val(1);
+	$("#PT", _workspace).val(0);
+	if ($("#PT", _workspace).is(":checked")) {
+		$("#PT", _workspace).val(1);
 	}
-	var sexta  = $("#PSex", this.workspace).val();
+	var terca = $("#PT", _workspace).val();
 	
-	$("#PSab", this.workspace).val(0);
-	if ($("#PSab", this.workspace).is(":checked")) {
-		$("#PSab", this.workspace).val(1);
+	$("#PQ", _workspace).val(0);
+	if ($("#PQ", _workspace).is(":checked")) {
+		$("#PQ", _workspace).val(1);
 	}
-	var sabado = $("#PSab", this.workspace).val();
+	var quarta = $("#PQ", _workspace).val();
 	
-	$("#PDom", this.workspace).val(0);
-	if ($("#PDom", this.workspace).is(":checked")) {
-		$("#PDom", this.workspace).val(1);
+	$("#PQu", _workspace).val(0);
+	if ($("#PQu", _workspace).is(":checked")) {
+		$("#PQu", _workspace).val(1);
 	}
-	var domingo  = $("#PDom", this.workspace).val();
+	var quinta = $("#PQu", _workspace).val();
+	
+	$("#PSex", _workspace).val(0);
+	if ($("#PSex", _workspace).is(":checked")) {
+		$("#PSex", _workspace).val(1);
+	}
+	var sexta  = $("#PSex", _workspace).val();
+	
+	$("#PSab", _workspace).val(0);
+	if ($("#PSab", _workspace).is(":checked")) {
+		$("#PSab", _workspace).val(1);
+	}
+	var sabado = $("#PSab", _workspace).val();
+	
+	$("#PDom", _workspace).val(0);
+	if ($("#PDom", _workspace).is(":checked")) {
+		$("#PDom", _workspace).val(1);
+	}
+	var domingo  = $("#PDom", _workspace).val();
 	
 	postData['formaCobranca.tipoCobranca'] = tipoCobranca;    
 	postData['formaCobranca.tipoFormaCobranca'] = tipoFormaCobranca;
 	postData['formaCobranca.numBanco'] = numBanco;        
 	postData['formaCobranca.nomeBanco'] = nomeBanco;          
-	postData['formaCobranca.agencia'] = agencia;            
-	postData['formaCobranca.agenciaDigito'] = agenciaDigito;     
+	postData['formaCobranca.agencia'] = agencia;               
 	postData['formaCobranca.conta'] = conta;              
-	postData['formaCobranca.contaDigito'] = contaDigito;        
+	postData['formaCobranca.nomeCorrentista'] = nomeCorrentista;        
 	postData['formaCobranca.domingo'] = domingo;    
 	postData['formaCobranca.segunda'] = segunda;            
 	postData['formaCobranca.terca'] = terca;            
@@ -1171,10 +1236,10 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 	postData['formaCobranca.diaDoMes'] = diaDoMes;
 	postData['formaCobranca.primeiroDiaQuinzenal'] = primeiroDiaQuinzenal;
 	postData['formaCobranca.segundoDiaQuinzenal'] = segundoDiaQuinzenal;
-	postData['formaCobranca.valor'] = valor;
+	postData['formaCobranca.valor'] = this.preparaValor(valor);
 	postData['formaCobranca.qtdeParcelas'] = qtdeParcelas;
-	postData['formaCobranca.valorParcela'] = valorParcela;
-	
+	postData['formaCobranca.valorParcela'] = this.preparaValor(valorParcela);
+	postData['formaCobranca.valorFormaPagamentoDeposito'] = this.preparaValor(valorFormaPagamentoDeposito);
 	
 	$.postJSON(this.path + 'salvaCaucaoLiquida.json', postData,
 			function(data) {
@@ -1188,7 +1253,7 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 					callBack();
 				}
 
-			}, null, true);
+			}, null, true, "");
 };
 
 CaucaoLiquida.prototype.resgatarValorCaucao = function() {
@@ -1245,15 +1310,49 @@ CaucaoLiquida.prototype.bindEvents = function() {
 		thousandsSeparator : '.'
 	});
 
-	$("#valorBoleto").priceFormat({
+	$("#valorBoleto", _workspace).priceFormat({
 		allowNegative : true,
 		centsSeparator : ',',
 		thousandsSeparator : '.'
 	});
 	
-	$("#qtdParcelaBoleto").numeric();
+	$("#qtdParcelaBoleto", _workspace).numeric();
 	
-	$("#valorParcelaBoleto").priceFormat({
+	$("#valorParcelaBoleto", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#numBancoDeposito", _workspace).numeric();
+	$("#agenciaDeposito", _workspace).numeric();
+	$("#contaDeposito", _workspace).numeric();
+	
+	$("#valorDesconto", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#valorDescontoAtual", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#utilizarDesconto", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#descontoCotaDesconto", _workspace).priceFormat({
+		allowNegative : true,
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+	
+	$("#valorFormaPagamentoDeposito", _workspace).priceFormat({
 		allowNegative : true,
 		centsSeparator : ',',
 		thousandsSeparator : '.'
@@ -1301,6 +1400,170 @@ CaucaoLiquida.prototype.initGrid = function() {
 	});
 	
 };
+
+CaucaoLiquida.prototype.opcaoPagto = function(op){
+	
+	if (op=='BOLETO'){
+		$('#divFormaBoleto', _workspace).show();
+		$('#divFormaDeposito', _workspace).hide();
+		$('#divFormaDinheiro', _workspace).hide();
+		$('#divFormaDesconto', _workspace).hide();
+    }
+	else if (op=='DEPOSITO_TRANSFERENCIA'){
+		$('#divFormaBoleto', _workspace).hide();
+		$('#divFormaDeposito', _workspace).show();
+		$('#divFormaDinheiro', _workspace).hide();
+		$('#divFormaDesconto', _workspace).hide();
+	}    
+	else if (op=='DINHEIRO'){
+		$('#divFormaBoleto', _workspace).hide();
+		$('#divFormaDeposito', _workspace).hide();
+		$('#divFormaDinheiro', _workspace).show();
+		$('#divFormaDesconto', _workspace).hide();
+	}    
+	else if (op=='DESCONTO_COTA'){
+		$('#divFormaBoleto', _workspace).hide();
+		$('#divFormaDeposito', _workspace).hide();
+		$('#divFormaDinheiro', _workspace).hide();
+		$('#divFormaDesconto', _workspace).show();
+	}    
+	else{
+		$('#divFormaBoleto', _workspace).hide();
+		$('#divFormaDeposito', _workspace).hide();
+		$('#divFormaDinheiro', _workspace).hide();
+		$('#divFormaDesconto', _workspace).hide();
+	}
+	
+};
+
+CaucaoLiquida.prototype.mostraDiario = function(){
+	$("#tipoFormaCobranca", _workspace).val('DIARIA');
+	$("#semanal", _workspace).attr("checked", false);
+	$("#quinzenal", _workspace).attr("checked", false);
+	$("#mensal", _workspace).attr("checked", false);
+	$( ".semanal" , _workspace).hide();
+	$( ".quinzenal" , _workspace).hide();
+	$( ".mensal" , _workspace).hide();
+	$( ".diario", _workspace).show();
+};
+
+CaucaoLiquida.prototype.mostraQuinzenal = function(){
+	$("#tipoFormaCobranca", _workspace).val('QUINZENAL');
+	$("#diario", _workspace).attr("checked", false);
+	$("#semanal", _workspace).attr("checked", false);
+	$("#mensal", _workspace).attr("checked", false);
+	$( ".diario" , _workspace).hide();
+	$( ".semanal" , _workspace).hide();
+	$( ".mensal" , _workspace).hide();
+	$( ".quinzenal", _workspace).show();
+};
+
+CaucaoLiquida.prototype.mostraSemanal = function(){
+	$("#tipoFormaCobranca", _workspace).val('SEMANAL');
+	$("#diario", _workspace).attr("checked", false);
+	$("#quinzenal", _workspace).attr("checked", false);
+	$("#mensal", _workspace).attr("checked", false);
+	$( ".diario" , _workspace).hide();
+	$( ".quinzenal" , _workspace).hide();
+	$( ".mensal" , _workspace).hide();
+	$( ".semanal" , _workspace).show();
+};
+	
+CaucaoLiquida.prototype.mostraMensal = function(){
+	$("#tipoFormaCobranca", _workspace).val('MENSAL');
+	$("#diario", _workspace).attr("checked", false);
+	$("#semanal", _workspace).attr("checked", false);
+	$("#quinzenal", _workspace).attr("checked", false);
+	$( ".diario" , _workspace).hide();
+	$( ".semanal" , _workspace).hide();
+	$( ".quinzenal" , _workspace).hide();
+	$( ".mensal" , _workspace).show();
+};
+
+CaucaoLiquida.prototype.opcaoTipoFormaCobranca = function(op){
+	if (op=='SEMANAL'){
+		$("#semanal", _workspace).attr("checked", true);
+		$("#mensal", _workspace).attr("checked", false);
+		$("#diario", _workspace).attr("checked", false);
+		$("#quinzenal", _workspace).attr("checked", false);
+		this.mostraSemanal();
+    }
+	else if (op=='MENSAL'){
+		$("#semanal", _workspace).attr("checked", false);
+		$("#mensal", _workspace).attr("checked", true);
+		$("#diario", _workspace).attr("checked", false);
+		$("#quinzenal", _workspace).attr("checked", false);
+		this.mostraMensal();
+	}    
+	else if (op=='DIARIA'){
+		$("#semanal", _workspace).attr("checked", false);
+		$("#mensal", _workspace).attr("checked", false);
+		$("#diario", _workspace).attr("checked", true);
+		$("#quinzenal", _workspace).attr("checked", false);
+		this.mostraDiario();
+	}    
+	else if (op=='QUINZENAL'){
+		$("#semanal", _workspace).attr("checked", false);
+		$("#mensal", _workspace).attr("checked", false);
+		$("#diario", _workspace).attr("checked", false);
+		$("#quinzenal", _workspace).attr("checked", true);
+		this.mostraQuinzenal();
+	}    
+};
+
+
+//OBTEM UM PARÂMETRO PARA ALTERAÇÃO
+CaucaoLiquida.prototype.obterCaucaoLiquida = function(idCota){
+	var data = [{name: 'idCota', value: idCota}];
+	$.postJSON(this.path + 'getCaucaoLiquidaByCota.json',
+			   data,
+			   this.sucessCallbackObterCaucaoLiquida, 
+			   null,
+			   true);
+};
+
+
+CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
+	
+	var _this = this;
+	
+	$("#tipoCobranca", _workspace).val(resultado.tipoCobranca);
+	
+	CaucaoLiquida.prototype.opcaoPagto(resultado.tipoCobranca);
+	CaucaoLiquida.prototype.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
+	
+	$("#diaDoMes", _workspace).val(resultado.diaDoMes);
+	$("#primeiroDiaQuinzenal", _workspace).val(resultado.primeiroDiaQuinzenal);
+	$("#segundoDiaQuinzenal", _workspace).val(resultado.segundoDiaQuinzenal);
+	    
+	$("#PS", _workspace).attr('checked',resultado.segunda);
+	$("#PT", _workspace).attr('checked',resultado.terca);
+	$("#PQ", _workspace).attr('checked',resultado.quarta);
+	$("#PQu", _workspace).attr('checked',resultado.quinta);
+	$("#PSex", _workspace).attr('checked',resultado.sexta);
+	$("#PSab", _workspace).attr('checked',resultado.sabado);
+	$("#PDom", _workspace).attr('checked',resultado.domingo);
+
+	$("#numBancoDeposito", _workspace).val(resultado.numBanco);
+	$("#nomeBancoDeposito", _workspace).val(resultado.nomeBanco);
+	$("#agenciaDeposito", _workspace).val(resultado.agencia);
+	$("#contaDeposito", _workspace).val(resultado.conta);
+	$("#nomeCorrentistaDeposito", _workspace).val(resultado.nomeCorrentista);
+	
+	$("#valorBoleto", _workspace).val(resultado.valor);
+	$("#qtdParcelaBoleto", _workspace).val(resultado.qtdeParcelas);
+	$("#valorParcelaBoleto", _workspace).val(resultado.valorParcela);
+	
+	$("#valorFormaPagamentoDeposito", _workspace).val(resultado.valor);
+	
+	if ($("#valorFormaPagamentoDeposito", _workspace).val().indexOf(".") < 0){
+		
+		$("#valorFormaPagamentoDeposito", _workspace).val($("#valorFormaPagamentoDeposito", _workspace).val() + "00");
+	}
+	
+	$("#valorFormaPagamentoDeposito").priceFormat({centsSeparator : ',',thousandsSeparator : '.'});
+};
+
 
 
 //**************** OUTROS PROTOTYPE ********************//
@@ -1598,109 +1861,6 @@ Outros.prototype.initGrid = function() {
 	
 };
 
-TipoCotaGarantia.prototype.opcaoPagto = function(op){
-	
-	if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
-		$('#divFormaBoleto').show();
-		$('#divFormaDeposito').hide();
-		$('#divFormaDinheiro').hide();
-		$('#divFormaDesconto').hide();
-    }
-	else if ((op=='DEPOSITO')||(op=='TRANSFERENCIA_BANCARIA')){
-		$('#divFormaBoleto').hide();
-		$('#divFormaDeposito').show();
-		$('#divFormaDinheiro').hide();
-		$('#divFormaDesconto').hide();
-	}    
-	else if (op=='DINHEIRO'){
-		$('#divFormaBoleto').hide();
-		$('#divFormaDeposito').hide();
-		$('#divFormaDinheiro').show();
-		$('#divFormaDesconto').hide();
-	}    
-	else{
-		$('#divFormaBoleto').hide();
-		$('#divFormaDeposito').hide();
-		$('#divFormaDinheiro').hide();
-		$('#divFormaDesconto').show();
-	}
-	
-};
 
-TipoCotaGarantia.prototype.mostraDiario = function(){
-	$("#tipoFormaCobranca").val('DIARIA');
-	$("#semanal").attr("checked", false);
-	$("#quinzenal").attr("checked", false);
-	$("#mensal").attr("checked", false);
-	$( ".semanal" ).hide();
-	$( ".quinzenal" ).hide();
-	$( ".mensal" ).hide();
-	$( ".diario").show();
-};
-
-TipoCotaGarantia.prototype.mostraQuinzenal = function(){
-	$("#tipoFormaCobranca", this.workspace).val('QUINZENAL');
-	$("#diario").attr("checked", false);
-	$("#semanal").attr("checked", false);
-	$("#mensal").attr("checked", false);
-	$( ".diario" ).hide();
-	$( ".semanal" ).hide();
-	$( ".mensal" ).hide();
-	$( ".quinzenal").show();
-};
-
-TipoCotaGarantia.prototype.mostraSemanal = function(){
-	$("#tipoFormaCobranca", this.workspace).val('SEMANAL');
-	$("#diario").attr("checked", false);
-	$("#quinzenal").attr("checked", false);
-	$("#mensal").attr("checked", false);
-	$( ".diario" ).hide();
-	$( ".quinzenal" ).hide();
-	$( ".mensal" ).hide();
-	$( ".semanal" ).show();
-};
-	
-TipoCotaGarantia.prototype.mostraMensal = function(){
-	$("#tipoFormaCobranca", this.workspace).val('MENSAL');
-	$("#diario").attr("checked", false);
-	$("#semanal").attr("checked", false);
-	$("#quinzenal").attr("checked", false);
-	$( ".diario" ).hide();
-	$( ".semanal" ).hide();
-	$( ".quinzenal" ).hide();
-	$( ".mensal" ).show();
-};
-
-TipoCotaGarantia.prototype.opcaoTipoFormaCobranca = function(op){
-	if (op=='SEMANAL'){
-		$("#semanal").attr("checked", true);
-		$("#mensal").attr("checked", false);
-		$("#diario").attr("checked", false);
-		$("#quinzenal").attr("checked", false);
-		this.mostraSemanal();
-    }
-	else if (op=='MENSAL'){
-		$("#semanal").attr("checked", false);
-		$("#mensal").attr("checked", true);
-		$("#diario").attr("checked", false);
-		$("#quinzenal").attr("checked", false);
-		this.mostraMensal();
-	}    
-	else if (op=='DIARIA'){
-		$("#semanal").attr("checked", false);
-		$("#mensal").attr("checked", false);
-		$("#diario").attr("checked", true);
-		$("#quinzenal").attr("checked", false);
-		this.mostraDiario();
-	}    
-	else if (op=='QUINZENAL'){
-		$("#semanal").attr("checked", false);
-		$("#mensal").attr("checked", false);
-		$("#diario").attr("checked", false);
-		$("#quinzenal").attr("checked", true);
-		this.mostraQuinzenal();
-	}    
-};
 
 //@ sourceURL=scriptCotaGarantia.js
-

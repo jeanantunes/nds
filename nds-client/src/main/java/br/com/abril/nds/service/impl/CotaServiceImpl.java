@@ -68,6 +68,7 @@ import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -92,6 +93,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.HistoricoTitularidadeService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -192,6 +194,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private HistoricoTitularidadeService historicoTitularidadeService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1709,15 +1714,16 @@ public class CotaServiceImpl implements CotaService {
 
 		Cota cotaAntiga = this.cotaRepository.buscarPorId(cotaDTO.getIdCota());
 
+		HistoricoTitularidadeCota historicoCota = this.historicoTitularidadeService.gerarHistoricoTitularidadeCota(cotaAntiga);
+		
 		List<PDV> pdvs = cotaAntiga.getPdvs();
 		Set<Fornecedor> fornecedores = cotaAntiga.getFornecedores();
 		Set<DescontoProdutoEdicao> descontosProdutoEdicao = cotaAntiga.getDescontosProdutoEdicao();
 		ParametroCobrancaCota parametrosCobrancaCota = cotaAntiga.getParametroCobranca();
 		ParametroDistribuicaoCota parametroDistribuicaoCota = cotaAntiga.getParametroDistribuicao();
 
-//		TODO: aguardando resposta do Francivaldo.
-//		ContratoCota contratoCota = cotaAntiga.getContratoCota();
-//		boolean possuiContrato = cotaAntiga.isPossuiContrato();
+		Set<HistoricoTitularidadeCota> titularesCota = cotaAntiga.getTitularesCota();
+		titularesCota.add(historicoCota);
 
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
@@ -1728,11 +1734,10 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
 		cotaNova.setParametroCobranca(parametrosCobrancaCota);
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
+		cotaNova.setTitularesCota(titularesCota);
 
-//		TODO: aguardando resposta do Francivaldo.
-//		cotaNova.setContratoCota(contratoCota);
-//		cotaNova.setPossuiContrato(possuiContrato);
-
+		this.cotaRepository.merge(cotaNova);
+		
 		return cotaDTO;
 	}
 	
@@ -1849,6 +1854,7 @@ public class CotaServiceImpl implements CotaService {
 			
 			if (pdv != null){
 				
+				dto.setReferenciaEndereco(pdv.getPontoReferencia());
 				dto.setHorariosFuncionamento(pdv.getPeriodos());
 				
 				Endereco enderecoPDV = this.enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
@@ -1863,11 +1869,18 @@ public class CotaServiceImpl implements CotaService {
 			}
 		}
 		
-		//TODO
-		//referencia de entrega? dafuq???
-		//Débito: informação se o desconto é mensal / quinzenal / semanal / diário (informação no Cadastro dos Tipos de Serviços). non ecxiste mais
+		if (cota.getParametroDistribuicao() != null &&
+				cota.getParametroDistribuicao().getTipoEntrega() != null &&
+				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade() != null){
+		
+			dto.setPeriodicidade(
+				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade().getDescricao());
+		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("SUBREPORT_DIR",
+				Thread.currentThread().getContextClassLoader().getResource("/reports/").getPath());
+		
 		parameters.put("infoComp", this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao());
 		
 		List<TermoAdesaoDTO> listaDTO = new ArrayList<TermoAdesaoDTO>();

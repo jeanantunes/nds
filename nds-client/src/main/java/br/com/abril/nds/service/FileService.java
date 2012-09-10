@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,11 @@ public interface FileService {
 	 */
 	ArquivoDTO obterArquivoTemp(String dirBase) throws FileNotFoundException, IOException;
 
+	
+	/**
+	 * Remove todos os arquivos do diretório parametrizado
+	 */
+	void limparDiretorio(File diretorio);
 
 	/**
 	 * Obtém nome do arquivo temporario salvo

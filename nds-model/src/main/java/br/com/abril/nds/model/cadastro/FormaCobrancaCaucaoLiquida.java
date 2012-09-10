@@ -25,7 +25,7 @@ public class FormaCobrancaCaucaoLiquida implements Serializable {
 	/**
 	 * Serial Version UID
 	 */
-	private static final long serialVersionUID = -2405188133540434339L;
+	private static final long serialVersionUID = -2405188133540434350L;
 
 	@Id
 	@GeneratedValue(generator = "FORMA_COBRANCA_CAUCAO_LIQUIDA_SEQ")

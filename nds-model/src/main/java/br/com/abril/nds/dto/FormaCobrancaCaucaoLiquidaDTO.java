@@ -1,7 +1,7 @@
 package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 public class FormaCobrancaCaucaoLiquidaDTO {
@@ -11,16 +11,16 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	Long idCaucaoLiquida;
 	
 	//DADOS DO FORMULARIO
-	TipoCobranca tipoCobranca;
+	TipoCobrancaCotaGarantia tipoCobranca;
 	TipoFormaCobranca tipoFormaCobranca;
 	
-	Integer numBanco;
+	String numBanco;
 	String nomeBanco;
-	Integer agencia;
+	Long agencia;
 	String agenciaDigito;
-	Integer conta;
+	Long conta;
 	String contaDigito;
-	String nomeCorrentista;
+	String nomeCorrentista;	
 	
 	Integer diaDoMes;
 	Integer primeiroDiaQuinzenal;
@@ -36,15 +36,17 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	BigDecimal valor;
 	Integer qtdeParcelas;
 	BigDecimal valorParcela;
+	
+	BigDecimal valorFormaPagamentoDeposito;
 
 	public FormaCobrancaCaucaoLiquidaDTO(){
 		
 	}
 	
 	//CONTRUTOR PARA O FORMULARIO
-	public FormaCobrancaCaucaoLiquidaDTO(long idCota, TipoCobranca tipoCobranca, 
-			TipoFormaCobranca tipoFormaCobranca,Integer numBanco, String nomeBanco,String nomeCorrentista,
-			Integer agencia, String agenciaDigito, Integer conta,
+	public FormaCobrancaCaucaoLiquidaDTO(long idCota, TipoCobrancaCotaGarantia tipoCobranca, 
+			TipoFormaCobranca tipoFormaCobranca,String numBanco, String nomeBanco,String nomeCorrentista,
+			Long agencia, String agenciaDigito, Long conta,
 			String contaDigito, Integer diaDoMes, Integer primeiroDiaQuinzenal, Integer segundoDiaQuinzenal, boolean domingo, boolean segunda,
 			boolean terca, boolean quarta, boolean quinta, boolean sexta,
 			boolean sabado) {
@@ -70,7 +72,23 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 		this.sexta = sexta;
 		this.sabado = sabado;
 	}
-	
+
+	public Long getIdFormaCobrancaCaucaoLiquida() {
+		return idFormaCobrancaCaucaoLiquida;
+	}
+
+	public void setIdFormaCobrancaCaucaoLiquida(Long idFormaCobrancaCaucaoLiquida) {
+		this.idFormaCobrancaCaucaoLiquida = idFormaCobrancaCaucaoLiquida;
+	}
+
+	public Long getIdCaucaoLiquida() {
+		return idCaucaoLiquida;
+	}
+
+	public void setIdCaucaoLiquida(Long idCaucaoLiquida) {
+		this.idCaucaoLiquida = idCaucaoLiquida;
+	}
+
 	public Long getIdCota() {
 		return idCota;
 	}
@@ -79,11 +97,11 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 		this.idCota = idCota;
 	}
 
-	public TipoCobranca getTipoCobranca() {
+	public TipoCobrancaCotaGarantia getTipoCobranca() {
 		return tipoCobranca;
 	}
 
-	public void setTipoCobranca(TipoCobranca tipoCobranca) {
+	public void setTipoCobranca(TipoCobrancaCotaGarantia tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
 	}
 
@@ -95,11 +113,11 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 		this.tipoFormaCobranca = tipoFormaCobranca;
 	}
 
-	public Integer getNumBanco() {
+	public String getNumBanco() {
 		return numBanco;
 	}
 
-	public void setNumBanco(Integer numBanco) {
+	public void setNumBanco(String numBanco) {
 		this.numBanco = numBanco;
 	}
 
@@ -119,11 +137,11 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 		this.nomeCorrentista = nomeCorrentista;
 	}
 
-	public Integer getAgencia() {
+	public Long getAgencia() {
 		return agencia;
 	}
 
-	public void setAgencia(Integer agencia) {
+	public void setAgencia(Long agencia) {
 		this.agencia = agencia;
 	}
 
@@ -135,11 +153,11 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 		this.agenciaDigito = agenciaDigito;
 	}
 
-	public Integer getConta() {
+	public Long getConta() {
 		return conta;
 	}
 
-	public void setConta(Integer conta) {
+	public void setConta(Long conta) {
 		this.conta = conta;
 	}
 
@@ -253,5 +271,14 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 
 	public void setValorParcela(BigDecimal valorParcela) {
 		this.valorParcela = valorParcela;
+	}
+
+	public BigDecimal getValorFormaPagamentoDeposito() {
+		return valorFormaPagamentoDeposito;
+	}
+
+	public void setValorFormaPagamentoDeposito(
+			BigDecimal valorFormaPagamentoDeposito) {
+		this.valorFormaPagamentoDeposito = valorFormaPagamentoDeposito;
 	}
 }

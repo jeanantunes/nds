@@ -18,7 +18,7 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.ContaDepositoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
@@ -152,14 +152,14 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		salvarCaucaoLiquidaPagamentoTransferencia(cotaGarantiaCaucaoLiquida);
 	}
 
-	private ContaDepositoCaucaoLiquida getCotaCaucaoLiquida() {
+	private ContaBancariaDeposito getCotaCaucaoLiquida() {
 		
-		ContaDepositoCaucaoLiquida contaDepositoCaucaoLiquida = new ContaDepositoCaucaoLiquida();
-		contaDepositoCaucaoLiquida.setNomebanco("Nome Banco");
+		ContaBancariaDeposito contaDepositoCaucaoLiquida = new ContaBancariaDeposito();
+		contaDepositoCaucaoLiquida.setNomeBanco("Nome Banco");
 		contaDepositoCaucaoLiquida.setNomeCorrentista("Correntista");
-		contaDepositoCaucaoLiquida.setNumeroAgencia(123);
-		contaDepositoCaucaoLiquida.setNumeroBanco(12);
-		contaDepositoCaucaoLiquida.setNumeroContaCorrente(12345898);
+		contaDepositoCaucaoLiquida.setAgencia(123l);
+		contaDepositoCaucaoLiquida.setNumeroBanco("12");
+		contaDepositoCaucaoLiquida.setConta(12345898l);
 		return contaDepositoCaucaoLiquida;
 	}
 

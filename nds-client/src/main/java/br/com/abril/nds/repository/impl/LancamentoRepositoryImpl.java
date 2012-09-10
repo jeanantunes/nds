@@ -899,13 +899,16 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" inner join lancamentoParcial.periodos as periodo 	");
 		
-		hql.append(" inner join periodos.lancamento as lancamento 		");
+		hql.append(" inner join periodo.lancamento as lancamento 		");
 		
 		hql.append(" where ");
 
 		hql.append(" lancamentoParcial.produtoEdicao.id = :idProdutoEdicao and  ");
+		
 		hql.append(" lancamentoParcial.lancamentoInicial <= :dataOperacao and 	");
+		
 		hql.append(" lancamentoParcial.recolhimentoFinal >= :dataOperacao and 	");
+		
 		hql.append(" lancamento.dataLancamentoDistribuidor < :dataOperacao 	    ");
 		
 		Query query = getSession().createQuery(hql.toString());

@@ -34,6 +34,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -144,7 +145,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 				
 				save(movimentoEstoque);
 				
-				Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true);
+				Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
 				save(diferenca);
 				
 				itemFisico.setDiferenca(diferenca);

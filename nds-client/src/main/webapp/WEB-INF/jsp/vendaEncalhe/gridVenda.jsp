@@ -1,74 +1,4 @@
-
-<script type="text/javascript">
-
-$(function() {
-
-	$("#vendaEncalhesGrid").flexigrid({
-		preProcess:VENDA_PRODUTO.executarPreProcessamentoGridVenda,
-		onSuccess: VENDA_PRODUTO.formatarCampos,
-		dataType : 'json',
-		colModel :[ {
-			display : 'Código de Barras',
-			name : 'codigoBarras',
-			width : 170,
-			sortable : true,
-			align : 'left'
-		}, { 
-			display : 'Código',
-			name : 'codigoProduto',
-			width : 70,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Produto',
-			name : 'nomeProduto',
-			width : 150,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Edição',
-			name : 'numeroEdicao',
-			width : 60,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Preço c/ Desc. R$',
-			name : 'precoDesconto',
-			width : 80,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Qtde Disp.',
-			name : 'qntDisponivel',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Qtde Solic.',
-			name : 'qntSolicitada',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Total R$',
-			name : 'total',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Forma de Venda',
-			name : 'formaVenda',
-			width : 130,
-			sortable : true,
-			align : 'left'
-		}],
-		width : 1000,
-		height : 220
-	});
-});
-</script>
-
-
+<form id="form-venda-encalhe">
 <div id="dialog-venda-encalhe" style="display: none;" title="Venda de Encalhe">
 <jsp:include page="../messagesDialog.jsp" />     
 <table width="720" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -118,3 +48,4 @@ $(function() {
 </table>
 
 </div>
+</form>
