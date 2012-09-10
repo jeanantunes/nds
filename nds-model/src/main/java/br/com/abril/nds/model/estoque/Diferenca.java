@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -73,6 +75,13 @@ public class Diferenca implements Serializable {
 	@Transient
 	private BigDecimal valorTotalDiferenca;
 	
+	@OneToMany(mappedBy = "diferenca")
+	private Collection<RateioDiferenca> rateios;
+	
+	@OneToOne
+	@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")
+	private LancamentoDiferenca lancamentoDiferenca;
+	
 	public Diferenca() {
 		
 	}
@@ -89,7 +98,7 @@ public class Diferenca implements Serializable {
 		this.movimentoEstoque = diferenca.movimentoEstoque;
 		this.automatica = diferenca.automatica;
 		this.tipoEstoque = diferenca.tipoEstoque;
-		
+		this.lancamentoDiferenca = diferenca.lancamentoDiferenca;
 		this.valorTotalDiferenca = valorTotalDiferenca;
 	}
 	
@@ -171,6 +180,22 @@ public class Diferenca implements Serializable {
 
 	public void setValorTotalDiferenca(BigDecimal valorTotalDiferenca) {
 		this.valorTotalDiferenca = valorTotalDiferenca;
+	}
+	
+	public Collection<RateioDiferenca> getRateios() {
+		return rateios;
+	}
+
+	public void setRateios(Collection<RateioDiferenca> rateios) {
+		this.rateios = rateios;
+	}
+
+	public LancamentoDiferenca getLancamentoDiferenca() {
+		return lancamentoDiferenca;
+	}
+
+	public void setLancamentoDiferenca(LancamentoDiferenca lancamentoDiferenca) {
+		this.lancamentoDiferenca = lancamentoDiferenca;
 	}
 
 	/* (non-Javadoc)
