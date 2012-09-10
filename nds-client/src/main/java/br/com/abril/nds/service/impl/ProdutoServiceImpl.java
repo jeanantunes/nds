@@ -217,7 +217,6 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public Produto obterProdutoPorID(Long id) {
 
 		Produto produto = this.produtoRepository.obterProdutoPorID(id);
-				
 		return produto;
 	}
 

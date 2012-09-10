@@ -41,11 +41,14 @@ public class DistribuicaoDTO implements Serializable  {
 	private String gerenteComercial;
 	private Boolean utilizaProcuracao;
 	private Boolean procuracaoRecebida;
-	private BigDecimal taxaFixa;
+	private Boolean utilizaTermoAdesao;
+	private Boolean termoAdesaoRecebido;
 	private BigDecimal percentualFaturamento;
+	private BigDecimal taxaFixa;
 	private String inicioPeriodoCarencia;
 	private String fimPeriodoCarencia;
 	private String nomeTermoAdesao;
+	private String nomeProcuracao;
 	
 	private List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega;
 	
@@ -376,20 +379,6 @@ public class DistribuicaoDTO implements Serializable  {
 	}
 
 	/**
-	 * @return the taxaFixa
-	 */
-	public BigDecimal getTaxaFixa() {
-		return taxaFixa;
-	}
-
-	/**
-	 * @param taxaFixa the taxaFixa to set
-	 */
-	public void setTaxaFixa(BigDecimal taxaFixa) {
-		this.taxaFixa = taxaFixa;
-	}
-
-	/**
 	 * @return the percentualFaturamento
 	 */
 	public BigDecimal getPercentualFaturamento() {
@@ -403,6 +392,48 @@ public class DistribuicaoDTO implements Serializable  {
 		this.percentualFaturamento = percentualFaturamento;
 	}
 
+	/**
+	 * @return the utilizaTermoAdesao
+	 */
+	public Boolean getUtilizaTermoAdesao() {
+		return utilizaTermoAdesao;
+	}
+
+	/**
+	 * @param utilizaTermoAdesao the utilizaTermoAdesao to set
+	 */
+	public void setUtilizaTermoAdesao(Boolean utilizaTermoAdesao) {
+		this.utilizaTermoAdesao = utilizaTermoAdesao;
+	}
+
+	/**
+	 * @return the termoAdesaoRecebido
+	 */
+	public Boolean getTermoAdesaoRecebido() {
+		return termoAdesaoRecebido;
+	}
+
+	/**
+	 * @param termoAdesaoRecebido the termoAdesaoRecebido to set
+	 */
+	public void setTermoAdesaoRecebido(Boolean termoAdesaoRecebido) {
+		this.termoAdesaoRecebido = termoAdesaoRecebido;
+	}
+
+	/**
+	 * @return the taxaFixa
+	 */
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
+	}
+	
+	/**
+	 * @param taxaFixa the taxaFixa to set
+	 */
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+	
 	/**
 	 * @return the inicioPeriodoCarencia
 	 */
@@ -445,4 +476,19 @@ public class DistribuicaoDTO implements Serializable  {
 	public void setNomeTermoAdesao(String nomeTermoAdesao) {
 		this.nomeTermoAdesao = nomeTermoAdesao;
 	}
+
+	/**
+	 * @return the nomeProcuracao
+	 */
+	public String getNomeProcuracao() {
+		return nomeProcuracao;
+	}
+
+	/**
+	 * @param nomeProcuracao the nomeProcuracao to set
+	 */
+	public void setNomeProcuracao(String nomeProcuracao) {
+		this.nomeProcuracao = nomeProcuracao;
+	}
+	
 }
