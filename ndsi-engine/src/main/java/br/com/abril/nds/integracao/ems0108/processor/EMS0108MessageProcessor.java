@@ -91,7 +91,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento.setDataRecolhimentoDistribuidor(dataRec);
 			lancamento.setDataRecolhimentoPrevista(dataRec);
 			lancamento.setDataStatus(new Date());
-			lancamento.setNumeroReprogramacoes(0);
+			lancamento.setNumeroReprogramacoes(null);
 			lancamento.setProdutoEdicao(produtoEdicao);
 			lancamento.setReparte(BigInteger.valueOf(0));
 
@@ -140,10 +140,9 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento.setDataRecolhimentoDistribuidor(dataRec);
 			lancamento.setDataRecolhimentoPrevista(dataRec);
 			lancamento.setDataStatus(new Date());
-			// TODO Solicitar revisão modelo de numeroReprogramacoes: mapear
-			// para Integer em vez de int. Deve ser null em vez de 0
-			lancamento.setNumeroReprogramacoes(0);
+			lancamento.setNumeroReprogramacoes(null);
 			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setAlteradoInteface(true);
 		}
 	}
 
