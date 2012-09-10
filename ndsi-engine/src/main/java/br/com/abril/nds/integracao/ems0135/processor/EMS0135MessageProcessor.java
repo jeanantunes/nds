@@ -90,12 +90,34 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			atualizarNotaFiscalEntrada(notafiscalEntrada, input, produtoEdicao);
 		}
 		
+		this.calcularValores(notafiscalEntrada, input);
 		
 		salvarItemNota(notafiscalEntrada, input, produtoEdicao);
 	}
 	
-	private BigDecimal calcularValorBruto() {
-		return BigDecimal.ZERO;
+	/**
+	 * Realiza os cálculos de valores da Nota Fiscal. Após os cálculos, salva
+	 * os novos valores. 
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 */
+	private void calcularValores(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
+		
+	}
+	
+	/**
+	 * Método que contém as regras para o cálculo de Valor Bruto de uma Nf.
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 * @return
+	 */
+	private BigDecimal calcularValorBruto(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
+		BigDecimal valorBruto = nfEntrada.getValorBruto();
+		valorBruto = valorBruto.add(BigDecimal.valueOf(input.getPreco() 
+				* input.getQtdExemplar()));
+		return valorBruto;
 	}
 	
 	private BigDecimal calcularValorLiquido() {
@@ -167,13 +189,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
 		item.setDataLancamento(lancamento.getDataLancamentoPrevista());
 		item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
-		
-		
-		// Cálcular os valores "bruto", "liquido" e ":esconto":
-		BigDecimal valorBruto = nfEntrada.getValorBruto();
-		valorBruto = valorBruto.add(BigDecimal.valueOf(input.getPreco() 
-				* input.getQtdExemplar()));
-		nfEntrada.setValorBruto(valorBruto);
 		
 		this.getSession().persist(item);
 	}
