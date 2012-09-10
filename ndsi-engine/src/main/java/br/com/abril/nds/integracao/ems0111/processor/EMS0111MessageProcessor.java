@@ -153,7 +153,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// EFETIVAR INSERCAO NA BASE
 			getSession().persist(lancamento);			
 		} else {
-			
+			lancamento.setAlteradoInteface(true);
 			/*
 			 * Atualizar Lançamento:
 			 * 

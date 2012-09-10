@@ -324,3 +324,5 @@ var lancamentoRateioController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=lancamentoRateio.js

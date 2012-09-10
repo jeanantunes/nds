@@ -262,7 +262,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.qtde ";
 					break;
 				case STATUS_APROVACAO:
-					hql += "order by diferenca.tipoDiferenca ";
+					hql += "order by diferenca.statusConfirmacao ";
 					break;
 				case VALOR_TOTAL_DIFERENCA:
 					hql += " order by "
@@ -368,7 +368,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 				 
 				 hql += " join diferenca.produtoEdicao.produto.fornecedores fornecedores ";
 			}
-				 
+			
+			if (filtro.getIdCota() != null) {
+				 hql += " join diferenca.rateios rateios ";
+			}
+			
 			hql += " where diferenca.movimentoEstoque is not null "
 				+ " and diferenca.statusConfirmacao = :statusConfirmacao ";
 			
@@ -386,6 +390,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 				hql += " and fornecedores.id = :idFornecedor ";
 			}
 			
+			if (filtro.getIdCota() != null) {
+				hql += " and rateios.cota.id = :idCota ";
+			}
+						
 			if (filtro.getPeriodoVO() != null
 					&& filtro.getPeriodoVO().getDataInicial() != null
 					&& filtro.getPeriodoVO().getDataFinal() != null) {
@@ -429,6 +437,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		if (filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		if (filtro.getIdCota() != null) {
+			query.setParameter("idCota", filtro.getIdCota());
 		}
 		
 		if (filtro.getPeriodoVO() != null

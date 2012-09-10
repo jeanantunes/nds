@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public enum TipoParametroSistema {
 
-	PATH_SERVER_ROOT,
+	PATH_ARQUIVOS_DISTRIBUICAO_COTA,
 	
 	PATH_IMAGENS_CAPA,
 

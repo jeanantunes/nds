@@ -121,6 +121,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -1813,7 +1814,7 @@ public class Fixture {
 									  StatusConfirmacao statusConfirmacao,
 									  ItemRecebimentoFisico itemRecebimentoFisico,
 									  MovimentoEstoque movimentoEstoque,
-									  Boolean automatica) {
+									  Boolean automatica, TipoEstoque tipoEstoque) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -1825,6 +1826,7 @@ public class Fixture {
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		diferenca.setMovimentoEstoque(movimentoEstoque);
 		diferenca.setAutomatica(automatica);
+		diferenca.setTipoEstoque(tipoEstoque);
 		
 		return diferenca;
 	}
@@ -3383,4 +3385,18 @@ public class Fixture {
 		
 		return descontoL;
 	}
+    
+    public static RateioDiferenca criarRateioDiferenca(Cota cota, Date dataNotaEnvio, BigInteger qtde, 
+    		EstudoCota estudoCota, Diferenca diferenca) {
+    	
+    	RateioDiferenca rateio = new RateioDiferenca();
+    	
+    	rateio.setCota(cota);
+    	rateio.setDataNotaEnvio(dataNotaEnvio);
+    	rateio.setQtde(qtde);
+    	rateio.setEstudoCota(estudoCota);
+    	rateio.setDiferenca(diferenca);
+    	
+    	return rateio;
+    }
 }

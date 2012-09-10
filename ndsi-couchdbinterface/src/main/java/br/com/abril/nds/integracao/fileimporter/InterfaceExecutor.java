@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -174,11 +175,11 @@ public class InterfaceExecutor {
 	private void executarInterfaceImagem() {
 		
 		String diretorio = parametroSistemaDAO.getParametro("IMAGE_DIR");
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_integracao");
+		CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
 				
 		File[] imagens = new File(diretorio).listFiles(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
-		        return name.toLowerCase().endsWith(".jpg");
+		        return name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg");
 		    }
 		});
 		
@@ -195,21 +196,34 @@ public class InterfaceExecutor {
 				
 				doc = new IntegracaoDocument();
 				doc.set_id(id);
-				doc.setTipoDocumento("ImagemCapa");
+				doc.setTipoDocumento("ImagemCapa");				
 				couchDbClient.save(doc);
-			}
-				
-			doc = couchDbClient.find(IntegracaoDocument.class, doc.get_id());
 			
-			try {
-				FileInputStream in = new FileInputStream(imagem);
-				couchDbClient.saveAttachment(in, imagem.getName(), "image/jpeg", doc.get_id(), doc.get_rev());
-				in.close();
+				
+			    doc = couchDbClient.find(IntegracaoDocument.class, doc.get_id());
+			
+			
+				FileInputStream in = null;
+				try {
+					in = new FileInputStream(imagem);					
+					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} finally {
+					if (null != in) {
+						try {
+							in.close();
+						} catch (IOException e1) {							
+							e1.printStackTrace();
+						}
+					}
+				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			imagem.delete();
+			//imagem.delete();
 		}
 		
 		couchDbClient.shutdown();
