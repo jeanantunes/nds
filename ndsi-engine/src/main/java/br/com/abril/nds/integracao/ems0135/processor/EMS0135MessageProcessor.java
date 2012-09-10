@@ -105,7 +105,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private void calcularValores(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
 		
 		BigDecimal valorBruto = this.calcularValorBruto(nfEntrada, input);
-		
 		nfEntrada.setValorBruto(valorBruto);
 		
 		
@@ -113,17 +112,20 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	/**
-	 * Método que contém as regras para o cálculo de Valor Bruto de uma Nf.
+	 * Método que contém as regras para o cálculo do "Valor Bruto" de uma NF.
 	 * 
 	 * @param nfEntrada
 	 * @param input
 	 * @return
 	 */
 	private BigDecimal calcularValorBruto(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
-		BigDecimal valorBruto = nfEntrada.getValorBruto();
-		valorBruto = valorBruto.add(BigDecimal.valueOf(input.getPreco() 
-				* input.getQtdExemplar()));
-		return valorBruto;
+		
+		BigDecimal valorBrutoTotal = nfEntrada.getValorBruto();
+		BigDecimal valorBrutoItem = BigDecimal.valueOf(input.getPreco() 
+				* input.getQtdExemplar());
+		valorBrutoTotal = valorBrutoTotal.add(valorBrutoItem);
+		
+		return valorBrutoTotal;
 	}
 	
 	private BigDecimal calcularValorLiquido() {
