@@ -368,7 +368,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 
 		 if (produto!=null && !"".equals(produto)){
-	 	     hql.append(auxC+" view.produtoId = "+produto);
+	 	     hql.append(auxC+" view.produtoEdicaoId = "+produto);
 	 	     auxC = " and ";
 	     }
 
