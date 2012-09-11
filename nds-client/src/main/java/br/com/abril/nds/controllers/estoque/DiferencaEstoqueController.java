@@ -56,6 +56,7 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -111,6 +112,9 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private EstudoService estudoService;
+	
+	@Autowired
+	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
 	
 	@Autowired
 	private CotaService cotaService;
@@ -2186,11 +2190,13 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/rateio/buscarReparteCotaPreco")
 	public void buscarReparteCotaPreco(Long idProdutoEdicao, Integer numeroCota){
 		
-		//TODO
-		System.out.println("idProdutoEdicao: " + idProdutoEdicao + " - " + "numeroCota:" + numeroCota);
+		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(idProdutoEdicao, numeroCota);
+		
+		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		
 		Object[] dados = new Object[2];
-		dados[0] = 25;
-		dados[1] = 3.98;
+		dados[0] = qtde;
+		dados[1] = pe.getPrecoVenda();
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
@@ -2199,10 +2205,13 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/rateio/buscarPrecoProdutoEdicao")
 	public void buscarPrecoProdutoEdicao(String codigoProduto, Integer numeroEdicao){
 		
-		System.out.println("codigoProduto: " + codigoProduto + " - " + "numeroEdicao:" + numeroEdicao);
+		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao.toString());
+				
+		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(pe.getId(), null);
+				
 		Object[] dados = new Object[2];
-		dados[0] = 25;
-		dados[1] = 3.98;
+		dados[0] = qtde;
+		dados[1] = pe.getPrecoVenda();
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}

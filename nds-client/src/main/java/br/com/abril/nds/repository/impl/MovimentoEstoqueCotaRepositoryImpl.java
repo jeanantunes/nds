@@ -1374,5 +1374,34 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 			return hql.toString();
 		}
+
+	@Override
+	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao, Long idTipoMovimento) {
+		
+
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select sum(movimentoEstoqueCota.qtde) ");			
+		
+		hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
+		
+		hql.append(" where movimentoEstoqueCota.cota.id = :idCota and ");
+		
+		if(idProdutoEdicao != null)
+			hql.append(" movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
+		
+		hql.append(" movimentoEstoqueCota.tipoMovimento.id = :idTipoMovimento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		if(idProdutoEdicao != null)
+			query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("idTipoMovimento", idTipoMovimento);
+		
+		return ((BigInteger)query.uniqueResult()).longValue();
+	}
 		
 }

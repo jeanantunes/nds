@@ -9,17 +9,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 
 @Service
@@ -30,6 +35,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
@@ -135,6 +143,25 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		}
 		
 		return listaMovimentosFiltrados;
+	}
+
+	@Override
+	@Transactional
+	public Long obterQuantidadeReparteProdutoCota(Long idProdutoEdicao,
+			Integer numeroCota) {		
+		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		TipoMovimentoEstoque tipoMovimentoCota =
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		if(tipoMovimentoCota == null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Tipo de Movimento de Reparte não encontrado."));
+		
+		if(cota == null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota não encontrada."));
+		
+		return movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(cota.getId(), idProdutoEdicao, tipoMovimentoCota.getId());
 	}
 	
 }
