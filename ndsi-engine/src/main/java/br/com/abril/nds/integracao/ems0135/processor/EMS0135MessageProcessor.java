@@ -163,10 +163,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
 		
-		notaFiscalEntradaFornecedor.setDataEmissao(input.getDataEmissao());		
+		notaFiscalEntradaFornecedor.setDataEmissao(input.getDataEmissao());
 		notaFiscalEntradaFornecedor.setNumero(input.getNotaFiscal().longValue());
 		notaFiscalEntradaFornecedor.setSerie(input.getSerieNotaFiscal().toString());		
-		notaFiscalEntradaFornecedor.setDataExpedicao(input.getDataLancamento());		
+		notaFiscalEntradaFornecedor.setDataExpedicao(input.getDataEmissao());		
 		notaFiscalEntradaFornecedor.setChaveAcesso(input.getChaveAcessoNF());		
 		notaFiscalEntradaFornecedor.setCfop(obterCFOP());
 		notaFiscalEntradaFornecedor.setOrigem(Origem.INTERFACE);
