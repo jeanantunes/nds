@@ -1529,5 +1529,14 @@ public class CotaController {
 		
 		fileService.esvaziarTemp(path);
 	}
+	
+	@Post
+	public void carregarValoresEntregaBanca(Integer numCota) {
+		
+		DistribuicaoDTO dto = cotaService.carregarValoresEntregaBanca(numCota);
+		
+		this.result.use(Results.json()).from(dto, "result").serialize();
+	}
+	
 }
 
