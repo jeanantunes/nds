@@ -213,4 +213,16 @@ public interface ParametroCobrancaCotaService {
      *         titularidade da cota
      */
 	List<FornecedorDTO> obterFornecedoresFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
+
+    /**
+     * Obtém as informações de forma de pagamento associadas ao histórico de
+     * titularidade da cota
+     * 
+     * @param idFormaPagto
+     *            identificador da forma de pagto associado ao histórico de
+     *            titularidade da cota
+     * @return dto com as informações de forma de pagamento associados ao
+     *         histórico de titularidade da cota
+     */
+	FormaCobrancaDTO obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
 }

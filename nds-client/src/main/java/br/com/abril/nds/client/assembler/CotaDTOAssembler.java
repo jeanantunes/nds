@@ -439,6 +439,7 @@ public class CotaDTOAssembler {
     public static FormaCobrancaDTO toFormaCobrancaDTO(HistoricoTitularidadeCotaFormaPagamento formaPagto) {
         FormaCobrancaDTO dto = new FormaCobrancaDTO();
         dto.setTipoCobranca(formaPagto.getTipoCobranca());
+        dto.setIdFormaCobranca(formaPagto.getId());
         HistoricoTitularidadeCotaBanco banco = formaPagto.getBanco();
         if (banco != null) {
             dto.setAgencia(banco.getAgencia());

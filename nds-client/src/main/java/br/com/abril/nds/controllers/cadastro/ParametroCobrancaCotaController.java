@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
@@ -95,8 +96,6 @@ public class ParametroCobrancaCotaController {
     
     private HttpServletResponse httpResponse;
 	
-	private static List<ItemDTO<Integer,String>> listaBancos =  new ArrayList<ItemDTO<Integer,String>>();
-
     private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
      
     private static List<ItemDTO<TipoCota,String>> listaTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
@@ -141,10 +140,9 @@ public class ParametroCobrancaCotaController {
 	 * Método de Pré-carregamento de itens da pagina com informações default.
 	 */
 	public void preCarregamento(){
-		listaBancos = this.bancoService.getComboBancos();
 		listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
 		listaTiposCota = this.cotaService.getComboTiposCota();
-		result.include("listaBancos",listaBancos);
+		result.include("listaBancos", bancoService.getComboBancos());
 		result.include("listaTiposCobranca",listaTiposCobranca);
 		result.include("listaTiposCota",listaTiposCota);
 	}
@@ -161,10 +159,23 @@ public class ParametroCobrancaCotaController {
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
 	        listaFornecedores = this.parametroCobrancaCotaService.getComboFornecedoresCota(idCota);
 	    } else {
-	        listaFornecedores = parametroCobrancaCotaService.obterFornecedoresFormaPagamentoHistoricoTitularidade(idFormaPagto);
+            List<FornecedorDTO> fornecedores = parametroCobrancaCotaService
+                    .obterFornecedoresFormaPagamentoHistoricoTitularidade(idFormaPagto);
+            listaFornecedores = new ArrayList<ItemDTO<Long, String>>(
+                    fornecedores.size());
+            for (FornecedorDTO fornecedorDTO : fornecedores) {
+                listaFornecedores.add(new ItemDTO<Long, String>(fornecedorDTO
+                        .getIdFornecedor(), fornecedorDTO.getRazaoSocial()));
+            }
 	    }
 		result.use(Results.json()).from(listaFornecedores, "result").recursive().serialize();
 	}
+	
+    @Post
+    @Path("/carregarBancos")
+    public void carregarBancos(){
+        result.use(Results.json()).from(bancoService.getComboBancos(), "result").recursive().serialize();
+    }
 
 	
 	/**
@@ -212,24 +223,32 @@ public class ParametroCobrancaCotaController {
 	 * @throws Mensagens de Validação.
 	 * @param idFormaCobranca
 	 */
-	@Post
-	@Path("/obterFormaCobranca")
-	public void obterFormaCobranca(Long idFormaCobranca){
-		
-		validar();
-		
-		if (idFormaCobranca==null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O código da forma de cobrança informado náo é válido.");
-		} 
+    @Post
+    @Path("/obterFormaCobranca")
+    public void obterFormaCobranca(Long idFormaCobranca, ModoTela modoTela) {
+        FormaCobrancaDTO formaCobranca = null;
+        validar();
+        if (idFormaCobranca == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O código da forma de cobrança informado náo é válido.");
+        }
 
-		FormaCobrancaDTO formaCobranca = this.parametroCobrancaCotaService.obterDadosFormaCobranca(idFormaCobranca);
-		
-		if (formaCobranca==null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma forma de cobrança encontrada para o código de forma de cobrança.");
-		} 
-		
-		result.use(Results.json()).from(formaCobranca,"result").recursive().serialize();
-	}
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            formaCobranca = this.parametroCobrancaCotaService
+                    .obterDadosFormaCobranca(idFormaCobranca);
+        } else {
+            formaCobranca = parametroCobrancaCotaService
+                    .obterFormaPagamentoHistoricoTitularidade(idFormaCobranca);
+        }
+
+        if (formaCobranca == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Nenhuma forma de cobrança encontrada para o código de forma de cobrança.");
+        }
+
+        result.use(Results.json()).from(formaCobranca, "result").recursive()
+                .serialize();
+    }
 
 	
 	/**

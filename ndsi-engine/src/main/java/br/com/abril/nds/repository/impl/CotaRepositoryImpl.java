@@ -1388,6 +1388,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
     @Override
     public HistoricoTitularidadeCotaFormaPagamento obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto) {
         Validate.notNull(idFormaPagto, "Identificador da forma de pagamento não deve ser nulo!");
+        
         String hql = "from HistoricoTitularidadeCotaFormaPagamento where id = :id";
         Query query = getSession().createQuery(hql);
         query.setParameter("id", idFormaPagto);

@@ -988,5 +988,18 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
         HistoricoTitularidadeCotaFormaPagamento formaPagto = cotaRepository.obterFormaPagamentoHistoricoTitularidade(idFormaPagto);
         return new ArrayList<FornecedorDTO>(CotaDTOAssembler.toFornecedorDTOCollection(formaPagto.getFornecedores()));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	@Transactional(readOnly = true)
+    public FormaCobrancaDTO obterFormaPagamentoHistoricoTitularidade(
+            Long idFormaPagto) {
+	    Validate.notNull(idFormaPagto, "Identificador da Forma de Pagamento não deve ser nulo!");
+	    
+	    HistoricoTitularidadeCotaFormaPagamento formaPagto = cotaRepository.obterFormaPagamentoHistoricoTitularidade(idFormaPagto);
+        return CotaDTOAssembler.toFormaCobrancaDTO(formaPagto);
+    }
 	
 }
