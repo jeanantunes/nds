@@ -5,7 +5,8 @@ public enum StatusAprovacao {
 	PENDENTE("Pendente", "P"), 
 	APROVADO("Aprovado", "A"), 
 	REJEITADO("Rejeitado", "R"),
-	PERDA_GANHO("Perda/Ganho", "PG");
+	PERDA("Perda", "PD"),
+	GANHO("Ganho", "G");
 
 	private String descricao;
 	

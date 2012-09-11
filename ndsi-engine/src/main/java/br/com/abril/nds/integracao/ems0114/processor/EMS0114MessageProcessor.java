@@ -104,6 +104,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 								+ "para: " + simpleDateFormat.format(
 										dtRecolhimentoArquivo));
 				lancamento.setDataRecolhimentoPrevista(dtRecolhimentoArquivo);
+				lancamento.setAlteradoInteface(true);
 			}
 			
 			
@@ -120,6 +121,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 								+ "para: " + simpleDateFormat.format(
 										dtRecolhimentoArquivo));
 				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
+				lancamento.setAlteradoInteface(true);
 				
 			}
 		}

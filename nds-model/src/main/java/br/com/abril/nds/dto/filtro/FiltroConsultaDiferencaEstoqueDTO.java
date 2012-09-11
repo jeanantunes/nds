@@ -45,6 +45,8 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	@Export(label="Nome", exhibitionOrder = 5)
 	private String nomeCota;
 	
+	private Long idCota;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColunaConsulta ordenacaoColuna;
@@ -241,6 +243,14 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 
 	@Override

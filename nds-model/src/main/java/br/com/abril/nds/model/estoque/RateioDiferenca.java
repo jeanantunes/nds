@@ -45,7 +45,7 @@ public class RateioDiferenca implements Serializable {
 	private Cota cota;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA_NOTA_ENVIO", nullable = false)
+	@Column(name = "DATA_NOTA_ENVIO", nullable = true)
 	private Date dataNotaEnvio;
 	
 	@ManyToOne(optional = false)

@@ -755,8 +755,7 @@ public class MatrizLancamentoController {
 		produtoBalanceamentoVO.setDestacarLinha(
 			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
 				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD)
-				|| produtoLancamentoDTO.getDataLancamentoPrevista()
-					.compareTo(produtoLancamentoDTO.getNovaDataLancamento()) != 0);
+				|| produtoLancamentoDTO.isAlteradoInteface() );
 				
 		return produtoBalanceamentoVO;
 	}	
@@ -1201,5 +1200,11 @@ public class MatrizLancamentoController {
 			this.result.use(Results.json()).from(Results.nothing()).serialize();
 		}
 		
+	}
+	
+	@Post
+	public void excluirLancamento(Long idLancamento){
+		matrizLancamentoService.excluiLancamento(idLancamento);		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Lançamento excluído com sucesso!")).serialize();
 	}
 }

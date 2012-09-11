@@ -279,7 +279,7 @@ public class FiadorRepositoryImpl extends AbstractRepositoryModel<Fiador, Long> 
 		Query query = getSession().createQuery(hql.toString());
 		
 		
-		query.setString("nome", nome.toLowerCase() + "%");
+		query.setString("nome", "%" + nome.toLowerCase() + "%");
 		query.setMaxResults(maxResults);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));

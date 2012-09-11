@@ -29,6 +29,8 @@ public class RateioCotaVO implements Serializable {
 	
 	private BigInteger quantidade;
 	
+	private BigInteger reparteAtualCota;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -36,6 +38,24 @@ public class RateioCotaVO implements Serializable {
 		
 	}
 	
+	/**
+	 * @return the reparteAtualCota
+	 */
+	public BigInteger getReparteAtualCota() {
+		return reparteAtualCota;
+	}
+
+
+
+	/**
+	 * @param reparteAtualCota the reparteAtualCota to set
+	 */
+	public void setReparteAtualCota(BigInteger reparteAtualCota) {
+		this.reparteAtualCota = reparteAtualCota;
+	}
+
+
+
 	/**
 	 * @return the id
 	 */

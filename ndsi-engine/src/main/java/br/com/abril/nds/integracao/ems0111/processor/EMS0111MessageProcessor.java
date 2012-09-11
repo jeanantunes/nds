@@ -73,7 +73,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		// Validar Distribuidor:
 		final Number codDistribuidorSistema = (Number) message.getHeader().get(
-				MessageHeaderProperties.CODIGO_DISTRIBUIDOR);
+				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.name());
 		final Number codDistribuidorArquivo = input.getCodigoDistribuidor();
 		if (codDistribuidorSistema.longValue() != codDistribuidorArquivo.longValue()) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
@@ -102,7 +102,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
 		final BigDecimal precoPrevisto = input.getPrecoPrevisto();
-		if (!produtoEdicao.getPrecoPrevisto().equals(precoPrevisto)) {
+		if (null == produtoEdicao.getPrecoPrevisto() || !produtoEdicao.getPrecoPrevisto().equals(precoPrevisto)) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteracao do Preco Previsto do Produto: "
@@ -153,7 +153,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// EFETIVAR INSERCAO NA BASE
 			getSession().persist(lancamento);			
 		} else {
-			
+			lancamento.setAlteradoInteface(true);
 			/*
 			 * Atualizar Lançamento:
 			 * 

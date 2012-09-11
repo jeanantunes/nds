@@ -92,6 +92,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Date dataInicialLancamento = calendarioService.subtrairDiasUteis(new Date(), 7);
 		
+		if(filtro.getNumeroCota() != null) {
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+			filtro.setIdCota(cota.getId());
+		}
+		
 		return this.diferencaEstoqueRepository.obterDiferencas(filtro, dataInicialLancamento);
 	}
 	

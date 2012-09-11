@@ -19,11 +19,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	
 	<style type="text/css">
-		fieldset label {
-			width: auto;
-			margin-bottom: 0px !important;
-		}
-		
+	
 		#dialogConfirmacaoPerdaDados {
 			display:none;
 		}
@@ -31,25 +27,40 @@
 </head>
 
 <body>
-	<div class="corpo">
 		<form id="form-excluir">
-		<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
-			<p>Confirma esta Exclus&atilde;o?</p>
-		</div>
+			<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
+				<p>Confirma esta Exclus&atilde;o?</p>
+			</div>
 		</form>
+		
 		<form id="form-confirmar-lancamentos">
-		<div id="dialog-confirmar-lancamentos" title="Lançamento Faltas e Sobras">
-			<p>Confirma estes Lan&ccedil;amentos?</p>
-		</div>
+			<div id="dialog-confirmar-lancamentos" title="Lançamento Faltas e Sobras">
+				<p>Confirma estes Lan&ccedil;amentos?</p>
+			</div>
 		</form>
+		
 		<form id="formConfirmacaoPerdaDados">
-		<div id="dialogConfirmacaoPerdaDados" title="Lançamento Faltas e Sobras">
-			<p>Ao prosseguir com essa a&ccedil;&atilde;o voc&ecirc; perder&aacute; seus dados n&atilde;o salvos. Deseja prosseguir?</p>
-		</div>
+			<div id="dialogConfirmacaoPerdaDados" title="Lançamento Faltas e Sobras">
+				<p>Ao prosseguir com essa a&ccedil;&atilde;o voc&ecirc; perder&aacute; seus dados n&atilde;o salvos. Deseja prosseguir?</p>
+			</div>
 		</form>
-		<div class="container">
-
-			<fieldset class="classFieldset">
+		
+		<form id="lancamento-consulta">
+			
+			<div class="areaBts">
+					<div class="area">
+						<span  class="bt_novos">
+							<a href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();" rel="tipsy" title="Incluir Novo">
+								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
+							</a>
+						</span>
+						
+					</div>
+			</div>
+			
+			<div class="linha_separa_fields">&nbsp;</div>	
+				
+			<fieldset class="fieldFiltro">
 			
 				<legend>Lan&ccedil;amento Faltas e Sobras</legend>
 					  
@@ -68,8 +79,7 @@
 						<td width="294">
 							<select id="selectTiposDiferenca" 
 									name="tipoDiferenca"
-									 style="width: 220px;"
-									 onchange="lancamentoController.exibirBotaoNovo(this.value);">
+									 style="width: 220px;">
 									 
 								<option selected="selected"></option>
 								<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
@@ -88,7 +98,7 @@
 			
 			<div class="linha_separa_fields">&nbsp;</div>
 
-			<fieldset id="fieldsetPesquisa" class="classFieldset">
+			<fieldset class="fieldGrid">
 			
 				<legend>Lançamento Faltas e Sobras</legend>
 				
@@ -99,9 +109,6 @@
 				<table width="931" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 						<td width="459">
-							<span id="btnNovo" class="bt_novo">
-								<a href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();">Novo</a>
-							</span>
 							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
 								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();">Confirmar</a>
 							</span>
@@ -117,8 +124,15 @@
 			</fieldset>
 			
 			<div class="linha_separa_fields">&nbsp;</div>
+	</form>
+	
+	<form id="form-dialogConfirmacaoDirecionamentoDiferencaProdutoCota">
+		<div id="dialogConfirmacaoDirecionamentoDiferencaProdutoCota" title="Lançamento Faltas e Sobras" style="display: none">
+			<p> O valor total da diferença não foi direcionado para a(s) cota(s)! </p>
+			<br></br>
+			<p> Deseja direcionar o restante para o estoque ?</p>
 		</div>
-	</div>
+	</form>
 	
 	<form id="formNovoDialog">
 		<jsp:include page="novoDialog.jsp" />

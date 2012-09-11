@@ -23,7 +23,9 @@ public enum StatusLancamento {
 	LIBERAR_CALCULO("Liberar Cálculo"),
 	LANCADO("Lançado"),
 	EM_RECOLHIMENTO("Em Recolhimento"),
-	FECHADO("Fechado");
+	FECHADO("Fechado"),
+	
+	EXCLUIDO("Excluído");
 	
 	/** Descrição do status. */
 	private String descricao;
