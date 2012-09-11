@@ -670,9 +670,7 @@ public class CotaServiceImpl implements CotaService {
 			dto.setQtdeAutomatica(true);
 		}
 		
-		if(parametro == null) {
-			
-			this.obterTaxaPercentual(dto);
+		if (parametro == null) {
 			
 			return dto;
 		}
@@ -710,14 +708,6 @@ public class CotaServiceImpl implements CotaService {
 		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
 		
 		return dto;
-	}
-	
-	public void obterTaxaPercentual(DistribuicaoDTO dto) {
-		
-		//TODO: obter dados do cadastro de transportador
-		
-		dto.setTaxaFixa(null);
-		dto.setPercentualFaturamento(null);
 	}
 
 	@Override
@@ -1871,6 +1861,46 @@ public class CotaServiceImpl implements CotaService {
 		String path = url.toURI().getPath();
 		 
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+	}
+	
+	@Transactional(readOnly = true)
+	public DistribuicaoDTO carregarValoresEntregaBanca(Integer numCota) {
+		
+		DistribuicaoDTO dto = new DistribuicaoDTO();
+		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		
+		if (cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
+		}
+		
+		this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
+		
+		return dto;
+	}
+	
+	private DistribuicaoDTO obterPercentualFaturamentoTaxaFixa(Long idCota, DistribuicaoDTO dto) {
+		
+		PDV pdv = this.pdvRepository.obterPDVPrincipal(idCota);
+		
+		if (pdv != null) {
+		
+			Rota rota = this.rotaRepository.obterRotaPorPDV(pdv.getId(), idCota);
+			
+			if (rota != null) {
+				
+				Entregador entregador = this.entregadorRepository.obterEntregadorPorRota(rota.getId());
+				
+				if (entregador != null) {
+				
+					dto.setTaxaFixa(entregador.getTaxaFixa());
+					dto.setPercentualFaturamento(entregador.getPercentualFaturamento());
+				}
+			}
+		}
+		
+		return dto;
 	}
 	
 	/**

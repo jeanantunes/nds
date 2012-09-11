@@ -266,4 +266,6 @@ public interface CotaService {
 	void atualizaTermoAdesao(String numCota, DescricaoTipoEntrega descricaoTipoEntrega) throws FileNotFoundException, IOException ;
 	
 	byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception;
+	
+	DistribuicaoDTO carregarValoresEntregaBanca(Integer numCota);
 }

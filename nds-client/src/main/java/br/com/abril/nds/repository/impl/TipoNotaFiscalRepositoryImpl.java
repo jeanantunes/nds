@@ -72,7 +72,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		}
 		
 		if(filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty() ){
-			query.setParameter("tipoDescNota", filtro.getTipoNota() + "%");
+			query.setParameter("tipoDescNota", "%" + filtro.getTipoNota() + "%");
 		}
 		
 		if (filtro.getPaginacao() != null) {
@@ -103,7 +103,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		}
 		
 		if(filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty() ){
-			query.setParameter("tipoDescNota", filtro.getTipoNota() + "%");
+			query.setParameter("tipoDescNota", "%" + filtro.getTipoNota() + "%");
 		}
 		
 		List<Long>list = query.list();

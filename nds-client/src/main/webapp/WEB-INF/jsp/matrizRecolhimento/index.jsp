@@ -3,6 +3,8 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 		
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
+
+		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamentoRecolhimento.js"></script>
 	
 		<script type="text/javascript">
 
@@ -71,12 +73,12 @@
 						<a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 						<div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
-								<input type="checkbox" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="balanceamentoRecolhimentoController.checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>
+								<input type="checkbox" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>
 								<label for="checkBoxSelecionarTodosFornecedores">Selecionar Todos</label>
 							</span>
 		                    <br clear="all" />
 		                    <c:forEach items="${fornecedores}" var="fornecedor">
-		                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkGroupFornecedores" onclick="balanceamentoRecolhimentoController.verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox"/>
+		                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkGroupFornecedores" onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox"/>
 		                      	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.razaoSocial}</label>
 		                     	<br clear="all" />
 		                	</c:forEach> 
@@ -100,7 +102,7 @@
 					</td>
 					<td width="164">
 						<span class="bt_pesquisar" title="Pesquisar">
-							<a href="javascript:;" onclick="balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(pesquisar);">Pesquisar</a>
+							<a href="javascript:;" onclick="balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);">Pesquisar</a>
 						</span>
 					</td>
 				</tr>

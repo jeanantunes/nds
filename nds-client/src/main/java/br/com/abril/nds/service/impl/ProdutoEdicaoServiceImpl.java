@@ -599,13 +599,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamento.setDataStatus(dtSysdate);
 			
 			lancamento.setProdutoEdicao(produtoEdicao);
-		}
-		
-		
-		if (produtoEdicao.getLancamentos().isEmpty()) {
+	
 			lancamentoRepository.adicionar(lancamento);
 			produtoEdicao.getLancamentos().add(lancamento);
-		} else {
+		} else {			
+			if(lancamento.getStatus() == StatusLancamento.EXCLUIDO){
+				lancamento.setStatus(StatusLancamento.PLANEJADO);
+			}
 			lancamentoRepository.alterar(lancamento);
 		}
 		

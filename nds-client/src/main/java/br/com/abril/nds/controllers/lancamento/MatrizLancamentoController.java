@@ -1201,4 +1201,10 @@ public class MatrizLancamentoController {
 		}
 		
 	}
+	
+	@Post
+	public void excluirLancamento(Long idLancamento){
+		matrizLancamentoService.excluiLancamento(idLancamento);		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Lançamento excluído com sucesso!")).serialize();
+	}
 }
