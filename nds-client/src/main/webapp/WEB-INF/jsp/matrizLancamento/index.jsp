@@ -56,7 +56,13 @@ var lancamentosSelecionados = [];
 </head>
 
 <body>
-
+<form id="form-excluir-lancamento">
+<div id="dialog-excluir-lancamento" title="Balanceamento da Matriz de Lançamento" style="display:none">
+	
+	<p>Confirma a exclus&atilde;o deste lançamento?</p>
+			   
+</div>
+</form>
 
 <form id="form-confirm">
 <div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">
@@ -68,10 +74,10 @@ var lancamentosSelecionados = [];
 </div>
 </form>
 
-<form id="formVoltarConfiguracaoOriginal">
-<div id="dialogVoltarConfiguracaoOriginal" title="Balanceamento da Matriz de Lançamento" style="display:none">
+<form id="form-pagincao-confirmada">
+<div id="dialog-pagincao-confirmada" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
-			<p>Ao voltar a configuração original, você perdará os dados confirmados. Deseja prosseguir?</p>
+			<p>As seleções de lançamentos não serão salvas, deseja continuar?</p>
 			   
 </div>
 </form>
