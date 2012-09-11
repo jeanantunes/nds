@@ -89,14 +89,14 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     /**
      * Tipo do endereço
      */
-    @Column(name = "ENDERECO_TIPO_ENDERECO", nullable = false)
+    @Column(name = "ENDERECO_TIPO_ENDERECO")
     @Enumerated(EnumType.STRING)
     private TipoEndereco tipoEndereco;
    
     /**
      * Flag indicando se é o endereço principal
      */
-    @Column(name = "ENDERECO_PRINCIPAL", nullable = false)
+    @Column(name = "ENDERECO_PRINCIPAL")
     private boolean principal;
     
     public HistoricoTitularidadeCotaEndereco() {

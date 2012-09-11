@@ -23,7 +23,7 @@ public class HistoricoTitularidadeCotaTelefone implements Serializable {
     /**
      * Número do telefone
      */
-    @Column(name = "TELEFONE_NUMERO", nullable = false)
+    @Column(name = "TELEFONE_NUMERO")
     private String numero;
     
     /**
@@ -41,14 +41,14 @@ public class HistoricoTitularidadeCotaTelefone implements Serializable {
     /**
      * Tipo do telefone
      */
-    @Column(name = "TELEFONE_TIPO_TELEFONE", nullable = false)
+    @Column(name = "TELEFONE_TIPO_TELEFONE")
     @Enumerated(EnumType.STRING)
     private TipoTelefone tipoTelefone;
     
     /**
      * Flag indicando se este é o telefone principal
      */
-    @Column(name = "TELEFONE_PRINCIPAL", nullable = false)
+    @Column(name = "TELEFONE_PRINCIPAL")
     private boolean principal;
     
     public HistoricoTitularidadeCotaTelefone() {

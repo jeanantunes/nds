@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
-import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
@@ -70,7 +69,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
-import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
@@ -215,9 +213,9 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamen
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
-import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
 
@@ -3434,11 +3432,24 @@ public class Fixture {
         historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(456), BigDecimal.valueOf(33)));
         historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(789), BigDecimal.valueOf(33)));
 
-        HistoricoTitularidadeCotaPessoaFisica htcpf = new HistoricoTitularidadeCotaPessoaFisica(
-                    "Aristoteles da Silva", "862.243.913-51", "30.887.357-9",
-                    "SSP", "SP", criarData(10, Calendar.APRIL, 1974), EstadoCivil.SOLTEIRO, Sexo.MASCULINO,
-                    "Brasileira", "Mococa", "Ari");
-        historico.setPessoaFisica(htcpf);
+//        HistoricoTitularidadeCotaPessoaFisica htcpf = new HistoricoTitularidadeCotaPessoaFisica(
+//                    "Aristoteles da Silva", "862.243.913-51", "30.887.357-9",
+//                    "SSP", "SP", criarData(10, Calendar.APRIL, 1974), EstadoCivil.SOLTEIRO, Sexo.MASCULINO,
+//                    "Brasileira", "Mococa", "Ari");
+//        historico.setPessoaFisica(htcpf);
+        
+        HistoricoTitularidadeCotaPessoaJuridica htcpj = new HistoricoTitularidadeCotaPessoaJuridica("ABC corp", "ABC", "47.413.143/0001-99",  null, null);
+        historico.setPessoaJuridica(htcpj);
+        
+        HistoricoTitularidadeCotaSocio socio1 = new HistoricoTitularidadeCotaSocio("John Doe", true, "Gerente");
+        socio1.setEndereco(new HistoricoTitularidadeCotaEndereco(10, "Vila Mariana", "13730-335", 123, "Mococa", null, "Rua", "Cap. Miguel Ferreira", "593", "SP", 1, null, true));
+        socio1.setTelefone(new HistoricoTitularidadeCotaTelefone("3656-1234", null, "19", null, true));
+        historico.addSocio(socio1);
+        
+        HistoricoTitularidadeCotaSocio socio2 = new HistoricoTitularidadeCotaSocio("Jane Doe", false, "Supervisor");
+        socio2.setEndereco(new HistoricoTitularidadeCotaEndereco(10, "Vila Mariana", "13730-335", 123, "Mococa", null, "Rua", "Cap. Miguel Ferreira", "593", "SP", 1, null, true));
+        socio2.setTelefone(new HistoricoTitularidadeCotaTelefone("3656-1234", null, "19", null, true));
+        historico.addSocio(socio2);
         
         HistoricoTitularidadeCotaEndereco endereco1 = new HistoricoTitularidadeCotaEndereco(
                 10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,

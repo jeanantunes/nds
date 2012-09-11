@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -296,5 +297,14 @@ public interface CotaRepository extends Repository<Cota, Long> {
      *         identificador recebido
      */
     HistoricoTitularidadeCotaFormaPagamento obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
+    
+    /**
+     * Recupera o sócio do histórico de titularidade da cota
+     * 
+     * @param idSocio
+     *            identificador do sócio
+     * @return sócio do histórico de titularidade da cota
+     */
+    HistoricoTitularidadeCotaSocio obterSocioHistoricoTitularidade(Long idSocio);
 
 }

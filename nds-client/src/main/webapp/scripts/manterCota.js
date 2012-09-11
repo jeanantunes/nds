@@ -689,6 +689,8 @@ var MANTER_COTA = $.extend(true, {
 			$("#dialog-cota", this._workspace).find('.ui-datepicker-trigger').show();	
 			$("#dialog-cota", this._workspace).find('span[id^="btnAlterarTitularidade"]').show();
             $("#dialog-cota", this._workspace).find('.classPesquisar').show();
+            $("#btnAddSocio", this._workspace).show();
+
 		} else {
 			this.mudarNomeModalCadastro("Histórico Titularidade Cota - " +  MANTER_COTA.idCota);
 			$("#dialog-cota", this._workspace).find(':input:not(:disabled)').prop('disabled', true);
@@ -696,6 +698,7 @@ var MANTER_COTA = $.extend(true, {
 			$("#dialog-cota", this._workspace).find('.ui-datepicker-trigger').hide();	
 			$("#dialog-cota", this._workspace).find('span[id^="btnAlterarTitularidade"]').hide();
             $("#dialog-cota", this._workspace).find('.classPesquisar').hide();
+            $("#btnAddSocio", this._workspace).hide();
 		}
 	},
     
@@ -1361,22 +1364,37 @@ var SOCIO_COTA = $.extend(true, {
 		
 		popup_novo_socio: function() {
 			
-			$( "#dialog-socio", SOCIO_COTA._workspace ).dialog({
-				resizable: false,
-				height:340,
-				width:760,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
+			if (MANTER_COTA.isModoTelaCadastroCota()) {
+                $( "#dialog-socio", SOCIO_COTA._workspace ).dialog({
+                    resizable: false,
+                    height:340,
+                    width:760,
+                    modal: true,
+                    buttons: {
+                        "Confirmar": function() {
 
-						SOCIO_COTA.incluirSocio();
-					},
-					"Cancelar": function() {
-						$( this, SOCIO_COTA._workspace ).dialog( "close" );
-					}
-				},
-				form: $("#workspaceCota", this.workspace)
-			});
+                            SOCIO_COTA.incluirSocio();
+                        },
+                        "Cancelar": function() {
+                            $( this, SOCIO_COTA._workspace ).dialog( "close" );
+                        }
+                    },
+                    form: $("#workspaceCota", this.workspace)
+                });
+            } else {
+                $( "#dialog-socio", SOCIO_COTA._workspace ).dialog({
+                    resizable: false,
+                    height:340,
+                    width:760,
+                    modal: true,
+                    buttons: {
+                       "Fechar": function() {
+                            $( this, SOCIO_COTA._workspace ).dialog( "close" );
+                        }
+                    },
+                    form: $("#workspaceCota", this.workspace)
+                });
+            }
 		},
 		
 		bindButtonActions: function() {
@@ -1518,12 +1536,15 @@ var SOCIO_COTA = $.extend(true, {
 		},
 		
 		carregarSociosCota: function() {
-			
+
+            var param = [{name: 'idCota', value: MANTER_COTA.idCota},
+                {name: 'modoTela', value: MANTER_COTA.modoTela.value},
+                {name: 'idHistorico', value: MANTER_COTA.idHistorico}];
+
 			SOCIO_COTA.rows = [];
-			
-			$.postJSON(
-				contextPath+'/cadastro/cota/carregarSociosCota',
-				"idCota=" + MANTER_COTA.idCota,
+            $.postJSON(
+                contextPath+'/cadastro/cota/carregarSociosCota',
+				param,
 				function(result) {
 					
 					$.each(result, function(index, value) {
@@ -1581,7 +1602,10 @@ var SOCIO_COTA = $.extend(true, {
 				var idSocio = value.id;
 			
 				var acao  = '<a href="javascript:;" onclick="SOCIO_COTA.editarSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_editar.gif" border="0" hspace="5" /></a>';
-				    acao += '<a href="javascript:;" onclick="SOCIO_COTA.removerSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+
+                if (MANTER_COTA.isModoTelaCadastroCota()) {
+                    acao += '<a href="javascript:;" onclick="SOCIO_COTA.removerSocio(' + idSocio + ');" ><img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+                }
 
 				value.cell.acao = acao;
 				
@@ -1597,10 +1621,11 @@ var SOCIO_COTA = $.extend(true, {
 		editarSocio:function(idSocio){
 			
 			SOCIO_COTA.itemEdicao = idSocio;
-			
+			var param = [{name: 'idSocioCota', value: idSocio},
+                         {name: 'modoTela', value: MANTER_COTA.modoTela.value}];
 			$.postJSON(
 				contextPath+'/cadastro/cota/carregarSocioPorId',
-				"idSocioCota=" + idSocio,
+				param,
 				function(result) {
 
 					SOCIO_COTA.enderecoSocio.preencherComboUF(result.endereco.uf);
@@ -1640,7 +1665,9 @@ var SOCIO_COTA = $.extend(true, {
 			SOCIO_COTA.itemEdicao = null;
 			
 			$("#btnEditarSocio", this.workspace).hide();
-			$("#btnAddSocio", this.workspace).show();
+			if (MANTER_COTA.isModoTelaCadastroCota()) {
+                $("#btnAddSocio", this.workspace).show();
+            }
 		},
 		
 		removerSocio:function(idSocio) {

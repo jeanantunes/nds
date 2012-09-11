@@ -707,6 +707,19 @@ public class HistoricoTitularidadeCota implements Serializable {
         desconto.setHistoricoTitularidadeCota(this);
         descontos.add(desconto);
     }
+
+    /**
+     * Associa um sócio ao histórico de titularidade da cota
+     * 
+     * @param socio
+     *            sócio para inclusão
+     */
+    public void addSocio(HistoricoTitularidadeCotaSocio socio) {
+       if (socios == null) {
+           socios = new ArrayList<HistoricoTitularidadeCotaSocio>();
+       }
+       socios.add(socio);
+    }
     
 
 }
