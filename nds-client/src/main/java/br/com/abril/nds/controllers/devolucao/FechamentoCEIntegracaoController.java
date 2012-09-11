@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +17,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -30,6 +31,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -83,6 +85,9 @@ public class FechamentoCEIntegracaoController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
 	
 	
 	public FechamentoCEIntegracaoController(Result result) {
@@ -224,16 +229,23 @@ public class FechamentoCEIntegracaoController {
 	
 	@Get
 	@Path("/imprimeBoleto")
-	public void imprimeBoleto(String nossoNumero) throws Exception{
+	public void imprimeBoleto() throws Exception{
+		
+		try {
+			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), new HashSet<String>());
+		} catch (GerarCobrancaValidacaoException e) {
+			
+			throw e.getValidacaoException();
+		}
 
 
-		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
-
-		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
-
-		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(b);
+//		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
+//
+//		this.httpResponse.setContentType("application/pdf");
+//		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto.pdf");
+//
+//		OutputStream output = this.httpResponse.getOutputStream();
+//		output.write(b);
 
 //		//CONTROLE DE VIAS IMPRESSAS
 //		boletoService.incrementarVia(nossoNumero);
