@@ -1092,7 +1092,7 @@ function CaucaoLiquida(idCota, cotaGarantia) {
 			id:null,
 			valor:null,
 			atualizacao:null,
-			indiceReajuste:null
+			esp : ""
 		};
 }
 CaucaoLiquida.prototype.path = contextPath + "/cadastro/garantia/";
@@ -1116,8 +1116,8 @@ CaucaoLiquida.prototype.dataUnBind = function() {
 	var vr = this.getValorCaucaoLiquida($("#tipoCobranca", _workspace).val());
 	vr = removeMascaraPriceFormat(vr);
 	this.caucaoLiquida.valor =  vr / 100;
+	this.caucaoLiquida.esp = "";
 	
-	this.caucaoLiquida.indiceReajuste = 0.0;
 	this.caucaoLiquida.atualizacao = this.formatDate(new Date());
 };
 
@@ -1339,13 +1339,31 @@ CaucaoLiquida.prototype.salva = function(callBack) {
 				var listaMensagens = data.listaMensagens;
 
 				if (tipoMensagem && listaMensagens) {
-					exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+					
+					exibirMensagemDialog(
+						tipoMensagem, 
+						listaMensagens,
+						"dialog-cota"
+					);
+					
 				}
 				if(callBack){
 					callBack();
 				}
 
-			}, null, true, "");
+			}, 
+			function(data){
+				if (data.mensagens) {
+
+					exibirMensagemDialog(
+						data.mensagens.tipoMensagem, 
+						data.mensagens.listaMensagens,
+						"dialog-cota"
+					);
+				}	
+			}, 
+			true,
+			"dialog-cota");
 };
 
 CaucaoLiquida.prototype.resgatarValorCaucao = function() {
@@ -1363,7 +1381,7 @@ CaucaoLiquida.prototype.resgatarValorCaucao = function() {
 				var caucaoLiquida = {
 						id:null,
 						atualizacao : _this.formatDate(new Date()),
-						indiceReajuste: 0,
+						esp : "",
 						valor:0
 				};
 
@@ -1456,35 +1474,37 @@ CaucaoLiquida.prototype.initGrid = function() {
 	this.grid = $("<div></div>");
 	$("#cotaGarantiaCaucaoLiquidaGrid", _workspace).append(this.grid);
 	this.grid.flexigrid({
-		
+		preProcess: CaucaoLiquida.prototype.getDataFromResultGrid,
 		dataType : 'json',
 		colModel : [ {
 			display : 'Data',
 			name : 'atualizacao',
-			width : 270,
+			width : 225,
 			sortable : false,
 			align : 'center'
-
 		},{
-			display : 'Índice de Reajuste',
-			name : 'indiceReajuste',
-			width : 270,
-			sortable : false,
-			align : 'center'
-
-		},{
-
 			display : 'Valor R$',
 			name : 'valor',
-			width : 140,
+			width : 125,
 			sortable : false,
 			align : 'right'
-
+		},{
+			display : '',
+			name : 'esp',
+			width : 325,
+			sortable : false,
+			align : 'center'
 		}],
 		width : 740,
 		height : 150
 	});
-	
+};
+
+CaucaoLiquida.prototype.getDataFromResultGrid = function(data){
+	$.each(data.rows, function(index, row) {
+		row.cell.esp = "";
+	});
+	return data;
 };
 
 CaucaoLiquida.prototype.opcaoPagto = function(op){

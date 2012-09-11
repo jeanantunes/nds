@@ -34,12 +34,6 @@ public class HistoricoTitularidadeCotaCaucaoLiquida extends HistoricoTitularidad
     @Column(name="CAUCAO_LIQUIDA_DATA_ATUALIZACAO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date atualizacao;
-    
-    /**
-     * Índice de reajuste
-     */
-    @Column(name="CAUCAO_LIQUIDA_INDICE_REAJUSTE")
-    private BigDecimal indiceReajuste;
 
     /**
      * @return the valor
@@ -67,20 +61,6 @@ public class HistoricoTitularidadeCotaCaucaoLiquida extends HistoricoTitularidad
      */
     public void setAtualizacao(Date atualizacao) {
         this.atualizacao = atualizacao;
-    }
-
-    /**
-     * @return the indiceReajuste
-     */
-    public BigDecimal getIndiceReajuste() {
-        return indiceReajuste;
-    }
-
-    /**
-     * @param indiceReajuste the indiceReajuste to set
-     */
-    public void setIndiceReajuste(BigDecimal indiceReajuste) {
-        this.indiceReajuste = indiceReajuste;
     }
     
 }
