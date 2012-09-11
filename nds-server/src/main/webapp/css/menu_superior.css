@@ -1,0 +1,99 @@
+.menu_consulta{
+	color: #fff!important;
+	background-color:#0066CC;
+	font-weight:bold;
+	text-align:center;
+	font-size:12px!important;
+	padding-bottom:5px;
+	padding-top:5px;
+	border-top:1px dashed #fff;
+	border-bottom:1px dashed #fff;
+}
+.clearit {
+	clear: both;
+	height: 0;
+	line-height: 0.0;
+	font-size: 0;
+}
+#menu_principal li ul li {
+	width:200px;
+	font-size:11px!important;
+	color:#CCCCCC;
+
+}
+#menu_principal, #menu_principal ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	clear:both;
+	font-family: Arial, Helvetica, sans-serif;
+}
+#menu_principal a {
+	display: block;
+	text-decoration: none;
+	padding: 5px 0px 5px 5px;
+	
+	font-size: 11px;
+	color: #CCCCCC;
+}
+#menu_principal a.trigger {
+	background-image: url(../images/p7PM_dark_south.gif);
+    background-position: right 9px;
+    background-repeat: no-repeat;
+    /*margin-left: 10px;*/
+    padding: 5px 14px 5px 10px;
+}
+#menu_principal{
+	background:url(../images/bg_menu.jpg) repeat-x ;
+	width:100%;
+	padding-bottom: 3px;
+    padding-top: 7px;
+	position:relative;
+	z-index:1;
+}
+#menu_principal li {
+	float:left;
+	width:auto;
+}
+#menu_principal ul li ul {margin-left:0px;}
+
+/* hide from IE mac \*/
+#menu_principal li {}
+/* end hiding from IE5 mac */
+
+#menu_principal li ul, #menu_principal ul li  {
+	
+}
+#menu_principal ul li a  {
+	color: #565656;
+	border-right: 0;
+	margin-top:2px;
+	margin-left: -2px;
+
+}
+#menu_principal li ul {
+	position: absolute;
+	display: none;
+	background-color:#F5F5F5;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	
+	background-repeat: repeat-x;
+	width:200px;
+}
+#menu_principal li:hover a, #menu_principal a:focus,
+#menu_principal a:active, #menu_principal li.p7hvr a {
+	color: #fff;
+	background-color:#0066CC;
+}
+#menu_principal li:hover ul, #menu_principal li.p7hvr ul {
+	display: block;
+}
+#menu_principal li:hover ul a, #menu_principal li.p7hvr ul a {
+	color: #000000;
+	background-color: transparent;
+}
+#menu_principal ul a:hover {
+	background-color: #0066CC!important;
+	color: #fff !important;
+}

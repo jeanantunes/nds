@@ -1,0 +1,611 @@
+@charset "utf-8";
+/* CSS Document */
+html{height:100%; min-height:90%; overflow-y:auto;}
+body{
+	font-family: arial;
+	font-size: 11px;
+	color: #000;
+	background-color: #FFF;
+	margin: 0px;
+	height:100%;
+	
+}
+body td{font-size:11px; font-family:arial; line-height:25px;}
+.corpo{
+	width:100%;
+	height:100%;
+
+}
+a{color:#000;}
+.header{
+	background:url(../images/bg_header.jpg) repeat-x top center;
+	width:100%;
+	height:60px;
+}
+
+
+.separar{margin-right:5px; margin-left:7px;}
+.box_home{
+	float:left;
+	border-radius: 8px 8px 8px 8px;
+    box-shadow:0px 0px 7px 1px rgba(0, 0, 0, 0.2);
+    padding:5px;
+ }
+ .box_home p{font-size:11px!important; }
+.box_home h1{font-size:16px; color:#000000; margin-top:23px; margin-left:10px;}
+.box_home h2{font-size:16px; color:#666666; background-color:#f2f2f2;border-radius: 4px 4px 4px 4px; box-shadow:0px 3px 1px rgba(0, 0, 0, 0.2); padding:5px;}	
+.box_home .logoHome{ float:left; background:none!important; margin-left:10px; margin-right:10px;}
+.box_home ul{}
+.box_home li{list-style:none; line-height:25px;}
+.box_home li a{}
+.tamanho_1{width:368px!important; margin-top:20px;}
+.tamanho_2{width:150px!important; margin-top:20px;}
+
+
+
+.follow{width:240px; margin-left:20px; margin-right:15px; min-height: 177px;}
+.follow p{line-height:20px; margin-left:5px; border-bottom:1px solid #f2f2f2;}
+.follow p:hover{background:#f5f5f5; border-bottom:1px solid #ccc;}
+.follow p a{color:#000; text-decoration:underline; font-weight:bold;}
+.saudacao{width:420px!important; margin-left:20px; text-align:center;}
+.suporte{width:200px; min-height: 177px;}
+.feriados{width:466px;margin-left:20px;margin-top:20px;  }
+.feriados_home{float:left; width:225px;}
+.feriados_home .dia_feriado{
+	background: url("../images/bg_data_calendario.gif") no-repeat scroll center top transparent;
+   	color: red;
+    float: left;
+    font-size: 14px;
+    line-height: 42px;
+    margin-right:10px;
+    font-weight:bold;
+    padding-top: 3px;
+    text-align: center;
+    width: 40px;
+   }
+
+.feriados_home p{font-weight: bold;}
+.feriados_home span{color:#666; font-size:11px;}
+
+.bg_login{background:url(../images/bg_login.jpg) repeat-x;}
+.classPesquisar{background:url(../images/ico_pesquisar.png) no-repeat left center; width:16px; height:16px; float:left; margin-top:3px;}
+.classPesquisar a{width:16px; height:16px; float:left;text-decoration:none;}
+#tabLogin .bt a{border:1px solid #4A4A4A; background:url(../images/bg_bt_login.jpg) repeat-x;padding:5px; color:#FFFFFF; text-decoration:none; font-weight:bold; }
+#tabLogin .bt a:hover{border:1px solid #7EC3EC; background:url(../images/bg_bt_login_hover.jpg) repeat-x;color:#000; text-decoration:none; font-weight:bold; }
+
+.titAplicacao{float:left; margin-left:15px; margin-top:20px;}
+.titAplicacao h1{font-size:16px; margin:0px 0px 10px 0px;}
+.titAplicacao h2{font-size:12px; margin:0px; font-weight:normal;}
+.titAplicacao h3{font-size:10px; margin:5px 0px 0px 0px; font-weight:bold;}
+.sub-header{
+	margin:auto auto;
+}
+.logo{ background:url(../images/logo_distrib.gif) no-repeat left top; width:75px; height:25px;  float:left;}
+
+.usuario{float:right;}
+.usuario label{
+	font-weight:bold;
+	float:left;
+	margin-left:10px;
+}
+
+.usuario label a{color:#000!important; margin-top:-5px!important;}
+
+.bts_header{margin-top:5px;  line-height:15px; display:table; width:950px;}
+.bts_header a{padding:0px!important; height:16px; width:21px; }
+
+
+
+
+.containerHome_filtro{width:980px; margin:auto auto 83px;}
+.containerHome{width:980px; margin:auto auto;}
+.container{width:980px; margin:auto auto;clear:both;}
+
+/* configuração do fieldset da home */
+.containerHome fieldset{ width:211px; float:left; border:1px solid #ccc; min-height:225px;}
+.containerHome fieldset legend{ color:#000; font-weight:bold; font-size:12px;}
+.containerHome fieldset legend img{float:left; margin-right:5px; margin-top:-5px;}
+.containerHome fieldset ul{ margin:2px; padding:2px;}
+.containerHome fieldset li{ list-style-type:none; margin-bottom:10px;} 
+.containerHome fieldset li a{color:#00649F; text-decoration:none; font-size:12px;}
+.containerHome fieldset li a:hover{color:#000; text-decoration:underline;}
+
+/* configuração do fieldset das telas internas */
+fieldset{ /* width:200px; não definir tamanho fixo para um elemento geral */ min-width:200px; margin-right:12px; float:left; border:1px solid #ccc;}
+fieldset legend{ color:#000; font-weight:bold; font-size:12px;}
+fieldset legend img{float:left; margin-right:5px; margin-top:-5px;}
+fieldset ul{}
+fieldset li{ list-style-type:none; margin-bottom:10px;} 
+fieldset li a{color:#00649F; text-decoration:none; font-size:12px;}
+fieldset li a:hover{color:#000; text-decoration:underline;}
+/* alterado fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left: 5px; margin-right: 5px; width: 65px;}*/
+fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 5px;}
+
+.classFieldset{ width:960px!important; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
+.classFieldset legend{ color:#01649E;}
+
+.classFieldset_monitoramento{ width:980px; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
+.classFieldset_monitoramento legend{ color:#01649E;}
+
+.filtro{font-weight:bold;}
+
+.bt_iniciar{background:url(../images/bt_iniciar.png) no-repeat left center; width:120px; line-height:39px; float:left;}
+.bt_iniciar a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_iniciar a:hover{color:#00649F; text-decoration:underline;}
+
+.bt_finalizar{background:url(../images/bt_finalizar.png) no-repeat left center; width:90px; line-height:39px; float:left;}
+.bt_finalizar a{margin-left:38px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_finalizar a:hover{color:#00649F; text-decoration:underline;}
+
+.bt_confirmar{background:url(../images/bt_confirmar.png) no-repeat left center; width:104px; line-height:39px; float:left;}
+.bt_confirmar a{padding-left:32px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_confirmar a:hover{color:#00649F; text-decoration:underline;}
+
+.bt_confirmar_1{background:url(../images/bt_confirmar_1.png) no-repeat left center; width:183px; line-height:39px; float:left;}
+.bt_confirmar_1 a{padding-left:32px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_confirmar_1 a:hover{color:#00649F; text-decoration:underline;}
+
+.bt_pesquisar{background:url(../images/ico_pesquisar.png) no-repeat center center; width:20px; line-height:20px; float:left;}
+.bt_pesquisar a{ color:#000; font-weight:bold; text-decoration:none; border:1px solid #fff; display:table-cell; width:20px; height:20px; }
+.bt_pesquisar a:hover{color:#00649F;  border:1px solid #06C; display:table-cell}
+
+
+
+
+
+.bt_recolher{background:url(../images/bt_recolhimento_1.png) no-repeat left center; width:114px; line-height:39px; float:left;}
+.bt_recolher a{padding-left:28px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_recolher a:hover{color:#00649F; text-decoration:underline;}
+
+.bt_sellAll{ margin-top:8px; float:left;}
+.bt_sellAll label{float:left;}
+
+
+
+.bt_novo{background:url(../images/bt_novo.png) no-repeat left center; width:92px; line-height:39px; float:left;}
+.bt_novo a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_novo a:hover{color:#00649F; text-decoration:underline;}
+
+.bt_atualizarIco{background:url(../images/ico_atualizar.gif) no-repeat left center; width:21px; height:20px; float:left;}
+.bt_atualizarIco a{text-decoration:none; width:20px; display:block;}
+
+.bt_liberaDivida{background:url(../images/ico_add_novo.gif) no-repeat left center; width:16px; height:16px; float:left;}
+.bt_liberaDivida a{text-decoration:none;}
+
+
+.bt_pdv{background:url(../images/bt_pdv.png) no-repeat left center; width:120px; line-height:39px; float:left;}
+.bt_pdv a{margin-left:34px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_pdv a:hover{color:#00649F; text-decoration:underline;}
+
+
+.bt_financeiro{background:url(../images/bt_financeiro_1.png) no-repeat left center; width:94px; line-height:39px; float:left;}
+.bt_financeiro a{margin-left:24px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_financeiro a:hover{color:#00649F; text-decoration:underline;}
+
+
+.bt_suspender{background:url(../images/bt_suspender.png) no-repeat left center; width:170px; line-height:39px; float:left;}
+.bt_suspender a{padding-left:26px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_suspender a:hover{color:#00649F; text-decoration:underline;}
+
+
+
+.bt_arquivo{background:url(../images/bt_excel.png) no-repeat left center; width:110px; line-height:39px; float:left;}
+.bt_arquivo a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_arquivo a:hover{color:#00649F; text-decoration:underline;}
+
+
+.bt_xml{background:url(../images/bt_xml.png) no-repeat left center; width:110px; line-height:39px; float:left;}
+.bt_xml a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_xml a:hover{color:#00649F; text-decoration:underline;}
+
+
+.bt_imprimir{background:url(../images/bt_imprimir.png) no-repeat left center; width:110px; line-height:39px; float:left;}
+.bt_imprimir a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_imprimir a:hover{color:#00649F; text-decoration:underline;}
+
+.bt_add{background:url(../images/bt_add_novo.png) no-repeat left center; width:110px;  line-height:39px; float:left;}
+.bt_add a{padding-left:30px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_add a:hover{color:#00649F; text-decoration:underline;}
+
+.bt_integrar{background:url(../images/bt_integrar.png) no-repeat left center; width:110px;  line-height:39px; float:left;}
+.bt_integrar a{padding-left:30px; color:#000; font-weight:bold; text-decoration:none;}
+.bt_integrar a:hover{color:#00649F; text-decoration:underline;}
+
+
+.class_linha_1{background:#f0f0f0; line-height:39px;}
+.class_linha_2{background:#f8f8f8; line-height:39px;	}
+
+.linha_separa_fields{height:12px; width:100%;  float:left; overflow:hidden;}
+.linha_separa_fields_2{height:12px; width:700px;  float:left; overflow:hidden;}
+
+select{font-size: 12px; height: 21px; padding-top: 3px;}
+select, input{font-size: 12px; }
+.header_table{ background:url(../images/bg_header_table.jpg) repeat-x center center; line-height:25px; font-weight:bold; }
+.scroll_grid{height:130px; overflow-y:scroll;}
+
+
+.monitoramentos, .monitoramentos td{}
+.monitoramentos .class_linha{background:#fff; line-height:26px; border-bottom:1px solid #f2f2f2;}
+.monitoramentos .class_linha_1{background:#fff; line-height:26px; border-bottom:1px solid #f2f2f2;}
+.monitoramentos .class_linha_2{background:#fff; line-height:26px; border-bottom:1px solid #f2f2f2;	}
+.monitoramentos .header_1{ background-color:#DED9C5;line-height:26px;}
+.monitoramentos .header_2{ background-color:#ECF0DF;line-height:26px;}
+.monitoramentos .header_3{ background-color:#DBEEF4;line-height:26px;}
+.monitoramentos .borda_dupla{border-bottom:2px solid #ccc;}
+.monitoramentos .borda_dupla_right{border-right:2px solid #ccc;}
+.monitoramentos .class_total{ background-color:#f2f2f2;}
+.monitoramentos .class_verm{ color:#F00;}
+.monitoramentos td{border-right:1px solid #f2f2f2;}
+.monitoramentos .separado{ background-color:#FCBE8B;}
+.monitoramentos .finalizado{ background-color:#94B3D8;}
+
+
+.posicaoAtual span{font-size:15px; font-weight:bold;}
+.posicaoAtual table{font-size:13px;}
+.posicaoAtual table td{border-bottom:1px solid #efefef; line-height:22px;}
+
+
+/* CONFIGURAÇÃO MONITOR */
+.corpoMonitor{width:1917px;}
+.corpoMonitor .logo{margin:6px 0px 0px 10px;}
+.corpoMonitor .headerMonitor{
+	background:url(../images/bg_header_monitor.jpg) repeat-x top left;
+	width:100%;
+	height:70px;
+}
+.corpoMonitor .headerMonitor .sub-header-monitor{
+	width:1000px;
+	text-align:left;
+	margin:auto auto;
+	height:56px;
+	float:left;
+}
+.corpoMonitor .headerMonitor .cd{ float:left; margin:15px 0px 0px 0px; font-size:35px; font-weight:bold; color:#0163A3; text-decoration:underline;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.classVerde{ background-color:#00FF00;}
+.corpoMonitor .modelo_2 td{font-size:43px; line-height:65px!important;}
+
+
+.abrangencias .tabs td{font-size:58px!important;}
+
+
+.box_resumo{border:1px solid #DFDFDF; padding:5px; font-size:11px; margin:auto auto; width:140px;}
+.box_resumo label{width:139px; text-align:center; color:#01649E; font-weight:bold; border:1px solid #DFDFDF; margin-right:0px!important; margin-left:0px!important; display:table; background:#fff;}
+.box_resumo .span_1{width:79px; float:left; font-weight:bold; line-height:20px; border:1px solid #DFDFDF;  text-align:left; background:#fff; }
+.box_resumo .span_2{width:57px; float:left; text-align:right; clear:right; line-height:20px; border:1px solid #DFDFDF; text-align:right; background:#fff;}
+
+.imgProduto{float:left;}
+.dadosProduto{float:left; margin-left:20px;}
+
+.formsFiltroHome{line-height:21px!important; float:left; padding:2px; height:auto; margin-right:5px;}
+
+
+#effect, #effect_1 { display: none; margin: 0px; padding:5px!important; width:98%;  position: absolute; }
+ 
+
+#dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-pdv, #dialog-endereco{display:none;}
+  #pf-fiador, #pf-comprador, #pf-jornaleiro, #dialog-financeiro, #dialog-cpf, #dialog-cnpj{display:none;}
+  #pj-fiador, #pj-transportadora, #pj-fornecedor, #pj-jornaleiro, #tabs-pj, #tabs-pf, #dialog-reprogramar,  #dialog-novo-balanceamento, #dialog-novo-balanceamento_1{display:none;}
+  #pf-fiador_1, #pf-comprador_1, #pf-jornaleiro_1{display:none;}
+  #pj-fiador_1, #pj-transportadora_1, #pj-fornecedor_1, #pj-_1jornaleiro, #tabs_1-pj, #tabs_1-pf, #dialog-img,  #dialog-conta, #dialog-encalhe, #dialog-encalhe_2, #dialog-confirm, #dialog-rejeitar, #dialog-resumo, #dialog-resumo-ne, #dialog-resumo-box, #dialog-resumo-jornaleiro, #dialog-editar, #dialog-alert, #dialog-pdv, #dialog-suspender, #dialog-volume-valor, #dialog-peso, #dialog-num-lancto, #dialog-nota, #dialog-encargos, #dialog-detalhes, #dialog-conferencia{display:none;}
+  .dados, .dadosFiltro, .totais{display:none;}
+  
+.bt_sellAll label{ vertical-align:super!important;}
+
+.menu_fornecedor{display:block; position:absolute; border:1px solid #ccc; background:#FFF; width:170px; z-index:10;}
+.menu_fornecedor input{float:left; }
+.menu_fornecedor label{ margin-left:5px; margin-top:-5px;}
+
+
+.bt_configura_inicial{ border:1px solid #CCC; background:url(../images/bg_item_menu.jpg) repeat-x; float:right; margin:5px 0px 5px 0px; font-weight:bold;}
+.bt_configura_inicial a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
+.bt_configura_inicial a:hover{text-decoration:underline;}
+
+.bt_confirmar_novo{ border:1px solid #0C0; background:url(../images/bg_item_menu.jpg) repeat-x; float:left; margin-left: 10px;
+    padding: 5px; font-weight:bold;}
+.bt_confirmar_novo a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
+.bt_confirmar_novo a:hover{text-decoration:underline;}
+.vermelho{color:#FF0000; font-weight:bold;}
+
+
+.bt_incluir_novo{ border:1px solid #F2F2F2; background:url(../images/bg_item_menu.jpg) repeat-x; float:left; margin:5px 0px 0px 7px; font-weight:bold;}
+.bt_incluir_novo a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
+.bt_incluir_novo a:hover{text-decoration:underline;}
+.vermelho{color:#FF0000; font-weight:bold;}
+
+.bt_novos a, .bt_arq a{ border:1px solid #EFEFEF;   float:left; padding:5px; text-decoration:none; margin-left:10px;}
+/*.bt_novos a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
+.bt_novos a:hover{text-decoration:underline;}*/
+.bt_novos a:hover, .bt_arq a:hover{ border:1px solid #5BF065; float:left;}
+
+.bt_novos{  margin:5px 0px 0px 7px; }
+.bt_arq{float:right; }
+
+
+
+
+.alert{border:1px solid #F00!important; background:#F4F4F4; padding:5px; font-size:11px; float:left;}
+
+.infosPainel{ float:right; width:390px; }
+.infosPainel div{  padding-bottom:5px; margin-left:10px; margin-bottom:20px; background:#F8F8F8; margin-right:10px;}
+.infosPainel label{font-size:14px; font-weight:bold; background:#F2F2F2; width:100%!important; margin:0px; text-indent:5px;}
+.infosPainel div ul{margin:0px; padding:0px;}
+.infosPainel div ul li{margin:0px; padding:0px; line-height:23px; vertical-align:top;}
+.infosPainel div ul li img{float:left; padding-top:2px; }
+.infosPainel div ul li div{margin-bottom:5px; width:143px; margin-left:0px!important;}
+
+
+
+.ld_esq{float:left;  background:#CCCCCC}
+.ld_dir{ float:left; width:100%; margin-left:10px; margin-right:10px; background:#093 }
+
+.content{opacity:0.40; filter:alpha(opacity=10);}
+.content:hover{opacity:1.0; filter:alpha(opacity=100)}
+
+.sidebar1{ width:200px; background:#fff;  position:absolute; right:0px; z-index:1; }
+/*.sidebar1:hover{opacity:1.0; filter:alpha(opacity=100);  width:800px; position:absolute; right:0px; z-index:1;}*/
+
+
+
+fieldset{padding:5px; border:1px solid #E1E1FF;}
+fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5px; padding-right:5px;}
+
+
+/*.bancosGrid{opacity:0.40; filter:alpha(opacity=40);}
+.bancosGrid:hover{opacity:1.0; filter:alpha(opacity=100);}*/
+
+.area{width:960px;}
+.areaBts{
+	background: none repeat scroll 0 0 #FAFCFC;
+    border-bottom: 1px solid #CCCCCC;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    left: 0;
+    line-height: 28px;
+    margin-top: 2px;
+    padding-bottom: 1px;
+    padding-left: 0;
+    padding-right: 0;
+    right: 0;
+    width: 100%;
+    position:absolute;
+}
+.fieldFiltro{margin-top:27px; width:960px!important; margin-right:0px!important;}
+.fieldGrid{width:960px;}
+.img{margin-right:10px;}
+/* Navigation */
+.nav, .nav ul { 
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	
+}
+
+.nav {
+  z-index: 100;
+  position: relative;
+}
+.nav li {
+  background-color:#fff;
+  float: left;
+  margin: 0;
+  padding: 0;
+  position: relative;
+
+}
+.nav li a, .nav li a:link, .nav li a:active, .nav li a:visited {
+  color:#666;
+  display: block;
+  font-weight:bold;
+  text-decoration: none;
+  font-size:11px!important;
+}
+
+.nav li a:hover {
+  color: #000;
+  text-decoration:underline;
+
+}
+#nav-one li:hover a, 
+#nav-one li.sfHover a {
+  color: #000;
+}
+#nav-one li:hover ul a, 
+#nav-one li.sfHover ul a {
+  color: #959595;	
+}
+#nav-one li:hover ul a:hover, 
+#nav-one li.sfHover ul a:hover {
+  color: #000;	
+}
+
+
+
+
+
+
+
+.nav ul {
+
+  list-style: none;
+  margin: 0px;
+  padding:0px 0px 12px 0px;
+  width: 190px;
+  position: absolute;
+  top: -999em;
+  left: -1px;
+  border: 1px solid #ccc;
+  background-color:#FFF;
+}
+.nav li:hover ul,
+.nav li.sfHover ul {
+  top: 30px;
+  
+}
+.nav ul li {
+  border: 0;
+  float: none;
+  padding:5px;
+}
+.nav ul a {
+  	background-color:#F9F9F9;
+    border-bottom: 1px solid #CCCCCC;
+    padding-left: 2px;
+    padding-right: 2px;
+    white-space: normal;
+    width: 168px;
+	color:#000000!important;
+}
+.nav ul a:hover {
+  color: #fff!important;
+  background-color:#03F;
+  border-bottom: 1px solid #000;
+}
+
+.hDivBox th{font-weight:bold!important;}
+
+.alert{border:1px solid #F00!important; background:#F4F4F4; padding:5px; font-size:11px; float:left;}
+.box_resumo{border:1px solid #DFDFDF; padding:5px; font-size:11px; float:left; width: 159px;}
+.box_resumo label{width:157px !important; text-align:center; color:#01649E; font-weight:bold; border:1px solid #DFDFDF; margin-right:0px!important; margin-left:0px!important; background:#fff;}
+.box_resumo label img{padding-top:5px;}
+.box_resumo .span_1{width:80px; float:left; font-weight:bold; line-height:20px; border:1px solid #DFDFDF; background:#fff; }
+.box_resumo .span_2{width:75px; float:left; text-align:right; clear:right; line-height:20px; border:1px solid #DFDFDF; background:#fff; }
+
+.imgProduto{float:left;}
+.dadosProduto{float:left; margin-left:20px;}
+
+.formsFiltroHome{line-height:21px!important; float:left; padding:2px; height:auto; margin-right:5px;}
+
+
+#effect { display: none; margin: 0px; width:980px;  position: absolute; z-index: 10; }
+ #effect_1 { display: none; margin: 0px; width:800px;  position: absolute;  z-index: 10;}
+
+#dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-pdv, #dialog-endereco, #dialog-confirmar-lancamentos, #dialogReprogramarBalanceamento{display:none; font-size:12px;}
+  #pf-fiador, #pf-comprador, #pf-jornaleiro, #dialog-financeiro, #dialog-cpf, #dialog-cnpj{display:none;}
+  #pj-fiador, #pj-transportadora, #pj-fornecedor, #pj-jornaleiro, #tabs-pj, #tabs-pf, #dialog-reprogramar,  #dialog-novo-balanceamento, #dialog-novo-balanceamento_1{display:none;}
+  #pf-fiador_1, #pf-comprador_1, #pf-jornaleiro_1{display:none;}
+  #pj-fiador_1, #pj-transportadora_1, #pj-fornecedor_1, #pj-_1jornaleiro, #tabs_1-pj, #tabs_1-pf, #dialog-img,  #dialog-conta, #dialog-encalhe, #dialog-encalhe_2, #dialog-confirm, #dialog-rejeitar, #dialog-resumo, #dialog-resumo-ne, #dialog-resumo-box, #dialog-resumo-jornaleiro, #dialog-editar, #dialog-alert, #dialog-pdv, #dialog-suspender, #dialog-volume-valor, #dialog-peso, #dialog-num-lancto, #dialog-nota, #dialog-encargos, #dialog-detalhes, #dialog-conferencia, #dialog-suplementar, #dialog-manual, #dialog-excluir-tel, #dialog-excluir-end{display:none;}
+  .dados, .dadosFiltro, .totais{display:none;}
+  
+.bt_sellAll label{ vertical-align:super!important;}
+
+.menu_fornecedor{display:block; position:absolute; border:1px solid #ccc; background:#FFF; width:170px; z-index:10; padding:5px;}
+.menu_fornecedor input{float:left; margin-top:-2px;}
+.menu_fornecedor label{ }
+
+
+.bt_configura_inicial{ border:1px solid #CCC; background:url(../images/bg_item_menu.jpg) repeat-x; float:right; margin:5px 0px 5px 0px; font-weight:bold;}
+.bt_configura_inicial a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
+.bt_configura_inicial a:hover{text-decoration:underline;}
+
+.bt_confirmar_novo{ border:1px solid #0C0; background:url(../images/bg_item_menu.jpg) repeat-x; float:left; margin:5px 0px 0px 5px; font-weight:bold;}
+.bt_confirmar_novo a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
+.bt_confirmar_novo a:hover{text-decoration:underline;}
+.vermelho{color:#FF0000; font-weight:bold;}
+
+
+.bt_incluir_novo{ border:1px solid #F2F2F2; background:url(../images/bg_item_menu.jpg) repeat-x; float:left; margin:5px 0px 0px 7px; font-weight:bold;}
+.bt_incluir_novo a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
+.bt_incluir_novo a:hover{text-decoration:underline;}
+.vermelho{color:#FF0000; font-weight:bold;}
+
+
+
+
+
+.infosPainel{ float:right; width:390px; }
+.infosPainel div{  padding-bottom:5px; margin-left:10px; margin-bottom:20px; background:#F8F8F8; margin-right:10px;}
+.infosPainel label{font-size:14px; font-weight:bold; background:#F2F2F2; width:100%!important; margin:0px; text-indent:5px;}
+.infosPainel div ul{margin:0px; padding:0px;}
+.infosPainel div ul li{margin:0px; padding:0px; line-height:23px; vertical-align:top;}
+.infosPainel div ul li img{float:left; padding-top:2px; }
+.infosPainel div ul li div{margin-bottom:5px; width:143px; margin-left:0px!important;}
+
+
+
+
+.class_tota_pop{ 
+	font-weight: bold;
+    line-height: 20px;
+    margin-right: 15px;
+    margin-top: 10px;
+	float:left;
+}
+
+.ui-datepicker
+{
+    z-index: 1003;
+}
+
+
+.ui-datepicker-today a
+{
+	display:block !important;
+}
+
+.linhaComErro {
+		
+	background-color: #FA8072;
+}
+
+.linha_borda {
+    border-bottom: 1px solid #F0F0F0;
+    line-height: 18px;
+}
+
+
+.forncedoresSel, .editorSel, .produtosSel{
+	border:1px solid #ccc; 
+	padding:5px; 
+	display:table-cell;
+}
+
+.forncedoresSel label, .editorSel label{
+	line-height:22px; 
+	float:left; 
+	margin-right:10px;
+}
+
+.forncedoresSel img, .editorSel img{
+	margin-right:5px; 
+	padding-top:5px;
+}
+
+.forncedoresSel:hover, .editorSel:hover{
+	border:1px solid #06C;
+}
+
+
+.linkDisabled {
+	cursor:default;
+	opacity:0.4;
+	filter:alpha(opacity=40);
+}
+
+.redLabel {
+	color: #FF0000;
+}
+#effectError, #effectWarning, #effectSuccess{ 
+	line-height:30px; 
+	position:absolute; 
+	left:10px; 
+	right:10px; 
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.33); 
+	top:45px;
+	z-index:1;
+}	
+#effectError .ui-icon-info, #effectSuccess .ui-icon-info, #effectWarning .ui-icon-info{
+    margin-top: 5px;
+    margin-left:10px;
+}

@@ -33,6 +33,7 @@
 		margin: 0 !important;
 		padding: 5px !important;
 	}
+	.ui-datepicker-inline{height: 740px;}
 
     td.highlight { 
     		border: none !important;
@@ -294,15 +295,11 @@
 				<div id="feriadosWrapper">
 					
 					<div id="feriados"></div>
-					<div class="linha_separa_fields">&nbsp;</div>
 				</div>
 
 				<div class="linha_separa_fields">&nbsp;</div>
 
 
 			</fieldset>
-			<div class="linha_separa_fields">&nbsp;</div>
-			<div class="linha_separa_fields">&nbsp;</div>
-			<div class="linha_separa_fields">&nbsp;</div>
 
 </body>

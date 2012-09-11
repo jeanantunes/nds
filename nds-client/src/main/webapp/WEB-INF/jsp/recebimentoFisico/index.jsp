@@ -144,20 +144,92 @@
 				    		width="16" 
 				    		height="16" 
 				    		border="0" 
-				    		hspace="5" />Incluir Novo</a></span></td>			
+				    		/>Incluir Novo</a></span></td>			
 				 </tr>			
 			</table>
 
 		</div>
 
 	</form>
+	<div class="areaBts">
+		<div class="area">
+			<div id="botaoNovoProdutoOpaco" style="float:left;">
+							<span class="bt_novos" id="bt_novo_produtoOpaco"> 
+								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Incluir Novo Produto"> 
+									<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"  />
+								</a> 
+							</span>
+					</div>
 
+					<div id="botaoAdicionarOpaco" style="float:left;">
+							<span class="bt_novos" id="bt_adicionarOpaco"> 
+								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Adicionar Nota Fiscal"> 
+									<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" border="0" />
+								</a> 
+							</span>
+					</div>
 
-	<div class="corpo">
+					<div id="botaoNovoProduto" style="float:left;">
+							<span class="bt_novos" id="bt_novo_produto"> 
+								<a href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();" rel="tipsy" title="Incluir Novo Produto"> 
+									<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"  />
+								</a> 
+							</span>
+					</div>	
 
-		<br clear="all" /> <br />
+					<div id="botaoAdicionar" style="float:left;">
+							<span class="bt_novos" id="bt_adicionar"> 
+								<a href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();" rel="tipsy" title="Adicionar Nota Fiscal">  
+									<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" border="0"  />
+								</a> 
+							</span>
+					</div>
 
-		<div class="container">
+					<div id="botoesNormais" style="float:left; width:140px;">	
+
+						<span class="bt_novos"> 
+							<a href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()" rel="tipsy" title="Salvar">
+								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"  border="0" /> 
+							</a> 
+						</span>
+
+						<span class="bt_novos"> 
+							<a href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()" rel="tipsy" title="Cancelar">
+								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"   border="0" />
+							</a> 
+						</span>
+
+						<span class="bt_novos">
+							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
+								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
+							</a>
+						</span>
+					</div>	
+
+					<div id="botoesOpacos">
+
+						<span class="bt_novos"> 
+							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Salvar"> 
+								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"  border="0" />
+							</a> 
+						</span>
+
+						<span class="bt_novos"> 
+							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Cancelar"> 
+								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0" /> 
+							</a> 
+						</span>
+
+						<span class="bt_novos">
+							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento Físico"> 
+								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
+							</a>
+						</span>						
+
+					</div>
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
 
 			<form id="pesquisa_recebimento_fisico_form">
 
@@ -193,9 +265,9 @@
 							<td width="43"><input id="serie" type="text"
 								style="width: 30px;" />
 							</td>
-							<td width="110"><span class="bt_pesquisar"
-								title="Pesquisar Recebimento"> <a href="javascript:;"
-									onclick="recebimentoFisicoController.verificarNotaFiscalExistente();">Pesquisar</a> </span>
+							<td width="110"><span class="bt_novos">
+								<a href="javascript:;"
+									onclick="recebimentoFisicoController.verificarNotaFiscalExistente();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a> </span>
 							</td>
 
 						</tr>
@@ -228,7 +300,7 @@
 
 			<div class="linha_separa_fields">&nbsp;</div>
 
-			<fieldset class="fieldFiltro">
+			<fieldset class="fieldGrid">
 
 				<legend>Recebimentos Físico Cadastrados</legend>
 
@@ -240,90 +312,7 @@
 
 					</div>
 
-					<div id="botaoNovoProdutoOpaco">
-							<span class="bt_incluir_novo" id="bt_novo_produtoOpaco" title="Incluir Nova Linha"> 
-								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
-									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-									Novo Produto 
-								</a> 
-							</span>
-					</div>
-
-					<div id="botaoAdicionarOpaco">
-							<span class="bt_incluir_novo" id="bt_adicionarOpaco" title="Adicionar Nota Fiscal"> 
-								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
-									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-									Adicionar Nota Fiscal 
-								</a> 
-							</span>
-					</div>
-
-					<div id="botaoNovoProduto">
-							<span class="bt_incluir_novo" id="bt_novo_produto" title="Incluir Nova Linha"> 
-								<a href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();"> 
-									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-									Novo Produto 
-								</a> 
-							</span>
-					</div>	
-
-					<div id="botaoAdicionar">
-							<span class="bt_incluir_novo" id="bt_adicionar" title="Adicionar Nota Fiscal"> 
-								<a href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();">  
-									<img src="${pageContext.request.contextPath}/images/ico_add_novo.gif" border="0" hspace="5" />
-									Adicionar Nota Fiscal 
-								</a> 
-							</span>
-					</div>
-
-					<div id="botoesNormais">	
-
-						<span class="bt_novos" title="Salvar"> 
-							<a href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()">
-								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
-								Salvar 
-							</a> 
-						</span>
-
-						<span class="bt_novos" title="Cancelar"> 
-							<a href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()">
-								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
-								Cancelar 
-							</a> 
-						</span>
-
-						<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
-							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()">
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
-								Confirmar
-							</a>
-						</span>
-					</div>	
-
-					<div id="botoesOpacos">
-
-						<span class="bt_novos" title="Salvar"> 
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
-								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
-								Salvar 
-							</a> 
-						</span>
-
-						<span class="bt_novos" title="Cancelar"> 
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
-								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" width="19" height="17" alt="Salvar" hspace="5" border="0" />
-								Cancelar 
-							</a> 
-						</span>
-
-						<span class="bt_confirmar_novo" title="Confirmar Recebimento Físico">
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"> 
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" alt="Confirmar" border="0" hspace="5"/>
-								Confirmar
-							</a>
-						</span>						
-
-					</div>
+					
 
 					<span class="bt_sellAll" style="float:right; margin-right:40px;">
 						<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
@@ -334,11 +323,6 @@
 
 			</fieldset>
 
-			<div class="linha_separa_fields">&nbsp;</div>
-
-		</div>
-
-	</div>
 
 
 
@@ -437,7 +421,7 @@
 
 			<span class="bt_incluir_novo" title="Incluir Novo">
 			    <a href="javascript:;" onclick="recebimentoFisicoController.incluiNovoItem();">
-			        <img src= "${pageContext.request.contextPath}/images/ico_add.gif" alt="Incluir Novo" width="16" height="16" border="0" hspace="5" />
+			        <img src= "${pageContext.request.contextPath}/images/ico_add.gif" alt="Incluir Novo" width="16" height="16" border="0" />
 			        Incluir Novo
 			    </a>
 			</span>
