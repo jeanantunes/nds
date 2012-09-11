@@ -32,12 +32,10 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.LancamentoExcluido;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
-import br.com.abril.nds.repository.LancamentoExcluidoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -84,9 +82,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
-	
-	@Autowired
-	private LancamentoExcluidoRepository lancamentoExcluidoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -635,16 +630,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		try {
 			
 			for (Lancamento lancamento : lancamentos){
-				
-				LancamentoExcluido lancamentoExcluido = 
-						new LancamentoExcluido(
-								lancamento.getProdutoEdicao().getProduto().getCodigo(), 
-								lancamento.getProdutoEdicao().getProduto().getNome(), 
-								lancamento.getProdutoEdicao().getNumeroEdicao(), 
-								lancamento.getReparte(),
-								lancamento.getDataCriacao());
-				
-				this.lancamentoExcluidoRepository.adicionar(lancamentoExcluido);
 				
 				lancamento.setStatus(StatusLancamento.CANCELADO);
 				
