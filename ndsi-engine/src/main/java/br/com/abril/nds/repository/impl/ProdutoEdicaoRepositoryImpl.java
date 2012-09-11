@@ -320,7 +320,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("        JOIN pe.produto pr ");
 		hql.append("        JOIN pr.fornecedores fr JOIN fr.juridica jr ");
 		hql.append("        JOIN pe.lancamentos ln ");
-		hql.append("  WHERE 1=1 ");
+		hql.append("  WHERE pe.ativo = :indAtivo ");
 		
 		// Filtros opcionais da pesquisa:
 		if (dataLancamento != null) {
@@ -352,6 +352,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 		
 		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("indAtivo", true);
 		
 		// Parâmetros opcionais da pesquisa:
 		if (dataLancamento != null) {

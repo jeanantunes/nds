@@ -33,7 +33,7 @@ public class PessoaRepositoryImpl extends AbstractRepositoryModel<Pessoa, Long> 
 	public List<Pessoa> buscarPorNome(String nome) {
 		String hql = "from Pessoa where upper(nome) like upper(:nome) or upper(razaoSocial) like upper(:nome)";
 		Query query = getSession().createQuery(hql);
-		query.setParameter("nome",  nome + "%");
+		query.setParameter("nome",  "%" + nome + "%");
 		return query.list();
 	}
 	

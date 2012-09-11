@@ -117,6 +117,10 @@ public class CotaGarantiaController {
 	@Post("/salvaCaucaoLiquida.json")
 	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobranca) throws Exception {
 		
+		if(formaCobranca.getTipoCobranca()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
+		}
+		
 		if (listaCaucaoLiquida == null){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Nenhum valor informado."));
 		}	
@@ -188,17 +192,7 @@ public class CotaGarantiaController {
 		result.use(Results.json()).withoutRoot().from(cotaGarantias)
 				.recursive().serialize();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * Método responsável por obter tipos de cobrança de Garantia para preencher combo da camada view
 	 * @return comboTiposPagamento: Tipos de cobrança de Garantia padrão.
@@ -212,15 +206,6 @@ public class CotaGarantiaController {
 		
 		result.use(Results.json()).withoutRoot().from(listaTiposCobranca).recursive().serialize();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 	@Post("/buscaFiador.json")
 	public void buscaFiador(String nome, int maxResults) {
@@ -259,11 +244,6 @@ public class CotaGarantiaController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
 					"Parametros inválidos"));
 		}
-		
-		if (caucaoLiquida.getIndiceReajuste() == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Parametros inválidos"));
-		}	
 	}
 	
 	/**
@@ -271,13 +251,20 @@ public class CotaGarantiaController {
 	 * @param formaCobranca
 	 */
 	public void validarFormaCobranca(FormaCobrancaCaucaoLiquidaDTO formaCobranca){
-
-		if(formaCobranca.getTipoCobranca()==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
-		}
 		
-		if (formaCobranca.getTipoFormaCobranca()==null && formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
+		if (formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
+			
+			if (formaCobranca.getTipoFormaCobranca()==null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
+			}
+			
+	        if (formaCobranca.getValorParcela() == null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Informe o valor da parcela.");
+			}
+	
+			if (formaCobranca.getQtdeParcelas() == null){
+		        throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de parcelas.");
+			}
 		}
 		
 		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
@@ -301,7 +288,6 @@ public class CotaGarantiaController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
 				}
 			}
-			
 		}
 		
 		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
@@ -316,35 +302,9 @@ public class CotaGarantiaController {
 			}
 		}
 		
-		if (formaCobranca.getTipoCobranca()==TipoCobrancaCotaGarantia.DEPOSITO_TRANSFERENCIA){
-			
-			if((formaCobranca.getNomeBanco()==null) || ("".equals(formaCobranca.getNomeBanco()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
-			}
-			if((formaCobranca.getNumBanco()==null) || ("".equals(formaCobranca.getNumBanco()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
-			}
-			
-			if((formaCobranca.getConta()==null) || ("".equals(formaCobranca.getConta()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
-			}
-			
-			if((formaCobranca.getAgencia()==null) || ("".equals(formaCobranca.getAgencia()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
-			}
-			
-			if((formaCobranca.getNomeCorrentista()==null) || ("".equals(formaCobranca.getNomeCorrentista()))){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Correntista.");
-			}
+		if (formaCobranca.getValor() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe o valor.");
 		}
-		
-		if (formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.DEPOSITO_TRANSFERENCIA &&
-				formaCobranca.getValorFormaPagamentoDeposito() == null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, 
-					"Informe o valor do depósito.");
-		}
-
 	}
 	
 	/**

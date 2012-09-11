@@ -37,7 +37,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		Query query = super.getSession().createQuery(hql);
 
-		query.setParameter("nome", nome + "%");
+		query.setParameter("nome", "%" + nome + "%");
 		
 		return query.list();
 	}
