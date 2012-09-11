@@ -524,7 +524,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	public List<BoxRoteirizacaoDTO> obterBoxesPorNome(String nome) {
 		
 		Criteria criteria  = getSession().createCriteria(Box.class, "box");
-		criteria.add(Restrictions.ilike("box.nome", nome.toLowerCase() + "%"));
+		criteria.add(Restrictions.ilike("box.nome", "%" + nome.toLowerCase() + "%"));
 		
 		criteria.setProjection(Projections.projectionList()
 				.add(Projections.property("box.id"), "id")
@@ -546,7 +546,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
 		criteria.createAlias("roteiro.box","box");
-		criteria.add(Restrictions.ilike("roteiro.descricaoRoteiro", nome.toLowerCase() + "%"));
+		criteria.add(Restrictions.ilike("roteiro.descricaoRoteiro", "%" + nome.toLowerCase() + "%"));
 		criteria.add(Restrictions.in("box.id", idsBoxes));
 		
 		criteria.setProjection(Projections.projectionList()
@@ -569,7 +569,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		Criteria criteria  = getSession().createCriteria(Rota.class, "rota");
 		criteria.createAlias("rota.roteiro","roteiro");
-		criteria.add(Restrictions.ilike("rota.descricaoRota", nome.toLowerCase() + "%"));
+		criteria.add(Restrictions.ilike("rota.descricaoRota", "%" + nome.toLowerCase() + "%"));
 		criteria.add(Restrictions.in("roteiro.id", idsRoteiros));
 		
 		criteria.setProjection(Projections.projectionList()

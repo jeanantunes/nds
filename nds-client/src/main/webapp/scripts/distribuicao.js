@@ -135,7 +135,7 @@ function Distribuicao(tela) {
 			D.setNomeProcuracao(dto.nomeProcuracao);
 		}
 		
-		D.carregarConteudoTipoEntrega(tipoEntrega, false);
+		D.carregarConteudoTipoEntrega(tipoEntrega, false, false);
 		
 		if(dto.qtdeAutomatica) {
 			D.$('qtdePDV').attr('disabled','disabled');
@@ -296,7 +296,7 @@ function Distribuicao(tela) {
 			
 			D.set('tipoEntregaHidden', value);
 			
-			D.carregarConteudoTipoEntrega(value, false);
+			D.carregarConteudoTipoEntrega(value, false, true);
 			
 			return ;
 		}
@@ -312,7 +312,7 @@ function Distribuicao(tela) {
 			    	text: "Confirmar",
 			    	click: function() {
 					
-			    		D.carregarConteudoTipoEntrega(value, true);
+			    		D.carregarConteudoTipoEntrega(value, true, true);
 						
 						D.set('tipoEntregaHidden', value);
 						
@@ -333,7 +333,7 @@ function Distribuicao(tela) {
 		});
 	};
 	
-	this.carregarConteudoTipoEntrega = function(value, limparCampos) {
+	this.carregarConteudoTipoEntrega = function(value, limparCampos, carregarValores) {
 		
 		if (value == "COTA_RETIRA") {
 			
@@ -347,6 +347,11 @@ function Distribuicao(tela) {
 			
 			D.mostrarEsconderConteudoEntregaBanca(true, limparCampos);
 			
+			if (carregarValores) {
+				
+				D.carregarValoresCamposEntregaBanca();	
+			}
+			
 		} else if (value == "ENTREGADOR") {
 			
 			D.mostrarEsconderConteudoEntregaBanca(false, limparCampos);
@@ -359,6 +364,19 @@ function Distribuicao(tela) {
 			
 			D.mostrarEsconderConteudoEntregador(false, limparCampos);
 		}
+	};
+	
+	this.carregarValoresCamposEntregaBanca = function() {
+		
+		$.postJSON(contextPath + "/cadastro/cota/carregarValoresEntregaBanca",
+			"numCota=" + D.get("numCota"),
+			function (result) {
+			
+				D.set('percentualFaturamentoEntregaBanca',	result.percentualFaturamento);
+				D.set('taxaFixaEntregaBanca',				result.taxaFixa);
+			},
+			null,
+			true);
 	};
 	
 	this.mostrarEsconderConteudoEntregaBanca = function(exibirDiv, limparCampos) {
