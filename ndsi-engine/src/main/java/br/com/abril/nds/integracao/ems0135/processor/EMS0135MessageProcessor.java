@@ -100,69 +100,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		salvarItemNota(notafiscalEntrada, input, produtoEdicao);
 	}
 	
-	/**
-	 * Realiza os cálculos de valores da Nota Fiscal. Após os cálculos, salva
-	 * os novos valores. 
-	 * 
-	 * @param nfEntrada
-	 * @param input
-	 */
-	private void calcularValores(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
-		
-		BigDecimal valorBruto = this.calcularValorBruto(nfEntrada, input);
-		nfEntrada.setValorBruto(valorBruto);
-		
-		BigDecimal valorLiquido = this.calcularValorLiquido(nfEntrada, input);
-		nfEntrada.setValorLiquido(valorLiquido);
-		
-		BigDecimal valorDesconto = valorBruto.subtract(valorLiquido);
-		nfEntrada.setValorDesconto(valorDesconto);
-		
-		this.getSession().update(nfEntrada);
-	}
-	
-	/**
-	 * Método que contém as regras para o cálculo do "Valor Bruto" de uma NF.
-	 * 
-	 * @param nfEntrada
-	 * @param input
-	 * @return
-	 */
-	private BigDecimal calcularValorBruto(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
-		
-		BigDecimal valorBrutoTotal = nfEntrada.getValorBruto();
-		BigDecimal valorBrutoItem = BigDecimal.valueOf(input.getPreco() 
-				* input.getQtdExemplar());
-		valorBrutoTotal = valorBrutoTotal.add(valorBrutoItem);
-		
-		return valorBrutoTotal;
-	}
-	
-	/**
-	 * Método que contém as regras para o cálculo do "Valor Líquido" de uma NF.
-	 * 
-	 * @param nfEntrada
-	 * @param input
-	 * 
-	 * @return
-	 */
-	private BigDecimal calcularValorLiquido(NotaFiscalEntrada nfEntrada, 
-			EMS0135Input input) {
-		
-		BigDecimal valorLiquidoTotal = nfEntrada.getValorLiquido();
-		BigDecimal valorLiquidoItem = BigDecimal.valueOf((input.getPreco() 
-				- (input.getPreco() * input.getDesconto())) 
-				* input.getQtdExemplar());
-		valorLiquidoTotal = valorLiquidoTotal.add(valorLiquidoItem);
-		
-		return valorLiquidoTotal;
-	}
-	
-	private BigDecimal calcularValorUnitario() {
-		return BigDecimal.ZERO;
-	}
-	
-	
 	private NotaFiscalEntradaFornecedor salvarNotaFiscalEntrada(EMS0135Input input, ProdutoEdicao produtoEdicao) {
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
@@ -233,6 +170,69 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		this.getSession().persist(item);
 	}
+	
+	/**
+	 * Realiza os cálculos de valores da Nota Fiscal. Após os cálculos, salva
+	 * os novos valores. 
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 */
+	private void calcularValores(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
+		
+		BigDecimal valorBruto = this.calcularValorBruto(nfEntrada, input);
+		nfEntrada.setValorBruto(valorBruto);
+		
+		BigDecimal valorLiquido = this.calcularValorLiquido(nfEntrada, input);
+		nfEntrada.setValorLiquido(valorLiquido);
+		
+		BigDecimal valorDesconto = valorBruto.subtract(valorLiquido);
+		nfEntrada.setValorDesconto(valorDesconto);
+		
+		this.getSession().update(nfEntrada);
+	}
+	
+	/**
+	 * Método que contém as regras para o cálculo do "Valor Bruto" de uma NF.
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 * @return
+	 */
+	private BigDecimal calcularValorBruto(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
+		
+		BigDecimal valorBrutoTotal = nfEntrada.getValorBruto();
+		BigDecimal valorBrutoItem = BigDecimal.valueOf(input.getPreco() 
+				* input.getQtdExemplar());
+		valorBrutoTotal = valorBrutoTotal.add(valorBrutoItem);
+		
+		return valorBrutoTotal;
+	}
+	
+	/**
+	 * Método que contém as regras para o cálculo do "Valor Líquido" de uma NF.
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 * 
+	 * @return
+	 */
+	private BigDecimal calcularValorLiquido(NotaFiscalEntrada nfEntrada, 
+			EMS0135Input input) {
+		
+		BigDecimal valorLiquidoTotal = nfEntrada.getValorLiquido();
+		BigDecimal valorLiquidoItem = BigDecimal.valueOf((input.getPreco() 
+				- (input.getPreco() * input.getDesconto())) 
+				* input.getQtdExemplar());
+		valorLiquidoTotal = valorLiquidoTotal.add(valorLiquidoItem);
+		
+		return valorLiquidoTotal;
+	}
+	
+	private BigDecimal calcularValorUnitario() {
+		return BigDecimal.ZERO;
+	}
+	
 	
 	private Lancamento obterLancamentoProdutoEdicao(Long idProdutoEdicao) {
 		
