@@ -110,6 +110,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		BigDecimal valorLiquido = this.calcularValorLiquido(nfEntrada, input);
 		nfEntrada.setValorLiquido(valorLiquido);
 		
+		BigDecimal valorDesconto = valorBruto.subtract(valorLiquido);
+		nfEntrada.setValorDesconto(valorDesconto);
+		
 		this.getSession().update(nfEntrada);
 	}
 	
@@ -150,10 +153,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		return valorLiquidoTotal;
 	}
 	
-	private BigDecimal calcularValorDesconto() {
-		return BigDecimal.ZERO;
-	}
-
 	private BigDecimal calcularValorUnitario() {
 		return BigDecimal.ZERO;
 	}
