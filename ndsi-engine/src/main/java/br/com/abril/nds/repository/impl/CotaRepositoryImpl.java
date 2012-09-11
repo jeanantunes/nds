@@ -115,8 +115,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		criteria.createAlias("pessoa", "pessoa");
 
-		criteria.add(Restrictions.or(Restrictions.eq("pessoa.nome", nome),
-				Restrictions.eq("pessoa.razaoSocial", nome)));
+		criteria.add(Restrictions.or(Restrictions.like("pessoa.nome", nome, MatchMode.ANYWHERE),
+				Restrictions.like("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)));
 
 		return criteria.list();
 	}
