@@ -107,6 +107,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		BigDecimal valorBruto = this.calcularValorBruto(nfEntrada, input);
 		nfEntrada.setValorBruto(valorBruto);
 		
+		BigDecimal valorLiquido = this.calcularValorLiquido(nfEntrada, input);
+		nfEntrada.setValorLiquido(valorLiquido);
 		
 		this.getSession().update(nfEntrada);
 	}
@@ -128,8 +130,24 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		return valorBrutoTotal;
 	}
 	
-	private BigDecimal calcularValorLiquido() {
-		return BigDecimal.ZERO;
+	/**
+	 * Método que contém as regras para o cálculo do "Valor Líquido" de uma NF.
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 * 
+	 * @return
+	 */
+	private BigDecimal calcularValorLiquido(NotaFiscalEntrada nfEntrada, 
+			EMS0135Input input) {
+		
+		BigDecimal valorLiquidoTotal = nfEntrada.getValorLiquido();
+		BigDecimal valorLiquidoItem = BigDecimal.valueOf((input.getPreco() 
+				- (input.getPreco() * input.getDesconto())) 
+				* input.getQtdExemplar());
+		valorLiquidoTotal = valorLiquidoTotal.add(valorLiquidoItem);
+		
+		return valorLiquidoTotal;
 	}
 	
 	private BigDecimal calcularValorDesconto() {
@@ -155,13 +173,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notaFiscalEntradaFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalEntradaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
 		
-		BigDecimal valorBruto = new BigDecimal(input.getPreco() * input.getQtdExemplar());
 		notaFiscalEntradaFornecedor.setValorBruto(BigDecimal.ZERO);
-		
-		double desconto = (input.getDesconto() / 100);
-		Double valorLiquido =  (valorBruto.doubleValue()  + (desconto * input.getPreco())) * input.getQtdExemplar();
-		
-		notaFiscalEntradaFornecedor.setValorLiquido(new BigDecimal(valorLiquido));		
+		notaFiscalEntradaFornecedor.setValorLiquido(BigDecimal.ZERO);		
 		notaFiscalEntradaFornecedor.setValorDesconto(new BigDecimal(input.getDesconto()));		
 		notaFiscalEntradaFornecedor.setEmitente(obterPessoaJuridica("10000000000100"));		
 		notaFiscalEntradaFornecedor.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
@@ -178,13 +191,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	private void atualizarNotaFiscalEntrada(NotaFiscalEntrada notafiscalEntrada, EMS0135Input input, ProdutoEdicao produtoEdicao) {
-		BigDecimal valorBruto = new BigDecimal((input.getPreco() * input.getQtdExemplar()) + notafiscalEntrada.getValorBruto().floatValue() );
 		
-		double desconto = (input.getDesconto() / 100);
-		Double valorLiquido =  (valorBruto.doubleValue()  + (desconto * input.getPreco())) * input.getQtdExemplar();		
-		notafiscalEntrada.setValorLiquido(new BigDecimal(valorLiquido));
-		
-		this.getSession().update(notafiscalEntrada);
+//		this.getSession().update(notafiscalEntrada);
 //		salvarItemNota((NotaFiscalEntradaFornecedor)notafiscalEntrada, input, produtoEdicao);
 	}
 
