@@ -284,8 +284,8 @@ public class Lancamento implements Serializable {
 		return StatusLancamento.FURO.equals(status);
 	}
 	
-	public boolean isCancelamentoGD() {
-		return StatusLancamento.CANCELADO_GD.equals(status);
+	public boolean isCancelamento() {
+		return StatusLancamento.CANCELADO.equals(status);
 	}
 	
 	public boolean isExpedido() {
