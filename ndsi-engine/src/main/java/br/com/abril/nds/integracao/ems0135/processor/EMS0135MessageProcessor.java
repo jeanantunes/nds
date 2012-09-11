@@ -2,6 +2,9 @@ package br.com.abril.nds.integracao.ems0135.processor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -32,6 +35,8 @@ import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
 public class EMS0135MessageProcessor extends AbstractRepository implements MessageProcessor {
+	
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -87,7 +92,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		if(notafiscalEntrada == null){
 			notafiscalEntrada = salvarNotaFiscalEntrada(input, produtoEdicao);			
 		}else{
-			atualizarNotaFiscalEntrada(notafiscalEntrada, input, produtoEdicao);
+			atualizarNotaFiscalEntrada(message, notafiscalEntrada, input, produtoEdicao);
 		}
 		
 		this.calcularValores(notafiscalEntrada, input);
@@ -187,9 +192,33 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		return notaFiscalEntradaFornecedor;
 	}
 	
-	private void atualizarNotaFiscalEntrada(NotaFiscalEntrada notafiscalEntrada, EMS0135Input input, ProdutoEdicao produtoEdicao) {
+	private void atualizarNotaFiscalEntrada(Message message, 
+			NotaFiscalEntrada notafiscalEntrada, EMS0135Input input, 
+			ProdutoEdicao produtoEdicao) {
 		
-//		this.getSession().update(notafiscalEntrada);
+		boolean nfAlterado = false;
+		
+		// Verificar a Data de Emissão:
+		Date dtEmissaoAtual = this.normalizarDataSemHora(
+				notafiscalEntrada.getDataEmissao());
+		Date dtEmissaoNova = this.normalizarDataSemHora(
+				input.getDataEmissao());
+		if (!dtEmissaoAtual.equals(dtEmissaoNova)) {
+			nfAlterado = true;
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteracao da DATA EMISSAO da NotaFiscal: "
+							+ notafiscalEntrada.getNumero()
+							+ " , de: " + simpleDateFormat.format(dtEmissaoAtual) 
+							+ "para: " + simpleDateFormat.format(dtEmissaoNova));
+			notafiscalEntrada.setDataEmissao(dtEmissaoNova);
+		}
+		
+		
+		// Salvar se houver alterações: 
+		if (nfAlterado) {
+			this.getSession().update(notafiscalEntrada);
+		}
 	}
 
 	private void salvarItemNota(NotaFiscalEntrada nfEntrada, EMS0135Input input, ProdutoEdicao produtoEdicao) {
@@ -296,6 +325,26 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	}
 
 
+	/**
+	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
+	 * minuto, segundo e milissendo).
+	 * 
+	 * @param dt
+	 * 
+	 * @return
+	 */
+	private Date normalizarDataSemHora(Date dt) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dt);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		return cal.getTime();
+	}
+	
 	@Override
 	public void posProcess() {
 		// TODO Auto-generated method stub
