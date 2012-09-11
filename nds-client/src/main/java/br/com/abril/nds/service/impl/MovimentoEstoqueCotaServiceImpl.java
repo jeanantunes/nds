@@ -158,10 +158,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		if(tipoMovimentoCota == null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Tipo de Movimento de Reparte não encontrado."));
 		
-		if(cota == null)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota não encontrada."));
+		Long idCota = cota == null ? null : cota.getId();
 		
-		return movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(cota.getId(), idProdutoEdicao, tipoMovimentoCota.getId());
+		return movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(idCota, idProdutoEdicao, tipoMovimentoCota.getId());
 	}
 	
 }

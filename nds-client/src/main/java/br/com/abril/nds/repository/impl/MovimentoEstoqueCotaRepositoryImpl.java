@@ -1385,23 +1385,25 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
 		
-		hql.append(" where movimentoEstoqueCota.cota.id = :idCota and ");
+		hql.append(" where movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
 		
-		if(idProdutoEdicao != null)
-			hql.append(" movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
-		
+		if(idCota != null)
+			hql.append("  movimentoEstoqueCota.cota.id = :idCota and ");
+				
 		hql.append(" movimentoEstoqueCota.tipoMovimento.id = :idTipoMovimento ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		query.setParameter("idCota", idCota);
+		if(idCota != null)
+			query.setParameter("idCota", idCota);
 		
-		if(idProdutoEdicao != null)
-			query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		query.setParameter("idTipoMovimento", idTipoMovimento);
 		
-		return ((BigInteger)query.uniqueResult()).longValue();
+		BigInteger sum = (BigInteger) (query.uniqueResult() == null ? BigInteger.ZERO : query.uniqueResult());
+		
+		return sum.longValue();
 	}
 		
 }

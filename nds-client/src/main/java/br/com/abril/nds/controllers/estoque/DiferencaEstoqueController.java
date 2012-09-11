@@ -2190,13 +2190,16 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/rateio/buscarReparteCotaPreco")
 	public void buscarReparteCotaPreco(Long idProdutoEdicao, Integer numeroCota){
 		
+		if(numeroCota == null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota deve ser informada."));
+				
 		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(idProdutoEdicao, numeroCota);
-		
+				
 		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
 		
 		Object[] dados = new Object[2];
 		dados[0] = qtde;
-		dados[1] = pe.getPrecoVenda();
+		dados[1] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
@@ -2211,7 +2214,7 @@ public class DiferencaEstoqueController {
 				
 		Object[] dados = new Object[2];
 		dados[0] = qtde;
-		dados[1] = pe.getPrecoVenda();
+		dados[1] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
