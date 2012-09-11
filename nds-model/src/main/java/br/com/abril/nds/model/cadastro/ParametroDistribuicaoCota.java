@@ -77,6 +77,12 @@ public class ParametroDistribuicaoCota implements Serializable {
 	@Column(name = "RECIBO_EMAIL", nullable = true)
 	private Boolean reciboEmail;
 
+	@Column(name = "UTILIZA_TERMO_ADESAO")
+    private Boolean utilizaTermoAdesao;
+	
+	@Column(name = "TERMO_ADESAO_RECEBIDO")
+    private Boolean termoAdesaoRecebido;
+	
 	@Column(name = "UTILIZA_PROCURACAO")
     private Boolean utilizaProcuracao;
 	
@@ -314,6 +320,34 @@ public class ParametroDistribuicaoCota implements Serializable {
 	 */
 	public void setSlipEmail(Boolean slipEmail) {
 		this.slipEmail = slipEmail;
+	}
+
+	/**
+	 * @return the utilizaTermoAdesao
+	 */
+	public Boolean getUtilizaTermoAdesao() {
+		return utilizaTermoAdesao;
+	}
+
+	/**
+	 * @param utilizaTermoAdesao the utilizaTermoAdesao to set
+	 */
+	public void setUtilizaTermoAdesao(Boolean utilizaTermoAdesao) {
+		this.utilizaTermoAdesao = utilizaTermoAdesao;
+	}
+
+	/**
+	 * @return the termoAdesaoRecebido
+	 */
+	public Boolean getTermoAdesaoRecebido() {
+		return termoAdesaoRecebido;
+	}
+
+	/**
+	 * @param termoAdesaoRecebido the termoAdesaoRecebido to set
+	 */
+	public void setTermoAdesaoRecebido(Boolean termoAdesaoRecebido) {
+		this.termoAdesaoRecebido = termoAdesaoRecebido;
 	}
 
 	/**

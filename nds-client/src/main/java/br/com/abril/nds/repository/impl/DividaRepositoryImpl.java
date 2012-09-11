@@ -406,7 +406,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			whereUtilizado = true;
 			
 			sql.append("  (upper(PESSOA_.NOME) like :nomeCota or upper(PESSOA_.RAZAO_SOCIAL) like :nomeCota)");
-			params.put("nomeCota",filtro.getNomeCota().toUpperCase() + "%");
+			params.put("nomeCota", "%" + filtro.getNomeCota().toUpperCase() + "%");
 		}
 		
 		if(filtro.getStatusCota() != null) {

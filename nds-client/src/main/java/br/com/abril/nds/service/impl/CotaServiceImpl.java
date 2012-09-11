@@ -39,6 +39,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -669,9 +670,7 @@ public class CotaServiceImpl implements CotaService {
 			dto.setQtdeAutomatica(true);
 		}
 		
-		if(parametro == null) {
-			
-			this.obterTaxaPercentual(dto);
+		if (parametro == null) {
 			
 			return dto;
 		}
@@ -699,6 +698,8 @@ public class CotaServiceImpl implements CotaService {
 		dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
 		dto.setReciboImpresso(parametro.getReciboImpresso());
 		dto.setReciboEmail(parametro.getReciboEmail());
+		dto.setUtilizaTermoAdesao(parametro.getUtilizaTermoAdesao());
+		dto.setTermoAdesaoRecebido(parametro.getTermoAdesaoRecebido());
 		dto.setUtilizaProcuracao(parametro.getUtilizaProcuracao());
 		dto.setProcuracaoRecebida(parametro.getProcuracaoRecebida());
 		dto.setTaxaFixa(MathUtil.round(parametro.getTaxaFixa(), 2));
@@ -707,14 +708,6 @@ public class CotaServiceImpl implements CotaService {
 		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
 		
 		return dto;
-	}
-	
-	public void obterTaxaPercentual(DistribuicaoDTO dto) {
-		
-		//TODO: obter dados do cadastro de transportador
-		
-		dto.setTaxaFixa(null);
-		dto.setPercentualFaturamento(null);
 	}
 
 	@Override
@@ -771,6 +764,8 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
 		parametros.setReciboImpresso(dto.getReciboImpresso());
 		parametros.setReciboEmail(dto.getReciboEmail());
+		parametros.setUtilizaTermoAdesao(dto.getUtilizaTermoAdesao());
+		parametros.setTermoAdesaoRecebido(dto.getTermoAdesaoRecebido());
 		parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
 		parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
 		parametros.setTaxaFixa(dto.getTaxaFixa());
@@ -792,7 +787,11 @@ public class CotaServiceImpl implements CotaService {
 		
 		cotaRepository.merge(cota);		
 
-		atualizaTermoAdesao(cota.getNumeroCota().toString());
+		this.atualizaTermoAdesao(
+			cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGA_EM_BANCA);
+		
+		this.atualizaTermoAdesao(
+			cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGADOR);
 	}
 	
 
@@ -986,59 +985,27 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	@Transactional
-	public void atualizaTermoAdesao(String numCota) throws FileNotFoundException, IOException {
+	public void atualizaTermoAdesao(String numCota, DescricaoTipoEntrega descricaoTipoEntrega) throws FileNotFoundException, IOException {
 		
+		ParametroSistema pathDocumento = null;
+		
+		switch(descricaoTipoEntrega) {
+		case ENTREGA_EM_BANCA:
+			pathDocumento = this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
+			break;
+		case ENTREGADOR:
+			pathDocumento = this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_PROCURACAO);								
+			break;
+		default:
+			return;
+		}
 		
 		ParametroSistema raiz = 
-				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_SERVER_ROOT);					
+				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);					
 		
-		ParametroSistema pathTermoAdesao = 
-				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TERMO_ADESAO);								
-		
-		String path = (raiz.getValor() + pathTermoAdesao.getValor() + numCota).replace("\\", "/");
+		String path = (raiz.getValor() + pathDocumento.getValor() + numCota).replace("\\", "/");
 		
 		fileService.persistirTemporario(path);
-		
-		/*File fileDir = new File(arquivo.getPath());		
-		
-
-		if(fileDir.exists()) {
-			
-		 	for (String temp : fileDir.list()) {
-		 		(new File(fileDir, temp)).delete();
-		 	}
-
-			fileDir.delete();
-		}
-
-		fileDir.mkdirs();
-
-		File fileArquivo = new File(fileDir, arquivo.getNomeArquivo());				
-		
-		FileOutputStream fos = null;
-		
-		try {
-						
-			fos = new FileOutputStream(fileArquivo);
-			
-			IOUtils.copyLarge(arquivo.getArquivo(), fos);
-			
-		} catch (Exception e) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR,
-				"Falha ao gravar o arquivo em disco!");
-		
-		} finally {
-			try { 
-				if (fos != null) {
-					fos.close();
-				}
-			} catch (Exception e) {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-					"Falha ao fechar gravação de arquivo em disco!");
-			}
-		}*/
-		
 	}
 
 	/**
@@ -1894,6 +1861,46 @@ public class CotaServiceImpl implements CotaService {
 		String path = url.toURI().getPath();
 		 
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+	}
+	
+	@Transactional(readOnly = true)
+	public DistribuicaoDTO carregarValoresEntregaBanca(Integer numCota) {
+		
+		DistribuicaoDTO dto = new DistribuicaoDTO();
+		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		
+		if (cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
+		}
+		
+		this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
+		
+		return dto;
+	}
+	
+	private DistribuicaoDTO obterPercentualFaturamentoTaxaFixa(Long idCota, DistribuicaoDTO dto) {
+		
+		PDV pdv = this.pdvRepository.obterPDVPrincipal(idCota);
+		
+		if (pdv != null) {
+		
+			Rota rota = this.rotaRepository.obterRotaPorPDV(pdv.getId(), idCota);
+			
+			if (rota != null) {
+				
+				Entregador entregador = this.entregadorRepository.obterEntregadorPorRota(rota.getId());
+				
+				if (entregador != null) {
+				
+					dto.setTaxaFixa(entregador.getTaxaFixa());
+					dto.setPercentualFaturamento(entregador.getPercentualFaturamento());
+				}
+			}
+		}
+		
+		return dto;
 	}
 	
 	/**

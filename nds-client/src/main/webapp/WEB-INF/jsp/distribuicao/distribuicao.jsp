@@ -10,8 +10,10 @@
 	</script>
 	
 	<style>
-		.divConteudoEntregador, .divProcuracaoRecebida,
-		.divUtilizaProcuracao, #dialogMudancaTipoEntrega { display: none; }
+		.divConteudoEntregador, .divConteudoEntregaBanca,
+		.divUtilizaProcuracao, .divUtilizaTermoAdesao,
+		.divProcuracaoRecebida, .divTermoAdesaoRecebido,
+		#dialogMudancaTipoEntrega { display: none; }
 	</style>
 </head>
 
@@ -114,26 +116,25 @@
 					</tr>
 				</table>
 				
-				<a href="javascript:;" target="_blank" onclick="DISTRIB_COTA.imprimeTermoAdesao();">teste termo adesão vlw</a>
-
 				<div class="divConteudoEntregador">
-					<div id="cotaTemEntregador2" style="display: block;">
+					<div id="cotaTemEntregador" style="display: none;">
 						<table width="399" border="0" cellspacing="1" cellpadding="1">
 							<tr>
 								<td width="130">Utiliza Procuração?</td>
 								<td width="20">
 									<input type="checkbox" id="${param.tela}utilizaProcuracao"
 										   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaArquivo('divUtilizaProcuracao', 'divProcuracaoRecebida',
-											   												  'utilizaProcuracao', 'procuracaoRecebida')" />
+											   												      'utilizaProcuracao', 'procuracaoRecebida')" />
+								</td>
 											   												  
-									<td width="245" height="39" class="procuracaoPf">
-										<div class="divUtilizaProcuracao">
-											<span class="bt_imprimir">
-												<a href="javascript:;" target="_blank"
-												   onclick="DISTRIB_COTA.imprimeProcuracao();">Procuração</a>
-											</span>
-										</div>
-									</td>
+								<td width="245" height="39" class="procuracaoPf">
+									<div class="divUtilizaProcuracao">
+										<span class="bt_imprimir">
+											<a href="javascript:;"
+											   onclick="DISTRIB_COTA.downloadProcuracao();">Procuração</a>
+										</span>
+									</div>
+								</td>
 							</tr>
 						</table>
 							
@@ -146,26 +147,30 @@
 											   onclick="DISTRIB_COTA.mostrarEsconderDivArquivoRecebido('divProcuracaoRecebida', 'procuracaoRecebida')" />
 									</td>
 								</tr>
-								<tr>
-									<td width="130">&nbsp;</td>
-									<td width="265">
-										nome_do_arquivo
-									</td>
-								</tr>
 							</table>
 							<div class="divProcuracaoRecebida">
 								<table width="399" border="0" cellspacing="1" cellpadding="1">
 									<tr>
 										<td width="130">Arquivo:</td>
 										<td width="265">
-											<input name="fileField" type="file"
-												   id="fileField" size="15" />
+											
+											<form action="<c:url value='/cadastro/cota/uploadProcuracao' />" id="formUploadProcuracao"
+												  method="post" enctype="multipart/form-data" >		
+															
+												<input type="hidden" name="formUploadAjax" value="true" />
+												<input type="hidden" name="numCotaUpload" />
+												   
+											   	<div id="uploadProcuracao">
+													<input name="uploadedFileProcuracao" type="file" id="uploadedFileProcuracao"
+														   size="30" onchange="DISTRIB_COTA.submitForm('formUploadProcuracao')" />
+												</div>
+											</form>
 										</td>
 									</tr>
 									<tr>
 										<td width="130">&nbsp;</td>
 										<td width="265">
-											<a href="javascript:;">nome_do_arquivo</a>
+											<span id="nomeArquivoProcuracao"></span>
 										</td>
 									</tr>
 								</table>
@@ -176,8 +181,8 @@
 						<tr>
 							<td width="130">Percentual Faturamento:</td>
 							<td width="265">
-								<input id="${param.tela}percentualFaturamentoEntregador" type="text"
-									   style="width: 70px; text-align: right;" />
+								<input id="${param.tela}percentualFaturamentoEntregador" name="percentualFaturamento"
+									   type="text" style="width: 70px; text-align: right;" />
 							</td>
 						</tr>
 						<tr>
@@ -187,12 +192,12 @@
 									<tr>
 										<td width="43%">
 											<input id="${param.tela}inicioPeriodoCarenciaEntregador"
-												   name="inicioPeriodoCarenciaEntregador" type="text" style="width: 70px" />
+												   name="inicioPeriodoCarencia" type="text" style="width: 70px" />
 										</td>
 										<td width="14%">Até</td>
 										<td width="43%">
 											<input id="${param.tela}fimPeriodoCarenciaEntregador"
-												   name="fimPeriodoCarenciaEntregador" type="text" style="width: 70px" />
+												   name="fimPeriodoCarencia" type="text" style="width: 70px" />
 										</td>
 									</tr>
 								</table></td>

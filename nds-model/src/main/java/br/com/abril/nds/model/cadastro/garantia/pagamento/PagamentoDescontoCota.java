@@ -19,8 +19,8 @@ public class PagamentoDescontoCota extends PagamentoCaucaoLiquida {
 	@Column(name="DESCONTO_COTA",nullable=true)
 	private BigDecimal descontoCota;
 	
-	@Column(name="VALOR_UTILIZADO",nullable=true)
-	private BigDecimal valorUtilizado;
+	@Column(name="PORCENTAGEM_UTILIZADA",nullable=true)
+	private BigDecimal porcentagemUtilizada;
 
 	/**
 	 * @return the descontoAtual
@@ -51,18 +51,17 @@ public class PagamentoDescontoCota extends PagamentoCaucaoLiquida {
 	}
 
 	/**
-	 * @return the valorUtilizado
+	 * @return the porcentagemUtilizada
 	 */
-	public BigDecimal getValorUtilizado() {
-		return valorUtilizado;
+	public BigDecimal getPorcentagemUtilizada() {
+		return porcentagemUtilizada;
 	}
 
 	/**
-	 * @param valorUtilizado the valorUtilizado to set
+	 * @param porcentagemUtilizada the porcentagemUtilizada to set
 	 */
-	public void setValorUtilizado(BigDecimal valorUtilizado) {
-		this.valorUtilizado = valorUtilizado;
+	public void setPorcentagemUtilizada(BigDecimal porcentagemUtilizada) {
+		this.porcentagemUtilizada = porcentagemUtilizada;
 	}
-	
 	
 }

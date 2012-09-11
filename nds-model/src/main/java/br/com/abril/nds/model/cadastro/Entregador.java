@@ -68,6 +68,12 @@ public class Entregador {
 	@OneToOne
 	@JoinColumn(name="ROTA_ID")
 	private Rota rota;
+	
+    @Column(name = "TAXA_FIXA", precision = 16, scale = 4)
+    private BigDecimal taxaFixa;
+    
+    @Column(name = "PERCENTUAL_FATURAMENTO", precision = 16, scale = 4)
+    private BigDecimal percentualFaturamento;
 
 	/**
 	 * @return the id
@@ -223,6 +229,34 @@ public class Entregador {
 		int result = 1;
 		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
 		return result;
+	}
+
+	/**
+	 * @return the taxaFixa
+	 */
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
+	}
+
+	/**
+	 * @param taxaFixa the taxaFixa to set
+	 */
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+
+	/**
+	 * @return the percentualFaturamento
+	 */
+	public BigDecimal getPercentualFaturamento() {
+		return percentualFaturamento;
+	}
+
+	/**
+	 * @param percentualFaturamento the percentualFaturamento to set
+	 */
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
 	}
 
 	@Override

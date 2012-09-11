@@ -386,7 +386,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	selecionarTodos : function(input) {
 		
-		balanceamentoRecolhimentoController.checkAll(input, "checkReprogramar");
+		checkAll(input, "checkReprogramar");
 		
 		$("input[name='checkReprogramar']", balanceamentoRecolhimentoController.workspace).each(function() {
 		

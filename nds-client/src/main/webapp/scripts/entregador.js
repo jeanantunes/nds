@@ -129,7 +129,11 @@ var entregadorController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			
+			form: $("#div-wrapper-dialog-novoEntregador", this.workspace)
+			
+			
 		});
 	},
 	
@@ -270,7 +274,7 @@ var entregadorController = $.extend(true, {
 
 				} else {
 
-					$("#formDadosEntregadorPJ")[0].reset();
+					$("#formDadosEntregadorPJ", this.workspace)[0].reset();
 
 					entregadorController.popup_novoEntregador(false);
 
@@ -816,3 +820,5 @@ var entregadorController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=entregador.js
