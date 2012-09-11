@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.util.BigIntegerUtil;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
@@ -1263,6 +1262,22 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 														 codigosDiaSemana);
 		
 		return datasDistribuicao;
+	}
+	
+	@Override
+	@Transactional
+	public void excluiLancamento(long idLancamento){
+		Lancamento lancamento =  lancamentoRepository.buscarPorId(idLancamento);
+		if(lancamento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não encontrado!");
+		}
+		if(lancamento.getStatus() != StatusLancamento.PLANEJADO && lancamento.getStatus() != StatusLancamento.CONFIRMADO){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento " + lancamento.getStatus().getDescricao() +" não pode ser excluido!");
+		}
+		
+		lancamento.setStatus(StatusLancamento.EXCLUIDO);
+		
+		
 	}
 
 }
