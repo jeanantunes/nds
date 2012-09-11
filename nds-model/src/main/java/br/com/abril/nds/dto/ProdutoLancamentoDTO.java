@@ -96,7 +96,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 			return false;
 		}
 		
-		if (StatusLancamento.CANCELADO_GD.equals(this.statusLancamento)) {
+		if (StatusLancamento.CANCELADO.equals(this.statusLancamento)) {
 			
 			return false;
 		}

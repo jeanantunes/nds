@@ -32,10 +32,12 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoExcluido;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.LancamentoExcluidoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -82,6 +84,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
+	
+	@Autowired
+	private LancamentoExcluidoRepository lancamentoExcluidoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -616,31 +621,39 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
 		}
 
-		List<Long> idsLancamento = new ArrayList<Long>();
+		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
 		
-		for (Lancamento lancamento : produtoEdicao.getLancamentos()) {
+		for (Lancamento lancamento : lancamentos) {
 			
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
 					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
 				
 				throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
 			}
-			
-			idsLancamento.add(lancamento.getId());
 		}
 
 		try {
-
-			if (!idsLancamento.isEmpty()) {
-
-				int arraySize = idsLancamento.size();
+			
+			for (Lancamento lancamento : lancamentos){
 				
-				Long[] ids = idsLancamento.toArray(new Long[arraySize]);
+				LancamentoExcluido lancamentoExcluido = 
+						new LancamentoExcluido(
+								lancamento.getProdutoEdicao().getProduto().getCodigo(), 
+								lancamento.getProdutoEdicao().getProduto().getNome(), 
+								lancamento.getProdutoEdicao().getNumeroEdicao(), 
+								lancamento.getReparte(),
+								lancamento.getDataCriacao());
 				
-				this.lancamentoRepository.removerPorId(ids);
+				this.lancamentoExcluidoRepository.adicionar(lancamentoExcluido);
+				
+				lancamento.setStatus(StatusLancamento.CANCELADO);
+				
+				this.lancamentoRepository.alterar(lancamento);
 			}
-
-			this.produtoEdicaoRepository.remover(produtoEdicao);
+			
+			produtoEdicao.setAtivo(false);
+			
+			this.produtoEdicaoRepository.alterar(produtoEdicao);
 
 		} catch (DataIntegrityViolationException e) {
 			

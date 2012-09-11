@@ -25,15 +25,6 @@ public class CotaGarantiaDTO implements Serializable {
 	
 	public CotaGarantiaDTO() {
 	}
-	
-	
-	
-	
-
-	
-
-
-
 
 
 	public CotaGarantiaDTO(TipoGarantia tipo, CotaGarantia cotaGarantia) {
@@ -70,8 +61,5 @@ public class CotaGarantiaDTO implements Serializable {
 	public void setCotaGarantia(CotaGarantia cotaGarantia) {
 		this.cotaGarantia = cotaGarantia;
 	}
-	
-	
-	
 
 }

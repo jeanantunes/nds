@@ -754,7 +754,7 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setDestacarLinha(
 			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
-				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD)
+				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO)
 				|| produtoLancamentoDTO.isAlteradoInteface() );
 				
 		return produtoBalanceamentoVO;

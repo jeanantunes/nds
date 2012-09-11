@@ -170,7 +170,6 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			
 			caucaoLiquida.setValor(5000D);
-			caucaoLiquida.setIndiceReajuste(10D);
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
 			
 			listaCaucaoLiquida.add(caucaoLiquida);
