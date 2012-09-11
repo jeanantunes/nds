@@ -3410,6 +3410,7 @@ public class Fixture {
 		return descontoL;
 	}
     
+<<<<<<< HEAD
     
     
     public static HistoricoTitularidadeCota historicoTitularidade(Cota cota) {
@@ -3611,4 +3612,19 @@ public class Fixture {
     }
     
    
+=======
+    public static RateioDiferenca criarRateioDiferenca(Cota cota, Date dataNotaEnvio, BigInteger qtde, 
+    		EstudoCota estudoCota, Diferenca diferenca) {
+    	
+    	RateioDiferenca rateio = new RateioDiferenca();
+    	
+    	rateio.setCota(cota);
+    	rateio.setDataNotaEnvio(dataNotaEnvio);
+    	rateio.setQtde(qtde);
+    	rateio.setEstudoCota(estudoCota);
+    	rateio.setDiferenca(diferenca);
+    	
+    	return rateio;
+    }
+>>>>>>> DGBti/master
 }

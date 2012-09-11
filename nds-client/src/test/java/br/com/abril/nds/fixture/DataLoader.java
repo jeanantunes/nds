@@ -3234,8 +3234,8 @@ public class DataLoader {
 		merge(session, Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10"));
 		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
 		
-		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_SERVER_ROOT,
-				"C:\\WORKSPACE_NDS\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\nds-client"));	// windows;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA,
+				"C:\\Servidores\\apache-tomcat-7.0.25\\webapps\\nds-client\\distribuicao\\")); // windows;
 //				"???"));					// linux;
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA,
@@ -5063,6 +5063,11 @@ public class DataLoader {
 						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
 
 			session.save(diferenca);
+			
+			if (i < 5) {
+				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
+				session.save(rateio);
+			}
 		}
 	}
 

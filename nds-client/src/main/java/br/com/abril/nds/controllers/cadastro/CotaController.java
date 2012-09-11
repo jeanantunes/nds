@@ -160,6 +160,10 @@ public class CotaController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
+	private static final String NOME_DEFAULT_TERMO_ADESAO = "termo_adesao.pdf";
+
+	private static final String NOME_DEFAULT_PROCURACAO = "procuracao.pdf";
+
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_COTA)
 	public void index() {
@@ -1073,6 +1077,7 @@ public class CotaController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um dos filtros deve ser informado!");
 		}
 	}
+	
 	/**
 	 * Configura paginação do grid de pesquisa.
 	 * @param filtro
@@ -1125,34 +1130,40 @@ public class CotaController {
 		
 		dto.setTiposEntrega(gerarTiposEntrega());
 		
-		tratarDocumentoTipoEntrega(dto);
+		this.tratarDocumentoTipoEntrega(dto);
 				
 		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
-	}
-	
-	
+	}	
 	
 	private void tratarDocumentoTipoEntrega(DistribuicaoDTO dto) throws FileNotFoundException, IOException {
 
 		TipoParametroSistema parametroPath = null;
 		
-		if(DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(dto.getDescricaoTipoEntrega()))
-				parametroPath = TipoParametroSistema.PATH_TERMO_ADESAO;
-		else if(DescricaoTipoEntrega.ENTREGADOR.equals(dto.getDescricaoTipoEntrega()))
-				parametroPath = TipoParametroSistema.PATH_TERMO_ADESAO;
-		else
+		if(DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(dto.getDescricaoTipoEntrega())) {
+			parametroPath = TipoParametroSistema.PATH_TERMO_ADESAO;
+		} else if(DescricaoTipoEntrega.ENTREGADOR.equals(dto.getDescricaoTipoEntrega())) {
+			parametroPath = TipoParametroSistema.PATH_PROCURACAO;
+		} else {
 			return;
+		}
 		
-		String raiz = servletContext.getRealPath("") ;
+		ParametroSistema raiz = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
 		
 		ParametroSistema path = 
 				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);								
 		
-		String baseDir = (raiz + path.getValor() + dto.getNumCota().toString() ).replace("\\", "/");
+		String baseDir = (raiz.getValor() + path.getValor() + dto.getNumCota().toString() ).replace("\\", "/");
 				
-		fileService.resetTemp(baseDir);		
+		fileService.resetTemp(baseDir);
 		
-		dto.setNomeTermoAdesao(fileService.obterNomeArquivoTemp(baseDir));
+		String fileName = fileService.obterNomeArquivoTemp(baseDir);
+		
+		if(DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(dto.getDescricaoTipoEntrega())) {
+			dto.setNomeTermoAdesao(fileName);
+		} else if(DescricaoTipoEntrega.ENTREGADOR.equals(dto.getDescricaoTipoEntrega())) {
+			dto.setNomeProcuracao(fileName);
+		}
 	}
 
 	/**
@@ -1164,11 +1175,11 @@ public class CotaController {
 	@Post
 	public void salvarDistribuicaoCota(DistribuicaoDTO distribuicao) throws FileNotFoundException, IOException {
 		
-		this.validarDadosDistribuicaoCota(distribuicao);
+		this.validarDadosDistribuicaoCotaSalvar(distribuicao);
+
+		processarTipoEntrega(distribuicao);
 		
 		cotaService.salvarDistribuicaoCota(distribuicao);
-		
-		processarTipoEntrega(distribuicao);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
@@ -1178,68 +1189,52 @@ public class CotaController {
 		
 		switch(distribuicao.getDescricaoTipoEntrega()) {
 			case ENTREGA_EM_BANCA:
-				//TODO tratamento
-				//if(!distribuicao.get?TermoAdesaoRecebido?())
-				//	excluirArquivo(distribuicao.getNumCota(), TipoParametroSistema.PATH_TERMO_ADESAO);
+				if(!distribuicao.getTermoAdesaoRecebido())
+					excluirArquivo(distribuicao.getNumCota(), TipoParametroSistema.PATH_TERMO_ADESAO);
 				break;
 			case ENTREGADOR:
 				if(!distribuicao.getProcuracaoRecebida())
 					excluirArquivo(distribuicao.getNumCota(), TipoParametroSistema.PATH_PROCURACAO);
 				break;
+			default:
+				break;
 		}	
-	}
-	
-	@Get
-	public void imprimeProcuracao(Integer numeroCota) throws Exception{
-		
-		byte[] arquivo = this.cotaService.getDocumentoProcuracao(numeroCota);
-
-		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=procuracao.pdf");
-
-		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(arquivo);
-
-		httpResponse.flushBuffer();
-	}
-	
-	@Get
-	public void imprimeTermoAdesao(Integer numeroCota, String taxa, String percentual) throws Exception{
-		
-		BigDecimal valorTaxa = taxa == null || taxa.isEmpty() ? null : new BigDecimal(taxa);
-		BigDecimal valorPercentual = percentual == null || percentual.isEmpty() ? null : new BigDecimal(percentual);
-		
-		byte[] arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, valorTaxa, valorPercentual);
-
-		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=termo_adesao.pdf");
-
-		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(arquivo);
-
-		httpResponse.flushBuffer();
 	}
 
 	/**
-	 * Valida os dados de Distribuição da cota.
+	 * Valida os dados de Distribuição da Cota ao salvar.
 	 * 
 	 * @param distribuicao - DTO que representa os dados de distribuição da cota
 	 */
-	private void validarDadosDistribuicaoCota(DistribuicaoDTO distribuicao) {
+	private void validarDadosDistribuicaoCotaSalvar(DistribuicaoDTO distribuicao) {
 		
-		// TODO: Realizar tratamento para os outros tipos
-		if (DescricaoTipoEntrega.ENTREGADOR.equals(distribuicao.getDescricaoTipoEntrega())) {
+		if (DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(distribuicao.getDescricaoTipoEntrega())) {
 			
-			BigDecimal percentualFaturamento = distribuicao.getPercentualFaturamento();
-			
-			if (percentualFaturamento == null) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING,
-					"O Percentual de Faturamento deve ser preenchido!");
-			}
+			this.validarPercentualTaxa(
+				distribuicao.getPercentualFaturamento(), distribuicao.getTaxaFixa());
 			
 			this.validarPeriodoCarencia(
 				distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
+			
+		} else if (DescricaoTipoEntrega.ENTREGADOR.equals(distribuicao.getDescricaoTipoEntrega())) {
+			
+			this.validarPeriodoCarencia(
+				distribuicao.getInicioPeriodoCarencia(), distribuicao.getFimPeriodoCarencia());
+		}
+	}
+
+	/**
+	 * Valida os valores de percentual de faturamento e taxa fixa.
+	 * 
+	 * @param percentualFaturamento - percentual de faturamento
+	 * @param taxaFixa - taxa fixa
+	 */
+	private void validarPercentualTaxa(BigDecimal percentualFaturamento, BigDecimal taxaFixa) {
+		
+		if (percentualFaturamento == null && taxaFixa == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"O Percentual de Faturamento ou a Taxa Fixa devem ser preenchidos!");
 		}
 	}
 
@@ -1254,21 +1249,24 @@ public class CotaController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
+		if ((inicioPeriodoCarenciaFormatado == null || inicioPeriodoCarenciaFormatado.trim().isEmpty())
+				&& (fimPeriodoCarenciaFormatado == null || fimPeriodoCarenciaFormatado.trim().isEmpty())) {
+			
+			return;
+		}
+		
 		if (inicioPeriodoCarenciaFormatado == null || inicioPeriodoCarenciaFormatado.trim().isEmpty()) {
 			
-			listaMensagens.add("O início do Período de Carência deve ser preenchido!");
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "O início do Período de Carência deve ser preenchido!");
 		}
 		
 		if (fimPeriodoCarenciaFormatado == null || fimPeriodoCarenciaFormatado.trim().isEmpty()) {
 			
-			listaMensagens.add("O fim do Período de Carência deve ser preenchido!");
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
 		}
-		
-		if (!listaMensagens.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);	
-		}
-		
+				
 		if (!DateUtil.isValidDatePTBR(inicioPeriodoCarenciaFormatado)) {
 			
 			listaMensagens.add("Início do Período de Carência inválido!");
@@ -1388,76 +1386,107 @@ public class CotaController {
 	}
 	
 	@Post
-	public void uploadTermoAdesao(UploadedFile uploadedFile, Integer numCota) throws IOException {		
-		upload(uploadedFile, numCota, TipoParametroSistema.PATH_TERMO_ADESAO);
+	public void uploadTermoAdesao(UploadedFile uploadedFileTermo, Integer numCotaUpload) throws IOException {		
+		upload(uploadedFileTermo, numCotaUpload, TipoParametroSistema.PATH_TERMO_ADESAO);
 	}
 	
 	@Post
-	public void uploadProcuracao(UploadedFile uploadedFile, Integer numCota) throws IOException {		
-		upload(uploadedFile, numCota, TipoParametroSistema.PATH_PROCURACAO);
+	public void uploadProcuracao(UploadedFile uploadedFileProcuracao, Integer numCotaUpload) throws IOException {		
+		upload(uploadedFileProcuracao, numCotaUpload, TipoParametroSistema.PATH_PROCURACAO);
 	}
 	
 	private void upload(UploadedFile uploadedFile, Integer numCota, TipoParametroSistema parametroPath ) throws IOException {		
 		
-		this.fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
+		String fileName = "";
 		
-		if(uploadedFile==null)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Nenhum arquivo foi selecionado."));
-		
-		String raiz = servletContext.getRealPath("") ;
-		
-		ParametroSistema path = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);								
-		
-		String dirBase = (raiz + path.getValor() + numCota.toString() ).replace("\\", "/");
-		
-		fileService.setArquivoTemp(dirBase, uploadedFile.getFileName(), uploadedFile.getFile());
+		if(uploadedFile != null) {
 			
+			this.fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
+			
+			ParametroSistema raiz = 
+					this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
+			
+			ParametroSistema path = 
+					this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);								
+			
+			String dirBase = (raiz.getValor() + path.getValor() + numCota.toString() ).replace("\\", "/");
+			
+			fileService.setArquivoTemp(dirBase, uploadedFile.getFileName(), uploadedFile.getFile());
+			
+			fileName = uploadedFile.getFileName();
+		}
+		
 		this.result.use(PlainJSONSerialization.class)
-			.from(uploadedFile.getFileName(), "result").recursive().serialize();
+			.from(fileName, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void validarValoresParaDownload(BigDecimal taxa, BigDecimal percentual) {
+		
+		this.validarPercentualTaxa(percentual, taxa);
+		
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	@Get
-	public void downloadTermoAdesao(Integer numeroCota, BigDecimal taxa, BigDecimal percentual) throws Exception {
+	public void downloadTermoAdesao(Boolean termoAdesaoRecebido, Integer numeroCota, BigDecimal taxa, BigDecimal percentual) throws Exception {
 		
-		download(numeroCota, TipoParametroSistema.PATH_TERMO_ADESAO, taxa, percentual);		
+		download(termoAdesaoRecebido, numeroCota, TipoParametroSistema.PATH_TERMO_ADESAO, taxa, percentual);
 	}
 	
 	@Get
-	public void downloadProcuracao(Integer numeroCota) throws Exception {
+	public void downloadProcuracao(Boolean procuracaoRecebida, Integer numeroCota) throws Exception {
 		
-		download(numeroCota, TipoParametroSistema.PATH_PROCURACAO, null, null);		
+		download(procuracaoRecebida, numeroCota, TipoParametroSistema.PATH_PROCURACAO, null, null);
 	}
 	
-	private void download(Integer numeroCota, TipoParametroSistema parametroPath, BigDecimal taxa, BigDecimal percentual) throws Exception {
+	private void download(Boolean documentoRecebido, Integer numeroCota, TipoParametroSistema parametroPath, BigDecimal taxa, BigDecimal percentual) throws Exception {
 		
-		String raiz = servletContext.getRealPath("") ;
+		ParametroSistema raiz = 
+				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
 		
 		ParametroSistema path = 
 				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);		
 				
-		String dirBase = (raiz + path.getValor() + numeroCota.toString() ).replace("\\", "/");
+		String dirBase = (raiz.getValor() + path.getValor() + numeroCota.toString() ).replace("\\", "/");
 				
 		ArquivoDTO dto = fileService.obterArquivoTemp(dirBase);
 		
 		byte[] arquivo = null;
 		
-		if(dto == null) {
+		String contentType = null;
+		String nomeArquivo = null;
+		
+		if(dto == null || !documentoRecebido) {
 			
-			if(TipoParametroSistema.PATH_TERMO_ADESAO.equals(parametroPath))
+			if(TipoParametroSistema.PATH_TERMO_ADESAO.equals(parametroPath)) {
+			
 				arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, taxa, percentual);
-			else
+			
+				nomeArquivo = NOME_DEFAULT_TERMO_ADESAO;
+				
+			} else {
+				
 				arquivo = this.cotaService.getDocumentoProcuracao(numeroCota);
+				
+				nomeArquivo = NOME_DEFAULT_PROCURACAO;
+			}
+			
+			contentType = "application/pdf";
 			
 		} else {
 		
 			arquivo = IOUtils.toByteArray(dto.getArquivo());
+			
+			((FileInputStream)dto.getArquivo()).close();
+			
+			contentType = dto.getContentType();
+			
+			nomeArquivo = dto.getNomeArquivo();
 		}
 		
-		((FileInputStream)dto.getArquivo()).close();
-		
-		this.httpResponse.setContentType(dto.getContentType());
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + dto.getNomeArquivo());
+		this.httpResponse.setContentType(contentType);
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + nomeArquivo);
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(arquivo);
@@ -1466,28 +1495,39 @@ public class CotaController {
 		
 	}
 	
-	public void excluirTermoAdesao(Integer numCota, TipoParametroSistema parametroPath) {		
-		excluirArquivo(numCota, TipoParametroSistema.PATH_TERMO_ADESAO);
+	public void excluirTermoAdesao(Integer numCota) {
+		
+		this.excluirArquivo(numCota, TipoParametroSistema.PATH_TERMO_ADESAO);
+		
+		this.result.use(PlainJSONSerialization.class)
+			.from("", "result").recursive().serialize();
 	}
 	
 	
-	public void excluirProcuracao(Integer numCota, TipoParametroSistema parametroPath) {		
-		excluirArquivo(numCota, TipoParametroSistema.PATH_PROCURACAO);
+	public void excluirProcuracao(Integer numCota) {
+		
+		this.excluirArquivo(numCota, TipoParametroSistema.PATH_PROCURACAO);
+		
+		this.result.use(PlainJSONSerialization.class)
+			.from("", "result").recursive().serialize();
 	}
 	
 	private void excluirArquivo(Integer numCota, TipoParametroSistema parametroPath) {		
 		
-		String raiz = servletContext.getRealPath("") ;
+		ParametroSistema raiz = 
+			this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
 		
 		ParametroSistema pathTermoAdesao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);		
-				
-		String path = (raiz + pathTermoAdesao.getValor() + numCota.toString() ).replace("\\", "/");
+			this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);		
+		
+		if (raiz == null || pathTermoAdesao == null) {
+			
+			return;
+		}
+		
+		String path = (raiz.getValor() + pathTermoAdesao.getValor() + numCota.toString() ).replace("\\", "/");
 		
 		fileService.esvaziarTemp(path);
-			
-		this.result.use(PlainJSONSerialization.class)
-			.from("", "result").recursive().serialize();
 	}
 }
 

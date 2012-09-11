@@ -96,7 +96,7 @@ public class EntregadorController {
 
 	private static final String CPF = "CPF";
 	
-	private static final String CNPJ = "CNPF";
+	private static final String CNPJ = "CNPJ";
 	
 	private static final String NOME_ARQUIVO_PROCURACAO = "procuracao";
 	
