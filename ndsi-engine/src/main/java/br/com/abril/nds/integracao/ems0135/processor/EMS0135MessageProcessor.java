@@ -172,8 +172,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notaFiscalEntradaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
 		
 		notaFiscalEntradaFornecedor.setValorBruto(BigDecimal.ZERO);
-		notaFiscalEntradaFornecedor.setValorLiquido(BigDecimal.ZERO);		
-		notaFiscalEntradaFornecedor.setValorDesconto(new BigDecimal(input.getDesconto()));		
+		notaFiscalEntradaFornecedor.setValorLiquido(BigDecimal.ZERO);
+		notaFiscalEntradaFornecedor.setValorDesconto(BigDecimal.ZERO);
 		notaFiscalEntradaFornecedor.setEmitente(obterPessoaJuridica("10000000000100"));		
 		notaFiscalEntradaFornecedor.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
 		notaFiscalEntradaFornecedor.setEmitida(true);	
