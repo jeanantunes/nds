@@ -207,6 +207,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
+		row.cell.acoes = T.gerarAcoes(row.cell.id.toString());
 		
 		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
@@ -214,6 +215,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 	},
 	
+	this.gerarAcoes =  function(idLancamento){
+		return '<a href="javascript:;" onclick="' + T.instancia + '.excluir(' + idLancamento + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+	},
 	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado, index) {
 		
 		return '<input id="inputNovaData' + index + '" onchange="' + T.instancia + '.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:60px; float:left;" value="' + dataMatrizDistrib + '" ' + 
@@ -647,6 +651,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				width : 65,
 				sortable : false,
 				align : 'center'
+			},{
+				display : 'Ações',
+				name : 'acoes',
+				width : 65,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "codigoProduto",
 			sortorder : "asc",
@@ -704,7 +714,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			},
 			form: $("#dialog-reprogramar", this.workspace).parents("form")
 		});
-	}
+	},
 	
 	this.reprogramarSelecionados = function() {
 		
@@ -739,6 +749,33 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			},
 			form: $("#dialogReprogramarBalanceamento", this.workspace).parents("form")			
 		});
-	}
+	},
+	
+	this.excluir =  function(idLancamento){
+		$( "#dialog-excluir-lancamento", _workspace ).dialog({
+			resizable: false,
+			height:160,
+			width:320,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$.postJSON(
+							pathTela + "/matrizLancamento/excluirLancamento", 
+							{idLancamento:idLancamento},
+							function(result) {
+								
+								T.pesquisar();
+							}
+						);
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-excluir-lancamento", this.workspace).parents("form")
+		});
+	};
 	
 }

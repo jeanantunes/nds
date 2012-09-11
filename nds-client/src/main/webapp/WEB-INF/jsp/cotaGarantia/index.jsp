@@ -305,7 +305,6 @@
 					    <td valign="top" width="232">
 		
 					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="CaucaoLiquida.prototype.opcaoPagto(this.value);">
-		                        <option value="">Selecione</option>
 		                    </select> 
 		
 				        </td>
@@ -313,9 +312,15 @@
 				        <td width="361">
 					        <div name="divFormaDeposito" id="divFormaDeposito" style="display: none;">
 								<strong>Valor R$</strong>
-								<input type="text" id="valorFormaPagamentoDeposito" style="text-align: right;" />
+								<input type="text" id="valorDeposito" style="text-align: right;" />
+							</div>
+							
+							<div name="divFormaDinheiro" id="divFormaDinheiro" style="display: none;">
+								<strong>Valor R$</strong>
+								<input type="text" id="valorDinheiro" style="text-align: right;" />
 							</div>
 				        </td>
+				        
 				     </tr>
                  </table>
                  
@@ -396,20 +401,16 @@
 	                 <table width="100%" border="0" cellspacing="1" cellpadding="1">
 						  <tr>
 						    <td width="9%">Valor R$:</td>
-						    <td width="15%"><input name="valorBoleto" id="valorBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" /></td>
+						    <td width="15%"><input name="valorBoleto" id="valorBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" onchange="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
 						    <td width="14%">Qtde. Parcelas </td>
-						    <td width="11%"><input name="qtdParcelaBoleto" id="qtdParcelaBoleto" type="text" maxlength="16" style="width:50px; text-align:center;" /></td>
+						    <td width="11%"><input name="qtdParcelaBoleto" id="qtdParcelaBoleto" type="text" maxlength="6" style="width:50px; text-align:center;" onchange="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
 						    <td width="16%">Valor Parcela R$:</td>
-						    <td width="35%"><input name="valorParcelaBoleto" id="valorParcelaBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" /></td>
+						    <td width="35%"><input disabled="disabled" name="valorParcelaBoleto" id="valorParcelaBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" /></td>
 						  </tr>
 					 </table>
 	                 
 	                 
                  </div>
-                 
-                 <div name="divFormaDinheiro" id="divFormaDinheiro">
-                 </div>
-                 
                  
                  <div name="divFormaDesconto" id="divFormaDesconto">
 
@@ -451,16 +452,6 @@
     
     <table>
 	    <tr>
-	       <td width="110">Valor Inicial R$:</td>
-	    
-	       <td width="150">
-	          <input type="text" name="cotaGarantiaCaucaoLiquidaValor" id="cotaGarantiaCaucaoLiquidaValor" style="width:150px; text-align:right;">
-	       </td>
-	       
-	       <td width="270">
-	          <a id="cotaGarantiaCaucaoLiquidaIncluir" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Incluir" width="16" height="16" border="0"></a>
-	       </td>
-	        
 	       <td width="203">
 	           <span class="bt_confirmar_novo" title="Confirmar">
 	        	   <a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;">
@@ -487,11 +478,11 @@
     <br>
     
 	
-	<fieldset width="100%">
+	<fieldset>
 	
    	    <legend>Caução Depositada na conta</legend>
     
-        <table width="100%" border="0" cellspacing="2" cellpadding="2">
+        <table width="755" border="0" cellspacing="2" cellpadding="2">
         
 			  <tr>
 			      <td width="16%">Número Banco:</td>
