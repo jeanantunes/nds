@@ -3571,27 +3571,41 @@ public class Fixture {
         politicaSuspensao.setNumeroAcumuloDivida(3);
         financeiro.setPoliticaSuspensao(politicaSuspensao);
         
-        HistoricoTitularidadeCotaFormaPagamento formaPagto = new HistoricoTitularidadeCotaFormaPagamento();
-        formaPagto.setBanco(new HistoricoTitularidadeCotaBanco("349", "Banco Itau", Long.valueOf(809), null, Long.valueOf(123456), "7"));
-        formaPagto.setTipoCobranca(TipoCobranca.BOLETO);
+        HistoricoTitularidadeCotaFormaPagamento formaPagto1 = new HistoricoTitularidadeCotaFormaPagamento();
+        formaPagto1.setBanco(new HistoricoTitularidadeCotaBanco("349", "Banco Itau", Long.valueOf(809), null, Long.valueOf(123456), "7"));
+        formaPagto1.setTipoCobranca(TipoCobranca.BOLETO);
         
-        HistoricoTitularidadeCotaConcentracaoCobranca concentracao = new HistoricoTitularidadeCotaConcentracaoCobranca();
-        concentracao.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
-        concentracao.addDiaSemana(DiaSemana.SEGUNDA_FEIRA);
-        concentracao.addDiaSemana(DiaSemana.QUARTA_FEIRA);
-        concentracao.addDiaSemana(DiaSemana.SEXTA_FEIRA);
-        formaPagto.setConcentracaoCobranca(concentracao);
+        HistoricoTitularidadeCotaConcentracaoCobranca concentracao1 = new HistoricoTitularidadeCotaConcentracaoCobranca();
+        concentracao1.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
+        concentracao1.addDiaSemana(DiaSemana.SEGUNDA_FEIRA);
+        concentracao1.addDiaSemana(DiaSemana.QUARTA_FEIRA);
+        concentracao1.addDiaSemana(DiaSemana.SEXTA_FEIRA);
+        formaPagto1.setConcentracaoCobranca(concentracao1);
         
         
         HistoricoTitularidadeCotaFornecedor fornecedorPagto1 = new HistoricoTitularidadeCotaFornecedor();
         fornecedorPagto1.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Acme Inc", "Acme", "64.138.131/0001-12", null, null));
-        formaPagto.addFornecedor(fornecedorPagto1);
+        formaPagto1.addFornecedor(fornecedorPagto1);
         
         HistoricoTitularidadeCotaFornecedor fornecedorPagto2 = new HistoricoTitularidadeCotaFornecedor();
         fornecedorPagto2.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Massive Dynamic", "Massive Dynamic", "44.864.479/0001-80", null, null));
-        formaPagto.addFornecedor(fornecedorPagto2);
+        formaPagto1.addFornecedor(fornecedorPagto2);
+        financeiro.addFormaPagamento(formaPagto1);
         
-        financeiro.addFormaPagamento(formaPagto);
+        HistoricoTitularidadeCotaFormaPagamento formaPagto2 = new HistoricoTitularidadeCotaFormaPagamento();
+        formaPagto2.setTipoCobranca(TipoCobranca.DINHEIRO);
+        
+        HistoricoTitularidadeCotaConcentracaoCobranca concentracao2 = new HistoricoTitularidadeCotaConcentracaoCobranca();
+        concentracao2.setTipoFormaCobranca(TipoFormaCobranca.QUINZENAL);
+        concentracao2.addDiaMes(10);
+        concentracao2.addDiaMes(20);
+        formaPagto2.setConcentracaoCobranca(concentracao2);
+        
+        HistoricoTitularidadeCotaFornecedor fornecedorPagto3 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedorPagto3.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("XYZ Inc", "XYZ", "64.138.131/0001-12", null, null));
+        formaPagto2.addFornecedor(fornecedorPagto3);
+        
+        financeiro.addFormaPagamento(formaPagto2);
         historico.setFinanceiro(financeiro);
         
         try {

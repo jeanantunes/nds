@@ -16,7 +16,7 @@ public class FormaCobrancaDTO {
 	String fornecedor;
 	String concentracaoPagto;
 	String tipoPagto;
-	String detalhesTipoPagto;
+	String detalhesTipoPagto = "";
 	
 	//DADOS DO FORMULARIO
 	TipoCobranca tipoCobranca;
@@ -155,6 +155,9 @@ public class FormaCobrancaDTO {
 
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
+		if (this.tipoCobranca != null) {
+		    setTipoPagto(this.tipoCobranca.getDescTipoCobranca());
+		}
 	}
 
 	public TipoFormaCobranca getTipoFormaCobranca() {
@@ -163,9 +166,6 @@ public class FormaCobrancaDTO {
 
 	public void setTipoFormaCobranca(TipoFormaCobranca tipoFormaCobranca) {
 		this.tipoFormaCobranca = tipoFormaCobranca;
-		if (this.tipoFormaCobranca != null) {
-		    this.tipoPagto = this.tipoFormaCobranca.getDescricao();
-		}
 	}
 
 	public Long getIdBanco() {

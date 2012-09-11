@@ -477,7 +477,7 @@ public class CotaDTOAssembler {
                         dto.setSabado(true);
                     }
                     concentracaoes.add(diaSemana.getDescricaoDiaSemana());
-                    dto.setConcentracaoPagto(StringUtils.join(concentracaoes, "/"));
+                    dto.setConcentracaoPagto(StringUtils.join(concentracaoes, " / "));
                 }
             } else if (TipoFormaCobranca.QUINZENAL == dto.getTipoFormaCobranca()) {
                 if (diasMes != null && !diasMes.isEmpty()) {
@@ -503,7 +503,7 @@ public class CotaDTOAssembler {
             dto.addIdFornecedor(fornecedor.getId());
             fornecedores.add(fornecedor.getPessoaJuridica().getRazaoSocial());
         }
-        dto.setFornecedor(StringUtils.join(fornecedores, "/"));
+        dto.setFornecedor(StringUtils.join(fornecedores, " / "));
         return dto;
     }
  

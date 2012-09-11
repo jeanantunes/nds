@@ -132,4 +132,16 @@ public class HistoricoTitularidadeCotaConcentracaoCobranca implements Serializab
         diasSemana.add(diaSemana);
     }
 
+    /**
+     * Adiciona um novo dia do mês à concentração de cobrança
+     * 
+     * @param dia dia do mes para inclusão
+     */
+    public void addDiaMes(Integer dia) {
+        if (diasMes == null) {
+            diasMes = new HashSet<Integer>();
+        }
+        diasMes.add(dia);
+    }
+
 }
