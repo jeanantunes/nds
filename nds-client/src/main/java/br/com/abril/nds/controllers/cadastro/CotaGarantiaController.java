@@ -117,6 +117,10 @@ public class CotaGarantiaController {
 	@Post("/salvaCaucaoLiquida.json")
 	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobranca) throws Exception {
 		
+		if(formaCobranca.getTipoCobranca()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
+		}
+		
 		if (listaCaucaoLiquida == null){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Nenhum valor informado."));
 		}	
@@ -240,11 +244,6 @@ public class CotaGarantiaController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
 					"Parametros inválidos"));
 		}
-		
-		if (caucaoLiquida.getIndiceReajuste() == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Parametros inválidos"));
-		}	
 	}
 	
 	/**
@@ -252,10 +251,6 @@ public class CotaGarantiaController {
 	 * @param formaCobranca
 	 */
 	public void validarFormaCobranca(FormaCobrancaCaucaoLiquidaDTO formaCobranca){
-
-		if(formaCobranca.getTipoCobranca()==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
-		}
 		
 		if (formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
 			
