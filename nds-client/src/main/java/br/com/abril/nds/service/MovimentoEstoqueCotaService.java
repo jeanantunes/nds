@@ -21,4 +21,8 @@ public interface MovimentoEstoqueCotaService {
 	List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, 
 			TipoNotaFiscal tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
 			Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos);
+
+	Long obterQuantidadeReparteProdutoCota(Long idProdutoEdicao,
+			Integer numeroCota);
+	
 }
