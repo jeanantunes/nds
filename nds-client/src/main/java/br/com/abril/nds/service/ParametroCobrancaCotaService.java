@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -200,4 +201,16 @@ public interface ParametroCobrancaCotaService {
      *         cobrança do histórico de titularidade da cota
      */
 	List<FormaCobrancaDTO> obterFormasCobrancaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    /**
+     * Obtém os fornecedores associados à forma de pagamento do histórico de
+     * titularidade da cota
+     * 
+     * @param idFormaPagto
+     *            identificador da forma de pagamento associado ao histórico de
+     *            titularidade da cota
+     * @return fornecedores associados à forma de pagamento no histórico de
+     *         titularidade da cota
+     */
+	List<FornecedorDTO> obterFornecedoresFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
 }

@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -282,5 +283,18 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * 
      */
     HistoricoTitularidadeCota obterHistoricoTitularidade(Long idCota, Long idHistorico);
+    
+    
+    /**
+     * Recupera a forma de pagamento do histórico de titularidade da cota pelo
+     * indentificador
+     * 
+     * @param idFormaPagto
+     *            identificador da forma de pagamento do histórico de
+     *            titularidade da cota
+     * @return forma de pagamento do histórico de titularidade da cota com o
+     *         identificador recebido
+     */
+    HistoricoTitularidadeCotaFormaPagamento obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
 
 }

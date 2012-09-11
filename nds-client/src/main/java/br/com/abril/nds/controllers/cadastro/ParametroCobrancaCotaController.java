@@ -99,8 +99,6 @@ public class ParametroCobrancaCotaController {
 
     private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
      
-    private static List<ItemDTO<Long,String>> listaFornecedores =  new ArrayList<ItemDTO<Long,String>>();
-    
     private static List<ItemDTO<TipoCota,String>> listaTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
     
     public static final FileType[] extensoesAceitas = {FileType.DOC, FileType.DOCX, FileType.BMP, 
@@ -158,8 +156,13 @@ public class ParametroCobrancaCotaController {
 	 */
 	@Post
 	@Path("/fornecedoresCota")
-	public void fornecedoresCota(Long idCota){
-		listaFornecedores = this.parametroCobrancaCotaService.getComboFornecedoresCota(idCota);
+	public void fornecedoresCota(Long idCota, ModoTela modoTela, Long idFormaPagto){
+	    List<ItemDTO<Long,String>> listaFornecedores;
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        listaFornecedores = this.parametroCobrancaCotaService.getComboFornecedoresCota(idCota);
+	    } else {
+	        listaFornecedores = parametroCobrancaCotaService.obterFornecedoresFormaPagamentoHistoricoTitularidade(idFormaPagto);
+	    }
 		result.use(Results.json()).from(listaFornecedores, "result").recursive().serialize();
 	}
 

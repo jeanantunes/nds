@@ -2,7 +2,11 @@ package br.com.abril.nds.client.assembler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.CotaDTO;
@@ -19,11 +23,15 @@ import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TipoEstabelecimentoAssociacaoPDVDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
 import br.com.abril.nds.dto.TipoPontoPDVDTO;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
@@ -399,14 +407,103 @@ public class CotaDTOAssembler {
         return dto;
     }
 
-
+    /**
+     * Cria a coleção de {@link FormaCobrancaDTO} com as informações da coleção de
+     * {@link HistoricoTitularidadeCotaFormaPagamento} associados ao histórico de
+     * titularidade da cota
+     * 
+     * @param formasPagamento
+     *            coleção de {@link HistoricoTitularidadeCotaFormaPagamento} para
+     *            criação da coleção de {@link FormaCobrancaDTO}
+     * @return coleção de {@link FormaCobrancaDTO} com as informações
+     */
     public static Collection<FormaCobrancaDTO> toFormaCobrancaDTOCollection(
             Collection<HistoricoTitularidadeCotaFormaPagamento> formasPagamento) {
         List<FormaCobrancaDTO> dtos = new ArrayList<FormaCobrancaDTO>(formasPagamento.size());
         for (HistoricoTitularidadeCotaFormaPagamento formaPagto : formasPagamento) {
-            
+            FormaCobrancaDTO dto = toFormaCobrancaDTO(formaPagto);
+            dtos.add(dto);
         }
         return dtos;
+    }
+
+
+    /**
+     * Cria o {@link FormaCobrancaDTO} com as informações da 
+     * instância de {@link HistoricoTitularidadeCotaFormaPagamento}
+     * 
+     * @param formaPagto instância de
+     *            {@link HistoricoTitularidadeCotaFormaPagamento} para a criação do DTO
+     * @return {@link FormaCobrancaDTO} com as informações
+     */
+    public static FormaCobrancaDTO toFormaCobrancaDTO(HistoricoTitularidadeCotaFormaPagamento formaPagto) {
+        FormaCobrancaDTO dto = new FormaCobrancaDTO();
+        dto.setTipoCobranca(formaPagto.getTipoCobranca());
+        HistoricoTitularidadeCotaBanco banco = formaPagto.getBanco();
+        if (banco != null) {
+            dto.setAgencia(banco.getAgencia());
+            dto.setAgenciaDigito(banco.getDvAgencia());
+            dto.setConta(banco.getConta());
+            dto.setContaDigito(banco.getDvConta());
+            dto.setNomeBanco(banco.getNome());
+            dto.setNumBanco(banco.getNumeroBanco());
+            dto.setDetalhesTipoPagto(String.format("%s : %s : %s - %s",
+                    banco.getNome(), banco.getAgencia(), banco.getConta(),
+                    Util.nvl(banco.getDvConta(), "")));
+        }
+        HistoricoTitularidadeCotaConcentracaoCobranca concentracao = formaPagto.getConcentracaoCobranca();
+        if (concentracao != null) {
+            dto.setTipoFormaCobranca(concentracao.getTipoFormaCobranca());
+            Collection<Integer> diasMes = concentracao.getDiasMes();
+            List<DiaSemana> diasSemana = new ArrayList<DiaSemana>(concentracao.getDiasSemana());
+            Collections.sort(diasSemana);
+            if (TipoFormaCobranca.SEMANAL == dto.getTipoFormaCobranca()) {
+                List<String> concentracaoes = new ArrayList<String>();
+                for (DiaSemana diaSemana : diasSemana) {
+                    if (DiaSemana.DOMINGO == diaSemana) {
+                        dto.setDomingo(true);
+                    } else if (DiaSemana.SEGUNDA_FEIRA == diaSemana) {
+                        dto.setSegunda(true);
+                    } else if (DiaSemana.TERCA_FEIRA == diaSemana) {
+                        dto.setTerca(true);
+                    } else if (DiaSemana.QUARTA_FEIRA == diaSemana) {
+                        dto.setQuarta(true);
+                    } else if (DiaSemana.QUINTA_FEIRA == diaSemana) {
+                        dto.setQuinta(true);
+                    } else if (DiaSemana.SEXTA_FEIRA == diaSemana) {
+                        dto.setSexta(true);
+                    } else if (DiaSemana.SABADO == diaSemana) {
+                        dto.setSabado(true);
+                    }
+                    concentracaoes.add(diaSemana.getDescricaoDiaSemana());
+                    dto.setConcentracaoPagto(StringUtils.join(concentracaoes, "/"));
+                }
+            } else if (TipoFormaCobranca.QUINZENAL == dto.getTipoFormaCobranca()) {
+                if (diasMes != null && !diasMes.isEmpty()) {
+                    Iterator<Integer> iterator = diasMes.iterator();
+                    Integer dia1 = iterator.next();
+                    Integer dia2 = iterator.hasNext() ? iterator.next() : null;
+                    dto.setPrimeiroDiaQuinzenal(dia1);
+                    dto.setSegundoDiaQuinzenal(dia2);
+                    dto.setConcentracaoPagto(String.format("Todo dia %s e %s", dia1, dia2));
+                }
+            } else if (TipoFormaCobranca.MENSAL == dto.getTipoFormaCobranca()) {
+                if (diasMes != null && !diasMes.isEmpty()) {
+                    Integer dia = diasMes.iterator().next();
+                    dto.setDiaDoMes(dia);
+                    dto.setConcentracaoPagto(String.format("Todo dia %s", dia));
+                }
+            } else if (TipoFormaCobranca.DIARIA == dto.getTipoFormaCobranca()) {
+                dto.setConcentracaoPagto("Diariamente");
+            }
+        }
+        List<String> fornecedores = new ArrayList<String>();
+        for (HistoricoTitularidadeCotaFornecedor fornecedor : formaPagto.getFornecedores()) {
+            dto.addIdFornecedor(fornecedor.getId());
+            fornecedores.add(fornecedor.getPessoaJuridica().getRazaoSocial());
+        }
+        dto.setFornecedor(StringUtils.join(fornecedores, "/"));
+        return dto;
     }
  
 }

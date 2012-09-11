@@ -50,6 +50,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.Intervalo;
 
@@ -1379,5 +1380,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
         query.setParameter("idHistorico", idHistorico);
         query.setParameter("idCota", idCota);
         return (HistoricoTitularidadeCota) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HistoricoTitularidadeCotaFormaPagamento obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto) {
+        Validate.notNull(idFormaPagto, "Identificador da forma de pagamento não deve ser nulo!");
+        String hql = "from HistoricoTitularidadeCotaFormaPagamento where id = :id";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("id", idFormaPagto);
+        return (HistoricoTitularidadeCotaFormaPagamento) query.uniqueResult();
     }
 }

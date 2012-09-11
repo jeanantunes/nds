@@ -26,6 +26,7 @@ import br.com.abril.nds.client.assembler.CotaDTOAssembler;
 import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO;
@@ -51,6 +52,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -975,5 +977,16 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
                         .getFormasPagamento()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	@Transactional(readOnly = true)
+    public List<FornecedorDTO> obterFornecedoresFormaPagamentoHistoricoTitularidade(Long idFormaPagto) {
+        Validate.notNull(idFormaPagto, "Identificador da Forma de Pagamento não deve ser nulo!");
+        
+        HistoricoTitularidadeCotaFormaPagamento formaPagto = cotaRepository.obterFormaPagamentoHistoricoTitularidade(idFormaPagto);
+        return new ArrayList<FornecedorDTO>(CotaDTOAssembler.toFornecedorDTOCollection(formaPagto.getFornecedores()));
+    }
 	
 }

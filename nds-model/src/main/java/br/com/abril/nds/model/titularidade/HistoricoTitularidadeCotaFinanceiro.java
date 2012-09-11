@@ -2,6 +2,7 @@ package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -238,6 +239,19 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
      */
     public void setContratoRecebido(boolean contratoRecebido) {
         this.contratoRecebido = contratoRecebido;
+    }
+
+    /**
+     * Adiciona uma nova forma de pagamento ao histórico de titularidade da cota
+     * 
+     * @param formaPagto
+     *            forma de pagamento pára inclusão
+     */
+    public void addFormaPagamento(HistoricoTitularidadeCotaFormaPagamento formaPagto) {
+        if(formasPagamento == null) {
+            formasPagamento = new ArrayList<HistoricoTitularidadeCotaFormaPagamento>();
+        }
+        formasPagamento.add(formaPagto);
     }
     
 

@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -162,6 +163,9 @@ public class FormaCobrancaDTO {
 
 	public void setTipoFormaCobranca(TipoFormaCobranca tipoFormaCobranca) {
 		this.tipoFormaCobranca = tipoFormaCobranca;
+		if (this.tipoFormaCobranca != null) {
+		    this.tipoPagto = this.tipoFormaCobranca.getDescricao();
+		}
 	}
 
 	public Long getIdBanco() {
@@ -315,5 +319,12 @@ public class FormaCobrancaDTO {
 	public void setFornecedoresId(List<Long> fornecedoresId) {
 		this.fornecedoresId = fornecedoresId;
 	}
+
+    public void addIdFornecedor(Long id) {
+       if (fornecedoresId == null) {
+           fornecedoresId = new ArrayList<Long>();
+       }
+       fornecedoresId.add(id);
+    }
 
 }

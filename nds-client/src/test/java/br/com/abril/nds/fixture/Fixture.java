@@ -204,11 +204,14 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
@@ -3569,6 +3572,28 @@ public class Fixture {
         politicaSuspensao.setValor(BigDecimal.valueOf(1000));
         politicaSuspensao.setNumeroAcumuloDivida(3);
         financeiro.setPoliticaSuspensao(politicaSuspensao);
+        
+        HistoricoTitularidadeCotaFormaPagamento formaPagto = new HistoricoTitularidadeCotaFormaPagamento();
+        formaPagto.setBanco(new HistoricoTitularidadeCotaBanco("349", "Banco Itau", Long.valueOf(809), null, Long.valueOf(123456), "7"));
+        formaPagto.setTipoCobranca(TipoCobranca.BOLETO);
+        
+        HistoricoTitularidadeCotaConcentracaoCobranca concentracao = new HistoricoTitularidadeCotaConcentracaoCobranca();
+        concentracao.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
+        concentracao.addDiaSemana(DiaSemana.SEGUNDA_FEIRA);
+        concentracao.addDiaSemana(DiaSemana.QUARTA_FEIRA);
+        concentracao.addDiaSemana(DiaSemana.SEXTA_FEIRA);
+        formaPagto.setConcentracaoCobranca(concentracao);
+        
+        
+        HistoricoTitularidadeCotaFornecedor fornecedorPagto1 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedorPagto1.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Acme Inc", "Acme", "64.138.131/0001-12", null, null));
+        formaPagto.addFornecedor(fornecedorPagto1);
+        
+        HistoricoTitularidadeCotaFornecedor fornecedorPagto2 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedorPagto2.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Massive Dynamic", "Massive Dynamic", "44.864.479/0001-80", null, null));
+        formaPagto.addFornecedor(fornecedorPagto2);
+        
+        financeiro.addFormaPagamento(formaPagto);
         historico.setFinanceiro(financeiro);
         
         try {

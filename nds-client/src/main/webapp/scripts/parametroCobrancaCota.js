@@ -1,8 +1,12 @@
 var parametroCobrancaCotaController = $.extend(true, {
-	init : function () {
 
-        idHistorico: "";
-        modoTela: null,
+    idCota: "",
+    idHistorico: "",
+    idFormaPagto: "",
+    modoTela: null,
+
+    init : function () {
+
 
 		//GRID DE FORMAS DE COBRANÇA
 		$(".boletosUnificadosGrid", this.workspace).flexigrid({
@@ -90,6 +94,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 	//PRÉ CARREGAMENTO DA PAGINA
 	carregaFinanceiro : function(idCota){
+        parametroCobrancaCotaController.idCota = idCota;
 		$("#_idParametroCobranca", this.workspace).val("");
 		$("#_idCota", this.workspace).val("");
 		$("#_numCota", this.workspace).val("");
@@ -130,8 +135,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 		return options;
 	},
 	
-	carregarFornecedoresRelacionados : function(idCota){
-		var data = [{name: 'idCota', value: idCota}];
+	carregarFornecedoresRelacionados : function(){
+		var data = [{name: 'idCota', value: parametroCobrancaCotaController.idCota},
+            {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value},
+            {name: 'idFormaPagto', value: parametroCobrancaCotaController.idFormaPagto}];
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/fornecedoresCota",
 				   data,
 				   parametroCobrancaCotaController.sucessCallbackCarregarFornecedores,
@@ -154,7 +161,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$(".boletosUnificadosGrid", this.workspace).flexOptions({
 			/*METODO QUE RECEBERA OS PARAMETROS*/
 			url: contextPath + "/cota/parametroCobrancaCota/obterFormasCobranca",
-			params: [{name:'idCota', value:idCota}],
+			params: [{name:'idCota', value:idCota},
+                     {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value},
+                     {name: 'idHistorico', value: parametroCobrancaCotaController.idHistorico}],
 			        newp: 1
 		});
 		
@@ -374,7 +383,7 @@ var parametroCobrancaCotaController = $.extend(true, {
         }
 
 
-		parametroCobrancaCotaController.carregarFornecedoresRelacionados(resultado.idCota);
+		parametroCobrancaCotaController.carregarFornecedoresRelacionados();
 	},
 
 	postarParametroCobranca : function() {
