@@ -101,8 +101,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				this.lancamentoRepository.obterLancamentosCanceladosPor(
 						periodoDistribuicao, filtro.getIdsFornecedores());
 		
-		//TODO: obter produtos excluidos
-		
 		return produtosLancamentosCancelados;
 				
 	}
