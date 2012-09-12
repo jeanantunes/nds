@@ -250,6 +250,41 @@ function Endereco(paramTela, paramMessage) {
 		$("#"+paramTela+"principal", Endereco.workspace).attr("checked", false);
 	},
 	
+	this.bloquearCamposFormEndereco = function(indBloqueiaCampo) {
+		
+		if(indBloqueiaCampo) {
+			
+			$("#"+paramTela+"wrapperBtnIncluirNovoEnderecoHabilitado", Endereco.workspace).hide();
+			$("#"+paramTela+"wrapperBtnIncluirNovoEnderecoDesabilitado", Endereco.workspace).show();
+			
+			$("#"+paramTela+"wrapperBtnPesquisaCepHabilitado", Endereco.workspace).hide();
+			$("#"+paramTela+"wrapperBtnPesquisaCepDesabilitado", Endereco.workspace).show();
+			
+			
+		} else {
+
+			$("#"+paramTela+"wrapperBtnIncluirNovoEnderecoHabilitado", Endereco.workspace).show();
+			$("#"+paramTela+"wrapperBtnIncluirNovoEnderecoDesabilitado", Endereco.workspace).hide();
+			
+			$("#"+paramTela+"wrapperBtnPesquisaCepHabilitado", Endereco.workspace).show();
+			$("#"+paramTela+"wrapperBtnPesquisaCepDesabilitado", Endereco.workspace).hide();
+			
+		}
+		
+		$("#"+paramTela+"idEndereco", 				Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"tipoEndereco", 			Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"cep", 						Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"tipoLogradouro", 			Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"logradouro", 				Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"numero", 					Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"complemento", 				Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"bairro", 					Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"cidade", 					Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"uf", 						Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"principal", 				Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		
+	},
+	
 	this.pesquisarEnderecoPorCep = function () {
 		
 		var isFromModal = true;
