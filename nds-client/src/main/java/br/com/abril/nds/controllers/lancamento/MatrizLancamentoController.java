@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
@@ -118,7 +119,8 @@ public class MatrizLancamentoController {
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoLancamento(balanceamentoLancamento);
 						
-		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
+		
 	}
 	
 	
@@ -1038,6 +1040,8 @@ public class MatrizLancamentoController {
 		
 		resultadoResumoBalanceamento.setCapacidadeRecolhimentoDistribuidor(
 			balanceamentoBalanceamento.getCapacidadeDistribuicao());
+		
+		resultadoResumoBalanceamento.setListaProdutosLancamentosCancelados(balanceamentoBalanceamento.getProdutosLancamentosCancelados());
 		
 		return resultadoResumoBalanceamento;
 	}
