@@ -732,6 +732,7 @@ public class DescontoServiceImpl implements DescontoService {
      * {@inheritDoc}
      */
 	@Override
+	@Transactional
     public BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota,
             ProdutoEdicao produtoEdicao) {
         Validate.notNull(cota, "Cota não deve ser nula!");
