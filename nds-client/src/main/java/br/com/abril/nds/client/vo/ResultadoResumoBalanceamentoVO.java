@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
+
 public class ResultadoResumoBalanceamentoVO implements Serializable {
 
 	/**
@@ -16,6 +18,8 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	private boolean bloquearBotoes;
 	
 	private BigDecimal capacidadeRecolhimentoDistribuidor;
+	
+	private List<ProdutoLancamentoCanceladoDTO> listaProdutosLancamentosCancelados;
 	
 	/**
 	 * Construtor padrão.
@@ -66,6 +70,21 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	public void setCapacidadeRecolhimentoDistribuidor(
 			BigDecimal capacidadeRecolhimentoDistribuidor) {
 		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @return the listaProdutosLancamentosCancelados
+	 */
+	public List<ProdutoLancamentoCanceladoDTO> getListaProdutosLancamentosCancelados() {
+		return listaProdutosLancamentosCancelados;
+	}
+
+	/**
+	 * @param listaProdutosLancamentosCancelados the listaProdutosLancamentosCancelados to set
+	 */
+	public void setListaProdutosLancamentosCancelados(
+			List<ProdutoLancamentoCanceladoDTO> listaProdutosLancamentosCancelados) {
+		this.listaProdutosLancamentosCancelados = listaProdutosLancamentosCancelados;
 	}
 
 }

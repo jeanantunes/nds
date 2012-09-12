@@ -170,7 +170,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
 		$(".boletosUnificadosGrid", this.workspace).flexReload();
 		
-		$(".grids", this.workspace).show();
+		//$(".grids", this.workspace).show();
 	},
 	
 	getDataFromResult : function(resultado) {
@@ -181,7 +181,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
 			);
-			$(".grids", this.workspace).hide();
+			//$(".grids", this.workspace).hide();
 			return resultado;
 		}	
 		
@@ -200,7 +200,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 			row.cell.acao = linkEditar + linkExcluir;
 		});
 			
-		$(".grids", this.workspace).show();
+		//$(".grids", this.workspace).show();
 		
 		return resultado;
 	},

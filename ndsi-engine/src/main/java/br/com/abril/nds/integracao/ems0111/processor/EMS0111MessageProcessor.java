@@ -134,24 +134,42 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			lancamento.setDataStatus(dataOperacao);
 			
 			lancamento.setId(null);
+			
 			lancamento.setProdutoEdicao(produtoEdicao);
+			
 			lancamento.setDataLancamentoPrevista(input.getDataLancamento());
+			
 			lancamento.setTipoLancamento(parseTipo(input.getTipoLancamento()));
+			
 			lancamento.setReparte(BigInteger.valueOf(input.getRepartePrevisto()));
-			lancamento.setStatus(StatusLancamento.TRANSMITIDO);
+			
+			lancamento.setStatus(
+					(input.getRepartePrevisto() == 0) ? 
+							StatusLancamento.CANCELADO : StatusLancamento.TRANSMITIDO);
+			
 			lancamento.setRepartePromocional(BigInteger.valueOf(input.getRepartePromocional()));// confirmado
+			
 			lancamento.setDataCriacao(new Date());// confirmado
+			
 			lancamento.setDataLancamentoDistribuidor(input.getDataLancamento());// confirmado
+			
 			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
+			
 			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado
+			
 			lancamento.setExpedicao(null);// default
+			
 			lancamento.setHistoricos(null);// default
+			
 			lancamento.setRecebimentos(null);// default
+			
 			lancamento.setNumeroReprogramacoes(null);// confirmado
+			
 			lancamento.setSequenciaMatriz(null);// confirmado				
 
 			// EFETIVAR INSERCAO NA BASE
-			getSession().persist(lancamento);			
+			getSession().persist(lancamento);	
+			
 		} else {
 			lancamento.setAlteradoInteface(true);
 			/*
@@ -168,13 +186,16 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			 */
 			final BigInteger repartePrevisto = BigInteger.valueOf(
 					input.getRepartePrevisto());
+			
 			if (!lancamento.getReparte().equals(repartePrevisto)) {
+				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao do REPARTE PREVISTO do Produto: "
 								+ codigoProduto + " e Edicao: " + edicao
 								+ " , de: " + lancamento.getReparte() 
 								+ "para: " + repartePrevisto);
+				
 				lancamento.setReparte(repartePrevisto);
 			}
 			
@@ -222,16 +243,15 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
 			}
 			
-			
 			// Atualizar lançamento Distribuidor:
-			final StatusLancamento status = lancamento.getStatus();
-			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status) 
-					|| StatusLancamento.BALANCEADO_LANCAMENTO.equals(status); 
+			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
 			
-			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(
-					lancamento.getDataLancamentoDistribuidor());
-			if (!dtLancamentoDistribuidor.equals(dtLancamentoNovo) 
-					&& isStatusBalanceado) {
+			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status) || StatusLancamento.BALANCEADO_LANCAMENTO.equals(status); 
+			
+			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
+			
+			if (!dtLancamentoDistribuidor.equals(dtLancamentoNovo) && isStatusBalanceado) {
+				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao da DATA LANCAMENTO DISTRIBUIDOR do Produto: "
@@ -240,6 +260,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 										dtLancamentoDistribuidor)
 								+ "para: " + simpleDateFormat.format(
 										dtLancamentoNovo));
+				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
 			}
 			
