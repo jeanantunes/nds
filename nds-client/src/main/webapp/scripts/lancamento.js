@@ -170,7 +170,7 @@ var lancamentoController = $.extend(true, {
 			{
 				"Confirmar": function() {
 					
-					pesquisar(true);
+					lancamentoController.pesquisar(true);
 					
 				}, "Cancelar": function() {
 					

@@ -1083,5 +1083,21 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Assert.assertEquals(tamanhoEsperado, listaMovimentoEstoqueCota.size());
 		
 	}
+	
+	@Test
+	public void obterQuantidadeProdutoEdicaoMovimentadoPorCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		save(tipoMovimentoRecReparte);
+		
+		TipoMovimentoEstoque tipoMovimentoCota =
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		Long qtde = movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(cotaManoel.getId(), veja1.getId(), tipoMovimentoCota.getId());
+		
+		Assert.assertTrue(qtde.equals(50L));
+	}
 
 }

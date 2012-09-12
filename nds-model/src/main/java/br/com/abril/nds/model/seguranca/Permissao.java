@@ -36,6 +36,7 @@ public enum Permissao
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_EDICOES_FECHADAS_SALDO("Edições Fechadas com Saldo",									   Permissao.ROLE_ESTOQUE),
+	ROLE_ESTOQUE_VISAO_DO_ESTOQUE("Visão do Estoque",                                                      Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_HELP("Help",							                                                   Permissao.ROLE_ESTOQUE),
 	ROLE_EXPEDICAO("Expedição",															  				   null), 
 	ROLE_EXPEDICAO_MAPA_ABASTECIMENTO("Mapa de Abastecimento",										  	   Permissao.ROLE_EXPEDICAO), 
