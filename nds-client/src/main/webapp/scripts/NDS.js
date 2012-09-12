@@ -388,6 +388,10 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 				return;
 			}
 			
+			if (!json) {
+	               json = [];
+	        }
+			
 			if (json.mensagens) {
 				
 				tipoMensagem = json.mensagens.tipoMensagem;

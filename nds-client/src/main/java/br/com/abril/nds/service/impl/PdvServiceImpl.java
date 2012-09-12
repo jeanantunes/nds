@@ -660,7 +660,7 @@ public class PdvServiceImpl implements PdvService {
 
         Set<MaterialPromocional> materialPromocional = new HashSet<MaterialPromocional>();
 
-        if (pdvDTO.getMaps() != null) {
+        if (pdvDTO.getMaps() != null && !pdvDTO.getMaps().isEmpty()) {
 
             materialPromocional.addAll(materialPromocionalRepository
                     .obterMateriaisPromocional((pdvDTO.getMaps()
@@ -705,7 +705,7 @@ public class PdvServiceImpl implements PdvService {
 
         Set<TipoGeradorFluxoPDV> fluxoSecundario = null;
 
-        if (pdvDTO.getGeradorFluxoSecundario() != null) {
+        if (pdvDTO.getGeradorFluxoSecundario() != null && !pdvDTO.getGeradorFluxoSecundario().isEmpty()) {
 
             fluxoSecundario = new HashSet<TipoGeradorFluxoPDV>();
             fluxoSecundario.addAll(tipoGeradorFluxoPDVRepsitory

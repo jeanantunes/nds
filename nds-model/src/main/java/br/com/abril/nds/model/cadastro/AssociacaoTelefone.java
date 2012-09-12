@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -10,7 +11,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class AssociacaoTelefone {
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
 	@JoinColumn(name = "TELEFONE_ID")
 	private Telefone telefone;
 	
