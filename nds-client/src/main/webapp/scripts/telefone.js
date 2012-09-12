@@ -17,7 +17,7 @@ function Telefone(paramTela,message) {
     //Define a tela como operação de cadastro/consulta
     this.definirReadonly = function(readonly) {
         this.readonly = readonly;
-        var idBotaoIncluir = '#'+ paramTela + 'btnIncluirNovoTelefone';
+        var idBotaoIncluir = '#'+ paramTela + 'wrapperBtnAdicionarTelefoneHabilitado';
         if (this.readonly) {
             $(idBotaoIncluir).hide();
         } else {
@@ -268,6 +268,24 @@ function Telefone(paramTela,message) {
 		$("#"+paramTela+"telefonePrincipal").attr("checked", false);
 	};
 
+	this.bloquearCamposFormTelefone = function(indBloqueiaCampo) {
+		
+		if(indBloqueiaCampo) {
+			$("#"+paramTela+"wrapperBtnAdicionarTelefoneHabilitado").hide();
+			$("#"+paramTela+"wrapperBtnAdicionarTelefoneDesabilitado").show();
+		} else {
+			$("#"+paramTela+"wrapperBtnAdicionarTelefoneHabilitado").show();
+			$("#"+paramTela+"wrapperBtnAdicionarTelefoneDesabilitado").hide();
+		}		
+		
+		$("#"+paramTela+"tipoTelefone").prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"ddd").prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"numeroTelefone").prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"ramal").prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"telefonePrincipal").prop('disabled', indBloqueiaCampo);
+		
+	};
+	
 	this.opcaoTel = function(opcao, idDiv, idLbl, idCampo) {
 		var div1 = $("#"+paramTela+ idDiv);
 		var lbl = $("#"+paramTela + idLbl);

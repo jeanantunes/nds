@@ -52,9 +52,27 @@
 				</td>
 			</tr>
 			<tr>
+
 				<td>&nbsp;</td>
-				<td><span id="${param.tela}btnIncluirNovoTelefone" class="bt_add"><a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar">Incluir Novo</a></span></td>
+
+				<td>
+
+					<div id="${param.tela}wrapperBtnAdicionarTelefoneHabilitado" style="display: none">
+						<span class="bt_add">
+							<a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar">Incluir Novo</a>
+						</span>
+					</div>
+					
+					<div id="${param.tela}wrapperBtnAdicionarTelefoneDesabilitado" style="display: none">
+					  	<span class="bt_add" style="opacity:0.4">
+					  		<a href="#" onclick="javascript:;">Incluir Novo</a>
+					  	</span>
+				  	</div>
+				
+				</td>
+
 			</tr>
+
 		</table>
 		
 		<br />
