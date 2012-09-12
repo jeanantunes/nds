@@ -34,6 +34,12 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	@Override
 	public void processMessage(Message message) {
 		EMS0108Input input = (EMS0108Input) message.getBody();
+		
+		
+		// TODO:Deverá procurar a publicacao
+		// se não existir loga
+		
+		
 		// Obter o produto
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT pe ");
@@ -57,10 +63,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao = ((ProdutoEdicao) query.uniqueResult());
 		if (null != produtoEdicao) {
 			produto = produtoEdicao.getProduto();
-			numeroDias = produtoEdicao.getPeb();
+			numeroDias = produtoEdicao.getPeb(); // REGRA CRIADA DA MENTE INSANA DO PROGRAMADOR (não esta na EMS) !!!!
 		} else {
 			// FIXME Não encontrou o produto. Realizar Log
-			// Passar para a próxima linha
+			// Passar para a próxima linha 
+			// ISSO TA ERRADO, deve-se INSERIR NA TABELA PRODUTO_EDICAO DE ACORDO COM A EMS!!!!
 			return;
 		}
 
@@ -68,7 +75,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		Date dataLcto = null;
 		Date dataRec = null;
 		Date dataCriacaoArquivo = (Date) message.getHeader().get(
-				"FILE_CREATION_DATE");
+				"FILE_CREATION_DATE"); // ISSO DEVE SER A DATA DE OPERACAO!!!!
 
 		Lancamento lancamento = new Lancamento();
 
@@ -81,7 +88,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			// Soma o número de dias a recolher
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(dataLcto);
-			cal.add(Calendar.DATE, numeroDias);
+			cal.add(Calendar.DATE, numeroDias); 
 			dataRec = cal.getTime();
 
 			// Insert
