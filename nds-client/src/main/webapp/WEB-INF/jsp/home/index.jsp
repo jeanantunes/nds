@@ -170,6 +170,7 @@
 	});
 	
 	$(document).ready(function() {
+		
 		$("#ajaxLoading").ajaxStart(function() {
 			$(this).fadeIn(200);
 		});

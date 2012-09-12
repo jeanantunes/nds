@@ -383,11 +383,12 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 			var tipoMensagem = null;
 			var listaMensagens = null;
 			
-			if (!json && !sucessCallBackFunction) {
+			// json == null quando o vraptor retorna result.nothing()
+			if ( (json == null) || (!json && !sucessCallBackFunction) ) {
 				
 				return;
 			}
-			
+
 			if (json.mensagens) {
 				
 				tipoMensagem = json.mensagens.tipoMensagem;
