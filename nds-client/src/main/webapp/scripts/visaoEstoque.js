@@ -1,4 +1,6 @@
 var visaoEstoqueController = $.extend(true, {	
+	
+	path : contextPath + '/estoque/visaoEstoque/',
 
 	init : function() {
 		$("#dataMovimento").datepicker({
@@ -14,31 +16,34 @@ var visaoEstoqueController = $.extend(true, {
 	bindButtons : function() {
 		
 		$("#btnPesquisar", this.workspace).click(function() {
-			//visaoEstoqueController.pesquisar();
+			visaoEstoqueController.pesquisar();
 			$(".grids").show();
-			$("#fileExport").show();
 		});
 	},
 	
 	
 	pesquisar : function() {
 		
-		var dataMovimento = $("#dataMovimento").val();
-		var idFornecedor = $("#idFornecedor").val();
+		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
 		$(".visaoEstoqueGrid", this.workspace).flexOptions({
-			"url" : this.path + 'busca.json', 
-			params: [{name:'filtro.dataMovimento', value: dataMovimento },
-			         {name:'filtro.idFornecedor', value: idFornecedor }],			
+			url : this.path + 'pesquisar.json?' + params, 
 			newp:1
 		});
 		$(".visaoEstoqueGrid").flexReload();
 	},
 	
 	
+	montaColunaAcao : function(data) {
+		$.each(data.rows, function(index, value) {
+			var acao = "teste";
+			value.cell.acao = acao;	
+		});
+	},
+	
 	initGridVisaoEstoque : function () {
 		$(".visaoEstoqueGrid").flexigrid({
-			dataType : 'xml',
+			dataType : 'json',
 			colModel : [ {
 				display : 'Estoque',
 				name : 'estoque',
@@ -59,12 +64,12 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'total',
+				name : 'valor',
 				width : 100,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Ação',
+				display : 'A&ccedil;&atilde;o',
 				name : 'acao',
 				width : 80,
 				sortable : true,

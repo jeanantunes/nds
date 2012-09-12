@@ -14,6 +14,8 @@ public class VisaoEstoqueDTO implements Serializable{
 	private Long exemplares;
 	
 	private BigDecimal valor;
+	
+	private String acao = "";
 
 	public String getEstoque() {
 		return estoque;
@@ -47,5 +49,11 @@ public class VisaoEstoqueDTO implements Serializable{
 		this.valor = valor;
 	}
 
-	
+	public String getAcao() {
+		return acao;
+	}
+
+	public void setAcao(String acao) {
+		this.acao = acao;
+	}
 }

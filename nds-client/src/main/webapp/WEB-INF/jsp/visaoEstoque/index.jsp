@@ -3,15 +3,18 @@
 </head>
 
 <body>
+
+	<form action="/estoque/visaoEstoque" id="pesquisarVisaoEstoqueForm">
+	
 	<fieldset class="classFieldset">
 		<legend> Pesquisar Estoque</legend>
 	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	    	<tr>
 	        	<td width="99">Data Movimento:</td>
-	          	<td width="170"><input name="dataMovimento" type="text" id="dataMovimento" value="${dataAtual}" style="width: 80px; float: left; margin-right: 5px;" /></td>
+	          	<td width="170"><input name="filtro.dataMovimentacao" type="text" value="${dataAtual}" style="width: 80px; float: left; margin-right: 5px;" /></td>
 	          	<td width="71">Fornecedor:</td>
 	          	<td width="480">
-	          		<select name="filtroConsultaNotaFiscal.idFornecedor" id="selectFornecedores" style="width: 250px;">
+	          		<select name="filtro.idFornecedor" style="width: 250px;">
 						<option selected="selected" value="-1"></option>
 						<c:forEach items="${listFornecedores}" var="fornecedor">
 							<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
@@ -34,6 +37,7 @@
 		</fieldset>
 	</div>
 	
+	</form>
 	
 	<script type="text/javascript">
 		$(function(){
