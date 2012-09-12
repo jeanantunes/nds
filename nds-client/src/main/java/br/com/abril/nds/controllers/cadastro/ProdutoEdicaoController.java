@@ -191,8 +191,10 @@ public class ProdutoEdicaoController {
 			if (uLancamento != null) {
 				dto.setSituacaoLancamento(uLancamento.getStatus());
 				dto.setTipoLancamento(uLancamento.getTipoLancamento());
+				if(uLancamento.getStatus() != StatusLancamento.EXCLUIDO){					
+					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+				}				
 				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
-				dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
 				dto.setRepartePrevisto(uLancamento.getReparte());
 				dto.setRepartePromocional(uLancamento.getRepartePromocional());
 				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
