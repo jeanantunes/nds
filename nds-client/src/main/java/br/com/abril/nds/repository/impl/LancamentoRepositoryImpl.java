@@ -16,11 +16,14 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -1292,5 +1295,41 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("statusLancamento", statusLancamento);
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoLancamentoCanceladoDTO> obterLancamentosCanceladosPor(
+			Intervalo<Date> periodo, List<Long> idFornecedores) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ") 
+		   .append(" lancamento.produtoEdicao.produto.codigo as codigo, ")
+		   .append(" lancamento.produtoEdicao.produto.descricao as produto, ")
+		   .append(" lancamento.produtoEdicao.numeroEdicao as numeroEdicao, ")
+		   .append(" lancamento.reparte as reparte, ")
+		   .append(" lancamento.dataLancamentoPrevista as dataLancamento")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" join lancamento.produtoEdicao.produto produto ")
+		   .append(" join lancamento.produtoEdicao.produto.fornecedores fornecedores ")
+		   .append(" where lancamento.status = :statusLancamento ")
+		   .append(" and lancamento.dataLancamentoPrevista between :periodoInicial and :periodoFinal ")
+		   .append(" and fornecedores.id in (:idFornecedores) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(
+				ProdutoLancamentoCanceladoDTO.class);
+
+		query.setResultTransformer(resultTransformer);
+		
+		query.setParameter("statusLancamento", StatusLancamento.CANCELADO);
+		query.setParameter("periodoInicial", periodo.getDe());
+		query.setParameter("periodoFinal", periodo.getAte());
+		query.setParameterList("idFornecedores", idFornecedores);
+		
+		return query.list();
 	}
 }

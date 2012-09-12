@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.util.BigIntegerUtil;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.DadosBalanceamentoLancamentoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -71,9 +72,39 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
 			this.obterDadosLancamento(filtro, configuracaoInicial);
 		
-		return this.balancear(dadosBalanceamentoLancamento);
-	}
+		BalanceamentoLancamentoDTO matrizLancamento = this.balancear(dadosBalanceamentoLancamento);
 		
+		List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados = 
+													this.obterProdutosLancamentosCancelados(filtro);
+		
+		if (produtosLancamentosCancelados != null && !produtosLancamentosCancelados.isEmpty()) {
+			matrizLancamento.setProdutosLancamentosCancelados(produtosLancamentosCancelados);
+		}
+		
+		return matrizLancamento;
+	}
+	
+	private List<ProdutoLancamentoCanceladoDTO> obterProdutosLancamentosCancelados(FiltroLancamentoDTO filtro) {
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		Date dataLancamento = filtro.getData();
+		
+		int numeroSemana =
+			DateUtil.obterNumeroSemanaNoAno(dataLancamento,
+											distribuidor.getInicioSemana().getCodigoDiaSemana());
+		
+		Intervalo<Date> periodoDistribuicao = 
+			this.getPeriodoDistribuicao(distribuidor, dataLancamento, numeroSemana);
+		
+		List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados = 
+				this.lancamentoRepository.obterLancamentosCanceladosPor(
+						periodoDistribuicao, filtro.getIdsFornecedores());
+		
+		return produtosLancamentosCancelados;
+				
+	}
+	
 	@Override
 	@Transactional
 	public TreeMap<Date, List<ProdutoLancamentoDTO>> confirmarMatrizLancamento(
