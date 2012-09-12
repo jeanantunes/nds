@@ -495,7 +495,7 @@ var lancamentoNovoController = $.extend(true, {
 			
 			if(!idProdutoEdicao) {
 				exibirMensagemDialog('WARNING', ['Produto Edição não selecionado.'],'');			
-				$('#paraEstoque').click();
+				$('#paraCota').attr('checked',false);
 				return;
 			}
 			
@@ -589,7 +589,6 @@ var lancamentoNovoController = $.extend(true, {
 			function(result) {
 				$("#reparteProduto", lancamentoNovoController.workspace).text(result[0]);
 				$("#precoCapaProduto", lancamentoNovoController.workspace).text(result[1]);
-				debugger;
 				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result[2]);
 			},
 			null,

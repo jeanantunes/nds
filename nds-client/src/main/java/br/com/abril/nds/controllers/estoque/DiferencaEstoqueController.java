@@ -1897,6 +1897,10 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/rateio/buscarPrecoProdutoEdicao")
 	public void buscarPrecoProdutoEdicao(String codigoProduto, Integer numeroEdicao){
 		
+		if(numeroEdicao == null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número da Edição não informado."));
+		
+		
 		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao.toString());
 		
 		if(pe == null)
