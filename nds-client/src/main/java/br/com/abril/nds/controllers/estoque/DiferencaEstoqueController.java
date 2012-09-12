@@ -1878,6 +1878,7 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/rateio/buscarReparteCotaPreco")
 	public void buscarReparteCotaPreco(Long idProdutoEdicao, Integer numeroCota){
 		
+		
 		if(numeroCota == null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota deve ser informada."));
 				
@@ -1896,13 +1897,21 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/rateio/buscarPrecoProdutoEdicao")
 	public void buscarPrecoProdutoEdicao(String codigoProduto, Integer numeroEdicao){
 		
+		if(numeroEdicao == null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número da Edição não informado."));
+		
+		
 		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao.toString());
-				
+		
+		if(pe == null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Edição não encontrada."));
+		
 		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(pe.getId(), null);
 				
-		Object[] dados = new Object[2];
+		Object[] dados = new Object[3];
 		dados[0] = qtde;
 		dados[1] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
+		dados[2] = pe.getId();
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
@@ -1911,7 +1920,7 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/rateio/buscarProdutosCotaNota")
 	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota){
 		
-		//TODO
+		//TODO Aguardando o desenvolvimento da EMS 191
 		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
 		
 		DiferencaVO diferencaVO = new DiferencaVO();

@@ -1,5 +1,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/lancamentoNovo.js"></script>
 
+<input type="hidden" id="idProdutoEdicao"/>
+
 <div id="dialogNovasDiferencas" 
 	 title="Lançamento Faltas e Sobras - Produto"
 	 style="display: none;">
