@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
@@ -59,6 +60,8 @@ public class DiferencaVO implements Serializable {
 	
 	private BigInteger qtdeEstoqueAtual;
 	
+	private BigDecimal vlTotalDiferenca;
+	
 	private Boolean automatica;
 	
 	private String tipoEstoque;
@@ -66,6 +69,14 @@ public class DiferencaVO implements Serializable {
 	private boolean cadastrado;
 
 	private String fornecedor;
+	
+	private boolean redirecionarProdutosEstoque;
+	
+	private TipoDirecionamentoDiferenca tipoDirecionamento;
+	
+	public enum TipoDirecionamentoDiferenca {
+		ESTOQUE,COTA,NOTA
+	};
 	
 	/**
 	 * Construtor padrão.
@@ -86,6 +97,58 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	
+	
+
+	/**
+	 * @return the tipoDirecionamento
+	 */
+	public TipoDirecionamentoDiferenca getTipoDirecionamento() {
+		return tipoDirecionamento;
+	}
+
+	/**
+	 * @param tipoDirecionamento the tipoDirecionamento to set
+	 */
+	public void setTipoDirecionamento(TipoDirecionamentoDiferenca tipoDirecionamento) {
+		this.tipoDirecionamento = tipoDirecionamento;
+	}
+
+	/**
+	 * @return the redirecionarProdutosEstoque
+	 */
+	public boolean isRedirecionarProdutosEstoque() {
+		return redirecionarProdutosEstoque;
+	}
+
+	/**
+	 * @param redirecionarProdutosEstoque the redirecionarProdutosEstoque to set
+	 */
+	public void setRedirecionarProdutosEstoque(boolean redirecionarProdutosEstoque) {
+		this.redirecionarProdutosEstoque = redirecionarProdutosEstoque;
+	}
+
+	/**
+	 * @return the vlTotalDiferenca
+	 */
+	public BigDecimal getVlTotalDiferenca() {
+		return vlTotalDiferenca;
+	}
+
+	/**
+	 * @param vlTotalDiferenca the vlTotalDiferenca to set
+	 */
+	public void setVlTotalDiferenca(BigDecimal vlTotalDiferenca) {
+		this.vlTotalDiferenca = vlTotalDiferenca;
+	}
+
+	/**
+	 * @return the automatica
+	 */
+	public Boolean getAutomatica() {
+		return automatica;
 	}
 
 	/**
