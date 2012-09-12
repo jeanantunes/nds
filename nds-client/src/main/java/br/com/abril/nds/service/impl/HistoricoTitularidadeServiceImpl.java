@@ -1058,7 +1058,6 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			HistoricoTitularidadeCotaCaucaoLiquida historicoTitularidadeCotaCaucaoLiquida = 
 					new HistoricoTitularidadeCotaCaucaoLiquida();
 			
-			historicoTitularidadeCotaCaucaoLiquida.setIndiceReajuste(new BigDecimal(caucaoLiquida.getIndiceReajuste()));
 			historicoTitularidadeCotaCaucaoLiquida.setValor(new BigDecimal(caucaoLiquida.getValor()));
 			
 			if (caucaoLiquida.getAtualizacao() != null) {

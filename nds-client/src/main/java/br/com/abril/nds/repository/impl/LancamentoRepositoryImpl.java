@@ -1138,7 +1138,7 @@ public class LancamentoRepositoryImpl extends
 												   StatusLancamento.BALANCEADO.toString(),
 												   StatusLancamento.ESTUDO_FECHADO.toString(),
 												   StatusLancamento.FURO.toString(),
-												   StatusLancamento.CANCELADO_GD.toString()};
+												   StatusLancamento.CANCELADO.toString()};
 		
 		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.toString(),
 				  										  StatusLancamento.CONFIRMADO.toString()};

@@ -281,7 +281,7 @@ public class MatrizLancamentoServiceImplTest extends AbstractRepositoryImplTest 
 				produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.ANUAL.toString());
 				
 				if (k == 101) {
-					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO_GD.toString());
+					produtoLancamento.setStatusLancamento(StatusLancamento.CANCELADO.toString());
 					produtoLancamento.setPeriodicidadeProduto(PeriodicidadeProduto.SEMANAL.toString());
 				}
 				
