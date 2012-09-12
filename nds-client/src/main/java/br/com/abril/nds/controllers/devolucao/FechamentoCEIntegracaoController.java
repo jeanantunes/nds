@@ -231,14 +231,14 @@ public class FechamentoCEIntegracaoController {
 	@Path("/imprimeBoleto")
 	public void imprimeBoleto() throws Exception{
 		
-		try {
-			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), new HashSet<String>());
-		} catch (GerarCobrancaValidacaoException e) {
-			
-			throw e.getValidacaoException();
-		}
-
-
+//		try {
+//			this.gerarCobrancaService.gerarCobranca(null, this.getUsuario().getId(), new HashSet<String>());
+//		} catch (GerarCobrancaValidacaoException e) {
+//			
+//			throw e.getValidacaoException();
+//		}
+//
+//
 //		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
 //
 //		this.httpResponse.setContentType("application/pdf");
@@ -249,8 +249,10 @@ public class FechamentoCEIntegracaoController {
 
 //		//CONTROLE DE VIAS IMPRESSAS
 //		boletoService.incrementarVia(nossoNumero);
+//		
+//		httpResponse.flushBuffer();
 		
-		httpResponse.flushBuffer();
+		result.nothing();
 	}
 	
 	@Get

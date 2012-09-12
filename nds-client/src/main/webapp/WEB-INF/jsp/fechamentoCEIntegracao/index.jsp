@@ -94,14 +94,14 @@
 	    			</a>
 	    		</span>
 			    <span class="bt_novos" title="Imprimir Boleto">
-			    	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/imprimeBoleto">
+			    	<a href="javascript:;">
 			    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 			    		Boleto
 			    	</a>
 			    </span>
 			       
 			       <span class="bt_novos" title="Imprimir Boleto">
-			       	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/imprimeBoleto?nossoNumero='123456789'">
+			       	<a href="javascript:;">
 			       		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 			       		Boleto em Branco
 			       	</a>
