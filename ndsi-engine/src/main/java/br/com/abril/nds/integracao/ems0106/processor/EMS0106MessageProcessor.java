@@ -96,8 +96,19 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			estudo.setEstudoCotas(Collections.<EstudoCota>emptySet());
 			
 			// Atualizar os dados do Estudo:
-			estudo.setQtdeReparte(BigInteger.valueOf(
-					input.getReparteDistribuir()));
+			BigInteger qtdeReparteAtual = estudo.getQtdeReparte();
+			BigInteger qtdeReparteCorrente = BigInteger.valueOf(
+					input.getReparteDistribuir());
+			if (!qtdeReparteAtual.equals(qtdeReparteCorrente)) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da QUANTIDADE REPARTE do Estudo: "
+								+ estudo.getId()
+								+ ", de: " + qtdeReparteAtual
+								+ " para: " + qtdeReparteCorrente);
+				estudo.setQtdeReparte(qtdeReparteCorrente);
+			}
+			
 			estudo.setDataAlteracao(new Date());
 			this.getSession().merge(estudo);
 		}
