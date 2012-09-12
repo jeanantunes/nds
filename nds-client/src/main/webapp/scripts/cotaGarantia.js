@@ -1176,7 +1176,7 @@ CaucaoLiquida.prototype.calculaValorParcela = function(){
 	var vrBoleto = removeMascaraPriceFormat($("#valorBoleto",_workspace).val());
 	var qtdParcelas = removeMascaraPriceFormat($("#qtdParcelaBoleto",_workspace).val());
 	
-	var valorParcela = (vrBoleto / qtdParcelas);
+	var valorParcela = Math.round(vrBoleto / qtdParcelas);
 	$("#valorParcelaBoleto").val(valorParcela);
 	$("#valorParcelaBoleto", _workspace).priceFormat({
 		allowNegative : true,
