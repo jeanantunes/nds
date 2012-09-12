@@ -11,8 +11,7 @@
 	    <td width="245" height="39">
 	    	<div class="divUtilizaTermoAdesao">
 	    		<span class="bt_imprimir" style="display:block;">
-	    			<a href="javascript:;" target="_blank"
-	    			   onclick="DISTRIB_COTA.downloadTermoAdesao();">Termo</a>
+	    			<a href="javascript:;" onclick="DISTRIB_COTA.downloadTermoAdesao();">Termo</a>
 	    		</span>
     		</div>
 	    </td>

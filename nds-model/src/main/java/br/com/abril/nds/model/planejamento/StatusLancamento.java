@@ -12,7 +12,7 @@ public enum StatusLancamento {
 	EM_BALANCEAMENTO_RECOLHIMENTO("Em Balanceamento Recolhimento"),
 	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),
 	RECOLHIDO("Recolhido"),
-	CANCELADO_GD("Cancelado GD"),
+	CANCELADO("Cancelado"),
 
 	// EMS 217:
 	TRANSMITIDO("Transmitido"),
@@ -23,7 +23,9 @@ public enum StatusLancamento {
 	LIBERAR_CALCULO("Liberar Cálculo"),
 	LANCADO("Lançado"),
 	EM_RECOLHIMENTO("Em Recolhimento"),
-	FECHADO("Fechado");
+	FECHADO("Fechado"),
+	
+	EXCLUIDO("Excluído");
 	
 	/** Descrição do status. */
 	private String descricao;

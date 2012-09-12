@@ -117,7 +117,7 @@
 				</table>
 				
 				<div class="divConteudoEntregador">
-					<div id="cotaTemEntregador2" style="display: block;">
+					<div id="cotaTemEntregador" style="display: none;">
 						<table width="399" border="0" cellspacing="1" cellpadding="1">
 							<tr>
 								<td width="130">Utiliza Procuração?</td>
@@ -130,7 +130,7 @@
 								<td width="245" height="39" class="procuracaoPf">
 									<div class="divUtilizaProcuracao">
 										<span class="bt_imprimir">
-											<a href="javascript:;" target="_blank"
+											<a href="javascript:;"
 											   onclick="DISTRIB_COTA.downloadProcuracao();">Procuração</a>
 										</span>
 									</div>
