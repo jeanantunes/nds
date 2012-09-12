@@ -24,6 +24,7 @@ import javax.persistence.ManyToOne;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 /**
@@ -70,7 +71,7 @@ public abstract class Cobranca {
 	@Column(name = "CONTEMPLACAO", nullable = true)
 	protected boolean contemplacao;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne
 	@JoinColumn(name = "COTA_ID")
 	protected Cota cota;
 	
@@ -96,6 +97,10 @@ public abstract class Cobranca {
 	@ManyToOne
 	@JoinColumn(name = "BANCO_ID")
 	private Banco banco;
+	
+	@ManyToOne
+	@JoinColumn(name="FORNECEDOR_ID")
+	private Fornecedor fornecedor;
     
 	public Long getId() {
 		return id;
@@ -224,7 +229,13 @@ public abstract class Cobranca {
 	public void setBanco(Banco banco) {
 		this.banco = banco;
 	}
-	
-	
+
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
 	
 }
