@@ -31,7 +31,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
@@ -45,9 +44,6 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/banco")
 public class BancoController {
-	
-	@Autowired
-	private Validator validator;	
 	
 	@Autowired
 	private BancoService bancoService;
@@ -205,7 +201,19 @@ public class BancoController {
 						  BigDecimal vrMulta,
 						  String instrucoes){
 		
-		validarCadastroBanco(0,numero,nome,codigoCedente,agencia,conta,digito,apelido,juros,multa,vrMulta);
+		validarCadastroBanco(
+				true, 
+				numero,
+				nome,
+				codigoCedente,
+				agencia,
+				conta,
+				digito,
+				apelido,
+				carteira,
+				juros,
+				multa,
+				vrMulta);
 		
 		long lAgencia = Long.parseLong(agencia);
 		long lConta = Long.parseLong(conta);
@@ -251,6 +259,7 @@ public class BancoController {
 	
 	/**
 	 * Método responsável pela alteração de um Banco
+	 * 
 	 * @param idBanco
 	 * @param numero
 	 * @param nome
@@ -285,7 +294,19 @@ public class BancoController {
 						  	String instrucoes){
 		
 			
-		validarCadastroBanco(idBanco,numero,nome,codigoCedente,agencia,conta,digito,apelido,juros,multa,vrMulta);
+		validarCadastroBanco(
+				false, 
+				numero, 
+				nome, 
+				codigoCedente, 
+				agencia, 
+				conta, 
+				digito, 
+				apelido,
+				carteira,
+				juros, 
+				multa, 
+				vrMulta);
 		
 		if (ativo){
 			if (this.bancoService.verificarPendencias(idBanco)){
@@ -320,6 +341,8 @@ public class BancoController {
 	
 	/**
 	 * Método responsável por validar os dados de um novo banco ou de uma alteração de banco.
+	 * 
+	 * @param indNovoRegistro
 	 * @param numero
 	 * @param nome
 	 * @param codigoCedente
@@ -330,10 +353,9 @@ public class BancoController {
 	 * @param carteira
 	 * @param juros
 	 * @param multa
-	 * @param instrucoes
-	 * @throws Mensagens de validações de campos
+	 * @param vrMulta
 	 */
-	private void validarCadastroBanco(long idBanco,
+	private void validarCadastroBanco(boolean indNovoRegistro,
 								  	  String numero,
 								  	  String nome,
 								  	  String codigoCedente,
@@ -341,64 +363,74 @@ public class BancoController {
 								  	  String conta,
 								  	  String digito,
 								  	  String apelido,
+								  	  Integer carteira,
 								  	  BigDecimal juros,
 								  	  BigDecimal multa,
 								  	  BigDecimal vrMulta){
 		
-		if (idBanco==0){
+		
+		List<String> errorMsgs = new LinkedList<String>();
+		
+		if (indNovoRegistro){
+			
 			Banco banco = this.bancoService.obterbancoPorNumero(numero);
+			
 			if(banco!=null){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+numero+" já cadastrado.");
 			}
+
 			banco = this.bancoService.obterbancoPorNome(nome);
+			
 			if(banco!=null){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Banco "+nome+" já cadastrado.");
 			}
+			
 		}
 		
 		if ((numero==null)||("".equals(numero))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o número do banco.");
+			errorMsgs.add("Preencha o número do banco.");
 		}
 		
 		if ((nome==null)||("".equals(nome))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o nome do banco.");
+			errorMsgs.add("Preencha o nome do banco.");
 		}
 		
 		if ((codigoCedente==null)||("".equals(codigoCedente))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o código do cedente.");
+			errorMsgs.add("Preencha o código do cedente.");
 		}
 		
 		if ((agencia==null)||("".equals(agencia))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo agência.");
+			errorMsgs.add("Preencha o campo agência.");
 		}
 		
 		if ((conta==null)||("".equals(conta))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo conta.");
+			errorMsgs.add("Preencha o campo conta.");
 		}
 		
 		if ((digito==null)||("".equals(digito))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo dígito da conta do banco.");
+			errorMsgs.add("Preencha o campo dígito da conta do banco.");
 		}
 		
 		if ((apelido==null)||("".equals(apelido))){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo apelido.");
+			errorMsgs.add("Preencha o campo apelido.");
+		}
+		
+		if(carteira == null) {
+			errorMsgs.add("Valor inválido para o campo cateira.");
 		}
 		
 		if(juros==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Especifique a taxa de juros.");
-		}
-        if((multa==null)&&(vrMulta==null)){
-        	throw new ValidacaoException(TipoMensagem.WARNING, "Especifique a taxa ou o valor da multa.");
+			errorMsgs.add("Especifique a taxa de juros.");
 		}
 		
-        if (validator.hasErrors()) {
-			List<String> mensagens = new ArrayList<String>();
-			for (Message message : validator.getErrors()) {
-				mensagens.add(message.getMessage());
-			}
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
-			throw new ValidacaoException(validacao);
+        if((multa==null)&&(vrMulta==null)){
+        	errorMsgs.add("Especifique a taxa ou o valor da multa.");
 		}
+		
+        if(errorMsgs != null && !errorMsgs.isEmpty()) {
+        	throw new ValidacaoException(TipoMensagem.WARNING, errorMsgs);
+        }
+        
 	}
 	
 	
