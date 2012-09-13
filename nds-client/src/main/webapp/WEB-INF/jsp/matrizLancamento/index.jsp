@@ -104,6 +104,12 @@ var lancamentosSelecionados = [];
 		</div>
 		</form>
 
+<form id="form-alerta-lancamentos-produtos-cancelados">
+<div id="dialog-alerta-lancamentos-produtos-cancelados" title="Produtos com lançamentos cancelados" style="display:none">
+	<p>Os seguintes produtos tiveram seus lançamentos cancelados</p>
+	<div id="flexiGridLancamentosProdutosCancelados" />			   
+</div>
+</form>
 
 	
 		<form id="form-reprogramar">

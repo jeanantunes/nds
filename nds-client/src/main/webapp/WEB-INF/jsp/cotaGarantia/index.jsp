@@ -324,7 +324,7 @@
 				     </tr>
                  </table>
                  
-                 <div name="divFormaBoleto" id="divFormaBoleto">
+                 <div name="divFormaBoleto" id="divFormaBoleto" style="display: none;">
     
 	                 <table width="50%" border="0" cellspacing="1" cellpadding="1">
 				         <tr>
@@ -412,7 +412,7 @@
 	                 
                  </div>
                  
-                 <div name="divFormaDesconto" id="divFormaDesconto">
+                 <div name="divFormaDesconto" id="divFormaDesconto" style="display: none;">
 
                      <table width="100%" border="0" cellspacing="1" cellpadding="1">
 				        <tr>

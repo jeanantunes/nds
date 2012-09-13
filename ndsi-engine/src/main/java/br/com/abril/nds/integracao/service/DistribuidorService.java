@@ -1,5 +1,7 @@
 package br.com.abril.nds.integracao.service;
 
+import java.util.List;
+
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 
@@ -13,4 +15,5 @@ public interface DistribuidorService {
 
 	public DistribuidorDTO obterDadosEmissao();
 
+	List<String> obterNomeCNPJDistribuidor();
 }

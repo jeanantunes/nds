@@ -46,7 +46,7 @@ public interface BoxService {
 	 * @return
 	 */
 	public abstract List<Box> busca(Integer codigoBox, TipoBox tipoBox, String orderBy,
-			Ordenacao ordenacao, int initialResult, int maxResults);
+			Ordenacao ordenacao, Integer initialResult, Integer maxResults);
 	/**
 	 * Atualiza a entidade box do repositorio de dados
 	 * @param entity

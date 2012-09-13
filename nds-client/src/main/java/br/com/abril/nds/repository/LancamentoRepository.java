@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -249,6 +250,16 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, 
 																				 Date dataLancamentoPrevista, 
 																				 Date dataLancamentoDistribuidor);
+	
+	/**
+	 * Retorna os produtos dos lançamentos cancelados 
+	 * referentes a um periodo e determinados fornecedores. 
+	 * 
+	 * @param periodo - periodo 
+	 * @param idFornecedores - fornecedores dos produtos
+	 * @return lista lancamentos cancelados
+	 */
+	public List<ProdutoLancamentoCanceladoDTO> obterLancamentosCanceladosPor(Intervalo<Date> periodo, List<Long> idFornecedores);
 	
 }
 	

@@ -33,6 +33,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			data,
 			function(result) {
 				
+				if (result.listaProdutosLancamentosCancelados) {
+					T.popularGridProdutosLancamentosCancelados(result.listaProdutosLancamentosCancelados);
+				}
+				
 				T.popularResumoPeriodo(result);
 				
 				T.carregarGrid();
@@ -695,8 +699,75 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$("#novaDataLancamento", _workspace).mask("99/99/9999");
 		
-	}
+		this.carregarGridLancamentosCancelados();
+		
+	},
 
+	this.carregarGridLancamentosCancelados = function(){
+		
+		$("#flexiGridLancamentosProdutosCancelados", _workspace).flexigrid({
+			dataType : 'json',
+			colModel : [  {
+				display : 'Código',
+				name : 'codigo',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 90,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 110,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Reparte',
+				name : 'repartePrevisto',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Data Lançamento',
+				name : 'dataLancamento',
+				width : 120,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 570
+		});
+	},
+
+	this.popularGridProdutosLancamentosCancelados = function(listaProdutosLancamentosCancelados) {
+		
+		if (listaProdutosLancamentosCancelados.length > 0) {
+			$("#flexiGridLancamentosProdutosCancelados", _workspace).flexAddData({
+				rows : toFlexiGridObject(listaProdutosLancamentosCancelados),
+				page : 1,
+				total : 1
+			});
+		
+			this.popupLancamentosCancelados();
+		}
+	},
+	
+	this.popupLancamentosCancelados = function() {
+		$( "#dialog-alerta-lancamentos-produtos-cancelados", _workspace ).dialog({
+			resizable: false,
+			width:600,
+			modal: true,
+			buttons: {
+				"Ok": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	},
+	
 	this.popup_reprogramar = function() {
 		$( "#dialog-reprogramar", _workspace ).dialog({
 			resizable: false,

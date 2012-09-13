@@ -27,6 +27,8 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	
 	private Date dataLancamento;
 	
+	private List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -89,6 +91,21 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
+	}
+
+	/**
+	 * @return the produtosLancamentosCancelados
+	 */
+	public List<ProdutoLancamentoCanceladoDTO> getProdutosLancamentosCancelados() {
+		return produtosLancamentosCancelados;
+	}
+
+	/**
+	 * @param produtosLancamentosCancelados the produtosLancamentosCancelados to set
+	 */
+	public void setProdutosLancamentosCancelados(
+			List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados) {
+		this.produtosLancamentosCancelados = produtosLancamentosCancelados;
 	}
 	
 }

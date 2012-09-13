@@ -86,7 +86,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		hql.append(" mfc.valor as valor, ");
 		
-		hql.append(" mfc.data as dataLancamento ");
+		hql.append(" mfc.data as dataLancamento, ");
+		
+		hql.append(" mfc.observacao as observacoes");
 		
 		hql.append(" from MovimentoFinanceiroCota mfc ");
 		   
