@@ -197,3 +197,15 @@
 		});
 	</script>
 </div>
+
+<form id="idTipoEstoque">
+		<div id="dialog-tipo-estoque" title="Tipo de Estoque" style="display:none">
+			<fieldset>
+				<legend>Selecione o Tipo de Estoque</legend>
+			    <select id="selectTipoEstoque" name="" size="1" >
+			      
+			    </select>
+			
+			</fieldset>
+		</div>
+	</form>
