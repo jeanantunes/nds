@@ -496,6 +496,8 @@ var lancamentoNovoController = $.extend(true, {
 			if(!idProdutoEdicao) {
 				exibirMensagemDialog('WARNING', ['Produto Edição não selecionado.'],'');			
 				$('#paraCota').attr('checked',false);
+				$("#fieldCota", lancamentoNovoController.workspace).hide("slow");
+				$(".trCotas", lancamentoNovoController.workspace).remove();				
 				return;
 			}
 			
@@ -625,8 +627,6 @@ var lancamentoNovoController = $.extend(true, {
 		
 		if(qtde && qtdeFornecedor>0)
 			qtdes.push({tipo:'Devolução Fornecedor',	enum:'DEVOLUCAO_FORNECEDOR', 	valor:qtdeFornecedor});
-		
-		debugger;
 		
 		if(qtdes.length == 1) {
 			$("#reparteProduto", lancamentoNovoController.workspace).text(qtdes[0].valor);
