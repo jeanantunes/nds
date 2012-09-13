@@ -185,9 +185,14 @@ public class BoxController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "É necessario realizar a pesquisa primeiro."));
 		}
 		
-		List<Box> boxs = boxService.busca(filtro.getCodigoBox(), filtro.getTipoBox(), 
-				filtro.getOrderBy(), filtro.getOrdenacao(), filtro.getInitialResult(),
-				filtro.getMaxResults());
+		List<Box> boxs = 
+				boxService.busca(
+						filtro.getCodigoBox(), 
+						filtro.getTipoBox(), 
+						filtro.getOrderBy(), 
+						filtro.getOrdenacao(), 
+						null,
+						null);
 		
 		List<BoxDTO> listaBoxs = this.convertBoxToBoxDTO(boxs);
 		
