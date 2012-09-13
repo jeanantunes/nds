@@ -1,4 +1,3 @@
-//@ sourceURL=fiadorjs
 var fiadorController = $.extend(true, {
 		fecharModalCadastroFiador: false,
 		addConjuge : false,
@@ -530,7 +529,8 @@ var fiadorController = $.extend(true, {
 				function(){
 					_this.fecharModalCadastroFiador = false;
 				},
-				true
+				true,
+				"dialog-fiador"
 			);
 		},
 		
@@ -604,12 +604,12 @@ var fiadorController = $.extend(true, {
 			
 			$.postJSON(contextPath + '/cadastro/fiador/cadastrarFiadorCpf', data, 
 				function(result){
-						
+					
 					if (result[0].tipoMensagem){
 						exibirMensagem(result[0].tipoMensagem, result[0].listaMensagens);
 					}
-					
-					if (result[1] != ""){
+				
+					if (result[1]){
 						$(".fiadorController-pessoasGrid", fiadorController.workspace).flexAddData({
 							page: result[1].page, total: result[1].total, rows: result[1].rows
 						});
@@ -628,7 +628,8 @@ var fiadorController = $.extend(true, {
 				function (){
 					_this.fecharModalCadastroFiador = false;
 				},
-				true
+				true,
+				"dialog-fiador"
 			);
 		},
 		limparDadosCadastraisCPFFiador:function(){
@@ -1188,3 +1189,4 @@ var fiadorController = $.extend(true, {
 			}
 		}	
 }, BaseController);
+//@ sourceURL=fiador.js

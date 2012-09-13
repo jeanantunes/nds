@@ -11,11 +11,19 @@ public enum OperacaoFinaceira {
 	private OperacaoFinaceira(String descricao) {
 
 		this.descricao = descricao;
+	}	
+
+	/**
+	 * @return the descricao
+	 */
+	public String getDescricao() {
+		return descricao;
 	}
 
-	@Override
-	public String toString() {
-
-		return this.descricao;
+	/**
+	 * @param descricao the descricao to set
+	 */
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 }

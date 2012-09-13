@@ -9,6 +9,5 @@ public interface VisaoEstoqueService {
 	
 	List<VisaoEstoqueDTO> obterVisaoEstoque(FiltroConsultaVisaoEstoque filtro);
 	
-	
 
 }
