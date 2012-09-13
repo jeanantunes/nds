@@ -9,10 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,13 +25,12 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.repository.impl.AbstractRepository;
+
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
-public class EMS0198MessageProcessor implements MessageProcessor {
-
-	@PersistenceContext
-	private EntityManager entityManager;
+public class EMS0198MessageProcessor extends AbstractRepository implements MessageProcessor {
 
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
@@ -144,12 +140,12 @@ public class EMS0198MessageProcessor implements MessageProcessor {
 		sql.append(" and tme.grupoMovimentoEstoque = :tipoMovimento ");
 		sql.append(" order by co.numeroCota");
 
-		Query query = this.entityManager.createQuery(sql.toString());
+		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("dataLancDistrib", data);
 		query.setParameter("tipoMovimento", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 
 		@SuppressWarnings("unchecked")
-		List<PDV> pdvs = (List<PDV>) query.getResultList();
+		List<PDV> pdvs = (List<PDV>) query.list();
 
 		if (pdvs.isEmpty()) {
 
