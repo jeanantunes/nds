@@ -1192,56 +1192,34 @@ CaucaoLiquida.prototype.getValorCaucaoLiquida = function(tipo){
 	return this.preparaValor(valor);
 };
 
+CaucaoLiquida.prototype.adicionaDecimais = function(id){
+	if ($("#"+id, _workspace).val().indexOf(".") < 0){
+		$("#"+id, _workspace).val($("#"+id, _workspace).val() + "00");
+	}
+	
+	$("#"+id, _workspace).priceFormat({
+		centsSeparator : ',',
+		thousandsSeparator : '.'
+	});
+}
+
 CaucaoLiquida.prototype.setValorCaucaoLiquida = function(tipo,valor){
 
 	if (tipo=='BOLETO'){
 		 $("#valorBoleto", _workspace).val(valor);
-		 
-		 if ($("#valorBoleto", _workspace).val().indexOf(".") < 0){
-			$("#valorBoleto", _workspace).val($("#valorBoleto", _workspace).val() + "00");
-		 }
-		 
-		 $("#valorBoleto", _workspace).priceFormat({
-			 centsSeparator : ',',
-			 thousandsSeparator : '.'
-		 });
+		 this.adicionaDecimais("valorBoleto");
     }
 	else if (tipo=='DEPOSITO_TRANSFERENCIA'){
-
 		$("#valorDeposito", _workspace).val(valor);
-		
-		if ($("#valorDeposito", _workspace).val().indexOf(".") < 0){
-			$("#valorDeposito", _workspace).val($("#valorDeposito", _workspace).val() + "00");
-		}
-		
-		$("#valorDeposito").priceFormat({
-			centsSeparator : ',',
-			thousandsSeparator : '.'
-		});
+		this.adicionaDecimais("valorDeposito");
 	}    
     else if (tipo=='DINHEIRO'){
 		$("#valorDinheiro", _workspace).val(valor);
-		
-		if ($("#valorDinheiro", _workspace).val().indexOf(".") < 0){
-			$("#valorDinheiro", _workspace).val($("#valorDinheiro", _workspace).val() + "00");
-		}
-		
-		$("#valorDinheiro", _workspace).priceFormat({
-			centsSeparator : ',',
-			thousandsSeparator : '.'
-		});
+		this.adicionaDecimais("valorDinheiro");
 	}  
 	else if (tipo=='DESCONTO_COTA'){
 		$("#valorDesconto", _workspace).val(valor);
-		
-		if ($("#valorDesconto", _workspace).val().indexOf(".") < 0){
-			$("#valorDesconto", _workspace).val($("#valorDesconto", _workspace).val() + "00");
-		}
-		
-		$("#valorDesconto", _workspace).priceFormat({
-			centsSeparator : ',',
-			thousandsSeparator : '.'
-		});
+		this.adicionaDecimais("valorDesconto");
 	}     
 };
 
@@ -1670,6 +1648,7 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
 	
 	$("#qtdParcelaBoleto", _workspace).val(resultado.qtdeParcelas);
 	$("#valorParcelaBoleto", _workspace).val(resultado.valorParcela);
+	CaucaoLiquida.prototype.adicionaDecimais("valorParcelaBoleto");
 	
 	//FORMA DESCONTO
 	$("#valorDescontoAtual", _workspace).val(resultado.valorDescontoAtual);
