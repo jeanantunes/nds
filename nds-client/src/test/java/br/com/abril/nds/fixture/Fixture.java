@@ -208,10 +208,13 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracao
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFiador;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFiadorGarantia;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaGarantia;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
@@ -3618,6 +3621,16 @@ public class Fixture {
         
         financeiro.addFormaPagamento(formaPagto2);
         historico.setFinanceiro(financeiro);
+        
+        HistoricoTitularidadeCotaFiador fiador = new HistoricoTitularidadeCotaFiador();
+        fiador.setNome("José da Silva");
+        fiador.setCpfCnpj("667.672.958-09");
+        fiador.setHistoricoTitularidadeCotaEndereco(new HistoricoTitularidadeCotaEndereco(
+                10, "Centro", "13720-000", 12, "São José do Rio Pardo", null,
+                "Rua", "Treze de Maio", "10", "SP", 10, null, true));
+        fiador.setHistoricoTitularidadeCotaTelefone(new HistoricoTitularidadeCotaTelefone("3656-7464", null, "019", null, true));
+        fiador.addGarantia(new HistoricoTitularidadeCotaFiadorGarantia(BigDecimal.valueOf(100000), "Uma imóvel residencial"));
+        historico.addGarantia(fiador);
         
         try {
             URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");

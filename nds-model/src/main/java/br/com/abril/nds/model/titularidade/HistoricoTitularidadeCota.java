@@ -720,6 +720,20 @@ public class HistoricoTitularidadeCota implements Serializable {
        }
        socios.add(socio);
     }
+
+    /**
+     * Adiciona uma garantia ao histórico de titularidade da cota
+     * 
+     * @param garantia
+     *            garantia para inclusão
+     */
+    public void addGarantia(HistoricoTitularidadeCotaGarantia garantia) {
+        if (garantias == null) {
+            garantias = new ArrayList<HistoricoTitularidadeCotaGarantia>();
+        }
+        garantia.setHistoricoTitularidadeCota(this);
+        garantias.add(garantia);
+    }
     
 
 }

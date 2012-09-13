@@ -1,6 +1,5 @@
 package br.com.abril.nds.model.cadastro;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -8,11 +7,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 @MappedSuperclass
 public abstract class AssociacaoEndereco {
 	
-	@ManyToOne(optional = false, cascade=CascadeType.MERGE)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "ENDERECO_ID")
+	@Cascade(value = CascadeType.SAVE_UPDATE)
 	private Endereco endereco;
 	@Column(name = "TIPO_ENDERECO", nullable = false)
 	@Enumerated(EnumType.STRING)

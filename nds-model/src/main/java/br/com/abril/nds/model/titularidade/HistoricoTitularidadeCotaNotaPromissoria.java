@@ -27,19 +27,19 @@ public class HistoricoTitularidadeCotaNotaPromissoria extends
      * Vencimento da nota promissória
      */
     @Temporal(TemporalType.DATE)
-    @Column(name = "NOTA_PROMISSORIA_VENCIMENTO", nullable = false)
+    @Column(name = "NOTA_PROMISSORIA_VENCIMENTO")
     private Date vencimento;
 
     /**
      * Valor da nota promissória
      */
-    @Column(name = "NOTA_PROMISSORIA_VALOR", nullable = false)
+    @Column(name = "NOTA_PROMISSORIA_VALOR")
     private BigDecimal valor;
 
     /**
      * Valor da nota promissória por extenso
      */
-    @Column(name = "NOTA_PROMISSORIA_VALOR_EXTENSO", nullable = false)
+    @Column(name = "NOTA_PROMISSORIA_VALOR_EXTENSO")
     private String valorExtenso;
 
     /**

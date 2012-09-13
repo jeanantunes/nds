@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.CollectionTable;
@@ -125,4 +126,17 @@ public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGa
 			HistoricoTitularidadeCotaTelefone historicoTitularidadeCotaTelefone) {
 		this.historicoTitularidadeCotaTelefone = historicoTitularidadeCotaTelefone;
 	}
+
+    /**
+     * Adiciona uma nova garantia para o fiador
+     * 
+     * @param garantia
+     *            garantia para inclusão
+     */
+	public void addGarantia(HistoricoTitularidadeCotaFiadorGarantia garantia) {
+        if (this.garantias == null) {
+            garantias = new ArrayList<HistoricoTitularidadeCotaFiadorGarantia>();
+        }
+        garantias.add(garantia);
+    }
 }

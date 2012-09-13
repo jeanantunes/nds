@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -25,8 +24,8 @@ public class MovimentoFinanceiroFornecedor extends AbstractMovimentoFinanceiro {
 	private Fornecedor fornecedor;
 	
 	@OneToMany
-	@JoinTable(name = "MVTO_FINANCEIRO_ESTOQUE_COTA", joinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")}, 
-	inverseJoinColumns = {@JoinColumn(name = "MVTO_ESTOQUE_COTA_ID")})
+	//@JoinTable(name = "MVTO_FINANCEIRO_ESTOQUE_COTA", joinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")}, 
+	//inverseJoinColumns = {@JoinColumn(name = "MVTO_ESTOQUE_COTA_ID")})
 	private List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
 	
 	@Column(name = "OBSERVACAO")

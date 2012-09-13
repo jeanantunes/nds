@@ -22,28 +22,28 @@ public class HistoricoTitularidadeCotaImovel extends
     /**
      * Nome do proprietário do imóvel
      */
-    @Column(name = "IMOVEL_PROPRIETARIO", nullable = false)
+    @Column(name = "IMOVEL_PROPRIETARIO")
     private String proprietario;
 
     /**
      * Endereço do imóvel
      */
-    @Column(name = "IMOVEL_ENDERECO", nullable = false)
+    @Column(name = "IMOVEL_ENDERECO")
     private String endereco;
 
     /**
      * Número de registro do imóvel
      */
-    @Column(name = "IMOVEL_NUMERO_REGISTRO", nullable = false)
+    @Column(name = "IMOVEL_NUMERO_REGISTRO")
     private String numeroRegistro;
 
     /**
      * Valor do imóvel
      */
-    @Column(name = "IMOVEL_VALOR", nullable = false)
+    @Column(name = "IMOVEL_VALOR")
     private BigDecimal valor;
 
-    @Column(name = "IMOVEL_OBSERVACAO", nullable = false)
+    @Column(name = "IMOVEL_OBSERVACAO")
     private String observacao;
 
     /**
