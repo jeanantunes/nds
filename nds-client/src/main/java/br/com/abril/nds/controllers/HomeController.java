@@ -91,7 +91,7 @@ public class HomeController {
 		result.include("versao", version);
 		
 		
-		//result.include("changes", readJenkins());
+		result.include("changes", readJenkins());
 		
 		
 	}

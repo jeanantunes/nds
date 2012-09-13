@@ -484,11 +484,12 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	paraEstoque : function(param){
-		
-		if (param){			
+				
+		if (param){
 			
+			lancamentoNovoController.limparCotas();
 			$("#fieldCota", lancamentoNovoController.workspace).hide("slow");
-			$(".trCotas", lancamentoNovoController.workspace).remove();
+			
 		} else {
 			
 			var idProdutoEdicao = $("#idProdutoEdicao", lancamentoNovoController.workspace).val();
@@ -604,12 +605,21 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	limparCotas : function() {
+		
 		$(".trCotas", lancamentoNovoController.workspace).remove();		
-		$('#cotaInput1').val('');
-		$('#nomeInput1').val('');
-		$('#diferencaInput1').val('');
-		$('#reparteText1').text('');
-		$('#reparteAtualText1').text('');
+		$('#cotaInput1', lancamentoNovoController.workspace).val('');
+		$('#nomeInput1', lancamentoNovoController.workspace).val('');
+		$('#diferencaInput1', lancamentoNovoController.workspace).val('');
+		$('#reparteText1', lancamentoNovoController.workspace).text('');
+		$('#reparteAtualText1', lancamentoNovoController.workspace).text('');
+	},
+	
+	limparProduto : function() {
+		$("#precoCapaProduto", lancamentoNovoController.workspace).text('');
+		$("#reparteProduto", lancamentoNovoController.workspace).text('');
+		$("#diferencaProdutoInput", lancamentoNovoController.workspace).val('');
+		
+		lancamentoNovoController.limparCotas();
 	},
 	
 	verificarTipoEstoque : function(qtde, qtdeSuplementar, qtdeEncalhe, qtdeFornecedor) {
@@ -629,6 +639,7 @@ var lancamentoNovoController = $.extend(true, {
 			qtdes.push({tipo:'Devolução Fornecedor',	enum:'DEVOLUCAO_FORNECEDOR', 	valor:qtdeFornecedor});
 		
 		if(qtdes.length == 1) {
+			lancamentoNovoController.tipoEstoqueSelecionado = qtdes[0].enum;;
 			$("#reparteProduto", lancamentoNovoController.workspace).text(qtdes[0].valor);
 		
 		} else  {
@@ -641,7 +652,7 @@ var lancamentoNovoController = $.extend(true, {
 			
 			$( "#dialog-tipo-estoque", this.workspace).dialog({
 				resizable: false,
-				height:150,
+				height:160,
 				width:250,
 				modal: true,
 				buttons: {
@@ -651,7 +662,9 @@ var lancamentoNovoController = $.extend(true, {
 						
 						$("#reparteProduto", lancamentoNovoController.workspace).text(qtdeEstoque);
 						
-						lancamentoNovoController.tipoEstoqueSelecionado = $( "#selectTipoEstoque").val();
+						lancamentoNovoController.tipoEstoqueSelecionado = $( "#selectTipoEstoque :selected").attr('enum');
+						
+						$('#diferencaProdutoInput').focus();
 						
 						$( this ).dialog( "close" );
 					},
