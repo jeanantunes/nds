@@ -133,7 +133,7 @@
 		
 		<div id="tabs">
 			<ul>
-				<li><a href="#tabs-1">Dados Cadastrais</a></li>
+				<li><a href="#tabs-1" onclick="transportadorController.carregarCotasAtendidas();">Dados Cadastrais</a></li>
 				<li><a href="#tabs-2" onclick="ENDERECO_TRANSPORTADOR.popularGridEnderecos();">Endereços</a></li>
 				<li><a href="#tabs-3" onclick="TRANSPORTADOR.carregarTelefones();">Telefones</a></li>
 				<li><a href="#tabs-4" onclick="transportadorController.carregarGrids();">Veículos / Motoristas</a></li>
@@ -184,7 +184,18 @@
 					
 					<fieldset>
 						<legend>Cotas Atendidas</legend>
-						<table id="gridCotasAssociadas"></table>
+						<table id="gridCotasAtendidas"></table>
+						<span class="bt_novos" title="Gerar Arquivo">
+							<a href="javascript:;" onclick="transportadorController.exportarArquivo('XLS');" target="_blank">
+								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+							</a>
+						</span>
+						
+						<span class="bt_novos" title="Imprimir">
+							<a href="javascript:;" onclick="transportadorController.exportarArquivo('PDF');" target="_blank">
+								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
+							</a>
+						</span>
 					</fieldset>
 					
 				</fieldset>

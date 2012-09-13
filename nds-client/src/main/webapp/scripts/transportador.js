@@ -349,9 +349,20 @@ var transportadorController = $.extend(true, {
 			});
 			$(".boxRotaGrid", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarRotas"});
 			
-			$("#gridCotasAssociadas", transportadorController.workspace).flexigrid({
+			$("#gridCotasAtendidas", transportadorController.workspace).flexigrid({
 				dataType : 'json',
-				//preProcess: function(data){},
+				preProcess: function(data){
+					
+					$.each(data.rows, function(index, value) {
+						
+						if (!value.cell.valor){
+							
+							value.cell.valor = "";
+						}
+					});
+					
+					return data;
+				},
 				colModel : [ {
 					display : 'Cota',
 					name : 'numeroCota',
@@ -359,7 +370,7 @@ var transportadorController = $.extend(true, {
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Jornaleiro',
+					display : 'Nome',
 					name : 'nomeCota',
 					width : 222,
 					sortable : true,
@@ -385,18 +396,18 @@ var transportadorController = $.extend(true, {
 				}, {
 					display : 'Valor R$ / %',
 					name : 'valor',
-					width : 100,
+					width : 80,
 					sortable : true,
 					align : 'left'
 				}],
 				sortname : "numeroCota",
 				sortorder : "asc",
 				showTableToggleBtn : true,
-				width : 850,
+				width : 830,
 				height : 200,
 				disableSelect: true
 			});
-			$("#gridCotasAssociadas", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarCotasAssociadas"});
+			$("#gridCotasAtendidas", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarCotasAtendidas"});
 			
 			$("#cnpj", transportadorController.workspace).mask("99.999.999/9999-99");
 	},
@@ -943,6 +954,21 @@ var transportadorController = $.extend(true, {
 		);
 	},
 	
+	carregarCotasAtendidas : function(){
+		
+		$.postJSON(contextPath + "/cadastro/transportador/carregarCotasAtendidas", null, 
+			function(result) {
+				
+				if (result[0] != ""){
+					
+					$("#gridCotasAtendidas", transportadorController.workspace).flexAddData({
+						page: result.page, total: result.total, rows: result.rows
+					});
+				}
+			}
+		);
+	},
+	
 	buscarPessoaCNPJ : function(cnpj){
 		
 		if (cnpj != "__.___.___/____-__" && cnpj != ""){
@@ -1075,6 +1101,15 @@ var transportadorController = $.extend(true, {
 		
 		$(".transpTaxaFixa", this.workspace).hide();
 		$(".transpPercentual", this.workspace).show();
+	},
+	
+	exportarArquivo : function(fileType){
+		
+		var sortorder = $("#gridCotasAtendidas", transportadorController.workspace).getSortOrder();
+		var sortname = $("#gridCotasAtendidas", transportadorController.workspace).flexGetSortName();
+		
+		window.location = 
+			contextPath + "/cadastro/transportador/exportarCotasAtendidas?fileType=" + fileType + "&sortorder=" + sortorder + "&sortname=" + sortname;
 	}
 
 }, BaseController);
