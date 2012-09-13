@@ -33,6 +33,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			data,
 			function(result) {
 				
+				if (result.listaProdutosLancamentosCancelados) {
+					T.popularGridProdutosLancamentosCancelados(result.listaProdutosLancamentosCancelados);
+				}
+				
 				T.popularResumoPeriodo(result);
 				
 				T.carregarGrid();
@@ -207,6 +211,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
+		row.cell.acoes = T.gerarAcoes(row.cell.id.toString());
 		
 		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
@@ -214,6 +219,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 	},
 	
+	this.gerarAcoes =  function(idLancamento){
+		return '<a href="javascript:;" onclick="' + T.instancia + '.excluir(' + idLancamento + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+	},
 	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado, index) {
 		
 		return '<input id="inputNovaData' + index + '" onchange="' + T.instancia + '.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:60px; float:left;" value="' + dataMatrizDistrib + '" ' + 
@@ -647,6 +655,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				width : 65,
 				sortable : false,
 				align : 'center'
+			},{
+				display : 'Ações',
+				name : 'acoes',
+				width : 65,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "codigoProduto",
 			sortorder : "asc",
@@ -685,8 +699,75 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$("#novaDataLancamento", _workspace).mask("99/99/9999");
 		
-	}
+		this.carregarGridLancamentosCancelados();
+		
+	},
 
+	this.carregarGridLancamentosCancelados = function(){
+		
+		$("#flexiGridLancamentosProdutosCancelados", _workspace).flexigrid({
+			dataType : 'json',
+			colModel : [  {
+				display : 'Código',
+				name : 'codigo',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 90,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 110,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Reparte',
+				name : 'repartePrevisto',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Data Lançamento',
+				name : 'dataLancamento',
+				width : 120,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 570
+		});
+	},
+
+	this.popularGridProdutosLancamentosCancelados = function(listaProdutosLancamentosCancelados) {
+		
+		if (listaProdutosLancamentosCancelados.length > 0) {
+			$("#flexiGridLancamentosProdutosCancelados", _workspace).flexAddData({
+				rows : toFlexiGridObject(listaProdutosLancamentosCancelados),
+				page : 1,
+				total : 1
+			});
+		
+			this.popupLancamentosCancelados();
+		}
+	},
+	
+	this.popupLancamentosCancelados = function() {
+		$( "#dialog-alerta-lancamentos-produtos-cancelados", _workspace ).dialog({
+			resizable: false,
+			width:600,
+			modal: true,
+			buttons: {
+				"Ok": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	},
+	
 	this.popup_reprogramar = function() {
 		$( "#dialog-reprogramar", _workspace ).dialog({
 			resizable: false,
@@ -704,7 +785,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			},
 			form: $("#dialog-reprogramar", this.workspace).parents("form")
 		});
-	}
+	},
 	
 	this.reprogramarSelecionados = function() {
 		
@@ -739,6 +820,33 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			},
 			form: $("#dialogReprogramarBalanceamento", this.workspace).parents("form")			
 		});
-	}
+	},
+	
+	this.excluir =  function(idLancamento){
+		$( "#dialog-excluir-lancamento", _workspace ).dialog({
+			resizable: false,
+			height:160,
+			width:320,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$.postJSON(
+							pathTela + "/matrizLancamento/excluirLancamento", 
+							{idLancamento:idLancamento},
+							function(result) {
+								
+								T.pesquisar();
+							}
+						);
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-excluir-lancamento", this.workspace).parents("form")
+		});
+	};
 	
 }

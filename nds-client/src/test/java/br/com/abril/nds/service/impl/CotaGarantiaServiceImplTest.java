@@ -170,7 +170,6 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			
 			caucaoLiquida.setValor(5000D);
-			caucaoLiquida.setIndiceReajuste(10D);
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
 			
 			listaCaucaoLiquida.add(caucaoLiquida);
@@ -228,7 +227,6 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		pagamentoDescontoCota.setDescontoAtual(BigDecimal.ONE);
 		pagamentoDescontoCota.setDescontoCota(BigDecimal.TEN);
 		pagamentoDescontoCota.setValor(BigDecimal.TEN);
-		pagamentoDescontoCota.setValorUtilizado(BigDecimal.TEN);
 		
 		cotaGarantiaCaucaoLiquida = this.cotaGarantiaService.salvarCaucaoLiquida(getListaCaucaoLiquida(), cota.getId(),pagamentoDescontoCota,getCotaCaucaoLiquida());
 		

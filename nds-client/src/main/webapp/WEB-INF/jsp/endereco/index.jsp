@@ -50,9 +50,21 @@
 				<input type="text" style="float:left; margin-right:5px;" 
 					   name="enderecoAssociacao.endereco.cep" onkeyup="${param.telaEndereco}.autoCompletarCep();" id="${param.telaEndereco}cep" />
 
-					<span class="classPesquisar" title="Pesquisar Cep.">
-						<a href="javascript:;" onclick="${param.telaEndereco}.pesquisarEnderecoPorCep();">&nbsp;</a>
-					</span></td>
+					<div id="${param.telaEndereco}wrapperBtnPesquisaCepHabilitado">
+						<span class="classPesquisar" title="Pesquisar Cep.">
+							<a href="javascript:;" onclick="${param.telaEndereco}.pesquisarEnderecoPorCep();">&nbsp;</a>
+						</span>
+			  		</div>
+
+					
+					<div id="${param.telaEndereco}wrapperBtnPesquisaCepDesabilitado" style="display: none">
+						<span class="classPesquisar" style="opacity:0.4" title="Pesquisar Cep.">
+							<a href="#" onclick="javascript:;">&nbsp;</a>
+						</span>
+			  		</div>
+					
+					
+					</td>
 			</tr>
 			<tr>
 				<td>UF:</td>
@@ -122,9 +134,20 @@
 			<tr>
 			  <td>&nbsp;</td>
 			  <td>
-			  	<span class="bt_add" id="${param.telaEndereco}btnIncluirNovoEndereco">
-			  		<a href="javascript:;" onclick="${param.telaEndereco}.incluirNovoEndereco();" id="${param.telaEndereco}linkIncluirNovoEndereco">Incluir Novo</a>
-			  	</span>
+			  
+			    <div id="${param.telaEndereco}wrapperBtnIncluirNovoEnderecoHabilitado">
+				  	<span class="bt_add" id="${param.telaEndereco}btnIncluirNovoEndereco">
+				  		<a href="javascript:;" onclick="${param.telaEndereco}.incluirNovoEndereco();" id="${param.telaEndereco}linkIncluirNovoEndereco">Incluir Novo</a>
+				  	</span>
+			  	</div>
+
+			    <div id="${param.telaEndereco}wrapperBtnIncluirNovoEnderecoDesabilitado" style="display: none">
+				  	<span class="bt_add" style="opacity:0.4">
+				  		<a href="#" onclick="javascript:;">Incluir Novo</a>
+				  	</span>
+			  	</div>
+
+			  	
 			  </td>
 			  <td>&nbsp;</td>
 			  <td>&nbsp;</td>

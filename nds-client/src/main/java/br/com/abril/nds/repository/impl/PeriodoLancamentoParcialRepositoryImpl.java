@@ -276,7 +276,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 			param.put("codProduto", filtro.getCodigoProduto());
 		
 		if(filtro.getNomeProduto() != null) 
-			param.put("nomeProduto", filtro.getNomeProduto().toLowerCase());
+			param.put("nomeProduto", "%" + filtro.getNomeProduto().toLowerCase() + "%");
 		
 		if(filtro.getEdicaoProduto() != null) 
 			param.put("edProduto", filtro.getEdicaoProduto());

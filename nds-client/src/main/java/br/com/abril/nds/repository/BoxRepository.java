@@ -64,7 +64,7 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return
 	 */
 	public abstract List<Box> busca(Integer codigoBox, TipoBox tipoBox, String  orderBy,
-			Ordenacao ordenacao, int initialResult, int maxResults);
+			Ordenacao ordenacao, Integer initialResult, Integer maxResults);
 	
 	/**
 	 * Verifica a existência do Código do {@link Box}.

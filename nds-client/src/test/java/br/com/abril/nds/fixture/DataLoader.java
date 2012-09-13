@@ -19,8 +19,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.google.common.collect.Sets;
-
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -394,6 +392,7 @@ public class DataLoader {
 
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
+	private static Lancamento lancamentoCanceladoVeja5;
 	private static Lancamento lancamentoSuper1;
 	private static Lancamento lancamentoCapricho1;
 	private static Lancamento lancamentoCocaCola;
@@ -853,6 +852,11 @@ public class DataLoader {
 	private static Endereco enderecoRioPardo3;
 	private static TipoPontoPDV tipoPontoPDVResidencial;
 	private static TipoPontoPDV tipoPontoPDV2Comercial;
+	private static Lancamento lancamentoCanceladoSuper2;
+	private static Lancamento lancamentoCanceladoCapricho2;
+	private static ProdutoEdicao produtoEdicaoVeja5;
+	private static ProdutoEdicao produtoEdicaoSuper2;
+	private static ProdutoEdicao produtoEdicaoCapricho2;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -924,6 +928,7 @@ public class DataLoader {
 		criarEstoqueProdutoCota(session);
 		criarMovimentosEstoque(session);
 		criarLancamentos(session);
+		criarLancamentosCancelados(session);
 		criarEstudos(session);
 		criarEstudosCota(session);
 		
@@ -3234,8 +3239,8 @@ public class DataLoader {
 		merge(session, Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10"));
 		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
 		
-		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_SERVER_ROOT,
-				"C:\\WORKSPACE_NDS\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\nds-client"));	// windows;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA,
+				"C:\\Servidores\\apache-tomcat-7.0.25\\webapps\\nds-client\\distribuicao\\")); // windows;
 //				"???"));					// linux;
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA,
@@ -3826,6 +3831,45 @@ public class DataLoader {
 
 	}
 
+	private static void criarLancamentosCancelados(Session session) {
+		
+		lancamentoCanceladoVeja5 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoVeja5,
+						DateUtil.adicionarDias(new Date(), 0),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoVeja5.getPeb()), new Date(),
+
+						new Date(), BigInteger.TEN, StatusLancamento.CANCELADO,
+
+						null, 2);
+		session.save(lancamentoCanceladoVeja5);
+		
+		lancamentoCanceladoSuper2 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoSuper2,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoSuper2.getPeb()), new Date(),
+								new Date(), BigInteger.valueOf(100), StatusLancamento.CANCELADO,
+								null, 3);
+		session.save(lancamentoCanceladoSuper2);
+
+		
+		lancamentoCanceladoCapricho2 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoCapricho2,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoCapricho2.getPeb()), new Date(),
+								new Date(), BigInteger.valueOf(1000), StatusLancamento.CANCELADO,
+								null, 1);
+		session.save(lancamentoCanceladoCapricho2);
+	}
+	
 	private static void criarLancamentos(Session session) {
 
 
@@ -3852,7 +3896,7 @@ public class DataLoader {
 
 						null, 2);
 		session.save(lancamentoVeja2);
-
+		
 		lancamentoSuper1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
@@ -3863,7 +3907,7 @@ public class DataLoader {
 								new Date(), BigInteger.valueOf(100), StatusLancamento.CONFIRMADO,
 								null, 3);
 		session.save(lancamentoSuper1);
-
+		
 		lancamentoCapricho1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
@@ -3871,10 +3915,9 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCapricho1.getPeb()), new Date(),
-								new Date(), BigInteger.valueOf(1000), StatusLancamento.CONFIRMADO,
+								new Date(), BigInteger.valueOf(1000), StatusLancamento.CANCELADO,
 								null, 1);
 		session.save(lancamentoCapricho1);
-
 
 		lancamentoCocaCola = Fixture.lancamento(TipoLancamento.LANCAMENTO,cocaColaLight ,
 				new Date(), new Date(), new Date(), new Date(), BigInteger.valueOf(100), StatusLancamento.CONFIRMADO, itemCocaRecebimentoFisico, 1);
@@ -4120,15 +4163,30 @@ public class DataLoader {
 				"114", 5L, produtoVeja, null, false, "Veja 4");
 		session.save(produtoEdicaoVeja4);
 
+		produtoEdicaoVeja5 = Fixture.produtoEdicao("COD_C5", 54321L, 10, 14,
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
+				"114", 6L, produtoVeja, null, false, "Veja 5");
+		session.save(produtoEdicaoVeja5);
+		
 		produtoEdicaoSuper1 = Fixture.produtoEdicao("COD_5", 1L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"115", 6L, produtoSuper, null, false, "Super Int. 1");
 		session.save(produtoEdicaoSuper1);
+		
+		produtoEdicaoSuper2 = Fixture.produtoEdicao("COD_C6", 24321L, 10, 14,
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
+				"115", 6L, produtoSuper, null, false, "Super Int. 2");
+		session.save(produtoEdicaoSuper2);
 
 		produtoEdicaoCapricho1 = Fixture.produtoEdicao("COD_6", 1L, 9, 14,
 				new Long(150), new BigDecimal(9), new BigDecimal(13.5),
 				"116", 7L, produtoCapricho, null, false, "Capricho 1");
 		session.save(produtoEdicaoCapricho1);
+		
+		produtoEdicaoCapricho2 = Fixture.produtoEdicao("COD_C7", 25432L, 9, 14,
+				new Long(150), new BigDecimal(9), new BigDecimal(13.5),
+				"116", 7L, produtoCapricho, null, false, "Capricho 2");
+		session.save(produtoEdicaoCapricho2);
 
 		produtoEdicaoInfoExame1 = Fixture.produtoEdicao("COD_7", 1L, 12, 30,
 				new Long(250), new BigDecimal(11), new BigDecimal(14.5),
