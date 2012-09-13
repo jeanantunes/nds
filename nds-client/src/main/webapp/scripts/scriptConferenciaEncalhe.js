@@ -14,11 +14,17 @@ var ConferenciaEncalhe = $.extend(true, {
 		align : 'left'
 	}, {
 		display : 'Tipo de Lançamento',
-		name : 'tipoLancamento',
+		name : 'tipoLancamentoDescricao',
 		width : 140,
 		sortable : true,
 		align : 'left'
 	}, {
+		display : 'Observações',
+		name : 'observacoes',
+		width : 140,
+		sortable : true,
+		align : 'left'
+	},{
 		display : 'Valor R$',
 		name : 'valor',
 		width : 100,
@@ -44,7 +50,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$(".outrosVlrsGrid", ConferenciaEncalhe.workspace).flexigrid({
 			dataType : 'json',
 			colModel : ConferenciaEncalhe.outrosVlrsGridModel,
-			width : 400,
+			width : 540,
 			height : 250,
 			disableSelect: true
 		});
@@ -1087,7 +1093,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#dialog-outros-valores", ConferenciaEncalhe.workspace).dialog({
 			resizable : false,
 			height : 430,
-			width : 460,
+			width : 600,
 			modal : true,
 			buttons : {
 				"Fechar" : function() {
