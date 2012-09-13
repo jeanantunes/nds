@@ -91,12 +91,21 @@ public class VisaoEstoqueController {
 	}
 	
 	
-	
+	@Path("/exportar")
 	public void exportarConsulta(FileType fileType) throws IOException {
 		
 		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
 		
-		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
+		//List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
+		
+		VisaoEstoqueDTO dto = new VisaoEstoqueDTO();
+		dto.setEstoque("Teste");
+		dto.setProdutos(10L);
+		dto.setExemplares(1000L);
+		dto.setValor(BigDecimal.TEN);
+		
+		List<VisaoEstoqueDTO> listVisaoEstoque = new ArrayList<VisaoEstoqueDTO>();
+		listVisaoEstoque.add(dto);
 		
 		FileExporter.to("consulta-box", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), null, null,
