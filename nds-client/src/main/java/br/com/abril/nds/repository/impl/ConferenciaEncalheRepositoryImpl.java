@@ -2,9 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Query;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
-import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 
@@ -32,6 +29,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterDadosSlipConferenciaEncalhe(java.lang.Long, java.lang.Long)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
 
 		StringBuilder hql = new StringBuilder();
@@ -71,6 +69,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTOContingencia(java.lang.Long, java.lang.Integer, java.util.Date, java.util.Date, boolean, boolean, java.util.Set)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
 			Long idDistribuidor,
 			Integer numeroCota,
@@ -107,7 +106,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");		
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  (  ");
-		hql.append("          SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = COTA.ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)"	);		
+		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = COTA.ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);		
 		hql.append("         ) / 100 ) AS desconto         	");
 		
 		hql.append("    FROM    ");
@@ -181,6 +180,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTO(java.lang.Long, java.lang.Long)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
 	
 		StringBuilder hql = new StringBuilder();
@@ -206,13 +206,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		
 		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
-		hql.append("          SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)"	);		
+		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);		
 		hql.append("         ) / 100 ) AS desconto,        ");
 		
 		hql.append("         CONF_ENCALHE.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *  ");
 		
 		hql.append(" ( 							");
-		hql.append("          SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)"	);
+		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);
 		hql.append(" ) 							");
 		hql.append(" /100)) AS valorTotal,  	");
 		
@@ -295,35 +295,35 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * 
 	 * @return String
 	 */
-	private String getSubSqlQueryValorDesconto() {
-		
-		StringBuffer sql = new StringBuffer();
-		
-		sql.append("            SELECT                                                                                   ");
-		sql.append("             CASE                                                                                    ");
-		sql.append("                 WHEN PE.DESCONTO IS NOT NULL THEN PE.DESCONTO                                       ");
-		sql.append("                 ELSE CASE                                                                           ");
-		sql.append("                     WHEN CT.FATOR_DESCONTO IS NOT NULL THEN CT.FATOR_DESCONTO                       ");
-		sql.append("                     ELSE CASE                                                                       ");
-		sql.append("                         WHEN DISTRIB.FATOR_DESCONTO IS NOT NULL THEN DISTRIB.FATOR_DESCONTO         ");
-		sql.append("                         ELSE 0                        ");
-		sql.append("                     END                               ");
-		sql.append("                 END                                   ");
-		sql.append("             END                                       ");
-		sql.append("         FROM                                          ");
-		sql.append("             PRODUTO_EDICAO PE CROSS                   ");
-		sql.append("         JOIN                                          ");
-		sql.append("             COTA CT CROSS                             ");
-		sql.append("         JOIN                                          ");
-		sql.append("             DISTRIBUIDOR DISTRIB                      ");
-		sql.append("         WHERE                                         ");
-		sql.append("             CT.ID=CH_ENCALHE_COTA.COTA_ID             ");
-		sql.append("             AND PE.ID=CH_ENCALHE.PRODUTO_EDICAO_ID  ");
-		sql.append("             AND DISTRIB.ID= :idDistribuidor           ");
-		
-		return sql.toString();
-		
-	}
+//	private String getSubSqlQueryValorDesconto() {
+//		
+//		StringBuffer sql = new StringBuffer();
+//		
+//		sql.append("            SELECT                                                                                   ");
+//		sql.append("             CASE                                                                                    ");
+//		sql.append("                 WHEN PE.DESCONTO IS NOT NULL THEN PE.DESCONTO                                       ");
+//		sql.append("                 ELSE CASE                                                                           ");
+//		sql.append("                     WHEN CT.FATOR_DESCONTO IS NOT NULL THEN CT.FATOR_DESCONTO                       ");
+//		sql.append("                     ELSE CASE                                                                       ");
+//		sql.append("                         WHEN DISTRIB.FATOR_DESCONTO IS NOT NULL THEN DISTRIB.FATOR_DESCONTO         ");
+//		sql.append("                         ELSE 0                        ");
+//		sql.append("                     END                               ");
+//		sql.append("                 END                                   ");
+//		sql.append("             END                                       ");
+//		sql.append("         FROM                                          ");
+//		sql.append("             PRODUTO_EDICAO PE CROSS                   ");
+//		sql.append("         JOIN                                          ");
+//		sql.append("             COTA CT CROSS                             ");
+//		sql.append("         JOIN                                          ");
+//		sql.append("             DISTRIBUIDOR DISTRIB                      ");
+//		sql.append("         WHERE                                         ");
+//		sql.append("             CT.ID=CH_ENCALHE_COTA.COTA_ID             ");
+//		sql.append("             AND PE.ID=CH_ENCALHE.PRODUTO_EDICAO_ID  ");
+//		sql.append("             AND DISTRIB.ID= :idDistribuidor           ");
+//		
+//		return sql.toString();
+//		
+//	}
 	
 	
 	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor) {
@@ -358,7 +358,7 @@ public class ConferenciaEncalheRepositoryImpl extends
     private String obterHQLDesconto(String cota, String produto, String fornecedor){
     	
 		String auxC = " where ";
-		StringBuilder hql = new StringBuilder("select view.desconto from ViewDesconto view ");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto from ViewDesconto view ");
 		
 
     	 if (cota!=null && !"".equals(cota)){
@@ -376,8 +376,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		 if (fornecedor!=null && !"".equals(fornecedor)){
 	 	     hql.append(auxC+" view.fornecedorId = "+fornecedor);
 	 	     auxC = " and ";
-	     }	 
-
+		 }
+		 
+		 hql.append("),0)");
 
 		return hql.toString();
 	}
