@@ -80,6 +80,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -2086,6 +2087,21 @@ public class CotaServiceImpl implements CotaService {
                     .getTipoDesconto().getDescricao()));
         }
         return dtos;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public DistribuicaoDTO obterDistribuicaoHistoricoTitularidade(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        HistoricoTitularidadeCotaDistribuicao distribuicao = historico.getDistribuicao();
+        distribuicao.setHistoricoTitularidadeCota(historico);
+        return CotaDTOAssembler.toDistribuicaoDTO(distribuicao);
     }
 
 }

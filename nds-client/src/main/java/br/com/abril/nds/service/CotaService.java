@@ -337,5 +337,17 @@ public interface CotaService {
 	byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception;
 	
 	DistribuicaoDTO carregarValoresEntregaBanca(Integer numCota);
+
+    /**
+     * Obtém as informações de distribuição do histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico
+     * @return dto com as informações de distribuição do histórico de
+     *         titularidade da cota
+     */
+	DistribuicaoDTO obterDistribuicaoHistoricoTitularidade(Long idCota, Long idHistorico);
 }
 

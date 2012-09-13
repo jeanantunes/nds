@@ -207,6 +207,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescri
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFiador;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFiadorGarantia;
@@ -214,7 +215,6 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
-import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaGarantia;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
@@ -3415,6 +3415,7 @@ public class Fixture {
         HistoricoTitularidadeCota historico = new HistoricoTitularidadeCota();
         historico.setCota(cota);
         historico.setDataInclusao(cota.getInicioAtividade());
+        historico.setBox(cota.getBox().getNome());
         
         ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica();
         if(paramNFE != null) {
@@ -3629,8 +3630,35 @@ public class Fixture {
                 10, "Centro", "13720-000", 12, "São José do Rio Pardo", null,
                 "Rua", "Treze de Maio", "10", "SP", 10, null, true));
         fiador.setHistoricoTitularidadeCotaTelefone(new HistoricoTitularidadeCotaTelefone("3656-7464", null, "019", null, true));
-        fiador.addGarantia(new HistoricoTitularidadeCotaFiadorGarantia(BigDecimal.valueOf(100000), "Uma imóvel residencial"));
+        fiador.addGarantia(new HistoricoTitularidadeCotaFiadorGarantia(BigDecimal.valueOf(100000), "Imóvel residencial"));
         historico.addGarantia(fiador);
+        
+        HistoricoTitularidadeCotaDistribuicao distribuicao = new HistoricoTitularidadeCotaDistribuicao();
+        distribuicao.setQtdePDV(1);
+        distribuicao.setAssistenteComercial("John Doe");
+        distribuicao.setGerenteComercial("Jane Doe");
+        distribuicao.setObservacao("Observação");
+        distribuicao.setEntregaReparteVenda(true);
+        distribuicao.setSolicitaNumAtrasados(true);
+        distribuicao.setRecebeRecolheParcias(true);
+        distribuicao.setTipoEntrega(DescricaoTipoEntrega.ENTREGA_EM_BANCA);
+        distribuicao.setPercentualFaturamentoEntrega(BigDecimal.valueOf(10));
+        distribuicao.setInicioPeriodoCarencia(cota.getInicioAtividade());
+        distribuicao.setFimPeriodoCarencia(DateUtil.adicionarDias(cota.getInicioAtividade(), 60));
+        distribuicao.setSlipEmail(true);
+        distribuicao.setSlipImpresso(true);
+        distribuicao.setBoletoEmail(true);
+        distribuicao.setBoletoImpresso(true);
+        distribuicao.setBoletoSlipEmail(true);
+        distribuicao.setBoletoSlipImpresso(true);
+        distribuicao.setReciboEmail(true);
+        distribuicao.setReciboImpresso(true);
+        distribuicao.setNotaEnvioEmail(true);
+        distribuicao.setNotaEnvioImpresso(true);
+        distribuicao.setChamadaEncalheEmail(true);
+        distribuicao.setChamadaEncalheImpresso(true);
+        historico.setDistribuicao(distribuicao);
+        
         
         try {
             URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");

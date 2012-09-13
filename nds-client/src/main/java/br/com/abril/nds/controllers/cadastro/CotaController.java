@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -148,9 +147,6 @@ public class CotaController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
-	@Autowired
-	private ServletContext servletContext;
 	
 	@Autowired
 	private ParametroSistemaService parametroSistemaService; 
@@ -1124,13 +1120,17 @@ public class CotaController {
 	 * @throws FileNotFoundException 
 	 */
 	@Post
-	public void carregarDistribuicaoCota(Long idCota) throws FileNotFoundException, IOException {
-		
-		DistribuicaoDTO dto = cotaService.obterDadosDistribuicaoCota(idCota);
-		
-		dto.setTiposEntrega(gerarTiposEntrega());
-		
-		this.tratarDocumentoTipoEntrega(dto);
+	public void carregarDistribuicaoCota(Long idCota, ModoTela modoTela, Long idHistorico) throws FileNotFoundException, IOException {
+	    DistribuicaoDTO dto = null;
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+		    dto = cotaService.obterDadosDistribuicaoCota(idCota);
+		    
+		    dto.setTiposEntrega(gerarTiposEntrega());
+		    
+		    this.tratarDocumentoTipoEntrega(dto);
+		} else {
+		    dto = cotaService.obterDistribuicaoHistoricoTitularidade(idCota, idHistorico);
+		}
 				
 		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}	

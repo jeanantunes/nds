@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
+import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
@@ -24,6 +25,7 @@ import br.com.abril.nds.dto.TipoEstabelecimentoAssociacaoPDVDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
 import br.com.abril.nds.dto.TipoPontoPDVDTO;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -32,6 +34,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
@@ -504,6 +507,66 @@ public class CotaDTOAssembler {
             fornecedores.add(fornecedor.getPessoaJuridica().getRazaoSocial());
         }
         dto.setFornecedor(StringUtils.join(fornecedores, " / "));
+        return dto;
+    }
+
+
+    /**
+     * Cria o {@link DistribuicaoDTO} com as informações da 
+     * instância de {@link HistoricoTitularidadeCotaDistribuicao}
+     * 
+     * @param distribuicao instância de
+     *            {@link HistoricoTitularidadeCotaDistribuicao} para a criação do DTO
+     * @return {@link DistribuicaoDTO} com as informações
+     */
+    public static DistribuicaoDTO toDistribuicaoDTO(HistoricoTitularidadeCotaDistribuicao distribuicao) {
+        DistribuicaoDTO dto = new DistribuicaoDTO();
+        
+        dto.setNumCota(distribuicao.getHistoricoTitularidadeCota().getNumeroCota());
+        dto.setBox(distribuicao.getHistoricoTitularidadeCota().getBox());
+        dto.setQtdePDV(distribuicao.getQtdePDV());
+        dto.setAssistComercial(distribuicao.getAssistenteComercial());
+        dto.setGerenteComercial(distribuicao.getGerenteComercial());
+        dto.setObservacao(distribuicao.getObservacao());
+        dto.setRepPorPontoVenda(distribuicao.getEntregaReparteVenda());
+        dto.setSolNumAtras(distribuicao.getSolicitaNumAtrasados());
+        dto.setRecebeRecolhe(distribuicao.getRecebeRecolheParcias());
+        
+        dto.setSlipEmail(distribuicao.getSlipEmail());
+        dto.setSlipImpresso(distribuicao.getSlipImpresso());
+        
+        dto.setBoletoImpresso(distribuicao.getBoletoImpresso());
+        dto.setBoletoEmail(distribuicao.getBoletoEmail());
+        
+        dto.setBoletoSlipEmail(distribuicao.getBoletoSlipEmail());
+        dto.setBoletoSlipImpresso(distribuicao.getBoletoSlipImpresso());
+        
+        dto.setReciboEmail(distribuicao.getReciboEmail());
+        dto.setReciboImpresso(distribuicao.getReciboImpresso());
+        
+        dto.setNeEmail(distribuicao.getNotaEnvioEmail());
+        dto.setNeImpresso(distribuicao.getNotaEnvioImpresso());
+        
+        dto.setCeEmail(distribuicao.getChamadaEncalheEmail());
+        dto.setCeImpresso(distribuicao.getChamadaEncalheImpresso());
+        
+        DescricaoTipoEntrega tipoEntrega = distribuicao.getTipoEntrega();
+        dto.setDescricaoTipoEntrega(tipoEntrega);
+        dto.setPercentualFaturamento(distribuicao.getPercentualFaturamentoEntrega());
+        dto.setTaxaFixa(distribuicao.getTaxaFixaEntrega());
+        
+        dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(distribuicao.getInicioPeriodoCarencia()));
+        dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(distribuicao.getFimPeriodoCarencia()));
+        
+        dto.setUtilizaProcuracao(distribuicao.getPossuiProcuracao());
+        dto.setProcuracaoRecebida(distribuicao.getProcuracaoAssinada());
+        dto.setUtilizaTermoAdesao(distribuicao.getPossuiTermoAdesao());
+        dto.setTermoAdesaoRecebido(distribuicao.getTermoAdesaoAssinado());
+        
+        if (tipoEntrega != null) {
+            dto.addTipoEntrega(tipoEntrega);
+        }
+        
         return dto;
     }
  

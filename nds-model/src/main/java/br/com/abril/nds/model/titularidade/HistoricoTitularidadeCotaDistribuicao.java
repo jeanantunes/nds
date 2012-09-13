@@ -10,8 +10,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
-import br.com.abril.nds.model.cadastro.BaseCalculo;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 
 /**
  * Representa as informações de distribuição da cota no histórico de
@@ -38,28 +39,28 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     private String assistenteComercial;
     
     /**
+     * Nome do gerente comercial
+     */
+    @Column(name = "DISTRIBUICAO_GERENTE_COMERCIAL")
+    private String gerenteComercial;
+    
+    /**
      * Observação
      */
     @Column(name = "DISTRIBUICAO_OBSERVACAO")
     private String observacao;
     
     /**
-     * Flag indicando se é arrendatário 
+     * Flag indicando se entrega reoparte de venda
      */
-    @Column(name = "DISTRIBUICAO_ARRENDATARIO")
-    private Boolean arrendatario;
-    
-    /**
-     * Flag indicando se o reparte é por ponto de venda
-     */
-    @Column(name = "DISTRIBUICAO_REPARTE_POR_PONTO_VENDA")
-    private Boolean repartePorPontoVenda;
+    @Column(name = "DISTRIBUICAO_ENTREGA_REPARTE_VENDA")
+    private Boolean entregaReparteVenda;
     
     /**
      * Flag indicando se solicita números atrasados
      */
     @Column(name = "DISTRIBUICAO_SOLICITA_NUM_ATRASADOS")
-    private Boolean solicitaNumAtras;
+    private Boolean solicitaNumAtrasados;
     
     /**
      * Flag indicando se recebe ou recolhe parciais
@@ -104,16 +105,71 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     private Boolean slipEmail;
     
     /**
+     * Flag indicando se o boleto é impresso
+     */
+    @Column(name = "DISTRIBUICAO_BOLETO_IMPRESSO")
+    private Boolean boletoImpresso;
+    
+    /**
+     * Flag indicando se o boleto é enviado por email
+     */
+    @Column(name = "DISTRIBUICAO_BOLETO_EMAIL")
+    private Boolean boletoEmail;
+    
+    /**
+     * Flag indicando se o boleto + slip é impresso
+     */
+    @Column(name = "DISTRIBUICAO_BOLETO_SLIP_IMPRESSO")
+    private Boolean boletoSlipImpresso;
+    
+    /**
+     * Flag indicando se o boleto + slip é enviado por email
+     */
+    @Column(name = "DISTRIBUICAO_BOLETO_SLIP_EMAIL")
+    private Boolean boletoSlipEmail;
+    
+    /**
+     * Flag indicando se o recibo é impresso
+     */
+    @Column(name = "DISTRIBUICAO_RECIBO_IMPRESSO")
+    private Boolean reciboImpresso;
+    
+    /**
+     * Flag indicando se o recibo é enviado por email
+     */
+    @Column(name = "DISTRIBUICAO_RECIBO_EMAIL")
+    private Boolean reciboEmail;
+    
+    /**
      * Flag indicando se utiliza procuração
      */
     @Column(name = "DISTRIBUICAO_PROCURACAO_ASSINADA")
     private Boolean procuracaoAssinada;
     
     /**
+     * Flag indicando se possui procuração
+     */
+    @Column(name = "DISTRIBUICAO_POSSUI_PROCURACAO")
+    private Boolean possuiProcuracao;
+    
+    /**
+     * Flag indicando se possui termo de adesão
+     */
+    @Column(name = "DISTRIBUICAO_POSSUI_TERMO_ADESAO")
+    private Boolean possuiTermoAdesao;
+    
+    /**
+     * Flag indicando se termo de adesão está assinado
+     */
+    @Column(name = "DISTRIBUICAO_TERMO_ADESAO_ASSINADO")
+    private Boolean termoAdesaoAssinado;
+    
+    /**
      * Tipo de entrega utilizada
      */
     @Column(name = "DISTRIBUICAO_TIPO_ENTREGA")
-    private String tipoEntrega;
+    @Enumerated(EnumType.STRING)
+    private DescricaoTipoEntrega tipoEntrega;
     
     /**
      * Taxa fica de entrega
@@ -127,13 +183,7 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     @Column(name = "DISTRIBUICAO_PERCENTUAL_FATURAMENTO_ENTREGA")
     private BigDecimal percentualFaturamentoEntrega;
     
-    /**
-     * Base de cálculo da entrega
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "DISTRIBUICAO_BASE_CALCULO_ENTREGA")
-    private BaseCalculo baseCalculoEntrega;
-    
+   
     /**
      * Início do período de carencia da entrega
      */
@@ -147,6 +197,9 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     @Column(name = "DISTRIBUICAO_FIM_PERIODO_CARENCIA")
     @Temporal(TemporalType.DATE)
     private Date fimPeriodoCarencia;
+    
+    @Transient
+    private HistoricoTitularidadeCota historicoTitularidadeCota;
 
     /**
      * @return the qtdePDV
@@ -177,6 +230,20 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     }
 
     /**
+     * @return the gerenteComercial
+     */
+    public String getGerenteComercial() {
+        return gerenteComercial;
+    }
+
+    /**
+     * @param gerenteComercial the gerenteComercial to set
+     */
+    public void setGerenteComercial(String gerenteComercial) {
+        this.gerenteComercial = gerenteComercial;
+    }
+
+    /**
      * @return the observacao
      */
     public String getObservacao() {
@@ -191,51 +258,37 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     }
 
     /**
-     * @return the arrendatario
+     * @return the entregaReparteVenda
      */
-    public Boolean isArrendatario() {
-        return arrendatario;
+    public Boolean getEntregaReparteVenda() {
+        return entregaReparteVenda;
     }
 
     /**
-     * @param arrendatario the arrendatario to set
+     * @param entregaReparteVenda the entregaReparteVenda to set
      */
-    public void setArrendatario(Boolean arrendatario) {
-        this.arrendatario = arrendatario;
+    public void setEntregaReparteVenda(Boolean entregaReparteVenda) {
+        this.entregaReparteVenda = entregaReparteVenda;
     }
 
     /**
-     * @return the repartePorPontoVenda
+     * @return the solicitaNumAtrasados
      */
-    public Boolean isRepartePorPontoVenda() {
-        return repartePorPontoVenda;
+    public Boolean getSolicitaNumAtrasados() {
+        return solicitaNumAtrasados;
     }
 
     /**
-     * @param repartePorPontoVenda the repartePorPontoVenda to set
+     * @param solicitaNumAtrasados the solicitaNumAtrasados to set
      */
-    public void setRepartePorPontoVenda(Boolean repartePorPontoVenda) {
-        this.repartePorPontoVenda = repartePorPontoVenda;
-    }
-
-    /**
-     * @return the solicitaNumAtras
-     */
-    public Boolean isSolicitaNumAtras() {
-        return solicitaNumAtras;
-    }
-
-    /**
-     * @param solicitaNumAtras the solicitaNumAtras to set
-     */
-    public void setSolicitaNumAtras(Boolean solicitaNumAtras) {
-        this.solicitaNumAtras = solicitaNumAtras;
+    public void setSolicitaNumAtrasados(Boolean solicitaNumAtrasados) {
+        this.solicitaNumAtrasados = solicitaNumAtrasados;
     }
 
     /**
      * @return the recebeRecolheParcias
      */
-    public Boolean isRecebeRecolheParcias() {
+    public Boolean getRecebeRecolheParcias() {
         return recebeRecolheParcias;
     }
 
@@ -249,7 +302,7 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @return the notaEnvioImpresso
      */
-    public Boolean isNotaEnvioImpresso() {
+    public Boolean getNotaEnvioImpresso() {
         return notaEnvioImpresso;
     }
 
@@ -263,7 +316,7 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @return the notaEnvioEmail
      */
-    public Boolean isNotaEnvioEmail() {
+    public Boolean getNotaEnvioEmail() {
         return notaEnvioEmail;
     }
 
@@ -277,7 +330,7 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @return the chamadaEncalheImpresso
      */
-    public Boolean isChamadaEncalheImpresso() {
+    public Boolean getChamadaEncalheImpresso() {
         return chamadaEncalheImpresso;
     }
 
@@ -291,7 +344,7 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @return the chamadaEncalheEmail
      */
-    public Boolean isChamadaEncalheEmail() {
+    public Boolean getChamadaEncalheEmail() {
         return chamadaEncalheEmail;
     }
 
@@ -305,7 +358,7 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @return the slipImpresso
      */
-    public Boolean isSlipImpresso() {
+    public Boolean getSlipImpresso() {
         return slipImpresso;
     }
 
@@ -319,7 +372,7 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @return the slipEmail
      */
-    public Boolean isSlipEmail() {
+    public Boolean getSlipEmail() {
         return slipEmail;
     }
 
@@ -331,9 +384,93 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     }
 
     /**
+     * @return the boletoImpresso
+     */
+    public Boolean getBoletoImpresso() {
+        return boletoImpresso;
+    }
+
+    /**
+     * @param boletoImpresso the boletoImpresso to set
+     */
+    public void setBoletoImpresso(Boolean boletoImpresso) {
+        this.boletoImpresso = boletoImpresso;
+    }
+
+    /**
+     * @return the boletoEmail
+     */
+    public Boolean getBoletoEmail() {
+        return boletoEmail;
+    }
+
+    /**
+     * @param boletoEmail the boletoEmail to set
+     */
+    public void setBoletoEmail(Boolean boletoEmail) {
+        this.boletoEmail = boletoEmail;
+    }
+
+    /**
+     * @return the boletoSlipImpresso
+     */
+    public Boolean getBoletoSlipImpresso() {
+        return boletoSlipImpresso;
+    }
+
+    /**
+     * @param boletoSlipImpresso the boletoSlipImpresso to set
+     */
+    public void setBoletoSlipImpresso(Boolean boletoSlipImpresso) {
+        this.boletoSlipImpresso = boletoSlipImpresso;
+    }
+
+    /**
+     * @return the boletoSlipEmail
+     */
+    public Boolean getBoletoSlipEmail() {
+        return boletoSlipEmail;
+    }
+
+    /**
+     * @param boletoSlipEmail the boletoSlipEmail to set
+     */
+    public void setBoletoSlipEmail(Boolean boletoSlipEmail) {
+        this.boletoSlipEmail = boletoSlipEmail;
+    }
+
+    /**
+     * @return the reciboImpresso
+     */
+    public Boolean getReciboImpresso() {
+        return reciboImpresso;
+    }
+
+    /**
+     * @param reciboImpresso the reciboImpresso to set
+     */
+    public void setReciboImpresso(Boolean reciboImpresso) {
+        this.reciboImpresso = reciboImpresso;
+    }
+
+    /**
+     * @return the reciboEmail
+     */
+    public Boolean getReciboEmail() {
+        return reciboEmail;
+    }
+
+    /**
+     * @param reciboEmail the reciboEmail to set
+     */
+    public void setReciboEmail(Boolean reciboEmail) {
+        this.reciboEmail = reciboEmail;
+    }
+
+    /**
      * @return the procuracaoAssinada
      */
-    public Boolean isProcuracaoAssinada() {
+    public Boolean getProcuracaoAssinada() {
         return procuracaoAssinada;
     }
 
@@ -343,18 +480,60 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     public void setProcuracaoAssinada(Boolean procuracaoAssinada) {
         this.procuracaoAssinada = procuracaoAssinada;
     }
+    
+    /**
+     * @return the possuiProcuracao
+     */
+    public Boolean getPossuiProcuracao() {
+        return possuiProcuracao;
+    }
+
+    /**
+     * @param possuiProcuracao the possuiProcuracao to set
+     */
+    public void setPossuiProcuracao(Boolean possuiProcuracao) {
+        this.possuiProcuracao = possuiProcuracao;
+    }
+
+    /**
+     * @return the possuiTermoAdesao
+     */
+    public Boolean getPossuiTermoAdesao() {
+        return possuiTermoAdesao;
+    }
+
+    /**
+     * @param possuiTermoAdesao the possuiTermoAdesao to set
+     */
+    public void setPossuiTermoAdesao(Boolean possuiTermoAdesao) {
+        this.possuiTermoAdesao = possuiTermoAdesao;
+    }
+
+    /**
+     * @return the termoAdesaoAssinado
+     */
+    public Boolean getTermoAdesaoAssinado() {
+        return termoAdesaoAssinado;
+    }
+
+    /**
+     * @param termoAdesaoAssinado the termoAdesaoAssinado to set
+     */
+    public void setTermoAdesaoAssinado(Boolean termoAdesaoAssinado) {
+        this.termoAdesaoAssinado = termoAdesaoAssinado;
+    }
 
     /**
      * @return the tipoEntrega
      */
-    public String getTipoEntrega() {
+    public DescricaoTipoEntrega getTipoEntrega() {
         return tipoEntrega;
     }
 
     /**
      * @param tipoEntrega the tipoEntrega to set
      */
-    public void setTipoEntrega(String tipoEntrega) {
+    public void setTipoEntrega(DescricaoTipoEntrega tipoEntrega) {
         this.tipoEntrega = tipoEntrega;
     }
 
@@ -382,23 +561,11 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @param percentualFaturamentoEntrega the percentualFaturamentoEntrega to set
      */
-    public void setPercentualFaturamentoEntrega(BigDecimal percentualFaturamentoEntrega) {
+    public void setPercentualFaturamentoEntrega(
+            BigDecimal percentualFaturamentoEntrega) {
         this.percentualFaturamentoEntrega = percentualFaturamentoEntrega;
     }
 
-    /**
-     * @return the baseCalculoEntrega
-     */
-    public BaseCalculo getBaseCalculoEntrega() {
-        return baseCalculoEntrega;
-    }
-
-    /**
-     * @param baseCalculoEntrega the baseCalculoEntrega to set
-     */
-    public void setBaseCalculoEntrega(BaseCalculo baseCalculoEntrega) {
-        this.baseCalculoEntrega = baseCalculoEntrega;
-    }
 
     /**
      * @return the inicioPeriodoCarencia
@@ -428,4 +595,19 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
         this.fimPeriodoCarencia = fimPeriodoCarencia;
     }
 
+    /**
+     * @return the historicoTitularidadeCota
+     */
+    public HistoricoTitularidadeCota getHistoricoTitularidadeCota() {
+        return historicoTitularidadeCota;
+    }
+
+    /**
+     * @param historicoTitularidadeCota the historicoTitularidadeCota to set
+     */
+    public void setHistoricoTitularidadeCota(
+            HistoricoTitularidadeCota historicoTitularidadeCota) {
+        this.historicoTitularidadeCota = historicoTitularidadeCota;
+    }
+    
 }

@@ -171,6 +171,7 @@ var MANTER_COTA = $.extend(true, {
     },
 
     carregarDistribuicao:function(){
+        DISTRIB_COTA.definirModoTela(MANTER_COTA.modoTela, MANTER_COTA.idHistorico);
         if (MANTER_COTA.isModoTelaCadastroCota()) {
             TAB_COTA.funcaoSalvar = DISTRIB_COTA.salvar;
         }

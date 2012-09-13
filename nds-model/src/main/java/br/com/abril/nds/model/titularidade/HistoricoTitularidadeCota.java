@@ -202,6 +202,12 @@ public class HistoricoTitularidadeCota implements Serializable {
     @OneToMany(cascade = { CascadeType.ALL })
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     private Collection<HistoricoTitularidadeCotaSocio> socios;
+   
+    /**
+     * Box do histórico de titularidade da cota
+     */
+    @Column(name = "BOX")
+    private String box;
 
     /**
      * @return the id
@@ -564,6 +570,9 @@ public class HistoricoTitularidadeCota implements Serializable {
      */
     public void setDistribuicao(HistoricoTitularidadeCotaDistribuicao distribuicao) {
         this.distribuicao = distribuicao;
+        if (this.distribuicao != null) {
+            this.distribuicao.setHistoricoTitularidadeCota(this);
+        }
     }
 
     /**
@@ -580,6 +589,20 @@ public class HistoricoTitularidadeCota implements Serializable {
         this.socios = socios;
     }
     
+    /**
+     * @return the box
+     */
+    public String getBox() {
+        return box;
+    }
+
+    /**
+     * @param box the box to set
+     */
+    public void setBox(String box) {
+        this.box = box;
+    }
+
     public HistoricoTitularidadeCotaPessoa getPessoa() {
         return isPessoaFisica() ? pessoaFisica : pessoaJuridica;
     }

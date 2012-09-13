@@ -773,17 +773,15 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		historicoTitularidadeCotaDistribuicao.setProcuracaoAssinada(parametroDistribuicaoCota.getProcuracaoRecebida());
 		historicoTitularidadeCotaDistribuicao.setQtdePDV(parametroDistribuicaoCota.getQtdePDV());
 		historicoTitularidadeCotaDistribuicao.setRecebeRecolheParcias(parametroDistribuicaoCota.getRecebeRecolheParcias());
-		historicoTitularidadeCotaDistribuicao.setRepartePorPontoVenda(parametroDistribuicaoCota.getRepartePorPontoVenda());
+		historicoTitularidadeCotaDistribuicao.setEntregaReparteVenda(parametroDistribuicaoCota.getRepartePorPontoVenda());
 		historicoTitularidadeCotaDistribuicao.setSlipEmail(parametroDistribuicaoCota.getSlipEmail());
 		historicoTitularidadeCotaDistribuicao.setSlipImpresso(parametroDistribuicaoCota.getSlipImpresso());
-		historicoTitularidadeCotaDistribuicao.setSolicitaNumAtras(parametroDistribuicaoCota.getSolicitaNumAtras());
+		historicoTitularidadeCotaDistribuicao.setSolicitaNumAtrasados(parametroDistribuicaoCota.getSolicitaNumAtras());
 		historicoTitularidadeCotaDistribuicao.setTaxaFixaEntrega(parametroDistribuicaoCota.getTaxaFixa());
 		historicoTitularidadeCotaDistribuicao.setPercentualFaturamentoEntrega(parametroDistribuicaoCota.getPercentualFaturamento());
 
 		if (parametroDistribuicaoCota.getTipoEntrega() != null) {
-		
-			historicoTitularidadeCotaDistribuicao.setBaseCalculoEntrega(parametroDistribuicaoCota.getTipoEntrega().getBaseCalculo());
-			historicoTitularidadeCotaDistribuicao.setTipoEntrega(parametroDistribuicaoCota.getTipoEntrega().getDescricaoTipoEntrega().getValue());
+			historicoTitularidadeCotaDistribuicao.setTipoEntrega(parametroDistribuicaoCota.getTipoEntrega().getDescricaoTipoEntrega());
 		}
 
 		return historicoTitularidadeCotaDistribuicao;
