@@ -1198,6 +1198,11 @@ var ConferenciaEncalhe = $.extend(true, {
 				ConferenciaEncalhe.popup_alert();
 			}
 		});
+	},
+	
+	irParaContigencia: function(){
+		$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
+				contextPath + "/devolucao/conferenciaEncalheContingencia" + "?random=" + Math.random());
 	}
 
 }, BaseController);

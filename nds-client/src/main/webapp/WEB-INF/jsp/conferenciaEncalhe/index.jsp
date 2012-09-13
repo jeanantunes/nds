@@ -74,7 +74,7 @@
 				<tr>
 					<td width="126">
 						<span class="bt_novos" title="Contingência">
-							<a href="${pageContext.request.contextPath}/devolucao/conferenciaEncalheContingencia">
+							<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()">
 								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />Contingência
 							</a>
 						</span>
