@@ -67,6 +67,8 @@ public class DiferencaVO implements Serializable {
 
 	private String fornecedor;
 	
+	private boolean existemRateios;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -471,6 +473,20 @@ public class DiferencaVO implements Serializable {
 	
 	public String getFornecedor() {
 		return fornecedor;
+	}
+
+	/**
+	 * @return the existemRateios
+	 */
+	public boolean isExistemRateios() {
+		return existemRateios;
+	}
+
+	/**
+	 * @param existemRateios the existemRateios to set
+	 */
+	public void setExistemRateios(boolean existemRateios) {
+		this.existemRateios = existemRateios;
 	}
 
 }
