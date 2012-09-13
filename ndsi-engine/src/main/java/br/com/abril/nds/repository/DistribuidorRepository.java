@@ -41,4 +41,11 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	 */
 	public abstract TelefoneDistribuidor obterTelefonePrincipal();
 
+	List<String> obterNomeCNPJDistribuidor();
+	
+	String obterInformacoesComplementaresProcuracao();
+
+	String obterRazaoSocialDistribuidor();
+
+	String obterInformacoesComplementaresTermoAdesao();
 }

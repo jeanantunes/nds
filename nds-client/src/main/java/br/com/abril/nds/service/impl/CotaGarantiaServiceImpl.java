@@ -533,6 +533,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         //FORMA DE PAGAMENTO
         PagamentoCaucaoLiquida pagamento = null;
 		PagamentoBoleto pagamentoBoleto = null;
+		PagamentoDepositoTransferencia pagamentoDepositoTransferencia = null;
+		PagamentoDinheiro pagamentoDinheiro = null;
 		PagamentoDescontoCota pagamentoDescontoCota = null;
 		
         switch (formaCobrancaDTO.getTipoCobranca()){
@@ -665,15 +667,15 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 			case DINHEIRO:
 				
-				pagamento = new PagamentoCaucaoLiquida();
-				pagamento.setValor(formaCobrancaDTO.getValor());
+				pagamentoDinheiro = new PagamentoDinheiro();
+				pagamentoDinheiro.setValor(formaCobrancaDTO.getValor());
 				
 			break;
 			
             case DEPOSITO_TRANSFERENCIA:
 				
-				pagamento = new PagamentoCaucaoLiquida();
-				pagamento.setValor(formaCobrancaDTO.getValor());
+            	pagamentoDepositoTransferencia = new PagamentoDepositoTransferencia();
+            	pagamentoDepositoTransferencia.setValor(formaCobrancaDTO.getValor());
 				
 			break;
         }
@@ -701,7 +703,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 		cotaGarantiaCaucaoLiquida.setContaBancariaDeposito(contaDeposito);
 		
-		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoBoleto!=null?pagamentoBoleto:pagamentoDescontoCota!=null?pagamentoDescontoCota:pagamento);
+		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoBoleto!=null?pagamentoBoleto:pagamentoDescontoCota!=null?pagamentoDescontoCota:pagamentoDepositoTransferencia!=null?pagamentoDepositoTransferencia:pagamentoDinheiro!=null?pagamentoDinheiro:pagamento);
 		
 		cotaGarantiaCaucaoLiquida.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
 

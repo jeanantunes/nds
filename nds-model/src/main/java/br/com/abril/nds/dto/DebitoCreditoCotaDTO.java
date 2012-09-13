@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+
 public class DebitoCreditoCotaDTO implements Serializable {
 
 	/**
@@ -11,11 +13,13 @@ public class DebitoCreditoCotaDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String tipoLancamento;
+	private OperacaoFinaceira tipoLancamento;
 	private BigDecimal valor;
 	private Date dataLancamento;
 	private Date dataVencimento;
 	private Integer numeroCota;
+	
+	private String observacoes;
 	
 	public Date getDataLancamento() {
 		return dataLancamento;
@@ -41,11 +45,15 @@ public class DebitoCreditoCotaDTO implements Serializable {
 		this.numeroCota = numeroCota;
 	}
 
-	public String getTipoLancamento() {
+	public OperacaoFinaceira getTipoLancamento() {
 		return tipoLancamento;
 	}
+	
+	public String getTipoLancamentoDescricao() {
+		return (tipoLancamento!=null)? tipoLancamento.getDescricao():null;
+	}
 
-	public void setTipoLancamento(String tipoLancamento) {
+	public void setTipoLancamento(OperacaoFinaceira tipoLancamento) {
 		this.tipoLancamento = tipoLancamento;
 	}
 
@@ -55,6 +63,20 @@ public class DebitoCreditoCotaDTO implements Serializable {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
+	}
+
+	/**
+	 * @return the observacoes
+	 */
+	public String getObservacoes() {
+		return observacoes;
+	}
+
+	/**
+	 * @param observacoes the observacoes to set
+	 */
+	public void setObservacoes(String observacoes) {
+		this.observacoes = observacoes;
 	}
 	
 	

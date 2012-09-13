@@ -6,7 +6,9 @@ function Telefone(paramTela,message) {
 	
 	this.init = function(workspace) {
 		this.workspace = workspace;
-
+		
+		$("#"+paramTela+"wrapperBtnAdicionarTelefoneHabilitado").show();
+		
 		$("#"+paramTela+"ddd", Telefone.workspace).numeric();
 		$("#"+paramTela+"numeroTelefone", Telefone.workspace).numeric();
 		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");

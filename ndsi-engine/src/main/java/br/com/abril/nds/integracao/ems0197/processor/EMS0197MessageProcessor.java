@@ -1,0 +1,139 @@
+package br.com.abril.nds.integracao.ems0197.processor;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.NoResultException;
+
+import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Detalhe;
+import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Header;
+import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Trailer;
+import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
+import br.com.abril.nds.integracao.engine.MessageProcessor;
+import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.repository.impl.AbstractRepository;
+
+import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+
+@Component
+public class EMS0197MessageProcessor extends AbstractRepository implements MessageProcessor {
+
+	@Autowired
+	private FixedFormatManager fixedFormatManager;
+	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+	
+	@Override
+	public void processMessage(Message message) {
+
+		
+		// RECEBE DATA DO SISTEMA PARA FILTRAR A CONSULTA
+		Date dataLctoDistrib = (Date) message.getHeader()
+				.get("dataLctoDistrib");
+		
+		// OBTER LISTA DE JORNALEIROS PARA DEFINIR QTDE DE ARQUIVOS
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append("SELECT DISTINCT pdv FROM PDV pdv");
+		sql.append(" JOIN FETCH pdv.cota cotaPDV ");
+		sql.append(" LEFT JOIN FETCH cotaPDV.movimentoEstoqueCotas mec ");
+		sql.append(" LEFT JOIN FETCH mec.produtoEdicao pe ");
+		sql.append(" LEFT JOIN FETCH pe.produto pd ");
+		sql.append(" LEFT JOIN pe.lancamentos lan ");
+		sql.append(" LEFT JOIN mec.tipoMovimento tip ");
+		sql.append(" WHERE pdv.caracteristicas.pontoPrincipal = true ");
+		sql.append(" AND	lan.dataLancamentoDistribuidor = :dataInformada");
+		sql.append(" AND	tip.grupoMovimentoEstoque='ENVIO_JORNALEIRO'");
+		sql.append(" ORDER BY cotaPDV.numeroCota");
+		
+
+		Query query = getSession().createQuery(sql.toString());
+	    query.setParameter("dataInformada", dataLctoDistrib);
+
+		try {
+			@SuppressWarnings("unchecked")
+			List<PDV> jornaleiros = query.list();
+
+
+		// PARA CADA JORNALEIRO VERIFICAR OS REGISTROS COM OS DADOS PERTINENTES A ELE	
+			for (PDV jornaleiro : jornaleiros){
+				
+				System.out.println("break");
+				try{
+					
+					//CRIA O NOME DO ARQUIVO COM O NUMERO DA COTA + DATA INFORMADA
+					String nomeArquivo = ""+jornaleiro.getCota().getNumeroCota()+"".concat(sdf.format(dataLctoDistrib));
+					
+					PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/"+nomeArquivo+".rep"));	
+					
+					//REGISTRO TIPO 1
+					EMS0197Header outHeader = new EMS0197Header();
+					
+					outHeader.setCodigoCota(jornaleiro.getCota().getNumeroCota().toString());
+					outHeader.setNomePDV(jornaleiro.getNome());
+					outHeader.setDataLctoDistrib(sdf.format(dataLctoDistrib));//data recebida pela interface
+					
+					print.println(fixedFormatManager.export(outHeader));
+					
+					for(MovimentoEstoqueCota pe : jornaleiro.getCota().getMovimentoEstoqueCotas()){
+						//REGISTRO TIPO 2
+						EMS0197Detalhe outDetalhe = new EMS0197Detalhe();
+						
+						outDetalhe.setCodigoCota(jornaleiro.getCota().getNumeroCota().toString());
+						outDetalhe.setCodProduto(pe.getProdutoEdicao().getProduto().getCodigo().toString());
+						outDetalhe.setNumEdicao(pe.getProdutoEdicao().getNumeroEdicao().toString());
+						outDetalhe.setNomeProduto(pe.getProdutoEdicao().getProduto().getNome());
+						outDetalhe.setCodigoDeBarrasPE(pe.getProdutoEdicao().getCodigoDeBarras());
+						outDetalhe.setPrecoCustoPE(pe.getProdutoEdicao().getPrecoCusto().toString());
+						outDetalhe.setPrecoVendaPE(pe.getProdutoEdicao().getPrecoVenda().toString());
+						outDetalhe.setDescontoPE(pe.getProdutoEdicao().getDescontoLogistica().toString());
+						outDetalhe.setQtdeMEC(pe.getQtde().toString());
+					
+						print.println(fixedFormatManager.export(outDetalhe));
+						
+					}
+					//REGISTRO TIPO 3
+					EMS0197Trailer outTrailer = new EMS0197Trailer();
+					
+					outTrailer.setNumeroCota(jornaleiro.getCota().getNumeroCota().toString());
+					outTrailer.setQtdeRegTipo2(jornaleiro.getCota().getMovimentoEstoqueCotas().size());
+					
+					print.println(fixedFormatManager.export(outTrailer));
+					
+					print.flush();
+					print.close();
+					
+					}
+					catch(IOException e){
+				
+					}
+				}
+			}	
+			catch(NoResultException e){}	
+	
+			}
+
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+		
+	}
+				
+}
+
