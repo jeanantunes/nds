@@ -18,7 +18,7 @@
 	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	    	<tr>
 	        	<td width="99">Data Movimento:</td>
-	          	<td width="170"><input name="filtro.dataMovimentacao" type="text" value="${dataAtual}" style="width: 80px; float: left; margin-right: 5px;" /></td>
+	          	<td width="170"><input name="filtro.dataMovimentacao" id="visaoEstoque_filtro_dataMovimentacao" type="text" value="${dataAtual}" style="width: 80px; float: left; margin-right: 5px;" /></td>
 	          	<td width="71">Fornecedor:</td>
 	          	<td width="480">
 	          		<select name="filtro.idFornecedor" style="width: 250px;">
@@ -33,6 +33,8 @@
 	    </table>
 	</fieldset>
 	
+	</form>
+	
 	<div class="linha_separa_fields">&nbsp;</div>
 
 	<div class="grids" style="display:none;">
@@ -44,8 +46,7 @@
 		</fieldset>
 	</div>
 	
-	</form>
-	
+	<%-- POPUPS --%>
 	
 	<div id="dialog-lancamento" title="Vis&atilde;o Estoque Lan&ccedil;amento">
 		<fieldset>
@@ -56,6 +57,108 @@
 		</fieldset>
 	</div>
 
+	<div id="dialog-transferencia" title="Transfer&ecirc;ncia entre Estoques">
+		<form action="/estoque/VisaoEstoque" id="transferenciaEntreEstoquesForm" >
+		<fieldset style="width:870px!important;">
+			<legend>Transferir</legend>
+        	<table width="850" border="0" cellspacing="2" cellpadding="2">
+          		<tr>
+            		<td width="124">Data Movimenta&ccedil;&atilde;o:</td>
+            		<td width="123"><input name="dataMovimentacaoTransferencia" type="text" id="visaoEstoque_transferencia_dataMovimentacao" style="width:80px;"/></td>
+            		<td width="320"><strong>Estoque Selecionado</strong>: <span id="visaoEstoque_transferencia_estoqueSelecionado"></span></td>
+            		<td width="101">Incluir no Estoque:</td>
+            		<td width="150">
+            			<select name="select2" id="select2" style="width:150px;">
+              				<option selected="selected">Selecione...</option>
+            			</select>
+            		</td>
+          		</tr>
+        	</table>
+        </fieldset>
+    
+    	<div class="linha_separa_fields">&nbsp;</div>
+
+		<fieldset style="width:870px!important;">
+        	<legend>Transferência entre Estoques</legend>
+        	<table class="visaoEstoqueTransferenciaGrid"></table>
+        	<span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:40px;"/></span>
+		</fieldset>
+		</form>
+	</div>
+	
+	<div id="dialog-inventario" title="Invent&aacute;rio do Estoque">
+		<form action="" method="get" id="form1" name="form1">
+		<fieldset style="width:870px!important;">
+      		<legend>Estoque Selecionado: <span id="visaoEstoque_inventario_estoqueSelecionado"></span> - Data: <span id="visaoEstoque_inventario_dataMovimentacao"></span></legend>
+            <table class="visaoEstoqueInventarioGrid"></table>
+      		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir Confer&ecirc;ncia Cega</a></span>
+		</fieldset>
+		</form>
+	</div>
+	
+
+
+
+
+
+
+
+
+<%--
+
+	<div id="dialog-inventario-confirm" title="Confirmar Inventário do Estoque">
+<form action="" method="get" id="form1" name="form1">
+	<fieldset style="width:300px!important;">
+      <legend>Inventário</legend>
+      <p>Confirmação a atualização do Saldo?</p>
+	</fieldset>
+</form>
+</div>
+
+<div id="dialog-inventario" title="Inventário do Estoque">
+<form action="" method="get" id="form1" name="form1">
+	<fieldset style="width:870px!important;">
+      <legend>Estoque Selecionado: Lançamento - Data: 10/06/2012</legend>
+      
+      <table class="visaoEstoqueInventarioGrid"></table>
+      <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir Conferência Cega</a></span>
+	</fieldset>
+</form>
+</div>
+
+
+
+<div id="dialog-juramentado" title="Visão Estoque Juramentado">
+	<fieldset>
+        <legend>Visão de Estoque / Juramentado</legend>
+        <table class="visaoJuramentadaGrid"></table>
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+
+		  <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	</fieldset>
+</div>
+
+
+<div id="dialog-suplementar" title="Visão Estoque Suplementar">
+	<fieldset>
+        <legend>Visão de Estoque / Suplementar</legend>
+        <table class="visaoEstoqueSuplementarGrid"></table>
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+
+		  <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	</fieldset>
+</div>
+
+<div id="dialog-encalhe" title="Visão Estoque Encalhe">
+	<fieldset>
+        <legend>Visão de Estoque / Encalhe</legend>
+        <table class="visaoEstoqueEncalheGrid"></table>
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+
+		  <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	</fieldset>
+</div>
+ --%>
 	
 	
 	<script type="text/javascript">
