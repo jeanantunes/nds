@@ -635,7 +635,7 @@ TipoCotaGarantia.prototype.tipo = {
 		controller : CaucaoLiquida
 	},
 	'ANTECEDENCIA_VALIDADE' : {
-		label : 'Caução Liquida',
+		label : 'Antecedência Validade',
 		controller : CaucaoLiquida
 	},
 	'OUTROS' : {
@@ -692,18 +692,8 @@ TipoCotaGarantia.prototype.configTipoCotaGarantia = function(tipo,idCota) {
 
 TipoCotaGarantia.prototype.bindData = function(data) {
 
-	/*var select = $("#tipoGarantiaSelect option", _workspace);
-	
-	$(select).each(function() {
-	    $(this).remove();
-	});*/	
-
 	var select = $("#tipoGarantiaSelect", _workspace);
-	
-	/*for ( var index = $(select).length; index > 0; index--) {
-		$(select).remove(index);
-	}*/
-	
+
 	for ( var index in data) {
 		var tipo = data[index];
 		var option = document.createElement("option");
@@ -711,8 +701,6 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 		option.text = this.tipo[tipo].label;
 		
 		option.value = tipo;
-
-		//$(select).append('<option value="' + tipo + '">' + this.tipo[tipo].label + '</option>'); 
 		
 		try {
 			$(select).append(option, select.options[null]);
@@ -1208,23 +1196,52 @@ CaucaoLiquida.prototype.setValorCaucaoLiquida = function(tipo,valor){
 
 	if (tipo=='BOLETO'){
 		 $("#valorBoleto", _workspace).val(valor);
+		 
+		 if ($("#valorBoleto", _workspace).val().indexOf(".") < 0){
+			$("#valorBoleto", _workspace).val($("#valorBoleto", _workspace).val() + "00");
+		 }
+		 
+		 $("#valorBoleto", _workspace).priceFormat({
+			 centsSeparator : ',',
+			 thousandsSeparator : '.'
+		 });
     }
 	else if (tipo=='DEPOSITO_TRANSFERENCIA'){
 
 		$("#valorDeposito", _workspace).val(valor);
 		
 		if ($("#valorDeposito", _workspace).val().indexOf(".") < 0){
-			
 			$("#valorDeposito", _workspace).val($("#valorDeposito", _workspace).val() + "00");
 		}
 		
-		$("#valorDeposito").priceFormat({centsSeparator : ',',thousandsSeparator : '.'});
+		$("#valorDeposito").priceFormat({
+			centsSeparator : ',',
+			thousandsSeparator : '.'
+		});
 	}    
     else if (tipo=='DINHEIRO'){
 		$("#valorDinheiro", _workspace).val(valor);
+		
+		if ($("#valorDinheiro", _workspace).val().indexOf(".") < 0){
+			$("#valorDinheiro", _workspace).val($("#valorDinheiro", _workspace).val() + "00");
+		}
+		
+		$("#valorDinheiro", _workspace).priceFormat({
+			centsSeparator : ',',
+			thousandsSeparator : '.'
+		});
 	}  
 	else if (tipo=='DESCONTO_COTA'){
 		$("#valorDesconto", _workspace).val(valor);
+		
+		if ($("#valorDesconto", _workspace).val().indexOf(".") < 0){
+			$("#valorDesconto", _workspace).val($("#valorDesconto", _workspace).val() + "00");
+		}
+		
+		$("#valorDesconto", _workspace).priceFormat({
+			centsSeparator : ',',
+			thousandsSeparator : '.'
+		});
 	}     
 };
 
