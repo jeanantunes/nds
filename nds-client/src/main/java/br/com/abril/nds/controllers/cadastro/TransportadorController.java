@@ -24,8 +24,11 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
@@ -366,6 +369,22 @@ public class TransportadorController {
 			msgs.add("Insc. Estadual é obrigatório.");
 		}
 		
+		if (transportador.getParametroCobrancaTransportador() != null){
+			
+			ParametroCobrancaTransportador param = transportador.getParametroCobrancaTransportador();
+			
+			if (PeriodicidadeCobranca.SEMANAL == param.getPeriodicidadeCobranca() && 
+					(param.getDiasSemanaCobranca() == null || param.getDiasSemanaCobranca().isEmpty())){
+				
+				msgs.add("Selecione os dias da semana para cobrança semanal.");
+			} else if ((PeriodicidadeCobranca.QUINZENAL == param.getPeriodicidadeCobranca() ||
+					PeriodicidadeCobranca.MENSAL == param.getPeriodicidadeCobranca()) && 
+					(param.getDiaCobranca() == null || param.getDiaCobranca() <= 0 || param.getDiaCobranca() > 31)){
+				
+				msgs.add("Dia da cobrança inválido");
+			}
+		}
+		
 		if (!msgs.isEmpty()){
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
@@ -389,6 +408,25 @@ public class TransportadorController {
 			dados.add(transportador.getResponsavel());
 			dados.add(Util.adicionarMascaraCNPJ(transportador.getPessoaJuridica().getCnpj()));
 			dados.add(transportador.getPessoaJuridica().getInscricaoEstadual());
+			
+			if (transportador.getParametroCobrancaTransportador() != null){
+				
+				ParametroCobrancaTransportador param = transportador.getParametroCobrancaTransportador();
+				
+				dados.add(param.getModelidadeCobranca() != null ? param.getModelidadeCobranca().toString() : "");
+				dados.add(param.getValor() != null ? String.format("%.2f", param.getValor()) : "0,00");
+				dados.add(String.valueOf(param.isPorEntrega()));
+				dados.add(param.getPeriodicidadeCobranca().toString());
+				dados.add(param.getDiaCobranca() != null ? param.getDiaCobranca().toString() : "");
+				
+				if (param.getDiasSemanaCobranca() != null){
+					
+					for (DiaSemana dia : param.getDiasSemanaCobranca()){
+						
+						dados.add(dia.toString());
+					}
+				}
+			}
 			
 			this.carregarTelefonesEnderecosPessoa(transportador.getPessoaJuridica().getId());
 		}
