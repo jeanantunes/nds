@@ -58,11 +58,11 @@
 				</tr>
 				<tr>
 					<td>
-						<input type="text" id="codigoProdutoInput" style="width:60px;" maxlength="30"
+						<input type="text" id="codigoProdutoInput" style="width:60px;" maxlength="30" onchange="lancamentoNovoController.limparProduto()"
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td>
-						<input type="text" id="nomeProdutoInput" style="width:180px;" maxlength="60"
+						<input type="text" id="nomeProdutoInput" style="width:180px;" maxlength="60" onchange="lancamentoNovoController.limparProduto()"
 							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
