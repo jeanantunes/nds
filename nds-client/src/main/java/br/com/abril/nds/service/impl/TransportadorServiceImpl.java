@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -940,5 +941,13 @@ public class TransportadorServiceImpl implements TransportadorService {
 		}
 		
 		return this.associacaoVeiculoMotoristaRotaRepository.verificarAssociacaoRotaRoteiro(idRota);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<CotaAtendidaTransportadorVO> buscarCotasAtendidadas(
+			Long idTransportador, String sortorder, String sortname) {
+		
+		return this.transportadorRepository.buscarCotasAtendidadas(idTransportador, sortorder, sortname);
 	}
 }

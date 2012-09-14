@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -76,4 +77,7 @@ public interface TransportadorService {
 	boolean verificarAssociacaoVeiculo(Long referencia, Set<Long> idsIgnorar);
 
 	boolean verificarAssociacaoRotaRoteiro(Long idRota);
+
+	List<CotaAtendidaTransportadorVO> buscarCotasAtendidadas(
+			Long idTransportador, String sortorder, String sortname);
 }

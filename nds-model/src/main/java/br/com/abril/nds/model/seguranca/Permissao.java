@@ -58,6 +58,7 @@ public enum Permissao
 	ROLE_DEVOLUCAO_HELP("Help",																		  	   Permissao.ROLE_DEVOLUCAO),
 	ROLE_NFE("NF-e",																	  	   			   null),
 	ROLE_NFE_RETORNO_NFE("Retorno NF-e",																   Permissao.ROLE_NFE),
+	ROLE_NFE_IMPRESSAO_NFE("Impressão NF-e",															   Permissao.ROLE_NFE),
 	ROLE_NFE_CONSULTA_NFE_ENCALHE_TRATAMENTO("Consulta NF-e Encalhe Tratamento",						   Permissao.ROLE_NFE),
 	ROLE_NFE_PAINEL_MONITOR_NFE("Painel Monitor NF-e",													   Permissao.ROLE_NFE),
 	ROLE_RECOLHIMENTO("Recolhimento", 													  				   null),

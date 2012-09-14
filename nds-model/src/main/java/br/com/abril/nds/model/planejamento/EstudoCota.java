@@ -1,6 +1,5 @@
 package br.com.abril.nds.model.planejamento;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;

@@ -29,8 +29,11 @@ import br.com.abril.nds.client.vo.DiferencaVO.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.client.vo.ItemDiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
+import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
@@ -44,6 +47,7 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -51,12 +55,14 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.impl.EstoqueProdutoServiceImpl;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -119,6 +125,9 @@ public class DiferencaEstoqueController {
 	private CotaService cotaService;
 	
 	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
+	
+	@Autowired
 	private DistribuidorService distribuidorService;
 	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
@@ -135,6 +144,8 @@ public class DiferencaEstoqueController {
 	
 	private static final String MODO_INCLUSAO_SESSION_ATTRIBUTE = "modoInclusaoDiferenca";
 	
+	private static final String FILTRO_DETALHE_DIFERENCA_COTA = "filtroDetalheDiferencaCota";
+
 	public DiferencaEstoqueController(Result result, 
 								 	  HttpSession httpSession,
 								 	  HttpServletResponse httpServletResponse) {
@@ -1176,6 +1187,8 @@ public class DiferencaEstoqueController {
 			
 			DiferencaVO consultaDiferencaVO = new DiferencaVO();
 			
+			System.out.println("============RATEIOS===========" + diferenca.getRateios());
+			
 			consultaDiferencaVO.setId(diferenca.getId());
 			
 			consultaDiferencaVO.setDataLancamento(
@@ -1212,13 +1225,15 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setTipoEstoque(diferenca.getTipoEstoque().getDescricao());
 			
-			listaConsultaDiferenca.add(consultaDiferencaVO);
+			consultaDiferencaVO.setExistemRateios(diferenca.isExistemRateios());
 			
+			listaConsultaDiferenca.add(consultaDiferencaVO);
+
 			Fornecedor fornecedor = fornecedorService.obterFornecedorUnico(diferenca.getProdutoEdicao().getProduto().getCodigo());
 			
 			if(fornecedor != null)
 				consultaDiferencaVO.setFornecedor(fornecedor.getJuridica().getNomeFantasia());
-			
+
 			qtdeTotalDiferencas = 
 				qtdeTotalDiferencas.add(diferenca.getQtde());
 			
@@ -1906,16 +1921,23 @@ public class DiferencaEstoqueController {
 		if(pe == null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Edição não encontrada."));
 		
-		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(pe.getId(), null);
-				
-		Object[] dados = new Object[3];
-		dados[0] = qtde;
-		dados[1] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
-		dados[2] = pe.getId();
+		EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(pe.getId());
+		
+		if(estoque == null) 
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Produto sem estoque cadastrado."));
+						
+		Object[] dados = new Object[6];
+		dados[0] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
+		dados[1] = pe.getId();
+		
+		dados[2] = estoque.getQtde() == null ? 0 : estoque.getQtde();
+		dados[3] = estoque.getQtdeSuplementar() == null ? 0 : estoque.getQtdeSuplementar();
+		dados[4] = estoque.getQtdeDevolucaoEncalhe() == null ? 0 : estoque.getQtdeDevolucaoEncalhe();
+		dados[5] = estoque.getQtdeDevolucaoFornecedor() == null ? 0 : estoque.getQtdeDevolucaoFornecedor();
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
-	
+		
 	@Post
 	@Path("/lancamento/rateio/buscarProdutosCotaNota")
 	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota){
@@ -1948,4 +1970,77 @@ public class DiferencaEstoqueController {
 	public void obterDetalhes(Long idDiferenca) {
 		result.use(Results.json()).from("", "result").serialize();
 	}
+
+	@Post
+	@Path("/obterDetalhesDiferencaCota")
+	public void obterDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
+
+		filtro = prepararFiltroDetalheDiferencaCota(filtro, sortorder, sortname, page, rp);
+
+		DetalheDiferencaCotaDTO detalheDiferencaCota = obterDetalheDiferencaCotaDTO(filtro);
+
+		result.use(Results.json()).withoutRoot().from(detalheDiferencaCota).recursive().serialize();
+	}
+	
+	@Get
+	public void exportarDetalhesEstoqueCota(FileType fileType) throws IOException {
+		
+		if (fileType == null) {
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+		}
+
+		FiltroDetalheDiferencaCotaDTO filtro = (FiltroDetalheDiferencaCotaDTO) this.httpSession.getAttribute(FILTRO_DETALHE_DIFERENCA_COTA);
+
+		DetalheDiferencaCotaDTO detalhes = obterDetalheDiferencaCotaDTO(filtro);
+
+		FileExporter.to("diferenca-detalhe-estoque-cota", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, detalhes, 
+					detalhes.getDetalhesDiferenca(), RateioDiferencaCotaDTO.class, this.httpServletResponse);
+	}
+
+	private FiltroDetalheDiferencaCotaDTO prepararFiltroDetalheDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro, 
+																			 String sortorder, String sortname, int page, int rp) {
+
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+
+		filtro.setPaginacao(paginacao);
+
+		filtro.setColunaOrdenacao(
+			Util.getEnumByStringValue(FiltroDetalheDiferencaCotaDTO.ColunaOrdenacao.values(), sortname)
+		);
+		
+		this.httpSession.setAttribute(FILTRO_DETALHE_DIFERENCA_COTA, filtro);
+
+		return filtro;
+	}
+
+	private DetalheDiferencaCotaDTO obterDetalheDiferencaCotaDTO(FiltroDetalheDiferencaCotaDTO filtro) {
+
+		DetalheDiferencaCotaDTO detalheDiferencaCota = this.diferencaEstoqueService.obterDetalhesDiferencaCota(filtro);
+
+		List<CellModelKeyValue<RateioDiferencaCotaDTO>> lista = new ArrayList<CellModelKeyValue<RateioDiferencaCotaDTO>>();
+
+		int index = 0;
+
+		for (RateioDiferencaCotaDTO detalheDiferencaDTO : detalheDiferencaCota.getDetalhesDiferenca()) {
+
+			CellModelKeyValue<RateioDiferencaCotaDTO> cellModel = 
+					new CellModelKeyValue<RateioDiferencaCotaDTO>(++index, detalheDiferencaDTO);
+
+			lista.add(cellModel);
+		}
+
+		TableModel<CellModelKeyValue<RateioDiferencaCotaDTO>> tableModel = 
+				new TableModel<CellModelKeyValue<RateioDiferencaCotaDTO>>();
+
+		tableModel.setRows(lista);
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setTotal(detalheDiferencaCota.getQuantidadeTotalRegistrosDiferencaCota());
+
+		detalheDiferencaCota.setTableModel(tableModel);
+
+		return detalheDiferencaCota;
+	}
 }
+ 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.model.cadastro.Transportador;
@@ -125,5 +126,53 @@ public class TransportadorRepositoryImpl extends
 		query.setParameter("cnpj", cnpj);
 		
 		return (Transportador) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaAtendidaTransportadorVO> buscarCotasAtendidadas(
+			Long idTransportador, String sortorder,	String sortname){
+		
+		StringBuilder hql = new StringBuilder("select new ");
+		hql.append(CotaAtendidaTransportadorVO.class.getCanonicalName())
+		   .append("(roteirizacao.pdv.cota.numeroCota, roteirizacao.pdv.cota.pessoa.nome, roteirizacao.pdv.cota.box.nome || '-' || roteirizacao.pdv.cota.box.codigo, ")
+		   .append(" assoc.rota.roteiro.descricaoRoteiro, assoc.rota.codigoRota || '-' || assoc.rota.descricaoRota, ")
+		   .append(" coalesce(roteirizacao.pdv.cota.parametroDistribuicao.taxaFixa, roteirizacao.pdv.cota.parametroDistribuicao.percentualFaturamento || '%'))")
+		   .append(" from AssociacaoVeiculoMotoristaRota assoc ")
+		   .append(" join assoc.rota.roteirizacao roteirizacao ")
+		   .append(" where assoc.transportador.id = :idTransportador ");
+		
+		if ("numeroCota".equals(sortname)){
+			
+			hql.append(" order by roteirizacao.pdv.cota.numeroCota ");
+		} else if ("nomeCota".equals(sortname)){
+			
+			hql.append(" order by roteirizacao.pdv.cota.pessoa.nome ");
+		} else if ("box".equals(sortname)){
+			
+			hql.append(" order by roteirizacao.pdv.cota.box.nome ");
+		} else if ("roteiro".equals(sortname)){
+			
+			hql.append(" order by assoc.rota.roteiro.descricaoRoteiro ");
+		} else if ("rota".equals(sortname)){
+			
+			hql.append(" order by assoc.rota.codigoRota ");
+		} else {
+			
+			hql.append(" order by roteirizacao.pdv.cota.numeroCota ");
+		}
+		
+		if ("asc".equals(sortorder)){
+			
+			hql.append(" asc ");
+		} else {
+			
+			hql.append(" desc ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idTransportador", idTransportador);
+		
+		return query.list();
 	}
 }
