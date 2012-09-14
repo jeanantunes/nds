@@ -76,15 +76,6 @@ public class VisaoEstoqueController {
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
 		
-//		VisaoEstoqueDTO dto = new VisaoEstoqueDTO();
-//		dto.setEstoque("Teste");
-//		dto.setProdutos(10L);
-//		dto.setExemplares(1000L);
-//		dto.setValor(BigDecimal.TEN);
-//		
-//		List<VisaoEstoqueDTO> listVisaoEstoque = new ArrayList<VisaoEstoqueDTO>();
-//		listVisaoEstoque.add(dto);
-		
 		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).page(page).serialize();
 	}
 	

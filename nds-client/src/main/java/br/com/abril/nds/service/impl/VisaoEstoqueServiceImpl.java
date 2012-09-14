@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
@@ -18,6 +19,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 	private VisaoEstoqueRepository visaoEstoqueRepository;
 	
 	@Override
+	@Transactional
 	public List<VisaoEstoqueDTO> obterVisaoEstoque(FiltroConsultaVisaoEstoque filtro) {
 		List<VisaoEstoqueDTO> list = new ArrayList<VisaoEstoqueDTO>();
 
