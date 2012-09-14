@@ -1,12 +1,15 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.hibernate.Query;
-import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
+import br.com.abril.nds.util.Util;
 
 @Repository
 public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements VisaoEstoqueRepository{
@@ -37,11 +40,13 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		query.setParameter("dataMovimentacao", filtro.getDataMovimentacao());
 		
-		query.setResultTransformer(Transformers.aliasToBean(VisaoEstoqueDTO.class));
-		
-		lancamento = (VisaoEstoqueDTO) query.uniqueResult();
+		Object[] result = (Object[]) query.uniqueResult();
 		
 		lancamento.setEstoque("Lançamento");
+		lancamento.setProdutos(((BigInteger) Util.nvl(result[0], BigInteger.ZERO)).longValue());
+		lancamento.setExemplares(((BigInteger) Util.nvl(result[1], BigInteger.ZERO)).longValue());
+		lancamento.setValor((BigDecimal) Util.nvl(result[2], BigDecimal.ZERO));
+		
 		return lancamento;
 	}
 

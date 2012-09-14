@@ -2,7 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
@@ -18,10 +17,10 @@ public class VisaoEstoqueDTO implements Serializable{
 	private String estoque;
 	
 	@Export(label = "Produtos", alignment=Alignment.CENTER, exhibitionOrder = 2)
-	private BigInteger produtos;
+	private Long produtos;
 	
 	@Export(label = "Exemplares", alignment=Alignment.CENTER, exhibitionOrder = 3)
-	private BigInteger exemplares;
+	private Long exemplares;
 	
 	private BigDecimal valor;
 	
@@ -38,19 +37,19 @@ public class VisaoEstoqueDTO implements Serializable{
 		this.estoque = estoque;
 	}
 
-	public BigInteger getProdutos() {
+	public Long getProdutos() {
 		return produtos;
 	}
 
-	public void setProdutos(BigInteger produtos) {
+	public void setProdutos(Long produtos) {
 		this.produtos = produtos;
 	}
 
-	public BigInteger getExemplares() {
+	public Long getExemplares() {
 		return exemplares;
 	}
 
-	public void setExemplares(BigInteger exemplares) {
+	public void setExemplares(Long exemplares) {
 		this.exemplares = exemplares;
 	}
 
