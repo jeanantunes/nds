@@ -511,25 +511,19 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional
 	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO) throws ValidacaoException, InstantiationException, IllegalAccessException {
 		
+	    
+	    CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = prepareCotaGarantia(idCota,
+	            CotaGarantiaCaucaoLiquida.class);
 
-		//COTA GARANTIA CAUCAO LIQUIDA
-		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida =  cotaGarantiaRepository.getByCota(idCota,CotaGarantiaCaucaoLiquida.class);
+		
 		FormaCobrancaCaucaoLiquida formaCobranca = null;
 		
-        if(cotaGarantiaCaucaoLiquida==null){
-        	
-        	cotaGarantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
-        	Cota cota = cotaRepository.buscarPorId(idCota);
-        	cotaGarantiaCaucaoLiquida.setCota(cota);
+          	
+        if (TipoCobrancaCotaGarantia.BOLETO == cotaGarantiaCaucaoLiquida.getTipoCobranca()){
+        	PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
+        	formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
         }
-        else{
-        	
-        	if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobrancaCotaGarantia.BOLETO)==0){
-        		PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
-        		formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
-        	}
-        }
-		
+      
         
         //FORMA DE PAGAMENTO
         PagamentoCaucaoLiquida pagamento = null;
