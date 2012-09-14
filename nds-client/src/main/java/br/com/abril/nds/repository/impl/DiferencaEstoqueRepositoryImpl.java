@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -128,7 +129,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			BigDecimal valorTotalDiferenca = (BigDecimal) resultado[1];
 			
-			listaDiferencas.add(new Diferenca(diferenca, valorTotalDiferenca));
+			listaDiferencas.add(new Diferenca(false, diferenca, valorTotalDiferenca));
 		}
 		
 		return listaDiferencas;
@@ -176,16 +177,17 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 		} else {
 
+			String innerHQLDesconto = this.obterHQLDesconto(null);  
+
 			hql = " select diferenca, "
-				+ "("+ this.obterHQLDesconto() +") as desconto, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto() +") / 100))) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto() +") / 100))) "
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
-					
+
 		hql += " from Diferenca diferenca "
 			+  " join diferenca.movimentoEstoque movimentoEstoque "
 			+  " left join diferenca.produtoEdicao.produto.fornecedores fornecedor "
@@ -208,15 +210,25 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		return hql;
 	}
 
-	private String obterHQLDesconto() {
+	private String obterHQLDesconto(Long idCota) {
 		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
-		hql.append(" from ViewDesconto view, RateioDiferenca rateio ")
-		   .append(" where view.cotaId = rateio.cota.id ")
-		   .append(" and rateio.diferenca.id = diferenca.id ")
-		   .append(" and view.produtoEdicaoId = diferenca.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedor.id),0) ");
+		StringBuilder hql = new StringBuilder();
 		
+		if (idCota != null) {
+
+			hql.append(" coalesce ( ")
+			   .append(" coalesce(( ")
+			   .append(" select view.desconto")
+			   .append(" from ViewDesconto view ")
+			   .append(" where view.cotaId = :idCota ")
+			   .append(" and view.produtoEdicaoId = diferenca.produtoEdicao.id ")
+			   .append(" and view.fornecedorId = fornecedor.id), diferenca.produtoEdicao.produto.desconto), 0) ");
+		
+		} else {
+
+			hql.append(" coalesce (diferenca.produtoEdicao.produto.desconto, 0) ");
+		}
+
 		return hql.toString();
 	}
 
@@ -302,12 +314,14 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		List<Diferenca> listaDiferencas = new ArrayList<Diferenca>();
 		
 		for (Object[] resultado : listaResultados) {
-			
+
 			Diferenca diferenca = (Diferenca) resultado[0];
-			
+
 			BigDecimal valorTotalDiferenca = (BigDecimal) resultado[1];
-			
-			listaDiferencas.add(new Diferenca(diferenca, valorTotalDiferenca));
+
+			boolean existemRateios = ((Long) resultado[2]) > 0;
+
+			listaDiferencas.add(new Diferenca(existemRateios, diferenca, valorTotalDiferenca));
 		}
 		
 		return listaDiferencas;
@@ -346,14 +360,16 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 		} else {
 			
+			String innerHQLDesconto = this.obterHQLDesconto(filtro.getIdCota());  
+
 			hql = " select diferenca, "
-				+ " ("+ this.obterHQLDesconto() +") as desconto, "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto() +") / 100))) "
+				+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
 				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ this.obterHQLDesconto() +") / 100))) "
-				+ " else 0 end) as valorTotalDiferenca ";
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * ("+ innerHQLDesconto +") / 100))) "
+				+ " else 0 end) as valorTotalDiferenca, "
+				+ " (select count(rateios) from RateioDiferenca rateios where rateios.diferenca.id = diferenca.id) ";
 		}
 		
 		hql += " from Diferenca diferenca "
@@ -364,11 +380,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		if (filtro != null) {
 		
-			if (filtro.getIdFornecedor() != null) {
-				 
-				 hql += " join diferenca.produtoEdicao.produto.fornecedores fornecedores ";
-			}
-			
 			if (filtro.getIdCota() != null) {
 				 hql += " join diferenca.rateios rateios ";
 			}
@@ -387,7 +398,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			}
 						
 			if (filtro.getIdFornecedor() != null) {
-				hql += " and fornecedores.id = :idFornecedor ";
+				hql += " and fornecedor.id = :idFornecedor ";
 			}
 			
 			if (filtro.getIdCota() != null) {

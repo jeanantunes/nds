@@ -102,6 +102,8 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -1023,6 +1025,8 @@ public class DataLoader {
 		gerarDescontoDistribuidorParaFornecedor(session);
 		
 		criarDescontoProduto(session);
+		
+		criarDescontoProdutoEdicao(session);
 
 		gerarDescontoCota(session);
 		
@@ -11313,6 +11317,29 @@ public class DataLoader {
 			session, descontoProdutoVeja, descontoProdutoQuatroRodas, 
 			descontoProdutoInfoExame, descontoProdutoCapricho, descontoProdutoSuperInteressante
 		);
+	}
+	
+	private static void criarDescontoProdutoEdicao(Session session) {
+
+		DescontoProdutoEdicao descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaManoel, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+
+		save(session, descontoProdutoEdicao);
+		
+		descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaJose, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+
+		save(session, descontoProdutoEdicao);
+		
+		descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaMaria, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+
+		save(session, descontoProdutoEdicao);
+		
+		descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaGuilherme, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+
+		save(session, descontoProdutoEdicao);
 	}
 	
 	private static void criarDescontoLogistica(Session session){
