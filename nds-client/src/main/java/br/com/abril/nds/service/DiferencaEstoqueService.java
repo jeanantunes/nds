@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.RateioCotaVO;
+import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -71,4 +73,12 @@ public interface DiferencaEstoqueService {
 	
 	Diferenca lancarDiferenca(Diferenca diferenca);
 
+	/**
+	 * Método que retorna os detalhes de diferença por cota.
+	 * 
+	 * @param filtro
+	 * 
+	 * @return DetalheDiferencaCotaDTO
+	 */
+	DetalheDiferencaCotaDTO obterDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro);
 }

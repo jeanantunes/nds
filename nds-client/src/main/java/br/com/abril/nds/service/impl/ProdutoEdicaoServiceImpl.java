@@ -594,13 +594,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamento.setDataStatus(dtSysdate);
 			
 			lancamento.setProdutoEdicao(produtoEdicao);
-		}
-		
-		
-		if (produtoEdicao.getLancamentos().isEmpty()) {
+	
 			lancamentoRepository.adicionar(lancamento);
 			produtoEdicao.getLancamentos().add(lancamento);
-		} else {
+		} else {			
+			if(lancamento.getStatus() == StatusLancamento.EXCLUIDO){
+				lancamento.setStatus(StatusLancamento.PLANEJADO);
+			}
 			lancamentoRepository.alterar(lancamento);
 		}
 		
@@ -616,31 +616,29 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
 		}
 
-		List<Long> idsLancamento = new ArrayList<Long>();
+		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
 		
-		for (Lancamento lancamento : produtoEdicao.getLancamentos()) {
+		for (Lancamento lancamento : lancamentos) {
 			
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
 					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
 				
 				throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
 			}
-			
-			idsLancamento.add(lancamento.getId());
 		}
 
 		try {
-
-			if (!idsLancamento.isEmpty()) {
-
-				int arraySize = idsLancamento.size();
+			
+			for (Lancamento lancamento : lancamentos){
 				
-				Long[] ids = idsLancamento.toArray(new Long[arraySize]);
+				lancamento.setStatus(StatusLancamento.CANCELADO);
 				
-				this.lancamentoRepository.removerPorId(ids);
+				this.lancamentoRepository.alterar(lancamento);
 			}
-
-			this.produtoEdicaoRepository.remover(produtoEdicao);
+			
+			produtoEdicao.setAtivo(false);
+			
+			this.produtoEdicaoRepository.alterar(produtoEdicao);
 
 		} catch (DataIntegrityViolationException e) {
 			

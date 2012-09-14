@@ -82,11 +82,14 @@ public class Diferenca implements Serializable {
 	@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")
 	private LancamentoDiferenca lancamentoDiferenca;
 	
+	@Transient
+	private boolean existemRateios;
+	
 	public Diferenca() {
 		
 	}
 	
-	public Diferenca(Diferenca diferenca, BigDecimal valorTotalDiferenca) {
+	public Diferenca(boolean existemRateios, Diferenca diferenca, BigDecimal valorTotalDiferenca) {
 		
 		this.id = diferenca.id;
 		this.qtde = diferenca.qtde;
@@ -100,6 +103,7 @@ public class Diferenca implements Serializable {
 		this.tipoEstoque = diferenca.tipoEstoque;
 		this.lancamentoDiferenca = diferenca.lancamentoDiferenca;
 		this.valorTotalDiferenca = valorTotalDiferenca;
+		this.existemRateios = existemRateios;
 	}
 	
 	public Long getId() {
@@ -243,4 +247,17 @@ public class Diferenca implements Serializable {
 		this.tipoEstoque = tipoEstoque;
 	}
 
+	/**
+	 * @return the existemRateios
+	 */
+	public boolean isExistemRateios() {
+		return existemRateios;
+	}
+
+	/**
+	 * @param existemRateios the existemRateios to set
+	 */
+	public void setExistemRateios(boolean existemRateios) {
+		this.existemRateios = existemRateios;
+	}
 }

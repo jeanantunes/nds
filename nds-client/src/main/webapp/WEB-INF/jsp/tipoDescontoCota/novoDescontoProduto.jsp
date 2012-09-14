@@ -43,7 +43,13 @@
 	          <tr class="aEdicao" style="display:none;">
 
 		          <td>Edição Específica:</td>
-		          <td><input type="text" name="edicaoProduto" id="edicaoProduto" style="width:60px;"/>
+		          <td>
+		          <input 	type="text" 
+		          			name="edicaoProduto" 
+		          			id="edicaoProduto" 
+		          			style="width:60px;"
+		          			onchange="pesquisaProdutoTipoDescontoCota.validarNumEdicao('#pCodigoProduto', '#edicaoProduto', true);"
+		          />
 		          ou por
 		          <input type="text" name="quantidadeEdicoes" id="quantidadeEdicoes" style="width:60px;"/>
 		          Edições</td>

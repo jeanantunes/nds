@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
@@ -118,7 +119,8 @@ public class MatrizLancamentoController {
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoLancamento(balanceamentoLancamento);
 						
-		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
+		
 	}
 	
 	
@@ -754,7 +756,7 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setDestacarLinha(
 			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
-				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO_GD)
+				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO)
 				|| produtoLancamentoDTO.isAlteradoInteface() );
 				
 		return produtoBalanceamentoVO;
@@ -1039,6 +1041,8 @@ public class MatrizLancamentoController {
 		resultadoResumoBalanceamento.setCapacidadeRecolhimentoDistribuidor(
 			balanceamentoBalanceamento.getCapacidadeDistribuicao());
 		
+		resultadoResumoBalanceamento.setListaProdutosLancamentosCancelados(balanceamentoBalanceamento.getProdutosLancamentosCancelados());
+		
 		return resultadoResumoBalanceamento;
 	}
 	
@@ -1200,5 +1204,11 @@ public class MatrizLancamentoController {
 			this.result.use(Results.json()).from(Results.nothing()).serialize();
 		}
 		
+	}
+	
+	@Post
+	public void excluirLancamento(Long idLancamento){
+		matrizLancamentoService.excluiLancamento(idLancamento);		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Lançamento excluído com sucesso!")).serialize();
 	}
 }
