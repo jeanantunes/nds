@@ -1,6 +1,7 @@
 var diferencaEstoqueController = $.extend(true, {
 	
 	detalhes : [],
+	idDiferenca: "",
 	
 	init : function () {
 		$('input[id^="data"]', diferencaEstoqueController.workspace).datepicker({
@@ -70,7 +71,7 @@ var diferencaEstoqueController = $.extend(true, {
 				name : 'detalhes',
 				width : 50,
 				sortable : true,
-				align : 'center'
+				align : 'right'
 			}],
 			sortname : "dataLancamentoNumeroEdicao",
 			sortorder : "asc",
@@ -84,6 +85,7 @@ var diferencaEstoqueController = $.extend(true, {
 
 		$("#codigo", diferencaEstoqueController.workspace).focus();
 
+		diferencaEstoqueController.initDetalhesCotaGrid();
 	},
 		
 	
@@ -173,23 +175,175 @@ var diferencaEstoqueController = $.extend(true, {
 			
 			}
 			
-			row.cell.detalhes = diferencaEstoqueController.gerarBotaoDetalhe(index);
-		});
+			if (row.cell.existemRateios) {
+
+				row.cell.detalhes = diferencaEstoqueController.gerarBotaoDetalheCota(index, row.cell.id);
 			
+			} else {
+				
+				row.cell.detalhes = diferencaEstoqueController.gerarBotaoDetalhe(index);
+			}
+		});
+
 		$(".grids", diferencaEstoqueController.workspace).show();
-		
+
 		return resultado.tableModel;
 	},
 	
 	gerarBotaoDetalhe : function(index) {
-		return '<a href="javascript:;" onclick="diferencaEstoqueController.carregarDetalhes(' + index + ');">' +
+		return '<a href="javascript:;" onclick="diferencaEstoqueController.popupDetalhe(diferencaEstoqueController.detalhes[' + index + ']);">' +
 			   '<img src="'+ contextPath +'/images/ico_detalhes.png" border="0"></a>';
 	},
+	
+	gerarBotaoDetalheCota: function(index, idDiferenca) {
 
-	carregarDetalhes : function(index) {
+		return '<a href="javascript:;" onclick="diferencaEstoqueController.obterDetalhesDiferencaCota(diferencaEstoqueController.detalhes[' + index + '], ' + idDiferenca + ');">' +
+		   '<img src="'+ contextPath +'/images/ico_detalhes.png" border="0"></a>';
+	},
+	
+	initDetalhesCotaGrid: function() {
 
-		diferencaEstoqueController.popupDetalhe(diferencaEstoqueController.detalhes[index]);
+		$(".detalhesCotaGrid", diferencaEstoqueController.workspace).flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Data',
+				name : 'data',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 45,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeCota',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Box',
+				name : 'codigoBox',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Exemplares',
+				name : 'exemplares',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Desc. R$',
+				name : 'precoDescontoFormatado',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Total Aprovadas R$',
+				name : 'totalAprovadasFormatado',
+				width : 90,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Total Rejeitadas R$',
+				name : 'totalRejeitadasFormatado',
+				width : 90,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Total R$',
+				name : 'valorTotalFormatado',
+				width : 45,
+				sortable : true,
+				align : 'right'
+			}],
+			sortname : "data",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 730,
+			height : 180
+		});
+	},
+
+	obterDetalhesDiferencaCota: function(resultado, idDiferenca) {
+
+		diferencaEstoqueController.showPopupDetalhesCota();
+
+		$("#codigoDetalheEstoqueCota",              diferencaEstoqueController.workspace).html(resultado.codigoProduto);
+		$("#nomeProdutoDetalheEstoqueCota",         diferencaEstoqueController.workspace).html(resultado.descricaoProduto);
+		$("#numeroEdicaoDetalheEstoqueCota",        diferencaEstoqueController.workspace).html(resultado.numeroEdicao);
+		$("#nomeFornecedorDetalheEstoqueCota",      diferencaEstoqueController.workspace).html(resultado.fornecedor);
+		$("#tipoDiferencaDetalheEstoqueCota",       diferencaEstoqueController.workspace).html(resultado.tipoDiferenca);
+		$("#quantidadeDiferencaDetalheEstoqueCota", diferencaEstoqueController.workspace).html(resultado.quantidade);
+
+		$(".detalhesCotaGrid", diferencaEstoqueController.workspace).flexOptions({
+			url: contextPath + "/estoque/diferenca/obterDetalhesDiferencaCota",
+			preProcess: diferencaEstoqueController.setupDetalhesEstoqueCota,
+			params: diferencaEstoqueController.getParametrosDetalhesDiferencaCota(resultado, idDiferenca)			 
+		});
 		
+		$(".detalhesCotaGrid", diferencaEstoqueController.workspace).flexReload();
+	},
+
+	getParametrosDetalhesDiferencaCota: function(resultado, idDiferenca) {
+		
+		var data = new Array();
+		
+		data.push({name:'filtro.idDiferenca',      value: idDiferenca});
+		data.push({name:'filtro.codigoProduto',    value: resultado.codigoProduto});
+		data.push({name:'filtro.descricaoProduto', value: resultado.descricaoProduto});
+		data.push({name:'filtro.numeroEdicao', 	   value: resultado.numeroEdicao});
+		data.push({name:'filtro.nomeFornecedor',   value: resultado.fornecedor});
+		data.push({name:'filtro.tipoDiferenca',	   value: resultado.tipoDiferenca});
+		data.push({name:'filtro.quantidade', 	   value: resultado.quantidade});
+		
+		return data;
+	},
+	
+	setupDetalhesEstoqueCota: function(resultado) {
+
+		if (resultado.mensagens) {
+			
+			exibirMensagemDialog(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens,
+				"dialogDetalheEncalheCota"
+			);
+
+			return resultado.detalhesDiferenca;
+		}
+
+		$.each(resultado.tableModel.rows, function(index, row) {
+			
+			row.cell.data = row.cell.data.$;
+		});
+
+		$("#valorTotalDetalheEstoqueCota", diferencaEstoqueController.workspace).html(resultado.valorTotalFormatado);
+		$("#totalExemplaresDetalheEstoqueCota", diferencaEstoqueController.workspace).html(resultado.totalExemplares);
+
+		return resultado.tableModel;
+	},
+
+	showPopupDetalhesCota: function() {
+
+		$( "#dialogDetalheEncalheCota", diferencaEstoqueController.workspace ).dialog({
+			resizable: false,
+			height:470,
+			width:800,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this, diferencaEstoqueController.workspace ).dialog( "close" );
+				}
+			},
+			form: $("#dialogDetalheEncalheCota", this.workspace).parents("form")
+		});
 	},
 
 	popupDetalhe : function(result) {
@@ -202,20 +356,20 @@ var diferencaEstoqueController = $.extend(true, {
 		$('#detalheQtde', diferencaEstoqueController.workspace)			.html(result.quantidade);
 		$('#detalheEstoque', diferencaEstoqueController.workspace)		.html(result.tipoEstoque);
 		
-			$( "#dialog-detalhe-1", diferencaEstoqueController.workspace ).dialog({
-				resizable: false,
-				height:370,
-				width:350,
-				modal: true,
-				buttons: {
-					"Fechar": function() {
-						$( this ).dialog( "close" );
-						
-					},
-				},
-			    form: $("#dialog-detalhe-1", this.workspace).parents("form")
-			});
-		}
+		$( "#dialog-detalhe-1", diferencaEstoqueController.workspace ).dialog({
+			resizable: false,
+			height:370,
+			width:350,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					
+				}
+			},
+		    form: $("#dialog-detalhe-1", this.workspace).parents("form")
+		});
+	}
 
 }, BaseController);
 
@@ -225,3 +379,4 @@ $(function() {
 				
 });
 
+//@ sourceURL=dif.js
