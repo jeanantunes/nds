@@ -1,5 +1,6 @@
 var _workspace = "";
 
+
 /**
  * @param idCota
  * @returns {NotaPromissoria}
@@ -609,7 +610,9 @@ function TipoCotaGarantia(workspace) {
 		 return true;
 	}, function() {
 		 $("#tipoGarantiaSelect", _workspace).val(_this.controllerType);
-	});	
+	});
+    this.modoTela = null;
+    this.idHistorico = "";
 };
 
 TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
@@ -830,6 +833,11 @@ TipoCotaGarantia.prototype.salva = function(callBack) {
 	return retorno;
 };
 
+TipoCotaGarantia.prototype.definirModoTela = function(modoTela, idHistorico) {
+    this.modoTela = modoTela;
+    this.idHistorico = idHistorico;
+}
+
 // **************** FIADOR PROTOTYPE ********************//
 function Fiador(idCota, cotaGarantia) {
 	this._idCota = idCota;
@@ -970,10 +978,19 @@ Fiador.prototype.bindData = function() {
 	$("#cotaGarantiaFiadorNome", _workspace).html(nome);
 	$("#cotaGarantiaFiadorDoc", _workspace).html(doc);
 
-	var endereco = this.enderecoFiador;
-	var strEndereco = endereco.tipoLogradouro + ' ' + endereco.logradouro
-			+ ', ' + endereco.numero + ' - ' + endereco.bairro + ' - '
-			+ endereco.cidade + '/' + endereco.uf;
+    var strEndereco = '';
+	var endereco = '';
+	
+	for (var i in this.fiador.enderecoFiador) {
+		if (this.fiador.enderecoFiador[i].principal) {
+			endereco = this.fiador.enderecoFiador[i].endereco;
+		}
+	}
+	if (endereco) {
+        strEndereco = endereco.tipoLogradouro + ' ' + endereco.logradouro
+            + ', ' + endereco.numero + ' - ' + endereco.bairro + ' - '
+            + endereco.cidade + '/' + endereco.uf;
+    }
 
 	$("#cotaGarantiaFiadorEndereco", _workspace).html(strEndereco);
 	var telefone = '';

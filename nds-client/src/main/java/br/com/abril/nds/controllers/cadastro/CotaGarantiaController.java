@@ -14,7 +14,7 @@ import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -145,7 +145,7 @@ public class CotaGarantiaController {
 		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 
 		if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
-			result.use(CustomJson.class).from(cotaGarantia).serialize();		
+			result.use(CustomJson.class).from(cotaGarantia).exclude(EnderecoFiador.class, "fiador").serialize();		
 		}else{			
 			result.use(CustomJson.class).from("OK").serialize();		
 		}	
@@ -519,10 +519,7 @@ public class CotaGarantiaController {
 	public void getFiador(Long idFiador, String documento) {
 		Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
 		if (fiador != null) {
-			
-			Endereco endereco = cotaGarantiaService.buscaEnderecoFiadorPrincipal(idFiador);
-			
-			result.use(CustomMapJson.class).put("fiador",fiador).put("endereco", endereco).serialize();
+			result.use(CustomMapJson.class).put("fiador",fiador).exclude(EnderecoFiador.class, "fiador").serialize();
 		} else {
 			result.use(CustomJson.class).from("NotFound").serialize();
 		}

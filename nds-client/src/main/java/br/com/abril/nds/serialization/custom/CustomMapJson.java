@@ -2,6 +2,8 @@ package br.com.abril.nds.serialization.custom;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -15,6 +17,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.module.SimpleModule;
 
+import br.com.abril.nds.serialization.custom.CustomJson.PropertyExcludeModule;
 import br.com.caelum.vraptor.View;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.ioc.Component;
@@ -28,6 +31,8 @@ public class CustomMapJson implements View {
 
 	
 	private Map<String,Object> map = new HashMap<String, Object>();
+	
+	private Map<Class<?>, Collection<String>> toExclude = new HashMap<Class<?>, Collection<String>>();
 
 	public CustomMapJson(HttpServletResponse response,Localization localization)
 			throws IOException {
@@ -70,10 +75,18 @@ public class CustomMapJson implements View {
 		map.put(key, value);
 		return this;
 	}
+	
+	public CustomMapJson exclude(Class<?> clazz, String... properties) {
+	      toExclude.put(clazz, Arrays.asList(properties));
+	      return this;
+	}
 
 	public CustomMapJson serialize() {
 		try {
-			mapper.writeValue(response.getWriter(), this.map);
+			if (!toExclude.isEmpty()) {
+			    mapper.registerModule(new PropertyExcludeModule(toExclude));
+			}
+		    mapper.writeValue(response.getWriter(), this.map);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

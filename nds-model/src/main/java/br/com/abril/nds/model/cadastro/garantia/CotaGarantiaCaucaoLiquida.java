@@ -18,7 +18,6 @@ import javax.persistence.OrderBy;
 
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
 
@@ -40,7 +39,7 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	private ContaBancariaDeposito contaBancariaDeposito;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COBRANCA", nullable = false)
+	@Column(name = "TIPO_COBRANCA")
 	private TipoCobrancaCotaGarantia tipoCobranca;	
 	
 	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
