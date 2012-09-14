@@ -15,25 +15,24 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 	public VisaoEstoqueDTO obterLancamento(FiltroConsultaVisaoEstoque filtro) {
 		VisaoEstoqueDTO lancamento = new VisaoEstoqueDTO();
 		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT ")
-		   .append(" COUNT(EstoqueProduto.qtde) as produtos, ")
-		   .append(" SUM(EstoqueProduto.qtde) as exemplares, ")
-		   .append(" SUM(ProdutoEdicao.precoVenda * EstoqueProduto.qtde) as valor ")
-		   .append(" FROM Produto p ")
-		   .append(" INNER JOIN Produto.fornecedores fornecedor")
-		   .append(" INNER JOIN ProdutoEdicao ")
-		   .append(" ON p.id = ProdutoEdicao.produto.id")
-		   .append(" INNER JOIN EstoqueProduto ")
-		   .append(" ON ProdutoEdicao.id = EstoqueProduto.produtoEdicao.id")
-		   .append(" INNER JOIN MovimentoEstoque ")
-		   .append(" ON MovimentoEstoque.produtoEdicao.id = EstoqueProduto.produtoEdicao.id ")
-		   .append(" AND MovimentoEstoque.estoqueProduto.id = EstoqueProduto.id ")
-		   .append(" WHERE fornecedor.id = :idFornecedor ")
-		   .append(" AND MovimentoEstoque.dataCriacao = :dataMovimentacao ");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT ")
+		   .append(" COUNT(estoque_produto.qtde) as produtos, ")
+		   .append(" SUM(estoque_produto.qtde) as exemplares, ")
+		   .append(" SUM(produto_edicao.preco_venda * estoque_produto.qtde) as valor ")
+		   .append(" FROM produto_fornecedor ")
+		   .append(" INNER JOIN produto_edicao ")
+		   .append(" ON produto_fornecedor.produto_id = produto_edicao.produto_id ")
+		   .append(" INNER JOIN estoque_produto  ")
+		   .append(" ON produto_edicao.id = estoque_produto.produto_edicao_id ")
+		   .append(" INNER JOIN movimento_estoque ")
+		   .append(" ON movimento_estoque.produto_edicao_id = estoque_produto.produto_edicao_id ")
+		   .append(" AND movimento_estoque.estoque_produto_id = estoque_produto.id ")
+		   .append(" WHERE produto_fornecedor.fornecedores_id = :idFornecedor ")
+		   .append(" AND movimento_estoque.data_criacao = :dataMovimentacao ");
+
 	
-		Query query = getSession().createQuery(hql.toString());
+		Query query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		query.setParameter("dataMovimentacao", filtro.getDataMovimentacao());

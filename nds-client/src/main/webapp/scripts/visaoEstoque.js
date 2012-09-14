@@ -139,6 +139,9 @@ var visaoEstoqueController = $.extend(true, {
 	
 	popup_inventario : function(estoque) {
 		
+		$("#visaoEstoque_inventario_estoqueSelecionado").html(estoque);
+		$("#visaoEstoque_inventario_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
+		
 		$( "#dialog-inventario" ).dialog({
 			resizable: false,
 			height:480,
