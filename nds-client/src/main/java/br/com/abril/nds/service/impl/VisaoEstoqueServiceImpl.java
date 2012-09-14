@@ -21,12 +21,12 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 	public List<VisaoEstoqueDTO> obterVisaoEstoque(FiltroConsultaVisaoEstoque filtro) {
 		List<VisaoEstoqueDTO> list = new ArrayList<VisaoEstoqueDTO>();
 
-		list.add(visaoEstoqueRepository.obterLancamento());
-		list.add(visaoEstoqueRepository.obterLancamentoJuramentado());
-		list.add(visaoEstoqueRepository.obterSuplementar());
-		list.add(visaoEstoqueRepository.obterRecolhimento());
-		list.add(visaoEstoqueRepository.obterProdutosDanificados());
-		
+		list.add(visaoEstoqueRepository.obterLancamento(filtro));
+		list.add(visaoEstoqueRepository.obterLancamentoJuramentado(filtro));
+		list.add(visaoEstoqueRepository.obterSuplementar(filtro));
+		list.add(visaoEstoqueRepository.obterRecolhimento(filtro));
+		list.add(visaoEstoqueRepository.obterProdutosDanificados(filtro));
+
 		return list;
 	}
 
