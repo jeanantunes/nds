@@ -9,6 +9,7 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 
 	private Date dataMovimentacao;
 	private Long idFornecedor;
+	private String tipoEstoque;
 
 
 	public Date getDataMovimentacao() {
@@ -23,7 +24,13 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
 	}
-
+	public String getTipoEstoque() {
+		return tipoEstoque;
+	}
+	public void setTipoEstoque(String tipoEstoque) {
+		this.tipoEstoque = tipoEstoque;
+	}
+	
 	
 	@Override
 	public int hashCode() {

@@ -23,7 +23,8 @@ var visaoEstoqueController = $.extend(true, {
 		});
 		
 		visaoEstoqueController.initGridVisaoEstoque();
-		visaoEstoqueController.initGridVisaoEstoqueLancto();
+		visaoEstoqueController.initGridVisaoEstoqueDetalhe();
+		visaoEstoqueController.initGridVisaoEstoqueDetalheJuramentado();
 		visaoEstoqueController.initGridVisaoEstoqueTransferencia();
 		visaoEstoqueController.initGridVisaoEstoqueInventario();
 	},
@@ -44,7 +45,7 @@ var visaoEstoqueController = $.extend(true, {
 	
 	montaColunaAcao : function(data) {
 		$.each(data.rows, function(index, value) {
-			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_lancamento(\'' + value.cell.estoque + '\');" titile="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
+			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_detalhe(\'' + value.cell.estoque + '\');" titile="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
 			
 			if (value.cell.estoque != "Lançamento Juramentado") {
 				acao += '<a href="javascript:;" onClick="visaoEstoqueController.popup_transferencia(\'' + value.cell.estoque + '\');" title="Transferir Estoque"><img src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0" alt="Transferir" /></a>    ' +
@@ -57,8 +58,31 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
-	popup_lancamento : function(estoque) {
-		$("#dialog-lancamento").dialog({
+	popup_detalhe : function(estoque) {
+		
+		var div = 'dialog-detalhe';
+		var grid = 'visaoEstoqueDetalheGrid';
+		
+		if (estoque == 'Lançamento Juramentado') {
+			div = 'dialog-detalhe-juramentado';
+			grid = 'visaoEstoqueDetalheJuramentadoGrid';
+		} else {
+			$("#" + div).get(0).title = "Vis&atilde;o Estoque " + estoque;
+			$("#visaoEstoque_detalhe_estoque").html(estoque);
+		}
+		
+		$("#visaoEstoque_filtro_tipoEstoque").value(estoque);
+		
+		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		
+		$("." + grid, this.workspace).flexOptions({
+			url : this.path + 'pesquisarDetalhe.json?' + params, 
+			newp:1
+		});
+		
+		$("." + grid).flexReload();
+		
+		$("#" + div).dialog({
 			resizable: false,
 			height:380,
 			width:850,
@@ -162,8 +186,66 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
-	initGridVisaoEstoqueLancto : function() {
-		$(".visaoEstoqueLanctoGrid").flexigrid({
+	initGridVisaoEstoqueDetalhe : function() {
+		$(".visaoEstoqueDetalheGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 160,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 90,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Lcto',
+				name : 'dtLancto',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Rclto',
+				name : 'dtRecolto',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Qtde',
+				name : 'qtde',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Valor R$',
+				name : 'valorFormatado',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}],
+			width : 795,
+			height : 200
+		});
+	},
+	
+	
+	initGridVisaoEstoqueDetalheJuramentado : function() {
+		$(".visaoEstoqueDetalheJuramentadoGrid").flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',

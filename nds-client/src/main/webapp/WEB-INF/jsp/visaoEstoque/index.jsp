@@ -2,9 +2,9 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/visaoEstoque.js"></script>
 	
 	<style type="text/css">
-		#dialog-lancamento, #dialog-suplementar, #dialog-encalhe, #dialog-transferencia, #dialog-inventario-confirm, #dialog-inventario, #dialog-juramentado{display:none;}
+		#dialog-detalhe, #dialog-suplementar, #dialog-encalhe, #dialog-transferencia, #dialog-inventario-confirm, #dialog-inventario, #dialog-detalhe-juramentado{display:none;}
 		#dialog-suplementar fieldset, #dialog-encalhe fieldset{width:600px!important;}
-		#dialog-lancamento fieldset, #dialog-juramentado fieldset{width:800px!important;}
+		#dialog-detalhe fieldset, #dialog-detalhe-juramentado fieldset{width:800px!important;}
 		#dialog-transferencia form{margin:0px!important; padding:0px!important; width:900px!important; overflow:hidden; }
 	</style>
 </head>
@@ -12,6 +12,7 @@
 <body>
 
 	<form action="/estoque/visaoEstoque" id="pesquisarVisaoEstoqueForm">
+	<input type="hidden" name="filtro.tipoEstoque" id="visaoEstoque_filtro_tipoEstoque"/>
 	
 	<fieldset class="classFieldset">
 		<legend> Pesquisar Estoque</legend>
@@ -48,12 +49,21 @@
 	
 	<%-- POPUPS --%>
 	
-	<div id="dialog-lancamento" title="Vis&atilde;o Estoque Lan&ccedil;amento">
+	<div id="dialog-detalhe" title="Vis&atilde;o Estoque Lan&ccedil;amento">
 		<fieldset>
-	        <legend>Vis&atilde;o de Estoque / Lan&ccedil;amento</legend>
-	        <table class="visaoEstoqueLanctoGrid"></table>
+	        <legend>Vis&atilde;o de Estoque / <span id="visaoEstoque_detalhe_estoque"></span></legend>
+	        <table class="visaoEstoqueDetalheGrid"></table>
 	        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=XLS">Arquivo</a></span>
 			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=PDF">Imprimir</a></span>
+		</fieldset>
+	</div>
+	
+	<div id="dialog-detalhe-juramentado" title="Visão Estoque Juramentado">
+		<fieldset>
+	        <legend>Vis&atilde;o de Estoque / Juramentado</legend>
+	        <table class="visaoEstoqueDetalheJuramentadoGrid"></table>
+	        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalheJuramentado?fileType=XLS">Arquivo</a></span>
+			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalheJuramentado?fileType=PDF">Imprimir</a></span>
 		</fieldset>
 	</div>
 
