@@ -57,7 +57,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"NAO ENCONTROU ProdutoEdicao");
+					"NAO ENCONTROU ProdutoEdicao de codigo: " + codigoPublicacao
+					+ ", numeroEdicao: " + edicao);
 			return;
 		}
 			
@@ -66,7 +67,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		if (lancamento == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"NAO ENCONTROU Lancamento");
+					"NAO ENCONTROU Lancamento para ProdutoEdicao: "
+					+ produtoEdicao.getId());
 			return;
 		}
 		
