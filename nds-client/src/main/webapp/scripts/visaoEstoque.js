@@ -1,23 +1,32 @@
-var visaoEstoqueController = $.extend(true, {	
+var visaoEstoqueController = $.extend(true, {
 	
 	path : contextPath + '/estoque/visaoEstoque/',
 
-	
+
 	init : function() {
 		
-		$("#dataMovimento").datepicker({
+		$("#visaoEstoque_filtro_dataMovimentacao").datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
 		});
-
+		
+		$("#visaoEstoque_transferencia_dataMovimentacao").datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
 		$("#btnPesquisar", this.workspace).click(function() {
 			visaoEstoqueController.pesquisar();
 			$(".grids").show();
 		});
 		
 		visaoEstoqueController.initGridVisaoEstoque();
-		visaoEstoqueController.initGridVisaoEstoqueLancto();
+		visaoEstoqueController.initGridVisaoEstoqueDetalhe();
+		visaoEstoqueController.initGridVisaoEstoqueDetalheJuramentado();
+		visaoEstoqueController.initGridVisaoEstoqueTransferencia();
+		visaoEstoqueController.initGridVisaoEstoqueInventario();
 	},
 	
 	
@@ -36,7 +45,7 @@ var visaoEstoqueController = $.extend(true, {
 	
 	montaColunaAcao : function(data) {
 		$.each(data.rows, function(index, value) {
-			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_lancamento(\'' + value.cell.estoque + '\');" titile="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
+			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_detalhe(\'' + value.cell.estoque + '\');" titile="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
 			
 			if (value.cell.estoque != "Lançamento Juramentado") {
 				acao += '<a href="javascript:;" onClick="visaoEstoqueController.popup_transferencia(\'' + value.cell.estoque + '\');" title="Transferir Estoque"><img src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0" alt="Transferir" /></a>    ' +
@@ -49,9 +58,31 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
-	popup_lancamento : function(estoque) {
-
-		$( "#dialog-lancamento" ).dialog({
+	popup_detalhe : function(estoque) {
+		
+		var div = 'dialog-detalhe';
+		var grid = 'visaoEstoqueDetalheGrid';
+		
+		if (estoque == 'Lançamento Juramentado') {
+			div = 'dialog-detalhe-juramentado';
+			grid = 'visaoEstoqueDetalheJuramentadoGrid';
+		} else {
+			$("#" + div).get(0).title = "Vis&atilde;o Estoque " + estoque;
+			$("#visaoEstoque_detalhe_estoque").html(estoque);
+		}
+		
+		$("#visaoEstoque_filtro_tipoEstoque").value(estoque);
+		
+		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		
+		$("." + grid, this.workspace).flexOptions({
+			url : this.path + 'pesquisarDetalhe.json?' + params, 
+			newp:1
+		});
+		
+		$("." + grid).flexReload();
+		
+		$("#" + div).dialog({
 			resizable: false,
 			height:380,
 			width:850,
@@ -61,6 +92,49 @@ var visaoEstoqueController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			}
+		});
+	},
+	
+	
+	popup_transferencia : function(estoque) {
+		
+		$("#visaoEstoque_transferencia_estoqueSelecionado").html(estoque);
+		$("#dialog-transferencia").dialog({
+			resizable: false,
+			height:480,
+			width:930,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
+		});
+	},
+	
+	
+	popup_inventario : function(estoque) {
+		
+		$( "#dialog-inventario" ).dialog({
+			resizable: false,
+			height:480,
+			width:930,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+					popConfirmaEstoque();
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
+			
 		});
 	},
 	
@@ -89,7 +163,7 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'valor',
+				name : 'valorFormatado',
 				width : 100,
 				sortable : true,
 				align : 'right'
@@ -112,8 +186,66 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
-	initGridVisaoEstoqueLancto : function() {
-		$(".visaoEstoqueLanctoGrid").flexigrid({
+	initGridVisaoEstoqueDetalhe : function() {
+		$(".visaoEstoqueDetalheGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 160,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 90,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Lcto',
+				name : 'dtLancto',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Rclto',
+				name : 'dtRecolto',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Qtde',
+				name : 'qtde',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Valor R$',
+				name : 'valorFormatado',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}],
+			width : 795,
+			height : 200
+		});
+	},
+	
+	
+	initGridVisaoEstoqueDetalheJuramentado : function() {
+		$(".visaoEstoqueDetalheJuramentadoGrid").flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
@@ -178,6 +310,140 @@ var visaoEstoqueController = $.extend(true, {
 			}],
 			width : 795,
 			height : 200
+		});
+	},
+	
+	
+	initGridVisaoEstoqueTransferencia : function() {
+		$(".visaoEstoqueTransferenciaGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 110,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Dt. Lancto',
+				name : 'dtLancto',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Dt. Recolto',
+				name : 'dtRecolto',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Qtde',
+				name : 'qtde',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Transferir (exes.)',
+				name : 'precoCapa',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Saldo Estoque',
+				name : 'saldoEstoque',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : '',
+				name : 'acao',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 870,
+			height : 200
+		});
+	},
+	
+	
+	initGridVisaoEstoqueInventario : function() {
+		$(".visaoEstoqueInventarioGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'produto',
+				width : 110,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Dt. Lancto',
+				name : 'dtLancto',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Dt. Recolto',
+				name : 'dtRecolto',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Qtde',
+				name : 'qtde',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Estoque',
+				name : 'estoque',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Diferença',
+				name : 'Diferenca',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 870,
+			height : 300
 		});
 	},
 	

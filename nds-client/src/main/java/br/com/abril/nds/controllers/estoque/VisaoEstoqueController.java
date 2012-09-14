@@ -1,8 +1,6 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -76,18 +74,26 @@ public class VisaoEstoqueController {
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
-		//List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
+		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
 		
-		VisaoEstoqueDTO dto = new VisaoEstoqueDTO();
-		dto.setEstoque("Teste");
-		dto.setProdutos(10L);
-		dto.setExemplares(1000L);
-		dto.setValor(BigDecimal.TEN);
-		
-		List<VisaoEstoqueDTO> listVisaoEstoque = new ArrayList<VisaoEstoqueDTO>();
-		listVisaoEstoque.add(dto);
+//		VisaoEstoqueDTO dto = new VisaoEstoqueDTO();
+//		dto.setEstoque("Teste");
+//		dto.setProdutos(10L);
+//		dto.setExemplares(1000L);
+//		dto.setValor(BigDecimal.TEN);
+//		
+//		List<VisaoEstoqueDTO> listVisaoEstoque = new ArrayList<VisaoEstoqueDTO>();
+//		listVisaoEstoque.add(dto);
 		
 		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).page(page).serialize();
+	}
+	
+	
+	@Path("/pesquisarDetalhe.json")
+	public void pesquisarDetalhe(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+		
+		
+		
 	}
 	
 	
@@ -96,16 +102,7 @@ public class VisaoEstoqueController {
 		
 		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
 		
-		//List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
-		
-		VisaoEstoqueDTO dto = new VisaoEstoqueDTO();
-		dto.setEstoque("Teste");
-		dto.setProdutos(10L);
-		dto.setExemplares(1000L);
-		dto.setValor(BigDecimal.TEN);
-		
-		List<VisaoEstoqueDTO> listVisaoEstoque = new ArrayList<VisaoEstoqueDTO>();
-		listVisaoEstoque.add(dto);
+		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
 		
 		FileExporter.to("consulta-box", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), null, null,

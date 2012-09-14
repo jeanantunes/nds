@@ -19,6 +19,7 @@ import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Trailer;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.repository.impl.AbstractRepository;
@@ -30,7 +31,10 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
-	
+
+	@Autowired
+	private DistribuidorService distribuidorService;
+
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 	
 	@Override
@@ -38,8 +42,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		
 		// RECEBE DATA DO SISTEMA PARA FILTRAR A CONSULTA
-		Date dataLctoDistrib = (Date) message.getHeader()
-				.get("dataLctoDistrib");
+		//Date dataLctoDistrib = (Date) message.getHeader().get("dataLctoDistrib");
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		
 		// OBTER LISTA DE JORNALEIROS PARA DEFINIR QTDE DE ARQUIVOS
 		StringBuffer sql = new StringBuffer();
@@ -58,7 +62,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 
 		Query query = getSession().createQuery(sql.toString());
-	    query.setParameter("dataInformada", dataLctoDistrib);
+	    query.setParameter("dataInformada", dataOperacao);
 
 		try {
 			@SuppressWarnings("unchecked")
@@ -72,7 +76,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 				try{
 					
 					//CRIA O NOME DO ARQUIVO COM O NUMERO DA COTA + DATA INFORMADA
-					String nomeArquivo = ""+jornaleiro.getCota().getNumeroCota()+"".concat(sdf.format(dataLctoDistrib));
+					String nomeArquivo = ""+jornaleiro.getCota().getNumeroCota()+"".concat(sdf.format(dataOperacao));
 					
 					PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/"+nomeArquivo+".rep"));	
 					
@@ -81,7 +85,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 					
 					outHeader.setCodigoCota(jornaleiro.getCota().getNumeroCota().toString());
 					outHeader.setNomePDV(jornaleiro.getNome());
-					outHeader.setDataLctoDistrib(sdf.format(dataLctoDistrib));//data recebida pela interface
+					outHeader.setDataLctoDistrib(sdf.format(dataOperacao));//data recebida pela interface
 					
 					print.println(fixedFormatManager.export(outHeader));
 					
