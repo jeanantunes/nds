@@ -11,12 +11,6 @@ var visaoEstoqueController = $.extend(true, {
 			buttonImageOnly: true
 		});
 		
-		$("#visaoEstoque_transferencia_dataMovimentacao").datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
 		$("#btnPesquisar", this.workspace).click(function() {
 			visaoEstoqueController.pesquisar();
 			$(".grids").show();
@@ -58,6 +52,29 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
+	montaSelectIncluirEstoque : function(estoque) {
+		
+		var select = $("#visaoEstoque_selectIncluirEstoque").get(0);
+		
+		while(select.options.length > 0 ) {
+			select.remove(0);
+		}
+		
+		if (estoque != "Lançamento") {
+			select.add(new Option("Lançamento", "Lançamento"), null);
+		}
+		if (estoque != "Suplementar") {
+			select.add(new Option("Suplementar", "Suplementar"), null);
+		}
+		if (estoque != "Recolhimento") {
+			select.add(new Option("Recolhimento", "Recolhimento"), null);
+		}
+		if (estoque != "Produtos Danificados") {
+			select.add(new Option("Produtos Danificados", "Produtos Danificados"), null);
+		}
+	},
+	
+	
 	popup_detalhe : function(estoque) {
 		
 		var div = 'dialog-detalhe';
@@ -67,11 +84,10 @@ var visaoEstoqueController = $.extend(true, {
 			div = 'dialog-detalhe-juramentado';
 			grid = 'visaoEstoqueDetalheJuramentadoGrid';
 		} else {
-			$("#" + div).get(0).title = "Vis&atilde;o Estoque " + estoque;
 			$("#visaoEstoque_detalhe_estoque").html(estoque);
 		}
 		
-		$("#visaoEstoque_filtro_tipoEstoque").value(estoque);
+		$("#visaoEstoque_filtro_tipoEstoque").val(estoque);
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
@@ -98,7 +114,11 @@ var visaoEstoqueController = $.extend(true, {
 	
 	popup_transferencia : function(estoque) {
 		
+		visaoEstoqueController.montaSelectIncluirEstoque(estoque);
+		
 		$("#visaoEstoque_transferencia_estoqueSelecionado").html(estoque);
+		$("#visaoEstoque_transferencia_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
+		
 		$("#dialog-transferencia").dialog({
 			resizable: false,
 			height:480,
