@@ -1752,6 +1752,7 @@ public class Fixture {
 		estoqueProduto.setQtde(qtde);
 		estoqueProduto.setQtdeSuplementar(qtde);
 		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
+		estoqueProduto.setQtdeDevolucaoFornecedor(qtde);
 		return estoqueProduto;
 	}
 	

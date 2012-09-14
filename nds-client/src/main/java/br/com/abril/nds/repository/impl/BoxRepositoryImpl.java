@@ -109,7 +109,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Box> busca(Integer codigoBox,TipoBox tipoBox, String  orderBy , Ordenacao ordenacao, int initialResult, int maxResults){
+	public List<Box> busca(Integer codigoBox,TipoBox tipoBox, String  orderBy , Ordenacao ordenacao, Integer initialResult, Integer maxResults){
 		
 		Criteria criteria = addRestrictions(codigoBox, tipoBox);
 		
@@ -119,8 +119,18 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 			criteria.addOrder(Order.desc(orderBy));
 		}
 		
-		criteria.setMaxResults(maxResults);
-		criteria.setFirstResult(initialResult);
+		if(initialResult != null) {
+			
+			criteria.setFirstResult(initialResult);
+			
+		}
+		
+		if(maxResults != null) {
+			
+			criteria.setMaxResults(maxResults);
+			
+		}
+		
 		
 		return criteria.list();
 		

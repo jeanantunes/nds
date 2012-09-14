@@ -44,6 +44,7 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -51,12 +52,14 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.impl.EstoqueProdutoServiceImpl;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -117,6 +120,9 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -1906,16 +1912,23 @@ public class DiferencaEstoqueController {
 		if(pe == null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Edição não encontrada."));
 		
-		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(pe.getId(), null);
-				
-		Object[] dados = new Object[3];
-		dados[0] = qtde;
-		dados[1] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
-		dados[2] = pe.getId();
+		EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(pe.getId());
+		
+		if(estoque == null) 
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Produto sem estoque cadastrado."));
+						
+		Object[] dados = new Object[6];
+		dados[0] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
+		dados[1] = pe.getId();
+		
+		dados[2] = estoque.getQtde() == null ? 0 : estoque.getQtde();
+		dados[3] = estoque.getQtdeSuplementar() == null ? 0 : estoque.getQtdeSuplementar();
+		dados[4] = estoque.getQtdeDevolucaoEncalhe() == null ? 0 : estoque.getQtdeDevolucaoEncalhe();
+		dados[5] = estoque.getQtdeDevolucaoFornecedor() == null ? 0 : estoque.getQtdeDevolucaoFornecedor();
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
-	
+		
 	@Post
 	@Path("/lancamento/rateio/buscarProdutosCotaNota")
 	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota){
