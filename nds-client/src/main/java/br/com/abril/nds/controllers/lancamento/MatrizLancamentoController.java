@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +17,6 @@ import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
-import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
@@ -32,7 +28,6 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -50,6 +45,7 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -355,6 +351,20 @@ public class MatrizLancamentoController {
 	 * @param novaData - nova data de recolhimento
 	 */
 	private void validarDataReprogramacao(List<ProdutoLancamentoVO> produtosLancamento, Date novaData) {
+		
+		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
+
+		for (ConfirmacaoVO confirmacao : confirmacoes) {
+
+			if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
+
+				if (confirmacao.isConfirmado()) {
+
+					throw new ValidacaoException(TipoMensagem.WARNING,
+						"Lançamentos não podem ser reprogramados para uma data já confirmada!");
+				}
+			}
+		}		
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
 			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
@@ -750,14 +760,15 @@ public class MatrizLancamentoController {
 		
 		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());
 		
+		produtoBalanceamentoVO.setBloquearExclusao(produtoLancamentoDTO.isBalanceamentoConfirmado());
+		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
 		
 		produtoBalanceamentoVO.setPossuiFuro(produtoLancamentoDTO.isPossuiFuro());
 		
 		produtoBalanceamentoVO.setDestacarLinha(
 			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
-				|| produtoLancamentoDTO.getStatusLancamento().equals(StatusLancamento.CANCELADO)
-				|| produtoLancamentoDTO.isAlteradoInteface() );
+				|| produtoLancamentoDTO.isAlteradoInteface());
 				
 		return produtoBalanceamentoVO;
 	}	
@@ -1082,57 +1093,10 @@ public class MatrizLancamentoController {
 	 * 
 	 * @return List<ConfirmacaoVO>: confirmacoesVO
 	 */
-    private List<ConfirmacaoVO> montarListaDatasConfirmacao() {
-		
-    	BalanceamentoLancamentoDTO balanceamentoLancamento =
-			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+	private List<ConfirmacaoVO> montarListaDatasConfirmacao() {
 
-		if (balanceamentoLancamento == null) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
-		}
-    	
-		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
-
-		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
-
-		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry
-				: balanceamentoLancamento.getMatrizLancamento().entrySet()) {
-			
-			Date novaData = entry.getKey();
-			
-            List<ProdutoLancamentoDTO> produtosLancamento = entry.getValue();
-			
-			if (produtosLancamento == null || produtosLancamento.isEmpty()) {
-				
-				continue;
-			}
-		
-			boolean confirmado = false;
-			
-			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
-
-				confirmado =
-					(produtoLancamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO)
-						&& (produtoLancamento.getDataLancamentoDistribuidor().compareTo(
-								produtoLancamento.getNovaDataLancamento()) == 0));
-				
-				if (!confirmado) {
-					
-					break;
-				}
-			}
-			
-			mapaDatasConfirmacaoOrdenada.put(novaData, confirmado);
-		}
-		
-		Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
-		
-		for (Entry<Date, Boolean> item : entrySet) {
-			
-			confirmacoesVO.add(
-				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
-		}
+		List<ConfirmacaoVO> confirmacoesVO =
+			matrizLancamentoService.obterDatasConfirmacao(this.getProdutoLancamentoDTOFromMatrizSessao());
 
 		return confirmacoesVO;
 	}
