@@ -850,8 +850,12 @@ public class DataLoader {
 	private static Endereco enderecoRioPardo1;
 	private static Endereco enderecoRioPardo2;
 	private static Endereco enderecoRioPardo3;
-	private static TipoPontoPDV tipoPontoPDVResidencial;
-	private static TipoPontoPDV tipoPontoPDV2Comercial;
+
+	private static TipoPontoPDV tipoPontoPDVBanca;
+	private static TipoPontoPDV tipoPontoPDVRevistaria;
+	private static TipoPontoPDV tipoPontoPDVLivraria;
+	private static TipoPontoPDV tipoPontoPDVEtc;
+	
 	private static Lancamento lancamentoCanceladoSuper2;
 	private static Lancamento lancamentoCanceladoCapricho2;
 	private static ProdutoEdicao produtoEdicaoVeja5;
@@ -916,7 +920,6 @@ public class DataLoader {
 		criarDiasDistribuicaoFornecedores(session);
 		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
-		gerarTiposPontoPDV(session);
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
 		criarEditores(session);		
@@ -1150,6 +1153,7 @@ public class DataLoader {
 		criarUsuarioAdministrador(session); 
 		
 		criarTiposMovimento(session);
+		gerarTiposPontoPDV(session);
 		
 	}
 
@@ -1814,10 +1818,12 @@ public class DataLoader {
 
 	private static void gerarTiposPontoPDV(Session session) {
 
-		 tipoPontoPDVResidencial  = Fixture.criarTipoPontoPDV(1L, "Residencial");
-		 tipoPontoPDV2Comercial  = Fixture.criarTipoPontoPDV(2L, "Comercial");
-
-		save(session,tipoPontoPDVResidencial,tipoPontoPDV2Comercial);
+		 tipoPontoPDVBanca  = Fixture.criarTipoPontoPDV(1L, "Banca");
+		 tipoPontoPDVRevistaria  = Fixture.criarTipoPontoPDV(2L, "Revistaria");
+		 tipoPontoPDVLivraria  = Fixture.criarTipoPontoPDV(3L, "Livraria");
+		 tipoPontoPDVEtc = Fixture.criarTipoPontoPDV(4L, "Outros");
+		 
+		save(session, tipoPontoPDVBanca, tipoPontoPDVBanca, tipoPontoPDVBanca, tipoPontoPDVEtc);
 	}
 
 	private static void gerarHistoricosAculoDivida(Session session) {
@@ -2439,9 +2445,11 @@ public class DataLoader {
 
 	private static void criarPDVsCota(Session session){
 
-		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVResidencial, null);
+		save(session, tipoPontoPDVRevistaria, tipoPontoPDVBanca);
 		
-		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDV2Comercial, null);
+		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
+		
+		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
 		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
 		pdvJose.setSegmentacao(segmentacaoPDV);
@@ -2464,18 +2472,23 @@ public class DataLoader {
 		session.save(pdvLuis);
 
 		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
+		pdvJoao.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJoao);
 
 		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
+		pdvGuilherme.setSegmentacao(segmentacaoPDV);
 		session.save(pdvGuilherme);
 
 		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
+		pdvMurilo.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMurilo);
 
 		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
+		pdvMariana.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMariana);
 
 		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
+		pdvOrlando.setSegmentacao(segmentacaoPDV);
 		session.save(pdvOrlando);
 
 	}
