@@ -199,7 +199,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
 				
-				if (this.isBalanceamentoConfirmado(produtoRecolhimento)) {
+				if (produtoRecolhimento.isBalanceamentoConfirmado()) {
 					
 					this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
 															null, novaDataRecolhimento);
@@ -248,17 +248,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return matrizConfirmada;
 	}
 
-	/**
-	 * Verifica se o produto de balanceamento já está confirmado
-	 * 
-	 * @param produtoRecolhimento - produto de recolhimento
-	 * 
-	 * @return boolean
-	 */
-	private boolean isBalanceamentoConfirmado(ProdutoRecolhimentoDTO produtoRecolhimento) {
-		
-		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(produtoRecolhimento.getStatusLancamento());
-	}
+	
 	
 	/**
 	 * Método que atualiza as informações dos lançamentos.

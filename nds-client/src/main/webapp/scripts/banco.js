@@ -413,3 +413,5 @@ var bancoController = $.extend(true, {
 	    }
 	    
 }, BaseController);
+
+//@ sourceURL=scriptBancos.js

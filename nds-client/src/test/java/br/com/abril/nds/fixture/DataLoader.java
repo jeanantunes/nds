@@ -1846,7 +1846,7 @@ public class DataLoader {
 		 tipoPontoPDVLivraria  = Fixture.criarTipoPontoPDV(3L, "Livraria");
 		 tipoPontoPDVEtc = Fixture.criarTipoPontoPDV(4L, "Outros");
 		 
-		save(session, tipoPontoPDVBanca, tipoPontoPDVBanca, tipoPontoPDVBanca, tipoPontoPDVEtc);
+		save(session, tipoPontoPDVBanca, tipoPontoPDVRevistaria, tipoPontoPDVLivraria, tipoPontoPDVEtc);
 	}
 
 	private static void gerarHistoricosAculoDivida(Session session) {
@@ -2475,6 +2475,8 @@ public class DataLoader {
 
 	private static void criarPDVsCota(Session session){
 
+		save(session, tipoPontoPDVRevistaria, tipoPontoPDVBanca);
+		
 		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
 		
 		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
@@ -2500,18 +2502,23 @@ public class DataLoader {
 		session.save(pdvLuis);
 
 		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
+		pdvJoao.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJoao);
 
 		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
+		pdvGuilherme.setSegmentacao(segmentacaoPDV);
 		session.save(pdvGuilherme);
 
 		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
+		pdvMurilo.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMurilo);
 
 		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
+		pdvMariana.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMariana);
 
 		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
+		pdvOrlando.setSegmentacao(segmentacaoPDV);
 		session.save(pdvOrlando);
 
 	}

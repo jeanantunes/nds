@@ -96,11 +96,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 			return false;
 		}
 		
-		if (StatusLancamento.CANCELADO.equals(this.statusLancamento)) {
-			
-			return false;
-		}
-		
 		return true;
 	}
 	
@@ -492,6 +487,13 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setAlteradoInteface(boolean alteradoInteface) {
 		this.alteradoInteface = alteradoInteface;
+	}
+	
+	/**
+	 * @return the balanceamentoConfirmado
+	 */
+	public boolean isBalanceamentoConfirmado() {
+		return StatusLancamento.BALANCEADO.equals(statusLancamento);
 	}
 	
 }
