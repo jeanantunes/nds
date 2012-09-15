@@ -114,7 +114,7 @@
 </div>
 </form>
 
-<form id="form-pesquisar">
+<form id="form-pesquisar" >
 <div id="dialog-pesquisar" title="Pesquisa de Produtos" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
@@ -127,7 +127,9 @@
 			<tr>
 				<td width="44%">Digite o Código / Nome do Produto:</td>
 				<td width="56%">
-            		<input name="pesq_prod" type="text" id="pesq_prod" style="width:200px; float:left; margin-right:5px;"/>
+            		<input name="pesq_prod" type="text" 
+            			   id="pesq_prod" style="width:200px; float:left; margin-right:5px;"
+            			   onkeypress="return disableEnterKey(event);"/>
 	                <span class="classPesquisar">
 	                	<a href="javascript:;" onclick="mostrar_produtos();">&nbsp;</a>
 	                </span>

@@ -1823,7 +1823,7 @@ public class DataLoader {
 		 tipoPontoPDVLivraria  = Fixture.criarTipoPontoPDV(3L, "Livraria");
 		 tipoPontoPDVEtc = Fixture.criarTipoPontoPDV(4L, "Outros");
 		 
-		save(session, tipoPontoPDVBanca, tipoPontoPDVBanca, tipoPontoPDVBanca, tipoPontoPDVEtc);
+		save(session, tipoPontoPDVBanca, tipoPontoPDVRevistaria, tipoPontoPDVLivraria, tipoPontoPDVEtc);
 	}
 
 	private static void gerarHistoricosAculoDivida(Session session) {
