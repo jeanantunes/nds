@@ -45,8 +45,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 			Editor editor = this.findEditorByID(message);
 
-			TipoProduto tipoProduto = this.findTipoProduto(
-					GrupoProduto.REVISTA, message);
+			TipoProduto tipoProduto = this.findTipoProduto(message);
 
 			Produto produto = this.findProduto(message);
 
@@ -149,16 +148,16 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 	}
 
-	private TipoProduto findTipoProduto(GrupoProduto grupoProduto,
-			Message message) {
+	private TipoProduto findTipoProduto(Message message) {
+		EMS0109Input input = (EMS0109Input) message.getBody();
+
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("SELECT tp FROM TipoProduto tp ");
-		sql.append("WHERE  tp.grupoProduto = :grupoProduto ");
+		sql.append("WHERE  tp.codigo = :codigo ");
 
 		Query query = this.getSession().createQuery(sql.toString());
-		;
-		query.setParameter("grupoProduto", grupoProduto);
+		query.setParameter("codigo", input.getCategoria());
 
 		@SuppressWarnings("unchecked")
 		List<TipoProduto> tiposProduto = (List<TipoProduto>) query.list();
@@ -290,7 +289,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			produto.setEditor(editor);
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao do Editor para: " + editor.getNome());
+					"Atualizacao do Editor para: " + editor.getPessoaJuridica().getNome());
 		}
 		if (produto.getPeriodicidade() != periodicidadeProduto) {
 
