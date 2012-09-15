@@ -236,11 +236,11 @@ fieldset {
 								</tr>
 								<tr>
 									<td>Cod. de Barras:</td>
-									<td><input type="text" name="codigoDeBarras" id="produtoEdicaoController-codigoDeBarras" style="width:180px;" /></td>
+									<td><input type="text" name="codigoDeBarras" id="produtoEdicaoController-codigoDeBarras" style="width:180px;" maxlength="18" /></td>
 								</tr>
 								<tr>
 									<td>Cod. Barras Corporativo:</td>
-									<td><input type="text" name="codigoDeBarrasCorporativo" id="produtoEdicaoController-codigoDeBarrasCorporativo" style="width:180px;" /></td>
+									<td><input type="text" name="codigoDeBarrasCorporativo" id="produtoEdicaoController-codigoDeBarrasCorporativo" maxlength="25" style="width:180px;" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -450,7 +450,7 @@ fieldset {
 					</tr>
 					<tr>
 						<td>C&oacute;d. Barras:</td>
-						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="produtoEdicaoController-pCodigoDeBarras" style="width:290px;"/></td>						
+						<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="produtoEdicaoController-pCodigoDeBarras" style="width:290px;" maxlength="25" /></td>						
 						<td>Pre&ccedil;o (R$) de:</td>
 		                <td><input type="text" name="pPrecoDe" id="produtoEdicaoController-pPrecoDe" style="width:60px; text-align:right;"/></td>
 		                <td>At&eacute;:</td>
