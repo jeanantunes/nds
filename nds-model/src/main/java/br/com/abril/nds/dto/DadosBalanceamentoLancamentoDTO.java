@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import br.com.abril.nds.vo.ConfirmacaoVO;
+
 /**
  * DTO que representa os dados referentes ao balanceamento do recolhimento. 
  * 
@@ -35,6 +37,8 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	private int numeroSemana;
 	
 	private Date dataLancamento;
+	
+	private List<ConfirmacaoVO> datasConfirmacao;
 
 	/**
 	 * Construtor padrão.
@@ -155,6 +159,20 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
+	}
+
+	/**
+	 * @return the datasConfirmacao
+	 */
+	public List<ConfirmacaoVO> getDatasConfirmacao() {
+		return datasConfirmacao;
+	}
+
+	/**
+	 * @param datasConfirmacao the datasConfirmacao to set
+	 */
+	public void setDatasConfirmacao(List<ConfirmacaoVO> datasConfirmacao) {
+		this.datasConfirmacao = datasConfirmacao;
 	}
 	
 }

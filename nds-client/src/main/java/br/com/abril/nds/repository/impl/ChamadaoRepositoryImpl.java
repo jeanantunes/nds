@@ -300,7 +300,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		hql.append(" from VIEW_DESCONTO view ")
 		   .append(" where view.COTA_ID = cota.ID ")
 		   .append(" and view.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
-		   .append(" and view.FORNECEDOR_ID = produtoFornecedor.fornecedores_ID),0) ");
+		   .append(" and view.FORNECEDOR_ID = produtoFornecedor.FORNECEDORES_ID),0) ");
 		
 		return hql.toString();
 	}
