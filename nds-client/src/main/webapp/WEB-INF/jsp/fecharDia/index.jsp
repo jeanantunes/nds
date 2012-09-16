@@ -3,304 +3,18 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<link rel="stylesheet" type="text/css" href="../css/NDS.css" />
-<link rel="stylesheet" type="text/css" href="../scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
-<link rel="stylesheet" type="text/css" href="../css/menu_superior.css" />
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/NDS.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/acessoRapido.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
-<link rel="stylesheet" type="text/css" href="../scripts/flexigrid-1.1/css/flexigrid.pack.css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fecharDia.js"></script>
 <script language="javascript" type="text/javascript">
-function popup() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					$(".grids").show();
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	
-	function popup_processos() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-processos" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:300,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-					
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_repartes() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-repartes" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:900,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	function popup_recolhimento() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-recolhimentos" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:900,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	function popup_suplementar() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-suplementares" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:900,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	
-	
-	function popup_vendasTot() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-venda-total" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:900,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_fisico_faltas() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-fisico-faltas" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:750,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	
-	
-	function popup_encalhe_sobras() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-encalhe-sobras" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:750,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_encalhe_faltas() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-encalhe-faltas" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:750,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_estoque_lancto() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-estoque-lancto" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:750,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	
-	function popup_estoque_recolto() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-estoque-recolto" ).dialog({
-			resizable: false,
-			height:'auto',
-			width:750,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});	
-		      
-	};
-	
-	
-	
-	
-	function popup_excluir() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-excluir" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-	function popup_cotasGrid() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-cota-grid" ).dialog({
-			resizable: false,
-			height:390,
-			width:380,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				},
-			}
-		});
-	};
-	
-	function popup_boletos_baixados() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-boletos-baixados" ).dialog({
-			resizable: false,
-			height:430,
-			width:800,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					
-				},
-				
-			}
-		});	
-		      
-	};
-  //callback function to bring a hidden box back
-		function callback() {
-			setTimeout(function() {
-				$( "#effect:visible").removeAttr( "style" ).fadeOut();
 
-			}, 1000 );
-		};	
-		function mostrar(){
-			$(".grids").show();
-		}
-		
-$(function() {
-		$( "#datepickerDe" ).datepicker({
-			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerEmissao" ).datepicker({
-			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
+	/*
+	/dialog-encalhe-sobras
+	/dialog-encalhe-faltas
+	/dialog-estoque-lancto
+	/dialog-estoque-recolto
+	*/
+	
+	$(function() {
+		fecharDiaController.init();		
 	});		
 	
 </script>
@@ -310,77 +24,93 @@ $(function() {
 </head>
 
 <body>
-<div id="dialog-novo" title="Fechar o Dia">
-	<p>Confirma os Valores?</p>
+	<form id="form-popup">
+		<div id="dialog-novo" title="Fechar o Dia">
+			<p>Confirma os Valores?</p>
+		</div>
+	</form>
+
+	<form id="form-boletos-baixados">
+		<div id="dialog-boletos-baixados" title="Boletos Baixados" style="display:none;">
+			<fieldset style="width:750px!important;">
+		    	<legend>Boletos Baixados - Vencimento: 10/05/2012</legend>
+		    	<table class="boletoBaixadoGrid"></table>
+		        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+		        
+		    </fieldset>
+		</div>
+	</form>
+
+	<form id="form-cota-grid">
+		<div id="dialog-cota-grid" title="Cotas" style="display:none;">
+			<fieldset style="width:330px;">
+		    	<legend>Cotas</legend>
+		        <table class="popCotasGrid"></table>
+		    </fieldset>
+		    <br clear="all" />
+		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		
+		</div>
+	</form>
+
+	<form id="form-venda-total">
+		<div id="dialog-venda-total" title="Movimento" style="display:none;">
+			<fieldset style="width:850px;">
+		    	<legend>Vendas</legend>
+		        <table class="vendasDialogGrid"></table>
+		    </fieldset>
+		    <br clear="all" />
+		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		
+		</div>
+	</form>
+
+	<form id="form-suplementares">
+		<div id="dialog-suplementares" title="Movimento" style="display:none;">
+			<fieldset style="width:850px;">
+		    	<legend>Suplementar</legend>
+		        <table class="suplementarDialogGrid"></table>
+		    </fieldset>
+		    <br clear="all" />
+		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		
+		</div>
+	</form>
+
+	<form id="form-recolhimentos">
+		<div id="dialog-recolhimentos" title="Movimento" style="display:none;">
+			<fieldset style="width:850px;">
+		    	<legend>Recolhimento</legend>
+		        <table class="recolhimentoDialogGrid"></table>
+		    </fieldset>
+		    <br clear="all" />
+		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	</form>
+
 </div>
 
-<div id="dialog-boletos-baixados" title="Boletos Baixados" style="display:none;">
-	<fieldset style="width:750px!important;">
-    	<legend>Boletos Baixados - Vencimento: 10/05/2012</legend>
-    	<table class="boletoBaixadoGrid"></table>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-        
-    </fieldset>
-</div>
-<div id="dialog-cota-grid" title="Cotas" style="display:none;">
-	<fieldset style="width:330px;">
-    	<legend>Cotas</legend>
-        <table class="popCotasGrid"></table>
-    </fieldset>
-    <br clear="all" />
-    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-
-</div>
-<div id="dialog-venda-total" title="Movimento" style="display:none;">
-	<fieldset style="width:850px;">
-    	<legend>Vendas</legend>
-        <table class="vendasDialogGrid"></table>
-    </fieldset>
-    <br clear="all" />
-    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-
-</div>
-
-<div id="dialog-suplementares" title="Movimento" style="display:none;">
-	<fieldset style="width:850px;">
-    	<legend>Suplementar</legend>
-        <table class="suplementarDialogGrid"></table>
-    </fieldset>
-    <br clear="all" />
-    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-
-</div>
-
-<div id="dialog-recolhimentos" title="Movimento" style="display:none;">
-	<fieldset style="width:850px;">
-    	<legend>Recolhimento</legend>
-        <table class="recolhimentoDialogGrid"></table>
-    </fieldset>
-    <br clear="all" />
-    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-
-</div>
-
-<div id="dialog-repartes" title="Movimento" style="display:none;">
-	<fieldset style="width:850px;">
-    	<legend>Lançamento</legend>
-        <table class="reparteDialogGrid"></table>
-    </fieldset>
-    <br clear="all" />
-    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-
-</div>
+	<form id="form-repartes">
+		<div id="dialog-repartes" title="Movimento" style="display:none;">
+			<fieldset style="width:850px;">
+		    	<legend>Lançamento</legend>
+		        <table class="reparteDialogGrid"></table>
+		    </fieldset>
+		    <br clear="all" />
+		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		
+		</div>
+	</form>
 
 <div id="dialog-estoque-recolto" title="Estoque" style="display:none;">
 	<fieldset style="width:700px;">
@@ -407,17 +137,19 @@ $(function() {
 
 </div>
 
-<div id="dialog-fisico-faltas" title="Físico" style="display:none;">
-	<fieldset style="width:700px;">
-    	<legend>Faltas</legend>
-        <table class="fisico-faltasGrid"></table>
-    </fieldset>
-    <br clear="all" />
-    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-
-</div>
+	<form id="form-fisico-faltas">
+		<div id="dialog-fisico-faltas" title="Físico" style="display:none;">
+			<fieldset style="width:700px;">
+		    	<legend>Faltas</legend>
+		        <table class="fisico-faltasGrid"></table>
+		    </fieldset>
+		    <br clear="all" />
+		    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		
+		</div>
+	</form>
 
 <div id="dialog-encalhe-faltas" title="Encalhe" style="display:none;">
 	<fieldset style="width:700px;">
@@ -454,52 +186,55 @@ $(function() {
 <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 
 </div>
-<div id="dialog-processos" title="Status Processos" style="display:none;">
-  <fieldset style="width:260px;">
-    	<legend>Status dos Processos</legend>
-      <table width="260" border="0" cellspacing="1" cellpadding="1">
-        <tr class="header_table">
-          <td width="205">Processo</td>
-          <td width="48" align="center">Status</td>
-        </tr>
-        <tr class="class_linha_1">
-          <td>Baixa Bancária:</td>
-          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-        </tr>
-        <tr class="class_linha_2">
-          <td>Recebimento Físico:</td>
-          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-        </tr>
-        <tr class="class_linha_1">
-          <td>Lançamento de Faltas e Sobras:</td>
-          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-        </tr>
-        <tr class="class_linha_2">
-          <td>Confirmação de Expedição:</td>
-          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
-        </tr>
-        <tr class="class_linha_1">
-          <td>Fechamento de Encalhe:</td>
-          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
-        </tr>
-        <tr class="class_linha_2">
-          <td>Controle de Aprovações:</td>
-          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-        </tr>
-        <tr class="class_linha_1">
-          <td>Manutenção Status da Cota:</td>
-          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-        </tr>
-        <tr class="class_linha_2">
-          <td>Ajuste de Comissão Jornaleiros:</td>
-          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-        </tr>
-      </table>
-        
-        
-      
-    </fieldset>
-</div>
+
+	<form id="form-processos">
+		<div id="dialog-processos" title="Status Processos" style="display:none;">
+		  <fieldset style="width:260px;">
+		    	<legend>Status dos Processos</legend>
+		      <table width="260" border="0" cellspacing="1" cellpadding="1">
+		        <tr class="header_table">
+		          <td width="205">Processo</td>
+		          <td width="48" align="center">Status</td>
+		        </tr>
+		        <tr class="class_linha_1">
+		          <td>Baixa Bancária:</td>
+		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
+		        </tr>
+		        <tr class="class_linha_2">
+		          <td>Recebimento Físico:</td>
+		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
+		        </tr>
+		        <tr class="class_linha_1">
+		          <td>Lançamento de Faltas e Sobras:</td>
+		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
+		        </tr>
+		        <tr class="class_linha_2">
+		          <td>Confirmação de Expedição:</td>
+		          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
+		        </tr>
+		        <tr class="class_linha_1">
+		          <td>Fechamento de Encalhe:</td>
+		          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
+		        </tr>
+		        <tr class="class_linha_2">
+		          <td>Controle de Aprovações:</td>
+		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
+		        </tr>
+		        <tr class="class_linha_1">
+		          <td>Manutenção Status da Cota:</td>
+		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
+		        </tr>
+		        <tr class="class_linha_2">
+		          <td>Ajuste de Comissão Jornaleiros:</td>
+		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
+		        </tr>
+		      </table>
+		        
+		        
+		      
+		    </fieldset>
+		</div>
+	</form>
 
 <div class="corpo">   
     <br clear="all"/>
@@ -518,8 +253,8 @@ $(function() {
             <tr>
               <td width="104">Data da Operação:</td>
               <td width="111">05/05/2012</td>
-              <td width="185"><span class="bt_novos" title="Iniciar Fechamento do Dia"><a href="javascript:;" onclick="popup_processos();"><img border="0" hspace="5" src="../images/bt_devolucao.png">Iniciar Fechamento do Dia</a></span></td>
-              <td width="529"><span class="bt_confirmar_novo grids" style="display:none;" title="Confirmar"><a onclick="popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span></td>
+              <td width="185"><span class="bt_novos" title="Iniciar Fechamento do Dia"><a href="javascript:;" onclick="fecharDiaController.popup_processos();"><img border="0" hspace="5" src="../images/bt_devolucao.png">Iniciar Fechamento do Dia</a></span></td>
+              <td width="529"><span class="bt_confirmar_novo grids" style="display:none;" title="Confirmar"><a onclick="fecharDiaController.popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span></td>
             </tr>
           </table>
 
@@ -531,11 +266,11 @@ $(function() {
           
           <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #000;">
   <tr>
-    <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="popup_repartes();">REPARTE</a></strong></td>
+    <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_repartes();">REPARTE</a></strong></td>
     <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
-    <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="popup_recolhimento();">ENCALHE</a></strong></td>
+    <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_recolhimento();">ENCALHE</a></strong></td>
     <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
-    <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="popup_suplementar();">SUPLEMENTAR</a></strong></td>
+    <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_suplementar();">SUPLEMENTAR</a></strong></td>
     </tr>
   <tr>
     <td valign="top"><table border="0" cellspacing="1" cellpadding="2" style="margin-left:10px; margin-right:10px;">
@@ -600,7 +335,7 @@ $(function() {
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Venda</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_vendasTot();">10.000,00</a></td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot();">10.000,00</a></td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Sobras em</td>
@@ -652,9 +387,9 @@ $(function() {
 
           <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #000;">
             <tr>
-              <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="popup_boletos_baixados();">DÍVIDAS A RECEBER</a></strong></td>
+              <td height="26" align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_boletos_baixados();">DÍVIDAS A RECEBER</a></strong></td>
               <td align="center" bgcolor="#F4F4F4" style="width:10px; border-left:1px solid #ccc;">&nbsp;</td>
-              <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="popup_boletos_baixados();">DÍVIDAS A VENCER</a></strong></td>
+              <td align="center" bgcolor="#F4F4F4"><strong><a href="javascript:;" onclick="fecharDiaController.popup_boletos_baixados();">DÍVIDAS A VENCER</a></strong></td>
             </tr>
             <tr>
               <td valign="top"><table width="381" border="0" cellpadding="2" cellspacing="1" style="margin-left:10px; margin-right:10px;">
@@ -811,10 +546,10 @@ $(function() {
                 <tr>
                   <td width="222" align="center" style="border-bottom:1px solid #ccc;">100</td>
                   <td width="153" align="center" style="border-bottom:1px solid #ccc;">90</td>
-                  <td width="158" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_cotasGrid();">05</a></td>
-                  <td width="183" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_cotasGrid();">05</a></td>
-                  <td width="183" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_cotasGrid();">05</a></td>
-                  <td width="188" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="popup_cotasGrid();">00</a></td>
+                  <td width="158" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
+                  <td width="183" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
+                  <td width="183" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">05</a></td>
+                  <td width="188" align="center" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_cotasGrid();">00</a></td>
                 </tr>
                 <tr>
                   <td align="center">&nbsp;</td>
@@ -944,7 +679,7 @@ $(function() {
           <a href="relatorio_geral_financeiro_fisico_1.htm" target="_blank">rel_1</a> |  <a href="relatorio_geral_financeiro_fisico_2.htm" target="_blank">rel_2</a> |  <a href="relatorio_geral_financeiro_fisico_3.htm" target="_blank">rel_3</a><br />
           <br clear="all" />
         <br />
-	<span class="bt_confirmar_novo" title="Confirmar"><a onclick="popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span>
+	<span class="bt_confirmar_novo" title="Confirmar"><a onclick="fecharDiaController.popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span>
           
           
           <br clear="all" />
