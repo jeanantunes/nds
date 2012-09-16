@@ -606,7 +606,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		conferenciaEncalheDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
 		
-		conferenciaEncalheDTO.setNomeEditor(produtoEdicao.getProduto().getEditor().getNome());
+		conferenciaEncalheDTO.setNomeEditor(produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome());
 		
 		conferenciaEncalheDTO.setNomeEditor(produtoEdicao.getProduto().getFornecedor().getJuridica().getNome());
 		

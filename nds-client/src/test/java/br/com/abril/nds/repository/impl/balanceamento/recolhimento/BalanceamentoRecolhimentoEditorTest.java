@@ -81,7 +81,7 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 
 		PessoaJuridica juridicaFc = fornecedorFC.getJuridica();
 		
-		Editor globo = Fixture.criarEditor("Globo", 687L, juridicaFc, true);
+		Editor globo = Fixture.criarEditor( 687L, juridicaFc, true);
 		save(globo);
 		
 		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
