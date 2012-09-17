@@ -10,6 +10,7 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	private Date dataMovimentacao;
 	private Long idFornecedor;
 	private String tipoEstoque;
+	private String tipoEstoqueSelecionado;
 
 
 	public Date getDataMovimentacao() {
@@ -29,6 +30,12 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	}
 	public void setTipoEstoque(String tipoEstoque) {
 		this.tipoEstoque = tipoEstoque;
+	}
+	public String getTipoEstoqueSelecionado() {
+		return tipoEstoqueSelecionado;
+	}
+	public void setTipoEstoqueSelecionado(String tipoEstoqueSelecionado) {
+		this.tipoEstoqueSelecionado = tipoEstoqueSelecionado;
 	}
 	
 	

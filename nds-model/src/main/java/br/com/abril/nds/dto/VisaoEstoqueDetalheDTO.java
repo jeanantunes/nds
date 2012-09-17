@@ -11,6 +11,8 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 
 	private static final long serialVersionUID = 5851726250053057711L;
 	
+	private Long produtoEdicaoId;
+	
 	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private Long codigo;
 	
@@ -44,6 +46,12 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	private String diferenca;
 	
 	
+	public Long getProdutoEdicaoId() {
+		return produtoEdicaoId;
+	}
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+		this.produtoEdicaoId = produtoEdicaoId;
+	}
 	public Long getCodigo() {
 		return codigo;
 	}
