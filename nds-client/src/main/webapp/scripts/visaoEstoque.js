@@ -119,6 +119,15 @@ var visaoEstoqueController = $.extend(true, {
 		$("#visaoEstoque_transferencia_estoqueSelecionado").html(estoque);
 		$("#visaoEstoque_transferencia_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
 		
+		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		
+		$(".visaoEstoqueTransferenciaGrid", this.workspace).flexOptions({
+			url : this.path + 'pesquisarTransferencia.json?' + params, 
+			newp:1
+		});
+		
+		$(".visaoEstoqueTransferenciaGrid" + grid).flexReload();
+		
 		$("#dialog-transferencia").dialog({
 			resizable: false,
 			height:480,
@@ -141,6 +150,15 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$("#visaoEstoque_inventario_estoqueSelecionado").html(estoque);
 		$("#visaoEstoque_inventario_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
+		
+		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		
+		$(".visaoEstoqueInventarioGrid", this.workspace).flexOptions({
+			url : this.path + 'pesquisarInventario.json?' + params, 
+			newp:1
+		});
+		
+		$(".visaoEstoqueInventarioGrid" + grid).flexReload();
 		
 		$( "#dialog-inventario" ).dialog({
 			resizable: false,
