@@ -114,7 +114,7 @@ function PesquisaCota(workspace) {
 		
 		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 1000);
 		
-		pesquisaCota.intervalo = setInterval(function() {
+		pesquisaCota.intervalo = $().interval(function() {
 			
 			if (pesquisaCota.descricaoAtribuida) {
 				

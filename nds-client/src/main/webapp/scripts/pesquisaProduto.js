@@ -10,12 +10,6 @@ function PesquisaProduto(workspace) {
 	
 	this.workspace = workspace;
 	
-	window.addEventListener('blur', function() {
-
-		window.clearInterval(pesquisaProduto.intervalo);
-	
-	});
-	
 	//Pesquisa por código de produto
 	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).val();
@@ -62,7 +56,7 @@ function PesquisaProduto(workspace) {
 		
 		setTimeout(function() { clearInterval(pesquisaProduto.intervalo); }, 10 * 1000);
 		
-		pesquisaProduto.intervalo = setInterval(function() {
+		pesquisaProduto.intervalo = $().interval(function() {
 			
 			if (pesquisaProduto.descricaoAtribuida) {
 				
@@ -272,3 +266,5 @@ function PesquisaProduto(workspace) {
 	};
 	
 }
+
+//@ sourceURL=pesquisaProduto.js
