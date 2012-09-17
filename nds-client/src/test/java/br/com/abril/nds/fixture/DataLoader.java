@@ -4433,6 +4433,7 @@ public class DataLoader {
 
 	private static void criarTiposProduto(Session session) {
 		
+		tipoProdutoRefrigerante = Fixture.tipoProduto("Refrigerante", GrupoProduto.OUTROS, ncmBebidas, "", Long.valueOf(40));
 		tipoProdutoRevista = Fixture.tipoProduto("Revistas", GrupoProduto.REVISTA, ncmRevista, "4902.90.00", 001L);
 		tipoProdutoFasciculo= Fixture.tipoProduto("Fasciculos",GrupoProduto.COLECIONAVEL, ncmFasciculo, "", 002L);
 		tipoProdutoLivro= Fixture.tipoProduto("Livro",GrupoProduto.LIVRO, ncmLivro, "", 003L);
@@ -4457,7 +4458,7 @@ public class DataLoader {
 		save(session, tipoProdutoRevista, tipoProdutoFasciculo, tipoProdutoLivro, tipoProdutoCromo, tipoProdutoCard, tipoProdutoAlbun, 
 				tipoProdutoGuia, tipoProdutoQuadrinho, tipoProdutoAtividade, tipoProdutoPassatempo, tipoProdutoVideo, tipoProdutoCdrom,
 				tipoProdutoPoster, tipoProdutoJornal, tipoProdutoTabloide, tipoProdutoOutro, tipoProdutoCapaDura, tipoProdutoRevistaDigital, 
-				tipoProdutoDvd, tipoProdutoLivroIlustrado);
+				tipoProdutoDvd, tipoProdutoLivroIlustrado, tipoProdutoRefrigerante);
 		
 	}
 
