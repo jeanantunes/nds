@@ -10,6 +10,12 @@ function PesquisaProduto(workspace) {
 	
 	this.workspace = workspace;
 	
+	window.addEventListener('blur', function() {
+
+		window.clearInterval(pesquisaProduto.intervalo);
+	
+	});
+	
 	//Pesquisa por código de produto
 	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).val();
