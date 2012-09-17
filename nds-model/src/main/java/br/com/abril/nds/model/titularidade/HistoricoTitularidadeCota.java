@@ -782,4 +782,15 @@ public class HistoricoTitularidadeCota implements Serializable {
         return null;
     }
     
+    /**
+     * Retorna a garantia do tipo cheque caução do histórico de titularidade da cota
+     * @return garantia cheque caução do histórico de titularidade da cota
+     */
+    public HistoricoTitularidadeCotaChequeCaucao getGarantiaChequeCaucao() {
+        if (TipoGarantia.CHEQUE_CAUCAO == getTipoGarantia()) {
+            return HistoricoTitularidadeCotaChequeCaucao.class.cast(garantias.iterator().next());
+        }
+        return null;
+    }
+    
 }

@@ -1,111 +1,40 @@
-package br.com.abril.nds.model.titularidade;
+package br.com.abril.nds.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import br.com.abril.nds.model.cadastro.TipoGarantia;
-
 /**
- * Represenata a garantia do tipo "CHEQUE CAUCAO" no histórico de titularidade
- * da cota
+ * DTO com as informações do cheque caução
  * 
  * @author francisco.garcia
- * 
+ *
  */
-@Entity
-@DiscriminatorValue("CHEQUE_CAUCAO")
-public class HistoricoTitularidadeCotaChequeCaucao extends HistoricoTitularidadeCotaGarantia {
-    
-    private static final long serialVersionUID = 1L;
-    
-    public HistoricoTitularidadeCotaChequeCaucao() {
-        this.tipoGarantia = TipoGarantia.CHEQUE_CAUCAO;
-    }
+public class ChequeCaucaoDTO implements Serializable {
 
-    /**
-     * Número do banco do cheque
-     */
-    @Column(name = "CHEQUE_CAUCAO_NUMERO_BANCO")
+    private static final long serialVersionUID = 1L;
+
     private String numeroBanco;
-    
-    /**
-     * Nome do banco do cheque
-     */
-    @Column(name = "CHEQUE_CAUCAO_NOME_BANCO")
-    private String nomeBanco;
-    
-    /**
-     * Número da agencia do banco do cheque
-     */
-    @Column(name = "CHEQUE_CAUCAO_AGENCIA")
-    private Long agencia;
-    
-    /**
-     * Dígito verificador da agência do cheque
-     */
-    @Column(name = "CHEQUE_CAUCAO_DV_AGENCIA")
-    private String dvAgencia;
-    
-    /**
-     * Número da conta do cheque
-     */
-    @Column(name = "CHEQUE_CAUCAO_CONTA")
-    private Long conta;
-    
-    /**
-     * Dígito verificador da conta do cheque
-     */
-    @Column(name = "CHEQUE_CAUCAO_DV_CONTA")
-    private String dvConta;
-    
-    /**
-     * Valor do cheque
-     */
-    @Column(name="CHEQUE_CAUCAO_VALOR")
-    private BigDecimal valor;
-    
-    /**
-     * Número do cheque
-     */
-    @Column(name="CHEQUE_CAUCAO_NUMERO_CHEQUE")
-    private String numeroCheque;
-    
-    /**
-     * Data de emissão do cheque
-     */
-    @Temporal(TemporalType.DATE)
-    @Column(name="CHEQUE_CAUCAO_DATA_EMISSAO")
-    private Date emissao;
-    
-    /**
-     * Validade do cheque
-     */
-    @Temporal(TemporalType.DATE)
-    @Column(name="CHEQUE_CAUCAO_DATA_VALIDADE")
-    private Date validade;
-    
-    /**
-     * Nome do correntista
-     */
-    @Column(name="CHEQUE_CAUCAO_CORRENTISTA")
-    private String correntista;
-    
-    /**
-     * Imagem do cheque
-     */
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "CHEQUE_CAUCAO_IMAGEM")
-    private byte[] imagem;
+	
+	private String nomeBanco;
+	
+	private Long agencia;
+	
+	private String dvAgencia;
+	
+	private Long conta;
+	
+	private String dvConta;
+	
+	private BigDecimal valor;
+	
+	private String numeroCheque;
+	
+	private Date emissao;
+	
+	private Date validade;
+	
+	private String correntista;
 
     /**
      * @return the numeroBanco
@@ -260,19 +189,5 @@ public class HistoricoTitularidadeCotaChequeCaucao extends HistoricoTitularidade
     public void setCorrentista(String correntista) {
         this.correntista = correntista;
     }
-
-    /**
-     * @return the imagem
-     */
-    public byte[] getImagem() {
-        return imagem;
-    }
-
-    /**
-     * @param imagem the imagem to set
-     */
-    public void setImagem(byte[] imagem) {
-        this.imagem = imagem;
-    }
-    
+	
 }

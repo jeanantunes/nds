@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.dto.CaracteristicaDTO;
+import br.com.abril.nds.dto.ChequeCaucaoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
@@ -596,18 +598,59 @@ public class CotaDTOAssembler {
     }
 
     /**
-     * Retorna o dto com as informações de garantia para o tipo de garantia
-     * fiador do histórico de titularidade da COTA
+     * Retorna o DTO com as informações de garantia para o tipo de garantia
+     * fiador do histórico de titularidade da cota
      * 
      * @param garantiaFiador
      *            garantia fiador do histórico de titularidade da cota
-     * @return dto com as informações da garantia do tipo fiador do histórico de
+     * @return DTO com as informações da garantia do tipo fiador do histórico de
      *         titularidade da cota
      */
     public static CotaGarantiaDTO<FiadorDTO> toCotaGarantiaDTO(HistoricoTitularidadeCotaFiador garantiaFiador) {
         CotaGarantiaDTO<FiadorDTO> dto = new CotaGarantiaDTO<FiadorDTO>();
         dto.setTipo(garantiaFiador.getTipoGarantia());
         dto.setCotaGarantia(toFiadorDTO(garantiaFiador));
+        return dto;
+    }
+
+
+    /**
+     * Cria o {@link ChequeCaucaoDTO} com as informações da 
+     * instância de {@link HistoricoTitularidadeCotaChequeCaucao}
+     * 
+     * @param garantiaChequeCaucao instância de
+     *            {@link HistoricoTitularidadeCotaChequeCaucao} para a criação do DTO
+     * @return {@link ChequeCaucaoDTO} com as informações
+     */
+    public static ChequeCaucaoDTO toChequeCaucaoDTO(HistoricoTitularidadeCotaChequeCaucao garantiaChequeCaucao) {
+        ChequeCaucaoDTO dto = new ChequeCaucaoDTO();
+        dto.setAgencia(garantiaChequeCaucao.getAgencia());
+        dto.setConta(garantiaChequeCaucao.getConta());
+        dto.setCorrentista(garantiaChequeCaucao.getCorrentista());
+        dto.setDvAgencia(garantiaChequeCaucao.getDvAgencia());
+        dto.setDvConta(garantiaChequeCaucao.getDvConta());
+        dto.setEmissao(garantiaChequeCaucao.getEmissao());
+        dto.setNomeBanco(garantiaChequeCaucao.getNomeBanco());
+        dto.setNumeroBanco(garantiaChequeCaucao.getNumeroBanco());
+        dto.setNumeroCheque(garantiaChequeCaucao.getNumeroCheque());
+        dto.setValidade(garantiaChequeCaucao.getValidade());
+        dto.setValor(garantiaChequeCaucao.getValor());
+        return dto;
+    }
+
+    /**
+     * Retorna o DTO com as informações de garantia para o tipo de garantia
+     * cheque caução do histórico de titularidade da cota
+     * 
+     * @param garantiaChequeCaucao
+     *            garantia cheque caução do histórico de titularidade da cota
+     * @return DTO com as informações da garantia do tipo cheque caução do histórico de
+     *         titularidade da cota
+     */
+    public static CotaGarantiaDTO<ChequeCaucaoDTO> toCotaGarantiaDTO(HistoricoTitularidadeCotaChequeCaucao garantiaChequeCaucao) {
+        CotaGarantiaDTO<ChequeCaucaoDTO> dto = new CotaGarantiaDTO<ChequeCaucaoDTO>();
+        dto.setTipo(garantiaChequeCaucao.getTipoGarantia());
+        dto.setCotaGarantia(toChequeCaucaoDTO(garantiaChequeCaucao));
         return dto;
     }
  

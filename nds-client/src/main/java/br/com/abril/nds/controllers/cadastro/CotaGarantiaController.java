@@ -542,14 +542,17 @@ public class CotaGarantiaController {
 	}
 
 	
-	public Download getImageCheque(long idCheque) {		
-		
-		byte[] buff = cotaGarantiaService.getImageCheque(idCheque);
-		
-		if (buff == null) {
-			buff = new byte[0];
-		}
-		
+	public Download getImageCheque(long idCheque, ModoTela modoTela, Long idCota, Long idHistorico) {		
+	    byte[] buff = new byte[0];
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        buff = cotaGarantiaService.getImageCheque(idCheque);
+	    } else {
+	        buff = cotaGarantiaService.getImagemChequeCaucaoHistoricoTitularidade(idCota, idHistorico);
+	    }
+	    
+	    if (buff == null) {
+	        buff = new byte[0];
+	    }
 		return new ByteArrayDownload(buff, "image/jpeg", "cheque.jpg");
 	}
 	

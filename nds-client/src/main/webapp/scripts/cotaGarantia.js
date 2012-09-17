@@ -125,24 +125,28 @@ function ChequeCaucao(idCota, cotaGarantia) {
 	this.idCota = idCota;
 	this.cotaGarantia = cotaGarantia;
 	this.bindEvents();
-	if(cotaGarantia && cotaGarantia.cheque){
-		this.chequeCaucao = cotaGarantia.cheque;
-	}else{
-		this.chequeCaucao ={
-				id : null,
-				numeroBanco : null,
-				nomeBanco : null,
-				agencia : null,
-				dvAgencia : null,
-				conta : null,
-				dvConta : null,
-				valor : null,
-				numeroCheque : null,
-				emissao : null,
-				validade : null,
-				correntista : null
-			};
-	}
+	if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        if(cotaGarantia && cotaGarantia.cheque){
+            this.chequeCaucao = cotaGarantia.cheque;
+        }else{
+            this.chequeCaucao ={
+                id : null,
+                numeroBanco : null,
+                nomeBanco : null,
+                agencia : null,
+                dvAgencia : null,
+                conta : null,
+                dvConta : null,
+                valor : null,
+                numeroCheque : null,
+                emissao : null,
+                validade : null,
+                correntista : null
+            };
+        }
+    } else {
+        this.chequeCaucao = cotaGarantia;
+    }
 	this.dataBind();
 	this.toggle();
 	this.initUploadForm();
@@ -153,9 +157,8 @@ ChequeCaucao.prototype.path = contextPath + "/cadastro/garantia/";
 ChequeCaucao.prototype.get = function() {
 
 	var _this = this;
-	$.postJSON(this.path + 'getByCota.json', {
-		'idCota' : this.idCota
-	}, function(data) {
+    var param = [{name: 'idCota', value: this.idCota}, {name: 'modoTela', value: tipoCotaGarantia.getModoTela().value}];
+	$.postJSON(this.path + 'getByCota.json', param, function(data) {
 
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
@@ -257,16 +260,25 @@ ChequeCaucao.prototype.dataBind = function() {
 	$("#cotaGarantiaChequeCaucaoCorrentista")
 			.val(this.chequeCaucao.correntista);
 	
-	if(this.chequeCaucao.id){
-		this.loadImage();
-	}
+	if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        if(this.chequeCaucao.id){
+            this.loadImage();
+        }
+    } else {
+        this.loadImage();
+    }
 
 };
 
 ChequeCaucao.prototype.loadImage = function(){
 	 $("#cotaGarantiaChequeCaucaoImagem").empty();
 	 $("#cotaGarantiaChequeCaucaoImagemPanel").toggle(false);
-	var imgPath = this.path + 'getImageCheque?idCheque='+this.chequeCaucao.id;
+    var imgPath = this.path + 'getImageCheque?modoTela=' + tipoCotaGarantia.getModoTela().value;
+    if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        imgPath+= '&idCheque=' + this.chequeCaucao.id;
+    } else {
+        imgPath+= '&idCota=' + tipoCotaGarantia.getIdCota() + '&idHistorico=' + tipoCotaGarantia.getIdHistorico();
+    }
 	var img = null;
 	img = $("<img />").attr('src', imgPath)
     .load(function() {

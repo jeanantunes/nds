@@ -203,14 +203,13 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
-import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFiador;
-import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFiadorGarantia;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
@@ -3573,6 +3572,17 @@ public class Fixture {
         pdv.setExpositor(true);
         pdv.setTipoExpositor("Tipo Expositor");
         
+        try {
+            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");
+            File fileImagem = new File(urlImagem.toURI());
+            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
+            pdv.setImagem(imagem);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro definindo imagem histórico titularidade PDV", e);
+        }
+        
+        historico.addPdv(pdv);
+        
         HistoricoTitularidadeCotaFinanceiro financeiro = new HistoricoTitularidadeCotaFinanceiro();
         financeiro.setPossuiContrato(true);
         financeiro.setDataInicioContrato(cota.getInicioAtividade());
@@ -3623,15 +3633,40 @@ public class Fixture {
         financeiro.addFormaPagamento(formaPagto2);
         historico.setFinanceiro(financeiro);
         
-        HistoricoTitularidadeCotaFiador fiador = new HistoricoTitularidadeCotaFiador();
-        fiador.setNome("José da Silva");
-        fiador.setCpfCnpj("667.672.958-09");
-        fiador.setHistoricoTitularidadeCotaEndereco(new HistoricoTitularidadeCotaEndereco(
-                10, "Centro", "13720-000", 12, "São José do Rio Pardo", null,
-                "Rua", "Treze de Maio", "10", "SP", 10, null, true));
-        fiador.setHistoricoTitularidadeCotaTelefone(new HistoricoTitularidadeCotaTelefone("3656-7464", null, "019", null, true));
-        fiador.addGarantia(new HistoricoTitularidadeCotaFiadorGarantia(BigDecimal.valueOf(100000), "Imóvel residencial"));
-        historico.addGarantia(fiador);
+//        HistoricoTitularidadeCotaFiador fiador = new HistoricoTitularidadeCotaFiador();
+//        fiador.setNome("José da Silva");
+//        fiador.setCpfCnpj("667.672.958-09");
+//        fiador.setHistoricoTitularidadeCotaEndereco(new HistoricoTitularidadeCotaEndereco(
+//                10, "Centro", "13720-000", 12, "São José do Rio Pardo", null,
+//                "Rua", "Treze de Maio", "10", "SP", 10, null, true));
+//        fiador.setHistoricoTitularidadeCotaTelefone(new HistoricoTitularidadeCotaTelefone("3656-7464", null, "019", null, true));
+//        fiador.addGarantia(new HistoricoTitularidadeCotaFiadorGarantia(BigDecimal.valueOf(100000), "Imóvel residencial"));
+//        historico.addGarantia(fiador);
+        
+        HistoricoTitularidadeCotaChequeCaucao cheque = new HistoricoTitularidadeCotaChequeCaucao();
+        cheque.setAgencia(Long.valueOf(809));
+        cheque.setConta(Long.valueOf(1234));
+        cheque.setCorrentista("John Doe");
+        cheque.setDvAgencia("1");
+        cheque.setDvConta("1");
+        cheque.setEmissao(cota.getInicioAtividade());
+        cheque.setNomeBanco("Banco Itaú");
+        cheque.setNumeroBanco("349");
+        cheque.setNumeroCheque("987654");
+        cheque.setValidade(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
+        cheque.setValor(BigDecimal.valueOf(1000));
+        historico.addGarantia(cheque);
+        
+        try {
+            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("cheque.jpg");
+            File fileImagem = new File(urlImagem.toURI());
+            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
+            cheque.setImagem(imagem);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro carregando imagem cheque caução histórico titularidade", e);
+        }
+        
+        historico.addPdv(pdv);
         
         HistoricoTitularidadeCotaDistribuicao distribuicao = new HistoricoTitularidadeCotaDistribuicao();
         distribuicao.setQtdePDV(1);
@@ -3660,16 +3695,7 @@ public class Fixture {
         historico.setDistribuicao(distribuicao);
         
         
-        try {
-            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");
-            File fileImagem = new File(urlImagem.toURI());
-            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
-            pdv.setImagem(imagem);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro definindo imagem histórico titularidade PDV", e);
-        }
-        
-        historico.addPdv(pdv);
+    
         cota.addTitularCota(historico);
         return historico;
     }

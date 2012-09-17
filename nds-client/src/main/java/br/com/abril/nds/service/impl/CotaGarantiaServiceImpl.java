@@ -51,6 +51,7 @@ import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDepositoTrans
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDescontoCota;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCaucaoLiquidaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
@@ -877,8 +878,24 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
 	    if (TipoGarantia.FIADOR == historico.getTipoGarantia()) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaFiador());
+	    } else if (TipoGarantia.CHEQUE_CAUCAO == historico.getTipoGarantia()) {
+	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaChequeCaucao());
 	    }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	@Transactional(readOnly = true)
+    public byte[] getImagemChequeCaucaoHistoricoTitularidade(Long idCota, Long idHistorico) {
+	    Validate.notNull(idCota, "Identificador da cota não deve ser nulo!");
+        Validate.notNull(idHistorico, "Identificador do histórico não deve ser nulo!");
+        
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        HistoricoTitularidadeCotaChequeCaucao cheque = historico.getGarantiaChequeCaucao();
+        return cheque == null ? null : cheque.getImagem();
     }
 	
 }

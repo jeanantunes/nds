@@ -229,4 +229,16 @@ public interface CotaGarantiaService {
      *         da cota
      */
 	CotaGarantiaDTO<?> obterGarantiaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    /**
+     * Retorna a imagem da garantia cheque caução do histórico de titularidade
+     * da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return imagem do cheque caução do histórico de titularidade da cota
+     */
+	byte[] getImagemChequeCaucaoHistoricoTitularidade(Long idCota, Long idHistorico);
 }
