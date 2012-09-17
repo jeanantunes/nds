@@ -39,4 +39,18 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
 		return null;
 	}
+
+
+	@Override
+	@Transactional
+	public List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueTransferencia(FiltroConsultaVisaoEstoque filtro) {
+		return null;
+	}
+
+
+	@Override
+	@Transactional
+	public List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueInventario(FiltroConsultaVisaoEstoque filtro) {
+		return null;
+	}
 }

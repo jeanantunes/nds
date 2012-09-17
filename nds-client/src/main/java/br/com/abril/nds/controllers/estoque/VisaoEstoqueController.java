@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -76,7 +77,6 @@ public class VisaoEstoqueController {
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
-		
 		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).page(page).serialize();
 	}
 	
@@ -86,9 +86,24 @@ public class VisaoEstoqueController {
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
-		List<? extends VisaoEstoqueDetalheDTO> listaDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
+		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
+		result.use(FlexiGridJson.class).from(listDetalhe).total(listDetalhe.size()).page(page).serialize();
+	}
+	
+	
+	@Path("/pesquisarTransferencia.json")
+	public void pesquisarTransferencia(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
 		
-		result.use(FlexiGridJson.class).from(listaDetalhe).total(listaDetalhe.size()).page(page).serialize();
+		List<VisaoEstoqueDetalheDTO> listTransferencia = visaoEstoqueService.obterVisaoEstoqueTransferencia(filtro);
+		result.use(FlexiGridJson.class).from(listTransferencia).total(listTransferencia.size()).page(page).serialize();
+	}
+	
+	
+	@Path("/pesquisarInventario.json")
+	public void pesquisarInventario(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+		
+		List<VisaoEstoqueDetalheDTO> listInventario = visaoEstoqueService.obterVisaoEstoqueInventario(filtro);
+		result.use(FlexiGridJson.class).from(listInventario).total(listInventario.size()).page(page).serialize();
 	}
 	
 	
@@ -102,6 +117,28 @@ public class VisaoEstoqueController {
 		FileExporter.to("consulta-box", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), null, null,
 				listVisaoEstoque, VisaoEstoqueDTO.class,
+				this.httpServletResponse);
+		
+		result.use(Results.nothing());
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Path("/exportarDetalhe")
+	public void exportarDetalhe(FileType fileType) throws IOException {
+		
+		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
+		
+		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
+		Class clazz = VisaoEstoqueDetalheDTO.class;
+		
+		if (listDetalhe != null && !listDetalhe.isEmpty() && listDetalhe.get(0) instanceof VisaoEstoqueDetalheJuramentadoDTO) {
+			clazz = VisaoEstoqueDetalheJuramentadoDTO.class;
+		}
+		
+		FileExporter.to("consulta-box", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), null, null,
+				listDetalhe, clazz,
 				this.httpServletResponse);
 		
 		result.use(Results.nothing());

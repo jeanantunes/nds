@@ -35,6 +35,14 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 10)
 	private String valor;
 	
+	private String transferir;
+	
+	private String estoque;
+	
+	private String check;
+	
+	private String diferenca;
+	
 	
 	public Long getCodigo() {
 		return codigo;
@@ -83,5 +91,29 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	}
 	public void setValor(String valor) {
 		this.valor = valor;
+	}
+	public String getTransferir() {
+		return transferir;
+	}
+	public void setTransferir(String transferir) {
+		this.transferir = transferir;
+	}
+	public String getEstoque() {
+		return estoque;
+	}
+	public void setEstoque(String estoque) {
+		this.estoque = estoque;
+	}
+	public String getCheck() {
+		return check;
+	}
+	public void setCheck(String check) {
+		this.check = check;
+	}
+	public String getDiferenca() {
+		return diferenca;
+	}
+	public void setDiferenca(String diferenca) {
+		this.diferenca = diferenca;
 	}
 }
