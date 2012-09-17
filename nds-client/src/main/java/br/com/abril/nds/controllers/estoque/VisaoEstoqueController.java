@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -33,7 +34,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("estoque/visaoEstoque")
 public class VisaoEstoqueController {
 	
-	private static final String FILTRO_VISAO_ESTOQUE = "FILTRO_VISAO_ESTOQUE"; 
+	private static final String FILTRO_VISAO_ESTOQUE = "FILTRO_VISAO_ESTOQUE";
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -83,13 +84,16 @@ public class VisaoEstoqueController {
 	@Path("/pesquisarDetalhe.json")
 	public void pesquisarDetalhe(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
 		
+		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
+		List<? extends VisaoEstoqueDetalheDTO> listaDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
 		
+		result.use(FlexiGridJson.class).from(listaDetalhe).total(listaDetalhe.size()).page(page).serialize();
 	}
 	
 	
 	@Path("/exportar")
-	public void exportarConsulta(FileType fileType) throws IOException {
+	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
 		
