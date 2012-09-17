@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
 import br.com.abril.nds.service.VisaoEstoqueService;
@@ -32,5 +33,10 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 		return list;
 	}
 
-
+	
+	@Override
+	@Transactional
+	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
+		return null;
+	}
 }

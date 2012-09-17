@@ -20,7 +20,7 @@ public class VisaoEstoqueDTO implements Serializable{
 	private Long produtos;
 	
 	@Export(label = "Exemplares", alignment=Alignment.CENTER, exhibitionOrder = 3)
-	private Long exemplares;
+	private BigDecimal exemplares;
 	
 	private BigDecimal valor;
 	
@@ -45,11 +45,11 @@ public class VisaoEstoqueDTO implements Serializable{
 		this.produtos = produtos;
 	}
 
-	public Long getExemplares() {
+	public BigDecimal getExemplares() {
 		return exemplares;
 	}
 
-	public void setExemplares(Long exemplares) {
+	public void setExemplares(BigDecimal exemplares) {
 		this.exemplares = exemplares;
 	}
 
