@@ -32,44 +32,82 @@ $(function(){
 
 
 <fieldset class="classFieldset">
+	<legend> Pesquisar NF-e</legend>
 		<form>
-   	    <legend> Pesquisar NF-e</legend>
-        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-		  <tr>
-		    <td>Fornecedor:</td>		
-		    <td colspan="3">
-		     	<select id="selectFornecedores" multiple="multiple" style="width:400px">
-					<c:forEach items="${fornecedores}" var="fornecedor">
-							<option value="${fornecedor.key }">${fornecedor.value }</option>
-					</c:forEach>
-				</select>
-		    </td>		
-		    <td>Data Emiss&atilde;o:</td>		
-		    <td><input name="datepickerDe" type="text" id="datepickerEmissao" style="width:80px;"/></td>		
-		    </tr>		
-		  <tr>		
-		    <td width="91">Tipo de Nota:</td>		
-		    <td width="303">		
-			    <select id="selectTipoNotaFiscal" style="width:250px; font-size:11px!important">		
-				   <c:forEach items="${listaTipoNotaFiscal}" var="tipoNotaFiscal">
-							<option value="${tipoNotaFiscal.key }">${tipoNotaFiscal.value }</option>
-					</c:forEach>		
-				</select>		
-		    </td>		
-		    <td width="101">Intervalo Box:</td>		
-		    <td><input type="text" id="inputIntervaloBoxDe" style="width:76px;"/>&nbsp;At&eacute; &nbsp;<input type="text" id="inputIntervaloBoxAte" style="width:76px;"/></td>
-		    <td colspan="2">&nbsp;      &nbsp;</td>		
-		  </tr>		
-		  <tr>		
-		    <td>Cota de:</td>		
-		    <td><input type="text" id="inputIntervaloCotaDe" style="width:80px;"/>&nbsp;At&eacute;&nbsp;<input type="text" id="inputIntervaloCotaAte" style="width:80px;"/></td>		
-		    <td>Data Movimento:</td>		
-		    <td width="233"><input type="text" id="datepickerIntervaloMovimentoDe" style="width:76px;"/>		
-		      &nbsp;&nbsp;At&eacute;&nbsp;<input type="text" id="datepickerIntervaloMovimentoAte" style="width:76px;"/></td>		
-		    <td width="87">&nbsp;</td>		
-		    <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar">Pesquisar</a></span></tr>		
-		  </table>
-      </fieldset>
+			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+				<tr>
+					<td width="91">Tipo de Nota:</td>
+    				<td width="204">
+						<select id="selectTipoNotaFiscal" style="width:250px; font-size:11px!important">
+							<c:forEach items="${listaTipoNotaFiscal}" var="tipoNotaFiscal">
+								<option value="${tipoNotaFiscal.key }">${tipoNotaFiscal.value }</option>
+							</c:forEach>
+						</select>
+					</td>
+    				<td width="95">Data Movimento:</td>
+    				<td width="237">
+    					<input type="text" id="datepickerIntervaloMovimentoDe" style="width:76px;"/>&nbsp;&nbsp;At&eacute;&nbsp;
+						<input type="text" id="datepickerIntervaloMovimentoAte" style="width:76px;"/>
+					</td>
+					<td width="80">Data Emissão:</td>
+					<td width="212">
+						<input name="datepickerDe" type="text" id="datepickerEmissao" style="width:80px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>Roteiro:</td>
+					<td>
+						<select id="listRoteiro" style="width:200px; font-size:11px!important">
+      						<option value="">Selecione...</option>
+      						<c:forEach items="${roteiros}" var="roteiro">
+								<option value="${roteiro.key }">${roteiro.value }</option>
+							</c:forEach>
+    					</select>
+    				</td>
+					<td>Rota:</td>
+    				<td>
+    					<select id="listRota" style="width:200px; font-size:11px!important">
+    						<option value="">Selecione...</option>
+    						<c:forEach items="${rotas}" var="rota">
+								<option value="${rota.key }">${rota.value }</option>
+							</c:forEach>
+    					</select>
+    				</td>
+    				<td>Cota de:</td>
+    				<td>
+    					<input type="text" id="inputIntervaloCotaDe" style="width:80px;"/>&nbsp;At&eacute;&nbsp;
+						<input type="text" id="inputIntervaloCotaAte" style="width:80px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>Intervalo Box:</td>
+    				<td>
+    					<input type="text" id="inputIntervaloBoxDe" style="width:76px;"/>&nbsp;At&eacute; &nbsp;
+				  		<input type="text" id="inputIntervaloBoxAte" style="width:76px;"/>
+					</td>
+    				<td>Fornecedor:</td>
+    				<td colspan="3">
+				     	<select id="selectFornecedores" multiple="multiple" style="width:400px">
+							<c:forEach items="${fornecedores}" var="fornecedor">
+								<option value="${fornecedor.key }">${fornecedor.value }</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td>&nbsp;</td>
+    			</tr>
+  				<tr>
+				    <td>&nbsp;</td>
+				    <td>&nbsp;</td>
+				    <td>&nbsp;</td>
+				    <td>&nbsp;</td>
+				    <td>&nbsp;</td>
+				    <td>
+				    	<span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar" onclick="mostrar();">Pesquisar</a></span>
+				    </td>
+  				</tr>
+  				<td colspan="3"></td>
+  			</table>
+		</fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
        <fieldset class="classFieldset">
        	  <legend>Gera&ccedil;&atilde;o NF-e</legend>
@@ -80,11 +118,6 @@ $(function(){
           <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="btnImprimirXLS"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
           <span class="bt_novos" title="Imprimir"><a href="javascript:;" id="btnImprimirPDF"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>	
-
-          <span class="bt_novos" title="Imprimir NE/NECA"><a href="javascript:alert('Nao Implementada');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir NE/NECA" hspace="5" border="0" />Imprimir NE/NECA</a></span>
-
-          <span class="bt_novos" title="Visualizar NE/NECA"><a href="javascript:alert('Nao Implementada');"><img src="${pageContext.request.contextPath}/images/ico_detalhes.png" alt="Visualizar NE/NECA" hspace="5" border="0" />Visualizar NE/NECA</a></span>
-
 		</div>
 		</form>
       </fieldset>
