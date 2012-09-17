@@ -56,7 +56,7 @@ function PesquisaProduto(workspace) {
 		
 		setTimeout(function() { clearInterval(pesquisaProduto.intervalo); }, 10 * 1000);
 		
-		pesquisaProduto.intervalo = setInterval(function() {
+		pesquisaProduto.intervalo = $().interval(function() {
 			
 			if (pesquisaProduto.descricaoAtribuida) {
 				
@@ -266,3 +266,5 @@ function PesquisaProduto(workspace) {
 	};
 	
 }
+
+//@ sourceURL=pesquisaProduto.js

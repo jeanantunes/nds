@@ -1,6 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -14,16 +16,16 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	private Long produtoEdicaoId;
 	
 	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 3)
-	private Long codigo;
+	private String codigo;
 	
 	@Export(label = "Produto", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private String produto;
 	
 	@Export(label = "Edição", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	private Long edicao;
+	private BigInteger edicao;
 	
 	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 6)
-	private String precoCapa;
+	private BigDecimal precoCapa;
 	
 	@Export(label = "Lcto", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	private String lcto;
@@ -32,10 +34,10 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	private String rclto;
 	
 	@Export(label = "Qtde", alignment=Alignment.CENTER, exhibitionOrder = 9)
-	private Long qtde;
+	private BigDecimal qtde;
 	
 	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 10)
-	private String valor;
+	private BigDecimal valor;
 	
 	private String transferir;
 	
@@ -52,10 +54,10 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	public void setProdutoEdicaoId(Long produtoEdicaoId) {
 		this.produtoEdicaoId = produtoEdicaoId;
 	}
-	public Long getCodigo() {
+	public String getCodigo() {
 		return codigo;
 	}
-	public void setCodigo(Long codigo) {
+	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
 	public String getProduto() {
@@ -64,16 +66,16 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	public void setProduto(String produto) {
 		this.produto = produto;
 	}
-	public Long getEdicao() {
+	public BigInteger getEdicao() {
 		return edicao;
 	}
-	public void setEdicao(Long edicao) {
+	public void setEdicao(BigInteger edicao) {
 		this.edicao = edicao;
 	}
-	public String getPrecoCapa() {
+	public BigDecimal getPrecoCapa() {
 		return precoCapa;
 	}
-	public void setPrecoCapa(String precoCapa) {
+	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
 	}
 	public String getLcto() {
@@ -88,16 +90,16 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	public void setRclto(String rclto) {
 		this.rclto = rclto;
 	}
-	public Long getQtde() {
+	public BigDecimal getQtde() {
 		return qtde;
 	}
-	public void setQtde(Long qtde) {
+	public void setQtde(BigDecimal qtde) {
 		this.qtde = qtde;
 	}
-	public String getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
-	public void setValor(String valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 	public String getTransferir() {
