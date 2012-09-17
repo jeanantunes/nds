@@ -12,7 +12,7 @@ function PesquisaProduto(workspace) {
 	
 	window.addEventListener('blur', function() {
 
-		window.clearInterval(produtoEdicaoController.intervalo);
+		window.clearInterval(pesquisaProduto.intervalo);
 	
 	});
 	
