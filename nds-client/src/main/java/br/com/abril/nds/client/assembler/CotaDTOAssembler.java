@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
+import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
@@ -569,5 +570,7 @@ public class CotaDTOAssembler {
         
         return dto;
     }
+    
+    
  
 }

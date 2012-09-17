@@ -1,0 +1,187 @@
+package br.com.abril.nds.dto;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * DTO com as informações de Fiador
+ * @author francisco.garcia
+ *
+ */
+public class FiadorDTO implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+
+    private String nome;
+    
+    private String documento;
+    
+    private List<EnderecoDTO> enderecoFiador;
+    
+    private List<TelefoneDTO> telefonesFiador;
+    
+    private List<GarantiaDTO> garantias;
+    
+    /**
+     * @return the nome
+     */
+    public String getNome() {
+        return nome;
+    }
+
+    /**
+     * @param nome the nome to set
+     */
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    /**
+     * @return the documento
+     */
+    public String getDocumento() {
+        return documento;
+    }
+
+
+    /**
+     * @param documento the documento to set
+     */
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+
+    /**
+     * @return the enderecoFiador
+     */
+    public List<EnderecoDTO> getEnderecoFiador() {
+        return enderecoFiador;
+    }
+
+
+    /**
+     * @param enderecoFiador the enderecoFiador to set
+     */
+    public void setEnderecoFiador(List<EnderecoDTO> enderecoFiador) {
+        this.enderecoFiador = enderecoFiador;
+    }
+
+
+    /**
+     * @return the telefonesFiador
+     */
+    public List<TelefoneDTO> getTelefonesFiador() {
+        return telefonesFiador;
+    }
+
+
+    /**
+     * @param telefonesFiador the telefonesFiador to set
+     */
+    public void setTelefonesFiador(List<TelefoneDTO> telefonesFiador) {
+        this.telefonesFiador = telefonesFiador;
+    }
+
+
+    /**
+     * @return the garantias
+     */
+    public List<GarantiaDTO> getGarantias() {
+        return garantias;
+    }
+
+
+    /**
+     * @param garantias the garantias to set
+     */
+    public void setGarantias(List<GarantiaDTO> garantias) {
+        this.garantias = garantias;
+    }
+    
+    /**
+     * Adiciona uma garantia ao fiador
+     * 
+     * @param descricao
+     *            descrição da garantia
+     * @param valor
+     *            valor da garantia
+     */
+    public void addGarantia(String descricao, BigDecimal valor) {
+        if (this.garantias == null) {
+            this.garantias = new ArrayList<FiadorDTO.GarantiaDTO>();
+        }
+        this.garantias.add(new GarantiaDTO(valor, descricao));
+    }
+    
+    /**
+     * Adiciona um endereço ao fiador
+     * 
+     * @param endereco
+     *            endereço para inclusão
+     */
+    public void addEndereco(EnderecoDTO endereco) {
+        if (this.enderecoFiador == null) {
+            this.enderecoFiador = new ArrayList<EnderecoDTO>();
+        }
+        this.enderecoFiador.add(endereco);
+    }
+    
+    /**
+     * Adiciona um telefone ao fiador
+     * 
+     * @param telefone
+     *            telefone para inclusão
+     */
+    public void addTelefone(TelefoneDTO telefone) {
+        if (this.telefonesFiador == null) {
+            this.telefonesFiador = new ArrayList<TelefoneDTO>();
+        }
+        this.telefonesFiador.add(telefone);
+    }
+
+
+    public static class GarantiaDTO {
+        
+        public GarantiaDTO(BigDecimal valor, String descricao) {
+            this.valor = valor;
+            this.descricao = descricao;
+        }
+
+        private BigDecimal valor;
+        
+        private String descricao;
+
+        /**
+         * @return the valor
+         */
+        public BigDecimal getValor() {
+            return valor;
+        }
+
+        /**
+         * @param valor the valor to set
+         */
+        public void setValor(BigDecimal valor) {
+            this.valor = valor;
+        }
+
+        /**
+         * @return the descricao
+         */
+        public String getDescricao() {
+            return descricao;
+        }
+
+        /**
+         * @param descricao the descricao to set
+         */
+        public void setDescricao(String descricao) {
+            this.descricao = descricao;
+        }
+        
+    }
+
+}

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 import br.com.abril.nds.repository.EnderecoTransportadorRepository;
 import br.com.abril.nds.repository.MotoristaRepository;
+import br.com.abril.nds.repository.ParametroCobrancaTransportadorRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneTransportadorRepositoty;
@@ -42,8 +44,8 @@ import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.TransportadorService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class TransportadorServiceImpl implements TransportadorService {
@@ -78,6 +80,9 @@ public class TransportadorServiceImpl implements TransportadorService {
 	@Autowired
 	private AssociacaoVeiculoMotoristaRotaRepository associacaoVeiculoMotoristaRotaRepository;
 	
+	@Autowired
+	private ParametroCobrancaTransportadorRepository parametroCobrancaTransportadorRepository;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Transportador buscarTransportadorPorId(Long idTransportador) {
@@ -87,7 +92,11 @@ public class TransportadorServiceImpl implements TransportadorService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id transportador é obrigatório.");
 		}
 		
-		return this.transportadorRepository.buscarPorId(idTransportador);
+		Transportador transportador = this.transportadorRepository.buscarPorId(idTransportador);
+		
+		Hibernate.initialize(transportador.getParametroCobrancaTransportador().getDiasSemanaCobranca());
+		
+		return transportador;
 	}
 
 	@Override
@@ -136,6 +145,19 @@ public class TransportadorServiceImpl implements TransportadorService {
 		} else {
 			
 			this.transportadorRepository.alterar(transportador);
+		}
+		
+		if (transportador.getParametroCobrancaTransportador() != null){
+			
+			if (transportador.getParametroCobrancaTransportador().getId() == null){
+				
+				this.parametroCobrancaTransportadorRepository.adicionar(
+						transportador.getParametroCobrancaTransportador());
+			} else {
+				
+				this.parametroCobrancaTransportadorRepository.alterar(
+						transportador.getParametroCobrancaTransportador());
+			}
 		}
 		
 		this.processarEnderecos(transportador, listaEnderecosAdicionar, listaEnderecosRemover);

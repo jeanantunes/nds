@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -142,7 +143,7 @@ public class CotaGarantiaController {
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota) {
 		
-		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
+		CotaGarantiaDTO<CotaGarantia> cotaGarantia =	cotaGarantiaService.getByCota(idCota);
 
 		if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
 			result.use(CustomJson.class).from(cotaGarantia).exclude(EnderecoFiador.class, "fiador").serialize();		

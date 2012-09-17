@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
@@ -37,7 +38,7 @@ public interface CotaGarantiaService {
 	 *            Id da cota.
 	 * @return
 	 */
-	public abstract CotaGarantiaDTO getByCota(Long idCota);
+	public abstract CotaGarantiaDTO<CotaGarantia> getByCota(Long idCota);
 
 	/**
 	 * Salva no repositorio de dados a garantia de nota promissoria.

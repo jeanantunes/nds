@@ -206,7 +206,6 @@ public class ImportacaoDeArquivoProdutoStrategy extends ImportacaoAbstractStrate
 	  		    pj.setNomeFantasia("Editor_"+input.getCodigoDoEditor());
 	  		    pj.setRazaoSocial("Editor_"+input.getCodigoDoEditor());
 		        pessoaRepository.adicionar(pj);
-		  	    editor.setNome("Editor_"+input.getCodigoDoEditor());
 		  	    editor.setAtivo(true);
 		  	    editor.setOrigemInterface(false);
 		  	    editor.setPessoaJuridica(pj);

@@ -39,16 +39,19 @@ function exibirMensagem(tipoMensagem, mensagens) {
 	var textSuccess = $("#idTextSuccess");
 	var textWarning = $("#idTextWarning");
 	var textError = $("#idTextError");
-	
+
 	montarExibicaoMensagem(false, tipoMensagem, mensagens,
 						   divSuccess, textSuccess,
 						   divWarning, textWarning,
-						   divError, textError);
+						   divError, textError, false);
 }
 
 function exibirMensagemDialog(tipoMensagem, mensagens, idDialog) {
 	
-	clearMessageDialogTimeout(idDialog);
+	exibirMensagem(tipoMensagem, mensagens);
+	
+	// Not using this for now
+	/*clearMessageDialogTimeout(idDialog);
 	
 	var divSuccess = $("div[name='" + idDialog + "effectSuccessDialog']");
 	var divWarning = $("div[name='" + idDialog + "effectWarningDialog']");
@@ -61,13 +64,16 @@ function exibirMensagemDialog(tipoMensagem, mensagens, idDialog) {
 	montarExibicaoMensagem(true, tipoMensagem, mensagens,
 						   divSuccess, textSuccess,
 						   divWarning, textWarning,
-						   divError, textError);
+						   divError, textError, true);*/
+	
 }
 
 function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 								divSuccess, textSuccess,
 							    divWarning, textWarning,
-							    divError, textError) {
+							    divError, textError, isPopUp) {
+	
+	$("<div id='disabledBackground' class='ui-widget-overlay' style='width: 100%; height: 100%; z-index: 10001;'/>").appendTo($("#divCorpo"));
 	
 	var campoTexto;
 
@@ -76,8 +82,9 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		campoTexto = $(textSuccess);
 		
 		montarTextoMensagem(campoTexto, mensagens);
-		
+
 		$(divSuccess).show(0);
+
 		//$(divSuccess).show(0, esconde(isFromDialog, divSuccess));
 		
 	} else if (tipoMensagem == "WARNING") {
@@ -85,8 +92,9 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		campoTexto = $(textWarning);
 		
 		montarTextoMensagem(campoTexto, mensagens);
-		
+
 		$(divWarning).show(0);
+		
 		//$(divWarning).show(0, esconde(isFromDialog, divWarning));
 		
 	} else if (tipoMensagem == "ERROR") {
@@ -94,8 +102,9 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		campoTexto = $(textError);
 		
 		montarTextoMensagem(campoTexto, mensagens);
-		
+
 		$(divError).show(0);
+
 		//$(divError).show(0, esconde(isFromDialog, divError));
 	}
 }
@@ -119,23 +128,27 @@ function isNumeric(a){
 }
 
 function esconde(isFromDialog, div) {
-	
-	if (isFromDialog) {
+
+	$(div).fadeOut("slow");
+
+	/*if (isFromDialog) {
 		
 		messageDialogTimeout =
 			setTimeout(function() {
 				$(div).fadeOut("slow");
-			}, 0);
-			//}, 5000);
+			}, 5000);
 		
 	} else {
 		
-		messageTimeout = 
+		/*messageTimeout = 
 			setTimeout(function() {
 				$(div).fadeOut("slow");
-			}, 0);	
-			//}, 5000);	
-	}
+			}, 5000);	
+	}*/
+
+	// Remove a div que deixa o fundo desabilitado e escuro 
+	$("#disabledBackground").remove();
+
 }
 
 function clearMessageTimeout() {

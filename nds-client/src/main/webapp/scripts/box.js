@@ -295,3 +295,4 @@ var boxController = $.extend(true, {
 		this.detalheDialog();
 	}
 }, BaseController);
+//@ sourceURL=box.js

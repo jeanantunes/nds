@@ -106,7 +106,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public CotaGarantiaDTO getByCota(Long idCota) {
+	public CotaGarantiaDTO<CotaGarantia> getByCota(Long idCota) {
 		
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
 		
@@ -152,7 +152,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 		}
 
-		return new CotaGarantiaDTO(tipo, cotaGarantia);
+		return new CotaGarantiaDTO<CotaGarantia>(tipo, cotaGarantia);
 	}
 
 	/*
