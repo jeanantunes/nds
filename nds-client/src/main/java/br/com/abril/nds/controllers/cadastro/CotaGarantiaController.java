@@ -141,15 +141,20 @@ public class CotaGarantiaController {
 	}
 	
 	@Post("/getByCota.json")
-	public void getByCota(Long idCota) {
+	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
-		CotaGarantiaDTO<CotaGarantia> cotaGarantia =	cotaGarantiaService.getByCota(idCota);
-
-		if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
-			result.use(CustomJson.class).from(cotaGarantia).exclude(EnderecoFiador.class, "fiador").serialize();		
-		}else{			
-			result.use(CustomJson.class).from("OK").serialize();		
-		}	
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
+	        
+	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
+	            result.use(CustomJson.class).from(cotaGarantia).exclude(EnderecoFiador.class, "fiador").serialize();		
+	        }else{			
+	            result.use(CustomJson.class).from("OK").serialize();		
+	        }	
+	    } else {
+	        CotaGarantiaDTO<?> cotaGarantia = cotaGarantiaService.obterGarantiaHistoricoTitularidadeCota(idCota, idHistorico);
+	        result.use(CustomJson.class).from(cotaGarantia).serialize();  
+	    }
 	}
 	
 	/**
@@ -516,15 +521,16 @@ public class CotaGarantiaController {
 		}
 	}
 	
-	@Post("/getFiador.json")
-	public void getFiador(Long idFiador, String documento) {
-		Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
-		if (fiador != null) {
-			result.use(CustomMapJson.class).put("fiador",fiador).exclude(EnderecoFiador.class, "fiador").serialize();
-		} else {
-			result.use(CustomJson.class).from("NotFound").serialize();
-		}
-	}
+    @Post("/getFiador.json")
+    public void getFiador(Long idFiador, String documento) {
+        Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
+        if (fiador != null) {
+            result.use(CustomMapJson.class).put("fiador", fiador)
+                    .exclude(EnderecoFiador.class, "fiador").serialize();
+        } else {
+            result.use(CustomJson.class).from("NotFound").serialize();
+        }
+    }
 
 	@Post("/salvaFiador.json")
 	public void getFiador(Long idFiador, Long idCota)throws Exception  {

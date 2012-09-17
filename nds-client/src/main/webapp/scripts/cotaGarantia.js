@@ -605,14 +605,12 @@ function TipoCotaGarantia(workspace) {
 	this.newControllerType = null;
 	this.controllerType = null;
 	var _this = this;
-	this.confirmDialog = new ConfirmDialog('Ao mudar de garantia, os dados da garantia anterior serão perdidos.</br>Deseja continuar?', function() {		
+	this.confirmDialog = new ConfirmDialog('Ao mudar de garantia, os dados da garantia anterior serão perdidos.</br>Deseja continuar?', function() {
 		 _this.changeController(_this.newControllerType);
 		 return true;
 	}, function() {
 		 $("#tipoGarantiaSelect", _workspace).val(_this.controllerType);
 	});
-    this.modoTela = null;
-    this.idHistorico = "";
 };
 
 TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
@@ -664,9 +662,10 @@ TipoCotaGarantia.prototype.get = function() {
 
 TipoCotaGarantia.prototype.getData = function() {
 	var _this = this;
-	$.postJSON(this.path + 'getByCota.json', {
-		'idCota' : this.getIdCota()
-	}, function(data) {
+    var param = [{name: 'idCota', value: this.getIdCota()},
+        {name: 'modoTela', value: this.getModoTela().value},
+        {name: 'idHistorico', value: this.getIdHistorico()}]
+	$.postJSON(this.path + 'getByCota.json', param, function(data) {
 		var tipoMensagem = data.tipoMensagem;
 		var listaMensagens = data.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
@@ -815,8 +814,22 @@ TipoCotaGarantia.prototype.changeController = function(newControllerType) {
 };
 
 TipoCotaGarantia.prototype.getIdCota = function() {
-	return MANTER_COTA.idCota;
+    return MANTER_COTA.idCota;
 };
+
+TipoCotaGarantia.prototype.getModoTela = function() {
+    return MANTER_COTA.modoTela;
+};
+
+TipoCotaGarantia.prototype.getIdHistorico = function() {
+    return MANTER_COTA.idHistorico;
+};
+
+TipoCotaGarantia.prototype.isModoTelaCadastroCota = function() {
+    return MANTER_COTA.isModoTelaCadastroCota();
+};
+
+
 
 TipoCotaGarantia.prototype.salva = function(callBack) {
 	var retorno = false;
@@ -833,14 +846,9 @@ TipoCotaGarantia.prototype.salva = function(callBack) {
 	return retorno;
 };
 
-TipoCotaGarantia.prototype.definirModoTela = function(modoTela, idHistorico) {
-    this.modoTela = modoTela;
-    this.idHistorico = idHistorico;
-}
-
 // **************** FIADOR PROTOTYPE ********************//
 function Fiador(idCota, cotaGarantia) {
-	this._idCota = idCota;
+    this._idCota = idCota;
 	this.bindEvents();
 	this.toggle();
 	this.initGrid();
@@ -861,11 +869,18 @@ function Fiador(idCota, cotaGarantia) {
 		}
 	});
 
-	if (cotaGarantia && cotaGarantia.fiador) {
-		this.fiador = cotaGarantia.fiador;
-		this.bindData();
-		this.toggleDados(true);
-	}
+    if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        if (cotaGarantia && cotaGarantia.fiador) {
+            this.fiador = cotaGarantia.fiador;
+            this.bindData();
+            this.toggleDados(true);
+        }
+    } else {
+        this.fiador = cotaGarantia;
+        this.bindData();
+        this.toggleDados(true);
+    }
+
 
 };
 
@@ -966,26 +981,36 @@ Fiador.prototype.bindData = function() {
 
 	var nome;
 	var doc;
-	if (this.fiador.pessoa.razaoSocial) {
-		
-		nome = this.fiador.pessoa.razaoSocial;
-		doc = this.fiador.pessoa.cnpj;
-	} else {
-		nome = this.fiador.pessoa.nome;
-		doc = this.fiador.pessoa.cpf;
-	}
-	
+	if (this.fiador.pessoa) {
+        if (this.fiador.pessoa.razaoSocial) {
+
+            nome = this.fiador.pessoa.razaoSocial;
+            doc = this.fiador.pessoa.cnpj;
+        } else {
+            nome = this.fiador.pessoa.nome;
+            doc = this.fiador.pessoa.cpf;
+        }
+    } else {
+        nome = this.fiador.nome;
+        doc = this.fiador.documento;
+    }
+
 	$("#cotaGarantiaFiadorNome", _workspace).html(nome);
 	$("#cotaGarantiaFiadorDoc", _workspace).html(doc);
 
     var strEndereco = '';
 	var endereco = '';
-	
-	for (var i in this.fiador.enderecoFiador) {
-		if (this.fiador.enderecoFiador[i].principal) {
-			endereco = this.fiador.enderecoFiador[i].endereco;
-		}
-	}
+
+    if (this.fiador.enderecoPrincipal) {
+        endereco = this.fiador.enderecoPrincipal;
+    } else {
+        for (var i in this.fiador.enderecoFiador) {
+            if (this.fiador.enderecoFiador[i].principal) {
+                endereco = this.fiador.enderecoFiador[i].endereco;
+            }
+        }
+    }
+
 	if (endereco) {
         strEndereco = endereco.tipoLogradouro + ' ' + endereco.logradouro
             + ', ' + endereco.numero + ' - ' + endereco.bairro + ' - '
@@ -995,14 +1020,19 @@ Fiador.prototype.bindData = function() {
 	$("#cotaGarantiaFiadorEndereco", _workspace).html(strEndereco);
 	var telefone = '';
 
-	for ( var i in this.fiador.telefonesFiador) {
-		if (this.fiador.telefonesFiador[i].principal) {
-			telefone = this.fiador.telefonesFiador[i];
-		}
-	}
+    if (this.fiador.telefonePrincipal) {
+        telefone = this.fiador.telefonePrincipal;
+    } else {
+       for ( var i in this.fiador.telefonesFiador) {
+            if (this.fiador.telefonesFiador[i].principal) {
+                telefone = this.fiador.telefonesFiador[i].telefone;
+            }
+        }
+    }
+
 
 	$("#cotaGarantiaFiadorTelefone", _workspace).html(
-			'(' + telefone.telefone.ddd + ') ' + telefone.telefone.numero);
+			'(' + telefone.ddd + ') ' + telefone.numero);
 
 	var rows = new Array();
 	for ( var id in this.fiador.garantias) {

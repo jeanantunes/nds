@@ -11,6 +11,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
+import br.com.abril.nds.model.cadastro.TipoGarantia;
+
 /**
  * Representa a garantia do tipo "FIADOR" no histórico de titularidade da cota
  * 
@@ -22,6 +24,10 @@ import javax.persistence.JoinColumn;
 public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGarantia{
     
     private static final long serialVersionUID = 1L;
+    
+    public HistoricoTitularidadeCotaFiador() {
+        this.tipoGarantia = TipoGarantia.FIADOR;
+    }
 
     /**
      * Nome do fiador

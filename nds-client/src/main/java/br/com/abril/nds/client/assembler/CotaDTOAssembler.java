@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.FiadorDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
@@ -37,6 +38,8 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescri
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFiador;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFiadorGarantia;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
@@ -570,7 +573,42 @@ public class CotaDTOAssembler {
         
         return dto;
     }
-    
-    
+
+
+    /**
+     * Cria o {@link FiadorDTO} com as informações da 
+     * instância de {@link HistoricoTitularidadeCotaFiador}
+     * 
+     * @param fiador instância de
+     *            {@link HistoricoTitularidadeCotaFiador} para a criação do DTO
+     * @return {@link FiadorDTO} com as informações
+     */
+    public static FiadorDTO toFiadorDTO(HistoricoTitularidadeCotaFiador fiador) {
+        FiadorDTO dto = new FiadorDTO();
+        dto.setDocumento(fiador.getCpfCnpj());
+        dto.setNome(fiador.getNome());
+        dto.setEnderecoPrincipal(toEnderecoDTO(fiador.getHistoricoTitularidadeCotaEndereco()));
+        dto.setTelefonePrincipal(toTelefoneDTO(fiador.getHistoricoTitularidadeCotaTelefone()));
+        for (HistoricoTitularidadeCotaFiadorGarantia garantia : fiador.getGarantias()) {
+            dto.addGarantia(garantia.getDescricao(), garantia.getValor());
+        }
+        return dto;
+    }
+
+    /**
+     * Retorna o dto com as informações de garantia para o tipo de garantia
+     * fiador do histórico de titularidade da COTA
+     * 
+     * @param garantiaFiador
+     *            garantia fiador do histórico de titularidade da cota
+     * @return dto com as informações da garantia do tipo fiador do histórico de
+     *         titularidade da cota
+     */
+    public static CotaGarantiaDTO<FiadorDTO> toCotaGarantiaDTO(HistoricoTitularidadeCotaFiador garantiaFiador) {
+        CotaGarantiaDTO<FiadorDTO> dto = new CotaGarantiaDTO<FiadorDTO>();
+        dto.setTipo(garantiaFiador.getTipoGarantia());
+        dto.setCotaGarantia(toFiadorDTO(garantiaFiador));
+        return dto;
+    }
  
 }

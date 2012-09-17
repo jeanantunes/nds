@@ -217,4 +217,16 @@ public interface CotaGarantiaService {
 	 * @return Data Transfer Object com os dados da forma de cobranca
 	 */
 	FormaCobrancaCaucaoLiquidaDTO obterDadosCaucaoLiquida(Long idCota);
+
+	/**
+     * Recupera as informações de garantia da histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico
+     * @return DTO com as informações da garantia do histórico de titularidade
+     *         da cota
+     */
+	CotaGarantiaDTO<?> obterGarantiaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
 }

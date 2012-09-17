@@ -18,9 +18,9 @@ public class FiadorDTO implements Serializable {
     
     private String documento;
     
-    private List<EnderecoDTO> enderecoFiador;
+    private EnderecoDTO enderecoPrincipal;
     
-    private List<TelefoneDTO> telefonesFiador;
+    private TelefoneDTO telefonePrincipal;
     
     private List<GarantiaDTO> garantias;
     
@@ -53,38 +53,33 @@ public class FiadorDTO implements Serializable {
         this.documento = documento;
     }
 
-
     /**
-     * @return the enderecoFiador
+     * @return the enderecoPrincipal
      */
-    public List<EnderecoDTO> getEnderecoFiador() {
-        return enderecoFiador;
+    public EnderecoDTO getEnderecoPrincipal() {
+        return enderecoPrincipal;
     }
 
-
     /**
-     * @param enderecoFiador the enderecoFiador to set
+     * @param enderecoPrincipal the enderecoPrincipal to set
      */
-    public void setEnderecoFiador(List<EnderecoDTO> enderecoFiador) {
-        this.enderecoFiador = enderecoFiador;
+    public void setEnderecoPrincipal(EnderecoDTO enderecoPrincipal) {
+        this.enderecoPrincipal = enderecoPrincipal;
     }
 
-
     /**
-     * @return the telefonesFiador
+     * @return the telefonePrincipal
      */
-    public List<TelefoneDTO> getTelefonesFiador() {
-        return telefonesFiador;
+    public TelefoneDTO getTelefonePrincipal() {
+        return telefonePrincipal;
     }
 
-
     /**
-     * @param telefonesFiador the telefonesFiador to set
+     * @param telefonePrincipal the telefonePrincipal to set
      */
-    public void setTelefonesFiador(List<TelefoneDTO> telefonesFiador) {
-        this.telefonesFiador = telefonesFiador;
+    public void setTelefonePrincipal(TelefoneDTO telefonePrincipal) {
+        this.telefonePrincipal = telefonePrincipal;
     }
-
 
     /**
      * @return the garantias
@@ -115,33 +110,7 @@ public class FiadorDTO implements Serializable {
         }
         this.garantias.add(new GarantiaDTO(valor, descricao));
     }
-    
-    /**
-     * Adiciona um endereço ao fiador
-     * 
-     * @param endereco
-     *            endereço para inclusão
-     */
-    public void addEndereco(EnderecoDTO endereco) {
-        if (this.enderecoFiador == null) {
-            this.enderecoFiador = new ArrayList<EnderecoDTO>();
-        }
-        this.enderecoFiador.add(endereco);
-    }
-    
-    /**
-     * Adiciona um telefone ao fiador
-     * 
-     * @param telefone
-     *            telefone para inclusão
-     */
-    public void addTelefone(TelefoneDTO telefone) {
-        if (this.telefonesFiador == null) {
-            this.telefonesFiador = new ArrayList<TelefoneDTO>();
-        }
-        this.telefonesFiador.add(telefone);
-    }
-
+  
 
     public static class GarantiaDTO {
         

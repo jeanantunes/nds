@@ -28,6 +28,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 /**
  * Representa a titularidade da cota, utilizado como histórico de propriedade da
@@ -758,5 +759,27 @@ public class HistoricoTitularidadeCota implements Serializable {
         garantias.add(garantia);
     }
     
-
+    /**
+     * Retorna o tipo de garantia do histórico de titularidade da cota
+     * 
+     * @return tipo de garantia aceita no histórico de titularidade da cota
+     */
+    public TipoGarantia getTipoGarantia() {
+        if (garantias == null || garantias.isEmpty()) {
+            return null;
+        }
+        return garantias.iterator().next().getTipoGarantia();
+    }
+    
+    /**
+     * Retorna a garantia do tipo fiador do histórico de titularidade da cota
+     * @return garantia fiador do histórico de titularidade da cota
+     */
+    public HistoricoTitularidadeCotaFiador getGarantiaFiador() {
+        if (TipoGarantia.FIADOR == getTipoGarantia()) {
+            return HistoricoTitularidadeCotaFiador.class.cast(garantias.iterator().next());
+        }
+        return null;
+    }
+    
 }
