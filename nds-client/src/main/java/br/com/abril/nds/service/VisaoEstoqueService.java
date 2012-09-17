@@ -11,4 +11,8 @@ public interface VisaoEstoqueService {
 	List<VisaoEstoqueDTO> obterVisaoEstoque(FiltroConsultaVisaoEstoque filtro);
 	
 	List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro);
+	
+	List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueTransferencia(FiltroConsultaVisaoEstoque filtro);
+	
+	List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueInventario(FiltroConsultaVisaoEstoque filtro);
 }
