@@ -49,7 +49,7 @@
 	
 	<%-- POPUPS --%>
 	
-	<div id="dialog-detalhe" title="Vis&atilde;o Estoque Lan&ccedil;amento">
+	<div id="dialog-detalhe" title="Vis&atilde;o Estoque">
 		<fieldset>
 	        <legend>Vis&atilde;o de Estoque / <span id="visaoEstoque_detalhe_estoque"></span></legend>
 	        <table class="visaoEstoqueDetalheGrid"></table>
@@ -58,7 +58,7 @@
 		</fieldset>
 	</div>
 	
-	<div id="dialog-detalhe-juramentado" title="Visão Estoque Juramentado">
+	<div id="dialog-detalhe-juramentado" title="Vis&atilde;o Estoque">
 		<fieldset>
 	        <legend>Vis&atilde;o de Estoque / Juramentado</legend>
 	        <table class="visaoEstoqueDetalheJuramentadoGrid"></table>
@@ -74,12 +74,11 @@
         	<table width="850" border="0" cellspacing="2" cellpadding="2">
           		<tr>
             		<td width="124">Data Movimenta&ccedil;&atilde;o:</td>
-            		<td width="123"><input name="dataMovimentacaoTransferencia" type="text" id="visaoEstoque_transferencia_dataMovimentacao" style="width:80px;"/></td>
+            		<td width="123"><span id="visaoEstoque_transferencia_dataMovimentacao" style="width:80px;"></span></td>
             		<td width="320"><strong>Estoque Selecionado</strong>: <span id="visaoEstoque_transferencia_estoqueSelecionado"></span></td>
             		<td width="101">Incluir no Estoque:</td>
             		<td width="150">
-            			<select name="select2" id="select2" style="width:150px;">
-              				<option selected="selected">Selecione...</option>
+            			<select name="select2" id="visaoEstoque_selectIncluirEstoque" style="width:150px;">
             			</select>
             		</td>
           		</tr>
@@ -89,7 +88,7 @@
     	<div class="linha_separa_fields">&nbsp;</div>
 
 		<fieldset style="width:870px!important;">
-        	<legend>Transferência entre Estoques</legend>
+        	<legend>Transfer&ecirc;ncia entre Estoques</legend>
         	<table class="visaoEstoqueTransferenciaGrid"></table>
         	<span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:40px;"/></span>
 		</fieldset>

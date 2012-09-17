@@ -79,7 +79,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		save(fornecedorFC, fornecedorDinap);
 		
-		Editor globo = Fixture.criarEditor("Globo", 680L, fornecedorFC.getJuridica(), true);
+		Editor globo = Fixture.criarEditor(680L, fornecedorFC.getJuridica(), true);
 		save(globo);
 		
 		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");

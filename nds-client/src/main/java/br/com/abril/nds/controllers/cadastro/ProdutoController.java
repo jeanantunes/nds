@@ -582,7 +582,7 @@ public class ProdutoController {
 		listaBaseComboVO.add(getDefaultBaseComboVO());
 		
 		for (Editor editor : listaEditor) {
-			listaBaseComboVO.add(new BaseComboVO(editor.getId(), editor.getNome()));
+			listaBaseComboVO.add(new BaseComboVO(editor.getId(), editor.getPessoaJuridica().getNome()));
 		}
 		
 		return listaBaseComboVO;

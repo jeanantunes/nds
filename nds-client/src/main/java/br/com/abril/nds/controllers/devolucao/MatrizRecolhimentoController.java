@@ -19,7 +19,6 @@ import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
-import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoFormatadoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
@@ -44,6 +43,7 @@ import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -1253,12 +1253,19 @@ public class MatrizRecolhimentoController {
 			return null;
 		}
     	
+		List<ConfirmacaoVO> confirmacoesVO = this.obterDatasConfirmacao(balanceamentoRecolhimento.getMatrizRecolhimento());
+
+		return confirmacoesVO;
+	}
+
+	private List<ConfirmacaoVO> obterDatasConfirmacao(
+									TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+		
 		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
 
 		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
 
-		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry
-				: balanceamentoRecolhimento.getMatrizRecolhimento().entrySet()) {
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
 			
 			Date novaData = entry.getKey();
 			
@@ -1293,7 +1300,6 @@ public class MatrizRecolhimentoController {
 			confirmacoesVO.add(
 				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
 		}
-
 		return confirmacoesVO;
 	}
 	
