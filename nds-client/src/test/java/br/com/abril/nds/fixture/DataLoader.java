@@ -121,6 +121,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
@@ -1974,7 +1975,12 @@ public class DataLoader {
 		save(session,movimentoEstoque);
 
 		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
-		save(session,diferenca);
+		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+		
+		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca,diferenca);
 
 		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN , cotaManoel, diferenca, estudoCota, new Date());
 
@@ -5170,8 +5176,12 @@ public class DataLoader {
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
 						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+			LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+			
+			lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
 
-			session.save(diferenca);
+			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+			save(session, lancamentoDiferenca, diferenca);
 		}
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {
@@ -5308,7 +5318,12 @@ public class DataLoader {
 
 
 					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
-					session.save(diferenca);
+					LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+					
+					lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
+
+					diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+					save(session, lancamentoDiferenca,diferenca);
 
 					itemFisico.setDiferenca(diferenca);
 					session.update(itemFisico);
@@ -5409,22 +5424,46 @@ public class DataLoader {
 		Diferenca diferenca =
 			Fixture.diferenca(BigInteger.valueOf(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
 							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
-		session.save(diferenca);
+		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+		
+		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca, diferenca);
 
 		Diferenca diferenca2 =
 			Fixture.diferenca(BigInteger.valueOf(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
 							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true,TipoEstoque.LANCAMENTO);
-		session.save(diferenca2);
+		
+		LancamentoDiferenca lancamentoDiferenca2 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca2.setMovimentoEstoque(movimentoEstoqueDiferenca2);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca2, diferenca2);
 
 		Diferenca diferenca3 =
 			Fixture.diferenca(BigInteger.valueOf(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
 							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true, TipoEstoque.LANCAMENTO);
-		session.save(diferenca3);
+		
+		LancamentoDiferenca lancamentoDiferenca3 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca3.setMovimentoEstoque(movimentoEstoqueDiferenca3);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca3, diferenca3);
 
 		Diferenca diferenca4 =
 			Fixture.diferenca(BigInteger.valueOf(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
 					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true, TipoEstoque.LANCAMENTO);
-		session.save(diferenca4);
+		
+		LancamentoDiferenca lancamentoDiferenca4 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca4.setMovimentoEstoque(movimentoEstoqueDiferenca4);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		
+		save(session,lancamentoDiferenca4, diferenca4);
 
 		// Fim dos inserts na tabela DIFERENCA
 
