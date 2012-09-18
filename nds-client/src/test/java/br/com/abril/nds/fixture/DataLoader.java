@@ -940,7 +940,7 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		carregarDadosClean(session);
 
-		criarBanco(session);
+		//criarBanco(session);
 		criarUsuarios(session);
 		
 		criarDiasDistribuicaoFornecedores(session);
@@ -1161,9 +1161,11 @@ public class DataLoader {
 		tabelaNCM(session);
 		criarTiposProduto(session);
 		
+		criarBanco(session);		
+		
 		//Remover Depois
-		criarBox(session);
-		criarDistribuidor(session);
+		criarBox(session);criarDistribuidor
+		(session);
 		
 		criarEnderecoDistribuidor(session);
 		criarTelefoneDistribuidor(session);
@@ -2407,7 +2409,7 @@ public class DataLoader {
 
 
 	private static void criarParametrosCobrancaCota(Session session) {
-
+		
 		FormaCobranca formaBoleto =
 				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 											BigDecimal.ONE, BigDecimal.ONE,null);
@@ -4478,6 +4480,7 @@ public class DataLoader {
 		save(session, juridicaDistrib);
 
 		//FORMAS DE COBRANÇA DA COTA
+
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 												  BigDecimal.ONE, BigDecimal.ONE, null);
 
