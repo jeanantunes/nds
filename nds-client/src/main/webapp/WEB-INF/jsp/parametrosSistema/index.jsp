@@ -125,6 +125,16 @@ $(function(){
 							meses
 						</td>
 					</tr>
+					<tr>
+						<td>Interface Contrato Importa&ccedil;&atilde;o: </td>
+						<td>
+							<input type="text" name="dto.pathContrato" id="pathContrato" style="width:220px;" value="${parametroSistemaGeralDTO.pathContrato}" />
+						</td>	
+						<td>
+						</td>
+						<td>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</fieldset>
