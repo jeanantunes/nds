@@ -8,17 +8,23 @@ var _workspace = "";
 function NotaPromissoria(idCota, cotaGarantia) {
 	this.idCota = idCota;
 	this.bindEvents();
-	if (cotaGarantia && cotaGarantia.notaPromissoria) {
-		this.notaPromissoria = cotaGarantia.notaPromissoria;
-		
-	}else{
-		this.notaPromissoria = {
-			id : null,
-			vencimento : null,
-			valor : null,
-			valorExtenso : null
-		};
-	}
+	if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        if (cotaGarantia && cotaGarantia.notaPromissoria) {
+            this.notaPromissoria = cotaGarantia.notaPromissoria;
+
+        }else{
+            this.notaPromissoria = {
+                id : null,
+                vencimento : null,
+                valor : null,
+                valorExtenso : null
+            };
+        }
+        $('#cotaGarantiaNotaPromissoriaImprimir').show();
+    } else {
+        this.notaPromissoria = cotaGarantia;
+        $('#cotaGarantiaNotaPromissoriaImprimir').hide();
+    }
 	this.dataBind();
 	this.toggle();
 };

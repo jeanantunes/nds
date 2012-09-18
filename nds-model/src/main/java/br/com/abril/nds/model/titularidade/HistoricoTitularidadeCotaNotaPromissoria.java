@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.cadastro.TipoGarantia;
+
 /**
  * Representa a garantia do tipo "NOTA PROMISSORIA" no histórico de titularidade
  * da cota
@@ -41,6 +43,10 @@ public class HistoricoTitularidadeCotaNotaPromissoria extends
      */
     @Column(name = "NOTA_PROMISSORIA_VALOR_EXTENSO")
     private String valorExtenso;
+    
+    public HistoricoTitularidadeCotaNotaPromissoria() {
+        this.tipoGarantia = TipoGarantia.NOTA_PROMISSORIA;
+    }
 
     /**
      * @return the vencimento

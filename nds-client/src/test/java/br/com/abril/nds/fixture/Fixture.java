@@ -204,7 +204,6 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
-import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
@@ -216,6 +215,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamen
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaImovel;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaNotaPromissoria;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
@@ -3669,23 +3669,27 @@ public class Fixture {
 //            throw new RuntimeException("Erro carregando imagem cheque caução histórico titularidade", e);
 //        }
         
-        HistoricoTitularidadeCotaImovel imovel1 = new HistoricoTitularidadeCotaImovel();
-        imovel1.setEndereco("Rua Treze de Maio, 150 - Centro, São José do Rio Pardo-SP");
-        imovel1.setNumeroRegistro("1234");
-        imovel1.setObservacao("Observação");
-        imovel1.setProprietario("John Doe");
-        imovel1.setValor(BigDecimal.valueOf(150000));
-        historico.addGarantia(imovel1);
+//        HistoricoTitularidadeCotaImovel imovel1 = new HistoricoTitularidadeCotaImovel();
+//        imovel1.setEndereco("Rua Treze de Maio, 150 - Centro, São José do Rio Pardo-SP");
+//        imovel1.setNumeroRegistro("1234");
+//        imovel1.setObservacao("Observação");
+//        imovel1.setProprietario("John Doe");
+//        imovel1.setValor(BigDecimal.valueOf(150000));
+//        historico.addGarantia(imovel1);
+//        
+//        HistoricoTitularidadeCotaImovel imovel2 = new HistoricoTitularidadeCotaImovel();
+//        imovel2.setEndereco("Rua Campos Salles, 290 - Centro, São José do Rio Pardo-SP");
+//        imovel2.setNumeroRegistro("4321");
+//        imovel2.setObservacao("Observação II");
+//        imovel2.setProprietario("Jane Doe");
+//        imovel2.setValor(BigDecimal.valueOf(500000));
+//        historico.addGarantia(imovel2);
         
-        HistoricoTitularidadeCotaImovel imovel2 = new HistoricoTitularidadeCotaImovel();
-        imovel2.setEndereco("Rua Campos Salles, 290 - Centro, São José do Rio Pardo-SP");
-        imovel2.setNumeroRegistro("4321");
-        imovel2.setObservacao("Observação II");
-        imovel2.setProprietario("Jane Doe");
-        imovel2.setValor(BigDecimal.valueOf(500000));
-        historico.addGarantia(imovel2);
-        
-        historico.addPdv(pdv);
+        HistoricoTitularidadeCotaNotaPromissoria nota = new HistoricoTitularidadeCotaNotaPromissoria();
+        nota.setValor(BigDecimal.valueOf(1500));
+        nota.setValorExtenso("Um mile quinhentos reais");
+        nota.setVencimento(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
+        historico.addGarantia(nota);
         
         HistoricoTitularidadeCotaDistribuicao distribuicao = new HistoricoTitularidadeCotaDistribuicao();
         distribuicao.setQtdePDV(1);

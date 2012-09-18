@@ -810,4 +810,17 @@ public class HistoricoTitularidadeCota implements Serializable {
         return imoveis;
     }
     
+    /**
+     * Retorna a garantia do tipo nota promissória do histórico de titularidade da
+     * cota
+     * 
+     * @return garantia nota promissória do histórico de titularidade da cota
+     */
+    public HistoricoTitularidadeCotaNotaPromissoria getGarantiaNotaPromissoria() {
+        if (TipoGarantia.NOTA_PROMISSORIA == getTipoGarantia()) {
+            return HistoricoTitularidadeCotaNotaPromissoria.class.cast(garantias.iterator().next());
+        }
+        return null;
+    }
+    
 }

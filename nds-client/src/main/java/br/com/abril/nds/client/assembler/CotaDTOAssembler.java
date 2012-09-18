@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FiadorDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.GarantiaNotaPromissoriaDTO;
 import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.PdvDTO;
@@ -49,6 +50,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamen
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaImovel;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaNotaPromissoria;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
@@ -680,6 +682,27 @@ public class CotaDTOAssembler {
                     .getValor(), imovel.getObservacao()));
         }
         dto.setCotaGarantia(imoveis);
+        return dto;
+    }
+
+
+    /**
+     * Retorna o DTO com as informações de garantia para o tipo de garantia
+     * nota promissória do histórico de titularidade da cota
+     * 
+     * @param garantiaNotaPromissoria
+     *            garantia nota promissória do histórico de titularidade da cota
+     * @return DTO com as informações da garantia do tipo nota promissória do histórico de
+     *         titularidade da cota
+     */
+    public static CotaGarantiaDTO<GarantiaNotaPromissoriaDTO> toCotaGarantiaDTO(
+            HistoricoTitularidadeCotaNotaPromissoria garantiaNotaPromissoria) {
+        CotaGarantiaDTO<GarantiaNotaPromissoriaDTO> dto = new CotaGarantiaDTO<GarantiaNotaPromissoriaDTO>();
+        dto.setTipo(garantiaNotaPromissoria.getTipoGarantia());
+        dto.setCotaGarantia(new GarantiaNotaPromissoriaDTO(
+                garantiaNotaPromissoria.getVencimento(),
+                garantiaNotaPromissoria.getValor(), garantiaNotaPromissoria
+                        .getValorExtenso()));
         return dto;
     }
  
