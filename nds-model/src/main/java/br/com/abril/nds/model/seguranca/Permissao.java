@@ -36,6 +36,7 @@ public enum Permissao
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_EDICOES_FECHADAS_SALDO("Edições Fechadas com Saldo",									   Permissao.ROLE_ESTOQUE),
+	ROLE_ESTOQUE_VISAO_DO_ESTOQUE("Visão do Estoque",                                                      Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_HELP("Help",							                                                   Permissao.ROLE_ESTOQUE),
 	ROLE_EXPEDICAO("Expedição",															  				   null), 
 	ROLE_EXPEDICAO_MAPA_ABASTECIMENTO("Mapa de Abastecimento",										  	   Permissao.ROLE_EXPEDICAO), 
@@ -53,9 +54,11 @@ public enum Permissao
 	ROLE_DEVOLUCAO_EMISSAO_CE("Emissão CE",															  	   Permissao.ROLE_DEVOLUCAO),
 	ROLE_DEVOLUCAO_DIGICACAO_CONTAGEM_DEVOLUCAO("Digitação Contagem Devolução", 						   Permissao.ROLE_DEVOLUCAO),
 	ROLE_DEVOLUCAO_FECHAMENTO_ENCALHE("Fechamento Encalhe",											  	   Permissao.ROLE_DEVOLUCAO),
+	ROLE_DEVOLUCAO_FECHAMENTO_INTEGRACAO("Fechamento CE - Integração",								  	   Permissao.ROLE_DEVOLUCAO),
 	ROLE_DEVOLUCAO_HELP("Help",																		  	   Permissao.ROLE_DEVOLUCAO),
 	ROLE_NFE("NF-e",																	  	   			   null),
 	ROLE_NFE_RETORNO_NFE("Retorno NF-e",																   Permissao.ROLE_NFE),
+	ROLE_NFE_IMPRESSAO_NFE("Impressão NF-e",															   Permissao.ROLE_NFE),
 	ROLE_NFE_CONSULTA_NFE_ENCALHE_TRATAMENTO("Consulta NF-e Encalhe Tratamento",						   Permissao.ROLE_NFE),
 	ROLE_NFE_PAINEL_MONITOR_NFE("Painel Monitor NF-e",													   Permissao.ROLE_NFE),
 	ROLE_RECOLHIMENTO("Recolhimento", 													  				   null),
@@ -72,6 +75,7 @@ public enum Permissao
 	ROLE_RECOLHIMENTO_HELP("Help", 									   							 		   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_FINANCEIRO("Financeiro", 					   				                         	  	  	   null),
 	ROLE_FINANCEIRO_BAIXA_BANCARIA("Baixa Bancária", 					                         	  	   Permissao.ROLE_FINANCEIRO),
+	ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA("Negociação de Dívida",			                         	  	   Permissao.ROLE_FINANCEIRO),
 	ROLE_FINANCEIRO_BAIXA_BANCARIA_MANUAL("Baixa Bancária Manual",                                	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_BAIXA_MANUAL_DIVIDAS("Baixa Manual de Dívidas",                               	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA("Consulta Boletos por Cota",                         	  	   	   Permissao.ROLE_FINANCEIRO), 
@@ -99,6 +103,7 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_SERVICO_ENTREGA("Serviço de Entrega",										  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO),	
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros do Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração / Cota",			          					 		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros do Distribuidor", 						 	   Permissao.ROLE_ADMINISTRACAO);
 
 	private String descricao;

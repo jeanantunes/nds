@@ -1,190 +1,17 @@
-<head>
+﻿<head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/consultaBoletos.js"></script>
 
 <script type="text/javascript">
 
 	var pesquisaCotaConsultaBoletos = new PesquisaCota();
 
-	$(function() {
-		$(".boletosCotaGrid").flexigrid({
-		    preProcess: getDataFromResult,
-		    dataType : 'json',
-			colModel : [ {
-				display : 'Nosso Número',
-				name : 'nossoNumero',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Data Emissão',
-				name : 'dtEmissao',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Vencimento',
-				name : 'dtVencimento',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Pagamento',
-				name : 'dtPagto',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Encargos',
-				name : 'encargos',
-				width : 80,
-				sortable : true,
-				align : 'right',
-			}, {
-				display : 'Valor R$',
-				name : 'valor',
-				width : 90,
-				sortable : true,
-				align : 'right',
-			}, {
-				display : 'Tipo Baixa',
-				name : 'tipoBaixa',
-				width : 120,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 80,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 60,
-				sortable : false,
-				align : 'center',
-			}],
-			sortname : "dtVencimento",
-			sortorder : "desc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 'auto'
-		});
-    });
-		
-	$(function() {
-		$( "#dataDe" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$( "#dataAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$("#numCota").numeric();
-		$("#dataDe").mask("99/99/9999");
-		$("#dataAte").mask("99/99/9999");
-		
-		$("#descricaoCota").autocomplete({source: ""});
-		
-    }); 
-	
-	function mostrarGridConsulta() {
-		
-		/*PASSAGEM DE PARAMETROS*/
-		$(".boletosCotaGrid").flexOptions({
-			
-			/*METODO QUE RECEBERA OS PARAMETROS*/
-			url: "<c:url value='/financeiro/boletos/consultaBoletos' />",
-			params: [
-			         {name:'numCota', value:$("#numCota").val()},
-			         {name:'descricaoCota', value:$("#descricaoCota").val()},
-			         {name:'dataDe', value:$("#dataDe").val()},
-			         {name:'dataAte', value:$("#dataAte").val()},
-			         {name:'status', value:$("#status").val()}
-			        ] ,
-			        newp: 1
-		});
-		
-		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
-		$(".boletosCotaGrid").flexReload();
-		
-		$(".grids").show();
-	}	
-	
-	function getDataFromResult(resultado) {
-		
-		//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
-		if (resultado.mensagens) {
-			exibirMensagem(
-				resultado.mensagens.tipoMensagem, 
-				resultado.mensagens.listaMensagens
-			);
-			$(".grids").hide();
-			return resultado.tableModel;
-		}
-		
-		var dadosPesquisa;
-		$.each(resultado, function(index, value) {
-			  if(value[0] == "TblModelBoletos") {
-				  dadosPesquisa = value[1];
-			  }
-	    });
-		
-		$.each(dadosPesquisa.rows, 
-				function(index, row) {
+	$(function(){
+		consultaBoletosController.init();
+	});
 
-			         var linkEmail='';
-			         var linkImpressao='';
-			         
-		        	 linkImpressao = '<a href="javascript:;" onclick="imprimeBoleto(' + row.cell[0] + ');" style="cursor:pointer; margin-right:10px;">' +
-				 					 '<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0px" title="Imprime boleto" />' +
-				 					 '</a>';
-			         			 					     
-			         linkEmail = '<a href="javascript:;" onclick="enviaBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
-			                     '<img src="${pageContext.request.contextPath}/images/ico_email.png" border="0px" title="Envia boleto por e-mail" />' +
- 					             '</a>';		 					 
-									
-				     row.cell[8] = linkImpressao + linkEmail;
-		         }
-		);
-		
-		return dadosPesquisa;
-	}
-		
-	function enviaBoleto(nossoNumero) {
-		var data = [
-	   				   {
-	   					   name: 'nossoNumero', value: nossoNumero
-	   				   }
-	   			   ];
-		$.postJSON("<c:url value='/financeiro/boletos/enviaBoleto' />", data);
-	}
-	
-	function imprimeBoleto(nossoNumero) {
-		var data = [
-	   				   {
-	   					   name: 'nossoNumero', value: nossoNumero
-	   				   }
-	   			   ];
-		$.postJSON("<c:url value='/financeiro/boletos/verificaBoleto' />", data, imprimirBoleto );
-	}
-	
-	function imprimirBoleto(result){
-		if (result!=''){
-			document.location.assign("${pageContext.request.contextPath}/financeiro/boletos/imprimeBoleto?nossoNumero="+ result);
-		}
-	}
-	
 </script>
 
 </head>
@@ -236,11 +63,11 @@
 			      		 onblur="pesquisaCotaConsultaBoletos.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
 			  </td>
               
+
               <td width="114">Data de Vencimento:</td>
-              <td width="113"><input name="dataDe" id="dataDe" type="date" style="width:80px; float:left; margin-right:5px;" value="${dataDe}"/></td>
+              <td width="113"><input name="dataDe" id="dataDe" type="text" style="width:80px; float:left; margin-right:5px;" /></td>
               <td width="26">Até:</td>
-              <td width="113"><input name="dataAte" id="dataAte" type="date" style="width:80px; float:left; margin-right:5px;" value="${dataAte}"/></td>
-              
+              <td width="113"><input name="dataAte" id="dataAte" type="text" style="width:80px; float:left; margin-right:5px;" /></td>
               <td width="44">Status:</td>
               <td width="128">
                  <select name="status" id="status" style="width:100px;">
@@ -250,7 +77,7 @@
                  </select>
               </td>
               
-              <td width="33"><span class="bt_novos"><a href="javascript:;" onclick="mostrarGridConsulta();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+              <td width="33"><span class="bt_novos"><a href="javascript:;" onclick="consultaBoletosController.mostrarGridConsulta();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>
           </table>
 

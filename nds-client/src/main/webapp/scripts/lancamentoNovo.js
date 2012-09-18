@@ -3,6 +3,8 @@ var lancamentoNovoController = $.extend(true, {
 	ultimaLinhaPreenchida : "",
 	valorDiferencaDirecionadaEstoque:0,
 	idDiferenca:null,
+	redirecionarProdutosEstoque:false,
+	tipoEstoqueSelecionado:null,
 
 	init : function () {
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).datepicker({
@@ -81,7 +83,9 @@ var lancamentoNovoController = $.extend(true, {
 		$("#precoCapaProduto", lancamentoNovoController.workspace).text("");
 		$("#reparteProduto", lancamentoNovoController.workspace).text("");
 		$("#diferencaProdutoInput", lancamentoNovoController.workspace).val("");
-		$("#paraEstoque", lancamentoNovoController.workspace).check();
+		
+		$("#fieldCota", lancamentoNovoController.workspace).hide("slow");
+		$(".trCotas", lancamentoNovoController.workspace).remove();
 		
 		$(".trCotas", lancamentoNovoController.workspace).remove();
 		$("#cotaInput1", lancamentoNovoController.workspace).val("");
@@ -265,6 +269,8 @@ var lancamentoNovoController = $.extend(true, {
 		
 		var direcionadoParaEstoque = $('#paraEstoque', lancamentoNovoController.workspace).attr('checked') ? true : false;
 		
+		var reparteAtual = $("#reparteProduto", lancamentoNovoController.workspace).html();
+		
 		//lançamento por cota
 		var dataNotaEnvio = $("#dateNotaEnvio", lancamentoNovoController.workspace).val();
 		
@@ -279,10 +285,15 @@ var lancamentoNovoController = $.extend(true, {
 				 {name: "direcionadoParaEstoque", value: direcionadoParaEstoque},
 				 {name: "dataNotaEnvio", value: dataNotaEnvio},
 				 {name: "numeroCota", value: numeroCota},
+				 {name: "reparteAtual", value: reparteAtual},
+				 {name: "redirecionarProdutosEstoque", value: lancamentoNovoController.redirecionarProdutosEstoque},
+				 
 				 
 		 ];
 		
 		var linhasDaGrid = $('#grid_1 tr',this.workspace);
+		
+		var qntReparteRateio = 0;
 		
 		$.each(linhasDaGrid, function(index, value) {
 
@@ -311,7 +322,11 @@ var lancamentoNovoController = $.extend(true, {
 			data.push({name: "rateioCotas["+index+"].reparteCota", value: reparte });
 			data.push({name: "rateioCotas["+index+"].quantidade", value: diferenca});
 			data.push({name: "rateioCotas["+index+"].reparteAtualCota", value: reparteAtual});
+			
+			qntReparteRateio += eval(diferenca);
 		});
+		
+		data.push({name: "qntReparteRateio", value: qntReparteRateio});
 		
 		var linhasDaGrid = $('.lanctoFaltasSobrasCota_3Grid tr',this.workspace);
 		
@@ -361,6 +376,7 @@ var lancamentoNovoController = $.extend(true, {
 			},
 			function(result){
 				lancamentoNovoController.tratarErroCadastroNovasDiferencas(result);
+				$("#dialogConfirmacaoDirecionamentoDiferencaProdutoCota", lancamentoNovoController.workspace).dialog("close");
 			},
 			true
 		);
@@ -468,12 +484,23 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	paraEstoque : function(param){
-		
+				
 		if (param){
 			
+			lancamentoNovoController.limparCotas();
 			$("#fieldCota", lancamentoNovoController.workspace).hide("slow");
-			$(".trCotas", lancamentoNovoController.workspace).remove();
+			
 		} else {
+			
+			var idProdutoEdicao = $("#idProdutoEdicao", lancamentoNovoController.workspace).val();
+			
+			if(!idProdutoEdicao) {
+				exibirMensagemDialog('WARNING', ['Produto Edição não selecionado.'],'');			
+				$('#paraCota').attr('checked',false);
+				$("#fieldCota", lancamentoNovoController.workspace).hide("slow");
+				$(".trCotas", lancamentoNovoController.workspace).remove();				
+				return;
+			}
 			
 			$("#fieldCota", lancamentoNovoController.workspace).show("slow");
 		}
@@ -525,26 +552,38 @@ var lancamentoNovoController = $.extend(true, {
 		
 		$("#diferencaInput" + idDiv, lancamentoNovoController.workspace).focus();
 		
+		var idProdutoEdicao = $("#idProdutoEdicao", lancamentoNovoController.workspace).val();
+		
+		if(!idProdutoEdicao) {
+			exibirMensagemDialog('WARNING', ['Produto Edição não selecionado.'],'');			
+			return;
+		}
 		setTimeout(
 				function(){
 					if ($("#cotaInput" + idDiv, lancamentoNovoController.workspace).val() != ""){
 						$.postJSON(
 							contextPath + "/estoque/diferenca/lancamento/rateio/buscarReparteCotaPreco",
 							[
-							 	{name: "idProdutoEdicao", value: $("#codigoProduto", lancamentoNovoController.workspace).val()},
+							 	{name: "idProdutoEdicao", value: idProdutoEdicao},
 							 	{name: "numeroCota", value: $("#cotaInput" + idDiv, lancamentoNovoController.workspace).val()}
 							],
 							function(result) {
 								$("#reparteText" + idDiv, lancamentoNovoController.workspace).text(result[0]);
 							},
-							true
+							null,
+							true,
+							''
 						);
 					}
 				}
 		);
 	},
-	
+		
 	buscarPrecoProdutoEdicao : function(){
+		
+		$("#idProdutoEdicao", lancamentoNovoController.workspace).val(null);
+		
+		lancamentoNovoController.limparCotas();
 		
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/rateio/buscarPrecoProdutoEdicao",
@@ -553,11 +592,90 @@ var lancamentoNovoController = $.extend(true, {
 			 	{name: "numeroEdicao", value: $("#edicaoProdutoInput", lancamentoNovoController.workspace).val()}
 			],
 			function(result) {
-				$("#reparteProduto", lancamentoNovoController.workspace).text(result[0]);
-				$("#precoCapaProduto", lancamentoNovoController.workspace).text(result[1]);
+				$("#precoCapaProduto", lancamentoNovoController.workspace).text(result[0]);
+				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result[1]);
+				
+				lancamentoNovoController.verificarTipoEstoque(result[2], result[3], result[4], result[5]);
+				
 			},
-			true
+			null,
+			true,
+			''
 		);
+	},
+	
+	limparCotas : function() {
+		
+		$(".trCotas", lancamentoNovoController.workspace).remove();		
+		$('#cotaInput1', lancamentoNovoController.workspace).val('');
+		$('#nomeInput1', lancamentoNovoController.workspace).val('');
+		$('#diferencaInput1', lancamentoNovoController.workspace).val('');
+		$('#reparteText1', lancamentoNovoController.workspace).text('');
+		$('#reparteAtualText1', lancamentoNovoController.workspace).text('');
+	},
+	
+	limparProduto : function() {
+		$("#precoCapaProduto", lancamentoNovoController.workspace).text('');
+		$("#reparteProduto", lancamentoNovoController.workspace).text('');
+		$("#diferencaProdutoInput", lancamentoNovoController.workspace).val('');
+		
+		lancamentoNovoController.limparCotas();
+	},
+	
+	verificarTipoEstoque : function(qtde, qtdeSuplementar, qtdeEncalhe, qtdeFornecedor) {
+		
+		var qtdes = [];
+		
+		if(qtde && qtde>0)
+			qtdes.push({tipo:'Lançamento',				enum:'LANCAMENTO', 				valor:qtde});
+		
+		if(qtde && qtdeSuplementar>0)
+			qtdes.push({tipo:'Suplementar',				enum:'SUPLEMENTAR', 			valor:qtdeSuplementar});
+		
+		if(qtde && qtdeEncalhe>0)
+			qtdes.push({tipo:'Devolução Encalhe',		enum:'DEVOLUCAO_ENCALHE',		valor:qtdeEncalhe});
+		
+		if(qtde && qtdeFornecedor>0)
+			qtdes.push({tipo:'Devolução Fornecedor',	enum:'DEVOLUCAO_FORNECEDOR', 	valor:qtdeFornecedor});
+		
+		if(qtdes.length == 1) {
+			lancamentoNovoController.tipoEstoqueSelecionado = qtdes[0].enum;;
+			$("#reparteProduto", lancamentoNovoController.workspace).text(qtdes[0].valor);
+		
+		} else  {
+			
+			$( "#selectTipoEstoque").clear();
+						
+			$.each(qtdes, function(index, item){
+				$( "#selectTipoEstoque").append('<option enum="'+item.enum+'" valor="'+item.valor+'">'+item.tipo+'</option>');
+			});
+			
+			$( "#dialog-tipo-estoque", this.workspace).dialog({
+				resizable: false,
+				height:160,
+				width:250,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						var qtdeEstoque = $( "#selectTipoEstoque :selected").attr('valor');
+						
+						$("#reparteProduto", lancamentoNovoController.workspace).text(qtdeEstoque);
+						
+						lancamentoNovoController.tipoEstoqueSelecionado = $( "#selectTipoEstoque :selected").attr('enum');
+						
+						$('#diferencaProdutoInput').focus();
+						
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialog-tipo-estoque", this.workspace).parents("form")
+			});
+		}
+		
 	},
 	
 	calcularReparteAtual : function(idDiv){
@@ -612,6 +730,8 @@ var lancamentoNovoController = $.extend(true, {
 		
 		if(value == 'FALTA_EM'){
 			 $(".view-estouque",this.workspace).hide();
+			 $("#paraCota").check();
+			 lancamentoNovoController.paraEstoque(false);
 		}
 		else{
 			$(".view-estouque",this.workspace).show();
@@ -627,15 +747,21 @@ var lancamentoNovoController = $.extend(true, {
 		
 		if($("#paraCota").is(":checked")){
 			
-			if (lancamentoNovoController.validarDirecionamentoDiferencaProdutoCotas()){
-				
-				lancamentoNovoController.openDialogDirecionamentoDiferencaProdutoCota(isBotaoNovaDiferenca);
-			}
-			else{
+			if($("#tipoDiferenca", lancamentoNovoController.workspace).val()  == 'FALTA_EM'){
 				
 				lancamentoNovoController.cadastrarNovasDiferencas(isBotaoNovaDiferenca);
 			}
-			
+			else{
+				
+				if (lancamentoNovoController.validarDirecionamentoDiferencaProdutoCotas()){
+					
+					lancamentoNovoController.openDialogDirecionamentoDiferencaProdutoCota(isBotaoNovaDiferenca);
+				}
+				else{
+					
+					lancamentoNovoController.cadastrarNovasDiferencas(isBotaoNovaDiferenca);
+				}
+			}
 		}
 		else{
 			
@@ -684,10 +810,11 @@ var lancamentoNovoController = $.extend(true, {
 			{
 				"Confirmar": function() {
 					
+					lancamentoNovoController.redirecionarProdutosEstoque = true;
 					lancamentoNovoController.cadastrarNovasDiferencas(isBotaoIncluirNovo);
 					
 				}, "Cancelar": function() {
-					
+					lancamentoNovoController.redirecionarProdutosEstoque = false;
 					$(this).dialog("close");
 				}
 			},

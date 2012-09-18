@@ -33,9 +33,6 @@ public class Editor implements Serializable {
 	@Column(name = "ID", nullable = false)
 	private Long id;
 	
-	@Column(name = "NOME", nullable = false, length = 60)
-	private String nome;
-	
 	@Column(name = "CODIGO", nullable = false)
 	private Long codigo;
 
@@ -76,14 +73,6 @@ public class Editor implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
 	}
 	
 	public Long getCodigo() {

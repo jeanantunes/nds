@@ -162,12 +162,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	habilitarLinks : function() {
 		
-		habilitarLink("linkConfirmar", balanceamentoRecolhimentoController.obterConfirmacaoBalanceamento);
-		habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorEditor); });
-		habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorValor); });
-		habilitarLink("linkSalvar", balanceamentoRecolhimentoController.salvar);
-		habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(voltarConfiguracaoInicial); });
-		habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
+		balanceamentoRecolhimentoController.habilitarLink("linkConfirmar", balanceamentoRecolhimentoController.obterConfirmacaoBalanceamento);
+		balanceamentoRecolhimentoController.habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorEditor); });
+		balanceamentoRecolhimentoController.habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorValor); });
+		balanceamentoRecolhimentoController.habilitarLink("linkSalvar", balanceamentoRecolhimentoController.salvar);
+		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(voltarConfiguracaoInicial); });
+		balanceamentoRecolhimentoController.habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
 	},
 	
 	bloquearLink : function(idLink) {

@@ -39,8 +39,9 @@ public class CotaGarantiaCaucaoLiquida extends CotaGarantia {
 	@Embedded
 	private ContaBancariaDeposito contaBancariaDeposito;
 	
+	// Precisamos disso nulo senão não conseguimos gravar os outros tipos de CotaGarantia!
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COBRANCA", nullable = false)
+	@Column(name = "TIPO_COBRANCA", nullable = true)
 	private TipoCobrancaCotaGarantia tipoCobranca;	
 	
 	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)

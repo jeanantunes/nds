@@ -8,7 +8,11 @@
 
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/shortcut.js'></script>
 	
+	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.justLetter.js'></script>
+	
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalhe.js'></script>
+	
+	
 	
 	<style type="text/css">
 		._dados:hover{
@@ -74,7 +78,7 @@
 				<tr>
 					<td width="126">
 						<span class="bt_novos" title="Contingência">
-							<a href="${pageContext.request.contextPath}/devolucao/conferenciaEncalheContingencia">
+							<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()">
 								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />Contingência
 							</a>
 						</span>
@@ -110,7 +114,7 @@
 				</tr>
 				<tr>
 					<td class="class_linha_1" align="center" style="border-left: 1px solid #666; border-bottom: 1px solid #666;">
-						<input name="qtdeExemplar" type="text" id="qtdeExemplar" style="width: 60px; text-align: center;" maxlength="255"/>
+						<input name="qtdeExemplar" type="text" id="qtdeExemplar" class="input-numericE" style="width: 60px; text-align: center;" maxlength="255"/>
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666;">
 						<input name="cod_barras" type="text" id="cod_barras" style="width: 160px;" maxlength="255"/>

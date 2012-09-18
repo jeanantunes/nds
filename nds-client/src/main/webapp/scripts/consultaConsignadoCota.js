@@ -165,7 +165,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Reparte Total',
+					display : 'Consignado Total',
 					name : 'reparte',
 					width : 140,
 					sortable : true,
@@ -177,7 +177,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'right'
 				}, {
-					display : 'Total Desc. R$',
+					display : 'Consignado c/ Desc. R$',
 					name : 'totalDescontoFormatado',
 					width : 100,
 					sortable : true,

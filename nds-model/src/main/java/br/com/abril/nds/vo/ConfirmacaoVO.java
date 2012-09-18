@@ -1,4 +1,4 @@
-package br.com.abril.nds.client.vo;
+package br.com.abril.nds.vo;
 
 import java.io.Serializable;
 

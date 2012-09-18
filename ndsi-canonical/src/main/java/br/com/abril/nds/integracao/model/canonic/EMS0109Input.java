@@ -105,7 +105,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 
 	private Integer periodicidade;
 
-	private String categoria;
+	private Long categoria;
 
 	private String colecao;
 
@@ -498,7 +498,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	 * @return the categoria
 	 */
 	@Field(offset=225, length=3)
-	public String getCategoria() {
+	public Long getCategoria() {
 		return categoria;
 	}
 
@@ -910,7 +910,7 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	/**
 	 * @param categoria the categoria to set
 	 */
-	public void setCategoria(String categoria) {
+	public void setCategoria(Long categoria) {
 		this.categoria = categoria;
 	}
 

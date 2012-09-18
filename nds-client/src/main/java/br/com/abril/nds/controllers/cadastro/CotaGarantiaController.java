@@ -117,6 +117,10 @@ public class CotaGarantiaController {
 	@Post("/salvaCaucaoLiquida.json")
 	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobranca) throws Exception {
 		
+		if(formaCobranca.getTipoCobranca()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
+		}
+		
 		if (listaCaucaoLiquida == null){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Nenhum valor informado."));
 		}	
@@ -240,11 +244,6 @@ public class CotaGarantiaController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
 					"Parametros inválidos"));
 		}
-		
-		if (caucaoLiquida.getIndiceReajuste() == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Parametros inválidos"));
-		}	
 	}
 	
 	/**
@@ -252,10 +251,6 @@ public class CotaGarantiaController {
 	 * @param formaCobranca
 	 */
 	public void validarFormaCobranca(FormaCobrancaCaucaoLiquidaDTO formaCobranca){
-
-		if(formaCobranca.getTipoCobranca()==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
-		}
 		
 		if (formaCobranca.getTipoCobranca() == TipoCobrancaCotaGarantia.BOLETO){
 			
@@ -270,40 +265,40 @@ public class CotaGarantiaController {
 			if (formaCobranca.getQtdeParcelas() == null){
 		        throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de parcelas.");
 			}
-		}
 		
-		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-			if (formaCobranca.getDiaDoMes()==null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
+			if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+				if (formaCobranca.getDiaDoMes()==null){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
+				}
+				else{
+					if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
+						throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+					}
+				}
+				
 			}
-			else{
-				if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
-					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+			
+			if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+				if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
+				}
+				else{
+					if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
+						throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+					}
 				}
 			}
 			
-		}
-		
-		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
-			if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
-			}
-			else{
-				if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
-					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+			if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+				if((!formaCobranca.isDomingo())&&
+				   (!formaCobranca.isSegunda())&&
+				   (!formaCobranca.isTerca())&&
+				   (!formaCobranca.isQuarta())&&
+				   (!formaCobranca.isQuinta())&&
+				   (!formaCobranca.isSexta())&&
+				   (!formaCobranca.isSabado())){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
 				}
-			}
-		}
-		
-		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-			if((!formaCobranca.isDomingo())&&
-			   (!formaCobranca.isSegunda())&&
-			   (!formaCobranca.isTerca())&&
-			   (!formaCobranca.isQuarta())&&
-			   (!formaCobranca.isQuinta())&&
-			   (!formaCobranca.isSexta())&&
-			   (!formaCobranca.isSabado())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
 			}
 		}
 		

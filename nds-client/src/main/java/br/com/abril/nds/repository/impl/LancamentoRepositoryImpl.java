@@ -16,11 +16,13 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
@@ -48,11 +50,11 @@ public class LancamentoRepositoryImpl extends
 
 	private String getHQLDesconto() {
 		
-		StringBuilder hql = new StringBuilder(" coalesce((select view.desconto ");
-        hql.append(" from ViewDesconto view ")
-           .append(" where view.cotaId = cota.id ")
-           .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-           .append(" and view.fornecedorId = fornecedores.id),0) ");
+		StringBuilder hql = new StringBuilder("coalesce ((select view.DESCONTO");
+		hql.append(" from VIEW_DESCONTO view ")
+		   .append(" where view.COTA_ID = cota.ID ")
+		   .append(" and view.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
+		   .append(" and view.FORNECEDOR_ID = produtoFornecedor.FORNECEDORES_ID),0) ");
 		
 		return hql.toString();
 	}
@@ -415,7 +417,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, ");
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
-		sql.append(" editor.NOME as nomeEditor, ");
+		sql.append(" editor.pessoaJuridica.razaoSocial as nomeEditor, ");
 		
 		sql.append(" case ");
 		sql.append(" when (select box.TIPO_BOX from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
@@ -672,7 +674,7 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("valorTotal")
 													  .addScalar("desconto")
 													  .addScalar("parcial")
-													  .addScalar("peso")
+													  .addScalar("peso", StandardBasicTypes.LONG)
 													  .addScalar("idEditor", StandardBasicTypes.LONG)
 													  .addScalar("idLancamento", StandardBasicTypes.LONG)
 													  .addScalar("numeroEdicao", StandardBasicTypes.LONG)
@@ -983,6 +985,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.ID as idLancamento, ");
 		sql.append(" lancamento.DATA_LCTO_PREVISTA as dataLancamentoPrevista, ");
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamentoDistribuidor, ");
+		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as novaDataLancamento, ");
 		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
 		sql.append(" lancamento.ALTERADO_INTERFACE as alteradoInteface, ");
 
@@ -1106,6 +1109,7 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("idLancamento", StandardBasicTypes.LONG)
 			.addScalar("dataLancamentoPrevista")
 			.addScalar("dataLancamentoDistribuidor")
+			.addScalar("novaDataLancamento")
 			.addScalar("dataRecolhimentoPrevista")
 			.addScalar("repartePrevisto")
 			.addScalar("numeroReprogramacoes", StandardBasicTypes.INTEGER)
@@ -1122,7 +1126,7 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN)
 			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN);		
 		
-		aplicarParametros(query, periodoDistribuicao, fornecedores);
+		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoLancamentoDTO.class));
 
@@ -1137,8 +1141,7 @@ public class LancamentoRepositoryImpl extends
 												   StatusLancamento.CONFIRMADO.toString(),
 												   StatusLancamento.BALANCEADO.toString(),
 												   StatusLancamento.ESTUDO_FECHADO.toString(),
-												   StatusLancamento.FURO.toString(),
-												   StatusLancamento.CANCELADO_GD.toString()};
+												   StatusLancamento.FURO.toString()};
 		
 		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.toString(),
 				  										  StatusLancamento.CONFIRMADO.toString()};
@@ -1292,5 +1295,41 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("statusLancamento", statusLancamento);
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoLancamentoCanceladoDTO> obterLancamentosCanceladosPor(
+			Intervalo<Date> periodo, List<Long> idFornecedores) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ") 
+		   .append(" lancamento.produtoEdicao.produto.codigo as codigo, ")
+		   .append(" lancamento.produtoEdicao.produto.descricao as produto, ")
+		   .append(" lancamento.produtoEdicao.numeroEdicao as numeroEdicao, ")
+		   .append(" lancamento.reparte as reparte, ")
+		   .append(" lancamento.dataLancamentoPrevista as dataLancamento")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" join lancamento.produtoEdicao.produto produto ")
+		   .append(" join lancamento.produtoEdicao.produto.fornecedores fornecedores ")
+		   .append(" where lancamento.status = :statusLancamento ")
+		   .append(" and lancamento.dataLancamentoPrevista between :periodoInicial and :periodoFinal ")
+		   .append(" and fornecedores.id in (:idFornecedores) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(
+				ProdutoLancamentoCanceladoDTO.class);
+
+		query.setResultTransformer(resultTransformer);
+		
+		query.setParameter("statusLancamento", StatusLancamento.CANCELADO);
+		query.setParameter("periodoInicial", periodo.getDe());
+		query.setParameter("periodoFinal", periodo.getAte());
+		query.setParameterList("idFornecedores", idFornecedores);
+		
+		return query.list();
 	}
 }

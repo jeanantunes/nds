@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,8 +9,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -22,7 +21,6 @@ import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.repository.DistribuidorRepository;
 
 @Repository
-
 public class DistribuidorRepositoryImpl extends
 		AbstractRepositoryModel<Distribuidor, Long> implements
 		DistribuidorRepository {
@@ -118,4 +116,50 @@ public class DistribuidorRepositoryImpl extends
 		return criteria.list();
 	}
 
+	@Override
+	public List<String> obterNomeCNPJDistribuidor() {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select d.juridica.razaoSocial, d.juridica.cnpj from Distribuidor d");
+		
+		List<String> retorno = new ArrayList<String>();
+		
+		@SuppressWarnings("unchecked")
+		List<Object[]> listaResultados = query.list();
+		
+		for (Object[] dados : listaResultados){
+			
+			retorno.add((String)dados[0]);
+			retorno.add((String)dados[1]);
+		}
+		
+		return retorno;
+	}
+
+	@Override
+	public String obterInformacoesComplementaresProcuracao() {
+		
+		return (String) 
+				this.getSession().
+				createQuery(
+						"select d.informacoesComplementaresProcuracao from Distribuidor d").uniqueResult();
+	}
+
+	@Override
+	public String obterRazaoSocialDistribuidor() {
+		
+		return (String)
+				this.getSession().
+				createQuery("select d.juridica.razaoSocial from Distribuidor d").uniqueResult();
+	}
+	
+	@Override
+	public String obterInformacoesComplementaresTermoAdesao() {
+		
+		return (String) 
+				this.getSession().
+				createQuery(
+						"select d.parametroEntregaBanca.complementoTermoAdesao from Distribuidor d").uniqueResult();
+	}
 }

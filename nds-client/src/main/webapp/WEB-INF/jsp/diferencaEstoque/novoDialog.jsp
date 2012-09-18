@@ -1,5 +1,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/lancamentoNovo.js"></script>
 
+<input type="hidden" id="idProdutoEdicao"/>
+
 <div id="dialogNovasDiferencas" 
 	 title="Lançamento Faltas e Sobras - Produto"
 	 style="display: none;">
@@ -56,11 +58,11 @@
 				</tr>
 				<tr>
 					<td>
-						<input type="text" id="codigoProdutoInput" style="width:60px;" maxlength="30"
+						<input type="text" id="codigoProdutoInput" style="width:60px;" maxlength="30" onchange="lancamentoNovoController.limparProduto()"
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td>
-						<input type="text" id="nomeProdutoInput" style="width:180px;" maxlength="60"
+						<input type="text" id="nomeProdutoInput" style="width:180px;" maxlength="60" onchange="lancamentoNovoController.limparProduto()"
 							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
@@ -195,3 +197,15 @@
 		});
 	</script>
 </div>
+
+<form id="idTipoEstoque">
+		<div id="dialog-tipo-estoque" title="Tipo de Estoque" style="display:none">
+			<fieldset>
+				<legend>Selecione o Tipo de Estoque</legend>
+			    <select id="selectTipoEstoque" name="" size="1" >
+			      
+			    </select>
+			
+			</fieldset>
+		</div>
+	</form>

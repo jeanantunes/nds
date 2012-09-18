@@ -33,7 +33,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	 */
 	@Override
 	public List<Editor> obterEditores() {
-		String hql = "from Editor ed ORDER BY ed.nome";
+		String hql = "from Editor";
 		Query query = getSession().createQuery(hql);
 		@SuppressWarnings("unchecked")
 		List<Editor> editores = query.list();
@@ -73,7 +73,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		hql.append("SELECT new ").append(RegistroCurvaABCEditorVO.class.getCanonicalName())
 		.append(" ( editor.codigo , ")
-		.append("   editor.nome , ")
+		.append("   editor.pessoaJuridica.razaoSocial , ")
 		.append("   (sum(movimentos.qtde)) , ")
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - (("+ this.getHQLDesconto() +") * estoqueProdutoCota.produtoEdicao.precoVenda / 100))) ) ) ");
@@ -160,7 +160,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" GROUP BY editor.codigo, ")
-		   .append("   editor.nome ");
+		   .append("   editor.pessoaJuridica.razaoSocial ");
 
 		return hql.toString();
 	}
@@ -289,7 +289,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(RegistroHistoricoEditorVO.class.getCanonicalName())
-			.append(" ( editor.nome, ")
+			.append(" ( editor.pessoaJuridica.razaoSocial, ")
 			.append("   estoqueProdutoCota.produtoEdicao.produto.codigo, ")
 			.append("   estoqueProdutoCota.produtoEdicao.produto.nome, ")
 			.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao, ")

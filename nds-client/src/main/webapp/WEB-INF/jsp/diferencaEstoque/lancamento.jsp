@@ -137,8 +137,5 @@
 	<form id="formNovoDialog">
 		<jsp:include page="novoDialog.jsp" />
 	</form>
-	
-	<form id="formRateioDialog">
-		<jsp:include page="rateioDialog.jsp" />
-	</form>
+
 </body>

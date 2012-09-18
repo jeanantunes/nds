@@ -72,13 +72,13 @@ var produtoEdicaoController =$.extend(true,  {
 
 		// Mostrar auto complete por nome do produto
 		autoCompletarPorNomeProduto : function(idProduto, isFromModal) {
-
+			
 			produtoEdicaoController.pesquisaRealizada = false;
 
 			var nomeProduto = $(idProduto,this.workspace).val();
 
 			if (nomeProduto && nomeProduto.length > 2) {
-				$.postJSON(contextPath + "/produto/autoCompletarPorPorNomeProduto", "nomeProduto=" + nomeProduto,
+				$.postJSON(contextPath + "/produto/autoCompletarPorPorNomeProduto", {"nomeProduto" : nomeProduto},
 						function(result) { produtoEdicaoController.exibirAutoComplete(result, idProduto); },
 						null, isFromModal);
 			}
@@ -91,7 +91,7 @@ var produtoEdicaoController =$.extend(true,  {
 		intervalo : null,
 
 		exibirAutoComplete : function(result, idProduto) {
-
+			
 			$(idProduto).autocomplete({
 				source : result,
 				focus : function(event, ui) {
@@ -110,15 +110,19 @@ var produtoEdicaoController =$.extend(true,  {
 
 		// Pesquisar por nome do produto
 		pesquisarPorNomeProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-
-			setTimeout(function() { clearInterval(produtoEdicaoController.intervalo); }, 10 * 1000);
+			
+			setTimeout(function() {
+				
+				clearInterval(produtoEdicaoController.intervalo); 
+			
+			}, 10 * 1000);
 
 			produtoEdicaoController.intervalo = setInterval(function() {
-
+				
 				if (produtoEdicaoController.descricaoAtribuida) {
 
 					if (produtoEdicaoController.pesquisaRealizada) {
-
+						
 						clearInterval(produtoEdicaoController.intervalo);
 
 						return;
@@ -129,10 +133,11 @@ var produtoEdicaoController =$.extend(true,  {
 				}
 
 			}, 100);
+
 		},
 
 		pesquisarPorNomeProdutoAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-
+			
 			clearInterval(produtoEdicaoController.intervalo);
 
 			produtoEdicaoController.pesquisaRealizada = true;
@@ -144,7 +149,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$(idCodigo,this.workspace).val("");
 
 			if (nomeProduto && nomeProduto.length > 0) {
-				$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
+				$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
 						function(result) { produtoEdicaoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
 						function() { produtoEdicaoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
 			} else {
@@ -177,6 +182,13 @@ var produtoEdicaoController =$.extend(true,  {
 
 		init : function(){
 
+			window.addEventListener('blur', function() {
+
+				window.clearInterval(produtoEdicaoController.intervalo);
+			
+			});
+
+			
 			$("#produtoEdicaoController-tabEdicoes",this.workspace ).tabs();
 			$("#produtoEdicaoController-pDateLanctoDe,#produtoEdicaoController-pDateLanctoAte",this.workspace ).datepicker({
 				showOn: "button",
@@ -838,4 +850,4 @@ var produtoEdicaoController =$.extend(true,  {
 
 }, BaseController);
 
-
+//@ sourceURL=scriptProdutoEdicao.js
