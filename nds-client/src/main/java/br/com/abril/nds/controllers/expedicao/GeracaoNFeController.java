@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -23,6 +26,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNFeService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
@@ -60,6 +64,9 @@ public class GeracaoNFeController {
 	@Autowired
 	private CotaService cotaService;
 	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NFE)
 	public void index() {
@@ -68,6 +75,28 @@ public class GeracaoNFeController {
 				.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
 		
 		result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
+		
+		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
+		
+		List<ItemDTO<Long, String>> listRoteiro = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Roteiro roteiro : roteiros){
+			
+			listRoteiro.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
+		}
+		
+		result.include("roteiros", listRoteiro);
+		
+		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
+		
+		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Rota rota : rotas){
+			
+			listRota.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
+		}
+		
+		result.include("rotas", listRota);
 	}
 	
 	@Post("/busca.json")
@@ -75,8 +104,9 @@ public class GeracaoNFeController {
 			Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte,
-			List<Long> listIdFornecedor, List<Long> listIdProduto, Long tipoNotaFiscal, String sortname,
-			String sortorder, int rp, int page) {
+			List<Long> listIdFornecedor, List<Long> listIdProduto, Long tipoNotaFiscal,
+			Long idRoteiro, Long idRota,
+			String sortname, String sortorder, int rp, int page) {
 		
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
 		
