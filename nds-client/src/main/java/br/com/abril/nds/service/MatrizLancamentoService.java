@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.vo.ConfirmacaoVO;
 
 public interface MatrizLancamentoService {
 
@@ -70,5 +71,14 @@ public interface MatrizLancamentoService {
 	 * @throws ValidacaoException Laçamento está com status diferante de PLANEJADO e CONFIRMADO.
 	 */
 	public abstract void excluiLancamento(long idLancamento);
+	
+	/**
+	 * Obtém as datas dos lançamento e se estão confirmadas ou não.
+	 * 
+	 * @param produtosLancamento - Produtos de lançamento
+	 * 
+	 * @return {@link ConfirmacaoVO}
+	 */
+	public List<ConfirmacaoVO> obterDatasConfirmacao(List<ProdutoLancamentoDTO> produtosLancamento);
 
 }

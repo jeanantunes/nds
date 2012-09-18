@@ -202,7 +202,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 public class Fixture {
 	
 	public static PessoaJuridica juridicaAbril() {
-		return pessoaJuridica("Abril", "00000000000200", "010000000000",
+		return pessoaJuridica("Editora Abril", "00000000000200", "010000000000",
 				"abril@mail.com", "99.999-1");
 	}
 	
@@ -360,7 +360,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril", 10L, juridicaAbril(), true);
+		return criarEditor(10L, juridicaAbril(), true);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -2601,13 +2601,12 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome, Long codigo, 
+	public static Editor criarEditor(Long codigo, 
 									 PessoaJuridica pessoaJuridica,
 									 boolean ativo) {
 		
 		Editor editor = new Editor();
 		
-		editor.setNome(nome);
 		editor.setCodigo(10L);
 		editor.setPessoaJuridica(pessoaJuridica);
 		editor.setAtivo(ativo);

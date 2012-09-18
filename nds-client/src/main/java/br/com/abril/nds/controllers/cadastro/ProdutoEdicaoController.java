@@ -172,7 +172,7 @@ public class ProdutoEdicaoController {
 			dto.setOrigemInterface(pe.getOrigemInterface());
 			dto.setNumeroLancamento(pe.getNumeroLancamento());
 			dto.setPeb(pe.getPeb());
-			dto.setEditor(pe.getProduto().getEditor().getNome());
+			dto.setEditor(pe.getProduto().getEditor().getPessoaJuridica().getNome());
 			if (pe.getBrinde() !=null) {
 				dto.setDescricaoBrinde(pe.getBrinde().getDescricao());
 			}
@@ -463,7 +463,7 @@ public class ProdutoEdicaoController {
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
-										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getNome():""):""),
+										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome():""):""),
 										               produtoEdicao.getChamadaCapa(),
 										               (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
 										               Integer.toString(produtoEdicao.getPacotePadrao())

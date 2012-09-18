@@ -211,7 +211,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		row.cell.novaData = T.gerarInputDataDistrib(row.cell.novaData, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
-		row.cell.acoes = T.gerarAcoes(row.cell.id.toString());
+		row.cell.acoes = T.gerarAcoes(row.cell.id.toString(), row.cell.bloquearExclusao);
 		
 		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
@@ -219,19 +219,19 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 	},
 	
-	this.gerarAcoes =  function(idLancamento){
-		return '<a href="javascript:;" onclick="' + T.instancia + '.excluir(' + idLancamento + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+	this.gerarAcoes =  function(idLancamento, bloquearExclusao) {
+		return '<a href="javascript:;"' + ( bloquearExclusao ? 'style="opacity: 0.5;"' : 'onclick="' + T.instancia + '.excluir(' + idLancamento + ');"') + '><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
 	},
-	this.gerarInputDataDistrib = function(dataMatrizDistrib, isBloqueado, index) {
+	this.gerarInputDataDistrib = function(dataMatrizDistrib, bloquearData, index) {
 		
 		return '<input id="inputNovaData' + index + '" onchange="' + T.instancia + '.alterarData(this,\'' + index + '\');" type="text" name="dataNova" style="width:60px; float:left;" value="' + dataMatrizDistrib + '" ' + 
-			   (isBloqueado? ' disabled="disabled" ' : '') +  
+			   (bloquearData? ' disabled="disabled" ' : '') +  
 			   '/>' +
 		       '<span class="bt_atualizarIco" title="Reprogramar" ' +
-		       (isBloqueado? ' style="opacity:0.5;" ' : '') + 
+		       (bloquearData? ' style="opacity:0.5;" ' : '') + 
 		       '>' +
 		       '<a id="linkReprogramarUnico' + index + '" href="javascript:;" name="reprogramar" ' + 
-		       (isBloqueado? '' : ' onclick="' + T.instancia + '.reprogramarLancamentoUnico(' + index + ');') +
+		       (bloquearData? '' : ' onclick="' + T.instancia + '.reprogramarLancamentoUnico(' + index + ');') +
 		       '">&nbsp;</a></span>';
 		
 	},
@@ -296,9 +296,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.lancamentos[index].novaData = input.value;
 	},
 	
-	this.gerarCheckReprogramar = function(id,isBloqueado, index) { 
-		return '<input id="checkReprogramar' + index + '" type="checkbox" value="'+id+'" name="checkgroup" bloqueado="'+isBloqueado+'" ' +
-			   (isBloqueado? ' disabled="disabled" ' : ' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" ') + 
+	this.gerarCheckReprogramar = function(id, bloquearData, index) { 
+		return '<input id="checkReprogramar' + index + '" type="checkbox" value="'+id+'" name="checkgroup" bloqueado="'+bloquearData+'" ' +
+			   (bloquearData? ' disabled="disabled" ' : ' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" ') + 
 			   ' />';	
 	},
 	
@@ -518,7 +518,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			a.parent().addClass("linkDisabled");
 		} else {
 			input.enable();
-			a.attr('onclick', a.attr('onclick').replace('return;' , '' ) );
+			
+			if (a.attr('onclick')) {
+			
+				a.attr('onclick', a.attr('onclick').replace('return;' , '' ) );
+			}
+			
 			a.parent().removeClass("linkDisabled");
 		}
 	},
@@ -850,3 +855,5 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	};
 	
 }
+
+//@ sourceURL=balanceamentoLancamento.js
