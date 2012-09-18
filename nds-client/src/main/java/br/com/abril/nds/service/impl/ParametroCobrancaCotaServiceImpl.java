@@ -1,6 +1,9 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -16,6 +19,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +32,7 @@ import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO.TipoPessoa;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
@@ -41,11 +46,13 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -58,6 +65,7 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -100,6 +108,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
 	
 	/**
 	 * Método responsável por obter bancos para preencher combo da camada view
@@ -836,15 +847,56 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		if (contrato != null) {
 			
-			this.fileService.limparDiretorio(tempDir);
-			//TODO: obter arquivo contrato recebido;
-			
 			contratoVO = new ContratoVO();
 			contratoVO.setIdCota(idCota);
 			contratoVO.setDataTermino(contrato.getDataTermino());
 			contratoVO.setDataInicio(contrato.getDataInicio());
-			contratoVO.setRecebido(true);
+			contratoVO.setRecebido(contrato.isRecebido());
 			
+			this.fileService.limparDiretorio(tempDir);
+			
+			if (contrato.isRecebido()) {
+			
+			//TODO: obter arquivo contrato recebido;
+			
+			ParametroSistema pathContrato = 
+					this.parametroSistemaService.buscarParametroPorTipoParametro(
+							TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
+			
+			File diretorioContrato = new File(pathContrato.getValor(), cota.getNumeroCota().toString());
+			
+			File contratoRecebido = null;
+			
+			if (diretorioContrato.exists()) {
+				
+				File[] files = diretorioContrato.listFiles();
+				
+				contratoRecebido = files[0];
+			}
+			
+			File arquivoTemporario = new File(tempDir, contratoRecebido.getName());
+			
+			File arquivoContrato = new File(diretorioContrato, contratoRecebido.getName());
+			
+			try {
+								
+				FileOutputStream fos = new FileOutputStream(arquivoTemporario);
+				
+				FileInputStream fis = new FileInputStream(arquivoContrato);
+							
+				IOUtils.copyLarge(fis, fos);
+
+				fis.close();
+				
+				fos.close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir contrato anexo"));
+			}
+			
+			contratoVO.setTempFile(arquivoTemporario);
+			}
 		}
 		
 		return contratoVO;
