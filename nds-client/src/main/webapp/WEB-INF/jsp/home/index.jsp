@@ -286,7 +286,7 @@
 .ui-tabs .ui-tabs-panel {
     padding: 0px;
 }
-
+#btnVersao{font-size:10px; font-weight:bold;margin-left:5px;}
 </style>
 </head>
 <body>
@@ -320,11 +320,11 @@
 						<span class="bt_novos" style="display:none;">
 							<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
 						</span>
-					
-						<div class="usuario">
-							<a href="javascript:;" id="btnVersao">
+						<a href="javascript:;" id="btnVersao">
 								<label title="versao">Versão: ${versao}</label>								
 							</a>
+						<div class="usuario">
+							
 													
 							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 										

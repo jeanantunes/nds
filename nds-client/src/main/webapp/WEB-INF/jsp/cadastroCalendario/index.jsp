@@ -12,7 +12,7 @@
 
 	#dialog-feriado-mes {
 		display:none;
-	}
+	}x''
 
 	label {
 		vertical-align: super;
@@ -40,12 +40,13 @@
     		padding: 1px 0 1px 1px !important;
     		background: none !important;
     		overflow:hidden;
+    		line-height:22px!important;
     }
     
 	td.highlight a {
-			background: #EDB4B4 !important;  
-			border: 1px #AD3737 solid !important;
-			color:black !important;
+			background: #fff !important;  
+			border: 2px #0F0 solid !important;
+			color:#060 !important;
 	}
 
 </style>

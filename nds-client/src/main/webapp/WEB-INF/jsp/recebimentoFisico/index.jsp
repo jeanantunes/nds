@@ -19,7 +19,7 @@
 
 <style type="text/css">
     fieldset label {width: auto; margin-bottom: 0px!important;}
-    .nfes{display:none;}
+    .nfes{display:none; float: left; margin-top: 4px;line-height: 24px;}
 </style>
 
 </head>
@@ -276,7 +276,8 @@
 
 								<label for="eNF">É uma NF-e?</label>
 
-								<input type="checkbox" name="checkbox8" id="eNF" onchange="recebimentoFisicoController.mostrar_nfes();" style="float: left; margin-right: 10px;" /> 
+								<input type="checkbox" name="checkbox8" id="eNF" onchange="recebimentoFisicoController.mostrar_nfes();" style="float: left;  margin-left: 13px; margin-right: 10px;
+    margin-top: 9px;" /> 
 
 								<span id="nfes" class="nfes"> 
 
@@ -430,7 +431,7 @@
 			    <label for="textoSelTodos" id="textoSelTodos">
 	                Marcar Todos
 	            </label>
-			    <input type="checkbox"  id="selTodos" name="selTodos" onclick="recebimentoFisicoController.selecionarTodos(this.checked);" style="float:right; margin-top:-5px"/>
+			    <input type="checkbox"  id="selTodos" name="selTodos" onclick="recebimentoFisicoController.selecionarTodos(this.checked);" style="float:right; margin-left:10px"/>
 			</span>
 
 			<span style="float:right; margin-right:35px; margin-top:8px">

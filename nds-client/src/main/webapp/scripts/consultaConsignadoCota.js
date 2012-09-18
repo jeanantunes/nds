@@ -283,14 +283,14 @@ var consultaConsignadoCotaController = $.extend(true, {
 					$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).hide();
 					$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).show();
 					$("#totalGeralPorFornecedor", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
-							"<tr> <td style='border-top:1px solid #000;''><strong>Total Geral:</strong></td>" +
-        						" <td style='border-top:1px solid #000;'>&nbsp;</td> "+
-        						" <td style='border-top:1px solid #000;' align='right'><strong>"+result+"</strong></td></tr>");
+							"<tr> <td><strong>Total Geral:</strong></td>" +
+        						" <td>&nbsp;</td> "+
+        						" <td align='right'><strong>"+result+"</strong></td></tr>");
 				}else{					
-					$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
-												"<tr> <td style='border-top:1px solid #000;''><strong>Total Geral:</strong></td>" +
-			                						" <td style='border-top:1px solid #000;'>&nbsp;</td> "+
-			                						" <td style='border-top:1px solid #000;' align='right'><strong>"+result+"</strong></td></tr>");					
+					$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right' >" +
+												"<tr> <td><strong>Total Geral:</strong></td>" +
+			                						" <td>&nbsp;</td> "+
+			                						" <td align='right'><strong>"+result+"</strong></td></tr>");					
 				} 
 				
 			},
