@@ -10,11 +10,11 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 
 public interface ConsultaConsignadoCotaService {
 	
-	List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, String limitar);
+	List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);
 	
-	Integer buscarTodasMovimentacoesPorCota(FiltroConsultaConsignadoCotaDTO filtro, String limitar);
+	Integer buscarTodasMovimentacoesPorCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);
 	
-	List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro, String limitar);
+	List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);
 	
 	BigDecimal buscarTotalGeralDaCota(FiltroConsultaConsignadoCotaDTO filtro);
 	
