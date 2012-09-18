@@ -238,6 +238,16 @@ GeracaoNFeController.prototype.gridReaload = function(grid, uri) {
 			});
 		});
 	}
+	
+	params.push({
+		'name' : "idRoteiro",
+		'value' : $("#listRoteiro", this.workspace).val()
+	});
+	
+	params.push({
+		'name' : "idRota",
+		'value' : $("#listRota", this.workspace).val()
+	});
 
 	grid.flexOptions({
 		"url" : this.path + uri,
@@ -271,15 +281,27 @@ GeracaoNFeController.prototype.initGrid = function() {
 				}, {
 					display : 'Nome',
 					name : 'nomeCota',
-					width : 750,
+					width : 525,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Total Exemplares',
 					name : 'exemplares',
-					width : 100,
+					width : 110,
 					sortable : true,
 					align : 'center'
+				}, {
+					display : 'Total R$',
+					name : 'vlrTotal',
+					width : 90,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Total Desconto R$',
+					name : 'totalDesc',
+					width : 105,
+					sortable : true,
+					align : 'right'
 				} ],
 				sortname : "numeroCota",
 				sortorder : "asc",

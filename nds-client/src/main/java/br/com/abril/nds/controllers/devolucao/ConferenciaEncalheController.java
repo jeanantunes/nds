@@ -26,10 +26,12 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -318,7 +320,7 @@ public class ConferenciaEncalheController {
 	}
 
 	@Post
-	public void pesquisarProdutoEdicao(String codigoBarra, Integer sm, Long idProdutoEdicao, Long codigoAnterior, Long quantidade){
+	public void pesquisarProdutoEdicao(String codigoBarra, Integer sm, Long idProdutoEdicao, Long codigoAnterior, String quantidade){
 		
 		this.verificarInicioConferencia();
 		
@@ -408,7 +410,7 @@ public class ConferenciaEncalheController {
 	}
 	
 	@Post
-	public void adicionarProdutoConferido(Long idProdutoEdicao, Long quantidade, Boolean juramentada) {
+	public void adicionarProdutoConferido(Long idProdutoEdicao, String quantidade, Boolean juramentada) {
 		
 		if (idProdutoEdicao == null){
 			
@@ -660,7 +662,7 @@ public class ConferenciaEncalheController {
 		
 		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = 
 				(DadosDocumentacaoConfEncalheCotaDTO) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
-		
+		//TODO - Slip + Boleto
 		byte[] slip = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
 	
 		escreverArquivoParaResponse(slip, "slip");
@@ -1246,7 +1248,7 @@ public class ConferenciaEncalheController {
 	/*
 	 * Atualiza quantidade da conferencia ou cria um novo registro caso seja a primeira vez que se esta conferindo o produtoedicao
 	 */
-	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, Long quantidade, ProdutoEdicaoDTO produtoEdicao, Boolean juramentada) {
+	private ConferenciaEncalheDTO atualizarQuantidadeConferida(Long codigoAnterior, String quantidade, ProdutoEdicaoDTO produtoEdicao, Boolean juramentada) {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = null;
 		
@@ -1267,7 +1269,9 @@ public class ConferenciaEncalheController {
 		
 		if (conferenciaEncalheDTOSessao != null){
 			
-			conferenciaEncalheDTOSessao.setQtdExemplar(BigInteger.valueOf(quantidade));
+			Long qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTOSessao, quantidade);
+			conferenciaEncalheDTOSessao.setQtdExemplar(BigInteger.valueOf(qtde));
+			
 		} else {
 			
 			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, quantidade, true);
@@ -1278,7 +1282,51 @@ public class ConferenciaEncalheController {
 		return conferenciaEncalheDTOSessao;
 	}
 	
-	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, Long quantidade, boolean adicionarGrid) {
+	/**
+	 * Processa a quantidade informada pelo usuario, 
+	 * validando quando um produto CROMO é informado. 
+	 * 
+	 * @param idProdutoEdicao
+	 * @param conferenciaEncalheDTO
+	 * @param quantidade - quantidade informada pelo usuario (EX: 100 ou 100e);
+	 * 
+	 * @return quantidade
+	 */
+	private Long processarQtdeExemplar(Long idProdutoEdicao,
+			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade) {
+		
+				
+		Long qtd = null;
+		
+		Long pacotePadrao = (long) conferenciaEncalheDTO.getPacotePadrao();
+		
+		boolean quantidadeInformadaEmExemplares = false; 
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao);
+		
+		GrupoProduto grupoProduto = produtoEdicao.getProduto().getTipoProduto().getGrupoProduto();
+		
+		if(quantidade.contains("e")) {
+			quantidade = quantidade.replace("e", "");
+			quantidadeInformadaEmExemplares = true;
+		}
+			
+		try {
+			qtd = Long.parseLong(quantidade);
+		}catch(NumberFormatException e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
+		}
+		
+		if (GrupoProduto.CROMO.equals(grupoProduto)) {
+			if (!quantidadeInformadaEmExemplares && conferenciaEncalheDTO.isParcial()) {
+				qtd = qtd/pacotePadrao;
+			}
+		}
+		
+		return qtd;
+	}
+
+	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, String quantidade, boolean adicionarGrid) {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
@@ -1306,9 +1354,11 @@ public class ConferenciaEncalheController {
 		
 		
 		if (quantidade != null){
-		
-			conferenciaEncalheDTO.setQtdExemplar(BigInteger.valueOf(quantidade));
-			conferenciaEncalheDTO.setQtdInformada(BigInteger.valueOf(quantidade));
+			
+			Long qtd = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade);
+			
+			conferenciaEncalheDTO.setQtdExemplar(BigInteger.valueOf(qtd));
+			conferenciaEncalheDTO.setQtdInformada(BigInteger.valueOf(qtd));
 		} else {
 			
 			conferenciaEncalheDTO.setQtdExemplar(BigInteger.ONE);

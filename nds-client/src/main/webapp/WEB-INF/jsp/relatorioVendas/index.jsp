@@ -98,7 +98,7 @@ $(function(){
 					<td><select name="select2" id="selectEditor" style="width: 240px;">
 							<option>Todos</option>
                     		<c:forEach items="${editores}" var="editor">
-								<option value="${editor.id}">${editor.nome}</option>
+								<option value="${editor.id}">${editor.pessoaJuridica.razaoSocial}</option>
                    			</c:forEach> 
 					</select></td>
 					<td colspan="-1">Cota:</td>

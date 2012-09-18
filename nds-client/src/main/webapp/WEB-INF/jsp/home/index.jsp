@@ -26,6 +26,7 @@
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.justLetter.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.interval.js"></script>
 
 <script type="text/javascript" src="scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
 <script type="text/javascript" src="scripts/jquery.formatCurrency-1.4.0.min.js"></script>
@@ -68,6 +69,7 @@
 							}
 							
 						});
+		
 	})(jQuery);
 
 	(function($) {
@@ -166,7 +168,6 @@
 		});
 
 		$('#linkHome').click();
-		
 	});
 	
 	$(document).ready(function() {
@@ -178,7 +179,12 @@
 			$(this).fadeOut(200);
 		});
 		
-		redimensionarWorkspace();		
+		redimensionarWorkspace();
+
+		window.addEventListener('blur', function() {
+			
+			$().clearAllInterval();
+		});		
 		
 	});
 	
@@ -259,6 +265,10 @@
 	
 </script>
 
+<script
+	src="scripts/informeEncalhe.js"
+	type="text/javascript"></script>
+
 <style>
 #workspace {
 	margin-top: 0px;
@@ -283,6 +293,7 @@
 .ui-tabs .ui-tabs-panel {
     padding: 0px;
 }
+#btnVersao{font-size:10px; font-weight:bold;margin-left:5px;}
 </style>
 </head>
 <body>
@@ -316,11 +327,11 @@
 						<span class="bt_novos" style="display:none;">
 							<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
 						</span>
-					
-						<div class="usuario">
-							<a href="javascript:;" id="btnVersao">
+						<a href="javascript:;" id="btnVersao">
 								<label title="versao">Versão: ${versao}</label>								
 							</a>
+						<div class="usuario">
+							
 													
 							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 										
@@ -337,40 +348,6 @@
 					</div>
 					<br class="clearit">
 
-				<div class="container">
-					<div id="notify" style="display: none;"></div>
-					<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none;">
-						<p>
-							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-							<b id="idTextSuccess"></b>
-							<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
-								<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
-							</span>					
-						</p>
-					</div>
-					<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none;">
-						<p>
-							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-							<b id="idTextWarning"></b>
-							<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
-								<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
-							</span>					
-						</p>
-					</div>
-					<div id="effectError" class="ui-state-error ui-corner-all" style="display: none;">
-						<p>
-							<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-							<b id="idTextError"></b>
-							<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
-								<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
-							</span>					
-						</p>
-					</div>
-				</div>			
-
-			
-
-				
 			</div>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
@@ -382,6 +359,37 @@
 		</div>
 
 	</div>
+
+	<div class="container">
+		<div id="notify" style="display: none;"></div>
+		<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none; position: absolute; width: auto; z-index: 10002;">
+			<p>
+				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+				<b id="idTextSuccess"></b>
+				<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
+					<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
+				</span>					
+			</p>
+		</div>
+		<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none; position: absolute; width: auto; z-index: 10002;">
+			<p>
+				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+				<b id="idTextWarning"></b>
+				<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
+					<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
+				</span>					
+			</p>
+		</div>
+		<div id="effectError" class="ui-state-error ui-corner-all" style="display: none; position: absolute; width: auto; z-index: 10002;">
+			<p>
+				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+				<b id="idTextError"></b>
+				<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
+					<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
+				</span>					
+			</p>
+		</div>
+	</div>			
 
 </body>
 </html>

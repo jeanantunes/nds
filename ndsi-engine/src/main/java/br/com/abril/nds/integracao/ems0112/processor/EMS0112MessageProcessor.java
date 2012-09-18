@@ -58,9 +58,9 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor()) &&
 					input.getTipoOperacao().equals("A")){
 				
-				if(!input.getNomeEditor().equals(editor.getNome())){
-					editor.setNome(input.getNomeEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome do Editor para: "+editor.getNome());
+				if(!input.getNomeEditor().equals(editor.getPessoaJuridica().getNome())){
+					editor.getPessoaJuridica().setRazaoSocial(input.getNomeEditor());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome do Editor para: "+editor.getPessoaJuridica().getNome());
 				}
 				
 				if(!input.getInscricaoMunicipal().equals(editor.getPessoaJuridica().getInscricaoMunicipal())){
@@ -121,21 +121,22 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				//INSERE
 						
 				//PESSOA
-				pessoa = new PessoaJuridica();
+				pessoa = new PessoaJuridica();				
 				pessoa.setCnpj(input.getCnpj());
 				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
-				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
+				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());
+				pessoa.setRazaoSocial(input.getNomeEditor());
 				getSession().persist(pessoa);
 			} else {
 				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
 				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
+				pessoa.setRazaoSocial(input.getNomeEditor());
 				getSession().update(pessoa);				
 			}
 			
 			//EDITOR
 			Editor ed = new Editor();
 			ed.setCodigo(input.getCodigoEditor());
-			ed.setNome(input.getNomeEditor());
 			ed.setAtivo(input.getStatus());
 			ed.setNomeContato(input.getNomeContato());
 			ed.setPessoaJuridica(pessoa);

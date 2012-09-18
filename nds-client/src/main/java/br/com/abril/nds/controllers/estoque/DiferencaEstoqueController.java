@@ -23,15 +23,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
-import br.com.abril.nds.client.vo.ConfirmacaoVO;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.DiferencaVO.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.client.vo.ItemDiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
+import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoColunaConsulta;
+import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -59,7 +61,6 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.impl.EstoqueProdutoServiceImpl;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -70,6 +71,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -141,6 +143,8 @@ public class DiferencaEstoqueController {
 	
 	private static final String MODO_INCLUSAO_SESSION_ATTRIBUTE = "modoInclusaoDiferenca";
 	
+	private static final String FILTRO_DETALHE_DIFERENCA_COTA = "filtroDetalheDiferencaCota";
+
 	public DiferencaEstoqueController(Result result, 
 								 	  HttpSession httpSession,
 								 	  HttpServletResponse httpServletResponse) {
@@ -1182,6 +1186,8 @@ public class DiferencaEstoqueController {
 			
 			DiferencaVO consultaDiferencaVO = new DiferencaVO();
 			
+			System.out.println("============RATEIOS===========" + diferenca.getRateios());
+			
 			consultaDiferencaVO.setId(diferenca.getId());
 			
 			consultaDiferencaVO.setDataLancamento(
@@ -1218,13 +1224,15 @@ public class DiferencaEstoqueController {
 			
 			consultaDiferencaVO.setTipoEstoque(diferenca.getTipoEstoque().getDescricao());
 			
-			listaConsultaDiferenca.add(consultaDiferencaVO);
+			consultaDiferencaVO.setExistemRateios(diferenca.isExistemRateios());
 			
+			listaConsultaDiferenca.add(consultaDiferencaVO);
+
 			Fornecedor fornecedor = fornecedorService.obterFornecedorUnico(diferenca.getProdutoEdicao().getProduto().getCodigo());
 			
 			if(fornecedor != null)
 				consultaDiferencaVO.setFornecedor(fornecedor.getJuridica().getNomeFantasia());
-			
+
 			qtdeTotalDiferencas = 
 				qtdeTotalDiferencas.add(diferenca.getQtde());
 			
@@ -1961,4 +1969,77 @@ public class DiferencaEstoqueController {
 	public void obterDetalhes(Long idDiferenca) {
 		result.use(Results.json()).from("", "result").serialize();
 	}
+
+	@Post
+	@Path("/obterDetalhesDiferencaCota")
+	public void obterDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
+
+		filtro = prepararFiltroDetalheDiferencaCota(filtro, sortorder, sortname, page, rp);
+
+		DetalheDiferencaCotaDTO detalheDiferencaCota = obterDetalheDiferencaCotaDTO(filtro);
+
+		result.use(Results.json()).withoutRoot().from(detalheDiferencaCota).recursive().serialize();
+	}
+	
+	@Get
+	public void exportarDetalhesEstoqueCota(FileType fileType) throws IOException {
+		
+		if (fileType == null) {
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+		}
+
+		FiltroDetalheDiferencaCotaDTO filtro = (FiltroDetalheDiferencaCotaDTO) this.httpSession.getAttribute(FILTRO_DETALHE_DIFERENCA_COTA);
+
+		DetalheDiferencaCotaDTO detalhes = obterDetalheDiferencaCotaDTO(filtro);
+
+		FileExporter.to("diferenca-detalhe-estoque-cota", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, detalhes, 
+					detalhes.getDetalhesDiferenca(), RateioDiferencaCotaDTO.class, this.httpServletResponse);
+	}
+
+	private FiltroDetalheDiferencaCotaDTO prepararFiltroDetalheDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro, 
+																			 String sortorder, String sortname, int page, int rp) {
+
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+
+		filtro.setPaginacao(paginacao);
+
+		filtro.setColunaOrdenacao(
+			Util.getEnumByStringValue(FiltroDetalheDiferencaCotaDTO.ColunaOrdenacao.values(), sortname)
+		);
+		
+		this.httpSession.setAttribute(FILTRO_DETALHE_DIFERENCA_COTA, filtro);
+
+		return filtro;
+	}
+
+	private DetalheDiferencaCotaDTO obterDetalheDiferencaCotaDTO(FiltroDetalheDiferencaCotaDTO filtro) {
+
+		DetalheDiferencaCotaDTO detalheDiferencaCota = this.diferencaEstoqueService.obterDetalhesDiferencaCota(filtro);
+
+		List<CellModelKeyValue<RateioDiferencaCotaDTO>> lista = new ArrayList<CellModelKeyValue<RateioDiferencaCotaDTO>>();
+
+		int index = 0;
+
+		for (RateioDiferencaCotaDTO detalheDiferencaDTO : detalheDiferencaCota.getDetalhesDiferenca()) {
+
+			CellModelKeyValue<RateioDiferencaCotaDTO> cellModel = 
+					new CellModelKeyValue<RateioDiferencaCotaDTO>(++index, detalheDiferencaDTO);
+
+			lista.add(cellModel);
+		}
+
+		TableModel<CellModelKeyValue<RateioDiferencaCotaDTO>> tableModel = 
+				new TableModel<CellModelKeyValue<RateioDiferencaCotaDTO>>();
+
+		tableModel.setRows(lista);
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setTotal(detalheDiferencaCota.getQuantidadeTotalRegistrosDiferencaCota());
+
+		detalheDiferencaCota.setTableModel(tableModel);
+
+		return detalheDiferencaCota;
+	}
 }
+ 

@@ -20,6 +20,7 @@ import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -38,6 +39,9 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 
 	@Override
@@ -106,7 +110,8 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	
 	private Date getDataLancDistrib(Message message) {
 		
-		Date data = (Date) message.getHeader().get("DATA_LCTO_DISTRIB");
+		//Date data = (Date) message.getHeader().get("DATA_LCTO_DISTRIB");
+		Date data = distribuidorService.obter().getDataOperacao();
 		
 		if (data == null) {
 			

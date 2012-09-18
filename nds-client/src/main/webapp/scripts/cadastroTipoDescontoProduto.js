@@ -60,9 +60,17 @@ var descontoProdutoController = $.extend(true,{
 
 	obterParametrosNovoDescontoProduto: function() {
 		
+		var indProdutoEdicao = $("#mostrarEdicao", this.workspace).attr("checked") == 'checked';
 		var codigoProduto = $("#pCodigoProduto",this.workspace).val();
-		var edicaoProduto = $("#edicaoProduto",this.workspace).val();
-		var quantidadeEdicoes = $("#quantidadeEdicoes",this.workspace).val();
+
+		var edicaoProduto = null;
+		var quantidadeEdicoes = null;
+		
+		if(indProdutoEdicao) {
+			edicaoProduto 		= $("#edicaoProduto",this.workspace).val();
+			quantidadeEdicoes 	= $("#quantidadeEdicoes",this.workspace).val();
+		}
+		
 		var descontoProduto = $("#descontoProduto",this.workspace).val();
 		var descontoPredominante = $("#descontoPredominante",this.workspace).attr("checked") ? true : false;
 		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas",this.workspace).checked;
@@ -70,6 +78,7 @@ var descontoProdutoController = $.extend(true,{
 		
 		var data = new Array();
 		
+		data.push({name:'desconto.indProdutoEdicao' , value: indProdutoEdicao});
 		data.push({name:'desconto.codigoProduto' , value: codigoProduto});
 		data.push({name:'desconto.edicaoProduto' , value: edicaoProduto});
 		data.push({name:'desconto.descontoProduto' , value: descontoProduto});

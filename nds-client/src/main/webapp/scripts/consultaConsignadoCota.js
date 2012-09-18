@@ -165,8 +165,8 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Reparte Total',
-					name : 'reparte',
+					display : 'Consignado Total',
+					name : 'consignado',
 					width : 140,
 					sortable : true,
 					align : 'center'
@@ -177,7 +177,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'right'
 				}, {
-					display : 'Total Desc. R$',
+					display : 'Consignado c/ Desc. R$',
 					name : 'totalDescontoFormatado',
 					width : 100,
 					sortable : true,
@@ -283,14 +283,14 @@ var consultaConsignadoCotaController = $.extend(true, {
 					$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).hide();
 					$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).show();
 					$("#totalGeralPorFornecedor", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
-							"<tr> <td style='border-top:1px solid #000;''><strong>Total Geral:</strong></td>" +
-        						" <td style='border-top:1px solid #000;'>&nbsp;</td> "+
-        						" <td style='border-top:1px solid #000;' align='right'><strong>"+result+"</strong></td></tr>");
+							"<tr> <td><strong>Total Geral:</strong></td>" +
+        						" <td>&nbsp;</td> "+
+        						" <td align='right'><strong>"+result+"</strong></td></tr>");
 				}else{					
-					$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>" +
-												"<tr> <td style='border-top:1px solid #000;''><strong>Total Geral:</strong></td>" +
-			                						" <td style='border-top:1px solid #000;'>&nbsp;</td> "+
-			                						" <td style='border-top:1px solid #000;' align='right'><strong>"+result+"</strong></td></tr>");					
+					$("#totalGeralCota", consultaConsignadoCotaController.workspace).html(" <table width='190' border='0' cellspacing='1' cellpadding='1' align='right' >" +
+												"<tr> <td><strong>Total Geral:</strong></td>" +
+			                						" <td>&nbsp;</td> "+
+			                						" <td align='right'><strong>"+result+"</strong></td></tr>");					
 				} 
 				
 			},
@@ -340,12 +340,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 			width:860,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
+				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
 			},

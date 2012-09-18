@@ -153,6 +153,10 @@
 	</fieldset>
 	<div class="linha_separa_fields">&nbsp;</div>
 	
+	<form id="formDetalheEncalheCota">
+		<jsp:include page="detalhesEncalheCota.jsp"></jsp:include>
+	</form>
+
 	<form id="formDetalheConsultaFaltasSobras">
 		<div id="dialog-detalhe-1" title="Detalhes Estoque" style="display:none;">
 			<fieldset style="width:300px!important;">

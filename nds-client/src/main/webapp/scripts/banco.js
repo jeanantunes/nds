@@ -105,7 +105,7 @@ var bancoController = $.extend(true, {
 			
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
-				height:350,
+				height:310,
 				width:655,
 				modal: true,
 				buttons: {
@@ -127,7 +127,7 @@ var bancoController = $.extend(true, {
 		
 			$( "#dialog-alterar", this.workspace).dialog({
 				resizable: false,
-				height:350,
+				height:310,
 				width:655,
 				modal: true,
 				buttons: {
@@ -413,3 +413,5 @@ var bancoController = $.extend(true, {
 	    }
 	    
 }, BaseController);
+
+//@ sourceURL=scriptBancos.js

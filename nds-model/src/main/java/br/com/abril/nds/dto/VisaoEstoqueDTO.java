@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -16,13 +17,15 @@ public class VisaoEstoqueDTO implements Serializable{
 	private String estoque;
 	
 	@Export(label = "Produtos", alignment=Alignment.CENTER, exhibitionOrder = 2)
-	private Long produtos;
+	private BigDecimal produtos;
 	
 	@Export(label = "Exemplares", alignment=Alignment.CENTER, exhibitionOrder = 3)
-	private Long exemplares;
+	private BigDecimal exemplares;
+	
+	private BigDecimal valor;
 	
 	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
-	private BigDecimal valor;
+	private String valorFormatado;
 	
 	private String acao = "";
 
@@ -34,19 +37,19 @@ public class VisaoEstoqueDTO implements Serializable{
 		this.estoque = estoque;
 	}
 
-	public Long getProdutos() {
+	public BigDecimal getProdutos() {
 		return produtos;
 	}
 
-	public void setProdutos(Long produtos) {
+	public void setProdutos(BigDecimal produtos) {
 		this.produtos = produtos;
 	}
 
-	public Long getExemplares() {
+	public BigDecimal getExemplares() {
 		return exemplares;
 	}
 
-	public void setExemplares(Long exemplares) {
+	public void setExemplares(BigDecimal exemplares) {
 		this.exemplares = exemplares;
 	}
 
@@ -56,6 +59,7 @@ public class VisaoEstoqueDTO implements Serializable{
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
+		this.valorFormatado = CurrencyUtil.formatarValor(this.valor);
 	}
 
 	public String getAcao() {
@@ -64,5 +68,9 @@ public class VisaoEstoqueDTO implements Serializable{
 
 	public void setAcao(String acao) {
 		this.acao = acao;
+	}
+	
+	public String getValorFormatado() {
+		return this.valorFormatado;
 	}
 }

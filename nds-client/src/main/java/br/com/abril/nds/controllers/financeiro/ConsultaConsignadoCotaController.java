@@ -188,11 +188,11 @@ public class ConsultaConsignadoCotaController {
 	private TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> efetuarConsultaConsignadoCota(
 			FiltroConsultaConsignadoCotaDTO filtro) {
 		
-		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, "limitar");
+		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, true);
 		
 		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
 		
-		Integer totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro, "nao limitar");
+		Integer totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro, false);
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
@@ -233,11 +233,11 @@ public class ConsultaConsignadoCotaController {
 	
 	private TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> efetuarConsultaConsignadoCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro) {
 		
-		List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, "limitar");
+		List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, true);
 		
 		TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>>();
 		
-		Integer totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro, "nao limitar");
+		Integer totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro, false);
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
@@ -257,7 +257,7 @@ public class ConsultaConsignadoCotaController {
 		FiltroConsultaConsignadoCotaDTO filtro = (FiltroConsultaConsignadoCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
 		
 		if(filtro.getIdFornecedor() == null){
-			List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, "nao Limitar");
+			List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, false);
 			
 			if(listaConsignadoCota.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -268,7 +268,7 @@ public class ConsultaConsignadoCotaController {
 			
 		}else{
 			
-			List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, "nao limitar");
+			List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, false);
 			
 			if(listaConsignadoCota.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RateioCotaVO;
+import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -363,5 +366,25 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		return parametroNumeroDiasLancamento;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public DetalheDiferencaCotaDTO obterDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro) {
+
+		List<RateioDiferencaCotaDTO> detalhesDiferenca = rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
+		
+		DetalheDiferencaCotaDTO detalheDiferencaCota = this.rateioDiferencaRepository.obterDetalhesDiferencaCota(filtro);
+
+		if (detalheDiferencaCota == null) {
+
+			detalheDiferencaCota = new DetalheDiferencaCotaDTO();
+		}
+		
+		detalheDiferencaCota.setDetalhesDiferenca(detalhesDiferenca);
+		
+		return detalheDiferencaCota;
+	}
 }

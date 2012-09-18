@@ -1,4 +1,5 @@
 <head>
+	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 	<script type="text/javascript" src="scripts/transportador.js"></script>
 	<style>
 		.diasFunc label,.finceiro label {
@@ -161,27 +162,98 @@
 							<td>Insc. Estadual:</td>
 							<td><input type="text" style="width: 150px" id="inscEstadual" maxlength="255" /></td>
 						</tr>
+					</table>
+					<table width="850" cellpadding="3" cellspacing="2">
 						<tr>
-							<td>Cobrança</td>
+							<td width="117">Cobrança</td>
 							<td>
-								<select style="width: 100px;">
-									<option onclick="transportadorController.mostrarOpcaoTaxaFixa();">Taxa Fixa</option>
-									<option onclick="transportadorController.mostrarOpcaoPercentual()">Percentual</option>
+								<select style="width: 100px;" id="modelidadeCobranca">
+									<option onclick="transportadorController.mostrarOpcaoTaxaFixa();" value="TAXA_FIXA">Taxa Fixa</option>
+									<option onclick="transportadorController.mostrarOpcaoPercentual()" value="PERCENTUAL">Percentual</option>
 								</select>
 							</td>
 							<td class="transpTaxaFixa">Valor R$:</td>
 							<td class="transpTaxaFixa">
-								<input type="text"/>
+								<input type="text" id="valorTaxaFixa"/>
 							</td>
 							
-							<td class="transpPercentual" style="display: none;">Percentual (%):</td>
+							<td width="180" class="transpPercentual" style="display: none;">Percentual Faturamento Preço Capa:</td>
 							<td class="transpPercentual" style="display: none;">
-								<input type="text" />
+								<input type="text" id="valorPercentualFaturamento"/>
+							</td>
+							
+							<td>
+								<input type="checkbox" id="checkPorEntrega" />
+							</td>
+							<td>
+								Por Entrega
 							</td>
 						</tr>
 					</table>
-					<br/>
 					
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+					        <td width="20%">Periodicidade de Cobrança:</td>
+					        <td width="3%">
+					        	<input name="radioPeriodicidade" type="radio" value="DIARIO" 
+					        		onclick="transportadorController.alterarPeriodicidadeCobranca(this.value);" id="radioPeridioDiario" />
+					        </td>
+					        <td width="7%">Diário</td>
+					        <td width="3%">
+					        	<input name="radioPeriodicidade" type="radio" value="SEMANAL" 
+					        		onclick="transportadorController.alterarPeriodicidadeCobranca(this.value);" />
+					        </td>
+					        <td width="9%">Semanal</td>
+					        <td width="3%">
+					        	<input name="radioPeriodicidade" type="radio" value="QUINZENAL" 
+					        		onclick="transportadorController.alterarPeriodicidadeCobranca(this.value);" />
+					        </td>
+					        <td width="10%">Quinzenal</td>
+					        <td width="3%">
+					        	<input name="radioPeriodicidade" type="radio" value="MENSAL" 
+					        		onclick="transportadorController.alterarPeriodicidadeCobranca(this.value);" />
+					        </td>
+					        <td width="42%">Mensal</td>
+						</tr>
+					</table>
+          			<table width="100%" border="0" cellspacing="1" cellpadding="1" class="perCobrancaSemanal" style="display: none;">
+	            		<tr class="checksDiasSemana">
+							<td width="20"><input type="checkbox" id="checkSegunda" value="SEGUNDA_FEIRA" name="diaSemanaCob" /></td>
+							<td width="98">Segunda-feira</td>
+							<td width="20"><input type="checkbox" id="checkTerca" value="TERCA_FEIRA" name="diaSemanaCob" /></td>
+							<td width="80">Terça-feira</td>
+							<td width="20"><input type="checkbox" id="checkQuarta" value="QUARTA_FEIRA" name="diaSemanaCob" /></td>
+							<td width="83">Quarta-feira</td>
+							<td width="20"><input type="checkbox" id="checkQuinta" value="QUINTA_FEIRA" name="diaSemanaCob" /></td>
+							<td width="85">Quinta-feira</td>
+							<td width="20"><input type="checkbox" id="checkSexta" value="SEXTA_FEIRA" name="diaSemanaCob" /></td>
+							<td width="79">Sexta-feira</td>
+							<td width="20"><input type="checkbox" id="checkSabado" value="SABADO" name="diaSemanaCob" /></td>
+							<td width="54">Sábado</td>
+							<td width="20"><input type="checkbox" id="checkDomingo" value="DOMINGO" name="diaSemanaCob" /></td>
+							<td width="58">Domingo</td>
+            			</tr>
+          			</table>
+          			<table width="100%" border="0" cellspacing="1" cellpadding="1" class="perCobrancaQuinzenal" style="display: none;">
+        				<tr>
+							<td width="396" height="24" align="right">Todo dia:&nbsp;</td>
+							<td width="69">
+								<input type="text" id="inputQuinzenalDiaInicio" 
+									onkeyup="transportadorController.calcularDiaFimCobQuinzenal();" style="width:60px;"/>
+							</td>
+							<td width="21" align="center">e</td>
+							<td width="271">
+								<input type="text" id="inputQuinzenalDiaFim" disabled="disabled" style="width:60px;"/>
+							</td>
+      					</tr>
+					</table>
+					<table width="100%" border="0" cellspacing="1" cellpadding="1" class="perCobrancaMensal" style="display: none;">
+      					<tr>
+							<td width="495" align="right">Todo dia:&nbsp;</td>
+							<td width="268"><input type="text" id="inputCobrancaMensal" style="width:60px;"/></td>
+      					</tr>
+    				</table> 
+    				
 					<fieldset>
 						<legend>Cotas Atendidas</legend>
 						<table id="gridCotasAtendidas"></table>

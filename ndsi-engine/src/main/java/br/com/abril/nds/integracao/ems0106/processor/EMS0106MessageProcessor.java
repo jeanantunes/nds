@@ -1,8 +1,8 @@
 package br.com.abril.nds.integracao.ems0106.processor;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -57,7 +57,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"NAO ENCONTROU ProdutoEdicao");
+					"NAO ENCONTROU ProdutoEdicao de codigo: " + codigoPublicacao
+					+ ", numeroEdicao: " + edicao);
 			return;
 		}
 			
@@ -66,7 +67,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		if (lancamento == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"NAO ENCONTROU Lancamento");
+					"NAO ENCONTROU Lancamento para ProdutoEdicao: "
+					+ produtoEdicao.getId());
 			return;
 		}
 		
@@ -89,16 +91,26 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		} else {
 			
 			// Remoção dos EstudoCotas que ficaram desatualizados:
-			Set<EstudoCota> eCotas = estudo.getEstudoCotas();
-			if (eCotas != null && !eCotas.isEmpty()) {
-				for (EstudoCota eCota : eCotas) {
-					this.getSession().delete(eCota);
-				}
-			}
+			Query query = getSession().createQuery(
+					"DELETE EstudoCota e WHERE e.estudo = :estudo");
+			query.setParameter("estudo", estudo);
+			query.executeUpdate();
+			estudo.setEstudoCotas(Collections.<EstudoCota>emptySet());
 			
 			// Atualizar os dados do Estudo:
-			estudo.setQtdeReparte(BigInteger.valueOf(
-					input.getReparteDistribuir()));
+			BigInteger qtdeReparteAtual = estudo.getQtdeReparte();
+			BigInteger qtdeReparteCorrente = BigInteger.valueOf(
+					input.getReparteDistribuir());
+			if (!qtdeReparteAtual.equals(qtdeReparteCorrente)) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da QUANTIDADE REPARTE do Estudo: "
+								+ estudo.getId()
+								+ ", de: " + qtdeReparteAtual
+								+ " para: " + qtdeReparteCorrente);
+				estudo.setQtdeReparte(qtdeReparteCorrente);
+			}
+			
 			estudo.setDataAlteracao(new Date());
 			this.getSession().merge(estudo);
 		}

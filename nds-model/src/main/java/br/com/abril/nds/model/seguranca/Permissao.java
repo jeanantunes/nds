@@ -75,6 +75,7 @@ public enum Permissao
 	ROLE_RECOLHIMENTO_HELP("Help", 									   							 		   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_FINANCEIRO("Financeiro", 					   				                         	  	  	   null),
 	ROLE_FINANCEIRO_BAIXA_BANCARIA("Baixa Bancária", 					                         	  	   Permissao.ROLE_FINANCEIRO),
+	ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA("Negociação de Dívida",			                         	  	   Permissao.ROLE_FINANCEIRO),
 	ROLE_FINANCEIRO_BAIXA_BANCARIA_MANUAL("Baixa Bancária Manual",                                	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_BAIXA_MANUAL_DIVIDAS("Baixa Manual de Dívidas",                               	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA("Consulta Boletos por Cota",                         	  	   	   Permissao.ROLE_FINANCEIRO), 
@@ -102,6 +103,7 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_SERVICO_ENTREGA("Serviço de Entrega",										  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO),	
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros do Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração / Cota",			          					 		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros do Distribuidor", 						 	   Permissao.ROLE_ADMINISTRACAO);
 
 	private String descricao;
