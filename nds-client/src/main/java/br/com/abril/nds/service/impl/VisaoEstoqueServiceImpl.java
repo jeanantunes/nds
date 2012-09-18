@@ -37,7 +37,15 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 	@Override
 	@Transactional
 	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
-		return null;
+		List<VisaoEstoqueDetalheDTO> list = new ArrayList<VisaoEstoqueDetalheDTO>();
+
+		list.add(visaoEstoqueRepository.obterLancamentoDetalhe(filtro));
+/*		list.add(visaoEstoqueRepository.obterLancamentoJuramentado(filtro));
+		list.add(visaoEstoqueRepository.obterSuplementar(filtro));
+		list.add(visaoEstoqueRepository.obterRecolhimento(filtro));
+		list.add(visaoEstoqueRepository.obterProdutosDanificados(filtro));*/
+
+		return list;
 	}
 
 
