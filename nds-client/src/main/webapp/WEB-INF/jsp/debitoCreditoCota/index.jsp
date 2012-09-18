@@ -63,8 +63,8 @@
 			
 			acoes = 
 				'<a href="javascript:;" onclick="detalheMovimento(' + idMovimento + ')" ' +
-				' style="cursor:pointer;border:0px;margin:5px" title="Editar movimento">' +
-				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Detalhes do Movimento">' +
+				'<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0px"/>' +
 				'</a>' +
 				'<span style="border:0px;margin:5px">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px" style="opacity:0.4"/>' +
@@ -240,7 +240,7 @@
 	
 		$( "#dialog-detalhe" ).dialog({
 			resizable: false,
-			height:350,
+			height:300,
 			width:500,
 			modal: true,
 			buttons:[ 
@@ -696,7 +696,7 @@
 		</span>
 		<span class="bt_arq">
 			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
 			</a>
 		</span>
 		</div>
@@ -744,16 +744,16 @@
 		  </tr>
 		  <tr>
 		    <td colspan="3">Data Lançamento:</td>
-		    <td width="104"><input type="text" id="datepickerDeVenc" name="filtroDebitoCredito.dataLancamentoInicio" style="width:80px;" /></td>
-		    <td width="26">Até:</td>
-		    <td width="137"><input id="datepickerAteVenc" type="text" name="filtroDebitoCredito.dataLancamentoFim" style="width:80px;" /></td>
+		    <td width="109"><input type="text" id="datepickerDeVenc" name="filtroDebitoCredito.dataLancamentoInicio" style="width:80px;" /></td>
+		    <td width="32">Até:</td>
+		    <td width="126"><input id="datepickerAteVenc" type="text" name="filtroDebitoCredito.dataLancamentoFim" style="width:80px;" /></td>
 		    <td>Data Vencimento:</td>
-		    <td width="136"><input type="text" id="datepickerDe" name="filtroDebitoCredito.dataVencimentoInicio" style="width:80px;" /></td>
-		    <td width="27">Até:</td>
-		    <td width="113"><input id="datepickerAte" type="text" name="filtroDebitoCredito.dataVencimentoFim" style="width:80px;" /></td>
-		    <td width="78"><span class="bt_novos">
+		    <td width="105"><input type="text" id="datepickerDe" name="filtroDebitoCredito.dataVencimentoInicio" style="width:80px;" /></td>
+		    <td width="31">Até:</td>
+		    <td width="116"><input id="datepickerAte" type="text" name="filtroDebitoCredito.dataVencimentoFim" style="width:80px;" /></td>
+		    <td width="102"><span class="bt_novos">
             	<a href="javascript:;" onclick="popularGridDebitosCreditos();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
-  </tr>
+  		</tr>
   		</table>
       </fieldset>
      </form>
@@ -762,13 +762,9 @@
        	  <legend>Débitos / Créditos Cota Cadastrados</legend>
         <div class="grids" style="display:none;">
        	  <table class="debitosCreditosGrid"></table>
-         
+        
           <br />
-	
-		
-         
-
-          <span style="float:right; margin-right:260px" id="footerValorTotal"></span>
+          <span style="float:right; margin-right:297px" id="footerValorTotal"></span>
  		</div>
       </fieldset>
       
