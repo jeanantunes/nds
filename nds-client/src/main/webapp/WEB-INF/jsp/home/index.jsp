@@ -48,6 +48,7 @@
 						{
 							_original_init : $.ui.dialog.prototype._init,
 							_original_open : $.ui.dialog.prototype.open,				
+							_original_close : $.ui.dialog.prototype.close,				
 							_init : function() {
 								var self = this.element;
 	
@@ -64,8 +65,15 @@
 							open : function() {
 								var self = this.element, o = this.options;
 								self.parent().appendTo(o.form);
+								//self.parent().css("top", "58px");
+								escondeHeader();
+								redimensionarWorkspace();
 								this._original_open();
-								self.parent().css("top", "58px");
+							},
+							close : function() {
+								mostraHeader();
+								redimensionarWorkspace();
+								this._original_close();
 							}
 							
 						});
@@ -91,6 +99,7 @@
 									tabTemplate : "<li> <a href='#\{href\}'>#\{label\}</a> <span class='ui-icon ui-icon-close'>Remove Tab</span></li>",
 									add : function(event, ui) {
 										self.tabs('select', '#' + ui.panel.id);
+										//console.log($('#'+ui.panel.id) );
 									},
 									ajaxOptions : {
 										error : function(xhr, status, index,
@@ -130,8 +139,11 @@
 										add = false;
 									}
 								});
-								if (add) {
-									self.tabs('add', url, title, className);
+								if (add) {									
+									tab = self.tabs('add', url, title);									
+									$span = $("<span>").addClass(className);
+									$('a:contains(' + title + ')', '#workspace').parent().prepend($span);
+									
 								}
 							},
 							addCloseTab : function() {
@@ -154,9 +166,11 @@
 
 		// Dinamicaly add tabs from menu
 		$("#menu_principal ul li ul li").click(function() {
+			//S2
 			$('#workspace').tabs('addTab', 										
-					"<span class='" + $("span", $(this).parents("li")).attr('class') +"'>&nbsp;</span>" + $("a", this).html()
-					,  $("a", this).prop("href") + "?random=" + Math.random()
+					$("a", this).html()
+					, $("a", this).prop("href") + "?random=" + Math.random()
+					, $("span", $(this).parents("li")).attr('class')
 			);
 			return false;
 		});
