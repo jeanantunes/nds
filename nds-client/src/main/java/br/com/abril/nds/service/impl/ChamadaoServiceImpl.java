@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -174,9 +176,8 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 */
 	private void verificarSuspenderCota(FiltroChamadaoDTO filtro, Cota cota, Usuario usuario) {
 		
-		if(!SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
-		
-			filtro.setIdFornecedor(null);
+		if(!SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())
+				&& filtro.getIdFornecedor() == null) {
 			
 			List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadao =
 				this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
@@ -186,8 +187,45 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				this.suspenderCota(cota.getId(), usuario);
 			}
 		}
+		
+		if (filtro.getIdFornecedor() != null) {
+			
+			List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadao =
+				this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+			
+			if (listaConsignadoCotaChamadao == null || listaConsignadoCotaChamadao.isEmpty()) {
+				
+				this.desassociarFornecedorDaCota(filtro.getIdFornecedor(), cota);
+			}
+		}
 	}
 	
+	/**
+	 * Desassocia um fornecedor da cota informada.
+	 * 
+	 * @param idFornecedor - identificador do fornecedor
+	 * @param cota - cota
+	 */
+	private void desassociarFornecedorDaCota(Long idFornecedor, Cota cota) {
+		
+		Set<Fornecedor> fornecedores = cota.getFornecedores();
+		
+		Fornecedor fornecedorRemover = null;
+		
+		for (Fornecedor fornecedor : fornecedores) {
+			
+			if (fornecedor.getId().equals(idFornecedor)) {
+				
+				fornecedorRemover = fornecedor;
+			}
+		}
+		
+		if (fornecedorRemover != null) {
+			
+			fornecedores.remove(fornecedorRemover);
+		}
+	}
+
 	/**
 	 * Suspende a cota.
 	 * 
