@@ -1,6 +1,8 @@
 <head>
 	
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/painelOperacional.css" />
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/menu_superior.css" />	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/painelOperacional.js"></script>
 
 </head>
