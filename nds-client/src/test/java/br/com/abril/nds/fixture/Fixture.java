@@ -215,6 +215,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaImovel;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
@@ -3645,28 +3646,44 @@ public class Fixture {
 //        fiador.addGarantia(new HistoricoTitularidadeCotaFiadorGarantia(BigDecimal.valueOf(100000), "Imóvel residencial"));
 //        historico.addGarantia(fiador);
         
-        HistoricoTitularidadeCotaChequeCaucao cheque = new HistoricoTitularidadeCotaChequeCaucao();
-        cheque.setAgencia(Long.valueOf(809));
-        cheque.setConta(Long.valueOf(1234));
-        cheque.setCorrentista("John Doe");
-        cheque.setDvAgencia("1");
-        cheque.setDvConta("1");
-        cheque.setEmissao(cota.getInicioAtividade());
-        cheque.setNomeBanco("Banco Itaú");
-        cheque.setNumeroBanco("349");
-        cheque.setNumeroCheque("987654");
-        cheque.setValidade(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
-        cheque.setValor(BigDecimal.valueOf(1000));
-        historico.addGarantia(cheque);
+//        HistoricoTitularidadeCotaChequeCaucao cheque = new HistoricoTitularidadeCotaChequeCaucao();
+//        cheque.setAgencia(Long.valueOf(809));
+//        cheque.setConta(Long.valueOf(1234));
+//        cheque.setCorrentista("John Doe");
+//        cheque.setDvAgencia("1");
+//        cheque.setDvConta("1");
+//        cheque.setEmissao(cota.getInicioAtividade());
+//        cheque.setNomeBanco("Banco Itaú");
+//        cheque.setNumeroBanco("349");
+//        cheque.setNumeroCheque("987654");
+//        cheque.setValidade(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
+//        cheque.setValor(BigDecimal.valueOf(1000));
+//        historico.addGarantia(cheque);
         
-        try {
-            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("cheque.jpg");
-            File fileImagem = new File(urlImagem.toURI());
-            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
-            cheque.setImagem(imagem);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro carregando imagem cheque caução histórico titularidade", e);
-        }
+//        try {
+//            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("cheque.jpg");
+//            File fileImagem = new File(urlImagem.toURI());
+//            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
+//            cheque.setImagem(imagem);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Erro carregando imagem cheque caução histórico titularidade", e);
+//        }
+        
+        HistoricoTitularidadeCotaImovel imovel1 = new HistoricoTitularidadeCotaImovel();
+        imovel1.setEndereco("Rua Treze de Maio, 150 - Centro, São José do Rio Pardo-SP");
+        imovel1.setNumeroRegistro("1234");
+        imovel1.setObservacao("Observação");
+        imovel1.setProprietario("John Doe");
+        imovel1.setValor(BigDecimal.valueOf(150000));
+        historico.addGarantia(imovel1);
+        
+        HistoricoTitularidadeCotaImovel imovel2 = new HistoricoTitularidadeCotaImovel();
+        imovel2.setEndereco("Rua Campos Salles, 290 - Centro, São José do Rio Pardo-SP");
+        imovel2.setNumeroRegistro("4321");
+        imovel2.setObservacao("Observação II");
+        imovel2.setProprietario("Jane Doe");
+        imovel2.setValor(BigDecimal.valueOf(500000));
+        historico.addGarantia(imovel2);
         
         historico.addPdv(pdv);
         

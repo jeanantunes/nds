@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FiadorDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
@@ -31,6 +32,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
@@ -46,6 +48,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaImovel;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
@@ -652,6 +655,31 @@ public class CotaDTOAssembler {
         CotaGarantiaDTO<ChequeCaucaoDTO> dto = new CotaGarantiaDTO<ChequeCaucaoDTO>();
         dto.setTipo(garantiaChequeCaucao.getTipoGarantia());
         dto.setCotaGarantia(toChequeCaucaoDTO(garantiaChequeCaucao));
+        return dto;
+    }
+
+    /**
+     * Cria a coleção de {@link CotaGarantiaDTO} com as informações da coleção de
+     * {@link HistoricoTitularidadeCotaImovel} associados ao histórico de
+     * titularidade da cota
+     * 
+     * @param garantiasImovel
+     *            coleção de {@link HistoricoTitularidadeCotaImovel} para
+     *            criação da coleção de {@link CotaGarantiaDTO}
+     * @return coleção de {@link CotaGarantiaDTO} com as informações
+     */
+    public static CotaGarantiaDTO<Collection<ImovelDTO>> toCotaGarantiaDTO(
+            Collection<HistoricoTitularidadeCotaImovel> garantiasImovel) {
+        CotaGarantiaDTO<Collection<ImovelDTO>> dto = new CotaGarantiaDTO<Collection<ImovelDTO>>();
+        dto.setTipo(TipoGarantia.IMOVEL);
+        List<ImovelDTO> imoveis = new ArrayList<ImovelDTO>(
+                garantiasImovel.size());
+        for (HistoricoTitularidadeCotaImovel imovel : garantiasImovel) {
+            imoveis.add(new ImovelDTO(imovel.getProprietario(), imovel
+                    .getEndereco(), imovel.getNumeroRegistro(), imovel
+                    .getValor(), imovel.getObservacao()));
+        }
+        dto.setCotaGarantia(imoveis);
         return dto;
     }
  

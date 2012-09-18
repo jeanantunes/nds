@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import br.com.abril.nds.model.cadastro.TipoGarantia;
+
 /**
  * Representa a garantia do tipo "IMOVEL" no histórico de titularidade da cota
  * 
@@ -45,6 +47,10 @@ public class HistoricoTitularidadeCotaImovel extends
 
     @Column(name = "IMOVEL_OBSERVACAO")
     private String observacao;
+    
+    public HistoricoTitularidadeCotaImovel() {
+        this.tipoGarantia = TipoGarantia.IMOVEL;
+    }
 
     /**
      * @return the proprietario

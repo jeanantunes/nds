@@ -880,6 +880,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaFiador());
 	    } else if (TipoGarantia.CHEQUE_CAUCAO == historico.getTipoGarantia()) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaChequeCaucao());
+	    } else if (TipoGarantia.IMOVEL == historico.getTipoGarantia()) {
+	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiasImovel());
 	    }
         return null;
     }

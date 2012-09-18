@@ -783,7 +783,9 @@ public class HistoricoTitularidadeCota implements Serializable {
     }
     
     /**
-     * Retorna a garantia do tipo cheque caução do histórico de titularidade da cota
+     * Retorna a garantia do tipo cheque caução do histórico de titularidade da
+     * cota
+     * 
      * @return garantia cheque caução do histórico de titularidade da cota
      */
     public HistoricoTitularidadeCotaChequeCaucao getGarantiaChequeCaucao() {
@@ -791,6 +793,21 @@ public class HistoricoTitularidadeCota implements Serializable {
             return HistoricoTitularidadeCotaChequeCaucao.class.cast(garantias.iterator().next());
         }
         return null;
+    }
+    
+    /***
+     * Retorna as garantias do tipo imóvel do histórico de titularidade da cota
+     * 
+     * @return coleção de garantias do tipo imóvel para o histórico de titularidade da cota
+     */
+    public Collection<HistoricoTitularidadeCotaImovel> getGarantiasImovel() {
+        List<HistoricoTitularidadeCotaImovel> imoveis = new ArrayList<HistoricoTitularidadeCotaImovel>();
+        if (TipoGarantia.IMOVEL == getTipoGarantia()) {
+            for(HistoricoTitularidadeCotaGarantia garantia : garantias) {
+                imoveis.add(HistoricoTitularidadeCotaImovel.class.cast(garantia));
+            }
+        }
+        return imoveis;
     }
     
 }

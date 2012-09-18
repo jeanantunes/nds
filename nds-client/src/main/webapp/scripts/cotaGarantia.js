@@ -346,6 +346,12 @@ function Imovel(idCota, cotaGarantia) {
 			valor : null,
 			observacao : null
 		};
+
+    if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        $('#cotaGarantiaImovelIncluirNovo').show();
+    } else {
+        $('#cotaGarantiaImovelIncluirNovo').hide();
+    }
 };
 
 Imovel.prototype.path = contextPath + "/cadastro/garantia/";
@@ -373,7 +379,10 @@ Imovel.prototype.incluirImovel = function(callBack) {
 			var novoImovel = data.imovel;
 				
 			if (_this.itemEdicao == null || _this.itemEdicao < 0) {
-				_this.cotaGarantia.imoveis.push(novoImovel);
+				if (!_this.cotaGarantia.imoveis) {
+                    _this.cotaGarantia.imoveis = new Array();
+                }
+                _this.cotaGarantia.imoveis.push(novoImovel);
 				
 			} else {
 				_this.cotaGarantia.imoveis.slice(_this.itemEdicao, 1);
@@ -438,14 +447,21 @@ Imovel.prototype.dataBind = function() {
 };
 
 Imovel.prototype.popularGrid = function() {	
-	
-	
-	if (!(this.cotaGarantia && this.cotaGarantia.imoveis)) {
-		this.cotaGarantia.imoveis =  new Array();
-	} 
-	
+
+    var lista = [];
+
+    if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        if (this.cotaGarantia && this.cotaGarantia.imoveis) {
+            lista =  this.cotaGarantia.imoveis;
+        }
+    } else {
+        if (this.cotaGarantia) {
+            lista = this.cotaGarantia;
+        }
+    }
+
 	this.grid.flexAddData({
-		rows : toFlexiGridObject(this.cotaGarantia.imoveis),
+		rows : toFlexiGridObject(lista),
 		page : 1,
 		total : 1
 	});
@@ -484,11 +500,17 @@ Imovel.prototype.destroy = function() {
 };
 
 Imovel.prototype.edita = function(id) {
-	this.imovel = this.cotaGarantia.imoveis[id];
+	if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        this.imovel = this.cotaGarantia.imoveis[id];
+    } else {
+        this.imovel = this.cotaGarantia[id];
+    }
 	this.itemEdicao = id;
 	this.dataBind();
-	$("#cotaGarantiaImovelSalvaEdicao").show();
-	$("#cotaGarantiaImovelIncluirNovo").hide();
+	if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        $("#cotaGarantiaImovelSalvaEdicao").show();
+        $("#cotaGarantiaImovelIncluirNovo").hide();
+    }
 };
 
 Imovel.prototype.remove = function(id) {
@@ -537,7 +559,6 @@ Imovel.prototype.initGrid = function() {
 										.each(
 												data.rows,
 												function(index, value) {
-													
 													var idImovel = value.id;
 
 													var acao = '<a href="javascript:;" onclick="tipoCotaGarantia.controller.edita('
@@ -545,16 +566,19 @@ Imovel.prototype.initGrid = function() {
 															+ ');" ><img src="'
 															+ contextPath
 															+ '/images/ico_editar.gif" border="0" style="margin-right:10px;" /></a>';
-													acao += '<a href="javascript:;" onclick="tipoCotaGarantia.controller.remove('
-															+ idImovel
-															+ ');" ><img src="'
-															+ contextPath
-															+ '/images/ico_excluir.gif" border="0" /></a>';
+													if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+                                                        acao += '<a href="javascript:;" onclick="tipoCotaGarantia.controller.remove('
+                                                            + idImovel
+                                                            + ');" ><img src="'
+                                                            + contextPath
+                                                            + '/images/ico_excluir.gif" border="0" /></a>';
+                                                    }
 
 													value.cell.acao = acao;
 												});
 								$(".cotaGarantiaImovelGrid").flexReload();
-								return data;
+
+                                return data;
 							}
 						},
 
@@ -563,31 +587,31 @@ Imovel.prototype.initGrid = function() {
 							display : 'Proprietário',
 							name : 'proprietario',
 							width : 115,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						}, {
 							display : 'Endereço',
 							name : 'endereco',
 							width : 150,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						}, {
 							display : 'N° Registro',
 							name : 'numeroRegistro',
 							width : 80,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						}, {
 							display : 'Valor R$',
 							name : 'valor',
 							width : 80,
-							sortable : true,
+							sortable : false,
 							align : 'right'
 						}, {
 							display : 'Observação',
 							name : 'observacao',
 							width : 180,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						}, {
 							display : 'Ação',

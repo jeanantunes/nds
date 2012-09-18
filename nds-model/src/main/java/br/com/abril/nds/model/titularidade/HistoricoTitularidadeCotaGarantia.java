@@ -2,7 +2,6 @@ package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -14,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -41,7 +40,7 @@ public abstract class HistoricoTitularidadeCotaGarantia implements Serializable 
     @Column(name="ID")
     protected Long id;
     
-    @OneToOne(optional = false, cascade=CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     protected HistoricoTitularidadeCota historicoTitularidadeCota;
     
