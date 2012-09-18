@@ -23,6 +23,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
@@ -767,6 +768,7 @@ public class Fixture {
 		cota.setSituacaoCadastro(situacaoCadastro);
 		cota.setBox(box);
 		cota.setInicioAtividade(new Date());
+		cota.setClassificacaoEspectativaFaturamento(ClassificacaoEspectativaFaturamento.D);
 		return cota;
 	}
 

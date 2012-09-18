@@ -86,6 +86,7 @@ public class CotaDTOAssembler {
         dto.setEmail(cota.getEmail());
         dto.setStatus(cota.getSituacaoCadastro());
         dto.setClassificacaoSelecionada(cota.getClassificacaoExpectativaFaturamento());
+        dto.addItemClassificacaoFaturamento(cota.getClassificacaoExpectativaFaturamento());
         dto.setEmiteNFE(cota.isEmiteNfe());
         dto.setEmailNF(cota.getEmailNfe());
        

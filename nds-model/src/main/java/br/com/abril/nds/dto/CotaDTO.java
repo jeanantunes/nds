@@ -630,5 +630,18 @@ public class CotaDTO implements Serializable {
 	public void addProprietario(TitularidadeCotaDTO proprietario) {
 	    proprietarios.add(proprietario);
 	}
+	
+	/**
+	 * Adiciona um item de classificação à lista de classificação de faturamento
+	 * @param classificacao classificação para inclusão
+	 */
+	public void addItemClassificacaoFaturamento(ClassificacaoEspectativaFaturamento classificacao) {
+	    if (classificacao != null) {
+	        if (this.listaClassificacao == null) {
+	            this.listaClassificacao = new ArrayList<ItemDTO<String,String>>();
+	        }
+	        this.listaClassificacao.add(new ItemDTO<String, String>(classificacao.name(), classificacao.getDescricao()));
+	    }
+	}
 
 }

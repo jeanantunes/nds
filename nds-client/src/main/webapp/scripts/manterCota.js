@@ -661,9 +661,11 @@ var MANTER_COTA = $.extend(true, {
             function(result){
                 if(result){
                     if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){
+                        MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
                         COTA_CPF.editarCPF(result);
                     }
                     else {
+                        MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         COTA_CNPJ.editarCNPJ(result);
                     }
                 }
