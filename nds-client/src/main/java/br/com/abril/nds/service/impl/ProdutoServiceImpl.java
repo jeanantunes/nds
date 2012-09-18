@@ -183,8 +183,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 			TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(codigoTipoProduto);
 			produto.setTipoProduto(tipoProduto);
 			
-			produto.setPeriodicidade(PeriodicidadeProduto.QUINZENAL);
-			produto.setPeso(new Long(10));
+			//TODO: Valor não informado na interface 
+			// de cadastro de produto
+			produto.setPeso(0L);
 
 			produto = this.produtoRepository.merge(produto);
 			

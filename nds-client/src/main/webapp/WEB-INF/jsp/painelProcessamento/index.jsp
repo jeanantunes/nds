@@ -23,8 +23,8 @@
 <div id="dialog-novo" title="Detalhes do Processamento">
     <fieldset>
 	    <legend>Detalhe do Processamento</legend>
-	    <p><strong>Interface:</strong> Lançamento - <strong>Data: </strong>27/04/2012 <strong>Hora:</strong> 13:59h</label>
-	    <br />
+	    <p><strong>Interface:</strong> Lançamento - <strong style="margin-right:5px; margin-left:10px;">Data: </strong>27/04/2012 <strong style="margin-right:5px; margin-left:10px;">Hora:</strong> 13:59h</p>
+	    <br clear="all" />
 	    <table class="detalheProcessamentoGrid"></table>
     </fieldset>
 </div>
@@ -33,19 +33,19 @@
 <div id="dialog-detalhes" title="Detalhes da Interface">
     <fieldset>
     <legend>Detalhe da Interface</legend>
-    <p><strong>Interface:</strong> Lançamento - <strong>Data: </strong>27/04/2012 <strong>Hora:</strong> 13:59h</label>
-    <br />
+    <p><strong>Interface:</strong> Lançamento - <strong style="margin-right:5px; margin-left:10px;">Data: </strong>27/04/2012 <strong style="margin-right:5px; margin-left:10px;">Hora:</strong> 13:59h</p>
+    <br clear="all" />
     <table class="detalheInterfaceGrid"></table>
     </fieldset>
 </div>
 
 	  <div class="areaBts">
 	  	<div class="area">
-	  		<span class="bt_arq" title="Gerar Arquivo"><a href="javascript:;" id="btnGerarXLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
-			<span class="bt_arq" title="Imprimir"><a href="javascript:;" id="btnGerarPDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a></span>
+	  		<span class="bt_arq"><a href="javascript:;" id="btnGerarXLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+			<span class="bt_arq"><a href="javascript:;" id="btnGerarPDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a></span>
 	  	</div>
 	  </div>
-	        <div class="linha_separa_fields">&nbsp;</div>
+	  <div class="linha_separa_fields">&nbsp;</div>
       <fieldset class="fieldFiltro">
        	  <legend>Painel de Processamentos</legend>
           <div class="grids" style="display:block;">
@@ -65,6 +65,7 @@
                         <td width="123">Não Processado</td>
                       </tr>
                       </table>
+                      <br clear="all"/>
                   <table class="painelInterfaceGrid"></table>
               </div>
                 <div id="tabPainel-Processos">
@@ -77,6 +78,7 @@
                         <td width="125">Não Processado</td>
                       </tr>
                       </table>
+                      <br clear="all"/>
                 	<table class="painelProcessamentoGrid"></table>
                 </div>                
             </div>

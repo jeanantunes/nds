@@ -239,7 +239,7 @@ var chamadaoController = $.extend(true, {
 		
 		if (checkAllSelected) {
 			
-			duplicarCamposParciais();
+			chamadaoController.duplicarCamposParciais();
 			
 		} else {
 			

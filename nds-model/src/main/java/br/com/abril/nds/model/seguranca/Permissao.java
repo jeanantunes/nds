@@ -75,6 +75,7 @@ public enum Permissao
 	ROLE_RECOLHIMENTO_HELP("Help", 									   							 		   Permissao.ROLE_RECOLHIMENTO),
 	ROLE_FINANCEIRO("Financeiro", 					   				                         	  	  	   null),
 	ROLE_FINANCEIRO_BAIXA_BANCARIA("Baixa Bancária", 					                         	  	   Permissao.ROLE_FINANCEIRO),
+	ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA("Negociação de Dívida",			                         	  	   Permissao.ROLE_FINANCEIRO),
 	ROLE_FINANCEIRO_BAIXA_BANCARIA_MANUAL("Baixa Bancária Manual",                                	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_BAIXA_MANUAL_DIVIDAS("Baixa Manual de Dívidas",                               	  	   Permissao.ROLE_FINANCEIRO), 
 	ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA("Consulta Boletos por Cota",                         	  	   	   Permissao.ROLE_FINANCEIRO), 

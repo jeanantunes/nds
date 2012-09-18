@@ -328,6 +328,20 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	}
 
 	/**
+	 * @return pathImportacaoContrato
+	 */
+	public String getPathContrato() {
+		return this.getParametroSistemaString(TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
+	}
+	
+	/**
+	 * @param pathContrato
+	 */
+	public void setPathContrato(String pathContrato) {
+		this.params.put(TipoParametroSistema.PATH_IMPORTACAO_CONTRATO, pathContrato);
+	}
+	
+	/**
 	 * @return the dtOperacaoCorrente
 	 */
 	public String getDtOperacaoCorrente() {
