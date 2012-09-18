@@ -300,6 +300,12 @@ public class CotaController {
 				cotaVO.setCodigoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
 			}
 			
+			if (cota.getSituacaoCadastro() != null) {
+
+				cotaVO.setStatus(cota.getSituacaoCadastro().toString());
+
+			}
+
 			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
 		}		
 	}

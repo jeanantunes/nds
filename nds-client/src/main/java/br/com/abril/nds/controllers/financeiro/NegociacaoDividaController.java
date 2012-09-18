@@ -18,6 +18,7 @@ public class NegociacaoDividaController {
 	@Autowired
 	private HttpServletResponse httpServletResponse;
 	
+	
 	@Autowired
 	private HttpSession session;
 	
@@ -34,6 +35,10 @@ public class NegociacaoDividaController {
 	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA)
 	public void index()
 	{}
+	
+
+	
+	
 	
 	
 }
