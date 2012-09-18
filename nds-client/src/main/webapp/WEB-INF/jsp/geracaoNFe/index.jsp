@@ -30,6 +30,14 @@ $(function(){
      </form>
 </div>
 
+<div id="dialogCotasSuspensasConfirmar" title="Transferência para Suplementar">
+	<form>
+		<fieldset>
+			<legend>Transferência para Suplementar</legend>
+			<p>O reparte das cotas selecionadas serão transferidos para Suplementar</p>
+		</fieldset>
+	</form>
+</div>
 
 <fieldset class="classFieldset">
 	<legend> Pesquisar NF-e</legend>
