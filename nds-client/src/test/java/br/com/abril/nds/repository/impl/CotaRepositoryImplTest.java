@@ -404,21 +404,18 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(1, 2);
 		SituacaoCadastro situacao =  SituacaoCadastro.ATIVO;
 		cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox,
-				situacao);
+				situacao, null, null);
 		
 		cotaRepository.obterIdCotasEntre(null, intervaloBox,
-				situacao);
+				situacao, null, null);
 		
 		cotaRepository.obterIdCotasEntre(intervaloCota, null,
-				situacao);
+				situacao, null, null);
 		
 		cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox,
-				null);
+				null, null, null);
 		
 		cotaRepository.obterIdCotasEntre(null, null,
-				null);
+				null, null, null);
 	}
-	
-	
-
 }
