@@ -301,13 +301,13 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Lcto',
-				name : 'dtLancto',
+				name : 'lcto',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Rclto',
-				name : 'dtRecolto',
+				name : 'rclto',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -319,7 +319,7 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'valorFormatado',
+				name : 'valor',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -371,13 +371,13 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Lcto',
-				name : 'dtLancto',
+				name : 'lcto',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Rclto',
-				name : 'dtRecolto',
+				name : 'rclto',
 				width : 70,
 				sortable : true,
 				align : 'center'
@@ -389,7 +389,7 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'total',
+				name : 'valor',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -499,13 +499,13 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Dt. Lancto',
-				name : 'dtLancto',
+				name : 'lcto',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Dt. Recolto',
-				name : 'dtRecolto',
+				name : 'rclto',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -523,7 +523,7 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Diferença',
-				name : 'Diferenca',
+				name : 'diferenca',
 				width : 90,
 				sortable : true,
 				align : 'center'
