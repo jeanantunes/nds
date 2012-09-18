@@ -219,33 +219,13 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Set<ProdutoEdicao>produtosEdicao = new HashSet<ProdutoEdicao>();
 		
-		if (desconto.getEdicaoProduto() != null) {
+		if(desconto.isIndProdutoEdicao()) {
 
-			ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				desconto.getCodigoProduto(), desconto.getEdicaoProduto()
-			);
+			if (desconto.getEdicaoProduto() != null) {
 
-			DescontoProduto descontoProduto = new DescontoProduto();
-
-			descontoProduto.setDesconto(desconto.getDescontoProduto());
-			descontoProduto.setDataAlteracao(new Date());
-			descontoProduto.setCotas(cotas);
-			descontoProduto.setDistribuidor(distribuidor);
-			descontoProduto.setProdutoEdicao(produtoEdicao);
-			descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
-
-			this.descontoProdutoRepository.adicionar(descontoProduto);
-			
-			produtosEdicao.add(produtoEdicao);
-
-		} else if (desconto.getQuantidadeEdicoes() != null) {
-
-			List<ProdutoEdicao> listaProdutoEdicao = 
-				this.produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoLimitado(
-					desconto.getCodigoProduto(), desconto.getQuantidadeEdicoes()
+				ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+					desconto.getCodigoProduto(), desconto.getEdicaoProduto()
 				);
-
-			for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 
 				DescontoProduto descontoProduto = new DescontoProduto();
 
@@ -257,10 +237,56 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
 
 				this.descontoProdutoRepository.adicionar(descontoProduto);
+				
+				produtosEdicao.add(produtoEdicao);
+
+			} else if (desconto.getQuantidadeEdicoes() != null) {
+
+				List<ProdutoEdicao> listaProdutoEdicao = 
+					this.produtoEdicaoRepository.obterProdutosEdicoesPorCodigoProdutoLimitado(
+						desconto.getCodigoProduto(), desconto.getQuantidadeEdicoes()
+					);
+
+				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
+
+					DescontoProduto descontoProduto = new DescontoProduto();
+
+					descontoProduto.setDesconto(desconto.getDescontoProduto());
+					descontoProduto.setDataAlteracao(new Date());
+					descontoProduto.setCotas(cotas);
+					descontoProduto.setDistribuidor(distribuidor);
+					descontoProduto.setProdutoEdicao(produtoEdicao);
+					descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
+
+					this.descontoProdutoRepository.adicionar(descontoProduto);
+				}
+				
+				produtosEdicao.addAll(listaProdutoEdicao);
 			}
 			
-			produtosEdicao.addAll(listaProdutoEdicao);
+		} else {
+			
+			List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoRepository.obterProdutosEdicaoPorCodigoProduto(desconto.getCodigoProduto());
+
+				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
+
+					DescontoProduto descontoProduto = new DescontoProduto();
+
+					descontoProduto.setDesconto(desconto.getDescontoProduto());
+					descontoProduto.setDataAlteracao(new Date());
+					descontoProduto.setCotas(cotas);
+					descontoProduto.setDistribuidor(distribuidor);
+					descontoProduto.setProdutoEdicao(produtoEdicao);
+					descontoProduto.setUsuario(usuarioRepository.buscarPorId(usuario.getId()));
+
+					this.descontoProdutoRepository.adicionar(descontoProduto);
+				}
+				
+				produtosEdicao.addAll(listaProdutoEdicao);
+
+			
 		}
+		
 		
 		processarDescontoProduto(produtosEdicao, cotas, desconto.getDescontoProduto(),
 								 desconto.isDescontoPredominante());
@@ -486,15 +512,15 @@ public class DescontoServiceImpl implements DescontoService {
 		List<String> mensagens = new ArrayList<String>();
 		
 		if (desconto.getCodigoProduto() == null || desconto.getCodigoProduto().isEmpty()) {
-			
 			mensagens.add("O campo Código deve ser preenchido!");
 		}
 		
-		if (desconto.getEdicaoProduto() == null && desconto.getQuantidadeEdicoes() == null) {
-			
-			mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
+		if(desconto.isIndProdutoEdicao()) {
+			if (desconto.getEdicaoProduto() == null && desconto.getQuantidadeEdicoes() == null) {
+				mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
+			}
 		}
-	
+		
 		Integer quantidadeEdicoesExistentes = 
 				this.produtoEdicaoRepository.obterQuantidadeEdicoesPorCodigoProduto(desconto.getCodigoProduto());
 		
