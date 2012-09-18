@@ -292,13 +292,13 @@ GeracaoNFeController.prototype.initGrid = function() {
 					align : 'center'
 				}, {
 					display : 'Total R$',
-					name : 'vlrTotal',
+					name : 'total',
 					width : 90,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Total Desconto R$',
-					name : 'totalDesc',
+					name : 'totalDesconto',
 					width : 105,
 					sortable : true,
 					align : 'right'

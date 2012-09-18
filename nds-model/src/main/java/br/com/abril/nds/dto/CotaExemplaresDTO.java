@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -22,6 +23,12 @@ public class CotaExemplaresDTO implements Serializable {
 	private String nomeCota;
 	@Export(label="Total Exemplares", alignment=Alignment.CENTER)
 	private Long exemplares;
+	
+	@Export(label="Total R$", alignment=Alignment.RIGHT)
+	private BigDecimal total;
+	
+	@Export(label="Total Desconto R$", alignment=Alignment.RIGHT)
+	private BigDecimal totalDesconto;
 	
 	private boolean inativo;
 
@@ -94,9 +101,20 @@ public class CotaExemplaresDTO implements Serializable {
 	public void setInativo(boolean inativo) {
 		this.inativo = inativo;
 	}
-	
-	
-	
-	
 
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
+	public BigDecimal getTotalDesconto() {
+		return totalDesconto;
+	}
+
+	public void setTotalDesconto(BigDecimal totalDesconto) {
+		this.totalDesconto = totalDesconto;
+	}
 }

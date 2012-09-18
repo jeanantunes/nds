@@ -227,7 +227,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return ids das cotas
      */
     Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota,
-            Intervalo<Integer> intervaloBox, SituacaoCadastro situacao);
+            Intervalo<Integer> intervaloBox, SituacaoCadastro situacao, Long idRoteiro, Long idRota);
 
     Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
 
