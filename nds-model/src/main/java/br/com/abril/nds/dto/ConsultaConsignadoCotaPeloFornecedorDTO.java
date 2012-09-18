@@ -20,8 +20,8 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 	@Export(label = "Nome" , alignment= Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeCota;
 	
-	@Export(label = "Reparte" , alignment= Alignment.CENTER, exhibitionOrder = 3)
-	private BigInteger reparte;
+	@Export(label = "Consignado Total" , alignment= Alignment.CENTER, exhibitionOrder = 3)
+	private BigInteger consignado;
 	
 	private BigDecimal total;
 	private BigDecimal totalDesconto;
@@ -36,12 +36,12 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 	public ConsultaConsignadoCotaPeloFornecedorDTO() { }
 	
 	public ConsultaConsignadoCotaPeloFornecedorDTO(Integer numeroCota,
-			String nomeCota, BigInteger reparte, BigDecimal total,
+			String nomeCota, BigInteger consignado, BigDecimal total,
 			BigDecimal totalDesconto, String nomeFornecedor, Long idFornecedor) {
 		super();
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
-		this.reparte = reparte;
+		this.consignado = consignado;
 		this.total = total;
 		this.totalDesconto = totalDesconto;
 		this.nomeFornecedor = nomeFornecedor;
@@ -67,12 +67,12 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 		this.nomeCota = nomeCota;
 	}
 
-	public BigInteger getReparte() {
-		return reparte;
+	public BigInteger getConsignado() {
+		return consignado;
 	}
 
-	public void setReparte(BigInteger reparte) {
-		this.reparte = reparte;
+	public void setConsignado(BigInteger consignado) {
+		this.consignado = consignado;
 	}
 
 	public BigDecimal getTotal() {

@@ -66,11 +66,7 @@
               </tr>
               <tr>
                 <td height="38">&nbsp;</td>
-                <td align="right" class="bt"><a id="btEntrar" href="javascript:;" onclick="form.submit();">ENTRAR</a></td>
-              </tr>
-              <tr>
-                <td>&nbsp;</td>
-                <td><a href="javascript:;">Esqueceu a senha?</a></td>
+                <td><span style="float:left;"><a href="javascript:;">Esqueceu a senha?</a></span><span class="bt" style="float:right;"><a id="btEntrar" href="javascript:;" onclick="form.submit();">ENTRAR</a></span></td>
               </tr>
             </table></td>
             <td width="7%">&nbsp;</td>

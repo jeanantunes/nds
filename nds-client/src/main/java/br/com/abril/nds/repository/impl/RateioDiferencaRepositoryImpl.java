@@ -74,7 +74,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 				hql += " rateioDiferenca.cota.numeroCota ";
 				break;
 			case DATA:
-				hql += " rateioDiferenca.diferenca.movimentoEstoque.data ";
+				hql += " rateioDiferenca.diferenca.lancamentoDiferenca.movimentoEstoque.data ";
 				break;
 			case EXEMPLARES:
 				hql += " rateioDiferenca.qtde ";
@@ -163,7 +163,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		String hqlDesconto = obterHQLDesconto();
 		
 		hql.append(" select ")
-		   .append(" rateioDiferenca.diferenca.movimentoEstoque.data as data, ")
+		   .append(" rateioDiferenca.diferenca.lancamentoDiferenca.movimentoEstoque.data as data, ")
 		   .append(" rateioDiferenca.cota.numeroCota as numeroCota, ")
 		   .append(" rateioDiferenca.cota.pessoa.nome as nomeCota, ")
 		   .append(" rateioDiferenca.cota.box.codigo as codigoBox, ")

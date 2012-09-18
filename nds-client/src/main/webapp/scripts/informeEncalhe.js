@@ -369,7 +369,7 @@ CapaPopup.prototype.openDialogUpload = function(event) {
 		autoOpen : true,
 		title : 'Nova Imagem',
 		resizable : false,
-		height : 260,
+		height : 230,
 		width : 480,
 		modal : true,
 		buttons : {
@@ -400,8 +400,16 @@ CapaPopup.prototype.openDialogUpload = function(event) {
 function CapaUpload(idProdutoEdicao, callBack) {
 
 	this.idProdutoEdicao = idProdutoEdicao;
-	this.panel = document.createElement('div');
-	this.panel.innerHTML = "<p>Este Produto esta sem capa no momento, deseja incluir uma?</p><p><strong>Selecione a imagem desejada:</strong></p>";
+
+	var inputFieldset = document.createElement("fieldset");
+	inputFieldset.style.width = '430px';
+	this.panel = (inputFieldset);
+	
+	var inputDiv = document.createElement('div');
+	this.panel.appendChild(inputDiv);
+	//this.panel = document.createElement('div');
+
+	this.panel.innerHTML = "<legend>Nova Imagem</legend><p>Este Produto esta sem capa no momento, deseja incluir uma?</p><br /><p><strong>Selecione a imagem desejada:</strong></p><br />";
 
 	var inputUpload = $('<input type="file" name="image"/>');	
 	$(this.panel, this.workspace).append(inputUpload);

@@ -104,7 +104,7 @@ public class GeracaoNFeController {
 			Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte,
-			List<Long> listIdFornecedor, List<Long> listIdProduto, Long tipoNotaFiscal,
+			List<Long> listIdFornecedor, Long tipoNotaFiscal,
 			Long idRoteiro, Long idRota,
 			String sortname, String sortorder, int rp, int page) {
 		
@@ -116,7 +116,7 @@ public class GeracaoNFeController {
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
 				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, 
-						listIdFornecedor, listIdProduto, tipoNotaFiscal,  sortname, sortorder, rp, page, null);
+						listIdFornecedor, tipoNotaFiscal, idRoteiro, idRota, sortname, sortorder, rp, page, null);
 		
 		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(cotaExemplaresDTOs.size()).serialize();
 	}
@@ -124,7 +124,7 @@ public class GeracaoNFeController {
 	@Post("/buscaCotasSuspensas.json")
 	public void buscaCotasSuspensas(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, List<Long> listIdProduto ,Long tipoNotaFiscal, String sortname,
+			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
 			String sortorder, int rp, int page) {
 		
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
@@ -135,7 +135,7 @@ public class GeracaoNFeController {
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = 
 				geracaoNFeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
-						listIdProduto, tipoNotaFiscal, sortname, sortorder, rp, page, SituacaoCadastro.SUSPENSO);
+						tipoNotaFiscal, null, null, sortname, sortorder, rp, page, SituacaoCadastro.SUSPENSO);
 		
 		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(cotaExemplaresDTOs.size()).serialize();
 	}
@@ -162,7 +162,7 @@ public class GeracaoNFeController {
 	@Post("/gerar.json")
 	public void gerar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, List<Long> listIdProduto, 
+			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, 
 			Long tipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
 		
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
@@ -173,7 +173,7 @@ public class GeracaoNFeController {
 		
 		try {
 			this.geracaoNFeService.gerarNotaFiscal(intervaloBox, intervalorCota, intervaloDateMovimento, 
-					listIdFornecedor, listIdProduto, tipoNotaFiscal, dataEmissao, idCotasSuspensas);
+					listIdFornecedor, null, tipoNotaFiscal, dataEmissao, idCotasSuspensas);
 			
 		} catch (IOException ioe){
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
@@ -192,7 +192,7 @@ public class GeracaoNFeController {
 	
 	public void exportar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, List<Long> listIdProduto, Long tipoNotaFiscal,String sortname,
+			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal,String sortname,
 			String sortorder,FileType fileType) throws IOException {
 		
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
@@ -201,7 +201,9 @@ public class GeracaoNFeController {
 		
 		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
 		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs=	geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNotaFiscal, sortname, sortorder, null, null, null);
+		List<CotaExemplaresDTO> cotaExemplaresDTOs=	
+				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
+						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
 		
 		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), null, null,

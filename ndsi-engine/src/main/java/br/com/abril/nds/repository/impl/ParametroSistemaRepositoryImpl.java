@@ -56,6 +56,7 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		lst.add(TipoParametroSistema.PATH_IMAGENS_CAPA);
 		lst.add(TipoParametroSistema.PATH_IMAGENS_PDV);
 		lst.add(TipoParametroSistema.FREQUENCIA_EXPURGO);
+		lst.add(TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
 		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameterList("listaTipoParametroSistema", lst);
