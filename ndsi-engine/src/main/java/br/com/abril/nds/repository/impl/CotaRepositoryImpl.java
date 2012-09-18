@@ -782,9 +782,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		hql.append(" FROM Cota cota 								")
 				.append(" join cota.pessoa pessoa 					")
-				.append(" left join cota.pdvs pdv 					")
-				.append(" left join cota.telefones telefonesCota 	")
-				.append(" left join telefonesCota.telefone telefone ")
 				.append(" left join cota.enderecos enderecoCota 	")
 				.append(" left join enderecoCota.endereco endereco 	");
 
