@@ -67,7 +67,7 @@ public class VisaoEstoqueController {
 	{
 		List<Fornecedor> listFornecedores = fornecedorService.obterFornecedores();
 		result.include("listFornecedores", listFornecedores);
-		result.include("dataAtual", DateUtil.formatarData(new Date(), "dd/MM/yyyy"));
+		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
 	}
 	
 	
