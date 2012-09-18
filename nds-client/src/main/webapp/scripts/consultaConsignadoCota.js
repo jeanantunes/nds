@@ -166,7 +166,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					align : 'left'
 				}, {
 					display : 'Consignado Total',
-					name : 'reparte',
+					name : 'consignado',
 					width : 140,
 					sortable : true,
 					align : 'center'
@@ -340,12 +340,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 			width:860,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").hide("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
+				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
 			},
