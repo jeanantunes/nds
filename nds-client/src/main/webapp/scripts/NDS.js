@@ -718,7 +718,9 @@ function limparCache() {
 }
 
 function redimensionarWorkspace() {
-	$("#workspace").innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
+	//$("#workspace").innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
+	$("#workspace div.ui-tabs-panel:not(.ui-tabs-hide)").not(":empty").get(0).innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
+	//$("#ui-tabs-\*.ui-tabs-panel").innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
 }
 
 //@ sourceURL=NDS.js

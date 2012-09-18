@@ -88,7 +88,7 @@
 												'<div class="ui-tabs-strip-spacer"></div>');
 
 								var tabOpt = {
-									tabTemplate : "<li><a href='#\{href\}'>#\{label\}</a> <span class='ui-icon ui-icon-close'>Remove Tab</span></li>",
+									tabTemplate : "<li> <a href='#\{href\}'>#\{label\}</a> <span class='ui-icon ui-icon-close'>Remove Tab</span></li>",
 									add : function(event, ui) {
 										self.tabs('select', '#' + ui.panel.id);
 									},
@@ -98,8 +98,7 @@
 											$(anchor.hash)
 													.html(
 															"pagina não encontrada :</br> Mensagem de Erro: </br>xhr["
-																	+ JSON
-																			.stringify(xhr)
+																	+ JSON.stringify(xhr)
 																	+ "] </br>status["
 																	+ xhr.status
 																	+ "] </br>index ["
@@ -122,7 +121,7 @@
 								$.fn.extend(this.options, tabOpt);
 								this.addCloseTab();
 							},
-							addTab : function(title, url) {
+							addTab : function(title, url, className) {
 								var self = this.element, o = this.options, add = true;
 								$("li", self).each(function() {
 									if ($("a", this).html() == title) {
@@ -132,7 +131,7 @@
 									}
 								});
 								if (add) {
-									self.tabs('add', url, title);
+									self.tabs('add', url, title, className);
 								}
 							},
 							addCloseTab : function() {
@@ -154,12 +153,13 @@
 		$('#workspace').tabs();
 
 		// Dinamicaly add tabs from menu
-		$("#menu_principal ul li ul li").click(
-				function() {
-					$('#workspace').tabs('addTab', $("a", this).html(),
-							$("a", this).prop("href") + "?random=" + Math.random());
-					return false;
-				});
+		$("#menu_principal ul li ul li").click(function() {
+			$('#workspace').tabs('addTab', 										
+					"<span class='" + $("span", $(this).parents("li")).attr('class') +"'>&nbsp;</span>" + $("a", this).html()
+					,  $("a", this).prop("href") + "?random=" + Math.random()
+			);
+			return false;
+		});
 
 		$('#linkHome').click(function() {
 			$('#workspace').tabs('addTab', $('#linkHome').html(),
@@ -291,7 +291,7 @@
 }
 </style>
 </head>
-<body>
+<body onresize="redimensionarWorkspace();">
 
 	<div class="corpo" id="divCorpo">
 		<div class="header">

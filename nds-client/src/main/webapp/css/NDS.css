@@ -610,3 +610,6 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
     margin-top: 5px;
     margin-left:10px;
 }
+div#ui-tabs-\*.ui-tabs-panel {
+	background-color: blue!important;
+}
