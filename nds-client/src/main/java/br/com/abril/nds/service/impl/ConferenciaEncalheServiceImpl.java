@@ -110,6 +110,7 @@ import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
@@ -216,6 +217,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private DescontoService descontoService;
 	
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
+		
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterListaBoxEncalhe()
@@ -881,6 +885,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
 		
 		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
+		
+		documentoConferenciaEncalhe.setUtilizaSlipBoleto(parametrosDistribuidorService.getParametrosDistribuidor().getBoletoSlipImpressao());
+		
 		return documentoConferenciaEncalhe;
 		
 	}

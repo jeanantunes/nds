@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.List;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -14,6 +15,8 @@ public class FiltroTipoDescontoDTO extends FiltroDTO implements Serializable {
 	private final String tipoDesconto = "Geral";
 
 	private OrdenacaoColunaConsulta ordenacaoColuna;
+	
+	private List<Long> idFornecedores;
 	
 	public enum OrdenacaoColunaConsulta {
 		
@@ -38,6 +41,23 @@ public class FiltroTipoDescontoDTO extends FiltroDTO implements Serializable {
 		}
 	}
 	
+	/**
+	 * Obtém idFornecedores
+	 *
+	 * @return List<Long>
+	 */
+	public List<Long> getIdFornecedores() {
+		return idFornecedores;
+	}
+
+	/**
+	 * Atribuí idFornecedores
+	 * @param idFornecedores 
+	 */
+	public void setIdFornecedores(List<Long> idFornecedores) {
+		this.idFornecedores = idFornecedores;
+	}
+
 	/**
 	 * @return the tipoDesconto
 	 */

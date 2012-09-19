@@ -42,23 +42,12 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("        pe.precoVenda as precoCapa, ")
 		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
 		   .append("        (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ")
-		   .append("        SUM(movimento.qtde *  ")
-		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-		   .append("                 ELSE 0 END) as reparte, ")		
-		   .append("        SUM(pe.precoVenda * movimento.qtde *  ")
-		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-		   .append("                 ELSE 0 END) as total, ")
-		   .append("        SUM( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde *  ")
-		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-		   .append("                 ELSE 0 END)  as totalDesconto ");
+		   .append("        (movimento.qtde) as reparte, ")		
+		   .append("        (pe.precoVenda * movimento.qtde) as total, ")
+		   .append("        ((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)  as totalDesconto ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
-		hql.append(getGroupBy(filtro));
-
 		hql.append(getOrderBy(filtro));
 
 		Query query =  getSession().createQuery(hql.toString());
@@ -125,6 +114,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public Integer buscarTodasMovimentacoesPorCota(
 			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		
@@ -142,12 +132,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		List<Long> totalRegistros = query.list();
 		
-		//Long totalRegistros = (Long) query.uniqueResult();
-		
-//		for(Long totalRegistro: listaTotalRegistros){
-//			totalRegistros = totalRegistros + totalRegistro;
-//		}
-		
 		return (totalRegistros == null) ? 0 : totalRegistros.size();
 		
 		
@@ -160,15 +144,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde *  ")
-		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-		   .append("                 ELSE 0 END)) ");
+		hql.append(" SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde ");
+		if (filtro.getIdCota() == null) {
+			hql.append("            * CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
+			   .append("                   WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
+			   .append("                   ELSE 0 END ");
+		}
+		hql.append("           )) ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
-//		hql.append(getGroupBy(filtro));
-
 		Query query =  getSession().createQuery(hql.toString());
 		
 		buscarParametrosConsignadoCota(query, filtro);
@@ -185,10 +170,15 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde *  ")
-		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-		   .append("                 ELSE 0 END)) as total, ");
+		hql.append("SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde ");
+
+		if (filtro.getIdCota() == null) {
+			hql.append("            * CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
+			   .append("                   WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
+			   .append("                   ELSE 0 END ");
+		}
+		hql.append("            )) as total, ");
+		
 		hql.append("pessoa.razaoSocial as nomeFornecedor");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
@@ -287,20 +277,26 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesEntrada = new ArrayList<GrupoMovimentoEstoque>();
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesSaida = new ArrayList<GrupoMovimentoEstoque>();
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
 		
-		for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
-			if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio())) {
-				if(OperacaoEstoque.ENTRADA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
-					listaGrupoMovimentoEstoquesEntrada.add(grupoMovimentoEstoque);
-				}else if(OperacaoEstoque.SAIDA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
-					listaGrupoMovimentoEstoquesSaida.add(grupoMovimentoEstoque);
+		if (filtro.getIdCota() == null) { 
+			for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
+				if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio())) {
+					if(OperacaoEstoque.ENTRADA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
+						listaGrupoMovimentoEstoquesEntrada.add(grupoMovimentoEstoque);
+					}else if(OperacaoEstoque.SAIDA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
+						listaGrupoMovimentoEstoquesSaida.add(grupoMovimentoEstoque);
+					}
 				}
-			}
+			} 
+			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesEntrada);
+			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesSaida);
+
+		} else {
+			listaGrupoMovimentoEstoquesEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+			listaGrupoMovimentoEstoques = listaGrupoMovimentoEstoquesEntrada;
 		}
 		
-		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
-		listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesEntrada);
-		listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesSaida);
 		
 		if(query.getQueryString().contains(":tipoMovimentoEntrada")) {
 			query.setParameterList("tipoMovimentoEntrada", listaGrupoMovimentoEstoquesEntrada);

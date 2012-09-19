@@ -27,6 +27,10 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	private boolean indGeraDocumentacaoConferenciaEncalhe = false;
 
 	/**
+	 * Define se distribuidor utiliza  impressão de Boleto + Slip no mesmo documento
+	 */
+	private boolean utilizaSlipBoleto;
+	/**
 	 * Obtém idControleConferenciaEncalheCota
 	 *
 	 * @return Long
@@ -77,6 +81,20 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	public void setIndGeraDocumentacaoConferenciaEncalhe(
 			boolean indGeraDocumentacaoConferenciaEncalhe) {
 		this.indGeraDocumentacaoConferenciaEncalhe = indGeraDocumentacaoConferenciaEncalhe;
+	}
+
+	/**
+	 * @return the utilizaSlipBoleto
+	 */
+	public boolean isUtilizaSlipBoleto() {
+		return utilizaSlipBoleto;
+	}
+
+	/**
+	 * @param utilizaSlipBoleto the utilizaSlipBoleto to set
+	 */
+	public void setUtilizaSlipBoleto(boolean utilizaSlipBoleto) {
+		this.utilizaSlipBoleto = utilizaSlipBoleto;
 	}
 	
 	
