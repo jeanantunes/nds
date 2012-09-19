@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FiadorDTO;
+import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.GarantiaNotaPromissoriaDTO;
@@ -30,14 +31,18 @@ import br.com.abril.nds.dto.TipoEstabelecimentoAssociacaoPDVDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
 import br.com.abril.nds.dto.TipoPontoPDVDTO;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaAtualizacaoCaucaoLiquida;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCaucaoLiquida;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
@@ -52,6 +57,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionament
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaImovel;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaNotaPromissoria;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPagamentoCaucaoLiquida;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
@@ -703,6 +709,101 @@ public class CotaDTOAssembler {
                 garantiaNotaPromissoria.getVencimento(),
                 garantiaNotaPromissoria.getValor(), garantiaNotaPromissoria
                         .getValorExtenso()));
+        return dto;
+    }
+
+
+    /**
+     * Retorna o DTO com as informações de garantia para o tipo de garantia
+     * caução líquida do histórico de titularidade da cota
+     * 
+     * @param garantiaCaucaoLiquida
+     *            garantia caução líquida do histórico de titularidade da cota
+     * @return DTO com as informações da garantia do tipo caução líquida do histórico de
+     *         titularidade da cota
+     */
+    public static CotaGarantiaDTO<FormaCobrancaCaucaoLiquidaDTO> toCotaGarantiaDTO(HistoricoTitularidadeCotaCaucaoLiquida garantiaCaucaoLiquida) {
+        CotaGarantiaDTO<FormaCobrancaCaucaoLiquidaDTO> dto = new CotaGarantiaDTO<FormaCobrancaCaucaoLiquidaDTO>();
+        dto.setTipo(garantiaCaucaoLiquida.getTipoGarantia());
+        dto.setCotaGarantia(toFormaCobrancaCaucaoLiquidaDTO(garantiaCaucaoLiquida));       
+        return dto;
+    }
+
+
+    /**
+     * Retorna o DTO com as informações de garantia para o tipo de garantia
+     * caução líquida do histórico de titularidade da cota
+     * 
+     * @param garantiaCaucaoLiquida
+     *            garantia caução líquida do histórico de titularidade da cota
+     * @return DTO com as informações da garantia do tipo caução líquida do
+     *         histórico de titularidade da cota
+     */
+    public static FormaCobrancaCaucaoLiquidaDTO toFormaCobrancaCaucaoLiquidaDTO(HistoricoTitularidadeCotaCaucaoLiquida garantiaCaucaoLiquida) {
+        FormaCobrancaCaucaoLiquidaDTO dto = new FormaCobrancaCaucaoLiquidaDTO();
+        dto.setValor(garantiaCaucaoLiquida.getValor());
+
+        ContaBancariaDeposito contaDeposito = garantiaCaucaoLiquida.getContaBancariaDeposito();
+        if (contaDeposito != null) {
+            dto.setAgencia(contaDeposito.getAgencia());
+            dto.setAgenciaDigito(contaDeposito.getDvAgencia());
+            dto.setConta(contaDeposito.getConta());
+            dto.setContaDigito(contaDeposito.getDvConta());
+            dto.setNomeBanco(contaDeposito.getNomeBanco());
+            dto.setNumBanco(contaDeposito.getNumeroBanco());
+            dto.setNomeCorrentista(contaDeposito.getNomeCorrentista());
+        }
+        
+        for (HistoricoTitularidadeCotaAtualizacaoCaucaoLiquida atualizacao : garantiaCaucaoLiquida.getAtualizacoes()) {
+            dto.addCaucaoLiquida(atualizacao.getAtualizacao(), atualizacao.getValor());
+        }
+        
+        HistoricoTitularidadeCotaPagamentoCaucaoLiquida pagamento = garantiaCaucaoLiquida.getPagamento();
+        if (pagamento != null) {
+            dto.setTipoCobranca(pagamento.getTipoCobranca());
+            if (TipoCobrancaCotaGarantia.BOLETO == pagamento.getTipoCobranca()) {
+                dto.setQtdeParcelas(pagamento.getQtdeParcelasBoleto());
+                dto.setValorParcela(pagamento.getValorParcelasBoleto());
+                dto.setTipoFormaCobranca(pagamento.getPeriodicidadeBoleto());
+                Collection<Integer> diasMes = pagamento.getDiasMesBoleto();
+                if (TipoFormaCobranca.SEMANAL == pagamento.getPeriodicidadeBoleto()) {
+                    for (DiaSemana diaSemana : pagamento.getDiasSemanaBoleto()) {
+                        if (DiaSemana.DOMINGO == diaSemana) {
+                            dto.setDomingo(true);
+                        } else if (DiaSemana.SEGUNDA_FEIRA == diaSemana) {
+                            dto.setSegunda(true);   
+                        } else if (DiaSemana.TERCA_FEIRA == diaSemana) {
+                            dto.setTerca(true);   
+                        } else if (DiaSemana.QUARTA_FEIRA == diaSemana) {
+                            dto.setQuarta(true);   
+                        } else if (DiaSemana.QUINTA_FEIRA == diaSemana) {
+                            dto.setQuinta(true);   
+                        } else if (DiaSemana.SEXTA_FEIRA == diaSemana) {
+                            dto.setSexta(true);   
+                        } else if (DiaSemana.SABADO == diaSemana) {
+                            dto.setSabado(true);   
+                        }
+                    }
+                } else if (TipoFormaCobranca.QUINZENAL == pagamento.getPeriodicidadeBoleto()) {
+                    if (diasMes != null && !diasMes.isEmpty()) {
+                        Iterator<Integer> iterator = diasMes.iterator();
+                        Integer dia1 = iterator.next();
+                        Integer dia2 = iterator.hasNext() ? iterator.next() : null;
+                        dto.setPrimeiroDiaQuinzenal(dia1);
+                        dto.setSegundoDiaQuinzenal(dia2);
+                    }
+                } else if (TipoFormaCobranca.MENSAL == pagamento.getPeriodicidadeBoleto()) {
+                    if (diasMes != null && !diasMes.isEmpty()) {
+                        Integer dia = diasMes.iterator().next();
+                        dto.setDiaDoMes(dia);
+                    }
+                }
+            } else if (TipoCobrancaCotaGarantia.DESCONTO_COTA == pagamento.getTipoCobranca()) {
+                dto.setValorDescontoAtual(pagamento.getDescontoNormal());
+                dto.setUtilizarDesconto(pagamento.getPorcentagemUtilizada());
+                dto.setDescontoCotaDesconto(pagamento.getDescontoReduzido());
+            }
+        }
         return dto;
     }
  

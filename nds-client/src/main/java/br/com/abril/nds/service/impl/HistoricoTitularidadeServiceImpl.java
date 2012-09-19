@@ -17,15 +17,17 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaCobrancaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -49,6 +51,9 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoBoleto;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDescontoCota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -77,6 +82,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaGarantia;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaImovel;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaNotaPromissoria;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPagamentoCaucaoLiquida;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
@@ -907,7 +913,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			
 			CotaGarantiaCaucaoLiquida caucaoLiquida = (CotaGarantiaCaucaoLiquida) cotaGarantia;
 			
-			return gerarHistoricoTitularidadeCotaCaucaoLiquida(caucaoLiquida.getCaucaoLiquidas());
+			return gerarHistoricoTitularidadeCotaCaucaoLiquida(caucaoLiquida);
 		
 		} else if (cotaGarantia instanceof CotaGarantiaChequeCaucao) {
 			
@@ -1037,35 +1043,57 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	/*
 	 * Método que gera um histórico de garantias do tipo CaucaoLiquida
 	 * 
-	 * @param caucoesLiquida - Lista de caucao liquida que a cota possui em sua garantia.
+	 * @param caucaoLiquida - Caução líquida
 	 *  
 	 * @return List<HistoricoTitularidadeCotaCaucaoLiquida> - lista com o histórico gerado.
 	 */
-	private List<HistoricoTitularidadeCotaCaucaoLiquida> gerarHistoricoTitularidadeCotaCaucaoLiquida(List<CaucaoLiquida> caucoesLiquida) {
+	private List<HistoricoTitularidadeCotaCaucaoLiquida> gerarHistoricoTitularidadeCotaCaucaoLiquida(CotaGarantiaCaucaoLiquida caucaoLiquida) {
 		
-		if (caucoesLiquida == null) {
-			
-			return null;
-		}
+		List<HistoricoTitularidadeCotaCaucaoLiquida> historicosTitularidadeCotaCaucaoLiquida = new ArrayList<HistoricoTitularidadeCotaCaucaoLiquida>();
+
+		HistoricoTitularidadeCotaCaucaoLiquida historico = new HistoricoTitularidadeCotaCaucaoLiquida();
 		
-		List<HistoricoTitularidadeCotaCaucaoLiquida> historicosTitularidadeCotaCaucaoLiquida = 
-				new ArrayList<HistoricoTitularidadeCotaCaucaoLiquida>();
-
-		for (CaucaoLiquida caucaoLiquida : caucoesLiquida) {
-			
-			HistoricoTitularidadeCotaCaucaoLiquida historicoTitularidadeCotaCaucaoLiquida = 
-					new HistoricoTitularidadeCotaCaucaoLiquida();
-			
-			historicoTitularidadeCotaCaucaoLiquida.setValor(new BigDecimal(caucaoLiquida.getValor()));
-			
-			if (caucaoLiquida.getAtualizacao() != null) {
-			
-				historicoTitularidadeCotaCaucaoLiquida.setAtualizacao(caucaoLiquida.getAtualizacao().getTime());
-			}
-
-			historicosTitularidadeCotaCaucaoLiquida.add(historicoTitularidadeCotaCaucaoLiquida);
-		}
-
+		ContaBancariaDeposito contaDeposito = caucaoLiquida.getContaBancariaDeposito();
+        if (contaDeposito != null) {
+            historico.setContaBancariaDeposito(new ContaBancariaDeposito(
+                    contaDeposito.getNumeroBanco(), contaDeposito.getNomeBanco(),
+                    contaDeposito.getAgencia(), contaDeposito.getDvAgencia(),
+                    contaDeposito.getConta(), contaDeposito.getDvConta(),
+                    contaDeposito.getNomeCorrentista()));
+        }
+        
+        PagamentoCaucaoLiquida fp = caucaoLiquida.getFormaPagamento();
+        if (fp != null) {
+            historico.setValor(fp.getValor());
+            HistoricoTitularidadeCotaPagamentoCaucaoLiquida historicoPagamento = new HistoricoTitularidadeCotaPagamentoCaucaoLiquida();
+            historicoPagamento.setTipoCobranca(caucaoLiquida.getTipoCobranca());
+            historico.setPagamento(historicoPagamento);
+            if (fp instanceof PagamentoBoleto) {
+                PagamentoBoleto fpBoleto = PagamentoBoleto.class.cast(fp);
+                FormaCobrancaCaucaoLiquida cobrancaCaucaoLiquida = fpBoleto.getFormaCobrancaCaucaoLiquida();
+                historicoPagamento.setPeriodicidadeBoleto(cobrancaCaucaoLiquida.getTipoFormaCobranca());
+                historicoPagamento.setQtdeParcelasBoleto(fpBoleto.getQuantidadeParcelas());
+                historicoPagamento.setValorParcelasBoleto(fpBoleto.getValorParcela());
+                List<Integer> diasMes = cobrancaCaucaoLiquida.getDiasDoMes();
+                if (diasMes != null) {
+                    for (Integer diaMes : diasMes) {
+                        historicoPagamento.addDiaMesBoleto(diaMes);
+                    }
+                }
+                Set<ConcentracaoCobrancaCaucaoLiquida> concentracoes = cobrancaCaucaoLiquida.getConcentracaoCobrancaCaucaoLiquida();
+                if (concentracoes != null) {
+                    for (ConcentracaoCobrancaCaucaoLiquida concentracao : concentracoes) {
+                        historicoPagamento.addDiaSemanaBoleto(concentracao.getDiaSemana());
+                    }
+                }
+            } else if (fp instanceof PagamentoDescontoCota) {
+                PagamentoDescontoCota fpDesconto = PagamentoDescontoCota.class.cast(fp);
+                historicoPagamento.setDescontoNormal(fpDesconto.getDescontoAtual());
+                historicoPagamento.setDescontoReduzido(fpDesconto.getDescontoCota());
+                historicoPagamento.setPorcentagemUtilizada(fpDesconto.getPorcentagemUtilizada());
+            }
+        }
+        historicosTitularidadeCotaCaucaoLiquida.add(historico);
 		return historicosTitularidadeCotaCaucaoLiquida;
 	}
 	

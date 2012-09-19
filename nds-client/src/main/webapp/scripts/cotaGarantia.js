@@ -1171,6 +1171,11 @@ function CaucaoLiquida(idCota, cotaGarantia) {
 			atualizacao:null,
 			esp : ""
 		};
+    if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        $(".bt_confirmar_novo", _workspace).show();
+    } else {
+        $(".bt_confirmar_novo", _workspace).hide();
+    }
 }
 CaucaoLiquida.prototype.path = contextPath + "/cadastro/garantia/";
 
@@ -1211,13 +1216,17 @@ CaucaoLiquida.prototype.incluirCaucao = function(callBack) {
 
 CaucaoLiquida.prototype.popularGrid = function() {
 	
-	var salvas;
-	if (this.cotaGarantia && this.cotaGarantia.caucaoLiquidas) {
-		salvas = this.cotaGarantia.caucaoLiquidas;
-	}else{
-		salvas = new Array();
-	}	
-	
+	var salvas = new Array();
+	if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        if (this.cotaGarantia && this.cotaGarantia.caucaoLiquidas) {
+            salvas = this.cotaGarantia.caucaoLiquidas;
+        }
+    } else {
+        if (this.cotaGarantia && this.cotaGarantia.caucoes) {
+            salvas = this.cotaGarantia.caucoes;
+        }
+    }
+
 	this.rows  = this.listNovosCalcao.concat(salvas);
 	
 	this.grid.flexAddData({
@@ -1704,7 +1713,9 @@ CaucaoLiquida.prototype.opcaoTipoFormaCobranca = function(op){
 
 //OBTEM UM PARÂMETRO PARA ALTERAÇÃO
 CaucaoLiquida.prototype.obterCaucaoLiquida = function(idCota){
-	var data = [{name: 'idCota', value: idCota}];
+	var data = [{name: 'idCota', value: idCota},
+                {name: 'modoTela', value:  tipoCotaGarantia.getModoTela().value},
+                {name: 'idHistorico', value:  tipoCotaGarantia.getIdHistorico()}];
 	$.postJSON(this.path + 'getCaucaoLiquidaByCota.json',
 			   data,
 			   this.sucessCallbackObterCaucaoLiquida, 

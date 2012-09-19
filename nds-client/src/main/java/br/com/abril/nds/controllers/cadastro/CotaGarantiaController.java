@@ -162,21 +162,19 @@ public class CotaGarantiaController {
 	 * @param idCota
 	 */
 	@Post("/getCaucaoLiquidaByCota.json")
-	public void getCaucaoLiquidaByCota(Long idCota) {
+	public void getCaucaoLiquidaByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 
-		if (idCota != null) {
-		
-			FormaCobrancaCaucaoLiquidaDTO dadosCaucaoLiquida = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
-			
-			if (dadosCaucaoLiquida != null) {			
-				result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();		
-			}else{			
-				result.use(CustomJson.class).from("OK").serialize();		
-			}	
-		}
-		else{
-			result.use(CustomJson.class).from("OK").serialize();
-		}
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            FormaCobrancaCaucaoLiquidaDTO dadosCaucaoLiquida = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
+            if (dadosCaucaoLiquida != null) {
+                result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();
+            } else {
+                result.use(CustomJson.class).from("OK").serialize();
+            }
+        } else {
+            FormaCobrancaCaucaoLiquidaDTO dto = cotaGarantiaService.obterCaucaoLiquidaHistoricoTitularidadeCota(idCota, idHistorico);
+            result.use(CustomJson.class).from(dto).serialize();
+        }
 	}
 
 	@Post("/getTipoGarantiaCadastrada.json")

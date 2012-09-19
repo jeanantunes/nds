@@ -823,4 +823,17 @@ public class HistoricoTitularidadeCota implements Serializable {
         return null;
     }
     
+    /**
+     * Retorna a garantia do tipo caução líquida do histórico de titularidade da
+     * cota
+     * 
+     * @return garantia caução líquida do histórico de titularidade da cota
+     */
+    public HistoricoTitularidadeCotaCaucaoLiquida getGarantiaCaucaoLiquida() {
+        if (TipoGarantia.CAUCAO_LIQUIDA == getTipoGarantia()) {
+            return HistoricoTitularidadeCotaCaucaoLiquida.class.cast(garantias.iterator().next());
+        }
+        return null;
+    }
+    
 }

@@ -51,6 +51,7 @@ import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDepositoTrans
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDescontoCota;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCaucaoLiquida;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCaucaoLiquidaRepository;
@@ -884,6 +885,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiasImovel());
 	    } else if (TipoGarantia.NOTA_PROMISSORIA == historico.getTipoGarantia()) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaNotaPromissoria());
+	    } else if (TipoGarantia.CAUCAO_LIQUIDA == historico.getTipoGarantia()) {
+	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaCaucaoLiquida());
 	    }
         return null;
     }
@@ -900,6 +903,20 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         HistoricoTitularidadeCotaChequeCaucao cheque = historico.getGarantiaChequeCaucao();
         return cheque == null ? null : cheque.getImagem();
+    }
+
+	 /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public FormaCobrancaCaucaoLiquidaDTO obterCaucaoLiquidaHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da cota não deve ser nulo!");
+        Validate.notNull(idHistorico, "Identificador do histórico não deve ser nulo!");
+        
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        HistoricoTitularidadeCotaCaucaoLiquida caucao = historico.getGarantiaCaucaoLiquida();
+        return caucao == null ? null : CotaDTOAssembler.toFormaCobrancaCaucaoLiquidaDTO(caucao);
     }
 	
 }

@@ -521,7 +521,6 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			CaucaoLiquida caucaoLiquida = iteratorCaucaoLiquida.next();
 			HistoricoTitularidadeCotaCaucaoLiquida historicoCaucaoLiquida = iteratorHistorico.next();
 
-			Assert.assertEquals(historicoCaucaoLiquida.getAtualizacao(), caucaoLiquida.getAtualizacao().getTime());
 			Assert.assertEquals(historicoCaucaoLiquida.getValor(), new BigDecimal(caucaoLiquida.getValor()));
 		}
 	}

@@ -229,6 +229,19 @@ public interface CotaGarantiaService {
      *         da cota
      */
 	CotaGarantiaDTO<?> obterGarantiaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+	
+    /**
+     * Recupera as informações da caução líquida do histórico de titularidade da
+     * cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico
+     * @return DTO com as informações da caução líquida do histórico de
+     *         titularidade da cota
+     */
+    FormaCobrancaCaucaoLiquidaDTO obterCaucaoLiquidaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
 
     /**
      * Retorna a imagem da garantia cheque caução do histórico de titularidade
