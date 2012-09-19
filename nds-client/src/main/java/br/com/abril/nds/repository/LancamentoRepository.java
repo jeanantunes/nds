@@ -261,6 +261,14 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 */
 	public List<ProdutoLancamentoCanceladoDTO> obterLancamentosCanceladosPor(Intervalo<Date> periodo, List<Long> idFornecedores);
 	
+	/**
+	 * Verifica se existe Matriz de Balanciamento co status Planejado ou Confimado.
+	 * 
+	 * @param data - Dia de Verificação.
+	 * @return - true se encontrar e false se não encontrar. 
+	 */
+	public Boolean existeMatrizBalanceamentoConfirmado(Date data);
+	
 }
 	
 	
