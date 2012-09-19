@@ -67,6 +67,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -76,7 +77,7 @@ import br.com.abril.nds.vo.PeriodoVO;
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private MovimentoEstoqueCotaRepositoryImpl movimentoEstoqueCotaRepository;
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	private TipoMovimentoEstoqueRepositoryImpl tipoMovimentoEstoqueRepository;

@@ -268,4 +268,6 @@ public interface CotaService {
 	byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception;
 	
 	DistribuicaoDTO carregarValoresEntregaBanca(Integer numCota);
+
+	void cancelarChamadao(Integer numeroCota);
 }

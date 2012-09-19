@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -19,9 +20,9 @@ public class EMS0120Detalhe {
 	private Long quantidadeReparte;
 	private BigDecimal precoCapa;
 	private Date dataLancamento;
-	private String numeroBoxCota;
+	private Integer numeroBoxCota;
 
-	@Field(offset=1, length=2, paddingChar='2')
+	@Field(offset=1, length=1, paddingChar='2')
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -57,7 +58,7 @@ public class EMS0120Detalhe {
 		this.codPublicacao = codPublicacao;
 	}
 
-	@Field(offset=18, length=4)
+	@Field(offset=18, length=4, paddingChar='0')
 	public Long getEdicao() {
 		return edicao;
 	}
@@ -66,7 +67,7 @@ public class EMS0120Detalhe {
 		this.edicao = edicao;
 	}
 	
-	@Field(offset=22, length=4)
+	@Field(offset=22, length=4, paddingChar='0')
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
@@ -75,7 +76,7 @@ public class EMS0120Detalhe {
 		this.codigoCota = codigoCota;
 	}
 	
-	@Field(offset=26, length=8)
+	@Field(offset=26, length=8, paddingChar='0')
 	public Long getQuantidadeReparte() {
 		return quantidadeReparte;
 	}
@@ -84,7 +85,7 @@ public class EMS0120Detalhe {
 		this.quantidadeReparte = quantidadeReparte;
 	}
 
-	@Field(offset=34, length=9)
+	@Field(offset=34, length=9, paddingChar='0')
 	public BigDecimal getPrecoCapa() {
 		return precoCapa;
 	}
@@ -103,12 +104,12 @@ public class EMS0120Detalhe {
 		this.dataLancamento = dataLancamento;
 	}
 
-	@Field(offset=51, length=3)
-	public String getNumeroBoxCota() {
+	@Field(offset=51, length=3, paddingChar='0', align=Align.RIGHT)
+	public Integer getNumeroBoxCota() {
 		return numeroBoxCota;
 	}
 
-	public void setNumeroBoxCota(String numeroBoxCota) {
+	public void setNumeroBoxCota(Integer numeroBoxCota) {
 		this.numeroBoxCota = numeroBoxCota;
 	}
 }

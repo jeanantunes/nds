@@ -26,6 +26,12 @@ public class EditorServiceImpl implements EditorService {
 	public List<Editor> obterEditores() {
 		return editorRepository.obterEditores();
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Editor obterEditorPorId(Long idEditor) {
+		return editorRepository.buscarPorId(idEditor);
+	}
 
 	@Override
 	@Transactional

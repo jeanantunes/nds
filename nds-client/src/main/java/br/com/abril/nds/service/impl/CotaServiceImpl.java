@@ -1659,7 +1659,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		List<Cota> listaCotas = new ArrayList<Cota>();
 		
-		Set<Long> idCotas = this.cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox, situacao);
+		Set<Long> idCotas = this.cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox, situacao, null, null);
 		
 		for(Long idCota : idCotas ) {
 			
@@ -1878,6 +1878,15 @@ public class CotaServiceImpl implements CotaService {
 		this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
 		
 		return dto;
+	}
+	
+	@Transactional
+	@Override
+	public void cancelarChamadao(Integer numeroCota){
+		
+		//TODO apagar chamada de encalhe
+		
+		this.cotaRepository.ativarCota(numeroCota);
 	}
 	
 	private DistribuicaoDTO obterPercentualFaturamentoTaxaFixa(Long idCota, DistribuicaoDTO dto) {
