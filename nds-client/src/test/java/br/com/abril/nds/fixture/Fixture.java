@@ -2898,6 +2898,7 @@ public class Fixture {
 		parametroDistribuicaoCota.setChamadaEncalheEmail(chamadaEncalheEmail);
 		parametroDistribuicaoCota.setSlipImpresso(slipImpresso);
 		parametroDistribuicaoCota.setSlipEmail(slipEmail);
+		parametroDistribuicaoCota.setBoletoSlipImpresso(slipEmail);
 		
 		return parametroDistribuicaoCota;
 	}

@@ -1,11 +1,18 @@
 package br.com.abril.nds.client.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.BaseFont;
@@ -16,9 +23,30 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class PDFUtil {
 
-	public static byte[] concatPDFs(List<InputStream> streamOfPDFFiles,
-			OutputStream outputStream, boolean paginate) {
+	public static byte[] mergePDFs(byte[]... arquivos) {
 
+		try {
+			List<InputStream> pdfs = new ArrayList<InputStream>();
+
+			for (byte[] byteFile : arquivos) {
+				pdfs.add(new ByteArrayInputStream(byteFile));
+			}
+			
+			return PDFUtil.concatPDFs(pdfs, true);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public static byte[] concatPDFs(List<InputStream> streamOfPDFFiles, boolean paginate) throws FileNotFoundException {
+
+		String file = "temp.pdf";
+		
+		OutputStream outputStream = new FileOutputStream(file);
+		
 		Document document = new Document();
 		try {
 			List<InputStream> pdfs = streamOfPDFFiles;
@@ -72,12 +100,17 @@ public class PDFUtil {
 				}
 				pageOfCurrentReaderPDF = 0;
 			}
+						
 			outputStream.flush();
 			document.close();
 			outputStream.close();
 			
-			return cb.toPdf(writer);
-					
+			byte[] retorno = IOUtils.toByteArray(new FileInputStream(file));
+			
+			new File(file).delete();
+			
+			return retorno;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

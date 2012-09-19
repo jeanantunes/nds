@@ -768,9 +768,11 @@ public class CotaController {
 	/**
 	 * Descontos da cota: Obtem os tipos de desconto do distribuidor
 	 */
-	private List<TipoDescontoDTO> obterDescontosDistribuidor(String sortorder, String sortname){
+	private List<TipoDescontoDTO> obterDescontosDistribuidor(String sortorder, String sortname, List<Long> idFornecedores){
 		
         FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
+        
+        filtro.setIdFornecedores(idFornecedores);
         
         Integer totalDeRegistros = descontoService.buscarQntTipoDesconto(filtro);
 		
@@ -830,29 +832,86 @@ public class CotaController {
 	
 	@Post
 	@Path("/obterTiposDescontoCota")
-	public void obterTiposDescontoCota(Long idCota, ModoTela modoTela, Long idHistorico, String sortorder, String sortname){
-        Cota cota = cotaService.obterPorId(idCota);
-      
-        if (ModoTela.CADASTRO_COTA == modoTela) {
-            List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
-            if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
-                result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
-            } else {
-                List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname);
-                result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
-            }
-        } else {
-            Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+	public void obterTiposDescontoCota(Long idCota, ModoTela modoTela, Long idHistorico, String sortorder, String sortname) {
+		
+	    Cota cota = cotaService.obterPorId(idCota);
+		
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        if (cota!=null){
+			
+	            List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
+			
+	            if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
+			
+	                result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
+			
+	            } else {
+				
+	                List<Long> idFornecedores = obterIdFornecedoresCota(cota.getId());
+				
+	                if(idFornecedores == null || idFornecedores.isEmpty()) {
+				
+	                    result.nothing();
+				
+	                } else {
+
+	                    List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname, idFornecedores);
+					
+	                    if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
+
+	                        result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
+				    
+	                    } else {
+					
+	                        result.nothing();
+				    
+	                    }
+
+					
+	                }
+				
+	            }
+			
+	        } else {
+
+	            result.nothing();
+
+			
+	        }
+		
+	    } else {
+	        Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
             List<TipoDescontoCotaDTO> descontosCota = new ArrayList<TipoDescontoCotaDTO>(PaginacaoUtil
                     .ordenarEmMemoria(cotaService
                             .obterDescontosCotaHistoricoTitularidadeCota(
                                     idCota, idHistorico), ordenacao, sortname));
             
             result.use(FlexiGridJson.class).from(descontosCota).page(1).total(1).serialize();
-        }
-        
+	    }
 	}
 	
+	List<Long> obterIdFornecedoresCota(Long idCota) {
+		
+		List<Fornecedor> fornecedores = cotaService.obterFornecedoresCota(idCota);
+		
+		List<Long> idFornecedores = null;
+		
+		if(fornecedores!=null && !fornecedores.isEmpty()) {
+			
+			idFornecedores = new ArrayList<Long>();
+			
+			for(Fornecedor fornecedor : fornecedores) {
+				
+				idFornecedores.add(fornecedor.getId());
+				
+			}
+			
+		}
+		
+		return idFornecedores;
+		
+	}
+
 	/**
 	 * Valida se o número da cota informada para histórico base é ativo.
 	 * 
