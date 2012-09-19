@@ -3699,12 +3699,17 @@ public class Fixture {
         caucaoLiquida.setContaBancariaDeposito(new ContaBancariaDeposito("349", "Banco Itau", Long.valueOf(809), "1", Long.valueOf(123456), "1", "John Doe"));
         caucaoLiquida.addAtualizacao(new HistoricoTitularidadeCotaAtualizacaoCaucaoLiquida(DateUtil.adicionarDias(cota.getInicioAtividade(), 30), BigDecimal.valueOf(415)));
         HistoricoTitularidadeCotaPagamentoCaucaoLiquida pagamentoCaucao = new HistoricoTitularidadeCotaPagamentoCaucaoLiquida();
-        pagamentoCaucao.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
-        pagamentoCaucao.setPeriodicidadeBoleto(TipoFormaCobranca.SEMANAL);
-        pagamentoCaucao.setQtdeParcelasBoleto(10);
-        pagamentoCaucao.setValorParcelasBoleto(BigDecimal.valueOf(100));
-        pagamentoCaucao.addDiaSemanaBoleto(DiaSemana.SEGUNDA_FEIRA);
-        pagamentoCaucao.addDiaSemanaBoleto(DiaSemana.SEXTA_FEIRA);
+//        pagamentoCaucao.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
+//        pagamentoCaucao.setPeriodicidadeBoleto(TipoFormaCobranca.SEMANAL);
+//        pagamentoCaucao.setQtdeParcelasBoleto(10);
+//        pagamentoCaucao.setValorParcelasBoleto(BigDecimal.valueOf(100));
+//        pagamentoCaucao.addDiaSemanaBoleto(DiaSemana.SEGUNDA_FEIRA);
+//        pagamentoCaucao.addDiaSemanaBoleto(DiaSemana.SEXTA_FEIRA);
+        pagamentoCaucao.setTipoCobranca(TipoCobrancaCotaGarantia.DESCONTO_COTA);
+        pagamentoCaucao.setDescontoNormal(BigDecimal.valueOf(10));
+        pagamentoCaucao.setDescontoReduzido(BigDecimal.valueOf(5));
+        pagamentoCaucao.setPorcentagemUtilizada(BigDecimal.valueOf(5));
+        
         caucaoLiquida.setPagamento(pagamentoCaucao);
         historico.addGarantia(caucaoLiquida);        
         
@@ -3733,8 +3738,6 @@ public class Fixture {
         distribuicao.setChamadaEncalheEmail(true);
         distribuicao.setChamadaEncalheImpresso(true);
         historico.setDistribuicao(distribuicao);
-        
-        
     
         cota.addTitularCota(historico);
         return historico;
