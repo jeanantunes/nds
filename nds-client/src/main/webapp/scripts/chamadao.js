@@ -442,6 +442,28 @@ var chamadaoController = $.extend(true, {
 				   null,
 				   true
 		);
+	},
+	
+	cancelarChamadao : function(){
+		
+		$.postJSON(contextPath + "/devolucao/chamadao/cancelarChamadao",
+				   null,
+				   function(result) {
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							
+							exibirMensagem(tipoMensagem, listaMensagens);
+						}
+						
+						$(".chamadaoGrid", chamadaoController.workspace).flexReload();
+						
+						$("#checkAll", chamadaoController.workspace).attr("checked", false);
+					},
+				   null
+		);
 	}
 	
 }, BaseController);
