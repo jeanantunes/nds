@@ -153,7 +153,11 @@ public class CotaGarantiaController {
 	        }	
 	    } else {
 	        CotaGarantiaDTO<?> cotaGarantia = cotaGarantiaService.obterGarantiaHistoricoTitularidadeCota(idCota, idHistorico);
-	        result.use(CustomJson.class).from(cotaGarantia).serialize();  
+	        if (cotaGarantia != null) {
+	            result.use(CustomJson.class).from(cotaGarantia).serialize();  
+	        } else {
+	            result.use(CustomJson.class).from("OK").serialize();      
+	        }
 	    }
 	}
 	

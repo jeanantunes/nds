@@ -2109,8 +2109,11 @@ public class CotaServiceImpl implements CotaService {
         
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         HistoricoTitularidadeCotaDistribuicao distribuicao = historico.getDistribuicao();
-        distribuicao.setHistoricoTitularidadeCota(historico);
-        return CotaDTOAssembler.toDistribuicaoDTO(distribuicao);
+        if (distribuicao != null) {
+            distribuicao.setHistoricoTitularidadeCota(historico);
+            return CotaDTOAssembler.toDistribuicaoDTO(distribuicao);
+        }
+        return new DistribuicaoDTO(); 
     }
 
 }

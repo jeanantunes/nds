@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
@@ -71,6 +72,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
@@ -217,9 +219,9 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaOutros;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
-import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
 
@@ -419,6 +421,18 @@ public class Fixture {
 		fisica.setEmail(email);
 		return fisica;
 	}
+	
+    public static PessoaFisica pessoaFisica(String cpf, String email,
+            String nome, String rg, String orgaoEmissor, String uf,
+            Date dataNascimento, EstadoCivil estadoCivil) {
+        PessoaFisica fisica = pessoaFisica(cpf, email, nome);
+        fisica.setRg(rg);
+        fisica.setOrgaoEmissor(orgaoEmissor);
+        fisica.setUfOrgaoEmissor(uf);
+        fisica.setDataNascimento(dataNascimento);
+        fisica.setEstadoCivil(estadoCivil);
+        return fisica;
+    }
 
 	public static PessoaJuridica pessoaJuridica(String razaoSocial,
 			String cnpj, String ie, String email, String im) {
@@ -3438,24 +3452,13 @@ public class Fixture {
         historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(456), BigDecimal.valueOf(33)));
         historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(789), BigDecimal.valueOf(33)));
 
-//        HistoricoTitularidadeCotaPessoaFisica htcpf = new HistoricoTitularidadeCotaPessoaFisica(
-//                    "Aristoteles da Silva", "862.243.913-51", "30.887.357-9",
-//                    "SSP", "SP", criarData(10, Calendar.APRIL, 1974), EstadoCivil.SOLTEIRO, Sexo.MASCULINO,
-//                    "Brasileira", "Mococa", "Ari");
-//        historico.setPessoaFisica(htcpf);
+        HistoricoTitularidadeCotaPessoaFisica htcpf = new HistoricoTitularidadeCotaPessoaFisica(
+                    "Aristoteles da Silva", "862.243.913-51", "30.887.357-9",
+                    "SSP", "SP", criarData(10, Calendar.APRIL, 1974), EstadoCivil.SOLTEIRO, Sexo.MASCULINO,
+                    "Brasileira", "Mococa", "Ari");
+        historico.setPessoaFisica(htcpf);
         
-        HistoricoTitularidadeCotaPessoaJuridica htcpj = new HistoricoTitularidadeCotaPessoaJuridica("ABC corp", "ABC", "47.413.143/0001-99",  null, null);
-        historico.setPessoaJuridica(htcpj);
-        
-        HistoricoTitularidadeCotaSocio socio1 = new HistoricoTitularidadeCotaSocio("John Doe", true, "Gerente");
-        socio1.setEndereco(new HistoricoTitularidadeCotaEndereco(10, "Vila Mariana", "13730-335", 123, "Mococa", null, "Rua", "Cap. Miguel Ferreira", "593", "SP", 1, null, true));
-        socio1.setTelefone(new HistoricoTitularidadeCotaTelefone("3656-1234", null, "19", null, true));
-        historico.addSocio(socio1);
-        
-        HistoricoTitularidadeCotaSocio socio2 = new HistoricoTitularidadeCotaSocio("Jane Doe", false, "Supervisor");
-        socio2.setEndereco(new HistoricoTitularidadeCotaEndereco(10, "Vila Mariana", "13730-335", 123, "Mococa", null, "Rua", "Cap. Miguel Ferreira", "593", "SP", 1, null, true));
-        socio2.setTelefone(new HistoricoTitularidadeCotaTelefone("3656-1234", null, "19", null, true));
-        historico.addSocio(socio2);
+       
         
         HistoricoTitularidadeCotaEndereco endereco1 = new HistoricoTitularidadeCotaEndereco(
                 10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
@@ -3635,80 +3638,6 @@ public class Fixture {
         
         financeiro.addFormaPagamento(formaPagto2);
         historico.setFinanceiro(financeiro);
-        
-//        HistoricoTitularidadeCotaFiador fiador = new HistoricoTitularidadeCotaFiador();
-//        fiador.setNome("José da Silva");
-//        fiador.setCpfCnpj("667.672.958-09");
-//        fiador.setHistoricoTitularidadeCotaEndereco(new HistoricoTitularidadeCotaEndereco(
-//                10, "Centro", "13720-000", 12, "São José do Rio Pardo", null,
-//                "Rua", "Treze de Maio", "10", "SP", 10, null, true));
-//        fiador.setHistoricoTitularidadeCotaTelefone(new HistoricoTitularidadeCotaTelefone("3656-7464", null, "019", null, true));
-//        fiador.addGarantia(new HistoricoTitularidadeCotaFiadorGarantia(BigDecimal.valueOf(100000), "Imóvel residencial"));
-//        historico.addGarantia(fiador);
-        
-//        HistoricoTitularidadeCotaChequeCaucao cheque = new HistoricoTitularidadeCotaChequeCaucao();
-//        cheque.setAgencia(Long.valueOf(809));
-//        cheque.setConta(Long.valueOf(1234));
-//        cheque.setCorrentista("John Doe");
-//        cheque.setDvAgencia("1");
-//        cheque.setDvConta("1");
-//        cheque.setEmissao(cota.getInicioAtividade());
-//        cheque.setNomeBanco("Banco Itaú");
-//        cheque.setNumeroBanco("349");
-//        cheque.setNumeroCheque("987654");
-//        cheque.setValidade(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
-//        cheque.setValor(BigDecimal.valueOf(1000));
-//        historico.addGarantia(cheque);
-        
-//        try {
-//            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("cheque.jpg");
-//            File fileImagem = new File(urlImagem.toURI());
-//            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
-//            cheque.setImagem(imagem);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Erro carregando imagem cheque caução histórico titularidade", e);
-//        }
-        
-//        HistoricoTitularidadeCotaImovel imovel1 = new HistoricoTitularidadeCotaImovel();
-//        imovel1.setEndereco("Rua Treze de Maio, 150 - Centro, São José do Rio Pardo-SP");
-//        imovel1.setNumeroRegistro("1234");
-//        imovel1.setObservacao("Observação");
-//        imovel1.setProprietario("John Doe");
-//        imovel1.setValor(BigDecimal.valueOf(150000));
-//        historico.addGarantia(imovel1);
-//        
-//        HistoricoTitularidadeCotaImovel imovel2 = new HistoricoTitularidadeCotaImovel();
-//        imovel2.setEndereco("Rua Campos Salles, 290 - Centro, São José do Rio Pardo-SP");
-//        imovel2.setNumeroRegistro("4321");
-//        imovel2.setObservacao("Observação II");
-//        imovel2.setProprietario("Jane Doe");
-//        imovel2.setValor(BigDecimal.valueOf(500000));
-//        historico.addGarantia(imovel2);
-        
-//        HistoricoTitularidadeCotaNotaPromissoria nota = new HistoricoTitularidadeCotaNotaPromissoria();
-//        nota.setValor(BigDecimal.valueOf(1500));
-//        nota.setValorExtenso("Um mile quinhentos reais");
-//        nota.setVencimento(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
-//        historico.addGarantia(nota);
-        
-//        HistoricoTitularidadeCotaCaucaoLiquida caucaoLiquida = new HistoricoTitularidadeCotaCaucaoLiquida();
-//        caucaoLiquida.setValor(BigDecimal.valueOf(1000));
-//        caucaoLiquida.setContaBancariaDeposito(new ContaBancariaDeposito("349", "Banco Itau", Long.valueOf(809), "1", Long.valueOf(123456), "1", "John Doe"));
-//        caucaoLiquida.addAtualizacao(new HistoricoTitularidadeCotaAtualizacaoCaucaoLiquida(DateUtil.adicionarDias(cota.getInicioAtividade(), 30), BigDecimal.valueOf(415)));
-//        HistoricoTitularidadeCotaPagamentoCaucaoLiquida pagamentoCaucao = new HistoricoTitularidadeCotaPagamentoCaucaoLiquida();
-//        pagamentoCaucao.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
-//        pagamentoCaucao.setPeriodicidadeBoleto(TipoFormaCobranca.SEMANAL);
-//        pagamentoCaucao.setQtdeParcelasBoleto(10);
-//        pagamentoCaucao.setValorParcelasBoleto(BigDecimal.valueOf(100));
-//        pagamentoCaucao.addDiaSemanaBoleto(DiaSemana.SEGUNDA_FEIRA);
-//        pagamentoCaucao.addDiaSemanaBoleto(DiaSemana.SEXTA_FEIRA);
-
-//        pagamentoCaucao.setTipoCobranca(TipoCobrancaCotaGarantia.DESCONTO_COTA);
-//        pagamentoCaucao.setDescontoNormal(BigDecimal.valueOf(10));
-//        pagamentoCaucao.setDescontoReduzido(BigDecimal.valueOf(5));
-//        pagamentoCaucao.setPorcentagemUtilizada(BigDecimal.valueOf(5));
-//        caucaoLiquida.setPagamento(pagamentoCaucao);
-//        historico.addGarantia(caucaoLiquida);       
         
         HistoricoTitularidadeCotaOutros outros1 = new HistoricoTitularidadeCotaOutros();
         outros1.setDescricao("Carro");

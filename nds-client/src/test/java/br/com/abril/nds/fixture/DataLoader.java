@@ -48,6 +48,7 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
@@ -5534,7 +5535,7 @@ public class DataLoader {
 				"93081738000101", "333333333333", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("10732815665",
-				"sys.discover@gmail.com", "Manoel da Silva");
+				"sys.discover@gmail.com", "Manoel da Silva", "12654879-9", "SSP", "SP", DateUtil.parseDataPTBR("13/09/1979"), EstadoCivil.SOLTEIRO);
 
 		manoelCunha = Fixture.pessoaFisica("45300458970",
 				"sys.discover@gmail.com", "Manoel da Cunha");

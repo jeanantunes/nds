@@ -338,7 +338,7 @@ public interface CotaService {
 	
 	DistribuicaoDTO carregarValoresEntregaBanca(Integer numCota);
 
-<<<<<<< HEAD
+
     /**
      * Obtém as informações de distribuição do histórico de titularidade da cota
      * 
@@ -350,9 +350,6 @@ public interface CotaService {
      *         titularidade da cota
      */
 	DistribuicaoDTO obterDistribuicaoHistoricoTitularidade(Long idCota, Long idHistorico);
-}
 
-=======
 	void cancelarChamadao(Integer numeroCota);
 }
->>>>>>> DGBti/master

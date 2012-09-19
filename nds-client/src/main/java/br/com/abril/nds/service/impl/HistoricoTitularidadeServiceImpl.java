@@ -127,39 +127,20 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 
 		HistoricoTitularidadeCota historicoTitularidadeCota = new HistoricoTitularidadeCota();
 
-		historicoTitularidadeCota.setCota(
-			cota
-		);
-		historicoTitularidadeCota.setInicio(
-			cota.getInicioAtividade()
-		);
-		historicoTitularidadeCota.setEmail(
-			cota.getPessoa().getEmail()
-		);
-		historicoTitularidadeCota.setSituacaoCadastro(
-			cota.getSituacaoCadastro()
-		);
-		historicoTitularidadeCota.setNumeroCota(
-			cota.getNumeroCota()
-		);
-		historicoTitularidadeCota.setFim(
-			new Date()
-		);
-		historicoTitularidadeCota.setClassificacaoExpectativaFaturamento(
-			cota.getClassificacaoEspectativaFaturamento()
-		);
-		historicoTitularidadeCota.setTelefones(
-			gerarHistoricoTitularidadeCotaTelefoneCota(cota.getTelefones())
-		);
-		historicoTitularidadeCota.setEnderecos(
-			gerarHistoricoTitularidadeCotaEnderecoCota(cota.getEnderecos())
-		);
-		historicoTitularidadeCota.setFornecedores(
-			gerarHistoricoTitularidadeCotaFornecedor(cota.getFornecedores())
-		);
-		historicoTitularidadeCota.setPdvs(
-			gerarHistoricoTitularidadeCotaPDV(cota.getPdvs())
-		);
+		historicoTitularidadeCota.setCota(cota);
+		
+		historicoTitularidadeCota.setDataInclusao(cota.getInicioAtividade());
+		
+		historicoTitularidadeCota.setInicio(cota.getInicioAtividade());
+		historicoTitularidadeCota.setEmail(	cota.getPessoa().getEmail());
+		historicoTitularidadeCota.setSituacaoCadastro(cota.getSituacaoCadastro());
+		historicoTitularidadeCota.setNumeroCota(cota.getNumeroCota());
+		historicoTitularidadeCota.setFim(new Date());
+		historicoTitularidadeCota.setClassificacaoExpectativaFaturamento(cota.getClassificacaoEspectativaFaturamento());
+		historicoTitularidadeCota.setTelefones(gerarHistoricoTitularidadeCotaTelefoneCota(cota.getTelefones()));
+		historicoTitularidadeCota.setEnderecos(gerarHistoricoTitularidadeCotaEnderecoCota(cota.getEnderecos()));
+		historicoTitularidadeCota.setFornecedores(gerarHistoricoTitularidadeCotaFornecedor(cota.getFornecedores()));
+		historicoTitularidadeCota.setPdvs(gerarHistoricoTitularidadeCotaPDV(historicoTitularidadeCota, cota.getPdvs()));
 		historicoTitularidadeCota.setSocios(
 			gerarHistoricoTitularidadeCotaSocio(cota.getSociosCota())
 		);
@@ -418,7 +399,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	 * @return List<HistoricoTitularidadeCotaPDV> - histórico gerado.
 	 * 
 	 */
-	private List<HistoricoTitularidadeCotaPDV> gerarHistoricoTitularidadeCotaPDV(List<PDV> pdvs) {
+	private List<HistoricoTitularidadeCotaPDV> gerarHistoricoTitularidadeCotaPDV(HistoricoTitularidadeCota historicoTitularidadeCota, List<PDV> pdvs) {
 		
 		if (pdvs == null || pdvs.isEmpty()) {
 			
@@ -491,6 +472,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			historicoTitularidadeCotaPDV.setExpositor(pdv.getExpositor());
 			historicoTitularidadeCotaPDV.setTipoExpositor(pdv.getTipoExpositor());
 
+			historicoTitularidadeCotaPDV.setHistoricoTitularidadeCota(historicoTitularidadeCota);
 			historicosTitularidadeCotaPDV.add(historicoTitularidadeCotaPDV);
 		}
 		

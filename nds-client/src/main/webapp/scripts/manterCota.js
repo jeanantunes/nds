@@ -1074,11 +1074,7 @@ var COTA_CNPJ = $.extend(true, {
                 exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
 
             },
-            function(result) {
-                if (result.mensagens) {
-                    exibirMensagemDialog(result.mensagens.tipoMensagem, result.mensagens.listaMensagens,"dialog-cota");
-                }
-            },
+            null,
             true
         );
     },
@@ -1278,11 +1274,7 @@ var COTA_CPF = $.extend(true, {
                 exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
 
             },
-            function(result) {
-                if (result.mensagens) {
-                    exibirMensagemDialog(result.mensagens.tipoMensagem, result.mensagens.listaMensagens,"dialog-cota");
-                }
-            },
+            null,
             true
         );
 

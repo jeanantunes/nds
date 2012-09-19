@@ -881,21 +881,25 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         Validate.notNull(idHistorico, "Identificador do histórico não deve ser nulo!");
         
 	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-	    if (TipoGarantia.FIADOR == historico.getTipoGarantia()) {
+	    TipoGarantia tipoGarantia = historico.getTipoGarantia();
+	    if (tipoGarantia == null) {
+	        return null;
+	    }
+        if (TipoGarantia.FIADOR == tipoGarantia) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaFiador());
-	    } else if (TipoGarantia.CHEQUE_CAUCAO == historico.getTipoGarantia()) {
+	    } else if (TipoGarantia.CHEQUE_CAUCAO == tipoGarantia) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaChequeCaucao());
-	    } else if (TipoGarantia.IMOVEL == historico.getTipoGarantia()) {
+	    } else if (TipoGarantia.IMOVEL == tipoGarantia) {
 	        return CotaDTOAssembler.toCotaGarantiaDTOImovel(historico.getGarantiasImovel());
-	    } else if (TipoGarantia.NOTA_PROMISSORIA == historico.getTipoGarantia()) {
+	    } else if (TipoGarantia.NOTA_PROMISSORIA == tipoGarantia) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaNotaPromissoria());
-	    } else if (TipoGarantia.CAUCAO_LIQUIDA == historico.getTipoGarantia()) {
+	    } else if (TipoGarantia.CAUCAO_LIQUIDA == tipoGarantia) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaCaucaoLiquida());
-	    } else if (TipoGarantia.OUTROS == historico.getTipoGarantia()) {
+	    } else if (TipoGarantia.OUTROS == tipoGarantia) {
 	        return CotaDTOAssembler.toCotaGarantiaDTOOutros(historico.getGarantiasOutros());
 	    } else {
-	        LOGGER.error("Tipo de garantia não tratado: " + historico.getTipoGarantia());
-	        throw new UnsupportedOperationException("Tipo de garantia não tratado: " + historico.getTipoGarantia());
+	        LOGGER.error("Tipo de garantia não tratado: " + tipoGarantia);
+	        throw new UnsupportedOperationException("Tipo de garantia não tratado: " + tipoGarantia);
 	    }
     }
 

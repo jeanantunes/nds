@@ -797,13 +797,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 					
 					.append(" pessoa.email as email ,")
 					.append(" cota.situacaoCadastro as status, ")
-					.append(" cota.box.nome as descricaoBox ");
+					.append(" box.nome as descricaoBox ");
 		}
 
 		hql.append(" FROM Cota cota 								")
 				.append(" join cota.pessoa pessoa 					")
 				.append(" left join cota.enderecos enderecoCota 	")
-				.append(" left join enderecoCota.endereco endereco 	");
+				.append(" left join enderecoCota.endereco endereco 	")
+		        .append(" left join cota.box box ");
 
 		
 		
@@ -1461,7 +1462,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return hql.toString();
 	}
 
-<<<<<<< HEAD
     /**
      * {@inheritDoc}
      */
@@ -1502,8 +1502,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
         query.setParameter("id", idSocio);
         return (HistoricoTitularidadeCotaSocio) query.uniqueResult();
     }
-=======
-	@Override
+
+    @Override
 	public void ativarCota(Integer numeroCota) {
 		
 		Query query = 
@@ -1515,5 +1515,5 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		query.executeUpdate();
 	}	
->>>>>>> DGBti/master
+
 }
