@@ -51,7 +51,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.addScalar("qtdExemplaresTotal", StandardBasicTypes.BIG_INTEGER)
 			.addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
 		
-		aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
+		this.aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 			ResumoConsignadoCotaChamadaoDTO.class));
@@ -85,9 +85,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 					.append("and fornecedor.JURIDICA_ID = pessoa.ID and produtoFor.PRODUTO_ID = produto.ID) ")
 				.append("else null end) as nomeFornecedor, ")
 			.append("lancamento.DATA_REC_PREVISTA as dataRecolhimento, ")
-			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) * ")
+			.append("produtoEdicao.PRECO_VENDA * ")
 			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotal, ")
-			.append("lancamento.ID as idLancamento ");
+			.append("(produtoEdicao.PRECO_VENDA - (produtoEdicao.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) * ")
+			.append("(estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) as valorTotalDesconto, ")
+			.append("lancamento.ID as idLancamento, ")
+			.append("produtoEdicao.POSSUI_BRINDE as possuiBrinde ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
@@ -107,6 +110,10 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 					hql.append(" order by numeroEdicao ");
 					break;
 				
+				case BRINDE:
+					hql.append(" order by possuiBrinde ");
+					break;
+					
 				case PRECO_VENDA:
 					hql.append(" order by precoVenda ");
 					break;
@@ -130,6 +137,11 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 				case VALOR_TOTAL:
 					hql.append(" order by valorTotal ");
 					break;
+				
+				case VALOR_TOTAL_DESCONTO:
+					hql.append(" order by valorTotalDesconto ");
+					break;
+					
 					
 				default:
 					break;
@@ -146,9 +158,11 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.addScalar("numeroEdicao", StandardBasicTypes.LONG).addScalar("precoVenda")
 			.addScalar("precoDesconto").addScalar("reparte")
 			.addScalar("nomeFornecedor").addScalar("dataRecolhimento")
-			.addScalar("valorTotal").addScalar("idLancamento", StandardBasicTypes.LONG);
+			.addScalar("valorTotal").addScalar("valorTotalDesconto")
+			.addScalar("idLancamento", StandardBasicTypes.LONG)
+			.addScalar("possuiBrinde", StandardBasicTypes.BOOLEAN);
 		
-		aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
+		this.aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
 		
 		if (filtro != null && filtro.getPaginacao() != null) {
 			
@@ -180,7 +194,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		Query query = getSession().createSQLQuery(hql.toString())
 			.addScalar("totalConsignados", StandardBasicTypes.LONG);
 		
-		aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
+		this.aplicarParametrosParaPesquisaConsignadosCota(filtro, query);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -198,41 +212,41 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		hql.append("from COTA cota ")
 	    	.append("inner join ESTOQUE_PRODUTO_COTA estoqueProdCota ")
-	            .append("on cota.ID = estoqueProdCota.COTA_ID ")
+	    	.append("on cota.ID = estoqueProdCota.COTA_ID ")
 	        .append("inner join ESTUDO_COTA estudoCota ")
-	            .append("on cota.ID = estudoCota.COTA_ID ")
+	        .append("on cota.ID = estudoCota.COTA_ID ")
 	        .append("inner join ESTUDO estudo ")
-	            .append("on estudoCota.ESTUDO_ID = estudo.ID ") 
+	        .append("on estudoCota.ESTUDO_ID = estudo.ID ") 
 	        .append("inner join PRODUTO_EDICAO produtoEdicao ") 
-	            .append("on estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
+	        .append("on estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
 	        .append("inner join PRODUTO produto ") 
-	            .append("on produtoEdicao.PRODUTO_ID = produto.ID ") 
+	        .append("on produtoEdicao.PRODUTO_ID = produto.ID ")
 	        .append("inner join LANCAMENTO lancamento ") 
-	            .append("on (produtoEdicao.ID = lancamento.PRODUTO_EDICAO_ID ")
-	            .append("and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
+	        .append("on (produtoEdicao.ID = lancamento.PRODUTO_EDICAO_ID ")
+	        .append("and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ")
 	            
-    	hql.append("inner join PRODUTO_FORNECEDOR produtoFornecedor ")
-    		.append("on produtoFornecedor.PRODUTO_ID = produto.ID ");
+    		.append("inner join PRODUTO_FORNECEDOR produtoFornecedor ")
+    		.append("on produtoFornecedor.PRODUTO_ID = produto.ID ")
 	            
-	    hql.append("where estoqueProdCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
+	    	.append("where estoqueProdCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
 	        .append("and ( ")
-	        	.append("(lancamento.STATUS = :statusLancamentoBalanceadoRec ")
-	        		.append("and lancamento.DATA_REC_PREVISTA > :dataRecolhimento) ")
-	        	.append("or (lancamento.STATUS = :statusLancamentoExpedido) ")
-	        	.append("or (lancamento.STATUS = :statusLancamentoEmBalanceamentoRec) ")
+	        .append("(lancamento.STATUS = :statusLancamentoBalanceadoRec ")
+	        .append("and lancamento.DATA_REC_PREVISTA > :dataRecolhimento) ")
+	        .append("or (lancamento.STATUS = :statusLancamentoExpedido) ")
+	        .append("or (lancamento.STATUS = :statusLancamentoEmBalanceamentoRec) ")
 	        .append(") ")
 	        .append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
 	        .append("and (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ")
 	        
 	        .append("and not exists ( ")
-	        	.append("select chamadaEncalheCota.COTA_ID ")
-	            .append("from CHAMADA_ENCALHE_COTA chamadaEncalheCota ") 
-	            .append("inner join CHAMADA_ENCALHE chamadaEncalhe ")
-	                .append("on chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID, COTA c ")
-	            .append("where chamadaEncalheCota.COTA_ID = c.ID ")
-	            .append("and chamadaEncalheCota.COTA_ID = cota.ID ")
-	            .append("and chamadaEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
-	            .append("and chamadaEncalhe.TIPO_CHAMADA_ENCALHE in (:chamadaEncalheAntecipada, :chamadaEncalheChamadao) ")
+	        .append("select chamadaEncalheCota.COTA_ID ")
+	        .append("from CHAMADA_ENCALHE_COTA chamadaEncalheCota ") 
+	        .append("inner join CHAMADA_ENCALHE chamadaEncalhe ")
+	        .append("on chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID, COTA c ")
+	        .append("where chamadaEncalheCota.COTA_ID = c.ID ")
+	        .append("and chamadaEncalheCota.COTA_ID = cota.ID ")
+	        .append("and chamadaEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID ") 
+	        .append("and chamadaEncalhe.TIPO_CHAMADA_ENCALHE in (:chamadaEncalheAntecipada, :chamadaEncalheChamadao) ")
             .append(")");
 		
 		if (filtro != null) {
@@ -245,6 +259,11 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			if (filtro.getIdFornecedor() != null) {
 
 				hql.append(" AND produtoFornecedor.FORNECEDORES_ID = :idFornecedor ");
+			}
+
+			if (filtro.getIdEditor() != null) {
+
+				hql.append(" AND produto.EDITOR_ID = :idEditor ");
 			}
 		}
 		
@@ -262,11 +281,6 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	private void aplicarParametrosParaPesquisaConsignadosCota(FiltroChamadaoDTO filtro, 
 													 	 	  Query query) {
 		
-		if (filtro == null) {
-			
-			return;
-		}
-		
 		query.setParameter("statusLancamentoBalanceadoRec",
 						   StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
 		
@@ -281,6 +295,11 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.toString());
 		
+		if (filtro == null) {
+			
+			return;
+		}
+		
 		if (filtro.getDataChamadao() != null) {
 			query.setParameter("dataRecolhimento", filtro.getDataChamadao());
 		}
@@ -291,6 +310,10 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		if (filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		if (filtro.getIdEditor() != null) {
+			query.setParameter("idEditor", filtro.getIdEditor());
 		}
 	}
 	

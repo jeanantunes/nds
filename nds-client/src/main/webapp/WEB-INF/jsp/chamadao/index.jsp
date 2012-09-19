@@ -33,27 +33,30 @@
 	</form>
 	
 	<fieldset class="classFieldset">
-   	    <legend> Pesquisar        </legend>
+   	    <legend>Pesquisar</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   			<tr>
-			    <td width="29">Cota:</td>
-			    <td width="98">
+			    <td width="73">Cota:</td>
+			    <td width="175">
 			    	<input type="text" name="numeroCota" id="numeroCota" style="width:70px; float:left;
 						   margin-right:5px;" onchange="pesquisaCotaChamadao.pesquisarPorNumeroCota('#numeroCota', '#descricaoCota');" />
 			    </td>
-			    <td width="38">Nome:</td>
-			    <td width="178">
+			    <td width="37">Nome:</td>
+			    <td width="211">
 			    	<input name="descricaoCota" id="descricaoCota" type="text"
 		      		 	   class="nome_jornaleiro" maxlength="255" style="width:130px;"
 		      		 	   onkeyup="pesquisaCotaChamadao.autoCompletarPorNome('#descricaoCota');" 
 		      		 	   onblur="pesquisaCotaChamadao.pesquisarPorNomeCota('#numeroCota', '#descricaoCota');" />
 		      	</td>
-			    <td width="96">Data Chamadão:</td>
-			    <td width="102">
+			    <td width="94">Data Chamadão:</td>
+			    <td width="220">
 			    	<input type="text" name="dataChamadao" id="dataChamadao" style="width:70px; float:left; margin-right:5px;" />
 			    </td>
-			    <td width="68">Fornecedor:</td>
-			    <td width="191">
+				<td width="104">&nbsp;</td>
+  			</tr>
+  			<tr>
+  				<td>Fornecedor:</td>
+			    <td>
 			   		<select name="idFornecedor" id="idFornecedor" style="width:190px;">
       					<option selected="selected" value="">Todos</option>
 						<c:forEach var="fornecedor" items="${listaFornecedores}">
@@ -61,12 +64,26 @@
 						</c:forEach>
     				</select>
     			</td>
-    			<td width="104">
+			    <td align="right">
+			   		<input type="checkbox" name="checkbox" id="checkbox" />
+			   	</td>
+			    <td>Com CE</td>
+			    <td>Editor:</td>
+			    <td>
+			    	<select name="idEditor" id="idEditor" style="width:190px;">
+			      		<option selected="selected" value="">Todos</option>
+			      		<c:forEach var="editor" items="${listaEditores}">
+							<option value="${editor.key}">${editor.value}</option>
+						</c:forEach>
+			    	</select>
+			    </td>
+			    <td>
     				<span class="bt_pesquisar" title="Pesquisar">
     					<a href="javascript:;" onclick="chamadaoController.pesquisar();">Pesquisar</a>
     				</span>
     			</td>
-  			</tr>
+		  </tr>
+  			
 		</table>
 	</fieldset>
 	

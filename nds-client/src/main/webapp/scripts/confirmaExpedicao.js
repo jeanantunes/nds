@@ -3,7 +3,7 @@ var confirmaExpedicaoController = $.extend(true, {
 	change : false,
 
 	init : function() {
-		confirmaExpedicaoController.definirAcaoPesquisaTeclaEnter();
+		definirAcaoPesquisaTeclaEnter();
 		//Define foco inicial no campo Data Lançamento.
 		$('#idDataLancamento', confirmaExpedicaoController.workspace).focus();
 
@@ -173,7 +173,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			var cell = grid.rows[i].cell;
 								
 			if(cell.estudo) {
-				cell.selecionado = gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado);
+				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado);
 			} else {
 				cell.estudo="";
 				cell.selecionado="";
@@ -186,7 +186,7 @@ var confirmaExpedicaoController = $.extend(true, {
 	cliquePesquisar : function() {
 		
 		$("#selecionarTodosID", confirmaExpedicaoController.workspace).attr("checked",false);
-		change= !change;
+		confirmaExpedicaoController.change= !confirmaExpedicaoController.change;
 		
 		var dataLancamento = $('#idDataLancamento', confirmaExpedicaoController.workspace).attr('value');
 		var idFornecedor = $('#idFornecedor', confirmaExpedicaoController.workspace).attr('value');
