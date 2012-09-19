@@ -1439,5 +1439,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		   .append(" and view.fornecedorId = fornecedores.id ");
 		
 		return hql.toString();
+	}
+
+	@Override
+	public void ativarCota(Integer numeroCota) {
+		
+		Query query = 
+				this.getSession().createQuery(
+						"update Cota set situacaoCadastro = :status where numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("status", SituacaoCadastro.ATIVO);
+		
+		query.executeUpdate();
 	}	
 }

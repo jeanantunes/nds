@@ -393,6 +393,20 @@ public class ChamadaoController {
 							"result").recursive().serialize();
 	}
 	
+	@Post
+	public void cancelarChamadao(){
+		
+		FiltroChamadaoDTO filtroSessao =
+				(FiltroChamadaoDTO) 
+					this.session.getAttribute(FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE);
+		
+		this.cotaService.cancelarChamadao(filtroSessao.getNumeroCota());
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão cancelado com sucesso!"),
+								"result").recursive().serialize();
+	}
+	
 	/**
 	 * Processa o resultado dos consignados da cota.
 	 *  

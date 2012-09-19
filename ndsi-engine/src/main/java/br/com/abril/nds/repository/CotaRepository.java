@@ -266,4 +266,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
      */
     int obterCountQtdeCotaMunicipio();
 
+	void ativarCota(Integer numeroCota);
 }
