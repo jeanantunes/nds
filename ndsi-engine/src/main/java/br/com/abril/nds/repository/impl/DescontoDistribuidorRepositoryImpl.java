@@ -43,13 +43,19 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 				.append("then 'Diversos' ")
 				.append("when (select count(fornecedor.id) from DescontoDistribuidor descontoFor JOIN descontoFor.fornecedores fornecedor  ")
 					.append("where descontoFor.id = desconto.id ) = 1 then pessoa.razaoSocial ")
-			.append("else null end) as fornecedor, ")
-		    .append(" 'Geral' as descTipoDesconto ");
+			.append("else null end) as fornecedor, 	")
+		    .append(" 'Geral' as descTipoDesconto 	");
 		
-		hql.append(" from DescontoDistribuidor desconto")
+		hql.append(" from DescontoDistribuidor desconto		")
 			.append(" JOIN desconto.fornecedores fornecedor ")
-			.append(" JOIN fornecedor.juridica pessoa ")
-			.append(" group by desconto.id");
+			.append(" JOIN fornecedor.juridica pessoa 		");
+			
+		
+		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
+			hql.append(" where fornecedor.id in (:idFornecedores) ");
+		}
+		
+		hql.append(" group by desconto.id ");
 		
 		hql.append(getOrdenacao(filtro));
 		
@@ -58,6 +64,10 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(TipoDescontoDTO.class);
 
 		query.setResultTransformer(resultTransformer);
+		
+		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
+			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
+		}
 		
 		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());

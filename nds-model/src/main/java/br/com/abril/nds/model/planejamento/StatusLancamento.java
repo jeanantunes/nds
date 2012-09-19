@@ -5,7 +5,6 @@ public enum StatusLancamento {
 	PLANEJADO("Planejado"),
 	CONFIRMADO("Confirmado"),
 	BALANCEADO("Balanceado"),
-	BALANCEADO_LANCAMENTO("Balanceado Lançamento"),
 	ESTUDO_FECHADO("Estudo Fechado"),
 	FURO("Furo"),
 	EXPEDIDO("Expedido"),

@@ -466,7 +466,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		data = replaceAll(data, "</PRE>", "");
 		
 		var responseJson = jQuery.parseJSON(data);
-		
 		if (responseJson.mensagens) {
 			exibirMensagemDialog(
 				responseJson.mensagens.tipoMensagem, 
@@ -474,12 +473,16 @@ var parametroCobrancaCotaController = $.extend(true, {
 			);
 			
 		} else {
-			$("#parametroCobrancaArquivo > *").remove();
-			
-			var fileName = '<span id="parametroCobrancaFileName">'+responseJson.fileName+'</span>';
-			
-			$("#parametroCobrancaArquivo", this.workspace).append(fileName);
+			parametroCobrancaCotaController.showFileName(responseJson.fileName);
 		}			
+	},
+	
+	showFileName : function(fileName) {
+		$("#parametroCobrancaArquivo > *").remove();
+		
+		var fileName = '<span id="parametroCobrancaFileName">'+fileName+'</span>';
+		
+		$("#parametroCobrancaArquivo", this.workspace).append(fileName);
 	},
 	
 	carregarArquivoContrato : function() {
@@ -493,9 +496,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/carregarArquivoContrato", params,
 				function(data){
 					if(data.isRecebido) {
+						
 						_this.exibe_form_upload(true);
 						$("#parametroCobrancaIsRecebidoCheckBox").attr("checked", true);
-						$("#parametroCobrancaFileName").html(data.fileName);
+						_this.showFileName(data.fileName);
 					}
 		});
 	},
@@ -914,15 +918,17 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 	//IMPRESSÃO DO CONTRATO
 	imprimeContrato : function(){
+		debugger;
 		
-		var fileName =  $("#parametroCobrancaFileName",this.workspace).html();
-		
-		if (!fileName) return;
 		
 		var idCota = $("#_idCota", this.workspace).val();
 		var dataInicio = $("#parametroCobrancaDateInicio",this.workspace).val();
 		var dataTermino = $("#parametroCobrancaDateTermino",this.workspace).val();
 		var isRecebido = $("#parametroCobrancaIsRecebidoCheckBox").is(":checked");
+		
+		var fileName =  $("#parametroCobrancaFileName",this.workspace).html();
+		
+		if (!fileName) isRecebido = false;
 		
 	    document.location.assign(
 	    		contextPath + "/cota/parametroCobrancaCota/imprimeContrato?" +

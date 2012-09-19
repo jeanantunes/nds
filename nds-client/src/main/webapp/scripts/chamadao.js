@@ -59,13 +59,13 @@ var chamadaoController = $.extend(true, {
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
-				width : 70,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Produto',
 				name : 'produto',
-				width : 80,
+				width : 85,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -75,39 +75,51 @@ var chamadaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
+				display : 'Brinde',
+				name : 'brinde',
+				width : 30,
+				sortable : true,
+				align : 'right'
+			}, {
 				display : 'Preço Venda R$',
 				name : 'precoVenda',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Preço Desconto R$',
 				name : 'precoDesconto',
-				width : 110,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 90,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Fornecedor',
 				name : 'fornecedor',
-				width : 130,
+				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Recolhimento',
 				name : 'dataRecolhimento',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Valor R$',
 				name : 'valorTotal',
 				width : 70,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Valor c/ desconto R$',
+				name : 'valorTotalDesconto',
+				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -164,6 +176,8 @@ var chamadaoController = $.extend(true, {
 		
 		var numeroCota;
 		var dataChamadaoFormatada;
+		var idFornecedor;
+		var idEditor;
 		
 		if(followUp != ''){
 			numeroCota = $("#numeroCotaFollowUp", chamadaoController.workspace).val();
@@ -171,7 +185,8 @@ var chamadaoController = $.extend(true, {
 		}else{
 			numeroCota = $("#numeroCota", chamadaoController.workspace).val();
 			dataChamadaoFormatada = $("#dataChamadao", chamadaoController.workspace).val();
-			var idFornecedor = $("#idFornecedor", chamadaoController.workspace).val();
+			idFornecedor = $("#idFornecedor", chamadaoController.workspace).val();
+			idEditor = $("#idEditor", chamadaoController.workspace).val();
 		}
 		
 		$(".chamadaoGrid", chamadaoController.workspace).flexOptions({
@@ -191,7 +206,8 @@ var chamadaoController = $.extend(true, {
 			params: [
 		         {name:'numeroCota', value: numeroCota},
 		         {name:'dataChamadaoFormatada', value: dataChamadaoFormatada},
-		         {name:'idFornecedor', value: idFornecedor}
+		         {name:'idFornecedor', value: idFornecedor},
+		         {name:'idEditor', value: idEditor}
 		    ],
 		    newp: 1,
 		});
@@ -425,6 +441,28 @@ var chamadaoController = $.extend(true, {
 					},
 				   null,
 				   true
+		);
+	},
+	
+	cancelarChamadao : function(){
+		
+		$.postJSON(contextPath + "/devolucao/chamadao/cancelarChamadao",
+				   null,
+				   function(result) {
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							
+							exibirMensagem(tipoMensagem, listaMensagens);
+						}
+						
+						$(".chamadaoGrid", chamadaoController.workspace).flexReload();
+						
+						$("#checkAll", chamadaoController.workspace).attr("checked", false);
+					},
+				   null
 		);
 	}
 	

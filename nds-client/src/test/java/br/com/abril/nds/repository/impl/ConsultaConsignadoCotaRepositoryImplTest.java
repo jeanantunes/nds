@@ -186,6 +186,10 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 				this.consignadoCotaRepository.buscarConsignadoCota(this.filtroConsultaConsignadoCotaDTO, false);
 		
 		Assert.assertNotNull(lista);
+
+		int tamanhoEsperado = 4;
+		
+		Assert.assertEquals(tamanhoEsperado, lista.size());
 	}
 	
 	@Test

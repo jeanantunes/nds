@@ -53,6 +53,7 @@ public class ConfirmacaoExpedicaoController {
 		protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
 		protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro não esperado ao confirmar expedições.";
 		protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
+		protected static final String MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Há matriz de lançamento confirmada.";
 		
 		private static final Logger LOG = LoggerFactory
 				.getLogger(ConfirmacaoExpedicaoController.class);
@@ -294,6 +295,8 @@ public class ConfirmacaoExpedicaoController {
 			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
 			
 			try {
+				validarExistenciaMatriz(DateUtil.parseData(dtLancamento, Constantes.DATE_PATTERN_PT_BR));
+				
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 			
@@ -384,5 +387,16 @@ public class ConfirmacaoExpedicaoController {
 				
 			}
 			return grid;
-		}				
+		}
+		
+		/**
+		 * Válida
+		 * 
+		 * @param dataLancamento
+		 */
+		private void validarExistenciaMatriz(Date dataLancamento) {
+			if(lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
+				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO));
+			}
+		}
 	}
