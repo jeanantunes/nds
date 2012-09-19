@@ -120,16 +120,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	private void escreverArquivo(Message message, Distribuidor distribuidor, List<Estudo> listaEstudo) {
 		
 		try {
-			
-			String ems0132PathName = (String) message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue());
-			
-			if (ems0132PathName == null) {
-				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, "Path do MDC não setado.");
-				throw new RuntimeException("Path do MDC não setado.");
-			}
-			
-			String fileName = ems0132PathName + "/LANCAMENTO.NEW";
-
+						
 			
 			if (listaEstudo == null || listaEstudo.isEmpty()) {
 				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Nenhum dado encontrado para geracao do arquivo.");
@@ -138,7 +129,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 			
 			Calendar dataAtual = Calendar.getInstance();			
 			
-			File arquivo = new File(fileName);
+			File arquivo = new File(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/LANCAMENTO.NEW");
 			
 			PrintWriter writer = 
 				new PrintWriter(
@@ -154,15 +145,16 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 					
 					for (Fornecedor fornecedor : produto.getFornecedores()) {
 
-						output.setCodigoDistribuidor(distribuidor.getCodigo());
-						output.setCodigoDistribuidor(1);
+						output.setCodigoDistribuidor( Long.valueOf( distribuidor.getCodigoDistribuidorDinap() ));						
 						output.setDataGeracaoArquivo(dataAtual.getTime());
 						output.setHotaGeracaoArquivo(dataAtual.getTime());
 						output.setMnemonicoTabela(CODIGO_LANP);
 						output.setCodigoContexto(produto.getCodigoContexto());
 						output.setCodigoFornecedor(fornecedor.getCodigoInterface());
-						output.setCodigoProduto(produto.getCodigo());
-						output.setNumeroLancamento(estudo.getId());
+						output.setCodigoProduto( estudo.getProdutoEdicao().getProduto().getCodigo() );
+						output.setNumeroEdicao(estudo.getProdutoEdicao().getNumeroEdicao());
+						output.setNumeroLancamento( 0L );
+						output.setNumeroFase(0);
 						output.setDataLancamento(estudo.getDataLancamento());
 					}
 				}
