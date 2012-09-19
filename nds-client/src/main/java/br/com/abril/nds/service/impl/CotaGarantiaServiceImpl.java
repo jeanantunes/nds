@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,6 +104,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	
 	@Autowired 
 	private FormaCobrancaCaucaoLiquidaRepository formaCobrancaRepository;
+	
+    private static final  Logger LOGGER = LoggerFactory.getLogger(CotaGarantiaServiceImpl.class);
 	
 	/*
 	 * (non-Javadoc)
@@ -882,13 +886,17 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	    } else if (TipoGarantia.CHEQUE_CAUCAO == historico.getTipoGarantia()) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaChequeCaucao());
 	    } else if (TipoGarantia.IMOVEL == historico.getTipoGarantia()) {
-	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiasImovel());
+	        return CotaDTOAssembler.toCotaGarantiaDTOImovel(historico.getGarantiasImovel());
 	    } else if (TipoGarantia.NOTA_PROMISSORIA == historico.getTipoGarantia()) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaNotaPromissoria());
 	    } else if (TipoGarantia.CAUCAO_LIQUIDA == historico.getTipoGarantia()) {
 	        return CotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaCaucaoLiquida());
+	    } else if (TipoGarantia.OUTROS == historico.getTipoGarantia()) {
+	        return CotaDTOAssembler.toCotaGarantiaDTOOutros(historico.getGarantiasOutros());
+	    } else {
+	        LOGGER.error("Tipo de garantia não tratado: " + historico.getTipoGarantia());
+	        throw new UnsupportedOperationException("Tipo de garantia não tratado: " + historico.getTipoGarantia());
 	    }
-        return null;
     }
 
     /**

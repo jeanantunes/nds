@@ -835,5 +835,21 @@ public class HistoricoTitularidadeCota implements Serializable {
         }
         return null;
     }
-    
+
+    /***
+     * Retorna as garantias do tipo outros do histórico de titularidade da cota
+     * 
+     * @return coleção de garantias do tipo outros para o histórico de
+     *         titularidade da cota
+     */
+    public Collection<HistoricoTitularidadeCotaOutros> getGarantiasOutros() {
+        List<HistoricoTitularidadeCotaOutros> outros = new ArrayList<HistoricoTitularidadeCotaOutros>();
+        if (TipoGarantia.OUTROS == getTipoGarantia()) {
+            for (HistoricoTitularidadeCotaGarantia garantia : garantias) {
+                outros.add(HistoricoTitularidadeCotaOutros.class.cast(garantia));
+            }
+        }
+        return outros;
+    }
+
 }

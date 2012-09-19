@@ -16,8 +16,7 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
  */
 @Entity
 @DiscriminatorValue("IMOVEL")
-public class HistoricoTitularidadeCotaImovel extends
-        HistoricoTitularidadeCotaGarantia {
+public class HistoricoTitularidadeCotaImovel extends HistoricoTitularidadeCotaGarantia {
 
     private static final long serialVersionUID = 1L;
 

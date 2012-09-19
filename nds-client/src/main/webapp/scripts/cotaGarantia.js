@@ -1791,6 +1791,11 @@ function Outros(idCota, cotaGarantia) {
 			valor:null,
 			validade:null
 		};
+    if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        $("#cotaGarantiaOutrosIncluirNovo").show();
+    } else {
+        $("#cotaGarantiaOutrosIncluirNovo").hide();
+    }
 }
 Outros.prototype.path = contextPath + "/cadastro/garantia/";
 
@@ -1863,6 +1868,7 @@ Outros.prototype.limparForm = function() {
 	this.itemEdicao = null;
 	
 	this.dataBind();
+
 	$("#cotaGarantiaOutrosSalvaEdicao").hide();
 	$("#cotaGarantiaOutrosIncluirNovo").show();
 };
@@ -1885,13 +1891,19 @@ Outros.prototype.dataBind = function() {
 
 
 Outros.prototype.popularGrid = function() {
-	
-	if (!(this.cotaGarantia && this.cotaGarantia.outros)) {
-		this.cotaGarantia.outros =  new Array();
-	} 
-	
+
+    var lista = [];
+
+    if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        if (this.cotaGarantia && this.cotaGarantia.outros) {
+            lista = this.cotaGarantia.outros;
+        }
+    } else {
+        lista = this.cotaGarantia;
+    }
+
 	this.grid.flexAddData({
-		rows : toFlexiGridObject(this.cotaGarantia.outros),
+		rows : toFlexiGridObject(lista),
 		page : 1,
 		total : 1
 	});
@@ -1950,16 +1962,21 @@ Outros.prototype.destroy = function() {
 };
 
 Outros.prototype.edita = function(id) {
-	
-	this.outro = this.cotaGarantia.outros[id];
-	
+	if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+        this.outro = this.cotaGarantia.outros[id];
+    } else {
+        this.outro = this.cotaGarantia[id];
+    }
+
 	this.itemEdicao = id;
 	
 	this.dataBind();
+
+    if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+	    $("#cotaGarantiaOutrosSalvaEdicao").show();
 	
-	$("#cotaGarantiaOutrosSalvaEdicao").show();
-	
-	$("#cotaGarantiaOutrosIncluirNovo").hide();
+    	$("#cotaGarantiaOutrosIncluirNovo").hide();
+    }
 	
 };
 
@@ -2014,11 +2031,13 @@ Outros.prototype.initGrid = function() {
 											+ ');" ><img src="'
 											+ contextPath
 											+ '/images/ico_editar.gif" border="0" style="margin-right:10px;" /></a>';
-									acao += '<a href="javascript:;" onclick="tipoCotaGarantia.controller.remove('
-											+ idOutros
-											+ ');" ><img src="'
-											+ contextPath
-											+ '/images/ico_excluir.gif" border="0" /></a>';
+									if (tipoCotaGarantia.isModoTelaCadastroCota()) {
+                                        acao += '<a href="javascript:;" onclick="tipoCotaGarantia.controller.remove('
+                                            + idOutros
+                                            + ');" ><img src="'
+                                            + contextPath
+                                            + '/images/ico_excluir.gif" border="0" /></a>';
+                                    }
 
 									value.cell.acao = acao;
 								});
@@ -2032,9 +2051,9 @@ Outros.prototype.initGrid = function() {
 		colModel : [ {
 			display : 'Descrição',
 			name : 'descricao',
-			width : 270,
+			width : 370,
 			sortable : false,
-			align : 'center'
+			align : 'left'
 		},{
 			display : 'Valor R$',
 			name : 'valor',
@@ -2044,14 +2063,14 @@ Outros.prototype.initGrid = function() {
 		},{
 			display : 'Validade',
 			name : 'validade',
-			width : 270,
+			width : 70,
 			sortable : false,
 			align : 'center'
 
 		},{
 			display : 'Ação',
 			name : 'acao',
-			width : 270,
+			width : 70,
 			sortable : false,
 			align : 'center'
 
