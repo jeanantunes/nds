@@ -121,19 +121,22 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			
+			String ems0132PathName = (String) message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue());
+			
+			if (ems0132PathName == null) {
+				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, "Path do MDC não setado.");
+				throw new RuntimeException("Path do MDC não setado.");
+			}
+			
+			String fileName = ems0132PathName + "/LANCAMENTO.NEW";
+
+			
 			if (listaEstudo == null || listaEstudo.isEmpty()) {
 				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Nenhum dado encontrado para geracao do arquivo.");
 				throw new RuntimeException("Nenhum dado encontrado para geracao do arquivo.");
 			}
 			
-			Calendar dataAtual = Calendar.getInstance();
-			
-			String fileName = getFileNamePath(message, dataAtual);
-			
-			if (fileName == null) {
-				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, "Nome do arquivo invalido.");
-				throw new RuntimeException("Nome do arquivo invalido.");
-			}
+			Calendar dataAtual = Calendar.getInstance();			
 			
 			File arquivo = new File(fileName);
 			
@@ -178,27 +181,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 	
-	/**
-	 * Retorna o nome do arquivo a ser gerado.
-	 * 
-	 * @param message
-	 * @param dataAtual
-	 * @return
-	 */
-	private String getFileNamePath(Message message, Calendar dataAtual) {
 
-		String data = DateUtil.formatarData(dataAtual.getTime(), "MMddyyyy");
-		String hora = DateUtil.formatarData(dataAtual.getTime(), "HHmmss");
-		
-		String ems0132PathName = (String) message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue());
-		
-		if (ems0132PathName == null) {
-			return null;
-		}
-		
-		return ems0132PathName + "/" + data + hora + ".drl";
-	}
-	
 	/**
 	 * Busca o Distribuidor.
 	 * 
