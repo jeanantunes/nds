@@ -677,10 +677,6 @@ TipoCotaGarantia.prototype.tipo = {
 		label : 'Caução Liquida',
 		controller : CaucaoLiquida
 	},
-	'ANTECEDENCIA_VALIDADE' : {
-		label : 'Antecedência Validade',
-		controller : CaucaoLiquida
-	},
 	'OUTROS' : {
 		label : 'Outros',
 		controller : Outros
@@ -739,18 +735,20 @@ TipoCotaGarantia.prototype.bindData = function(data) {
 	var select = $("#tipoGarantiaSelect", _workspace);
 
 	for ( var index in data) {
-		var tipo = data[index];
-		var option = document.createElement("option");
-			
-		option.text = this.tipo[tipo].label;
-		
-		option.value = tipo;
-		
-		try {
-			$(select).append(option, select.options[null]);
-		} catch (e) {
-			$(select).append(option, null);
-		}
+        var tipo = data[index];
+		if (this.tipo[tipo]) {
+            var option = document.createElement("option");
+
+            option.text = this.tipo[tipo].label;
+
+            option.value = tipo;
+
+            try {
+                $(select).append(option, select.options[null]);
+            } catch (e) {
+                $(select).append(option, null);
+            }
+        }
 	}
 	
 };
