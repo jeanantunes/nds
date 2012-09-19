@@ -50,7 +50,7 @@ public class EMS0123Header implements Serializable {
 		this.horaMovimento = horaMovimento;
 	}
 	
-	@Field(offset=18, length=6)
+	@Field(offset=18, length=6, paddingChar='0')
 	public Integer getQtdeRegistrosDetalhe() {
 		return qtdeRegistrosDetalhe;
 	}
