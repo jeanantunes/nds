@@ -1696,7 +1696,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		List<Cota> listaCotas = new ArrayList<Cota>();
 		
-		Set<Long> idCotas = this.cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox, situacao);
+		Set<Long> idCotas = this.cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox, situacao, null, null);
 		
 		for(Long idCota : idCotas ) {
 			

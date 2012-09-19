@@ -29,8 +29,8 @@ public interface GeracaoNFeService {
 	 */
 	public abstract List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
 	Intervalo<Integer> intervalorCota,
-	Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
-	String sortorder, Integer rp, Integer page, SituacaoCadastro situacaoCadastro);
+	Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota, 
+	String sortname, String sortorder, Integer rp, Integer page, SituacaoCadastro situacaoCadastro);
 
 
 	/**

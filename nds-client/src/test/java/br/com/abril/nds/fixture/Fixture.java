@@ -40,6 +40,7 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoCota;
@@ -1855,7 +1856,6 @@ public class Fixture {
 		diferenca.setTipoDiferenca(tipoDiferenca);
 		diferenca.setStatusConfirmacao(statusConfirmacao);
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
-		diferenca.setMovimentoEstoque(movimentoEstoque);
 		diferenca.setAutomatica(automatica);
 		diferenca.setTipoEstoque(tipoEstoque);
 		
@@ -2268,6 +2268,7 @@ public class Fixture {
 		formaBoleto.setTaxaMulta(taxaMulta);
 		formaBoleto.setRecebeCobrancaEmail(recebeCobrancaEmail);
 		formaBoleto.setParametroCobrancaCota(parametroCobranca);
+		formaBoleto.setFormaCobrancaBoleto(FormaCobrancaBoleto.SEM_REGISTRO);
 		
 		
 		return formaBoleto;

@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,12 +28,15 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BancoService;
@@ -42,10 +46,13 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.util.ArquivoImportFileFilter;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -93,6 +100,9 @@ public class ParametroCobrancaCotaController {
 	
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
     
     private HttpServletResponse httpResponse;
 	
@@ -487,11 +497,14 @@ public class ParametroCobrancaCotaController {
 	@Path("/imprimeContrato")
 	public void imprimeContrato(Long idCota, Date dataInicio, Date dataTermino, boolean isRecebido) throws Exception {
 		
-		byte[] b = null;
+		byte[] bytes = null;
 		
 		ContratoVO contrato = (ContratoVO) (this.session.getAttribute(CONTRATO_UPLOADED));
 		
 		File arquivo = null;
+		
+		String contentType = "application/pdf";
+		String extension = ".pdf";
 		
 		if (contrato != null) {
 			
@@ -507,18 +520,22 @@ public class ParametroCobrancaCotaController {
 		}
 		
 		if (isRecebido && (arquivo != null)) {
-			b = this.obterArquivoAnexo();
+			bytes = this.obterArquivoAnexo();
+			
+			extension = FileImportUtil.getExtensionFile(arquivo.getName());
+			contentType = FileImportUtil.getContentTypeByExtension(extension);
+			
 		} else {
-			b = this.parametroCobrancaCotaService.geraImpressaoContrato(idCota, dataInicio, dataTermino);
+			bytes = this.parametroCobrancaCotaService.geraImpressaoContrato(idCota, dataInicio, dataTermino);
 		}
 		
 		this.session.setAttribute(CONTRATO_UPLOADED, contrato);
 		
-		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=contrato.pdf");
+		this.httpResponse.setContentType(contentType);
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=contrato"+extension);
 
 		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(b);
+		output.write(bytes);
 
 		httpResponse.flushBuffer();
 	}
@@ -540,6 +557,8 @@ public class ParametroCobrancaCotaController {
 			
 			arquivo = IOUtils.toByteArray(fis);
 			
+			fis.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -558,10 +577,40 @@ public class ParametroCobrancaCotaController {
     		File file = contrato.getTempFile();
     		
     		if (file != null) {
-    			//TODO: salvar arquivo no local fixo
+
+    			ParametroSistema pathContrato = 
+    					this.parametroSistemaService.buscarParametroPorTipoParametro(
+    							TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
+    			
+    			Cota cota = this.cotaService.obterPorId(contrato.getIdCota());
+    			
+    			File path = new File(pathContrato.getValor(), cota.getNumeroCota().toString());
+    			
+    			path.mkdirs();
+    			
+    			this.fileService.limparDiretorio(path);
+    			
+    			File novoArquivo = new File(path, file.getName());
+    			
+    			try {
+					this.fileService.persistirTemporario(path.toString());
+					
+					FileOutputStream fos = new FileOutputStream(novoArquivo);
+					
+					FileInputStream fis = new FileInputStream(file);
+								
+					IOUtils.copyLarge(fis, fos);
+
+					fis.close();
+					
+					fos.close();
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir contrato anexo"));
+				}
     		}
     	} 
-		
 	}
     
 	
@@ -590,12 +639,12 @@ public class ParametroCobrancaCotaController {
 		String fileName = uploadedFile.getFileName();
 		
 		File diretorio = this.getTemporaryDirUpload(Integer.parseInt(numeroCota));
-		
-		diretorio.mkdirs();
 
 		File arquivo = new File(diretorio, fileName);
 		
 		FileOutputStream fileOutStream = null;;
+		
+		diretorio.mkdirs();
 		
 		try {
 		
@@ -618,7 +667,7 @@ public class ParametroCobrancaCotaController {
 		}
 		
 		contrato.setTempFile(arquivo);
-		
+		contrato.setRecebido(true);
 		this.session.setAttribute(CONTRATO_UPLOADED, contrato);
 		
 		result.use(PlainJSONSerialization.class).from(fileName, "fileName").recursive().serialize();

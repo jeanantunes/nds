@@ -642,7 +642,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(this.ordenarConsultaCota(filtro));
 
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("principal", Boolean.TRUE);
 
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());
@@ -701,7 +700,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(this.getSqlPesquisaCota(filtro, Boolean.TRUE));
 
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("principal", Boolean.TRUE);
 
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());
@@ -738,6 +736,44 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return (Long) query.uniqueResult();
 	}
 
+	private String getSubSqlPesquisaTelefone() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" ( select telefone.ddd || '-' || telefone.numero ");
+		
+		hql.append(" from  ");
+		
+		hql.append(" Telefone telefone where telefone.id = 	");
+		
+		hql.append(" ( select max(telefone.id) from TelefoneCota telefoneCota inner join telefoneCota.telefone as telefone");
+		
+		hql.append(" where telefoneCota.cota.id = cota.id and ");
+		
+		hql.append(" telefoneCota.principal = true ) ) as telefone, ");
+		
+		return hql.toString();
+		
+	}
+	
+	private String getSubSqlPesquisaContatoPDV() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" ( select pdv.contato ");
+		
+		hql.append(" from  ");
+		
+		hql.append(" PDV pdv ");
+		
+		hql.append(" where pdv.id =  ");
+		
+		hql.append(" ( select max(pdv.id) from PDV pdv where pdv.cota.id = cota.id and pdv.caracteristicas.pontoPrincipal = true ) ) as contato,");
+		
+		return hql.toString();
+		
+	}
+	
 	private String getSqlPesquisaCota(FiltroCotaDTO filtro, boolean isCount) {
 
 		StringBuilder hql = new StringBuilder();
@@ -754,56 +790,99 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 					.append(" case when (pessoa.cpf is not null) then ( pessoa.cpf )")
 					.append(" when (pessoa.cnpj is not null) then ( pessoa.cnpj )")
 					.append(" else null end as numeroCpfCnpj, ")
-					.append(" pdv.contato as contato ,")
-					.append(" telefone.ddd || '-'|| telefone.numero as telefone ,")
+					
+					
+					.append(getSubSqlPesquisaContatoPDV())
+					.append(getSubSqlPesquisaTelefone())
+					
 					.append(" pessoa.email as email ,")
 					.append(" cota.situacaoCadastro as status, ")
 					.append(" cota.box.nome as descricaoBox ");
 		}
 
-		hql.append(" FROM Cota cota ")
-				.append(" join cota.pessoa pessoa ")
-				.append(" left join cota.pdvs pdv ")
-				.append(" left join cota.telefones telefonesCota ")
-				.append(" left join telefonesCota.telefone telefone ")
-				.append(" left join cota.enderecos enderecoCota ")
-				.append(" left join enderecoCota.endereco endereco ")
+		hql.append(" FROM Cota cota 								")
+				.append(" join cota.pessoa pessoa 					")
+				.append(" left join cota.enderecos enderecoCota 	")
+				.append(" left join enderecoCota.endereco endereco 	");
 
-				.append(" WHERE")
-				.append(" ( telefonesCota.principal is null OR telefonesCota.principal=:principal ) ")
-				.append(" AND (pdv.caracteristicas.pontoPrincipal is null OR pdv.caracteristicas.pontoPrincipal=:principal) ");
+		
+		
+		if(	filtro.getNumeroCota() != null ||
+			(filtro.getNumeroCpfCnpj() != null && !filtro.getNumeroCpfCnpj().trim().isEmpty()) ||
+			(filtro.getNomeCota() != null && !filtro.getNomeCota().trim().isEmpty()) ||
+			(filtro.getLogradouro() != null && !filtro.getLogradouro().trim().isEmpty()) ||
+			(filtro.getBairro() != null && !filtro.getBairro().trim().isEmpty()) ||
+			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty())) {
+			
+			hql.append(" WHERE ");
+			
+		}
+		
+		boolean indAnd = false;
 
 		if (filtro.getNumeroCota() != null) {
-			hql.append(" AND cota.numeroCota =:numeroCota ");
+			
+			hql.append(" cota.numeroCota =:numeroCota ");
+			
+			indAnd = true;
 		}
 
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
-			hql.append(" AND ( upper (pessoa.cpf) like(:numeroCpfCnpj) OR  upper(pessoa.cnpj) like upper (:numeroCpfCnpj) ) ");
+			
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper (pessoa.cpf) like(:numeroCpfCnpj) OR  upper(pessoa.cnpj) like upper (:numeroCpfCnpj) ) ");
+			
+			indAnd = true;
 		}
 
 		if (filtro.getNomeCota() != null
 				&& !filtro.getNomeCota().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(pessoa.nome) like upper(:nomeCota) OR  upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper(pessoa.nome) like upper(:nomeCota) OR  upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
+			
+			indAnd = true;
 		}
 		
 		if (filtro.getLogradouro() != null
 				&& !filtro.getLogradouro().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(endereco.logradouro) like upper(:logradouro) )");
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper(endereco.logradouro) like upper(:logradouro) )");
+			
+			indAnd = true;
 		}
 		
 		if (filtro.getBairro() != null
 				&& !filtro.getBairro().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(endereco.bairro) like upper(:bairro) )");
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper(endereco.bairro) like upper(:bairro) )");
+			
+			indAnd = true;
 		}
 		
 		if (filtro.getMunicipio() != null
 				&& !filtro.getMunicipio().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(endereco.cidade) like upper(:municipio) )");
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper(endereco.cidade) like upper(:municipio) )");
 		}
 
 		return hql.toString();
@@ -1154,7 +1233,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao) {
+	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao, Long idRoteiro, Long idRota) {
 		
 		Set<Long> listaIdCotas = new HashSet<Long>();
 		
@@ -1178,6 +1257,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if(situacao != null){
 			criteria.add(Restrictions.eq("situacaoCadastro", situacao));
 		}
+		
+		criteria.createAlias("box.roteiros", "roteiro");
+		
+		if (idRoteiro != null){
+			
+			criteria.add(Restrictions.eq("roteiro.id", idRoteiro));
+		}
+		
+		if (idRota != null){
+			
+			criteria.createAlias("roteiro.rotas", "rota");
+			criteria.add(Restrictions.eq("rota.id", idRota));
+		}
+		
 		listaIdCotas.addAll(criteria.list());
 		
 		return listaIdCotas;

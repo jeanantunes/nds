@@ -72,4 +72,5 @@ public interface FileService {
 	 * 
 	 */
 	void validarArquivo(int maxSize, UploadedFile file, FileType... extensoes) throws IOException;
+	
 }

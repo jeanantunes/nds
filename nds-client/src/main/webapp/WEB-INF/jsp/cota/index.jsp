@@ -9,7 +9,7 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
-<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pessoa.js"></script>
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
 
@@ -21,6 +21,8 @@
 
 
 <script language="javascript" type="text/javascript">
+	
+	var pesquisaCotaCadastroCota = new PesquisaCota();
 	
 	$(function() {
 		MANTER_COTA.init();	
@@ -100,7 +102,7 @@
 				      		 class="nome_jornaleiro" 
 				      		 maxlength="255"
 				      		 style="width:200px;"
-				      		 onkeyup="PESSOA.autoCompletarPorNome('#descricaoPessoa');" />
+				      		 onkeyup="pesquisaCotaCadastroCota.autoCompletarPorNome('#descricaoPessoa');" />
                </td>
                <td width="83">CPF / CNPJ:</td>
                <td width="219">
