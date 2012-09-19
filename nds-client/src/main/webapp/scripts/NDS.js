@@ -659,24 +659,10 @@ function focarPrimeiroElemento() {
 }
 
 function escondeHeader(){
-	$('.sub-header').fadeOut('fast');
-	$('#sobeHeader').fadeOut('fast');
-	$('.headerEsconde').fadeIn('fast');
-	$('#desceHeader').fadeIn('fast');
-	// Elemento existe
-	if ($('.gridOff').length != 0) {
-		$('.gridOff').removeClass('gridOff').addClass('gridOn');
-	}
+	$('.header').hide();
 }
 function mostraHeader(){
-	$('.sub-header').fadeIn('fast');
-	$('#sobeHeader').fadeIn('fast');
-	$('.headerEsconde').fadeOut('fast');
-	$('#desceHeader').fadeOut('fast');
-	// Elemento existe
-	if ($('.gridOn').length != 0) {
-		$('.gridOn').removeClass('gridOn').addClass('gridOff');
-	}
+	$('.header').show();
 }
 
 /**
@@ -717,7 +703,14 @@ function limparCache() {
 }
 
 function redimensionarWorkspace() {
-	$("#workspace").innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
+	// Faz as abas do workspace ficarem por cima de tudo S2
+	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide)').css("overflow-y", "auto");	
+	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide)').innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
+
+	/*if ($('.areaBts').length != 0) {
+		$('.areaBts').addClass('navbar-fixed-top');
+	}*/
+	
 }
 
 //@ sourceURL=NDS.js

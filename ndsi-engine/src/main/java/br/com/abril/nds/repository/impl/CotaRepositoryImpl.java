@@ -1461,6 +1461,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return hql.toString();
 	}
 
+<<<<<<< HEAD
     /**
      * {@inheritDoc}
      */
@@ -1501,4 +1502,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
         query.setParameter("id", idSocio);
         return (HistoricoTitularidadeCotaSocio) query.uniqueResult();
     }
+=======
+	@Override
+	public void ativarCota(Integer numeroCota) {
+		
+		Query query = 
+				this.getSession().createQuery(
+						"update Cota set situacaoCadastro = :status where numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("status", SituacaoCadastro.ATIVO);
+		
+		query.executeUpdate();
+	}	
+>>>>>>> DGBti/master
 }

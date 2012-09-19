@@ -101,7 +101,16 @@
 							  border="0" hspace="5"
 							  src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
 						</span>
-	
+						
+						<span class="bt_novos" title="Cancelar">
+							<a href="javascript:;" onclick="chamadaoController.cancelarChamadao();">
+								<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" hspace="5" border="0" />
+								Cancelar
+							</a>
+						</span>
+						
+						<br clear="all" />
+						
 	      				<span class="bt_novos" title="Gerar Arquivo">
 	      					<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=XLS">
 								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />

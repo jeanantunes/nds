@@ -307,4 +307,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
      */
     HistoricoTitularidadeCotaSocio obterSocioHistoricoTitularidade(Long idSocio);
 
+	void ativarCota(Integer numeroCota);
 }
