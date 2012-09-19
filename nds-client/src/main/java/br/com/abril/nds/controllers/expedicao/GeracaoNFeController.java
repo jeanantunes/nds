@@ -182,6 +182,14 @@ public class GeracaoNFeController {
 		result.use(CustomMapJson.class).put("result", true).serialize();
 	}
 	
+	@Post("/transferirSuplementar.json")
+	public void transferirSuplementar(List<Long> idsCota){
+		
+		//TODO
+		
+		result.use(CustomMapJson.class).put("result", true).serialize();
+	}
+	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		List<ItemDTO<Long, String>> listaTipoNotaFiscal = 
