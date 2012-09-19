@@ -65,10 +65,6 @@ public class Diferenca implements Serializable {
 	@Column(name = "STATUS_CONFIRMACAO", nullable = false)
 	private StatusConfirmacao statusConfirmacao;
 	
-	@OneToOne(optional = true)
-	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
-	private MovimentoEstoque movimentoEstoque;
-	
 	@Column(name = "AUTOMATICA")
 	private Boolean automatica = false;
 	
@@ -98,7 +94,6 @@ public class Diferenca implements Serializable {
 		this.produtoEdicao = diferenca.produtoEdicao;
 		this.tipoDiferenca = diferenca.tipoDiferenca;
 		this.statusConfirmacao = diferenca.statusConfirmacao;
-		this.movimentoEstoque = diferenca.movimentoEstoque;
 		this.automatica = diferenca.automatica;
 		this.tipoEstoque = diferenca.tipoEstoque;
 		this.lancamentoDiferenca = diferenca.lancamentoDiferenca;
@@ -160,14 +155,6 @@ public class Diferenca implements Serializable {
 
 	public void setStatusConfirmacao(StatusConfirmacao statusConfirmacao) {
 		this.statusConfirmacao = statusConfirmacao;
-	}
-
-	public MovimentoEstoque getMovimentoEstoque() {
-		return movimentoEstoque;
-	}
-
-	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
-		this.movimentoEstoque = movimentoEstoque;
 	}
 
 	public Boolean isAutomatica() {
