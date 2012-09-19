@@ -265,9 +265,9 @@ var produtoController = $.extend(true, {
 						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
 						$("#segmentacaoTemaSecundario", produtoController.workspace).val(result.temaSecundario);
 
-						if (result.formaComercializacao == 'Conta Firme') {
+						if (result.formaComercializacao == 'CONTA_FIRME') {
 							$("#formaComercializacaoContaFirme", this.workspace).attr('checked', true);
-						} else if (result.formaComercializacao == 'Consignado') {
+						} else if (result.formaComercializacao == 'CONSIGNADO') {
 							$("#formaComercializacaoConsignado", this.workspace).attr('checked', true);
 						}
 						
