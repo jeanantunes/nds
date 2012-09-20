@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0133.outbound;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -15,24 +16,25 @@ public class EMS0133Output implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Integer codigoDistribuidor;
+	private String codigoDistribuidor;
 	private Date dataGeracaoArquivo;
 	private Date horaGeracaoArquivo;
 	private String mnemonicoTabela;
 	private Integer contextoProduto;
 	private Integer codigoFornecedorProduto;
 	private String codigoProduto;
+	private Long numeroEdicao;
 	private Date dataRecolhimento;
 	
 	@Field(offset = 1, length = 7)
-	public Integer getCodigoDistribuidor() {
+	public String getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
-	public void setCodigoDistribuidor(Integer codigoDistribuidor) {
+	public void setCodigoDistribuidor(String codigoDistribuidor) {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 	
-	@FixedFormatPattern("MMddyyyy")
+	@FixedFormatPattern("ddMMyyyy")
 	@Field(offset = 8, length = 8)
 	public Date getDataGeracaoArquivo() {
 		return dataGeracaoArquivo;
@@ -76,7 +78,7 @@ public class EMS0133Output implements Serializable{
 		this.codigoFornecedorProduto = codigoFornecedorProduto;
 	}
 	
-	@Field(offset = 34, length = 12)
+	@Field(offset = 34, length = 8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -84,7 +86,20 @@ public class EMS0133Output implements Serializable{
 		this.codigoProduto = codigoProduto;
 	}
 	
-	@FixedFormatPattern("MMddyyyy")
+	/**
+	 * @return the numeroEdicao
+	 */
+	@Field(offset=42, length=4, paddingChar='0', align=Align.RIGHT)
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+	/**
+	 * @param numeroEdicao the numeroEdicao to set
+	 */
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+	@FixedFormatPattern("ddMMyyyy")
 	@Field(offset = 46, length = 8)
 	public Date getDataRecolhimento() {
 		return dataRecolhimento;
@@ -106,6 +121,8 @@ public class EMS0133Output implements Serializable{
 						: codigoFornecedorProduto.hashCode());
 		result = prime * result
 				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());						
 		result = prime * result
 				+ ((contextoProduto == null) ? 0 : contextoProduto.hashCode());
 		result = prime
@@ -149,6 +166,11 @@ public class EMS0133Output implements Serializable{
 			if (other.codigoProduto != null)
 				return false;
 		} else if (!codigoProduto.equals(other.codigoProduto))
+			return false;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
 			return false;
 		if (contextoProduto == null) {
 			if (other.contextoProduto != null)
