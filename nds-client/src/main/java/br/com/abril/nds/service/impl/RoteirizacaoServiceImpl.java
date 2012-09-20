@@ -16,13 +16,16 @@ import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
@@ -40,6 +43,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Autowired
 	private RotaRepository rotaRepository;
+	
+	@Autowired
+	private BoxRepository boxRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -460,5 +466,41 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return roteirizacaoRepository.obterRotasPorNomeERoteiros(nome, idsRoteiros);
 	}
 
-
+	
+	/**
+     * Obtem lista de Box do tipo lançamento
+     * @return List<Box>
+     */
+	@Transactional
+	@Override
+	public List<Box> obterListaBoxLancamento(){
+		List<Box> listaBox = new ArrayList<Box>();
+		listaBox = this.boxRepository.obterListaBox(TipoBox.LANCAMENTO);
+		return listaBox;
+	}
+	
+	/**
+     * Obtem lista de Roteiro por Box
+     * @return List<Roteiro>
+     */
+	@Transactional
+	@Override
+	public List<Roteiro> obterListaRoteiroPorBox(Long idBox){
+		List<Roteiro> listaRoteiro = new ArrayList<Roteiro>();
+		listaRoteiro = this.roteiroRepository.buscarRoteiroDeBox(idBox);
+		return listaRoteiro;
+	}
+	
+	/**
+     * Obtem lista de Rota por Roteiro
+     * @return List<Rota>
+     */
+	@Transactional
+	@Override
+	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro){
+		List<Rota> listaRota = new ArrayList<Rota>();
+		listaRota = this.rotaRepository.buscarRotaPorRoteiro(idRoteiro, null, null);
+		return listaRota;
+	}
+	
 }
