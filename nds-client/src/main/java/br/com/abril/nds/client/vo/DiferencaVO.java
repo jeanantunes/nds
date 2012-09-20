@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -45,7 +48,7 @@ public class DiferencaVO implements Serializable {
 	private BigInteger quantidade;
 	
 	@Export(label = "Tipo de Diferença", exhibitionOrder = 7)
-	private String tipoDiferenca;
+	private String descricaoTipoDiferenca;
 	
 	@Export(label = "Nota", exhibitionOrder = 8)
 	private String numeroNotaFiscal;
@@ -60,11 +63,13 @@ public class DiferencaVO implements Serializable {
 	
 	private BigInteger qtdeEstoqueAtual;
 	
+	private BigInteger qtdeEstoque;
+	
 	private BigDecimal vlTotalDiferenca;
 	
 	private Boolean automatica;
 	
-	private String tipoEstoque;
+	private TipoEstoque tipoEstoque;
 	
 	private boolean cadastrado;
 
@@ -76,10 +81,8 @@ public class DiferencaVO implements Serializable {
 	
 	private TipoDirecionamentoDiferenca tipoDirecionamento;
 	
-	public enum TipoDirecionamentoDiferenca {
-		ESTOQUE,COTA,NOTA
-	};
-	
+	private TipoDiferenca tipoDiferenca;
+
 	/**
 	 * Construtor padrão.
 	 */
@@ -101,8 +104,41 @@ public class DiferencaVO implements Serializable {
 		this.id = id;
 	}
 	
-	
-	
+
+	/**
+	 * @return the descricaoTipoDiferenca
+	 */
+	public String getDescricaoTipoDiferenca() {
+		return descricaoTipoDiferenca;
+	}
+
+	/**
+	 * @param descricaoTipoDiferenca the descricaoTipoDiferenca to set
+	 */
+	public void setDescricaoTipoDiferenca(String descricaoTipoDiferenca) {
+		this.descricaoTipoDiferenca = descricaoTipoDiferenca;
+	}
+
+	/**
+	 * @param tipoDiferenca the tipoDiferenca to set
+	 */
+	public void setTipoDiferenca(TipoDiferenca tipoDiferenca) {
+		this.tipoDiferenca = tipoDiferenca;
+	}
+
+	/**
+	 * @return the qtdeEstoque
+	 */
+	public BigInteger getQtdeEstoque() {
+		return qtdeEstoque;
+	}
+
+	/**
+	 * @param qtdeEstoque the qtdeEstoque to set
+	 */
+	public void setQtdeEstoque(BigInteger qtdeEstoque) {
+		this.qtdeEstoque = qtdeEstoque;
+	}
 
 	/**
 	 * @return the tipoDirecionamento
@@ -254,7 +290,7 @@ public class DiferencaVO implements Serializable {
 	/**
 	 * @return the tipoDiferenca
 	 */
-	public String getTipoDiferenca() {
+	public TipoDiferenca getTipoDiferenca() {
 		return tipoDiferenca;
 	}
 
@@ -262,7 +298,7 @@ public class DiferencaVO implements Serializable {
 	 * @param tipoDiferenca the tipoDiferenca to set
 	 */
 	public void setTipoDiferenca(String tipoDiferenca) {
-		this.tipoDiferenca = tipoDiferenca;
+		this.descricaoTipoDiferenca = tipoDiferenca;
 	}
 
 	/**
@@ -404,7 +440,7 @@ public class DiferencaVO implements Serializable {
 		result = prime * result
 				+ ((statusAprovacao == null) ? 0 : statusAprovacao.hashCode());
 		result = prime * result
-				+ ((tipoDiferenca == null) ? 0 : tipoDiferenca.hashCode());
+				+ ((descricaoTipoDiferenca == null) ? 0 : descricaoTipoDiferenca.hashCode());
 		result = prime * result
 				+ ((tipoEstoque == null) ? 0 : tipoEstoque.hashCode());
 		result = prime
@@ -498,10 +534,10 @@ public class DiferencaVO implements Serializable {
 				return false;
 		} else if (!statusAprovacao.equals(other.statusAprovacao))
 			return false;
-		if (tipoDiferenca == null) {
-			if (other.tipoDiferenca != null)
+		if (descricaoTipoDiferenca == null) {
+			if (other.descricaoTipoDiferenca != null)
 				return false;
-		} else if (!tipoDiferenca.equals(other.tipoDiferenca))
+		} else if (!descricaoTipoDiferenca.equals(other.descricaoTipoDiferenca))
 			return false;
 		if (tipoEstoque == null) {
 			if (other.tipoEstoque != null)
@@ -519,14 +555,14 @@ public class DiferencaVO implements Serializable {
 	/**
 	 * @return the tipoEstoque
 	 */
-	public String getTipoEstoque() {
+	public TipoEstoque getTipoEstoque() {
 		return tipoEstoque;
 	}
 
 	/**
 	 * @param tipoEstoque the tipoEstoque to set
 	 */
-	public void setTipoEstoque(String tipoEstoque) {
+	public void setTipoEstoque(TipoEstoque tipoEstoque) {
 		this.tipoEstoque = tipoEstoque;
 	}
 
