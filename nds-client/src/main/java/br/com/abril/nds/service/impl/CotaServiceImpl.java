@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.assembler.CotaDTOAssembler;
+import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -2022,7 +2022,7 @@ public class CotaServiceImpl implements CotaService {
         Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
         Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
 	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-        CotaDTO dto = CotaDTOAssembler.toCotaDTO(historico);
+        CotaDTO dto = HistoricoTitularidadeCotaDTOAssembler.toCotaDTO(historico);
         return dto;
     }
     
@@ -2035,7 +2035,7 @@ public class CotaServiceImpl implements CotaService {
         Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
         Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
 	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-        return new ArrayList<EnderecoAssociacaoDTO>(CotaDTOAssembler.toEnderecoAssociacaoDTOCollection(historico.getEnderecos()));
+        return new ArrayList<EnderecoAssociacaoDTO>(HistoricoTitularidadeCotaDTOAssembler.toEnderecoAssociacaoDTOCollection(historico.getEnderecos()));
     }
 
     /**
@@ -2047,7 +2047,7 @@ public class CotaServiceImpl implements CotaService {
         Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
         Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-        return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(historico.getTelefones()));
+        return new ArrayList<TelefoneAssociacaoDTO>(HistoricoTitularidadeCotaDTOAssembler.toTelefoneAssociacaoDTOCollection(historico.getTelefones()));
     }
 
     /**
@@ -2059,7 +2059,7 @@ public class CotaServiceImpl implements CotaService {
         Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
         Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
-        return new ArrayList<FornecedorDTO>(CotaDTOAssembler.toFornecedorDTOCollection(historico.getFornecedores()));
+        return new ArrayList<FornecedorDTO>(HistoricoTitularidadeCotaDTOAssembler.toFornecedorDTOCollection(historico.getFornecedores()));
     }
 	
 	/**
@@ -2111,7 +2111,7 @@ public class CotaServiceImpl implements CotaService {
         HistoricoTitularidadeCotaDistribuicao distribuicao = historico.getDistribuicao();
         if (distribuicao != null) {
             distribuicao.setHistoricoTitularidadeCota(historico);
-            return CotaDTOAssembler.toDistribuicaoDTO(distribuicao);
+            return HistoricoTitularidadeCotaDTOAssembler.toDistribuicaoDTO(distribuicao);
         }
         return new DistribuicaoDTO(); 
     }

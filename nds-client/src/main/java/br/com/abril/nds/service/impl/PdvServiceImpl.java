@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.assembler.CotaDTOAssembler;
+import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
@@ -1332,7 +1332,7 @@ public class PdvServiceImpl implements PdvService {
     public List<PdvDTO> obterPdvsHistoricoTitularidade(FiltroPdvDTO filtro) {
         List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository
                 .obterPDVsHistoricoTitularidade(filtro);
-        return new ArrayList<PdvDTO>(CotaDTOAssembler.toPdvDTOCollection(pdvs));
+        return new ArrayList<PdvDTO>(HistoricoTitularidadeCotaDTOAssembler.toPdvDTOCollection(pdvs));
     }
 
     /**
@@ -1343,7 +1343,7 @@ public class PdvServiceImpl implements PdvService {
     public PdvDTO obterPdvHistoricoTitularidade(Long idPdv) {
         Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
         HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
-        return CotaDTOAssembler.toPdvDTO(pdv);
+        return HistoricoTitularidadeCotaDTOAssembler.toPdvDTO(pdv);
     }
 
     /**
@@ -1354,7 +1354,7 @@ public class PdvServiceImpl implements PdvService {
     public List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidadePDV(Long idPdv) {
         Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
         HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
-        return new ArrayList<EnderecoAssociacaoDTO>(CotaDTOAssembler.toEnderecoAssociacaoDTOCollection(pdv.getEnderecos()));
+        return new ArrayList<EnderecoAssociacaoDTO>(HistoricoTitularidadeCotaDTOAssembler.toEnderecoAssociacaoDTOCollection(pdv.getEnderecos()));
     }
 
     /**
@@ -1365,7 +1365,7 @@ public class PdvServiceImpl implements PdvService {
     public List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidadePDV(Long idPdv) {
         Validate.notNull(idPdv, "Identificador do PDV não deve ser nulo!");
         HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
-        return new ArrayList<TelefoneAssociacaoDTO>(CotaDTOAssembler.toTelefoneAssociacaoDTOCollection(pdv.getTelefones()));
+        return new ArrayList<TelefoneAssociacaoDTO>(HistoricoTitularidadeCotaDTOAssembler.toTelefoneAssociacaoDTOCollection(pdv.getTelefones()));
     }
 
     /**

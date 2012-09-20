@@ -70,17 +70,18 @@ import br.com.abril.nds.util.Util;
 
 /**
  * Classe utilitária para auxílio na 
- * criação dos DTO's com informações da Cota
+ * criação dos DTO's com informações do 
+ * histórico de titularidade da cota
  * 
  * @author francisco.garcia
  *
  */
-public class CotaDTOAssembler {
+public class HistoricoTitularidadeCotaDTOAssembler {
     
     private static final String FORMATO_ENDERECO = "%s,%s-%s-%s";
     private static final String FORMATO_TELEFONE = "%s-%s";
     
-    private CotaDTOAssembler() {
+    private HistoricoTitularidadeCotaDTOAssembler() {
     }
     
     
