@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -23,6 +25,7 @@ import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
@@ -460,7 +463,17 @@ public class FornecedorServiceImpl implements FornecedorService {
 				enderecoFornecedor.setFornecedor(fornecedor);
 			}
 
-			enderecoFornecedor.setEndereco(enderecoAssociacao.getEndereco());
+			EnderecoDTO dto = enderecoAssociacao.getEndereco();
+			
+            Endereco endereco = new Endereco(dto.getCodigoBairro(),
+                    dto.getBairro(), dto.getCep(), dto.getCodigoCidadeIBGE(),
+                    dto.getCidade(), dto.getComplemento(),
+                    dto.getTipoLogradouro(), dto.getLogradouro(),
+                    dto.getNumero(), dto.getUf(), dto.getCodigoUf(),
+                    fornecedor.getJuridica());
+            endereco.setId(dto.getId());
+			
+            enderecoFornecedor.setEndereco(endereco);
 
 			enderecoFornecedor.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
@@ -476,7 +489,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	private void removerEnderecosFornecedor(Fornecedor fornecedor, 
 			   								List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
 		
 		List<Long> idsEndereco = new ArrayList<Long>();
 
@@ -533,13 +546,16 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		if (listaTelefoneFornecedor != null && !listaTelefoneFornecedor.isEmpty()){
 			
-			this.telefoneService.cadastrarTelefone(listaTelefoneFornecedor, fornecedor.getJuridica());
+			PessoaJuridica juridica = fornecedor.getJuridica();
+            this.telefoneService.cadastrarTelefone(listaTelefoneFornecedor, juridica);
 			
 			for (TelefoneAssociacaoDTO dto : listaTelefoneFornecedor){
 				
-				TelefoneFornecedor telefoneFornecedor =
+				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+                TelefoneFornecedor telefoneFornecedor =
 					this.telefoneFornecedorRepository.obterTelefoneFornecedor(
-						dto.getTelefone().getId(), fornecedor.getId());
+						telefoneDTO.getId(), fornecedor.getId());
 				
 				if (telefoneFornecedor == null){
 					
@@ -547,13 +563,17 @@ public class FornecedorServiceImpl implements FornecedorService {
 					
 					telefoneFornecedor.setFornecedor(fornecedor);
 					telefoneFornecedor.setPrincipal(dto.isPrincipal());
-					telefoneFornecedor.setTelefone(dto.getTelefone());
+					Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), juridica);
+					telefoneFornecedor.setTelefone(telefone);
 					telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
 					
 					this.telefoneFornecedorRepository.adicionar(telefoneFornecedor);
 					
 				} else {
-					
+					Telefone telefone = telefoneFornecedor.getTelefone();
+					telefone.setDdd(telefoneDTO.getDdd());
+					telefone.setNumero(telefoneDTO.getNumero());
+					telefone.setRamal(telefoneDTO.getRamal());
 					telefoneFornecedor.setPrincipal(dto.isPrincipal());
 					telefoneFornecedor.setTipoTelefone(dto.getTipoTelefone());
 					

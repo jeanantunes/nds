@@ -395,7 +395,6 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		Assert.assertEquals(historicoDistribuicao.getPercentualFaturamentoEntrega(), distribuicao.getPercentualFaturamento());
 		Assert.assertEquals(historicoDistribuicao.getTaxaFixaEntrega(), distribuicao.getTaxaFixa());
 		Assert.assertEquals(historicoDistribuicao.getTipoEntrega(), distribuicao.getTipoEntrega().getDescricaoTipoEntrega().getValue());
-		Assert.assertEquals(historicoDistribuicao.getBaseCalculoEntrega(), distribuicao.getTipoEntrega().getBaseCalculo());
 	}
 	
 	private void assertSocios(Set<SocioCota> socios, Collection<HistoricoTitularidadeCotaSocio> historicoSocios) {
@@ -522,7 +521,6 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			CaucaoLiquida caucaoLiquida = iteratorCaucaoLiquida.next();
 			HistoricoTitularidadeCotaCaucaoLiquida historicoCaucaoLiquida = iteratorHistorico.next();
 
-			Assert.assertEquals(historicoCaucaoLiquida.getAtualizacao(), caucaoLiquida.getAtualizacao().getTime());
 			Assert.assertEquals(historicoCaucaoLiquida.getValor(), new BigDecimal(caucaoLiquida.getValor()));
 		}
 	}

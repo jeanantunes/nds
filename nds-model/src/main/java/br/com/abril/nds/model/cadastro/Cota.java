@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cascade;
 
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
@@ -464,6 +465,31 @@ public class Cota implements Serializable {
      */
     public void setTitularesCota(Set<HistoricoTitularidadeCota> titularesCota) {
         this.titularesCota = titularesCota;
+    }
+    
+    /**
+     * Adiciona um novo histórico de titularidade da cota
+     * 
+     * @param titularCota
+     *            histórico de titularidade da cota para adição
+     * @throws IllegalArgumentException
+     *             caso o histórico de titularidade da cota seja nulo
+     */
+    public void addTitularCota(HistoricoTitularidadeCota titularCota) {
+        Validate.notNull(titularCota, "Titular da Cota não deve ser nulo!");
+        if (titularesCota == null) {
+            titularesCota = new HashSet<HistoricoTitularidadeCota>();
+        }
+        titularesCota.add(titularCota);
+    }
+    
+    /**
+     * Verifica se o titular da cota é uma pessoa física
+     * 
+     * @return true se o titular é pessoa física, false caso contrário
+     */
+    public boolean isTitularPessoaFisica() {
+        return pessoa instanceof PessoaFisica;
     }
 
 	/**

@@ -51,6 +51,20 @@ public class HistoricoTitularidadeCotaBanco implements Serializable {
      */
     @Column(name = "BANCO_DV_CONTA")
     private String dvConta;
+    
+    public HistoricoTitularidadeCotaBanco() {
+    }
+    
+    public HistoricoTitularidadeCotaBanco(String numeroBanco, String nome,
+            Long agencia, String dvAgencia, Long conta, String dvConta) {
+        this.numeroBanco = numeroBanco;
+        this.nome = nome;
+        this.agencia = agencia;
+        this.dvAgencia = dvAgencia;
+        this.conta = conta;
+        this.dvConta = dvConta;
+    }
+
 
     /**
      * @return the numeroBanco

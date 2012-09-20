@@ -1,12 +1,16 @@
 package br.com.abril.nds.fixture;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.LeiautePicking;
@@ -19,6 +23,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Algoritmo;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
@@ -32,6 +37,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
@@ -66,6 +72,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
@@ -90,6 +97,7 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -197,6 +205,25 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaBanco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaConcentracaoCobranca;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaEndereco;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFornecedor;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFuncionamentoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaOutros;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
+import br.com.abril.nds.util.DateUtil;
 
 
 public class Fixture {
@@ -394,6 +421,18 @@ public class Fixture {
 		fisica.setEmail(email);
 		return fisica;
 	}
+	
+    public static PessoaFisica pessoaFisica(String cpf, String email,
+            String nome, String rg, String orgaoEmissor, String uf,
+            Date dataNascimento, EstadoCivil estadoCivil) {
+        PessoaFisica fisica = pessoaFisica(cpf, email, nome);
+        fisica.setRg(rg);
+        fisica.setOrgaoEmissor(orgaoEmissor);
+        fisica.setUfOrgaoEmissor(uf);
+        fisica.setDataNascimento(dataNascimento);
+        fisica.setEstadoCivil(estadoCivil);
+        return fisica;
+    }
 
 	public static PessoaJuridica pessoaJuridica(String razaoSocial,
 			String cnpj, String ie, String email, String im) {
@@ -744,6 +783,7 @@ public class Fixture {
 		cota.setSituacaoCadastro(situacaoCadastro);
 		cota.setBox(box);
 		cota.setInicioAtividade(new Date());
+		cota.setClassificacaoEspectativaFaturamento(ClassificacaoEspectativaFaturamento.D);
 		return cota;
 	}
 
@@ -3388,6 +3428,260 @@ public class Fixture {
 		return descontoL;
 	}
     
+    public static HistoricoTitularidadeCota historicoTitularidade(Cota cota) {
+        HistoricoTitularidadeCota historico = new HistoricoTitularidadeCota();
+        historico.setCota(cota);
+        historico.setDataInclusao(cota.getInicioAtividade());
+        historico.setBox(cota.getBox().getNome());
+        
+        ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica();
+        if(paramNFE != null) {
+            historico.setEmiteNfe(paramNFE.getEmiteNotaFiscalEletronica());
+            historico.setEmailNfe(paramNFE.getEmailNotaFiscalEletronica());
+        }
+
+        historico.setInicio(cota.getInicioAtividade());
+        historico.setFim(DateUtil.adicionarDias(cota.getInicioAtividade(), 60));
+        historico.setEmail("aristoteles@mail.com");
+        historico.setNumeroCota(cota.getNumeroCota());
+        historico.setClassificacaoExpectativaFaturamento(cota.getClassificacaoEspectativaFaturamento());
+        historico.setSituacaoCadastro(cota.getSituacaoCadastro());
+        
+        historico.setInicioPeriodoCotaBase(cota.getInicioAtividade());
+        historico.setFimPeriodoCotaBase(DateUtil.adicionarDias(cota.getInicioAtividade(), 60));
+        historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(123), BigDecimal.valueOf(33)));
+        historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(456), BigDecimal.valueOf(33)));
+        historico.addCotaReferencia(new HistoricoTitularidadeCotaReferenciaCota(Integer.valueOf(789), BigDecimal.valueOf(33)));
+
+        HistoricoTitularidadeCotaPessoaFisica htcpf = new HistoricoTitularidadeCotaPessoaFisica(
+                    "Aristoteles da Silva", "862.243.913-51", "30.887.357-9",
+                    "SSP", "SP", criarData(10, Calendar.APRIL, 1974), EstadoCivil.SOLTEIRO, Sexo.MASCULINO,
+                    "Brasileira", "Mococa", "Ari");
+        historico.setPessoaFisica(htcpf);
+        
+       
+        
+        HistoricoTitularidadeCotaEndereco endereco1 = new HistoricoTitularidadeCotaEndereco(
+                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Treze de Maio", "13", "SP", 15, TipoEndereco.COMERCIAL,
+                true);
+        historico.addEndereco(endereco1);
+        
+        HistoricoTitularidadeCotaEndereco endereco2 = new HistoricoTitularidadeCotaEndereco(
+                10, "Centro", "13720-000", 150, "São José do Rio Pardo", null,
+                "Rua", "Nove de Julho", "100", "SP", 15, TipoEndereco.RESIDENCIAL,
+                false);
+        historico.addEndereco(endereco2);
+        
+        HistoricoTitularidadeCotaTelefone telefone1 = new HistoricoTitularidadeCotaTelefone(
+                "3681-6669-", null, "19", TipoTelefone.COMERCIAL, true);
+        historico.addTelefone(telefone1);
+        
+        HistoricoTitularidadeCotaTelefone telefone2 = new HistoricoTitularidadeCotaTelefone(
+                "9899-4321-", null, "19", TipoTelefone.CELULAR, false);
+        historico.addTelefone(telefone2);
+        
+        HistoricoTitularidadeCotaFornecedor fornecedor1 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedor1.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Acme Inc", "Acme", "64.138.131/0001-12", null, null));
+        historico.addFornecedor(fornecedor1);
+        
+        HistoricoTitularidadeCotaFornecedor fornecedor2 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedor2.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Massive Dynamic", "Massive Dynamic", "44.864.479/0001-80", null, null));
+        historico.addFornecedor(fornecedor2);
+        
+        HistoricoTitularidadeCotaDescontoCota descontoCota1 = new HistoricoTitularidadeCotaDescontoCota(
+                TipoDesconto.ESPECIFICO, "Acme", new Date(),
+                BigDecimal.valueOf(10));
+        HistoricoTitularidadeCotaDescontoCota descontoCota2 = new HistoricoTitularidadeCotaDescontoCota(
+                TipoDesconto.ESPECIFICO, "Massive Dinamic", new Date(),
+                BigDecimal.valueOf(5));
+        historico.addDesconto(descontoCota1);
+        historico.addDesconto(descontoCota2);
+        
+        HistoricoTitularidadeCotaDescontoProduto descontoProduto1 = new HistoricoTitularidadeCotaDescontoProduto(
+                "123", "Quatro Rodas", Long.valueOf(45), new Date(),
+                BigDecimal.valueOf(10));
+        
+        HistoricoTitularidadeCotaDescontoProduto descontoProduto2 = new HistoricoTitularidadeCotaDescontoProduto(
+                "456", "Super Interessante", Long.valueOf(46), new Date(), BigDecimal.valueOf(5));
+        historico.addDesconto(descontoProduto1);
+        historico.addDesconto(descontoProduto2);
+ 
+        HistoricoTitularidadeCotaPDV pdv = new HistoricoTitularidadeCotaPDV();
+        pdv.setStatus(StatusPDV.ATIVO);
+        pdv.setDataInclusao(cota.getInicioAtividade());
+        pdv.setNome("Super PDV");
+        pdv.setContato("Aristóteles Da Silva");
+        pdv.setSite("www.superpdvdoaristoteles.com");
+        pdv.setEmail("emaildosuperpdvdoaristotles@localhost");
+        pdv.setPontoReferencia("Logo ali");
+        pdv.setDentroOutroEstabelecimento(true);
+        
+        pdv.setTipoEstabelecimentoPDV(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(10), "Supermercado"));
+        
+        CaracteristicasPDV caracteristicas = new CaracteristicasPDV();
+        caracteristicas.setPontoPrincipal(true);
+        caracteristicas.setPossuiComputador(true);
+        caracteristicas.setPossuiLuminoso(true);
+        caracteristicas.setTextoLuminoso("Super PDV do Aristóteles");
+        pdv.setCaracteristicas(caracteristicas);
+        pdv.setTamanhoPDV(TamanhoPDV.G);
+        pdv.setQtdeFuncionarios(2);
+        pdv.setPossuiSistemaIPV(true);
+        pdv.setPorcentagemFaturamento(BigDecimal.valueOf(100));
+        
+        HistoricoTitularidadeCotaCodigoDescricao tipoLicenca = new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(10), "Alvará");
+        pdv.setTipoLicencaMunicipal(tipoLicenca);
+        pdv.setNumeroLicencaMunicipal("100");
+        pdv.setNomeLicencaMunicipal("Alvará de Funcionamento");
+        
+        HistoricoTitularidadeCotaFuncionamentoPDV periodo = new HistoricoTitularidadeCotaFuncionamentoPDV(
+                TipoPeriodoFuncionamentoPDV.DIARIA, DateUtil.parseData("08:00",
+                        DateUtil.PADRAO_HORA_MINUTO), DateUtil.parseData(
+                        "17:00", DateUtil.PADRAO_HORA_MINUTO));
+        pdv.addPeriodoFuncionamento(periodo);
+        
+        HistoricoTitularidadeCotaCodigoDescricao tipoPonto = new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(10), "Comercial");
+        pdv.setTipoPonto(tipoPonto);
+        
+        HistoricoTitularidadeCotaEndereco enderecoPDV = new HistoricoTitularidadeCotaEndereco(
+                10, "Centro", "13720-000", 99, "São José do Rio Pardo", null,
+                "Rua", "Benjamin Constant", "50", "SP", 15, TipoEndereco.COMERCIAL,
+                true);
+        pdv.addEndereco(enderecoPDV);
+        
+        HistoricoTitularidadeCotaTelefone telefonePDV = new HistoricoTitularidadeCotaTelefone(
+                "3681-1234", null, "19", TipoTelefone.COMERCIAL, true);
+        pdv.addTelefone(telefonePDV);
+        
+        pdv.setAreaInfluencia(new HistoricoTitularidadeCotaCodigoDescricao(Long.valueOf(10), "Residencial"));
+        pdv.setTipoCaracteristica(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL);
+        
+        pdv.setGeradorFluxoPrincipal(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(1), "Cursinho"));
+        pdv.addGeradorFluxoSecundario(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(2), "Padarias")); 
+        pdv.addGeradorFluxoSecundario(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(3), "Restaurantes")); 
+        
+        pdv.addMaterialPromocional(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(1), "Adesivo")); 
+        
+        pdv.addMaterialPromocional(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(2), "Bandeirola")); 
+        
+        pdv.addMaterialPromocional(new HistoricoTitularidadeCotaCodigoDescricao(
+                Long.valueOf(3), "Poster")); 
+        
+        pdv.setExpositor(true);
+        pdv.setTipoExpositor("Tipo Expositor");
+        
+        try {
+            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");
+            File fileImagem = new File(urlImagem.toURI());
+            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
+            pdv.setImagem(imagem);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro definindo imagem histórico titularidade PDV", e);
+        }
+        
+        historico.addPdv(pdv);
+        
+        HistoricoTitularidadeCotaFinanceiro financeiro = new HistoricoTitularidadeCotaFinanceiro();
+        financeiro.setPossuiContrato(true);
+        financeiro.setDataInicioContrato(cota.getInicioAtividade());
+        financeiro.setDataTerminoContrato(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
+        financeiro.setContratoRecebido(true);
+        financeiro.setFatorVencimento(2);
+        financeiro.setTipoCota(TipoCota.CONSIGNADO);
+        financeiro.setValorMininoCobranca(BigDecimal.valueOf(500));
+        PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
+        politicaSuspensao.setValor(BigDecimal.valueOf(1000));
+        politicaSuspensao.setNumeroAcumuloDivida(3);
+        financeiro.setPoliticaSuspensao(politicaSuspensao);
+        
+        HistoricoTitularidadeCotaFormaPagamento formaPagto1 = new HistoricoTitularidadeCotaFormaPagamento();
+        formaPagto1.setBanco(new HistoricoTitularidadeCotaBanco("349", "Banco Itau", Long.valueOf(809), null, Long.valueOf(123456), "7"));
+        formaPagto1.setTipoCobranca(TipoCobranca.BOLETO);
+        
+        HistoricoTitularidadeCotaConcentracaoCobranca concentracao1 = new HistoricoTitularidadeCotaConcentracaoCobranca();
+        concentracao1.setTipoFormaCobranca(TipoFormaCobranca.SEMANAL);
+        concentracao1.addDiaSemana(DiaSemana.SEGUNDA_FEIRA);
+        concentracao1.addDiaSemana(DiaSemana.QUARTA_FEIRA);
+        concentracao1.addDiaSemana(DiaSemana.SEXTA_FEIRA);
+        formaPagto1.setConcentracaoCobranca(concentracao1);
+        
+        
+        HistoricoTitularidadeCotaFornecedor fornecedorPagto1 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedorPagto1.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Acme Inc", "Acme", "64.138.131/0001-12", null, null));
+        formaPagto1.addFornecedor(fornecedorPagto1);
+        
+        HistoricoTitularidadeCotaFornecedor fornecedorPagto2 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedorPagto2.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("Massive Dynamic", "Massive Dynamic", "44.864.479/0001-80", null, null));
+        formaPagto1.addFornecedor(fornecedorPagto2);
+        financeiro.addFormaPagamento(formaPagto1);
+        
+        HistoricoTitularidadeCotaFormaPagamento formaPagto2 = new HistoricoTitularidadeCotaFormaPagamento();
+        formaPagto2.setTipoCobranca(TipoCobranca.DINHEIRO);
+        
+        HistoricoTitularidadeCotaConcentracaoCobranca concentracao2 = new HistoricoTitularidadeCotaConcentracaoCobranca();
+        concentracao2.setTipoFormaCobranca(TipoFormaCobranca.QUINZENAL);
+        concentracao2.addDiaMes(10);
+        concentracao2.addDiaMes(20);
+        formaPagto2.setConcentracaoCobranca(concentracao2);
+        
+        HistoricoTitularidadeCotaFornecedor fornecedorPagto3 = new HistoricoTitularidadeCotaFornecedor();
+        fornecedorPagto3.setPessoaJuridica(new HistoricoTitularidadeCotaPessoaJuridica("XYZ Inc", "XYZ", "64.138.131/0001-12", null, null));
+        formaPagto2.addFornecedor(fornecedorPagto3);
+        
+        financeiro.addFormaPagamento(formaPagto2);
+        historico.setFinanceiro(financeiro);
+        
+        HistoricoTitularidadeCotaOutros outros1 = new HistoricoTitularidadeCotaOutros();
+        outros1.setDescricao("Carro");
+        outros1.setValor(BigDecimal.valueOf(5000));
+        outros1.setValidade(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
+        historico.addGarantia(outros1);
+        
+        HistoricoTitularidadeCotaOutros outros2 = new HistoricoTitularidadeCotaOutros();
+        outros2.setDescricao("Notebook");
+        outros2.setValor(BigDecimal.valueOf(1000));
+        outros2.setValidade(DateUtil.adicionarDias(cota.getInicioAtividade(), 180));
+        historico.addGarantia(outros2);
+        
+        HistoricoTitularidadeCotaDistribuicao distribuicao = new HistoricoTitularidadeCotaDistribuicao();
+        distribuicao.setQtdePDV(1);
+        distribuicao.setAssistenteComercial("John Doe");
+        distribuicao.setGerenteComercial("Jane Doe");
+        distribuicao.setObservacao("Observação");
+        distribuicao.setEntregaReparteVenda(true);
+        distribuicao.setSolicitaNumAtrasados(true);
+        distribuicao.setRecebeRecolheParcias(true);
+        distribuicao.setTipoEntrega(DescricaoTipoEntrega.ENTREGA_EM_BANCA);
+        distribuicao.setPercentualFaturamentoEntrega(BigDecimal.valueOf(10));
+        distribuicao.setInicioPeriodoCarencia(cota.getInicioAtividade());
+        distribuicao.setFimPeriodoCarencia(DateUtil.adicionarDias(cota.getInicioAtividade(), 60));
+        distribuicao.setSlipEmail(true);
+        distribuicao.setSlipImpresso(true);
+        distribuicao.setBoletoEmail(true);
+        distribuicao.setBoletoImpresso(true);
+        distribuicao.setBoletoSlipEmail(true);
+        distribuicao.setBoletoSlipImpresso(true);
+        distribuicao.setReciboEmail(true);
+        distribuicao.setReciboImpresso(true);
+        distribuicao.setNotaEnvioEmail(true);
+        distribuicao.setNotaEnvioImpresso(true);
+        distribuicao.setChamadaEncalheEmail(true);
+        distribuicao.setChamadaEncalheImpresso(true);
+        historico.setDistribuicao(distribuicao);
+    
+        cota.addTitularCota(historico);
+        return historico;
+    }
+    
     public static RateioDiferenca criarRateioDiferenca(Cota cota, Date dataNotaEnvio, BigInteger qtde, 
     		EstudoCota estudoCota, Diferenca diferenca) {
     	
@@ -3401,4 +3695,5 @@ public class Fixture {
     	
     	return rateio;
     }
+
 }
