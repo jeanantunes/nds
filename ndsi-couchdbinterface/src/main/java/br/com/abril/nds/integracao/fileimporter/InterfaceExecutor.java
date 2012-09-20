@@ -266,13 +266,13 @@ public class InterfaceExecutor {
 				if(row != null && !row.isEmpty()) {
 					
 					Bairro doc = new Bairro();
-					doc.setTipoDocumento("CEP");					
-					doc.setSubTipoDocumento("BAIRRO");
-					doc.set_id( "BAI" + (row.get("BAI_NU") != null ? row.get("BAI_NU").toString() : "" ));
+					doc.setTipoDocumento("bairro");					
+					doc.set_id( "bairro/" + (row.get("BAI_NU") != null ? row.get("BAI_NU").toString() : "" ));
+					
 					doc.setNome((row.get("BAI_NO") != null ? row.get("BAI_NO").toString() : "" ));
 					doc.setUf((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 					Localidade l = new Localidade();
-					l.set_id( "LOC" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+					l.set_id( "localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 					doc.setLocalidade(l);
 					try {
 						couchDbClient.save(doc);
@@ -288,18 +288,28 @@ public class InterfaceExecutor {
 							
 				Logradouro doc = new Logradouro();
 				
-				doc.setTipoDocumento("CEP");					
-				doc.setSubTipoDocumento("LOGRADOURO");
-				doc.set_id("LOG" + (row.get("LOG_NU") != null ? row.get("LOG_NU").toString() : "" ));
+				doc.setTipoDocumento("logradouro");
+				doc.set_id("logradouro/" + (row.get("LOG_NU") != null ? row.get("LOG_NU").toString() : "" ));
 				doc.setNome((row.get("LOG_NO") != null ? row.get("LOG_NO").toString() : "" ));
 				doc.setComplemento((row.get("LOG_COMPLEMENTO") != null ? row.get("LOG_COMPLEMENTO").toString() : "" ));
 				doc.setCep((row.get("CEP") != null ? row.get("CEP").toString() : "" ));
 				doc.setUf((row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));				
 				doc.setAbreviatura((row.get("LOG_NO_ABREV") != null ? row.get("LOG_NO_ABREV").toString() : "" ));
+				doc.setTipoLogradouro((row.get("TLO_TX") != null ? row.get("TLO_TX").toString() : "" ));
 				
 				Localidade l = new Localidade();
-				l.set_id("LOC" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+				l.set_id("localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 				doc.setLocalidade(l);
+				
+				
+				Bairro bi = new Bairro();
+				bi.set_id("bairro/" + (row.get("BAI_NU_INI") != null ? row.get("BAI_NU_INI").toString() : "" ));
+				doc.setBairroInicial(bi);
+				
+				Bairro bf = new Bairro();
+				bf.set_id("bairro/" + (row.get("BAI_NU_FIM") != null ? row.get("BAI_NU_FIM").toString() : "" ));
+				doc.setBairroInicial(bf);
+				
 				try {
 					couchDbClient.save(doc);
 				} catch (CouchDbException ce) {
@@ -312,16 +322,15 @@ public class InterfaceExecutor {
 				 
 				Localidade doc = new Localidade();
 				
-				doc.setTipoDocumento("CEP");					
-				doc.setSubTipoDocumento("LOCALIDADE");
-				doc.set_id("LOC" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
+				doc.setTipoDocumento("localidade");					
+				doc.set_id("localidade/" + (row.get("LOC_NU") != null ? row.get("LOC_NU").toString() : "" ));
 				doc.setNome((row.get("LOG_NO") != null ? row.get("LOG_NO").toString() : "" ));
 				doc.setCep((row.get("CEP") != null ? row.get("CEP").toString() : "" ));
 				doc.setAbreviatura((row.get("LOG_NO_ABREV") != null ? row.get("LOG_NO_ABREV").toString() : "" ));
 				doc.setCodigoMunicipioIBGE((row.get("MUN_NU") != null ? Long.valueOf( row.get("MUN_NU").toString() ) : null ));
 				
 				UnidadeFederacao u = new UnidadeFederacao();
-				u.set_id("UF" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+				u.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setUnidadeFederacao(u);
 				try {
 					couchDbClient.save(doc);
@@ -336,9 +345,8 @@ public class InterfaceExecutor {
 				
 				UnidadeFederacao doc = new UnidadeFederacao();
 				
-				doc.setTipoDocumento("CEP");					
-				doc.setSubTipoDocumento("LOCALIDADE");
-				doc.set_id("UF" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
+				doc.setTipoDocumento("uf");					
+				doc.set_id("uf/" + (row.get("UFE_SG") != null ? row.get("UFE_SG").toString() : "" ));
 				doc.setFaixaCepInicial((row.get("UFE_CEP_INI") != null ? row.get("UFE_CEP_INI").toString() : "" ));
 				doc.setFaixaCepFinal((row.get("UFE_CEP_FIM") != null ? row.get("UFE_CEP_FIM").toString() : "" ));
 				try {
@@ -347,48 +355,7 @@ public class InterfaceExecutor {
 					
 				}
 			}
-			
 						
-			for(Map<String, Object> rowLog : tblLogradouro) {
-				
-				if(rowLog != null && !rowLog.isEmpty()) {
-				
-					
-					EnderecoVO doc = new EnderecoVO();
-										
-					if ( rowLog.get("LOC_NU") != null ) {
-						
-						Map<String, Object> rowLoc = Cursor.findRow(tblLocalidade, Collections.singletonMap("LOC_NU", rowLog.get("LOC_NU")));
-						
-						doc.setLocalidade((rowLoc != null && rowLoc.get("LOC_NO") != null ? rowLoc.get("LOC_NO").toString() : "" ));
-						doc.setCodigoCidadeIBGE((rowLoc != null && rowLoc.get("MUN_NU") != null ? Long.valueOf( rowLoc.get("MUN_NU").toString()) : null ));
-						
-					}
-					
-					if ( rowLog.get("BAI_NU_INI") != null ) {
-						
-						Map<String, Object> rowBai = Cursor.findRow(tblBairro, Collections.singletonMap("BAI_NU", rowLog.get("BAI_NU_INI")));
-						doc.setBairro((rowBai != null ? rowBai.get("BAI_NO").toString() : "" ));
-						
-					}
-					
-									
-					doc.setTipoDocumento("CEP");					
-					doc.setSubTipoDocumento("CEP");
-					doc.setCep((rowLog.get("CEP") != null ? rowLog.get("CEP").toString() : "" ));
-					doc.setIdLocalidade((rowLog.get("LOC_NU") != null ? Long.valueOf( rowLog.get("LOC_NU").toString() ) : null ));										
-					doc.setUf((rowLog.get("UFE_SG") != null ? rowLog.get("UFE_SG").toString() : "" ));
-					doc.setComplemento((rowLog.get("LOG_COMPLEMENTO") != null ? rowLog.get("LOG_COMPLEMENTO").toString() : "" ));
-					doc.setLogradouro((rowLog.get("LOG_NO") != null ? rowLog.get("LOG_NO").toString() : "" ));
-					doc.setTipoLogradouro((rowLog.get("TLO_TX") != null ? rowLog.get("TLO_TX").toString() : "" ));
-				
-					try {
-						couchDbClient.save(doc);
-					} catch (CouchDbException ce) {
-						System.out.println(ce);
-					}
-				}
-			}
 
 		} catch (Throwable e) {
 			throw new RuntimeException(e);

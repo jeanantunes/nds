@@ -21,9 +21,9 @@ public class Logradouro  extends IntegracaoDocument implements Serializable {
 
 	private String cep;
 
-	private Long chaveBairroFinal;
+	private Bairro bairroFinal;
 
-	private Long chaveBairroInicial;
+	private Bairro bairroInicial;
 
 	private String status;
 	
@@ -69,33 +69,39 @@ public class Logradouro  extends IntegracaoDocument implements Serializable {
 		this.cep = cep;
 	}
 
-	/**
-	 * @return the chaveBairroFinal
-	 */
-	public Long getChaveBairroFinal() {
-		return chaveBairroFinal;
-	}
+
 
 	/**
-	 * @param chaveBairroFinal the chaveBairroFinal to set
+	 * @return the bairroFinal
 	 */
-	public void setChaveBairroFinal(Long chaveBairroFinal) {
-		this.chaveBairroFinal = chaveBairroFinal;
+	public Bairro getBairroFinal() {
+		return bairroFinal;
 	}
 
-	/**
-	 * @return the chaveBairroInicial
-	 */
-	public Long getChaveBairroInicial() {
-		return chaveBairroInicial;
-	}
 
 	/**
-	 * @param chaveBairroInicial the chaveBairroInicial to set
+	 * @param bairroFinal the bairroFinal to set
 	 */
-	public void setChaveBairroInicial(Long chaveBairroInicial) {
-		this.chaveBairroInicial = chaveBairroInicial;
+	public void setBairroFinal(Bairro bairroFinal) {
+		this.bairroFinal = bairroFinal;
 	}
+
+
+	/**
+	 * @return the bairroInicial
+	 */
+	public Bairro getBairroInicial() {
+		return bairroInicial;
+	}
+
+
+	/**
+	 * @param bairroInicial the bairroInicial to set
+	 */
+	public void setBairroInicial(Bairro bairroInicial) {
+		this.bairroInicial = bairroInicial;
+	}
+
 
 	/**
 	 * @return the status
