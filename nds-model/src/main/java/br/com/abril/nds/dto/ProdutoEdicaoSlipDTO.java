@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class ProdutoEdicaoSlipDTO implements Serializable {
 
+	private Long idChamadaEncalhe;
+	
 	private String nomeProduto;
 	
 	private Long idProdutoEdicao;
@@ -24,6 +26,16 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	private BigDecimal valorTotal;
 
 	private Date dataRecolhimentoDistribuidor;
+	
+	private Date dataOperacao;
+	
+	private Date dataRecolhimento;
+	
+	private String ordinalDiaConferenciaEncalhe;
+	
+	private String qtdeTotalProdutos;
+	
+	private String valorTotalEncalhe;
 	
 	/**
 	 * Obtém nomeProduto
@@ -177,6 +189,89 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
-	
-	
+
+	/**
+	 * @return the dataOperacao
+	 */
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	/**
+	 * @param dataOperacao the dataOperacao to set
+	 */
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
+	}
+
+	/**
+	 * @return the dataRecolhimento
+	 */
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	/**
+	 * @param dataRecolhimento the dataRecolhimento to set
+	 */
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	/**
+	 * @return the ordinalDiaConferenciaEncalhe
+	 */
+	public String getOrdinalDiaConferenciaEncalhe() {
+		return ordinalDiaConferenciaEncalhe;
+	}
+
+	/**
+	 * @param ordinalDiaConferenciaEncalhe the ordinalDiaConferenciaEncalhe to set
+	 */
+	public void setOrdinalDiaConferenciaEncalhe(String ordinalDiaConferenciaEncalhe) {
+		this.ordinalDiaConferenciaEncalhe = ordinalDiaConferenciaEncalhe;
+	}
+
+	/**
+	 * @return the qtdeTotalProdutos
+	 */
+	public String getQtdeTotalProdutos() {
+		return qtdeTotalProdutos;
+	}
+
+	/**
+	 * @param qtdeTotalProdutos the qtdeTotalProdutos to set
+	 */
+	public void setQtdeTotalProdutos(String qtdeTotalProdutos) {
+		this.qtdeTotalProdutos = qtdeTotalProdutos;
+	}
+
+	/**
+	 * @return the valorTotalEncalhe
+	 */
+	public String getValorTotalEncalhe() {
+		return valorTotalEncalhe;
+	}
+
+	/**
+	 * @param valorTotalEncalhe the valorTotalEncalhe to set
+	 */
+	public void setValorTotalEncalhe(String valorTotalEncalhe) {
+		this.valorTotalEncalhe = valorTotalEncalhe;
+	}
+
+	/**
+	 * @return the idChamadaEncalhe
+	 */
+	public Long getIdChamadaEncalhe() {
+		return idChamadaEncalhe;
+	}
+
+	/**
+	 * @param idChamadaEncalhe the idChamadaEncalhe to set
+	 */
+	public void setIdChamadaEncalhe(Long idChamadaEncalhe) {
+		this.idChamadaEncalhe = idChamadaEncalhe;
+	}
+
 }
