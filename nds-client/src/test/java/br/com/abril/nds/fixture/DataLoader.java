@@ -130,6 +130,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -1000,19 +1001,19 @@ public class DataLoader {
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM, TipoDirecionamentoDiferenca.COTA);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja2, tipoMovimentoFaltaDe,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja3, tipoMovimentoSobraDe,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaHistoricoSituacaoCota(session, 100);
 
@@ -1981,7 +1982,7 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(session,movimentoEstoque);
 
-		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE, new Date());
 		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
 		
 		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
@@ -5172,7 +5173,8 @@ public class DataLoader {
 												   TipoMovimentoEstoque tipoMovimento,
 												   Usuario usuario,
 												   EstoqueProduto estoqueProduto,
-												   TipoDiferenca tipoDiferenca) {
+												   TipoDiferenca tipoDiferenca,
+												   TipoDirecionamentoDiferenca tipoDirecionamento) {
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {
 
@@ -5185,13 +5187,9 @@ public class DataLoader {
 			Diferenca diferenca =
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
-						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
-			LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+						StatusConfirmacao.PENDENTE, null,true, TipoEstoque.LANCAMENTO,tipoDirecionamento, new Date());
 			
-			lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
-
-			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
-			save(session, lancamentoDiferenca, diferenca);
+			save(session, diferenca);
 		}
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {
@@ -5205,7 +5203,7 @@ public class DataLoader {
 			Diferenca diferenca =
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
-						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+						StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO,tipoDirecionamento,new Date());
 
 			session.save(diferenca);
 			
@@ -5213,6 +5211,14 @@ public class DataLoader {
 				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
 				session.save(rateio);
 			}
+			
+			LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+			lancamentoDiferenca.setStatus(StatusAprovacao.APROVADO);
+			lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
+
+			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+			
+			session.save(lancamentoDiferenca);
 		}
 	}
 
@@ -5327,7 +5333,11 @@ public class DataLoader {
 				if(indDiferenca > 5){
 
 
-					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), 
+							usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, 
+							StatusConfirmacao.CONFIRMADO, itemFisico, true, 
+							TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE,new Date());
+					
 					LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
 					
 					lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
@@ -5433,7 +5443,8 @@ public class DataLoader {
 
 		Diferenca diferenca =
 			Fixture.diferenca(BigInteger.valueOf(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO, TipoDirecionamentoDiferenca.COTA, new Date());
+		
 		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
 		
 		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
@@ -5443,7 +5454,7 @@ public class DataLoader {
 
 		Diferenca diferenca2 =
 			Fixture.diferenca(BigInteger.valueOf(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true,TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, true,TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE, new Date());
 		
 		LancamentoDiferenca lancamentoDiferenca2 = new LancamentoDiferenca();
 		
@@ -5454,7 +5465,7 @@ public class DataLoader {
 
 		Diferenca diferenca3 =
 			Fixture.diferenca(BigInteger.valueOf(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true, TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.COTA, new Date());
 		
 		LancamentoDiferenca lancamentoDiferenca3 = new LancamentoDiferenca();
 		
@@ -5465,7 +5476,7 @@ public class DataLoader {
 
 		Diferenca diferenca4 =
 			Fixture.diferenca(BigInteger.valueOf(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true, TipoEstoque.LANCAMENTO);
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE, new Date());
 		
 		LancamentoDiferenca lancamentoDiferenca4 = new LancamentoDiferenca();
 		
@@ -5479,19 +5490,19 @@ public class DataLoader {
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM,TipoDirecionamentoDiferenca.COTA);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja2, tipoMovimentoFaltaDe,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja3, tipoMovimentoSobraDe,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
 			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm,
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(BigInteger.valueOf(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel, new Date());
 		session.save(rateioDiferencaCotaManoel);
