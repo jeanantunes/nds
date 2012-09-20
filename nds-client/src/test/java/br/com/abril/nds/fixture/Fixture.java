@@ -3005,7 +3005,9 @@ public class Fixture {
 		Logradouro logradouro = new Logradouro();
 		
 		logradouro.setCep(cep);
-		logradouro.setChaveBairroInicial(chaveBairroInicial);
+		Bairro b = new Bairro();
+		b.set_id("bairro/" + chaveBairroInicial.toString());
+		logradouro.setBairroInicial(b);
 		logradouro.set_id(id.toString());
 		logradouro.setLocalidade(localidade);
 		logradouro.setNome(nome);
