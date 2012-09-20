@@ -10,7 +10,7 @@ import java.util.Date;
  * @author francisco.garcia
  *
  */
-public class TitularidadeCotaDTO implements Serializable{
+public class TitularidadeCotaDTO implements Serializable, Comparable<TitularidadeCotaDTO>{
 
     private static final long serialVersionUID = 1L;
     
@@ -103,6 +103,11 @@ public class TitularidadeCotaDTO implements Serializable{
      */
     public String getDocumento() {
         return documento;
+    }
+
+    @Override
+    public int compareTo(TitularidadeCotaDTO o) {
+        return o.getFim().compareTo(this.getFim());
     }
 
 }

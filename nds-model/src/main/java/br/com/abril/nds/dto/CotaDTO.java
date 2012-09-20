@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
@@ -106,7 +108,7 @@ public class CotaDTO implements Serializable {
 	
 	private String descricaoBox;
 	
-	private Collection<TitularidadeCotaDTO> proprietarios = new ArrayList<TitularidadeCotaDTO>();
+	private Set<TitularidadeCotaDTO> proprietarios = new TreeSet<TitularidadeCotaDTO>();
 	
 	private boolean alteracaoTitularidade;
 	
@@ -599,14 +601,7 @@ public class CotaDTO implements Serializable {
     public Collection<TitularidadeCotaDTO> getProprietarios() {
         return proprietarios;
     }
-
-    /**
-     * @param proprietarios the proprietarios to set
-     */
-    public void setProprietarios(Collection<TitularidadeCotaDTO> proprietarios) {
-        this.proprietarios = proprietarios;
-    }
-
+  
 	/**
 	 * @return the isAlteracaoTitularidade
 	 */
