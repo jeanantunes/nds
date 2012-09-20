@@ -1,7 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 
 /**
  * Representação de Campos da tela de Distribuição (Cadastro de Cota)
@@ -18,9 +21,8 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean qtdeAutomatica;
 	private String box;
 	private String assistComercial;
-	private Long tipoEntrega;
+	private DescricaoTipoEntrega descricaoTipoEntrega;
 	private String observacao;
-	private Boolean arrendatario;
 	private Boolean repPorPontoVenda;
 	private Boolean solNumAtras;
 	private Boolean recebeRecolhe;
@@ -30,8 +32,25 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean ceEmail;
 	private Boolean slipImpresso;
 	private Boolean slipEmail;
+	private Boolean boletoImpresso;
+	private Boolean boletoEmail;
+	private Boolean boletoSlipImpresso;
+	private Boolean boletoSlipEmail;
+	private Boolean reciboImpresso;
+	private Boolean reciboEmail;
+	private String gerenteComercial;
+	private Boolean utilizaProcuracao;
+	private Boolean procuracaoRecebida;
+	private Boolean utilizaTermoAdesao;
+	private Boolean termoAdesaoRecebido;
+	private BigDecimal percentualFaturamento;
+	private BigDecimal taxaFixa;
+	private String inicioPeriodoCarencia;
+	private String fimPeriodoCarencia;
+	private String nomeTermoAdesao;
+	private String nomeProcuracao;
 	
-	private List<ItemDTO<Long, String>> tiposEntrega;
+	private List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega;
 	
 	public DistribuicaoDTO(){
 		
@@ -94,17 +113,17 @@ public class DistribuicaoDTO implements Serializable  {
 	}
 
 	/**
-	 * @return the tipoEntrega
+	 * @return the descricaoTipoEntrega
 	 */
-	public Long getTipoEntrega() {
-		return tipoEntrega;
+	public DescricaoTipoEntrega getDescricaoTipoEntrega() {
+		return descricaoTipoEntrega;
 	}
 
 	/**
-	 * @param tipoEntrega the tipoEntrega to set
+	 * @param descricaoTipoEntrega the descricaoTipoEntrega to set
 	 */
-	public void setTipoEntrega(Long tipoEntrega) {
-		this.tipoEntrega = tipoEntrega;
+	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
+		this.descricaoTipoEntrega = descricaoTipoEntrega;
 	}
 
 	/**
@@ -119,20 +138,6 @@ public class DistribuicaoDTO implements Serializable  {
 	 */
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
-	}
-
-	/**
-	 * @return the arrendatario
-	 */
-	public Boolean getArrendatario() {
-		return arrendatario;
-	}
-
-	/**
-	 * @param arrendatario the arrendatario to set
-	 */
-	public void setArrendatario(Boolean arrendatario) {
-		this.arrendatario = arrendatario;
 	}
 	
 	/**
@@ -236,14 +241,14 @@ public class DistribuicaoDTO implements Serializable  {
 	/**
 	 * @return the tiposEntrega
 	 */
-	public List<ItemDTO<Long, String>> getTiposEntrega() {
+	public List<ItemDTO<DescricaoTipoEntrega, String>> getTiposEntrega() {
 		return tiposEntrega;
 	}
 
 	/**
 	 * @param tiposEntrega the tiposEntrega to set
 	 */
-	public void setTiposEntrega(List<ItemDTO<Long, String>> tiposEntrega) {
+	public void setTiposEntrega(List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega) {
 		this.tiposEntrega = tiposEntrega;
 	}
 
@@ -287,5 +292,203 @@ public class DistribuicaoDTO implements Serializable  {
 	 */
 	public void setQtdeAutomatica(Boolean qtdeAutomatica) {
 		this.qtdeAutomatica = qtdeAutomatica;
+	}
+
+	public String getGerenteComercial() {
+		return gerenteComercial;
+	}
+
+	public void setGerenteComercial(String gerenteComercial) {
+		this.gerenteComercial = gerenteComercial;
+	}
+
+	public Boolean getBoletoImpresso() {
+		return boletoImpresso;
+	}
+
+	public void setBoletoImpresso(Boolean boletoImpresso) {
+		this.boletoImpresso = boletoImpresso;
+	}
+
+	public Boolean getBoletoEmail() {
+		return boletoEmail;
+	}
+
+	public void setBoletoEmail(Boolean boletoEmail) {
+		this.boletoEmail = boletoEmail;
+	}
+
+	public Boolean getBoletoSlipImpresso() {
+		return boletoSlipImpresso;
+	}
+
+	public void setBoletoSlipImpresso(Boolean boletoSlipImpresso) {
+		this.boletoSlipImpresso = boletoSlipImpresso;
+	}
+
+	public Boolean getBoletoSlipEmail() {
+		return boletoSlipEmail;
+	}
+
+	public void setBoletoSlipEmail(Boolean boletoSlipEmail) {
+		this.boletoSlipEmail = boletoSlipEmail;
+	}
+
+	public Boolean getReciboImpresso() {
+		return reciboImpresso;
+	}
+
+	public void setReciboImpresso(Boolean reciboImpresso) {
+		this.reciboImpresso = reciboImpresso;
+	}
+
+	public Boolean getReciboEmail() {
+		return reciboEmail;
+	}
+
+	public void setReciboEmail(Boolean reciboEmail) {
+		this.reciboEmail = reciboEmail;
 	}	
+
+	/**
+	 * @return the utilizaProcuracao
+	 */
+	public Boolean getUtilizaProcuracao() {
+		return utilizaProcuracao;
+	}
+
+	/**
+	 * @param utilizaProcuracao the utilizaProcuracao to set
+	 */
+	public void setUtilizaProcuracao(Boolean utilizaProcuracao) {
+		this.utilizaProcuracao = utilizaProcuracao;
+	}
+
+	/**
+	 * @return the procuracaoRecebida
+	 */
+	public Boolean getProcuracaoRecebida() {
+		return procuracaoRecebida;
+	}
+
+	/**
+	 * @param procuracaoRecebida the procuracaoRecebida to set
+	 */
+	public void setProcuracaoRecebida(Boolean procuracaoRecebida) {
+		this.procuracaoRecebida = procuracaoRecebida;
+	}
+
+	/**
+	 * @return the percentualFaturamento
+	 */
+	public BigDecimal getPercentualFaturamento() {
+		return percentualFaturamento;
+	}
+
+	/**
+	 * @param percentualFaturamento the percentualFaturamento to set
+	 */
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
+	}
+
+	/**
+	 * @return the utilizaTermoAdesao
+	 */
+	public Boolean getUtilizaTermoAdesao() {
+		return utilizaTermoAdesao;
+	}
+
+	/**
+	 * @param utilizaTermoAdesao the utilizaTermoAdesao to set
+	 */
+	public void setUtilizaTermoAdesao(Boolean utilizaTermoAdesao) {
+		this.utilizaTermoAdesao = utilizaTermoAdesao;
+	}
+
+	/**
+	 * @return the termoAdesaoRecebido
+	 */
+	public Boolean getTermoAdesaoRecebido() {
+		return termoAdesaoRecebido;
+	}
+
+	/**
+	 * @param termoAdesaoRecebido the termoAdesaoRecebido to set
+	 */
+	public void setTermoAdesaoRecebido(Boolean termoAdesaoRecebido) {
+		this.termoAdesaoRecebido = termoAdesaoRecebido;
+	}
+
+	/**
+	 * @return the taxaFixa
+	 */
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
+	}
+	
+	/**
+	 * @param taxaFixa the taxaFixa to set
+	 */
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
+	}
+	
+	/**
+	 * @return the inicioPeriodoCarencia
+	 */
+	public String getInicioPeriodoCarencia() {
+		return inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @param inicioPeriodoCarencia the inicioPeriodoCarencia to set
+	 */
+	public void setInicioPeriodoCarencia(String inicioPeriodoCarencia) {
+		this.inicioPeriodoCarencia = inicioPeriodoCarencia;
+	}
+
+	/**
+	 * @return the fimPeriodoCarencia
+	 */
+	public String getFimPeriodoCarencia() {
+		return fimPeriodoCarencia;
+	}
+
+	/**
+	 * @param fimPeriodoCarencia the fimPeriodoCarencia to set
+	 */
+	public void setFimPeriodoCarencia(String fimPeriodoCarencia) {
+		this.fimPeriodoCarencia = fimPeriodoCarencia;
+	}
+	
+
+	/**
+	 * @return the nomeTermoAdesao
+	 */
+	public String getNomeTermoAdesao() {
+		return nomeTermoAdesao;
+	}
+
+	/**
+	 * @param nomeTermoAdesao the nomeTermoAdesao to set
+	 */
+	public void setNomeTermoAdesao(String nomeTermoAdesao) {
+		this.nomeTermoAdesao = nomeTermoAdesao;
+	}
+
+	/**
+	 * @return the nomeProcuracao
+	 */
+	public String getNomeProcuracao() {
+		return nomeProcuracao;
+	}
+
+	/**
+	 * @param nomeProcuracao the nomeProcuracao to set
+	 */
+	public void setNomeProcuracao(String nomeProcuracao) {
+		this.nomeProcuracao = nomeProcuracao;
+	}
+	
 }

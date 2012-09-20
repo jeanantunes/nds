@@ -97,7 +97,7 @@ public class ParametroCobrancaController {
      * Método de chamada da página
      */
     @Get
-    @Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_COBRANCA)
+    @Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA)
     public void index(){ 
     	
     	listaBancos.clear();

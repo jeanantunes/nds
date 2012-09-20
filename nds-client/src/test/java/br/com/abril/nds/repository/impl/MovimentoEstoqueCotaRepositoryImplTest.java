@@ -67,6 +67,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -76,7 +77,7 @@ import br.com.abril.nds.vo.PeriodoVO;
 public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private MovimentoEstoqueCotaRepositoryImpl movimentoEstoqueCotaRepository;
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	private TipoMovimentoEstoqueRepositoryImpl tipoMovimentoEstoqueRepository;
@@ -1082,6 +1083,22 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		Assert.assertEquals(tamanhoEsperado, listaMovimentoEstoqueCota.size());
 		
+	}
+	
+	@Test
+	public void obterQuantidadeProdutoEdicaoMovimentadoPorCota() {
+		
+		setUpForMapaAbastecimento();
+		
+		TipoMovimentoEstoque tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
+		save(tipoMovimentoRecReparte);
+		
+		TipoMovimentoEstoque tipoMovimentoCota =
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		Long qtde = movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(cotaManoel.getId(), veja1.getId(), tipoMovimentoCota.getId());
+		
+		Assert.assertTrue(qtde.equals(50L));
 	}
 
 }

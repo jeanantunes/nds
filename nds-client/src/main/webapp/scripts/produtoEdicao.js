@@ -72,13 +72,13 @@ var produtoEdicaoController =$.extend(true,  {
 
 		// Mostrar auto complete por nome do produto
 		autoCompletarPorNomeProduto : function(idProduto, isFromModal) {
-
+			
 			produtoEdicaoController.pesquisaRealizada = false;
 
 			var nomeProduto = $(idProduto,this.workspace).val();
 
 			if (nomeProduto && nomeProduto.length > 2) {
-				$.postJSON(contextPath + "/produto/autoCompletarPorPorNomeProduto", "nomeProduto=" + nomeProduto,
+				$.postJSON(contextPath + "/produto/autoCompletarPorPorNomeProduto", {"nomeProduto" : nomeProduto},
 						function(result) { produtoEdicaoController.exibirAutoComplete(result, idProduto); },
 						null, isFromModal);
 			}
@@ -91,7 +91,7 @@ var produtoEdicaoController =$.extend(true,  {
 		intervalo : null,
 
 		exibirAutoComplete : function(result, idProduto) {
-
+			
 			$(idProduto).autocomplete({
 				source : result,
 				focus : function(event, ui) {
@@ -110,15 +110,19 @@ var produtoEdicaoController =$.extend(true,  {
 
 		// Pesquisar por nome do produto
 		pesquisarPorNomeProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-
-			setTimeout(function() { clearInterval(produtoEdicaoController.intervalo); }, 10 * 1000);
+			
+			setTimeout(function() {
+				
+				clearInterval(produtoEdicaoController.intervalo); 
+			
+			}, 10 * 1000);
 
 			produtoEdicaoController.intervalo = setInterval(function() {
-
+				
 				if (produtoEdicaoController.descricaoAtribuida) {
 
 					if (produtoEdicaoController.pesquisaRealizada) {
-
+						
 						clearInterval(produtoEdicaoController.intervalo);
 
 						return;
@@ -129,10 +133,11 @@ var produtoEdicaoController =$.extend(true,  {
 				}
 
 			}, 100);
+
 		},
 
 		pesquisarPorNomeProdutoAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-
+			
 			clearInterval(produtoEdicaoController.intervalo);
 
 			produtoEdicaoController.pesquisaRealizada = true;
@@ -144,7 +149,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$(idCodigo,this.workspace).val("");
 
 			if (nomeProduto && nomeProduto.length > 0) {
-				$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", "nomeProduto=" + nomeProduto,
+				$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
 						function(result) { produtoEdicaoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
 						function() { produtoEdicaoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
 			} else {
@@ -177,6 +182,13 @@ var produtoEdicaoController =$.extend(true,  {
 
 		init : function(){
 
+			window.addEventListener('blur', function() {
+
+				window.clearInterval(produtoEdicaoController.intervalo);
+			
+			});
+
+			
 			$("#produtoEdicaoController-tabEdicoes",this.workspace ).tabs();
 			$("#produtoEdicaoController-pDateLanctoDe,#produtoEdicaoController-pDateLanctoAte",this.workspace ).datepicker({
 				showOn: "button",
@@ -412,44 +424,45 @@ var produtoEdicaoController =$.extend(true,  {
 			var tipoMensagem = (mensagens && mensagens.tipoMensagem) ? mensagens.tipoMensagem : null; 
 			var listaMensagens = (mensagens && mensagens.listaMensagens) ? mensagens.listaMensagens : null;
 			if (tipoMensagem && listaMensagens) {
-				exibirMensagem(tipoMensagem, listaMensagens);
-				return;
-			}
+				exibirMensagem(tipoMensagem, listaMensagens);				
+				$(".grids").hide();
+			}else{
 
-			var nProduto = '';
-			var cProduto = '';
-			$.each(resultado.rows, function(index, row) {
-
-				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
-				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
-				'</a>';
-
-				var linkExcluir = '<a href="javascript:;" onclick="produtoEdicaoController.removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
-				'<img title="Excluir" src="' + contextPath + '/images/ico_excluir.gif" border="0px" />' +
-				'</a>';
-
-				row.cell.acao = linkAprovar + linkExcluir;
-
+				var nProduto = '';
+				var cProduto = '';
+				$.each(resultado.rows, function(index, row) {
+	
+					var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
+					'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
+					'</a>';
+	
+					var linkExcluir = '<a href="javascript:;" onclick="produtoEdicaoController.removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
+					'<img title="Excluir" src="' + contextPath + '/images/ico_excluir.gif" border="0px" />' +
+					'</a>';
+	
+					row.cell.acao = linkAprovar + linkExcluir;
+	
+					//
+					if(row.cell.nomeProduto){
+						nProduto = row.cell.nomeProduto;
+					}else{
+						row.cell.nomeProduto = '';
+					}
+					cProduto = row.cell.codigoProduto;
+				});
+	
+				$(".grids").show();
+	
 				//
-				if(row.cell.nomeProduto){
-					nProduto = row.cell.nomeProduto;
-				}else{
-					row.cell.nomeProduto = '';
+				var txt = '';
+				if (nProduto != null || cProduto != null) {
+					txt = ": " + cProduto + " - " + nProduto;
 				}
-				cProduto = row.cell.codigoProduto;
-			});
-
-			$(".grids").show();
-
-			//
-			var txt = '';
-			if (nProduto != null || cProduto != null) {
-				txt = ": " + cProduto + " - " + nProduto;
+				$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
+				$("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+	
+				return resultado;
 			}
-			$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
-			$("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
-
-			return resultado;
 		},
 		novaEdicao : function () {
 			produtoEdicaoController.popup(null);
@@ -514,6 +527,7 @@ var produtoEdicaoController =$.extend(true,  {
 								$("#produtoEdicaoController-fase").val(result.fase);
 								$("#produtoEdicaoController-numeroLancamento").val(result.numeroLancamento);
 								$("#produtoEdicaoController-pacotePadrao").val(result.pacotePadrao);
+								$("#produtoEdicaoController-situacao").val(result.situacaoLancamento);
 								$("#produtoEdicaoController-tipoLancamento").val(result.tipoLancamento);
 								$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevisto);
 								$("#produtoEdicaoController-precoVenda").val(result.precoVenda);
@@ -836,4 +850,4 @@ var produtoEdicaoController =$.extend(true,  {
 
 }, BaseController);
 
-
+//@ sourceURL=scriptProdutoEdicao.js

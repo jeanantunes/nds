@@ -72,6 +72,11 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		
 		OrdenacaoColunaConsulta coluna = filtro.getOrdenacaoColuna();
 		
+		if (coluna == null) {
+			
+			return hql;
+		}
+		
 		String nome = null;
 		
 		switch(coluna) {

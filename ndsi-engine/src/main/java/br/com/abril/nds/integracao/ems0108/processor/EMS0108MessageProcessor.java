@@ -1,14 +1,11 @@
 package br.com.abril.nds.integracao.ems0108.processor;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -26,12 +23,23 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	}
 
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
 	/**
 	 * Processa as linhas do arquivo da interface EMS0108
 	 */
 	@Override
 	public void processMessage(Message message) {
 		EMS0108Input input = (EMS0108Input) message.getBody();
+		
+		
+		// TODO:Deverá procurar a publicacao
+		// se não existir loga
+		
+		
 		// Obter o produto
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT pe ");
@@ -55,10 +63,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao = ((ProdutoEdicao) query.uniqueResult());
 		if (null != produtoEdicao) {
 			produto = produtoEdicao.getProduto();
-			numeroDias = produtoEdicao.getPeb();
+			numeroDias = produtoEdicao.getPeb(); // REGRA CRIADA DA MENTE INSANA DO PROGRAMADOR (não esta na EMS) !!!!
 		} else {
 			// FIXME Não encontrou o produto. Realizar Log
-			// Passar para a próxima linha
+			// Passar para a próxima linha 
+			// ISSO TA ERRADO, deve-se INSERIR NA TABELA PRODUTO_EDICAO DE ACORDO COM A EMS!!!!
 			return;
 		}
 
@@ -66,7 +75,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		Date dataLcto = null;
 		Date dataRec = null;
 		Date dataCriacaoArquivo = (Date) message.getHeader().get(
-				"FILE_CREATION_DATE");
+				"FILE_CREATION_DATE"); // ISSO DEVE SER A DATA DE OPERACAO!!!!
 
 		Lancamento lancamento = new Lancamento();
 
@@ -79,7 +88,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			// Soma o número de dias a recolher
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(dataLcto);
-			cal.add(Calendar.DATE, numeroDias);
+			cal.add(Calendar.DATE, numeroDias); 
 			dataRec = cal.getTime();
 
 			// Insert
@@ -89,7 +98,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento.setDataRecolhimentoDistribuidor(dataRec);
 			lancamento.setDataRecolhimentoPrevista(dataRec);
 			lancamento.setDataStatus(new Date());
-			lancamento.setNumeroReprogramacoes(0);
+			lancamento.setNumeroReprogramacoes(null);
 			lancamento.setProdutoEdicao(produtoEdicao);
 			lancamento.setReparte(BigInteger.valueOf(0));
 
@@ -138,10 +147,15 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento.setDataRecolhimentoDistribuidor(dataRec);
 			lancamento.setDataRecolhimentoPrevista(dataRec);
 			lancamento.setDataStatus(new Date());
-			// TODO Solicitar revisão modelo de numeroReprogramacoes: mapear
-			// para Integer em vez de int. Deve ser null em vez de 0
-			lancamento.setNumeroReprogramacoes(0);
+			lancamento.setNumeroReprogramacoes(null);
 			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setAlteradoInteface(true);
 		}
 	}
+
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }

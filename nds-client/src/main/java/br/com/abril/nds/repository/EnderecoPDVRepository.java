@@ -23,4 +23,6 @@ public interface EnderecoPDVRepository extends Repository<EnderecoPDV, Long> {
 	List<Endereco> buscarMunicipioPdvPrincipal();
 	
 	Endereco buscarMunicipioPdvPrincipal(Integer codigoCidadeIBGE );
+
+	Endereco buscarEnderecoPrincipal(Long idPdv);
 }

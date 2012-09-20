@@ -19,13 +19,18 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
 </head>
 
 <body>
+
+<jsp:include page="roteirizacao.jsp"/>
+
 <form action="" method="get" id="form1" name="form1">
 	
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos" title="Roteiriza&ccedil;&atilde;o"><a href="javascript:;" onclick="roteirizacao.popupRoteirizacao();" rel="tipsy" title="Incluir Nova Roteirização"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0"/></a></span>
-			<span class="bt_arq" title="Gerar Arquivo"><a href="javascript:;" onclick="roteirizacao.gerarArquivoRoteirizacao('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
-    		<span class="bt_arq" title="Imprimir"><a href="javascript:;" onclick="roteirizacao.imprimirArquivo('PDF');" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
+			<div id="botoesExportacao" style="display:none;">
+				<span class="bt_arq" title="Gerar Arquivo"><a href="javascript:;" onclick="roteirizacao.exportar('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+	    		<span class="bt_arq" title="Imprimir"><a href="javascript:;" onclick="roteirizacao.exportar('PDF');" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
+    		</div>
 		</div>
 	</div>
 	
@@ -112,6 +117,15 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
 	        	
 	      </fieldset>
       </div>
+      
+      <div id="dialog-detalhes" title="Cotas" style="width: auto; min-height: 60.40000009536743px; height: auto; " class="ui-dialog-content ui-widget-content" scrolltop="0" scrollleft="0">
+		<fieldset>
+	    	<legend id="legendDetalhesCota"></legend>
+	        
+	        <table id="cotasGrid" width="347" border="0" cellspacing="1" cellpadding="1"> </table>
+	
+	  </fieldset>
+	</div>
       
 </form>
 

@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estoque;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -56,12 +58,12 @@ public class Diferenca implements Serializable {
 	private TipoDiferenca tipoDiferenca;
 	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_ESTOQUE", nullable = false)
+	private TipoEstoque tipoEstoque;
+	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_CONFIRMACAO", nullable = false)
 	private StatusConfirmacao statusConfirmacao;
-	
-	@OneToOne(optional = true)
-	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
-	private MovimentoEstoque movimentoEstoque;
 	
 	@Column(name = "AUTOMATICA")
 	private Boolean automatica = false;
@@ -69,11 +71,21 @@ public class Diferenca implements Serializable {
 	@Transient
 	private BigDecimal valorTotalDiferenca;
 	
+	@OneToMany(mappedBy = "diferenca")
+	private Collection<RateioDiferenca> rateios;
+	
+	@OneToOne
+	@JoinColumn(name = "LANCAMENTO_DIFERENCA_ID")
+	private LancamentoDiferenca lancamentoDiferenca;
+	
+	@Transient
+	private boolean existemRateios;
+	
 	public Diferenca() {
 		
 	}
 	
-	public Diferenca(Diferenca diferenca, BigDecimal valorTotalDiferenca) {
+	public Diferenca(boolean existemRateios, Diferenca diferenca, BigDecimal valorTotalDiferenca) {
 		
 		this.id = diferenca.id;
 		this.qtde = diferenca.qtde;
@@ -82,10 +94,11 @@ public class Diferenca implements Serializable {
 		this.produtoEdicao = diferenca.produtoEdicao;
 		this.tipoDiferenca = diferenca.tipoDiferenca;
 		this.statusConfirmacao = diferenca.statusConfirmacao;
-		this.movimentoEstoque = diferenca.movimentoEstoque;
 		this.automatica = diferenca.automatica;
-		
+		this.tipoEstoque = diferenca.tipoEstoque;
+		this.lancamentoDiferenca = diferenca.lancamentoDiferenca;
 		this.valorTotalDiferenca = valorTotalDiferenca;
+		this.existemRateios = existemRateios;
 	}
 	
 	public Long getId() {
@@ -144,14 +157,6 @@ public class Diferenca implements Serializable {
 		this.statusConfirmacao = statusConfirmacao;
 	}
 
-	public MovimentoEstoque getMovimentoEstoque() {
-		return movimentoEstoque;
-	}
-
-	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
-		this.movimentoEstoque = movimentoEstoque;
-	}
-
 	public Boolean isAutomatica() {
 		return automatica;
 	}
@@ -166,6 +171,22 @@ public class Diferenca implements Serializable {
 
 	public void setValorTotalDiferenca(BigDecimal valorTotalDiferenca) {
 		this.valorTotalDiferenca = valorTotalDiferenca;
+	}
+	
+	public Collection<RateioDiferenca> getRateios() {
+		return rateios;
+	}
+
+	public void setRateios(Collection<RateioDiferenca> rateios) {
+		this.rateios = rateios;
+	}
+
+	public LancamentoDiferenca getLancamentoDiferenca() {
+		return lancamentoDiferenca;
+	}
+
+	public void setLancamentoDiferenca(LancamentoDiferenca lancamentoDiferenca) {
+		this.lancamentoDiferenca = lancamentoDiferenca;
 	}
 
 	/* (non-Javadoc)
@@ -199,4 +220,31 @@ public class Diferenca implements Serializable {
 		return true;
 	}
 
+	/**
+	 * @return the tipoEstoque
+	 */
+	public TipoEstoque getTipoEstoque() {
+		return tipoEstoque;
+	}
+
+	/**
+	 * @param tipoEstoque the tipoEstoque to set
+	 */
+	public void setTipoEstoque(TipoEstoque tipoEstoque) {
+		this.tipoEstoque = tipoEstoque;
+	}
+
+	/**
+	 * @return the existemRateios
+	 */
+	public boolean isExistemRateios() {
+		return existemRateios;
+	}
+
+	/**
+	 * @param existemRateios the existemRateios to set
+	 */
+	public void setExistemRateios(boolean existemRateios) {
+		this.existemRateios = existemRateios;
+	}
 }

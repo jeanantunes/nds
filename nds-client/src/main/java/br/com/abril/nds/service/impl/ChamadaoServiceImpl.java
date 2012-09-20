@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,12 +15,14 @@ import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
@@ -26,6 +30,7 @@ import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ChamadaoRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
@@ -59,6 +64,9 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	
 	@Autowired
 	protected CotaService cotaService;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -135,6 +143,12 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 				chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.CHAMADAO);
 				
+				Set<Lancamento> lancamentos = new HashSet<Lancamento>();
+				Lancamento lancamento = this.lancamentoRepository.buscarPorId(consignadoCotaChamadao.getIdLancamento());
+				lancamentos.add(lancamento);
+				
+				chamadaEncalhe.setLancamentos(lancamentos);
+				
 				chamadaEncalhe = chamadaEncalheRepository.merge(chamadaEncalhe);
 			}
 			
@@ -174,9 +188,8 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 */
 	private void verificarSuspenderCota(FiltroChamadaoDTO filtro, Cota cota, Usuario usuario) {
 		
-		if(!SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
-		
-			filtro.setIdFornecedor(null);
+		if(!SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())
+				&& filtro.getIdFornecedor() == null) {
 			
 			List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadao =
 				this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
@@ -186,8 +199,45 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				this.suspenderCota(cota.getId(), usuario);
 			}
 		}
+		
+		if (filtro.getIdFornecedor() != null) {
+			
+			List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadao =
+				this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+			
+			if (listaConsignadoCotaChamadao == null || listaConsignadoCotaChamadao.isEmpty()) {
+				
+				this.desassociarFornecedorDaCota(filtro.getIdFornecedor(), cota);
+			}
+		}
 	}
 	
+	/**
+	 * Desassocia um fornecedor da cota informada.
+	 * 
+	 * @param idFornecedor - identificador do fornecedor
+	 * @param cota - cota
+	 */
+	private void desassociarFornecedorDaCota(Long idFornecedor, Cota cota) {
+		
+		Set<Fornecedor> fornecedores = cota.getFornecedores();
+		
+		Fornecedor fornecedorRemover = null;
+		
+		for (Fornecedor fornecedor : fornecedores) {
+			
+			if (fornecedor.getId().equals(idFornecedor)) {
+				
+				fornecedorRemover = fornecedor;
+			}
+		}
+		
+		if (fornecedorRemover != null) {
+			
+			fornecedores.remove(fornecedorRemover);
+		}
+	}
+
 	/**
 	 * Suspende a cota.
 	 * 

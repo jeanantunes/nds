@@ -5,7 +5,7 @@ package br.com.abril.nds.model.cadastro;
  * @version 1.0
  * @created 14-fev-2012 11:35:31
  */
-public enum GrupoProduto {
+public enum GrupoProduto {	
 	
 	CROMO("Cromo"),
 	REVISTA("Revista"),
@@ -14,8 +14,11 @@ public enum GrupoProduto {
 	VALE_DESCONTO("Vale Desconto"),
 	CARTELA("Cartela"),
 	COLECIONAVEL("Colecionável"),
-	OUTROS("Outros");
+	OUTROS("Outros"),
+	GUIA("Guia"),
+	ALBUM("Album");
 	
+	private Integer codigo;
 	private String nome;
 	
 	GrupoProduto(String nome){

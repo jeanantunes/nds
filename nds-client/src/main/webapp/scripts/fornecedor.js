@@ -86,10 +86,55 @@ var fornecedorController = $.extend(true,{
 			});
 			
 			
+		},
+		
+		
+		getActionParaGridEnderecoFornecedor : function (idEndereco) {
+			
+			if(ENDERECO_FORNECEDOR.indBloqueiaCamposEdicaoFornecedor) {
+				
+				return  '<a href="javascript:;" onclick="ENDERECO_FORNECEDOR.editarEndereco(' 		 
+				+ idEndereco 
+				+ ')" ' 															
+				+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' 	
+				+ '<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' 			
+				+ '</a>' 
+				+ '<img src="'+contextPath+'/images/ico_excluir.gif" style="opacity:0.4" border="0px"/>'; 
+				
+			} else {
+				
+				return '<a href="javascript:;" onclick="ENDERECO_FORNECEDOR.editarEndereco(' + idEndereco + ')" ' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Editar endereço">' +
+				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
+				'</a>' +
+				'<a href="javascript:;" onclick="ENDERECO_FORNECEDOR.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
+				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+				'</a>';
+				
+			}
+		
+		},		
+		
+		bloquearCamposEdicaoFornecedor : function(indBloqueiaCampo){
+			
+			$("#fornecedorController-idFornecedor", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-codigoInterface", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-razaoSocial", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-nomeFantasia", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-cnpj", 				fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-inscricaoEstadual", 	fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-responsavel", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-email", 				fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-tipoFornecedor", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-validadeContrato", 	fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-emailNfe", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-possuiContrato", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$( '#fornecedorController-validade', 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			
 		},
-
-		novoFornecedor:	function (isEdicao) {
+		
+		novoFornecedor:	function (isEdicao, indBloqueiaCamposEdicaoFornecedor) {
 				
 				if (!isEdicao) {
 					
@@ -110,29 +155,51 @@ var fornecedorController = $.extend(true,{
 				
 				} else {
 					
-					fornecedorController.showPopupFornecedor();
+					fornecedorController.showPopupFornecedor(indBloqueiaCamposEdicaoFornecedor);
 				}
 
 				$( "#fornecedorController-tabFornecedores", fornecedorController.workspace ).tabs( "select" , 0 );
 			},
 
-			showPopupFornecedor:	function () {
+			showPopupFornecedor: function (indEdicaoBloqueada) {
+				
+				
+				var dialog_novo_fornecedor = {
+						resizable: false,
+						height:570,
+						width:840,
+						modal: true,
+						form: $("#fornecedorController-dialogNovoFornecedor", this.workspace).parents("form"),
+						buttons : {}
+				};
+				
+				if(indEdicaoBloqueada) {
 
-				$( "#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog({
-					resizable: false,
-					height:570,
-					width:840,
-					modal: true,
-					buttons: {
-						"Confirmar": function() {
-							fornecedorController.cadastrarFornecedor();
-						},
-						"Cancelar": function() {
-							$( this ).dialog( "close" );
-						}
-					},
-					form: $("#fornecedorController-dialogNovoFornecedor", this.workspace).parents("form")
-				});
+					dialog_novo_fornecedor.buttons = {
+							
+							"Cancelar": function() {
+								$( this ).dialog( "close" );
+							}
+							
+					};
+					
+				} else {
+
+					dialog_novo_fornecedor.buttons = {
+							
+							"Confirmar": function() {
+								fornecedorController.cadastrarFornecedor();
+							},
+							"Cancelar": function() {
+								$( this ).dialog( "close" );
+							}
+							
+					};
+					
+				}
+				
+				
+				$( "#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog(dialog_novo_fornecedor);
 			},
 			
 			limparCamposModal:	function () {
@@ -173,7 +240,7 @@ var fornecedorController = $.extend(true,{
 					function(result) {
 						exibirMensagemDialog(
 							result.mensagens.tipoMensagem, 
-							result.mensagens.listaMensagens, ""
+							result.mensagens.listaMensagens, "fornecedorController-dialogNovoFornecedor"
 						);
 					},
 					true
@@ -269,8 +336,8 @@ var fornecedorController = $.extend(true,{
 				return data;
 			},
 
-			editarFornecedor:function (idFornecedor) {
-
+			editarFornecedor:function (idFornecedor, indBloqueiaCamposEdicaoFornecedor) {
+				
 				$.postJSON(
 					 contextPath +"/cadastro/fornecedor/editarFornecedor",
 					{'idFornecedor': idFornecedor},
@@ -305,11 +372,24 @@ var fornecedorController = $.extend(true,{
 							$( '.fornecedorController-validade', fornecedorController.workspace ).hide();
 						}
 
-						fornecedorController.novoFornecedor(true);
+						fornecedorController.novoFornecedor(true, indBloqueiaCamposEdicaoFornecedor);
 						
+						ENDERECO_FORNECEDOR.getAction = fornecedorController.getActionParaGridEnderecoFornecedor;
+						ENDERECO_FORNECEDOR.indBloqueiaCamposEdicaoFornecedor = indBloqueiaCamposEdicaoFornecedor;
 						ENDERECO_FORNECEDOR.popularGridEnderecos();
-						
+
+						FORNECEDOR.getActions = fornecedorController.getActionParaGridTelefoneFornecedor;
+						FORNECEDOR.indBloqueiaCamposEdicaoFornecedor = indBloqueiaCamposEdicaoFornecedor;
 						FORNECEDOR.carregarTelefones();
+						
+						fornecedorController.bloquearCamposEdicaoFornecedor(indBloqueiaCamposEdicaoFornecedor);
+						
+						ENDERECO_FORNECEDOR.bloquearCamposFormEndereco(indBloqueiaCamposEdicaoFornecedor);
+						
+						FORNECEDOR.bloquearCamposFormTelefone(indBloqueiaCamposEdicaoFornecedor);
+
+						
+						
 					},
 					function(result) {
 						exibirMensagem(
@@ -320,12 +400,46 @@ var fornecedorController = $.extend(true,{
 				);
 			},
 			
-			getActionFornecedor:function (idFornecedor, isHabilitado) {
+			getActionParaGridTelefoneFornecedor : function(idTelefone) {
+
+				if(FORNECEDOR.indBloqueiaCamposEdicaoFornecedor) {
+
+					return '<a href="javascript:;" onclick="FORNECEDOR.editarTelefone('
+					+ idTelefone
+					+ ')" '
+					+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar telefone">'
+					+ '<img src="/nds-client/images/ico_editar.gif" border="0px"/>'
+					+ '</a>'
+					+ '<img src="'+contextPath+'/images/ico_excluir.gif" style="opacity:0.4" border="0px"/>';
+					
+					
+				} else {
+					
+					return '<a href="javascript:;" onclick="FORNECEDOR.editarTelefone('
+					+ idTelefone
+					+ ')" '
+					+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar telefone">'
+					+ '<img src="/nds-client/images/ico_editar.gif" border="0px"/>'
+					+ '</a>'
+					+ '<a href="javascript:;" onclick="FORNECEDOR.removerTelefone('
+					+ idTelefone
+					+ ')" '
+					+ ' style="cursor:pointer;border:0px;margin:5px" title="Excluir telefone">'
+					+ '<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>'
+					+ '</a>';
+					
+				}
+				
+			},
+			
+			getActionFornecedor : function(idFornecedor, isHabilitado) {
 
 				if (isHabilitado) {
 				
 					return '<a href="javascript:;" onclick="fornecedorController.editarFornecedor('
-							+ idFornecedor
+							+ idFornecedor 
+							+ ','
+							+ false
 							+ ')" '
 							+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar fornecedor">'
 							+ '<img src="'+contextPath +'/images/ico_editar.gif" border="0px"/>'
@@ -339,8 +453,14 @@ var fornecedorController = $.extend(true,{
 				
 				} else {
 					
-					return '<img src="'+contextPath +'/images/ico_editar.gif" border="0px"'
-							+ ' style="opacity:0.4;padding-right:10px"/>'
+					return 	'<a href="javascript:;" onclick="fornecedorController.editarFornecedor('
+							+ idFornecedor 
+							+ ','
+							+ true
+							+ ')" '
+							+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar fornecedor">'
+							+ '<img src="'+contextPath +'/images/ico_editar.gif" border="0px"/>'
+							+ '</a>'
 						 	+ '<img src="'+contextPath + '/images/ico_excluir.gif" border="0px"'
 						 	+ ' style="opacity:0.4"/>';
 
@@ -425,3 +545,5 @@ var fornecedorController = $.extend(true,{
 
 			}		
 }, BaseController);
+
+//@ sourceURL=fornecedor.js

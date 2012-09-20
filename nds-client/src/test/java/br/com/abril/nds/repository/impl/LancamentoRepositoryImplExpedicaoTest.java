@@ -75,7 +75,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 		Editor abril = Fixture.editoraAbril();
 		save(abril);
 		
-		for(Integer i=1000;i<1010; i++) {
+		for(Integer i=1000;i<1020; i++) {
 			
 			PessoaJuridica juridica = Fixture.pessoaJuridica("PessoaJ"+i,
 					"0"+ i, "000000000000", "acme@mail.com", "99.999-9");
@@ -119,40 +119,57 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 					itemNotaFiscal, recebimentoFisico, BigInteger.valueOf(i));
 			save(itemFisico);
 			
-			Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
-					BigInteger.valueOf(100), 
-					StatusLancamento.ESTUDO_FECHADO, 
-					itemFisico, 1);
-			lancamento.setReparte(BigInteger.valueOf(10));
-			save(lancamento);
-		
-			Estudo estudo = new Estudo();
-			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
-			estudo.setProdutoEdicao(produtoEdicao);
-			estudo.setQtdeReparte(BigInteger.valueOf(10));
-			save(estudo);
+			if (i < 1010) {
+				Lancamento lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(23, Calendar.FEBRUARY, 2012), 
+						BigInteger.valueOf(100), 
+						StatusLancamento.ESTUDO_FECHADO, 
+						itemFisico, 1);
+				lancamento.setReparte(BigInteger.valueOf(10));
+				save(lancamento);
 			
-			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "01" + i, "ie"+i, "email"+i, "99.999-9");
-			Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
-			EstudoCota estudoCota = Fixture.estudoCota(BigInteger.valueOf(3), BigInteger.valueOf(3), 
-					estudo, cota);
-			save(pessoa,cota,estudoCota);		
-			
-			Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "02" + i, "ie"+i, "email"+i, "99.999-9");
-			Cota cota2 = Fixture.cota(i+3000, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
-			EstudoCota estudoCota2 = Fixture.estudoCota(BigInteger.valueOf(7), BigInteger.valueOf(7), 
-					estudo, cota2);
-			save( pessoa2,cota2,estudoCota2);		
-			
-			
-			TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoRecebimentoReparte();	
+				Estudo estudo = new Estudo();
+				estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
+				estudo.setProdutoEdicao(produtoEdicao);
+				estudo.setQtdeReparte(BigInteger.valueOf(10));
+				estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+				estudo.setDataCadastro(new Date());
+				save(estudo);
+				
+				Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "01" + i, "ie"+i, "email"+i, "99.999-9");
+				Cota cota = Fixture.cota(i, pessoa, SituacaoCadastro.ATIVO, box300Reparte);
+				EstudoCota estudoCota = Fixture.estudoCota(BigInteger.valueOf(3), BigInteger.valueOf(3), 
+						estudo, cota);
+				save(pessoa,cota,estudoCota);		
+				
+				Pessoa pessoa2 = Fixture.pessoaJuridica("razaoS2"+i, "02" + i, "ie"+i, "email"+i, "99.999-9");
+				Cota cota2 = Fixture.cota(i+3000, pessoa2, SituacaoCadastro.ATIVO, box300Reparte);
+				EstudoCota estudoCota2 = Fixture.estudoCota(BigInteger.valueOf(7), BigInteger.valueOf(7), 
+						estudo, cota2);
+				save( pessoa2,cota2,estudoCota2);		
+				
+				
+				TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoRecebimentoReparte();	
+	
+				TipoMovimentoEstoque tipoMovimento2 = Fixture.tipoMovimentoEnvioJornaleiro();
+				save(tipoMovimento,tipoMovimento2);
 
-			TipoMovimentoEstoque tipoMovimento2 = Fixture.tipoMovimentoEnvioJornaleiro();
-			save(tipoMovimento,tipoMovimento2);
+			} else {
+				Lancamento lancamentoBalanceado = Fixture.lancamento(TipoLancamento.LANCAMENTO, produtoEdicao,
+						Fixture.criarData(24, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(24, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(24, Calendar.FEBRUARY, 2012), 
+						Fixture.criarData(24, Calendar.FEBRUARY, 2012), 
+						BigInteger.valueOf(100), 
+						(i < 1015) ? StatusLancamento.PLANEJADO : StatusLancamento.BALANCEADO , 
+						itemFisico, 1);
+				lancamentoBalanceado.setReparte(BigInteger.valueOf(10));
+
+				save(lancamentoBalanceado);
+			}
 		}
 		
 	}
@@ -180,6 +197,27 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 					
 		Assert.assertTrue(nLancamentos.equals(10L));
 	}	
+
+	@Test
+	public void existeMatrizBalanciamentoConfirmadoTrue() {
+		
+		Boolean existelancamentosConfirmado = lancamentoRepository
+				.existeMatrizBalanceamentoConfirmado(Fixture.criarData(24,
+						Calendar.FEBRUARY, 2012));
+			
+		Assert.assertTrue(existelancamentosConfirmado);
+	}
+	
+	@Test
+	public void existeMatrizBalanciamentoConfirmadoFalse() {
+		
+		Boolean existelancamentosConfirmado = lancamentoRepository
+				.existeMatrizBalanceamentoConfirmado(Fixture.criarData(23,
+						Calendar.FEBRUARY, 2012));
+			
+		Assert.assertFalse(existelancamentosConfirmado);
+	}
+	
 
 }
 

@@ -1,16 +1,20 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.AssociacaoVeiculoMotoristaRotaDTO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -19,12 +23,17 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO.OrdenacaoColunaTransportador;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TransportadorService;
@@ -32,9 +41,13 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -77,16 +90,22 @@ public class TransportadorController {
 	@Autowired
 	PessoaService pessoaService;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	private final String FILTRO_PESQUISA_TRANSPORTADORES = "filtroPesquisaTransportadores";
 	
 	private Result result;
 	
 	private HttpSession httpSession;
 	
-	public TransportadorController(Result result, HttpSession httpSession){
+	private HttpServletResponse httpResponse;
+	
+	public TransportadorController(Result result, HttpSession httpSession, HttpServletResponse httpResponse){
 		
 		this.result = result;
 		this.httpSession = httpSession;
+		this.httpResponse = httpResponse;
 	}
 	
 	@Path("/")
@@ -350,6 +369,22 @@ public class TransportadorController {
 			msgs.add("Insc. Estadual é obrigatório.");
 		}
 		
+		if (transportador.getParametroCobrancaTransportador() != null){
+			
+			ParametroCobrancaTransportador param = transportador.getParametroCobrancaTransportador();
+			
+			if (PeriodicidadeCobranca.SEMANAL == param.getPeriodicidadeCobranca() && 
+					(param.getDiasSemanaCobranca() == null || param.getDiasSemanaCobranca().isEmpty())){
+				
+				msgs.add("Selecione os dias da semana para cobrança semanal.");
+			} else if ((PeriodicidadeCobranca.QUINZENAL == param.getPeriodicidadeCobranca() ||
+					PeriodicidadeCobranca.MENSAL == param.getPeriodicidadeCobranca()) && 
+					(param.getDiaCobranca() == null || param.getDiaCobranca() <= 0 || param.getDiaCobranca() > 31)){
+				
+				msgs.add("Dia da cobrança inválido");
+			}
+		}
+		
 		if (!msgs.isEmpty()){
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
@@ -373,6 +408,25 @@ public class TransportadorController {
 			dados.add(transportador.getResponsavel());
 			dados.add(Util.adicionarMascaraCNPJ(transportador.getPessoaJuridica().getCnpj()));
 			dados.add(transportador.getPessoaJuridica().getInscricaoEstadual());
+			
+			if (transportador.getParametroCobrancaTransportador() != null){
+				
+				ParametroCobrancaTransportador param = transportador.getParametroCobrancaTransportador();
+				
+				dados.add(param.getModelidadeCobranca() != null ? param.getModelidadeCobranca().toString() : "");
+				dados.add(param.getValor() != null ? String.format("%.2f", param.getValor()) : "0,00");
+				dados.add(String.valueOf(param.isPorEntrega()));
+				dados.add(param.getPeriodicidadeCobranca().toString());
+				dados.add(param.getDiaCobranca() != null ? param.getDiaCobranca().toString() : "");
+				
+				if (param.getDiasSemanaCobranca() != null){
+					
+					for (DiaSemana dia : param.getDiasSemanaCobranca()){
+						
+						dados.add(dia.toString());
+					}
+				}
+			}
 			
 			this.carregarTelefonesEnderecosPessoa(transportador.getPessoaJuridica().getId());
 		}
@@ -1092,6 +1146,46 @@ public class TransportadorController {
 		this.httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 	}
 	
+	@Post
+	public void carregarCotasAtendidas(String sortorder, String sortname){
+		
+		List<CotaAtendidaTransportadorVO> cotasAtendidas;
+		
+		Long idTransportador = (Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO);
+		
+		if (idTransportador == null){
+			
+			cotasAtendidas = new ArrayList<CotaAtendidaTransportadorVO>();
+		} else {
+			
+			cotasAtendidas = 
+					this.transportadorService.buscarCotasAtendidadas(idTransportador, sortorder, sortname);
+		}
+		
+		result.use(FlexiGridJson.class).from(cotasAtendidas).page(1).total(cotasAtendidas.size()).serialize();
+	}
+	
+	@Get
+	public void exportarCotasAtendidas(FileType fileType, String sortorder, String sortname) throws IOException{
+		
+		List<CotaAtendidaTransportadorVO> cotasAtendidas;
+		
+		Long idTransportador = (Long) this.httpSession.getAttribute(ID_TRANSPORTADORA_EDICAO);
+		
+		if (idTransportador == null){
+			
+			cotasAtendidas = new ArrayList<CotaAtendidaTransportadorVO>();
+		} else {
+			
+			cotasAtendidas = 
+					this.transportadorService.buscarCotasAtendidadas(idTransportador, sortorder, sortname);
+		}
+		
+		FileExporter.to("cotas_atendidas", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					cotasAtendidas, CotaAtendidaTransportadorVO.class, this.httpResponse);
+	}
+	
 	private TableModel<CellModelKeyValue<Veiculo>> getTableModelVeiculos(List<Veiculo> listaVeiculos) {
 		
 		TableModel<CellModelKeyValue<Veiculo>> tableModel = new TableModel<CellModelKeyValue<Veiculo>>();
@@ -1202,5 +1296,29 @@ public class TransportadorController {
 		tableModel.setTotal(listaRotas.size()); 
 		
 		return tableModel;
+	}
+	
+	private NDSFileHeader getNDSFileHeader() {
+		
+		NDSFileHeader ndsFileHeader = new NDSFileHeader();
+		List<String> dados = this.distribuidorService.obterNomeCNPJDistribuidor();
+		
+		if (dados.size() == 2) {
+			
+			ndsFileHeader.setNomeDistribuidor(dados.get(0));
+			ndsFileHeader.setCnpjDistribuidor(dados.get(1));
+		}
+		
+		ndsFileHeader.setData(new Date());
+		ndsFileHeader.setNomeUsuario(this.obterUsuario().getNome());
+		return ndsFileHeader;
+	}
+	
+	private Usuario obterUsuario() {
+		//TODO: obter usuário
+		Usuario usuario = new Usuario();
+		usuario.setNome("João");
+		usuario.setId(1L);
+		return usuario;
 	}
 }

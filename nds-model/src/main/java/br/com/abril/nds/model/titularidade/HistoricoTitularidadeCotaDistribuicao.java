@@ -47,67 +47,67 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
      * Flag indicando se é arrendatário 
      */
     @Column(name = "DISTRIBUICAO_ARRENDATARIO")
-    private boolean arrendatario;
+    private Boolean arrendatario;
     
     /**
      * Flag indicando se o reparte é por ponto de venda
      */
     @Column(name = "DISTRIBUICAO_REPARTE_POR_PONTO_VENDA")
-    private boolean repartePorPontoVenda;
+    private Boolean repartePorPontoVenda;
     
     /**
      * Flag indicando se solicita números atrasados
      */
     @Column(name = "DISTRIBUICAO_SOLICITA_NUM_ATRASADOS")
-    private boolean solicitaNumAtras;
+    private Boolean solicitaNumAtras;
     
     /**
      * Flag indicando se recebe ou recolhe parciais
      */
     @Column(name = "DISTRIBUICAO_RECEBE_RECOLHE_PARCIAIS")
-    private boolean recebeRecolheParcias;
+    private Boolean recebeRecolheParcias;
     
     /**
      * Flag indicando se a nota é impressa
      */
     @Column(name = "DISTRIBUICAO_NOTA_ENVIO_IMPRESSO")
-    private boolean notaEnvioImpresso;
+    private Boolean notaEnvioImpresso;
     
     /**
      * Flag indicando se a nota é enviada por email
      */
     @Column(name = "DISTRIBUICAO_NOTA_ENVIO_EMAIL")
-    private boolean notaEnvioEmail;
+    private Boolean notaEnvioEmail;
     
     /**
      * Flag indicando se a chamada de encalhe é impressa
      */
     @Column(name = "DISTRIBUICAO_CHAMADA_ENCALHE_IMPRESSO")
-    private boolean chamadaEncalheImpresso;
+    private Boolean chamadaEncalheImpresso;
     
     /**
      * Flag indicando se a chamada de encalhe é enviada por email
      */
     @Column(name = "DISTRIBUICAO_CHAMADA_ENCALHE_EMAIL")
-    private boolean chamadaEncalheEmail;
+    private Boolean chamadaEncalheEmail;
     
     /**
      * Flag indicando se o slip é impresso
      */
     @Column(name = "DISTRIBUICAO_SLIP_IMPRESSO")
-    private boolean slipImpresso;
+    private Boolean slipImpresso;
     
     /**
      * Flag indicando se o slip é enviado por email
      */
     @Column(name = "DISTRIBUICAO_SLIP_EMAIL")
-    private boolean slipEmail;
+    private Boolean slipEmail;
     
     /**
      * Flag indicando se utiliza procuração
      */
     @Column(name = "DISTRIBUICAO_PROCURACAO_ASSINADA")
-    private boolean procuracaoAssinada;
+    private Boolean procuracaoAssinada;
     
     /**
      * Tipo de entrega utilizada
@@ -125,7 +125,7 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
      * Percentual do faturamento que corresponde a entrega
      */
     @Column(name = "DISTRIBUICAO_PERCENTUAL_FATURAMENTO_ENTREGA")
-    private Float percentualFaturamentoEntrega;
+    private BigDecimal percentualFaturamentoEntrega;
     
     /**
      * Base de cálculo da entrega
@@ -193,154 +193,154 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @return the arrendatario
      */
-    public boolean isArrendatario() {
+    public Boolean isArrendatario() {
         return arrendatario;
     }
 
     /**
      * @param arrendatario the arrendatario to set
      */
-    public void setArrendatario(boolean arrendatario) {
+    public void setArrendatario(Boolean arrendatario) {
         this.arrendatario = arrendatario;
     }
 
     /**
      * @return the repartePorPontoVenda
      */
-    public boolean isRepartePorPontoVenda() {
+    public Boolean isRepartePorPontoVenda() {
         return repartePorPontoVenda;
     }
 
     /**
      * @param repartePorPontoVenda the repartePorPontoVenda to set
      */
-    public void setRepartePorPontoVenda(boolean repartePorPontoVenda) {
+    public void setRepartePorPontoVenda(Boolean repartePorPontoVenda) {
         this.repartePorPontoVenda = repartePorPontoVenda;
     }
 
     /**
      * @return the solicitaNumAtras
      */
-    public boolean isSolicitaNumAtras() {
+    public Boolean isSolicitaNumAtras() {
         return solicitaNumAtras;
     }
 
     /**
      * @param solicitaNumAtras the solicitaNumAtras to set
      */
-    public void setSolicitaNumAtras(boolean solicitaNumAtras) {
+    public void setSolicitaNumAtras(Boolean solicitaNumAtras) {
         this.solicitaNumAtras = solicitaNumAtras;
     }
 
     /**
      * @return the recebeRecolheParcias
      */
-    public boolean isRecebeRecolheParcias() {
+    public Boolean isRecebeRecolheParcias() {
         return recebeRecolheParcias;
     }
 
     /**
      * @param recebeRecolheParcias the recebeRecolheParcias to set
      */
-    public void setRecebeRecolheParcias(boolean recebeRecolheParcias) {
+    public void setRecebeRecolheParcias(Boolean recebeRecolheParcias) {
         this.recebeRecolheParcias = recebeRecolheParcias;
     }
 
     /**
      * @return the notaEnvioImpresso
      */
-    public boolean isNotaEnvioImpresso() {
+    public Boolean isNotaEnvioImpresso() {
         return notaEnvioImpresso;
     }
 
     /**
      * @param notaEnvioImpresso the notaEnvioImpresso to set
      */
-    public void setNotaEnvioImpresso(boolean notaEnvioImpresso) {
+    public void setNotaEnvioImpresso(Boolean notaEnvioImpresso) {
         this.notaEnvioImpresso = notaEnvioImpresso;
     }
 
     /**
      * @return the notaEnvioEmail
      */
-    public boolean isNotaEnvioEmail() {
+    public Boolean isNotaEnvioEmail() {
         return notaEnvioEmail;
     }
 
     /**
      * @param notaEnvioEmail the notaEnvioEmail to set
      */
-    public void setNotaEnvioEmail(boolean notaEnvioEmail) {
+    public void setNotaEnvioEmail(Boolean notaEnvioEmail) {
         this.notaEnvioEmail = notaEnvioEmail;
     }
 
     /**
      * @return the chamadaEncalheImpresso
      */
-    public boolean isChamadaEncalheImpresso() {
+    public Boolean isChamadaEncalheImpresso() {
         return chamadaEncalheImpresso;
     }
 
     /**
      * @param chamadaEncalheImpresso the chamadaEncalheImpresso to set
      */
-    public void setChamadaEncalheImpresso(boolean chamadaEncalheImpresso) {
+    public void setChamadaEncalheImpresso(Boolean chamadaEncalheImpresso) {
         this.chamadaEncalheImpresso = chamadaEncalheImpresso;
     }
 
     /**
      * @return the chamadaEncalheEmail
      */
-    public boolean isChamadaEncalheEmail() {
+    public Boolean isChamadaEncalheEmail() {
         return chamadaEncalheEmail;
     }
 
     /**
      * @param chamadaEncalheEmail the chamadaEncalheEmail to set
      */
-    public void setChamadaEncalheEmail(boolean chamadaEncalheEmail) {
+    public void setChamadaEncalheEmail(Boolean chamadaEncalheEmail) {
         this.chamadaEncalheEmail = chamadaEncalheEmail;
     }
 
     /**
      * @return the slipImpresso
      */
-    public boolean isSlipImpresso() {
+    public Boolean isSlipImpresso() {
         return slipImpresso;
     }
 
     /**
      * @param slipImpresso the slipImpresso to set
      */
-    public void setSlipImpresso(boolean slipImpresso) {
+    public void setSlipImpresso(Boolean slipImpresso) {
         this.slipImpresso = slipImpresso;
     }
 
     /**
      * @return the slipEmail
      */
-    public boolean isSlipEmail() {
+    public Boolean isSlipEmail() {
         return slipEmail;
     }
 
     /**
      * @param slipEmail the slipEmail to set
      */
-    public void setSlipEmail(boolean slipEmail) {
+    public void setSlipEmail(Boolean slipEmail) {
         this.slipEmail = slipEmail;
     }
 
     /**
      * @return the procuracaoAssinada
      */
-    public boolean isProcuracaoAssinada() {
+    public Boolean isProcuracaoAssinada() {
         return procuracaoAssinada;
     }
 
     /**
      * @param procuracaoAssinada the procuracaoAssinada to set
      */
-    public void setProcuracaoAssinada(boolean procuracaoAssinada) {
+    public void setProcuracaoAssinada(Boolean procuracaoAssinada) {
         this.procuracaoAssinada = procuracaoAssinada;
     }
 
@@ -375,14 +375,14 @@ public class HistoricoTitularidadeCotaDistribuicao implements Serializable {
     /**
      * @return the percentualFaturamentoEntrega
      */
-    public Float getPercentualFaturamentoEntrega() {
+    public BigDecimal getPercentualFaturamentoEntrega() {
         return percentualFaturamentoEntrega;
     }
 
     /**
      * @param percentualFaturamentoEntrega the percentualFaturamentoEntrega to set
      */
-    public void setPercentualFaturamentoEntrega(Float percentualFaturamentoEntrega) {
+    public void setPercentualFaturamentoEntrega(BigDecimal percentualFaturamentoEntrega) {
         this.percentualFaturamentoEntrega = percentualFaturamentoEntrega;
     }
 

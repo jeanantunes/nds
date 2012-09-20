@@ -2,9 +2,12 @@ package br.com.abril.nds.integracao.ems0135.processor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,8 @@ import br.com.abril.nds.repository.impl.AbstractRepository;
 @Component
 public class EMS0135MessageProcessor extends AbstractRepository implements MessageProcessor {
 	
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
@@ -40,95 +45,194 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorService distribuidorService;
 	
 	
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
 
 	@Override
 	public void processMessage(Message message) {
 		
 		EMS0135Input input = (EMS0135Input) message.getBody();
-		
-		validarDistribuidor(message, input);
-		
-		ProdutoEdicao produtoEdicao = obterProdutoEdicao(input);
-		
-		if(produtoEdicao == null){			
-			
-			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Produto não encontrado.");
-
-			throw new RuntimeException("Produto não encontrado.");
+		if (input == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+			return;
 		}
 		
-		NotaFiscalEntrada notafiscalEntrada = obterNotaFiscal(input.getNotaFiscal());
 		
+		// Validar código do distribuidor:
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		if(!distribuidor.getCodigoDistribuidorDinap().equals(
+				input.getDistribuidor().toString())){			
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
+			return;
+		}
+		
+		
+		// Validar Produto/Edicao
+		final Integer codigoProduto = input.getCodigoProduto();
+		final Integer edicao = input.getEdicao();
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
+				edicao);
+		if (produtoEdicao == null) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
+							+ codigoProduto + " e Edicao: " + edicao
+							+ " na tabela produto_edicao");
+			return;
+		}
+
+		
+		NotaFiscalEntrada notafiscalEntrada = obterNotaFiscal(
+				input.getNotaFiscal());
 		if(notafiscalEntrada == null){
-			salvarNotaFiscalEntrada(input, produtoEdicao);			
+			notafiscalEntrada = salvarNotaFiscalEntrada(input, produtoEdicao);			
 		}else{
-			atualizarNotaFiscalEntrada(notafiscalEntrada, input, produtoEdicao);
+			atualizarNotaFiscalEntrada(message, notafiscalEntrada, input, produtoEdicao);
 		}
 		
+		this.calcularValores(notafiscalEntrada, input);
 		
+		salvarItemNota(notafiscalEntrada, input, produtoEdicao);
 	}
-
-	private void salvarNotaFiscalEntrada(EMS0135Input input, ProdutoEdicao produtoEdicao) {
-		
+	
+	private NotaFiscalEntradaFornecedor salvarNotaFiscalEntrada(EMS0135Input input, ProdutoEdicao produtoEdicao) {
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
 		
-		notaFiscalEntradaFornecedor.setDataEmissao(input.getDataEmissao());		
+		notaFiscalEntradaFornecedor.setDataEmissao(input.getDataEmissao());
 		notaFiscalEntradaFornecedor.setNumero(input.getNotaFiscal().longValue());
 		notaFiscalEntradaFornecedor.setSerie(input.getSerieNotaFiscal().toString());		
-		notaFiscalEntradaFornecedor.setDataExpedicao(input.getDataLancamento());		
+		notaFiscalEntradaFornecedor.setDataExpedicao(input.getDataEmissao());		
 		notaFiscalEntradaFornecedor.setChaveAcesso(input.getChaveAcessoNF());		
 		notaFiscalEntradaFornecedor.setCfop(obterCFOP());
 		notaFiscalEntradaFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalEntradaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
 		
-		BigDecimal valorBruto = new BigDecimal(input.getPreco() * input.getQtdExemplar());
-		notaFiscalEntradaFornecedor.setValorBruto(valorBruto);
+		notaFiscalEntradaFornecedor.setValorBruto(BigDecimal.ZERO);
+		notaFiscalEntradaFornecedor.setValorLiquido(BigDecimal.ZERO);
+		notaFiscalEntradaFornecedor.setValorDesconto(BigDecimal.ZERO);
+		notaFiscalEntradaFornecedor.setEmitente(obterPessoaJuridica("10000000000100"));		
+		notaFiscalEntradaFornecedor.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
+		notaFiscalEntradaFornecedor.setEmitida(true);	
 		
-		double desconto = (input.getDesconto() / 100);
-		Double valorLiquido =  (valorBruto.doubleValue()  + (desconto * input.getPreco())) * input.getQtdExemplar();		
-		notaFiscalEntradaFornecedor.setValorLiquido(new BigDecimal(valorLiquido));
+		//Implementado pela regra assistida pelo Sr. Eduardo "Punk Rock" Castro em 03/09 devido a informação necessaria na consulta de Notas
 		
-		notaFiscalEntradaFornecedor.setValorDesconto(new BigDecimal(input.getDesconto()));
+		notaFiscalEntradaFornecedor.setFornecedor(produtoEdicao.getProduto().getFornecedor());
 		
-		notaFiscalEntradaFornecedor.setEmitente(obterPessoaJuridica("10000000000100"));
+		this.getSession().persist(notaFiscalEntradaFornecedor);		
 		
-		notaFiscalEntradaFornecedor.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));
-		
-		notaFiscalEntradaFornecedor.setEmitida(true);
-		
-		this.getSession().persist(notaFiscalEntradaFornecedor);
-		
-		salvarItemNota(notaFiscalEntradaFornecedor, input, produtoEdicao);
+		return notaFiscalEntradaFornecedor;
 	}
 	
-	private void atualizarNotaFiscalEntrada(NotaFiscalEntrada notafiscalEntrada, EMS0135Input input, ProdutoEdicao produtoEdicao) {
-		BigDecimal valorBruto = new BigDecimal((input.getPreco() * input.getQtdExemplar()) + notafiscalEntrada.getValorBruto().floatValue() );
-		notafiscalEntrada.setValorBruto(valorBruto);
+	private void atualizarNotaFiscalEntrada(Message message, 
+			NotaFiscalEntrada notafiscalEntrada, EMS0135Input input, 
+			ProdutoEdicao produtoEdicao) {
 		
-		double desconto = (input.getDesconto() / 100);
-		Double valorLiquido =  (valorBruto.doubleValue()  + (desconto * input.getPreco())) * input.getQtdExemplar();		
-		notafiscalEntrada.setValorLiquido(new BigDecimal(valorLiquido));
+		boolean nfAlterado = false;
 		
-		this.getSession().update(notafiscalEntrada);
+		// Verificar a Data de Emissão:
+		Date dtEmissaoAtual = this.normalizarDataSemHora(
+				notafiscalEntrada.getDataEmissao());
+		Date dtEmissaoNova = this.normalizarDataSemHora(
+				input.getDataEmissao());
+		if (!dtEmissaoAtual.equals(dtEmissaoNova)) {
+			nfAlterado = true;
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteracao da DATA EMISSAO da NotaFiscal: "
+							+ notafiscalEntrada.getNumero()
+							+ " , de: " + simpleDateFormat.format(dtEmissaoAtual) 
+							+ "para: " + simpleDateFormat.format(dtEmissaoNova));
+			notafiscalEntrada.setDataEmissao(dtEmissaoNova);
+		}
 		
-		salvarItemNota((NotaFiscalEntradaFornecedor)notafiscalEntrada, input, produtoEdicao);
 		
+		// Salvar se houver alterações: 
+		if (nfAlterado) {
+			this.getSession().update(notafiscalEntrada);
+		}
 	}
 
-	private void salvarItemNota(NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor, EMS0135Input input, ProdutoEdicao produtoEdicao) {
+	private void salvarItemNota(NotaFiscalEntrada nfEntrada, EMS0135Input input, ProdutoEdicao produtoEdicao) {
 		
 		ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
 		item.setQtde(new BigInteger(input.getQtdExemplar().toString()));
-		item.setNotaFiscal(notaFiscalEntradaFornecedor);
+		item.setNotaFiscal(nfEntrada);
 		item.setProdutoEdicao(produtoEdicao);
 		Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
 		item.setDataLancamento(lancamento.getDataLancamentoPrevista());
 		item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
 		
 		this.getSession().persist(item);
-		
 	}
+	
+	/**
+	 * Realiza os cálculos de valores da Nota Fiscal. Após os cálculos, salva
+	 * os novos valores. 
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 */
+	private void calcularValores(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
+		
+		BigDecimal valorBruto = this.calcularValorBruto(nfEntrada, input);
+		nfEntrada.setValorBruto(valorBruto);
+		
+		BigDecimal valorLiquido = this.calcularValorLiquido(nfEntrada, input);
+		nfEntrada.setValorLiquido(valorLiquido);
+		
+		BigDecimal valorDesconto = valorBruto.subtract(valorLiquido);
+		nfEntrada.setValorDesconto(valorDesconto);
+		
+		this.getSession().update(nfEntrada);
+	}
+	
+	/**
+	 * Método que contém as regras para o cálculo do "Valor Bruto" de uma NF.
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 * @return
+	 */
+	private BigDecimal calcularValorBruto(NotaFiscalEntrada nfEntrada, EMS0135Input input) {
+		
+		BigDecimal valorBrutoTotal = nfEntrada.getValorBruto();
+		BigDecimal valorBrutoItem = BigDecimal.valueOf(input.getPreco() 
+				* input.getQtdExemplar());
+		valorBrutoTotal = valorBrutoTotal.add(valorBrutoItem);
+		
+		return valorBrutoTotal;
+	}
+	
+	/**
+	 * Método que contém as regras para o cálculo do "Valor Líquido" de uma NF.
+	 * 
+	 * @param nfEntrada
+	 * @param input
+	 * 
+	 * @return
+	 */
+	private BigDecimal calcularValorLiquido(NotaFiscalEntrada nfEntrada, 
+			EMS0135Input input) {
+		
+		BigDecimal valorLiquidoTotal = nfEntrada.getValorLiquido();
+		BigDecimal valorLiquidoItem = BigDecimal.valueOf((input.getPreco() 
+				- (input.getPreco() * input.getDesconto())) 
+				* input.getQtdExemplar());
+		valorLiquidoTotal = valorLiquidoTotal.add(valorLiquidoItem);
+		
+		return valorLiquidoTotal;
+	}
+	
+	private BigDecimal calcularValorUnitario() {
+		return BigDecimal.ZERO;
+	}
+	
 	
 	private Lancamento obterLancamentoProdutoEdicao(Long idProdutoEdicao) {
 		
@@ -160,22 +264,33 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
-	private ProdutoEdicao obterProdutoEdicao(EMS0135Input input) {
-		
-		String hql = "from ProdutoEdicao produtoEdicao " 
-				   + " join fetch produtoEdicao.produto " 
-				   + " where produtoEdicao.produto.codigo = :codigoProduto "
-				   + " and 	 produtoEdicao.numeroEdicao   = :numeroEdicao";
-		
-		Query query = super.getSession().createQuery(hql);
+	/**
+	 * Obtém o Produto Edição cadastrado previamente.
+	 * 
+	 * @param codigoPublicacao Código da Publicação.
+	 * @param edicao Número da Edição.
+	 * 
+	 * @return
+	 */
+	private ProdutoEdicao obterProdutoEdicao(Integer codigoPublicacao,
+			Integer edicao) {
 
-		query.setParameter("codigoProduto", input.getCodigoProduto().toString());
-		query.setParameter("numeroEdicao", new Long(input.getEdicao()));
-		
-		query.setMaxResults(1);
-		
-		return (ProdutoEdicao) query.uniqueResult();
-		
+		try {
+
+			Criteria criteria = this.getSession().createCriteria(
+					ProdutoEdicao.class, "produtoEdicao");
+
+			criteria.createAlias("produtoEdicao.produto", "produto");
+			criteria.setFetchMode("produto", FetchMode.JOIN);
+
+			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
+			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
+
+			return (ProdutoEdicao) criteria.uniqueResult();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
@@ -209,20 +324,30 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		return (CFOP) criteria.uniqueResult();
 	}
 
-	private void validarDistribuidor(Message message, EMS0135Input input) {
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getDistribuidor().toString())){			
-		
-			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código do distribuidor do arquivo não é o mesmo do arquivo.");
 
-			throw new RuntimeException("Distribuidor incorreto.");
-		}
+	/**
+	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
+	 * minuto, segundo e milissendo).
+	 * 
+	 * @param dt
+	 * 
+	 * @return
+	 */
+	private Date normalizarDataSemHora(Date dt) {
 		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dt);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		return cal.getTime();
 	}
-
 	
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
 	
-	
-
 }

@@ -1374,5 +1374,82 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 			return hql.toString();
 		}
+
+	@Override
+	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao, Long idTipoMovimento) {
+		
+
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select sum(movimentoEstoqueCota.qtde) ");			
+		
+		hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
+		
+		hql.append(" where movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
+		
+		if(idCota != null)
+			hql.append("  movimentoEstoqueCota.cota.id = :idCota and ");
+				
+		hql.append(" movimentoEstoqueCota.tipoMovimento.id = :idTipoMovimento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		if(idCota != null)
+			query.setParameter("idCota", idCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("idTipoMovimento", idTipoMovimento);
+		
+		BigInteger sum = (BigInteger) (query.uniqueResult() == null ? BigInteger.ZERO : query.uniqueResult());
+		
+		return sum.longValue();
+	}
+	
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public  List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores){
+		StringBuffer sql = new StringBuffer("SELECT DISTINCT movimentoEstoqueCota ");		
+		sql.append(" FROM Lancamento lancamento ");
+	
+		sql.append("   INNER JOIN lancamento.movimentoEstoqueCotas movimentoEstoqueCota ");
+		sql.append("   LEFT JOIN movimentoEstoqueCota.cota.fornecedores fornecedor ");
+		
+		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
+		   .append("   AND movimentoEstoqueCota.cota.id = :idCota ");
+		
+		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			sql.append("   AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		}
+		
+		if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
+			sql.append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ");
+		}		
+		
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			sql.append("   AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
+		}		
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("status", StatusAprovacao.APROVADO);
+		query.setParameter("idCota", idCota);
+	
+	
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			query.setParameterList("listaFornecedores", listaFornecedores);
+		}
+		
+		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			query.setParameter("dataInicio", periodo.getDe());
+			query.setParameter("dataFim", periodo.getAte());
+		}
+		
+		if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
+			query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
+		}		
+		
+		return query.list();
+	}
 		
 }

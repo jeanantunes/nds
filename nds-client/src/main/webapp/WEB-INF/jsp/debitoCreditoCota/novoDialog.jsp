@@ -1,132 +1,79 @@
 <div id="dialog-novo" title="Incluir Novo Tipo de Movimento" style="display: none;">
-
-	<jsp:include page="../messagesDialog.jsp" />
-	
-	<input type="hidden" id="grupoMovimentoHidden" />
-
-	<table width="760" border="0" cellspacing="2" cellpadding="2">
-	  <tr>
-	    <td width="119">Tipo de Lançamento:</td>
-	    <td width="517">
-			<select onchange="configuraTelaLancamento(this.value);" name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:300px;">
-		  		<option selected="selected"></option>
+	<fieldset style="width:815px!important;">
+		<legend>Tipo de Movimento</legend>
+		<jsp:include page="../messagesDialog.jsp" />
+		
+		<input type="hidden" id="grupoMovimentoHidden" />
+		<!-- começa aqui  -->
+		<div style="width:325px; line-height:26px;">Tipo de Lançamento:
+			<select onchange="configuraTelaLancamento(this.value);" name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:200px;float:right;">
+				<option selected="selected"></option>
 				<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 					<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
 				</c:forEach>
-		    </select>
-	    </td>
-	  </tr>
-	</table>   
-	  
-	<table name="tabelaFaturamento" id="tabelaFaturamento" width="760" border="0">  
-	  <tr>
-	    <td width="40">Percentual(%):</td>
-	    <td width="30">
-			 <input type="text" maxlength="3" style="width:30px;height:15px;" name="debitoCredito.percentual" id="novoPercentual" />
-	    </td>
-	    
-	    <td width="80">Base de Cálculo:</td>
-	    <td width="120">
-			<select name="debitoCredito.baseCalculo.id" id="novoBaseCalculo" style="width:120px;">
-			
-		  		<option selected="selected"></option>
-				<c:forEach items="${basesCalculo}" var="base">
-					<option value="${base}">${base.value}</option>
-				</c:forEach>
-				
-		    </select>
-	    </td>
-	    
-	    <td width="100">Período para Cálculo:</td>
-	    <td width="70">
-			<input type="text" name="debitoCredito.dataPeriodoDe" id="novoDataPeriodoDe" style="width:70px;height:15px;" />
-	    </td>
-	    
-	    <td width="20">até</td>
-	    <td width="70">
-			<input type="text" name="debitoCredito.dataPeriodoAte" id="novoDataPeriodoAte" style="width:70px;height:15px;" />
-	    </td>
-	  </tr>
-   </table>	  
-	  
-   <table width="760" border="0">  	  
-	  <tr>
-	    <td width="20">Box:</td>
-	    <td width="120">
-			<select name="debitoCredito.box.id" id="novoBox" onchange="carregarRoteiros(this.value,0);carregarRotas(0,0);" style="width:120px;">
-			
-		  		<option value="0" selected="selected"></option>
-				<c:forEach items="${boxes}" var="box">
-					<option value="${box.id}">${box.nome}</option>
-				</c:forEach>
-				
-		    </select>
-	    </td>
-	    
-	    <td width="40" id="tituloNovoRoteiro">Roteiro:</td>
-	    <td width="180">
-		    <div id="roteirosBox"/>
-	    </td>
-	    
-	    <td width="30" id="tituloNovoRota">Rota:</td>
-	    <td width="180">
-			<div id="rotasRoteiro"/>
-	    </td>
-	  </tr>
-   </table>	  
-	  
-   <table width="760" border="0">   	  
-	  <tr>
-	    <td width="100">Data Vencimento:</td>
-	    <td width="100">
-			<input type="text" name="debitoCredito.dataVencimento" id="novoDataVencimento" style="width:70px;height:15px;" />
-	    </td>
-	    
-	    <td width="40" id="tituloNovoValor">Valor(R$):</td>
-	    <td width="70">
-			 <input maxlength="16" type="text" style="width:70px;height:15px;" name="debitoCredito.valor" id="novoValor" />
-	    </td>
-	    
-	    <td width="30">Observação:</td>
-	    <td width="300">
-			 <input maxlength="150" type="text" style="width:300px;height:15px;" name="debitoCredito.observacao" id="novoObservacao" />
-	    </td>
-	    
-	    <td width="20">
-	        <span>
-	            <a href="javascript:;" onclick="obterInformacoesParaLancamento();" style="width:20px;">
-	                <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" hspace="5" border="0" />
-	            </a>
-	        </span>
-	    </td>
-	    
-	  </tr>
-	</table>
-	
-	
-	
-	
-	<br />
-	
-	<form name="formularioListaLancamentos" id="formularioListaLancamentos">
+			</select>
+		</div>
 
-		<table class="debitosCreditosGrid_1" id="debitosCreditosGrid_1"></table>
 		
-		<table  width="100%" border="0" cellspacing="2" cellpadding="2" >
-		    <tr>
-			    <td width="80%"></td>    
-			    
-				<td width="20%">    
-			        <span class="checar">
-			            <label for="textoSelTodos" id="textoSelTodos" style="float:left;">Marcar Todos</label>
-			            <input title="Selecionar todos os lançamentos" type="checkbox" id="selTodos" name="selTodos" onclick="selecionarTodos(this.checked);" style="float:left;"/>
-			        </span>
-			    </td>
-            </tr> 
-	    </table>
+		<div name="tabelaFaturamento" id="tabelaFaturamento" >
+		    <div style="width:181px; float:left; line-height:26px;">Percentual(%): <input type="text" maxlength="3" style="width:50px; text-align:right; float:right;" name="novoPercentual" id="novoPercentual2" /></div>
+		    <div style="width:256px; float:left; line-height:26px; margin-left:10px;">
+		    Base de Cálculo: <select name="debitoCredito.baseCalculo.id2" id="debitoCredito.baseCalculo.id" style="width:150px; float:right;">
+		    <option selected="selected"></option>
+		    <c:forEach items="${basesCalculo}" var="base">
+		    	<option value="${base}">${base.value}</option>
+		    </c:forEach>
+		    </select></div>
+		    <div style="width:222px; float:left; line-height:26px; margin-left:8px;">Período para Cálculo: 
+		    <input type="text" name="novoDataPeriodoDe" id="novoDataPeriodoDe" style="width:70px;" /></div>
+		    <div style="width:123px; float:left; line-height:26px;">Até:
+		    <input type="text" name="novoDataPeriodoAte" id="novoDataPeriodoAte" style="width:70px;" />
+		    </div>
+		    <br clear="all"/>
+		</div>
+		
+		
+		<div style="width:235px; line-height:26px; float:left;">Box: <select name="debitoCredito.box.id" id="novoBox" onchange="carregarRoteiros(this.value,0);carregarRotas(0,0);" style="width:110px; float:right;">
+		            <option value="0" selected="selected"></option>
+		            <c:forEach items="${boxes}" var="box">
+		              <option value="${box.id}">${box.nome}</option>
+		            </c:forEach>
+		        </select></div>
+		<div style="width:57px; line-height:26px; float:left; margin-left:5px;">Roteiro: </div><div id="roteirosBox" style="float:left;"></div>
+		<div style="width:40px; line-height:26px; float:left; margin-left:5px;">Rota: </div><div id="rotasRoteiro" style="float:left;"></div>
+		
+		<br clear="all"/>
+		<div style="width:235px; line-height:26px; float:left;">Data Vencimento: <input type="text" name="debitoCredito.dataVencimento" id="novoDataVencimento" style="width:70px; margin-left:26px;" /></div>
+		
+		<div id="tituloNovoValor" style="width:150px; line-height:26px; float:left; margin-left:5px;">Valor(R$): <input maxlength="16" type="text" style="width:70px;" name="debitoCredito.valor" id="novoValor" /></div>
+		<div style="width:321px; line-height:26px; float:left;">Observação: <input maxlength="150" type="text" style="width:240px;" name="debitoCredito.observacao" id="novoObservacao" /></div>
+		<div style="width:40px; line-height:26px; float:left;"><a href="javascript:;" onclick="obterInformacoesParaLancamento();" style="width:20px;"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" hspace="5" border="0" /></a></div>
+		<!-- termina aqui  -->
+		<br clear="all" />
+		
+		
+		<br />
+		
+		<form name="formularioListaLancamentos" id="formularioListaLancamentos">
 	
-	</form>
-	
+			<table class="debitosCreditosGrid_1" id="debitosCreditosGrid_1"></table>
+			
+			<table  width="100%" border="0" cellspacing="2" cellpadding="2">
+			    <tr>
+				    <td width="65%"></td>    
+				    
+					<td width="35%">    
+				        <span class="checar" style="float:right; margin-right:43px;">
+				            <label for="textoSelTodos" id="textoSelTodos" style="float:left;">Marcar Todos</label>
+				            <input title="Selecionar todos os lançamentos" type="checkbox" id="selTodos" name="selTodos" onclick="selecionarTodos(this.checked);" style="float:left; margin-top:8px;"/>
+				        </span>
+				    </td>
+	            </tr> 
+		    </table>
+		
+		</form>
+	</fieldset>
+	<br clear="all" />
 	<script language="javascript" type="text/javascript">
 	
 	    
@@ -190,7 +137,7 @@
 			}, {
 				display : 'Observação',
 				name : 'observacao',
-				width : 230,
+				width : 260,
 				sortable : false,
 				align : 'left'
 			}, {
@@ -201,8 +148,8 @@
 				align : 'center',
 			}],
 			disableSelect : true,
-			width : 770,
-			height : 300
+			width : 800,
+			height : 220
 		});
 		
 		function configurarCampos() {
@@ -272,8 +219,8 @@
 			
 			$("#dialog-novo").dialog({
 				resizable: false,
-				height:600,
-				width:800,
+				height:550,
+				width:860,
 				modal: true,
 				buttons:[ 
 				          {

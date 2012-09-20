@@ -1,6 +1,6 @@
 package br.com.abril.nds.integracao.ems0120.processor;
 
-import java.io.FileWriter; 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -9,8 +9,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Detalhe;
 import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Header;
@@ -29,7 +27,6 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 
 @Component
-
 public class EMS0120MessageProcessor extends AbstractRepository implements MessageProcessor {
 
 	
@@ -42,14 +39,19 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
-	public EMS0120MessageProcessor() {
-
-	}
 	
 	@Override
-	
+	public void preProcess() {
+		// TODO Auto-generated method stub
+		
+	}
+		
+	@Override
+	@SuppressWarnings("unchecked")
 	public void processMessage(Message message) {
 	
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		
 		StringBuilder sql = new  StringBuilder();
 		sql.append("SELECT mec ");
 		sql.append("FROM MovimentoEstoqueCota mec ");
@@ -59,15 +61,11 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 		sql.append("JOIN FETCH p.fornecedores fs ");
 		sql.append("WHERE mec.data = :dataOperacao ");
 		sql.append("AND mec.tipoMovimento.grupoMovimentoEstoque = :recebimentoReparte ");
-
-		
-		
 	
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("dataOperacao", distribuidorService.obter().getDataOperacao());
+		Query query = this.getSession().createQuery(sql.toString());		
+		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("recebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
-		@SuppressWarnings("unchecked")
 		List<MovimentoEstoqueCota> mecs = (List<MovimentoEstoqueCota>) query.list();
 
 		Date data = new Date();
@@ -94,9 +92,9 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 			    outdetalhe.setContextoProduto(mec.getProdutoEdicao().getProduto().getCodigoContexto());//cod_publ
 				outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
 				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
-				outdetalhe.setNumeroBoxCota(mec.getCota().getBox().getCodigo() + " - "+mec.getCota().getBox().getNome());
+				outdetalhe.setNumeroBoxCota(mec.getCota().getBox().getCodigo());
 				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
-				outdetalhe.setQuantidadeReparte(mec.getQtde());
+				outdetalhe.setQuantidadeReparte(Long.valueOf( mec.getQtde().toString() ));
 				outdetalhe.setDataLancamento(mec.getData());
 				
 				 
@@ -116,4 +114,9 @@ public class EMS0120MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }

@@ -4,7 +4,7 @@ var transferirRoteirizacaoComNovaRota= false;
 var pesquisaPorCota = false;
 
 var roteirizacao = $.extend(true, {
-
+	
 		abrirTelaRoteiro : function () {
 			
 			$.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaRoteiro',null,
@@ -31,6 +31,8 @@ var roteirizacao = $.extend(true, {
 					   null,
 					   true
 				);
+			
+			this.init();
 
 		},
 		
@@ -216,6 +218,7 @@ var roteirizacao = $.extend(true, {
 				width : 270,
 				height : 220
 			});
+		
 		},
 		
 		callBackRotaGrid :  function (data){
@@ -226,7 +229,6 @@ var roteirizacao = $.extend(true, {
 				var detalhe ='<a href="javascript:roteirizacao.cotaSelecionada('+idRota+');" ><img src="'+contextPath+'/images/ico_detalhes.png" border="0" alt="Detalhes" /></a>';
 				value.cell.selecione = selecione;
 				value.cell.detalhe = detalhe;
-	        	
 			});
 			
 			$(".grids", roteirizacao.workspace).show();
@@ -334,6 +336,26 @@ var roteirizacao = $.extend(true, {
 		});	
 		      
 	},
+	
+	popupDetalhesCota : function(title, box, roteiro, rota) {
+		
+		$('#legendDetalhesCota').html(title);
+		
+		$( "#dialog-detalhes" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:420,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-detalhes", this.workspace).parents("form")
+		});
+	},
+	
+	
 	popupTransferirRota : function() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		$("#roteiroTranferenciaNome", roteirizacao.workspace).val('');
@@ -575,7 +597,7 @@ var roteirizacao = $.extend(true, {
 		cotaSelecionada : function(rotaId) {
 			 roteirizacao.populaDadosCota(rotaId);
 	         roteirizacao.populaCotasRotaGrid(rotaId);
-	         roteirizacao.habilitaBotao('botaoCotaAusentes', function(){roteirizacao.abrirTelaCotas()}) // desabilitaBotao('botaoCotaAusentes');
+	         roteirizacao.habilitaBotao('botaoCotaAusentes', function(){roteirizacao.abrirTelaCotas();}); // desabilitaBotao('botaoCotaAusentes');
 	       
 		},
 		
@@ -758,7 +780,7 @@ var roteirizacao = $.extend(true, {
 		
 		pesquisarPvsPorCota : function(){
 			$('#cotaDisponivelPesquisa', roteirizacao.workspace).html('');
-			roteirizacao.carregarNomeCotasPesquisa('cotaDisponivelPesquisa',  $('#numeroCotaPesquisa', roteirizacao.workspace).val(), function(){roteirizacao.buscarPvsPorCota()} );
+			roteirizacao.carregarNomeCotasPesquisa('cotaDisponivelPesquisa',  $('#numeroCotaPesquisa', roteirizacao.workspace).val(), function(){roteirizacao.buscarPvsPorCota();} );
 		
 		},
 		
@@ -1203,15 +1225,11 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 	
 	$(".gridWrapper", this.workspace).append($("<table>").attr("class", "rotaRoteirosGrid"));
 	
-	var indGridPorRotaOuCota = false;
-	
 	var rotaPesquisa 	= $('#rotaPesquisa', roteirizacao.workspace).val();
 	
 	var cotaPesquisa 	= $('#cotaPesquisa', roteirizacao.workspace).val();
 	
-	if(rotaPesquisa != "" || cotaPesquisa != "") {
-		indGridPorRotaOuCota = true;
-	} 
+	var indGridPorRotaOuCota = (rotaPesquisa != "" || cotaPesquisa != "");
 	
 	if(indGridPorRotaOuCota) {
 		
@@ -1324,6 +1342,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			
 			$(".grids", roteirizacao.workspace).hide();
 
+			roteirizacao.esconderBotoesExportacao();
+			
 			return data;
 		}
 		
@@ -1346,11 +1366,13 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		
 		$(".grids", roteirizacao.workspace).show();
 		
+		roteirizacao.mostrarBotoesExportacao();
+				
 		return data;
 	},
 
 	callBackPesquisaRoteirizacaoGridCotasSumarizadas: function (data) {
-		
+				
 		if (data.mensagens) {
 
 			exibirMensagem(
@@ -1360,6 +1382,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			
 			$(".grids", roteirizacao.workspace).hide();
 
+			roteirizacao.esconderBotoesExportacao();
+			
 			return data;
 		}
 
@@ -1371,14 +1395,16 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 			var idBox 		= value.cell.idBox;
 			var idRota 		= value.cell.idRota;
 			var idRoteiro 	= value.cell.idRoteiro;
-			
-			var parametros = idBox + ',' + idRota + ',' + idRoteiro;
 
+			var title = value.cell.descricaoRota + ' - ' + value.cell.descricaoRoteiro;			
 			
-			value.cell.qntCotas =  '<a href="javascript:;" onclick="roteirizacao.detalharRotaRoteiroCotasSumarizadas('+parametros+');">' + qntCotas + '</a>';
+			value.cell.qntCotas =  '<a href="javascript:;" ' + 
+				'onclick="roteirizacao.detalharRotaRoteiroCotasSumarizadas(\''+title+'\','+idBox+','+idRota+','+idRoteiro+');">' + qntCotas + '</a>';
 		});
 		
 		$(".grids", roteirizacao.workspace).show();
+		
+		roteirizacao.mostrarBotoesExportacao();
 		
 		return data;
 	},
@@ -1392,12 +1418,18 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		
 	},
 	
-	detalharRotaRoteiroCotasSumarizadas : function(idBox, idCota, idRota, idRoteiro) {
+	detalharRotaRoteiroCotasSumarizadas : function(title, idBox, idRota, idRoteiro) {
 		
-		//TODO: implementar js
+		var data = [];
 		
-		alert('Detalhando rota roteiro cotas sumarizadas');
+		data.push({name:'idBox',		value: idBox });
+		data.push({name:'idRota',		value: idRota });
+		data.push({name:'idRoteiro',	value: idRoteiro });
 		
+		$("#cotasGrid", this.workspace).flexOptions({ params:data });		
+		$("#cotasGrid", this.workspace).flexReload();
+		
+		roteirizacao.popupDetalhesCota(title, idBox, idRoteiro, idRota);		
 	},
 	
 	pesquisarRoteirizacao: function () {
@@ -1427,34 +1459,6 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		$(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
 	},
 	
-	buscarRoteirizacaoPorCota: function () {
-		var tipoRoteiro = "NORMAL";
-		 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
-			 tipoRoteiro = "ESPECIAL";
-		 }
-		 pesquisaRoteizicaoPorCota = true;
-		roteirizacao.iniciarPesquisaRoteirizacaoGrid();
-		$(".rotaRoteirosGrid", roteirizacao.workspace).clear();
-			$(".rotaRoteirosGrid", roteirizacao.workspace).flexOptions({
-				"url" : contextPath + '/cadastro/roteirizacao/pesquisarRoteirizacaoPorCota',
-				params : [{
-					name : "numeroCota",
-					value : $('#cotaPesquisa', roteirizacao.workspace).val()
-				}, 
-				{
-					name : "tipoRoteiro",
-					value : tipoRoteiro
-				}],
-				
-				
-				newp:1
-			});
-			
-			$(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
-	},
-	
-	
-	
 	carregarNomeCotas : function (campoExibicao, numeroCota, callBack) {
 		$('#'+campoExibicao).html('');
 		var result = false;
@@ -1482,11 +1486,6 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 				true
 			);
 		 return result;	
-
-	},
-	
-	pesquisarRoteirizacaoPorCota : function(){
-		roteirizacao.carregarNomeCotas('nomeCotaPesquisa',  $('#cotaPesquisa', roteirizacao.workspace).val(), function(){roteirizacao.buscarRoteirizacaoPorCota()});
 
 	},
 	
@@ -1653,59 +1652,66 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 					true
 				);
 			
-			return  result
+			return  result;
 
 		},
-		 gerarArquivoRoteirizacao : function(fileType) {
+		
+		exportar : function(fileType) {
+			 
+			 //TODO:
 			 var tipoRoteiro = "NORMAL";
+			 
 			 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
 				 tipoRoteiro = "ESPECIAL";
 			 }
 			 
 			window.location = 
 				contextPath + 
-				"/cadastro/roteirizacao/imprimirArquivo?" + 
-				"boxId=" +  $('#boxPesquisa', roteirizacao.workspace).val() +
-				"&roteiroId=" + $('#roteiroPesquisa', roteirizacao.workspace).val() + 
-				"&rotaId=" + $('#rotaPesquisa', roteirizacao.workspace).val() +
-				"&tipoRoteiro=" + tipoRoteiro +
-				"&numeroCota=" + $('#cotaPesquisa', roteirizacao.workspace).val() +
-				"&pesquisaRoteizicaoPorCota=" +pesquisaRoteizicaoPorCota +
-				"&sortname=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetSortName() +
-				"&sortorder=" + $(".rotaRoteirosGrid", roteirizacao.workspace).getSortOrder() +
-				"&rp=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetRowsPerPage() +
-				"&page=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetPageNumber() +
-				"&fileType=" + fileType;
-
+				"/cadastro/roteirizacao/exportar?fileType=" + fileType;
 
 			return false;
 		},
 		
-		imprimirArquivo : function (fileType) {
-			 var tipoRoteiro = "NORMAL";
-			 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
-				 tipoRoteiro = "ESPECIAL";
-			 }
-			 
-			window.location = 
-				contextPath + 
-				"/cadastro/roteirizacao/imprimirArquivo?" + 
-				"boxId=" +  $('#boxPesquisa', roteirizacao.workspace).val() +
-				"&roteiroId=" + $('#roteiroPesquisa', roteirizacao.workspace).val() + 
-				"&rotaId=" + $('#rotaPesquisa', roteirizacao.workspace).val() +
-				"&tipoRoteiro=" + tipoRoteiro +
-				"&numeroCota=" + $('#cotaPesquisa', roteirizacao.workspace).val() +
-				"&pesquisaRoteizicaoPorCota=" +pesquisaRoteizicaoPorCota +
-				"&sortname=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetSortName() +
-				"&sortorder=" + $(".rotaRoteirosGrid", roteirizacao.workspace).getSortOrder() +
-				"&rp=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetRowsPerPage() +
-				"&page=" + $(".rotaRoteirosGrid", roteirizacao.workspace).flexGetPageNumber() +
-				"&fileType=" + fileType;
-
-			return false;
+		mostrarBotoesExportacao : function() {
+			
+			$("#botoesExportacao").show();
+		},
+		
+		esconderBotoesExportacao : function() {
+			
+			$("#botoesExportacao", roteirizacao.workspace).hide();
+		},
+				
+		init : function() {
+			
+			$("#cotasGrid",roteirizacao.workspace).flexigrid({
+				autoload : false,
+				url : contextPath + '/cadastro/roteirizacao/obterCotasSumarizadas',
+				dataType : 'json',
+				colModel : [ {
+					display : 'Cota',
+					name : 'numeroCota',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nome',
+					name : 'nome',
+					width : 250,
+					sortable : true,
+					align : 'left'
+				}],
+				sortname : "numeroCota",
+				width : 380,
+				height : 140
+			});
 		}
 	  
 		
 }, BaseController);
+
+$(function() {
+	roteirizacao.init();
+});
 
 //@ sourceURL=meuScriptRoteirizacao.js

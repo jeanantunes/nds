@@ -21,7 +21,7 @@
                 <li><a href="#tabCota-6">Fornecedores</a></li>
                 <li><a href="#tabCota-7">Desconto</a></li>
                 <li><a href="#tabCota-8">Financeiro</a></li>
-                <li><a href="#tabCota-9">Distribuição</a></li>
+                <li><a href="#tabCota-9" onclick="MANTER_COTA.verificarEntregador();">Distribuição</a></li>
                 <li><a href="#tabCota-10" id="idTabSocio">Sócios</a></li>
           </ul>
         

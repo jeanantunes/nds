@@ -125,7 +125,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 
 		criteria.add(Restrictions.and(Restrictions.eq("uf.sigla", siglaUF),
 									  Restrictions.ilike("nome",
-											  nome, MatchMode.START)));
+											  nome, MatchMode.ANYWHERE)));
 
 		return criteria.list();
 	}
@@ -172,7 +172,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 
 		criteria.add(Restrictions.and(Restrictions.eq("localidade.codigoMunicipioIBGE", codigoIBGE),
 									  Restrictions.ilike("nome",
-											  nome, MatchMode.START)));
+											  nome, MatchMode.ANYWHERE)));
 
 		return criteria.list();
 	}
@@ -188,7 +188,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 
 		criteria.add(Restrictions.and(Restrictions.eq("chaveBairroInicial", codigoBairro),
 									  Restrictions.ilike("nome",
-											  nomeLogradouro, MatchMode.START)));
+											  nomeLogradouro, MatchMode.ANYWHERE)));
 
 		return criteria.list();
 	}	

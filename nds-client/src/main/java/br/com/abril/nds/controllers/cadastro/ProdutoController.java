@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.FormatoProduto;
@@ -26,6 +27,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -74,6 +76,9 @@ public class ProdutoController {
 	
 	@Autowired
 	private DescontoService descontoService;
+	
+	@Autowired
+	private DescontoLogisticaService descontoLogisticaService;
 	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
@@ -379,26 +384,17 @@ public class ProdutoController {
 	 * @param codigoTipoDesconto
 	 */
 	@Post
-	public void carregarPercentualDesconto(Long codigoTipoDesconto) {
+	public void carregarPercentualDesconto(Integer codigoTipoDesconto) {
 	
-		
-		//TODO:Entidade TipoDesconto excluída
-		
-		
-		/*
-		TipoDesconto tipoDesconto = 
-			this.tipoDescontoService.obterTipoDescontoPorID(codigoTipoDesconto);
-		*/
-		
-		BigDecimal porcentagem = BigDecimal.ZERO;
-		
-		/*
-		if (tipoDesconto != null) {
-			porcentagem = tipoDesconto.getPorcentagem();
+	    DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterPorTipoDesconto(codigoTipoDesconto);
+			
+		Float porcentagem = 0f;
+
+		if (descontoLogistica != null) {
+			porcentagem = descontoLogistica.getPercentualDesconto();
 		}
-		*/
 		
-		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
+		this.result.use(Results.json()).from(new BigDecimal(porcentagem), "result").recursive().serialize();
 	}
 
 	/**
@@ -586,7 +582,7 @@ public class ProdutoController {
 		listaBaseComboVO.add(getDefaultBaseComboVO());
 		
 		for (Editor editor : listaEditor) {
-			listaBaseComboVO.add(new BaseComboVO(editor.getId(), editor.getNome()));
+			listaBaseComboVO.add(new BaseComboVO(editor.getId(), editor.getPessoaJuridica().getNome()));
 		}
 		
 		return listaBaseComboVO;

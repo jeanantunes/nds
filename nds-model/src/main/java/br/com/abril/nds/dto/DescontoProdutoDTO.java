@@ -28,6 +28,8 @@ public class DescontoProdutoDTO implements Serializable {
 
 	private Usuario usuario;
 	
+	private boolean indProdutoEdicao;
+	
 	/**
 	 * @return the codigoProduto
 	 */
@@ -153,4 +155,22 @@ public class DescontoProdutoDTO implements Serializable {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+
+	/**
+	 * Obtém indProdutoEdicao
+	 *
+	 * @return boolean
+	 */
+	public boolean isIndProdutoEdicao() {
+		return indProdutoEdicao;
+	}
+
+	/**
+	 * Atribuí indProdutoEdicao
+	 * @param indProdutoEdicao 
+	 */
+	public void setIndProdutoEdicao(boolean indProdutoEdicao) {
+		this.indProdutoEdicao = indProdutoEdicao;
+	}
+	
 }

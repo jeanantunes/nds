@@ -21,6 +21,8 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -32,6 +34,7 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoCota;
@@ -114,11 +117,13 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -198,7 +203,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 public class Fixture {
 	
 	public static PessoaJuridica juridicaAbril() {
-		return pessoaJuridica("Abril", "00000000000200", "010000000000",
+		return pessoaJuridica("Editora Abril", "00000000000200", "010000000000",
 				"abril@mail.com", "99.999-1");
 	}
 	
@@ -356,7 +361,7 @@ public class Fixture {
 	}
 	
 	public static Editor editoraAbril() {
-		return criarEditor("Editora Abril", 10L, juridicaAbril(), true);
+		return criarEditor(10L, juridicaAbril(), true);
 	}
 
 	public static Date criarData(int dia, int mes, int ano) {
@@ -753,7 +758,9 @@ public class Fixture {
 		estudo.setDataLancamento(data);
 
 		estudo.setProdutoEdicao(produtoEdicao);
-
+		
+		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+		estudo.setDataCadastro(new Date());
 		return estudo;
 	}
 
@@ -858,7 +865,25 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		return tipoMovimento;
 	}
+		
+	public static TipoMovimentoEstoque tipoMovimentoNivelamentoEntrada() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Nivelamento Entrada");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA);
+		return tipoMovimento;
+	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoNivelamentoSaida() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Nivelamento Saida");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.NIVELAMENTO_SAIDA);
+		return tipoMovimento;
+	}
+		
 	public static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -971,6 +996,16 @@ public class Fixture {
 	
 		return tipoMovimento;
 	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEncalheAntecipado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Encalhe Antecipado");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+	
+		return tipoMovimento;
+	}	
 	
 	public static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -1719,6 +1754,7 @@ public class Fixture {
 		estoqueProduto.setQtde(qtde);
 		estoqueProduto.setQtdeSuplementar(qtde);
 		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
+		estoqueProduto.setQtdeDevolucaoFornecedor(qtde);
 		return estoqueProduto;
 	}
 	
@@ -1781,7 +1817,7 @@ public class Fixture {
 									  StatusConfirmacao statusConfirmacao,
 									  ItemRecebimentoFisico itemRecebimentoFisico,
 									  MovimentoEstoque movimentoEstoque,
-									  Boolean automatica) {
+									  Boolean automatica, TipoEstoque tipoEstoque) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -1791,8 +1827,8 @@ public class Fixture {
 		diferenca.setTipoDiferenca(tipoDiferenca);
 		diferenca.setStatusConfirmacao(statusConfirmacao);
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
-		diferenca.setMovimentoEstoque(movimentoEstoque);
 		diferenca.setAutomatica(automatica);
+		diferenca.setTipoEstoque(tipoEstoque);
 		
 		return diferenca;
 	}
@@ -2203,6 +2239,7 @@ public class Fixture {
 		formaBoleto.setTaxaMulta(taxaMulta);
 		formaBoleto.setRecebeCobrancaEmail(recebeCobrancaEmail);
 		formaBoleto.setParametroCobrancaCota(parametroCobranca);
+		formaBoleto.setFormaCobrancaBoleto(FormaCobrancaBoleto.SEM_REGISTRO);
 		
 		
 		return formaBoleto;
@@ -2564,13 +2601,12 @@ public class Fixture {
 		return telefone;
 	}
 	
-	public static Editor criarEditor(String nome, Long codigo, 
+	public static Editor criarEditor(Long codigo, 
 									 PessoaJuridica pessoaJuridica,
 									 boolean ativo) {
 		
 		Editor editor = new Editor();
 		
-		editor.setNome(nome);
 		editor.setCodigo(10L);
 		editor.setPessoaJuridica(pessoaJuridica);
 		editor.setAtivo(ativo);
@@ -2789,12 +2825,12 @@ public class Fixture {
 		return parametroContratoCota;
 	}
 
-	public static TipoEntrega criarTipoEntrega(Long id, String descricao, Periodicidade periodicidade) {
+	public static TipoEntrega criarTipoEntrega(Long id, DescricaoTipoEntrega descricaoTipoEntrega, Periodicidade periodicidade) {
 		
 		TipoEntrega tipoEntrega = new TipoEntrega();
 		
 		tipoEntrega.setId(id);
-		tipoEntrega.setDescricao(descricao);
+		tipoEntrega.setDescricaoTipoEntrega(descricaoTipoEntrega);
 		tipoEntrega.setPeriodicidade(periodicidade);
 		
 		return tipoEntrega;
@@ -2802,7 +2838,7 @@ public class Fixture {
 
 	public static ParametroDistribuicaoCota criarParametroDistribuidor(Integer qtdePDV,
 			String assistenteComercial, TipoEntrega tipoEntrega,
-			String observacao, Boolean arrendatario,
+			String observacao,
 			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
 			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
 			Boolean notaEnvioEmail, Boolean chamadaEncalheImpresso,
@@ -2813,7 +2849,6 @@ public class Fixture {
 		parametroDistribuicaoCota.setQtdePDV(qtdePDV);
 		parametroDistribuicaoCota.setAssistenteComercial(assistenteComercial);
 		parametroDistribuicaoCota.setTipoEntrega(tipoEntrega);
-		parametroDistribuicaoCota.setArrendatario(arrendatario);
 		parametroDistribuicaoCota.setObservacao(observacao);
 		parametroDistribuicaoCota.setRepartePorPontoVenda(repartePorPontoVenda);
 		parametroDistribuicaoCota.setSolicitaNumAtras(solicitaNumAtras);
@@ -2824,6 +2859,7 @@ public class Fixture {
 		parametroDistribuicaoCota.setChamadaEncalheEmail(chamadaEncalheEmail);
 		parametroDistribuicaoCota.setSlipImpresso(slipImpresso);
 		parametroDistribuicaoCota.setSlipEmail(slipEmail);
+		parametroDistribuicaoCota.setBoletoSlipImpresso(slipEmail);
 		
 		return parametroDistribuicaoCota;
 	}
@@ -3340,4 +3376,30 @@ public class Fixture {
 		
 		return descontoP;
 	}
+	
+    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, Float percentualDesconto, Float percentualPrestacaoServico, Integer tipoDesconto, Set<Produto> produtos){
+		
+    	DescontoLogistica descontoL = new DescontoLogistica();
+		descontoL.setDataInicioVigencia(dataInicioVigencia);
+		descontoL.setPercentualDesconto(percentualDesconto);
+		descontoL.setPercentualPrestacaoServico(percentualPrestacaoServico);
+		descontoL.setTipoDesconto(tipoDesconto);
+		descontoL.setProdutos(produtos);
+		
+		return descontoL;
+	}
+    
+    public static RateioDiferenca criarRateioDiferenca(Cota cota, Date dataNotaEnvio, BigInteger qtde, 
+    		EstudoCota estudoCota, Diferenca diferenca) {
+    	
+    	RateioDiferenca rateio = new RateioDiferenca();
+    	
+    	rateio.setCota(cota);
+    	rateio.setDataNotaEnvio(dataNotaEnvio);
+    	rateio.setQtde(qtde);
+    	rateio.setEstudoCota(estudoCota);
+    	rateio.setDiferenca(diferenca);
+    	
+    	return rateio;
+    }
 }

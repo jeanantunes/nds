@@ -71,7 +71,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			criteria.setFetchMode("pf", FetchMode.JOIN);
 		}
 		
-		criteria.add(Restrictions.eq("ccec.dataOperacao", filtro.getDataEncalhe()));
+		criteria.add(Restrictions.eq("ccec.dataOperacao", filtro.getDataEncalhe()));		
 		
 		if (filtro.getBoxId() != null) {
 			criteria.add(Restrictions.eq("ccec.box.id", filtro.getBoxId()));

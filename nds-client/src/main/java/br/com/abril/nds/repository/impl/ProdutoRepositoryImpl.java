@@ -37,7 +37,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		Query query = super.getSession().createQuery(hql);
 
-		query.setParameter("nome", nome + "%");
+		query.setParameter("nome", "%" + nome + "%");
 		
 		return query.list();
 	}
@@ -84,7 +84,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		String hql = "select produto.id as id, produto.codigo as codigo, produto.nome as produtoDescricao, ";
 		hql += " tipoProduto.descricao as tipoProdutoDescricao, ";
-		hql += " case when editor.nome is null then '' else editor.nome end as nomeEditor, ";
+		hql += " case when editor.pessoaJuridica.razaoSocial is null then '' else editor.pessoaJuridica.razaoSocial end as nomeEditor, ";
 		hql += " juridica.razaoSocial as tipoContratoFornecedor, ";
 		hql += " produto.peb as peb, produto.pacotePadrao as pacotePadrao, ";
 		hql += " coalesce(descontoLogistica.percentualDesconto, 0) as percentualDesconto, ";
@@ -159,7 +159,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		}
 		
 		if (editor != null && !editor.isEmpty()) {
-			hql += auxHql+" editor.nome like :nomeEditor ";
+			hql += auxHql+" editor.pessoaJuridica.razaoSocial like :nomeEditor ";
 			auxHql = " and ";
 		}
 

@@ -33,7 +33,7 @@ public class PessoaJuridica extends Pessoa implements Serializable {
 	@Column(name = "CNPJ", unique = true)
 	private String cnpj;
 	
-	@Column(name = "INSC_ESTADUAL",length=18, unique = true)
+	@Column(name = "INSC_ESTADUAL",length=20)
 	private String inscricaoEstadual;
 	
 	@Column(name = "INSC_MUNICIPAL",length=15)

@@ -4,12 +4,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -20,8 +19,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 
 /**
  * Entidade que representa a hierarquia de desconto da cota no histórico de
@@ -57,16 +54,10 @@ public abstract class HistoricoTitularidadeCotaDesconto implements Serializable 
     @Column(name = "DESCONTO", nullable = false)
     protected BigDecimal desconto;
     
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     protected HistoricoTitularidadeCota historicoTitularidadeCota;
     
-    /**
-     * Tipo do desconto
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TIPO_DESCONTO")
-    protected TipoDesconto tipoDesconto;
 
     /**
      * @return the id
@@ -124,19 +115,4 @@ public abstract class HistoricoTitularidadeCotaDesconto implements Serializable 
             HistoricoTitularidadeCota historicoTitularidadeCota) {
         this.historicoTitularidadeCota = historicoTitularidadeCota;
     }
-
-    /**
-     * @return the tipoDesconto
-     */
-    public TipoDesconto getTipoDesconto() {
-        return tipoDesconto;
-    }
-
-    /**
-     * @param tipoDesconto the tipoDesconto to set
-     */
-    public void setTipoDesconto(TipoDesconto tipoDesconto) {
-        this.tipoDesconto = tipoDesconto;
-    }
-    
 }

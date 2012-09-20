@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
@@ -47,6 +48,24 @@ public interface ConferenciaEncalheService {
 	 */
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
 	
+	/**
+	 * Valida se o produto edicao em questão é relalivo a lancamento parcial.
+	 * 
+	 * @param codigo
+	 * @param numeroEdicao
+	 * 
+	 * @return boolean
+	 */
+	public boolean isLancamentoParcialProdutoEdicao(String codigo, Long numeroEdicao);
+
+	
+	/**
+	 * Obtém o TipoContabilizacaoCE.
+	 * 
+	 * @return TipoContabilizacaoCE
+	 */
+	public TipoContabilizacaoCE obterTipoContabilizacaoCE();
+
 	
 	/**
 	 * Obtém os dados sumarizados de encalhe da cota, e se esta estiver

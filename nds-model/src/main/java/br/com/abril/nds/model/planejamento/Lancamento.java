@@ -128,6 +128,10 @@ public class Lancamento implements Serializable {
 	@ManyToMany(mappedBy="lancamentos", targetEntity=ChamadaEncalhe.class)
 	private Set<ChamadaEncalhe> chamadaEncalhe;
 	
+	
+	@Column(name="ALTERADO_INTERFACE", nullable = false)
+	private boolean alteradoInteface = false;
+	
 	public Long getId() {
 		return id;
 	}
@@ -280,8 +284,8 @@ public class Lancamento implements Serializable {
 		return StatusLancamento.FURO.equals(status);
 	}
 	
-	public boolean isCancelamentoGD() {
-		return StatusLancamento.CANCELADO_GD.equals(status);
+	public boolean isCancelamento() {
+		return StatusLancamento.CANCELADO.equals(status);
 	}
 	
 	public boolean isExpedido() {
@@ -352,6 +356,20 @@ public class Lancamento implements Serializable {
 	 */
 	public void setChamadaEncalhe(Set<ChamadaEncalhe> chamadaEncalhe) {
 		this.chamadaEncalhe = chamadaEncalhe;
+	}
+
+	/**
+	 * @return the alteradoInteface
+	 */
+	public boolean isAlteradoInteface() {
+		return alteradoInteface;
+	}
+
+	/**
+	 * @param alteradoInteface the alteradoInteface to set
+	 */
+	public void setAlteradoInteface(boolean alteradoInteface) {
+		this.alteradoInteface = alteradoInteface;
 	}
 
 	

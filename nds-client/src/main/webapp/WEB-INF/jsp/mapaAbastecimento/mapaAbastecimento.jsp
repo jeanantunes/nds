@@ -9,7 +9,7 @@
 		
 		var pesquisaProdutoMapaAbastecimento = new PesquisaProduto();
 	
-		var MA = new MapaAbastecimento('${pageContext.request.contextPath}', 'MA');
+		var MA = new MapaAbastecimento('${pageContext.request.contextPath}', 'MA', BaseController.workspace);
 	</script>
 	
 		
@@ -17,7 +17,7 @@
 					
 		function popup_detalhe_box() {
 			
-				$( "#dialog-detalhesAbastecimento" ).dialog({
+				$( "#dialog-detalhesAbastecimento", BaseController.workspace ).dialog({
 					resizable: false,
 					height:410,
 					width:710,
@@ -26,7 +26,8 @@
 						"Fechar": function() {
 							$( this ).dialog( "close" );
 						},
-					}
+					},
+					form: $("#dialog-detalhesAbastecimento", this.workspace).parents("form")
 				});
 			};	
 		
@@ -37,7 +38,7 @@
 <body>
 	
 	
-
+<form id="form-detalhesAbastecimento">
 <div id="dialog-detalhesAbastecimento" title="Produtos do Box" style="display:none;">
 	<fieldset>
     	<legend><span id="titleBox" ></span></legend>
@@ -45,15 +46,11 @@
 
     </fieldset>
 </div>
+</form>
 
 <div class="corpo">
   
     <div class="container">
-    
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Ausente < evento > com < status >.</b></p>
-	</div>
     	
       <fieldset class="classFieldset">
    	    <legend> Pesquisar Mapa de Abastecimento</legend>
@@ -198,7 +195,7 @@
 
 $(function() {	
 	
-	$(".mapaAbastecimentoGrid").flexigrid($.extend({},{
+	$(".mapaAbastecimentoGrid", BaseController.workspace).flexigrid($.extend({},{
 		colModel : [ {
 				display : 'Box',
 				name : 'box',
@@ -240,9 +237,9 @@ $(function() {
 			height : 255
 	})); 
 	
-	$(".grids").show();	
+	$(".grids", BaseController.workspace).show();	
 	
-	$(".mapaAbastecimentoDetalheGrid").flexigrid($.extend({},{
+	$(".mapaAbastecimentoDetalheGrid", BaseController.workspace).flexigrid($.extend({},{
 		colModel : [ {	
 				display : 'Código',
 				name : 'codigoProduto',

@@ -45,7 +45,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		$("#fatorVencimento", this.workspace).numeric();
 		$("#valorMinimo", this.workspace).numeric();
-		$("#comissao", this.workspace).numeric();
 		$("#qtdDividasAberto", this.workspace).numeric();
 		$("#vrDividasAberto", this.workspace).numeric();
 		
@@ -56,9 +55,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#conta", this.workspace).numeric();
 	    $("#contaDigito", this.workspace).numeric();
 	    $("#diaDoMes", this.workspace).numeric();
-
+	    $(".dataInputMask", this.workspace).mask("99/99/9999");
+	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
+	    $("#primeiroDiaQuinzenal", this.workspace).numeric();
+	    $("#segundoDiaQuinzenal", this.workspace).numeric();
 	},
 	
+		
 	//PRÉ CARREGAMENTO DA PAGINA
 	carregaFinanceiro : function(idCota){
 		$("#_idParametroCobranca", this.workspace).val("");
@@ -66,6 +69,21 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#_numCota", this.workspace).val("");
 		parametroCobrancaCotaController.obterParametroCobranca(idCota);
 		parametroCobrancaCotaController.mostrarGrid(idCota);	
+		
+		var _this = this;
+	    
+	    var options = {
+				success: _this.tratarRespostaUploadAnexoContrato,
+		};
+	    
+	    $('#parametroCobrancaFormUpload', this.workspace).ajaxForm(options);
+	    
+	    $(".dataInputMask").mask("99/99/9999");
+	    
+	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
+	    this.calcularDataTermino();
+	    this.carregarArquivoContrato();
+	    
 	},
 	
 	montarTrRadioBox : function(result,name,nameItemIdent) {
@@ -113,7 +131,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
 		$(".boletosUnificadosGrid", this.workspace).flexReload();
 		
-		$(".grids", this.workspace).show();
+		//$(".grids", this.workspace).show();
 	},
 	
 	getDataFromResult : function(resultado) {
@@ -124,7 +142,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
 			);
-			$(".grids", this.workspace).hide();
+			//$(".grids", this.workspace).hide();
 			return resultado;
 		}	
 		
@@ -140,21 +158,35 @@ var parametroCobrancaCotaController = $.extend(true, {
 			row.cell.acao = linkEditar + linkExcluir;
 		});
 			
-		$(".grids", this.workspace).show();
+		//$(".grids", this.workspace).show();
 		
 		return resultado;
 	},
 	
     //MODOS DE EXIBIÇÃO 
-	exibe_botao_contrato : function(contrato){
-		if (contrato){
-			$('#botaoContrato', this.workspace).show();
-		}
-		else{
-			$('#botaoContrato', this.workspace).hide();
+	exibe_form_contrato : function(exibir){
+		
+		if(exibir) {
+			$(".form-contrato-hidden-class").css("visibility", "visible");
+		}else{
+			$(".form-contrato-hidden-class").css("visibility", "hidden");
 		}
 	},
-
+	
+	exibe_form_suspencao : function(exibir) {
+		$(".form-suspensao-hidden-class").toggle(exibir);
+	},
+	
+	exibe_form_upload : function(exibir) {
+		$(".parametroCobrancaFileField").toggle(exibir);
+		if(!exibir) {
+			this.removerUpload();
+			 $("#parametroCobrancaFormUploadFile").val("");
+		} else {
+			$("#parametroCobrancaNumeroCota", this.workspace).val(MANTER_COTA.numeroCota);
+		}
+	},
+	
 	opcaoPagto : function(op){
 		
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
@@ -180,19 +212,51 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 	},
 	
-	mostraSemanal : function(){
-		$("#tipoFormaCobranca", this.workspace).val('SEMANAL');
+	mostraDiario : function(){
+		$("#tipoFormaCobranca", this.workspace).val('DIARIA');
+		$("#semanal").attr("checked", false);
+		$("#quinzenal").attr("checked", false);
 		$("#mensal").attr("checked", false);
 		//document.formularioFormaCobranca.mensal.checked = false;
-		$( ".semanal", this.workspace ).show();
+		$( ".semanal", this.workspace ).hide();
+		$( ".quinzenal", this.workspace ).hide();
 		$( ".mensal", this.workspace ).hide();
+		$( ".diario", this.workspace ).show();
+	},
+	
+	mostraQuinzenal : function(){
+		$("#tipoFormaCobranca", this.workspace).val('QUINZENAL');
+		$("#diario").attr("checked", false);
+		$("#semanal").attr("checked", false);
+		$("#mensal").attr("checked", false);
+		//document.formularioFormaCobranca.mensal.checked = false;
+		$( ".diario", this.workspace ).hide();
+		$( ".semanal", this.workspace ).hide();
+		$( ".mensal", this.workspace ).hide();
+		$( ".quinzenal", this.workspace ).show();
+	},
+	
+	mostraSemanal : function(){
+		$("#tipoFormaCobranca", this.workspace).val('SEMANAL');
+		$("#diario").attr("checked", false);
+		$("#quinzenal").attr("checked", false);
+		$("#mensal").attr("checked", false);
+		//document.formularioFormaCobranca.mensal.checked = false;
+		$( ".diario", this.workspace ).hide();
+		$( ".quinzenal", this.workspace ).hide();
+		$( ".mensal", this.workspace ).hide();
+		$( ".semanal", this.workspace ).show();
 	},
 		
 	mostraMensal : function(){
 		$("#tipoFormaCobranca", this.workspace).val('MENSAL');
+		$("#diario").attr("checked", false);
 		$("#semanal").attr("checked", false);
+		$("#quinzenal").attr("checked", false);
 		//document.formularioFormaCobranca.semanal.checked = false;
+		$( ".diario", this.workspace ).hide();
 		$( ".semanal", this.workspace ).hide();
+		$( ".quinzenal", this.workspace ).hide();
 		$( ".mensal", this.workspace ).show();
 	},
 	
@@ -200,6 +264,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		if (op=='SEMANAL'){
 			$("#semanal").attr("checked", true);
 			$("#mensal").attr("checked", false);
+			$("#diario").attr("checked", false);
+			$("#quinzenal").attr("checked", false);
 			/*document.formularioFormaCobranca.semanal.checked = true;
 			document.formularioFormaCobranca.mensal.checked = false;*/
 			parametroCobrancaCotaController.mostraSemanal();
@@ -207,9 +273,29 @@ var parametroCobrancaCotaController = $.extend(true, {
 		else if (op=='MENSAL'){
 			$("#semanal").attr("checked", false);
 			$("#mensal").attr("checked", true);
+			$("#diario").attr("checked", false);
+			$("#quinzenal").attr("checked", false);
 			/*document.formularioFormaCobranca.semanal.checked = false;
 			document.formularioFormaCobranca.mensal.checked = true;*/
 			parametroCobrancaCotaController.mostraMensal();
+		}    
+		else if (op=='DIARIA'){
+			$("#semanal").attr("checked", false);
+			$("#mensal").attr("checked", false);
+			$("#diario").attr("checked", true);
+			$("#quinzenal").attr("checked", false);
+			/*document.formularioFormaCobranca.semanal.checked = false;
+			document.formularioFormaCobranca.mensal.checked = true;*/
+			parametroCobrancaCotaController.mostraDiario();
+		}    
+		else if (op=='QUINZENAL'){
+			$("#semanal").attr("checked", false);
+			$("#mensal").attr("checked", false);
+			$("#diario").attr("checked", false);
+			$("#quinzenal").attr("checked", true);
+			/*document.formularioFormaCobranca.semanal.checked = false;
+			document.formularioFormaCobranca.mensal.checked = true;*/
+			parametroCobrancaCotaController.mostraQuinzenal();
 		}    
 	},
 
@@ -242,10 +328,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		//document.formFinanceiro.contrato.checked = resultado.contrato;
 		
-		parametroCobrancaCotaController.exibe_botao_contrato(resultado.contrato);
+		parametroCobrancaCotaController.exibe_form_contrato(resultado.contrato);
 
 		$("#valorMinimo", this.workspace).val(resultado.valorMinimo);
-		$("#comissao", this.workspace).val(resultado.comissao);
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto", this.workspace).val(resultado.vrDividasAberto);
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
@@ -277,7 +362,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var contrato = $("#contrato", this.workspace).val();
 	 
 		var valorMinimo = $("#valorMinimo", this.workspace).val();
-		var comissao = $("#comissao", this.workspace).val();
 		var qtdDividasAberto = $("#qtdDividasAberto", this.workspace).val();
 		var vrDividasAberto = $("#vrDividasAberto", this.workspace).val();
 		var tipoCota = $("#tipoCota", this.workspace).val();
@@ -289,8 +373,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   "&parametroCobranca.fatorVencimento="+fatorVencimento+    
 				   "&parametroCobranca.sugereSuspensao="+sugereSuspensao+    
 				   "&parametroCobranca.contrato="+contrato+          
-				   "&parametroCobranca.valorMinimo="+valorMinimo+        
-				   "&parametroCobranca.comissao="+comissao+          
+				   "&parametroCobranca.valorMinimo="+valorMinimo+    
 				   "&parametroCobranca.qtdDividasAberto="+qtdDividasAberto+   
 				   "&parametroCobranca.vrDividasAberto="+vrDividasAberto+
 				   "&parametroCobranca.tipoCota="+tipoCota,
@@ -302,7 +385,21 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   },
 				   true);
 	},
-
+	calcularDataTermino : function() {
+			
+		var dataInicio = $("#parametroCobrancaDateInicio").val();
+		
+		var params = {"dataInicio":dataInicio};
+		
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/calcularDataTermino.json", params, 
+				function(result) {
+					
+					$("#parametroCobrancaDateTermino").val(result.dataTermino);
+					
+				}
+		);
+	},
+	
 	//FORMAS DE COBRANÇA
 	preparaNovaFormaCobranca : function(){
 		
@@ -313,11 +410,15 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		$( ".semanal", this.workspace ).hide();
 		$( ".mensal", this.workspace ).hide();
+		$( ".diario", this.workspace ).hide();
+		$( ".quinzenal", this.workspace ).hide();
 		
 		$("#mensal", this.workspace).attr("checked", false);
 		$("#semanal", this.workspace).attr("checked", false);
 		/*document.formularioFormaCobranca.mensal.checked = false;
 		document.formularioFormaCobranca.semanal.checked = false;*/
+		$("#diario", this.workspace).attr("checked", false);
+		$("#quinzenal", this.workspace).attr("checked", false);
 		
 		$("#_idFormaCobranca", this.workspace).val("");
 		$("#tipoCobranca", this.workspace).val("");
@@ -330,6 +431,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#conta", this.workspace).val("");
 	    $("#contaDigito", this.workspace).val("");
 	    $("#diaDoMes", this.workspace).val("");
+	    $("#primeiroDiaQuinzenal", this.workspace).val("");
+	    $("#segundoDiaQuinzenal", this.workspace).val("");
 
 		$("#recebeEmail", this.workspace).attr("checked", false);
 		$("#PS", this.workspace).attr("checked", false);
@@ -348,17 +451,91 @@ var parametroCobrancaCotaController = $.extend(true, {
 		document.formularioFormaCobranca.PSex.checked = false;
 		document.formularioFormaCobranca.PSab.checked = false;
 		document.formularioFormaCobranca.PDom.checked = false;*/
+		
+		
+		parametroCobrancaCotaController.obterFormaCobrancaDefault();
 	}, 
+
+	
+	tratarRespostaUploadAnexoContrato : function(data) {
+		
+		data = replaceAll(data, "<pre>", "");
+		data = replaceAll(data, "</pre>", "");
+		
+		data = replaceAll(data, "<PRE>", "");
+		data = replaceAll(data, "</PRE>", "");
+		
+		var responseJson = jQuery.parseJSON(data);
+		if (responseJson.mensagens) {
+			exibirMensagemDialog(
+				responseJson.mensagens.tipoMensagem, 
+				responseJson.mensagens.listaMensagens, "dialog-cota"
+			);
+			
+		} else {
+			parametroCobrancaCotaController.showFileName(responseJson.fileName);
+		}			
+	},
+	
+	showFileName : function(fileName) {
+		$("#parametroCobrancaArquivo > *").remove();
+		
+		var fileName = '<span id="parametroCobrancaFileName">'+fileName+'</span>';
+		
+		$("#parametroCobrancaArquivo", this.workspace).append(fileName);
+	},
+	
+	carregarArquivoContrato : function() {
+
+		var idCota = MANTER_COTA.idCota;
+		var numeroCota = MANTER_COTA.numeroCota;
+		var params = {idCota:idCota, numeroCota:numeroCota};
+		
+		var _this = this;
+		
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/carregarArquivoContrato", params,
+				function(data){
+					if(data.isRecebido) {
+						
+						_this.exibe_form_upload(true);
+						$("#parametroCobrancaIsRecebidoCheckBox").attr("checked", true);
+						_this.showFileName(data.fileName);
+					}
+		});
+	},
+	
+	removerUpload : function() {
+		var fileName =  $("#parametroCobrancaFileName").html();
+		
+		if (!fileName) return;
+		
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/removerUpload.json", null,
+			null,  
+			function(data) {
+			
+				var mensagens = data.mensagens? data.mensagens:data;
+				var tipoMensagem = mensagens.tipoMensagem;
+				var listaMensagens = mensagens.listaMensagens;
+
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagemDialog(tipoMensagem, listaMensagens,"dialog-cota");
+				}
+		},true);
+		
+		$("#parametroCobrancaArquivo > *").remove();
+	},
 	
 	obterFornecedoresUnificados : function(unificados) {
-		$("input[name='checkGroupFornecedores']:checked", this.workspace).each(function(i) {
-			$("#fornecedor_"+$(this), this.workspace).attr("checked", false);
-			//document.getElementById("fornecedor_"+$(this).val()).checked = false;
+		$("input[name='checkGroupFornecedores']:checked", parametroCobrancaCotaController.workspace).each(function(i) {
+			//$("#fornecedor_"+$(this).val(), this.workspace).attr("checked", false);
+			document.getElementById("fornecedor_"+$(this).val(), parametroCobrancaCotaController.workspace).checked = false;
 		});
 		var i;
 		for(i=0;i<unificados.length;i++){
-			$("#fornecedor_"+unificados[i], this.workspace).attr("checked", false);
-			//document.getElementById("fornecedor_"+unificados[i]).checked = true;
+			//$("#fornecedor_"+unificados[i], this.workspace).attr("checked", false);
+			if(document.getElementById('fornecedor_'+unificados[i])){
+			    document.getElementById("fornecedor_"+unificados[i], parametroCobrancaCotaController.workspace).checked = true;
+			}
 		}
 	},
 	
@@ -386,6 +563,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#conta", this.workspace).val(resultado.conta);
 	    $("#contaDigito", this.workspace).val(resultado.contaDigito);
 	    $("#diaDoMes", this.workspace).val(resultado.diaDoMes);
+	    $("#primeiroDiaQuinzenal", this.workspace).val(resultado.primeiroDiaQuinzenal);
+	    $("#segundoDiaQuinzenal", this.workspace).val(resultado.segundoDiaQuinzenal);
+	    
 		
 		$("#recebeEmail", this.workspace).attr("checked", resultado.recebeEmail);
 		$("#PS", this.workspace).attr("checked", resultado.segunda);
@@ -425,7 +605,43 @@ var parametroCobrancaCotaController = $.extend(true, {
 		parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
 		parametroCobrancaCotaController.obterFornecedoresUnificados(resultado.fornecedoresId);
 	},
+
+	obterFormaCobrancaDefault : function(){
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterFormaCobrancaDefault",
+		   null,
+		   function(resultado){
+	            
+	           if (resultado){
 	
+				   //hidden
+				   $("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
+				
+				   $("#tipoCobranca", this.workspace).val(resultado.tipoCobranca);
+				   $("#tipoFormaCobranca", this.workspace).val(resultado.tipoFormaCobranca);
+				   if (resultado.diasDoMes.length == 1){
+				       $("#diaDoMes", this.workspace).val(resultado.diasDoMes[0]);
+				   }
+				   else if (resultado.diasDoMes.length > 1){
+					   $("#primeiroDiaQuinzenal", this.workspace).val(resultado.diasDoMes[0]);
+					   $("#segundoDiaQuinzenal", this.workspace).val(resultado.diasDoMes[1]);
+				   }
+				   $("#PS", this.workspace).attr("checked", resultado.segunda);
+				   $("#PT", this.workspace).attr("checked", resultado.terca);
+				   $("#PQ", this.workspace).attr("checked", resultado.quarta);
+				   $("#PQu", this.workspace).attr("checked", resultado.quinta);
+				   $("#PSex", this.workspace).attr("checked", resultado.sexta);
+				   $("#PSab", this.workspace).attr("checked", resultado.sabado);
+				   $("#PDom", this.workspace).attr("checked", resultado.domingo);
+	
+				   parametroCobrancaCotaController.opcaoPagto(resultado.tipoCobranca);
+				   parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca); 
+	           }
+	           
+           },
+           null,
+		   true);
+	},
+
 	obterFornecedoresMarcados : function() {
 		var fornecedorMarcado = "";
 		$("input[name='checkGroupFornecedores']:checked", this.workspace).each(function(i) {
@@ -453,6 +669,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var conta               = $("#conta", this.workspace).val();
 		var contaDigito         = $("#contaDigito", this.workspace).val();
 		var diaDoMes            = $("#diaDoMes", this.workspace).val();
+		var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenal", this.workspace).val();
+		var segundoDiaQuinzenal = $("#segundoDiaQuinzenal", this.workspace).val();
 
 		$("#recebeEmail", this.workspace).val(0);
 		//if (document.formularioDadosBoleto.recebeEmail.checked){
@@ -531,6 +749,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 					   "&formaCobranca.sexta="+sexta+            
 					   "&formaCobranca.sabado="+sabado+
 					   "&formaCobranca.diaDoMes="+diaDoMes+
+					   "&formaCobranca.primeiroDiaQuinzenal="+primeiroDiaQuinzenal+
+					   "&formaCobranca.segundoDiaQuinzenal="+segundoDiaQuinzenal+
 					   "&tipoFormaCobranca="+tipoFormaCobranca+
 					   "&"+parametroCobrancaCotaController.obterFornecedoresMarcados(),
 					   function(mensagens) {
@@ -576,6 +796,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 					   "&formaCobranca.sexta="+sexta+            
 					   "&formaCobranca.sabado="+sabado+
 					   "&formaCobranca.diaDoMes="+diaDoMes+
+					   "&formaCobranca.primeiroDiaQuinzenal="+primeiroDiaQuinzenal+
+					   "&formaCobranca.segundoDiaQuinzenal="+segundoDiaQuinzenal+
 					   "&tipoFormaCobranca="+tipoFormaCobranca+
 					   "&"+parametroCobrancaCotaController.obterFornecedoresMarcados(),
 					   function(mensagens) {
@@ -696,10 +918,32 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 	//IMPRESSÃO DO CONTRATO
 	imprimeContrato : function(){
+		debugger;
+		
+		
 		var idCota = $("#_idCota", this.workspace).val();
-	    document.location.assign(contextPath + "/cota/parametroCobrancaCota/imprimeContrato?idCota="+idCota);
+		var dataInicio = $("#parametroCobrancaDateInicio",this.workspace).val();
+		var dataTermino = $("#parametroCobrancaDateTermino",this.workspace).val();
+		var isRecebido = $("#parametroCobrancaIsRecebidoCheckBox").is(":checked");
+		
+		var fileName =  $("#parametroCobrancaFileName",this.workspace).html();
+		
+		if (!fileName) isRecebido = false;
+		
+	    document.location.assign(
+	    		contextPath + "/cota/parametroCobrancaCota/imprimeContrato?" +
+	    				"idCota="+idCota+"&dataInicio="+dataInicio+"&dataTermino="+dataTermino+"&isRecebido="+isRecebido);
 	},
-
+	
+	uploadContratoAnexo : function() {
+		var selectedFile = $("#parametroCobrancaFormUploadFile").val();
+		
+		if(!selectedFile) return;
+		
+		$('#parametroCobrancaFormUpload', this.workspace).submit();
+	},
+	
+	
 	//INCLUSÃO DE NOVA UNIFICAÇÃO SEM SAIR DO POPUP
 	incluirNovaUnificacao : function(){
 		parametroCobrancaCotaController.postarFormaCobranca(false,true);

@@ -32,9 +32,6 @@ fieldset label {
 <script
 	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"
 	type="text/javascript"></script>
-<script
-	src="${pageContext.request.contextPath}/scripts/informeEncalhe.js"
-	type="text/javascript"></script>
 <script type="text/javascript">
 	$(function() {
 		var informeEncalhe = new InformeEncalhe();
@@ -139,7 +136,7 @@ fieldset label {
 	</div>
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_arq" title="Imprimir"><a href="javascript:;"
+			<span class="bt_arq"><a href="javascript:;"
 				id="btnImprimir" rel="tipsy" title="Imprimir"><img
 					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 					hspace="5" border="0" alt="" /></a>
@@ -168,10 +165,10 @@ fieldset label {
 
 				<td colspan="3">Data Recolhimento:</td>
 
-				<td width="109"><input type="text" id="dataRecolhimentoBox"
+				<td width="99"><input type="text" id="dataRecolhimentoBox"
 					style="width: 70px;" /></td>
 
-				<td width="284"><span class="bt_novos"><a
+				<td width="294"><span class="bt_novos"><a
 						href="javascript:;" id="btnPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 
 			</tr>
@@ -179,15 +176,11 @@ fieldset label {
 	</fieldset>
 
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="fieldGrid">
-
-		<legend>Informe de Recolhimentos Cadastrados</legend>
-
-		<div class="grids" style="display: none;">
-
-			<div id="consultaInformeEncalheGrid"></div>
-			
-		</div>
-	</fieldset>
+	<div class="grids" style="display: none;">
+		<fieldset class="fieldGrid">
+			<legend>Informe de Recolhimentos Cadastrados</legend>
+			<div id="consultaInformeEncalheGrid"></div>		
+		</fieldset>
+	</div>
 </body>
 </html>

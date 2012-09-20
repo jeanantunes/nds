@@ -1,8 +1,8 @@
 package br.com.abril.nds.integracao.ems0106.processor;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -19,7 +19,9 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
@@ -32,13 +34,18 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorService distribuidorService;
 
 	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void processMessage(Message message) {
 		
 		EMS0106Input input = (EMS0106Input) message.getBody();
 		if (input == null) {
-			
 			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, "NAO ENCONTROU o Arquivo");
+					message, EventoExecucaoEnum.ERRO_INFRA, 
+					"NAO ENCONTROU o Arquivo");
 			return;
 		}
 		
@@ -49,8 +56,9 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 				edicao);
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
-					"NAO ENCONTROU ProdutoEdicao");
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"NAO ENCONTROU ProdutoEdicao de codigo: " + codigoPublicacao
+					+ ", numeroEdicao: " + edicao);
 			return;
 		}
 			
@@ -58,8 +66,9 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 				produtoEdicao);
 		if (lancamento == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.HIERARQUIA,
-					"NAO ENCONTROU Lancamento");
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"NAO ENCONTROU Lancamento para ProdutoEdicao: "
+					+ produtoEdicao.getId());
 			return;
 		}
 		
@@ -70,53 +79,42 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			estudo = new Estudo();
 			estudo.setQtdeReparte(BigInteger.valueOf(
 					input.getReparteDistribuir()));
-			estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
+			estudo.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
 			estudo.setProdutoEdicao(produtoEdicao);
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+			estudo.setDataCadastro(new Date());
 			getSession().persist(estudo);
 			
 			// Associar novo estudo com o lançamento existente:
 			lancamento.setEstudo(estudo);
-			getSession().merge(lancamento);
+			this.getSession().merge(lancamento);
 		} else {
 			
-			// Atualizar o valor total do reparte:
-			estudo.setQtdeReparte(BigInteger.valueOf(
-					input.getReparteDistribuir()));
-			getSession().merge(estudo);
-		}
+			// Remoção dos EstudoCotas que ficaram desatualizados:
+			Query query = getSession().createQuery(
+					"DELETE EstudoCota e WHERE e.estudo = :estudo");
+			query.setParameter("estudo", estudo);
+			query.executeUpdate();
+			estudo.setEstudoCotas(Collections.<EstudoCota>emptySet());
 			
-			
-		/*
-		 * TODO: Posteriormente remover o trecho comentado:
-			
-			List<Estudo> listaEstudos = 
-				this.getEstudosSalvos(
-					lancamento.getProdutoEdicao().getId(), 
-					lancamento.getDataLancamentoPrevista());
-			
-			if (listaEstudos.isEmpty()) {
-				
-				Estudo estudo = new Estudo();
-		
-				estudo.setProdutoEdicao(lancamento.getProdutoEdicao());
-				estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-				estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
-		
-				getSession().persist(estudo);
-				///FIXME Comentado para verificação posterios junto a Eduardo "PunkRock" Castro em 08/08
-//				for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-//					
-//					estudo = new Estudo();
-//					
-//					estudo.setProdutoEdicao(produtoEdicao);
-//					estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-//					estudo.setQtdeReparte(BigInteger.valueOf( input.getReparteDistribuir() ));
-//		
-//					getSession().persist(estudo);
-//				}
-
+			// Atualizar os dados do Estudo:
+			BigInteger qtdeReparteAtual = estudo.getQtdeReparte();
+			BigInteger qtdeReparteCorrente = BigInteger.valueOf(
+					input.getReparteDistribuir());
+			if (!qtdeReparteAtual.equals(qtdeReparteCorrente)) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteracao da QUANTIDADE REPARTE do Estudo: "
+								+ estudo.getId()
+								+ ", de: " + qtdeReparteAtual
+								+ " para: " + qtdeReparteCorrente);
+				estudo.setQtdeReparte(qtdeReparteCorrente);
 			}
-		 */			
+			
+			estudo.setDataAlteracao(new Date());
+			this.getSession().merge(estudo);
+		}
+		
 	}
 	
 	/**
@@ -147,27 +145,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			throw new RuntimeException(e);
 		}
 	}
-	/*
-	@SuppressWarnings("unchecked")
-	private List<EMS0107Input> getListaCotaPublicacao(String codigoPublicacao, Long edicao) {
-
-		// Obter a cota
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append("SELECT e ");
-		sql.append("FROM EMS0107Input e JOIN FETCH e.cota ");
-		sql.append("WHERE ");
-		sql.append("     e.codigoPublicacao = :codigoProduto ");
-		sql.append("     AND e.edicao = :numeroEdicao ");
-
-		Query query = getSession().createQuery(sql.toString());
-
-		query.setParameter("codigoProduto", codigoPublicacao);
-		query.setParameter("numeroEdicao", edicao);
-
-		return query.list();
-	}
-	*/
+	
 	/**
 	 * Obtém o Lançamento com data de lançamento mais próximo do dia corrente.
 	 *  
@@ -182,8 +160,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		sql.append("SELECT lcto FROM Lancamento lcto ");
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
-		sql.append("      AND lcto.dataLancamentoPrevista >= :dataOperacao ");
-		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
+		sql.append("      AND lcto.dataLancamentoDistribuidor >= :dataOperacao ");
+		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor ASC");
 		
 		Query query = getSession().createQuery(sql.toString());
 		
@@ -196,24 +174,10 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		return (Lancamento) query.uniqueResult();
 	}
-	
-	@SuppressWarnings("unchecked")
-	private List<Estudo> getEstudosSalvos(Long idProdutoEdicao, Date dataLancamentoPrevista) {
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT e ");
-		sql.append("FROM Estudo e ");
-		sql.append("	JOIN FETCH e.produtoEdicao pe ");
-		sql.append("WHERE ");
-		sql.append("	pe.id = :produtoEdicaoId ");
-		sql.append("	AND e.dataLancamento = :dataLancamento ");
 
-		Query query = getSession().createQuery(sql.toString());
-
-		query.setParameter("produtoEdicaoId", idProdutoEdicao);
-		query.setParameter("dataLancamento", dataLancamentoPrevista);
-
-		return query.list();
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
 	}
 	
 }

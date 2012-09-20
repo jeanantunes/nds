@@ -18,9 +18,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 					align : 'left'
 				}, {
 					display : 'Tipo de Lançamento',
-					name : 'tipoLancto',
+					name : 'tipoLancamentoDescricao',
 					width : 140,
 					sortable : false,
+					align : 'left'
+				},{
+					display : 'Observações',
+					name : 'observacoes',
+					width : 140,
+					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Valor R$',
@@ -29,7 +35,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					sortable : false,
 					align : 'right'
 				} ],
-				width : 400,
+				width : 540,
 				height : 250
 			});
 			
@@ -365,7 +371,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 			$.each(modeloConferenciaEncalhe, 
 				function(index, value) {
-					
+				
+					var parcial = value.parcial;
+				
 					var _class;
 					
 					if (index % 2 == 0){
@@ -414,7 +422,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					var inputCheckBoxJuramentada = '';
 					
-					if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado == true) {
+					if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado == true && parcial == true) {
 						
 						inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 						+ ' onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
@@ -922,7 +930,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#dialog-outros-valores", ConferenciaEncalheCont.workspace).dialog({
 			resizable : false,
 			height : 430,
-			width : 460,
+			width : 600,
 			modal : true,
 			buttons : {
 				"Fechar" : function() {

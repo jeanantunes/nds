@@ -5,8 +5,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -35,6 +33,11 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	private PeriodicidadeProdutoService periodicidadeProdutoService;
 
 	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void processMessage(Message message) {
 
 		// Distribuidor unico para todo sistema
@@ -42,8 +45,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 			Editor editor = this.findEditorByID(message);
 
-			TipoProduto tipoProduto = this.findTipoProduto(
-					GrupoProduto.REVISTA, message);
+			TipoProduto tipoProduto = this.findTipoProduto(message);
 
 			Produto produto = this.findProduto(message);
 
@@ -146,16 +148,16 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 	}
 
-	private TipoProduto findTipoProduto(GrupoProduto grupoProduto,
-			Message message) {
+	private TipoProduto findTipoProduto(Message message) {
+		EMS0109Input input = (EMS0109Input) message.getBody();
+
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("SELECT tp FROM TipoProduto tp ");
-		sql.append("WHERE  tp.grupoProduto = :grupoProduto ");
+		sql.append("WHERE  tp.codigo = :codigo ");
 
 		Query query = this.getSession().createQuery(sql.toString());
-		;
-		query.setParameter("grupoProduto", grupoProduto);
+		query.setParameter("codigo", input.getCategoria());
 
 		@SuppressWarnings("unchecked")
 		List<TipoProduto> tiposProduto = (List<TipoProduto>) query.list();
@@ -199,7 +201,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		Produto produto = new Produto();
 
 		PeriodicidadeProduto periodicidadeProduto = this
-				.findPeriodicidadeProduto(input.getPeriodicidade());
+				.findPeriodicidadeProduto(input.getPeb());
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
@@ -240,7 +242,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
 		PeriodicidadeProduto periodicidadeProduto = this
-				.findPeriodicidadeProduto(input.getPeriodicidade());
+				.findPeriodicidadeProduto(input.getPeb());
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		DescontoLogistica descontoLogistica = this
@@ -287,7 +289,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			produto.setEditor(editor);
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao do Editor para: " + editor.getNome());
+					"Atualizacao do Editor para: " + editor.getPessoaJuridica().getNome());
 		}
 		if (produto.getPeriodicidade() != periodicidadeProduto) {
 
@@ -399,4 +401,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		}
 
 	}
+
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }

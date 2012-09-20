@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -12,10 +13,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
+import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
@@ -26,6 +29,10 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoBoleto;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDepositoTransferencia;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDescontoCota;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.CotaGarantiaService;
 
@@ -91,10 +98,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		cheque.setValidade(Calendar.getInstance());
 		cheque.setCorrentista("Senor Abravanel");
 		
-		
-			cotaGarantia = cotaGarantiaService.salvaChequeCaucao(cheque, cota.getId());
-			
-		
+		cotaGarantia = cotaGarantiaService.salvaChequeCaucao(cheque, cota.getId());
 		
 		assertNotNull(cotaGarantia);
 	}
@@ -130,34 +134,104 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 			
 		int expectedSize = 4;
 		
-		Assert.assertEquals(expectedSize, cotaGarantia.getImoveis().size());
-		
-		
-						
+		Assert.assertEquals(expectedSize, cotaGarantia.getImoveis().size());					
 	}
 
 
 	@Test
 	public void testSalvaCaucaoLiquida() throws Exception {
+	
+		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
 		
-		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = null;
+		salvarCaucaoLiquidaPagamentoBoleto(cotaGarantiaCaucaoLiquida);
 		
+		salvarCaucaoLiquidaPagamentoDescontoCota(cotaGarantiaCaucaoLiquida);
+		
+		salvarCaucaoLiquidaPagamentoDinheiro(cotaGarantiaCaucaoLiquida);
+		
+		salvarCaucaoLiquidaPagamentoTransferencia(cotaGarantiaCaucaoLiquida);
+	}
+
+	private ContaBancariaDeposito getCotaCaucaoLiquida() {
+		
+		ContaBancariaDeposito contaDepositoCaucaoLiquida = new ContaBancariaDeposito();
+		contaDepositoCaucaoLiquida.setNomeBanco("Nome Banco");
+		contaDepositoCaucaoLiquida.setNomeCorrentista("Correntista");
+		contaDepositoCaucaoLiquida.setAgencia(123l);
+		contaDepositoCaucaoLiquida.setNumeroBanco("12");
+		contaDepositoCaucaoLiquida.setConta(12345898l);
+		return contaDepositoCaucaoLiquida;
+	}
+
+	private List<CaucaoLiquida> getListaCaucaoLiquida() {
 		List<CaucaoLiquida> listaCaucaoLiquida = new ArrayList<CaucaoLiquida>();
 		
 		for (int i = 0 ; i <= 5; i++) {
 			CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 			
 			caucaoLiquida.setValor(5000D);
-			caucaoLiquida.setIndiceReajuste(10D);
 			caucaoLiquida.setAtualizacao(Calendar.getInstance());
 			
 			listaCaucaoLiquida.add(caucaoLiquida);
 		}
+		return listaCaucaoLiquida;
+	}
+	
+	private void salvarCaucaoLiquidaPagamentoDinheiro(CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida) throws ValidacaoException, InstantiationException, IllegalAccessException{
 		
-		cotaGarantiaCaucaoLiquida = this.cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, cota.getId());
+		PagamentoDinheiro pagamentoDinheiro = new PagamentoDinheiro();
+		pagamentoDinheiro.setValor(BigDecimal.TEN);
+		
+		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoDinheiro);
+		
+		cotaGarantiaCaucaoLiquida = this.cotaGarantiaService.salvarCaucaoLiquida(getListaCaucaoLiquida(), cota.getId(),pagamentoDinheiro,getCotaCaucaoLiquida());
 		
 		assertNotNull(cotaGarantiaCaucaoLiquida);
 		
+		Assert.assertTrue( cotaGarantiaCaucaoLiquida.getFormaPagamento() instanceof  PagamentoDinheiro  );
 	}
-
+	
+	private void salvarCaucaoLiquidaPagamentoBoleto(CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida) throws ValidacaoException, InstantiationException, IllegalAccessException{
+		
+		PagamentoBoleto pagamentoBoleto = new PagamentoBoleto();
+		pagamentoBoleto.setValor(BigDecimal.TEN);
+		pagamentoBoleto.setQuantidadeParcelas(10);
+		pagamentoBoleto.setValorParcela(BigDecimal.ONE);
+		
+		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoBoleto);
+	
+		cotaGarantiaCaucaoLiquida = this.cotaGarantiaService.salvarCaucaoLiquida(getListaCaucaoLiquida(), cota.getId(),pagamentoBoleto,getCotaCaucaoLiquida());
+		
+		assertNotNull(cotaGarantiaCaucaoLiquida);
+		
+		Assert.assertTrue( cotaGarantiaCaucaoLiquida.getFormaPagamento() instanceof  PagamentoBoleto  );
+	}
+	
+	private void salvarCaucaoLiquidaPagamentoTransferencia(CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida) throws ValidacaoException, InstantiationException, IllegalAccessException{
+		
+		PagamentoDepositoTransferencia pagamentoDepositoTransferencia = new PagamentoDepositoTransferencia();
+		pagamentoDepositoTransferencia.setValor(BigDecimal.TEN);
+		
+		cotaGarantiaCaucaoLiquida.setFormaPagamento(pagamentoDepositoTransferencia);
+		
+		cotaGarantiaCaucaoLiquida = this.cotaGarantiaService.salvarCaucaoLiquida(getListaCaucaoLiquida(), cota.getId(),pagamentoDepositoTransferencia,getCotaCaucaoLiquida());
+		
+		assertNotNull(cotaGarantiaCaucaoLiquida);
+		
+		Assert.assertTrue( cotaGarantiaCaucaoLiquida.getFormaPagamento() instanceof  PagamentoDepositoTransferencia  );
+	}
+	
+	private void salvarCaucaoLiquidaPagamentoDescontoCota(CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida) throws ValidacaoException, InstantiationException, IllegalAccessException{
+		
+		PagamentoDescontoCota pagamentoDescontoCota = new PagamentoDescontoCota();
+		pagamentoDescontoCota.setDescontoAtual(BigDecimal.ONE);
+		pagamentoDescontoCota.setDescontoCota(BigDecimal.TEN);
+		pagamentoDescontoCota.setValor(BigDecimal.TEN);
+		
+		cotaGarantiaCaucaoLiquida = this.cotaGarantiaService.salvarCaucaoLiquida(getListaCaucaoLiquida(), cota.getId(),pagamentoDescontoCota,getCotaCaucaoLiquida());
+		
+		assertNotNull(cotaGarantiaCaucaoLiquida);
+		
+		Assert.assertTrue( cotaGarantiaCaucaoLiquida.getFormaPagamento() instanceof  PagamentoDescontoCota  );
+	}
 }

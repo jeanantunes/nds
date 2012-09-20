@@ -35,6 +35,7 @@ var produtoController = $.extend(true, {
 	pesquisarProdutosSuccessCallBack:function() {
 		
 		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
+
 	},
 	
 	pesquisarProdutosErrorCallBack: function() {
@@ -189,7 +190,6 @@ var produtoController = $.extend(true, {
 		
 		var codigo = $("#codigoProduto", this.workspace).val();
 		var produto = $("#produto", this.workspace).val();
-		var periodicidade = $("#periodicidade", this.workspace).val();
 		var fornecedor = $("#fornecedor", this.workspace).val();
 		var editor = $("#edicao", this.workspace).val();
 		var codigoTipoProduto = $("#comboTipoProduto", this.workspace).val();
@@ -427,6 +427,7 @@ var produtoController = $.extend(true, {
 			   	function (result) {
 
 					var tipoMensagem = result.tipoMensagem;
+					
 					var listaMensagens = result.listaMensagens;
 					
 					if (tipoMensagem && listaMensagens) {
@@ -435,7 +436,11 @@ var produtoController = $.extend(true, {
 					} 
 
 					if (tipoMensagem == 'SUCCESS') {
+						
 						$("#dialog-novo", this.workspace).dialog( "close" );
+						
+						produtoController.pesquisar();
+						
 					}
 					
 				},

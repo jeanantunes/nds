@@ -29,6 +29,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -156,7 +157,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
-								  tipoDiferenca, statusConfirmado, null, movimentoEstoque, true);
+								  tipoDiferenca, statusConfirmado, null, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			
@@ -175,7 +176,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
-								  tipoDiferenca, statusPendente, null, movimentoEstoque, true);
+								  tipoDiferenca, statusPendente, null, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			
@@ -211,9 +212,17 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		for (int i = 0; i < listaDiferencas.size(); i++) {
 			
 			Diferenca diferenca = listaDiferencas.get(i);
-			
+
+			Date data = null;
+
+			if (diferenca.getLancamentoDiferenca() != null &&
+					diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null) {
+				
+				diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
+			}
+
 			Assert.assertEquals(
-				this.dataMovimento, diferenca.getMovimentoEstoque().getData());
+				this.dataMovimento, data);
 			
 			Assert.assertEquals(
 				this.tipoDiferenca, diferenca.getTipoDiferenca());
@@ -246,7 +255,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
 		filtro.setCodigoProduto("1");
-		filtro.setNumeroEdicao(1L);
+		
 		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
 		filtro.setPaginacao(paginacao);
@@ -263,7 +272,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
 		filtro.setCodigoProduto("1");
-		filtro.setNumeroEdicao(1L);
+		
 		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 		
 		Long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro, null);

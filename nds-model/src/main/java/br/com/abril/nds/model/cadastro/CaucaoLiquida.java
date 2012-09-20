@@ -35,7 +35,6 @@ public class CaucaoLiquida implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	
 	@Column(name="VALOR")
 	private Double valor;
 	
@@ -43,9 +42,6 @@ public class CaucaoLiquida implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Calendar atualizacao;
 	
-	@Column(name="INDICE_REAJUSTE")
-	private Double indiceReajuste;
-
 	/**
 	 * @return the id
 	 */
@@ -86,20 +82,6 @@ public class CaucaoLiquida implements Serializable {
 	 */
 	public void setAtualizacao(Calendar atualizacao) {
 		this.atualizacao = atualizacao;
-	}
-
-	/**
-	 * @return the indiceReajuste
-	 */
-	public Double getIndiceReajuste() {
-		return indiceReajuste;
-	}
-
-	/**
-	 * @param indiceReajuste the indiceReajuste to set
-	 */
-	public void setIndiceReajuste(Double indiceReajuste) {
-		this.indiceReajuste = indiceReajuste;
 	}
 
 }

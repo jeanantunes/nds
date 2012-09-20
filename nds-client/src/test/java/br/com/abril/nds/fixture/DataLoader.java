@@ -34,6 +34,8 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuicaoDistribuidor;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -98,6 +100,8 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -117,11 +121,13 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -201,6 +207,7 @@ import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.Util;
 
 public class DataLoader {
@@ -229,6 +236,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoSobraDe;
 	private static TipoMovimentoEstoque tipoMovimentoRecFisico;
 	private static TipoMovimentoEstoque tipoMovimentoRecReparte;
+	private static TipoMovimentoEstoque tipoMovimentoNivelamentoEntrada;
+	private static TipoMovimentoEstoque tipoMovimentoNivelamentoSaida;
+	
 	private static TipoMovimentoEstoque tipoMovimentoEnvioEncalhe;
 
 	private static TipoMovimentoEstoque tipoMovimentoRecebimentoEncalhe;
@@ -247,6 +257,7 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCompraEncalhe;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalhe;
 	private static TipoMovimentoEstoque tipoMovimentoVendaEncalheSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoEncalheAntecipado;
 	private static TipoMovimentoEstoque tipoMovimentoEstornoVendaEncalheSuplementar;
 
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
@@ -332,10 +343,39 @@ public class DataLoader {
 	private static Fornecedor fornecedorDinap;
 	private static Fornecedor fornecedorFc;
 	private static Distribuidor distribuidor;
+
+	private static NCM ncmCartaz;	
+	private static NCM ncmCd;	
+	private static NCM ncmRevista;
+	private static NCM ncmLivro;
+	private static NCM ncmFasciculo;
+	private static NCM ncmLivroilustrado;
+	private static NCM ncmFigurinha;
+	private static NCM ncmBebidas;
+
+	
+	private static TipoProduto tipoProdutoRefrigerante;
 	private static TipoProduto tipoProdutoRevista;
-	private static TipoProduto tipoRefrigerante;
-	private static TipoProduto tipoCromo;
-	private static TipoProduto tipoOutros;
+	private static TipoProduto tipoProdutoFasciculo;
+	private static TipoProduto tipoProdutoLivro;
+	private static TipoProduto tipoProdutoCromo;
+	private static TipoProduto tipoProdutoCard;
+	private static TipoProduto tipoProdutoAlbun;
+	private static TipoProduto tipoProdutoGuia;
+	private static TipoProduto tipoProdutoQuadrinho;
+	private static TipoProduto tipoProdutoAtividade;
+	private static TipoProduto tipoProdutoPassatempo;
+	private static TipoProduto tipoProdutoVideo;
+	private static TipoProduto tipoProdutoCdrom;
+	private static TipoProduto tipoProdutoPoster;
+	private static TipoProduto tipoProdutoJornal;
+	private static TipoProduto tipoProdutoTabloide;
+	private static TipoProduto tipoProdutoOutro;
+	private static TipoProduto tipoProdutoCapaDura;
+	private static TipoProduto tipoProdutoRevistaDigital;
+	private static TipoProduto tipoProdutoDvd;
+	private static TipoProduto tipoProdutoLivroIlustrado;
+
 
 	private static Produto produtoVeja;
 	private static Produto produtoSuper;
@@ -382,6 +422,7 @@ public class DataLoader {
 
 	private static Lancamento lancamentoVeja1;
 	private static Lancamento lancamentoVeja2;
+	private static Lancamento lancamentoCanceladoVeja5;
 	private static Lancamento lancamentoSuper1;
 	private static Lancamento lancamentoCapricho1;
 	private static Lancamento lancamentoCocaCola;
@@ -829,18 +870,23 @@ public class DataLoader {
 	private static EventoExecucao eventoInformacaoDadoAlterado;
 	private static EventoExecucao eventoRegistroExistente;
 	
-	private static NCM ncmRevistas;
-	private static NCM ncmlivros;
-	private static NCM ncmCromo;
-	private static NCM ncmBebidas;
 	private static Endereco enderecoMococa1;
 	private static Endereco enderecoMococa2;
 	private static Endereco enderecoLuisMococa3;
 	private static Endereco enderecoRioPardo1;
 	private static Endereco enderecoRioPardo2;
 	private static Endereco enderecoRioPardo3;
-	private static TipoPontoPDV tipoPontoPDVResidencial;
-	private static TipoPontoPDV tipoPontoPDV2Comercial;
+
+	private static TipoPontoPDV tipoPontoPDVBanca;
+	private static TipoPontoPDV tipoPontoPDVRevistaria;
+	private static TipoPontoPDV tipoPontoPDVLivraria;
+	private static TipoPontoPDV tipoPontoPDVEtc;
+	
+	private static Lancamento lancamentoCanceladoSuper2;
+	private static Lancamento lancamentoCanceladoCapricho2;
+	private static ProdutoEdicao produtoEdicaoVeja5;
+	private static ProdutoEdicao produtoEdicaoSuper2;
+	private static ProdutoEdicao produtoEdicaoCapricho2;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -894,25 +940,24 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		carregarDadosClean(session);
 
-		criarBanco(session);
+		//criarBanco(session);
 		criarUsuarios(session);
 		
 		criarDiasDistribuicaoFornecedores(session);
 		criarDiasDistribuicaoDistribuidor(session);
 		criarCotas(session);
-		gerarTiposPontoPDV(session);
 		criarPDVsCota(session);
 		criarDistribuicaoCota(session);
 		criarEditores(session);		
 		criarProdutos(session);
 		criarProdutosEdicao(session);
-		criarTiposMovimento(session);
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
 		criarEstoqueProdutoCota(session);
 		criarMovimentosEstoque(session);
 		criarLancamentos(session);
+		criarLancamentosCancelados(session);
 		criarEstudos(session);
 		criarEstudosCota(session);
 		
@@ -1003,11 +1048,14 @@ public class DataLoader {
 		gerarDescontoDistribuidorParaFornecedor(session);
 		
 		criarDescontoProduto(session);
+		
+		criarDescontoProdutoEdicao(session);
 
 		gerarDescontoCota(session);
 		
 		gerarGrupos(session);
-
+		
+		criarDescontoLogistica(session);
 	}
 
 	
@@ -1099,9 +1147,7 @@ public class DataLoader {
 	
 	private static void carregarDadosClean(Session session) {
 		
-		gerarCfops(session);
-		
-		tabelaNCM(session);
+		gerarCfops(session);			
 		
 		criarParametrosSistema(session);
 		criarInterfaceExecucao(session);
@@ -1112,12 +1158,14 @@ public class DataLoader {
 		criarTiposFornecedores(session);
 		criarFornecedores(session);
 		
-		//tabelaNCM(session);
+		tabelaNCM(session);
 		criarTiposProduto(session);
 		
+		criarBanco(session);		
+		
 		//Remover Depois
-		criarBox(session);
-		criarDistribuidor(session);
+		criarBox(session);criarDistribuidor
+		(session);
 		
 		criarEnderecoDistribuidor(session);
 		criarTelefoneDistribuidor(session);
@@ -1129,6 +1177,9 @@ public class DataLoader {
 		criarFeriado(session);		
 		
 		criarUsuarioAdministrador(session); 
+		
+		criarTiposMovimento(session);
+		gerarTiposPontoPDV(session);
 		
 	}
 
@@ -1612,7 +1663,7 @@ public class DataLoader {
 		Produto guiaQuatroRodas = Fixture.produto("3111", "Guia Quatro Rodas", "Guia Quatro Rodas", PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
 		guiaQuatroRodas.addFornecedor(fornecedorDinap);
 
-		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoCromo, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
+		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoProdutoCromo, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
 		cromoBrasileirao.addFornecedor(fornecedorFc);
 
 		Produto guiaViagem = Fixture.produto("3113", "Guia Viagem", "Guia Viagem", PeriodicidadeProduto.ANUAL, tipoProdutoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
@@ -1731,9 +1782,9 @@ public class DataLoader {
 
 	private static void gerarTipoEntrega(Session session) {
 
-		tipoCotaRetira = Fixture.criarTipoEntrega(1L,"Cota Retira", Periodicidade.DIARIO);
-		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,"Entrega em Banca", Periodicidade.DIARIO);
-		tipoEntregador = Fixture.criarTipoEntrega(1L,"Entregador", Periodicidade.DIARIO);
+		tipoCotaRetira = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.COTA_RETIRA, Periodicidade.DIARIO);
+		tipoEntregaEmBanca = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.ENTREGA_EM_BANCA, Periodicidade.DIARIO);
+		tipoEntregador = Fixture.criarTipoEntrega(1L,DescricaoTipoEntrega.ENTREGADOR, Periodicidade.DIARIO);
 
 		save(session,tipoCotaRetira,tipoEntregaEmBanca,tipoEntregador);
 	}
@@ -1793,10 +1844,12 @@ public class DataLoader {
 
 	private static void gerarTiposPontoPDV(Session session) {
 
-		 tipoPontoPDVResidencial  = Fixture.criarTipoPontoPDV(1L, "Residencial");
-		 tipoPontoPDV2Comercial  = Fixture.criarTipoPontoPDV(2L, "Comercial");
-
-		save(session,tipoPontoPDVResidencial,tipoPontoPDV2Comercial);
+		 tipoPontoPDVBanca  = Fixture.criarTipoPontoPDV(1L, "Banca");
+		 tipoPontoPDVRevistaria  = Fixture.criarTipoPontoPDV(2L, "Revistaria");
+		 tipoPontoPDVLivraria  = Fixture.criarTipoPontoPDV(3L, "Livraria");
+		 tipoPontoPDVEtc = Fixture.criarTipoPontoPDV(4L, "Outros");
+		 
+		save(session, tipoPontoPDVBanca, tipoPontoPDVRevistaria, tipoPontoPDVLivraria, tipoPontoPDVEtc);
 	}
 
 	private static void gerarHistoricosAculoDivida(Session session) {
@@ -1821,11 +1874,18 @@ public class DataLoader {
 	}
 
 	private static void tabelaNCM(Session session){
-		ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
-		ncmlivros = Fixture.ncm(49019000l, "LIVROS","KG");
-		ncmCromo = Fixture.ncm(48205000l,"CROMO","KG");
+		
+		
+		ncmRevista = Fixture.ncm(49029000l,"REVISTAS","KG");
+		ncmFasciculo = Fixture.ncm(49019100l,"FASCICULO","KG");
+		ncmLivro = Fixture.ncm(49019000l, "LIVROS","KG");
+		ncmFigurinha = Fixture.ncm(48205000l,"CROMO","KG");		
+		ncmLivroilustrado = Fixture.ncm(49030000l,"LIVRO ILUSTRADO","KG");		
+		ncmCd = Fixture.ncm(85243100l,"CD","KG");		
+		ncmCartaz = Fixture.ncm(49111090l,"CARTAZ","KG");						
 		ncmBebidas = Fixture.ncm(22029000l,"OUTRAS BEBIDAS","L");
-		save(session,ncmRevistas,ncmlivros,ncmBebidas,ncmCromo);
+		
+		save(session, ncmRevista, ncmFasciculo, ncmLivro, ncmFigurinha, ncmLivroilustrado, ncmCd, ncmCartaz, ncmBebidas);
 	}
 	
 	private static void criarDadosContaCorrenteConsigando(Session session){
@@ -1857,7 +1917,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, ncmRevistas, "473794321", 003L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Consignado", GrupoProduto.REVISTA, ncmRevista, "473794321", 003L);
 		save(session,tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
@@ -1914,8 +1974,13 @@ public class DataLoader {
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicaoBravo1, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(session,movimentoEstoque);
 
-		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true);
-		save(session,diferenca);
+		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+		
+		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca,diferenca);
 
 		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN , cotaManoel, diferenca, estudoCota, new Date());
 
@@ -1970,7 +2035,7 @@ public class DataLoader {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session, usuario);
 
-		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, ncmRevistas, "513543", 004L);
+		TipoProduto tipoProduto = Fixture.tipoProduto("Revista C.C.Movimento", GrupoProduto.REVISTA, ncmRevista, "513543", 004L);
 		save(session, tipoProduto);
 
 		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedor("Tipo A",GrupoFornecedor.PUBLICACAO);
@@ -2344,7 +2409,7 @@ public class DataLoader {
 
 
 	private static void criarParametrosCobrancaCota(Session session) {
-
+		
 		FormaCobranca formaBoleto =
 				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 											BigDecimal.ONE, BigDecimal.ONE,null);
@@ -2418,9 +2483,11 @@ public class DataLoader {
 
 	private static void criarPDVsCota(Session session){
 
-		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVResidencial, null);
+		save(session, tipoPontoPDVRevistaria, tipoPontoPDVBanca);
 		
-		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDV2Comercial, null);
+		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
+		
+		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
 		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
 		pdvJose.setSegmentacao(segmentacaoPDV);
@@ -2443,18 +2510,23 @@ public class DataLoader {
 		session.save(pdvLuis);
 
 		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
+		pdvJoao.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJoao);
 
 		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
+		pdvGuilherme.setSegmentacao(segmentacaoPDV);
 		session.save(pdvGuilherme);
 
 		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
+		pdvMurilo.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMurilo);
 
 		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
+		pdvMariana.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMariana);
 
 		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
+		pdvOrlando.setSegmentacao(segmentacaoPDV);
 		session.save(pdvOrlando);
 
 	}
@@ -2913,8 +2985,6 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 
-		movimentoEstoqueCota1.setEstudoCota(estudoCotaManoel);
-
 		movimentoEstoqueCota2 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
@@ -2965,18 +3035,6 @@ public class DataLoader {
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaInfoExame1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
 
-		movimentoEstoqueCota2.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota3.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota4.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota5.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota6.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota7.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota8.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota9.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota10.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota11.setEstudoCota(estudoCotaManoel);
-		movimentoEstoqueCota333.setEstudoCota(estudoCotaManoel);
-
 		//MOVIMENTOS TIPO ENCALHE
 		movimentoEstoqueCota13 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelVeja1,
@@ -3001,7 +3059,6 @@ public class DataLoader {
 		movimentoEstoqueCota18 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoEnvioEncalhe, usuarioJoao, estoqueProdutoCotaManoelQuatroRodas1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.PENDENTE, null);
-
 
 
 		//MOVIMENTOS TIPO CONSIGNADO
@@ -3062,7 +3119,77 @@ public class DataLoader {
 				tipoMovimentoVendaEncalhe, usuarioJoao, estoqueProdutoCotaManoelSuper1,
 				BigInteger.TEN, cotaManoel, StatusAprovacao.APROVADO, null);
 
+		try {
+			detach(session, estudoCotaManoel);
+			
+			EstudoCota estudoCotaManoel1 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel2 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel3 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel4 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel5 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel6 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel7 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel8 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel9 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel10 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel11 = EntityUtil.clonarSemID(estudoCotaManoel);
 
+			EstudoCota estudoCotaManoel19 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel20 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel21 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel22 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel23 = EntityUtil.clonarSemID(estudoCotaManoel);
+			EstudoCota estudoCotaManoel24 = EntityUtil.clonarSemID(estudoCotaManoel);
+
+			estudoCotaManoel1.setRateiosDiferenca(null);
+			estudoCotaManoel2.setRateiosDiferenca(null);
+			estudoCotaManoel3.setRateiosDiferenca(null);
+			estudoCotaManoel4.setRateiosDiferenca(null);
+			estudoCotaManoel5.setRateiosDiferenca(null);
+			estudoCotaManoel6.setRateiosDiferenca(null);
+			estudoCotaManoel7.setRateiosDiferenca(null);
+			estudoCotaManoel8.setRateiosDiferenca(null);
+			estudoCotaManoel9.setRateiosDiferenca(null);
+			estudoCotaManoel10.setRateiosDiferenca(null);
+			estudoCotaManoel11.setRateiosDiferenca(null);
+
+			estudoCotaManoel19.setRateiosDiferenca(null);
+			estudoCotaManoel20.setRateiosDiferenca(null);
+			estudoCotaManoel21.setRateiosDiferenca(null);
+			estudoCotaManoel22.setRateiosDiferenca(null);
+			estudoCotaManoel23.setRateiosDiferenca(null);
+			estudoCotaManoel24.setRateiosDiferenca(null);
+
+			movimentoEstoqueCota1.setEstudoCota(estudoCotaManoel1);
+			movimentoEstoqueCota2.setEstudoCota(estudoCotaManoel2);
+			movimentoEstoqueCota3.setEstudoCota(estudoCotaManoel3);
+			movimentoEstoqueCota4.setEstudoCota(estudoCotaManoel4);
+			movimentoEstoqueCota5.setEstudoCota(estudoCotaManoel5);
+			movimentoEstoqueCota6.setEstudoCota(estudoCotaManoel6);
+			movimentoEstoqueCota7.setEstudoCota(estudoCotaManoel7);
+			movimentoEstoqueCota8.setEstudoCota(estudoCotaManoel8);
+			movimentoEstoqueCota9.setEstudoCota(estudoCotaManoel9);
+			movimentoEstoqueCota10.setEstudoCota(estudoCotaManoel10);
+			movimentoEstoqueCota11.setEstudoCota(estudoCotaManoel11);
+
+			movimentoEstoqueCota19.setEstudoCota(estudoCotaManoel19);
+			movimentoEstoqueCota20.setEstudoCota(estudoCotaManoel20);
+			movimentoEstoqueCota21.setEstudoCota(estudoCotaManoel21);
+			movimentoEstoqueCota22.setEstudoCota(estudoCotaManoel22);
+			movimentoEstoqueCota23.setEstudoCota(estudoCotaManoel23);
+			movimentoEstoqueCota24.setEstudoCota(estudoCotaManoel24);
+			
+			save(session, estudoCotaManoel1, estudoCotaManoel2,
+					estudoCotaManoel3, estudoCotaManoel4, estudoCotaManoel5,
+					estudoCotaManoel6, estudoCotaManoel7, estudoCotaManoel8,
+					estudoCotaManoel9, estudoCotaManoel10, estudoCotaManoel11, 
+					estudoCotaManoel19, estudoCotaManoel20, estudoCotaManoel21,
+					estudoCotaManoel22, estudoCotaManoel23, estudoCotaManoel24);
+
+		} catch(Exception exception) {
+			exception.printStackTrace();
+		}
+		movimentoEstoqueCota333.setEstudoCota(estudoCotaManoel);
 
 		MovimentoEstoqueCota movimentoEstoqueCota31 = Fixture.movimentoEstoqueCota(produtoEdicaoVeja1,
 				tipoMovimentoRecReparte, usuarioJoao, estoqueProdutoCotaVeja1,
@@ -3162,13 +3289,26 @@ public class DataLoader {
 		merge(session, Fixture.parametroSistema(3L, TipoParametroSistema.EMAIL_USUARIO, "sys.discover@gmail.com"));
 		merge(session, Fixture.parametroSistema(4L, TipoParametroSistema.EMAIL_SENHA, "discover10"));
 		merge(session, Fixture.parametroSistema(5L, TipoParametroSistema.EMAIL_PORTA, "465"));
-
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA,
+				"C:\\Servidores\\apache-tomcat-7.0.25\\webapps\\nds-client\\distribuicao\\")); // windows;
+//				"???"));					// linux;
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_CAPA,
 //				"C:\\apache-tomcat-7.0.25\\webapps\\nds-client\\capas\\"));	// windows;
 				"/opt/tomcat/webapps/nds-client/capas/"));					// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMAGENS_PDV,
 //				"\\images\\pdv\\"));	// windows;
 				"/images/pdv/"));		// linux;
+		
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_TERMO_ADESAO,
+				"\\termo_adesao\\"));	// windows;
+//				"/termo_adesao/"));		// linux;
+
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_PROCURACAO,
+				"\\procuracao\\"));	// windows;
+//				"/procuracao/"));		// linux;
+		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM, "7"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM, "7"));
@@ -3179,15 +3319,18 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO,
 				"C:\\notas\\"));			// windows;
 //				"/opt/interface/notas/"));	// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMPORTACAO_CONTRATO,
+				"C:\\contratos\\"));			// windows;
+//				"/opt/interface/contratos/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface_mdc/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));	// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface_mdc/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-//				"C:\\interface_mdc\\"));		// windows;
-				"/opt/interface_mdc/"));		// linux;
+				"C:\\interface_mdc\\"));		// windows;
+//				"/opt/interface_mdc/"));		// linux;
 		
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
@@ -3742,6 +3885,45 @@ public class DataLoader {
 
 	}
 
+	private static void criarLancamentosCancelados(Session session) {
+		
+		lancamentoCanceladoVeja5 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoVeja5,
+						DateUtil.adicionarDias(new Date(), 0),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoVeja5.getPeb()), new Date(),
+
+						new Date(), BigInteger.TEN, StatusLancamento.CANCELADO,
+
+						null, 2);
+		session.save(lancamentoCanceladoVeja5);
+		
+		lancamentoCanceladoSuper2 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoSuper2,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoSuper2.getPeb()), new Date(),
+								new Date(), BigInteger.valueOf(100), StatusLancamento.CANCELADO,
+								null, 3);
+		session.save(lancamentoCanceladoSuper2);
+
+		
+		lancamentoCanceladoCapricho2 = Fixture
+				.lancamento(
+						TipoLancamento.LANCAMENTO,
+						produtoEdicaoCapricho2,
+						DateUtil.adicionarDias(new Date(), 1),
+						DateUtil.adicionarDias(new Date(),
+								produtoEdicaoCapricho2.getPeb()), new Date(),
+								new Date(), BigInteger.valueOf(1000), StatusLancamento.CANCELADO,
+								null, 1);
+		session.save(lancamentoCanceladoCapricho2);
+	}
+	
 	private static void criarLancamentos(Session session) {
 
 
@@ -3768,7 +3950,7 @@ public class DataLoader {
 
 						null, 2);
 		session.save(lancamentoVeja2);
-
+		
 		lancamentoSuper1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
@@ -3779,7 +3961,7 @@ public class DataLoader {
 								new Date(), BigInteger.valueOf(100), StatusLancamento.CONFIRMADO,
 								null, 3);
 		session.save(lancamentoSuper1);
-
+		
 		lancamentoCapricho1 = Fixture
 				.lancamento(
 						TipoLancamento.LANCAMENTO,
@@ -3787,10 +3969,9 @@ public class DataLoader {
 						DateUtil.adicionarDias(new Date(), 1),
 						DateUtil.adicionarDias(new Date(),
 								produtoEdicaoCapricho1.getPeb()), new Date(),
-								new Date(), BigInteger.valueOf(1000), StatusLancamento.CONFIRMADO,
+								new Date(), BigInteger.valueOf(1000), StatusLancamento.CANCELADO,
 								null, 1);
 		session.save(lancamentoCapricho1);
-
 
 		lancamentoCocaCola = Fixture.lancamento(TipoLancamento.LANCAMENTO,cocaColaLight ,
 				new Date(), new Date(), new Date(), new Date(), BigInteger.valueOf(100), StatusLancamento.CONFIRMADO, itemCocaRecebimentoFisico, 1);
@@ -4036,15 +4217,30 @@ public class DataLoader {
 				"114", 5L, produtoVeja, null, false, "Veja 4");
 		session.save(produtoEdicaoVeja4);
 
+		produtoEdicaoVeja5 = Fixture.produtoEdicao("COD_C5", 54321L, 10, 14,
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
+				"114", 6L, produtoVeja, null, false, "Veja 5");
+		session.save(produtoEdicaoVeja5);
+		
 		produtoEdicaoSuper1 = Fixture.produtoEdicao("COD_5", 1L, 10, 14,
 				new Long(100), BigDecimal.TEN, new BigDecimal(20),
 				"115", 6L, produtoSuper, null, false, "Super Int. 1");
 		session.save(produtoEdicaoSuper1);
+		
+		produtoEdicaoSuper2 = Fixture.produtoEdicao("COD_C6", 24321L, 10, 14,
+				new Long(100), BigDecimal.TEN, new BigDecimal(20),
+				"115", 6L, produtoSuper, null, false, "Super Int. 2");
+		session.save(produtoEdicaoSuper2);
 
 		produtoEdicaoCapricho1 = Fixture.produtoEdicao("COD_6", 1L, 9, 14,
 				new Long(150), new BigDecimal(9), new BigDecimal(13.5),
 				"116", 7L, produtoCapricho, null, false, "Capricho 1");
 		session.save(produtoEdicaoCapricho1);
+		
+		produtoEdicaoCapricho2 = Fixture.produtoEdicao("COD_C7", 25432L, 9, 14,
+				new Long(150), new BigDecimal(9), new BigDecimal(13.5),
+				"116", 7L, produtoCapricho, null, false, "Capricho 2");
+		session.save(produtoEdicaoCapricho2);
 
 		produtoEdicaoInfoExame1 = Fixture.produtoEdicao("COD_7", 1L, 12, 30,
 				new Long(250), new BigDecimal(11), new BigDecimal(14.5),
@@ -4233,7 +4429,7 @@ public class DataLoader {
 		produtoPlacar.setTributacaoFiscal(TributacaoFiscal.TRIBUTADO);
 		session.save(produtoPlacar);
 
-		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoRefrigerante, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
+		cocaCola = Fixture.produto("564", "Coca-Cola", "Coca-Cola", PeriodicidadeProduto.MENSAL, tipoProdutoRefrigerante, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
 		cocaCola.addFornecedor(fornecedorAcme);
 		cocaCola.setTributacaoFiscal(TributacaoFiscal.TRIBUTADO);
 		save(session, cocaCola);
@@ -4247,14 +4443,34 @@ public class DataLoader {
 	}
 
 	private static void criarTiposProduto(Session session) {
-		tipoProdutoRevista = Fixture.tipoRevista(ncmRevistas);
-		session.save(tipoProdutoRevista);
-
-		tipoRefrigerante = Fixture.tipoProduto("Refrigerante",GrupoProduto.OUTROS, ncmBebidas, "", 006L);
-		session.save(tipoRefrigerante);
-
-		tipoCromo = Fixture.tipoCromo(ncmCromo);
-		session.save(tipoCromo);
+		
+		tipoProdutoRefrigerante = Fixture.tipoProduto("Refrigerante", GrupoProduto.OUTROS, ncmBebidas, "", Long.valueOf(40));
+		tipoProdutoRevista = Fixture.tipoProduto("Revistas", GrupoProduto.REVISTA, ncmRevista, "4902.90.00", 001L);
+		tipoProdutoFasciculo= Fixture.tipoProduto("Fasciculos",GrupoProduto.COLECIONAVEL, ncmFasciculo, "", 002L);
+		tipoProdutoLivro= Fixture.tipoProduto("Livro",GrupoProduto.LIVRO, ncmLivro, "", 003L);
+		tipoProdutoCromo= Fixture.tipoProduto("Cromos", GrupoProduto.CROMO, ncmFigurinha, "4908.90.00", 004L);		
+		tipoProdutoCard= Fixture.tipoProduto("Cards/Similares",GrupoProduto.CROMO, ncmFigurinha, "", 005L);		
+		tipoProdutoAlbun= Fixture.tipoProduto("Album",GrupoProduto.ALBUM, ncmLivroilustrado, "", 006L);		
+		tipoProdutoGuia= Fixture.tipoProduto("Guia",GrupoProduto.GUIA, ncmLivro, "", 007L);		
+		tipoProdutoQuadrinho= Fixture.tipoProduto("Quadrinhos",GrupoProduto.REVISTA, ncmRevista, "", Long.valueOf(8));		
+		tipoProdutoAtividade= Fixture.tipoProduto("Atividades",GrupoProduto.REVISTA, ncmRevista, "", Long.valueOf(9));		
+		tipoProdutoPassatempo= Fixture.tipoProduto("Passa Tempo",GrupoProduto.REVISTA, ncmRevista, "", Long.valueOf(10));		
+		tipoProdutoVideo= Fixture.tipoProduto("Videos",GrupoProduto.OUTROS, ncmCd, "", Long.valueOf(11));		
+		tipoProdutoCdrom= Fixture.tipoProduto("CD-ROM",GrupoProduto.OUTROS, ncmCd, "", Long.valueOf(12));		
+		tipoProdutoPoster= Fixture.tipoProduto("Poster",GrupoProduto.OUTROS, ncmCartaz, "", Long.valueOf(13));		
+		tipoProdutoJornal= Fixture.tipoProduto("Jornal",GrupoProduto.JORNAL, ncmRevista, "", Long.valueOf(14));		
+		tipoProdutoTabloide= Fixture.tipoProduto("Tabloide",GrupoProduto.JORNAL, ncmRevista, "", Long.valueOf(15));		
+		tipoProdutoOutro= Fixture.tipoProduto("Outros",GrupoProduto.OUTROS, ncmRevista, "", Long.valueOf(16));		
+		tipoProdutoCapaDura= Fixture.tipoProduto("Capa Dura",GrupoProduto.OUTROS, ncmLivro, "", Long.valueOf(18));		
+		tipoProdutoRevistaDigital= Fixture.tipoProduto("Revista Digital",GrupoProduto.REVISTA, ncmRevista, "", Long.valueOf(19));		
+		tipoProdutoDvd= Fixture.tipoProduto("DVD",GrupoProduto.OUTROS, ncmCd, "", Long.valueOf(24));
+		tipoProdutoLivroIlustrado= Fixture.tipoProduto("Livro Ilustrado",GrupoProduto.ALBUM, ncmLivroilustrado, "", Long.valueOf(36));
+		
+		save(session, tipoProdutoRevista, tipoProdutoFasciculo, tipoProdutoLivro, tipoProdutoCromo, tipoProdutoCard, tipoProdutoAlbun, 
+				tipoProdutoGuia, tipoProdutoQuadrinho, tipoProdutoAtividade, tipoProdutoPassatempo, tipoProdutoVideo, tipoProdutoCdrom,
+				tipoProdutoPoster, tipoProdutoJornal, tipoProdutoTabloide, tipoProdutoOutro, tipoProdutoCapaDura, tipoProdutoRevistaDigital, 
+				tipoProdutoDvd, tipoProdutoLivroIlustrado, tipoProdutoRefrigerante);
+		
 	}
 
 	private static void criarDistribuidor(Session session) {
@@ -4264,6 +4480,7 @@ public class DataLoader {
 		save(session, juridicaDistrib);
 
 		//FORMAS DE COBRANÇA DA COTA
+
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 												  BigDecimal.ONE, BigDecimal.ONE, null);
 
@@ -4607,11 +4824,11 @@ public class DataLoader {
 
 		ParametroDistribuicaoCota parametroGuilherme = 	Fixture.criarParametroDistribuidor(
 				100, "Joao da Silva", tipoEntregador, "Muito importante isso aeh!",
-				true, true, true, true, true, true, true, true, true, true);
+				true, true, true, true, true, true, true, true, true);
 
 		ParametroDistribuicaoCota parametroJoao = 	Fixture.criarParametroDistribuidor(
 				120, "Maria da Silva", tipoEntregaEmBanca, "Muito importante isso aeh também!",
-				false, false, false, false, false, false, false, false, false, false);
+				false, false, false, false, false, false, false, false, false);
 
 		cotaJoao.setParametroDistribuicao(parametroJoao);
 		cotaGuilherme.setParametroDistribuicao(parametroGuilherme);
@@ -4799,11 +5016,15 @@ public class DataLoader {
 		tipoMovimentoRecFisico = Fixture.tipoMovimentoRecebimentoFisico();
 		tipoMovimentoRecReparte = Fixture.tipoMovimentoRecebimentoReparte();
 
+		tipoMovimentoNivelamentoEntrada = Fixture.tipoMovimentoNivelamentoEntrada();
+		tipoMovimentoNivelamentoSaida = Fixture.tipoMovimentoNivelamentoSaida();
+
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
 
 		tipoMovimentoVendaEncalheSuplementar = Fixture.tipoMovimentoVendaEncalheSuplementar();
+		tipoMovimentoEncalheAntecipado = Fixture.tipoMovimentoEncalheAntecipado();
 		tipoMovimentoEstornoVendaEncalheSuplementar = Fixture.tipoMovimentoEstornoVendaEncalheSuplementar();
 		tipoMovimentoEstoqueCompraSuplementar = Fixture.tipoMovimentoCompraSuplementar();
 		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
@@ -4811,7 +5032,7 @@ public class DataLoader {
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
-					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar);
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, tipoMovimentoEncalheAntecipado);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -4954,9 +5175,13 @@ public class DataLoader {
 			Diferenca diferenca =
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
-						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true);
+						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+			LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+			
+			lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
 
-			session.save(diferenca);
+			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+			save(session, lancamentoDiferenca, diferenca);
 		}
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {
@@ -4970,9 +5195,14 @@ public class DataLoader {
 			Diferenca diferenca =
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
-						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
+						StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
 
 			session.save(diferenca);
+			
+			if (i < 5) {
+				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
+				session.save(rateio);
+			}
 		}
 	}
 
@@ -4981,6 +5211,12 @@ public class DataLoader {
 		for (Object entidade : entidades) {
 			session.save(entidade);
 			session.flush();
+		}
+	}
+
+	private static void detach(Session session, Object... entidades) {
+		for (Object entidade : entidades) {
+			session.evict(entidade);
 		}
 	}
 
@@ -5001,7 +5237,7 @@ public class DataLoader {
 	 */
 	private static void carregarDadosParaResumoExpedicao(Session session){
 
-		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevista);
 		session.save(tipoRevista);
 
 		CFOP cfop = Fixture.cfop5102();
@@ -5081,8 +5317,13 @@ public class DataLoader {
 				if(indDiferenca > 5){
 
 
-					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true);
-					session.save(diferenca);
+					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+					LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+					
+					lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
+
+					diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+					save(session, lancamentoDiferenca,diferenca);
 
 					itemFisico.setDiferenca(diferenca);
 					session.update(itemFisico);
@@ -5113,6 +5354,8 @@ public class DataLoader {
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setQtdeReparte(BigInteger.valueOf(i));
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+			estudo.setDataCadastro(new Date());
 			session.save(estudo);
 		}
 	}
@@ -5180,23 +5423,47 @@ public class DataLoader {
 
 		Diferenca diferenca =
 			Fixture.diferenca(BigInteger.valueOf(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true);
-		session.save(diferenca);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+		
+		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca, diferenca);
 
 		Diferenca diferenca2 =
 			Fixture.diferenca(BigInteger.valueOf(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true);
-		session.save(diferenca2);
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true,TipoEstoque.LANCAMENTO);
+		
+		LancamentoDiferenca lancamentoDiferenca2 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca2.setMovimentoEstoque(movimentoEstoqueDiferenca2);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca2, diferenca2);
 
 		Diferenca diferenca3 =
 			Fixture.diferenca(BigInteger.valueOf(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true);
-		session.save(diferenca3);
+							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true, TipoEstoque.LANCAMENTO);
+		
+		LancamentoDiferenca lancamentoDiferenca3 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca3.setMovimentoEstoque(movimentoEstoqueDiferenca3);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca3, diferenca3);
 
 		Diferenca diferenca4 =
 			Fixture.diferenca(BigInteger.valueOf(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
-					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true);
-		session.save(diferenca4);
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true, TipoEstoque.LANCAMENTO);
+		
+		LancamentoDiferenca lancamentoDiferenca4 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca4.setMovimentoEstoque(movimentoEstoqueDiferenca4);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		
+		save(session,lancamentoDiferenca4, diferenca4);
 
 		// Fim dos inserts na tabela DIFERENCA
 
@@ -5602,7 +5869,7 @@ public class DataLoader {
 		save(session,box300Reparte);
 
 
-		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevistas);
+		TipoProduto tipoRevista = Fixture.tipoRevista(ncmRevista);
 		save(session,tipoRevista);
 
 		CFOP cfop = Fixture.cfop5102();
@@ -5668,6 +5935,8 @@ public class DataLoader {
 			estudo.setDataLancamento(Fixture.criarData(23, Calendar.FEBRUARY, 2012));
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setQtdeReparte(BigInteger.valueOf(10));
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+			estudo.setDataCadastro(new Date());
 			save(session,estudo);
 
 			Pessoa pessoa = Fixture.pessoaJuridica("razaoS"+i, "CNPK" + i, "ie"+i, "email"+i,"99.999-9");
@@ -7711,11 +7980,11 @@ public class DataLoader {
 	private static void criarDadosBalanceamentos(Session session) {
 
 		//EDITORES
-		Editor globo = Fixture.criarEditor("Globo", 680L, juridicaDinap, true);
+		Editor globo = Fixture.criarEditor(680L, juridicaDinap, true);
 
-		Editor europa = Fixture.criarEditor("Europa", 681L, juridicaAcme, true);
+		Editor europa = Fixture.criarEditor( 681L, juridicaAcme, true);
 
-		Editor jazz = Fixture.criarEditor("Jazz", 682L, juridicaFc, true);
+		Editor jazz = Fixture.criarEditor(682L, juridicaFc, true);
 
 		//TipoProduto tipoCromo = Fixture.tipoCromo(ncmCromo);
 		save(session, globo, europa, jazz);
@@ -7811,7 +8080,7 @@ public class DataLoader {
 		recreio.addFornecedor(fornecedorFc);
 		save(session, recreio);
 
-		Produto womenHealth = Fixture.produto("559", "Women's Health", "Revista Women's Health", PeriodicidadeProduto.MENSAL, tipoCromo, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
+		Produto womenHealth = Fixture.produto("559", "Women's Health", "Revista Women's Health", PeriodicidadeProduto.MENSAL, tipoProdutoCromo, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
 		womenHealth.setEditor(editoraAbril);
 		womenHealth.addFornecedor(fornecedorFc);
 		save(session, womenHealth);
@@ -7831,7 +8100,7 @@ public class DataLoader {
 		gestaoEscolar.addFornecedor(fornecedorFc);
 		save(session, gestaoEscolar);
 
-		Produto lola = Fixture.produto("563", "Lola", "Lola", PeriodicidadeProduto.MENSAL, tipoCromo, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
+		Produto lola = Fixture.produto("563", "Lola", "Lola", PeriodicidadeProduto.MENSAL, tipoProdutoCromo, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
 		lola.setEditor(editoraAbril);
 		lola.addFornecedor(fornecedorFc);
 		save(session, lola);
@@ -11036,7 +11305,7 @@ public class DataLoader {
 			boolean parcial = false;
 			
 			ProdutoEdicao produtoEdicaoCE = null;
-			Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoCromo, produtoPeb, produtoPacotePadrao, produtoPeso, TributacaoFiscal. TRIBUTADO);
+			Produto produtoCE = Fixture.produto(codigoProduto, descProduto, nomeProduto, periodicidade, tipoProdutoCromo, produtoPeb, produtoPacotePadrao, produtoPeso, TributacaoFiscal. TRIBUTADO);
 			produtoCE.addFornecedor(fornecedorDinap);
 			session.save(produtoCE);
 			produtoEdicaoCE = Fixture.produtoEdicao(codigoProdutoEdicao, numeroEdicao, pacotePadrao, peb,
@@ -11150,4 +11419,36 @@ public class DataLoader {
 		);
 	}
 	
+	private static void criarDescontoProdutoEdicao(Session session) {
+
+		DescontoProdutoEdicao descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaManoel, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+
+		save(session, descontoProdutoEdicao);
+		
+		descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaJose, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+
+		save(session, descontoProdutoEdicao);
+		
+		descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaMaria, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+
+		save(session, descontoProdutoEdicao);
+		
+		descontoProdutoEdicao = 
+				Fixture.descontoProdutoEdicao(cotaGuilherme, new BigDecimal("10"), fornecedorDinap, produtoEdicaoVeja1, TipoDesconto.ESPECIFICO);
+
+		save(session, descontoProdutoEdicao);
+	}
+	
+	private static void criarDescontoLogistica(Session session){
+		
+        Set<Produto> produtos = new LinkedHashSet<Produto>();
+		
+        produtos.add(produtoVeja);
+		
+		DescontoLogistica dl = Fixture.descontoLogistica(new Date(), 25f, 25f, new Integer(1),produtos);
+	    save(session,dl);
+	}
 }

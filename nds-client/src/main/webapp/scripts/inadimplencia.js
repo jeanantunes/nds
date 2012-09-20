@@ -1,0 +1,290 @@
+var inadimplenciaController = $.extend(true, {
+
+	nomeCota : "",
+
+	init : function () {		
+		$("#idNumCota", inadimplenciaController.workspace).numeric();
+		$("#idNomeCota", inadimplenciaController.workspace).autocomplete({source: ""});
+
+		$( "#idDataDe", inadimplenciaController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$( "#idDataAte", inadimplenciaController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$( "#idDataDe", inadimplenciaController.workspace ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+		$("#idDataDe", inadimplenciaController.workspace).mask("99/99/9999");
+		
+		$( "#idDataAte",inadimplenciaController.workspace ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+		$("#idDataAte", inadimplenciaController.workspace).mask("99/99/9999");
+	
+		$("#selDivida", inadimplenciaController.workspace).click(function() {
+			$(".menu_dividas", inadimplenciaController.workspace).show().fadeIn("fast");
+		});
+
+		$(".menu_dividas", inadimplenciaController.workspace).mouseleave(function() {
+			$(".menu_dividas", inadimplenciaController.workspace).hide();
+		});
+
+		$("#idNumCota", inadimplenciaController.workspace).mask("?99999999999999999999", {placeholder:""});
+	
+		$(".inadimplenciaGrid", inadimplenciaController.workspace).flexigrid($.extend({},{
+			colModel : [ {
+					display : 'Cota',
+					name : 'numCota',
+					width : 50,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Nome',
+					name : 'nome',
+					width : 130,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Status',
+					name : 'status',
+					width : 70,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Consignado at&eacute Data',
+					name : 'consignado',
+					width : 110,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Data Vencimento',
+					name : 'dataVencimento',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Data Pagamento',
+					name : 'dataPagamento',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Situa&ccedil&atildeo da D&iacutevida',
+					name : 'situacao',
+					width : 100,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Divida Acumulada',
+					name : 'dividaAcumulada',
+					width : 85,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Dias em Atraso',
+					name : 'diasAtraso',
+					width : 75,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Detalhes',
+					name : 'detalhe',
+					width : 40,
+					align : 'center',
+				}],
+				sortname : "nome",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 960,
+				height : 180
+			}));
+	
+		$(".grids", inadimplenciaController.workspace).show();	
+	},
+
+	cliquePesquisar : function() {
+		
+		var periodoDe = $('#idDataDe', inadimplenciaController.workspace).attr('value');
+		var periodoAte = $('#idDataAte', inadimplenciaController.workspace).attr('value');
+		var numCota = $('#idNumCota', inadimplenciaController.workspace).attr('value');
+		var nomeCota = $('#idNomeCota', inadimplenciaController.workspace).attr('value');
+		var statusCota = $('#idStatusCota', inadimplenciaController.workspace).attr('value');
+		
+		var situacaoEmAberto = ( $('#idDividaEmAberto', inadimplenciaController.workspace).attr('checked') == "checked" ) ;	
+		var situacaoNegociada = ( $('#idDividaNegociada', inadimplenciaController.workspace).attr('checked') == "checked" );
+		var situacaoPaga = ( $('#idDividaPaga', inadimplenciaController.workspace).attr('checked') == "checked" );
+
+		$(".inadimplenciaGrid", inadimplenciaController.worlspace).flexOptions({			
+			url : contextPath + '/inadimplencia/pesquisar',
+			dataType : 'json',
+			preProcess:inadimplenciaController.processaRetornoPesquisa,
+			
+			params:[{name:'periodoDe',value : periodoDe},
+			        {name:'periodoAte',value : periodoAte},
+			        {name:'numCota',value : numCota},
+			        {name:'nomeCota',value : nomeCota},
+			        {name:'statusCota',value : statusCota},
+			        {name:'situacaoEmAberto',value : situacaoEmAberto},
+			        {name:'situacaoNegociada',value : situacaoNegociada},
+			        {name:'situacaoPaga',value : situacaoPaga}]		
+		});
+		
+		$(".inadimplenciaGrid", inadimplenciaController.workspace).flexReload();
+	},
+
+	selecionarTodos : function(elementoCheck) {
+		
+		//var selects =  document.getElementsByName("checkgroup_menu_divida");
+		var selects = $("[name='checkgroup_menu_divida']");
+		
+		$.each(selects, function(index, row) {
+			row.checked=elementoCheck.checked;
+		});
+		
+	},
+
+	processaRetornoPesquisa : function(result) {
+		
+		var grid = result[0];
+		var mensagens = result[1];
+		var status = result[2];
+		var total = result[3];
+		var qtde = result[4];
+		
+		if(mensagens!=null && mensagens.length!=0) {
+			exibirMensagem(status,mensagens);
+		}
+		
+		if(!grid.rows) {
+			document.getElementById("idTotal").innerHTML  = "0,00";
+			document.getElementById("idQtde").innerHTML  = 0;	
+			return grid;
+		}
+		
+		$.each(grid.rows, function(index, row) {
+			
+			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome);		
+			
+	  	});
+		
+		/*document.getElementById("idQtde").innerHTML  = qtde;
+		document.getElementById("idTotal").innerHTML  = total;*/
+		$("#idQtde", inadimplenciaController.workspace).html(qtde);
+		$("#idTotal", inadimplenciaController.workspace).html(total);
+		
+		return grid;
+	},
+
+	gerarBotaoDetalhes : function(idDivida, nome) {
+		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+		
+	},
+
+	getDetalhes : function(idDivida, nome) {
+		nomeCota = nome;
+		$.postJSON(contextPath + "/inadimplencia/getDetalhesDivida", 
+				"idDivida="+idDivida+"&method='get'", 
+				inadimplenciaController.popupDetalhes);	
+	},
+
+	popupDetalhes : function(result) {
+		
+			inadimplenciaController.gerarTabelaDetalhes(result, nomeCota);
+		
+			$( "#dialog-detalhes", inadimplenciaController.workspace ).dialog({
+				resizable: false,
+				height:'auto',
+				width:380,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+						
+						
+					},
+				},
+				form: $("#dialog-detalhes", this.workspace).parents("form")
+			});
+	},
+		
+	gerarTabelaDetalhes : function(dividas, nome) {
+		
+		//var div = document.getElementById("dialog-detalhes");
+		var div = $("#dialog-detalhes", inadimplenciaController.workspace);
+		
+		//div.innerHTML="";
+		$(div).html("");
+		
+		var fieldset  = document.createElement("FIELDSET");
+		
+		fieldset.style.cssText = "width:330px;" + fieldset.style.cssText;
+
+		$(div).append(fieldset);
+		//div.appendChild(fieldset);
+		
+		var legend = document.createElement("LEGEND");
+		legend.innerHTML = "Cota: ".bold() + " - " + nome;
+		
+		fieldset.appendChild(legend);
+		
+		var table = document.createElement("TABLE");
+		table.id = "tabelaDetalhesId";
+		table.width = "330";
+		table.border = "0";
+		table.cellspacing = "1";
+		table.cellpadding = "1";
+		
+		fieldset.appendChild(table);
+		
+		var tbody = document.createElement("TBODY");
+		
+		table.appendChild(tbody);
+		
+	 	var cabecalho = document.createElement("TR");
+	 	cabecalho.className="header_table";
+	 	
+	 	var tdDia = document.createElement("TD");
+	 	tdDia.width="136";
+	 	tdDia.align="left";
+	 	tdDia.innerHTML="Dia Vencimento".bold();
+	 	cabecalho.appendChild(tdDia);
+	 	
+	 	var tdValor = document.createElement("TD");
+	 	tdValor.width="157";
+	 	tdValor.align="right";
+	 	tdValor.innerHTML="Valor R$".bold();		 	
+	 	cabecalho.appendChild(tdValor);
+	 	
+	 	tbody.appendChild(cabecalho);
+		
+		 $(dividas).each(function (index, divida) {
+			 
+			 var linha = document.createElement("TR");
+			 
+			 var lin = (index%2==0) ? 1:2;
+			 
+			 linha.className="class_linha_" + lin ;
+	 	 
+		 	var cel = document.createElement("TD");
+		 	cel.align="left";
+		 	text = document.createTextNode(divida.vencimento);
+		 	cel.appendChild(text);			 	
+		 	linha.appendChild(cel);
+		 	
+		 	var cel2 = document.createElement("TD");
+		 	cel2.align="right";
+		 	text2 = document.createTextNode(divida.valor);
+		 	cel2.appendChild(text2);			 	
+		 	linha.appendChild(cel2);
+		 	
+		 	tbody.appendChild(linha);
+			 
+		 });		 		
+	}
+	
+}, BaseController);

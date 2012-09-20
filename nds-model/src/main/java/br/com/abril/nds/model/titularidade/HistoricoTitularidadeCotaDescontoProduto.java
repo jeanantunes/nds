@@ -33,8 +33,8 @@ public class HistoricoTitularidadeCotaDescontoProduto extends
     /**
      * Código do produto edição
      */
-    @Column(name = "PRODUTO_CODIGO_EDICAO")
-    private String codigoEdicao;
+    @Column(name = "PRODUTO_NUMERO_EDICAO")
+    private Long numeroEdicao;
 
     /**
      * @return the codigo
@@ -66,19 +66,17 @@ public class HistoricoTitularidadeCotaDescontoProduto extends
         this.nome = nome;
     }
 
-    /**
-     * @return the codigoEdicao
-     */
-    public String getCodigoEdicao() {
-        return codigoEdicao;
-    }
+	/**
+	 * @return the numeroEdicao
+	 */
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
 
-    /**
-     * @param codigoEdicao
-     *            the codigoEdicao to set
-     */
-    public void setCodigoEdicao(String codigoEdicao) {
-        this.codigoEdicao = codigoEdicao;
-    }
-
+	/**
+	 * @param numeroEdicao the numeroEdicao to set
+	 */
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
 }

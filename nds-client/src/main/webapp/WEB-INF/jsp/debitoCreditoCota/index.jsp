@@ -63,8 +63,8 @@
 			
 			acoes = 
 				'<a href="javascript:;" onclick="detalheMovimento(' + idMovimento + ')" ' +
-				' style="cursor:pointer;border:0px;margin:5px" title="Editar movimento">' +
-				'<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0px"/>' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Detalhes do Movimento">' +
+				'<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0px"/>' +
 				'</a>' +
 				'<span style="border:0px;margin:5px">' +
 				'<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0px" style="opacity:0.4"/>' +
@@ -140,7 +140,7 @@
 			singleSelect: true,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 'auto'
 		});
 
 		$(".debitosCreditosGrid").flexOptions({
@@ -240,7 +240,7 @@
 	
 		$( "#dialog-detalhe" ).dialog({
 			resizable: false,
-			height:350,
+			height:300,
 			width:500,
 			modal: true,
 			buttons:[ 
@@ -677,113 +677,98 @@
 </form>
 </div>
 
-<br clear="all"/>
-    <br />
-   
-    <div class="container">	
-    <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Débito / Crédito < evento > com < status >.</b></p>
+
+	<form id="formPesquisaDebitosCreditos">
+	
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_novos">
+				<a href="javascript:;" onclick="popupNovoDialog();" rel="tipsy" title="Incluir Novo Tipo de Movimento">
+					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" 
+ 	   				hspace="5" border="0"/>
+ 	   			</a>
+ 	   		</span>
+			
+			<span class="bt_arq">
+			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
+			</a>
+		</span>
+		<span class="bt_arq">
+			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
+			</a>
+		</span>
+		</div>
 	</div>
-<form id="formPesquisaDebitosCreditos">
-      <fieldset class="classFieldset">
-   	    <legend>Pesquisar Débitos / Créditos Cota
-        </legend><table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-  <tr>
-
-    <td width="29">Cota:</td>
-         <td width="105">
-         <input name="filtroDebitoCredito.numeroCota" 
-       		    id="numeroCota" 
-       		    type="text"
-       		    maxlength="11"
-       		    style="width:80px; 
-       		    float:left; margin-right:5px;"
-       		    onchange="pesquisaCotaDebitoCreditoCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');" />
-	</td>
-		
-	<td>
-	     <input name="filtroDebitoCredito.nomeCota" 
-	      	    id="nomeCota" 
-	      		type="text" 
-	      		class="nomeCota" 
-	      		maxlength="255"
-	      		style="width:250px;"
-	      		onkeyup="pesquisaCotaDebitoCreditoCota.autoCompletarPorNome('#nomeCota');" 
-	      		onblur="pesquisaCotaDebitoCreditoCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');" />
-	</td>
-    
-    <td width="121">Tipo de Lançamento:</td>
-    
-    <td width="360">
-	    <select name="filtroDebitoCredito.idTipoMovimento" id="idTipoMovimento" style="width:250px;">
-		  <option selected="selected"></option>
-		  <c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
-		  	<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
-		  </c:forEach>
-		</select>
-	</td>
-
-  </tr>
-  </table>
+	
+	<div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldFiltro">
+   	    <legend>Pesquisar Débitos / Créditos Cota</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-          <tr>
-            <td width="105">Data Lançamento:</td>
-            <td width="115">
-            	<input type="text" id="datepickerDeVenc" name="filtroDebitoCredito.dataLancamentoInicio" style="width:80px;" />
-            </td>
-            <td width="30">Até:</td>
-            <td width="190">
-            	<input id="datepickerAteVenc" type="text" name="filtroDebitoCredito.dataLancamentoFim" style="width:80px;" />
-            </td>
-            <td width="121">Data Vencimento:</td>
-            <td width="106">
-            	<input type="text" id="datepickerDe" name="filtroDebitoCredito.dataVencimentoInicio" style="width:80px;" />
-            </td>
-            <td width="29" align="center">Até:</td>
-            <td colspan="2">
-            	<input id="datepickerAte" type="text" name="filtroDebitoCredito.dataVencimentoFim" style="width:80px;" />
-            </td>
-            <td width="104"><span class="bt_pesquisar">
-            	<a href="javascript:;" onclick="popularGridDebitosCreditos();">Pesquisar</a></span>
-            </td>
-          </tr>
-        </table>
+		  <tr>
+		
+		    <td width="33">Cota:</td>
+		         <td width="85">
+		         <input name="filtroDebitoCredito.numeroCota" 
+		       		    id="numeroCota" 
+		       		    type="text"
+		       		    maxlength="11"
+		       		    style="width:80px; 
+		       		    float:left; margin-right:5px;"
+		       		    onchange="pesquisaCotaDebitoCreditoCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');" />
+			</td>
+			<td width="41">Nome:</td>
+			<td colspan="3">
+			     <input name="filtroDebitoCredito.nomeCota" 
+			      	    id="nomeCota" 
+			      		type="text" 
+			      		class="nomeCota" 
+			      		maxlength="255"
+			      		style="width:250px;"
+			      		onkeyup="pesquisaCotaDebitoCreditoCota.autoCompletarPorNome('#nomeCota');" 
+			      		onblur="pesquisaCotaDebitoCreditoCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');" />
+			</td>
+		    
+		    <td width="114">Tipo de Lançamento:</td>
+		    
+		    <td colspan="4">
+			    <select name="filtroDebitoCredito.idTipoMovimento" id="idTipoMovimento" style="width:250px;">
+				  <option selected="selected"></option>
+				  <c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
+				  	<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
+				  </c:forEach>
+				</select>
+			</td>
+		
+		  </tr>
+		  <tr>
+		    <td colspan="3">Data Lançamento:</td>
+		    <td width="109"><input type="text" id="datepickerDeVenc" name="filtroDebitoCredito.dataLancamentoInicio" style="width:80px;" /></td>
+		    <td width="32">Até:</td>
+		    <td width="126"><input id="datepickerAteVenc" type="text" name="filtroDebitoCredito.dataLancamentoFim" style="width:80px;" /></td>
+		    <td>Data Vencimento:</td>
+		    <td width="105"><input type="text" id="datepickerDe" name="filtroDebitoCredito.dataVencimentoInicio" style="width:80px;" /></td>
+		    <td width="31">Até:</td>
+		    <td width="116"><input id="datepickerAte" type="text" name="filtroDebitoCredito.dataVencimentoFim" style="width:80px;" /></td>
+		    <td width="102"><span class="bt_novos">
+            	<a href="javascript:;" onclick="popularGridDebitosCreditos();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+  		</tr>
+  		</table>
       </fieldset>
      </form>
           <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="classFieldset">
+      <fieldset class="fieldGrid">
        	  <legend>Débitos / Créditos Cota Cadastrados</legend>
         <div class="grids" style="display:none;">
        	  <table class="debitosCreditosGrid"></table>
-         
+        
           <br />
-	
-		<span class="bt_novos" title="Gerar Arquivo">
-			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=XLS">
-				<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
-					Arquivo
-			</a>
-		</span>
-		<span class="bt_novos" title="Imprimir">
-			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=PDF">
-			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-				Imprimir
-			</a>
-		</span>
-         
-
-          <span style="float:right; margin-right:260px" id="footerValorTotal"></span>
- </div>
- <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popupNovoDialog();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" 
- 	   hspace="5" border="0"/>Novo</a></span>
-
-
+          <span style="float:right; margin-right:297px" id="footerValorTotal"></span>
+ 		</div>
       </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
       
-    </div>
-</div> 
+
 
 <jsp:include page="novoDialog.jsp" />
 

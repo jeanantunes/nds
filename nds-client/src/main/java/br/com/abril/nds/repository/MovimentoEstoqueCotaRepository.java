@@ -232,5 +232,15 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return lista movimento estoque cota
 	 */
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProduto);
-	
+
+	/**
+	 * Obtém quantidade de produto transferido pela/para cota de acordo com o tipo de movimento
+	 * @param idCota - Id da cota
+	 * @param idProdutoEdicao - Id do ProdutoEdicao
+	 * @return 
+	 */
+	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao, Long idTipoMovimento);
+
+	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor,
+			Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores);
 }

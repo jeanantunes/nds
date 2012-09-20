@@ -1,12 +1,8 @@
 package br.com.abril.nds.integracao.ems0112.processor;
 
-import javax.persistence.Column;
-
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
@@ -37,7 +33,11 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorService distribuidorService;
 	
 	@Override
-	
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	public void processMessage(Message message) {
 
 		EMS0112Input input = (EMS0112Input) message.getBody();
@@ -58,9 +58,9 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor()) &&
 					input.getTipoOperacao().equals("A")){
 				
-				if(!input.getNomeEditor().equals(editor.getNome())){
-					editor.setNome(input.getNomeEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome do Editor para: "+editor.getNome());
+				if(!input.getNomeEditor().equals(editor.getPessoaJuridica().getNome())){
+					editor.getPessoaJuridica().setRazaoSocial(input.getNomeEditor());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome do Editor para: "+editor.getPessoaJuridica().getNome());
 				}
 				
 				if(!input.getInscricaoMunicipal().equals(editor.getPessoaJuridica().getInscricaoMunicipal())){
@@ -121,21 +121,22 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				//INSERE
 						
 				//PESSOA
-				pessoa = new PessoaJuridica();
+				pessoa = new PessoaJuridica();				
 				pessoa.setCnpj(input.getCnpj());
 				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
-				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
+				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());
+				pessoa.setRazaoSocial(input.getNomeEditor());
 				getSession().persist(pessoa);
 			} else {
 				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
 				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
+				pessoa.setRazaoSocial(input.getNomeEditor());
 				getSession().update(pessoa);				
 			}
 			
 			//EDITOR
 			Editor ed = new Editor();
 			ed.setCodigo(input.getCodigoEditor());
-			ed.setNome(input.getNomeEditor());
 			ed.setAtivo(input.getStatus());
 			ed.setNomeContato(input.getNomeContato());
 			ed.setPessoaJuridica(pessoa);
@@ -486,7 +487,9 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 		
-		
-		
-
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
+	}
+	
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
@@ -59,9 +60,25 @@ public class DiferencaVO implements Serializable {
 	
 	private BigInteger qtdeEstoqueAtual;
 	
+	private BigDecimal vlTotalDiferenca;
+	
 	private Boolean automatica;
 	
+	private String tipoEstoque;
+	
 	private boolean cadastrado;
+
+	private String fornecedor;
+	
+	private boolean existemRateios;
+	
+	private boolean redirecionarProdutosEstoque;
+	
+	private TipoDirecionamentoDiferenca tipoDirecionamento;
+	
+	public enum TipoDirecionamentoDiferenca {
+		ESTOQUE,COTA,NOTA
+	};
 	
 	/**
 	 * Construtor padrão.
@@ -82,6 +99,58 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	
+	
+
+	/**
+	 * @return the tipoDirecionamento
+	 */
+	public TipoDirecionamentoDiferenca getTipoDirecionamento() {
+		return tipoDirecionamento;
+	}
+
+	/**
+	 * @param tipoDirecionamento the tipoDirecionamento to set
+	 */
+	public void setTipoDirecionamento(TipoDirecionamentoDiferenca tipoDirecionamento) {
+		this.tipoDirecionamento = tipoDirecionamento;
+	}
+
+	/**
+	 * @return the redirecionarProdutosEstoque
+	 */
+	public boolean isRedirecionarProdutosEstoque() {
+		return redirecionarProdutosEstoque;
+	}
+
+	/**
+	 * @param redirecionarProdutosEstoque the redirecionarProdutosEstoque to set
+	 */
+	public void setRedirecionarProdutosEstoque(boolean redirecionarProdutosEstoque) {
+		this.redirecionarProdutosEstoque = redirecionarProdutosEstoque;
+	}
+
+	/**
+	 * @return the vlTotalDiferenca
+	 */
+	public BigDecimal getVlTotalDiferenca() {
+		return vlTotalDiferenca;
+	}
+
+	/**
+	 * @param vlTotalDiferenca the vlTotalDiferenca to set
+	 */
+	public void setVlTotalDiferenca(BigDecimal vlTotalDiferenca) {
+		this.vlTotalDiferenca = vlTotalDiferenca;
+	}
+
+	/**
+	 * @return the automatica
+	 */
+	public Boolean getAutomatica() {
+		return automatica;
 	}
 
 	/**
@@ -294,6 +363,8 @@ public class DiferencaVO implements Serializable {
 		this.automatica = automatica;
 	}
 	
+
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -301,7 +372,45 @@ public class DiferencaVO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((automatica == null) ? 0 : automatica.hashCode());
+		result = prime * result + (cadastrado ? 1231 : 1237);
+		result = prime * result
+				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
+		result = prime * result
+				+ ((dataLancamento == null) ? 0 : dataLancamento.hashCode());
+		result = prime
+				* result
+				+ ((descricaoProduto == null) ? 0 : descricaoProduto.hashCode());
+		result = prime * result
+				+ ((fornecedor == null) ? 0 : fornecedor.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((motivoAprovacao == null) ? 0 : motivoAprovacao.hashCode());
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		result = prime
+				* result
+				+ ((numeroNotaFiscal == null) ? 0 : numeroNotaFiscal.hashCode());
+		result = prime * result
+				+ ((pacotePadrao == null) ? 0 : pacotePadrao.hashCode());
+		result = prime * result
+				+ ((precoVenda == null) ? 0 : precoVenda.hashCode());
+		result = prime
+				* result
+				+ ((qtdeEstoqueAtual == null) ? 0 : qtdeEstoqueAtual.hashCode());
+		result = prime * result
+				+ ((quantidade == null) ? 0 : quantidade.hashCode());
+		result = prime * result
+				+ ((statusAprovacao == null) ? 0 : statusAprovacao.hashCode());
+		result = prime * result
+				+ ((tipoDiferenca == null) ? 0 : tipoDiferenca.hashCode());
+		result = prime * result
+				+ ((tipoEstoque == null) ? 0 : tipoEstoque.hashCode());
+		result = prime
+				* result
+				+ ((valorTotalDiferenca == null) ? 0 : valorTotalDiferenca
+						.hashCode());
 		return result;
 	}
 
@@ -317,12 +426,130 @@ public class DiferencaVO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		DiferencaVO other = (DiferencaVO) obj;
+		if (automatica == null) {
+			if (other.automatica != null)
+				return false;
+		} else if (!automatica.equals(other.automatica))
+			return false;
+		if (cadastrado != other.cadastrado)
+			return false;
+		if (codigoProduto == null) {
+			if (other.codigoProduto != null)
+				return false;
+		} else if (!codigoProduto.equals(other.codigoProduto))
+			return false;
+		if (dataLancamento == null) {
+			if (other.dataLancamento != null)
+				return false;
+		} else if (!dataLancamento.equals(other.dataLancamento))
+			return false;
+		if (descricaoProduto == null) {
+			if (other.descricaoProduto != null)
+				return false;
+		} else if (!descricaoProduto.equals(other.descricaoProduto))
+			return false;
+		if (fornecedor == null) {
+			if (other.fornecedor != null)
+				return false;
+		} else if (!fornecedor.equals(other.fornecedor))
+			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (motivoAprovacao == null) {
+			if (other.motivoAprovacao != null)
+				return false;
+		} else if (!motivoAprovacao.equals(other.motivoAprovacao))
+			return false;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		if (numeroNotaFiscal == null) {
+			if (other.numeroNotaFiscal != null)
+				return false;
+		} else if (!numeroNotaFiscal.equals(other.numeroNotaFiscal))
+			return false;
+		if (pacotePadrao == null) {
+			if (other.pacotePadrao != null)
+				return false;
+		} else if (!pacotePadrao.equals(other.pacotePadrao))
+			return false;
+		if (precoVenda == null) {
+			if (other.precoVenda != null)
+				return false;
+		} else if (!precoVenda.equals(other.precoVenda))
+			return false;
+		if (qtdeEstoqueAtual == null) {
+			if (other.qtdeEstoqueAtual != null)
+				return false;
+		} else if (!qtdeEstoqueAtual.equals(other.qtdeEstoqueAtual))
+			return false;
+		if (quantidade == null) {
+			if (other.quantidade != null)
+				return false;
+		} else if (!quantidade.equals(other.quantidade))
+			return false;
+		if (statusAprovacao == null) {
+			if (other.statusAprovacao != null)
+				return false;
+		} else if (!statusAprovacao.equals(other.statusAprovacao))
+			return false;
+		if (tipoDiferenca == null) {
+			if (other.tipoDiferenca != null)
+				return false;
+		} else if (!tipoDiferenca.equals(other.tipoDiferenca))
+			return false;
+		if (tipoEstoque == null) {
+			if (other.tipoEstoque != null)
+				return false;
+		} else if (!tipoEstoque.equals(other.tipoEstoque))
+			return false;
+		if (valorTotalDiferenca == null) {
+			if (other.valorTotalDiferenca != null)
+				return false;
+		} else if (!valorTotalDiferenca.equals(other.valorTotalDiferenca))
+			return false;
 		return true;
+	}
+
+	/**
+	 * @return the tipoEstoque
+	 */
+	public String getTipoEstoque() {
+		return tipoEstoque;
+	}
+
+	/**
+	 * @param tipoEstoque the tipoEstoque to set
+	 */
+	public void setTipoEstoque(String tipoEstoque) {
+		this.tipoEstoque = tipoEstoque;
+	}
+
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;		
+	}
+	
+	public String getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @return the existemRateios
+	 */
+	public boolean isExistemRateios() {
+		return existemRateios;
+	}
+
+	/**
+	 * @param existemRateios the existemRateios to set
+	 */
+	public void setExistemRateios(boolean existemRateios) {
+		this.existemRateios = existemRateios;
 	}
 
 }

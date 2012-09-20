@@ -83,7 +83,7 @@ public class ProdutoEdicaoController {
 		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
 		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
-			if(dataLancamentoDe.before(dataLancamentoAte)){
+			if(dataLancamentoDe.after(dataLancamentoAte)){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
 			}
 			
@@ -92,7 +92,7 @@ public class ProdutoEdicaoController {
 		if(precoDe == null ^ precoAte == null ){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
 		}else if(precoDe != null && precoAte != null ){
-			if(precoDe.compareTo(precoAte) <=0){
+			if(precoDe.compareTo(precoAte) > 0){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
@@ -107,9 +107,14 @@ public class ProdutoEdicaoController {
 	
 		// Pesquisar:
 		Long qtd = peService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
-		List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
-		
-		this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
+		if(qtd > 0){			
+			List<ProdutoEdicaoDTO> lst = peService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+			
+			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
+		}else{
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+					"Registros não encontrados."));
+		}
 	}
 	
 	@Post
@@ -167,7 +172,7 @@ public class ProdutoEdicaoController {
 			dto.setOrigemInterface(pe.getOrigemInterface());
 			dto.setNumeroLancamento(pe.getNumeroLancamento());
 			dto.setPeb(pe.getPeb());
-			dto.setEditor(pe.getProduto().getEditor().getNome());
+			dto.setEditor(pe.getProduto().getEditor().getPessoaJuridica().getNome());
 			if (pe.getBrinde() !=null) {
 				dto.setDescricaoBrinde(pe.getBrinde().getDescricao());
 			}
@@ -186,8 +191,10 @@ public class ProdutoEdicaoController {
 			if (uLancamento != null) {
 				dto.setSituacaoLancamento(uLancamento.getStatus());
 				dto.setTipoLancamento(uLancamento.getTipoLancamento());
+				if(uLancamento.getStatus() != StatusLancamento.EXCLUIDO){					
+					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+				}				
 				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
-				dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
 				dto.setRepartePrevisto(uLancamento.getReparte());
 				dto.setRepartePromocional(uLancamento.getRepartePromocional());
 				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
@@ -456,7 +463,7 @@ public class ProdutoEdicaoController {
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
-										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getNome():""):""),
+										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome():""):""),
 										               produtoEdicao.getChamadaCapa(),
 										               (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
 										               Integer.toString(produtoEdicao.getPacotePadrao())

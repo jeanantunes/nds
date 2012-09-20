@@ -3,6 +3,7 @@ package br.com.abril.nds.model.titularidade;
 import java.io.Serializable;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -40,7 +41,7 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
     /**
      * Fornecedores associados à forma de pagamento
      */
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(name = "HISTORICO_TITULARIDADE_COTA_FORMA_PAGAMENTO_FORNECEDOR", 
         joinColumns = {@JoinColumn(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_ID")}, 
         inverseJoinColumns = {@JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FORNECEDOR_ID")})
@@ -62,9 +63,9 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
     /**
      * Concentrações de pagamento
      */
-    @OneToMany
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "HISTORICO_TITULARIDADE_FORMA_PAGAMENTO_ID")
-    private Collection<HistoricoTitularidadeCotaConcentracaoCobranca> concentracoesCobranca;
+    private HistoricoTitularidadeCotaConcentracaoCobranca concentracaoCobranca;
 
     /**
      * @return the id
@@ -123,19 +124,18 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
         this.banco = banco;
     }
 
-    /**
-     * @return the concentracoesCobranca
-     */
-    public Collection<HistoricoTitularidadeCotaConcentracaoCobranca> getConcentracoesCobranca() {
-        return concentracoesCobranca;
-    }
+	/**
+	 * @return the concentracaoCobranca
+	 */
+	public HistoricoTitularidadeCotaConcentracaoCobranca getConcentracaoCobranca() {
+		return concentracaoCobranca;
+	}
 
-    /**
-     * @param concentracoesCobranca the concentracoesCobranca to set
-     */
-    public void setConcentracoesCobranca(
-            Collection<HistoricoTitularidadeCotaConcentracaoCobranca> concentracoesCobranca) {
-        this.concentracoesCobranca = concentracoesCobranca;
-    }
-
+	/**
+	 * @param concentracaoCobranca the concentracaoCobranca to set
+	 */
+	public void setConcentracaoCobranca(
+			HistoricoTitularidadeCotaConcentracaoCobranca concentracaoCobranca) {
+		this.concentracaoCobranca = concentracaoCobranca;
+	}
 }

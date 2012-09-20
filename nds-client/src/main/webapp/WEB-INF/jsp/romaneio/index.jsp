@@ -19,56 +19,11 @@
 <script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.datepicker.js"></script>
 <script language="javascript" type="text/javascript" src="../scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 <link rel="stylesheet" type="text/css" href="../scripts/flexigrid-1.1/css/flexigrid.pack.css" />
+<script language="javascript" type="text/javascript" src="../scripts/romaneios.js"></script>
 <script language="javascript" type="text/javascript">
-	function mostrar(){
-	$(".grids").show();
-}	
-$(function() {
-		
-	});
-	function confirmar(){
-		$(".dados").show();
-	}
-	function pesqEncalhe(){
-		$(".dadosFiltro").show();		
-	}
-
-	function pesquisar(){	
-		
-		$(".romaneiosGrid").flexOptions({
-			url: "<c:url value='/romaneio/pesquisarRomaneio'/>",
-			dataType : 'json',
-			params: [
-						{name:'filtro.idBox', value:$('#idBox').val()},
-						{name:'filtro.idRoteiro', value:$('#idRoteiro').val()},
-						{name:'filtro.idRota', value:$('#idRota').val()},
-						{name:'filtro.nomeRota',	value: $('#idRota option:selected').text()}
-						]
-		});
-		
-		$(".romaneiosGrid").flexReload();
-				
-	}
-
-	function executarPreProcessamento(resultado) {
-		
-		if (resultado.mensagens) {
-
-			exibirMensagem(
-				resultado.mensagens.tipoMensagem, 
-				resultado.mensagens.listaMensagens
-			);
-			
-			$(".grids").hide();
-
-			return resultado;
-		}
-		
-		$(".grids").show();
-		
-		return resultado;
-	}
-
+$(function(){
+	romaneiosController.init();
+});
 </script>
 <style type="text/css">
   .dados, .dadosFiltro{display:none;}
@@ -82,11 +37,6 @@ $(function() {
    
     <div class="container">
     
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Expedição < evento > com < status >.</b></p>
-	</div>
-
 	<br />
 
       <fieldset class="classFieldset">
@@ -125,7 +75,7 @@ $(function() {
 				    </select>
                  
                 </td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="pesquisar();">Pesquisar</a></span></td>
+              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="romaneiosController.pesquisar();">Pesquisar</a></span></td>
             </tr>
   
   		</table>
@@ -153,64 +103,6 @@ $(function() {
       <div class="linha_separa_fields">&nbsp;</div>
     </div>
 </div> 
-<script>
-	
-		
-		$(".romaneiosGrid").flexigrid({
-			preProcess: executarPreProcessamento,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nome',
-				width : 180,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Endereço',
-				name : 'logradouro',
-				width : 260,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Bairro',
-				name : 'bairro',
-				width : 135,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Cidade',
-				name : 'cidade',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'UF',
-				name : 'uf',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Telefone',
-				name : 'numeroTelefone',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 150
-		});
-</script>
+
 </body>
 </html>

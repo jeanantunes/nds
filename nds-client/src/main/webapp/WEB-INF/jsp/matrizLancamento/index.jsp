@@ -8,8 +8,8 @@
 }
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamentoLancamento.js"></script>
+
 
 <script type="text/javascript">
 
@@ -18,191 +18,11 @@ var pathTela = "${pageContext.request.contextPath}";
 
 var balanceamento = new Balanceamento(pathTela, "balanceamento");
 
-var balanceamentoLancamento = new BalanceamentoLancamento(pathTela, "balanceamentoLancamento", balanceamento);
+var balanceamentoLancamento = new BalanceamentoLancamento(pathTela, "balanceamentoLancamento", balanceamento, BaseController.workspace);
+
+balanceamentoLancamento.inicializar();
 
 var lancamentosSelecionados = [];
-
-
-$(function() {
-	
-	balanceamentoLancamento.definirAcaoPesquisaTeclaEnter();
-	
-	$("#lancamentosProgramadosGrid").flexigrid({
-		colModel : [  {
-			display : 'Código',
-			name : 'codigoProduto',
-			width : 45,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Produto',
-			name : 'nomeProduto',
-			width : 100,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Edição',
-			name : 'numeroEdicao',
-			width : 30,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Preço Capa R$',
-			name : 'precoVenda',
-			width : 78,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Reparte',
-			name : 'repartePrevisto',
-			width : 38,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Lançamento',
-			name : 'descricaoLancamento',
-			width : 63,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Recolhimento',
-			name : 'dataRecolhimentoPrevista',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		},{
-			display : 'Total R$',
-			name : 'valorTotal',
-			width : 42,
-			sortable : true,
-			align : 'right'
-		}, {
-			display : 'Físico',
-			name : 'reparteFisico',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Distribuição',
-			name : 'distribuicao',
-			width : 60,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Previsto',
-			name : 'dataLancamentoPrevista',
-			width : 55,
-			sortable : true,
-			align : 'center'
-		}, {
-			display : 'Matriz/Distrib.',
-			name : 'novaData',
-			width : 97,
-			sortable : false,
-			align : 'center'
-		},{
-			display : 'Reprogramar',
-			name : 'reprogramar',
-			width : 65,
-			sortable : false,
-			align : 'center'
-		}],
-		sortname : "codigoProduto",
-		sortorder : "asc",
-		usepager : true,
-		useRp : true,
-		rp : 15,
-		showTableToggleBtn : true,
-		width : 960,
-		height : 180,
-		disableSelect : true
-		});
-	
-});
-
-
-function popup_reprogramar() {
-	$( "#dialog-reprogramar" ).dialog({
-		resizable: false,
-		height:160,
-		width:320,
-		modal: true,
-		buttons: {
-			"Confirmar": function() {
-				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);
-			},
-			"Cancelar": function() {
-				$( this ).dialog( "close" );
-			}
-		}
-	});
-};
-	
-$(function() {
-	$( "#datepickerDe" ).datepicker({
-		showOn: "button",
-		dateFormat: 'dd/mm/yy',
-		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
-		buttonImageOnly: true
-	});
-	$( "#datepickerDe_1" ).datepicker({
-		showOn: "button",
-		dateFormat: 'dd/mm/yy',
-		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
-		buttonImageOnly: true
-	});
-	
-	$("#datepickerDe").mask("99/99/9999");
-	$("#datepickerDe_1").mask("99/99/9999");
-	
-	
-	$( "#novaDataLancamento" ).datepicker({
-		showOn: "button",
-		dateFormat: 'dd/mm/yy',
-		buttonImage: "<c:url value='scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif'/>",
-		buttonImageOnly: true
-	});
-	
-	$("#novaDataLancamento").mask("99/99/9999");
-	
-	
-});
-
-function reprogramarSelecionados() {
-	
-	$("#dialogReprogramarBalanceamento").dialog({
-		resizable: false,
-		height:'auto',
-		width:"300px",
-		modal: true,
-		buttons: [
-		    {
-		    	id: "dialogReprogramarBtnConfirmar",
-		    	text: "Confirmar",
-		    	click: function() {
-				
-		    		balanceamentoLancamento.reprogramarLancamentosSelecionados();
-		    	}
-		    },
-		    {
-		    	id: "dialogReprogramarBtnCancelar",
-		    	text: "Cancelar",
-		    	click: function() {
-		    
-		    		$(this).dialog("close");
-		    	}
-			}
-		],
-		beforeClose: function() {
-			
-			$("#novaDataLancamento").val("");
-			
-			clearMessageDialogTimeout();
-		}
-	});
-}
-
 
 </script>
 
@@ -236,8 +56,15 @@ function reprogramarSelecionados() {
 </head>
 
 <body>
+<form id="form-excluir-lancamento">
+<div id="dialog-excluir-lancamento" title="Balanceamento da Matriz de Lançamento" style="display:none">
+	
+	<p>Confirma a exclus&atilde;o deste lançamento?</p>
+			   
+</div>
+</form>
 
-
+<form id="form-confirm">
 <div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">
 			
 			<jsp:include page="../messagesDialog.jsp" />
@@ -245,20 +72,26 @@ function reprogramarSelecionados() {
 			<p>Existem lançamentos não confirmados. Ao prosseguir com essa ação você perderá os dados. Deseja prosseguir?</p>
 			   
 </div>
+</form>
 
-<div id="dialogVoltarConfiguracaoOriginal" title="Balanceamento da Matriz de Lançamento" style="display:none">
-			
-			<p>Ao voltar a configuração original, você perdará os dados confirmados. Deseja prosseguir?</p>
-			   
-</div>
-
+<form id="form-pagincao-confirmada">
 <div id="dialog-pagincao-confirmada" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
 			<p>As seleções de lançamentos não serão salvas, deseja continuar?</p>
 			   
 </div>
+</form>
+
+<form id="form-pagincao-confirmada">
+<div id="dialog-pagincao-confirmada" title="Balanceamento da Matriz de Lançamento" style="display:none">
+			
+			<p>As seleções de lançamentos não serão salvas, deseja continuar?</p>
+			   
+</div>
+</form>
 
 	
+		<form id="formReprogramarBalanceamento">
 		<div id="dialogReprogramarBalanceamento" title="Reprogramar Lançamentos">
 		    
 		    <jsp:include page="../messagesDialog.jsp" />
@@ -269,22 +102,32 @@ function reprogramarSelecionados() {
 			    	   style="width:80px;" id="novaDataLancamento" />
 		    </p>
 		</div>
+		</form>
 
+<form id="form-alerta-lancamentos-produtos-cancelados">
+<div id="dialog-alerta-lancamentos-produtos-cancelados" title="Produtos com lançamentos cancelados" style="display:none">
+	<p>Os seguintes produtos tiveram seus lançamentos cancelados</p>
+	<div id="flexiGridLancamentosProdutosCancelados" />			   
+</div>
+</form>
 
-	<form action="" method="get" id="form1" name="form1">
 	
+		<form id="form-reprogramar">
 		<div id="dialog-reprogramar" title="Reprogramar Lançamento">
 			<p><strong>Nova Data Matriz/Distrib:</strong> 
 		      <input name="datepickerDe_1" type="text" style="width:80px;" id="datepickerDe_1" />
 		    </p>
 		</div>
+		</form>
 		
+		<form id="form-novo">
 		<div id="dialog-novo" title="Consulta de Lançamentos Programados">
 		     <fieldset style="width:365px;">
 		     	<legend>988989 - Nome do Fornecedor</legend>
 		        <table class="lancamentoProgFornecedorGrid"></table>
 		     </fieldset>
 		</div>
+		</form>
 		
 		   	<jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialog-novo" name="messageDialog"/>
@@ -299,7 +142,7 @@ function reprogramarSelecionados() {
 			  			
 			  			<span class="bt_novos" title="Reprogramar">
 			  				<!-- Reprogramar -->
-			  				<a id="linkReprogramar" href="javascript:;" onclick="reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
+			  				<a id="linkReprogramar" href="javascript:;" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
 		                </span>
 		                
 		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00;" title="Confirmar">
@@ -386,10 +229,13 @@ function reprogramarSelecionados() {
 		        </div>
 		      </fieldset>
 		
+		<form id="form-detalhe-produto">
         <div id="dialog-detalhe-produto" title="Detalhes do Produto" style="display:none;">
 		    <jsp:include page="../produtoEdicao/detalheProduto.jsp" />
         </div>
+        </form>
 
+		<form id="form-confirm-balanceamento">
 		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
 		    
 		    <jsp:include page="../messagesDialog.jsp">
@@ -404,7 +250,7 @@ function reprogramarSelecionados() {
 
 		    </fieldset>
 		</div>
+		</form>
 	
-	</form>
 
 </body>

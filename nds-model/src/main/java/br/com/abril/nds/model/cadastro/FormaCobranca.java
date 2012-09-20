@@ -78,7 +78,7 @@ public class FormaCobranca implements Serializable {
 	private boolean recebeCobrancaEmail;
 	
 	@Embedded
-	private ContaBancaria contaBancariaCota;
+	private ContaBancariaDeposito contaBancariaCota;
 	
 	@ManyToMany
 	@JoinTable(name = "FORMA_COBRANCA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORMA_COBRANCA_ID")}, 
@@ -196,11 +196,11 @@ public class FormaCobranca implements Serializable {
 		this.recebeCobrancaEmail = recebeCobrancaEmail;
 	}
 	
-	public ContaBancaria getContaBancariaCota() {
+	public ContaBancariaDeposito getContaBancariaCota() {
 		return contaBancariaCota;
 	}
 	
-	public void setContaBancariaCota(ContaBancaria contaBancariaCota) {
+	public void setContaBancariaCota(ContaBancariaDeposito contaBancariaCota) {
 		this.contaBancariaCota = contaBancariaCota;
 	}
 	

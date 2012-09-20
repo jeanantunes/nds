@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -31,6 +30,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Cascade;
 
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -71,13 +71,7 @@ public class Cota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SITUACAO_CADASTRO", nullable = false)
 	private SituacaoCadastro situacaoCadastro;
-	
-	/**
-	 *Assumido como 'comissão' no 'cadastro cota cobrança'
-	 */
-	@Column(name  ="FATOR_DESCONTO")
-	private BigDecimal fatorDesconto;
-	
+		
 	@OneToMany(mappedBy = "cota")
 	private Set<EnderecoCota> enderecos = new HashSet<EnderecoCota>();
 	
@@ -157,6 +151,12 @@ public class Cota implements Serializable {
 	 */
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
 	private Set<HistoricoTitularidadeCota> titularesCota;
+	
+	/**
+	 * Referente a garantias da cota.
+	 */
+	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
+	private CotaGarantia cotaGarantia;
 	
 	public Set<HistoricoNumeroCota> getHistoricoNumeroCota() {
 		return historicoNumeroCota;
@@ -240,15 +240,7 @@ public class Cota implements Serializable {
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-	
-	public BigDecimal getFatorDesconto() {
-		return fatorDesconto;
-	}
-	
-	public void setFatorDesconto(BigDecimal fatorDesconto) {
-		this.fatorDesconto = fatorDesconto;
-	}
-	
+		
 	public Set<EnderecoCota> getEnderecos() {
 		return enderecos;
 	}
@@ -474,5 +466,17 @@ public class Cota implements Serializable {
         this.titularesCota = titularesCota;
     }
 
+	/**
+	 * @return the cotaGarantia
+	 */
+	public CotaGarantia getCotaGarantia() {
+		return cotaGarantia;
+	}
 
+	/**
+	 * @param cotaGarantia the cotaGarantia to set
+	 */
+	public void setCotaGarantia(CotaGarantia cotaGarantia) {
+		this.cotaGarantia = cotaGarantia;
+	}
 }

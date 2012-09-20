@@ -67,7 +67,7 @@ var CadastroCalendario = $.extend(true, {
 				align : 'center'
 			}],
 			width : 650,
-			height : 120
+			height : 100
 		});
 		
 		
@@ -232,27 +232,46 @@ var CadastroCalendario = $.extend(true, {
 				indEfetuaCobranca, 
 				descricaoFeriado) {
 			
-					var parametrosPesquisa = 
-						[ {name : "dtFeriado", value : dtFeriado},
-						  {name : "descTipoFeriado", value : tipoFeriado},
-						  {name : "idLocalidade", value : idLocalidade},
-						  {name : "indRepeteAnualmente", value : indRepeteAnualmente}];
+			
+			$( "#dialog-excluir", CadastroCalendario.workspace ).dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						var parametrosPesquisa = 
+							[ {name : "dtFeriado", value : dtFeriado},
+							  {name : "descTipoFeriado", value : tipoFeriado},
+							  {name : "idLocalidade", value : idLocalidade},
+							  {name : "indRepeteAnualmente", value : indRepeteAnualmente}];
+						
+						$.postJSON(
+								
+								contextPath + '/administracao/cadastroCalendario/excluirCadastroFeriado', 
+								
+								parametrosPesquisa,
+								
+								function(result) {
+									
+									CadastroCalendario.limparCamposEdicaoCadastroFeriado();
+									
+									CadastroCalendario.recarregarDiaFeriadoGrid(dtFeriado);
+									
+									CadastroCalendario.recarregarPainelCalendarioFeriado();
+									
+								}, null, true, 'dialog-editar');
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialog-excluir", this.workspace).parents("form")
+			});
+			
 					
-					$.postJSON(
-							
-							contextPath + '/administracao/cadastroCalendario/excluirCadastroFeriado', 
-							
-							parametrosPesquisa,
-							
-							function(result) {
-								
-								CadastroCalendario.limparCamposEdicaoCadastroFeriado();
-								
-								CadastroCalendario.recarregarDiaFeriadoGrid(dtFeriado);
-								
-								CadastroCalendario.recarregarPainelCalendarioFeriado();
-								
-							}, null, true, 'dialog-editar');
 					
 				},
 		
@@ -343,8 +362,8 @@ var CadastroCalendario = $.extend(true, {
 			
 		},
 		
-		popupEdicaoCadastroFeriado : function(date, dates) {	
-			
+		popupEdicaoCadastroFeriado : function(date, dates) {			
+					
 			CadastroCalendario.limparCamposEdicaoCadastroFeriado();
 			
 			CadastroCalendario.recarregarDiaFeriadoGrid(date);
@@ -353,7 +372,7 @@ var CadastroCalendario = $.extend(true, {
 				
 				resizable: false,
 				
-				height:480,
+				height:450,
 				
 				width:700,
 				
@@ -462,6 +481,7 @@ var CadastroCalendario = $.extend(true, {
 						} else {
 							CadastroCalendario.recarregarDiaFeriadoGrid(dtFeriado);
 							exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, 'dialog-editar');
+							$( "#dialog-editar", CadastroCalendario.workspace ).dialog( "close" );
 						}
 
 						CadastroCalendario.recarregarPainelCalendarioFeriado();
@@ -487,7 +507,7 @@ var CadastroCalendario = $.extend(true, {
 			$( "#dialog-novo", CadastroCalendario.workspace ).dialog({
 				
 				resizable: false,
-				height:300,
+				height:320,
 				width:430,
 				modal: true,
 				buttons: {
@@ -503,29 +523,6 @@ var CadastroCalendario = $.extend(true, {
 					}
 				},
 				form: $("#dialog-novo", this.workspace).parents("form")
-			});
-		},
-		
-		
-		popup_excluir : function() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-		
-			$( "#dialog-excluir", CadastroCalendario.workspace ).dialog({
-				resizable: false,
-				height:'auto',
-				width:300,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$("#effect").show("highlight", {}, 1000, callback);
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				},
-				form: $("#dialog-excluir", this.workspace).parents("form")
 			});
 		},
 		

@@ -74,6 +74,8 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private boolean lancamentoAgrupado;
   	
   	private List<ProdutoLancamentoDTO> produtosLancamentoAgrupados = new ArrayList<ProdutoLancamentoDTO>();
+  	
+  	private boolean alteradoInteface;
 	
 	/**
 	 * Construtor padrão.
@@ -90,11 +92,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 		if (this.possuiRecebimentoFisico
 				&& this.numeroReprogramacoes != null
 				&& this.numeroReprogramacoes >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
-			
-			return false;
-		}
-		
-		if (StatusLancamento.CANCELADO_GD.equals(this.statusLancamento)) {
 			
 			return false;
 		}
@@ -476,6 +473,27 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setProdutosLancamentoAgrupados(
 			List<ProdutoLancamentoDTO> produtosLancamentoAgrupados) {
 		this.produtosLancamentoAgrupados = produtosLancamentoAgrupados;
+	}
+
+	/**
+	 * @return the alteradoInteface
+	 */
+	public boolean isAlteradoInteface() {
+		return alteradoInteface;
+	}
+
+	/**
+	 * @param alteradoInteface the alteradoInteface to set
+	 */
+	public void setAlteradoInteface(boolean alteradoInteface) {
+		this.alteradoInteface = alteradoInteface;
+	}
+	
+	/**
+	 * @return the balanceamentoConfirmado
+	 */
+	public boolean isBalanceamentoConfirmado() {
+		return StatusLancamento.BALANCEADO.equals(statusLancamento);
 	}
 	
 }

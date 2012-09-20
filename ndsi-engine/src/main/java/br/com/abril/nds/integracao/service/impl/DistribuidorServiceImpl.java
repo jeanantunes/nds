@@ -1,5 +1,7 @@
 package br.com.abril.nds.integracao.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +20,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	public boolean isDistribuidor(Integer codigo) {
-		if (obter().getCodigo().equals(codigo))
+		if (obter().getCodigoDistribuidorDinap().equals(codigo.toString()))
 			return true;
 		return false;
 	}
@@ -55,4 +57,10 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return dto;
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public List<String> obterNomeCNPJDistribuidor(){
+		
+		return this.distribuidorRepository.obterNomeCNPJDistribuidor();
+	}
 }

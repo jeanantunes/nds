@@ -35,8 +35,9 @@ public class TipoEntrega implements Serializable  {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCRICAO", nullable = false)
-	private String descricao;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DESCRICAO_TIPO_ENTREGA", nullable = false)
+	private DescricaoTipoEntrega descricaoTipoEntrega;
 	
 	@Column(name = "TAXA_FIXA", nullable = true)
 	private BigDecimal taxaFixa;
@@ -79,19 +80,19 @@ public class TipoEntrega implements Serializable  {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	/**
-	 * @return the descricao
+	 * @return the descricaoTipoEntrega
 	 */
-	public String getDescricao() {
-		return descricao;
+	public DescricaoTipoEntrega getDescricaoTipoEntrega() {
+		return descricaoTipoEntrega;
 	}
-	
+
 	/**
-	 * @param descricao the descricao to set
+	 * @param descricaoTipoEntrega the descricaoTipoEntrega to set
 	 */
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
+		this.descricaoTipoEntrega = descricaoTipoEntrega;
 	}
 
 	/**

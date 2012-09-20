@@ -162,5 +162,21 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		criteria.setProjection(Projections.max("ordem"));  
 		return (Integer) criteria.uniqueResult();  
 	}
-	
+
+	@Override
+	public Rota obterRotaPorPDV(Long idPDV, Long idCota) {
+		
+		StringBuilder hql = new StringBuilder("select rot.rota from Roteirizacao rot ");
+		hql.append(" where rot.pdv.id = :idPDV ")
+		   .append(" and rot.pdv.caracteristicas.pontoPrincipal = :principal ")
+		   .append(" and rot.pdv.cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idPDV", idPDV);
+		query.setParameter("principal", true);
+		query.setParameter("idCota", idCota);
+		query.setMaxResults(1);
+		
+		return (Rota) query.uniqueResult();
+	}
 }

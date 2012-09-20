@@ -1,6 +1,6 @@
 package br.com.abril.nds.integracao.ems0132.processor;
 
-import java.io.File; 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,8 +11,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.ems0132.outbound.EMS0132Output;
 import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
@@ -54,6 +52,12 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	 */
 	private static final String CODIGO_LANP = "LANP";
 	
+	
+	@Override
+	public void preProcess() {
+		// TODO Auto-generated method stub
+	}
+
 	@Override
 	public void processMessage(Message message) {
 
@@ -116,22 +120,16 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	private void escreverArquivo(Message message, Distribuidor distribuidor, List<Estudo> listaEstudo) {
 		
 		try {
+						
 			
 			if (listaEstudo == null || listaEstudo.isEmpty()) {
 				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Nenhum dado encontrado para geracao do arquivo.");
 				throw new RuntimeException("Nenhum dado encontrado para geracao do arquivo.");
 			}
 			
-			Calendar dataAtual = Calendar.getInstance();
+			Calendar dataAtual = Calendar.getInstance();			
 			
-			String fileName = getFileNamePath(message, dataAtual);
-			
-			if (fileName == null) {
-				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, "Nome do arquivo invalido.");
-				throw new RuntimeException("Nome do arquivo invalido.");
-			}
-			
-			File arquivo = new File(fileName);
+			File arquivo = new File(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/LANCAMENTO.NEW");
 			
 			PrintWriter writer = 
 				new PrintWriter(
@@ -147,15 +145,16 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 					
 					for (Fornecedor fornecedor : produto.getFornecedores()) {
 
-						output.setCodigoDistribuidor(distribuidor.getCodigo());
-						output.setCodigoDistribuidor(1);
+						output.setCodigoDistribuidor( Long.valueOf( distribuidor.getCodigoDistribuidorDinap() ));						
 						output.setDataGeracaoArquivo(dataAtual.getTime());
 						output.setHotaGeracaoArquivo(dataAtual.getTime());
 						output.setMnemonicoTabela(CODIGO_LANP);
 						output.setCodigoContexto(produto.getCodigoContexto());
 						output.setCodigoFornecedor(fornecedor.getCodigoInterface());
-						output.setCodigoProduto(produto.getCodigo());
-						output.setNumeroLancamento(estudo.getId());
+						output.setCodigoProduto( estudo.getProdutoEdicao().getProduto().getCodigo() );
+						output.setNumeroEdicao(estudo.getProdutoEdicao().getNumeroEdicao());
+						output.setNumeroLancamento( 0L );
+						output.setNumeroFase(0);
 						output.setDataLancamento(estudo.getDataLancamento());
 					}
 				}
@@ -174,27 +173,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 	
-	/**
-	 * Retorna o nome do arquivo a ser gerado.
-	 * 
-	 * @param message
-	 * @param dataAtual
-	 * @return
-	 */
-	private String getFileNamePath(Message message, Calendar dataAtual) {
 
-		String data = DateUtil.formatarData(dataAtual.getTime(), "MMddyyyy");
-		String hora = DateUtil.formatarData(dataAtual.getTime(), "HHmmss");
-		
-		String ems0132PathName = (String) message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue());
-		
-		if (ems0132PathName == null) {
-			return null;
-		}
-		
-		return ems0132PathName + "/" + data + hora + ".drl";
-	}
-	
 	/**
 	 * Busca o Distribuidor.
 	 * 
@@ -203,6 +182,11 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	private Distribuidor obterDistribuidor() {
 		
 		return this.distribuidorService.obter();
+	}
+	
+	@Override
+	public void posProcess() {
+		// TODO Auto-generated method stub
 	}
 	
 }
