@@ -29,7 +29,7 @@
 						</c:forEach>
 					</select>
 	          	</td>
-	          	<td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar"></a></span></td>
+	          	<td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisarVisaoEstoque"></a></span></td>
 	        </tr>
 	    </table>
 	</fieldset>
@@ -44,6 +44,8 @@
 			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportar?fileType=PDF">Imprimir</a></span>
 		</fieldset>
 	</div>
+	
+	</form>
 	
 	<%-- POPUPS --%>
 	
@@ -91,13 +93,11 @@
 	</div>
 	
 	<div id="dialog-inventario" title="Invent&aacute;rio do Estoque">
-		<form action="" method="get" id="form1" name="form1">
 		<fieldset style="width:870px!important;">
       		<legend>Estoque Selecionado: <span id="visaoEstoque_inventario_estoqueSelecionado"></span> - Data: <span id="visaoEstoque_inventario_dataMovimentacao"></span></legend>
             <table class="visaoEstoqueInventarioGrid"></table>
       		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir Confer&ecirc;ncia Cega</a></span>
 		</fieldset>
-		</form>
 	</div>
 	
 
@@ -111,23 +111,19 @@
 <%--
 
 	<div id="dialog-inventario-confirm" title="Confirmar Inventário do Estoque">
-<form action="" method="get" id="form1" name="form1">
 	<fieldset style="width:300px!important;">
       <legend>Inventário</legend>
       <p>Confirmação a atualização do Saldo?</p>
 	</fieldset>
-</form>
 </div>
 
 <div id="dialog-inventario" title="Inventário do Estoque">
-<form action="" method="get" id="form1" name="form1">
 	<fieldset style="width:870px!important;">
       <legend>Estoque Selecionado: Lançamento - Data: 10/06/2012</legend>
       
       <table class="visaoEstoqueInventarioGrid"></table>
       <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir Conferência Cega</a></span>
 	</fieldset>
-</form>
 </div>
 
 
@@ -164,7 +160,7 @@
 </div>
  --%>
 	
-	</form>
+	
 	
 	<script type="text/javascript">
 		$(function(){

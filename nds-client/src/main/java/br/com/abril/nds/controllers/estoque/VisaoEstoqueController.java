@@ -114,8 +114,8 @@ public class VisaoEstoqueController {
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
 		
-		FileExporter.to("consulta-box", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
+		FileExporter.to("visao-estoque", fileType).inHTTPResponse(
+				this.getNDSFileHeader(filtro.getDataMovimentacao()), null, null,
 				listVisaoEstoque, VisaoEstoqueDTO.class,
 				this.httpServletResponse);
 		
@@ -136,8 +136,8 @@ public class VisaoEstoqueController {
 			clazz = VisaoEstoqueDetalheJuramentadoDTO.class;
 		}
 		
-		FileExporter.to("consulta-box", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
+		FileExporter.to("visao-estoque", fileType).inHTTPResponse(
+				this.getNDSFileHeader(filtro.getDataMovimentacao()), null, null,
 				listDetalhe, clazz,
 				this.httpServletResponse);
 		
@@ -145,7 +145,7 @@ public class VisaoEstoqueController {
 	}
 	
 	
-	private NDSFileHeader getNDSFileHeader() {
+	private NDSFileHeader getNDSFileHeader(Date data) {
 
 		NDSFileHeader ndsFileHeader = new NDSFileHeader();
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -155,7 +155,7 @@ public class VisaoEstoqueController {
 			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
 		}
 
-		ndsFileHeader.setData(new Date());
+		ndsFileHeader.setData(data);
 		ndsFileHeader.setNomeUsuario(getUsuario().getNome());
 		return ndsFileHeader;
 	}

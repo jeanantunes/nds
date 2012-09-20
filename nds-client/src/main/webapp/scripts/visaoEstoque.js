@@ -11,9 +11,9 @@ var visaoEstoqueController = $.extend(true, {
 			buttonImageOnly: true
 		});
 		
-		$("#btnPesquisar", this.workspace).click(function() {
+		$("#btnPesquisarVisaoEstoque", this.workspace).click(function() {
 			visaoEstoqueController.pesquisar();
-			$(".grids").show();
+			$(".grids", this.workspace).show();
 		});
 		
 		visaoEstoqueController.initGridVisaoEstoque();
@@ -34,7 +34,7 @@ var visaoEstoqueController = $.extend(true, {
 			newp : 1
 		});
 		
-		$(".visaoEstoqueGrid").flexReload();
+		$(".visaoEstoqueGrid", this.workspace).flexReload();
 	},
 	
 	
@@ -42,7 +42,7 @@ var visaoEstoqueController = $.extend(true, {
 	
 		$.each(data.rows, function(index, value) {
 			
-			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_detalhe(\'' + value.cell.estoque + '\');" titile="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
+			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_detalhe(\'' + value.cell.estoque + '\');" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
 			
 			if (value.cell.estoque != "Lançamento Juramentado") {
 				acao += '<a href="javascript:;" onClick="visaoEstoqueController.popup_transferencia(\'' + value.cell.estoque + '\');" title="Transferir Estoque"><img src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0" alt="Transferir" /></a>    ' +
@@ -133,14 +133,14 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$("#visaoEstoque_filtro_tipoEstoque").val(estoque);
 		
-		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		var params = $("#pesquisarVisaoEstoqueForm").serialize();
 		
 		$("." + grid, this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhe.json?' + params, 
 			newp:1
 		});
 		
-		$("." + grid).flexReload();
+		$("." + grid, this.workspace).flexReload();
 		
 		$("#" + div).dialog({
 			resizable: false,
@@ -233,41 +233,30 @@ var visaoEstoqueController = $.extend(true, {
 				display : 'Estoque',
 				name : 'estoque',
 				width : 400,
-				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produtos',
 				name : 'produtos',
 				width : 150,
-				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Exemplares',
 				name : 'exemplares',
 				width : 150,
-				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Valor R$',
 				name : 'valorFormatado',
 				width : 100,
-				sortable : true,
 				align : 'right'
 			}, {
 				display : 'A&ccedil;&atilde;o',
 				name : 'acao',
 				width : 80,
-				sortable : true,
 				align : 'left'
 			}],
-			sortname : "estoque",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 200
 		});
 	},
 	
