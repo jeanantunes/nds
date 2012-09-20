@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.util.BigIntegerUtil;
+import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -118,6 +121,7 @@ import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheExcedeReparteException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
@@ -2290,6 +2294,84 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	private String space(int size){
+		String s="";
+		for (int i=0;i<size;i++){
+			s+=" ";
+		}
+		return s; 
+	}
+	
+	private String getDiaMesOrdinal(Long x){
+		String ord="";
+		String aux="";
+		aux = Long.toString(x);
+		
+		int i=1;
+		
+		if (aux.length()>1){
+			aux = aux.substring(i-1, i);
+			switch (Integer.parseInt(aux)){ 
+			    case 1:
+			    	ord+="DÉCIMO";
+			        break;
+			    case 2:
+			    	ord+="VIGÉSIMO";
+			        break;
+			    case 3:
+			    	ord+="TRIGÉSIMO";
+			        break;
+			    default:
+			    	ord+="";
+			}
+			i++;
+		}
+		
+		aux = Long.toString(x);
+		aux = aux.substring(i-1,i);
+		switch (Integer.parseInt(aux)){ 
+		    case 1:
+		    	ord+=" PRIMEIRO";
+		    	break;
+		    case 2:
+		    	ord+=" SEGUNDO";
+		    	break;
+		    case 3:
+		    	ord+=" TERCEIRO";
+		    	break;
+		    case 4:
+		    	ord+=" QUARTO";
+		    	break;
+		    case 5:
+		    	ord+=" QUINTO";
+		    	break;
+		    case 6:
+		    	ord+="SEXTO";
+		    	break;
+		    case 7:
+		    	ord+=" SÉTIMO";
+		    	break;
+		    case 8:
+		    	ord+=" OITAVO";
+		        break;
+		    case 9:
+		    	ord+=" NONO";
+		        break;
+		    default:
+		    	ord+="";
+	    }
+
+		return ord;
+	}
+	
+	private long obterDiasEntreDatas(ProdutoEdicaoSlipDTO produtoEdicaoSlip){
+		long d = 0;
+		if (produtoEdicaoSlip.getDataOperacao()!=null && produtoEdicaoSlip.getDataRecolhimento()!=null){
+			d = DateUtil.obterDiferencaDias(produtoEdicaoSlip.getDataOperacao(), produtoEdicaoSlip.getDataRecolhimento());
+		}
+		return d;
+	}
+	
 	private byte[] gerarSlip(Long idControleConferenciaEncalheCota) {
 
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
@@ -2303,6 +2385,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						idControleConferenciaEncalheCota, 
 						distribuidor.getId());
 		
+		NumberFormat formatter = new DecimalFormat("00000");
+		
 		Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
 		Long idCota				= controleConferenciaEncalheCota.getCota().getId();
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
@@ -2314,11 +2398,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BigInteger qtdeTotalProdutos 	= null;
 		BigDecimal valorTotalEncalhe 	= null;
 		BigDecimal valorTotalPagar 		= null;
+		BigDecimal valorDevido = BigDecimal.ZERO;
 		
 		BigDecimal valorTotalReparte = obterValorTotalReparte(distribuidor.getId(), numeroCota, dataOperacao);
 		
+		BigInteger qtdeTotalProdutosDia = null;
+		BigDecimal valorTotalEncalheDia = null;
+		long dAnt=0;
+		long d=0;
+		boolean exibeSubtotalDia = false;
+		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
-			
+				
+ 			dAnt=d;
+ 			
 			BigInteger reparte = obterQtdeReparteParaProdutoEdicao(
 					idCota, 
 					produtoEdicaoSlip.getIdProdutoEdicao(), 
@@ -2331,6 +2424,29 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			valorTotalEncalhe = BigDecimalUtil.soma(valorTotalEncalhe, produtoEdicaoSlip.getValorTotal());
 			
+			qtdeTotalProdutosDia = BigIntegerUtil.soma(qtdeTotalProdutosDia, produtoEdicaoSlip.getEncalhe());   
+				
+			valorTotalEncalheDia = BigDecimalUtil.soma(valorTotalEncalheDia, produtoEdicaoSlip.getValorTotal());
+			
+			valorDevido = BigDecimalUtil.soma(valorDevido,produtoEdicaoSlip.getPrecoVenda().multiply(new BigDecimal(produtoEdicaoSlip.getReparte().intValue())));
+			
+			d = this.obterDiasEntreDatas(produtoEdicaoSlip);
+ 
+			String numCE = formatter.format(produtoEdicaoSlip.getIdChamadaEncalhe());
+			
+			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(d==dAnt?"":this.getDiaMesOrdinal(d)+" DIA - CE NUM "+numCE);
+		
+		    exibeSubtotalDia = (listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)==(listaProdutoEdicaoSlip.size()-1))||
+		    		           (d!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
+			                     
+			produtoEdicaoSlip.setQtdeTotalProdutos(!exibeSubtotalDia?"":"Total de Produtos do dia:"+this.space(133 - (CurrencyUtil.formatarValor(qtdeTotalProdutosDia).length()))+CurrencyUtil.formatarValor(qtdeTotalProdutosDia));
+ 			produtoEdicaoSlip.setValorTotalEncalhe(!exibeSubtotalDia?"":"Total do Encalhe do dia:"+this.space(133 - (CurrencyUtil.formatarValor(valorTotalEncalheDia).length()))+CurrencyUtil.formatarValor(valorTotalEncalheDia));
+ 			
+ 			if(exibeSubtotalDia){
+ 				qtdeTotalProdutosDia = BigInteger.ZERO;   
+ 				valorTotalEncalheDia = BigDecimal.ZERO;
+ 			}
+	
 		}
 		
 		valorTotalReparte = (valorTotalReparte == null) ? BigDecimal.ZERO : valorTotalReparte;
@@ -2339,20 +2455,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigDecimal valorTotalDebitoCredito	= obterValorTotalDebitoCreditoCota(numeroCota, dataOperacao);
 		
-		BigDecimal valorDevido = BigDecimal.ZERO;
-		
 		valorTotalPagar = (valorTotalReparte.subtract(valorTotalEncalhe));
 		
 		if(BigDecimal.ZERO.compareTo(valorTotalDebitoCredito)>0) {
-			
-			valorDevido = valorTotalDebitoCredito.abs();
 			
 			valorTotalPagar = valorTotalPagar.add(valorTotalDebitoCredito.abs());
 			
 		} else {
 			
 			valorTotalPagar = valorTotalPagar.subtract(valorTotalDebitoCredito.abs());
-			
 		}
 
 		
@@ -2377,24 +2488,63 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		slip.setNumSlip(null);                 
 		slip.setListaProdutoEdicaoSlipDTO(listaProdutoEdicaoSlip);
 
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		parameters.put("NUMERO_COTA", slip.getNumeroCota());
 		parameters.put("NOME_COTA", slip.getNomeCota());
-		
 		parameters.put("NUM_SLIP", numeroSlip.toString());
 		parameters.put("CODIGO_BOX", slip.getCodigoBox());
 		parameters.put("DATA_CONFERENCIA", slip.getDataConferencia());
 		parameters.put("CE_JORNALEIRO", slip.getCeJornaleiro());
-		parameters.put("TOTAL_PROD_DIA", slip.getTotalProdutoDia());
-		parameters.put("VALOR_ENCA_DIA", slip.getValorEncalheDia());
 		parameters.put("VALOR_DEVIDO", slip.getValorDevido());
 		parameters.put("VALOR_SLIP", slip.getValorSlip());
 		parameters.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
 		parameters.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
-		parameters.put("VALOR_TOTAL_PAGAR", slip.getValorTotalPagar());
+		parameters.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
+		parameters.put("VALOR_PAGAMENTO_PENDENTE", slip.getValorTotalPagar());
+		parameters.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
+		parameters.put("VALOR_CREDITO_DIF", slip.getValorTotalPagar());
+
+		
+		//OBTEM OS MOVIMENTOS FINANCEIROS(DÉBITOS E CRÉDITOS) DA COTA NA DATA DE OPERAÇÃO
+		List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = this.conferenciaEncalheRepository.obterComposicaoCobrancaSlip(numeroCota, controleConferenciaEncalheCota.getDataOperacao(), null);
+		
+		parameters.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
 		
 		
+        //OBTÉM O NUMERO DE CHAMADA DE ENCALHE RELACIONADO COM CADA MOVIMENTO FINANCEIRO DA COMPOSIÇÃO DE COBRANÇA
+		for (ComposicaoCobrancaSlipDTO item:listaComposicaoCobranca){
+			ChamadaEncalheCota chamadaEncalhe = this.conferenciaEncalheRepository.obterChamadaEncalheDevolucao(item.getIdMovimentoFinanceiro());
+		    if (chamadaEncalhe!=null){
+		        item.setDescricao(item.getDescricao()+"-CE num "+formatter.format(chamadaEncalhe.getId()));
+		    }
+		}
+		
+		
+        //TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
+		BigDecimal totalComposicao = BigDecimal.ZERO;
+		for(ComposicaoCobrancaSlipDTO item:listaComposicaoCobranca){
+			if (item.getOperacaoFinanceira().equals("D")){
+				totalComposicao = totalComposicao.add(item.getValor());
+			}
+			else{
+				totalComposicao = totalComposicao.subtract(item.getValor());
+			}
+		}
+		totalComposicao = totalComposicao.add(slip.getValorSlip());
+		parameters.put("VALOR_TOTAL_PAGAR", totalComposicao);
+		
+		
+		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		try{
+		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+
+
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
