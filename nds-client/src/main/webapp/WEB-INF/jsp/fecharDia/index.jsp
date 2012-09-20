@@ -253,7 +253,12 @@
             <tr>
               <td width="104">Data da Operação:</td>
               <td width="111">05/05/2012</td>
-              <td width="185"><span class="bt_novos" title="Iniciar Fechamento do Dia"><a href="javascript:;" onclick="fecharDiaController.popup_processos();"><img border="0" hspace="5" src="../images/bt_devolucao.png">Iniciar Fechamento do Dia</a></span></td>
+              <td width="185">
+              	<span class="bt_novos" title="Iniciar Fechamento do Dia">
+              		<a href="javascript:;" onclick="fecharDiaController.popup_processos();">
+              		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png">Iniciar Fechamento do Dia</a>
+              	</span>
+              </td>
               <td width="529"><span class="bt_confirmar_novo grids" style="display:none;" title="Confirmar"><a onclick="fecharDiaController.popup();" href="javascript:;"><img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="../images/ico_check.gif">Confirmar</a></span></td>
             </tr>
           </table>

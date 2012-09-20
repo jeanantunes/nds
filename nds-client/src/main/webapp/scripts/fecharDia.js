@@ -97,24 +97,6 @@ var fecharDiaController =  $.extend(true, {
 		});	
 		      
 	},
-	//Esse função não está sendo chamada na tela. Por que foi criada?
-	popup_fisico_faltas : function(){
-		
-		$( "#dialog-fisico-faltas", fecharDiaController.workspace ).dialog({
-			resizable: false,
-			height:'auto',
-			width:750,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			},
-			form: $("#dialog-fisico-faltas", fecharDiaController.workspace).parents("form")
-		});	
-		      
-	},
 	
 	popup_cotasGrid : function(){
 	
@@ -176,8 +158,23 @@ var fecharDiaController =  $.extend(true, {
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
-		});	
+		});
+		
+		fecharDiaController.iniciarValidacoes();
 		      
+	},
+	
+	iniciarValidacoes : function(){
+		$.postJSON(contextPath + "/lancamento/furoProduto/buscarNomeProduto", data,
+				function(result){
+					if (result && result.string != ""){
+						$("#produto", vendaProdutoController.workspace).val(result);	
+						$("#edicoes", vendaProdutoController.workspace).focus();
+					} else {
+						$("#produto", vendaProdutoController.workspace).val("");
+						$("#edicoes", vendaProdutoController.workspace).focus();
+					}
+				});
 	}
 	
 }, BaseController);

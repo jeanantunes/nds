@@ -613,5 +613,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 	    }
 		return res;
 	}
+
+	@Override
+	public boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor) {
+		Date diaDeOperaoMenosUm = DateUtil.subtrairDias(dataOperacaoDistribuidor, 1);
+		return this.cobrancaRepository.existeCobrancaParaFecharDia(diaDeOperaoMenosUm);
+	}
 	
 }
