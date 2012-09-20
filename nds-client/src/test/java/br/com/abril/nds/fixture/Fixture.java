@@ -117,7 +117,6 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
-import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
@@ -1752,9 +1751,9 @@ public class Fixture {
 		EstoqueProduto estoqueProduto = new EstoqueProduto();
 		estoqueProduto.setProdutoEdicao(produtoEdicao);
 		estoqueProduto.setQtde(qtde);
-		estoqueProduto.setQtdeSuplementar(qtde);
+		estoqueProduto.setQtdeSuplementar(qtde.add(BigInteger.TEN));
 		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
-		estoqueProduto.setQtdeDevolucaoFornecedor(qtde);
+		estoqueProduto.setQtdeDevolucaoFornecedor(qtde.add(BigInteger.TEN));
 		return estoqueProduto;
 	}
 	
