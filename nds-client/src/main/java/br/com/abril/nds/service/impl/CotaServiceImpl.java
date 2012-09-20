@@ -990,15 +990,27 @@ public class CotaServiceImpl implements CotaService {
 		}
 				
 		boolean incluirPDV = false;
-		
+		//Flag indica criação de uma nova cota
+		boolean newCota = false;
 		if(cota == null){
 			cota = new Cota();
 			cota.setInicioAtividade(new Date());
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
 			incluirPDV = true;
+			newCota = true;
 		}
 		
-		processarNovoNumeroCota(cotaDto.getNumeroCota(),cota.getId());
+		//Flag indica a mudança de número da cota
+		boolean mudancaNumero = false;
+		if (!newCota) {
+		    Integer numeroCota = cota.getNumeroCota();
+		    Integer novoNumeroCota = cotaDto.getNumeroCota();
+		    mudancaNumero = !numeroCota.equals(novoNumeroCota);
+		}
+		//Se é uma nova cota ou alteração de número, processa o novo número
+		if (newCota || mudancaNumero) {
+		    processarNovoNumeroCota(cotaDto.getNumeroCota(),cota.getId());
+		}
 		
 	    cota.setNumeroCota(cotaDto.getNumeroCota());
 	    
