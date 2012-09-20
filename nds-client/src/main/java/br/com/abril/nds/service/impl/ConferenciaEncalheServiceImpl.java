@@ -2394,7 +2394,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
 		Long numeroSlip 		= controleNumeracaoSlipService.obterProximoNumeroSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE);
 		
-		
 		BigInteger qtdeTotalProdutos 	= null;
 		BigDecimal valorTotalEncalhe 	= null;
 		BigDecimal valorTotalPagar 		= null;
