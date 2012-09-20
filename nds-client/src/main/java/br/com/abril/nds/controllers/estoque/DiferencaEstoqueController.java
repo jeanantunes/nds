@@ -29,6 +29,7 @@ import br.com.abril.nds.client.vo.ItemDiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.EstoqueDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
@@ -49,7 +50,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -57,7 +58,6 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstoqueProdutoService;
-import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
@@ -112,10 +112,7 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private ProdutoService produtoService;
-	
-	@Autowired
-	private EstudoCotaService estudoCotaService; 
-	
+		
 	@Autowired
 	private EstudoService estudoService;
 	
@@ -1953,18 +1950,90 @@ public class DiferencaEstoqueController {
 		if(estoque == null) 
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Produto sem estoque cadastrado."));
 						
-		Object[] dados = new Object[6];
+		Object[] dados = new Object[3];
 		dados[0] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
 		dados[1] = pe.getId();
 		
-		dados[2] = estoque.getQtde() == null ? 0 : estoque.getQtde();
-		dados[3] = estoque.getQtdeSuplementar() == null ? 0 : estoque.getQtdeSuplementar();
-		dados[4] = estoque.getQtdeDevolucaoEncalhe() == null ? 0 : estoque.getQtdeDevolucaoEncalhe();
-		dados[5] = estoque.getQtdeDevolucaoFornecedor() == null ? 0 : estoque.getQtdeDevolucaoFornecedor();
+		List<EstoqueDTO> estoques = gerarEstoques(estoque);
+				
+		dados[2] = estoques;  	
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
 		
+	private List<EstoqueDTO> gerarEstoques(EstoqueProduto estoque) {
+
+		List<EstoqueDTO> estoques = new ArrayList<EstoqueDTO>();
+		
+		if(estoque.getQtde() != null && estoque.getQtde().intValue() > 0) {
+			
+			estoques.add(
+					new EstoqueDTO(
+							TipoEstoque.LANCAMENTO.name(), 
+							TipoEstoque.LANCAMENTO.getDescricao(),
+							estoque.getQtde().intValue()
+							) 
+					); 
+		}
+		
+		if(estoque.getQtdeSuplementar() != null && estoque.getQtdeSuplementar().intValue() > 0) {
+				
+			estoques.add(
+					new EstoqueDTO(
+							TipoEstoque.SUPLEMENTAR.name(), 
+							TipoEstoque.SUPLEMENTAR.getDescricao(),
+							estoque.getQtdeSuplementar().intValue()
+							) 
+					);
+		}
+		
+		if(estoque.getQtdeDevolucaoEncalhe() != null && estoque.getQtdeDevolucaoEncalhe().intValue() > 0) {
+			
+			estoques.add(
+					new EstoqueDTO(
+							TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
+							TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
+							estoque.getQtdeDevolucaoEncalhe().intValue()
+							) 
+					); 
+		}
+		
+		if(estoque.getQtdeDevolucaoFornecedor() != null && estoque.getQtdeDevolucaoFornecedor().intValue() > 0) {
+		
+			estoques.add(
+					new EstoqueDTO(
+							TipoEstoque.DEVOLUCAO_FORNECEDOR.name(), 
+							TipoEstoque.DEVOLUCAO_FORNECEDOR.getDescricao(),
+							estoque.getQtdeDevolucaoFornecedor().intValue()
+							) 
+					); 
+		}
+		
+		if(estoque.getQtdeJuramentado() != null && estoque.getQtdeJuramentado().intValue() > 0) {
+			
+			estoques.add(
+					new EstoqueDTO(
+							TipoEstoque.JURAMENTADO.name(), 
+							TipoEstoque.JURAMENTADO.getDescricao(),
+							estoque.getQtdeJuramentado().intValue()
+							) 
+					); 
+		}
+		
+		if(estoque.getQtdeDanificado() != null && estoque.getQtdeDanificado().intValue() > 0) {
+		
+			estoques.add(
+					new EstoqueDTO(
+							TipoEstoque.DANIFICADO.name(), 
+							TipoEstoque.DANIFICADO.getDescricao(),
+							estoque.getQtdeDanificado().intValue()
+							) 
+					); 
+		}
+		
+		return estoques;
+	}
+
 	@Post
 	@Path("/lancamento/rateio/buscarProdutosCotaNota")
 	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota){

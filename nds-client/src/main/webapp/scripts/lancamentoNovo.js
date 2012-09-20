@@ -595,7 +595,7 @@ var lancamentoNovoController = $.extend(true, {
 				$("#precoCapaProduto", lancamentoNovoController.workspace).text(result[0]);
 				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result[1]);
 				
-				lancamentoNovoController.verificarTipoEstoque(result[2], result[3], result[4], result[5]);
+				lancamentoNovoController.verificarTipoEstoque(result[2]);
 				
 			},
 			null,
@@ -622,38 +622,26 @@ var lancamentoNovoController = $.extend(true, {
 		lancamentoNovoController.limparCotas();
 	},
 	
-	verificarTipoEstoque : function(qtde, qtdeSuplementar, qtdeEncalhe, qtdeFornecedor) {
-		
-		var qtdes = [];
-		
-		if(qtde && qtde>0)
-			qtdes.push({tipo:'Lançamento',				enum:'LANCAMENTO', 				valor:qtde});
-		
-		if(qtde && qtdeSuplementar>0)
-			qtdes.push({tipo:'Suplementar',				enum:'SUPLEMENTAR', 			valor:qtdeSuplementar});
-		
-		if(qtde && qtdeEncalhe>0)
-			qtdes.push({tipo:'Devolução Encalhe',		enum:'DEVOLUCAO_ENCALHE',		valor:qtdeEncalhe});
-		
-		if(qtde && qtdeFornecedor>0)
-			qtdes.push({tipo:'Devolução Fornecedor',	enum:'DEVOLUCAO_FORNECEDOR', 	valor:qtdeFornecedor});
-		
-		if(qtdes.length == 1) {
-			lancamentoNovoController.tipoEstoqueSelecionado = qtdes[0].enum;;
-			$("#reparteProduto", lancamentoNovoController.workspace).text(qtdes[0].valor);
+	verificarTipoEstoque : function(estoques) {
+				
+		if(estoques.length == 1) {
+			lancamentoNovoController.tipoEstoqueSelecionado = estoques[0].nameEnum;;
+			$("#reparteProduto", lancamentoNovoController.workspace).text(estoques[0].qtde);
 		
 		} else  {
 			
 			$( "#selectTipoEstoque").clear();
 						
-			$.each(qtdes, function(index, item){
-				$( "#selectTipoEstoque").append('<option enum="'+item.enum+'" valor="'+item.valor+'">'+item.tipo+'</option>');
+			$.each(estoques, function(index, item){
+				$( "#selectTipoEstoque").append('<option enum="'+item.nameEnum+'" valor="'+item.qtde+'">'+item.desc+'</option>');
 			});
+			
+			lancamentoNovoController.atualizarQuantidade();
 			
 			$( "#dialog-tipo-estoque", this.workspace).dialog({
 				resizable: false,
 				height:160,
-				width:250,
+				width:330,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -676,6 +664,11 @@ var lancamentoNovoController = $.extend(true, {
 			});
 		}
 		
+	},
+	
+	atualizarQuantidade : function() {		
+		 var qtde = $( "#selectTipoEstoque :selected").attr('valor');
+		 $('#qtdeTipoDialog').val(qtde);
 	},
 	
 	calcularReparteAtual : function(idDiv){
