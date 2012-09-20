@@ -4,15 +4,21 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Representa as informações sobre proprietário
+ * Representa as informações sobre titularidade
  * da cota
  * 
  * @author francisco.garcia
  *
  */
-public class CotaProprietarioDTO implements Serializable{
+public class TitularidadeCotaDTO implements Serializable{
 
     private static final long serialVersionUID = 1L;
+    
+    
+    /**
+     * Identificador da titularidade
+     */
+    private Long id;
     
     /**
      * Identificador da Cota
@@ -35,17 +41,33 @@ public class CotaProprietarioDTO implements Serializable{
     private String nome;
     
     /**
-     * Documento de identificação di proprietário
+     * Documento de identificação do proprietário
      */
     private String documento;
  
-    public CotaProprietarioDTO(Long idCota, Date inicio, Date fim, String nome,
-            String documento) {
+    public TitularidadeCotaDTO(Long id, Long idCota, Date inicio, Date fim,
+            String nome, String documento) {
+
+        this.id = id;
         this.idCota = idCota;
         this.inicio = inicio;
         this.fim = fim;
         this.nome = nome;
         this.documento = documento;
+    }
+
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**

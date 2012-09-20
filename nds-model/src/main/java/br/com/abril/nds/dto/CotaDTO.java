@@ -105,8 +105,8 @@ public class CotaDTO implements Serializable {
 	private String natural;
 	
 	private String descricaoBox;
-		    	
-	private Collection<CotaProprietarioDTO> proprietarios = new ArrayList<CotaProprietarioDTO>();
+	
+	private Collection<TitularidadeCotaDTO> proprietarios = new ArrayList<TitularidadeCotaDTO>();
 	
 	private boolean alteracaoTitularidade;
 	
@@ -596,14 +596,14 @@ public class CotaDTO implements Serializable {
     /**
      * @return the proprietarios
      */
-    public Collection<CotaProprietarioDTO> getProprietarios() {
+    public Collection<TitularidadeCotaDTO> getProprietarios() {
         return proprietarios;
     }
 
     /**
      * @param proprietarios the proprietarios to set
      */
-    public void setProprietarios(Collection<CotaProprietarioDTO> proprietarios) {
+    public void setProprietarios(Collection<TitularidadeCotaDTO> proprietarios) {
         this.proprietarios = proprietarios;
     }
 
@@ -619,6 +619,29 @@ public class CotaDTO implements Serializable {
 	 */
 	public void setAlteracaoTitularidade(boolean isAlteracaoTitularidade) {
 		this.alteracaoTitularidade = isAlteracaoTitularidade;
+	}
+	
+	/**
+	 * Adiciona um proprietário a cota
+	 * 
+	 * @param proprietario proprietário para inclusão
+	 * 
+	 */
+	public void addProprietario(TitularidadeCotaDTO proprietario) {
+	    proprietarios.add(proprietario);
+	}
+	
+	/**
+	 * Adiciona um item de classificação à lista de classificação de faturamento
+	 * @param classificacao classificação para inclusão
+	 */
+	public void addItemClassificacaoFaturamento(ClassificacaoEspectativaFaturamento classificacao) {
+	    if (classificacao != null) {
+	        if (this.listaClassificacao == null) {
+	            this.listaClassificacao = new ArrayList<ItemDTO<String,String>>();
+	        }
+	        this.listaClassificacao.add(new ItemDTO<String, String>(classificacao.name(), classificacao.getDescricao()));
+	    }
 	}
 
 }

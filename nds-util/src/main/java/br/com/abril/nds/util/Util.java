@@ -357,5 +357,15 @@ public abstract class Util {
         }
         return value;
     }
+    
+    
+    /**
+     * Cria um identificador para o objeto 
+     * @param object objeto para criação do identificador
+     * @return identificador gerado
+     */
+    public static <T> Long generateObjectId(T object) {
+        return Long.valueOf(System.identityHashCode(object));
+    }
 
 }

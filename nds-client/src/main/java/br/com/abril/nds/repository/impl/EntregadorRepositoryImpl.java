@@ -6,16 +6,21 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -29,6 +34,8 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 @Repository
 public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador, Long> 
 									  implements EntregadorRepository {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(EntregadorRepositoryImpl.class);
 
 	/**
 	 * Construtor.
@@ -239,7 +246,17 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 
 		Query query = getSession().createQuery(hql.toString());
 
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(EnderecoAssociacaoDTO.class);
+		ResultTransformer resultTransformer = null; 
+        
+        try {
+            resultTransformer = new AliasToBeanConstructorResultTransformer(
+                    EnderecoAssociacaoDTO.class.getConstructor(Long.class, Endereco.class, boolean.class, TipoEndereco.class));
+        } catch (Exception e) {
+            String message = "Erro criando result transformer para classe: "
+                    + EnderecoAssociacaoDTO.class.getName();
+            LOG.error(message, e);
+            throw new RuntimeException(message, e);
+        }
 		
 		query.setResultTransformer(resultTransformer);
 		
