@@ -14,6 +14,7 @@ import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
 import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -220,6 +221,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setCodigo(input.getCodigoPublicacao());
 		produto.setAtivo(input.isStatus());
 		produto.setDataDesativacao(input.getDataDesativacao());
+		produto.setFormaComercializacao(
+				(input.getFormaComercializacao().equals("CON") 
+						? FormaComercializacao.CONSIGNADO 
+						: FormaComercializacao.CONTA_FIRME
+				) 
+		);
 
 		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
 		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
