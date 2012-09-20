@@ -11,10 +11,13 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -261,13 +264,92 @@ public interface CotaService {
 	 */
 	CotaDTO criarCotaTitularidade(CotaDTO cotaDTO);
 
-	byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
+	/**
+     * Obtém o histórico de titularidade da cota de acordo com o identificador
+     * da cota e o identificador do histórico
+     * @param idCota identificador da cota
+     * @param idHistorico identificador da cota
+     * @return {@link CotaDTO} com as informações do histórico de titularidade da cota
+     */
+    CotaDTO obterHistoricoTitularidade(Long idCota, Long idHistorico);
+    
+    /**
+     * Obtém a lista de endereços associados ao histórico de titularidade 
+     * da cota
+     * @param idCota identificador da cota
+     * @param idHistorico identificador do histórico de titularidade
+     * @return {@link List<EnderecoAssociacaoDTO>} com os endereços associados ao 
+     * histórico de titularidade da cota
+     */
+    List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(Long idCota, Long idHistorico);
+
+    /**
+     * Obtém a lista de telefones associados ao histórico de titularidade 
+     * da cota
+     * @param idCota identificador da cota
+     * @param idHistorico identificador do histórico de titularidade
+     * @return {@link List<TelefoneAssociacaoDTO>} com os telefones associados ao 
+     * histórico de titularidade da cota
+     */
+    List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico);
+
+    /**
+     * Obtém a lista de fornecedores associados ao histórico de titularidade da
+     * cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return Lista de fornecedores associados ao histórico de titularidade da
+     *         cota
+     */
+    List<FornecedorDTO> obterFornecedoresHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+    
+    /**
+     * Recupera os descontos de produto do histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return Lista de {@link TipoDescontoProdutoDTO} com as informações de
+     *         desconto associados ao histórico de titularidade da cota
+     */
+    List<TipoDescontoProdutoDTO> obterDescontosProdutoHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+    
+    /**
+     * Recupera os descontos de cota do histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico de titularidade
+     * @return Lista de {@link TipoDescontoCotaDTO} com as informações de
+     *         desconto associados ao histórico de titularidade da cota
+     */
+    List<TipoDescontoCotaDTO> obterDescontosCotaHistoricoTitularidadeCota(Long idCota, Long idHistorico);
+
+    byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception;
 
 	void atualizaTermoAdesao(String numCota, DescricaoTipoEntrega descricaoTipoEntrega) throws FileNotFoundException, IOException ;
 	
 	byte[] getDocumentoTermoAdesao(Integer numeroCota, BigDecimal valorDebito, BigDecimal percentualDebito) throws Exception;
 	
 	DistribuicaoDTO carregarValoresEntregaBanca(Integer numCota);
+
+
+    /**
+     * Obtém as informações de distribuição do histórico de titularidade da cota
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico
+     * @return dto com as informações de distribuição do histórico de
+     *         titularidade da cota
+     */
+	DistribuicaoDTO obterDistribuicaoHistoricoTitularidade(Long idCota, Long idHistorico);
 
 	void cancelarChamadao(Integer numeroCota);
 }

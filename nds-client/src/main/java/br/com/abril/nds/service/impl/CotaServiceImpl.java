@@ -17,21 +17,29 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.jsoup.helper.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TermoAdesaoDTO;
+import br.com.abril.nds.dto.TipoDescontoCotaDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
+import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -70,6 +78,9 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -339,7 +350,9 @@ public class CotaServiceImpl implements CotaService {
 
 		validarEnderecoPrincipalPorCota(listaEnderecoAssociacao, cota);
 		
-		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, cota.getPessoa());
+		Pessoa pessoa = cota.getPessoa();
+        
+		enderecoService.cadastrarEnderecos(listaEnderecoAssociacao, pessoa);
 		
 		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacao) {
 
@@ -352,7 +365,18 @@ public class CotaServiceImpl implements CotaService {
 				enderecoCota.setCota(cota);
 			}
 
-			enderecoCota.setEndereco(enderecoAssociacao.getEndereco());
+			EnderecoDTO enderecoDTO = enderecoAssociacao.getEndereco();
+			
+            Endereco endereco = new Endereco(enderecoDTO.getCodigoBairro(),
+                    enderecoDTO.getBairro(), enderecoDTO.getCep(),
+                    enderecoDTO.getCodigoCidadeIBGE(), enderecoDTO.getCidade(),
+                    enderecoDTO.getComplemento(),
+                    enderecoDTO.getTipoLogradouro(),
+                    enderecoDTO.getLogradouro(), enderecoDTO.getNumero(),
+                    enderecoDTO.getUf(), enderecoDTO.getCodigoUf(), pessoa);
+            endereco.setId(enderecoDTO.getId());
+			
+            enderecoCota.setEndereco(endereco);
 
 			enderecoCota.setPrincipal(enderecoAssociacao.isEnderecoPrincipal());
 
@@ -365,7 +389,7 @@ public class CotaServiceImpl implements CotaService {
 	private void removerEnderecosCota(Cota cota,
 									  List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
-		List<Endereco> listaEndereco = new ArrayList<Endereco>();
+		List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
 		
 		List<Long> idsEndereco = new ArrayList<Long>();
 
@@ -450,7 +474,9 @@ public class CotaServiceImpl implements CotaService {
 		List<Telefone> listaTelefone = new ArrayList<Telefone>();
 		
 		for (TelefoneAssociacaoDTO telefoneCota : listaTelefonesAdicionar){
-			listaTelefone.add(telefoneCota.getTelefone());
+		    TelefoneDTO dto = telefoneCota.getTelefone();
+		    Telefone telefone = new Telefone(dto.getId(), dto.getNumero(), dto.getRamal(), dto.getDdd(), cota.getPessoa());
+            listaTelefone.add(telefone);
 		}
 		
 		cota.getPessoa().setTelefones(listaTelefone);
@@ -461,7 +487,9 @@ public class CotaServiceImpl implements CotaService {
 
 	private void salvarTelefonesCota(Cota cota, List<TelefoneAssociacaoDTO> listaTelefonesCota) {
 		
-		this.telefoneService.cadastrarTelefone(listaTelefonesCota, cota.getPessoa());
+		Pessoa pessoa = cota.getPessoa();
+        
+		this.telefoneService.cadastrarTelefone(listaTelefonesCota, pessoa);
 		
 		if (listaTelefonesCota != null){
 			
@@ -469,17 +497,19 @@ public class CotaServiceImpl implements CotaService {
 					
 				TelefoneCota telefoneCota = null;
 				
-				if(dto.getTelefone()!= null && dto.getTelefone().getId()!= null){
-					telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(dto.getTelefone().getId(), cota.getId());
+				TelefoneDTO telefoneDTO = dto.getTelefone();
+				
+                if(telefoneDTO!= null && telefoneDTO.getId()!= null){
+					telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(telefoneDTO.getId(), cota.getId());
 				}
 				
 				if(telefoneCota == null){
 					telefoneCota = new TelefoneCota();
 					telefoneCota.setCota(cota);
 				}
-			
+				Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
 				telefoneCota.setPrincipal(dto.isPrincipal());
-				telefoneCota.setTelefone(dto.getTelefone());
+				telefoneCota.setTelefone(telefone);
 				telefoneCota.setTipoTelefone(dto.getTipoTelefone());
 				
 				this.telefoneCotaRepository.merge(telefoneCota);
@@ -822,6 +852,13 @@ public class CotaServiceImpl implements CotaService {
 		
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
+		
+        for (HistoricoTitularidadeCota historico : cota.getTitularesCota()) {
+            cotaDTO.addProprietario(new TitularidadeCotaDTO(historico.getId(),
+                    cota.getId(), historico.getInicio(), historico.getFim(),
+                    historico.getPessoa().getNome(), historico.getPessoa()
+                            .getDocumento()));
+        }
 		
 		return cotaDTO;
 	}
@@ -1965,7 +2002,7 @@ public class CotaServiceImpl implements CotaService {
 				
 				EnderecoAssociacaoDTO enderecoAssociacao = new EnderecoAssociacaoDTO();
 				
-				enderecoAssociacao.setEndereco(enderecoCota.getEndereco());
+				enderecoAssociacao.setEndereco(EnderecoDTO.fromEndereco(enderecoCota.getEndereco()));
 				enderecoAssociacao.setEnderecoPrincipal(enderecoCota.isPrincipal());
 				enderecoAssociacao.setTipoEndereco(enderecoCota.getTipoEndereco());
 				
@@ -1975,4 +2012,109 @@ public class CotaServiceImpl implements CotaService {
 		
 		return enderecoAssociacaoCadastrado;
 	}
+
+	/**
+    * {@inheritDoc}
+    */
+	@Override
+    @Transactional(readOnly = true)
+    public CotaDTO obterHistoricoTitularidade(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        CotaDTO dto = HistoricoTitularidadeCotaDTOAssembler.toCotaDTO(historico);
+        return dto;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<EnderecoAssociacaoDTO> obterEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<EnderecoAssociacaoDTO>(HistoricoTitularidadeCotaDTOAssembler.toEnderecoAssociacaoDTOCollection(historico.getEnderecos()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<TelefoneAssociacaoDTO> obterTelefonesHistoricoTitularidade(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<TelefoneAssociacaoDTO>(HistoricoTitularidadeCotaDTOAssembler.toTelefoneAssociacaoDTOCollection(historico.getTelefones()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional(readOnly = true)
+    public List<FornecedorDTO> obterFornecedoresHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return new ArrayList<FornecedorDTO>(HistoricoTitularidadeCotaDTOAssembler.toFornecedorDTOCollection(historico.getFornecedores()));
+    }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<TipoDescontoProdutoDTO> obterDescontosProdutoHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+	    Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        List<TipoDescontoProdutoDTO> dtos = new ArrayList<TipoDescontoProdutoDTO>();
+        for (HistoricoTitularidadeCotaDescontoProduto desconto : historico.getDescontosProduto()) {
+            dtos.add(new TipoDescontoProdutoDTO(desconto.getCodigo(), desconto
+                    .getNome(), desconto.getNumeroEdicao(), desconto
+                    .getDesconto(), desconto.getAtualizacao()));
+        }
+	    return dtos;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<TipoDescontoCotaDTO> obterDescontosCotaHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        List<TipoDescontoCotaDTO> dtos = new ArrayList<TipoDescontoCotaDTO>();
+        for (HistoricoTitularidadeCotaDescontoCota desconto : historico.getDescontosCota()) {
+            dtos.add(new TipoDescontoCotaDTO(desconto.getDesconto(), desconto
+                    .getFornecedor(), desconto.getAtualizacao(), desconto
+                    .getTipoDesconto().getDescricao()));
+        }
+        return dtos;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public DistribuicaoDTO obterDistribuicaoHistoricoTitularidade(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+        
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        HistoricoTitularidadeCotaDistribuicao distribuicao = historico.getDistribuicao();
+        if (distribuicao != null) {
+            distribuicao.setHistoricoTitularidadeCota(historico);
+            return HistoricoTitularidadeCotaDTOAssembler.toDistribuicaoDTO(distribuicao);
+        }
+        return new DistribuicaoDTO(); 
+    }
+
 }
+

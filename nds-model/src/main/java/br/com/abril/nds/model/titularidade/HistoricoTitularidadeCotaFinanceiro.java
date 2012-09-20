@@ -2,7 +2,9 @@ package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +18,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -69,6 +73,32 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     @OneToMany(cascade = {CascadeType.ALL})
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_FINANCEIRO_ID")
     private Collection<HistoricoTitularidadeCotaFormaPagamento> formasPagamento;
+    
+    /**
+     * Flag indicando se a cota possui contrato
+     */
+    @Column(name = "POSSUI_CONTRATO")
+    private boolean possuiContrato;
+    
+    /**
+     * Data de início do contrato
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DATA_INICIO_CONTRATO")
+    private Date dataInicioContrato;
+    
+    /**
+     * Data de término do contrato
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DATA_TERMINO_CONTRATO")
+    private Date dataTerminoContrato;
+    
+    /**
+     * Flag indicando se o contrato foi recebido
+     */
+    @Column(name = "CONTRATO_RECEBIDO")
+    private boolean contratoRecebido;
 
     /**
      * @return the id
@@ -153,6 +183,75 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     public void setFormasPagamento(
             Collection<HistoricoTitularidadeCotaFormaPagamento> formasPagamento) {
         this.formasPagamento = formasPagamento;
+    }
+
+    /**
+     * @return the possuiContrato
+     */
+    public boolean isPossuiContrato() {
+        return possuiContrato;
+    }
+
+    /**
+     * @param possuiContrato the possuiContrato to set
+     */
+    public void setPossuiContrato(boolean possuiContrato) {
+        this.possuiContrato = possuiContrato;
+    }
+
+    /**
+     * @return the dataInicioContrato
+     */
+    public Date getDataInicioContrato() {
+        return dataInicioContrato;
+    }
+
+    /**
+     * @param dataInicioContrato the dataInicioContrato to set
+     */
+    public void setDataInicioContrato(Date dataInicioContrato) {
+        this.dataInicioContrato = dataInicioContrato;
+    }
+
+    /**
+     * @return the dataTerminoContrato
+     */
+    public Date getDataTerminoContrato() {
+        return dataTerminoContrato;
+    }
+
+    /**
+     * @param dataTerminoContrato the dataTerminoContrato to set
+     */
+    public void setDataTerminoContrato(Date dataTerminoContrato) {
+        this.dataTerminoContrato = dataTerminoContrato;
+    }
+
+    /**
+     * @return the contratoRecebido
+     */
+    public boolean isContratoRecebido() {
+        return contratoRecebido;
+    }
+
+    /**
+     * @param contratoRecebido the contratoRecebido to set
+     */
+    public void setContratoRecebido(boolean contratoRecebido) {
+        this.contratoRecebido = contratoRecebido;
+    }
+
+    /**
+     * Adiciona uma nova forma de pagamento ao histórico de titularidade da cota
+     * 
+     * @param formaPagto
+     *            forma de pagamento pára inclusão
+     */
+    public void addFormaPagamento(HistoricoTitularidadeCotaFormaPagamento formaPagto) {
+        if(formasPagamento == null) {
+            formasPagamento = new ArrayList<HistoricoTitularidadeCotaFormaPagamento>();
+        }
+        formasPagamento.add(formaPagto);
     }
     
 

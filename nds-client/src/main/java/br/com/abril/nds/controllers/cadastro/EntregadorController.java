@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.ProcuracaoCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -38,6 +39,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
@@ -955,7 +957,9 @@ public class EntregadorController {
 				
 				TelefoneEntregador telefoneEntregador = new TelefoneEntregador();
 				telefoneEntregador.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
-				telefoneEntregador.setTelefone(telefoneAssociacaoDTO.getTelefone());
+				TelefoneDTO dto = telefoneAssociacaoDTO.getTelefone();
+				Telefone telefone = new Telefone(dto.getId(), dto.getNumero(), dto.getRamal(), dto.getDdd(), null);
+                telefoneEntregador.setTelefone(telefone);
 				telefoneEntregador.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
 
 				if (key > 0) {

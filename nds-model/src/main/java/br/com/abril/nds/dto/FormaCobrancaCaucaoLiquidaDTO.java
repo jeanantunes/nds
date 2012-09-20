@@ -1,5 +1,8 @@
 package br.com.abril.nds.dto;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -41,6 +44,8 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	BigDecimal descontoCotaDesconto;
 	
 	BigDecimal valor;
+	
+	private Collection<CaucaoLiquidaDTO> caucoes;
 
 	public FormaCobrancaCaucaoLiquidaDTO(){
 		
@@ -277,5 +282,26 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 
 	public void setDescontoCotaDesconto(BigDecimal descontoCotaDesconto) {
 		this.descontoCotaDesconto = descontoCotaDesconto;
+	}
+	
+	/**
+     * @return the caucoes
+     */
+    public Collection<CaucaoLiquidaDTO> getCaucoes() {
+        return caucoes;
+    }
+
+    /**
+     * @param caucoes the caucoes to set
+     */
+    public void setCaucoes(Collection<CaucaoLiquidaDTO> caucoes) {
+        this.caucoes = caucoes;
+    }
+
+    public void addCaucaoLiquida(Date atualizacao, BigDecimal valor) {
+	    if (this.caucoes == null) {
+	        this.caucoes = new ArrayList<CaucaoLiquidaDTO>();
+	    }
+	    this.caucoes.add(new CaucaoLiquidaDTO(valor, atualizacao));
 	}
 }

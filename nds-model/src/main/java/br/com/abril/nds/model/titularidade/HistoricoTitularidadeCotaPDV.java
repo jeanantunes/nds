@@ -2,11 +2,13 @@ package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -15,16 +17,17 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
@@ -115,6 +118,15 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
      */
     @Column(name = "DENTRO_OUTRO_ESTABELECIMENTO")
     private boolean dentroOutroEstabelecimento;
+    
+    /**
+     *  Tipo de estabelecimento ao qual o PDV está inserido
+     */
+    @Embedded
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_TIPO_ESTABELECIMENTO_PDV")),
+            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_TIPO_ESTABELECIMENTO_PDV")) })
+    private HistoricoTitularidadeCotaCodigoDescricao tipoEstabelecimentoPDV;
 
     /**
      * Flag indicando se o pdv possui arrendatário
@@ -158,8 +170,17 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
      * Licença municipal do PDV
      */
     @Embedded
-    private LicencaMunicipal licencaMunicipal;
-
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_TIPO_LICENCA_MUNICIPAL")),
+            @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_TIPO_LICENCA_MUNICIPAL")) })
+    private HistoricoTitularidadeCotaCodigoDescricao tipoLicencaMunicipal;
+    
+    @Column(name = "NUMERO_LICENCA_MUNICIPAL")
+    private String numeroLicencaMunicipal;
+    
+    @Column(name = "NOME_LICENCA_LICENCA_MUNICIPAL")
+    private String nomeLicencaMunicipal;
+    
     /**
      * Características do PDV
      */
@@ -219,6 +240,17 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
             @AttributeOverride(name = "codigo", column = @Column(name = "CODIGO_GERADOR_FLUXO")),
             @AttributeOverride(name = "descricao", column = @Column(name = "DESCRICAO_GERADOR_FLUXO")) })
     private Collection<HistoricoTitularidadeCotaCodigoDescricao> geradoresFluxoSecundarios;
+    
+    @Column(name = "EXPOSITOR")    
+    private Boolean expositor;
+        
+    @Column(name = "TIPO_EXPOSITOR")
+    private String tipoExpositor;
+    
+    @Basic(fetch = FetchType.LAZY)
+    @Lob
+    @Column(name = "IMAGEM")
+    private byte[] imagem;
 
     /**
      * @return the id
@@ -402,6 +434,21 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
     public void setDentroOutroEstabelecimento(boolean dentroOutroEstabelecimento) {
         this.dentroOutroEstabelecimento = dentroOutroEstabelecimento;
     }
+    
+    /**
+     * @return the tipoEstabelecimentoPDV
+     */
+    public HistoricoTitularidadeCotaCodigoDescricao getTipoEstabelecimentoPDV() {
+        return tipoEstabelecimentoPDV;
+    }
+
+    /**
+     * @param tipoEstabelecimentoPDV the tipoEstabelecimentoPDV to set
+     */
+    public void setTipoEstabelecimentoPDV(
+            HistoricoTitularidadeCotaCodigoDescricao tipoEstabelecimentoPDV) {
+        this.tipoEstabelecimentoPDV = tipoEstabelecimentoPDV;
+    }
 
     /**
      * @return the arrendatario
@@ -495,18 +542,46 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
     }
 
     /**
-     * @return the licencaMunicipal
+     * @return the tipoLicencaMunicipal
      */
-    public LicencaMunicipal getLicencaMunicipal() {
-        return licencaMunicipal;
+    public HistoricoTitularidadeCotaCodigoDescricao getTipoLicencaMunicipal() {
+        return tipoLicencaMunicipal;
     }
 
     /**
-     * @param licencaMunicipal
-     *            the licencaMunicipal to set
+     * @param tipoLicencaMunicipal the tipoLicencaMunicipal to set
      */
-    public void setLicencaMunicipal(LicencaMunicipal licencaMunicipal) {
-        this.licencaMunicipal = licencaMunicipal;
+    public void setTipoLicencaMunicipal(
+            HistoricoTitularidadeCotaCodigoDescricao tipoLicencaMunicipal) {
+        this.tipoLicencaMunicipal = tipoLicencaMunicipal;
+    }
+
+    /**
+     * @return the numeroLicencaMunicipal
+     */
+    public String getNumeroLicencaMunicipal() {
+        return numeroLicencaMunicipal;
+    }
+
+    /**
+     * @param numeroLicencaMunicipal the numeroLicencaMunicipal to set
+     */
+    public void setNumeroLicencaMunicipal(String numeroLicencaMunicipal) {
+        this.numeroLicencaMunicipal = numeroLicencaMunicipal;
+    }
+
+    /**
+     * @return the nomeLicencaMunicipal
+     */
+    public String getNomeLicencaMunicipal() {
+        return nomeLicencaMunicipal;
+    }
+
+    /**
+     * @param nomeLicencaMunicipal the nomeLicencaMunicipal to set
+     */
+    public void setNomeLicencaMunicipal(String nomeLicencaMunicipal) {
+        this.nomeLicencaMunicipal = nomeLicencaMunicipal;
     }
 
     /**
@@ -618,5 +693,179 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
             Collection<HistoricoTitularidadeCotaCodigoDescricao> geradoresFluxoSecundarios) {
         this.geradoresFluxoSecundarios = geradoresFluxoSecundarios;
     }
+    
+    /**
+     * @return the expositor
+     */
+    public Boolean getExpositor() {
+        return expositor;
+    }
 
+    /**
+     * @param expositor the expositor to set
+     */
+    public void setExpositor(Boolean expositor) {
+        this.expositor = expositor;
+    }
+
+    /**
+     * @return the tipoExpositor
+     */
+    public String getTipoExpositor() {
+        return tipoExpositor;
+    }
+
+    /**
+     * @param tipoExpositor the tipoExpositor to set
+     */
+    public void setTipoExpositor(String tipoExpositor) {
+        this.tipoExpositor = tipoExpositor;
+    }
+    
+    /**
+     * @return the imagem
+     */
+    public byte[] getImagem() {
+        return imagem;
+    }
+
+    /**
+     * @param imagem the imagem to set
+     */
+    public void setImagem(byte[] imagem) {
+        this.imagem = imagem;
+    }
+
+    /**
+     * Adiciona um período de funcionamento ao PDV
+     * 
+     * @param periodo
+     *            período de funcionamento para inclusão
+     */
+    public void addPeriodoFuncionamento(
+            HistoricoTitularidadeCotaFuncionamentoPDV periodo) {
+        if (periodos == null) {
+            periodos = new ArrayList<HistoricoTitularidadeCotaFuncionamentoPDV>();
+        }
+        periodos.add(periodo);
+    }
+    
+    /**
+     * Recupera o endereço principal do PDV
+     * 
+     * @return endereço principal do PDV ou null caso não possua endereços
+     */
+    public HistoricoTitularidadeCotaEndereco getEnderecoPrincipal() {
+        for (HistoricoTitularidadeCotaEndereco endereco : enderecos) {
+            if (endereco.isPrincipal()) {
+                return endereco;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Recupera o telefone principal do PDV
+     * 
+     * @return telefone principal do PDV ou null caso não possua telefones
+     */
+    public HistoricoTitularidadeCotaTelefone getTelefonePrincipal() {
+        for (HistoricoTitularidadeCotaTelefone telefone : telefones) {
+            if (telefone.isPrincipal()) {
+                return telefone;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Adiciona um endereço ao PDV
+     * 
+     * @param endereco
+     *            endereço para inclusão
+     */
+    public void addEndereco(HistoricoTitularidadeCotaEndereco endereco) {
+        if (enderecos == null) {
+            enderecos = new ArrayList<HistoricoTitularidadeCotaEndereco>();
+        }
+        enderecos.add(endereco);
+    }
+
+    /**
+     * Adiciona um telefone ao PDV
+     * 
+     * @param telefone
+     *            para inclusão
+     */
+    public void addTelefone(HistoricoTitularidadeCotaTelefone telefone) {
+        if (telefones == null) {
+            telefones = new ArrayList<HistoricoTitularidadeCotaTelefone>();
+        }
+        telefones.add(telefone);
+        
+    }
+
+    /**
+     * Adiciona um gerador de fluxo secundario ao PDV
+     * 
+     * @param geradorFluxoSecundario
+     *            gerador de fluxo secundario para inclusão
+     */
+    public void addGeradorFluxoSecundario(HistoricoTitularidadeCotaCodigoDescricao geradorFluxoSecundario) {
+        if(geradoresFluxoSecundarios == null) {
+            geradoresFluxoSecundarios = new ArrayList<HistoricoTitularidadeCotaCodigoDescricao>();
+        }
+        geradoresFluxoSecundarios.add(geradorFluxoSecundario);
+    }
+
+    
+    /**
+     * Adiciona o material promocional ao PDV
+     * 
+     * @param material
+     *            material promocional para inclusão
+     */
+    public void addMaterialPromocional(HistoricoTitularidadeCotaCodigoDescricao material) {
+        if (materiais == null) {
+            materiais = new ArrayList<HistoricoTitularidadeCotaCodigoDescricao>();
+        }
+        materiais.add(material);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        HistoricoTitularidadeCotaPDV other = (HistoricoTitularidadeCotaPDV) obj;
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        return true;
+    }
+   
 }

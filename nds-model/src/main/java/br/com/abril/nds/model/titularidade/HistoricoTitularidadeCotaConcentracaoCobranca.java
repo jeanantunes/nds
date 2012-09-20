@@ -2,6 +2,7 @@ package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -116,6 +117,31 @@ public class HistoricoTitularidadeCotaConcentracaoCobranca implements Serializab
      */
     public void setDiasMes(Collection<Integer> diasMes) {
         this.diasMes = diasMes;
+    }
+
+    /**
+     * Adiciona um novo dia da semana à concentração de cobrança
+     * 
+     * @param diaSemana
+     *            dia da semana para inclusão
+     */
+    public void addDiaSemana(DiaSemana diaSemana) {
+        if (diasSemana == null) {
+            diasSemana = new HashSet<DiaSemana>();
+        }
+        diasSemana.add(diaSemana);
+    }
+
+    /**
+     * Adiciona um novo dia do mês à concentração de cobrança
+     * 
+     * @param dia dia do mes para inclusão
+     */
+    public void addDiaMes(Integer dia) {
+        if (diasMes == null) {
+            diasMes = new HashSet<Integer>();
+        }
+        diasMes.add(dia);
     }
 
 }

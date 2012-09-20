@@ -81,7 +81,7 @@ public class EMS0133MessageProcessor extends AbstractRepository implements Messa
 				ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.RELACIONAMENTO, "Nenhum resultado encontrado para Data de Operação: "+ distribuidor.getDataOperacao());
 			}
 			
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/"+sdf.format(data)+".drr"));	
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/RECOLHIMENTO.NEW"));	
 			
 			
 			
@@ -92,11 +92,12 @@ public class EMS0133MessageProcessor extends AbstractRepository implements Messa
 				for(Fornecedor fornecedor : lancamento.getProdutoEdicao().getProduto().getFornecedores()){			
 						output.setCodigoFornecedorProduto(fornecedor.getCodigoInterface());
 						output.setCodigoProduto(lancamento.getProdutoEdicao().getProduto().getCodigo());
+						output.setNumeroEdicao(lancamento.getProdutoEdicao().getNumeroEdicao());						
 						output.setContextoProduto(lancamento.getProdutoEdicao().getProduto().getCodigoContexto());
 						output.setDataGeracaoArquivo(data);
 						output.setHoraGeracaoArquivo(data);
 						output.setDataRecolhimento(lancamento.getDataRecolhimentoDistribuidor());
-						output.setCodigoDistribuidor(distribuidor.getCodigo());
+						output.setCodigoDistribuidor(distribuidor.getCodigoDistribuidorDinap());
 						
 						print.println(fixedFormatManager.export(output));
 				}

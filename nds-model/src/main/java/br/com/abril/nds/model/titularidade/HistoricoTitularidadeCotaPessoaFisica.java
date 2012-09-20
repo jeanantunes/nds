@@ -20,7 +20,7 @@ import br.com.abril.nds.model.cadastro.Sexo;
  * 
  */
 @Embeddable
-public class HistoricoTitularidadeCotaPessoaFisica implements Serializable {
+public class HistoricoTitularidadeCotaPessoaFisica implements HistoricoTitularidadeCotaPessoa, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,6 +92,26 @@ public class HistoricoTitularidadeCotaPessoaFisica implements Serializable {
      */
     @Column(name = "APELIDO", length = 25)
     private String apelido;
+    
+    public HistoricoTitularidadeCotaPessoaFisica() {
+    }    
+
+    public HistoricoTitularidadeCotaPessoaFisica(String nome, String cpf,
+            String rg, String orgaoEmissor, String ufOrgaoEmissor,
+            Date dataNascimento, EstadoCivil estadoCivil, Sexo sexo,
+            String nacionalidade, String natural, String apelido) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.rg = rg;
+        this.orgaoEmissor = orgaoEmissor;
+        this.ufOrgaoEmissor = ufOrgaoEmissor;
+        this.dataNascimento = dataNascimento;
+        this.estadoCivil = estadoCivil;
+        this.sexo = sexo;
+        this.nacionalidade = nacionalidade;
+        this.natural = natural;
+        this.apelido = apelido;
+    }
 
     /**
      * @return the nome
@@ -256,6 +276,11 @@ public class HistoricoTitularidadeCotaPessoaFisica implements Serializable {
      */
     public void setApelido(String apelido) {
         this.apelido = apelido;
+    }
+
+    @Override
+    public String getDocumento() {
+        return cpf;
     }
 
 }

@@ -28,6 +28,15 @@ public class HistoricoTitularidadeCotaFiadorGarantia implements Serializable {
      */
     @Column(name = "GARANTIA_DESCRICAO")
     private String descricao;
+    
+    public HistoricoTitularidadeCotaFiadorGarantia() {
+    }
+    
+    public HistoricoTitularidadeCotaFiadorGarantia(BigDecimal valor,
+            String descricao) {
+        this.valor = valor;
+        this.descricao = descricao;
+    }
 
     /**
      * @return the valor

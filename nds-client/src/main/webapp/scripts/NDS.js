@@ -213,12 +213,11 @@ function serializeArrayToPost(listaName, lista, obj) {
  * @returns {Array} 
  */
 function toFlexiGridObject(list){
-	
-	var rows = new Array();
-	for (var index in list) {		
-		rows.push({"id" : rows.length,	"cell" : list[index]});		
+    var rows = new Array();
+    for (i = 0; i < list.length; i++ ) {
+        rows.push({"id" : rows.length,	"cell" : list[i]});
 	}
-	return rows;
+    return rows;
 }
 
 
