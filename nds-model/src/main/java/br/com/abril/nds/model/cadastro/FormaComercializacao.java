@@ -28,9 +28,4 @@ public enum FormaComercializacao {
 		return value;
 	}
 	
-	@Override
-	public String toString() {
-		return this.value;
-	}
-	
 }
