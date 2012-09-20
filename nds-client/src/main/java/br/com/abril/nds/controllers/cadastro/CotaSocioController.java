@@ -9,6 +9,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.service.SocioCotaService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -133,19 +134,28 @@ public class CotaSocioController {
 	}
 	
 	@Post
-	public void carregarSociosCota(Long idCota){
+	public void carregarSociosCota(Long idCota, ModoTela modoTela, Long idHistorico){
 		
-		List<SocioCota> sociosCota = this.socioCotaService.obterSociosCota(idCota);
-		
-		this.result.use(Results.json()).from(sociosCota, "result").exclude("cota").recursive().serialize();		
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        List<SocioCota> sociosCota = this.socioCotaService.obterSociosCota(idCota);
+	        this.result.use(Results.json()).from(sociosCota, "result").exclude("cota").recursive().serialize();		
+	    } else {
+	        List<HistoricoTitularidadeCotaSocio> socios = socioCotaService.obterSociosHistoricoTitularidadeCota(idCota, idHistorico);
+	        result.use(Results.json()).from(socios, "result").recursive().serialize();
+	    }
+	    
 	}
 	
 	@Post
-	public void carregarSocioPorId(Long idSocioCota) {
+	public void carregarSocioPorId(Long idSocioCota, ModoTela modoTela) {
 		
-		SocioCota socioCota = this.socioCotaService.obterSocioPorId(idSocioCota);
-		
-		this.result.use(Results.json()).from(socioCota, "result").exclude("cota").recursive().serialize();	
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		    SocioCota socioCota = this.socioCotaService.obterSocioPorId(idSocioCota);
+		    this.result.use(Results.json()).from(socioCota, "result").exclude("cota").recursive().serialize();	
+		} else {
+		    HistoricoTitularidadeCotaSocio socio = socioCotaService.obterSocioHistoricoTitularidadeCota(idSocioCota);
+		    this.result.use(Results.json()).from(socio, "result").recursive().serialize();   
+		}
 	}
 	
 	@Post

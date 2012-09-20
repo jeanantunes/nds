@@ -14,7 +14,7 @@ public class TelefoneAssociacaoDTO implements Serializable {
 	
 	private Long id;
 	
-	private Telefone telefone;
+	private TelefoneDTO telefone;
 	
 	private TipoTelefone tipoTelefone;
 	
@@ -29,21 +29,27 @@ public class TelefoneAssociacaoDTO implements Serializable {
 		if (tipoTelefone != null){
 			
 			this.principal = principal;
-			this.telefone = telefone;
+			this.telefone = TelefoneDTO.fromTelefone(telefone);
 			this.tipoTelefone = tipoTelefone;
 			this.referencia = telefone.getId().intValue();
 		} else {
 			
-			this.telefone = telefonePessoa;
+			this.telefone = TelefoneDTO.fromTelefone(telefonePessoa);
 			this.referencia = telefonePessoa.getId().intValue();
 		}
 	}
+	
+    public TelefoneAssociacaoDTO(Integer referencia, Telefone telefone, boolean principal,
+            TipoTelefone tipoTelefone) {
+        this(principal, telefone, tipoTelefone, null);
+        this.referencia = referencia;
+    }
 
-	public Telefone getTelefone() {
+	public TelefoneDTO getTelefone() {
 		return telefone;
 	}
 
-	public void setTelefone(Telefone telefone) {
+	public void setTelefone(TelefoneDTO telefone) {
 		this.telefone = telefone;
 	}
 

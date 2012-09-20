@@ -112,8 +112,31 @@ public class Endereco implements Serializable, Cloneable {
 	@ManyToOne
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
+	
+	public Endereco() {
+	}
 
-	public Long getId() {
+	public Endereco(Integer codigoBairro, String bairro, String cep,
+            Integer codigoCidadeIBGE, String cidade, String complemento,
+            String tipoLogradouro, String logradouro, String numero, String uf,
+            Integer codigoUf, Pessoa pessoa) {
+        this.codigoBairro = codigoBairro;
+        this.bairro = bairro;
+        this.cep = cep;
+        this.codigoCidadeIBGE = codigoCidadeIBGE;
+        this.cidade = cidade;
+        this.complemento = complemento;
+        this.tipoLogradouro = tipoLogradouro;
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.uf = uf;
+        this.codigoUf = codigoUf;
+        this.pessoa = pessoa;
+    }
+
+
+
+    public Long getId() {
 		return id;
 	}
 

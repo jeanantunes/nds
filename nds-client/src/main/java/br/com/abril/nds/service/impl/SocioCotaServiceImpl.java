@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.jsoup.helper.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,8 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
@@ -143,5 +147,29 @@ public class SocioCotaServiceImpl implements SocioCotaService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Deve ser informado ao menos 1 sócio principal.");
 		}
-	}	
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<HistoricoTitularidadeCotaSocio> obterSociosHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
+
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        return historico.getSocios() == null ? new ArrayList<HistoricoTitularidadeCotaSocio>()
+                : new ArrayList<HistoricoTitularidadeCotaSocio>(historico.getSocios());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public HistoricoTitularidadeCotaSocio obterSocioHistoricoTitularidadeCota(Long idSocioCota) {
+        Validate.notNull(idSocioCota, "Identificador do sócio não deve ser nulo");
+        return cotaRepository.obterSocioHistoricoTitularidade(idSocioCota);
+    }
 }

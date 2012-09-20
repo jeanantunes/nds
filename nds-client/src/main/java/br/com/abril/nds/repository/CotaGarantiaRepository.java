@@ -53,4 +53,5 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	public abstract Cheque getCheque(long idCheque);
 
 	CotaGarantiaFiador obterCotaGarantiaFiadorPorIdFiador(Long idFiador);
+
 }
