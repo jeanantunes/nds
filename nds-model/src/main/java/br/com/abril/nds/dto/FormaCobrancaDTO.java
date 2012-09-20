@@ -14,7 +14,7 @@ public class FormaCobrancaDTO {
 	
 	//DADOS DO GRID
 	String fornecedor;
-	String concentracaoPagto;
+	String concentracaoPagto = "";
 	String tipoPagto;
 	String detalhesTipoPagto = "";
 	
