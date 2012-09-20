@@ -143,7 +143,6 @@ var confirmaExpedicaoController = $.extend(true, {
 		//var selects =  document.getElementsByName("selecao");
 		var selects =  $("[name='selecao']");
 
-		confirmaExpedicaoController.confirmaExpedicaoController.
 		$.postJSON(contextPath + "/confirmacaoExpedicao/selecionarTodos", 
 				"selecionado="+elementoCheck.checked, 
 				confirmaExpedicaoController.retornoSemAcao);	
