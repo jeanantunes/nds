@@ -148,7 +148,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			gerarHistoricoTitularidadeCotaDistribuicao(cota.getParametroDistribuicao())
 		);
 		historicoTitularidadeCota.setDescontos(
-			gerarHistoricoTitularidadeCotaDesconto(cota.getId(), cota.getNumeroCota())
+			gerarHistoricoTitularidadeCotaDesconto(historicoTitularidadeCota, cota.getId(), cota.getNumeroCota())
 		);
 		historicoTitularidadeCota.setGarantias(
 			(List<HistoricoTitularidadeCotaGarantia>) gerarHistoricoTitularidadeCotaGarantias(historicoTitularidadeCota, cota.getCotaGarantia())
@@ -784,12 +784,12 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	 * 
 	 * @return List<HistoricoTitularidadeCotaDesconto> - lista com o histórico gerado.
 	 */
-	private List<HistoricoTitularidadeCotaDesconto> gerarHistoricoTitularidadeCotaDesconto(Long idCota, Integer numeroCota) {
+	private List<HistoricoTitularidadeCotaDesconto> gerarHistoricoTitularidadeCotaDesconto(HistoricoTitularidadeCota historicoTitularidadeCota, Long idCota, Integer numeroCota) {
 
 		List<HistoricoTitularidadeCotaDesconto> listaDesconto = new ArrayList<HistoricoTitularidadeCotaDesconto>();
 		
-		List<HistoricoTitularidadeCotaDescontoProduto> descontosProduto = gerarHistoricoTitularidadeCotaDescontoProduto(idCota);
-		List<HistoricoTitularidadeCotaDescontoCota> descontosCota = gerarHistoricoTitularidadeCotaDescontoCota(numeroCota);
+		List<HistoricoTitularidadeCotaDescontoProduto> descontosProduto = gerarHistoricoTitularidadeCotaDescontoProduto(historicoTitularidadeCota, idCota);
+		List<HistoricoTitularidadeCotaDescontoCota> descontosCota = gerarHistoricoTitularidadeCotaDescontoCota(historicoTitularidadeCota, numeroCota);
 		
 		if (descontosProduto != null) {
 		
@@ -811,7 +811,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	 * 
 	 * @return List<HistoricoTitularidadeCotaDescontoProduto> - lista com o histórico gerado.
 	 */
-	private List<HistoricoTitularidadeCotaDescontoProduto> gerarHistoricoTitularidadeCotaDescontoProduto(Long idCota) {
+	private List<HistoricoTitularidadeCotaDescontoProduto> gerarHistoricoTitularidadeCotaDescontoProduto(HistoricoTitularidadeCota historicoTitularidadeCota, Long idCota) {
 
 		List<TipoDescontoProdutoDTO> listaDescontoProduto =  this.descontoProdutoRepository.obterTiposDescontoProdutoPorCota(idCota, null, null);
 		
@@ -833,7 +833,8 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			historicoTitularidadeCotaDescontoProduto.setDesconto(descontoProduto.getDesconto());
 			historicoTitularidadeCotaDescontoProduto.setAtualizacao(descontoProduto.getDataAlteracao());
 			historicoTitularidadeCotaDescontoProduto.setNumeroEdicao(descontoProduto.getNumeroEdicao());
-
+			historicoTitularidadeCotaDescontoProduto.setHistoricoTitularidadeCota(historicoTitularidadeCota);
+			
 			listaCotaDescontoProduto.add(historicoTitularidadeCotaDescontoProduto);
 		}
 		
@@ -847,7 +848,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	 * 
 	 * @return List<HistoricoTitularidadeCotaDescontoCota> - lista com o histórico gerado.
 	 */
-	private List<HistoricoTitularidadeCotaDescontoCota> gerarHistoricoTitularidadeCotaDescontoCota(Integer numeroCota) {
+	private List<HistoricoTitularidadeCotaDescontoCota> gerarHistoricoTitularidadeCotaDescontoCota(HistoricoTitularidadeCota historicoTitularidadeCota, Integer numeroCota) {
 
 		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
 		
@@ -871,6 +872,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			historicoTitularidadeCotaDescontoCota.setFornecedor(tipoDescontoCotaDTO.getFornecedor());
 			historicoTitularidadeCotaDescontoCota.setDesconto(tipoDescontoCotaDTO.getDesconto());
 			historicoTitularidadeCotaDescontoCota.setAtualizacao(tipoDescontoCotaDTO.getDataAlteracao());
+			historicoTitularidadeCotaDescontoCota.setHistoricoTitularidadeCota(historicoTitularidadeCota);
 		}
 
 		return listaHistoricoDescontoCota;
