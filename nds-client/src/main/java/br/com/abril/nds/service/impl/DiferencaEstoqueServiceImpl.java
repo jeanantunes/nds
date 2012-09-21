@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +43,7 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.DateUtil;
@@ -79,6 +82,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
 	
 	@Autowired
 	private CotaRepository cotaRepository;
@@ -159,6 +165,41 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			this.confirmarLancamentosDiferenca(
 				mapaRateioCotas, filtroPesquisa, idUsuario);
+		}
+	}
+	
+	@Transactional
+	public void salvarLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
+										   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
+										   Long idUsuario){
+		
+		
+		Usuario usuario = usuarioService.buscar(idUsuario);
+		
+		for (Diferenca diferenca : listaNovasDiferencas) {
+
+			Long idDiferencaTemporario = diferenca.getId();
+			
+			if(!diferenca.isAutomatica()){
+				diferenca.setId(null);
+			}
+			
+			this.diferencaEstoqueRepository.merge(diferenca);
+			
+			if (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) {
+				
+				List<RateioCotaVO> listaRateioCotas = mapaRateioCotas.remove(idDiferencaTemporario);
+				
+				mapaRateioCotas.put(diferenca.getId(), listaRateioCotas);
+			}
+		
+			this.processarRateioCotas(diferenca, mapaRateioCotas, idUsuario);
+			
+			diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+			
+			diferenca.setResponsavel(usuario);
+			
+			this.diferencaEstoqueRepository.merge(diferenca);
 		}
 	}
 	
@@ -251,7 +292,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		for (RateioCotaVO rateioCotaVO : listaRateioCotaVO) {
 			
 			RateioDiferenca rateioDiferenca = new RateioDiferenca();
-
+			
+			rateioDiferenca.setId(rateioCotaVO.getId());
 			rateioDiferenca.setDiferenca(diferenca);
 			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
 			
@@ -266,7 +308,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			rateioDiferenca.setEstudoCota(estudoCota);
 			
-			this.rateioDiferencaRepository.adicionar(rateioDiferenca);
+			this.rateioDiferencaRepository.merge(rateioDiferenca);
 		}
 	}
 
@@ -322,6 +364,39 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	public Diferenca obterDiferenca(Long id) {
 		
 		return this.diferencaEstoqueRepository.buscarPorId(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<RateioCotaVO> obterRateiosCotaPorIdDiferenca(Long idDiferenca){
+		
+		List<RateioCotaVO> listaRetorno = new ArrayList<RateioCotaVO>();
+		
+		Diferenca diferenca = obterDiferenca(idDiferenca);
+		
+		if(diferenca!= null && diferenca.getRateios()!= null){
+			
+			for(RateioDiferenca rateio : diferenca.getRateios()){
+				
+				RateioCotaVO rateioVO = new RateioCotaVO();
+				
+				rateioVO.setIdDiferenca(rateio.getDiferenca().getId());
+				rateioVO.setNomeCota(rateio.getCota().getPessoa().getNome());
+				rateioVO.setNumeroCota(rateio.getCota().getNumeroCota());
+				rateioVO.setQuantidade(rateio.getQtde());
+				
+				Long reparteCota = 
+						movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota
+							(rateio.getDiferenca().getProdutoEdicao().getId(), rateio.getCota().getNumeroCota());
+				
+				rateioVO.setReparteCota(new BigInteger(reparteCota.toString()));
+				
+				rateioVO.setReparteAtualCota(rateioVO.getReparteCota().subtract(rateio.getQtde()));
+				
+				listaRetorno.add(rateioVO);
+			}
+		}
+		
+		return listaRetorno;
 	}
 	
 	/*

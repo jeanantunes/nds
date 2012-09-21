@@ -118,6 +118,8 @@ var lancamentoNovoController = $.extend(true, {
 		lancamentoNovoController.idDiferenca = null;
 		
 		lancamentoNovoController.openModalDiferenca();
+		
+		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque("FALTA_DE");
 	},
 	
 	editarDiferenca:function(idDiferenca){
@@ -127,61 +129,70 @@ var lancamentoNovoController = $.extend(true, {
 			[{name:"idDiferenca", value:idDiferenca}],
 			function(result) {
 				
+				var diferenca = result.diferenca;
+				
 				$("#tipoDiferenca", lancamentoNovoController.workspace).attr("disabled", "disabled");
 				$("#checkboxLancCota", lancamentoNovoController.workspace).attr("disabled", "disabled");
 				$("#codigoProdutoInput", lancamentoNovoController.workspace).attr("disabled", "disabled");
 				$("#nomeProdutoInput", lancamentoNovoController.workspace).attr("disabled", "disabled");
 				$("#edicaoProdutoInput", lancamentoNovoController.workspace).attr("disabled", "disabled");
 				
-				$("#reparteProduto", lancamentoNovoController.workspace).text(result.qtdeEstoqueAtual);
-				$("#tipoDiferenca", lancamentoNovoController.workspace).val(result.tipoDiferenca);
+				$("#reparteProduto", lancamentoNovoController.workspace).text(diferenca.qtdeEstoqueAtual);
+				$("#tipoDiferenca", lancamentoNovoController.workspace).val(diferenca.tipoDiferenca);
+				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result.idProdutoEdicao);
 				
-				if (result.codigoProduto){
+				lancamentoNovoController.idDiferenca = idDiferenca;
+				
+				if (diferenca.codigoProduto){
 					
-					$("#codigoProdutoInput", lancamentoNovoController.workspace).val(result.codigoProduto);
+					$("#codigoProdutoInput", lancamentoNovoController.workspace).val(diferenca.codigoProduto);
 				}
 				
-				if (result.descricaoProduto){
+				if (diferenca.descricaoProduto){
 					
-					$("#nomeProdutoInput", lancamentoNovoController.workspace).val(result.descricaoProduto);
+					$("#nomeProdutoInput", lancamentoNovoController.workspace).val(diferenca.descricaoProduto);
 				}
 				
-				if (result.numeroEdicao && result.numeroEdicao){
+				if (diferenca.numeroEdicao && diferenca.numeroEdicao){
 					
-					$("#edicaoProdutoInput", lancamentoNovoController.workspace).val(result.numeroEdicao);
+					$("#edicaoProdutoInput", lancamentoNovoController.workspace).val(diferenca.numeroEdicao);
 				}
 				
-				if (!result.precoVenda){
+				if (!diferenca.precoVenda){
 					
 					$("#precoCapaProduto", lancamentoNovoController.workspace).text("0,00");
 					
 				} else{
 					
-					$("#precoCapaProduto", lancamentoNovoController.workspace).text(result.precoVenda);
+					$("#precoCapaProduto", lancamentoNovoController.workspace).text(diferenca.precoVenda);
 				}
 				
-				if (result.quantidade){
+				if (diferenca.quantidade){
 					
-					$("#diferencaProdutoInput", lancamentoNovoController.workspace).val(result.quantidade);
+					$("#diferencaProdutoInput", lancamentoNovoController.workspace).val(diferenca.quantidade);
 					
 				} else {
 					
 					$("#diferencaProdutoInput", lancamentoNovoController.workspace).val(0);
 				}
 				
-				if(result.tipoDirecionamento == 'COTA'){
+				if(diferenca.tipoDirecionamento == 'COTA'){
 					
 					$("#paraCota").check();
-					lancamentoNovoController.carregarRateiosDiferenca(idDiferenca);
+					
+					if(result.rateios){
+						
+						lancamentoNovoController.renderizarlistaRateio(result.rateios);
+					}
 				}
 				
-				if(result.tipoDirecionamento == 'ESTOQUE'){
+				if(diferenca.tipoDirecionamento == 'ESTOQUE'){
 					
 					 $("#paraEstoque").check();
 					 lancamentoNovoController.paraEstoque(true);
 				}
 				
-				lancamentoNovoController.idDiferenca = idDiferenca;	
+				lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(diferenca.tipoDiferenca);	
 			},
 			null, 
 			true

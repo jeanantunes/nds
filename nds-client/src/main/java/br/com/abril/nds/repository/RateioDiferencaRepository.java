@@ -8,7 +8,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 
 public interface RateioDiferencaRepository extends Repository<RateioDiferenca, Long>{
-	
+		
 	void removerRateioDiferencaPorDiferenca(Long idDiferenca);
 	
 	List<RateioDiferencaCotaDTO> obterRateioDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro);
