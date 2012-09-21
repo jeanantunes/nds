@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 
@@ -20,7 +21,7 @@ public interface EnderecoPDVRepository extends Repository<EnderecoPDV, Long> {
 
 	void excluirEnderecosPDV(Collection<Long> idsEnderecoPDV);
 	
-	List<Endereco> buscarMunicipioPdvPrincipal();
+	List<ItemDTO<Integer, String>> buscarMunicipioPdvPrincipal();
 	
 	Endereco buscarMunicipioPdvPrincipal(Integer codigoCidadeIBGE );
 

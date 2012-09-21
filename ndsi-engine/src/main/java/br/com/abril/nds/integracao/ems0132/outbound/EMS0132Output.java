@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0132.outbound;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -16,13 +17,14 @@ public class EMS0132Output implements Serializable {
 
 	private static final long serialVersionUID = 5447737644024208144L;
 
-	private Integer codigoDistribuidor;
+	private Long codigoDistribuidor;
 	private Date dataGeracaoArquivo;
 	private Date hotaGeracaoArquivo;
 	private String mnemonicoTabela = "LANP";
 	private Integer codigoContexto;
 	private Integer codigoFornecedor;
 	private String codigoProduto;
+	private Long numeroEdicao;
 	private Long numeroLancamento;
 	private Integer numeroFase;
 	private Date dataLancamento;
@@ -31,22 +33,21 @@ public class EMS0132Output implements Serializable {
 	/**
 	 * Construtor Padrao
 	 */
-	public EMS0132Output() {
-		
+	public EMS0132Output() {		
 	}
 
 	/**
 	 * @return the codigoDistribuidor
 	 */
-	@Field(offset=1, length=7)
-	public Integer getCodigoDistribuidor() {
+	@Field(offset=1, length=7, paddingChar='0')
+	public Long getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
 
 	/**
 	 * @param codigoDistribuidor the codigoDistribuidor to set
 	 */
-	public void setCodigoDistribuidor(Integer codigoDistribuidor) {
+	public void setCodigoDistribuidor(Long codigoDistribuidor) {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 
@@ -54,7 +55,7 @@ public class EMS0132Output implements Serializable {
 	 * @return the dataGeracaoArquivo
 	 */
 	@Field(offset=8, length=8)
-	@FixedFormatPattern("MMddyyyy")
+	@FixedFormatPattern("ddMMyyyy")
 	public Date getDataGeracaoArquivo() {
 		return dataGeracaoArquivo;
 	}
@@ -85,7 +86,7 @@ public class EMS0132Output implements Serializable {
 	/**
 	 * @return the mnemonicoTabela
 	 */
-	@Field(offset=22, length=25)
+	@Field(offset=22, length=4)
 	public String getMnemonicoTabela() {
 		return mnemonicoTabela;
 	}
@@ -126,11 +127,11 @@ public class EMS0132Output implements Serializable {
 	public void setCodigoFornecedor(Integer codigoFornecedor) {
 		this.codigoFornecedor = codigoFornecedor;
 	}
-
+	
 	/**
 	 * @return the codigoProduto
 	 */
-	@Field(offset=34, length=12)
+	@Field(offset=34, length=8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -143,9 +144,24 @@ public class EMS0132Output implements Serializable {
 	}
 
 	/**
+	 * @return the numeroEdicao
+	 */
+	@Field(offset=42, length=4, paddingChar='0', align=Align.RIGHT)
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	/**
+	 * @param numeroEdicao the numeroEdicao to set
+	 */
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+
+	/**
 	 * @return the numeroLancamento
 	 */
-	@Field(offset=46, length=2)
+	@Field(offset=46, length=2, paddingChar='0')
 	public Long getNumeroLancamento() {
 		return numeroLancamento;
 	}
@@ -160,7 +176,7 @@ public class EMS0132Output implements Serializable {
 	/**
 	 * @return the numeroFase
 	 */
-	@Field(offset=48, length=2)
+	@Field(offset=48, length=2, paddingChar='0')
 	public Integer getNumeroFase() {
 		return numeroFase;
 	}
@@ -176,7 +192,7 @@ public class EMS0132Output implements Serializable {
 	 * @return the dataLancamento
 	 */
 	@Field(offset=50, length=8)
-	@FixedFormatPattern("MMddyyyy")
+	@FixedFormatPattern("ddMMyyyy")
 	public Date getDataLancamento() {
 		return dataLancamento;
 	}
@@ -206,6 +222,8 @@ public class EMS0132Output implements Serializable {
 				+ ((codigoFornecedor == null) ? 0 : codigoFornecedor.hashCode());
 		result = prime * result
 				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());		
 		result = prime
 				* result
 				+ ((dataGeracaoArquivo == null) ? 0 : dataGeracaoArquivo
@@ -257,6 +275,11 @@ public class EMS0132Output implements Serializable {
 			if (other.codigoProduto != null)
 				return false;
 		} else if (!codigoProduto.equals(other.codigoProduto))
+			return false;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
 			return false;
 		if (dataGeracaoArquivo == null) {
 			if (other.dataGeracaoArquivo != null)

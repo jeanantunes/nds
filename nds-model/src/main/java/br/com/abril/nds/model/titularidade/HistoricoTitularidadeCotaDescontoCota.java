@@ -1,5 +1,8 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -20,7 +23,17 @@ import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 public class HistoricoTitularidadeCotaDescontoCota extends HistoricoTitularidadeCotaDesconto {
     
     private static final long serialVersionUID = 1L;
+    
+    public HistoricoTitularidadeCotaDescontoCota() {
+    }
 
+    public HistoricoTitularidadeCotaDescontoCota(TipoDesconto tipoDesconto,
+            String fornecedor, Date atualizacao, BigDecimal desconto) {
+        this.tipoDesconto = tipoDesconto;
+        this.fornecedor = fornecedor;
+        this.atualizacao = atualizacao;
+        this.desconto = desconto;
+    }
 
     /**
      * Tipo do desconto

@@ -179,4 +179,5 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		
 		return (Rota) query.uniqueResult();
 	}
+	
 }

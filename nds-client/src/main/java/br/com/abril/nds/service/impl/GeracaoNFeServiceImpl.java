@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -32,7 +35,6 @@ import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class GeracaoNFeServiceImpl implements GeracaoNFeService {
@@ -61,38 +63,38 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
-			List<Long> listIdFornecedor, List<Long> listIdProduto, Long idTipoNotaFiscal, String sortname,
-			String sortorder, Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro) {
+			List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota,
+			String sortname, String sortorder, Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro) {
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
 		
 		Set<Long> idsCotasDestinatarias =
-				this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacaoCadastro);
+				this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacaoCadastro, idRoteiro, idRota);
 		
 		ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal = new ConsultaLoteNotaFiscalDTO();
 		
 		dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
 		dadosConsultaLoteNotaFiscal.setPeriodoMovimento(intervaloDateMovimento);
 		dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(idsCotasDestinatarias);
-		dadosConsultaLoteNotaFiscal.setListaIdProdutos(listIdProduto);
 		dadosConsultaLoteNotaFiscal.setListaIdFornecedores(listIdFornecedor);
 		
-		Map<Long, Integer> idCotaTotalItens = this.notaFiscalService.obterTotalItensNotaFiscalPorCotaEmLote(dadosConsultaLoteNotaFiscal);
+		Map<Cota, QuantidadePrecoItemNotaDTO> cotasTotalItens = 
+				this.notaFiscalService.obterTotalItensNotaFiscalPorCotaEmLote(dadosConsultaLoteNotaFiscal);
 		
-		Set<Long> idCotas = idCotaTotalItens.keySet();
+		Set<Cota> cotas = cotasTotalItens.keySet();
 		
 		List<CotaExemplaresDTO> listaCotaExemplares = new ArrayList<CotaExemplaresDTO>();
 		
-		for (Long idCota : idCotas) {
-			
-			Cota cota = this.cotaRepository.buscarPorId(idCota);
+		for (Cota cota : cotas) {
 			
 			CotaExemplaresDTO cotaExemplares = new CotaExemplaresDTO();
 			
-			cotaExemplares.setIdCota(idCota);
-			cotaExemplares.setExemplares((long)idCotaTotalItens.get(idCota));
+			cotaExemplares.setIdCota(cota.getId());
+			cotaExemplares.setExemplares(cotasTotalItens.get(cota).getQuantidade().longValue());
 			cotaExemplares.setNomeCota(cota.getPessoa().getNome());
 			cotaExemplares.setNumeroCota(cota.getNumeroCota());
+			cotaExemplares.setTotal(cotasTotalItens.get(cota).getPreco());
+			cotaExemplares.setTotalDesconto(cotasTotalItens.get(cota).getPrecoComDesconto());
 			
 			listaCotaExemplares.add(cotaExemplares);
 			
@@ -112,7 +114,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
 			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas) throws FileNotFoundException, IOException {
 		
-		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null);
+		Set<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null, null, null);
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
 		
@@ -148,8 +150,11 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				
 				InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
 				
+				Set<Processo> processos = new HashSet<Processo>();
+				processos.add(Processo.GERACAO_NF_E);
+				
 				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
-						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas);
+						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos);
 				
 				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 				

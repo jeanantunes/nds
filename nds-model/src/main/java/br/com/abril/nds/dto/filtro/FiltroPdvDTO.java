@@ -13,6 +13,12 @@ public class FiltroPdvDTO implements Serializable {
 
 	private Long idCota;
 	
+	/**
+	 * Identificador do histórico de titularidade da
+	 * cota
+	 */
+	private Long idHistorico;
+	
 	private ColunaOrdenacao colunaOrdenacao;
 	
 	private PaginacaoVO paginacao;
@@ -55,6 +61,20 @@ public class FiltroPdvDTO implements Serializable {
 	}
 
 	/**
+     * @return the idHistorico
+     */
+    public Long getIdHistorico() {
+        return idHistorico;
+    }
+
+    /**
+     * @param idHistorico the idHistorico to set
+     */
+    public void setIdHistorico(Long idHistorico) {
+        this.idHistorico = idHistorico;
+    }
+
+    /**
 	 * @return the colunaOrdenacao
 	 */
 	public ColunaOrdenacao getColunaOrdenacao() {

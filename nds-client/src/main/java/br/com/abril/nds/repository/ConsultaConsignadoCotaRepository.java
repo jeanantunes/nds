@@ -11,11 +11,11 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 
 public interface ConsultaConsignadoCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
 	
-	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, String limitar);
+	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);
 	
-	public Integer buscarTodasMovimentacoesPorCota(FiltroConsultaConsignadoCotaDTO filtro, String limitar);
+	public Integer buscarTodasMovimentacoesPorCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);
 	
-	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro, String limitar);
+	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);
 	
 	public BigDecimal buscarTotalGeralDaCota(FiltroConsultaConsignadoCotaDTO filtro);
 	

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
@@ -27,6 +28,7 @@ import br.com.abril.nds.dto.ProcuracaoCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -38,6 +40,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
@@ -173,10 +176,11 @@ public class EntregadorController {
 		HashMap<String, String> cpf = new HashMap<String, String>();
 		cpf.put(CPF, cpfEntregador);
 		
-		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
+		validarParametrosEntradaCadastroEntregadorPF(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
-												   cpf);
+												   cpf,
+												   pessoaFisica.getRg());
 
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 
@@ -265,7 +269,7 @@ public class EntregadorController {
 		HashMap<String, String> cnpj = new HashMap<String, String>();
 		cnpj.put(CNPJ, cnpjEntregador);
 		
-		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
+		validarParametrosEntradaCadastroEntregadorPJ(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
 												   cnpj);
@@ -697,20 +701,52 @@ public class EntregadorController {
 		}
 	}
 	
+	private void validarParametrosEntradaCadastroEntregadorPF(Long codigoEntregador,
+			boolean isComissionado,
+			String percentualComissao,
+			HashMap<String, String> cpfCnpj,
+			String rg) {
+		
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		ValidacaoVO validacao = new ValidacaoVO();
+		validacao.setTipoMensagem(TipoMensagem.WARNING);
+		validacao.setListaMensagens(listaMensagens);
+		
+		if (rg != null && rg.length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
+			
+			listaMensagens.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
+		}
+		
+		validarParametrosEntradaCadastroEntregador(validacao, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
+		
+	}
+	
+	private void validarParametrosEntradaCadastroEntregadorPJ(Long codigoEntregador,
+			boolean isComissionado,
+			String percentualComissao,
+			HashMap<String, String> cpfCnpj) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		ValidacaoVO validacao = new ValidacaoVO();
+		validacao.setTipoMensagem(TipoMensagem.WARNING);
+		validacao.setListaMensagens(listaMensagens);
+		
+		validarParametrosEntradaCadastroEntregador(validacao, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
+		
+	}
+	
 	/*
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	private void validarParametrosEntradaCadastroEntregador(Long codigoEntregador,
+	private void validarParametrosEntradaCadastroEntregador(ValidacaoVO validacao,
+															Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
 															HashMap<String, String> cpfCnpj) {
 		
-		List<String> listaMensagens = new ArrayList<String>();
-		
-		ValidacaoVO validacao = new ValidacaoVO();
-		
-		validacao.setTipoMensagem(TipoMensagem.WARNING);
+		List<String> listaMensagens = validacao.getListaMensagens();
 						
 		if (codigoEntregador == null) {
 			
@@ -955,7 +991,9 @@ public class EntregadorController {
 				
 				TelefoneEntregador telefoneEntregador = new TelefoneEntregador();
 				telefoneEntregador.setPrincipal(telefoneAssociacaoDTO.isPrincipal());
-				telefoneEntregador.setTelefone(telefoneAssociacaoDTO.getTelefone());
+				TelefoneDTO dto = telefoneAssociacaoDTO.getTelefone();
+				Telefone telefone = new Telefone(dto.getId(), dto.getNumero(), dto.getRamal(), dto.getDdd(), null);
+                telefoneEntregador.setTelefone(telefone);
 				telefoneEntregador.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
 
 				if (key > 0) {

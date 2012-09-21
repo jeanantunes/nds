@@ -24,7 +24,7 @@ public class EMS0124Detalhe {
 	private Date dataLancamento;
 
 
-	@Field(offset=1, length=2, paddingChar='2')
+	@Field(offset=1, length=1, paddingChar='2')
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -42,7 +42,7 @@ public class EMS0124Detalhe {
 		this.contextoProduto = contextoProduto;
 	}
 	
-	@Field(offset=3, length=7, paddingChar='9')
+	@Field(offset=3, length=7)
 	public Integer getCodigoFornecedorProduto() {
 		return codigoFornecedorProduto;
 	}
@@ -60,7 +60,7 @@ public class EMS0124Detalhe {
 		this.codPublicacao = codPublicacao;
 	}
 
-	@Field(offset=18, length=4)
+	@Field(offset=18, length=4, paddingChar='0')
 	public Long getEdicao() {
 		return edicao;
 	}
@@ -69,7 +69,7 @@ public class EMS0124Detalhe {
 		this.edicao = edicao;
 	}
 	
-	@Field(offset=22, length=4)
+	@Field(offset=22, length=4, paddingChar='0')
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
@@ -87,7 +87,7 @@ public class EMS0124Detalhe {
 		this.tipoNivelamento = tipoNivelamento;
 	}
 
-	@Field(offset=27, length =8) 
+	@Field(offset=27, length =8, paddingChar='0') 
 	public Long getQuantidadeNivelamento() {
 		return quantidadeNivelamento;
 	}
@@ -96,8 +96,8 @@ public class EMS0124Detalhe {
 		this.quantidadeNivelamento = quantidadeNivelamento;
 	}
 	
-	@Field(offset=35, length=9)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
+	@Field(offset=35, length=9, paddingChar='0')
+	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = false)
 	public BigDecimal getPrecoCapa() {
 		return precoCapa;
 	}

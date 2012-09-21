@@ -240,4 +240,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return 
 	 */
 	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao, Long idTipoMovimento);
+
+	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor,
+			Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores);
 }

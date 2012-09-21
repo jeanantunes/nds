@@ -89,15 +89,38 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     /**
      * Tipo do endereço
      */
-    @Column(name = "ENDERECO_TIPO_ENDERECO", nullable = false)
+    @Column(name = "ENDERECO_TIPO_ENDERECO")
     @Enumerated(EnumType.STRING)
     private TipoEndereco tipoEndereco;
    
     /**
      * Flag indicando se é o endereço principal
      */
-    @Column(name = "ENDERECO_PRINCIPAL", nullable = false)
+    @Column(name = "ENDERECO_PRINCIPAL")
     private boolean principal;
+    
+    public HistoricoTitularidadeCotaEndereco() {
+    }
+
+    public HistoricoTitularidadeCotaEndereco(Integer codigoBairro,
+            String bairro, String cep, Integer codigoCidadeIBGE, String cidade,
+            String complemento, String tipoLogradouro, String logradouro,
+            String numero, String uf, Integer codigoUf,
+            TipoEndereco tipoEndereco, boolean principal) {
+        this.codigoBairro = codigoBairro;
+        this.bairro = bairro;
+        this.cep = cep;
+        this.codigoCidadeIBGE = codigoCidadeIBGE;
+        this.cidade = cidade;
+        this.complemento = complemento;
+        this.tipoLogradouro = tipoLogradouro;
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.uf = uf;
+        this.codigoUf = codigoUf;
+        this.tipoEndereco = tipoEndereco;
+        this.principal = principal;
+    }
 
     /**
      * @return the codigoBairro

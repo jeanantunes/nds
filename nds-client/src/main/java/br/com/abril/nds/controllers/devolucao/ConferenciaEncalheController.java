@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -31,7 +32,6 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
-import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -93,7 +93,7 @@ public class ConferenciaEncalheController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
@@ -663,10 +663,25 @@ public class ConferenciaEncalheController {
 		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = 
 				(DadosDocumentacaoConfEncalheCotaDTO) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
 		
-		byte[] slip = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
-	
-		escreverArquivoParaResponse(slip, "slip");
 		
+		byte[] retorno = null; 
+		
+		if(dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto() && 
+				dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
+				!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
+			
+			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
+			byte[] boletoOuRecibo = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO);
+						
+			retorno = PDFUtil.mergePDFs(slip, boletoOuRecibo);
+			
+			escreverArquivoParaResponse(retorno, "slipBoleto");
+		} else {
+			
+			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
+			
+			escreverArquivoParaResponse(slip, "slip");
+		}
 	}
 
 	public void gerarBoletoOuRecibo() throws IOException {
@@ -772,7 +787,7 @@ public class ConferenciaEncalheController {
 				String[] tiposDocumento = null;
 				
 				if(	dadosDocumentacaoConfEncalheCota.getNossoNumero()!=null && 
-					!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
+					!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty() && !dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto()) {
 					
 					tiposDocumento = new String[]{
 							TipoDocumentoConferenciaEncalhe.SLIP.name(), 

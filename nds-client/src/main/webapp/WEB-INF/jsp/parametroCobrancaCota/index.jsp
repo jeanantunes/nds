@@ -230,7 +230,7 @@ $(function(){
 
 <br clear="all" />
 
-<span class="bt_novos" title="Nova Unificação"> <a
+<span id="FINANCEIRObtnNovaFormaPagamento" class="bt_novos" title="Nova Unificação"> <a
 	href="javascript:;"
 	onclick="parametroCobrancaCotaController.popup_nova_unificacao();">
 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"
@@ -518,7 +518,7 @@ $(function(){
 			</div>
 
 
-			<br clear="all" /> <span class="bt_add"> <a
+			<br clear="all" /> <span id="popupNovaFormaPagamentoIncluirNova" class="bt_add"> <a
 				href="javascript:;"
 				onclick="parametroCobrancaCotaController.incluirNovaUnificacao();">
 					Incluir Novo </a>

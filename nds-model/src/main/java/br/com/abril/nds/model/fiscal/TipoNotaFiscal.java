@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.fiscal;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -12,12 +13,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.CollectionOfElements;
 
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
@@ -30,7 +28,9 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 @Entity
 @Table(name = "TIPO_NOTA_FISCAL")
 @SequenceGenerator(name="TP_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
-public class TipoNotaFiscal {
+public class TipoNotaFiscal implements Serializable {
+
+	private static final long serialVersionUID = -5552879848986513495L;
 
 	@Id
 	@GeneratedValue(generator = "TP_NOTA_FISCAL_SEQ")

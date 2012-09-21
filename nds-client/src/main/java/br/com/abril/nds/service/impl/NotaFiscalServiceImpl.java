@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
+import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
@@ -33,6 +35,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -156,17 +159,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public Map<Long, Integer> obterTotalItensNotaFiscalPorCotaEmLote(ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
+	public Map<Cota, QuantidadePrecoItemNotaDTO> obterTotalItensNotaFiscalPorCotaEmLote(ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
 		
 		Intervalo<Date> periodo = dadosConsultaLoteNotaFiscal.getPeriodoMovimento();
 		
 		TipoNotaFiscal tipoNotaFiscal = dadosConsultaLoteNotaFiscal.getTipoNotaFiscal();
 		
 		List<Long> listaIdFornecedores = dadosConsultaLoteNotaFiscal.getListaIdFornecedores();
-		 
-		List<Long> listaIdProdutos = dadosConsultaLoteNotaFiscal.getListaIdProdutos();
 		
-		Map<Long, Integer> idCotaTotalItensNota = new HashMap<Long, Integer>();
+		Map<Cota, QuantidadePrecoItemNotaDTO> idCotaTotalItensNota = new HashMap<Cota, QuantidadePrecoItemNotaDTO>();
 		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
@@ -181,11 +182,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					if (cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() ==
 										tipoNotaFiscal.isContribuinte()) {
 				
-						List<ItemNotaFiscal> itensNotaFiscal = obterItensNotaFiscalPor(distribuidor, cota, periodo,
-						listaIdFornecedores, listaIdProdutos, tipoNotaFiscal);
+						List<ItemNotaFiscal> itensNotaFiscal = 
+								obterItensNotaFiscalPor(distribuidor, cota, periodo, listaIdFornecedores, null, tipoNotaFiscal);
 					
 						if (itensNotaFiscal != null && !itensNotaFiscal.isEmpty()) {
-							idCotaTotalItensNota.put(idCota, this.sumarizarTotalItensNota(itensNotaFiscal).intValue());
+							idCotaTotalItensNota.put(cota, this.sumarizarTotalItensNota(itensNotaFiscal));
 						}
 					}
 				}
@@ -475,6 +476,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		identificacaoEmitente.setNome(distribuidor.getJuridica().getNome());
 		identificacaoEmitente.setNomeFantasia(distribuidor.getJuridica()
 				.getNomeFantasia());
+		identificacaoEmitente.setPessoaEmitenteReferencia(distribuidor.getJuridica());
 
 		EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository
 				.obterEnderecoPrincipal();
@@ -626,7 +628,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada) {
+			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal,
+			InformacaoTransporte transporte,
+			InformacaoAdicional informacaoAdicional,
+			List<NotaFiscalReferenciada> listNotaFiscalReferenciada, 
+			Set<Processo> processos) {
 
 		NotaFiscal notaFiscal = new NotaFiscal();
 
@@ -682,7 +688,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.setInformacaoAdicional(informacaoAdicional);
 		
 		notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.GERADA);
-		
+
+		notaFiscal.setProcessos(processos);
 		
 		notaFiscalDAO.adicionar(notaFiscal);
 		
@@ -958,15 +965,31 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listaItemNotaFiscal intes para nota fiscal
 	 * @return somatoria total da quantidade de itens
 	 */
-	private BigInteger sumarizarTotalItensNota(List<ItemNotaFiscal> listaItemNotaFiscal) {
+	private QuantidadePrecoItemNotaDTO sumarizarTotalItensNota(List<ItemNotaFiscal> listaItemNotaFiscal) {
+		
+		QuantidadePrecoItemNotaDTO dto = new QuantidadePrecoItemNotaDTO();
 		
 		BigInteger quantidade = BigInteger.ZERO;
+		BigDecimal preco = BigDecimal.ZERO;
+		BigDecimal precoComDesconto = BigDecimal.ZERO;
 		
 		for (ItemNotaFiscal item : listaItemNotaFiscal) {
 			quantidade = quantidade.add(item.getQuantidade());
+			preco = preco.add(item.getValorUnitario().multiply(new BigDecimal(quantidade)));
+			
+			BigDecimal desconto = this.descontoService.obterDescontoPorCotaProdutoEdicao(
+					item.getListaMovimentoEstoqueCota().get(0).getCota(), 
+					this.produtoEdicaoRepository.buscarPorId(item.getIdProdutoEdicao()));
+			
+			precoComDesconto = precoComDesconto.add(item.getValorUnitario().subtract(
+					desconto, new MathContext(3)).multiply(item.getValorUnitario()).divide(new BigDecimal(100))).multiply(new BigDecimal(item.getQuantidade()));
 		}
 		
-		return quantidade;
+		dto.setQuantidade(quantidade);
+		dto.setPreco(preco);
+		dto.setPrecoComDesconto(precoComDesconto);
+		
+		return dto;
 	}
 	
 	/* (non-Javadoc)

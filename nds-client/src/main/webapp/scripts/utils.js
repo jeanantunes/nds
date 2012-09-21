@@ -202,6 +202,29 @@ function montarComboBoxCustomJson(result, incluirTodos) {
 	return options;
 }
 
+function montarComboBoxUnicaOpcao(value, label, element) {
+        $(element).html(newOption(value, label));
+}
+
+function carregarCombo(url, params, element, selected, idDialog ){
+    $.postJSON(url, params,
+        function(result){
+            var combo =  montarComboBox(result, false);
+            combo = newOption('-1', 'Selecione...') + combo;
+            $(element).html(combo);
+            if (selected) {
+                $(element).val(selected);
+            } else {
+                $(element).val('-1');
+            }
+        },null,true, idDialog);
+}
+
+
+function newOption(value, label) {
+    return "<option value='" + value + "'>" + label + "</option>"
+}
+
 function replaceAll(string, token, newtoken) {
 	while (string.indexOf(token) != -1) {
  		string = string.replace(token, newtoken);

@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -132,6 +133,23 @@ public interface RoteirizacaoService {
 	 * @return
 	 */
 	List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome, List<Long> idsRoteiros);
-
+    
+	/**
+     * Obtem lista de Box do tipo lançamento
+     * @return List<Box>
+     */
+	public List<Box> obterListaBoxLancamento();
+	
+	/**
+     * Obtem lista de Roteiro por Box
+     * @return List<Roteiro>
+     */
+	public List<Roteiro> obterListaRoteiroPorBox(Long idBox);
+	
+	/**
+     * Obtem lista de Rota por Roteiro
+     * @return List<Rota>
+     */
+	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro);
 }
 	

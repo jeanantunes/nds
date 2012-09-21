@@ -36,8 +36,16 @@ public class TipoDescontoCotaDTO implements Serializable {
 	private Long idTipoDesconto;
 	
 	public TipoDescontoCotaDTO() {}
+	
+    public TipoDescontoCotaDTO(BigDecimal desconto, String fornecedor,
+            Date dataAlteracao, String descTipoDesconto) {
+        this.desconto = desconto;
+        this.fornecedor = fornecedor;
+        this.dataAlteracao = dataAlteracao;
+        this.descTipoDesconto = descTipoDesconto;
+    }
 
-	/**
+    /**
 	 * @return the numeroCota
 	 */
 	public Integer getNumeroCota() {

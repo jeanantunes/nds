@@ -32,9 +32,6 @@ fieldset label {
 <script
 	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"
 	type="text/javascript"></script>
-<script
-	src="${pageContext.request.contextPath}/scripts/informeEncalhe.js"
-	type="text/javascript"></script>
 <script type="text/javascript">
 	$(function() {
 		var informeEncalhe = new InformeEncalhe();

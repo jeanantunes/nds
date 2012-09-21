@@ -1405,5 +1405,51 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return sum.longValue();
 	}
+	
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public  List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores){
+		StringBuffer sql = new StringBuffer("SELECT DISTINCT movimentoEstoqueCota ");		
+		sql.append(" FROM Lancamento lancamento ");
+	
+		sql.append("   INNER JOIN lancamento.movimentoEstoqueCotas movimentoEstoqueCota ");
+		sql.append("   LEFT JOIN movimentoEstoqueCota.cota.fornecedores fornecedor ");
+		
+		sql.append(" WHERE movimentoEstoqueCota.status = :status ")
+		   .append("   AND movimentoEstoqueCota.cota.id = :idCota ");
+		
+		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			sql.append("   AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		}
+		
+		if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
+			sql.append("   AND movimentoEstoqueCota.tipoMovimento.grupoMovimentoEstoque IN (:listaGrupoMoviementoEstoque) ");
+		}		
+		
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			sql.append("   AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
+		}		
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("status", StatusAprovacao.APROVADO);
+		query.setParameter("idCota", idCota);
+	
+	
+		if (listaFornecedores != null && !listaFornecedores.isEmpty()) {
+			query.setParameterList("listaFornecedores", listaFornecedores);
+		}
+		
+		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			query.setParameter("dataInicio", periodo.getDe());
+			query.setParameter("dataFim", periodo.getAte());
+		}
+		
+		if (listaGrupoMovimentoEstoques != null && !listaGrupoMovimentoEstoques.isEmpty()) {
+			query.setParameterList("listaGrupoMoviementoEstoque", listaGrupoMovimentoEstoques);
+		}		
+		
+		return query.list();
+	}
 		
 }

@@ -24,8 +24,8 @@ $(function(){
 
 		<div class="areaBts">
 			<div class="area">
-				<span class="bt_novos" title="Salvar">
-					<a onclick="parametroSistemaController.salvar();" href="javascript:;">
+				<span class="bt_novos">
+					<a onclick="parametroSistemaController.salvar();" href="javascript:;" rel="tipsy" title="Salvar">
 					<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 					</a>
 				</span>
@@ -123,6 +123,16 @@ $(function(){
 						<td>
 							<input type="text" maxlength="4" name="dto.frequenciaExpurgo" id="frequenciaExpurgo" style="width:100px;" value="${parametroSistemaGeralDTO.frequenciaExpurgo}" />
 							meses
+						</td>
+					</tr>
+					<tr>
+						<td>Interface Contrato Importa&ccedil;&atilde;o: </td>
+						<td>
+							<input type="text" name="dto.pathContrato" id="pathContrato" style="width:220px;" value="${parametroSistemaGeralDTO.pathContrato}" />
+						</td>	
+						<td>
+						</td>
+						<td>
 						</td>
 					</tr>
 				</tbody>

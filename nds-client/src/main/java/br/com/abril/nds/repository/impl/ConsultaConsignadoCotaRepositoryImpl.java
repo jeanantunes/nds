@@ -1,7 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -14,7 +14,9 @@ import br.com.abril.nds.dto.TotalConsultaConsignadoCotaDetalhado;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
 @Repository
@@ -28,33 +30,29 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(
-			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {
+			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT produto.codigo as codigoProduto, ");
-		hql.append("produto.nome as nomeProduto, ");		
-		hql.append("pe.numeroEdicao as numeroEdicao, ");
-		hql.append("pessoa.razaoSocial as nomeFornecedor, ");
-		hql.append("movimento.data as dataLancamento, ");
-		hql.append("pe.precoVenda as precoCapa, ");
-		hql.append("("+ this.getHQLDesconto() +") as desconto, ");
-		hql.append("(pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ");
-		hql.append(" movimento.qtde as reparte, ");		
-		hql.append(" (pe.precoVenda * movimento.qtde) as total, ");
-		hql.append(" ( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)  as totalDesconto ");
+		hql.append(" SELECT produto.codigo as codigoProduto, ")
+		   .append("        produto.nome as nomeProduto, ")	
+		   .append("        pe.numeroEdicao as numeroEdicao, ")
+		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
+		   .append("        movimento.data as dataLancamento, ")
+		   .append("        pe.precoVenda as precoCapa, ")
+		   .append("        ("+ this.getHQLDesconto() +") as desconto, ")
+		   .append("        (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) as precoDesconto, ")
+		   .append("        (movimento.qtde) as reparte, ")		
+		   .append("        (pe.precoVenda * movimento.qtde) as total, ")
+		   .append("        ((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)  as totalDesconto ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
 		hql.append(getOrderBy(filtro));
-		
+
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		buscarParametrosConsignadoCota(query, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaDTO.class));
@@ -62,7 +60,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 				
 		return  query.list();
@@ -71,29 +69,36 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
-			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {
+			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT cota.numeroCota as numeroCota, ");
-		hql.append("pessoaCota.nome as nomeCota, ");
-		hql.append(" movimento.qtde as reparte, ");
-		hql.append(" (pe.precoVenda * movimento.qtde) as total, ");
-		hql.append(" ( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)  as totalDesconto, ");
-		hql.append("pessoa.razaoSocial as nomeFornecedor,  ");
-		hql.append("fornecedor.id as idFornecedor  ");
+		hql.append(" SELECT cota.numeroCota as numeroCota, ")
+		   .append("        pessoaCota.nome as nomeCota, ")
+		   .append("        SUM(movimento.qtde *  ")
+		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
+		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
+		   .append("                 ELSE 0 END) as consignado, ")
+		   .append("        SUM(pe.precoVenda * movimento.qtde *  ")
+		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
+		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
+		   .append("                 ELSE 0 END) as total, ")
+		   .append("        SUM((pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde *  ")
+		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
+		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
+		   .append("                 ELSE 0 END)  as totalDesconto, ")
+		   .append("        pessoa.razaoSocial as nomeFornecedor,  ")
+		   .append("        fornecedor.id as idFornecedor  ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
+		hql.append(getGroupBy(filtro));
+
 		hql.append(getOrderBy(filtro));
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		buscarParametrosConsignadoCota(query, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
@@ -101,7 +106,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 				
 		return  query.list();
@@ -109,27 +114,25 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public Integer buscarTodasMovimentacoesPorCota(
-			FiltroConsultaConsignadoCotaDTO filtro, String limitar) {
+			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT count(movimento)");
-		
+		hql.append(" SELECT count(movimento)  ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
+		hql.append(getGroupBy(filtro));
+
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
+		buscarParametrosConsignadoCota(query, filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		List<Long> totalRegistros = query.list();
 		
-		Long totalRegistros = (Long) query.uniqueResult();
-		
-		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
+		return (totalRegistros == null) ? 0 : totalRegistros.size();
 		
 		
 	}
@@ -141,17 +144,19 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT sum(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde))");
+		hql.append(" SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde ");
+		if (filtro.getIdCota() == null) {
+			hql.append("            * CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
+			   .append("                   WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
+			   .append("                   ELSE 0 END ");
+		}
+		hql.append("           )) ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		buscarParametrosConsignadoCota(query, filtro);
 		
 		BigDecimal totalRegistros = (BigDecimal) query.uniqueResult();
 		
@@ -165,20 +170,24 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT sum(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde)) as total, ");
+		hql.append("SELECT SUM(( (pe.precoVenda - (pe.precoVenda * ("+ this.getHQLDesconto() +") / 100)) * movimento.qtde ");
+
+		if (filtro.getIdCota() == null) {
+			hql.append("            * CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
+			   .append("                   WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
+			   .append("                   ELSE 0 END ");
+		}
+		hql.append("            )) as total, ");
+		
 		hql.append("pessoa.razaoSocial as nomeFornecedor");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
-		hql.append("group by pessoa.razaoSocial");
-		
+		hql.append(getGroupBy(filtro));
+
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosConsignadoCota(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		buscarParametrosConsignadoCota(query, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				TotalConsultaConsignadoCotaDetalhado.class));
@@ -190,27 +199,26 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		StringBuilder hql = new StringBuilder();
 	
-
-		hql.append(" from MovimentoEstoqueCota movimento ");
+		hql.append(" FROM MovimentoEstoqueCota movimento ");
 		hql.append(" LEFT JOIN movimento.cota as cota ");
 		hql.append(" LEFT JOIN movimento.tipoMovimento as tipoMovimento ");
 		hql.append(" LEFT JOIN movimento.produtoEdicao as pe ");
 		hql.append(" LEFT JOIN pe.produto as produto ");
 		hql.append(" LEFT JOIN cota.parametroCobranca parametroCobranca ");
-		hql.append(" LEFT JOIN cota.fornecedores as fornecedor ");
+		hql.append(" LEFT JOIN produto.fornecedores as fornecedor ");
 		hql.append(" LEFT JOIN fornecedor.juridica as pessoa ");		
 		if(filtro.getIdCota() == null || filtro.getIdFornecedor() != null){
 			hql.append(" LEFT JOIN cota.pessoa as pessoaCota ");
 		}
-		
-		hql.append(" WHERE  tipoMovimento.grupoMovimentoEstoque = :tipoMovimento  " );
-		hql.append(" AND  parametroCobranca.tipoCota = :tipoCota  " );
+
+		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimento) " );
+		hql.append("   AND parametroCobranca.tipoCota = :tipoCota  " );
 		
 		if(filtro.getIdCota() != null ) { 
-			hql.append(" AND cota.id =:numeroCota");			
+			hql.append("   AND cota.id = :numeroCota");			
 		}
 		if(filtro.getIdFornecedor() != null) { 
-			hql.append(" AND fornecedor.id =:idFornecedor");
+			hql.append("   AND fornecedor.id = :idFornecedor");
 		}
 		
 
@@ -227,12 +235,12 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		boolean ordenar = false; 
 		
 		if(filtro.getIdCota() != null && !ordenar){
-			hql.append(" order by cota.numeroCota ");
+			hql.append(" ORDER BY cota.numeroCota ");
 			ordenar = true;
 		}
 		
 		if(filtro.getIdFornecedor() != null && !ordenar){
-			hql.append(" order by cota.numeroCota ");
+			hql.append(" ORDER BY cota.numeroCota ");
 			ordenar = true;
 		}
 		
@@ -243,31 +251,82 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		return hql.toString();
 	}
+
+	private String getGroupBy(FiltroConsultaConsignadoCotaDTO filtro){
+		StringBuilder hql = new StringBuilder();
+		
+		if(filtro.getIdCota() != null){
+	        hql.append(" GROUP BY produto.codigo, ")
+			   .append("          produto.nome, ")	
+			   .append("          pe.numeroEdicao , ")
+			   .append("          pessoa.razaoSocial,  ")
+			   .append("          fornecedor.id, ")
+			   .append("          movimento.data, ")
+			   .append("          pe.precoVenda ");
+		} else {
+	        hql.append("  GROUP BY cota.numeroCota,  ")
+			   .append("          pessoaCota.nome,  ")
+			   .append("          pessoa.razaoSocial,  ")
+			   .append("          fornecedor.id ");
+		}
+
+		return hql.toString();	
+	}
 	
-	private HashMap<String,Object> buscarParametrosConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro){
+	private void buscarParametrosConsignadoCota(Query query, FiltroConsultaConsignadoCotaDTO filtro){
 		
-		HashMap<String,Object> param = new HashMap<String, Object>();
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesEntrada = new ArrayList<GrupoMovimentoEstoque>();
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesSaida = new ArrayList<GrupoMovimentoEstoque>();
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
 		
-		param.put("tipoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-		param.put("tipoCota", TipoCota.CONSIGNADO);
+		if (filtro.getIdCota() == null) { 
+			for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
+				if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio())) {
+					if(OperacaoEstoque.ENTRADA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
+						listaGrupoMovimentoEstoquesEntrada.add(grupoMovimentoEstoque);
+					}else if(OperacaoEstoque.SAIDA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
+						listaGrupoMovimentoEstoquesSaida.add(grupoMovimentoEstoque);
+					}
+				}
+			} 
+			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesEntrada);
+			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesSaida);
+
+		} else {
+			listaGrupoMovimentoEstoquesEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+			listaGrupoMovimentoEstoques = listaGrupoMovimentoEstoquesEntrada;
+		}
+		
+		
+		if(query.getQueryString().contains(":tipoMovimentoEntrada")) {
+			query.setParameterList("tipoMovimentoEntrada", listaGrupoMovimentoEstoquesEntrada);
+		}
+		
+		if(query.getQueryString().contains(":tipoMovimentoSaida")) {
+			query.setParameterList("tipoMovimentoSaida", listaGrupoMovimentoEstoquesSaida);
+		}
+		
+		query.setParameterList("tipoMovimento", listaGrupoMovimentoEstoques);
+		query.setParameter("tipoCota", TipoCota.CONSIGNADO);
 		
 		if(filtro.getIdCota() != null ) { 
-			param.put("numeroCota", filtro.getIdCota());
+			query.setParameter("numeroCota", filtro.getIdCota());
 		}
 		if(filtro.getIdFornecedor() != null ) { 
-			param.put("idFornecedor", filtro.getIdFornecedor());
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 		
-		return param;
 	}
 	
 	private String getHQLDesconto(){
 		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = pe.id ")
-		   .append(" and view.fornecedorId = fornecedor.id),0) ");
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" COALESCE((SELECT view.desconto")
+		   .append(" FROM ViewDesconto view ")
+		   .append(" WHERE view.cotaId = cota.id ")
+		   .append("   AND view.produtoEdicaoId = pe.id ")
+		   .append("   AND view.fornecedorId = fornecedor.id),0) ");
 		
 		return hql.toString();
 	}

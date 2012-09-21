@@ -249,7 +249,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// Atualizar lançamento Distribuidor:
 			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
 			
-			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status) || StatusLancamento.BALANCEADO_LANCAMENTO.equals(status); 
+			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status); 
 			
 			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
 			
