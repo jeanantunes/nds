@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -853,7 +855,19 @@ public class CotaServiceImpl implements CotaService {
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
 		
-        for (HistoricoTitularidadeCota historico : cota.getTitularesCota()) {
+		List<HistoricoTitularidadeCota> titulares = new ArrayList<HistoricoTitularidadeCota>();
+		if (cota.getTitularesCota() != null) {
+		    titulares.addAll(cota.getTitularesCota());
+		}
+		Collections.sort(titulares, new Comparator<HistoricoTitularidadeCota>() {
+
+            @Override
+            public int compare(HistoricoTitularidadeCota o1, HistoricoTitularidadeCota o2) {
+                return o2.getFim().compareTo(o1.getFim());
+            }
+        });
+		
+        for (HistoricoTitularidadeCota historico : titulares) {
             cotaDTO.addProprietario(new TitularidadeCotaDTO(historico.getId(),
                     cota.getId(), historico.getInicio(), historico.getFim(),
                     historico.getPessoa().getNome(), historico.getPessoa()
