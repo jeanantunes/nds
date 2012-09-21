@@ -131,8 +131,8 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		
 		historicoTitularidadeCota.setDataInclusao(cota.getInicioAtividade());
 		
-		historicoTitularidadeCota.setInicio(cota.getInicioAtividade());
-		historicoTitularidadeCota.setEmail(	cota.getPessoa().getEmail());
+		historicoTitularidadeCota.setInicio(cota.getInicioTitularidade());
+		historicoTitularidadeCota.setEmail(cota.getPessoa().getEmail());
 		historicoTitularidadeCota.setSituacaoCadastro(cota.getSituacaoCadastro());
 		historicoTitularidadeCota.setNumeroCota(cota.getNumeroCota());
 		historicoTitularidadeCota.setFim(new Date());
