@@ -1059,6 +1059,7 @@ var COTA_CNPJ = $.extend(true, {
         var formData = $("#formDadosBasicoCnpj", this.workspace).serializeArray();
 
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
+        formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCNPJ",
