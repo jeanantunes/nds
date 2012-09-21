@@ -233,6 +233,70 @@ var lancamentoController = $.extend(true, {
 		
 		$("#dialog-confirmar-lancamentos", lancamentoController.workspace).show();
 	},
+	
+	popupSalvarLancamentos : function(){
+		$("#dialog-salvar-lancamentos", lancamentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: 
+			{
+				"Confirmar": function() {
+					
+					$.postJSON(
+						contextPath + "/estoque/diferenca/salvarLancamentos", 
+						null,
+						function(result) {
+
+							lancamentoController.inicializar();
+						}
+					);
+
+					$(this).dialog("close");
+				
+				}, "Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			form: $("#dialog-salvar-lancamentos", this.workspace).parents("form")			
+		});
+		
+		$("#dialog-salvar-lancamentos", lancamentoController.workspace).show();
+	},
+	
+	popupCancelarLancamentos : function(){
+		$("#dialog-cancelar-lancamentos", lancamentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: 
+			{
+				"Confirmar": function() {
+					
+					$.postJSON(
+						contextPath + "/estoque/diferenca/cancelarLancamentos", 
+						null,
+						function(result) {
+
+							lancamentoController.inicializar();
+						}
+					);
+
+					$(this).dialog("close");
+				
+				}, "Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			form: $("#dialog-cancelar-lancamentos", this.workspace).parents("form")			
+		});
+		
+		$("#dialog-cancelar-lancamentos", lancamentoController.workspace).show();
+	},
 
 	configurarFlexiGrid : function() {
 

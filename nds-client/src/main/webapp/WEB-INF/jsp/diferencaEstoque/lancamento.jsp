@@ -45,6 +45,18 @@
 			</div>
 		</form>
 		
+		<form id="form-salvar-lancamentos">
+			<div id="dialog-salvar-lancamentos" title="Lançamento Faltas e Sobras" style="display: none">
+				<p>Salvar estes Lan&ccedil;amentos?</p>
+			</div>
+		</form>
+		
+		<form id="form-cancelar-lancamentos">
+			<div id="dialog-cancelar-lancamentos" title="Lançamento Faltas e Sobras" style="display: none">
+				<p>Cancelar estes Lan&ccedil;amentos?</p>
+			</div>
+		</form>
+		
 		<form id="lancamento-consulta">
 			
 			<div class="areaBts">
@@ -109,9 +121,25 @@
 				<table width="931" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 						<td width="459">
-							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
-								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();">Confirmar</a>
+							
+							<span class="bt_novos" title="Salvar">
+								<a href="javascript:;" onclick="lancamentoController.popupSalvarLancamentos();">
+									Salvar
+								</a>
 							</span>
+							
+							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
+								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();">
+									Confirmar
+								</a>
+							</span>
+							
+							 <span class="total bt_novos" title="Cancelar Lançamento de Faltas e Sobras">
+							 	<a href="javascript:;" onclick="lancamentoController.popupCancelarLancamentos();">
+							 		Cancelar
+							 	</a>
+							 </span>
+							
 						</td>
 						<td id="labelTotalGeral" width="99" class="total" style="display: none">
 							<strong>Total Geral:</strong>

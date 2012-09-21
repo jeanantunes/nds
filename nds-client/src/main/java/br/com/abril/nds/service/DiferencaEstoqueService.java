@@ -81,4 +81,10 @@ public interface DiferencaEstoqueService {
 	 * @return DetalheDiferencaCotaDTO
 	 */
 	DetalheDiferencaCotaDTO obterDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro);
+	
+	List<RateioCotaVO> obterRateiosCotaPorIdDiferenca(Long idDiferenca);
+	
+	void salvarLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
+			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
+			   Long idUsuario);
 }
