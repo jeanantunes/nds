@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
@@ -108,7 +106,7 @@ public class CotaDTO implements Serializable {
 	
 	private String descricaoBox;
 	
-	private Set<TitularidadeCotaDTO> proprietarios = new TreeSet<TitularidadeCotaDTO>();
+	private List<TitularidadeCotaDTO> proprietarios = new ArrayList<TitularidadeCotaDTO>();
 	
 	private boolean alteracaoTitularidade;
 	
