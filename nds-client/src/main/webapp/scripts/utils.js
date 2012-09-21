@@ -222,6 +222,30 @@ function removeMascaraPriceFormat(field) {
 	return field;
 }
 
+function priceToFloat(field) {
+	
+	field = replaceAll(field, ".", "");
+	field = replaceAll(field, ",", ".");
+	
+	return parseFloat(field).toFixed(2);
+}
+
+function floatToPrice(field) {
+	
+	var price = String(field);
+    var part = price.split(".");
+    return part[0].split("").reverse().reduce(function(acc, price, i, orig) {
+        return  price + (i && !(i % 3) ? "." : "") + acc;
+    }, "") + "," + part[1];
+    
+}
+
+function sumPrice(price1, price2){
+	
+	return floatToPrice((parseFloat(priceToFloat(price1)) + parseFloat(priceToFloat(price2))).toFixed(2));
+}
+
+
 function clickLineFlexigrid(inputCheck, select) {
 	
 	var line = $(inputCheck).parents()[2];
