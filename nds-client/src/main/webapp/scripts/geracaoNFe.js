@@ -273,7 +273,7 @@ GeracaoNFeController.prototype.gridReaload = function(grid, uri) {
 			&& ($("#inputIntervaloCotaAte", this.workspace).val().length > 0) 
 			&& (($("#datepickerIntervaloMovimentoDe", this.workspace).val().length == 0) 
 					||  ($("#datepickerIntervaloMovimentoAte", this.workspace).val().length == 0))) {
-		exibirMensagem("WARNING", ["Quando haver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
+		exibirMensagem("WARNING", ["Quando houver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
 		return;
 	}
 	
