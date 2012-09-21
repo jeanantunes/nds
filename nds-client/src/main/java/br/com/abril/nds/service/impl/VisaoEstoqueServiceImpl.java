@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +14,11 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
 import br.com.abril.nds.service.VisaoEstoqueService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
 @Service
-public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
+public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 
 	@Autowired
 	private VisaoEstoqueRepository visaoEstoqueRepository;
@@ -30,37 +32,37 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 		if (DateUtil.isHoje(filtro.getDataMovimentacao())) {
 
 			// Busca na tabela estoque
-			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 			
-			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 			
-			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 			
-			filtro.setTipoEstoque(TipoEstoque.RECOLHIMENTO.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.RECOLHIMENTO.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 			
-			filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 			
 		} else {
 
 			// Busca na tabela histórico
-			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
-			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
-			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
-			filtro.setTipoEstoque(TipoEstoque.RECOLHIMENTO.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.RECOLHIMENTO.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
-			filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.getDescricao());
+			filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 		}
 		
@@ -72,16 +74,18 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 	@Transactional
 	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
 		
+		List<? extends VisaoEstoqueDetalheDTO> list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
 		
+		BigDecimal precoCapa;
+		BigDecimal qtde;
 		
-		List<VisaoEstoqueDetalheDTO> list = new ArrayList<VisaoEstoqueDetalheDTO>();
-
-		list.add(visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro));
-/*		list.add(visaoEstoqueRepository.obterLancamentoJuramentado(filtro));
-		list.add(visaoEstoqueRepository.obterSuplementar(filtro));
-		list.add(visaoEstoqueRepository.obterRecolhimento(filtro));
-		list.add(visaoEstoqueRepository.obterProdutosDanificados(filtro));*/
-
+		for (VisaoEstoqueDetalheDTO dto: list) {
+			
+			precoCapa = CurrencyUtil.converterValor(dto.getPrecoCapa());
+			qtde = CurrencyUtil.converterValor(dto.getQtde());
+			dto.setValor(precoCapa.multiply(qtde));
+		}
+		
 		return list;
 	}
 
