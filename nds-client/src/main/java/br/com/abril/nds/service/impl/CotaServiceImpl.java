@@ -855,7 +855,22 @@ public class CotaServiceImpl implements CotaService {
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
 		
-		List<HistoricoTitularidadeCota> titulares = new ArrayList<HistoricoTitularidadeCota>();
+		processarTitularidadeCota(cota, cotaDTO);
+		
+		return cotaDTO;
+	}
+
+    /**
+     * Processa os registros de titularidade da cota para criação dos titulares
+     * no DTO
+     * 
+     * @param cota
+     *            cota com as informações de titularidade
+     * @param cotaDTO
+     *            DTO com as incormações da cota
+     */
+	private void processarTitularidadeCota(Cota cota, CotaDTO cotaDTO) {
+        List<HistoricoTitularidadeCota> titulares = new ArrayList<HistoricoTitularidadeCota>();
 		if (cota.getTitularesCota() != null) {
 		    titulares.addAll(cota.getTitularesCota());
 		}
@@ -873,9 +888,7 @@ public class CotaServiceImpl implements CotaService {
                     historico.getPessoa().getNome(), historico.getPessoa()
                             .getDocumento()));
         }
-		
-		return cotaDTO;
-	}
+    }
 	
 	/**
 	 *  Atribui os dados da pessoa relacionada a cota ao objeto CotaDTO
@@ -1767,6 +1780,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setTitularesCota(titularesCota);
 
 		this.cotaRepository.merge(cotaNova);
+		processarTitularidadeCota(cotaAntiga, cotaDTO);
 		
 		return cotaDTO;
 	}
