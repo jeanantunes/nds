@@ -18,7 +18,7 @@ public class EMS0120Trailer {
 		this.tipoRegistro = tipoRegistro;
 	}
 
-	@Field(offset=2, length=51, paddingChar='0')
+	@Field(offset=2, length=52, paddingChar='0')
 	public String getFiller() {
 		return filler;
 	}

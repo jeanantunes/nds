@@ -202,10 +202,22 @@
 		<div id="dialog-tipo-estoque" title="Tipo de Estoque" style="display:none">
 			<fieldset>
 				<legend>Selecione o Tipo de Estoque</legend>
-			    <select id="selectTipoEstoque" name="" size="1" >
-			      
-			    </select>
-			
+			    
+			    <table><tr>
+			    	<td>
+			    		  <select id="selectTipoEstoque" name="" size="1" onchange="lancamentoNovoController.atualizarQuantidade()" ></select>
+			    	</td>
+			    	<td width="20px">
+			    		
+			    	</td>
+			    	<td>
+			    		Quantidade:
+			    	</td>
+			  	  	<td>
+				  	  	<input id="qtdeTipoDialog" type="text" style="width:30px;" disabled="disabled"/>
+			    	</td>
+			    </tr></table>
+			  				
 			</fieldset>
 		</div>
 	</form>

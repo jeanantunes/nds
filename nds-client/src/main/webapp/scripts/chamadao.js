@@ -128,6 +128,11 @@ var chamadaoController = $.extend(true, {
 				width : 40,
 				sortable : false,
 				align : 'center'
+			}, {
+				display: '',
+				name: 'lancamentoHidden',
+				width: 0,
+				sortable: false
 			}],
 			sortname : "codigo",
 			sortorder : "asc",
@@ -241,10 +246,13 @@ var chamadaoController = $.extend(true, {
 						   + ' name="checkConsignado"'
 						   + ' value="' + row.id + '"'
 						   + ' onclick="chamadaoController.calcularParcial()" />';
+			
+			var inputHidden = '<input type="hidden" class="lancamentoHidden" value="'+ row.cell.idLancamento +'"/>';
 						   
 			row.cell.reparte = spanReparte;
 			row.cell.valorTotal = spanValorTotal;
 			row.cell.sel = inputCheck;
+			row.cell.lancamentoHidden = inputHidden;
 		});
 		
 		$("#qtdProdutosTotal", chamadaoController.workspace).val(resultado.qtdProdutosTotal);
@@ -399,22 +407,25 @@ var chamadaoController = $.extend(true, {
 				
 				var linha = $(value);
 				
-				var colunaCheck = linha.find("td")[9];
+				var colunaCheck = linha.find("td")[11];
 				
 				var inputCheck = $(colunaCheck).find("div").find('input[name="checkConsignado"]');
 				
 				var checked = inputCheck.attr("checked") == "checked";
 				
 				if (checked) {
-				
+					
 					var colunaCodProduto = linha.find("td")[0];
 					var colunaNumEdicao = linha.find("td")[2];
+					var inputHiddenLancamento = linha.find("td")[12];
 					
 					var codProduto = $(colunaCodProduto).find("div").html();
 					var numEdicao = $(colunaNumEdicao).find("div").html();
+					var lancamento = $($(inputHiddenLancamento).find("div").html()).val();
 					
 					var linhaSelecionada = 'listaChamadao[' + index + '].codigoProduto=' + codProduto + '&';
 					linhaSelecionada += 'listaChamadao[' + index + '].numeroEdicao=' + numEdicao + '&';
+					linhaSelecionada += 'listaChamadao[' + index + '].idLancamento=' + lancamento + '&';
 					
 					listaChamadao = (listaChamadao + linhaSelecionada);
 				}
@@ -442,6 +453,30 @@ var chamadaoController = $.extend(true, {
 				   null,
 				   true
 		);
+	},
+	
+	cancelarChamadao : function(){
+		
+		$.postJSON(contextPath + "/devolucao/chamadao/cancelarChamadao",
+				   null,
+				   function(result) {
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							
+							exibirMensagem(tipoMensagem, listaMensagens);
+						}
+						
+						$(".chamadaoGrid", chamadaoController.workspace).flexReload();
+						
+						$("#checkAll", chamadaoController.workspace).attr("checked", false);
+					},
+				   null
+		);
 	}
 	
 }, BaseController);
+
+//@ sourceURL=chamadao.js

@@ -18,6 +18,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -92,21 +93,25 @@ public class EMS0124MessageProcessor extends AbstractRepository implements Messa
 				
 				EMS0124Detalhe outdetalhe = new EMS0124Detalhe();
 				
-				TipoMovimentoEstoque tipoMovimento = (TipoMovimentoEstoque) mec.getTipoMovimento();
+				for (Fornecedor fornecedor : mec.getProdutoEdicao().getProduto().getFornecedores()) { 
 				
-				outdetalhe.setCodigoCota(mec.getCota().getNumeroCota());
-			    outdetalhe.setContextoProduto(mec.getProdutoEdicao().getProduto().getCodigoContexto());
-				outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
-				outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
-				outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
-				outdetalhe.setQuantidadeNivelamento( Long.valueOf( mec.getQtde().toString() ));
-				outdetalhe.setDataLancamento(mec.getData());
-				if (tipoMovimento.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA))
-					outdetalhe.setTipoNivelamento("E");
-				else 
-					outdetalhe.setTipoNivelamento("S");
-				 
+					TipoMovimentoEstoque tipoMovimento = (TipoMovimentoEstoque) mec.getTipoMovimento();
+					
+					outdetalhe.setCodigoFornecedorProduto(fornecedor.getCodigoInterface());
+					outdetalhe.setCodigoCota(mec.getCota().getNumeroCota());
+				    outdetalhe.setContextoProduto(mec.getProdutoEdicao().getProduto().getCodigoContexto());
+					outdetalhe.setCodPublicacao(mec.getProdutoEdicao().getProduto().getCodigo());
+					outdetalhe.setEdicao(mec.getProdutoEdicao().getNumeroEdicao());
+					outdetalhe.setPrecoCapa(mec.getProdutoEdicao().getPrecoVenda());
+					outdetalhe.setQuantidadeNivelamento( Long.valueOf( mec.getQtde().toString() ));
+					outdetalhe.setDataLancamento(mec.getData());
+					if (tipoMovimento.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.NIVELAMENTO_ENTRADA))
+						outdetalhe.setTipoNivelamento("E");
+					else 
+						outdetalhe.setTipoNivelamento("S");
+				} 
 				print.println(fixedFormatManager.export(outdetalhe));
+				
 
 			}
 			EMS0124Trailer outtrailer = new EMS0124Trailer();

@@ -29,6 +29,15 @@ public class HistoricoTitularidadeCotaCodigoDescricao implements Serializable {
      */
     @Column(name = "DESCRICAO", nullable = false)
     private String descricao;
+    
+    public HistoricoTitularidadeCotaCodigoDescricao() {
+    }
+
+    public HistoricoTitularidadeCotaCodigoDescricao(Long codigo,
+            String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
 
     public Long getCodigo() {
         return codigo;

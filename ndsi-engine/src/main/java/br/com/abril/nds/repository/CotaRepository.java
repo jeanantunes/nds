@@ -22,6 +22,9 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -265,5 +268,44 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return
      */
     int obterCountQtdeCotaMunicipio();
+    
+    /**
+     * Recupera o histórico de titularidade da cota pelo identificador da cota e
+     * identificador do histórico
+     * 
+     * @param idCota
+     *            identificador da cota
+     * @param idHistorico
+     *            identificador do histórico
+     * @return {@link HistoricoTitularidadeCota} que correspopnde aos
+     *         identificadores recebidos ou null caso não seja encontrado
+     * @throws IllegalArgumentException
+     *             se os identificadores recebidos forem nulos
+     * 
+     */
+    HistoricoTitularidadeCota obterHistoricoTitularidade(Long idCota, Long idHistorico);
+    
+    
+    /**
+     * Recupera a forma de pagamento do histórico de titularidade da cota pelo
+     * indentificador
+     * 
+     * @param idFormaPagto
+     *            identificador da forma de pagamento do histórico de
+     *            titularidade da cota
+     * @return forma de pagamento do histórico de titularidade da cota com o
+     *         identificador recebido
+     */
+    HistoricoTitularidadeCotaFormaPagamento obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto);
+    
+    /**
+     * Recupera o sócio do histórico de titularidade da cota
+     * 
+     * @param idSocio
+     *            identificador do sócio
+     * @return sócio do histórico de titularidade da cota
+     */
+    HistoricoTitularidadeCotaSocio obterSocioHistoricoTitularidade(Long idSocio);
 
+	void ativarCota(Integer numeroCota);
 }

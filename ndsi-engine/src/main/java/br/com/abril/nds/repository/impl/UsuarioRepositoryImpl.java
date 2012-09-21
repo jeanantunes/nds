@@ -115,6 +115,16 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 		return (String) criteria.uniqueResult();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Usuario getUsuarioLogado(String login) {
+		Criteria criteria =  getSession().createCriteria(Usuario.class);
+		criteria.add(Restrictions.eq("login", login));
+		return (Usuario) criteria.uniqueResult();
+	}
+
 
 	@Override
 	public void alterarSenha(Usuario usuario) {

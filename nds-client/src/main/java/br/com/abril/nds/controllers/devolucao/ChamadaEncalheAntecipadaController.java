@@ -130,13 +130,7 @@ public class ChamadaEncalheAntecipadaController {
 	
 	private void carregarMunicipios(){
 		
-		List<Endereco> enderecoPdvPrincipal = pdvService.buscarMunicipiosPdvPrincipal();
-		
-		List<ItemDTO<Integer, String>> municipios = new ArrayList<ItemDTO<Integer,String>>();
-		
-		for (Endereco tp : enderecoPdvPrincipal) {
-			municipios.add(new ItemDTO<Integer, String>(tp.getCodigoCidadeIBGE(),tp.getCidade()));
-		}
+		List<ItemDTO<Integer, String>> municipios = pdvService.buscarMunicipiosPdvPrincipal();
 		
 		result.include("listaMunicipios",municipios);
 	}

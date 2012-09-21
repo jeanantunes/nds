@@ -20,14 +20,12 @@ import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
-import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Status;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.MonitorNFEService;
@@ -89,6 +87,7 @@ public class PainelMonitorNFEController {
 	public void index(){
 		
 		carregarComboSituacaoNfe();
+		carregarComboTipoNfe();
 		
 	}
 	
@@ -506,19 +505,34 @@ public class PainelMonitorNFEController {
 		
 		List<ItemDTO<String, String>> comboStatusNfe = new ArrayList<ItemDTO<String, String>>();
 		
+		for(StatusEmissaoNfe statusEmissaoNfe: StatusEmissaoNfe.values()) {
+			comboStatusNfe.add(new ItemDTO(statusEmissaoNfe.name(), statusEmissaoNfe.getDescricao()));
+		}
 		
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.AGUARDANDO_PROCESSAMENTO.name(), StatusEmissaoNfe.AGUARDANDO_PROCESSAMENTO.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.EM_PROCESSAMENTO.name(), StatusEmissaoNfe.EM_PROCESSAMENTO.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.PROCESSAMENTO_REJEITADO.name(), StatusEmissaoNfe.PROCESSAMENTO_REJEITADO.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.AGUARDANDO_ACAO_DO_USUARIO.name(), StatusEmissaoNfe.AGUARDANDO_ACAO_DO_USUARIO.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_AUTORIZADA.name(), StatusEmissaoNfe.NFE_AUTORIZADA.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_REJEITADA.name(), StatusEmissaoNfe.NFE_REJEITADA.getDescricao()));
-		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_DENEGADA.name(), StatusEmissaoNfe.NFE_DENEGADA.getDescricao()));
+//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.AGUARDANDO_PROCESSAMENTO.name(), StatusEmissaoNfe.AGUARDANDO_PROCESSAMENTO.getDescricao()));
+//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.EM_PROCESSAMENTO.name(), StatusEmissaoNfe.EM_PROCESSAMENTO.getDescricao()));
+//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.PROCESSAMENTO_REJEITADO.name(), StatusEmissaoNfe.PROCESSAMENTO_REJEITADO.getDescricao()));
+//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.AGUARDANDO_ACAO_DO_USUARIO.name(), StatusEmissaoNfe.AGUARDANDO_ACAO_DO_USUARIO.getDescricao()));
+//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_AUTORIZADA.name(), StatusEmissaoNfe.NFE_AUTORIZADA.getDescricao()));
+//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_REJEITADA.name(), StatusEmissaoNfe.NFE_REJEITADA.getDescricao()));
+//		comboStatusNfe.add(new ItemDTO(StatusEmissaoNfe.NFE_DENEGADA.name(), StatusEmissaoNfe.NFE_DENEGADA.getDescricao()));
 
 		result.include("comboStatusNfe", comboStatusNfe);
 		
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void carregarComboTipoNfe() {
+		
+		List<ItemDTO<String, String>> comboTipoNfe = new ArrayList<ItemDTO<String, String>>();
+		
+		for(Processo processo: Processo.values()) {
+			comboTipoNfe.add(new ItemDTO(processo.name(), processo.getDescricao()));
+		}
+
+		result.include("comboTipoNfe", comboTipoNfe);
+		
+	}
 	
 	@Path("/pesquisar")
 	public void pesquisar(

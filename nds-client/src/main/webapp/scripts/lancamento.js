@@ -23,25 +23,6 @@ var lancamentoController = $.extend(true, {
 		$("#selectTiposDiferenca", lancamentoController.workspace).val(null);
 	},
 	
-	verificarExistenciaEstudo : function(idDiferenca) {
-
-		var data = [
-				{
-					name: 'idDiferenca', value: idDiferenca
-				}
-			];
-		
-		$.postJSON(
-			contextPath + "/estoque/diferenca/lancamento/rateio/validarEstudo", 
-			data,
-			function(result) {
-				
-				lancamentoNovoController.popupNovasDiferencas(idDiferenca);
-			},
-			null
-		);
-	},
-
 	executarPreProcessamento : function(data) {
 		
 		if (data.mensagens) {
@@ -89,7 +70,7 @@ var lancamentoController = $.extend(true, {
 		
 		$.each(resultado.tableModel.rows, function(index, row) {
 
-			var linkRateioDiferenca = '<a id="ratearDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.verificarExistenciaEstudo(' + row.cell.id + ');" style="cursor:pointer">' +
+			var linkRateioDiferenca = '<a id="ratearDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoNovoController.editarDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
 									     '<img src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 									  '</a>';
 			
@@ -296,7 +277,7 @@ var lancamentoController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Tipo de Diferença',
-				name : 'tipoDiferenca',
+				name : 'descricaoTipoDiferenca',
 				width : 120,
 				sortable : true,
 				align : 'left'

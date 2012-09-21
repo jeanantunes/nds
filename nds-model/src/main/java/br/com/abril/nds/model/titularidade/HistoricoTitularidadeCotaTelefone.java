@@ -23,7 +23,7 @@ public class HistoricoTitularidadeCotaTelefone implements Serializable {
     /**
      * Número do telefone
      */
-    @Column(name = "TELEFONE_NUMERO", nullable = false)
+    @Column(name = "TELEFONE_NUMERO")
     private String numero;
     
     /**
@@ -33,17 +33,35 @@ public class HistoricoTitularidadeCotaTelefone implements Serializable {
     private String ramal;
     
     /**
+     * DDD do telefone
+     */
+    @Column(name = "DDD")
+    private String ddd;
+    
+    /**
      * Tipo do telefone
      */
-    @Column(name = "TELEFONE_TIPO_TELEFONE", nullable = false)
+    @Column(name = "TELEFONE_TIPO_TELEFONE")
     @Enumerated(EnumType.STRING)
     private TipoTelefone tipoTelefone;
     
     /**
      * Flag indicando se este é o telefone principal
      */
-    @Column(name = "TELEFONE_PRINCIPAL", nullable = false)
+    @Column(name = "TELEFONE_PRINCIPAL")
     private boolean principal;
+    
+    public HistoricoTitularidadeCotaTelefone() {
+    }
+
+    public HistoricoTitularidadeCotaTelefone(String numero, String ramal,
+            String ddd, TipoTelefone tipoTelefone, boolean principal) {
+        this.numero = numero;
+        this.ramal = ramal;
+        this.ddd = ddd;
+        this.tipoTelefone = tipoTelefone;
+        this.principal = principal;
+    }
 
     /**
      * @return the numero
@@ -71,6 +89,20 @@ public class HistoricoTitularidadeCotaTelefone implements Serializable {
      */
     public void setRamal(String ramal) {
         this.ramal = ramal;
+    }
+    
+    /**
+     * @return the ddd
+     */
+    public String getDdd() {
+        return ddd;
+    }
+
+    /**
+     * @param ddd the ddd to set
+     */
+    public void setDdd(String ddd) {
+        this.ddd = ddd;
     }
 
     /**

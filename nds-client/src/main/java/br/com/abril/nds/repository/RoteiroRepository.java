@@ -20,6 +20,5 @@ public interface RoteiroRepository extends Repository<Roteiro, Long> {
 	Integer buscarMaiorOrdemRoteiro();
 	
     List<Roteiro> buscarRoteiroEspecial();
-
 	
 }

@@ -9,9 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
+import br.com.abril.nds.repository.impl.VisaoEstoqueRepositoryImpl;
 import br.com.abril.nds.service.VisaoEstoqueService;
+
 
 @Service
 public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
@@ -37,13 +40,25 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 	@Override
 	@Transactional
 	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
-		List<VisaoEstoqueDetalheDTO> list = new ArrayList<VisaoEstoqueDetalheDTO>();
-
-		list.add(visaoEstoqueRepository.obterLancamentoDetalhe(filtro));
-/*		list.add(visaoEstoqueRepository.obterLancamentoJuramentado(filtro));
-		list.add(visaoEstoqueRepository.obterSuplementar(filtro));
-		list.add(visaoEstoqueRepository.obterRecolhimento(filtro));
-		list.add(visaoEstoqueRepository.obterProdutosDanificados(filtro));*/
+		
+		List<? extends VisaoEstoqueDetalheDTO> list = null;
+		
+		if(filtro.getTipoEstoque().equals(VisaoEstoqueRepositoryImpl.LANCAMENTO)) {
+			list = new ArrayList<VisaoEstoqueDetalheDTO>();
+			list = visaoEstoqueRepository.obterLancamentoDetalhe(filtro);
+		} else if (filtro.getTipoEstoque().equals(VisaoEstoqueRepositoryImpl.LANCAMENTO_JURAMENTADO)){
+			list = new ArrayList<VisaoEstoqueDetalheJuramentadoDTO>();
+			list = visaoEstoqueRepository.obterLancamentoJuramentadoDetalhe(filtro);
+		}else if (filtro.getTipoEstoque().equals(VisaoEstoqueRepositoryImpl.SUPLEMENTAR)) {
+			list = new ArrayList<VisaoEstoqueDetalheDTO>();
+			list = visaoEstoqueRepository.obterSuplementarDetalhe(filtro);
+		} else if(filtro.getTipoEstoque().equals(VisaoEstoqueRepositoryImpl.RECOLHIMENTO)) {
+			list = new ArrayList<VisaoEstoqueDetalheDTO>();
+			list = visaoEstoqueRepository.obterRecolhimentoDetalhe(filtro);
+		} else {
+			list = new ArrayList<VisaoEstoqueDetalheDTO>();
+			list = visaoEstoqueRepository.obterProdutosDanificadosDetalhe(filtro);
+		}
 
 		return list;
 	}
