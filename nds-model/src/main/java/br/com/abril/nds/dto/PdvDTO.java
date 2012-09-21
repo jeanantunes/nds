@@ -3,15 +3,13 @@ package br.com.abril.nds.dto;
 import java.io.FileInputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 
 public class PdvDTO implements Serializable {
 
@@ -58,15 +56,15 @@ public class PdvDTO implements Serializable {
 	
 	private BigDecimal porcentagemFaturamento;
 	
-	private TipoLicencaMunicipal tipoLicencaMunicipal;
+	private TipoLicencaMunicipalDTO tipoLicencaMunicipal = new TipoLicencaMunicipalDTO();
 
 	private String numeroLicenca;
 	
 	private String nomeLicenca;
 	
-	private TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV;
+	private TipoEstabelecimentoAssociacaoPDVDTO tipoEstabelecimentoAssociacaoPDV = new TipoEstabelecimentoAssociacaoPDVDTO();
 	
-	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO ;
+	private List<PeriodoFuncionamentoDTO> periodosFuncionamentoDTO;
 	
 	private List<EnderecoAssociacaoDTO> enderecosAdicionar;
 		
@@ -78,13 +76,13 @@ public class PdvDTO implements Serializable {
 	
     private CaracteristicaDTO caracteristicaDTO;
     
-	private List<Long> geradorFluxoSecundario;
+	private List<Long> geradorFluxoSecundario = new ArrayList<Long>();
     
     private Long geradorFluxoPrincipal;
     
-    private List<Long> maps;
+    private List<Long> maps = new ArrayList<Long>();
     
-    private TipoPontoPDV tipoPontoPDV;
+    private TipoPontoPDVDTO tipoPontoPDV = new TipoPontoPDVDTO();
     
     private boolean expositor;
     
@@ -95,6 +93,8 @@ public class PdvDTO implements Serializable {
     private String pathImagem;
     
     private String pathAplicacao;
+    
+    private boolean possuiImagem;
     
 	/**
 	 * @return the expositor
@@ -355,14 +355,14 @@ public class PdvDTO implements Serializable {
 	/**
 	 * @return the tipoLicencaMunicipal
 	 */
-	public TipoLicencaMunicipal getTipoLicencaMunicipal() {
+	public TipoLicencaMunicipalDTO getTipoLicencaMunicipal() {
 		return tipoLicencaMunicipal;
 	}
 
 	/**
 	 * @param tipoLicencaMunicipal the tipoLicencaMunicipal to set
 	 */
-	public void setTipoLicencaMunicipal(TipoLicencaMunicipal tipoLicencaMunicipal) {
+	public void setTipoLicencaMunicipal(TipoLicencaMunicipalDTO tipoLicencaMunicipal) {
 		this.tipoLicencaMunicipal = tipoLicencaMunicipal;
 	}
 
@@ -397,7 +397,7 @@ public class PdvDTO implements Serializable {
 	/**
 	 * @return the tipoEstabelecimentoAssociacaoPDV
 	 */
-	public TipoEstabelecimentoAssociacaoPDV getTipoEstabelecimentoAssociacaoPDV() {
+	public TipoEstabelecimentoAssociacaoPDVDTO getTipoEstabelecimentoAssociacaoPDV() {
 		return tipoEstabelecimentoAssociacaoPDV;
 	}
 
@@ -405,7 +405,7 @@ public class PdvDTO implements Serializable {
 	 * @param tipoEstabelecimentoAssociacaoPDV the tipoEstabelecimentoAssociacaoPDV to set
 	 */
 	public void setTipoEstabelecimentoAssociacaoPDV(
-			TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoAssociacaoPDV) {
+			TipoEstabelecimentoAssociacaoPDVDTO tipoEstabelecimentoAssociacaoPDV) {
 		this.tipoEstabelecimentoAssociacaoPDV = tipoEstabelecimentoAssociacaoPDV;
 	}
 
@@ -496,14 +496,14 @@ public class PdvDTO implements Serializable {
 	/**
 	 * @return the tipoPontoPDV
 	 */
-	public TipoPontoPDV getTipoPontoPDV() {
+	public TipoPontoPDVDTO getTipoPontoPDV() {
 		return tipoPontoPDV;
 	}
 
 	/**
 	 * @param tipoPontoPDV the tipoPontoPDV to set
 	 */
-	public void setTipoPontoPDV(TipoPontoPDV tipoPontoPDV) {
+	public void setTipoPontoPDV(TipoPontoPDVDTO tipoPontoPDV) {
 		this.tipoPontoPDV = tipoPontoPDV;
 	}
 	
@@ -607,6 +607,34 @@ public class PdvDTO implements Serializable {
 
 	public void setArrendatario(boolean arrendatario) {
 		this.arrendatario = arrendatario;
+	}
+	
+	/**
+     * @return the possuiImagem
+     */
+    public boolean isPossuiImagem() {
+        return possuiImagem;
+    }
+
+    /**
+     * @param possuiImagem the possuiImagem to set
+     */
+    public void setPossuiImagem(boolean possuiImagem) {
+        this.possuiImagem = possuiImagem;
+    }
+
+    public void addGeradorFluxoSecundario(Long geradorFluxoSecundario) {
+	    if (this.geradorFluxoSecundario == null) {
+	        this.geradorFluxoSecundario = new ArrayList<Long>();
+	    }
+	    this.geradorFluxoSecundario.add(geradorFluxoSecundario);
+	}
+	
+	public void addMaterialPromocional(Long materialPromocional) {
+	    if (this.maps == null) {
+	        this.maps = new ArrayList<Long>();
+	    }
+	    this.maps.add(materialPromocional);
 	}
 	
 }

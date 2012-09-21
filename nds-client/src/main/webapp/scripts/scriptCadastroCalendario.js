@@ -67,7 +67,7 @@ var CadastroCalendario = $.extend(true, {
 				align : 'center'
 			}],
 			width : 650,
-			height : 120
+			height : 100
 		});
 		
 		
@@ -372,7 +372,7 @@ var CadastroCalendario = $.extend(true, {
 				
 				resizable: false,
 				
-				height:480,
+				height:450,
 				
 				width:700,
 				
@@ -507,7 +507,7 @@ var CadastroCalendario = $.extend(true, {
 			$( "#dialog-novo", CadastroCalendario.workspace ).dialog({
 				
 				resizable: false,
-				height:300,
+				height:320,
 				width:430,
 				modal: true,
 				buttons: {

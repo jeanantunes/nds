@@ -5,7 +5,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -31,6 +33,7 @@ import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -464,6 +467,10 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 				.informacaoTransporte("88416646000103", enderecoTransporte,
 						"IEstd", 132, "municipio", "nome", null, "SP", null);
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
-		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null);
+
+		Set<Processo> processos = new HashSet<Processo>();
+		processos.add(Processo.GERACAO_NF_E);
+
+		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos);
 	}
 }

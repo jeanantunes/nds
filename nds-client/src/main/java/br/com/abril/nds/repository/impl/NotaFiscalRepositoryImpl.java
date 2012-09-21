@@ -135,7 +135,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				sql.append(" AND ");
 			}
 			
-			sql.append(" NOTA_FISCAL_NOVO.TIPO_OPERACAO = :tipoEmissaoNfe ");
+			sql.append(" EXISTS(SELECT * FROM NOTA_FISCAL_PROCESSO ")
+			   .append("        WHERE NOTA_FISCAL_PROCESSO.NOTA_FISCAL_ID = NOTA_FISCAL_NOVO.ID ")
+			   .append("          AND NOTA_FISCAL_PROCESSO.PROCESSO = :tipoEmissaoNfe) ");
 			
 			indAnd = true;
 		}
@@ -367,7 +369,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				sql.append(" AND ");
 			}
 			
-			sql.append(" NOTA_FISCAL_NOVO.TIPO_OPERACAO = :tipoEmissaoNfe ");
+			sql.append(" EXISTS(SELECT * FROM NOTA_FISCAL_PROCESSO ")
+			   .append("        WHERE NOTA_FISCAL_PROCESSO.NOTA_FISCAL_ID = NOTA_FISCAL_NOVO.ID ")
+			   .append("          AND NOTA_FISCAL_PROCESSO.PROCESSO = :tipoEmissaoNfe) ");
 			
 			indAnd = true;
 		}

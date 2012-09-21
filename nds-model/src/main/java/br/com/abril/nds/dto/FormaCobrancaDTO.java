@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -13,9 +14,9 @@ public class FormaCobrancaDTO {
 	
 	//DADOS DO GRID
 	String fornecedor;
-	String concentracaoPagto;
+	String concentracaoPagto = "";
 	String tipoPagto;
-	String detalhesTipoPagto;
+	String detalhesTipoPagto = "";
 	
 	//DADOS DO FORMULARIO
 	TipoCobranca tipoCobranca;
@@ -154,6 +155,9 @@ public class FormaCobrancaDTO {
 
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
+		if (this.tipoCobranca != null) {
+		    setTipoPagto(this.tipoCobranca.getDescTipoCobranca());
+		}
 	}
 
 	public TipoFormaCobranca getTipoFormaCobranca() {
@@ -315,5 +319,12 @@ public class FormaCobrancaDTO {
 	public void setFornecedoresId(List<Long> fornecedoresId) {
 		this.fornecedoresId = fornecedoresId;
 	}
+
+    public void addIdFornecedor(Long id) {
+       if (fornecedoresId == null) {
+           fornecedoresId = new ArrayList<Long>();
+       }
+       fornecedoresId.add(id);
+    }
 
 }

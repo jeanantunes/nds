@@ -110,9 +110,8 @@ label {
     
         <jsp:include page="../messagesDialog.jsp" />
 
-	
-			<label><strong>Dados de Bancos</strong>
-			</label>
+			<fieldset>
+			<legend>Dados de Bancos</legend>
 	
 	        <input type="hidden" id="idBanco" name="idBanco" />
 	
@@ -177,11 +176,11 @@ label {
 				<tr>
 					<td>Instruções:</td>
 					<td colspan="3"><textarea name="alterInstrucoes" id="alterInstrucoes" maxlength="200"
-							style="width: 490px;"></textarea>
+							style="width: 510px;"></textarea>
 					</td>
 				</tr>
 			</table>
-			
+			</fieldset>
 	</div>
 	</form>
 

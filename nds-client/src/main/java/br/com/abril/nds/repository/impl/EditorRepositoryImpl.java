@@ -33,7 +33,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	 */
 	@Override
 	public List<Editor> obterEditores() {
-		String hql = "from Editor ed ORDER BY ed.nome";
+		String hql = "from Editor ed ORDER BY ed.pessoaJuridica.razaoSocial";
 		Query query = getSession().createQuery(hql);
 		@SuppressWarnings("unchecked")
 		List<Editor> editores = query.list();

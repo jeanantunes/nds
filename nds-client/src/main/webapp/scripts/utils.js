@@ -202,6 +202,29 @@ function montarComboBoxCustomJson(result, incluirTodos) {
 	return options;
 }
 
+function montarComboBoxUnicaOpcao(value, label, element) {
+        $(element).html(newOption(value, label));
+}
+
+function carregarCombo(url, params, element, selected, idDialog ){
+    $.postJSON(url, params,
+        function(result){
+            var combo =  montarComboBox(result, false);
+            combo = newOption('-1', 'Selecione...') + combo;
+            $(element).html(combo);
+            if (selected) {
+                $(element).val(selected);
+            } else {
+                $(element).val('-1');
+            }
+        },null,true, idDialog);
+}
+
+
+function newOption(value, label) {
+    return "<option value='" + value + "'>" + label + "</option>"
+}
+
 function replaceAll(string, token, newtoken) {
 	while (string.indexOf(token) != -1) {
  		string = string.replace(token, newtoken);
@@ -221,6 +244,30 @@ function removeMascaraPriceFormat(field) {
 	
 	return field;
 }
+
+function priceToFloat(field) {
+	
+	field = replaceAll(field, ".", "");
+	field = replaceAll(field, ",", ".");
+	
+	return parseFloat(field).toFixed(2);
+}
+
+function floatToPrice(field) {
+	
+	var price = String(field);
+    var part = price.split(".");
+    return part[0].split("").reverse().reduce(function(acc, price, i, orig) {
+        return  price + (i && !(i % 3) ? "." : "") + acc;
+    }, "") + "," + part[1];
+    
+}
+
+function sumPrice(price1, price2){
+	
+	return floatToPrice((parseFloat(priceToFloat(price1)) + parseFloat(priceToFloat(price2))).toFixed(2));
+}
+
 
 function clickLineFlexigrid(inputCheck, select) {
 	

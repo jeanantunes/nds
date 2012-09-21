@@ -1,8 +1,10 @@
 package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -26,6 +28,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 /**
  * Representa a titularidade da cota, utilizado como histórico de propriedade da
@@ -52,6 +55,10 @@ public class HistoricoTitularidadeCota implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "COTA_ID")
     private Cota cota;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DATA_INCLUSAO")
+    private Date dataInclusao;
 
     /**
      * Início da titularidade para a cota
@@ -85,6 +92,18 @@ public class HistoricoTitularidadeCota implements Serializable {
      */
     @Column(name = "EMAIL")
     private String email;
+    
+    /**
+     * Flag indicando se a cota emite NFE
+     */
+    @Column(name = "EMITE_NFE")
+    private boolean emiteNfe;
+    
+    /**
+     * Email de utilização da NFE
+     */
+    @Column(name = "EMAIL_NFE")
+    private String emailNfe;
 
     /**
      * Pessoa Física titular da cota do histórico de titularidade 
@@ -184,6 +203,12 @@ public class HistoricoTitularidadeCota implements Serializable {
     @OneToMany(cascade = { CascadeType.ALL })
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
     private Collection<HistoricoTitularidadeCotaSocio> socios;
+   
+    /**
+     * Box do histórico de titularidade da cota
+     */
+    @Column(name = "BOX")
+    private String box;
 
     /**
      * @return the id
@@ -213,6 +238,20 @@ public class HistoricoTitularidadeCota implements Serializable {
      */
     public void setCota(Cota cota) {
         this.cota = cota;
+    }
+    
+    /**
+     * @return the dataInclusao
+     */
+    public Date getDataInclusao() {
+        return dataInclusao;
+    }
+
+    /**
+     * @param dataInclusao the dataInclusao to set
+     */
+    public void setDataInclusao(Date dataInclusao) {
+        this.dataInclusao = dataInclusao;
     }
 
     /**
@@ -288,6 +327,34 @@ public class HistoricoTitularidadeCota implements Serializable {
      */
     public void setEmail(String email) {
         this.email = email;
+    }
+    
+    /**
+     * @return the emiteNfe
+     */
+    public boolean isEmiteNfe() {
+        return emiteNfe;
+    }
+
+    /**
+     * @param emiteNfe the emiteNfe to set
+     */
+    public void setEmiteNfe(boolean emiteNfe) {
+        this.emiteNfe = emiteNfe;
+    }
+
+    /**
+     * @return the emailNfe
+     */
+    public String getEmailNfe() {
+        return emailNfe;
+    }
+
+    /**
+     * @param emailNfe the emailNfe to set
+     */
+    public void setEmailNfe(String emailNfe) {
+        this.emailNfe = emailNfe;
     }
 
     /**
@@ -504,6 +571,9 @@ public class HistoricoTitularidadeCota implements Serializable {
      */
     public void setDistribuicao(HistoricoTitularidadeCotaDistribuicao distribuicao) {
         this.distribuicao = distribuicao;
+        if (this.distribuicao != null) {
+            this.distribuicao.setHistoricoTitularidadeCota(this);
+        }
     }
 
     /**
@@ -519,4 +589,267 @@ public class HistoricoTitularidadeCota implements Serializable {
     public void setSocios(Collection<HistoricoTitularidadeCotaSocio> socios) {
         this.socios = socios;
     }
+    
+    /**
+     * @return the box
+     */
+    public String getBox() {
+        return box;
+    }
+
+    /**
+     * @param box the box to set
+     */
+    public void setBox(String box) {
+        this.box = box;
+    }
+
+    public HistoricoTitularidadeCotaPessoa getPessoa() {
+        return isPessoaFisica() ? pessoaFisica : pessoaJuridica;
+    }
+    
+    /**
+     * Verifica se a pessoa associada ao histórico de titularidade é uma pessoa
+     * física
+     * 
+     * @return true se o pessoa associada for uma pessoa física, false caso
+     *         contrário
+     */
+    public boolean isPessoaFisica() {
+        return pessoaFisica != null;
+    }
+    
+    /**
+     * Adiciona um endereço ao histórico de titularidade da cota
+     * 
+     * @param endereco
+     *            endereço para inclusão
+     */
+    public void addEndereco(HistoricoTitularidadeCotaEndereco endereco) {
+        if (enderecos == null) {
+            enderecos = new ArrayList<HistoricoTitularidadeCotaEndereco>();
+        }
+        enderecos.add(endereco);
+    }
+
+    /**
+     * Adiciona um telefone ao histórico de titularidade da cota
+     * 
+     * @param telefone
+     *            telefone para inclusão
+     */
+    public void addTelefone(HistoricoTitularidadeCotaTelefone telefone) {
+       if (telefones == null) {
+           telefones = new ArrayList<HistoricoTitularidadeCotaTelefone>();
+       }
+       telefones.add(telefone);
+    }
+
+    /**
+     * Adiciona um pdv ao histórico de titularidade da cota
+     * @param pdv para inclusão
+     */
+    public void addPdv(HistoricoTitularidadeCotaPDV pdv) {
+        if (pdvs == null) {
+            pdvs = new ArrayList<HistoricoTitularidadeCotaPDV>();
+        }
+        pdv.setHistoricoTitularidadeCota(this);
+        pdvs.add(pdv);
+    }
+    
+    /**
+     * Adiciona um cota referência ao histórico de titularidade da cota
+     * 
+     * @param referencia
+     *            referência para inclusão
+     */
+    public void addCotaReferencia(HistoricoTitularidadeCotaReferenciaCota referencia) {
+        if (referencias == null) {
+            referencias = new ArrayList<HistoricoTitularidadeCotaReferenciaCota>();
+        }
+        referencias.add(referencia);
+    }
+
+    /**
+     * Adiciona um fornecedor ao histórico de titularidade da cota
+     * 
+     * @param fornecedor
+     *            fornecedor para inclusão
+     */
+    public void addFornecedor(HistoricoTitularidadeCotaFornecedor fornecedor) {
+        if (fornecedores == null) {
+            fornecedores = new ArrayList<HistoricoTitularidadeCotaFornecedor>();
+        }
+        fornecedores.add(fornecedor);
+    }
+
+    /**
+     * Recupera os descontos de produto associados ao histórico de titularidade
+     * da cota
+     * 
+     * @return coleção de descontos de produto associados ao histórico de
+     *         titularidade da cota
+     */
+    public Collection<HistoricoTitularidadeCotaDescontoProduto> getDescontosProduto() {
+        List<HistoricoTitularidadeCotaDescontoProduto> descontosProduto = new ArrayList<HistoricoTitularidadeCotaDescontoProduto>();
+        for (HistoricoTitularidadeCotaDesconto desconto : descontos) {
+            if (desconto instanceof HistoricoTitularidadeCotaDescontoProduto) {
+                descontosProduto.add(HistoricoTitularidadeCotaDescontoProduto.class.cast(desconto));
+            }
+        }
+        return descontosProduto;
+    }
+    
+    /**
+     * Recupera os descontos da cota associados ao histórico de titularidade
+     * da cota
+     * 
+     * @return coleção de descontos da cota associados ao histórico de
+     *         titularidade da cota
+     */
+    public Collection<HistoricoTitularidadeCotaDescontoCota> getDescontosCota() {
+        List<HistoricoTitularidadeCotaDescontoCota> descontosCota = new ArrayList<HistoricoTitularidadeCotaDescontoCota>();
+        for (HistoricoTitularidadeCotaDesconto desconto : descontos) {
+            if (desconto instanceof HistoricoTitularidadeCotaDescontoCota) {
+                descontosCota.add(HistoricoTitularidadeCotaDescontoCota.class.cast(desconto));
+            }
+        }
+        return descontosCota;
+    }
+
+    /**
+     * Adiciona um desconto aos descontos associados ao histórico de
+     * titularidade da cota
+     * 
+     * @param desconto
+     *            desconto para inclusão
+     */
+    public void addDesconto(HistoricoTitularidadeCotaDesconto desconto) {
+        if (descontos == null) {
+            descontos = new ArrayList<HistoricoTitularidadeCotaDesconto>();
+        }
+        desconto.setHistoricoTitularidadeCota(this);
+        descontos.add(desconto);
+    }
+
+    /**
+     * Associa um sócio ao histórico de titularidade da cota
+     * 
+     * @param socio
+     *            sócio para inclusão
+     */
+    public void addSocio(HistoricoTitularidadeCotaSocio socio) {
+       if (socios == null) {
+           socios = new ArrayList<HistoricoTitularidadeCotaSocio>();
+       }
+       socios.add(socio);
+    }
+
+    /**
+     * Adiciona uma garantia ao histórico de titularidade da cota
+     * 
+     * @param garantia
+     *            garantia para inclusão
+     */
+    public void addGarantia(HistoricoTitularidadeCotaGarantia garantia) {
+        if (garantias == null) {
+            garantias = new ArrayList<HistoricoTitularidadeCotaGarantia>();
+        }
+        garantia.setHistoricoTitularidadeCota(this);
+        garantias.add(garantia);
+    }
+    
+    /**
+     * Retorna o tipo de garantia do histórico de titularidade da cota
+     * 
+     * @return tipo de garantia aceita no histórico de titularidade da cota
+     */
+    public TipoGarantia getTipoGarantia() {
+        if (garantias == null || garantias.isEmpty()) {
+            return null;
+        }
+        return garantias.iterator().next().getTipoGarantia();
+    }
+    
+    /**
+     * Retorna a garantia do tipo fiador do histórico de titularidade da cota
+     * @return garantia fiador do histórico de titularidade da cota
+     */
+    public HistoricoTitularidadeCotaFiador getGarantiaFiador() {
+        if (TipoGarantia.FIADOR == getTipoGarantia()) {
+            return HistoricoTitularidadeCotaFiador.class.cast(garantias.iterator().next());
+        }
+        return null;
+    }
+    
+    /**
+     * Retorna a garantia do tipo cheque caução do histórico de titularidade da
+     * cota
+     * 
+     * @return garantia cheque caução do histórico de titularidade da cota
+     */
+    public HistoricoTitularidadeCotaChequeCaucao getGarantiaChequeCaucao() {
+        if (TipoGarantia.CHEQUE_CAUCAO == getTipoGarantia()) {
+            return HistoricoTitularidadeCotaChequeCaucao.class.cast(garantias.iterator().next());
+        }
+        return null;
+    }
+    
+    /***
+     * Retorna as garantias do tipo imóvel do histórico de titularidade da cota
+     * 
+     * @return coleção de garantias do tipo imóvel para o histórico de titularidade da cota
+     */
+    public Collection<HistoricoTitularidadeCotaImovel> getGarantiasImovel() {
+        List<HistoricoTitularidadeCotaImovel> imoveis = new ArrayList<HistoricoTitularidadeCotaImovel>();
+        if (TipoGarantia.IMOVEL == getTipoGarantia()) {
+            for(HistoricoTitularidadeCotaGarantia garantia : garantias) {
+                imoveis.add(HistoricoTitularidadeCotaImovel.class.cast(garantia));
+            }
+        }
+        return imoveis;
+    }
+    
+    /**
+     * Retorna a garantia do tipo nota promissória do histórico de titularidade da
+     * cota
+     * 
+     * @return garantia nota promissória do histórico de titularidade da cota
+     */
+    public HistoricoTitularidadeCotaNotaPromissoria getGarantiaNotaPromissoria() {
+        if (TipoGarantia.NOTA_PROMISSORIA == getTipoGarantia()) {
+            return HistoricoTitularidadeCotaNotaPromissoria.class.cast(garantias.iterator().next());
+        }
+        return null;
+    }
+    
+    /**
+     * Retorna a garantia do tipo caução líquida do histórico de titularidade da
+     * cota
+     * 
+     * @return garantia caução líquida do histórico de titularidade da cota
+     */
+    public HistoricoTitularidadeCotaCaucaoLiquida getGarantiaCaucaoLiquida() {
+        if (TipoGarantia.CAUCAO_LIQUIDA == getTipoGarantia()) {
+            return HistoricoTitularidadeCotaCaucaoLiquida.class.cast(garantias.iterator().next());
+        }
+        return null;
+    }
+
+    /***
+     * Retorna as garantias do tipo outros do histórico de titularidade da cota
+     * 
+     * @return coleção de garantias do tipo outros para o histórico de
+     *         titularidade da cota
+     */
+    public Collection<HistoricoTitularidadeCotaOutros> getGarantiasOutros() {
+        List<HistoricoTitularidadeCotaOutros> outros = new ArrayList<HistoricoTitularidadeCotaOutros>();
+        if (TipoGarantia.OUTROS == getTipoGarantia()) {
+            for (HistoricoTitularidadeCotaGarantia garantia : garantias) {
+                outros.add(HistoricoTitularidadeCotaOutros.class.cast(garantia));
+            }
+        }
+        return outros;
+    }
+
 }

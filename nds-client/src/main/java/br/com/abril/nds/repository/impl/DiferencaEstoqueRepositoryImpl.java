@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
@@ -91,8 +89,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
-		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
-		
 		if (filtro != null) {
 		
 			if (filtro.getDataMovimento() != null) {
@@ -143,8 +139,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
-		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
-		
 		if (filtro.getDataMovimento() != null) {
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
@@ -188,17 +182,15 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 				+ " else 0 end) as valorTotalDiferenca ";
 		}
 
-		hql += " from Diferenca diferenca "
-			+  " join diferenca.movimentoEstoque movimentoEstoque "
+		hql += " from Diferenca diferenca " 
 			+  " left join diferenca.produtoEdicao.produto.fornecedores fornecedor "
-			+  " where diferenca.statusConfirmacao = :statusConfirmacao "
-			+  " and movimentoEstoque.status = :statusAprovacao ";
+			+  " where diferenca.statusConfirmacao = :statusConfirmacao ";
 		
 		if (filtro != null) {
 			
 			if (filtro.getDataMovimento() != null) {
-	
-				hql += " and movimentoEstoque.data = :dataMovimento ";
+
+				hql += " and diferenca.dataMovimento = :dataMovimento ";
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
@@ -243,11 +235,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			switch (filtro.getOrdenacaoColuna()) {
 			
 				case DATA_LANCAMENTO_NUMERO_EDICAO:
-					hql += "order by diferenca.movimentoEstoque.data, "
+					hql += "order by diferenca.dataMovimento, "
 						 + " diferenca.produtoEdicao.numeroEdicao ";
 					break;
 				case DATA_LANCAMENTO:
-					hql += "order by diferenca.movimentoEstoque.data ";
+					hql += "order by diferenca.dataMovimento";
 					break;
 				case CODIGO_PRODUTO:
 					hql += "order by diferenca.produtoEdicao.produto.codigo ";
@@ -384,7 +376,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 				 hql += " join diferenca.rateios rateios ";
 			}
 			
-			hql += " where diferenca.movimentoEstoque is not null "
+			hql += " where diferenca.lancamentoDiferenca is not null "
 				+ " and diferenca.statusConfirmacao = :statusConfirmacao ";
 			
 			if (dataLimiteLancamentoPesquisa != null) {
@@ -409,7 +401,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					&& filtro.getPeriodoVO().getDataInicial() != null
 					&& filtro.getPeriodoVO().getDataFinal() != null) {
 				
-				hql += " and diferenca.movimentoEstoque.data between :dataInicial and :dataFinal ";
+				hql += " and diferenca.dataMovimento between :dataInicial and :dataFinal ";
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
@@ -482,9 +474,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	@Override
 	public BigDecimal obterValorFinanceiroPorTipoDiferenca(TipoDiferenca tipoDiferenca){
 		
-		StringBuilder hql = new StringBuilder("select sum(diferenca.movimentoEstoque.qtde) * sum(diferenca.produtoEdicao.precoVenda) ");
+		StringBuilder hql = new StringBuilder("select sum(diferenca.lancamentoDiferenca.movimentoEstoque.qtde) * sum(diferenca.produtoEdicao.precoVenda) ");
 		hql.append(" from Diferenca diferenca, Distribuidor distribuidor ")
-		   .append(" where diferenca.movimentoEstoque.data = distribuidor.dataOperacao ")
+		   .append(" where diferenca.lancamentoDiferenca.movimentoEstoque.data = distribuidor.dataOperacao ")
 		   .append(" and diferenca.tipoDiferenca = :tipoDiferenca ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
