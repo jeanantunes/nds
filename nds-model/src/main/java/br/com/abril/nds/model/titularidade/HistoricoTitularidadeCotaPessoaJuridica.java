@@ -12,7 +12,7 @@ import javax.persistence.Embeddable;
  *
  */
 @Embeddable
-public class HistoricoTitularidadeCotaPessoaJuridica implements Serializable {
+public class HistoricoTitularidadeCotaPessoaJuridica implements HistoricoTitularidadeCotaPessoa, Serializable {
     
     private static final long serialVersionUID = 1L;
 
@@ -45,6 +45,19 @@ public class HistoricoTitularidadeCotaPessoaJuridica implements Serializable {
      */
     @Column(name = "INSC_MUNICIPAL", length=15)
     private String inscricaoMunicipal;
+    
+    public HistoricoTitularidadeCotaPessoaJuridica() {
+    }
+
+    public HistoricoTitularidadeCotaPessoaJuridica(String razaoSocial,
+            String nomeFantasia, String cnpj, String inscricaoEstadual,
+            String inscricaoMunicipal) {
+        this.razaoSocial = razaoSocial;
+        this.nomeFantasia = nomeFantasia;
+        this.cnpj = cnpj;
+        this.inscricaoEstadual = inscricaoEstadual;
+        this.inscricaoMunicipal = inscricaoMunicipal;
+    }
 
     /**
      * @return the razaoSocial
@@ -114,6 +127,16 @@ public class HistoricoTitularidadeCotaPessoaJuridica implements Serializable {
      */
     public void setInscricaoMunicipal(String inscricaoMunicipal) {
         this.inscricaoMunicipal = inscricaoMunicipal;
+    }
+
+    @Override
+    public String getNome() {
+        return razaoSocial;
+    }
+
+    @Override
+    public String getDocumento() {
+        return cnpj;
     }
 
 }

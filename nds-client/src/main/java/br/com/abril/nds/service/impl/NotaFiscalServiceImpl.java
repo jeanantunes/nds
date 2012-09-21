@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -475,6 +476,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		identificacaoEmitente.setNome(distribuidor.getJuridica().getNome());
 		identificacaoEmitente.setNomeFantasia(distribuidor.getJuridica()
 				.getNomeFantasia());
+		identificacaoEmitente.setPessoaEmitenteReferencia(distribuidor.getJuridica());
 
 		EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository
 				.obterEnderecoPrincipal();
@@ -626,7 +628,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada) {
+			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal,
+			InformacaoTransporte transporte,
+			InformacaoAdicional informacaoAdicional,
+			List<NotaFiscalReferenciada> listNotaFiscalReferenciada, 
+			Set<Processo> processos) {
 
 		NotaFiscal notaFiscal = new NotaFiscal();
 
@@ -682,7 +688,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.setInformacaoAdicional(informacaoAdicional);
 		
 		notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.GERADA);
-		
+
+		notaFiscal.setProcessos(processos);
 		
 		notaFiscalDAO.adicionar(notaFiscal);
 		

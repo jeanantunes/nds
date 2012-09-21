@@ -39,6 +39,8 @@ public class SlipDTO {
 
 	private List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlipDTO;
 	
+	private List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO;
+	
 	
 	
 	/**
@@ -297,6 +299,21 @@ public class SlipDTO {
 	public void setListaProdutoEdicaoSlipDTO(
 			List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlipDTO) {
 		this.listaProdutoEdicaoSlipDTO = listaProdutoEdicaoSlipDTO;
+	}
+
+	/**
+	 * @return the listaComposicaoCobrancaDTO
+	 */
+	public List<ComposicaoCobrancaSlipDTO> getListaComposicaoCobrancaDTO() {
+		return listaComposicaoCobrancaDTO;
+	}
+
+	/**
+	 * @param listaComposicaoCobrancaDTO the listaComposicaoCobrancaDTO to set
+	 */
+	public void setListaComposicaoCobrancaDTO(
+			List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO) {
+		this.listaComposicaoCobrancaDTO = listaComposicaoCobrancaDTO;
 	}
 	
 }

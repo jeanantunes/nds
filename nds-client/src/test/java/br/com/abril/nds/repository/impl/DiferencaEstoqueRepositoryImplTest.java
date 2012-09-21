@@ -26,9 +26,11 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -67,6 +69,10 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 
 	private Fornecedor fornecedor;
 	
+	private Date datalancamentoDiferenca = new Date();
+
+	private ProdutoEdicao produtoEdicao;
+	
 	@Before
 	public void setup() {
 		abril = Fixture.editoraAbril();
@@ -86,7 +92,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 
-		ProdutoEdicao produtoEdicao = this.criarProdutoEdicao();
+		produtoEdicao = this.criarProdutoEdicao();
 		
 		TipoMovimentoEstoque tipoMovimento = Fixture.tipoMovimentoFaltaEm();
 		
@@ -157,11 +163,18 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
-								  tipoDiferenca, statusConfirmado, null, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+								  tipoDiferenca, statusConfirmado, null,true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.COTA, datalancamentoDiferenca);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			
 			save(diferenca);
+			
+			LancamentoDiferenca lancamento = new LancamentoDiferenca();
+			lancamento.setMovimentoEstoque(movimentoEstoque);
+			lancamento.setDiferenca(diferenca);
+			lancamento.setDataProcessamento(new Date());
+			
+			save(lancamento);
 		}
 		
 		for (int i = 0; i < this.qtdeMovimentosConsulta; i++) {
@@ -176,11 +189,18 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			Diferenca diferenca = 
 				Fixture.diferenca(quantidadeDiferenca, usuario, produtoEdicao,
-								  tipoDiferenca, statusPendente, null, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+								  tipoDiferenca, statusPendente, null, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.COTA, datalancamentoDiferenca);
 			
 			diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 			
 			save(diferenca);
+			
+			LancamentoDiferenca lancamento = new LancamentoDiferenca();
+			lancamento.setMovimentoEstoque(movimentoEstoque);
+			lancamento.setDiferenca(diferenca);
+			lancamento.setDataProcessamento(new Date());
+			
+			save(lancamento);
 		}
 	}
 	
@@ -189,7 +209,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
 		
-		filtro.setDataMovimento(this.dataMovimento);
+		filtro.setDataMovimento(datalancamentoDiferenca);
 		filtro.setTipoDiferenca(this.tipoDiferenca);
 
 		filtro.setOrdenacaoColuna(OrdenacaoColunaLancamento.VALOR_TOTAL_DIFERENCA);
@@ -209,23 +229,11 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		Assert.assertEquals(this.qtdResultadoPorPagina, listaDiferencas.size());
 		
-		for (int i = 0; i < listaDiferencas.size(); i++) {
+		for (Diferenca diferenca : listaDiferencas) {
 			
-			Diferenca diferenca = listaDiferencas.get(i);
-
-			Date data = null;
-
-			if (diferenca.getLancamentoDiferenca() != null &&
-					diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null) {
-				
-				diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
-			}
-
-			Assert.assertEquals(
-				this.dataMovimento, data);
+			Assert.assertEquals(DateUtil.formatarDataPTBR(datalancamentoDiferenca),DateUtil.formatarDataPTBR(diferenca.getDataMovimento()));
 			
-			Assert.assertEquals(
-				this.tipoDiferenca, diferenca.getTipoDiferenca());
+			Assert.assertEquals(this.tipoDiferenca, diferenca.getTipoDiferenca());
 		}
 	}
 	
@@ -234,7 +242,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
 		
-		filtro.setDataMovimento(this.dataMovimento);
+		filtro.setDataMovimento(datalancamentoDiferenca);
 		filtro.setTipoDiferenca(this.tipoDiferenca);
 		
 		Long quantidadeTotal = this.diferencaEstoqueRepository.obterTotalDiferencasLancamento(filtro);
@@ -254,9 +262,9 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
-		filtro.setCodigoProduto("1");
+		//filtro.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 		
-		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+		filtro.setTipoDiferenca(this.tipoDiferenca);
 		
 		filtro.setPaginacao(paginacao);
 		
@@ -271,9 +279,9 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	public void obterTotalDiferencas() {
 		FiltroConsultaDiferencaEstoqueDTO filtro = new FiltroConsultaDiferencaEstoqueDTO();
 		
-		filtro.setCodigoProduto("1");
+		filtro.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 		
-		filtro.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+		filtro.setTipoDiferenca(this.tipoDiferenca);
 		
 		Long quantidadeTotal = diferencaEstoqueRepository.obterTotalDiferencas(filtro, null);
 		

@@ -82,9 +82,9 @@ $(function() {
 					<td>	
 						<select name="tipoNfe" id="tipoNfe" style="width: 120px;">
 							<option selected="selected"></option>
-							<option value="">Todos</option>
-							<option value="ENTRADA">Entrada</option>
-							<option value="SAIDA">Saída</option>
+						    <c:forEach items="${comboTipoNfe}" var="comboTipoNfe">
+						      		<option value="${comboTipoNfe.key}">${comboTipoNfe.value}</option>	
+						    </c:forEach>
 						</select>
 					</td>
 					<td>Número:</td>

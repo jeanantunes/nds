@@ -16,10 +16,10 @@ import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -228,6 +228,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 				) 
 		);
 
+		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
+		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
+
 		if (fornecedor != null) {
 
 			produto.addFornecedor(fornecedor);
@@ -407,8 +410,30 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			}
 		}
 
+		TributacaoFiscal tributacaoFiscal = getTributacaoFiscal(input.getCodigoSituacaoTributaria());
+		if (produto.getTributacaoFiscal() != tributacaoFiscal) {
+			produto.setTributacaoFiscal(tributacaoFiscal);
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizacao da Tributação Fiscal para: " + tributacaoFiscal);
+		}
+
 	}
 
+	/**
+	 * Retorna o enum TributacaoFiscal (codigoSituacaoTributaria) baseado na posição 220 retornada na EMS0109Input.java
+	 * @return
+	 */
+	private TributacaoFiscal getTributacaoFiscal(String codigoSituacaoTributaria) {
+		if ("A".equalsIgnoreCase(codigoSituacaoTributaria)) {
+			return TributacaoFiscal.TRIBUTADO;
+		} else if ("B".equalsIgnoreCase(codigoSituacaoTributaria)) {
+			return TributacaoFiscal.ISENTO;
+		} else {
+			return TributacaoFiscal.OUTROS;
+		}
+	}
+	
 	@Override
 	public void posProcess() {
 		// TODO Auto-generated method stub

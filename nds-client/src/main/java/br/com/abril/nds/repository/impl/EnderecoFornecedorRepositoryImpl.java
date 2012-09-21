@@ -3,17 +3,23 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.repository.EnderecoFornecedorRepository;
 
 @Repository
 public class EnderecoFornecedorRepositoryImpl extends AbstractRepositoryModel<EnderecoFornecedor, Long> 
 											  implements EnderecoFornecedorRepository {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(EnderecoFornecedorRepositoryImpl.class);
 
 	public EnderecoFornecedorRepositoryImpl() {
 		super(EnderecoFornecedor.class);
@@ -36,7 +42,17 @@ public class EnderecoFornecedorRepositoryImpl extends AbstractRepositoryModel<En
 
 		Query query = getSession().createQuery(hql.toString());
 
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(EnderecoAssociacaoDTO.class);
+		ResultTransformer resultTransformer = null; 
+        
+        try {
+            resultTransformer = new AliasToBeanConstructorResultTransformer(
+                    EnderecoAssociacaoDTO.class.getConstructor(Long.class, Endereco.class, boolean.class, TipoEndereco.class));
+        } catch (Exception e) {
+            String message = "Erro criando result transformer para classe: "
+                    + EnderecoAssociacaoDTO.class.getName();
+            LOG.error(message, e);
+            throw new RuntimeException(message, e);
+        }
 		
 		query.setResultTransformer(resultTransformer);
 		

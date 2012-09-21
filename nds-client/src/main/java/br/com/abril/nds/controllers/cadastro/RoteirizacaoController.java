@@ -779,4 +779,36 @@ public class RoteirizacaoController {
 		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
+	/**
+	 * Obtém lista de box do tipo lançamento
+	 */
+	@Get
+	@Path("/obterBoxLancamento")
+	public void obterBoxLancamento(){
+		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento();
+		result.use(FlexiGridJson.class).from(listaBox).total(listaBox.size()).page(1).serialize();
+	}
+	
+	/**
+	 * Obtém lista de roteiros do box
+	 * @param idBox
+	 */
+	@Get
+	@Path("/obterRoteirosBox")
+	public void obterRoteirosBox(Long idBox){
+		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(idBox);
+		result.use(FlexiGridJson.class).from(listaRoteiro).total(listaRoteiro.size()).page(1).serialize();
+	}
+	
+	/**
+	 * Obtém lista de rotas do roteiro
+	 * @param idRoteiro
+	 */
+	@Get
+	@Path("/obterRotasRoteiro")
+	public void obterRotasRoteiro(Long idRoteiro){
+		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro);
+		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
+	}
+	
 }

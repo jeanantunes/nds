@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -45,6 +46,11 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
+	
+	
+	
+	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
+	private List<ItemNotaEnvio> listaProduto;
 	
 	public Cota getCota() {
 		return cota;
