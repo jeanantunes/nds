@@ -25,4 +25,17 @@ public interface MovimentoEstoqueCotaService {
 	Long obterQuantidadeReparteProdutoCota(Long idProdutoEdicao,
 			Integer numeroCota);
 	
+	/**
+	 * Método responsável por realizar a transferência do reparte, referente ao Estoque da Cota
+	 * para o Estoque do Distribuidor, como "suplementar".
+	 * 
+	 * @param distribuidor
+	 * @param idCota
+	 * @param periodo
+	 * @param listaIdFornecedores
+	 * @param listaIdProduto
+	 * @param tipoNotaFiscal
+	 */
+	void transferirReparteParaSuplementar(Distribuidor distribuidor, List<Long> idsCota, Intervalo<Date> periodo, 
+			List<Long> listaIdFornecedores, List<Long> listaIdProduto, TipoNotaFiscal tipoNotaFiscal);
 }

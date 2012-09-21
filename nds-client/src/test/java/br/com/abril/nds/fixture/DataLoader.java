@@ -256,6 +256,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoSuplementarCotaAusente;
 
+	private static TipoMovimentoEstoque tipoMovimentoEstornoCotaEnvioReparte;
+	private static TipoMovimentoEstoque tipoMovimentoEntradaSuplementarEnvioReparte;
+	
 	private static TipoMovimentoEstoque tipoMovimentoReparteCotaAusente;
 	private static TipoMovimentoEstoque tipoMovimentoRestautacaoReparteCotaAusente;
 
@@ -5047,6 +5050,9 @@ public class DataLoader {
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
+		
+		tipoMovimentoEstornoCotaEnvioReparte = Fixture.tipoMovimentoEstornoCotaEstornoEnvioReparte();
+		tipoMovimentoEntradaSuplementarEnvioReparte = Fixture.tipoMovimentoEntradaSuplementarEnvioReparte();
 
 		tipoMovimentoEnvioEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
 
