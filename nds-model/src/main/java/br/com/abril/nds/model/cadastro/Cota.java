@@ -118,6 +118,13 @@ public class Cota implements Serializable {
 	private Date inicioAtividade;
 	
 	/**
+	 * Data de início do titular da cota
+	 */
+	@Temporal(TemporalType.DATE)
+    @Column(name = "INICIO_TITULARIDADE", nullable = false)
+	private Date inicioTitularidade;
+	
+	/**
 	 * Fornecedores associados à Cota
 	 */
 	@ManyToMany
@@ -158,6 +165,11 @@ public class Cota implements Serializable {
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
+	
+	public Cota() {
+        this.inicioAtividade = new Date();
+        this.inicioTitularidade = new Date();
+    }
 	
 	public Set<HistoricoNumeroCota> getHistoricoNumeroCota() {
 		return historicoNumeroCota;
@@ -314,7 +326,15 @@ public class Cota implements Serializable {
 		this.inicioAtividade = inicioAtividade;
 	}
 	
-	public Set<Fornecedor> getFornecedores() {
+    public Date getInicioTitularidade() {
+        return inicioTitularidade;
+    }
+
+    public void setInicioTitularidade(Date inicioTitularidade) {
+        this.inicioTitularidade = inicioTitularidade;
+    }
+
+    public Set<Fornecedor> getFornecedores() {
 		return fornecedores;
 	}
 	
