@@ -88,9 +88,10 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 																  Integer numeroCota) {
 		
 		String hql = " from EstudoCota estudoCota "
-				   + " where estudoCota.estudo.dataLancamento = :dataLancamentoDistribuidor " 
+				   + " where estudoCota.estudo.dataLancamento <= :dataLancamentoDistribuidor " 
 				   + " and estudoCota.estudo.produtoEdicao.id = :idProdutoEdicao " 
-				   + " and estudoCota.cota.numeroCota = :numeroCota ";
+				   + " and estudoCota.cota.numeroCota = :numeroCota "
+				   + " order by estudoCota.estudo.dataLancamento desc ";
 		
 		Query query = super.getSession().createQuery(hql);
 		

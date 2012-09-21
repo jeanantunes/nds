@@ -44,7 +44,7 @@ var diferencaEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Tipo de Diferença',
-				name : 'tipoDiferenca',
+				name : 'descricaoTipoDiferenca',
 				width : 130,
 				sortable : true,
 				align : 'left'
@@ -279,7 +279,7 @@ var diferencaEstoqueController = $.extend(true, {
 		$("#nomeProdutoDetalheEstoqueCota",         diferencaEstoqueController.workspace).html(resultado.descricaoProduto);
 		$("#numeroEdicaoDetalheEstoqueCota",        diferencaEstoqueController.workspace).html(resultado.numeroEdicao);
 		$("#nomeFornecedorDetalheEstoqueCota",      diferencaEstoqueController.workspace).html(resultado.fornecedor);
-		$("#tipoDiferencaDetalheEstoqueCota",       diferencaEstoqueController.workspace).html(resultado.tipoDiferenca);
+		$("#tipoDiferencaDetalheEstoqueCota",       diferencaEstoqueController.workspace).html(resultado.descricaoTipoDiferenca);
 		$("#quantidadeDiferencaDetalheEstoqueCota", diferencaEstoqueController.workspace).html(resultado.quantidade);
 
 		$(".detalhesCotaGrid", diferencaEstoqueController.workspace).flexOptions({
@@ -352,7 +352,7 @@ var diferencaEstoqueController = $.extend(true, {
 		$('#detalheNome', diferencaEstoqueController.workspace)			.html(result.descricaoProduto);
 		$('#detalheEdicao', diferencaEstoqueController.workspace)		.html(result.numeroEdicao);
 		$('#detalheFornecedor', diferencaEstoqueController.workspace)	.html(result.fornecedor);
-		$('#detalheTipo', diferencaEstoqueController.workspace)			.html(result.tipoDiferenca);
+		$('#detalheTipo', diferencaEstoqueController.workspace)			.html(result.descricaoTipoDiferenca);
 		$('#detalheQtde', diferencaEstoqueController.workspace)			.html(result.quantidade);
 		$('#detalheEstoque', diferencaEstoqueController.workspace)		.html(result.tipoEstoque);
 		
