@@ -203,16 +203,7 @@ var entregadorController = $.extend(true, {
 						result.listaMensagens
 					);
 				}
-			},
-			function(result) {
-		
-				exibirMensagemDialog(
-					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens, ""
-				);
-			},
-			true
-		);
+			});
 	},
 	
 	editarEntregador: function(idEntregador) {
