@@ -2,19 +2,23 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -100,6 +104,13 @@ public class NotaFiscal implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_PROCESSAMENTO_INTERNO")
 	private StatusProcessamentoInterno statusProcessamentoInterno;
+	
+	@ElementCollection
+	@JoinTable(name = "NOTA_FISCAL_PROCESSO", 
+			joinColumns = {@JoinColumn(name = "NOTA_FISCAL_ID", referencedColumnName="ID")})
+	@Column(name = "PROCESSO")
+	@Enumerated(EnumType.STRING)
+	private Set<Processo> processos;
 	
 	/**
 	 * Construtor padrão.
@@ -251,6 +262,20 @@ public class NotaFiscal implements Serializable {
 	public void setStatusProcessamentoInterno(
 			StatusProcessamentoInterno statusProcessamentoInterno) {
 		this.statusProcessamentoInterno = statusProcessamentoInterno;
+	}
+
+	/**
+	 * @return the processos
+	 */
+	public Set<Processo> getProcessos() {
+		return processos;
+	}
+
+	/**
+	 * @param processos the processos to set
+	 */
+	public void setProcessos(Set<Processo> processos) {
+		this.processos = processos;
 	}
 	
 }
