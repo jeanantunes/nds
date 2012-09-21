@@ -145,6 +145,7 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	popup_processos : function() {
+		fecharDiaController.iniciarValidacoes();
 		$( "#dialog-processos", fecharDiaController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
@@ -160,21 +161,27 @@ var fecharDiaController =  $.extend(true, {
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
 		});
 		
-		fecharDiaController.iniciarValidacoes();
+		
 		      
 	},
 	
 	iniciarValidacoes : function(){
-		$.postJSON(contextPath + "/lancamento/furoProduto/buscarNomeProduto", data,
+		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
 				function(result){
-					if (result && result.string != ""){
-						$("#produto", vendaProdutoController.workspace).val(result);	
-						$("#edicoes", vendaProdutoController.workspace).focus();
-					} else {
-						$("#produto", vendaProdutoController.workspace).val("");
-						$("#edicoes", vendaProdutoController.workspace).focus();
-					}
+					fecharDiaController.validacaoBaixaBancaria(result);
 				});
+	},
+	
+	validacaoBaixaBancaria : function(result){
+		var baixaBancaria = "<tr class='class_linha_1'><td>Baixa Bancária</td>";					
+		var iconeBaixaBancaria = null;
+		if(result.baixaBancaria){
+			iconeBaixaBancaria = 'ico_bloquear.gif';
+		}else{
+			iconeBaixaBancaria = 'ico_check.gif';
+		}
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeBaixaBancaria+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao').append(baixaBancaria + imagem);
 	}
 	
 }, BaseController);

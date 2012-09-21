@@ -191,14 +191,10 @@
 		<div id="dialog-processos" title="Status Processos" style="display:none;">
 		  <fieldset style="width:260px;">
 		    	<legend>Status dos Processos</legend>
-		      <table width="260" border="0" cellspacing="1" cellpadding="1">
+		      <table width="260" border="0" cellspacing="1" cellpadding="1" id="tabela-validacao">
 		        <tr class="header_table">
 		          <td width="205">Processo</td>
 		          <td width="48" align="center">Status</td>
-		        </tr>
-		        <tr class="class_linha_1">
-		          <td>Baixa Bancária:</td>
-		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
 		        </tr>
 		        <tr class="class_linha_2">
 		          <td>Recebimento Físico:</td>
