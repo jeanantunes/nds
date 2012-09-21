@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -148,8 +150,11 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				
 				InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
 				
+				Set<Processo> processos = new HashSet<Processo>();
+				processos.add(Processo.GERACAO_NF_E);
+				
 				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, 
-						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas);
+						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos);
 				
 				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 				

@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -853,7 +855,19 @@ public class CotaServiceImpl implements CotaService {
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
 		
-        for (HistoricoTitularidadeCota historico : cota.getTitularesCota()) {
+		List<HistoricoTitularidadeCota> titulares = new ArrayList<HistoricoTitularidadeCota>();
+		if (cota.getTitularesCota() != null) {
+		    titulares.addAll(cota.getTitularesCota());
+		}
+		Collections.sort(titulares, new Comparator<HistoricoTitularidadeCota>() {
+
+            @Override
+            public int compare(HistoricoTitularidadeCota o1, HistoricoTitularidadeCota o2) {
+                return o2.getFim().compareTo(o1.getFim());
+            }
+        });
+		
+        for (HistoricoTitularidadeCota historico : titulares) {
             cotaDTO.addProprietario(new TitularidadeCotaDTO(historico.getId(),
                     cota.getId(), historico.getInicio(), historico.getFim(),
                     historico.getPessoa().getNome(), historico.getPessoa()
@@ -990,15 +1004,27 @@ public class CotaServiceImpl implements CotaService {
 		}
 				
 		boolean incluirPDV = false;
-		
+		//Flag indica criação de uma nova cota
+		boolean newCota = false;
 		if(cota == null){
 			cota = new Cota();
 			cota.setInicioAtividade(new Date());
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
 			incluirPDV = true;
+			newCota = true;
 		}
 		
-		processarNovoNumeroCota(cotaDto.getNumeroCota(),cota.getId());
+		//Flag indica a mudança de número da cota
+		boolean mudancaNumero = false;
+		if (!newCota) {
+		    Integer numeroCota = cota.getNumeroCota();
+		    Integer novoNumeroCota = cotaDto.getNumeroCota();
+		    mudancaNumero = !numeroCota.equals(novoNumeroCota);
+		}
+		//Se é uma nova cota ou alteração de número, processa o novo número
+		if (newCota || mudancaNumero) {
+		    processarNovoNumeroCota(cotaDto.getNumeroCota(),cota.getId());
+		}
 		
 	    cota.setNumeroCota(cotaDto.getNumeroCota());
 	    
@@ -1732,7 +1758,7 @@ public class CotaServiceImpl implements CotaService {
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
 		Cota cotaNova = this.cotaRepository.buscarPorId(idCotaNova);
-
+		cotaNova.setInicioTitularidade(new Date());
 		cotaNova.setPdvs(pdvs);
 		cotaNova.setFornecedores(fornecedores);
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
