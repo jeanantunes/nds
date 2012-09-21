@@ -404,7 +404,8 @@ public class ConsultaEncalheController {
 		String reparte 				= null;
 		String encalhe 				= null;
 		String fornecedor			= null;
-		String total 				= null;
+		String valor 				= null;
+		String valorComDesconto		= null;
 		String recolhimento 		= null;
 		
 		for(ConsultaEncalheDTO consultaEncalheDTO : listaConsultaEncalheDTO) {
@@ -417,7 +418,8 @@ public class ConsultaEncalheController {
 			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte().intValue());
 			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe().intValue());
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
-			total 				= CurrencyUtil.formatarValor(consultaEncalheDTO.getTotal());
+			valor 				= CurrencyUtil.formatarValor(consultaEncalheDTO.getValor());
+			valorComDesconto	= CurrencyUtil.formatarValor(consultaEncalheDTO.getValor());
 			
 			if(consultaEncalheDTO.getRecolhimento()<=0) {
 				recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
@@ -437,7 +439,8 @@ public class ConsultaEncalheController {
 			consultaEncalheVO.setReparte(reparte);
 			consultaEncalheVO.setEncalhe(encalhe);
 			consultaEncalheVO.setFornecedor(fornecedor);
-			consultaEncalheVO.setTotal(total);
+			consultaEncalheVO.setValor(valor);
+			consultaEncalheVO.setValorComDesconto(valorComDesconto);
 			consultaEncalheVO.setRecolhimento(recolhimento);
 			
 			listaResultadosVO.add(consultaEncalheVO);
