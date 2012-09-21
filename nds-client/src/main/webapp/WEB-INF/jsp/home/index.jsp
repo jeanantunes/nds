@@ -191,6 +191,7 @@
 		});
 		$("#ajaxLoading").ajaxStop(function() {
 			$(this).fadeOut(200);
+			redimensionarWorkspace();
 		});
 		
 		redimensionarWorkspace();
@@ -285,7 +286,7 @@
 
 <style>
 #workspace {
-	margin-top: 0px;
+	margin-top: 7px;
 }
 
 #ajaxLoading {
@@ -307,65 +308,61 @@
 .ui-tabs .ui-tabs-panel {
     padding: 0px;
 }
-#btnVersao{font-size:10px; font-weight:bold;margin-left:5px;}
+#btnVersao{font-size:10px; font-weight:normal;margin-left:5px; text-decoration:none!important;}
 </style>
 </head>
 <body onresize="redimensionarWorkspace();">
 
 	<div class="corpo" id="divCorpo">
 		<div class="header">
+			<div class="bts_header">
+				<span class="bt_novos" style="display:none;">
+					<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
+				</span>
+				<div class="logo">&nbsp;</div>
+				<a href="javascript:;" id="btnVersao">
+						<label title="versao">Versão: ${versao}</label>								
+					</a>
+				<div class="usuario">
+					
+											
+					<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
+								
+					<label> <script type="text/javascript"
+							language="JavaScript">
+						diaSemana();
+					</script> </label>
+				
+					<label>
+						<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
+					</label>
+	
+				</div>
+			</div>
 			<div class="sub-header">
 				<div id="menu_principal" style="float:left!important;">
 					<ul>
-						<li><div class="logo">&nbsp;</div></li>
-						<!-- <li><a href="index.htm"><span class="classROLE_HOME">&nbsp;</span>Home</a>
-						</li> -->
-							<c:forEach items="${menus}" var="menu">
-								<li><a href="javascript:;" class="trigger"><span
-									class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
-									<ul>
-										<c:forEach items="${menus[menu.key]}" var="submenu">
-											<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
-											</li>
-										</c:forEach>						
-									</ul>
-								</li>
-							</c:forEach>
+						<c:forEach items="${menus}" var="menu">
+							<li><a href="javascript:;" class="trigger"><span
+								class="class${menu.key.permissao}">&nbsp;</span>${menu.key.permissao.descricao}</a>
+								<ul>
+									<c:forEach items="${menus[menu.key]}" var="submenu">
+										<li><a href="<c:url value='${submenu.key.url}' />">${submenu.key.permissao.descricao}</a>
+										</li>
+									</c:forEach>						
+								</ul>
+							</li>
+						</c:forEach>
 						<li>
 							<a href="help.htm"><span class="classROLE_HELP">&nbsp;</span>Help</a>
 						</li>
 					</ul>
 					</div>
 					<br clear="all"/>
-					<div class="bts_header">
-						<span class="bt_novos" style="display:none;">
-							<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
-						</span>
-						<a href="javascript:;" id="btnVersao">
-								<label title="versao">Versão: ${versao}</label>								
-							</a>
-						<div class="usuario">
-							
-													
-							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
-										
-							<label> <script type="text/javascript"
-									language="JavaScript">
-								diaSemana();
-							</script> </label>
-						
-							<label>
-								<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
-							</label>
-			
-						</div>
-					</div>
-					<br class="clearit">
-
 			</div>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
-		
+		<br clear="all"/>
 		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
 		
 		<div id="workspace">

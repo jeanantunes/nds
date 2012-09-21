@@ -1957,15 +1957,6 @@ public class CotaServiceImpl implements CotaService {
 		return dto;
 	}
 	
-	@Transactional
-	@Override
-	public void cancelarChamadao(Integer numeroCota){
-		
-		//TODO apagar chamada de encalhe
-		
-		this.cotaRepository.ativarCota(numeroCota);
-	}
-	
 	private DistribuicaoDTO obterPercentualFaturamentoTaxaFixa(Long idCota, DistribuicaoDTO dto) {
 		
 		PDV pdv = this.pdvRepository.obterPDVPrincipal(idCota);

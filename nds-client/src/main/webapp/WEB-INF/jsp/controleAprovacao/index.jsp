@@ -33,8 +33,13 @@ $(function(){
 		<textarea id=motivoRejeicao rows="4" style="width: 420px;"></textarea>
 	</div>
 	</form>
-
-	<fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+			&nbsp;
+		</div>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
+	<fieldset class="fieldFiltro">
 		
 		<legend>Pesquisar Aprovações</legend>
 		
@@ -67,8 +72,8 @@ $(function(){
 				</td>
 				
 				<td width="400">
-					<span class="bt_pesquisar" title="Pesquisar Recebimento">
-						<a href="javascript:;" onclick="controleAprovacaoController.pesquisar();">Pesquisar</a>
+					<span class="bt_novos">
+						<a href="javascript:;" onclick="controleAprovacaoController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					</span>
 				</td>
 			</tr>
@@ -78,7 +83,7 @@ $(function(){
 
 	<div class="linha_separa_fields">&nbsp;</div>
 
-	<fieldset class="classFieldset">
+	<fieldset class="fieldGrid">
 		
 		<legend>Solicitações de Aprovação</legend>
 		
@@ -87,7 +92,5 @@ $(function(){
 		</div>
 		
 	</fieldset>
-
-	<div class="linha_separa_fields">&nbsp;</div>
 
 </body>
