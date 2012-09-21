@@ -22,26 +22,28 @@ var ConsultaEncalhe = $.extend(true, {
 				height : 180
 			});
 			
-			$('#dataRecolhimento', ConsultaEncalhe.workspace).datepicker({
+			$('.datePicker', ConsultaEncalhe.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			
-			$('#dataRecolhimento', ConsultaEncalhe.workspace).mask("99/99/9999");
+			$('.datePicker', ConsultaEncalhe.workspace).mask("99/99/9999");
 			
 		},
 		
 		pesquisar: function() {
 			
-			var dataRecolhimento 	= $("#dataRecolhimento", ConsultaEncalhe.workspace).val();
-			var idFornecedor		= $("#idFornecedor", ConsultaEncalhe.workspace).val();
-			var numeroCota			= $("#cota", ConsultaEncalhe.workspace).val();
+			var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
+			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
+			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
+			var numeroCota				= $("#cota", ConsultaEncalhe.workspace).val();
 			
 			var formData = [
 			        
-			        {name:'dataRecolhimento', value: dataRecolhimento},
+			        {name:'dataRecolhimentoInicial', value: dataRecolhimentoInicial},
+			        {name:'dataRecolhimentoFinal', value: dataRecolhimentoFinal},
 			        {name:'idFornecedor', value: idFornecedor},
 			        {name:'numeroCota', value: numeroCota }
 			];
