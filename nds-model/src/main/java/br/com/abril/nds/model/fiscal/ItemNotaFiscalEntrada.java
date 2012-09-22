@@ -102,6 +102,12 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	
 	@OneToOne(mappedBy = "itemNotaFiscal")
 	private ItemRecebimentoFisico recebimentoFisico;
+	
+	@Column(name = "PRECO", nullable = false)
+	private BigDecimal preco;
+	
+	@Column(name = "DESCONTO", nullable = false)
+	private BigDecimal desconto;
 
 	public Long getId() {
 		return id;
@@ -352,8 +358,33 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	public void setValorIPIProduto(BigDecimal valorIPIProduto) {
 		this.valorIPIProduto = valorIPIProduto;
 	}
-	
-	
-	
-	
+
+	/**
+	 * @return the preco
+	 */
+	public BigDecimal getPreco() {
+		return preco;
+	}
+
+	/**
+	 * @param preco the preco to set
+	 */
+	public void setPreco(BigDecimal preco) {
+		this.preco = preco;
+	}
+
+	/**
+	 * @return the desconto
+	 */
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	/**
+	 * @param desconto the desconto to set
+	 */
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+		
 }

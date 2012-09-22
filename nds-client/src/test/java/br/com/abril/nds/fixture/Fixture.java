@@ -1380,7 +1380,6 @@ public class Fixture {
 		notaFiscalFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscalFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalFornecedor.setUsuario(usuario);
-		notaFiscalFornecedor.setFornecedor(fornecedor);
 		notaFiscalFornecedor.setValorBruto(valorBruto);
 		notaFiscalFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalFornecedor.setValorLiquido(valorLiquido);
@@ -1594,7 +1593,6 @@ public class Fixture {
 		notaFiscalEntradaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscalEntradaFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalEntradaFornecedor.setUsuario(usuario);
-		notaFiscalEntradaFornecedor.setFornecedor(fornecedor);
 		notaFiscalEntradaFornecedor.setValorBruto(valorBruto);
 		notaFiscalEntradaFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalEntradaFornecedor.setValorLiquido(valorLiquido);
