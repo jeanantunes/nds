@@ -19,6 +19,8 @@ public class RateioCotaVO implements Serializable {
 	
 	private Long id;
 	
+	private Long idRateio;
+	
 	private Long idDiferenca;
 	
 	private Integer numeroCota;
@@ -38,6 +40,26 @@ public class RateioCotaVO implements Serializable {
 		
 	}
 	
+	
+	
+	/**
+	 * @return the idRateio
+	 */
+	public Long getIdRateio() {
+		return idRateio;
+	}
+
+
+
+	/**
+	 * @param idRateio the idRateio to set
+	 */
+	public void setIdRateio(Long idRateio) {
+		this.idRateio = idRateio;
+	}
+
+
+
 	/**
 	 * @return the reparteAtualCota
 	 */

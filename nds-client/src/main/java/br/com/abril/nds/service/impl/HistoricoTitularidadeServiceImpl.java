@@ -207,6 +207,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		HistoricoTitularidadeCotaTelefone historicoTitularidadeCotaTelefone = 
 				new HistoricoTitularidadeCotaTelefone();
 		
+		historicoTitularidadeCotaTelefone.setDdd(telefone.getDdd());
 		historicoTitularidadeCotaTelefone.setNumero(telefone.getNumero());
 		historicoTitularidadeCotaTelefone.setRamal(telefone.getRamal());
 

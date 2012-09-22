@@ -1009,19 +1009,19 @@ public class DataLoader {
 		criarMassaNotaFiscalEntradaFornecedorParaRecebimentoFisico(session);
 
 		gerarCargaDiferencaEstoque(
-			session, 50, produtoEdicaoVeja1, tipoMovimentoFaltaEm,
+			session, 2, produtoEdicaoVeja1, tipoMovimentoFaltaEm,
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM, TipoDirecionamentoDiferenca.COTA);
 
 		gerarCargaDiferencaEstoque(
-			session, 50, produtoEdicaoVeja2, tipoMovimentoFaltaDe,
+			session, 2, produtoEdicaoVeja2, tipoMovimentoFaltaDe,
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
-			session, 50, produtoEdicaoVeja3, tipoMovimentoSobraDe,
+			session, 2, produtoEdicaoVeja3, tipoMovimentoSobraDe,
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaDiferencaEstoque(
-			session, 50, produtoEdicaoVeja4, tipoMovimentoSobraEm,
+			session, 2, produtoEdicaoVeja4, tipoMovimentoSobraEm,
 				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM,TipoDirecionamentoDiferenca.ESTOQUE);
 
 		gerarCargaHistoricoSituacaoCota(session, 100);
@@ -5200,6 +5200,11 @@ public class DataLoader {
 						StatusConfirmacao.PENDENTE, null,true, TipoEstoque.LANCAMENTO,tipoDirecionamento, new Date());
 			
 			save(session, diferenca);
+			
+			if (i < 5) {
+				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
+				session.save(rateio);
+			}
 		}
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {

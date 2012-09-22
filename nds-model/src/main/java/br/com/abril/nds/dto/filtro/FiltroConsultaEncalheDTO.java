@@ -45,7 +45,8 @@ public class FiltroConsultaEncalheDTO {
 		REPARTE("reparte"),
 		ENCALHE("encalhe"),
 		FORNECEDOR("fornecedor"),
-		TOTAL("total"),
+		VALOR("total"),
+		VALOR_COM_DESCONTO("valorComDesconto"),
 		RECOLHIMENTO("recolhimento");
 		
 		private String nomeColuna;
