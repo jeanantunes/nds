@@ -149,7 +149,7 @@ public class DiferencaEstoqueController {
 	
 	private static final String MODO_INCLUSAO_SESSION_ATTRIBUTE = "modoInclusaoDiferenca";
 	
-	private static final String MODO_EDICAO_NOVA_DIFERENCA_SESSION_ATTRIBUTE = "modoEdicaoNovaDiferenca";
+	private static final String MODO_DIFERENCA_CADASTRADAS_SESSION_ATTRIBUTE = "modoDiferencaAutomatica";
 	
 	private static final String FILTRO_DETALHE_DIFERENCA_COTA = "filtroDetalheDiferencaCota";
 
@@ -294,7 +294,7 @@ public class DiferencaEstoqueController {
 										  String sortorder, String sortname, Integer page, Integer rp) {
 		
 		
-		Boolean modoEdicaoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_EDICAO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
+		Boolean modoEdicaoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_DIFERENCA_CADASTRADAS_SESSION_ATTRIBUTE);
 		
 		if(modoEdicaoNovaDiferenca){
 			
@@ -538,7 +538,7 @@ public class DiferencaEstoqueController {
 			incluirDiferencaEstoque(diferencaVO,tipoDiferenca);		
 		}
 		
-		this.httpSession.setAttribute(MODO_EDICAO_NOVA_DIFERENCA_SESSION_ATTRIBUTE,true);
+		this.httpSession.setAttribute(MODO_DIFERENCA_CADASTRADAS_SESSION_ATTRIBUTE,true);
 	}
 
 	private void validarTipoDiferenca(TipoDiferenca tipoDiferenca,BigInteger diferenca, BigInteger qntReparteRateio) {
@@ -600,11 +600,11 @@ public class DiferencaEstoqueController {
 			
 			diferencaEditavel.setQuantidade(qntDiferenca);
 		    
-			this.httpSession.setAttribute(MODO_EDICAO_NOVA_DIFERENCA_SESSION_ATTRIBUTE,false);
+			this.httpSession.setAttribute(MODO_DIFERENCA_CADASTRADAS_SESSION_ATTRIBUTE,false);
 			
 			if (diferencaEditavel.isCadastrado()){
 				
-				this.httpSession.setAttribute(MODO_EDICAO_NOVA_DIFERENCA_SESSION_ATTRIBUTE,true);
+				this.httpSession.setAttribute(MODO_DIFERENCA_CADASTRADAS_SESSION_ATTRIBUTE,true);
 				
 				Set<Diferenca> listaDiferencas = (Set<Diferenca>)
 						this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
@@ -1114,7 +1114,7 @@ public class DiferencaEstoqueController {
 	@SuppressWarnings("unchecked")
 	public void salvarLancamentos() {
 		
-		Boolean modoEdicao = (Boolean) this.httpSession.getAttribute(MODO_EDICAO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
+		Boolean modoEdicao = (Boolean) this.httpSession.getAttribute(MODO_DIFERENCA_CADASTRADAS_SESSION_ATTRIBUTE);
 		
 		Set<Diferenca> listaNovasDiferencas = null;
 		
@@ -1151,39 +1151,23 @@ public class DiferencaEstoqueController {
 		
 		//TODO verificar se os dados serão cancelados serão os do banco de dadoso ou apenas na sessão do usuario
 		
-		Boolean modoInclusao = (Boolean) this.httpSession.getAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE);
+		Boolean modoDiferencaAutomatica = (Boolean) this.httpSession.getAttribute(MODO_DIFERENCA_CADASTRADAS_SESSION_ATTRIBUTE);
 		
-		Set<Diferenca> listaNovasDiferencas =
-			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
-		
-		if (modoInclusao != null 
-				&& modoInclusao
-				&& (listaNovasDiferencas == null
-						|| listaNovasDiferencas.isEmpty())) {
+		if(modoDiferencaAutomatica!= null && modoDiferencaAutomatica){
 			
-			result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
-						Constantes.PARAM_MSGS).recursive().serialize();
+			List<Diferenca> listaNovasDiferencas =
+					(List<Diferenca>) this.httpSession.getAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE);
+			
+			//TODO IMplementar metodo de alteração de estatus para Cancelado.
+		}
+		else{
 			
 			this.limparSessao();
-			
-			return;
 		}
-		
-		FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
-			(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
-		
-		for(Diferenca diferenca : listaNovasDiferencas){
-			diferenca.setStatusConfirmacao(StatusConfirmacao.CANCELADO);
-		}
-		
-		this.diferencaEstoqueService.efetuarAlteracoes(listaNovasDiferencas, null, filtroPesquisa, this.getUsuario().getId());
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
-		
-		this.limparSessao();
 	}
 	/**
 	 * Método responsável por carregar todos os combos da tela de lançamento.
@@ -2138,7 +2122,7 @@ public class DiferencaEstoqueController {
 		
 		this.httpSession.removeAttribute(MODO_INCLUSAO_SESSION_ATTRIBUTE);
 		
-		this.httpSession.removeAttribute(MODO_EDICAO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
+		this.httpSession.removeAttribute(MODO_DIFERENCA_CADASTRADAS_SESSION_ATTRIBUTE);
 		
 	}
 	
