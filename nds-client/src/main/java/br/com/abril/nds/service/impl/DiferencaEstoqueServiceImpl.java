@@ -33,7 +33,6 @@ import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
@@ -206,6 +205,27 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
 			
+			diferenca.setResponsavel(usuario);
+			
+			this.diferencaEstoqueRepository.merge(diferenca);
+		}
+	}
+	
+	@Transactional
+	public void cancelarDiferencas(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
+								   Long idUsuario) {
+		
+		Usuario usuario = usuarioService.buscar(idUsuario);
+		
+		filtroPesquisa.setPaginacao(null);
+		filtroPesquisa.setOrdenacaoColuna(null);
+		
+		List<Diferenca> listaDiferencas =
+			this.diferencaEstoqueRepository.obterDiferencasLancamento(filtroPesquisa);
+		
+		for (Diferenca diferenca : listaDiferencas) {
+			
+			diferenca.setStatusConfirmacao(StatusConfirmacao.CANCELADO);
 			diferenca.setResponsavel(usuario);
 			
 			this.diferencaEstoqueRepository.merge(diferenca);
