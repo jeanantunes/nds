@@ -406,9 +406,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}
 		
 		List<Fornecedor> fornecedor =	fornecedorService.obterFornecedores(cnpj);
-		
-		((NotaFiscalEntradaFornecedor)notaFiscal).setFornecedor(fornecedor.get(0));
-		
+				
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscal.setOrigem(Origem.MANUAL);

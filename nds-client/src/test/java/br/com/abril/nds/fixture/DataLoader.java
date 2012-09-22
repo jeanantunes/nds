@@ -220,6 +220,8 @@ public class DataLoader {
 
 	private static final String PARAM_SKIP_DATA = "skipData";
 	private static final String PARAM_CLEAN_DATA = "cleanData";
+	
+	private static PessoaJuridica juridicaTreelog;
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -951,6 +953,10 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		carregarDadosClean(session);
 
+		criarPessoas(session);
+		criarFornecedores(session);
+
+		
 		//criarBanco(session);
 		criarUsuarios(session);
 		
@@ -1165,9 +1171,9 @@ public class DataLoader {
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
 				
-		criarPessoas(session);
+		criarPessoasClean(session);
 		criarTiposFornecedores(session);
-		criarFornecedores(session);
+		criarFornecedoresClean(session);
 		
 		tabelaNCM(session);
 		criarTiposProduto(session);
@@ -3359,6 +3365,7 @@ public class DataLoader {
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6248116"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE, "1"));
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
@@ -4850,13 +4857,8 @@ public class DataLoader {
 		save(session, cotaJoao, cotaGuilherme);
 	}
 
-	private static void criarFornecedores(Session session) {
+	private static void criarFornecedoresClean(Session session) {
 
-		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
-		fornecedorAcme.setCodigoInterface(123);
-		fornecedorAcme.setResponsavel("João");
-		fornecedorAcme.setOrigem(Origem.INTERFACE);
-		fornecedorAcme.setEmailNfe("joao@email.com");
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
@@ -4869,7 +4871,7 @@ public class DataLoader {
 		fornecedorFc.setOrigem(Origem.MANUAL);
 		fornecedorFc.setEmailNfe("acme@acme.com");
 
-		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
+		save(session, fornecedorDinap, fornecedorFc);
 
 		Endereco enderecoPrincipal = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", "50", "Centro", "Mococa", "SP",3530508);
@@ -4877,11 +4879,6 @@ public class DataLoader {
 		Endereco endereco = Fixture.criarEndereco(
 				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", "50", "Centro", "Mococa", "SP",3530508);
 
-		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
-		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
-		enderecoFornecedorAcme.setPrincipal(true);
-		enderecoFornecedorAcme.setEndereco(enderecoPrincipal);
-		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.COMERCIAL);
 
 		EnderecoFornecedor enderecoFornecedorDinap = new EnderecoFornecedor();
 		enderecoFornecedorDinap.setFornecedor(fornecedorDinap);
@@ -4895,35 +4892,9 @@ public class DataLoader {
 		enderecoFornecedorFc.setEndereco(enderecoPrincipal);
 		enderecoFornecedorFc.setTipoEndereco(TipoEndereco.COMERCIAL);
 
-		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme, enderecoFornecedorDinap, enderecoFornecedorFc);
-
-		enderecoFornecedorAcme = new EnderecoFornecedor();
-		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
-		enderecoFornecedorAcme.setPrincipal(false);
-		enderecoFornecedorAcme.setEndereco(endereco);
-		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		enderecoFornecedorDinap = new EnderecoFornecedor();
-		enderecoFornecedorDinap.setFornecedor(fornecedorDinap);
-		enderecoFornecedorDinap.setPrincipal(false);
-		enderecoFornecedorDinap.setEndereco(endereco);
-		enderecoFornecedorDinap.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		enderecoFornecedorFc = new EnderecoFornecedor();
-		enderecoFornecedorFc.setFornecedor(fornecedorFc);
-		enderecoFornecedorFc.setPrincipal(false);
-		enderecoFornecedorFc.setEndereco(endereco);
-		enderecoFornecedorFc.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme, enderecoFornecedorDinap, enderecoFornecedorFc);
-
-		Telefone telefonePrincipalAcme = Fixture.telefone("19", "3216549", null);
-		TelefoneFornecedor telefoneFornecedorAcme = new TelefoneFornecedor();
-		telefoneFornecedorAcme.setPrincipal(true);
-		telefoneFornecedorAcme.setFornecedor(fornecedorAcme);
-		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
-		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.CELULAR);
-
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorDinap, enderecoFornecedorFc);
+		
+		
 		Telefone telefonePrincipalDinap = Fixture.telefone("11", "18250104", null);
 		TelefoneFornecedor telefoneFornecedorDinap = new TelefoneFornecedor();
 		telefoneFornecedorDinap.setPrincipal(true);
@@ -4938,8 +4909,55 @@ public class DataLoader {
 		telefoneFornecedorFc.setTelefone(telefonePrincipalFc);
 		telefoneFornecedorFc.setTipoTelefone(TipoTelefone.CELULAR);
 
-		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc,
-					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
+		save(session, telefonePrincipalDinap, telefonePrincipalFc,
+					  telefoneFornecedorDinap, telefoneFornecedorFc);
+
+	}
+	
+	private static void criarFornecedores(Session session) {
+
+		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
+		fornecedorAcme.setCodigoInterface(123);
+		fornecedorAcme.setResponsavel("João");
+		fornecedorAcme.setOrigem(Origem.INTERFACE);
+		fornecedorAcme.setEmailNfe("joao@email.com");
+		
+
+		save(session, fornecedorAcme);
+
+		Endereco enderecoPrincipal = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", "50", "Centro", "Mococa", "SP",3530508);
+
+		Endereco endereco = Fixture.criarEndereco(
+				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", "50", "Centro", "Mococa", "SP",3530508);
+
+		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
+		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
+		enderecoFornecedorAcme.setPrincipal(true);
+		enderecoFornecedorAcme.setEndereco(enderecoPrincipal);
+		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.COMERCIAL);
+
+
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme);
+
+		enderecoFornecedorAcme = new EnderecoFornecedor();
+		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
+		enderecoFornecedorAcme.setPrincipal(false);
+		enderecoFornecedorAcme.setEndereco(endereco);
+		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+
+
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme);
+
+		Telefone telefonePrincipalAcme = Fixture.telefone("19", "3216549", null);
+		TelefoneFornecedor telefoneFornecedorAcme = new TelefoneFornecedor();
+		telefoneFornecedorAcme.setPrincipal(true);
+		telefoneFornecedorAcme.setFornecedor(fornecedorAcme);
+		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
+		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.CELULAR);
+
+
+		save(session, telefonePrincipalAcme, telefoneFornecedorAcme);
 
 		telefonePrincipalAcme = Fixture.telefone("19", "75110240", null);
 		telefoneFornecedorAcme = new TelefoneFornecedor();
@@ -4948,22 +4966,8 @@ public class DataLoader {
 		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
 		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.RESIDENCIAL);
 
-		telefonePrincipalDinap = Fixture.telefone("11", "5407842", null);
-		telefoneFornecedorDinap = new TelefoneFornecedor();
-		telefoneFornecedorDinap.setPrincipal(false);
-		telefoneFornecedorDinap.setFornecedor(fornecedorDinap);
-		telefoneFornecedorDinap.setTelefone(telefonePrincipalDinap);
-		telefoneFornecedorDinap.setTipoTelefone(TipoTelefone.RESIDENCIAL);
 
-		telefonePrincipalFc = Fixture.telefone("19", "3210054", null);
-		telefoneFornecedorFc = new TelefoneFornecedor();
-		telefoneFornecedorFc.setPrincipal(false);
-		telefoneFornecedorFc.setFornecedor(fornecedorFc);
-		telefoneFornecedorFc.setTelefone(telefonePrincipalFc);
-		telefoneFornecedorFc.setTipoTelefone(TipoTelefone.RESIDENCIAL);
-
-		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc,
-					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
+		save(session, telefonePrincipalAcme, telefoneFornecedorAcme);
 
 		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros,123456);
 		fornecedor.setEmailNfe("email@email.com");
@@ -5541,15 +5545,24 @@ public class DataLoader {
 	}
 
 
-	private static void criarPessoas(Session session){
-		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000000000004", "sys.discover@gmail.com", "99.999-9");
+	private static void criarPessoasClean(Session session) {
+		juridicaTreelog = Fixture.pessoaJuridica("Treelog",
+				"61.438.248/0001-23", "000000000000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11111111000111", "111111111111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222222222222", "sys.discover@gmail.com", "99.999-9");
+				"28.322.873/0001-30", "222222222222", "sys.discover@gmail.com", "99.999-9");
+		
+		save(session, juridicaTreelog, juridicaDinap, juridicaFc);
+		
+	}
+	
+	private static void criarPessoas(Session session){
+				 
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
 				"93081738000101", "333333333333", "sys.discover@gmail.com", "99.999-9");
+		juridicaAcme = Fixture.pessoaJuridica("Acme",
+				"10000000000100", "000000000004", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("10732815665",
 				"sys.discover@gmail.com", "Manoel da Silva", "12654879-9", "SSP", "SP", DateUtil.parseDataPTBR("13/09/1979"), EstadoCivil.SOLTEIRO);
@@ -5579,7 +5592,7 @@ public class DataLoader {
 
 	    PessoaFisica joana  = Fixture.pessoaFisica("12345678905", "sys.discover@gmail.com", "Joana");
 
-		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaValida,manoel,manoelCunha,jose,maria,
+		save(session, juridicaAcme, juridicaValida,manoel,manoelCunha,jose,maria,
 				guilherme,murilo,mariana,orlando,luis,joao, joana);
 
 	}

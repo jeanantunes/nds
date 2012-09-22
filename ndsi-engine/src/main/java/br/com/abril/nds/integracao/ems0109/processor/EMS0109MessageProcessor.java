@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0109.processor;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	private PeriodicidadeProdutoService periodicidadeProdutoService;
 
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 	
@@ -435,7 +436,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	}
 	
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	
