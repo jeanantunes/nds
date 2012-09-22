@@ -224,7 +224,9 @@ var lancamentoNovoController = $.extend(true, {
 				if(linhaAtual > 0){
 					
 					  var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual +1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
-								'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual +1) +'" onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual +1) +', nomeInput'+ (linhaAtual +1) +', true, lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual +1) +'),lancamentoNovoController.erroPesquisaCota('+(linhaAtual +1)+'));" style="width:60px;" /></td>' +
+								'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual +1) +'" onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual +1) +', nomeInput'+ (linhaAtual +1) +', true, lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual +1) +'),lancamentoNovoController.erroPesquisaCota('+(linhaAtual +1)+'));" style="width:60px;" />'
+								+'<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden'+ (linhaAtual +1) +' " />'
+								+'</td>' +
 								'<td>'+
 								     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual+1) +'" style="width:180px;" '+
 								         ' onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput'+ (linhaAtual+1) +');" ' +
@@ -254,6 +256,8 @@ var lancamentoNovoController = $.extend(true, {
 				$("#diferencaInput" + (linhaAtual+1), lancamentoNovoController.workspace).val(value.quantidade);
 					
 				$("#reparteAtualText" + (linhaAtual+1), lancamentoNovoController.workspace).text(value.reparteAtualCota);
+				
+				$("#rateioIDInputHidden" + (linhaAtual+1), lancamentoNovoController.workspace).val(value.idRateio);
 				
 			});
 			
@@ -382,6 +386,8 @@ var lancamentoNovoController = $.extend(true, {
 			
 			var numeroCota = $(linha.find("td")[0],this.workspace).find('input[name="cotaInput"]').val();
 			
+			var idRateioCota =  $(linha.find("td")[0],this.workspace).find('input[name="rateioIDInputHidden"]').val();
+			
 			var nomeCota = $(linha.find("td")[1],this.workspace).find('input[name="nomeInput"]').val();
 			
 			var reparte = $(linha.find("td")[2],this.workspace).html();
@@ -403,6 +409,7 @@ var lancamentoNovoController = $.extend(true, {
 			data.push({name: "rateioCotas["+index+"].reparteCota", value: reparte });
 			data.push({name: "rateioCotas["+index+"].quantidade", value: diferenca});
 			data.push({name: "rateioCotas["+index+"].reparteAtualCota", value: reparteAtual});
+			data.push({name: "rateioCotas["+index+"].idRateio", value: idRateioCota });
 			
 			qntReparteRateio += eval(diferenca);
 		});
