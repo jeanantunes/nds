@@ -2,10 +2,9 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/visaoEstoque.js"></script>
 	
 	<style type="text/css">
-		#dialog-detalhe, #dialog-suplementar, #dialog-encalhe, #dialog-transferencia, #dialog-inventario-confirm, #dialog-inventario, #dialog-detalhe-juramentado{display:none;}
-		#dialog-suplementar fieldset, #dialog-encalhe fieldset{width:600px!important;}
-		#dialog-detalhe fieldset, #dialog-detalhe-juramentado fieldset{width:800px!important;}
-		#dialog-transferencia form{margin:0px!important; padding:0px!important; width:900px!important; overflow:hidden; }
+		#dialog-visaoEstoque-detalhe, #dialog-visaoEstoque-detalhe-juramentado, #dialog-visaoEstoque-transferencia, #dialog-visaoEstoque-inventario{display:none;}
+		#dialog-visaoEstoque-detalhe fieldset, #dialog-visaoEstoque-detalhe-juramentado fieldset{width:800px!important;}
+		#dialog-visaoEstoque-transferencia form{margin:0px!important; padding:0px!important; width:900px!important; overflow:hidden; }
 	</style>
 </head>
 
@@ -13,6 +12,7 @@
 
 	<form action="/estoque/visaoEstoque" id="pesquisarVisaoEstoqueForm">
 	<input type="hidden" name="filtro.tipoEstoque" id="visaoEstoque_filtro_tipoEstoque"/>
+	<input type="hidden" name="filtro.tipoEstoqueSelecionado" id="visaoEstoque_filtro_tipoEstoqueSelecionado"/>
 	
 	<fieldset class="classFieldset">
 		<legend> Pesquisar Estoque</legend>
@@ -49,7 +49,7 @@
 	
 	<%-- POPUPS --%>
 	
-	<div id="dialog-detalhe" title="Vis&atilde;o Estoque">
+	<div id="dialog-visaoEstoque-detalhe" title="Vis&atilde;o Estoque">
 		<fieldset>
 	        <legend>Vis&atilde;o de Estoque / <span id="visaoEstoque_detalhe_estoque"></span></legend>
 	        <table class="visaoEstoqueDetalheGrid"></table>
@@ -58,7 +58,7 @@
 		</fieldset>
 	</div>
 	
-	<div id="dialog-detalhe-juramentado" title="Vis&atilde;o Estoque">
+	<div id="dialog-visaoEstoque-detalhe-juramentado" title="Vis&atilde;o Estoque">
 		<fieldset>
 	        <legend>Vis&atilde;o de Estoque / Juramentado</legend>
 	        <table class="visaoEstoqueDetalheJuramentadoGrid"></table>
@@ -67,7 +67,7 @@
 		</fieldset>
 	</div>
 
-	<div id="dialog-transferencia" title="Transfer&ecirc;ncia entre Estoques">
+	<div id="dialog-visaoEstoque-transferencia" title="Transfer&ecirc;ncia entre Estoques">
 		<fieldset style="width:870px!important;">
 			<legend>Transferir</legend>
         	<table width="850" border="0" cellspacing="2" cellpadding="2">
@@ -92,7 +92,7 @@
 		</fieldset>
 	</div>
 	
-	<div id="dialog-inventario" title="Invent&aacute;rio do Estoque">
+	<div id="dialog-visaoEstoque-inventario" title="Invent&aacute;rio do Estoque">
 		<fieldset style="width:870px!important;">
       		<legend>Estoque Selecionado: <span id="visaoEstoque_inventario_estoqueSelecionado"></span> - Data: <span id="visaoEstoque_inventario_dataMovimentacao"></span></legend>
             <table class="visaoEstoqueInventarioGrid"></table>

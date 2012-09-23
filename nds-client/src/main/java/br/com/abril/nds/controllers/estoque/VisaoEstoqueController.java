@@ -13,6 +13,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
+import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -91,19 +92,13 @@ public class VisaoEstoqueController {
 	}
 	
 	
-	@Path("/pesquisarTransferencia.json")
-	public void pesquisarTransferencia(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
-		
-		List<VisaoEstoqueDetalheDTO> listTransferencia = visaoEstoqueService.obterVisaoEstoqueTransferencia(filtro);
-		result.use(FlexiGridJson.class).from(listTransferencia).total(listTransferencia.size()).page(page).serialize();
-	}
+	@Path("/transferir")
+	public void transferir(FiltroConsultaVisaoEstoque filtro, List<VisaoEstoqueTransferenciaDTO> listaTransferencia) {
 	
-	
-	@Path("/pesquisarInventario.json")
-	public void pesquisarInventario(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
 		
-		List<VisaoEstoqueDetalheDTO> listInventario = visaoEstoqueService.obterVisaoEstoqueInventario(filtro);
-		result.use(FlexiGridJson.class).from(listInventario).total(listInventario.size()).page(page).serialize();
+		
+		
+		result.use(Results.json()).from(filtro, "result").serialize();
 	}
 	
 	

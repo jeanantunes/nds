@@ -42,11 +42,11 @@ var visaoEstoqueController = $.extend(true, {
 	
 		$.each(data.rows, function(index, value) {
 			
-			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_detalhe(\'' + value.cell.tipoEstoque + '\');" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
+			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_detalhe(\'' + value.cell.tipoEstoque + '\', \'' + value.cell.estoque + '\');" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
 			
 			if (value.cell.tipoEstoque != "LANCAMENTO_JURAMENTADO") {
-				acao += '<a href="javascript:;" onClick="visaoEstoqueController.popup_transferencia(\'' + value.cell.tipoEstoque + '\');" title="Transferir Estoque"><img src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0" alt="Transferir" /></a>    ' +
-						'<a href="javascript:;" onClick="visaoEstoqueController.popup_inventario(\'' + value.cell.tipoEstoque + '\');" title="Inventário Estoque"><img src="' + contextPath + '/images/bt_expedicao.png" hspace="5" border="0" alt="Inventário" /></a>';
+				acao += '<a href="javascript:;" onClick="visaoEstoqueController.popup_transferencia(\'' + value.cell.tipoEstoque + '\', \'' + value.cell.estoque + '\');" title="Transferir Estoque"><img src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0" alt="Transferir" /></a>    ' +
+						'<a href="javascript:;" onClick="visaoEstoqueController.popup_inventario(\'' + value.cell.tipoEstoque + '\', \'' + value.cell.estoque + '\');" title="Inventário Estoque"><img src="' + contextPath + '/images/bt_expedicao.png" hspace="5" border="0" alt="Inventário" /></a>';
 			}
 			
 			value.cell.acao = acao;
@@ -65,16 +65,16 @@ var visaoEstoqueController = $.extend(true, {
 		}
 		
 		if (tipoEstoque != "LANCAMENTO") {
-			select.add(new Option("LANCAMENTO", "Lançamento"), null);
+			select.add(new Option("Lançamento", "LANCAMENTO"), null);
 		}
 		if (tipoEstoque != "SUPLEMENTAR") {
-			select.add(new Option("SUPLEMENTAR", "Suplementar"), null);
+			select.add(new Option("Suplementar","SUPLEMENTAR"), null);
 		}
 		if (tipoEstoque != "RECOLHIMENTO") {
-			select.add(new Option("RECOLHIMENTO", "Recolhimento"), null);
+			select.add(new Option("Recolhimento", "RECOLHIMENTO"), null);
 		}
 		if (tipoEstoque != "PRODUTOS_DANIFICADOS") {
-			select.add(new Option("PRODUTOS_DANIFICADOS", "Produtos Danificados"), null);
+			select.add(new Option("Produtos Danificados", "PRODUTOS_DANIFICADOS"), null);
 		}
 	},
 	
@@ -83,11 +83,22 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 				
-			value.cell.transferir = '<input type="text" style="width:80px; text-align:center;" name="transferir_' + value.cell.produtoEdicaoId + '"/>';
-			value.cell.check = '<input type="checkbox" class="visaoEstoqueCheck" name="checkTransferir" value="' + value.cell.produtoEdicaoId + '" onclick="visaoEstoqueController.verificarCheck();" />';
+			value.cell.estoque = value.cell.qtde;
+			value.cell.transferir = '<input type="text" id="inputVisaoEstoqueTransferencia_' + value.cell.produtoEdicaoId + '" style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarSaldo(this)"/>';
+			value.cell.check = '<input type="checkbox" class="visaoEstoqueCheck" name="checkVisaoEstoqueTransferir" value="' + value.cell.produtoEdicaoId + '" onclick="visaoEstoqueController.verificarCheck();" />';
 		});
 		
 		return data;
+	},
+	
+	
+	ajustarSaldo : function(element) {
+		
+		var tr = element.parentNode.parentNode.parentNode;
+		var qtdeTransferir = parseInt($.trim(element.value) == "" ? 0 : element.value); 
+		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
+		
+		$('td[abbr="estoque"] >div', tr).html(qtde - qtdeTransferir);
 	},
 	
 	
@@ -115,20 +126,53 @@ var visaoEstoqueController = $.extend(true, {
 	
 	confirmarTransferencia : function() {
 		
+		$('#visaoEstoque_filtro_tipoEstoqueSelecionado').val($('#visaoEstoque_selectIncluirEstoque').val());
 		
+		var params = visaoEstoqueController.parametrosTransferencia();
+		
+		$.postJSON(
+			this.path + 'transferir?' + $('#pesquisarVisaoEstoqueForm').serialize(),
+			params,
+			function() {
+				$('#dialog-visaoEstoque-transferencia').dialog('close');
+				visaoEstoqueController.pesquisar();
+			}
+		);
 	},
 	
 	
-	popup_detalhe : function(tipoEstoque) {
+	parametrosTransferencia : function() {
 		
-		var div = 'dialog-detalhe';
+		var dados ="";
+		var index = 0;
+		$("input[type=checkbox][name='checkVisaoEstoqueTransferir']:checked").each(function(i, element) {
+			if (dados != ""){
+				dados+=",";
+			}
+				
+			var produtoEdicaoId = element.value;
+			var qtde = $('#inputVisaoEstoqueTransferencia_' + element.value).val();
+			
+			dados+='{name:"listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"listaTransferencia['+index+'].qtde",value:'+qtde+'}';
+			index++;
+		});
+		//dados += ',{name:"idRota",value:'+$('#rotaSelecionada', roteirizacao.workspace).val()+'}';
+		var params = '['+dados+']';
+        alert(params);
+		return eval(params);
+	},
+	
+	
+	popup_detalhe : function(tipoEstoque, estoque) {
+		
+		var div = 'dialog-visaoEstoque-detalhe';
 		var grid = 'visaoEstoqueDetalheGrid';
 		
 		if (tipoEstoque == 'LANCAMENTO_JURAMENTADO') {
-			div = 'dialog-detalhe-juramentado';
+			div = 'dialog-visaoEstoque-detalhe-juramentado';
 			grid = 'visaoEstoqueDetalheJuramentadoGrid';
 		} else {
-			$("#visaoEstoque_detalhe_estoque").html(tipoEstoque);
+			$("#visaoEstoque_detalhe_estoque").html(estoque);
 		}
 		
 		$("#visaoEstoque_filtro_tipoEstoque").val(tipoEstoque);
@@ -156,31 +200,33 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
-	popup_transferencia : function(tipoEstoque) {
+	popup_transferencia : function(tipoEstoque, estoque) {
 		
 		visaoEstoqueController.montaSelectIncluirEstoque(tipoEstoque);
 		
-		$("#visaoEstoque_transferencia_estoqueSelecionado").html(tipoEstoque);
+		$("#visaoEstoque_transferencia_estoqueSelecionado").html(estoque);
 		$("#visaoEstoque_transferencia_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
+		
+		$("#visaoEstoque_filtro_tipoEstoque").val(tipoEstoque);
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
 		$(".visaoEstoqueTransferenciaGrid", this.workspace).flexOptions({
-			url : this.path + 'pesquisarTransferencia.json?' + params, 
+			url : this.path + 'pesquisarDetalhe.json?' + params, 
 			preProcess : visaoEstoqueController.montaInputTransferencia,
 			newp:1
 		});
 		
 		$(".visaoEstoqueTransferenciaGrid").flexReload();
 		
-		$("#dialog-transferencia").dialog({
+		$("#dialog-visaoEstoque-transferencia").dialog({
 			resizable: false,
 			height:480,
 			width:930,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$(this).dialog("close");
+					//$(this).dialog("close");
 					$("#effect").show("highlight", {}, 1000, callback);
 					visaoEstoqueController.confirmarTransferencia();
 				},
@@ -192,10 +238,12 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
-	popup_inventario : function(tipoEstoque) {
+	popup_inventario : function(tipoEstoque, estoque) {
 		
-		$("#visaoEstoque_inventario_estoqueSelecionado").html(tipoEstoque);
+		$("#visaoEstoque_inventario_estoqueSelecionado").html(estoque);
 		$("#visaoEstoque_inventario_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
+		
+		$("#visaoEstoque_filtro_tipoEstoque").val(tipoEstoque);
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
@@ -206,7 +254,7 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$(".visaoEstoqueInventarioGrid").flexReload();
 		
-		$( "#dialog-inventario" ).dialog({
+		$( "#dialog-visaoEstoque-inventario").dialog({
 			resizable: false,
 			height:480,
 			width:930,

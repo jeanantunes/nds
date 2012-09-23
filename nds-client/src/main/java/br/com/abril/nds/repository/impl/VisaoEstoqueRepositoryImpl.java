@@ -110,8 +110,9 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		String coluna = this.getColunaQtde(filtro.getTipoEstoque(), true);
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT pe.codigo as codigo")
-           .append("       ,pe.nomeComercial as produto")
+		hql.append(" SELECT pe.id as produtoEdicaoId")
+		   .append("       ,pe.codigo as codigo")
+		   .append("       ,pe.nomeComercial as produto")
 		   .append("       ,pe.numeroEdicao as edicao")
 		   .append("       ,pe.precoVenda as precoCapa")
 		   .append("       ,lan.dataLancamentoDistribuidor as lcto")
