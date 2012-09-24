@@ -5,7 +5,7 @@ var lancamentoController = $.extend(true, {
 		lancamentoController.configurarFlexiGrid();
 
 		$(".grids", lancamentoController.workspace).hide();
-		$("#btnConfirmar", lancamentoController.workspace).hide();
+		$("#btnsControleDiferenca", lancamentoController.workspace).hide();
 		$("#labelTotalGeral", lancamentoController.workspace).hide();
 		$("#qtdeTotalDiferencas", lancamentoController.workspace).hide();
 		$("#valorTotalDiferencas", lancamentoController.workspace).hide();
@@ -33,7 +33,7 @@ var lancamentoController = $.extend(true, {
 			);
 			
 			$(".grids", lancamentoController.workspace).hide();
-			$("#btnConfirmar", lancamentoController.workspace).hide();
+			$("#btnsControleDiferenca", lancamentoController.workspace).hide();
 			$("#labelTotalGeral", lancamentoController.workspace).hide();
 			$("#qtdeTotalDiferencas", lancamentoController.workspace).hide();
 			$("#valorTotalDiferencas", lancamentoController.workspace).hide();
@@ -95,7 +95,7 @@ var lancamentoController = $.extend(true, {
 		if ($(".grids", lancamentoController.workspace).css('display') == 'none') {	
 
 			$(".grids", lancamentoController.workspace).show();
-			$("#btnConfirmar", lancamentoController.workspace).show();
+			$("#btnsControleDiferenca", lancamentoController.workspace).show();
 			$("#labelTotalGeral", lancamentoController.workspace).show();
 			$("#qtdeTotalDiferencas", lancamentoController.workspace).show();
 			$("#valorTotalDiferencas", lancamentoController.workspace).show();
@@ -371,3 +371,5 @@ var lancamentoController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=lancamento.js
