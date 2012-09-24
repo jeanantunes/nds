@@ -61,10 +61,16 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	
 	@SuppressWarnings("unchecked")
 	public List<Roteirizacao> buscarRoterizacaoPorRota(Long rotaId) {
-		Criteria criteria = getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota.id", rotaId));
-		criteria.addOrder(Order.asc("ordem"));
-		return criteria.list();
+
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select roteiro.roteirizacao from Roteiro roteiro " )
+			.append(" join roteiro.rotas rota " )
+			.append(" where rota.id=:idRota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idRota", rotaId);
+		
+		return query.list();
 	}
 	
 	@Override
@@ -203,80 +209,6 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		criteria.setMaxResults(maxResults);
 		criteria.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
 		return criteria.list(); 
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void atualizaOrdenacao(Roteirizacao roteirizacao ){
-		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
-		criteria.add(Restrictions.ge("ordem", roteirizacao.getOrdem()));
-		criteria.add(Restrictions.ne("id", roteirizacao.getId()));
-		criteria.addOrder(Order.asc("ordem"));
-		List<Roteirizacao> lista = criteria.list();
-		Integer ordem = roteirizacao.getOrdem();
-		for(Roteirizacao entity : lista ){
-			ordem++;
-			entity.setOrdem(ordem);
-			alterar(entity);
-
-		}
-	}
-
-	public void atualizaOrdenacaoAsc(Roteirizacao roteirizacao ){
-		Roteirizacao roteirizacaoAnterior = buscaRoteiricaoComOrdemAnterior(roteirizacao);
-		Integer novaOrdem = roteirizacaoAnterior.getOrdem();
-		roteirizacao.setOrdem(novaOrdem);
-		alterar(roteirizacao);
-		atualizaOrdenacao(roteirizacao);
-		
-	}
-	
-	
-
-	public void atualizaOrdenacaoDesc(Roteirizacao roteirizacao ){
-		Roteirizacao roteirizacaoPosterior = buscaRoteiricaoComOrdemPosterior(roteirizacao);
-		Integer novaOrdem = roteirizacaoPosterior.getOrdem();
-		Integer antigaOrdem = roteirizacao.getOrdem();
-		roteirizacao.setOrdem(novaOrdem);
-		roteirizacaoPosterior.setOrdem(antigaOrdem);
-		alterar(roteirizacao);
-		alterar(roteirizacaoPosterior);
-		//	atualizaOrdenacao(roteirizacao);
-		
-	}
-	
-	
-	
-	@SuppressWarnings("unchecked")
-	public Roteirizacao buscaRoteiricaoComOrdemAnterior(Roteirizacao roteirizacao ){
-		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
-		criteria.add(Restrictions.lt("ordem", roteirizacao.getOrdem()));
-		criteria.addOrder(Order.desc("ordem"));
-		criteria.setMaxResults(1);
-		List<Roteirizacao> lista = criteria.list();
-		if (lista == null || lista.isEmpty()){
-			return null;
-		} else {
-			return lista.get(0);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Roteirizacao buscaRoteiricaoComOrdemPosterior(Roteirizacao roteirizacao ){
-		Criteria criteria =  getSession().createCriteria(Roteirizacao.class);
-		criteria.add(Restrictions.eq("rota", roteirizacao.getRota()));
-		criteria.add(Restrictions.gt("ordem", roteirizacao.getOrdem()));
-		criteria.addOrder(Order.asc("ordem"));
-		criteria.setMaxResults(1);
-		List<Roteirizacao> lista = criteria.list();
-		if (lista == null || lista.isEmpty()){
-			return null;
-		} else {
-			return lista.get(0);
-		}
-		
 	}
 	
 	@SuppressWarnings("unchecked")

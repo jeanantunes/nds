@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -448,12 +449,24 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		save(box2);
 		
-		Roteiro roteiro1 = Fixture.criarRoteiro("", box1, TipoRoteiro.NORMAL);
-		Roteiro roteiro2 = Fixture.criarRoteiro("", box2, TipoRoteiro.NORMAL);
+		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		save(pdv);
+		
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
+		save(roteirizacao);
+		
+		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		save(pdv2);
+		
+		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
+		save(roteirizacao2);
+		
+		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, box1, TipoRoteiro.NORMAL);
+		Roteiro roteiro2 = Fixture.criarRoteiro("",roteirizacao2, box2, TipoRoteiro.NORMAL);
 		save(roteiro1,roteiro2);
 		
-		rota1 = Fixture.rota("ROTA01", "Rota 1");
-		rota2 = Fixture.rota("ROTA01", "Rota 1");
+		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1, Arrays.asList(pdv));
+		rota2 = Fixture.rota("ROTA01", "Rota 1", roteiro2, Arrays.asList(pdv2));
 		rota1.setRoteiro(roteiro1);
 		rota2.setRoteiro(roteiro2);
 		save(rota1,rota2);
@@ -503,17 +516,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				estoqueProdutoCota, BigInteger.valueOf(100), cotaPedro, StatusAprovacao.APROVADO, "");
 		save(mec3);
 			
-		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
-		save(pdv);
-		
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota1, 0);
-		save(roteirizacao);
-		
-		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
-		save(pdv2);
-		
-		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(pdv2, rota2, 0);
-		save(roteirizacao2);
 	}
 	
 	
