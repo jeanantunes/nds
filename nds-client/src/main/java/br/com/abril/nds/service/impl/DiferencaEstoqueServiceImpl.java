@@ -167,13 +167,19 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.confirmarLancamentosDiferenca(
 				mapaRateioCotas, filtroPesquisa, idUsuario);
 		}
-	}
+	} 
 	
 	@Transactional
 	public void salvarLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
 										   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
-										   Long idUsuario){
+										   Long idUsuario,boolean isDiferencaNova){
 		
+		
+		salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario,isDiferencaNova);
+	}
+
+	private void salvarDiferenca(Set<Diferenca> listaNovasDiferencas,
+			Map<Long, List<RateioCotaVO>> mapaRateioCotas, Long idUsuario, boolean isDiferencaNova) {
 		
 		Usuario usuario = usuarioService.buscar(idUsuario);
 		
@@ -181,11 +187,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 			Long idDiferencaTemporario = diferenca.getId();
 			
-			if(!diferenca.isAutomatica()){
+			if(isDiferencaNova){
 				diferenca.setId(null);
 			}
 			
-			this.diferencaEstoqueRepository.merge(diferenca);
+			diferenca = this.diferencaEstoqueRepository.merge(diferenca);
 			
 			if (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) {
 				
@@ -318,7 +324,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		Set<Long> rateiosAssociadosDiferenca = new HashSet<Long>();
+		List<Long> rateiosAssociadosDiferenca = new ArrayList<Long>();
 		
 		for (RateioCotaVO rateioCotaVO : listaRateioCotaVO) {
 			
@@ -345,14 +351,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioDiferenca.setDiferenca(diferenca);
 			}
-			else{
-				
-				rateiosAssociadosDiferenca.add(rateioDiferenca.getId());
-			}
 			
 			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
 			
-			this.rateioDiferencaRepository.merge(rateioDiferenca);
+			rateioDiferenca = this.rateioDiferencaRepository.merge(rateioDiferenca);
+			
+			rateiosAssociadosDiferenca.add(rateioDiferenca.getId());
 		}
 		
 		if(!rateiosAssociadosDiferenca.isEmpty()){
@@ -521,5 +525,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		detalheDiferencaCota.setDetalhesDiferenca(detalhesDiferenca);
 		
 		return detalheDiferencaCota;
+	}
+	
+	@Override
+	@Transactional
+	public void excluirLancamentoDiferenca(Long idDiferenca) {
+		
+		rateioDiferencaRepository.removerRateioDiferencaPorDiferenca(idDiferenca);
+		
+		diferencaEstoqueRepository.removerPorId(idDiferenca);
 	}
 }

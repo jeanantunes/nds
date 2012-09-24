@@ -86,7 +86,7 @@ public interface DiferencaEstoqueService {
 	
 	void salvarLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
 			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
-			   Long idUsuario);
+			   Long idUsuario,boolean isDiferencaNova);
 	
 	/**
 	 * Cancela as diferenças obtidas de acordo com o filtro informado.
@@ -95,4 +95,6 @@ public interface DiferencaEstoqueService {
 	 * @param idUsuario - identificador do usuário
 	 */
 	void cancelarDiferencas(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa, Long idUsuario);
+
+	void excluirLancamentoDiferenca(Long idDiferenca);
 }

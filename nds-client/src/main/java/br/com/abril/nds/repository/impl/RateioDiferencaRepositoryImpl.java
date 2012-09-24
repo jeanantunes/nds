@@ -34,11 +34,11 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		query.executeUpdate();
 	}
 	
-	public void removerRateiosNaoAssociadosDiferenca( Long idDiferenca, Set<Long> idRateios){
+	public void removerRateiosNaoAssociadosDiferenca( Long idDiferenca, List<Long> idRateios){
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("delete from RateioDiferenca r where not in (:idRateios) and r.diferenca.id = :idDiferenca ");
+		hql.append("delete from RateioDiferenca r where r.id not in (:idRateios) and r.diferenca.id = :idDiferenca ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("idRateios", idRateios);
