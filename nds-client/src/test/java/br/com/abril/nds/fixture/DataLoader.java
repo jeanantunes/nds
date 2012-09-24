@@ -2544,48 +2544,78 @@ public class DataLoader {
 
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
-		session.save(roteiro);
 
-		Rota rota = Fixture.rota("005", "Rota 005");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
+		
+		
 
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
-		session.save(roteirizacao);
+		
+		
+		Box boxA = Fixture.criarBox(1000, "BX-A", TipoBox.LANCAMENTO);
+		session.save(boxA);
+		
+		Box boxB = Fixture.criarBox(2000, "BX-B", TipoBox.LANCAMENTO);
+		session.save(boxB);
+		
+		
+		
+		
+		
+		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(boxA);
+		session.save(roteirizacao1);
 	
-		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota,1);
-		session.save(roteirizacao);
+		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(boxB);
+		session.save(roteirizacao2);
 		
-		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
-		session.save(roteiro);
-
-		rota = Fixture.rota("004", "Rota 004");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-
-		roteirizacao = Fixture.criarRoteirizacao(pdvJose, rota,1);
-		session.save(roteirizacao);
+		Roteirizacao roteirizacao3 = Fixture.criarRoteirizacao(boxA);
+		session.save(roteirizacao3);;
 		
-		roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
-		session.save(roteirizacao);
+		
+		
+		
+		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,boxA,TipoRoteiro.NORMAL);
+		session.save(roteiroPinheiros);
 
-		rota = Fixture.rota("006", "Rota 006");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-
-		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",box2,TipoRoteiro.NORMAL);
+		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,boxB,TipoRoteiro.NORMAL);
+		session.save(roteiroInterlagos);
+		
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",roteirizacao3,boxA,TipoRoteiro.NORMAL);
 		session.save(roteiroTCD);
 
-		Rota rota10 = Fixture.rota("001", "Rota 001");
-		rota10.setRoteiro(roteiroTCD);
+		
+		
+		
+		
+		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
+		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
+		
+		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose);
+		pdvcotaJose2.setSegmentacao(segmentacaoPDV);
+		session.save(pdvcotaJose2);
+
+		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel);
+		pdvcotaManoel2.setSegmentacao(segmentacaoPDV2);
+		session.save(pdvcotaManoel2);
+		
+		List<PDV> pdvs = Arrays.asList(pdvcotaJose2,pdvcotaManoel2);
+		
+		
+
+		
+		
+		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros,pdvs);
+		session.save(rota1);
+		
+		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos,pdvs);
+		session.save(rota2);
+		
+		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
 		session.save(rota10);
+	
 
-
-		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
-		session.save(roteirizacao);
-
-
+		
+		
+	
+          
 	}
 
 

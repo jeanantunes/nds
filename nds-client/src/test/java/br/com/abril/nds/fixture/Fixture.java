@@ -2416,11 +2416,13 @@ public class Fixture {
 		
 		return parametro;
 	}
-	public static Rota rota(String codigoRota, String descricaoRota){
+	public static Rota rota(String codigoRota, String descricaoRota, Roteiro roteiro, List<PDV> pdvs){
 		Rota rota = new Rota();
 		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
 		rota.setOrdem(0);
+		rota.setRoteiro(roteiro);
+		rota.setPdvs(pdvs);
 		return rota;
 	}
 	
@@ -2968,23 +2970,24 @@ public class Fixture {
 		return parcial;
 	}
 	
-	public static Roteirizacao criarRoteirizacao(PDV pdv, Rota rota,Integer ordem ){
+	public static Roteirizacao criarRoteirizacao(Box box ){
 		
 		Roteirizacao roteirizacao = new Roteirizacao();
-		roteirizacao.setPdv(pdv);
-		roteirizacao.setRota(rota);
-		roteirizacao.setOrdem(ordem);
-		
+		roteirizacao.setBox(box);
+
 		return roteirizacao;
 	}
 	
-	public static Roteiro criarRoteiro(String descricaoRoteiro,Box box, TipoRoteiro tipoRoteiro ){
-		Roteiro rota = new Roteiro();
-		rota.setDescricaoRoteiro(descricaoRoteiro);
-		rota.setOrdem(0);
-		rota.setTipoRoteiro(tipoRoteiro);
-		rota.setBox(box);
-		return rota;
+	public static Roteiro criarRoteiro(String descricaoRoteiro, Roteirizacao roteirizacao, Box box, TipoRoteiro tipoRoteiro ){
+		
+		Roteiro roteiro = new Roteiro();
+		roteiro.setDescricaoRoteiro(descricaoRoteiro);
+		roteiro.setOrdem(0);
+		roteiro.setTipoRoteiro(tipoRoteiro);
+		roteiro.setRoteirizacao(roteirizacao);
+		roteiro.setBox(box);
+		
+		return roteiro;
 	}
 	
 	public static  PDV criarPDVPrincipal(String nome, Cota cota){

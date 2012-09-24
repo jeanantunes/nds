@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.util.IOUtils;
@@ -385,7 +386,7 @@ public class CotaGarantiaController {
 		if (notaPromissoria.getVencimento() == null) {
 			listaMensagens
 					.add("O preenchimento do campo [Vencimento] é obrigatório");
-		}else if(notaPromissoria.getVencimento().compareTo(Calendar.getInstance()) <= 0  ) {
+		}else if(notaPromissoria.getVencimento().compareTo(new Date()) <= 0  ) {
 			listaMensagens
 			.add("O campo [Vencimento] deve ser uma data no futuro.");
 		}

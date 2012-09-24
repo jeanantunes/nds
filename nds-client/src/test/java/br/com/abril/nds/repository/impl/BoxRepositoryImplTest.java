@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -59,41 +60,41 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 				"joao@gmail.com", "João da Silva");
 		save(pessoaFisica);
 
-		Cota cota = Fixture
+		Cota cotaF = Fixture
 				.cota(1, pessoaFisica, SituacaoCadastro.ATIVO, box);
-		cota.setSugereSuspensao(true);
-		save(cota);
+		cotaF.setSugereSuspensao(true);
+		save(cotaF);
 		
-		roteiro = Fixture.criarRoteiro("Pinheiros", box,TipoRoteiro.NORMAL);
-		save(roteiro);
-		
-		rota = Fixture.rota("005", "Rota 005");
-		rota.setRoteiro(roteiro);
-		save(rota);
-		
-		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
+		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaF);
 		save(pdv);
 		
-		roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
+		Cota cotaJ = Fixture
+				.cota(2, pessoaJuridica, SituacaoCadastro.ATIVO, box);
+		cotaJ.setSugereSuspensao(true);
+		
+		save(cotaJ);
+		
+		roteirizacao = Fixture.criarRoteirizacao(box);
 		save(roteirizacao);
 		
-		cota = Fixture
-				.cota(2, pessoaJuridica, SituacaoCadastro.ATIVO, box);
-		cota.setSugereSuspensao(true);
-		
-		save(cota);
-		
-		roteiro = Fixture.criarRoteiro("Interlagos",box,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,box,TipoRoteiro.NORMAL);
 		save(roteiro);
 		
-		rota = Fixture.rota("004", "Rota 004");
+		rota = Fixture.rota("005", "Rota 005",roteiro,Arrays.asList(pdv));
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
-		pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
+		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao,box,TipoRoteiro.NORMAL);
+		save(roteiro);
+		
+		rota = Fixture.rota("004", "Rota 004",roteiro,Arrays.asList(pdv));
+		rota.setRoteiro(roteiro);
+		save(rota);
+		
+		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ);
 		save(pdv);
 		
-		roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
+		roteirizacao = Fixture.criarRoteirizacao(box);
 		save(roteirizacao);
 		
 
