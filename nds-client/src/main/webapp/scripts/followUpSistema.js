@@ -158,7 +158,7 @@ var followUpSistemaController = $.extend(true, {
 
 		$(".atualizacaoCadastralGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			url : contextPath + '/followup/pesquisaDadosCadastrais',
-	        preProcess:  followUpSistemaController.exPreProcFollowupStatusCota, 
+	        preProcess:  followUpSistemaController.exPreProcFollowupCadastro, 
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
@@ -297,7 +297,13 @@ var followUpSistemaController = $.extend(true, {
 	},
 	
 	exPreProcFollowupCadastro : function(resultado) {
-		//alert("exefollowPreProcessamentoCadastro");
+	$.each(resultado.rows, function(index, row) {		
+			
+		if ( row.cell.dataVencimento == undefined ){
+				row.cell.dataVencimento='';
+		}
+			
+		});
 		return resultado;
 	},
 	
@@ -306,3 +312,6 @@ var followUpSistemaController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+
+

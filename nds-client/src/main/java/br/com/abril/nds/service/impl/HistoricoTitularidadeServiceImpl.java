@@ -1085,12 +1085,12 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 
 		if (cheque.getEmissao() != null) {
 		
-			historicoTitularidadeCotaChequeCaucao.setEmissao(cheque.getEmissao().getTime());
+			historicoTitularidadeCotaChequeCaucao.setEmissao(cheque.getEmissao());
 		}
 
 		if (cheque.getValidade() != null) {
 		
-			historicoTitularidadeCotaChequeCaucao.setValidade(cheque.getValidade().getTime());
+			historicoTitularidadeCotaChequeCaucao.setValidade(cheque.getValidade());
 		}
 		
 		if (cheque.getChequeImage() != null) {
@@ -1170,7 +1170,7 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 
 		if (notaPromissoria.getVencimento() != null) {
 		
-			historicoTitularidadeCotaNotaPromissoria.setVencimento(notaPromissoria.getVencimento().getTime());
+			historicoTitularidadeCotaNotaPromissoria.setVencimento(notaPromissoria.getVencimento());
 		}
 
 		return historicoTitularidadeCotaNotaPromissoria;
