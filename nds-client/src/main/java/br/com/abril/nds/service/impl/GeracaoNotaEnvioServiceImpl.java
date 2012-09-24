@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -95,7 +95,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	@Override
 	@Transactional
-	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
+	public List<ConsultaNotaEnvioDTO> busca(Intervalo<Integer> intervaloBox,
 			Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento,
 			List<Long> listIdFornecedor, String sortname, String sortorder,
@@ -111,13 +111,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		Set<Long> idCotas = cotasTotalItens.keySet();
 
-		List<CotaExemplaresDTO> listaCotaExemplares = new ArrayList<CotaExemplaresDTO>();
+		List<ConsultaNotaEnvioDTO> listaCotaExemplares = new ArrayList<ConsultaNotaEnvioDTO>();
 
 		for (Long idCota : idCotas) {
 
 			Cota cota = this.cotaRepository.buscarPorId(idCota);
 
-			CotaExemplaresDTO cotaExemplares = new CotaExemplaresDTO();
+			ConsultaNotaEnvioDTO cotaExemplares = new ConsultaNotaEnvioDTO();
 
 			cotaExemplares.setIdCota(cota.getId());
 			cotaExemplares.setNomeCota(cota.getPessoa().getNome());
@@ -135,11 +135,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				cotaExemplares.setTotalDesconto(BigDecimal.ZERO);
 				cotaExemplares.setExemplares(0L);
 			}
-
+			
+			//TODO: setar flag "true" para notas que ja foram impressas
 			listaCotaExemplares.add(cotaExemplares);
-
 		}
-
+				
 		return listaCotaExemplares;
 	}
 
@@ -267,7 +267,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		if (cota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota
-					+ " não encontrada!");
+					+ " n�o encontrada!");
 		}
 		notaEnvio.setEmitente(carregarEmitente(distribuidor));
 		notaEnvio.setDestinatario(carregaDestinatario(cota, idRota));
@@ -282,7 +282,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		
 		if(listaItemNotaEnvio.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não é possivel gerar nota de envio para Cota " + cota.getNumeroCota());
+			throw new ValidacaoException(TipoMensagem.ERROR, "N�o � possivel gerar nota de envio para Cota " + cota.getNumeroCota());
 		}
 		int sequencia = 0;
 		for(ItemNotaEnvio itemNotaEnvio:listaItemNotaEnvio){
@@ -319,14 +319,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		if (enderecoDistribuidor == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal do distribuidor não encontrada!");
+					"Endere�o principal do distribuidor n�o encontrada!");
 		}
 
 		try {
 			emitente.setEndereco(cloneEndereco(enderecoDistribuidor.getEndereco()));
 		} catch (Exception exception) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Erro ao adicionar o endereço do distribuidor!");
+					"Erro ao adicionar o endere�o do distribuidor!");
 		}
 		
 		TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository
@@ -354,14 +354,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		if (enderecoCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal da cota " + cota.getId() + " não encontrada!");
+					"Endere�o principal da cota " + cota.getId() + " n�o encontrada!");
 		}
 		
 		try {
 			destinatario.setEndereco(cloneEndereco(enderecoCota.getEndereco()));
 		} catch (CloneNotSupportedException e) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Erro ao adicionar o endereço do Emitente!");
+					"Erro ao adicionar o endere�o do Emitente!");
 		}
 		
 
@@ -391,7 +391,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Rota rota = rotaRepository.buscarPorId(idRota);
 		
 		if(rota ==null ){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Rota não encontrada!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Rota n�o encontrada!");
 		}
 		destinatario.setRotaReferencia(rota);		
 		

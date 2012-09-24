@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -513,7 +514,7 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 	
 	@Test
 	public void buscaTest(){
-		List<CotaExemplaresDTO>  lista = geracaoNotaEnvioService.busca(null, null, null, null, null, null, null, null, null, null, null);
+		List<ConsultaNotaEnvioDTO>  lista = geracaoNotaEnvioService.busca(null, null, null, null, null, null, null, null, null, null, null);
 		System.out.println(lista);
 	}
 	
