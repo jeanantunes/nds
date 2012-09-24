@@ -61,7 +61,8 @@ public class Fornecedor implements Serializable {
 
 	@Column(name="POSSUI_CONTRATO")
 	private boolean possuiContrato;
-
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="VALIDADE_CONTRATO")
 	private Date validadeContrato;
 

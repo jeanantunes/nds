@@ -2,6 +2,7 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -18,7 +19,9 @@ public class FiltroRomaneioDTO implements Serializable {
 	private Long idBox;
 	private Long idRoteiro;
 	private Long idRota;
-	private String nomeRota;	
+	private String nomeRota;
+	private Date data;
+	private List<Long> produtos;
 	
 	private PaginacaoVO paginacao;
 	
@@ -139,6 +142,22 @@ public class FiltroRomaneioDTO implements Serializable {
 
 	public void setNomeRota(String nomeRota) {
 		this.nomeRota = nomeRota;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public List<Long> getProdutos() {
+		return produtos;
+	}
+
+	public void setProdutos(List<Long> produtos) {
+		this.produtos = produtos;
 	}
 
 }

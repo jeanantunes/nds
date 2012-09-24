@@ -99,7 +99,7 @@ public class ParciaisController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_CADASTRO_PARCIAIS)
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS)
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);	

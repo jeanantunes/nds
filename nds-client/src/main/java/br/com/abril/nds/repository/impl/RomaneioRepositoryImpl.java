@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -27,9 +26,22 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT cota.numeroCota as numeroCota, ");
-		hql.append("pessoa.nome as nome, ");		
-		hql.append("telefone.numero as numeroTelefone, ");
-		hql.append("cota.id as idCota ");
+		hql.append("pessoa.nome as nome, ");
+		hql.append("cota.id as idCota, ");
+		hql.append("rota.id as idRota, ");
+		hql.append("notaEnvio.numero as numeroNotaEnvio ");
+		
+		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+		
+			hql.append(",(round(estudo.qtdeReparte / lancamento.produtoEdicao.pacotePadrao)) as pacote, ");
+			hql.append("(round(estudo.qtdeReparte - lancamento.produtoEdicao.pacotePadrao)) as quebra, ");
+			hql.append("estudo.qtdeReparte as reparteTotal ");
+		}
+		
+		if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
+			
+			this.getHQLProdutos(hql, filtro);
+		}
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		
@@ -37,11 +49,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosRomaneio(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		this.setarParametrosRomaneio(filtro, query, false);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				RomaneioDTO.class));
@@ -56,6 +64,20 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 	}
 	
+	private void getHQLProdutos(StringBuilder hql, FiltroRomaneioDTO filtro) {
+		
+		for (int index = 0 ; index < filtro.getProdutos().size() ; index++){
+			
+			hql.append(", coalesce((select estudo.qtdeReparte ")
+			   .append(" from estudo ")
+			   .append(" where estudo.id = estudoCota.estudo.id ")
+			   .append(" and estudoCota.cota.id = cota.id ")
+			   .append(" and lancamento.estudo.id = estudo.id ")
+			   .append(" and lancamento.produtoEdicao.id = :idProdutoEdicao").append(index)
+			   .append(" and lancamento.dataLancamentoDistribuidor = :data),0) as qtdProduto").append(index);
+		}
+	}
+
 	private List<RomaneioDTO> popularEndereco(List<RomaneioDTO> listaRomaneios){
 		List<RomaneioDTO> listaAux = new ArrayList<RomaneioDTO>();
 		for(RomaneioDTO romaneio:listaRomaneios){
@@ -99,29 +121,35 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		StringBuilder hql = new StringBuilder();
 	
 
-		hql.append(" from Cota cota ");
+		hql.append(" from Cota cota, Lancamento lancamento, Estudo estudo, EstudoCota estudoCota, NotaEnvio notaEnvio ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" LEFT JOIN pessoa.telefones as telefone ");
 		hql.append(" LEFT JOIN cota.box as box ");
 		hql.append(" LEFT JOIN box.roteiros as roteiro ");
 		hql.append(" LEFT JOIN roteiro.rotas as rota ");
+		hql.append(" JOIN notaEnvio.listaItemNotaEnvio as item ");
+		hql.append(" JOIN item.listaMovimentoEstoqueCota as movimentoEstoque ");
 		
+		hql.append(" where estudoCota.estudo.id = estudo.id and estudoCota.cota.id = cota.id and lancamento.estudo.id = estudo.id ");
+		hql.append(" and movimentoEstoque.lancamento = lancamento.id ");
 
-		boolean usarAnd = false;
-		
-		if(filtro.getIdBox() != null && filtro.getIdBox() != -1 ) {
-			hql.append( (usarAnd ? " and ":" where ") +" box.id = :idBox ");
-			usarAnd = true;
+		if(filtro.getIdBox() != null && filtro.getIdBox() != -1) {
+			hql.append( " and box.id = :idBox ");
 		}
 		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() != -1){
-			hql.append( (usarAnd ? " and ":" where ") + " roteiro.id = :idRoteiro ");
-			usarAnd = true;
+			hql.append( " and roteiro.id = :idRoteiro ");
 		}
 		if(filtro.getIdRota() != null && filtro.getIdRota() != -1){
-			hql.append( (usarAnd ? " and ":" where ") + " rota.id = :idRota ");
-			usarAnd = true;
+			hql.append( " and rota.id = :idRota ");
 		}
-
+		
+		if(filtro.getData() != null){
+			hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
+		}
+		
+		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+			
+			hql.append(" and lancamento.produtoEdicao.id in (:produtos) ");
+		}
 
 		return hql.toString();
 	}
@@ -133,64 +161,73 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		boolean usarAsc = false;
+		hql.append(" order by rota.id asc ");
 		
 		if(filtro.getIdRoteiro() == null && filtro.getIdRota() != null){
-			hql.append(" order by rota.ordem asc ");
-			usarAsc = true;
+			hql.append(" ,rota.ordem ");
 		}
 		if(filtro.getIdRoteiro() != null && filtro.getIdRota() == null){
-			hql.append(" order by roteiro.ordem asc ");
-			usarAsc = true;
+			hql.append(" ,roteiro.ordem ");
 		}
 		if(filtro.getIdRoteiro() != null && filtro.getIdRota() != null){
-			hql.append(" order by roteiro.ordem asc, rota.ordem asc ");
-			usarAsc = true;
+			hql.append(" ,roteiro.ordem asc, rota.ordem asc ");
 		}
 		
-		if (filtro.getPaginacao().getOrdenacao() != null && usarAsc) {
+		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
 		}
 		
 		return hql.toString();
 	}
 	
-	private HashMap<String,Object> buscarParametrosRomaneio(FiltroRomaneioDTO filtro){
+	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query, boolean queryCount){
 		
-		HashMap<String,Object> param = new HashMap<String, Object>();
-		
-		if(filtro.getIdBox() != null && filtro.getIdBox() != -1 ) { 
-			param.put("idBox", filtro.getIdBox());
+		if(filtro.getIdBox() != null && filtro.getIdBox() != -1) { 
+			query.setParameter("idBox", filtro.getIdBox());
 		}
 		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() != -1){
-			param.put("idRoteiro", filtro.getIdRoteiro());
+			query.setParameter("idRoteiro", filtro.getIdRoteiro());
 		}
 		if(filtro.getIdRota() != null && filtro.getIdRota() != -1){
-			param.put("idRota", filtro.getIdRota());
+			query.setParameter("idRota", filtro.getIdRota());
 		}
 		
-		return param;
+		if (filtro.getData() != null){
+			
+			query.setParameter("data", filtro.getData());
+		}
+		
+		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()){
+			
+			if (filtro.getProdutos().size() == 1){
+			
+				query.setParameterList("produtos", filtro.getProdutos());
+			} else if (!queryCount){
+				
+				for (int index = 0 ; index < filtro.getProdutos().size() ; index++){
+					
+					query.setParameter("idProdutoEdicao" + index, filtro.getProdutos().get(index));
+				}
+			}
+		}
 	}
 
 	@Override
 	public Integer buscarTotal(FiltroRomaneioDTO filtro) {
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cota) ");
+		hql.append(" select count(cota.numeroCota) ");
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		
+		hql.append(getOrderBy(filtro));
+		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosRomaneio(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}	
+		this.setarParametrosRomaneio(filtro, query, true);
 		
 		Long totalRegistros = (Long) query.uniqueResult();
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
-	
 }

@@ -1,6 +1,9 @@
 package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,31 +11,28 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.jasperreports.engine.JRException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.ResultadoRomaneioVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.RomaneioService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
@@ -64,9 +64,6 @@ public class RomaneioController {
 	private HttpSession session;
 	
 	@Autowired
-	private DistribuidorService distribuidorService;
-	
-	@Autowired
 	private HttpServletResponse httpResponse;
 	
 	
@@ -76,8 +73,15 @@ public class RomaneioController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS, null);
 		carregarComboBox();
 		carregarComboRoteiro();
-		carregarComboRota(); 
+		carregarComboRota();
+		
+		Date dataAtual = new Date();
+		
+		result.include("dataAtual", new SimpleDateFormat("dd/MM/yyyy").format(dataAtual));
+		
+		result.include("produtos", this.pesquisarProdutosDataLancamento(dataAtual));
 	}
+	
 	@Post
 	@Path("/pesquisarRomaneio")
 	public void pesquisarRomaneio(FiltroRomaneioDTO filtro, String sortorder, String sortname, int page, int rp){
@@ -91,7 +95,25 @@ public class RomaneioController {
 		TableModel<CellModelKeyValue<RomaneioDTO>> tableModel = efetuarConsultaRomaneio(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
+	public void carregarProdutosDataLancamento(Date data){
 		
+		result.use(Results.json()).from(this.pesquisarProdutosDataLancamento(data), "result").recursive().serialize();
+	}
+	
+	private List<ItemDTO<Long, String>> pesquisarProdutosDataLancamento(Date data){
+		
+		List<ProdutoEdicao> produtos = this.romaneioService.buscarProdutosLancadosData(data);
+		
+		List<ItemDTO<Long, String>> listaItens = new ArrayList<ItemDTO<Long,String>>();
+		for (ProdutoEdicao produto : produtos){
+			
+			listaItens.add(new ItemDTO<Long, String>(produto.getId(), produto.getNomeComercial()));
+		}
+		
+		return listaItens;
 	}
 	
 	private TableModel<CellModelKeyValue<RomaneioDTO>> efetuarConsultaRomaneio(FiltroRomaneioDTO filtro) {
@@ -115,64 +137,43 @@ public class RomaneioController {
 	}
 	
 	@Get
-	public void exportar(FileType fileType) throws IOException {
+	public void exportar(FileType fileType) throws IOException, URISyntaxException, JRException {
 		
 		FiltroRomaneioDTO filtro = (FiltroRomaneioDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);
 		
-		List<RomaneioDTO> listaDTOParaExportacao = this.romaneioService.buscarRomaneio(filtro, "naoLimitar");
+		byte[] arquivo = this.romaneioService.gerarRelatorio(filtro, "", fileType);
 		
-		if(listaDTOParaExportacao.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-		}
+		this.httpResponse.setContentType("application/pdf");
 		
-		Integer totalRegistros = this.romaneioService.buscarTotalDeRomaneios(filtro);
-		ResultadoRomaneioVO romaneioVO = new ResultadoRomaneioVO();
-		romaneioVO.setTotalCotas(totalRegistros);
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=romaneio." + fileType.getExtension());
+
+		OutputStream output = this.httpResponse.getOutputStream();
 		
-		FileExporter.to("romaneios", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, romaneioVO, 
-				listaDTOParaExportacao, RomaneioDTO.class, this.httpResponse);
-			
+		output.write(arquivo);
+
+		httpResponse.getOutputStream().close();
 		
 		result.nothing();
 	}
 	
-	private NDSFileHeader getNDSFileHeader() {
-		
-		NDSFileHeader ndsFileHeader = new NDSFileHeader();
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
-		}
-		
-		ndsFileHeader.setData(new Date());
-		
-		ndsFileHeader.setNomeUsuario(this.getUsuario().getNome());
-		
-		return ndsFileHeader;
-	}
-	
-	public Usuario getUsuario() {
-		Usuario usuario = new Usuario();
-		usuario.setId(1L);
-		usuario.setNome("Lazaro Jornaleiro");
-		return usuario;
-	}
-
 	private void validarEntrada(FiltroRomaneioDTO filtro) {
-		boolean validar = false;
+		
+		List<String> msgs = new ArrayList<String>();
 		
 		if(filtro.getIdBox()==null && filtro.getIdRoteiro()==null && filtro.getIdRota()==null){
-			validar = true;
+			
+			msgs.add("Preencha box, roteiro ou rota!");
 		}
 		
-		if(validar){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um filtro deve ser preenchido!");
+		if (filtro.getData() == null){
+			
+			msgs.add("Preencha a data!");
 		}
 		
+		if (!msgs.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+		}
 	}
 	
 	private void tratarFiltro(FiltroRomaneioDTO filtroAtual) {

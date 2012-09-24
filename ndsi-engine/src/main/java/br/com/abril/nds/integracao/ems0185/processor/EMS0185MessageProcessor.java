@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.sql.DataSource;
 
@@ -37,7 +38,7 @@ public class EMS0185MessageProcessor extends AbstractRepository implements Messa
 
 	
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -115,7 +116,7 @@ public class EMS0185MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

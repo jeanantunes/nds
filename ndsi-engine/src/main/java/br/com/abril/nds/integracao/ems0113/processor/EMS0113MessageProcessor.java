@@ -1,5 +1,7 @@
 package br.com.abril.nds.integracao.ems0113.processor;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +31,7 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorService distribuidorServiceImpl;
 	
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -62,7 +64,7 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

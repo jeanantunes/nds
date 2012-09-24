@@ -11,6 +11,8 @@ public class CotaRoteirizacaoDTO implements Serializable {
 	private Integer numeroCota;
 	
 	private String nomeCota;
+	
+	private Boolean selecionado;
 
 	/**
 	 * @return the idCota
@@ -53,6 +55,19 @@ public class CotaRoteirizacaoDTO implements Serializable {
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
-	
+
+	/**
+	 * @return the selecionado
+	 */
+	public Boolean getSelecionado() {
+		return selecionado;
+	}
+
+	/**
+	 * @param selecionado the selecionado to set
+	 */
+	public void setSelecionado(Boolean selecionado) {
+		this.selecionado = selecionado;
+	}
 	
 }

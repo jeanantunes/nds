@@ -95,7 +95,7 @@ public class FechamentoCEIntegracaoController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_DEVOLUCAO_FECHAMENTO_INTEGRACAO)
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO)
 	public void index(){
 		this.carregarComboFornecedores();
 		

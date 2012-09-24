@@ -68,7 +68,7 @@ public class GeracaoNFeController {
 	private RoteirizacaoService roteirizacaoService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NFE)
+	@Rules(Permissao.ROLE_NFE_GERACAO_NFE)
 	public void index() {
 		
 		result.include("fornecedores", fornecedorService
@@ -209,7 +209,7 @@ public class GeracaoNFeController {
 		
 		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
 		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs=	
+		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
 				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
 						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
 		

@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 
@@ -37,7 +38,7 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 	
 	
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -119,7 +120,7 @@ public class EMS0131MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

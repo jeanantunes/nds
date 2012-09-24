@@ -285,10 +285,6 @@
 	type="text/javascript"></script>
 
 <style>
-#workspace {
-	margin-top: 7px;
-}
-
 #ajaxLoading {
 	position: absolute;	z-index: 99999;
 	left: 0px; top: 0px; width: 100%; height: 100%; margin: 0;
@@ -362,7 +358,6 @@
 			</div>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
-		<br clear="all"/>
 		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
 		
 		<div id="workspace">
