@@ -22,26 +22,28 @@ var ConsultaEncalhe = $.extend(true, {
 				height : 180
 			});
 			
-			$('#dataRecolhimento', ConsultaEncalhe.workspace).datepicker({
+			$('.datePicker', ConsultaEncalhe.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			
-			$('#dataRecolhimento', ConsultaEncalhe.workspace).mask("99/99/9999");
+			$('.datePicker', ConsultaEncalhe.workspace).mask("99/99/9999");
 			
 		},
 		
 		pesquisar: function() {
 			
-			var dataRecolhimento 	= $("#dataRecolhimento", ConsultaEncalhe.workspace).val();
-			var idFornecedor		= $("#idFornecedor", ConsultaEncalhe.workspace).val();
-			var numeroCota			= $("#cota", ConsultaEncalhe.workspace).val();
+			var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
+			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
+			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
+			var numeroCota				= $("#cota", ConsultaEncalhe.workspace).val();
 			
 			var formData = [
 			        
-			        {name:'dataRecolhimento', value: dataRecolhimento},
+			        {name:'dataRecolhimentoInicial', value: dataRecolhimentoInicial},
+			        {name:'dataRecolhimentoFinal', value: dataRecolhimentoFinal},
 			        {name:'idFornecedor', value: idFornecedor},
 			        {name:'numeroCota', value: numeroCota }
 			];
@@ -90,19 +92,19 @@ var ConsultaEncalhe = $.extend(true, {
 				var colModel = [ {
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 60,
+					width : 40,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 100,
+					width : 80,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 60,
+					width : 40,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -120,25 +122,31 @@ var ConsultaEncalhe = $.extend(true, {
 				}, {
 					display : 'Reparte',
 					name : 'reparte',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Encalhe',
 					name : 'encalhe',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Fornecedor',
 					name : 'fornecedor',
-					width : 120,
+					width : 85,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Total R$',
-					name : 'total',
-					width : 90,
+					display : 'Valor R$',
+					name : 'valor',
+					width : 60,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Valor c/ Desc.',
+					name : 'valorComDesconto',
+					width : 70,
 					sortable : true,
 					align : 'right'
 				}, {

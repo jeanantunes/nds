@@ -748,7 +748,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		setUpForConsultaEncalhe();
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		filtro.setDataRecolhimento(Fixture.criarData(1, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(1, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(1, Calendar.MARCH, 2012));
 		
 		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, true);
 		
@@ -764,7 +765,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
 		
-		filtro.setDataRecolhimento(Fixture.criarData(2, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(2, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(2, Calendar.MARCH, 2012));
 		
 		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, true);
 		
@@ -796,7 +798,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		
 		ConsultaEncalheDTO cEncalhe_1 = listaConsultaEncalhe.get(0);
-		Assert.assertEquals((8*15), cEncalhe_1.getTotal().intValue());
+		Assert.assertEquals((8*15), cEncalhe_1.getValor().intValue());
 		
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -816,7 +818,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		
-		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdCota(cotaManoel.getId());
 		filtro.setIdFornecedor(fornecedorDinap.getId());
 		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.RECOLHIMENTO);

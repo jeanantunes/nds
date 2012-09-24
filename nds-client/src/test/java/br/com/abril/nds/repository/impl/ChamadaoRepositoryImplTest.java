@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -17,18 +19,23 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.ChamadaoRepository;
 import br.com.abril.nds.util.DateUtil;
@@ -41,8 +48,21 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
 	private static BigInteger qtdEstoqueVeja1;
 	
-	//@Before
+	private static BigInteger qtdChamadaEncalheVeja2;
+	
+	private Fornecedor fornecedor;
+	
+	@Before
 	public void setup() {
+		
+		TipoFornecedor fornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
+		save(fornecedorPublicacao);
+		
+		fornecedor = Fixture.fornecedorFC(fornecedorPublicacao);
+		save(fornecedor);
+		
+		Set<Fornecedor> fornecedores = new TreeSet<Fornecedor>();
+		fornecedores.add(fornecedor);
 		
 		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
 		save(ncmRevistas);
@@ -51,12 +71,18 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		save(tipoProdutoRevista);
 		
 		Produto produtoVeja = Fixture.produtoVeja(tipoProdutoRevista);
+		produtoVeja.setFornecedores(fornecedores);
 		save(produtoVeja);
 		
 		ProdutoEdicao produtoEdicaoVeja1 =
 			Fixture.produtoEdicao("1", 1L, 10, 14, new Long(100),
 								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
-		save(produtoEdicaoVeja1);
+		
+		ProdutoEdicao produtoEdicaoVeja2 =
+			Fixture.produtoEdicao("2", 2L, 10, 14, new Long(100),
+								  BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", 1L, produtoVeja, null, false);
+		
+		save(produtoEdicaoVeja1, produtoEdicaoVeja2);
 		
 		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
@@ -90,6 +116,18 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 										DateUtil.adicionarDias(new Date(), 1), new Date(), new Date(),
 										BigInteger.TEN, StatusLancamento.EXPEDIDO, null, null, 1);
 		save(lancamentoVeja1);
+		
+		ChamadaEncalhe chamadaEncalhe =
+			Fixture.chamadaEncalhe(new Date(), produtoEdicaoVeja2, TipoChamadaEncalhe.CHAMADAO);
+		
+		save(chamadaEncalhe);
+		
+		qtdChamadaEncalheVeja2 = BigInteger.TEN;
+		
+		ChamadaEncalheCota chamadaEncalheCota =
+			Fixture.chamadaEncalheCota(chamadaEncalhe, true, cotaManoel, qtdChamadaEncalheVeja2);
+		
+		save(chamadaEncalheCota);
 	}
 	
 	@Test
@@ -106,12 +144,36 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	}
 	
 	@Test
+	public void obterChamadaEncalheParaChamadao() {
+		
+		FiltroChamadaoDTO filtro = getFiltro();
+
+		List<ConsignadoCotaChamadaoDTO> listaChamadaEncalheChamadaoDTO = 
+			this.chamadaoRepository.obterConsignadosComChamadao(filtro);
+		
+		Assert.assertNotNull(listaChamadaEncalheChamadaoDTO);
+		
+		Assert.assertTrue(!listaChamadaEncalheChamadaoDTO.isEmpty());
+	}
+	
+	@Test
 	public void obterTotalConsignadoCotaChamadao() {
 		
 		FiltroChamadaoDTO filtro = getFiltro();
 		
 		Long qtdeTotalRegistros =
 			this.chamadaoRepository.obterTotalConsignadosParaChamadao(filtro);
+		
+		Assert.assertTrue(qtdeTotalRegistros == 1);
+	}
+	
+	@Test
+	public void obterTotalChamadaEncalheChamadao() {
+		
+		FiltroChamadaoDTO filtro = getFiltro();
+		
+		Long qtdeTotalRegistros =
+			this.chamadaoRepository.obterTotalConsignadosComChamadao(filtro);
 		
 		Assert.assertTrue(qtdeTotalRegistros == 1);
 	}
@@ -130,6 +192,20 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 			resumoConsignadoCotaChamadaoDTO.getQtdExemplaresTotal().compareTo(qtdEstoqueVeja1) == 0);
 	}
 	
+	@Test
+	public void obterResumoChamadaEncalheChamadao() {
+		
+		FiltroChamadaoDTO filtro = getFiltro();
+
+		ResumoConsignadoCotaChamadaoDTO resumoChamadaEncalheChamadaoDTO = 
+			this.chamadaoRepository.obterResumoConsignadosComChamadao(filtro);
+			
+		Assert.assertNotNull(resumoChamadaEncalheChamadaoDTO);
+		
+		Assert.assertTrue(
+			resumoChamadaEncalheChamadaoDTO.getQtdExemplaresTotal().compareTo(qtdChamadaEncalheVeja2) == 0);
+	}
+	
 	private FiltroChamadaoDTO getFiltro() {
 
 		FiltroChamadaoDTO filtro = new FiltroChamadaoDTO();
@@ -137,6 +213,8 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		filtro.setNumeroCota(123);
 		
 		filtro.setDataChamadao(new Date());
+		
+		filtro.setIdFornecedor(fornecedor.getId());
 		
 		filtro.setPaginacao(new PaginacaoVO(1, 15, "asc"));
 

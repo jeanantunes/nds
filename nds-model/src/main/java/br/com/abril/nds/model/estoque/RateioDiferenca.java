@@ -52,7 +52,7 @@ public class RateioDiferenca implements Serializable {
 	@JoinColumn(name = "DIFERENCA_ID")
 	private Diferenca diferenca;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	

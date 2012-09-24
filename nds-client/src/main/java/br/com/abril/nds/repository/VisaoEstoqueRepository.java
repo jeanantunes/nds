@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.util.List;
+
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
@@ -14,11 +16,11 @@ public interface VisaoEstoqueRepository {
 	VisaoEstoqueDTO obterRecolhimento(FiltroConsultaVisaoEstoque filtro);
 	VisaoEstoqueDTO obterProdutosDanificados(FiltroConsultaVisaoEstoque filtro);
 	
-	VisaoEstoqueDetalheDTO obterLancamentoDetalhe(FiltroConsultaVisaoEstoque filtro);
-	VisaoEstoqueDetalheJuramentadoDTO obterLancamentoJuramentadoDetalhe(FiltroConsultaVisaoEstoque filtro);
-	VisaoEstoqueDetalheDTO obterSuplementarDetalhe(FiltroConsultaVisaoEstoque filtro);
-	VisaoEstoqueDetalheDTO obterRecolhimentoDetalhe(FiltroConsultaVisaoEstoque filtro);
-	VisaoEstoqueDetalheDTO obterProdutosDanificadosDetalhe(FiltroConsultaVisaoEstoque filtro);
+	List<VisaoEstoqueDetalheDTO> obterLancamentoDetalhe(FiltroConsultaVisaoEstoque filtro);
+	List<VisaoEstoqueDetalheJuramentadoDTO> obterLancamentoJuramentadoDetalhe(FiltroConsultaVisaoEstoque filtro);
+	List<VisaoEstoqueDetalheDTO> obterSuplementarDetalhe(FiltroConsultaVisaoEstoque filtro);
+	List<VisaoEstoqueDetalheDTO> obterRecolhimentoDetalhe(FiltroConsultaVisaoEstoque filtro);
+	List<VisaoEstoqueDetalheDTO> obterProdutosDanificadosDetalhe(FiltroConsultaVisaoEstoque filtro);
 	
 	
 }

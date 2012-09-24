@@ -49,8 +49,12 @@ public class TitularidadeCotaDTO implements Serializable {
 
         this.id = id;
         this.idCota = idCota;
-        this.inicio = inicio;
-        this.fim = fim;
+        if (inicio != null) {
+            this.inicio = new Date(inicio.getTime());
+        }
+        if (fim != null) {
+            this.fim = new Date(fim.getTime());
+        }
         this.nome = nome;
         this.documento = documento;
     }

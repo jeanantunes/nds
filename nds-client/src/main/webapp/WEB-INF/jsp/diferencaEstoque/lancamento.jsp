@@ -45,16 +45,51 @@
 			</div>
 		</form>
 		
+		<form id="form-salvar-lancamentos">
+			<div id="dialog-salvar-lancamentos" title="Lançamento Faltas e Sobras" style="display: none">
+				<p>Salvar estes Lan&ccedil;amentos?</p>
+			</div>
+		</form>
+		
+		<form id="form-cancelar-lancamentos">
+			<div id="dialog-cancelar-lancamentos" title="Lançamento Faltas e Sobras" style="display: none">
+				<p>Cancelar estes Lan&ccedil;amentos?</p>
+			</div>
+		</form>
+		
 		<form id="lancamento-consulta">
 			
 			<div class="areaBts">
 					<div class="area">
-						<span  class="bt_novos">
-							<a href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();" rel="tipsy" title="Incluir Novo">
+						<span class="bt_novos">
+							<a href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();" rel="tipsy"
+							   title="Incluir Novo">
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
 							</a>
 						</span>
 						
+						<div id="btnsControleDiferenca">
+							<span class="bt_novos">
+								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();"
+								   title="Confirmar Lançamento de Faltas e Sobras">
+									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
+								</a>
+							</span>
+							
+							<span class="bt_novos">
+								<a href="javascript:;" onclick="lancamentoController.popupSalvarLancamentos();"
+								   title="Salvar">
+									<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
+								</a>
+							</span>
+							
+							<span class="bt_novos">
+								<a href="javascript:;" onclick="lancamentoController.popupCancelarLancamentos();"
+								   title="Cancelar Lançamento de Faltas e Sobras">
+							 		<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" border="0" />
+							 	</a>
+							</span>
+						</div>
 					</div>
 			</div>
 			
@@ -108,11 +143,7 @@
 				
 				<table width="931" border="0" cellspacing="1" cellpadding="1">
 					<tr>
-						<td width="459">
-							<span id="btnConfirmar" class="total bt_confirmar" style="display: none;">
-								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();">Confirmar</a>
-							</span>
-						</td>
+						<td width="459">&nbsp;</td>
 						<td id="labelTotalGeral" width="99" class="total" style="display: none">
 							<strong>Total Geral:</strong>
 						</td>

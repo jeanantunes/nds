@@ -36,6 +36,8 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Editor", exhibitionOrder = 5)
 	private String nomeEditor;
 	
+	private boolean chamadaEncalhe;
+	
 	private OrdenacaoColunaChamadao ordenacaoColuna;
 	
 	/**
@@ -52,14 +54,16 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	 * @param dataChamadao - data do chamadão
 	 * @param idFornecedor - id do fornecedor
 	 * @param idEditor - id do editor
+	 * @param chamadaEncalhe - indica se a busca irá obter chamadas de encalhe
 	 */
 	public FiltroChamadaoDTO(Integer numeroCota, Date dataChamadao,
-							 Long idFornecedor, Long idEditor) {
+							 Long idFornecedor, Long idEditor, boolean chamadaEncalhe) {
 		
 		this.numeroCota = numeroCota;
 		this.dataChamadao = dataChamadao;
 		this.idFornecedor = idFornecedor;
 		this.idEditor = idEditor;
+		this.chamadaEncalhe = chamadaEncalhe;
 	}
 
 	/**
@@ -194,6 +198,20 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	}
 	
 	/**
+	 * @return the chamadaEncalhe
+	 */
+	public boolean isChamadaEncalhe() {
+		return chamadaEncalhe;
+	}
+
+	/**
+	 * @param chamadaEncalhe the chamadaEncalhe to set
+	 */
+	public void setChamadaEncalhe(boolean chamadaEncalhe) {
+		this.chamadaEncalhe = chamadaEncalhe;
+	}
+
+	/**
 	 * @return the ordenacaoColuna
 	 */
 	public OrdenacaoColunaChamadao getOrdenacaoColuna() {
@@ -214,6 +232,7 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + (chamadaEncalhe ? 1231 : 1237);
 		result = prime * result
 				+ ((dataChamadao == null) ? 0 : dataChamadao.hashCode());
 		result = prime * result
@@ -245,6 +264,8 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroChamadaoDTO other = (FiltroChamadaoDTO) obj;
+		if (chamadaEncalhe != other.chamadaEncalhe)
+			return false;
 		if (dataChamadao == null) {
 			if (other.dataChamadao != null)
 				return false;
