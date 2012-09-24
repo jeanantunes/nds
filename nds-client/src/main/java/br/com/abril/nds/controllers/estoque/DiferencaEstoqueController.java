@@ -555,9 +555,7 @@ public class DiferencaEstoqueController {
 								BigInteger qntReparteRateio,
 								List<RateioCotaVO> rateiosCota,
 								TipoDirecionamentoDiferenca direcionamento){
-		
-		//TODO Implementação da Edição de Diferença
-		
+			
 		DiferencaVO diferencaEditavel = this.obterDiferencaPorId(idDiferenca);
 		
 		if(diferencaEditavel!= null){
@@ -1005,16 +1003,32 @@ public class DiferencaEstoqueController {
 	@Path("/lancamento/excluir")
 	public void excluirFaltaSobra(Long idDiferenca){
 		
-		excluirDiferenca(idDiferenca);
+		Boolean modoEdicaoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE); 
 		
 		FiltroLancamentoDiferencaEstoqueDTO filtro = 
-			(FiltroLancamentoDiferencaEstoqueDTO) 
-				this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
+				(FiltroLancamentoDiferencaEstoqueDTO) 
+					this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 		
-		this.pesquisarLancamentosNovos(
-			filtro.getDataMovimento(), filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
-				filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
-					filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(modoEdicaoNovaDiferenca!= null && modoEdicaoNovaDiferenca){
+		
+			excluirDiferenca(idDiferenca);
+			
+			this.pesquisarLancamentosNovos(
+				filtro.getDataMovimento(), filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
+					filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
+						filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
+		else{
+			
+			diferencaEstoqueService.excluirLancamentoDiferenca(idDiferenca);
+			
+			this.pesquisarLancamentos(DateUtil.formatarDataPTBR(filtro.getDataMovimento()) 
+					, filtro.getTipoDiferenca(), filtro.getPaginacao().getSortOrder(), 
+						filtro.getOrdenacaoColuna().toString(), filtro.getPaginacao().getPaginaAtual(), 
+							filtro.getPaginacao().getQtdResultadosPorPagina());
+			
+		}
+	
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1133,7 +1147,7 @@ public class DiferencaEstoqueController {
 		
 		if(listaNovasDiferencas != null){
 						
-			this.diferencaEstoqueService.salvarLancamentosDiferenca(listaNovasDiferencas, mapaRateioCotas, this.getUsuario().getId());
+			this.diferencaEstoqueService.salvarLancamentosDiferenca(listaNovasDiferencas, mapaRateioCotas, this.getUsuario().getId(),modoEdicao);
 		}
 		
 		result.use(Results.json()).from(
@@ -2191,8 +2205,6 @@ public class DiferencaEstoqueController {
 	
 	@SuppressWarnings({ "unchecked"})
 	private List<RateioCotaVO> obterRateiosEdicaoDiferenca(Long idDiferenca){
-		
-		//TODO implementar logica de consulta de rateios para edição de diferença
 			
 		 Map<Long, List<RateioCotaVO>> mapaRateioCotas =
 					(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
