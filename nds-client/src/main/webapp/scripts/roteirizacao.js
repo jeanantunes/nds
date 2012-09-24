@@ -1,9 +1,50 @@
+var TipoTransferencia = {
+    COTA : {value: 'COTA'},
+    ROTA : {value: 'ROTA'},
+    ROTEIRO : { value: 'ROTEIRO'}
+};
+
 var roteiroSelecionadoAutoComplete = false;	
 var transferirRotasComNovoRoteiro = false;
 var transferirRoteirizacaoComNovaRota= false;
 var pesquisaPorCota = false;
 
 var roteirizacao = $.extend(true, {
+	
+		tipoTransferencia: null,
+        idBox : null,
+        idRoteiro: null,
+        idsRotas: [],
+		
+		definirTransferenciaCota : function() {
+			if (!roteirizacao.isTransferenciaCota()) {
+				roteirizacao.tipoTransferencia = TipoTransferencia.COTA;
+			}
+		},
+		
+		definirTransferenciaRota : function() {
+			if (!roteirizacao.isTransferenciaRota()) {
+				roteirizacao.tipoTransferencia = TipoTransferencia.ROTA;
+			}
+		},
+		
+		definirTransferenciaRoteiro : function() {
+			if (!roteirizacao.isTransferenciaRoteiro()) {
+				roteirizacao.tipoTransferencia = TipoTransferencia.ROTEIRO;
+			}
+		},
+		
+		isTransferenciaCota : function() {
+			return TipoTransferencia.COTA == roteirizacao.tipoTransferencia;
+		},
+		
+		isTransferenciaRota : function() {
+			return TipoTransferencia.ROTA == roteirizacao.tipoTransferencia;
+		},
+		
+		isTransferenciaRoteiro : function() {
+			return TipoTransferencia.ROTEIRO == roteirizacao.tipoTransferencia;
+		},
 	
 		abrirTelaRoteiro : function () {
 			
@@ -212,6 +253,11 @@ var roteirizacao = $.extend(true, {
 				width : 270,
 				height : 140
 			});
+
+            $(".rotasGrid", roteirizacao.workspace).flexOptions({
+                url : contextPath + "/cadastro/roteirizacao/carregarRotas",
+                params: [{name: 'idRoteiro', value: roteirizacao.idRoteiro}]
+            });
 		
 		},
 		
@@ -233,18 +279,19 @@ var roteirizacao = $.extend(true, {
 
         iniciaBoxGrid : function(){
             $(".boxGrid", roteirizacao.workspace).flexigrid({
-                preProcess: false   ,
+                preProcess: function(data) {
+                	$.each(data.rows, function(index, value) {
+        				var selecione = '<input type="radio" value="' + value.cell.id +'" name="boxRadio"/>';
+        				value.cell.selecione = selecione;
+        			});
+                	return data;
+                },
                 dataType : 'json',
+                onSuccess: roteirizacao.iniciaRoteirosGrid,
                 colModel : [{
-                    display : 'Ordem',
-                    name : 'ordem',
-                    width : 35,
-                    sortable : true,
-                    align : 'left'
-                }, {
                     display : 'Nome',
-                    name : 'descricaoBox',
-                    width : 160,
+                    name : 'nome',
+                    width : 180,
                     sortable : true,
                     align : 'left'
                 }, {
@@ -258,6 +305,12 @@ var roteirizacao = $.extend(true, {
                 width : 270,
                 height : 140
             });
+
+            $(".boxGrid", roteirizacao.workspace).flexOptions({
+                url : contextPath + "/cadastro/roteirizacao/obterBoxLancamento"
+            });
+           
+            $(".boxGrid", roteirizacao.workspace).flexReload();
         },
 
         iniciaRoteirosGrid : function(){
@@ -287,6 +340,13 @@ var roteirizacao = $.extend(true, {
                 width : 270,
                 height : 140
             });
+
+            $(".roteirosGrid", roteirizacao.workspace).flexOptions({
+                url : contextPath + "/cadastro/roteirizacao/obterRoteirosBox",
+                params: [{name: 'idBox', value: roteirizacao.idBox}]
+            });
+            
+            $(".roteirosGrid", roteirizacao.workspace).flexReload();
         },
 		
 		abrirTelaRota : function () {
@@ -1605,9 +1665,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		$(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
 		$('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
         roteirizacao.iniciaBoxGrid();
-        roteirizacao.iniciaRoteirosGrid();
-        roteirizacao.iniciaRotasGrid();
-		roteirizacao.iniciaCotasDisponiveisGrid();
+     	roteirizacao.iniciaCotasDisponiveisGrid();
 		roteirizacao.iniciaCotasRotaGrid();
 		roteirizacao.desabilitaBotao('botaoTransfereciaRota', roteirizacao.workspace);
 		roteirizacao.desabilitaBotao('botaoExcluirRota', roteirizacao.workspace);
@@ -1754,6 +1812,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 				width : 380,
 				height : 140
 			});
+
 		}
 	  
 		

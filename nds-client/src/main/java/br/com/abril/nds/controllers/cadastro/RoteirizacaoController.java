@@ -707,7 +707,7 @@ public class RoteirizacaoController {
 	/**
 	 * Obtém lista de box do tipo lançamento
 	 */
-	@Get
+	@Post
 	@Path("/obterBoxLancamento")
 	public void obterBoxLancamento(){
 		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento();

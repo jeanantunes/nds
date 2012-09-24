@@ -122,13 +122,13 @@
         <legend>Box</legend>
 
 
-        <input name="searchBox" type="text" id="searchBox" style="width:240px; float:left; margin-bottom:5px;" />
+        <input name="nomeBox" type="text" id="nomeBox" style="width:240px; float:left; margin-bottom:5px;" />
         <a href="javascript:;">
             <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
                  alt="Adicionar Rota" width="16" height="16" border="0"
                  style="float:left; margin-left:5px; margin-top:5px;" /></a>
             <br/>
-        <table class="boxGrid"/>
+        <table class="boxGrid"></table>
     </fieldset>
 
 
@@ -137,7 +137,7 @@
         <legend>Roteiros</legend>
 
 
-        <input name="searchRoteiros" type="text" id="searchRoteiros" style="width:240px; float:left; margin-bottom:5px;" />
+        <input name="descricaoRoteiro" type="text" id="descricaoRoteiro" style="width:240px; float:left; margin-bottom:5px;" />
         <a href="javascript:;">
                 <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
                      alt="Adicionar Rota" width="16" height="16" border="0"
@@ -151,7 +151,7 @@
     <fieldset style="width:270px; float:left; margin-left:15px;">
         <legend>Rotas</legend>
 
-        <input name="searchRota" type="text" id="searchRota" style="width:240px; float:left; margin-bottom:5px;" />
+        <input name="descricaoRota" type="text" id="descricaoRota" style="width:240px; float:left; margin-bottom:5px;" />
         <a href="javascript:;">
             <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
                  alt="Adicionar Rota" width="16" height="16" border="0"
