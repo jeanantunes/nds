@@ -44,12 +44,8 @@ public class ArquivoImportFileFilter implements FileFilter {
 	 * @return extensão do arquivo no formato ".ext"
 	 */
 	private static String getExtensionFile(String fileName) {
-		
-		String extension = null;
-		
-		extension = fileName.substring(fileName.lastIndexOf("."));
-		
-		return extension;
+			
+		return FileImportUtil.getExtensionFile(fileName);
 	}
 	
 	/**

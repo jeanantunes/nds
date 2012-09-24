@@ -83,6 +83,7 @@ public class FileServiceImpl implements FileService {
 		
 	}
 	
+	@Override
 	public void limparDiretorio(File diretorio) {
 		if(diretorio.exists()) {
 			
@@ -107,7 +108,6 @@ public class FileServiceImpl implements FileService {
 			if(tempDir.list().length > 0)
 				arquivo = tempDir.listFiles()[0];
 		}
-		
 
 		esvaziarReal(dirBase);
 		
@@ -199,8 +199,6 @@ public class FileServiceImpl implements FileService {
 		
 		if(!valido)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Formato de arquivo inválido"));
-		
-		
 	}
-
+	
 }

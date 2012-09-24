@@ -3,7 +3,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmaExpedicaoController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmaExpedicao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-dateFormat/jquery.dateFormat-1.0.js"></script>
 
 <title>NDS - Novo Distrib</title>

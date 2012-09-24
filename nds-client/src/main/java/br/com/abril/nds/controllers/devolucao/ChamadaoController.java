@@ -26,6 +26,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -83,6 +85,9 @@ public class ChamadaoController {
 	@Autowired
 	private CotaService cotaService;
 	
+	@Autowired
+	private EditorService editorService;
+	
 	private static final String FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroPesquisaConsignados";
 	
 	private static final String QTD_REGISTROS_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaConsignados";
@@ -93,9 +98,13 @@ public class ChamadaoController {
 	public void index() {
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =
-			this.carregarComboFornecedores(null);
+			this.carregarComboFornecedores();
 			
+		List<ItemDTO<Long, String>> listaEditoresCombo = 
+			this.carregarComboEditores();
+		
 		result.include("listaFornecedores", listaFornecedoresCombo);
+		result.include("listaEditores", listaEditoresCombo);
 	}
 	
 	@Get
@@ -152,6 +161,11 @@ public class ChamadaoController {
 			
 			chamadaoVO.setValorTotal(
 				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotal()));
+			
+			chamadaoVO.setValorTotalDesconto(
+				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotalDesconto()));
+			
+			chamadaoVO.setBrinde(consignadoCotaChamadao.isPossuiBrinde() ? "Sim" : "Não");
 			
 			listaChamadao.add(chamadaoVO);
 		}
@@ -237,6 +251,16 @@ public class ChamadaoController {
 					filtroSessao.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
 				}
 			}
+			
+			if (filtroSessao.getIdEditor() != null) {
+				
+				Editor editor = this.editorService.obterEditorPorId(filtroSessao.getIdEditor());
+				
+				if (editor != null) {
+					
+					filtroSessao.setNomeEditor(editor.getPessoaJuridica().getRazaoSocial());
+				}
+			}
 		}
 		
 		return filtroSessao;
@@ -267,12 +291,31 @@ public class ChamadaoController {
 	}
 	
 	/**
+	 * Método responsável por carregar o combo de editores.
+	 */
+	private List<ItemDTO<Long, String>> carregarComboEditores() {
+
+		List<Editor> editores = editorService.obterEditores();
+		
+		List<ItemDTO<Long, String>> listaEditoresCombo = new ArrayList<ItemDTO<Long, String>>();
+		
+		for (Editor editor : editores) {
+			
+			listaEditoresCombo.add(
+				new ItemDTO<Long, String>(
+					editor.getId(), editor.getPessoaJuridica().getRazaoSocial()));
+		}
+		
+		return listaEditoresCombo;
+	}
+	
+	/**
 	 * Método responsável por carregar o combo de fornecedores.
 	 */
-	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
+	private List<ItemDTO<Long, String>> carregarComboFornecedores() {
 		
 		List<Fornecedor> listaFornecedor =
-			fornecedorService.obterFornecedoresPorProduto(codigoProduto, null);
+			fornecedorService.obterFornecedoresPorProduto(null, null);
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =
 			new ArrayList<ItemDTO<Long,String>>();
@@ -289,14 +332,14 @@ public class ChamadaoController {
 	@Post
 	@Path("/pesquisarConsignados")
 	public void pesquisarConsignados(Integer numeroCota, String dataChamadaoFormatada, Long idFornecedor,
-									 String sortorder, String sortname, int page, int rp) {
+									 Long idEditor, String sortorder, String sortname, int page, int rp) {
 		
 		this.validarEntradaDadosPesquisa(numeroCota, dataChamadaoFormatada);
 		
 		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
 		
 		FiltroChamadaoDTO filtro  = 
-			this.carregarFiltroPesquisa(numeroCota, dataChamadao, idFornecedor,
+			this.carregarFiltroPesquisa(numeroCota, dataChamadao, idFornecedor, idEditor,
 										sortorder, sortname, page, rp);
 		
 		ConsultaChamadaoDTO consultaChamadaoDTO = 
@@ -340,13 +383,28 @@ public class ChamadaoController {
 		FiltroChamadaoDTO filtro  = 
 			this.carregarFiltroConfirmacao(filtroSessao.getNumeroCota(),
 										   filtroSessao.getDataChamadao(),
-										   filtroSessao.getIdFornecedor());
+										   filtroSessao.getIdFornecedor(),
+										   filtroSessao.getIdEditor());
 		
 		chamadaoService.confirmarChamadao(listaChamadao, filtro, chamarTodos, obterUsuario());
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão realizado com sucesso!"),
 							"result").recursive().serialize();
+	}
+	
+	@Post
+	public void cancelarChamadao(){
+		
+		FiltroChamadaoDTO filtroSessao =
+				(FiltroChamadaoDTO) 
+					this.session.getAttribute(FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE);
+		
+		this.cotaService.cancelarChamadao(filtroSessao.getNumeroCota());
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão cancelado com sucesso!"),
+								"result").recursive().serialize();
 	}
 	
 	/**
@@ -395,7 +453,12 @@ public class ChamadaoController {
 			chamadaoVO.setValorTotal(
 				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotal()));
 			
+			chamadaoVO.setValorTotalDesconto(
+				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotalDesconto()));
+			
 			chamadaoVO.setIdLancamento(consignadoCotaChamadao.getIdLancamento().toString());
+			
+			chamadaoVO.setBrinde(consignadoCotaChamadao.isPossuiBrinde() ? "Sim" : "Não");
 			
 			listaChamadao.add(chamadaoVO);
 		}
@@ -487,6 +550,7 @@ public class ChamadaoController {
 	 * @param numeroCota - número da cota
 	 * @param dataChamadao - data do chamadão
 	 * @param idFornecedor - id do fornecedor
+	 * @param idEditor - id do editor
 	 * @param sortorder - ordenação
 	 * @param sortname - coluna para ordenação
 	 * @param page - página atual
@@ -497,13 +561,14 @@ public class ChamadaoController {
 	private FiltroChamadaoDTO carregarFiltroPesquisa(Integer numeroCota,
 													 Date dataChamadao,
 													 Long idFornecedor,
+													 Long idEditor,
 													 String sortorder, 
 													 String sortname, 
 													 int page, 
 													 int rp) {
 		
 		FiltroChamadaoDTO filtroAtual =
-			new FiltroChamadaoDTO(numeroCota, dataChamadao, idFornecedor);
+			new FiltroChamadaoDTO(numeroCota, dataChamadao, idFornecedor, idEditor);
 		
 		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
 		
@@ -526,15 +591,17 @@ public class ChamadaoController {
 	 * @param numeroCota - número da cota
 	 * @param dataChamadao - data do chamadão
 	 * @param idFornecedor - id do fornecedor
+	 * @param idEditor - id do editor
 	 * 
 	 * @return filtro
 	 */
 	private FiltroChamadaoDTO carregarFiltroConfirmacao(Integer numeroCota,
 													 	Date dataChamadao,
-													 	Long idFornecedor) {
+													 	Long idFornecedor,
+													 	Long idEditor) {
 		
 		FiltroChamadaoDTO filtroAtual =
-			new FiltroChamadaoDTO(numeroCota, dataChamadao, idFornecedor);
+			new FiltroChamadaoDTO(numeroCota, dataChamadao, idFornecedor, idEditor);
 		
 		return filtroAtual;
 	}

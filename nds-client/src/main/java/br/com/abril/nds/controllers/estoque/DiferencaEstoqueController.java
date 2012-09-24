@@ -39,6 +39,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.Ordenacao
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -48,6 +49,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -172,14 +174,29 @@ public class DiferencaEstoqueController {
 		BigDecimal valorTotalDiferencas = BigDecimal.ZERO;
 	
 		for (Diferenca diferenca : listaDiferencas) {
+
+			Date dataLancamento = null;
+
+			StatusAprovacao statusAprovacao = null;
+			
+			String motivo = null;
+			
+			if ((diferenca.getLancamentoDiferenca() != null) &&
+					(diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null)) {
+				
+				dataLancamento = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
+				
+				statusAprovacao = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatus();
+				
+				motivo = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getMotivo();
+			}
 			
 			DiferencaVO consultaDiferencaVO = new DiferencaVO();
 			
 			consultaDiferencaVO.setId(diferenca.getId());
 			
 			consultaDiferencaVO.setDataLancamento(
-				DateUtil.formatarData(
-					diferenca.getMovimentoEstoque().getData(), Constantes.DATE_PATTERN_PT_BR));
+				DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR));
 			
 			consultaDiferencaVO.setCodigoProduto(diferenca.getProdutoEdicao().getProduto().getCodigo());
 			
@@ -203,9 +220,9 @@ public class DiferencaEstoqueController {
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
 			consultaDiferencaVO.setStatusAprovacao(
-				diferenca.getMovimentoEstoque().getStatus().getDescricaoAbreviada());
+				statusAprovacao.getDescricaoAbreviada());
 			
-			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
+			consultaDiferencaVO.setMotivoAprovacao(motivo);
 			
 			consultaDiferencaVO.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
@@ -1027,9 +1044,10 @@ public class DiferencaEstoqueController {
 			lancamentoDiferenca.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			lancamentoDiferenca.setAutomatica(diferenca.isAutomatica());
 			
-			if (diferenca.getMovimentoEstoque() != null) {
-			
-				Date dataLancamento = diferenca.getMovimentoEstoque().getData();
+			if (diferenca.getLancamentoDiferenca() != null &&
+					diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null) {
+
+				Date dataLancamento = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
 				
 				if (dataLancamento != null) {
 					
@@ -1143,10 +1161,11 @@ public class DiferencaEstoqueController {
 			lancamentoDiferenca.setQuantidade(diferenca.getQtde());
 			lancamentoDiferenca.setTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
-			if (diferenca.getMovimentoEstoque() != null) {
-				
-				Date dataLancamento = diferenca.getMovimentoEstoque().getData();
-				
+			if (diferenca.getLancamentoDiferenca() != null &&
+					diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null) {
+
+				Date dataLancamento = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
+
 				if (dataLancamento != null) {
 					
 					lancamentoDiferenca.setDataLancamento(DateUtil.formatarDataPTBR(dataLancamento));
@@ -1184,15 +1203,24 @@ public class DiferencaEstoqueController {
 		
 		for (Diferenca diferenca : listaDiferencas) {
 			
-			DiferencaVO consultaDiferencaVO = new DiferencaVO();
+			Date dataLancamento = null;
 			
-			System.out.println("============RATEIOS===========" + diferenca.getRateios());
+			String motivo = null;
+			
+			if (diferenca.getLancamentoDiferenca() != null && 
+					diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null) {
+				
+				dataLancamento = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
+				
+				motivo = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getMotivo();
+			}
+			
+			DiferencaVO consultaDiferencaVO = new DiferencaVO();
 			
 			consultaDiferencaVO.setId(diferenca.getId());
 			
 			consultaDiferencaVO.setDataLancamento(
-				DateUtil.formatarData(diferenca.getMovimentoEstoque().getData(),
-									  Constantes.DATE_PATTERN_PT_BR));
+				DateUtil.formatarData(dataLancamento,Constantes.DATE_PATTERN_PT_BR));
 			
 			consultaDiferencaVO.setCodigoProduto(diferenca.getProdutoEdicao().getProduto().getCodigo());
 			consultaDiferencaVO.setDescricaoProduto(diferenca.getProdutoEdicao().getProduto().getNome());
@@ -1217,7 +1245,7 @@ public class DiferencaEstoqueController {
 					(diferenca.getLancamentoDiferenca() != null) ?
 						diferenca.getLancamentoDiferenca().getStatus().getDescricaoAbreviada() : "");
 			
-			consultaDiferencaVO.setMotivoAprovacao(diferenca.getMovimentoEstoque().getMotivo());
+			consultaDiferencaVO.setMotivoAprovacao(motivo);
 			
 			consultaDiferencaVO.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));

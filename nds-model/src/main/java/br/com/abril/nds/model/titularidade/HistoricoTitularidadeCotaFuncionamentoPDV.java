@@ -44,6 +44,17 @@ public class HistoricoTitularidadeCotaFuncionamentoPDV implements Serializable {
     @Temporal(TemporalType.TIME)
     @Column(name = "HORARIO_FIM")
     private Date horarioFim;
+    
+    public HistoricoTitularidadeCotaFuncionamentoPDV() {
+    }
+    
+    public HistoricoTitularidadeCotaFuncionamentoPDV(
+            TipoPeriodoFuncionamentoPDV tipoPeriodoFuncionamentoPDV,
+            Date horarioInicio, Date horarioFim) {
+        this.tipoPeriodoFuncionamentoPDV = tipoPeriodoFuncionamentoPDV;
+        this.horarioInicio = horarioInicio;
+        this.horarioFim = horarioFim;
+    }
 
     /**
      * @return the tipoPeriodoFuncionamentoPDV

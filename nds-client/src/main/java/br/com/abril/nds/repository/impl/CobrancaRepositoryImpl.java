@@ -257,4 +257,20 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+	@Override
+	public boolean existeCobrancaParaFecharDia(Date diaDeOperaoMenosUm) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Cobranca c where ");		
+		hql.append(" c.statusCobranca = :statusCobranca");		
+		hql.append(" and c.dataVencimento = :diaDeOperaoMenosUm ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
+		
+		query.setParameter("diaDeOperaoMenosUm", diaDeOperaoMenosUm);
+		
+		return query.list().isEmpty() ? false : true;
+	}
 }

@@ -136,4 +136,12 @@ public interface CobrancaService {
 	 * @return
 	 */
 	BigDecimal obterSaldoDivida(Long idCobranca);
+	
+	/**
+	 * Verifica se tem cobrança para o dia(D-1) de operação do distribuidor.
+	 * 
+	 * @param idCobranca
+	 * @return
+	 */
+	boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor);
 }

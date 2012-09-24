@@ -97,24 +97,6 @@ var fecharDiaController =  $.extend(true, {
 		});	
 		      
 	},
-	//Esse função não está sendo chamada na tela. Por que foi criada?
-	popup_fisico_faltas : function(){
-		
-		$( "#dialog-fisico-faltas", fecharDiaController.workspace ).dialog({
-			resizable: false,
-			height:'auto',
-			width:750,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			},
-			form: $("#dialog-fisico-faltas", fecharDiaController.workspace).parents("form")
-		});	
-		      
-	},
 	
 	popup_cotasGrid : function(){
 	
@@ -163,6 +145,7 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	popup_processos : function() {
+		fecharDiaController.iniciarValidacoes();
 		$( "#dialog-processos", fecharDiaController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
@@ -176,8 +159,29 @@ var fecharDiaController =  $.extend(true, {
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
-		});	
+		});
+		
+		
 		      
+	},
+	
+	iniciarValidacoes : function(){
+		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
+				function(result){
+					fecharDiaController.validacaoBaixaBancaria(result);
+				});
+	},
+	
+	validacaoBaixaBancaria : function(result){
+		var baixaBancaria = "<tr class='class_linha_1'><td>Baixa Bancária</td>";					
+		var iconeBaixaBancaria = null;
+		if(result.baixaBancaria){
+			iconeBaixaBancaria = 'ico_bloquear.gif';
+		}else{
+			iconeBaixaBancaria = 'ico_check.gif';
+		}
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeBaixaBancaria+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao').append(baixaBancaria + imagem);
 	}
 	
 }, BaseController);

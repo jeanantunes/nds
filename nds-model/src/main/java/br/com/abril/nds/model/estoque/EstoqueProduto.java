@@ -44,6 +44,12 @@ public class EstoqueProduto {
 	@Column(name = "QTDE_DEVOLUCAO_FORNECEDOR")
 	private BigInteger qtdeDevolucaoFornecedor;
 	
+	@Column(name = "QTDE_JURAMENTADO")
+	private BigInteger qtdeJuramentado;
+	
+	@Column(name = "QTDE_DANIFICADO")
+	private BigInteger qtdeDanificado;
+	
 	@OneToMany(mappedBy = "estoqueProduto")
 	private List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
 	
@@ -125,6 +131,22 @@ public class EstoqueProduto {
 	 */
 	public void setQtdeDevolucaoFornecedor(BigInteger qtdeDevolucaoFornecedor) {
 		this.qtdeDevolucaoFornecedor = qtdeDevolucaoFornecedor;
+	}
+
+	public BigInteger getQtdeJuramentado() {
+		return qtdeJuramentado;
+	}
+
+	public void setQtdeJuramentado(BigInteger qtdeJuramentado) {
+		this.qtdeJuramentado = qtdeJuramentado;
+	}
+
+	public BigInteger getQtdeDanificado() {
+		return qtdeDanificado;
+	}
+
+	public void setQtdeDanificado(BigInteger qtdeDanificado) {
+		this.qtdeDanificado = qtdeDanificado;
 	}
 
 }

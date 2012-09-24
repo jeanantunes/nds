@@ -51,8 +51,20 @@ public class Telefone implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
+	
+	public Telefone() {
+    }
 
-	public Long getId() {
+	public Telefone(Long id, String numero, String ramal, String ddd,
+            Pessoa pessoa) {
+        this.id = id;
+        this.numero = numero;
+        this.ramal = ramal;
+        this.ddd = ddd;
+        this.pessoa = pessoa;
+    }
+
+    public Long getId() {
 		return id;
 	}
 

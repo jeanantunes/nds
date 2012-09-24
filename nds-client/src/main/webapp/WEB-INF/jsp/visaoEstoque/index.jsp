@@ -34,8 +34,6 @@
 	    </table>
 	</fieldset>
 	
-	</form>
-	
 	<div class="linha_separa_fields">&nbsp;</div>
 
 	<div class="grids" style="display:none;">
@@ -68,7 +66,6 @@
 	</div>
 
 	<div id="dialog-transferencia" title="Transfer&ecirc;ncia entre Estoques">
-		<form action="/estoque/VisaoEstoque" id="transferenciaEntreEstoquesForm" >
 		<fieldset style="width:870px!important;">
 			<legend>Transferir</legend>
         	<table width="850" border="0" cellspacing="2" cellpadding="2">
@@ -78,8 +75,7 @@
             		<td width="320"><strong>Estoque Selecionado</strong>: <span id="visaoEstoque_transferencia_estoqueSelecionado"></span></td>
             		<td width="101">Incluir no Estoque:</td>
             		<td width="150">
-            			<select name="select2" id="visaoEstoque_selectIncluirEstoque" style="width:150px;">
-            			</select>
+            			<select name="filtro.tipoEstoqueSelecionado" id="visaoEstoque_selectIncluirEstoque" style="width:150px;"></select>
             		</td>
           		</tr>
         	</table>
@@ -90,9 +86,8 @@
 		<fieldset style="width:870px!important;">
         	<legend>Transfer&ecirc;ncia entre Estoques</legend>
         	<table class="visaoEstoqueTransferenciaGrid"></table>
-        	<span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:40px;"/></span>
+        	<span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="visaoEstoqueCheckSelecionarTodos" name="Todos" onclick="visaoEstoqueController.checkAll(this);" style="float:left; margin-right:40px;"/></span>
 		</fieldset>
-		</form>
 	</div>
 	
 	<div id="dialog-inventario" title="Invent&aacute;rio do Estoque">
@@ -169,6 +164,7 @@
 </div>
  --%>
 	
+	</form>
 	
 	<script type="text/javascript">
 		$(function(){

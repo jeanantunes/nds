@@ -17,6 +17,8 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
@@ -46,6 +48,7 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
@@ -121,6 +124,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
@@ -210,6 +214,8 @@ import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.Util;
 
 public class DataLoader {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DataLoader.class);
 
 	private static final String PARAM_SKIP_DATA = "skipData";
 	private static final String PARAM_CLEAN_DATA = "cleanData";
@@ -895,10 +901,11 @@ public class DataLoader {
 		Transaction tx = null;
 		boolean commit = false;
 
+		LOG.info("==== INICIANDO EXECUÇÃO DATALOADER ====");
 		List<String> parans =  Arrays.asList(args);
 		if(!parans.contains(PARAM_SKIP_DATA)){
 			try {
-				sf = ctx.getBean(SessionFactory.class);
+			    sf = ctx.getBean(SessionFactory.class);
 				session = sf.openSession();
 				tx = session.beginTransaction();				
 				
@@ -925,6 +932,7 @@ public class DataLoader {
 				}
 			}
 		}
+		LOG.info("==== EXECUÇÃO DATALOADER CONCLUÍDA ====");
 	}
 
 	private static void gerarCotasAusentes(Session session) {
@@ -939,7 +947,7 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		carregarDadosClean(session);
 
-		criarBanco(session);
+		//criarBanco(session);
 		criarUsuarios(session);
 		
 		criarDiasDistribuicaoFornecedores(session);
@@ -1160,9 +1168,11 @@ public class DataLoader {
 		tabelaNCM(session);
 		criarTiposProduto(session);
 		
+		criarBanco(session);		
+		
 		//Remover Depois
-		criarBox(session);
-		criarDistribuidor(session);
+		criarBox(session);criarDistribuidor
+		(session);
 		
 		criarEnderecoDistribuidor(session);
 		criarTelefoneDistribuidor(session);
@@ -1972,7 +1982,12 @@ public class DataLoader {
 		save(session,movimentoEstoque);
 
 		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicaoBravo1, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
-		save(session,diferenca);
+		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+		
+		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca,diferenca);
 
 		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN , cotaManoel, diferenca, estudoCota, new Date());
 
@@ -2401,7 +2416,7 @@ public class DataLoader {
 
 
 	private static void criarParametrosCobrancaCota(Session session) {
-
+		
 		FormaCobranca formaBoleto =
 				Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 											BigDecimal.ONE, BigDecimal.ONE,null);
@@ -3311,6 +3326,9 @@ public class DataLoader {
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO,
 				"C:\\notas\\"));			// windows;
 //				"/opt/interface/notas/"));	// linux;
+		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_IMPORTACAO_CONTRATO,
+				"C:\\contratos\\"));			// windows;
+//				"/opt/interface/contratos/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
 				"C:\\interface_mdc\\"));		// windows;
 //				"/opt/interface_mdc/"));		// linux;
@@ -4433,6 +4451,7 @@ public class DataLoader {
 
 	private static void criarTiposProduto(Session session) {
 		
+		tipoProdutoRefrigerante = Fixture.tipoProduto("Refrigerante", GrupoProduto.OUTROS, ncmBebidas, "", Long.valueOf(40));
 		tipoProdutoRevista = Fixture.tipoProduto("Revistas", GrupoProduto.REVISTA, ncmRevista, "4902.90.00", 001L);
 		tipoProdutoFasciculo= Fixture.tipoProduto("Fasciculos",GrupoProduto.COLECIONAVEL, ncmFasciculo, "", 002L);
 		tipoProdutoLivro= Fixture.tipoProduto("Livro",GrupoProduto.LIVRO, ncmLivro, "", 003L);
@@ -4453,11 +4472,12 @@ public class DataLoader {
 		tipoProdutoRevistaDigital= Fixture.tipoProduto("Revista Digital",GrupoProduto.REVISTA, ncmRevista, "", Long.valueOf(19));		
 		tipoProdutoDvd= Fixture.tipoProduto("DVD",GrupoProduto.OUTROS, ncmCd, "", Long.valueOf(24));
 		tipoProdutoLivroIlustrado= Fixture.tipoProduto("Livro Ilustrado",GrupoProduto.ALBUM, ncmLivroilustrado, "", Long.valueOf(36));
+		tipoProdutoRefrigerante = Fixture.tipoProduto("Refrigerante", GrupoProduto.OUTROS, ncmBebidas, "", Long.valueOf(40));
 		
 		save(session, tipoProdutoRevista, tipoProdutoFasciculo, tipoProdutoLivro, tipoProdutoCromo, tipoProdutoCard, tipoProdutoAlbun, 
 				tipoProdutoGuia, tipoProdutoQuadrinho, tipoProdutoAtividade, tipoProdutoPassatempo, tipoProdutoVideo, tipoProdutoCdrom,
 				tipoProdutoPoster, tipoProdutoJornal, tipoProdutoTabloide, tipoProdutoOutro, tipoProdutoCapaDura, tipoProdutoRevistaDigital, 
-				tipoProdutoDvd, tipoProdutoLivroIlustrado);
+				tipoProdutoDvd, tipoProdutoLivroIlustrado, tipoProdutoRefrigerante);
 		
 	}
 
@@ -4468,6 +4488,7 @@ public class DataLoader {
 		save(session, juridicaDistrib);
 
 		//FORMAS DE COBRANÇA DA COTA
+
 		formaBoleto = Fixture.formaCobrancaBoleto(true, new BigDecimal(200), true, bancoHSBC,
 												  BigDecimal.ONE, BigDecimal.ONE, null);
 
@@ -4635,6 +4656,8 @@ public class DataLoader {
 
 
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
+		cotaManoel.setInicioAtividade(DateUtil.adicionarDias(cotaManoel.getInicioAtividade(), -360));
+		
 		parametroCotaNotaFiscalEletronicaManoel = Fixture.parametrosCotaNotaFiscalEletronica(false, "manoel@email.com");
 		cotaManoel.setParametrosCotaNotaFiscalEletronica(parametroCotaNotaFiscalEletronicaManoel);
 		
@@ -4803,8 +4826,8 @@ public class DataLoader {
 		formaTransferenciBancaria.setParametroCobrancaCota(parametroCobrancaConta4);
 		formaTransferenciBancaria.setPrincipal(true);
 		save(session, formaTransferenciBancaria);
-
-
+		
+		Fixture.historicoTitularidade(cotaManoel);
 	}
 
 	private static void criarDistribuicaoCota(Session session) {
@@ -5163,8 +5186,12 @@ public class DataLoader {
 				Fixture.diferenca(
 					BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca,
 						StatusConfirmacao.PENDENTE, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+			LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+			
+			lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
 
-			session.save(diferenca);
+			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+			save(session, lancamentoDiferenca, diferenca);
 		}
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {
@@ -5301,7 +5328,12 @@ public class DataLoader {
 
 
 					Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(10), usuario, produtoEdicao, TipoDiferenca.SOBRA_DE, StatusConfirmacao.CONFIRMADO, itemFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
-					session.save(diferenca);
+					LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+					
+					lancamentoDiferenca.setMovimentoEstoque(movimentoEstoque);
+
+					diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+					save(session, lancamentoDiferenca,diferenca);
 
 					itemFisico.setDiferenca(diferenca);
 					session.update(itemFisico);
@@ -5402,22 +5434,46 @@ public class DataLoader {
 		Diferenca diferenca =
 			Fixture.diferenca(BigInteger.valueOf(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
 							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
-		session.save(diferenca);
+		LancamentoDiferenca lancamentoDiferenca = new LancamentoDiferenca();
+		
+		lancamentoDiferenca.setMovimentoEstoque(movimentoEstoqueDiferenca);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca, diferenca);
 
 		Diferenca diferenca2 =
 			Fixture.diferenca(BigInteger.valueOf(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
 							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true,TipoEstoque.LANCAMENTO);
-		session.save(diferenca2);
+		
+		LancamentoDiferenca lancamentoDiferenca2 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca2.setMovimentoEstoque(movimentoEstoqueDiferenca2);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca2, diferenca2);
 
 		Diferenca diferenca3 =
 			Fixture.diferenca(BigInteger.valueOf(3), usuarioJoao, produtoEdicaoVeja3, TipoDiferenca.SOBRA_EM,
 							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true, TipoEstoque.LANCAMENTO);
-		session.save(diferenca3);
+		
+		LancamentoDiferenca lancamentoDiferenca3 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca3.setMovimentoEstoque(movimentoEstoqueDiferenca3);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		save(session,lancamentoDiferenca3, diferenca3);
 
 		Diferenca diferenca4 =
 			Fixture.diferenca(BigInteger.valueOf(4), usuarioJoao, produtoEdicaoVeja4, TipoDiferenca.SOBRA_DE,
 					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true, TipoEstoque.LANCAMENTO);
-		session.save(diferenca4);
+		
+		LancamentoDiferenca lancamentoDiferenca4 = new LancamentoDiferenca();
+		
+		lancamentoDiferenca4.setMovimentoEstoque(movimentoEstoqueDiferenca4);
+
+		diferenca.setLancamentoDiferenca(lancamentoDiferenca);
+		
+		save(session,lancamentoDiferenca4, diferenca4);
 
 		// Fim dos inserts na tabela DIFERENCA
 
@@ -5479,7 +5535,7 @@ public class DataLoader {
 				"93081738000101", "333333333333", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("10732815665",
-				"sys.discover@gmail.com", "Manoel da Silva");
+				"sys.discover@gmail.com", "Manoel da Silva", "12654879-9", "SSP", "SP", DateUtil.parseDataPTBR("13/09/1979"), EstadoCivil.SOLTEIRO);
 
 		manoelCunha = Fixture.pessoaFisica("45300458970",
 				"sys.discover@gmail.com", "Manoel da Cunha");

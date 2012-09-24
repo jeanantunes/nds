@@ -8,15 +8,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -33,9 +37,11 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -43,6 +49,9 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.Intervalo;
 
@@ -56,6 +65,8 @@ import br.com.abril.nds.util.Intervalo;
 @Repository
 public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		implements CotaRepository {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(CotaRepositoryImpl.class);
 
 	@Value("#{queries.suspensaoCota}")
 	protected String querySuspensaoCota;
@@ -138,8 +149,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		Query query = getSession().createQuery(hql.toString());
 
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(
-				EnderecoAssociacaoDTO.class);
+		ResultTransformer resultTransformer = null; 
+		
+		try {
+		    resultTransformer = new AliasToBeanConstructorResultTransformer(
+		            EnderecoAssociacaoDTO.class.getConstructor(Long.class, Endereco.class, boolean.class, TipoEndereco.class));
+		} catch (Exception e) {
+            String message = "Erro criando result transformer para classe: "
+                    + EnderecoAssociacaoDTO.class.getName();
+            LOG.error(message, e);
+            throw new RuntimeException(message, e);
+        }
 
 		query.setResultTransformer(resultTransformer);
 
@@ -622,7 +642,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(this.ordenarConsultaCota(filtro));
 
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("principal", Boolean.TRUE);
 
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());
@@ -681,7 +700,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(this.getSqlPesquisaCota(filtro, Boolean.TRUE));
 
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("principal", Boolean.TRUE);
 
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());
@@ -718,6 +736,44 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return (Long) query.uniqueResult();
 	}
 
+	private String getSubSqlPesquisaTelefone() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" ( select telefone.ddd || '-' || telefone.numero ");
+		
+		hql.append(" from  ");
+		
+		hql.append(" Telefone telefone where telefone.id = 	");
+		
+		hql.append(" ( select max(telefone.id) from TelefoneCota telefoneCota inner join telefoneCota.telefone as telefone");
+		
+		hql.append(" where telefoneCota.cota.id = cota.id and ");
+		
+		hql.append(" telefoneCota.principal = true ) ) as telefone, ");
+		
+		return hql.toString();
+		
+	}
+	
+	private String getSubSqlPesquisaContatoPDV() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" ( select pdv.contato ");
+		
+		hql.append(" from  ");
+		
+		hql.append(" PDV pdv ");
+		
+		hql.append(" where pdv.id =  ");
+		
+		hql.append(" ( select max(pdv.id) from PDV pdv where pdv.cota.id = cota.id and pdv.caracteristicas.pontoPrincipal = true ) ) as contato,");
+		
+		return hql.toString();
+		
+	}
+	
 	private String getSqlPesquisaCota(FiltroCotaDTO filtro, boolean isCount) {
 
 		StringBuilder hql = new StringBuilder();
@@ -734,56 +790,100 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 					.append(" case when (pessoa.cpf is not null) then ( pessoa.cpf )")
 					.append(" when (pessoa.cnpj is not null) then ( pessoa.cnpj )")
 					.append(" else null end as numeroCpfCnpj, ")
-					.append(" pdv.contato as contato ,")
-					.append(" telefone.ddd || '-'|| telefone.numero as telefone ,")
+					
+					
+					.append(getSubSqlPesquisaContatoPDV())
+					.append(getSubSqlPesquisaTelefone())
+					
 					.append(" pessoa.email as email ,")
 					.append(" cota.situacaoCadastro as status, ")
-					.append(" cota.box.nome as descricaoBox ");
+					.append(" box.nome as descricaoBox ");
 		}
 
-		hql.append(" FROM Cota cota ")
-				.append(" join cota.pessoa pessoa ")
-				.append(" left join cota.pdvs pdv ")
-				.append(" left join cota.telefones telefonesCota ")
-				.append(" left join telefonesCota.telefone telefone ")
-				.append(" left join cota.enderecos enderecoCota ")
-				.append(" left join enderecoCota.endereco endereco ")
+		hql.append(" FROM Cota cota 								")
+				.append(" join cota.pessoa pessoa 					")
+				.append(" left join cota.enderecos enderecoCota 	")
+				.append(" left join enderecoCota.endereco endereco 	")
+		        .append(" left join cota.box box ");
 
-				.append(" WHERE")
-				.append(" ( telefonesCota.principal is null OR telefonesCota.principal=:principal ) ")
-				.append(" AND (pdv.caracteristicas.pontoPrincipal is null OR pdv.caracteristicas.pontoPrincipal=:principal) ");
+		
+		
+		if(	filtro.getNumeroCota() != null ||
+			(filtro.getNumeroCpfCnpj() != null && !filtro.getNumeroCpfCnpj().trim().isEmpty()) ||
+			(filtro.getNomeCota() != null && !filtro.getNomeCota().trim().isEmpty()) ||
+			(filtro.getLogradouro() != null && !filtro.getLogradouro().trim().isEmpty()) ||
+			(filtro.getBairro() != null && !filtro.getBairro().trim().isEmpty()) ||
+			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty())) {
+			
+			hql.append(" WHERE ");
+			
+		}
+		
+		boolean indAnd = false;
 
 		if (filtro.getNumeroCota() != null) {
-			hql.append(" AND cota.numeroCota =:numeroCota ");
+			
+			hql.append(" cota.numeroCota =:numeroCota ");
+			
+			indAnd = true;
 		}
 
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
-			hql.append(" AND ( upper (pessoa.cpf) like(:numeroCpfCnpj) OR  upper(pessoa.cnpj) like upper (:numeroCpfCnpj) ) ");
+			
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper (pessoa.cpf) like(:numeroCpfCnpj) OR  upper(pessoa.cnpj) like upper (:numeroCpfCnpj) ) ");
+			
+			indAnd = true;
 		}
 
 		if (filtro.getNomeCota() != null
 				&& !filtro.getNomeCota().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(pessoa.nome) like upper(:nomeCota) OR  upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper(pessoa.nome) like upper(:nomeCota) OR  upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
+			
+			indAnd = true;
 		}
 		
 		if (filtro.getLogradouro() != null
 				&& !filtro.getLogradouro().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(endereco.logradouro) like upper(:logradouro) )");
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper(endereco.logradouro) like upper(:logradouro) )");
+			
+			indAnd = true;
 		}
 		
 		if (filtro.getBairro() != null
 				&& !filtro.getBairro().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(endereco.bairro) like upper(:bairro) )");
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper(endereco.bairro) like upper(:bairro) )");
+			
+			indAnd = true;
 		}
 		
 		if (filtro.getMunicipio() != null
 				&& !filtro.getMunicipio().trim().isEmpty()) {
 
-			hql.append(" AND ( upper(endereco.cidade) like upper(:municipio) )");
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" ( upper(endereco.cidade) like upper(:municipio) )");
 		}
 
 		return hql.toString();
@@ -1134,7 +1234,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao) {
+	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, SituacaoCadastro situacao, Long idRoteiro, Long idRota) {
 		
 		Set<Long> listaIdCotas = new HashSet<Long>();
 		
@@ -1158,6 +1258,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if(situacao != null){
 			criteria.add(Restrictions.eq("situacaoCadastro", situacao));
 		}
+		
+		criteria.createAlias("box.roteiros", "roteiro");
+		
+		if (idRoteiro != null){
+			
+			criteria.add(Restrictions.eq("roteiro.id", idRoteiro));
+		}
+		
+		if (idRota != null){
+			
+			criteria.createAlias("roteiro.rotas", "rota");
+			criteria.add(Restrictions.eq("rota.id", idRota));
+		}
+		
 		listaIdCotas.addAll(criteria.list());
 		
 		return listaIdCotas;
@@ -1346,5 +1460,60 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		   .append(" and view.fornecedorId = fornecedores.id ");
 		
 		return hql.toString();
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HistoricoTitularidadeCota obterHistoricoTitularidade(Long idCota,
+            Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da cota não deve ser nulo!");
+        Validate.notNull(idHistorico, "Identificador do histórico de titularidade não deve ser nulo!"); 
+        String hql = "from HistoricoTitularidadeCota historico where historico.id = :idHistorico and historico.cota.id = :idCota";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("idHistorico", idHistorico);
+        query.setParameter("idCota", idCota);
+        return (HistoricoTitularidadeCota) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HistoricoTitularidadeCotaFormaPagamento obterFormaPagamentoHistoricoTitularidade(Long idFormaPagto) {
+        Validate.notNull(idFormaPagto, "Identificador da forma de pagamento não deve ser nulo!");
+        
+        String hql = "from HistoricoTitularidadeCotaFormaPagamento where id = :id";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("id", idFormaPagto);
+        return (HistoricoTitularidadeCotaFormaPagamento) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HistoricoTitularidadeCotaSocio obterSocioHistoricoTitularidade(Long idSocio) {
+        Validate.notNull(idSocio, "Identificador do sócio não deve ser nulo!");
+        
+        String hql = "from HistoricoTitularidadeCotaSocio where id = :id";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("id", idSocio);
+        return (HistoricoTitularidadeCotaSocio) query.uniqueResult();
+    }
+
+    @Override
+	public void ativarCota(Integer numeroCota) {
+		
+		Query query = 
+				this.getSession().createQuery(
+						"update Cota set situacaoCadastro = :status where numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("status", SituacaoCadastro.ATIVO);
+		
+		query.executeUpdate();
 	}	
+
 }

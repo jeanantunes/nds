@@ -26,6 +26,7 @@
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.justLetter.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.interval.js"></script>
 
 <script type="text/javascript" src="scripts/tools-1.2.6/js/jquery.tools.min.js"></script>
 <script type="text/javascript" src="scripts/jquery.formatCurrency-1.4.0.min.js"></script>
@@ -47,6 +48,7 @@
 						{
 							_original_init : $.ui.dialog.prototype._init,
 							_original_open : $.ui.dialog.prototype.open,				
+							_original_close : $.ui.dialog.prototype.close,				
 							_init : function() {
 								var self = this.element;
 	
@@ -63,8 +65,15 @@
 							open : function() {
 								var self = this.element, o = this.options;
 								self.parent().appendTo(o.form);
+								//self.parent().css("top", "58px");
+								escondeHeader();
+								redimensionarWorkspace();
 								this._original_open();
-								self.parent().css("top", "58px");
+							},
+							close : function() {
+								mostraHeader();
+								redimensionarWorkspace();
+								this._original_close();
 							}
 							
 						});
@@ -87,9 +96,10 @@
 												'<div class="ui-tabs-strip-spacer"></div>');
 
 								var tabOpt = {
-									tabTemplate : "<li><a href='#\{href\}'>#\{label\}</a> <span class='ui-icon ui-icon-close'>Remove Tab</span></li>",
+									tabTemplate : "<li> <a href='#\{href\}'>#\{label\}</a> <span class='ui-icon ui-icon-close'>Remove Tab</span></li>",
 									add : function(event, ui) {
 										self.tabs('select', '#' + ui.panel.id);
+										//console.log($('#'+ui.panel.id) );
 									},
 									ajaxOptions : {
 										error : function(xhr, status, index,
@@ -97,8 +107,7 @@
 											$(anchor.hash)
 													.html(
 															"pagina não encontrada :</br> Mensagem de Erro: </br>xhr["
-																	+ JSON
-																			.stringify(xhr)
+																	+ JSON.stringify(xhr)
 																	+ "] </br>status["
 																	+ xhr.status
 																	+ "] </br>index ["
@@ -121,7 +130,7 @@
 								$.fn.extend(this.options, tabOpt);
 								this.addCloseTab();
 							},
-							addTab : function(title, url) {
+							addTab : function(title, url, className) {
 								var self = this.element, o = this.options, add = true;
 								$("li", self).each(function() {
 									if ($("a", this).html() == title) {
@@ -130,8 +139,11 @@
 										add = false;
 									}
 								});
-								if (add) {
-									self.tabs('add', url, title);
+								if (add) {									
+									tab = self.tabs('add', url, title);									
+									$span = $("<span>").addClass(className);
+									$('a:contains(' + title + ')', '#workspace').parent().prepend($span);
+									
 								}
 							},
 							addCloseTab : function() {
@@ -153,12 +165,15 @@
 		$('#workspace').tabs();
 
 		// Dinamicaly add tabs from menu
-		$("#menu_principal ul li ul li").click(
-				function() {
-					$('#workspace').tabs('addTab', $("a", this).html(),
-							$("a", this).prop("href") + "?random=" + Math.random());
-					return false;
-				});
+		$("#menu_principal ul li ul li").click(function() {
+			//S2
+			$('#workspace').tabs('addTab', 										
+					$("a", this).html()
+					, $("a", this).prop("href") + "?random=" + Math.random()
+					, $("span", $(this).parents("li")).attr('class')
+			);
+			return false;
+		});
 
 		$('#linkHome').click(function() {
 			$('#workspace').tabs('addTab', $('#linkHome').html(),
@@ -167,7 +182,6 @@
 		});
 
 		$('#linkHome').click();
-		
 	});
 	
 	$(document).ready(function() {
@@ -179,7 +193,12 @@
 			$(this).fadeOut(200);
 		});
 		
-		redimensionarWorkspace();		
+		redimensionarWorkspace();
+
+		window.addEventListener('blur', function() {
+			
+			$().clearAllInterval();
+		});		
 		
 	});
 	
@@ -260,6 +279,10 @@
 	
 </script>
 
+<script
+	src="scripts/informeEncalhe.js"
+	type="text/javascript"></script>
+
 <style>
 #workspace {
 	margin-top: 0px;
@@ -284,9 +307,10 @@
 .ui-tabs .ui-tabs-panel {
     padding: 0px;
 }
+#btnVersao{font-size:10px; font-weight:bold;margin-left:5px;}
 </style>
 </head>
-<body>
+<body onresize="redimensionarWorkspace();">
 
 	<div class="corpo" id="divCorpo">
 		<div class="header">
@@ -317,11 +341,11 @@
 						<span class="bt_novos" style="display:none;">
 							<a id="linkHome" href='<c:url value="/inicial/"/>' rel="tipsy" title="Voltar para Home"><span class="classROLE_HOME">&nbsp;</span>&nbsp;</a>
 						</span>
-					
-						<div class="usuario">
-							<a href="javascript:;" id="btnVersao">
+						<a href="javascript:;" id="btnVersao">
 								<label title="versao">Versão: ${versao}</label>								
 							</a>
+						<div class="usuario">
+							
 													
 							<label title="Usuário Logado no Sistema">Usuário: ${nomeUsuario}</label>
 										

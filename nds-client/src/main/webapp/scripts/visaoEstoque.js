@@ -30,7 +30,8 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$(".visaoEstoqueGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisar.json?' + params, 
-			newp:1
+			preProcess : visaoEstoqueController.montaColunaAcao,
+			newp : 1
 		});
 		
 		$(".visaoEstoqueGrid").flexReload();
@@ -38,7 +39,9 @@ var visaoEstoqueController = $.extend(true, {
 	
 	
 	montaColunaAcao : function(data) {
+	
 		$.each(data.rows, function(index, value) {
+			
 			var acao = '<a href="javascript:;" onclick="visaoEstoqueController.popup_detalhe(\'' + value.cell.estoque + '\');" titile="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
 			
 			if (value.cell.estoque != "Lançamento Juramentado") {
@@ -48,6 +51,7 @@ var visaoEstoqueController = $.extend(true, {
 			
 			value.cell.acao = acao;
 		});
+	
 		return data;
 	},
 	
@@ -56,7 +60,7 @@ var visaoEstoqueController = $.extend(true, {
 		
 		var select = $("#visaoEstoque_selectIncluirEstoque").get(0);
 		
-		while(select.options.length > 0 ) {
+		while (select.options.length > 0) {
 			select.remove(0);
 		}
 		
@@ -72,6 +76,46 @@ var visaoEstoqueController = $.extend(true, {
 		if (estoque != "Produtos Danificados") {
 			select.add(new Option("Produtos Danificados", "Produtos Danificados"), null);
 		}
+	},
+	
+	
+	montaInputTransferencia : function(data) {
+		
+		$.each(data.rows, function(index, value) {
+				
+			value.cell.transferir = '<input type="text" style="width:80px; text-align:center;" name="transferir_' + value.cell.produtoEdicaoId + '"/>';
+			value.cell.check = '<input type="checkbox" class="visaoEstoqueCheck" name="checkTransferir" value="' + value.cell.produtoEdicaoId + '" onclick="visaoEstoqueController.verificarCheck();" />';
+		});
+		
+		return data;
+	},
+	
+	
+	verificarCheck : function() {
+		
+		var todosChecados = true;
+		
+		$(".visaoEstoqueCheck").each(function(index, element) {
+			if (!element.checked) {
+				todosChecados = false;
+			}
+		});
+		
+		$("#visaoEstoqueCheckSelecionarTodos").get(0).checked = todosChecados;
+	},
+	
+	
+	checkAll : function (check) {
+		
+		$(".visaoEstoqueCheck").each(function(index, element) {
+			element.checked = check.checked;
+		});
+	},
+	
+	
+	confirmarTransferencia : function() {
+		
+		
 	},
 	
 	
@@ -119,6 +163,16 @@ var visaoEstoqueController = $.extend(true, {
 		$("#visaoEstoque_transferencia_estoqueSelecionado").html(estoque);
 		$("#visaoEstoque_transferencia_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
 		
+		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		
+		$(".visaoEstoqueTransferenciaGrid", this.workspace).flexOptions({
+			url : this.path + 'pesquisarTransferencia.json?' + params, 
+			preProcess : visaoEstoqueController.montaInputTransferencia,
+			newp:1
+		});
+		
+		$(".visaoEstoqueTransferenciaGrid").flexReload();
+		
 		$("#dialog-transferencia").dialog({
 			resizable: false,
 			height:480,
@@ -126,11 +180,12 @@ var visaoEstoqueController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
+					$(this).dialog("close");
 					$("#effect").show("highlight", {}, 1000, callback);
+					visaoEstoqueController.confirmarTransferencia();
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					$(this).dialog("close");
 				},
 			},
 		});
@@ -141,6 +196,15 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$("#visaoEstoque_inventario_estoqueSelecionado").html(estoque);
 		$("#visaoEstoque_inventario_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
+		
+		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		
+		$(".visaoEstoqueInventarioGrid", this.workspace).flexOptions({
+			url : this.path + 'pesquisarInventario.json?' + params, 
+			newp:1
+		});
+		
+		$(".visaoEstoqueInventarioGrid").flexReload();
 		
 		$( "#dialog-inventario" ).dialog({
 			resizable: false,
@@ -164,7 +228,6 @@ var visaoEstoqueController = $.extend(true, {
 	
 	initGridVisaoEstoque : function () {
 		$(".visaoEstoqueGrid").flexigrid({
-			preProcess :  visaoEstoqueController.montaColunaAcao,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Estoque',
@@ -238,13 +301,13 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Lcto',
-				name : 'dtLancto',
+				name : 'lcto',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Rclto',
-				name : 'dtRecolto',
+				name : 'rclto',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -256,7 +319,7 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'valorFormatado',
+				name : 'valor',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -308,13 +371,13 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Lcto',
-				name : 'dtLancto',
+				name : 'lcto',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Rclto',
-				name : 'dtRecolto',
+				name : 'rclto',
 				width : 70,
 				sortable : true,
 				align : 'center'
@@ -326,7 +389,7 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Valor R$',
-				name : 'total',
+				name : 'valor',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -366,13 +429,13 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Dt. Lancto',
-				name : 'dtLancto',
+				name : 'lcto',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Dt. Recolto',
-				name : 'dtRecolto',
+				name : 'rclto',
 				width : 70,
 				sortable : true,
 				align : 'center'
@@ -384,19 +447,19 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Transferir (exes.)',
-				name : 'precoCapa',
+				name : 'transferir',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Saldo Estoque',
-				name : 'saldoEstoque',
+				name : 'estoque',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '',
-				name : 'acao',
+				name : 'check',
 				width : 50,
 				sortable : true,
 				align : 'center'
@@ -436,13 +499,13 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Dt. Lancto',
-				name : 'dtLancto',
+				name : 'lcto',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Dt. Recolto',
-				name : 'dtRecolto',
+				name : 'rclto',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -460,7 +523,7 @@ var visaoEstoqueController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Diferença',
-				name : 'Diferenca',
+				name : 'diferenca',
 				width : 90,
 				sortable : true,
 				align : 'center'

@@ -17,10 +17,10 @@ public class VisaoEstoqueDTO implements Serializable{
 	private String estoque;
 	
 	@Export(label = "Produtos", alignment=Alignment.CENTER, exhibitionOrder = 2)
-	private Long produtos;
+	private BigDecimal produtos;
 	
 	@Export(label = "Exemplares", alignment=Alignment.CENTER, exhibitionOrder = 3)
-	private Long exemplares;
+	private BigDecimal exemplares;
 	
 	private BigDecimal valor;
 	
@@ -37,19 +37,19 @@ public class VisaoEstoqueDTO implements Serializable{
 		this.estoque = estoque;
 	}
 
-	public Long getProdutos() {
+	public BigDecimal getProdutos() {
 		return produtos;
 	}
 
-	public void setProdutos(Long produtos) {
+	public void setProdutos(BigDecimal produtos) {
 		this.produtos = produtos;
 	}
 
-	public Long getExemplares() {
+	public BigDecimal getExemplares() {
 		return exemplares;
 	}
 
-	public void setExemplares(Long exemplares) {
+	public void setExemplares(BigDecimal exemplares) {
 		this.exemplares = exemplares;
 	}
 

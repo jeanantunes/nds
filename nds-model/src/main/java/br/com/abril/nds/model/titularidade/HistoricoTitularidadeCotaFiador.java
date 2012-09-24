@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.titularidade;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.CollectionTable;
@@ -9,6 +10,8 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 /**
  * Representa a garantia do tipo "FIADOR" no histórico de titularidade da cota
@@ -21,6 +24,10 @@ import javax.persistence.JoinColumn;
 public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGarantia{
     
     private static final long serialVersionUID = 1L;
+    
+    public HistoricoTitularidadeCotaFiador() {
+        this.tipoGarantia = TipoGarantia.FIADOR;
+    }
 
     /**
      * Nome do fiador
@@ -125,4 +132,17 @@ public class HistoricoTitularidadeCotaFiador extends HistoricoTitularidadeCotaGa
 			HistoricoTitularidadeCotaTelefone historicoTitularidadeCotaTelefone) {
 		this.historicoTitularidadeCotaTelefone = historicoTitularidadeCotaTelefone;
 	}
+
+    /**
+     * Adiciona uma nova garantia para o fiador
+     * 
+     * @param garantia
+     *            garantia para inclusão
+     */
+	public void addGarantia(HistoricoTitularidadeCotaFiadorGarantia garantia) {
+        if (this.garantias == null) {
+            garantias = new ArrayList<HistoricoTitularidadeCotaFiadorGarantia>();
+        }
+        garantias.add(garantia);
+    }
 }

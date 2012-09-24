@@ -80,38 +80,26 @@ $(function() {
 		
 		<div class="box_home feriados">
 	    	
-		    <h2>Feriados do Mês: Agosto/2012</h2>
+		    <h2>Feriados do Mês: Setembro/2012</h2>
 		    <br clear="all" />
 		    
 		    <div class="feriados_home separar">
-			    <div class="dia_feriado">10</div>
-			    <p>Estadual<br />
-			    Dia de todos os Mortos</p>
+			    <div class="dia_feriado">07</div>
+			    <p>Federal<br />
+			    Dia da Independência</p>
 			    <span>São Paulo - Opera - Cobrança</span>
 		    </div>
 		    
 		    <div class="feriados_home">
-			    <div class="dia_feriado">15</div>
+			    <div class="dia_feriado">13</div>
 			    <p>Estadual<br />
-			    Dia de todos os Vivos</p>
+			    Qualidade de Vida</p>
 			    <span>São Paulo - Opera - Cobrança</span>
 		    </div>
 		    
 		    <div class="linha_separa_fields">&nbsp;</div>
 		    
-		    <div class="feriados_home separar">
-			    <div class="dia_feriado">18</div>
-			    <p>Estadual<br />
-			    Dia de todos os Mortos</p>
-			    <span>São Paulo - Opera - Cobrança</span>
-		    </div>
 		    
-		    <div class="feriados_home">
-			    <div class="dia_feriado">26</div>
-			    <p>Estadual<br />
-			    Dia de todos os Vivos</p>
-			    <span>São Paulo - Opera - Cobrança</span>
-		    </div>
 			<div class="linha_separa_fields">&nbsp;</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -21,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.DadosCotaVO;
@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -73,6 +74,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -98,6 +100,7 @@ public class CotaController {
 	public static final String LISTA_ENDERECOS_REMOVER_SESSAO = "listaEnderecoRemoverSessaoCota";
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
+
 	
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
@@ -146,9 +149,6 @@ public class CotaController {
 	private HttpServletResponse httpResponse;
 	
 	@Autowired
-	private ServletContext servletContext;
-	
-	@Autowired
 	private ParametroSistemaService parametroSistemaService; 
 
 	@Autowired
@@ -185,6 +185,26 @@ public class CotaController {
 		obterEndereco(idCota);
 		obterTelefones(idCota);
 	}
+	
+	
+	public void historicoTitularidade(Long idCota, Long idHistorico) {
+	    CotaDTO cotaDTO = cotaService.obterHistoricoTitularidade(idCota, idHistorico);
+	    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
+	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
+	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+	}
+
+    private void carregarEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
+        List<EnderecoAssociacaoDTO> enderecos = cotaService.obterEnderecosHistoricoTitularidade(idCota, idHistorico);
+	    session.setAttribute(LISTA_ENDERECOS_EXIBICAO, enderecos);
+    }
+    
+    private void carregarTelefonesHistoricoTitularidade(Long idCota, Long idHistorico) {
+        List<TelefoneAssociacaoDTO> telefones = cotaService.obterTelefonesHistoricoTitularidade(idCota, idHistorico);
+        session.setAttribute(LISTA_TELEFONES_EXIBICAO, telefones);
+    }
+    
+    
 
 	@SuppressWarnings("unchecked")
 	/**
@@ -684,11 +704,13 @@ public class CotaController {
 	 */
 	@Post
 	@Path("/obterFornecedores")
-	public void obterFornecedores(Long idCota){
-		
-		List<Fornecedor> fornecedores =   fornecedorService.obterFornecedores(idCota);
-		
-		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
+	public void obterFornecedores(Long idCota, ModoTela modoTela){
+	    List<ItemDTO<Long, String>> dtos = new ArrayList<ItemDTO<Long,String>>();
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(idCota);
+	        dtos = getFornecedores(fornecedores);
+	    } 
+        result.use(Results.json()).from(dtos,"result").recursive().serialize();
 	}
 	
 	/**
@@ -698,12 +720,18 @@ public class CotaController {
 	 */
 	@Post
 	@Path("/obterFornecedoresSelecionados")
-	public void obterFornecedoresSelecionados(Long idCota){
-		
-		List<Fornecedor> fornecedores =   fornecedorService.obterFornecedoresCota(idCota);
-		
-		result.use(Results.json()).from(this.getFornecedores(fornecedores),"result").recursive().serialize();
-	
+	public void obterFornecedoresSelecionados(Long idCota, ModoTela modoTela, Long idHistorico){
+	    List<ItemDTO<Long, String>> dtos = new ArrayList<ItemDTO<Long,String>>();
+	    if (ModoTela.CADASTRO_COTA ==  modoTela) {
+	        List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresCota(idCota);
+	        dtos = getFornecedores(fornecedores);
+	    } else {
+	        List<FornecedorDTO> fornecedores = cotaService.obterFornecedoresHistoricoTitularidadeCota(idCota, idHistorico);
+	        for (FornecedorDTO dto : fornecedores) {
+	            dtos.add(new ItemDTO<Long, String>(dto.getIdFornecedor(), dto.getRazaoSocial()));
+	        }
+	    }
+		result.use(Results.json()).from(dtos,"result").recursive().serialize();
 	}
 	
 	/**
@@ -726,17 +754,6 @@ public class CotaController {
 	}
 	
 	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * Descontos da cota: Obtem os tipos de desconto por produto relacionados à cota
 	 * @param idCota
@@ -751,9 +768,11 @@ public class CotaController {
 	/**
 	 * Descontos da cota: Obtem os tipos de desconto do distribuidor
 	 */
-	private List<TipoDescontoDTO> obterDescontosDistribuidor(String sortorder, String sortname){
+	private List<TipoDescontoDTO> obterDescontosDistribuidor(String sortorder, String sortname, List<Long> idFornecedores){
 		
         FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
+        
+        filtro.setIdFornecedores(idFornecedores);
         
         Integer totalDeRegistros = descontoService.buscarQntTipoDesconto(filtro);
 		
@@ -792,66 +811,107 @@ public class CotaController {
 		return descontos;
 	}
 	
-	/**
-	 * Descontos da Cota: Obtem os tipos de desconto por produto associados a cota informada
-	 * @param idCota -identificador da cota
-	 */
 	@Post
 	@Path("/obterTiposDescontoProduto")
-	public void obterTiposDescontoProduto(Integer numCota, String sortorder, String sortname){
-		
-		Cota cota = cotaService.obterPorNumeroDaCota(numCota);
-		
-		if (cota!=null){
-			List<TipoDescontoProdutoDTO> descontosProduto = this.obterDescontosProduto(cota, sortorder, sortname);
-			
-			if (descontosProduto!=null && descontosProduto.size() > 0){
-			    result.use(FlexiGridJson.class).from(descontosProduto).page(1).total(1).serialize();
-			}
-	    }
+	public void obterTiposDescontoProduto(Long idCota, ModoTela modoTela, Long idHistorico, String sortorder, String sortname){
+	    Cota cota = cotaService.obterPorId(idCota);
+	    List<TipoDescontoProdutoDTO> descontosProduto = null;
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		    descontosProduto = obterDescontosProduto(cota, sortorder, sortname);
+		} else {
+	        Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+            descontosProduto = new ArrayList<TipoDescontoProdutoDTO>(
+                    PaginacaoUtil.ordenarEmMemoria(cotaService
+                            .obterDescontosProdutoHistoricoTitularidadeCota(
+                                    idCota, idHistorico), ordenacao, sortname));
+		}
 
-		result.nothing();
+	    result.use(FlexiGridJson.class).from(descontosProduto).page(1).total(1).serialize();
 	}
 	
-	/**
-	 * Descontos da Cota: Obtem os tipos de desconto especificos associados a cota informada
-	 * @param idCota -identificador da cota
-	 */
+	
 	@Post
 	@Path("/obterTiposDescontoCota")
-	public void obterTiposDescontoCota(Integer numCota, String sortorder, String sortname){
+	public void obterTiposDescontoCota(Long idCota, ModoTela modoTela, Long idHistorico, String sortorder, String sortname) {
 		
-		Cota cota = cotaService.obterPorNumeroDaCota(numCota);
+	    Cota cota = cotaService.obterPorId(idCota);
 		
-		if (cota!=null){
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        if (cota!=null){
 			
-			List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
+	            List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
 			
-			if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
-				result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
-			}
-			else{
+	            if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
+			
+	                result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
+			
+	            } else {
 				
-				List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname);
+	                List<Long> idFornecedores = obterIdFornecedoresCota(cota.getId());
 				
-				if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
-					result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
-			    }
-			}
-		}
+	                if(idFornecedores == null || idFornecedores.isEmpty()) {
+				
+	                    result.nothing();
+				
+	                } else {
+
+	                    List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname, idFornecedores);
+					
+	                    if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
+
+	                        result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
+				    
+	                    } else {
+					
+	                        result.nothing();
+				    
+	                    }
+
+					
+	                }
+				
+	            }
 			
-		result.nothing();
+	        } else {
+
+	            result.nothing();
+
+			
+	        }
+		
+	    } else {
+	        Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+            List<TipoDescontoCotaDTO> descontosCota = new ArrayList<TipoDescontoCotaDTO>(PaginacaoUtil
+                    .ordenarEmMemoria(cotaService
+                            .obterDescontosCotaHistoricoTitularidadeCota(
+                                    idCota, idHistorico), ordenacao, sortname));
+            
+            result.use(FlexiGridJson.class).from(descontosCota).page(1).total(1).serialize();
+	    }
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	List<Long> obterIdFornecedoresCota(Long idCota) {
+		
+		List<Fornecedor> fornecedores = cotaService.obterFornecedoresCota(idCota);
+		
+		List<Long> idFornecedores = null;
+		
+		if(fornecedores!=null && !fornecedores.isEmpty()) {
+			
+			idFornecedores = new ArrayList<Long>();
+			
+			for(Fornecedor fornecedor : fornecedores) {
+				
+				idFornecedores.add(fornecedor.getId());
+				
+			}
+			
+		}
+		
+		return idFornecedores;
+		
+	}
+
 	/**
 	 * Valida se o número da cota informada para histórico base é ativo.
 	 * 
@@ -1119,13 +1179,17 @@ public class CotaController {
 	 * @throws FileNotFoundException 
 	 */
 	@Post
-	public void carregarDistribuicaoCota(Long idCota) throws FileNotFoundException, IOException {
-		
-		DistribuicaoDTO dto = cotaService.obterDadosDistribuicaoCota(idCota);
-		
-		dto.setTiposEntrega(gerarTiposEntrega());
-		
-		this.tratarDocumentoTipoEntrega(dto);
+	public void carregarDistribuicaoCota(Long idCota, ModoTela modoTela, Long idHistorico) throws FileNotFoundException, IOException {
+	    DistribuicaoDTO dto = null;
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+		    dto = cotaService.obterDadosDistribuicaoCota(idCota);
+		    
+		    dto.setTiposEntrega(gerarTiposEntrega());
+		    
+		    this.tratarDocumentoTipoEntrega(dto);
+		} else {
+		    dto = cotaService.obterDistribuicaoHistoricoTitularidade(idCota, idHistorico);
+		}
 				
 		this.result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}	
@@ -1310,12 +1374,16 @@ public class CotaController {
 	 * Recarrega os dados de endereço referente a cota.
 	 * 
 	 * @param idCota - identificador da cota
+	 * @param idHistorico - identificador do histórico de titularidade da cota
+	 * @param modoTela - Modo em que a tela está operando
 	 */
 	@Post
-	public void recarregarEndereco(Long idCota){
-		
-		obterEndereco(idCota);
-		
+	public void recarregarEndereco(Long idCota, Long idHistorico, ModoTela modoTela){
+		if (modoTela == ModoTela.CADASTRO_COTA) {
+		    obterEndereco(idCota);
+		} else {
+		    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
+		}
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
@@ -1323,11 +1391,16 @@ public class CotaController {
 	 * Recarrega os dados de telefone referente a cota.
 	 * 
 	 * @param idCota - identificador da cota
+	 * @param idHistorico - identificador do histórico de titularidade da cota
+	 * @param modoTela - Modo em que a tela está operando
 	 */
 	@Post
-	public void recarregarTelefone(Long idCota){
-		
-		obterTelefones(idCota);
+	public void recarregarTelefone(Long idCota, Long idHistorico, ModoTela modoTela){
+		if (modoTela == ModoTela.CADASTRO_COTA) {
+		    obterTelefones(idCota);
+		} else {
+		    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
+		}
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}

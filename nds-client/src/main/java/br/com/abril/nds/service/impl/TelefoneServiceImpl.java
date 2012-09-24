@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -42,32 +43,20 @@ public class TelefoneServiceImpl implements TelefoneService {
 		validarTelefonePrincipal(listaTelefones);
 		
 		for (TelefoneAssociacaoDTO associacaoTelefone : listaTelefones){
-			this.valiadarTelefone(associacaoTelefone.getTelefone(), associacaoTelefone.getTipoTelefone());
+			TelefoneDTO dto = associacaoTelefone.getTelefone();
+            
+			Telefone telefone = new Telefone(dto.getId(), dto.getNumero(), dto.getRamal(),dto.getDdd(), pessoa);
+			this.validarTelefone(telefone, associacaoTelefone.getTipoTelefone());
 			
-			associacaoTelefone.getTelefone().setPessoa(pessoa);
-			
-			if (associacaoTelefone.getTelefone().getId() == null){
-				this.telefoneRepository.adicionar(associacaoTelefone.getTelefone());
+			if (telefone.getId() == null){
+				this.telefoneRepository.adicionar(telefone);
 			} else {
-				this.telefoneRepository.alterar(associacaoTelefone.getTelefone());
+				this.telefoneRepository.alterar(telefone);
 			}
 		}
 	}
 	
-	@Transactional
-	@Override
-	public void cadastrarTelefone(TelefoneAssociacaoDTO associacaoTelefone){
-		
-		this.valiadarTelefone(associacaoTelefone.getTelefone(), associacaoTelefone.getTipoTelefone());
-		
-		if (associacaoTelefone.getTelefone().getId() == null){
-			this.telefoneRepository.adicionar(associacaoTelefone.getTelefone());
-		} else {
-			this.telefoneRepository.alterar(associacaoTelefone.getTelefone());
-		}
-	}
-	
-	private void valiadarTelefone(Telefone telefone, TipoTelefone tipoTelefone){
+	private void validarTelefone(Telefone telefone, TipoTelefone tipoTelefone){
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
 		
@@ -140,7 +129,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Telefone entregador é obrigatório.");
 				}
 				
-				this.valiadarTelefone(telefoneEntregador.getTelefone(), telefoneEntregador.getTipoTelefone());
+				this.validarTelefone(telefoneEntregador.getTelefone(), telefoneEntregador.getTipoTelefone());
 				
 				if (isTelefonePrincipal && telefoneEntregador.isPrincipal()) {
 					

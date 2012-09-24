@@ -101,16 +101,19 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
-		final BigDecimal precoPrevisto = input.getPrecoPrevisto();
-		if (null == produtoEdicao.getPrecoPrevisto() || !produtoEdicao.getPrecoPrevisto().equals(precoPrevisto)) {
+		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(
+				produtoEdicao.getPrecoPrevisto());
+		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(
+				input.getPrecoPrevisto());
+		if (!precoPrevistoAtual.equals(precoPrevistoCorrente)) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteracao do Preco Previsto do Produto: "
 							+ codigoProduto
 							+ " e Edicao: " + edicao
-							+ " , de: " + produtoEdicao.getPrecoPrevisto() 
-							+ "para: " + precoPrevisto);
-			produtoEdicao.setPrecoPrevisto(precoPrevisto);
+							+ ", de: " + precoPrevistoAtual
+							+ " para: " + precoPrevistoCorrente);
+			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
 			this.getSession().merge(produtoEdicao);
 		}
 		
@@ -246,7 +249,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// Atualizar lançamento Distribuidor:
 			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
 			
-			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status) || StatusLancamento.BALANCEADO_LANCAMENTO.equals(status); 
+			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status); 
 			
 			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
 			
@@ -322,6 +325,16 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	}
 	
 	/**
+	 * Trata o valor de um Number para evitar nullpointer.<br>
+	 * Caso o valor do Number seja null, será retornado 0 (zero).
+	 * @param valor
+	 * @return
+	 */
+	private BigDecimal tratarValorNulo(BigDecimal valor) {
+		return valor == null ? BigDecimal.ZERO : valor;
+	}
+		
+	/**
 	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
 	 * minuto, segundo e milissendo).
 	 * 
@@ -341,7 +354,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		return cal.getTime();
 	}
 	
-		
 	@Override
 	public void posProcess() {
 		// TODO Auto-generated method stub

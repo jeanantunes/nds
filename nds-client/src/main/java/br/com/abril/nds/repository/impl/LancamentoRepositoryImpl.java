@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -260,6 +261,41 @@ public class LancamentoRepositoryImpl extends
 		return hql.toString();
 	}
 	
+	public Boolean existeMatrizBalanceamentoConfirmado(Date data) {
+		 
+		StringBuilder jpql = new StringBuilder();
+		Boolean existeLancamentoConfirmado = true;
+		
+		jpql = new StringBuilder();
+		jpql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
+		jpql.append(" FROM Lancamento lancamento ");
+		jpql.append(" WHERE lancamento.dataLancamentoPrevista = :data ")
+		    .append("   AND lancamento.status IN (:statusPlanejadoEConfirmado) ");
+		
+		for (int i = 0; i < 2; i++) {
+			
+			Query query = getSession().createQuery(jpql.toString());
+	
+			List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
+			
+			if(i == 0) {
+				listaLancamentos.add(StatusLancamento.PLANEJADO);
+				listaLancamentos.add(StatusLancamento.CONFIRMADO);
+			} else {
+				listaLancamentos.add(StatusLancamento.BALANCEADO);
+			}
+			
+			query.setParameterList("statusPlanejadoEConfirmado", listaLancamentos);
+			query.setParameter("data", data);
+			
+			existeLancamentoConfirmado = existeLancamentoConfirmado && ((Boolean) query.uniqueResult());
+			
+		}
+		
+		return existeLancamentoConfirmado;
+		
+	}
+	
 	public Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo) {
 		
 		Map<String, Object> parametros = new HashMap<String, Object>();
@@ -417,7 +453,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, ");
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
-		sql.append(" editor.NOME as nomeEditor, ");
+		sql.append(" editor.pessoaJuridica.razaoSocial as nomeEditor, ");
 		
 		sql.append(" case ");
 		sql.append(" when (select box.TIPO_BOX from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
