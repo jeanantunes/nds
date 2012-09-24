@@ -1,80 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>NDS - Novo Distrib</title>
-<link rel="stylesheet" type="text/css" href="../css/NDS.css" />
-<link rel="stylesheet" type="text/css" href="../scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
-<link rel="stylesheet" type="text/css" href="../css/menu_superior.css" />
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/acessoRapido.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/NDS.js"></script>
-<script language="javascript" type="text/javascript" src="../scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
-<link rel="stylesheet" type="text/css" href="../scripts/flexigrid-1.1/css/flexigrid.pack.css" />
+<script type="text/javascript" src="scripts/impressaoNfe.js"></script>
 <script language="javascript" type="text/javascript">
-
-
-	function mostrar(){
-	$(".grids").show();
-}	
-$(function() {
-		$( "#datepickerDe" ).datepicker({
-			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerMovDe" ).datepicker({
-			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#datepickerMovAte" ).datepicker({
-			showOn: "button",
-			buttonImage: "../scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
+	$(function(){
+		impressaoNfeController.init();
 	});
-	function confirmar(){
-		$(".dados").show();
-	}
-	function pesqEncalhe(){
-		$(".dadosFiltro").show();
-		
-	}
-	function mostrar_nfes(){
-		$(".nfes").show();
-		};
-
-$(document).ready(function(){	
-	$("#selFornecedor").click(function() {
-		$(".menu_fornecedor").show().fadeIn("fast");
-	})
-
-	$(".menu_fornecedor").mouseleave(function() {
-		$(".menu_fornecedor").hide();
-	});
-	
-})
-
-$(document).ready(function(){	
-	$("#selProdutos").click(function() {
-		$(".menu_produtos").show().fadeIn("fast");
-	})
-
-	$(".menu_produtos").mouseleave(function() {
-		$(".menu_produtos").hide();
-	});
-	
-})
-
-
-
 </script>
 
 </head>
@@ -89,23 +18,19 @@ $(document).ready(function(){
    
     <div class="container">
     
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Arquivos Nf-e < evento > com < status >.</b></p>
-	</div>
-    	
       <fieldset class="classFieldset">
    	    <legend> Pesquisar NF-e</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="82">Tipo de Nota:</td>
-    <td width="209"><select name="select3" id="select3" style="width:200px; font-size:11px!important">
-      <option>NFe de Remessa em Consignação</option>
-      <option>NFe de Remessa para Distribuição</option>
-      <option>NFe de venda</option>
-      <option>Nota de Envio</option>
-      <option>NECA - Nota de Envio com Chave de Acesso</option>
-    </select></td>
+    <td width="209">
+    	<select name="select3" id="select3" style="width:200px; font-size:11px!important">
+    	<option value="-1">Selecione...</option>
+	    	<c:forEach items="${tipoNotas}" var="tipoNota">
+				<option value="${tipoNota.key}">${tipoNota.value}</option>
+			</c:forEach>
+    	</select>
+    </td>
     <td width="97">Data Movimento:</td>
     <td width="238"><input name="datepickerMovDe" type="text" id="datepickerMovDe" style="width:76px;"/>
 &nbsp;&nbsp;Até&nbsp;
@@ -115,21 +40,30 @@ $(document).ready(function(){
   </tr>
   <tr>
     <td>Roteiro:</td>
-    <td><select name="select" id="select" style="width:200px; font-size:11px!important">
-      <option>Selecione...</option>
-    </select></td>
+    <td>
+    	<select name="idRoteiro" id="idRoteiro" style="width:200px; font-size:11px!important">
+      		<option value="-1">Selecione...</option>
+	  		<c:forEach items="${roteiros}" var="roteiro">
+				<option value="${roteiro.id}">${roteiro.descricaoRoteiro}</option>
+			</c:forEach> 
+    	</select>
+    </td>
     <td>Rota:</td>
-    <td><select name="select2" id="select2" style="width:200px; font-size:11px!important">
-      <option>Selecione...</option>
-    </select></td>
+    <td>
+    	<select name="idRota" id="idRota" style="width:200px; font-size:11px!important">
+      		<option>Selecione...</option>
+      		<c:forEach items="${rotas}" var="rota">
+				<option value="${rota.id}">${rota.descricaoRota}</option>
+			</c:forEach> 
+    	</select>
+    </td>
     <td>Tipo Emissão:</td>
     <td><select name="select5" id="select5" style="width:210px; font-size:11px!important">
       <option selected="selected">Selecione...</option>
-      <option>Normal</option>
-      <option>Emissão Contingência sem conexão</option>
-      <option>Emissão Contingência SCAN</option>
-      <option>Emissão Contingência Prévia</option>
-      <option>Emissão Contingência Auxiliar FS-DA </option>
+      <c:forEach items="${tipoEmissao}" var="tipoEmissao">
+				<option value="${tipoEmissao}">${tipoEmissao.descricao}</option>
+			</c:forEach> 
+     
     </select></td>
     </tr>
   <tr>
@@ -147,11 +81,11 @@ $(document).ready(function(){
         <input type="checkbox" id="sel" name="Todos1" onclick="checkAll_fornecedor();" style="float:left;"/>
         <label for="sel">Selecionar Todos</label>
         </span> <br clear="all" />
-        <input id="dinap" name="checkgroup_menu" onclick="verifyCheck_1()" type="checkbox"/>
-        <label for="dinap">Dinap</label>
-        <br clear="all" />
-        <input name="checkgroup_menu" onclick="verifyCheck_1()" id="fc" type="checkbox"/>
-        <label for="fc">FC</label>
+        <c:forEach items="${fornecedores}" var="fornecedor">
+        	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkGroupFornecedores" onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox"/>
+          	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.razaoSocial}</label>
+         	<br clear="all" />
+    	</c:forEach> 
       </div></td>
     </tr>
   <tr>
@@ -161,16 +95,20 @@ $(document).ready(function(){
         <input type="checkbox" id="sel" name="Todos1" onclick="checkAll_produtos();" style="float:left;"/>
         <label for="sel">Selecionar Todos</label>
         </span> <br clear="all" />
-        <input id="cacao" name="checkgroup_menu" onclick="verifyCheck_1()" type="checkbox"/>
-        <label for="cacao">Cascão</label>
-        <br clear="all" />
-        <input name="checkgroup_menu" onclick="verifyCheck_1()" id="veja" type="checkbox"/>
-        <label for="veja">Veja</label>
+        <c:forEach items="${produtos}" var="produto">
+        	<input id="produto_${produto.id}" value="${produto.id}" name="checkGroupProduto" onclick="verifyCheck($('#checkBoxSelecionarTodosProduto'));" type="checkbox"/>
+          	<label for="produto_${produto.id}">${produto.nome}</label>
+         	<br clear="all" />
+    	</c:forEach>
       </div></td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
-    <td><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+    <td>
+    	<span class="bt_pesquisar">
+    		<a href="javascript:;" onclick="impressaoNfeController.pesquisar();">Pesquisar</a>
+    	</span>
+    </td>
   </tr>
   <td colspan="3">
     </td>
@@ -204,102 +142,6 @@ $(document).ready(function(){
     
     </div>
 </div> 
-<script>
-	$(".impressaoGrid").flexigrid({
-			url : '../xml/impressao_nfe-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 50,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nome',
-				width : 465,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Total Exemplares',
-				name : 'totalExemplares',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Total R$',
-				name : 'vlrTotal',
-				width : 80,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Total Desc. R$',
-				name : 'totalDesc',
-				width : 80,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Impressão',
-				name : 'impressao',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : ' ',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180
-		});
-		
-		
-		$(".cotasSuspensasGrid").flexigrid({
-			url : '../xml/gerar_nfe_2-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nome',
-				width : 290,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Total Exemplares',
-				name : 'totalExemplares',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : 'sel',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 570,
-			height : 180
-		});
-</script>
 
 </body>
 </html>
