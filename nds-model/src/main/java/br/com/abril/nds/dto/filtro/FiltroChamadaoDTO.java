@@ -28,8 +28,15 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	
 	private Long idFornecedor;
 	
+	private Long idEditor;
+	
 	@Export(label = "Fornecedor", exhibitionOrder = 4)
 	private String nomeFornecedor;
+	
+	@Export(label = "Editor", exhibitionOrder = 5)
+	private String nomeEditor;
+	
+	private boolean chamadaEncalhe;
 	
 	private OrdenacaoColunaChamadao ordenacaoColuna;
 	
@@ -46,12 +53,17 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	 * @param numeroCota - número da cota
 	 * @param dataChamadao - data do chamadão
 	 * @param idFornecedor - id do fornecedor
+	 * @param idEditor - id do editor
+	 * @param chamadaEncalhe - indica se a busca irá obter chamadas de encalhe
 	 */
-	public FiltroChamadaoDTO(Integer numeroCota, Date dataChamadao, Long idFornecedor) {
+	public FiltroChamadaoDTO(Integer numeroCota, Date dataChamadao,
+							 Long idFornecedor, Long idEditor, boolean chamadaEncalhe) {
 		
 		this.numeroCota = numeroCota;
 		this.dataChamadao = dataChamadao;
 		this.idFornecedor = idFornecedor;
+		this.idEditor = idEditor;
+		this.chamadaEncalhe = chamadaEncalhe;
 	}
 
 	/**
@@ -64,12 +76,14 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 		CODIGO_PRODUTO("codigo"),
 		NOME_PRODUTO("produto"),
 		EDICAO("edicao"),
+		BRINDE("brinde"),
 		PRECO_VENDA("precoVenda"),
 		PRECO_DESCONTO("precoDesconto"),
 		REPARTE("reparte"),
 		FORNECEDOR("fornecedor"),
 		RECOLHIMENTO("dataRecolhimento"),
-		VALOR_TOTAL("valorTotal");
+		VALOR_TOTAL("valorTotal"),
+		VALOR_TOTAL_DESCONTO("valorTotalDesconto");
 		
 		private String nomeColuna;
 		
@@ -142,6 +156,20 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	}
 
 	/**
+	 * @return the idEditor
+	 */
+	public Long getIdEditor() {
+		return idEditor;
+	}
+
+	/**
+	 * @param idEditor the idEditor to set
+	 */
+	public void setIdEditor(Long idEditor) {
+		this.idEditor = idEditor;
+	}
+
+	/**
 	 * @return the nomeFornecedor
 	 */
 	public String getNomeFornecedor() {
@@ -153,6 +181,34 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	 */
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	/**
+	 * @return the nomeEditor
+	 */
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	/**
+	 * @param nomeEditor the nomeEditor to set
+	 */
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
+	
+	/**
+	 * @return the chamadaEncalhe
+	 */
+	public boolean isChamadaEncalhe() {
+		return chamadaEncalhe;
+	}
+
+	/**
+	 * @param chamadaEncalhe the chamadaEncalhe to set
+	 */
+	public void setChamadaEncalhe(boolean chamadaEncalhe) {
+		this.chamadaEncalhe = chamadaEncalhe;
 	}
 
 	/**
@@ -176,12 +232,17 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + (chamadaEncalhe ? 1231 : 1237);
 		result = prime * result
 				+ ((dataChamadao == null) ? 0 : dataChamadao.hashCode());
+		result = prime * result
+				+ ((idEditor == null) ? 0 : idEditor.hashCode());
 		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
 		result = prime * result
 				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
+				+ ((nomeEditor == null) ? 0 : nomeEditor.hashCode());
 		result = prime * result
 				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
 		result = prime * result
@@ -203,10 +264,17 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroChamadaoDTO other = (FiltroChamadaoDTO) obj;
+		if (chamadaEncalhe != other.chamadaEncalhe)
+			return false;
 		if (dataChamadao == null) {
 			if (other.dataChamadao != null)
 				return false;
 		} else if (!dataChamadao.equals(other.dataChamadao))
+			return false;
+		if (idEditor == null) {
+			if (other.idEditor != null)
+				return false;
+		} else if (!idEditor.equals(other.idEditor))
 			return false;
 		if (idFornecedor == null) {
 			if (other.idFornecedor != null)
@@ -217,6 +285,11 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 			if (other.nomeCota != null)
 				return false;
 		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
+		if (nomeEditor == null) {
+			if (other.nomeEditor != null)
+				return false;
+		} else if (!nomeEditor.equals(other.nomeEditor))
 			return false;
 		if (nomeFornecedor == null) {
 			if (other.nomeFornecedor != null)
@@ -232,5 +305,5 @@ public class FiltroChamadaoDTO extends FiltroDTO implements Serializable {
 			return false;
 		return true;
 	}
-
+	
 }

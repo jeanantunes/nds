@@ -16,7 +16,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 public interface ChamadaoRepository extends Repository<Cota,Long> {
 
 	/**
-	 * Obtém os consignados para o chamadão
+	 * Obtém os consignados para o chamadão.
 	 * 
 	 * @param filtro - filtro para a pesquisa
 	 * 
@@ -25,7 +25,16 @@ public interface ChamadaoRepository extends Repository<Cota,Long> {
 	List<ConsignadoCotaChamadaoDTO> obterConsignadosParaChamadao(FiltroChamadaoDTO filtro);
 	
 	/**
-	 * Obtém o total de consignados para o chamadão
+	 * Obtém os consignados que já possuem chamadão.
+	 * 
+	 * @param filtro - filtro para a pesquisa
+	 * 
+	 * @return {@link List<ConsignadoCotaChamadaoDTO>}
+	 */
+	List<ConsignadoCotaChamadaoDTO> obterConsignadosComChamadao(FiltroChamadaoDTO filtro);
+	
+	/**
+	 * Obtém o total de consignados para o chamadão.
 	 * 
 	 * @param filtro - filtro para a pesquisa
 	 * 
@@ -34,12 +43,30 @@ public interface ChamadaoRepository extends Repository<Cota,Long> {
 	Long obterTotalConsignadosParaChamadao(FiltroChamadaoDTO filtro);
 	
 	/**
-	 * Obtém o resumo dos consignados para o chamadão
+	 * Obtém o total de consignados que já possuem chamadão.
+	 * 
+	 * @param filtro - filtro para a pesquisa
+	 * 
+	 * @return total de consignados para o chamadão
+	 */
+	Long obterTotalConsignadosComChamadao(FiltroChamadaoDTO filtro);
+	
+	/**
+	 * Obtém o resumo dos consignados para o chamadão.
 	 * 
 	 * @param filtro - filtro para a pesquisa
 	 * 
 	 * @return {@link ResumoConsignadoCotaChamadaoDTO}
 	 */
 	ResumoConsignadoCotaChamadaoDTO obterResumoConsignadosParaChamadao(FiltroChamadaoDTO filtro);
+	
+	/**
+	 * Obtém o resumo dos consignados que já possuem chamadão.
+	 * 
+	 * @param filtro - filtro para a pesquisa
+	 * 
+	 * @return {@link ResumoConsignadoCotaChamadaoDTO}
+	 */
+	ResumoConsignadoCotaChamadaoDTO obterResumoConsignadosComChamadao(FiltroChamadaoDTO filtro);
 
 }

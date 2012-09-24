@@ -5,7 +5,7 @@
 <br />
 <table class="PDVsGrid"></table>
 <br />
-<span class="bt_novo"><a href="javascript:;" onclick="PDV.poupNovoPDV();">Novo</a></span>
+<span class="bt_novo" id="PDVbtnNovo"><a href="javascript:;" onclick="PDV.poupNovoPDV();">Novo</a></span>
 
 <br clear="all" />
 

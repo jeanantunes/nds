@@ -29,6 +29,15 @@ public class HistoricoTitularidadeCotaReferenciaCota implements Serializable {
      */
     @Column(name="PERCENTUAL")
     private BigDecimal percentual;
+    
+    public HistoricoTitularidadeCotaReferenciaCota() {
+    }
+    
+    public HistoricoTitularidadeCotaReferenciaCota(Integer numeroCota,
+            BigDecimal percentual) {
+        this.numeroCota = numeroCota;
+        this.percentual = percentual;
+    }
 
     /**
      * @return the numeroCota

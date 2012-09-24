@@ -87,5 +87,4 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
 		return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
-	
 }

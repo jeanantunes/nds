@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -99,7 +100,7 @@ public class EnderecoPdvRepositoryTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterMunicipiosPdvPrincipal(){
 		
-		List<Endereco> endereco = enderecoPDVRepository.buscarMunicipioPdvPrincipal();
+		List<ItemDTO<Integer, String>> endereco = enderecoPDVRepository.buscarMunicipioPdvPrincipal();
 		
 		Assert.assertNotNull(endereco);
 		

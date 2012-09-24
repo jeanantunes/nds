@@ -16,13 +16,13 @@
 
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 
-	<bean id="dataSource"
+<!-- 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="${testDataSourceURL}" />
 		<property name="username" value="${testDataSourceUsername}" />
 		<property name="password" value="${testDataSourcePassword}" />
-    </bean>
+    </bean> -->
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -52,16 +52,15 @@
 		<property name="bachSize" value="500"/>
 	</bean>
 	
-	<!-- 
 
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:mem:nds" />
-		<property name="username" value="sa" />
-		<property name="password" value="" />
-		<property name="suppressClose" value="true" />
-	</bean>
+<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+    </bean> 
+		<!-- 
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">

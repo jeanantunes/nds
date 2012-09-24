@@ -35,7 +35,10 @@ import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoClusterPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 	
@@ -45,6 +48,8 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 	private Box box1;
 	
 	private Cota cotaManoel;
+	
+	private HistoricoTitularidadeCota historicoTitularidadeCotaManoel;
 	
 	@Before
 	public void setup() {
@@ -107,6 +112,9 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		TelefonePDV telefonePDV1 = Fixture.criarTelefonePDV(telefone, pdv, false, TipoTelefone.COMERCIAL);
 		save(telefonePDV1);
 		
+		historicoTitularidadeCotaManoel = Fixture.historicoTitularidade(cotaManoel);
+		save(cotaManoel);
+		
 	}
 	
 	@Test
@@ -136,4 +144,123 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		Assert.assertTrue(pdv.getCaracteristicas().isPontoPrincipal());
 		
 	}
+	
+	private FiltroPdvDTO criarParametrosPesquisaHistoricoTitularidade() {
+	    Long idCota = cotaManoel.getId();
+	    Long idHistorico = historicoTitularidadeCotaManoel.getId();
+	    
+	    FiltroPdvDTO filtro = new FiltroPdvDTO();
+	    filtro.setIdCota(idCota);
+	    filtro.setIdHistorico(idHistorico);
+	    PaginacaoVO paginacao = new PaginacaoVO(1, 10, "asc");
+	    filtro.setPaginacao(paginacao);
+	    return filtro;
+	}
+	
+	@Test
+	public void testObterPDVsHistoricoTitularidadeOrdernacaoNome() {
+	    FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
+	    HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+	    
+	    filtro.setColunaOrdenacao(ColunaOrdenacao.NOME_PDV);
+	    List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+	    Assert.assertNotNull(pdvs);
+	    Assert.assertTrue(pdvs.size() == 1);
+	    Assert.assertEquals(expected, pdvs.get(0));
+	}
+	
+	@Test
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoContato() {
+        FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
+        HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+    
+        filtro.setColunaOrdenacao(ColunaOrdenacao.CONTATO);
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+        Assert.assertNotNull(pdvs);
+        Assert.assertTrue(pdvs.size() == 1);
+        Assert.assertEquals(expected, pdvs.get(0));
+    }
+	
+	@Test
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoEndereco() {
+        FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
+        HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+    
+        filtro.setColunaOrdenacao(ColunaOrdenacao.ENDERECO);
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+        Assert.assertNotNull(pdvs);
+        Assert.assertTrue(pdvs.size() == 1);
+        Assert.assertEquals(expected, pdvs.get(0));
+    }
+	
+	@Test
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoTelefone() {
+        FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
+        HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+    
+        filtro.setColunaOrdenacao(ColunaOrdenacao.TELEFONE);
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+        Assert.assertNotNull(pdvs);
+        Assert.assertTrue(pdvs.size() == 1);
+        Assert.assertEquals(expected, pdvs.get(0));
+    }
+	
+	@Test
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoFaturamento() {
+        FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
+        HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+    
+        filtro.setColunaOrdenacao(ColunaOrdenacao.FATURAMENTO);
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+        Assert.assertNotNull(pdvs);
+        Assert.assertTrue(pdvs.size() == 1);
+        Assert.assertEquals(expected, pdvs.get(0));
+    }
+	
+	@Test
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoStatus() {
+        FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
+        HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+    
+        filtro.setColunaOrdenacao(ColunaOrdenacao.STATUS);
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+        Assert.assertNotNull(pdvs);
+        Assert.assertTrue(pdvs.size() == 1);
+        Assert.assertEquals(expected, pdvs.get(0));
+    }
+	
+	@Test
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoTipoPonto() {
+        FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
+        HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+    
+        filtro.setColunaOrdenacao(ColunaOrdenacao.TIPO_PONTO);
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+        Assert.assertNotNull(pdvs);
+        Assert.assertTrue(pdvs.size() == 1);
+        Assert.assertEquals(expected, pdvs.get(0));
+    }
+	
+	@Test
+    public void testObterPDVsHistoricoTitularidadeOrdernacaoPrincipal() {
+        FiltroPdvDTO filtro = criarParametrosPesquisaHistoricoTitularidade();
+        HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+    
+        filtro.setColunaOrdenacao(ColunaOrdenacao.PRINCIPAL);
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
+        Assert.assertNotNull(pdvs);
+        Assert.assertTrue(pdvs.size() == 1);
+        Assert.assertEquals(expected, pdvs.get(0));
+    }
+	
+	
+	@Test
+    public void testObterPDVHistoricoTitularidade() {
+	    HistoricoTitularidadeCotaPDV expected = historicoTitularidadeCotaManoel.getPdvs().iterator().next();
+	    
+        HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(expected.getId());
+        Assert.assertNotNull(pdv);
+        Assert.assertEquals(expected, pdv);
+    }
+
 }

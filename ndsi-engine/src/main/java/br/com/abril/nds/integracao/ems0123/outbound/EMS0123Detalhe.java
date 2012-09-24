@@ -21,7 +21,7 @@ public class EMS0123Detalhe {
 	private Date dataRecolhimento;
 
 
-	@Field(offset=1, length=2, paddingChar='2')
+	@Field(offset=1, length=1, paddingChar='2')
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -57,7 +57,7 @@ public class EMS0123Detalhe {
 		this.codPublicacao = codPublicacao;
 	}
 
-	@Field(offset=18, length=4)
+	@Field(offset=18, length=4, paddingChar='0')
 	public Long getEdicao() {
 		return edicao;
 	}
@@ -66,7 +66,7 @@ public class EMS0123Detalhe {
 		this.edicao = edicao;
 	}
 	
-	@Field(offset=22, length=4)
+	@Field(offset=22, length=4, paddingChar='0')
 	public Integer getCodigoCota() {
 		return codigoCota;
 	}
@@ -75,7 +75,7 @@ public class EMS0123Detalhe {
 		this.codigoCota = codigoCota;
 	}
 	
-	@Field(offset=26, length=8)
+	@Field(offset=26, length=8, paddingChar='0')
 	public Long getQuantidadeEncalhe() {
 		return quantidadeEncalhe;
 	}

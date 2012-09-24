@@ -12,6 +12,8 @@ import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.abril.nds.model.cadastro.TipoGarantia;
+
 /**
  * Represenata a garantia do tipo "CHEQUE CAUCAO" no histórico de titularidade
  * da cota
@@ -24,6 +26,10 @@ import javax.persistence.TemporalType;
 public class HistoricoTitularidadeCotaChequeCaucao extends HistoricoTitularidadeCotaGarantia {
     
     private static final long serialVersionUID = 1L;
+    
+    public HistoricoTitularidadeCotaChequeCaucao() {
+        this.tipoGarantia = TipoGarantia.CHEQUE_CAUCAO;
+    }
 
     /**
      * Número do banco do cheque

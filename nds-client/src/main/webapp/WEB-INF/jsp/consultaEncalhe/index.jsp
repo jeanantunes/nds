@@ -47,18 +47,25 @@ $(function(){
 		
 			<tr>
 			
-				<td width="30">Data:</td>
+				<td width="46">Per&iacute;odo:</td>
 				
 				<td colspan="3">
-					<input type="text" id="dataRecolhimento"
+					<input type="text" id="dataRecolhimentoInicial" class="datePicker"
+					style="width: 80px; float: left; margin-right: 5px;" />
+				</td>
+				
+				<td width="24">At&eacute;:</td>
+				
+				<td width="113">
+					<input type="text" id="dataRecolhimentoFinal" class="datePicker"
 					style="width: 80px; float: left; margin-right: 5px;" />
 				</td>
 				
 				<td width="68">Fornecedor:</td>
 				
-				<td width="264">
+				<td width="130">
 				
-					<select name="idFornecedor" id="idFornecedor" style="width:260px;">
+					<select name="idFornecedor" id="idFornecedor" style="width:130px;">
 					    <option value="-1"  selected="selected">Todos</option>
 					    <c:forEach items="${listaFornecedores}" var="fornecedor">
 					      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
@@ -67,7 +74,7 @@ $(function(){
 				
 				</td>
 				
-				<td width="30">
+				<td width="28">
 					Cota:
 				</td>
 				
@@ -80,9 +87,9 @@ $(function(){
 				
 				</td>
 				
-				<td width="36">Nome:</td>
+				<td width="37">Nome:</td>
 				
-				<td width="160">
+				<td width="138">
 
 		            <input type="text"
 		            maxlength="255" 
@@ -90,11 +97,11 @@ $(function(){
 		            id="nomeCota" 
 		            onkeyup="pesquisaCotaConsultaEncalhe.autoCompletarPorNome('#nomeCota');" 
 		            onblur="pesquisaCotaConsultaEncalhe.pesquisarPorNomeCota('#cota', '#nomeCota');" 
-		            style="width:160px;"/>
+		            style="width:130px;"/>
 					
 				</td>
 				
-				<td width="104">
+				<td width="107">
 					<span class="bt_novos">
 						<a href="javascript:;" onclick="ConsultaEncalhe.pesquisar()"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					</span>

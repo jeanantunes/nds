@@ -2,19 +2,22 @@ package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 /**
  * Representa classe base de garantias no histórico 
@@ -35,11 +38,15 @@ public abstract class HistoricoTitularidadeCotaGarantia implements Serializable 
     @Id
     @GeneratedValue(generator="HIST_TIT_COTA_GARANTIA_SEQ")
     @Column(name="ID")
-    private Long id;
+    protected Long id;
     
-    @OneToOne(optional = false, cascade=CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "HISTORICO_TITULARIDADE_COTA_ID")
-    private HistoricoTitularidadeCota historicoTitularidadeCota;
+    protected HistoricoTitularidadeCota historicoTitularidadeCota;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIPO_GARANTIA")
+    protected TipoGarantia tipoGarantia;
 
     /**
      * @return the id
@@ -69,5 +76,21 @@ public abstract class HistoricoTitularidadeCotaGarantia implements Serializable 
             HistoricoTitularidadeCota historicoTitularidadeCota) {
         this.historicoTitularidadeCota = historicoTitularidadeCota;
     }
+
+    /**
+     * @return the tipoGarantia
+     */
+    public TipoGarantia getTipoGarantia() {
+        return tipoGarantia;
+    }
+
+    /**
+     * @param tipoGarantia the tipoGarantia to set
+     */
+    public void setTipoGarantia(TipoGarantia tipoGarantia) {
+        this.tipoGarantia = tipoGarantia;
+    }
+    
+    
     
 }

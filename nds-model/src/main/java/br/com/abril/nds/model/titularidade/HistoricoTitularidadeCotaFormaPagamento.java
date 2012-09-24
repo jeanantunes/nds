@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.titularidade;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
@@ -138,4 +139,17 @@ public class HistoricoTitularidadeCotaFormaPagamento implements Serializable {
 			HistoricoTitularidadeCotaConcentracaoCobranca concentracaoCobranca) {
 		this.concentracaoCobranca = concentracaoCobranca;
 	}
+
+    /**
+     * Adiciona um novo fornecedor ao histórico de titularidade da cota
+     * 
+     * @param fornecedor
+     *            fornecedor para inclusão
+     */
+	public void addFornecedor(HistoricoTitularidadeCotaFornecedor fornecedor) {
+        if (fornecedores == null) {
+            fornecedores = new ArrayList<HistoricoTitularidadeCotaFornecedor>();
+        }
+        fornecedores.add(fornecedor);
+    }
 }

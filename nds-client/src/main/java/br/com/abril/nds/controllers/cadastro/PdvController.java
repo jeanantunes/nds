@@ -1,10 +1,12 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MaterialPromocionalDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -28,14 +32,11 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
@@ -54,6 +55,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
@@ -125,38 +128,60 @@ public class PdvController {
 	
 	@Post
 	@Path("/carregarMaterialPromocional")
-	public void carregarMaterialPromocional(List<Long> codigos){
-		
+	public void carregarMaterialPromocional(List<Long> codigos, ModoTela modoTela, Long idPdv){
+	    List<ItemDTO<Long, String>> listaDescricao;
 		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterMateriaisPromocionalPDV(cod)), "result").recursive().serialize();
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		    listaDescricao = getListaDescricao(pdvService.obterMateriaisPromocionalPDV(cod));
+		} else {
+		    Set<Long> codigosMateriais = new HashSet<Long>(Arrays.asList(cod));
+            List<MaterialPromocionalDTO> dtos = pdvService.obterMateriaisPromocionaisHistoricoTitularidadePDV(idPdv, codigosMateriais);
+            listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
+            for (MaterialPromocionalDTO materialDTO : dtos) {
+                listaDescricao.add(new ItemDTO<Long, String>(materialDTO.getCodigo(), materialDTO.getDescricao()));
+            }
+		}
+        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/carregarMaterialPromocionalNotIn")
-	public void carregarMaterialPromocionalNotIn(List<Long> codigos){
-		
-		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterMateriaisPromocionalPDVNotIn(cod)), "result").recursive().serialize();
+	public void carregarMaterialPromocionalNotIn(List<Long> codigos, ModoTela modoTela){
+	    List<ItemDTO<Long, String>> listaDescricao = new ArrayList<ItemDTO<Long,String>>();
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+	        listaDescricao = getListaDescricao(pdvService.obterMateriaisPromocionalPDVNotIn(cod));
+	    }
+        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
 	}
 
 	@Post
 	@Path("/carregarGeradorFluxo")
-	public void carregarGeradorFluxo(List<Long> codigos){
-		
-		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposGeradorFluxo(cod)), "result").recursive().serialize();
+	public void carregarGeradorFluxo(List<Long> codigos, ModoTela modoTela, Long idPdv){
+	    List<ItemDTO<Long, String>> listaDescricao;
+	    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));
+	    } else {
+	        Set<Long> codigosGeradores = new HashSet<Long>(Arrays.asList(cod));
+	        List<GeradorFluxoDTO> dtos = pdvService.obterGeradoresFluxoHistoricoTitularidadePDV(idPdv, codigosGeradores);
+	        listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
+	        for (GeradorFluxoDTO geradorFluxoDTO : dtos) {
+                listaDescricao.add(new ItemDTO<Long, String>(geradorFluxoDTO.getCodigo(), geradorFluxoDTO.getDescricao()));
+            }
+	    }
+        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/carregarGeradorFluxoNotIn")
-	public void carregarGeradorFluxoNotIn(List<Long> codigos){
-		
-		Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-		
-		result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod)), "result").recursive().serialize();
+	public void carregarGeradorFluxoNotIn(List<Long> codigos, ModoTela modoTela){
+	    List<ItemDTO<Long, String>> listaDescricao = new ArrayList<ItemDTO<Long,String>>();
+	    if (ModoTela.CADASTRO_COTA ==  modoTela) {
+	        Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod));
+	    }		
+        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
 	}
 	
 	
@@ -166,6 +191,36 @@ public class PdvController {
 		
 		result.use(Results.json()).from(gerarDiasFuncionamento(TipoPeriodoFuncionamentoPDV.values()), "result").recursive().serialize();
 	}
+	
+	@Post
+	@Path("/carregarTiposEstabelecimento")
+	public void carregarTiposEstabelecimento() {
+	    result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoEstabelecimentoAssociacaoPDV()), "result").recursive().serialize();
+	}
+	
+	@Post
+    @Path("/carregarTiposLicencaMunicipal")
+    public void carregarTiposLicencaMunicipal() {
+        result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoLicencaMunicipal()), "result").recursive().serialize();
+    }
+	
+	@Post
+    @Path("/carregarTiposPontoPdv")
+    public void carregarTiposPontoPdv() {
+        result.use(Results.json()).from(getListaDescricao(pdvService.obterTiposPontoPDV()), "result").recursive().serialize();
+    }
+	
+	@Post
+	@Path("/carregarCaracteristicasPdv")
+	public void carregarCaracteristicasPdv() {
+	      result.use(Results.json()).from(getListaCaracteristica(), "result").recursive().serialize();
+	}
+	
+	@Post
+    @Path("/carregarAreasInfluenciaPdv")
+    public void carregarAreasInfluenciaPdv() {
+        result.use(Results.json()).from(getListaDescricao(pdvService.obterAreasInfluenciaPDV()), "result").recursive().serialize();
+    }
 
 	/**
 	 * Retorna uma lista de caracteristicas de segmentação do PDV
@@ -255,9 +310,18 @@ public class PdvController {
 		return itens;
 	}
 	
+	/**
+	 * Lista os PDVS associados à cota ou ao Histórico de titularidade da cota
+	 * de acordo com o modo em que a tela está operando
+	 * @param idCota Identificador da cota
+	 * @param idHistorico identificador do histórico
+	 * @param modoTela modo em que a tela está operando
+	 * @param sortname nome da coluna para ordenação 
+	 * @param sortorder sentido da ordenação
+	 */
 	@Post
 	@Path("/consultar")
-	public void consultarPDVs(Long idCota,String sortname, String sortorder){
+	public void consultarPDVs(Long idCota, Long idHistorico, ModoTela modoTela, String sortname, String sortorder){
 		
 		FiltroPdvDTO filtro = new FiltroPdvDTO();
 		filtro.setIdCota(idCota);
@@ -268,7 +332,14 @@ public class PdvController {
 		
 		filtro.setColunaOrdenacao(Util.getEnumByStringValue(FiltroPdvDTO.ColunaOrdenacao.values(),sortname));
 		
-		List<PdvVO>  listaPdvs = getListaPdvs(filtro);
+		List<PdvVO>  listaPdvs = null;
+		
+		if (ModoTela.CADASTRO_COTA == modoTela) {
+		   listaPdvs = getListaPdvs(filtro);
+		} else {
+		    filtro.setIdHistorico(idHistorico);
+		    listaPdvs = toPdvVO(pdvService.obterPdvsHistoricoTitularidade(filtro));
+		}
 		
 		TableModel<CellModelKeyValue<PdvVO>> tableModel = new TableModel<CellModelKeyValue<PdvVO>>();
 			
@@ -289,17 +360,15 @@ public class PdvController {
 	 * @return List<PdvVO>
 	 */
 	private List<PdvVO> getListaPdvs(FiltroPdvDTO filtro){
-		
 		List<PdvDTO> listDtos = pdvService.obterPDVsPorCota(filtro);
-		
-		List<PdvVO> listaRetorno = new ArrayList<PdvVO>();
-		
-		PdvVO pdvVO = null;
-		
-		for(PdvDTO pdv : listDtos){
-			
-			pdvVO = new PdvVO();
-			
+		return  toPdvVO(listDtos);
+	}
+
+    private List<PdvVO> toPdvVO(List<PdvDTO> dtos) {
+        List<PdvVO> vos = new ArrayList<PdvVO>(dtos.size());
+      
+        for(PdvDTO pdv : dtos){
+			PdvVO pdvVO = new PdvVO();
 			pdvVO.setIdPdv(pdv.getId());
 			pdvVO.setIdCota(pdv.getIdCota());
 			pdvVO.setNomePdv(pdv.getNomePDV());
@@ -311,12 +380,10 @@ public class PdvController {
 			pdvVO.setStatus( tratarCampo(pdv.getStatusPDV()));
 			pdvVO.setFaturamento((pdv.getPorcentagemFaturamento()==null
 									?"":CurrencyUtil.formatarValor(pdv.getPorcentagemFaturamento())));
-		   
-			listaRetorno.add(pdvVO);
+			vos.add(pdvVO);
 		}
-		
-		return listaRetorno;
-	}
+        return vos;
+    }
 	
 	private String tratarCampo(Object valor){
 		
@@ -335,38 +402,40 @@ public class PdvController {
 		
 	@Post
 	@Path("/editar")
-	public void editarPDV(Long idPdv, Long idCota){
-		
+	public void editarPDV(Long idPdv, Long idCota, ModoTela modoTela){
 		limparDadosSessao();
 
-		PdvDTO dto = pdvService.obterPDV(idCota, idPdv);
+	    PdvDTO dto = null;
 		
-		carregarTelefonesPDV(idPdv, idCota);
-		
-		carregarEndercosPDV(idPdv, idCota);
-		
-		tratarPathImagem(dto);
-		
-		if(dto!= null){
-			
-			if(dto.getTamanhoPDV() == null){
-				dto.setTipoPontoPDV(new TipoPontoPDV());
-			}
-			
-			if(dto.getTipoEstabelecimentoAssociacaoPDV() == null){
-				dto.setTipoEstabelecimentoAssociacaoPDV(new TipoEstabelecimentoAssociacaoPDV());
-			}
-			
-			if(dto.getTipoLicencaMunicipal()== null){
-				dto.setTipoLicencaMunicipal(new TipoLicencaMunicipal());
-			}
-			
-			if(dto.getTipoPontoPDV() == null){
-				dto.setTipoPontoPDV(new TipoPontoPDV());
-			}
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+		    dto = pdvService.obterPDV(idCota, idPdv);
+		    
+		    carregarTelefonesPDV(idPdv, idCota);
+		    
+		    carregarEnderecosPDV(idPdv, idCota);
+		    
+		    tratarPathImagem(dto);
+		    
+		} else {
+		    dto = pdvService.obterPdvHistoricoTitularidade(idPdv);
+		  
+		    carregarEnderecosHistoricoTitularidadePDV(idPdv);
+		    
+		    carregarTelefonesHistoricoTitularidade(idPdv);
+
 		}
+		
 			
 		result.use(Results.json()).from(dto).recursive().serialize();
+	}
+	
+	@Path("/imagemPdvHistoricoTitularidade")
+	public Download imagemPdvHistoricoTitularidade(Long idPdv) {
+	    byte[] imagem = pdvService.obterImagemHistoricoTitularidadePDV(idPdv);
+        if (imagem == null) {
+            imagem = new byte[0];
+        }
+	    return new InputStreamDownload(new ByteArrayInputStream(imagem), null, null);
 	}
 	
 	private void tratarPathImagem(PdvDTO dto) {
@@ -380,6 +449,7 @@ public class PdvController {
 		if(file.exists()) 
 			dto.setPathImagem(pathPDV.getValor() + "pdv_" + dto.getId() + ".jpeg" );
 	}
+	
 	private void limparDadosSessao() {
 		
 		this.httpSession.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
@@ -790,10 +860,14 @@ public class PdvController {
 		
 		List<TelefoneAssociacaoDTO> lista = this.pdvService.buscarTelefonesPdv(idPdv, idCota);
 		
-		httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
+		armazenarTelefonesSessao(lista);
+	}
+
+    private void armazenarTelefonesSessao(List<TelefoneAssociacaoDTO> lista) {
+        httpSession.setAttribute(LISTA_TELEFONES_EXIBICAO, lista);
 		httpSession.setAttribute(LISTA_TELEFONES_REMOVER_SESSAO, null);
 		httpSession.setAttribute(LISTA_TELEFONES_SALVAR_SESSAO, null);
-	}
+    }
 	
 	/**
 	 * Carrega endereços ligados ao PDV e Cota
@@ -802,13 +876,40 @@ public class PdvController {
 	 * @param idPdv - Id do PDV
 	 * @param idCota - Id da Cota
 	 */
-	private void carregarEndercosPDV(Long idPdv, Long idCota) {
+	private void carregarEnderecosPDV(Long idPdv, Long idCota) {
 		
 		List<EnderecoAssociacaoDTO> listaEnderecos = this.pdvService.buscarEnderecosPDV(idPdv,idCota);
 		
-		httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
+		armazenarEnderecosSessao(listaEnderecos);
+	}
+
+    private void armazenarEnderecosSessao(
+            List<EnderecoAssociacaoDTO> listaEnderecos) {
+        httpSession.setAttribute(LISTA_ENDERECOS_EXIBICAO, listaEnderecos);
 		httpSession.setAttribute(LISTA_ENDERECOS_REMOVER_SESSAO, null);
 		httpSession.setAttribute(LISTA_ENDERECOS_SALVAR_SESSAO, null);
+    }
+	
+    /**
+     * Carrega os endereços do histórico de titularidade do PDV
+     * 
+     * @param idPdv
+     *            identificador do PDV
+     */
+	private void carregarEnderecosHistoricoTitularidadePDV(Long idPdv) {
+	    List<EnderecoAssociacaoDTO> enderecos = pdvService.obterEnderecosHistoricoTitularidadePDV(idPdv);
+	    armazenarEnderecosSessao(enderecos);
+	}
+	
+	 /**
+     * Carrega os telefones do histórico de titularidade do PDV
+     * 
+     * @param idPdv
+     *            identificador do PDV
+     */
+	private void carregarTelefonesHistoricoTitularidade(Long idPdv) {
+	    List<TelefoneAssociacaoDTO> telefones = pdvService.obterTelefonesHistoricoTitularidadePDV(idPdv);
+	    armazenarTelefonesSessao(telefones);
 	}
 		
 	/**
@@ -824,7 +925,7 @@ public class PdvController {
 		
 		carregarTelefonesPDV(null, idCota);
 		
-		carregarEndercosPDV(null,idCota);
+		carregarEnderecosPDV(null,idCota);
 
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}

@@ -132,7 +132,17 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * 
 	 */
-	NIVELAMENTO_ENTRADA(OperacaoEstoque.ENTRADA,Dominio.COTA);
+	NIVELAMENTO_ENTRADA(OperacaoEstoque.ENTRADA,Dominio.COTA),
+
+	/**
+	 * Estorno da cota para notas de envio.
+	 */
+	ESTORNO_ENVIO_REPARTE(OperacaoEstoque.SAIDA, Dominio.COTA),
+	
+	/**
+	 * Envio de reparte da cota para suplementar do distribuidor.
+	 */
+	ENTRADA_SUPLEMENTAR_ENVIO_REPARTE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR);
 
 	
 	private OperacaoEstoque operacaoEstoque;

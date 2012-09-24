@@ -37,7 +37,22 @@ public class ContaBancariaDeposito implements Serializable {
 	@Column(name="CORRENTISTA",nullable=true)
 	private String nomeCorrentista;
 	
-	/**
+	public ContaBancariaDeposito() {
+    }
+	
+    public ContaBancariaDeposito(String numeroBanco, String nomeBanco,
+            Long agencia, String dvAgencia, Long conta, String dvConta,
+            String nomeCorrentista) {
+        this.numeroBanco = numeroBanco;
+        this.nomeBanco = nomeBanco;
+        this.agencia = agencia;
+        this.dvAgencia = dvAgencia;
+        this.conta = conta;
+        this.dvConta = dvConta;
+        this.nomeCorrentista = nomeCorrentista;
+    }
+
+    /**
 	 * @return the numeroBanco
 	 */
 	public String getNumeroBanco() {

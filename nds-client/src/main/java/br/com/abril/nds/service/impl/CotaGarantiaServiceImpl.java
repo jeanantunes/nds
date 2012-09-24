@@ -6,10 +6,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
+import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -47,6 +52,9 @@ import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoCaucaoLiquida
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDepositoTransferencia;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDescontoCota;
 import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCaucaoLiquida;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCaucaoLiquidaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
@@ -97,6 +105,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Autowired 
 	private FormaCobrancaCaucaoLiquidaRepository formaCobrancaRepository;
 	
+    private static final  Logger LOGGER = LoggerFactory.getLogger(CotaGarantiaServiceImpl.class);
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -105,7 +115,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public CotaGarantiaDTO getByCota(Long idCota) {
+	public CotaGarantiaDTO<CotaGarantia> getByCota(Long idCota) {
 		
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
 		
@@ -151,7 +161,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 		}
 
-		return new CotaGarantiaDTO(tipo, cotaGarantia);
+		return new CotaGarantiaDTO<CotaGarantia>(tipo, cotaGarantia);
 	}
 
 	/*
@@ -289,6 +299,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		fiador.getTelefonesFiador().size();
 		fiador.getGarantias().size();
 		fiador.getPessoa().getEnderecos().size();
+		Hibernate.initialize(fiador.getEnderecoFiador());
 	}
 
 	@Transactional
@@ -509,25 +520,19 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional
 	public CotaGarantiaCaucaoLiquida salvarCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO) throws ValidacaoException, InstantiationException, IllegalAccessException {
 		
+	    
+	    CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida = prepareCotaGarantia(idCota,
+	            CotaGarantiaCaucaoLiquida.class);
 
-		//COTA GARANTIA CAUCAO LIQUIDA
-		CotaGarantiaCaucaoLiquida cotaGarantiaCaucaoLiquida =  cotaGarantiaRepository.getByCota(idCota,CotaGarantiaCaucaoLiquida.class);
+		
 		FormaCobrancaCaucaoLiquida formaCobranca = null;
 		
-        if(cotaGarantiaCaucaoLiquida==null){
-        	
-        	cotaGarantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
-        	Cota cota = cotaRepository.buscarPorId(idCota);
-        	cotaGarantiaCaucaoLiquida.setCota(cota);
+          	
+        if (TipoCobrancaCotaGarantia.BOLETO == cotaGarantiaCaucaoLiquida.getTipoCobranca()){
+        	PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
+        	formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
         }
-        else{
-        	
-        	if (cotaGarantiaCaucaoLiquida.getTipoCobranca().compareTo(TipoCobrancaCotaGarantia.BOLETO)==0){
-        		PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
-        		formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
-        	}
-        }
-		
+      
         
         //FORMA DE PAGAMENTO
         PagamentoCaucaoLiquida pagamento = null;
@@ -865,5 +870,65 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return formaCobrancaDTO;
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	@Transactional(readOnly = true)
+    public CotaGarantiaDTO<?> obterGarantiaHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da cota não deve ser nulo!");
+        Validate.notNull(idHistorico, "Identificador do histórico não deve ser nulo!");
+        
+	    HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+	    TipoGarantia tipoGarantia = historico.getTipoGarantia();
+	    if (tipoGarantia == null) {
+	        return null;
+	    }
+        if (TipoGarantia.FIADOR == tipoGarantia) {
+	        return HistoricoTitularidadeCotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaFiador());
+	    } else if (TipoGarantia.CHEQUE_CAUCAO == tipoGarantia) {
+	        return HistoricoTitularidadeCotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaChequeCaucao());
+	    } else if (TipoGarantia.IMOVEL == tipoGarantia) {
+	        return HistoricoTitularidadeCotaDTOAssembler.toCotaGarantiaDTOImovel(historico.getGarantiasImovel());
+	    } else if (TipoGarantia.NOTA_PROMISSORIA == tipoGarantia) {
+	        return HistoricoTitularidadeCotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaNotaPromissoria());
+	    } else if (TipoGarantia.CAUCAO_LIQUIDA == tipoGarantia) {
+	        return HistoricoTitularidadeCotaDTOAssembler.toCotaGarantiaDTO(historico.getGarantiaCaucaoLiquida());
+	    } else if (TipoGarantia.OUTROS == tipoGarantia) {
+	        return HistoricoTitularidadeCotaDTOAssembler.toCotaGarantiaDTOOutros(historico.getGarantiasOutros());
+	    } else {
+	        LOGGER.error("Tipo de garantia não tratado: " + tipoGarantia);
+	        throw new UnsupportedOperationException("Tipo de garantia não tratado: " + tipoGarantia);
+	    }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	@Transactional(readOnly = true)
+    public byte[] getImagemChequeCaucaoHistoricoTitularidade(Long idCota, Long idHistorico) {
+	    Validate.notNull(idCota, "Identificador da cota não deve ser nulo!");
+        Validate.notNull(idHistorico, "Identificador do histórico não deve ser nulo!");
+        
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        HistoricoTitularidadeCotaChequeCaucao cheque = historico.getGarantiaChequeCaucao();
+        return cheque == null ? null : cheque.getImagem();
+    }
+
+	 /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public FormaCobrancaCaucaoLiquidaDTO obterCaucaoLiquidaHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
+        Validate.notNull(idCota, "Identificador da cota não deve ser nulo!");
+        Validate.notNull(idHistorico, "Identificador do histórico não deve ser nulo!");
+        
+        HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
+        HistoricoTitularidadeCotaCaucaoLiquida caucao = historico.getGarantiaCaucaoLiquida();
+        return caucao == null ? null : HistoricoTitularidadeCotaDTOAssembler.toFormaCobrancaCaucaoLiquidaDTO(caucao);
+    }
 	
 }

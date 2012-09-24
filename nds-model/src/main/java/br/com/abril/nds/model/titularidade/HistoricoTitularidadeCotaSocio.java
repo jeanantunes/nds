@@ -57,6 +57,15 @@ public class HistoricoTitularidadeCotaSocio implements Serializable {
      */
     @Embedded
     private HistoricoTitularidadeCotaTelefone telefone;
+    
+    public HistoricoTitularidadeCotaSocio() {}
+    
+    public HistoricoTitularidadeCotaSocio(String nome,
+            boolean principal, String cargo) {
+        this.nome = nome;
+        this.principal = principal;
+        this.cargo = cargo;
+    }
 
     /**
      * @return the id

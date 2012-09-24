@@ -18,7 +18,7 @@
 			<input type="text" style="width: 150px" id="${param.prefix}cpfFiador" name="cpfFiador" />
 		</td>
 		<td>R. G.:</td>
-		<td colspan="3"><input type="text" style="width: 150px" id="${param.prefix}rgFiador" name="rgFiador" /></td>
+		<td colspan="3"><input type="text" style="width: 150px" id="${param.prefix}rgFiador" name="rgFiador" maxlength="15" /></td>
 	</tr>
 	<tr>
 		<td>Data Nascimento:</td>
@@ -85,7 +85,7 @@
 			<td>CPF:</td>
 			<td><input type="text" style="width: 150px" id="${param.prefix}cpfConjuge" name="cpfConjuge" onblur="fiadorController.buscarPessoaCPF(this.value, false);"/></td>
 			<td>R. G.:</td>
-			<td colspan="3"><input type="text" style="width: 175px" id="${param.prefix}rgConjuge" name="rgConjuge" /></td>
+			<td colspan="3"><input type="text" style="width: 175px" id="${param.prefix}rgConjuge" name="rgConjuge" maxlength="15" /></td>
 		</tr>
 		<tr>
 			<td>Data Nascimento:</td>

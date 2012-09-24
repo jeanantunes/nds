@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 public class ConsignadoCotaChamadaoDTO implements Serializable{
@@ -18,7 +19,7 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	
 	private BigDecimal precoDesconto;
 	
-	private BigDecimal reparte;
+	private BigInteger reparte;
 	
 	private String nomeFornecedor;
 
@@ -26,9 +27,13 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	
 	private BigDecimal valorTotal;
 	
+	private BigDecimal valorTotalDesconto;
+	
 	private Long idLancamento;
 	
 	private BigDecimal deconto;
+	
+	private boolean possuiBrinde;
 
 	/**
 	 * @return the codigoProduto
@@ -103,14 +108,14 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	/**
 	 * @return the reparte
 	 */
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 
 	/**
 	 * @param reparte the reparte to set
 	 */
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 
@@ -157,6 +162,20 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	}
 
 	/**
+	 * @return the valorTotalDesconto
+	 */
+	public BigDecimal getValorTotalDesconto() {
+		return valorTotalDesconto;
+	}
+
+	/**
+	 * @param valorTotalDesconto the valorTotalDesconto to set
+	 */
+	public void setValorTotalDesconto(BigDecimal valorTotalDesconto) {
+		this.valorTotalDesconto = valorTotalDesconto;
+	}
+
+	/**
 	 * @return the idLancamento
 	 */
 	public Long getIdLancamento() {
@@ -177,4 +196,19 @@ public class ConsignadoCotaChamadaoDTO implements Serializable{
 	public void setDeconto(BigDecimal deconto) {
 		this.deconto = deconto;
 	}
+
+	/**
+	 * @return the possuiBrinde
+	 */
+	public boolean isPossuiBrinde() {
+		return possuiBrinde;
+	}
+
+	/**
+	 * @param possuiBrinde the possuiBrinde to set
+	 */
+	public void setPossuiBrinde(boolean possuiBrinde) {
+		this.possuiBrinde = possuiBrinde;
+	}
+	
 }
