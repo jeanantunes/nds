@@ -69,7 +69,7 @@ public class FechamentoEncalheController {
 	private CalendarioService calendarioService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_DEVOLUCAO_FECHAMENTO_ENCALHE)
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 	public void index() {
 		
 		Distribuidor dist = distribuidorService.obter();

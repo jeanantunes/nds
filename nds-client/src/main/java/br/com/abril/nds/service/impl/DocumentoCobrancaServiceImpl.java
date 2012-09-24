@@ -28,7 +28,9 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -329,9 +331,19 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			
 			if(roteirizacao!= null){
 				
-				impressaoDTO.setRota( (roteirizacao.getRota()!= null)? roteirizacao.getRota().getCodigoRota():"");
-				impressaoDTO.setRoteiro( (roteirizacao.getRota().getRoteiro()!= null)? roteirizacao.getRota().getRoteiro().getDescricaoRoteiro():"");
-		
+				if(roteirizacao.getBox()!=null){
+					
+					Roteiro roteiro = roteirizacaoService.obterRoteiroDeBoxPorOrdem(roteirizacao.getBox().getId());
+					
+					if (roteiro!=null){
+						
+						impressaoDTO.setRoteiro(roteiro.getDescricaoRoteiro());
+						
+						Rota rota = roteirizacaoService.obterRotaDeRoteiroPorOrdem(roteiro.getId());
+					
+					    impressaoDTO.setRota( (rota!= null)? rota.getCodigoRota():"");
+					}
+				}
 			}
 			else{
 		
