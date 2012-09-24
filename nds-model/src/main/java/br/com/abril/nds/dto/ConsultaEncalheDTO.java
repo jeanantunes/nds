@@ -27,7 +27,9 @@ public class ConsultaEncalheDTO {
 	
 	private String fornecedor;
 	
-	private BigDecimal total;
+	private BigDecimal valor;
+	
+	private BigDecimal valorComDesconto;
 	
 	private Integer recolhimento;
 	
@@ -222,23 +224,6 @@ public class ConsultaEncalheDTO {
 	}
 
 	/**
-	 * Obtém total
-	 *
-	 * @return BigDecimal
-	 */
-	public BigDecimal getTotal() {
-		return total;
-	}
-
-	/**
-	 * Atribuí total
-	 * @param total 
-	 */
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
-
-	/**
 	 * Obtém recolhimento
 	 *
 	 * @return Integer
@@ -253,6 +238,34 @@ public class ConsultaEncalheDTO {
 	 */
 	public void setRecolhimento(Integer recolhimento) {
 		this.recolhimento = recolhimento;
+	}
+
+	/**
+	 * @return the valor
+	 */
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	/**
+	 * @param valor the valor to set
+	 */
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+
+	/**
+	 * @return the valorComDesconto
+	 */
+	public BigDecimal getValorComDesconto() {
+		return valorComDesconto;
+	}
+
+	/**
+	 * @param valorComDesconto the valorComDesconto to set
+	 */
+	public void setValorComDesconto(BigDecimal valorComDesconto) {
+		this.valorComDesconto = valorComDesconto;
 	}
 
 	

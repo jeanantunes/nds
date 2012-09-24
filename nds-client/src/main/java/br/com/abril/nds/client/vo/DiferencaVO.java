@@ -182,12 +182,6 @@ public class DiferencaVO implements Serializable {
 		this.vlTotalDiferenca = vlTotalDiferenca;
 	}
 
-	/**
-	 * @return the automatica
-	 */
-	public Boolean getAutomatica() {
-		return automatica;
-	}
 
 	/**
 	 * @return the dataLancamento

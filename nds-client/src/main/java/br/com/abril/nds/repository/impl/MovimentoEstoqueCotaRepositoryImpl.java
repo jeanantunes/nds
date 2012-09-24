@@ -356,16 +356,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO 	as numeroEdicao,  ");
 		sql.append("	PRODUTO_EDICAO.PRECO_VENDA 		as precoVenda,    ");
 		
-		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100)) ");
+		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce(("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100, 0))) ");
 		sql.append("	as precoComDesconto,  ");
 
 		sql.append("	ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA 	as reparte,  	");
 		sql.append("	sum(MOVIMENTO_ESTOQUE_COTA.QTDE) 	as encalhe,     ");
 		sql.append(" 	PESSOA.RAZAO_SOCIAL 				as fornecedor,  ");
 		
-		sql.append("	sum(		");
-		sql.append("	    MOVIMENTO_ESTOQUE_COTA.QTDE * ( PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * ("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100) ");
-		sql.append("	) ) as total, ");
+		sql.append("	(sum(MOVIMENTO_ESTOQUE_COTA.QTDE) * ( PRODUTO_EDICAO.PRECO_VENDA) ) as valor, ");
+		
+		sql.append("	(sum(MOVIMENTO_ESTOQUE_COTA.QTDE) * ( PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce(("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100, 0) ) ) ) as valorComDesconto, ");
 		
 		sql.append("	((TO_DAYS(MOVIMENTO_ESTOQUE_COTA.DATA) - TO_DAYS(CHAMADA_ENCALHE.DATA_RECOLHIMENTO)) + 1) as recolhimento ");
 
@@ -461,8 +461,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 					case FORNECEDOR:
 						orderByColumn = " fornecedor ";
 						break;
-					case TOTAL:
-						orderByColumn = " total ";
+					case VALOR:
+						orderByColumn = " valor ";
+						break;
+					case VALOR_COM_DESCONTO:
+						orderByColumn = " valorComDesconto ";
 						break;
 					case RECOLHIMENTO:
 						orderByColumn = " recolhimento ";
@@ -492,7 +495,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		.addScalar("reparte")
 		.addScalar("encalhe")
 		.addScalar("fornecedor")
-		.addScalar("total")
+		.addScalar("valor")
+		.addScalar("valorComDesconto")
 		.addScalar("recolhimento");
 		
 		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDTO.class));

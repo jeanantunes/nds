@@ -92,19 +92,19 @@ var ConsultaEncalhe = $.extend(true, {
 				var colModel = [ {
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 60,
+					width : 40,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 100,
+					width : 80,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 60,
+					width : 40,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -122,25 +122,31 @@ var ConsultaEncalhe = $.extend(true, {
 				}, {
 					display : 'Reparte',
 					name : 'reparte',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Encalhe',
 					name : 'encalhe',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Fornecedor',
 					name : 'fornecedor',
-					width : 120,
+					width : 85,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Total R$',
-					name : 'total',
-					width : 90,
+					display : 'Valor R$',
+					name : 'valor',
+					width : 60,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Valor c/ Desc.',
+					name : 'valorComDesconto',
+					width : 70,
 					sortable : true,
 					align : 'right'
 				}, {

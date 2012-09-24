@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -28,6 +29,19 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		hql.append("delete from RateioDiferenca r where r.diferenca.id = :idDiferenca");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idDiferenca", idDiferenca);
+		
+		query.executeUpdate();
+	}
+	
+	public void removerRateiosNaoAssociadosDiferenca( Long idDiferenca, List<Long> idRateios){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("delete from RateioDiferenca r where r.id not in (:idRateios) and r.diferenca.id = :idDiferenca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameterList("idRateios", idRateios);
 		query.setParameter("idDiferenca", idDiferenca);
 		
 		query.executeUpdate();

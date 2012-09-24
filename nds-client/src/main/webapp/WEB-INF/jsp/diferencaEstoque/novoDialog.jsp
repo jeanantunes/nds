@@ -122,6 +122,9 @@
 							<td>
 								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="255"
 									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota(1));"/>
+								
+								<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden1"/>
+								
 							</td>
 							<td>
 								<input type="text" name="nomeInput" id="nomeInput1" style="width:180px;" maxlength="255"
