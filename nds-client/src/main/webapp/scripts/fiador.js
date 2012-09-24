@@ -210,7 +210,12 @@ var fiadorController = $.extend(true, {
 			$('#fiadorController-socio-cpfFiador', fiadorController.workspace).mask("999.999.999-99",{completed:function(){
 				_this.buscarPessoaCPF(this.value, true);
 			}});
-			$('#fiadorController-cpfConjuge, #fiadorController-socio-cpfFiador', fiadorController.workspace).mask("999.999.999-99");
+			
+			$('#fiadorController-cpfConjuge', fiadorController.workspace).mask("999.999.999-99");
+			$('#fiadorController-socio-cpfFiador', fiadorController.workspace).mask("999.999.999-99");
+			$('#fiadorController-socio-cpfConjuge', fiadorController.workspace).mask("999.999.999-99");
+			
+			
 			$('#fiadorController-dataNascimentoFiadorCpf,#fiadorController-socio-dataNascimentoFiadorCpf', fiadorController.workspace).mask("99/99/9999");
 			$('#fiadorController-dataNascimentoConjugeCpf,#fiadorController-socio-dataNascimentoConjugeCpf', fiadorController.workspace).mask("99/99/9999");
 			$('#fiadorController-selectUfOrgaoEmiCpf,#fiadorController-socio-selectUfOrgaoEmiConjugeCpf', fiadorController.workspace).mask("aa");

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.service.FiadorService;
@@ -157,6 +158,80 @@ public class SociosController {
 		this.pesquisarSociosFiador(null, null);
 	}
 	
+	private void validarConjugeDoSocio(PessoaFisica pessoa, CPFValidator cpfValidator, List<String> msgsValidacao) {
+		
+		if (validator.hasErrors()) {
+			
+			for (Message message : validator.getErrors()) {
+				
+				if (message.getCategory().equals("conjuge.dataNascimento")){
+					msgsValidacao.add("Data de nascimento do conjuge do sócio inválida.");
+				}
+				
+			}
+		}
+		
+		if (pessoa.getCpf().equals(pessoa.getConjuge().getCpf())){
+			msgsValidacao.add("Fiador e conjuge devem ser pessoas diferentes.");
+		}
+		
+		pessoa = pessoa.getConjuge();
+		
+		if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
+			msgsValidacao.add("Nome do conjuge é obrigatório.");
+		}
+		
+		if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
+			msgsValidacao.add("E-mail do conjuge é obrigatório.");
+		}
+		
+		if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+			msgsValidacao.add("CPF do conjuge é obrigatório.");
+		} else {
+			
+			try {
+				
+				cpfValidator.assertValid(pessoa.getCpf());
+			
+			} catch(InvalidStateException e) {
+				
+				//Tenta validar CPF não formatado.
+				cpfValidator = new CPFValidator(false);
+
+				try {
+					
+					cpfValidator.assertValid(pessoa.getCpf());
+				
+				} catch(InvalidStateException ie) {
+					
+					msgsValidacao.add("CPF do conjuge inválido."); 
+					
+				}
+			}
+			
+		}
+		
+		
+		
+		
+		if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
+			msgsValidacao.add("R.G. do conjuge é obrigatório.");
+		} else if (pessoa.getRg().length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
+			
+			msgsValidacao.add("Quantidade de caracteres do campo [RG] do conjuge excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
+			
+		}
+		
+		if (pessoa.getDataNascimento() == null){
+			msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
+		}
+		
+		if (pessoa.getSexo() == null){
+			msgsValidacao.add("Sexo do conjuge é obrigatório.");
+		}
+		
+	}
+	
 	private void validarDadosEntrada(PessoaFisica pessoa, Long ref) {
 		
 		List<String> msgsValidacao = new ArrayList<String>();
@@ -191,11 +266,39 @@ public class SociosController {
 		}
 		
 		if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
+			
 			msgsValidacao.add("CPF é obrigatório.");
+			
+		} else {
+			
+			try {
+				
+				cpfValidator.assertValid(pessoa.getCpf());
+			
+			} catch(InvalidStateException e) {
+				
+				//Tenta validar CPF não formatado.
+				cpfValidator = new CPFValidator(false);
+
+				try {
+					
+					cpfValidator.assertValid(pessoa.getCpf());
+				
+				} catch(InvalidStateException ie) {
+					
+					msgsValidacao.add("CPF inválido."); 
+					
+				}
+			}
+			
 		}
 		
 		if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
 			msgsValidacao.add("R.G. é obrigatório.");
+		} else if (pessoa.getRg().length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
+			
+			msgsValidacao.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
+			
 		}
 		
 		if (pessoa.getDataNascimento() == null){
@@ -210,69 +313,22 @@ public class SociosController {
 			msgsValidacao.add("Sexo é obrigatório.");
 		}
 		
-		try{
-			cpfValidator.assertValid(pessoa.getCpf());
-		
-		} catch(InvalidStateException e){
-			
-			//Tenta validar CPF não formatado.
-			cpfValidator = new CPFValidator(false);
-
-			try {
-				cpfValidator.assertValid(pessoa.getCpf());
-			
-			} catch(InvalidStateException ie) {
-				msgsValidacao.add("CPF inválido."); 
-			}
-		}
-		
-		//dados do conjuge
-		if (pessoa.getConjuge() != null){
-			
-			if (pessoa.getCpf().equals(pessoa.getConjuge().getCpf())){
-				msgsValidacao.add("Fiador e conjuge devem ser pessoas diferentes.");
-			}
-			
-			pessoa = pessoa.getConjuge();
-			
-			if (pessoa.getNome() == null || pessoa.getNome().trim().isEmpty()){
-				msgsValidacao.add("Nome do conjuge é obrigatório.");
-			}
-			
-			if (pessoa.getEmail() == null || pessoa.getEmail().trim().isEmpty()){
-				msgsValidacao.add("E-mail do conjuge é obrigatório.");
-			}
-			
-			if (pessoa.getCpf() == null || pessoa.getCpf().trim().isEmpty()){
-				msgsValidacao.add("CPF do conjuge é obrigatório.");
-			}
-			
-			if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
-				msgsValidacao.add("R.G. do conjuge é obrigatório.");
-			}
-			
-			if (pessoa.getDataNascimento() == null){
-				msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");
-			}
-			
-			if (pessoa.getSexo() == null){
-				msgsValidacao.add("Sexo do conjuge é obrigatório.");
-			}
-		}
-		
 		if (validator.hasErrors()) {
 			
 			for (Message message : validator.getErrors()) {
+
 				if (message.getCategory().equals("dataNascimento")){
 					msgsValidacao.add("Data de nascimento do sócio inválida.");
 				}
 				
-				if (message.getCategory().equals("conjuge.dataNascimento")){
-					msgsValidacao.add("Data de nascimento do conjuge do sócio inválida.");
-				}
 			}
 		}
 		
+		//dados do conjuge
+		if (pessoa.getConjuge() != null) {
+			this.validarConjugeDoSocio(pessoa, cpfValidator, msgsValidacao);
+		}
+
 		Long idFiador = (Long) this.httpSession.getAttribute(FiadorController.ID_FIADOR_EDICAO);
 		
 		if (idFiador != null){
