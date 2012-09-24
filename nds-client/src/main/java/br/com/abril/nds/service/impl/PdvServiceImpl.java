@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.CaracteristicaDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MaterialPromocionalDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
@@ -1319,7 +1320,7 @@ public class PdvServiceImpl implements PdvService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Endereco> buscarMunicipiosPdvPrincipal() {
+    public List<ItemDTO<Integer, String>> buscarMunicipiosPdvPrincipal() {
 
         return enderecoPDVRepository.buscarMunicipioPdvPrincipal();
     }

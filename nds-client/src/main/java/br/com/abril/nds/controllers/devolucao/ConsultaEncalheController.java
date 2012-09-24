@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -243,7 +242,7 @@ public class ConsultaEncalheController {
 		
 		if (dataRecolhimento == null || dataRecolhimento.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo Data é obrigatório");
+			mensagens.add("O preenchimento do perído é obrigatório");
 		} 
 		
 		return mensagens;
@@ -285,17 +284,19 @@ public class ConsultaEncalheController {
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataRecolhimento, Long idFornecedor, Integer numeroCota,  String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota,  String sortorder, String sortname, int page, int rp){
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
 		}
 		
-		Date dataRecDistribuidor = validarDataRecolhimento(dataRecolhimento);
+		Date dataRecDistribuidorInicial = validarDataRecolhimento(dataRecolhimentoInicial);
+		Date dataRecDistribuidorFinal = validarDataRecolhimento(dataRecolhimentoFinal);
 		
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		
-		filtro.setDataRecolhimento(dataRecDistribuidor);
+		filtro.setDataRecolhimentoInicial(dataRecDistribuidorInicial);
+		filtro.setDataRecolhimentoFinal(dataRecDistribuidorFinal);
 		
 		filtro.setIdFornecedor(idFornecedor);
 		
@@ -403,7 +404,8 @@ public class ConsultaEncalheController {
 		String reparte 				= null;
 		String encalhe 				= null;
 		String fornecedor			= null;
-		String total 				= null;
+		String valor 				= null;
+		String valorComDesconto		= null;
 		String recolhimento 		= null;
 		
 		for(ConsultaEncalheDTO consultaEncalheDTO : listaConsultaEncalheDTO) {
@@ -416,7 +418,8 @@ public class ConsultaEncalheController {
 			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte().intValue());
 			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe().intValue());
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
-			total 				= CurrencyUtil.formatarValor(consultaEncalheDTO.getTotal());
+			valor 				= CurrencyUtil.formatarValor(consultaEncalheDTO.getValor());
+			valorComDesconto	= CurrencyUtil.formatarValor(consultaEncalheDTO.getValor());
 			
 			if(consultaEncalheDTO.getRecolhimento()<=0) {
 				recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
@@ -436,7 +439,8 @@ public class ConsultaEncalheController {
 			consultaEncalheVO.setReparte(reparte);
 			consultaEncalheVO.setEncalhe(encalhe);
 			consultaEncalheVO.setFornecedor(fornecedor);
-			consultaEncalheVO.setTotal(total);
+			consultaEncalheVO.setValor(valor);
+			consultaEncalheVO.setValorComDesconto(valorComDesconto);
 			consultaEncalheVO.setRecolhimento(recolhimento);
 			
 			listaResultadosVO.add(consultaEncalheVO);

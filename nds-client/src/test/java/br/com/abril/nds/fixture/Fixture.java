@@ -130,6 +130,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -1104,6 +1105,24 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCotaEstornoEnvioReparte() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Envio Reparte");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_ENVIO_REPARTE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEntradaSuplementarEnvioReparte() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada Suplementar de Envio Reparte Distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
+		return tipoMovimento;
+	}
+	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -1791,9 +1810,9 @@ public class Fixture {
 		EstoqueProduto estoqueProduto = new EstoqueProduto();
 		estoqueProduto.setProdutoEdicao(produtoEdicao);
 		estoqueProduto.setQtde(qtde);
-		estoqueProduto.setQtdeSuplementar(qtde);
+		estoqueProduto.setQtdeSuplementar(qtde.add(BigInteger.TEN));
 		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
-		estoqueProduto.setQtdeDevolucaoFornecedor(qtde);
+		estoqueProduto.setQtdeDevolucaoFornecedor(qtde.add(BigInteger.TEN));
 		return estoqueProduto;
 	}
 	
@@ -1855,8 +1874,9 @@ public class Fixture {
 									  TipoDiferenca tipoDiferenca,
 									  StatusConfirmacao statusConfirmacao,
 									  ItemRecebimentoFisico itemRecebimentoFisico,
-									  MovimentoEstoque movimentoEstoque,
-									  Boolean automatica, TipoEstoque tipoEstoque) {
+									  Boolean automatica, TipoEstoque tipoEstoque, 
+									  TipoDirecionamentoDiferenca tipoDirecionamento,
+									  Date dataLancamentoDiferenca) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -1868,6 +1888,8 @@ public class Fixture {
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		diferenca.setAutomatica(automatica);
 		diferenca.setTipoEstoque(tipoEstoque);
+		diferenca.setTipoDirecionamento(tipoDirecionamento);
+		diferenca.setDataMovimento(dataLancamentoDiferenca);
 		
 		return diferenca;
 	}

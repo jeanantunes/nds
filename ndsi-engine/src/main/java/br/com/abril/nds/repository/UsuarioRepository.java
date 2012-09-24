@@ -16,6 +16,8 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
 	public Long quantidade(Usuario usuario);
 
 	public String getNomeUsuarioPorLogin(String login);
+	
+	public Usuario getUsuarioLogado(String login);
 
 	public void alterarSenha(Usuario usuario);
 	

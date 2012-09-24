@@ -5,6 +5,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MaterialPromocionalDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
@@ -78,13 +79,13 @@ public interface PdvService {
 	 * @param listaTipos
 	 * @throws Exception
 	 */
-	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos) ;
+	void validarPeriodos(List<PeriodoFuncionamentoDTO> periodos);
 
 	List<TelefoneAssociacaoDTO> buscarTelefonesPdv(Long idPdv, Long idCota);
 	
 	boolean existePDVPrincipal(Long idCota, Long idPdv);
 	
-	List<Endereco> buscarMunicipiosPdvPrincipal();
+	List<ItemDTO<Integer, String>> buscarMunicipiosPdvPrincipal();
 	
 	Endereco buscarMunicipioPdvPrincipal(Integer codigoCidadeIBGE);
 	

@@ -47,6 +47,7 @@ public class EstudoCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
 	@OneToMany(mappedBy = "estudoCota")
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	

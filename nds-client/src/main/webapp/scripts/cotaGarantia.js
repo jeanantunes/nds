@@ -677,6 +677,7 @@ function TipoCotaGarantia(workspace) {
 
 TipoCotaGarantia.prototype.path = contextPath + "/cadastro/garantia/";
 TipoCotaGarantia.prototype.tipo = {
+
     'FIADOR' : {
         label : 'Fiador',
         controller : Fiador

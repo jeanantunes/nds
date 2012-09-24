@@ -43,6 +43,7 @@ public enum Permissao
 	ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO("Confirma Expedição",											  	   Permissao.ROLE_EXPEDICAO), 
 	ROLE_EXPEDICAO_CONSULTA_RESUMOS_NFE_GERADAS_RETORNADAS("Consulta Resumos NF-e Geradas e Retornadas",   Permissao.ROLE_EXPEDICAO), 
 	ROLE_EXPEDICAO_GERACAO_ARQUIVOS_NFE("Geração de Arquivos NF-e", 									   Permissao.ROLE_EXPEDICAO),
+	ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO("Nota de Envio",	 												   Permissao.ROLE_EXPEDICAO),
 	ROLE_EXPEDICAO_GERACAO_NFE("Geração de NF-e", 													  	   Permissao.ROLE_EXPEDICAO),
 	ROLE_EXPEDICAO_COTA_AUSENTE("Cota Ausente", 														   Permissao.ROLE_EXPEDICAO),
 	ROLE_EXPEDICAO_PAINEL_MONITOR_NFE("Painel Monitor NF-e", 											   Permissao.ROLE_EXPEDICAO),

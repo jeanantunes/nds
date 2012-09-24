@@ -37,7 +37,7 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	private BigDecimal qtde;
 	
 	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 10)
-	private BigDecimal valor;
+	private String valor;
 	
 	private String transferir;
 	
@@ -96,10 +96,10 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	public void setQtde(BigDecimal qtde) {
 		this.qtde = qtde;
 	}
-	public BigDecimal getValor() {
+	public String getValor() {
 		return valor;
 	}
-	public void setValor(BigDecimal valor) {
+	public void setValor(String valor) {
 		this.valor = valor;
 	}
 	public String getTransferir() {

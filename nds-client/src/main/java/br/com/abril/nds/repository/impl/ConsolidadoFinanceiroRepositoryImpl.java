@@ -415,7 +415,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		query.setParameter("numeroCota", filtro.getNumeroCota());
 		query.setParameter("dataConsolidado", filtro.getDataConsolidado());		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
