@@ -111,7 +111,7 @@ var roteirizacao = $.extend(true, {
 				
 				},
 				minLength: 2,
-				delay : 0,
+				delay : 0
 			});
 		},
 		//Busca dados para o auto complete do nome da cota
@@ -189,13 +189,7 @@ var roteirizacao = $.extend(true, {
 			$(".rotasGrid", roteirizacao.workspace).flexigrid({
 				preProcess:roteirizacao.callBackRotaGrid,
 				dataType : 'json',
-				colModel : [ {
-					display : '',
-					name : 'selecione',
-					width : 15,
-					sortable : false,
-					align : 'center'
-				},{
+				colModel : [{
 					display : 'Ordem',
 					name : 'ordem',
 					width : 35,
@@ -204,19 +198,19 @@ var roteirizacao = $.extend(true, {
 				}, {
 					display : 'Nome',
 					name : 'descricaoRota',
-					width : 135,
+					width : 160,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : '',
-					name : 'detalhe',
-					width : 15,
-					sortable : false,
-					align : 'center'
-				}],
-				sortname : "codigo",
+                    display : '',
+                    name : 'selecione',
+                    width : 20,
+                    sortable : false,
+                    align : 'center'
+                }],
+				sortname : "descricaoRota",
 				width : 270,
-				height : 220
+				height : 140
 			});
 		
 		},
@@ -235,6 +229,65 @@ var roteirizacao = $.extend(true, {
 			
 			return data;
 		},
+
+
+        iniciaBoxGrid : function(){
+            $(".boxGrid", roteirizacao.workspace).flexigrid({
+                preProcess: false   ,
+                dataType : 'json',
+                colModel : [{
+                    display : 'Ordem',
+                    name : 'ordem',
+                    width : 35,
+                    sortable : true,
+                    align : 'left'
+                }, {
+                    display : 'Nome',
+                    name : 'descricaoBox',
+                    width : 160,
+                    sortable : true,
+                    align : 'left'
+                }, {
+                    display : '',
+                    name : 'selecione',
+                    width : 20,
+                    sortable : false,
+                    align : 'center'
+                }],
+                sortname : "descricaoBox",
+                width : 270,
+                height : 140
+            });
+        },
+
+        iniciaRoteirosGrid : function(){
+            $(".roteirosGrid", roteirizacao.workspace).flexigrid({
+                preProcess: false,
+                dataType : 'json',
+                colModel : [{
+                    display : 'Ordem',
+                    name : 'ordem',
+                    width : 35,
+                    sortable : true,
+                    align : 'left'
+                }, {
+                    display : 'Nome',
+                    name : 'descricaoRoteiro',
+                    width : 160,
+                    sortable : true,
+                    align : 'left'
+                }, {
+                    display : '',
+                    name : 'selecione',
+                    width : 20,
+                    sortable : false,
+                    align : 'center'
+                }],
+                sortname : "descricaoBox",
+                width : 270,
+                height : 140
+            });
+        },
 		
 		abrirTelaRota : function () {
 			var idRoteiro =  $('#idRoteiroSelecionado', roteirizacao.workspace).val();
@@ -483,57 +536,51 @@ var roteirizacao = $.extend(true, {
 				preProcess:roteirizacao.callBackCotasRotaGrid,
 				dataType : 'json',
 				colModel : [ {
-					display : '',
-					name : 'selecione',
-					width : 20,
+					display : 'PDV',
+					name : 'pdv',
+					width : 120,
 					sortable : true,
 					align : 'left'
 				},{
-					display : 'Ordem',
-					name : 'ordem',
-					width : 35,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Pto. Venda',
-					name : 'pontoVenda',
-					width : 80,
-					sortable : true,
-					align : 'left'
-				}, {
-					display : 'Orig.',
+					display : 'Origem',
 					name : 'origemEndereco',
-					width : 30,
+					width : 50,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Endereço',
 					name : 'endereco',
-					width : 135,
+					width : 325,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Cota',
-					name : 'numeroCota',
-					width : 30,
+					name : 'cota',
+					width : 50,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Nome',
 					name : 'nome',
-					width : 95,
+					width : 170,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Ordenar',
-					name : 'ordenar',
-					width : 50,
+					display : 'Ordem',
+					name : 'ordem',
+					width : 40,
 					sortable : true,
-					align : 'right'
+					align : 'left'
+				}, {
+					display : '',
+					name : 'selecione',
+					width : 15,
+					sortable : false,
+					align : 'center'
 				}],
 				sortname : "ordem",
-				width : 590,
-				height : 220
+				width : 875,
+				height : 150
 			});
 		},
 	
@@ -1259,7 +1306,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 				name : 'numeroCota',
 				width : 78,
 				sortable : true,
-				align : 'left',
+				align : 'left'
 			}, {
 				display : 'Nome',
 				name : 'nome',
@@ -1313,7 +1360,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 				name : 'qntCotas',
 				width : 78,
 				sortable : true,
-				align : 'left',
+				align : 'left'
 			}],
 			sortname : "nomeBox",
 			sortorder : "asc",
@@ -1493,8 +1540,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		roteirizacao.reiniciaTelaRoteirizacao();
 	    $( "#dialog-roteirizacao", roteirizacao.workspace ).dialog({
 				resizable: false,
-				height:510,
-				width:940,
+				height:610,
+				width:955,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -1557,7 +1604,9 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		$(".rotasGrid", roteirizacao.workspace).clear();
 		$(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
 		$('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
-		roteirizacao.iniciaRotasGrid();
+        roteirizacao.iniciaBoxGrid();
+        roteirizacao.iniciaRoteirosGrid();
+        roteirizacao.iniciaRotasGrid();
 		roteirizacao.iniciaCotasDisponiveisGrid();
 		roteirizacao.iniciaCotasRotaGrid();
 		roteirizacao.desabilitaBotao('botaoTransfereciaRota', roteirizacao.workspace);
