@@ -1,5 +1,7 @@
 package br.com.abril.nds.integracao.engine.test;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 
@@ -15,7 +17,7 @@ public class TestProcessor implements MessageProcessor {
 	}
 	
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -24,7 +26,7 @@ public class TestProcessor implements MessageProcessor {
 	}
 
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

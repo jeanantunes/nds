@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0116.processor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -431,7 +432,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	}
 	
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

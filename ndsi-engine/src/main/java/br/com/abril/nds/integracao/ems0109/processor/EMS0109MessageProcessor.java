@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0109.processor;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
 import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -33,7 +35,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	private PeriodicidadeProdutoService periodicidadeProdutoService;
 
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 	
@@ -220,6 +222,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setCodigo(input.getCodigoPublicacao());
 		produto.setAtivo(input.isStatus());
 		produto.setDataDesativacao(input.getDataDesativacao());
+		produto.setFormaComercializacao(
+				(input.getFormaComercializacao().equals("CON") 
+						? FormaComercializacao.CONSIGNADO 
+						: FormaComercializacao.CONTA_FIRME
+				) 
+		);
 
 		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
 		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
@@ -428,7 +436,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	}
 	
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	
