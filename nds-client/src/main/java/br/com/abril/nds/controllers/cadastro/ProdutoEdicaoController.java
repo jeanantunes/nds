@@ -128,12 +128,14 @@ public class ProdutoEdicaoController {
 		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		dto.setNomeProduto(produto.getNome());
+		dto.setCodigoProduto(produto.getCodigo());
 		
 		String nomeFornecedor = "";
 		if (produto.getFornecedor() != null 
 				&& produto.getFornecedor().getJuridica() != null) {
 			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
 		}
+		
 		dto.setNomeFornecedor(nomeFornecedor);
 		dto.setFase(produto.getFase());
 		dto.setPacotePadrao(produto.getPacotePadrao());
@@ -149,7 +151,7 @@ public class ProdutoEdicaoController {
 			Long id = Long.valueOf(idProdutoEdicao);
 			ProdutoEdicao pe = peService.obterProdutoEdicao(id);
 			dto.setId(id);
-			dto.setCodigoProduto(pe.getCodigo());
+			
 			dto.setNomeComercialProduto(pe.getNomeComercial());
 			dto.setNumeroEdicao(pe.getNumeroEdicao());
 			dto.setPacotePadrao(pe.getPacotePadrao());
@@ -250,9 +252,10 @@ public class ProdutoEdicaoController {
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		dto.setId(idProdutoEdicao);
-		dto.setCodigoProduto(codigoProdutoEdicao);
+		
 		dto.setNomeComercialProduto(nomeComercialProduto);
 		dto.setNumeroEdicao(numeroEdicao);
+		dto.setCodigoProduto(codigoProdutoEdicao);
 		dto.setPacotePadrao(pacotePadrao);
 		dto.setTipoLancamento(tipoLancamento);
 		dto.setPrecoPrevisto(precoPrevisto);
