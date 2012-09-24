@@ -68,7 +68,7 @@ public class GeracaoNFeController {
 	private RoteirizacaoService roteirizacaoService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NFE)
+	@Rules(Permissao.ROLE_NFE_GERACAO_NFE)
 	public void index() {
 		
 		result.include("fornecedores", fornecedorService
