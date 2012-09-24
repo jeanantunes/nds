@@ -209,7 +209,7 @@ public class GeracaoNFeController {
 		
 		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
 		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs=	
+		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
 				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
 						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
 		

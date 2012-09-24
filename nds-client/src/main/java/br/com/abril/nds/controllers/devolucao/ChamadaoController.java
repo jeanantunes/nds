@@ -135,40 +135,8 @@ public class ChamadaoController {
 		ResumoConsignadoCotaChamadaoDTO resumoConsignadoCotaChamadao = 
 			consultaChamadaoDTO.getResumoConsignadoCotaChamadao();
 		
-		List<ChamadaoVO> listaChamadao = new LinkedList<ChamadaoVO>();
-		
-		ChamadaoVO chamadaoVO = null;
-		
-		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaConsignadoCotaChamadaoDTO) {
-			
-			chamadaoVO = new ChamadaoVO();
-			
-			chamadaoVO.setCodigo(consignadoCotaChamadao.getCodigoProduto());
-			chamadaoVO.setProduto(consignadoCotaChamadao.getNomeProduto());
-			chamadaoVO.setEdicao(consignadoCotaChamadao.getNumeroEdicao().toString());
-			
-			chamadaoVO.setPrecoVenda(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoVenda()));
-			
-			chamadaoVO.setPrecoDesconto(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoDesconto()));
-			
-			chamadaoVO.setReparte(String.valueOf(consignadoCotaChamadao.getReparte().longValue()));
-			chamadaoVO.setFornecedor(consignadoCotaChamadao.getNomeFornecedor());
-			
-			chamadaoVO.setDataRecolhimento(
-				DateUtil.formatarDataPTBR(consignadoCotaChamadao.getDataRecolhimento()));
-			
-			chamadaoVO.setValorTotal(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotal()));
-			
-			chamadaoVO.setValorTotalDesconto(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotalDesconto()));
-			
-			chamadaoVO.setBrinde(consignadoCotaChamadao.isPossuiBrinde() ? "Sim" : "Não");
-			
-			listaChamadao.add(chamadaoVO);
-		}
+		List<ChamadaoVO> listaChamadao =
+			this.getListaChamadaoVO(listaConsignadoCotaChamadaoDTO);
 		
 		ResultadoChamadaoVO resultadoChamadao = null;
 		
@@ -189,7 +157,6 @@ public class ChamadaoController {
 				new ResultadoChamadaoVO(null, resumoConsignadoCotaChamadao.getQtdProdutosTotal(),
 										resumoConsignadoCotaChamadao.getQtdExemplaresTotal(),
 										valorTotalFormatado);
-			
 		}
 		
 		FileExporter.to("chamadao", fileType)
@@ -332,7 +299,7 @@ public class ChamadaoController {
 	@Post
 	@Path("/pesquisarConsignados")
 	public void pesquisarConsignados(Integer numeroCota, String dataChamadaoFormatada, Long idFornecedor,
-									 Long idEditor, String sortorder, String sortname, int page, int rp) {
+									 Long idEditor, boolean chamadaEncalhe, String sortorder, String sortname, int page, int rp) {
 		
 		this.validarEntradaDadosPesquisa(numeroCota, dataChamadaoFormatada);
 		
@@ -340,10 +307,21 @@ public class ChamadaoController {
 		
 		FiltroChamadaoDTO filtro  = 
 			this.carregarFiltroPesquisa(numeroCota, dataChamadao, idFornecedor, idEditor,
-										sortorder, sortname, page, rp);
+										chamadaEncalhe, sortorder, sortname, page, rp);
 		
-		ConsultaChamadaoDTO consultaChamadaoDTO = 
-			this.chamadaoService.obterConsignados(filtro);
+		ConsultaChamadaoDTO consultaChamadaoDTO = null;
+		
+		if (filtro.isChamadaEncalhe()) {
+		
+			consultaChamadaoDTO = 
+				this.chamadaoService.obterConsignadosComChamadao(filtro);
+			
+		} else {
+		
+			consultaChamadaoDTO = 
+				this.chamadaoService.obterConsignados(filtro);
+		}
+		
 		
 		if (consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO() == null || 
 				consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO().isEmpty()) {
@@ -368,7 +346,69 @@ public class ChamadaoController {
 	
 	@Post
 	@Path("/confirmarChamadao")
-	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao, boolean chamarTodos) {
+	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
+								  boolean chamarTodos,
+								  String novaDataChamadaoFormatada) {
+		
+		FiltroChamadaoDTO filtroSessao =
+			(FiltroChamadaoDTO) 
+				this.session.getAttribute(FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE);
+		
+		FiltroChamadaoDTO filtro  = 
+			this.configurarFiltroTela(filtroSessao.getNumeroCota(),
+									  filtroSessao.getDataChamadao(),
+									  filtroSessao.getIdFornecedor(),
+									  filtroSessao.getIdEditor(),
+									  filtroSessao.isChamadaEncalhe());
+		
+		this.validarDadosConfirmarChamadao(
+			listaChamadao, chamarTodos, novaDataChamadaoFormatada, filtroSessao.isChamadaEncalhe());
+		
+		Date novaDataChamadao = DateUtil.parseDataPTBR(novaDataChamadaoFormatada);
+		
+		this.chamadaoService.confirmarChamadao(
+			listaChamadao, filtro, chamarTodos, obterUsuario(), novaDataChamadao);
+		
+		result.use(Results.json()).from(
+			new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão realizado com sucesso!"),
+							"result").recursive().serialize();
+	}
+
+	/**
+	 * Valida os dados para confirmação do chamadão.
+	 * 
+	 * @param listaChamadao - lista de consignados para o chamadão
+	 * @param chamarTodos - indica se todas as publicações da cota serão recolhidas
+	 * @param novaDataChamadaoFormatada - nova data para chamadão formatada
+	 * @param isChamadaEncalhe - indica se os consignados possuem chamada de encalhe
+	 */
+	private void validarDadosConfirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
+											   boolean chamarTodos,
+											   String novaDataChamadaoFormatada,
+											   boolean isChamadaEncalhe) {
+		
+		if (!chamarTodos && listaChamadao == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"É necessário selecionar pelo menos um produto para realizar o chamadão!");
+		}
+		
+		if (isChamadaEncalhe) {
+		
+			if (novaDataChamadaoFormatada == null
+					|| novaDataChamadaoFormatada.trim().isEmpty()
+					|| !DateUtil.isValidDatePTBR(novaDataChamadaoFormatada)) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"É necessário informar a nova data de chamadão!");
+			}
+		}
+	}
+	
+	@Post
+	@Path("/cancelarChamadao")
+	public void cancelarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
+			  					 boolean chamarTodos) {
 		
 		if (!chamarTodos && listaChamadao == null) {
 			
@@ -377,30 +417,17 @@ public class ChamadaoController {
 		}
 		
 		FiltroChamadaoDTO filtroSessao =
-			(FiltroChamadaoDTO) 
-				this.session.getAttribute(FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE);
-		
-		FiltroChamadaoDTO filtro  = 
-			this.carregarFiltroConfirmacao(filtroSessao.getNumeroCota(),
-										   filtroSessao.getDataChamadao(),
-										   filtroSessao.getIdFornecedor(),
-										   filtroSessao.getIdEditor());
-		
-		chamadaoService.confirmarChamadao(listaChamadao, filtro, chamarTodos, obterUsuario());
-		
-		result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão realizado com sucesso!"),
-							"result").recursive().serialize();
-	}
-	
-	@Post
-	public void cancelarChamadao(){
-		
-		FiltroChamadaoDTO filtroSessao =
 				(FiltroChamadaoDTO) 
 					this.session.getAttribute(FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE);
 		
-		this.cotaService.cancelarChamadao(filtroSessao.getNumeroCota());
+		FiltroChamadaoDTO filtro  = 
+			this.configurarFiltroTela(filtroSessao.getNumeroCota(),
+									  filtroSessao.getDataChamadao(),
+									  filtroSessao.getIdFornecedor(),
+									  filtroSessao.getIdEditor(),
+									  filtroSessao.isChamadaEncalhe());
+		
+		this.chamadaoService.cancelarChamadao(listaChamadao, filtro, chamarTodos);
 		
 		result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão cancelado com sucesso!"),
@@ -419,6 +446,52 @@ public class ChamadaoController {
 									  ResumoConsignadoCotaChamadaoDTO resumoConsignadoCotaChamadao,
 									  FiltroChamadaoDTO filtro,
 									  Integer qtdeTotalRegistros) {
+		
+		List<ChamadaoVO> listaChamadao =
+			this.getListaChamadaoVO(listaConsignadoCotaChamadaoDTO);
+		
+		TableModel<CellModelKeyValue<ChamadaoVO>> tableModel =
+			new TableModel<CellModelKeyValue<ChamadaoVO>>();
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setTotal(qtdeTotalRegistros);
+				
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaChamadao));
+		
+		Long qtdProdutosTotal = null;
+		
+		BigInteger qtdExemplaresTotal = null;
+		
+		String valorTotalFormatado = null;
+		
+		if (resumoConsignadoCotaChamadao != null) {
+			
+			qtdProdutosTotal = resumoConsignadoCotaChamadao.getQtdProdutosTotal();
+			
+			qtdExemplaresTotal = resumoConsignadoCotaChamadao.getQtdExemplaresTotal();
+			
+			if (resumoConsignadoCotaChamadao.getValorTotal() != null) {
+			
+				valorTotalFormatado =
+					CurrencyUtil.formatarValor(resumoConsignadoCotaChamadao.getValorTotal());	
+			}
+		}
+		
+		ResultadoChamadaoVO resultadoChamadao =
+			new ResultadoChamadaoVO(tableModel, qtdProdutosTotal,
+									qtdExemplaresTotal, valorTotalFormatado);
+		
+		result.use(Results.json()).withoutRoot().from(resultadoChamadao).recursive().serialize();
+	}
+
+	/**
+	 * Obtém uma lista de ChamadaoVO.
+	 * 
+	 * @param listaConsignadoCotaChamadaoDTO - lista de consignados para o chamadão
+	 * 
+	 * @return lista de ChamadaoVO
+	 */
+	private List<ChamadaoVO> getListaChamadaoVO(List<ConsignadoCotaChamadaoDTO> listaConsignadoCotaChamadaoDTO) {
 		
 		List<ChamadaoVO> listaChamadao = new LinkedList<ChamadaoVO>();
 		
@@ -456,55 +529,20 @@ public class ChamadaoController {
 			chamadaoVO.setValorTotalDesconto(
 				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotalDesconto()));
 			
-			chamadaoVO.setIdLancamento(consignadoCotaChamadao.getIdLancamento().toString());
+			if (consignadoCotaChamadao.getIdLancamento() != null) {
+				
+				chamadaoVO.setIdLancamento(consignadoCotaChamadao.getIdLancamento().toString());
+			} else {
+				
+				chamadaoVO.setIdLancamento(null);
+			}
 			
 			chamadaoVO.setBrinde(consignadoCotaChamadao.isPossuiBrinde() ? "Sim" : "Não");
 			
 			listaChamadao.add(chamadaoVO);
 		}
 		
-		TableModel<CellModelKeyValue<ChamadaoVO>> tableModel =
-			new TableModel<CellModelKeyValue<ChamadaoVO>>();
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		tableModel.setTotal(qtdeTotalRegistros);
-		
-		List<CellModelKeyValue<ChamadaoVO>> listaCellModel = new ArrayList<CellModelKeyValue<ChamadaoVO>>();
-		
-		for (ChamadaoVO vo : listaChamadao) {
-			
-			CellModelKeyValue<ChamadaoVO> cell =
-				new CellModelKeyValue<ChamadaoVO>(Integer.valueOf(vo.getIdLancamento()), vo);
-			
-			listaCellModel.add(cell);
-		}
-		
-		tableModel.setRows(listaCellModel);
-		
-		Long qtdProdutosTotal = null;
-		
-		BigInteger qtdExemplaresTotal = null;
-		
-		String valorTotalFormatado = null;
-		
-		if (resumoConsignadoCotaChamadao != null) {
-			
-			qtdProdutosTotal = resumoConsignadoCotaChamadao.getQtdProdutosTotal();
-			
-			qtdExemplaresTotal = resumoConsignadoCotaChamadao.getQtdExemplaresTotal();
-			
-			if (resumoConsignadoCotaChamadao.getValorTotal() != null) {
-			
-				valorTotalFormatado =
-					CurrencyUtil.formatarValor(resumoConsignadoCotaChamadao.getValorTotal());	
-			}
-		}
-		
-		ResultadoChamadaoVO resultadoChamadao =
-			new ResultadoChamadaoVO(tableModel, qtdProdutosTotal,
-									qtdExemplaresTotal, valorTotalFormatado);
-		
-		result.use(Results.json()).withoutRoot().from(resultadoChamadao).recursive().serialize();
+		return listaChamadao;
 	}
 	
 	/**
@@ -551,6 +589,7 @@ public class ChamadaoController {
 	 * @param dataChamadao - data do chamadão
 	 * @param idFornecedor - id do fornecedor
 	 * @param idEditor - id do editor
+	 * @param chamadaEncalhe - indica se a busca irá obter chamadas de encalhe
 	 * @param sortorder - ordenação
 	 * @param sortname - coluna para ordenação
 	 * @param page - página atual
@@ -562,13 +601,15 @@ public class ChamadaoController {
 													 Date dataChamadao,
 													 Long idFornecedor,
 													 Long idEditor,
+													 boolean chamadaEncalhe,
 													 String sortorder, 
 													 String sortname, 
 													 int page, 
 													 int rp) {
 		
 		FiltroChamadaoDTO filtroAtual =
-			new FiltroChamadaoDTO(numeroCota, dataChamadao, idFornecedor, idEditor);
+			this.configurarFiltroTela(
+				numeroCota, dataChamadao, idFornecedor, idEditor, chamadaEncalhe);
 		
 		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
 		
@@ -584,26 +625,28 @@ public class ChamadaoController {
 		
 		return filtroAtual;
 	}
-	
+
 	/**
-	 * Carrega o filtro da pesquisa de consignados da cota para confirmar o chamadão.
+	 * Carrega o filtro com os dados informados na tela.
 	 * 
 	 * @param numeroCota - número da cota
 	 * @param dataChamadao - data do chamadão
 	 * @param idFornecedor - id do fornecedor
 	 * @param idEditor - id do editor
+	 * @param chamadaEncalhe - indica se a busca irá obter chamadas de encalhe
 	 * 
 	 * @return filtro
 	 */
-	private FiltroChamadaoDTO carregarFiltroConfirmacao(Integer numeroCota,
-													 	Date dataChamadao,
-													 	Long idFornecedor,
-													 	Long idEditor) {
+	private FiltroChamadaoDTO configurarFiltroTela(Integer numeroCota,
+												   Date dataChamadao,
+												   Long idFornecedor,
+												   Long idEditor,
+												   boolean chamadaEncalhe) {
 		
-		FiltroChamadaoDTO filtroAtual =
-			new FiltroChamadaoDTO(numeroCota, dataChamadao, idFornecedor, idEditor);
+		FiltroChamadaoDTO filtro =
+			new FiltroChamadaoDTO(numeroCota, dataChamadao, idFornecedor, idEditor, chamadaEncalhe);
 		
-		return filtroAtual;
+		return filtro;
 	}
 	
 	/**

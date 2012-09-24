@@ -798,7 +798,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		
 		ConsultaEncalheDTO cEncalhe_1 = listaConsultaEncalhe.get(0);
-		Assert.assertEquals((8*15), cEncalhe_1.getTotal().intValue());
+		Assert.assertEquals((8*15), cEncalhe_1.getValor().intValue());
 		
 		} catch(Exception e) {
 			e.printStackTrace();
