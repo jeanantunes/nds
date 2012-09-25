@@ -973,12 +973,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		setUpForMapaAbastecimento();
 		
+		List<String> codigosProduto = new ArrayList<String>();
+		
+		codigosProduto.add(veja1.getCodigo());
+		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setDataDate(new Date());
 		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
 		filtro.setBox(box1.getId());
 		filtro.setRota(rota1.getId());
-		filtro.setCodigoProduto(veja1.getCodigo());
+		filtro.setCodigosProduto(codigosProduto);
 		filtro.setCodigoCota(cotaManoel.getNumeroCota());
 		
 		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
@@ -991,12 +995,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		setUpForMapaAbastecimento();
 		
+		List<String> codigosProduto = new ArrayList<String>();
+		
+		codigosProduto.add(veja1.getCodigo());
+		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setDataDate(new Date());
 		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
 		filtro.setBox(box1.getId());
 		filtro.setRota(rota1.getId());
-		filtro.setCodigoProduto(veja1.getCodigo());
+		filtro.setCodigosProduto(codigosProduto);
 		filtro.setCodigoCota(cotaManoel.getNumeroCota());
 		
 		Long count = movimentoEstoqueCotaRepository.countObterDadosAbastecimento(filtro);
