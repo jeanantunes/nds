@@ -17,4 +17,7 @@ public interface GeracaoNotaEnvioService {
 	public abstract NotaEnvio gerar(Long idCota, Long idRota, String chaveAcesso,
 			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao, Date dataEmissao, Intervalo<Date> periodo, List<Long> listaIdFornecedores);
 
+	public abstract NotaEnvio visualizar(Long idCota, Long idRota, String chaveAcesso,
+			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao, Date dataEmissao, Intervalo<Date> periodo, List<Long> listaIdFornecedores);
+
 }
