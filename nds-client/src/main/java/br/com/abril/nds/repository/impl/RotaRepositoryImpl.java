@@ -127,8 +127,7 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	public List<Rota> obterRotasPorCota(Integer numeroCota){
 		
 		Criteria criteria =  getSession().createCriteria(Rota.class, "rota");
-		criteria.createAlias("rota.roteirizacao","roteirizacao");
-		criteria.createAlias("roteirizacao.pdv","pdv");
+		criteria.createAlias("rota.pdvs","pdv");
 		criteria.createAlias("pdv.cota","cota");
 		
 		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));

@@ -449,6 +449,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		save(box2);
 		
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		save(cotaManoel);
+		
 		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
 		save(pdv);
 		
@@ -470,9 +473,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		rota1.setRoteiro(roteiro1);
 		rota2.setRoteiro(roteiro2);
 		save(rota1,rota2);
-		
-		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
-		save(cotaManoel);
 		
 		Cota cotaPedro = Fixture.cota(124, pedro, SituacaoCadastro.ATIVO, box2);
 		save(cotaPedro);
@@ -965,7 +965,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
 
-		Assert.assertTrue(listaMovimento.size() == 2);
+		Assert.assertTrue(listaMovimento.size() == 1);
 	}	
 	
 	@Test
