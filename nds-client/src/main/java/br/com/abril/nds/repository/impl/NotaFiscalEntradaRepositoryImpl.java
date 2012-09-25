@@ -65,8 +65,12 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ")
-		   .append(" join notaFiscal.fornecedor ")
-		   .append(" join notaFiscal.tipoNotaFiscal ");
+		   .append(" join notaFiscal.tipoNotaFiscal ")
+		   .append(" join notaFiscal.itens i ")
+		   .append(" join i.produtoEdicao pe")
+		   .append(" join pe.produto p")
+		   .append(" join p.fornecedores f");
+		
 		
 		String condicoes = "";
 		
@@ -100,7 +104,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 
 			condicoes += "".equals(condicoes) ? " where " : " and ";
 			
-			condicoes += " notaFiscal.fornecedor.id = :idFornecedor ";
+			condicoes += " f.id = :idFornecedor ";
 		}
 
 		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null) {
@@ -139,7 +143,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						break;
 					case FORNECEDOR:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " notaFiscal.fornecedor.juridica.razaoSocial ";
+						orderByColumn += " f.juridica.razaoSocial ";
 						break;
 					case NOTA_RECEBIDA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
