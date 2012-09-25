@@ -705,7 +705,8 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			StatusPDV.ATIVO, 
 			caracteristicas, 
 			licencaMunicipal, 
-			segmentacao
+			segmentacao,
+			1
 		);
 		
 		pdv.setEnderecos(getEnderecosPDV());

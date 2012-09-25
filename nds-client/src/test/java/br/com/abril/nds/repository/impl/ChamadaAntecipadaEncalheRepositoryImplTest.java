@@ -110,7 +110,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel);
+		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel,1);
 		save(pdv);
 		
 		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(box1);
@@ -129,7 +129,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		Cota cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
 		save(cotaJose);
 		
-		pdv = Fixture.criarPDVPrincipal("Jose", cotaJose);
+		pdv = Fixture.criarPDVPrincipal("Jose", cotaJose,2);
 		save(pdv);
 		
 		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao1,box1,TipoRoteiro.NORMAL);
@@ -149,7 +149,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 
 		save(tipoProdutoRevista);
 		
-		pdv = Fixture.criarPDVPrincipal("Maria", cotaMaria);
+		pdv = Fixture.criarPDVPrincipal("Maria", cotaMaria,3);
 		save(pdv);
 		
 	

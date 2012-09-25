@@ -452,13 +452,13 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
 		save(cotaManoel);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel,1 );
 		save(pdv);
 		
 		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
 		save(roteirizacao);
 		
-		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel,2 );
 		save(pdv2);
 		
 		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
