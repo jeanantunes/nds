@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0108.processor;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	}
 
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -154,7 +155,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	}
 
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

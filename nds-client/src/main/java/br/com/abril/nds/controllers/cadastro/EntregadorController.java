@@ -641,7 +641,7 @@ public class EntregadorController {
 			if (rota != null){
 				
 				dados[1] = rota.getRoteiro() != null ? rota.getRoteiro().getDescricaoRoteiro() : "";
-				dados[2] = rota.getRoteiro() != null && rota.getRoteiro().getBox() != null ? rota.getRoteiro().getBox().getNome() : "";
+				dados[2] = rota.getRoteiro() != null && rota.getRoteiro().getRoteirizacao().getBox() != null ? rota.getRoteiro().getRoteirizacao().getBox().getNome() : "";
 				dados[3] = entregador.getRota() != null ? entregador.getRota().getDescricaoRota() : "";
 			} else {
 				

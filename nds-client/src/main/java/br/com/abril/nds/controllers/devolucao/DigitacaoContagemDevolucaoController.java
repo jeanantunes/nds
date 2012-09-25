@@ -85,7 +85,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_DEVOLUCAO_DIGICACAO_CONTAGEM_DEVOLUCAO)
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO)
 	public void index(){
 		
 		/**

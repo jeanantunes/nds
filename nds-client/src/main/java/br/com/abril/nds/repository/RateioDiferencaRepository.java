@@ -16,5 +16,5 @@ public interface RateioDiferencaRepository extends Repository<RateioDiferenca, L
 	
 	DetalheDiferencaCotaDTO obterDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro);
 	
-	void removerRateiosNaoAssociadosDiferenca( Long idDiferenca, Set<Long> idRateios);
+	void removerRateiosNaoAssociadosDiferenca( Long idDiferenca, List<Long> idRateios);
 }

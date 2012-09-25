@@ -71,7 +71,7 @@
 						<div id="btnsControleDiferenca">
 							<span class="bt_novos">
 								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();"
-								   title="Confirmar">
+								   title="Confirmar Lançamento de Faltas e Sobras">
 									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
 								</a>
 							</span>

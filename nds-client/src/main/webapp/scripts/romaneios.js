@@ -2,7 +2,7 @@ var romaneiosController = $.extend(true, {
 	
 	init : function () {
 		$(".romaneiosGrid", romaneiosController.workspace).flexigrid({
-			preProcess: executarPreProcessamento,
+			preProcess: romaneiosController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
