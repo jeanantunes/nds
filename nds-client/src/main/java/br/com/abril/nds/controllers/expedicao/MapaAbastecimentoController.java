@@ -131,14 +131,26 @@ public class MapaAbastecimentoController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		tratarFiltro(filtro);
-		
-		List<AbastecimentoDTO> lista = mapaAbastecimentoService.obterDadosAbastecimento(filtro);
-		
-		Long totalRegistros = mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
 
-		result.use(FlexiGridJson.class).from(lista).page(1).total(totalRegistros.intValue()).serialize();
+		switch(filtro.getTipoConsulta()) {
+
+		case BOX:
+			this.popularGridPorBox(filtro);
+			break;
+		case COTA:
+			//TODO
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não implementado");
+		case PRODUTO:
+			//TODO
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não implementado");
+		case ROTA:
+			//TODO
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não implementado");
+		default:
+			break;
+		}
 	}
-		
+
 	@Post
 	public void pesquisarDetalhes(Long idBox, String data, String sortname, String sortorder) {
 				
@@ -299,5 +311,14 @@ public class MapaAbastecimentoController {
 	
 	public void impressaoFalha(String mensagemErro){
 		result.include(mensagemErro);					
+	}
+	
+	private void popularGridPorBox(FiltroMapaAbastecimentoDTO filtro) {
+		
+		List<AbastecimentoDTO> lista = mapaAbastecimentoService.obterDadosAbastecimento(filtro);
+		
+		Long totalRegistros = mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(1).total(totalRegistros.intValue()).serialize();
 	}
 }
