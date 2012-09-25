@@ -219,6 +219,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		cotaExemplares.setExemplares(quantidade.longValue());
 
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public NotaEnvio visualizar(Long idCota, Long idRota, String chaveAcesso,
+			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao,
+			Date dataEmissao, Intervalo<Date> periodo,
+			List<Long> listaIdFornecedores){
+		return gerar(idCota, idRota, chaveAcesso, codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao, periodo, listaIdFornecedores);
+	}
 
 	@Override
 	@Transactional
@@ -313,7 +322,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	private IdentificacaoDestinatario carregaDestinatario(Cota cota, Long idRota) {
 		IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
-
+		destinatario.setNumeroCota(cota.getNumeroCota());
 		destinatario.setDocumento(cota.getPessoa().getDocumento());
 
 		EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota
@@ -355,17 +364,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setNomeBox(cota.getBox().getNome());
 
-		Rota rota = rotaRepository.buscarPorId(idRota);
-
-		if (rota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Rota n�o encontrada!");
+		if (idRota != null) {
+			Rota rota = rotaRepository.buscarPorId(idRota);
+			if (rota == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Rota n�o encontrada!");
+			}
+			destinatario.setRotaReferencia(rota);
+			destinatario.setCodigoRota(rota.getCodigoRota());
+			destinatario.setDescricaoRota(rota.getDescricaoRota());
 		}
-		destinatario.setRotaReferencia(rota);
-
-		destinatario.setCodigoRota(rota.getCodigoRota());
-		destinatario.setCodigoRota(rota.getDescricaoRota());
-
 		return destinatario;
 	}
 

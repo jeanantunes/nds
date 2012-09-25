@@ -2,6 +2,9 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
+import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 
 public class FiltroConsultaVisaoEstoque implements Serializable {
 
@@ -11,6 +14,8 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	private Long idFornecedor;
 	private String tipoEstoque;
 	private String tipoEstoqueSelecionado;
+	
+	List<VisaoEstoqueTransferenciaDTO> listaTransferencia;
 
 
 	public Date getDataMovimentacao() {
@@ -36,6 +41,12 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	}
 	public void setTipoEstoqueSelecionado(String tipoEstoqueSelecionado) {
 		this.tipoEstoqueSelecionado = tipoEstoqueSelecionado;
+	}
+	public List<VisaoEstoqueTransferenciaDTO> getListaTransferencia() {
+		return listaTransferencia;
+	}
+	public void setListaTransferencia(List<VisaoEstoqueTransferenciaDTO> listaTransferencia) {
+		this.listaTransferencia = listaTransferencia;
 	}
 	
 	

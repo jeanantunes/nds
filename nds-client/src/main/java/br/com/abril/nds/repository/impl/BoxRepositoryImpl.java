@@ -189,25 +189,44 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * @see br.com.abril.nds.repository.BoxRepository#obtemCotaRotaRoteiro(long)
 	 */
 	@Override
-	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id){
+	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long idBox){
 		
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select roteirizacao.pdv.cota.numeroCota as numeroCota,");
-		hql.append("case roteirizacao.pdv.cota.pessoa.class when 'F' then roteirizacao.pdv.cota.pessoa.nome when 'J' then roteirizacao.pdv.cota.pessoa.razaoSocial end  as nomeCota,");
-		hql.append("rota.codigoRota ||' - '|| rota.descricaoRota as rota,");
-		hql.append("roteiro.descricaoRoteiro as roteiro");
+		hql.append(" select ");
+				
+		hql.append(" cota.numeroCota as numeroCota,");
 		
-		hql.append(" from Roteiro roteiro  join roteiro.rotas rota join rota.roteirizacao roteirizacao ");
+		hql.append(" case pessoa.class ");
 		
-		hql.append(" where roteiro.box.id = :id");
+		hql.append("       when 'F' then pessoa.nome ");
+				
+		hql.append("       when 'J' then pessoa.razaoSocial end  as nomeCota,");
+		
+		hql.append(" rota.codigoRota ||' - '|| rota.descricaoRota as rota,");
+		
+		hql.append(" roteiro.descricaoRoteiro as roteiro ");
+
+		hql.append(" from Roteiro roteiro  " );
+				
+		hql.append(" join roteiro.rotas rota " );
+
+		hql.append(" join roteiro.roteirizacao roteirizacao ");
+		
+		hql.append(" join roteirizacao.box box ");
+		
+		hql.append(" join box.cotas cota ");
+		
+		hql.append(" join cota.pessoa pessoa ");
+
+		hql.append(" where box.id = :id");
 		
 		hql.append(" order by roteiro asc, rota asc, numeroCota asc");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		query.setLong("id", id);
+		query.setLong("id", idBox);
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				CotaRotaRoteiroDTO.class));
 		
@@ -275,21 +294,26 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
         
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select distinct c from Cota c");
+		hql.append(" select distinct cota from Cota cota");
 		
 		if(idRoteiro!=null && idRoteiro>0){
-		    hql.append(", Roteiro rr");
+		    hql.append(", Roteiro roteiro ");
 		    if (idRota!=null && idRota>0){
-				hql.append(", Roteirizacao r");
+				hql.append(", Roteirizacao roteirizacao, Rota rota ");
 			}
 		}  
 		
-		hql.append(" where c.box.id = :idBox");
+		hql.append(" where cota.box.id = :idBox");
 		
 		if(idRoteiro!=null && idRoteiro>0){
-		    hql.append(" and rr.box = c.box and rr.id = :idRoteiro ");
+		    hql.append(" and roteiro.box = cota.box ");
+		    hql.append(" and roteiro.id = :idRoteiro ");
 		    if (idRota!=null && idRota>0){
-		    	hql.append(" and r.rota.roteiro = rr and r.rota.id = :idRota and r.pdv.cota = c");
+		    	
+		    	hql.append(" and roteiro.roteirizacao = roteirizacao ");
+		    	hql.append(" and rota.roteiro = roteiro ");
+		    	hql.append(" and rota.id = :idRota ");
+		    	
 			}
 		}
 		

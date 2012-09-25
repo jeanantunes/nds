@@ -565,25 +565,25 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
     line-height: 18px;
 }
 
-
 .forncedoresSel, .editorSel, .produtosSel{
 	border:1px solid #ccc; 
 	padding:5px; 
-	display:table-cell;
+	display:block;
+	float:left;
 }
 
-.forncedoresSel label, .editorSel label{
+.forncedoresSel label, .editorSel label, .produtosSel label{
 	line-height:22px; 
 	float:left; 
 	margin-right:10px;
 }
 
-.forncedoresSel img, .editorSel img{
+.forncedoresSel img, .editorSel img, .produtosSel img{
 	margin-right:5px; 
 	padding-top:5px;
 }
 
-.forncedoresSel:hover, .editorSel:hover{
+.forncedoresSel:hover, .editorSel:hover, .produtosSel:hover{
 	border:1px solid #06C;
 }
 

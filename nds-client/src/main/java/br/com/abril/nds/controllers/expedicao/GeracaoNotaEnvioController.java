@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
@@ -287,6 +288,15 @@ public class GeracaoNotaEnvioController {
 		usuario.setNome("Jornaleiro da Silva");
 
 		return usuario;
+	}
+	
+	
+	public void visualizarNE(Long idCota, Date dataEmissao, Intervalo<Date> periodo, List<Long> listaIdFornecedores){
+		
+		NotaEnvio notaEnvio = geracaoNotaEnvioService.visualizar(idCota, null, null, null, null, dataEmissao, periodo, listaIdFornecedores);
+		
+		result.include("notaEnvio",notaEnvio);
+		
 	}
 	
 }
