@@ -571,10 +571,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		diferenca.setResponsavel(usuarioLogado);
 		diferenca.setProdutoEdicao(produtoEdicao);
-		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
-		diferenca.setTipoEstoque(TipoEstoque.LANCAMENTO);
-		
 		
 		if( calculoQdeDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
 		
@@ -806,7 +802,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(indDiferenca) {
 			
 			Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
-			diferencaEstoqueService.lancarDiferenca(diferenca);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
 			ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 			itemRecebimento.setDiferenca(diferenca);
 			itemRecebimentoFisicoRepository.alterar(itemRecebimento);
