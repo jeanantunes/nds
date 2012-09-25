@@ -215,6 +215,8 @@ var recebimentoFisicoController = $.extend(true, {
 			recebimentoFisicoController.pesquisarItemNotaGrid();
 
 		} else {
+
+			exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
 			
 			$(".grids", this.workspace).hide();
 			
