@@ -17,16 +17,7 @@ public interface GeracaoNotaEnvioService {
 	public abstract NotaEnvio gerar(Long idCota, Long idRota, String chaveAcesso,
 			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao, Date dataEmissao, Intervalo<Date> periodo, List<Long> listaIdFornecedores);
 
-	/**
-	 * Verifica se existem cotas suspensas ou ausentes 
-	 * para geração de nota de envio 
-	 * 
-	 * @return
-	 */
-	public abstract List<ConsultaNotaEnvioDTO> oterCotasSuspensasAusentes(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota, Intervalo<Date> intervaloDateMovimento,
-			List<Long> listIdFornecedor, Long idRoteiro, Long idRota, Date dataEmissao);
+	public abstract NotaEnvio visualizar(Long idCota, Long idRota, String chaveAcesso,
+			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao, Date dataEmissao, Intervalo<Date> periodo, List<Long> listaIdFornecedores);
 
-	
-	
-	
 }
