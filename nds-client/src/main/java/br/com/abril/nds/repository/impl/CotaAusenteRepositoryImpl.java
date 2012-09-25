@@ -1,9 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,6 +133,23 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		
 	}
 	
+	
+	public CotaAusente obterCotaAusentePor(Long idCota, Date data) {
+		
+		Criteria criteria = this.getSession().createCriteria(CotaAusente.class);
+		
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		criteria.add(Restrictions.eq("data", data));
+		
+		CotaAusente cotaAusente = null;
+		
+		try {
+		  	cotaAusente = (CotaAusente) criteria.uniqueResult();
+		} catch(HibernateException e) {
+			e.printStackTrace();
+		}
+		return  cotaAusente;
+	}
 	
 	@Override
 	@Transactional
