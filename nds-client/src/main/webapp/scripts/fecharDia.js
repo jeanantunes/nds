@@ -169,6 +169,7 @@ var fecharDiaController =  $.extend(true, {
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
 				function(result){
 					fecharDiaController.validacaoBaixaBancaria(result);
+					fecharDiaController.validacaoRecebimentoFisico(result);
 				});
 	},
 	
@@ -182,6 +183,18 @@ var fecharDiaController =  $.extend(true, {
 		}
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeBaixaBancaria+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 		$('#tabela-validacao').append(baixaBancaria + imagem);
-	}
+	},
+	
+	validacaoRecebimentoFisico : function(result){
+		var recebimentoFisico = "<tr class='class_linha_2'><td>Recebimento Físico:</td>";					
+		var iconeRecebimentoFisico = null;
+		if(result.recebimentoFisico){
+			iconeRecebimentoFisico = 'ico_check.gif';
+		}else{			
+			iconeRecebimentoFisico = 'ico_bloquear.gif';
+		}
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao').append(recebimentoFisico + imagem);
+	}	
 	
 }, BaseController);

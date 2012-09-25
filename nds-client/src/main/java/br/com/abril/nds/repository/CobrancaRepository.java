@@ -68,6 +68,5 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	List<Cobranca> obterCobrancasPorIDS(List<Long> listaCobrancas);
 
 	BigDecimal obterValorCobrancasQuitadasPorData(Date data);
-
-	boolean existeCobrancaParaFecharDia(Date diaDeOperaoMenosUm);
+	
 }

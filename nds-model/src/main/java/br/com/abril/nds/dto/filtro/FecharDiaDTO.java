@@ -12,6 +12,10 @@ public class FecharDiaDTO implements Serializable {
 	private Boolean baixaBancaria;
 	
 	private Boolean geracaoDeCobranca;
+	
+	private Boolean recebimentoFisico;
+	
+	
 
 	public Boolean getBaixaBancaria() {
 		return baixaBancaria;
@@ -27,6 +31,14 @@ public class FecharDiaDTO implements Serializable {
 
 	public void setGeracaoDeCobranca(Boolean geracaoDeCobranca) {
 		this.geracaoDeCobranca = geracaoDeCobranca;
+	}
+
+	public Boolean getRecebimentoFisico() {
+		return recebimentoFisico;
+	}
+
+	public void setRecebimentoFisico(Boolean recebimentoFisico) {
+		this.recebimentoFisico = recebimentoFisico;
 	}
 	
 }

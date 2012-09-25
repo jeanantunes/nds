@@ -16,7 +16,6 @@ import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
-import br.com.abril.nds.dto.filtro.FecharDiaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
@@ -615,11 +614,4 @@ public class CobrancaServiceImpl implements CobrancaService {
 		return res;
 	}
 
-	@Override
-	@Transactional
-	public boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor) {
-		Date diaDeOperaoMenosUm = DateUtil.subtrairDias(dataOperacaoDistribuidor, 1);
-		return this.cobrancaRepository.existeCobrancaParaFecharDia(diaDeOperaoMenosUm);
-	}
-	
 }
