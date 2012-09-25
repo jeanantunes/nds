@@ -79,9 +79,22 @@ var recebimentoFisicoController = $.extend(true, {
 
 		$("#produto", this.workspace).autocomplete({source: ""});
 		
+		recebimentoFisicoController.ocultarBtns();
+		
 		this.formatItemNota();
 
 		this.inicializarGridPopUpNota();
+		
+	},
+	
+	ocultarBtns : function() {
+
+		$('#botoesNormais', this.workspace).hide();
+		$('#botaoNovoProdutoOpaco', this.workspace).hide();
+		$('#botaoNovoProduto', this.workspace).hide();
+		$('#botaoAdicionarOpaco', this.workspace).hide();
+		$('#botaoAdicionar', this.workspace).hide();
+		$('#botoesOpacos', this.workspace).hide();
 		
 	},
 	
@@ -204,6 +217,8 @@ var recebimentoFisicoController = $.extend(true, {
 		} else {
 			
 			$(".grids", this.workspace).hide();
+			
+			recebimentoFisicoController.ocultarBtns();
 			
 			recebimentoFisicoController.popup_adicionar();
 		
@@ -706,6 +721,8 @@ var recebimentoFisicoController = $.extend(true, {
 				
 	    		$(".grids", this.workspace).hide();
 	    		
+	    		recebimentoFisicoController.ocultarBtns();
+	    		
 	    		recebimentoFisicoController.limparCamposPesquisa();
 	        	
 	    		recebimentoFisicoController.limparCamposNovoItem();
@@ -713,6 +730,8 @@ var recebimentoFisicoController = $.extend(true, {
 	    		recebimentoFisicoController.limparCampos();
 	        	
 	        	exibirMensagem(result.tipoMensagem, result.listaMensagens);
+	        	
+	        	
 	        	
 			} 
 	    	
@@ -1390,7 +1409,11 @@ var recebimentoFisicoController = $.extend(true, {
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
 			);
+			
 			$(".grids", this.workspace).hide();
+			
+			recebimentoFisicoController.ocultarBtns();
+			
 			return resultado;
 		}
 		
