@@ -142,9 +142,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	@Transactional
-	public Diferenca lancarDiferenca(Diferenca diferenca) {
+	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca) {
 		
-		this.processarMovimentoEstoque(diferenca, diferenca.getResponsavel().getId());
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
+		diferenca.setTipoEstoque(TipoEstoque.LANCAMENTO);
+		diferenca.setAutomatica(true);
+		diferenca.setDataMovimento(distribuidor.getDataOperacao());
 		
 		this.diferencaEstoqueRepository.adicionar(diferenca);
 		
