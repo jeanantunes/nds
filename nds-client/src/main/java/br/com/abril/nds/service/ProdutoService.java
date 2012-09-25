@@ -86,4 +86,11 @@ public interface ProdutoService {
 	 * @return lista de produtos
 	 */
 	List<Produto> obterProdutosPelosIds(List<Long> idsProdutos);
+	
+	/**
+	 * Obtém todos os produtos.
+	 * 
+	 * @return lista de produtos
+	 */
+	List<Produto> obterProdutos();
 }
