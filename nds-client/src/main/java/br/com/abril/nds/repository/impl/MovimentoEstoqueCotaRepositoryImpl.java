@@ -920,11 +920,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("	join movimentoCota.cota cota ");
 		hql.append("	join movimentoCota.produtoEdicao produtoEdicao ");
 		hql.append("	join produtoEdicao.produto produto ");		
-		
-		hql.append("	join roterizacao.rota rota ");
-		hql.append("	join roterizacao.pdv pdv ");
-		hql.append("	join rota.roteiro roteiro ");
-		hql.append("	join roteiro.box box ");
+
+		hql.append("    join cota.pdvs pdv ");
+		hql.append("    join pdv.rotas rota  ");
+		hql.append("    join rota.roteiro roteiro ");
+		hql.append("    join roteiro.roteirizacao roteirizacao ");
+		hql.append("    join cota.box box ");
 		
 		if(filtro.getUseSM() != null && filtro.getUseSM() == true) {
 			hql.append("	join movimentoCota.estudoCota estudoCota ");
@@ -934,7 +935,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" where movimentoCota.tipoMovimento.grupoMovimentoEstoque='RECEBIMENTO_REPARTE' ");
 
-		hql.append(" and cota.id=pdv.cota.id ");
 		
 		if(filtro.getDataDate() != null) {
 			hql.append(" and movimentoCota.data=:data ");
