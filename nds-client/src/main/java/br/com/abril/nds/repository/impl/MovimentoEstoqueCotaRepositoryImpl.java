@@ -953,6 +953,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			param.put("rota", filtro.getRota());
 		}
 		
+
+		if(filtro.getRoteiro() != null) {
+			
+			hql.append(" and roteiro.id =:roteiro ");
+			param.put("roteiro", filtro.getRoteiro());
+		}
+		
 		if(filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().trim().isEmpty()) {
 			
 			hql.append(" and produto.codigo =:codigoProduto ");

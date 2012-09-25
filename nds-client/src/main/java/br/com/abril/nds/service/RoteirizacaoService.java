@@ -151,5 +151,13 @@ public interface RoteirizacaoService {
      * @return List<Rota>
      */
 	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro);
+
+	/**
+	 * Obtém lista de Roteiros
+	 * 
+	 * @param numeroCota
+	 * @return
+	 */
+	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota);
 }
 	

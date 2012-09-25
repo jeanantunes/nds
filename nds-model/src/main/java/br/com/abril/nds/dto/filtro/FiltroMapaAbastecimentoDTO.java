@@ -14,7 +14,8 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Date dataDate;
 	private TipoConsulta tipoConsulta;
 	private Long box;
-	private Long Rota;
+	private Long rota;
+	private Long roteiro;
 	private String codigoProduto;
 	private String nomeProduto;
 	private Integer codigoCota;
@@ -136,14 +137,14 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	 * @return the rota
 	 */
 	public Long getRota() {
-		return Rota;
+		return rota;
 	}
 
 	/**
 	 * @param rota the rota to set
 	 */
 	public void setRota(Long rota) {
-		Rota = rota;
+		this.rota = rota;
 	}
 
 	/**
@@ -262,6 +263,20 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 
 	public void setUseSM(Boolean useSM) {
 		this.useSM = useSM;
+	}
+
+	/**
+	 * @return the roteiro
+	 */
+	public Long getRoteiro() {
+		return roteiro;
+	}
+
+	/**
+	 * @param roteiro the roteiro to set
+	 */
+	public void setRoteiro(Long roteiro) {
+		this.roteiro = roteiro;
 	}
 	
 	

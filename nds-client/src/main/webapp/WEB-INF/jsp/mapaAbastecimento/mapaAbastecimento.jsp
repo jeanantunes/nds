@@ -97,10 +97,10 @@
               <td>Roteiro:</td>
               <td>
 			  
-			  
-			  <select name="select4" id="select4" style="width:140px;">
-              </select>
-			  
+<select id="roteiro" disabled="disabled" name="select" style="width:140px;">
+       <option selected="selected" value="">Selecione...</option>
+	        
+</select>	  			  
 			  
 			  </td>
               <td>Rota:</td>

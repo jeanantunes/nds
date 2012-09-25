@@ -23,14 +23,17 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -43,6 +46,8 @@ public class MapaAbastecimentoController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
 	
+	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO = "Não há matriz de lancamento confirmada para esta data.";
+	
 	@Autowired
 	private HttpSession session;
 	
@@ -51,6 +56,9 @@ public class MapaAbastecimentoController {
 	
 	@Autowired
 	private MapaAbastecimentoService mapaAbastecimentoService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 	
 	@Autowired
 	private BoxService boxService;
@@ -115,10 +123,38 @@ public class MapaAbastecimentoController {
 		return listaRotas;
 	}
 	
+	/**
+	 * Retorna uma lista de Rota no formato ItemDTO
+	 * @param rotas
+	 * @return 
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> carregarRoteiro(List<Roteiro> roteiros){
+		
+		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(Roteiro rota : roteiros){
+			
+			listaRoteiros.add(new ItemDTO<Long, String>(rota.getId(),rota.getId() + " " + rota.getDescricaoRoteiro()));
+		}
+		
+		return listaRoteiros;
+	}
+		
+	/**
+	 * Válida
+	 * 
+	 * @param dataLancamento
+	 */
+	private void validarExistenciaMatriz(Date dataLancamento) {
+		if(!lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO ));
+		}
+	}	
 	
 	@Post
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
-				
+		
 		if(filtro.getTipoConsulta() == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
 				
@@ -127,6 +163,8 @@ public class MapaAbastecimentoController {
 		
 		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
+		
+		validarExistenciaMatriz(filtro.getDataDate());
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
@@ -193,7 +231,7 @@ public class MapaAbastecimentoController {
 	@Post
 	public void buscarBoxRotaPorCota(Integer numeroCota) {
 				
-		Object[] combos = new Object[2];
+		Object[] combos = new Object[3];
 		
 		
 		
@@ -202,9 +240,11 @@ public class MapaAbastecimentoController {
 			boxes.add(boxService.obterBoxPorCota(numeroCota));
 			combos[0] = carregarBoxes(boxes);
 			combos[1] = carregarRota(roteirizacaoService.obterRotasPorCota(numeroCota));
+			combos[2] = carregarRoteiro(roteirizacaoService.obterRoteirosPorCota(numeroCota));
 		} else {
 			combos[0] = carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO));
 			combos[1] = carregarRota(roteirizacaoService.buscarRotas());
+			combos[2] = carregarRoteiro(roteirizacaoService.obterRoteirosPorCota(null));
 		}
 		
 		

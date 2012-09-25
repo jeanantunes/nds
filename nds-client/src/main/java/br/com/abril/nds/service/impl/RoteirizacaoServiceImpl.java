@@ -502,5 +502,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		listaRota = this.rotaRepository.buscarRotaPorRoteiro(idRoteiro, null, null);
 		return listaRota;
 	}
+
+	@Override
+	@Transactional
+	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota) {
+		
+		return roteiroRepository.obterRoteirosPorCota(numeroCota);
+	}
 	
 }

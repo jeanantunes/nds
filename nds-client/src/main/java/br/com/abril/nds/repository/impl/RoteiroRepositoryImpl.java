@@ -86,5 +86,22 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
 		criteria.addOrder(Order.asc("descricaoRoteiro"));
 		return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota) {
+		
+		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
+		
+		if(numeroCota != null) {
+			criteria.createAlias("roteiro.box", "box");
+			criteria.createAlias("box.cotas", "cotas");
+			criteria.add(Restrictions.eq("cotas.numeroCota", numeroCota));
+		}
+		
+		criteria.addOrder(Order.asc("roteiro.descricaoRoteiro"));
+		
+		return  criteria.list();
+	}
 	
 }

@@ -89,15 +89,22 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		
 		result[1].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
 		
+		result[2].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
+		
+		
 		var comboBox =  montarComboBox(result[0], false);
 		$('#box', _workspace).html(comboBox);
 		
 		var comboRota =  montarComboBox(result[1], false);
 		$('#rota', _workspace).html(comboRota);
-				
-		if(isCotaDefined)
-			$('#rota', _workspace).enable();
 		
+		var comboRoteiro =  montarComboBox(result[2], false);
+		$('#roteiro', _workspace).html(comboRoteiro);
+		
+		if(isCotaDefined) {
+			$('#rota', _workspace).enable();
+			$('#roteiro', _workspace).enable();
+		}
 	},
 	
 	this.carregarDetalhes = function(indice) {
@@ -111,24 +118,24 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			
 		case 'BOX':
 			T.atualizarBoxRota();
-			T.bloquearCampos('rota','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box');
 			break;
 		case 'ROTA':
 			T.atualizarBoxRota();
 			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('box','rota');
+			T.desbloquearCampos('box','rota','roteiro');
 			break;
 		case 'COTA':
-			T.bloquearCampos('box','rota','codigoProduto','nomeProduto','edicao','quebraPorCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','quebraPorCota');
 			T.desbloquearCampos('codigoCota','nomeCota');
 			break;
 		case 'PRODUTO':
-			T.bloquearCampos('box','rota','codigoCota','nomeCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota');
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao','quebraPorCota');
 			break;			
 		default:
-			T.bloquearCampos('box','rota','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('box','rota', 'roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			break;
 		}
 	},	
@@ -155,6 +162,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		data.push({name:'filtro.tipoConsulta',		value: T.get("tipoConsulta")});
 		data.push({name:'filtro.box',				value: T.get("box")});
 		data.push({name:'filtro.rota',				value: T.get("rota")});
+		data.push({name:'filtro.roteiro',				value: T.get("roteiro")});
 		data.push({name:'filtro.codigoProduto',	value: T.get("codigoProduto")});
 		data.push({name:'filtro.nomeProduto',		value: T.get("nomeProduto")});
 		data.push({name:'filtro.edicaoProduto',			value: T.get("edicao")});
