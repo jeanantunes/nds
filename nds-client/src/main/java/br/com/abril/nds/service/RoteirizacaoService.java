@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
@@ -49,6 +50,8 @@ public interface RoteirizacaoService {
 	
 	Roteirizacao buscarRoteirizacaoDeCota(Integer numeroCota);
 	
+	Roteirizacao buscarRoteirizacaoPorId(Long idRoteirizacao);
+	
 	List<Rota> buscarRotaPorRoteiro(String descRoteiro);
 	
 	Rota buscarRotaPorId(Long idRota);
@@ -57,11 +60,7 @@ public interface RoteirizacaoService {
 
 	List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome, MatchMode matchMode);
 	
-	List<CotaDisponivelRoteirizacaoDTO> buscarRoterizacaoPorRota(Long rotaId);
-	
 	List<CotaDisponivelRoteirizacaoDTO> buscarPvsPorCota(Integer numeroCota,  Long rotaId,  Long roteiroId );
-	
-	void gravaRoteirizacao(List<CotaDisponivelRoteirizacaoDTO> lista,  Long idRota);
 
 	/**
 	 * Obtem rotas por numero da cota
@@ -75,8 +74,6 @@ public interface RoteirizacaoService {
 	Integer buscarMaiorOrdemRoteiro();
 	
 	Integer buscarMaiorOrdemRota(Long idRoteiro);
-	
-	void transferirRoteirizacao(List<Long> roteirizacaoId,Rota rota);
 	
 	void excluirRoteirizacao(List<Long> roteirizacaoId);
 	
@@ -96,17 +93,29 @@ public interface RoteirizacaoService {
 	
 	List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
 	
-	void transferirRoteirizacaoComNovaRota(List<Long> roteirizacaoId,Rota rota);
-	
 	void atualizaOrdenacao(Roteirizacao roteirizacao);
-	
-	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
-	
-	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao);
 
 	Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 	
 	List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro);
+	
+	
+	
+	//NOVA ROTEIRIZAÇÃO
+	
+	/**
+	 * Obtém um Roteiro do box considerando a ordem
+	 * @param idBox
+	 * @return Roteiro
+	 */
+	Roteiro obterRoteiroDeBoxPorOrdem(Long idBox);
+	
+	/**
+	 * Obtém um Rota do Roteiro considerando a ordem
+	 * @param idRoteiro
+	 * @return Rota
+	 */
+	Rota obterRotaDeRoteiroPorOrdem(Long idRoteiro);
 	
 	/**
 	 * Obtém Boxes por nome
@@ -159,5 +168,12 @@ public interface RoteirizacaoService {
 	 * @return
 	 */
 	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota);
+	
+	/**
+	 * Obtem dados da roteirização
+	 * @param parametros
+	 * @return RoteirizacaoDTO
+	 */
+	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros);
 }
 	

@@ -557,7 +557,7 @@ var produtoEdicaoController =$.extend(true,  {
 								$("#produtoEdicaoController-descricaoBrinde").val(result.descricaoBrinde).attr("readonly", false);
 
 								if (result.origemInterface) {
-									$("#produtoEdicaoController-precoVenda").attr("readonly", false);	
+									$("#produtoEdicaoController-precoVenda").attr("readonly", true);	
 								} else {
 									$("#produtoEdicaoController-tabSegmentacao").hide();	
 									$("#produtoEdicaoController-codigoProdutoEdicao").attr("readonly", false);

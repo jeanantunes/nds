@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -30,6 +31,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -66,6 +68,9 @@ public class MapaAbastecimentoController {
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 	
+	@Autowired
+	private ProdutoService produtoService;
+	
 	public void mapaAbastecimento() {
 		
 	}
@@ -85,9 +90,27 @@ public class MapaAbastecimentoController {
 		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));
 		result.include("listaRotas",carregarRota(roteirizacaoService.buscarRotas()));
 		
+		result.include("listaProdutos", this.carregarProdutos());
+		
 		result.forwardTo(MapaAbastecimentoController.class).mapaAbastecimento();
 	}
 	
+	/**
+	 * Carrega a lista de Produtos.
+	 */
+	private List<ItemDTO<String, String>> carregarProdutos() {
+		
+		List<Produto> listaProdutos = produtoService.obterProdutos();
+		
+		List<ItemDTO<String, String>> listaProdutosCombo = new ArrayList<ItemDTO<String,String>>();
+				
+		for(Produto produto : listaProdutos) {
+			
+			listaProdutosCombo.add(new ItemDTO<String, String>(produto.getCodigo(), produto.getNome()));
+		}
+		
+		return listaProdutosCombo;			
+	}	
 
 	/**
 	 * Carrega a lista de Boxes
@@ -206,7 +229,7 @@ public class MapaAbastecimentoController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Cota' não foi preenchida.");
 				break;
 			case PRODUTO:
-				if(filtroAtual.getCodigoProduto()==null)
+				if(filtroAtual.getCodigosProduto()==null)
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Produto' não foi preenchido.");
 				break;
 			case ROTA:

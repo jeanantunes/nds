@@ -1,15 +1,17 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import br.com.abril.nds.model.cadastro.pdv.PDV;
 
 @Entity
 @Table(name = "ROTEIRIZACAO")
@@ -23,17 +25,13 @@ public class Roteirizacao {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "PDV_ID")
-	private PDV pdv;
-
-	@ManyToOne
-	@JoinColumn(name = "ROTA_ID")
-	private Rota rota;
+	@JoinColumn(name = "BOX_ID",nullable=true)
+	private Box box;
 	
-	@Column(name="ORDEM", nullable = false)
-	private Integer ordem;
+	@OneToMany
+	@JoinColumn( name="ROTEIRIZACAO_ID")
+	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
 	
-
 	public Long getId() {
 		return id;
 	}
@@ -41,34 +39,33 @@ public class Roteirizacao {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
-	/**
-	 * @return the pdv
-	 */
-	public PDV getPdv() {
-		return pdv;
-	}
 
 	/**
-	 * @param pdv the pdv to set
+	 * @return the box
 	 */
-	public void setPdv(PDV pdv) {
-		this.pdv = pdv;
+	public Box getBox() {
+		return box;
 	}
 
-	public Rota getRota() {
-		return rota;
+	/**
+	 * @param box the box to set
+	 */
+	public void setBox(Box box) {
+		this.box = box;
 	}
 
-	public void setRota(Rota rota) {
-		this.rota = rota;
+	/**
+	 * @return the roteiros
+	 */
+	public List<Roteiro> getRoteiros() {
+		return roteiros;
 	}
 
-	public Integer getOrdem() {
-		return ordem;
+	/**
+	 * @param roteiros the roteiros to set
+	 */
+	public void setRoteiros(List<Roteiro> roteiros) {
+		this.roteiros = roteiros;
 	}
 
-	public void setOrdem(Integer ordem) {
-		this.ordem = ordem;
-	}
 }

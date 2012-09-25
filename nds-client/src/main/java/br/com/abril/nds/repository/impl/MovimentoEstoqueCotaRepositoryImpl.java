@@ -882,6 +882,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select box.id as idBox, ");
@@ -890,7 +892,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		sum(movimentoCota.qtde) as totalReparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox ");
 			
-		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by box.id ");
 		
@@ -900,6 +902,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(AbastecimentoDTO.class));
@@ -914,17 +920,18 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 	}
 	
-	private void gerarFromWhereDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro, StringBuilder hql, HashMap<String, Object> param) {
+	private void gerarFromWhereDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro, StringBuilder hql, HashMap<String, Object> param, HashMap<String, List<String>> paramList) {
 		
 		hql.append(" from MovimentoEstoqueCota movimentoCota, Roteirizacao roterizacao ");
 		hql.append("	join movimentoCota.cota cota ");
 		hql.append("	join movimentoCota.produtoEdicao produtoEdicao ");
 		hql.append("	join produtoEdicao.produto produto ");		
-		
-		hql.append("	join roterizacao.rota rota ");
-		hql.append("	join roterizacao.pdv pdv ");
-		hql.append("	join rota.roteiro roteiro ");
-		hql.append("	join roteiro.box box ");
+
+		hql.append("    join cota.pdvs pdv ");
+		hql.append("    join pdv.rotas rota  ");
+		hql.append("    join rota.roteiro roteiro ");
+		hql.append("    join roteiro.roteirizacao roteirizacao ");
+		hql.append("    join cota.box box ");
 		
 		if(filtro.getUseSM() != null && filtro.getUseSM() == true) {
 			hql.append("	join movimentoCota.estudoCota estudoCota ");
@@ -934,7 +941,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" where movimentoCota.tipoMovimento.grupoMovimentoEstoque='RECEBIMENTO_REPARTE' ");
 
-		hql.append(" and cota.id=pdv.cota.id ");
 		
 		if(filtro.getDataDate() != null) {
 			hql.append(" and movimentoCota.data=:data ");
@@ -953,17 +959,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			param.put("rota", filtro.getRota());
 		}
 		
-
 		if(filtro.getRoteiro() != null) {
 			
 			hql.append(" and roteiro.id =:roteiro ");
 			param.put("roteiro", filtro.getRoteiro());
 		}
-		
 		if(filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().trim().isEmpty()) {
-			
-			hql.append(" and produto.codigo =:codigoProduto ");
-			param.put("codigoProduto", filtro.getCodigoProduto());
+			hql.append(" and produto.codigo in (:codigosProduto) ");
+			paramList.put("codigosProduto", filtro.getCodigosProduto());
 		}
 		
 		if(filtro.getEdicaoProduto() != null) {
@@ -1010,11 +1013,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select count(distinct box.id) ");
 			
-		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 				
 		Query query =  getSession().createQuery(hql.toString());
 				
@@ -1022,6 +1027,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			query.setParameter(key, param.get(key));
 		}
 	
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
+		}
+		
 		Long count = (Long) query.uniqueResult();
 		
 		return (count == 	null) ? 0 : count;
@@ -1034,6 +1043,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select produto.codigo as codigoProduto, ");
@@ -1045,7 +1056,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		filtro.setBox(idBox);
 						
-		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by produtoEdicao.id ");
 		
@@ -1055,6 +1066,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
@@ -1099,6 +1114,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select box.codigo as codigoBox, ");
@@ -1109,7 +1126,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
 		
 								
-		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by produtoEdicao.id, box.id ");
 		
@@ -1119,6 +1136,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
@@ -1132,6 +1153,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select box.codigo as codigoBox, ");
@@ -1143,7 +1166,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
 		
 								
-		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
 		
@@ -1153,6 +1176,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
@@ -1165,8 +1192,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoEdicao(
 			FiltroMapaAbastecimentoDTO filtro) {
 
-
 		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
 		
 		StringBuilder hql = new StringBuilder();
 				
@@ -1179,7 +1207,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
 		
 								
-		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by box.id, rota.codigoRota ");
 		
@@ -1189,6 +1217,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
@@ -1203,6 +1235,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
@@ -1213,7 +1247,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		filtro.setUseSM(true);
 		
-		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by produtoEdicao.id ");
 		
@@ -1223,6 +1257,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
@@ -1237,6 +1275,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select cota.numeroCota as codigoCota, ");
@@ -1247,7 +1287,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
 		
 								
-		gerarFromWhereDadosAbastecimento(filtro, hql, param);
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by cota.id ");
 		
@@ -1257,6 +1297,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));

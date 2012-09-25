@@ -132,12 +132,11 @@ public class GeracaoNotaEnvioController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		//FIXME: Obter cotas ausentes e suspensas
 		List<ConsultaNotaEnvioDTO> cotasAusentes =	
-				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
-						filtro.getIdFornecedores(), null, null, null, null, 
-						SituacaoCadastro.SUSPENSO, filtro.getIdRoteiro(), filtro.getIdRota());
-		
+				this.geracaoNotaEnvioService.oterCotasSuspensasAusentes(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
+						filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), filtro.getIdRoteiro(), 
+						filtro.getIdRota(), filtro.getDataEmissao());
+						
 		if (cotasAusentes != null && !cotasAusentes.isEmpty())
 			hasCotasAusentes = true;
 		
@@ -168,9 +167,9 @@ public class GeracaoNotaEnvioController {
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
 		List<ConsultaNotaEnvioDTO> cotasAusentes =	
-				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
-						filtro.getIdFornecedores(), null, null, null, null, 
-						SituacaoCadastro.SUSPENSO, filtro.getIdRoteiro(), filtro.getIdRota());
+				this.geracaoNotaEnvioService.oterCotasSuspensasAusentes(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
+						filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), filtro.getIdRoteiro(), 
+						filtro.getIdRota(), filtro.getDataEmissao());
 		
 		result.use(FlexiGridJson.class).from(cotasAusentes)
 				.page(filtro.getPaginacaoVO().getPaginaAtual())
@@ -194,7 +193,12 @@ public class GeracaoNotaEnvioController {
 	
 	@Post
 	public void gerarNotaEnvio() {
-		//TODO: gerar notas de envio
+		
+		//TODO: gerar notas de envio - Utilizar funcionalidade de impressão da EMS 231
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
+				"Notas Geradas com sucesso."),
+							Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	/**

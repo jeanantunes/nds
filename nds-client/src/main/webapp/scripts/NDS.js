@@ -705,8 +705,8 @@ function limparCache() {
 function redimensionarWorkspace() {
 	// Faz as abas do workspace ficarem por cima de tudo S2
 	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide)').css("overflow-y", "auto");	
-	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide)').innerHeight($("#divCorpo").innerHeight()-$(".header").innerHeight());
-
+	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide)').innerHeight($("body").innerHeight()-$(".header").innerHeight()-$(".ui-tabs-nav").innerHeight()-12);
+	
 	/*if ($('.areaBts').length != 0) {
 		$('.areaBts').addClass('navbar-fixed-top');
 	}*/

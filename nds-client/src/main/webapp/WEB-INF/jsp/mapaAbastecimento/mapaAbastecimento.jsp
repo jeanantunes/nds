@@ -37,6 +37,20 @@
 
 <body>
 	
+<form id="idEmissaoCEfornecedor">
+	<div id="dialog-pesq-produtos" title="Selecionar Produtos" style="display: none;">
+		<fieldset>
+			<legend>Selecione um ou mais Produtos</legend>
+			<select id="selectProdutos" name="selectProdutos"
+					size="1" multiple="multiple" style="width:440px; height:150px;" >
+					
+			    <c:forEach items="${listaProdutos}" var="produto">
+			    	<option value="${produto.key}_${produto.value}">${produto.value}</option>
+		      	</c:forEach>
+	      	</select>
+		</fieldset>
+	</div>
+</form>
 	
 <form id="form-detalhesAbastecimento">
 <div id="dialog-detalhesAbastecimento" title="Produtos do Box" style="display:none;">
@@ -122,19 +136,12 @@
 			  
 <!-- Código Produto -->              
 <input id="codigoProduto" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
-		 onchange="pesquisaProdutoMapaAbastecimento.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', null , false);" />
+	   onchange="MA.pesquisarPorCodigoProduto('#codigoProduto', '#nomeProduto', null , false);" />
 	
-			  
-                <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
-              <td width="81">Produto:</td>
+			  </td>
+              <td width="81">Produto:</td>              
               <td width="155">
-			  
-<!-- Nome Produto -->              
-<input id= "nomeProduto" disabled="disabled" type="text" class="nome_jornaleiro" style="width:150px;"
-		 onkeyup="pesquisaProdutoMapaAbastecimento.autoCompletarPorNomeProduto('#nomeProduto', false);"
-		 onblur="pesquisaProdutoMapaAbastecimento.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
-
-			  
+              	<a id="linkProdutos" href="javascript:;" onclick="MA.carregarProdutos();">Selecione Produto:</a>
 			  </td>
               <td width="43">Edição:</td>
               <td colspan="3">
@@ -148,7 +155,7 @@
             </tr>
             <tr>
               <td colspan="9">
-           
+				<div id="produtosSelecionados" class="produto" style="float:left; width:980px;"></div>
               </td>
             </tr>
             <tr>

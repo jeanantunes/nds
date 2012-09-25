@@ -2,8 +2,10 @@ package br.com.abril.nds.model.cadastro.pdv;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,6 +14,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,10 +28,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
-import br.com.abril.nds.model.cadastro.Roteirizacao;
+import br.com.abril.nds.model.cadastro.Rota;
 
 /**
  * Entidade que representa o PDV associado
@@ -188,9 +194,13 @@ public class PDV implements Serializable {
 	@OneToOne(mappedBy = "pdv",cascade=CascadeType.REMOVE)	  	
 	private GeradorFluxoPDV geradorFluxoPDV;
 	
-	@OneToMany
-	@JoinColumn( name="PDV_ID")
-	private Set<Roteirizacao> roteirizacao;
+
+	@ManyToMany
+	@JoinTable(name = "PDV_ROTA", joinColumns = {@JoinColumn(name = "PDV_ID")},
+	inverseJoinColumns = {@JoinColumn(name = "ROTA_ID")})
+	@NotFound(action=NotFoundAction.IGNORE)
+	private Set<Rota> rotas =  new HashSet<Rota>();
+	
 	
 	public Long getId() {
 		return id;
@@ -418,17 +428,17 @@ public class PDV implements Serializable {
 	}
 
 	/**
-	 * @return the roteirizacao
+	 * @return the rotas
 	 */
-	public Set<Roteirizacao> getRoteirizacao() {
-		return roteirizacao;
+	public Set<Rota> getRotas() {
+		return rotas;
 	}
 
 	/**
-	 * @param roteirizacao the roteirizacao to set
+	 * @param rotas the rotas to set
 	 */
-	public void setRoteirizacao(Set<Roteirizacao> roteirizacao) {
-		this.roteirizacao = roteirizacao;
+	public void setRotas(Set<Rota> rotas) {
+		this.rotas = rotas;
 	}
 
 	/**

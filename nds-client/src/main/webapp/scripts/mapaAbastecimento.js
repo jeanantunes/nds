@@ -5,6 +5,142 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	var T = this;
 	
 	this.mapas = [];
+	this.produtosSelecionados = [],
+	
+	//Pesquisa por código de produto
+	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
+		
+		var codigoProduto = $(idCodigo, _workspace).val();
+		
+		codigoProduto = $.trim(codigoProduto);
+		
+		$(idCodigo, _workspace).val(codigoProduto);
+		
+		if (codigoProduto && codigoProduto.length > 0) {
+			
+			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
+					   "codigoProduto=" + codigoProduto,
+					   function(result) {
+							
+							T.adicionarProduto(result.codigo, result.descricao);
+				
+							T.mostrarProdutosSelecionados();
+							
+							$(idCodigo, _workspace).val("");
+					   },
+					   function() {
+						   
+						   $(idCodigo, _workspace).val("");
+					   }
+			);
+		}
+	},
+	
+	this.carregarProdutos = function() {
+		
+		$("#selectProdutos", _workspace).val("");
+		
+		$("#dialog-pesq-produtos").dialog({
+			resizable: false,
+			height:300,
+			width:500,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					T.getProdutosSelecionados();
+					
+					T.mostrarProdutosSelecionados();
+
+					$( this ).dialog( "close" );
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-pesq-produtos", _workspace).parents("form")
+		});
+	},
+	
+	this.limparProdutosSelecionados = function() {
+		
+		T.produtosSelecionados = [];
+		
+		T.mostrarProdutosSelecionados();
+	},
+	
+	this.getProdutosSelecionados = function() {
+		
+		$.each( $('#selectProdutos', this.workspace).val(), function(index, row) {
+			
+			T.adicionarProduto(row.split('_')[0], row.split('_')[1]);
+		});
+	},
+	
+	this.adicionarProduto = function(id, nome) {
+		
+		if (!T.existeProdutoSelecionado(nome)) {
+		
+			T.produtosSelecionados.push({id: id, nome: nome});
+		}
+	},
+	
+	this.existeProdutoSelecionado = function(nome) {
+		
+		var existeProduto = false;
+		
+		$.each(T.produtosSelecionados, function(index, produto) {
+			
+			if (produto.nome == nome) {
+				
+				existeProduto = true;
+			}
+		});
+		
+		return existeProduto; 
+	},
+	
+	this.mostrarProdutosSelecionados = function() {
+		
+		var cellProdutos = '';
+				
+		$.each(T.produtosSelecionados, function(index, produto) {
+			
+			cellProdutos += '<div class="produtosSel">' +
+						    	'<label>'+ produto.nome +'</label>' +
+								'<a href="javascript:;" onclick="' + objName + '.removerProduto(' + index + ');">' +
+									'<img src="'+ contextPath +'/images/ico_excluir.gif" width="15" height="15" alt="Excluir" border="0" />' +
+								'</a>' +
+						    '</div>';
+		});
+		
+		$('#produtosSelecionados', this.workspace).html(cellProdutos);
+		
+	},
+	
+	this.removerProduto = function(index) {
+		T.produtosSelecionados.splice(index, 1);
+		T.mostrarProdutosSelecionados();
+	},
+	
+	this.bloquearLinkProdutos = function() {
+		
+		var linkProdutos = $("#linkProdutos");
+		
+		linkProdutos.attr("style", "opacity: 0.5;");
+		
+		var funcaoClick = linkProdutos.attr("onclick").replace("return;", "" );
+		
+		linkProdutos.attr("onclick", "return;" + funcaoClick);
+	},
+	
+	this.desbloquearLinkProdutos = function() {
+		
+		var linkProdutos = $("#linkProdutos");
+		
+		linkProdutos.attr("style", "");
+		linkProdutos.attr("onclick", linkProdutos.attr("onclick").replace("return;", "" ));
+	},
 	
 	this.pesquisar = function() {
 		
@@ -120,19 +256,26 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			T.atualizarBoxRota();
 			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box');
+			T.bloquearLinkProdutos();
+			T.limparProdutosSelecionados();
 			break;
 		case 'ROTA':
 			T.atualizarBoxRota();
 			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box','rota','roteiro');
+			T.bloquearLinkProdutos();
+			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':
 			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','quebraPorCota');
 			T.desbloquearCampos('codigoCota','nomeCota');
+			T.bloquearLinkProdutos();
+			T.limparProdutosSelecionados();
 			break;
 		case 'PRODUTO':
 			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota');
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao','quebraPorCota');
+			T.desbloquearLinkProdutos();
 			break;			
 		default:
 			T.bloquearCampos('box','rota', 'roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
@@ -163,7 +306,10 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		data.push({name:'filtro.box',				value: T.get("box")});
 		data.push({name:'filtro.rota',				value: T.get("rota")});
 		data.push({name:'filtro.roteiro',				value: T.get("roteiro")});
-		data.push({name:'filtro.codigoProduto',	value: T.get("codigoProduto")});
+		$.each(T.produtosSelecionados, function(index, row) {
+			data.push({name:'filtro.codigosProduto[' + index + ']',	value: row.id});
+		});
+		
 		data.push({name:'filtro.nomeProduto',		value: T.get("nomeProduto")});
 		data.push({name:'filtro.edicaoProduto',			value: T.get("edicao")});
 		data.push({name:'filtro.codigoCota',		value: T.get("codigoCota")});
@@ -227,4 +373,9 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		});
 
 	});
+	
+	T.bloquearLinkProdutos();
+	T.limparProdutosSelecionados();
 }
+
+//@ sourceURL=mapaAbastecimento.js
