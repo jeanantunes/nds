@@ -9,6 +9,8 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -35,7 +37,7 @@ public class FecharDiaController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
 	public void index(){
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		result.include("dataOperacao", distribuidor.getDataOperacao());
+		result.include("dataOperacao", DateUtil.formatarData(distribuidor.getDataOperacao(), Constantes.DATE_PATTERN_PT_BR));
 	}
 	
 	@Post
