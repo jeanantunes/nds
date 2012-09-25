@@ -2721,7 +2721,8 @@ public class Fixture {
 							   Boolean principal, StatusPDV status,
 							   CaracteristicasPDV caracteristicas,
 							   LicencaMunicipal licencaMunicipal, 
-							   SegmentacaoPDV segmentacao){
+							   SegmentacaoPDV segmentacao,
+							   Integer ordem){
 
 		PDV pdv = new PDV();
 		pdv.setNome(nome);
@@ -2734,6 +2735,8 @@ public class Fixture {
 		pdv.setLicencaMunicipal(licencaMunicipal);
 		
 		pdv.setSegmentacao(segmentacao);
+		
+		pdv.setOrdem(ordem);
 		
 		return pdv;
 	}
@@ -2988,13 +2991,14 @@ public class Fixture {
 		return roteiro;
 	}
 	
-	public static  PDV criarPDVPrincipal(String nome, Cota cota){
+	public static  PDV criarPDVPrincipal(String nome, Cota cota,Integer ordem){
 		
 		PDV pdv = new PDV();
 		pdv.setNome(nome);
 		pdv.setCota(cota);
 		pdv.setCaracteristicas(new CaracteristicasPDV());
 		pdv.getCaracteristicas().setPontoPrincipal(true);
+		pdv.setOrdem(ordem);
 		
 		return pdv;
 	}
