@@ -1477,7 +1477,6 @@ public class RecebimentoFisicoController {
 		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
 		
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
-		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setNumero(nota.getNumero());
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());

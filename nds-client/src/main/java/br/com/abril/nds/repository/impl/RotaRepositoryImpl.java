@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -100,23 +98,6 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		criteria.add(Restrictions.ilike("descricaoRota", rotaNome ,matchMode));
 		return criteria.list();
 	}
-
-	@Override
-	public List<Roteirizacao> buscarRoterizacaoPorRotaRoteiro(Long rotaId,
-			Long roteiroId) {
-		List<Roteirizacao> roteirizacao =  new ArrayList<Roteirizacao>();
-		Criteria criteria = getSession().createCriteria(Rota.class);
-		criteria.add(Restrictions.eq("roteiro.id", roteiroId));
-		criteria.add(Restrictions.eq("id", rotaId));
-		Rota rota = (Rota)criteria.uniqueResult();
-		if ( rota != null ){
-			roteirizacao = rota.getRoteirizacao();
-		}
-		
-		return roteirizacao;
-
-			
-	}	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -146,8 +127,7 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	public List<Rota> obterRotasPorCota(Integer numeroCota){
 		
 		Criteria criteria =  getSession().createCriteria(Rota.class, "rota");
-		criteria.createAlias("rota.roteirizacao","roteirizacao");
-		criteria.createAlias("roteirizacao.pdv","pdv");
+		criteria.createAlias("rota.pdvs","pdv");
 		criteria.createAlias("pdv.cota","cota");
 		
 		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));

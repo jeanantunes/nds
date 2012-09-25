@@ -34,13 +34,13 @@ public class Roteiro implements Serializable {
 	@Column(name="DESCRICAO_ROTEIRO")
 	private String descricaoRoteiro;
 	
+	@ManyToOne
+	@JoinColumn(name = "ROTEIRIZACAO_ID", nullable = false )
+	private Roteirizacao roteirizacao;
+	
 	@OneToMany
 	@JoinColumn( name="ROTEIRO_ID")
 	private List<Rota> rotas = new ArrayList<Rota>();
-	
-	@ManyToOne
-	@JoinColumn(name = "BOX_ID", nullable = true)
-	private Box box;
 	
 	@Column(name="ORDEM", nullable = false)
 	private Integer ordem;
@@ -49,7 +49,10 @@ public class Roteiro implements Serializable {
 	@Column(name = "TIPO_ROTEIRO", nullable = false)
 	private TipoRoteiro tipoRoteiro;
 	
-
+	@ManyToOne
+	@JoinColumn(name = "BOX_ID",nullable = false)
+	private Box box;
+	
 	public Integer getOrdem() {
 		return ordem;
 	}
@@ -73,6 +76,14 @@ public class Roteiro implements Serializable {
 	public void setDescricaoRoteiro(String descricaoRoteiro) {
 		this.descricaoRoteiro = descricaoRoteiro;
 	}
+	
+	public Roteirizacao getRoteirizacao() {
+		return roteirizacao;
+	}
+
+	public void setRoteirizacao(Roteirizacao roteirizacao) {
+		this.roteirizacao = roteirizacao;
+	}
 
 	public List<Rota> getRotas() {
 		return rotas;
@@ -81,14 +92,6 @@ public class Roteiro implements Serializable {
 	public void setRotas(List<Rota> rotas) {
 		this.rotas = rotas;
 	}
-	
-	public Box getBox() {
-		return box;
-	}
-
-	public void setBox(Box box) {
-		this.box = box;
-	}
 
 	public TipoRoteiro getTipoRoteiro() {
 		return tipoRoteiro;
@@ -96,6 +99,14 @@ public class Roteiro implements Serializable {
 
 	public void setTipoRoteiro(TipoRoteiro tipoRoteiro) {
 		this.tipoRoteiro = tipoRoteiro;
+	}
+
+	public Box getBox() {
+		return box;
+	}
+
+	public void setBox(Box box) {
+		this.box = box;
 	}
 
 }

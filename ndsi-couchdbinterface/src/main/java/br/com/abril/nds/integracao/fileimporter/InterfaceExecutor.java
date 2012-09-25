@@ -28,7 +28,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
+import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
+import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.integracao.persistence.dao.InterfaceExecucaoHibernateDAO;
 import br.com.abril.nds.integracao.persistence.dao.LogExecucaoArquivoHibernateDAO;
 import br.com.abril.nds.integracao.persistence.dao.LogExecucaoHibernateDAO;
@@ -334,7 +337,8 @@ public class InterfaceExecutor {
 		FileReader in = new FileReader(arquivo);
 		Scanner scanner = new Scanner(in);
 		int linhaArquivo = 0;
-
+		IntegracaoDocumentMaster<?> docM = null;
+		
 		while (scanner.hasNextLine()) {
 
 			String linha = scanner.nextLine();
@@ -350,15 +354,44 @@ public class InterfaceExecutor {
 //				throw new ValidacaoException(TAMANHO_LINHA);
 //			}
 			
-			IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
-			
-			doc.setTipoDocumento(interfaceEnum.name());
-			doc.setNomeArquivo(arquivo.getName());
-			doc.setLinhaArquivo(linhaArquivo);
-			doc.setDataHoraExtracao(dataInicio);
-			doc.setNomeUsuarioExtracao(nomeUsuario);
+			if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
+				IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
+				
+				doc.setTipoDocumento(interfaceEnum.name());
+				doc.setNomeArquivo(arquivo.getName());
+				doc.setLinhaArquivo(linhaArquivo);
+				doc.setDataHoraExtracao(dataInicio);
+				doc.setNomeUsuarioExtracao(nomeUsuario);
+	
+				couchDbClient.save(doc);
+			} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
 
-			couchDbClient.save(doc);
+				IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
+				
+				if (((IntegracaoDocumentMaster<?>) this.ffm.load(interfaceEnum.getClasseMaster(), linha)).sameObject(docM)) {
+					docM.addItem(docD);				
+				} else {
+					if (docM != null) {
+						couchDbClient.save(docM);							
+					}
+					
+					docM = (IntegracaoDocumentMaster<IntegracaoDocumentDetail>) this.ffm.load(interfaceEnum.getClasseMaster(), linha);
+					
+					docM.setTipoDocumento(interfaceEnum.name());
+					docM.setNomeArquivo(arquivo.getName());
+					docM.setLinhaArquivo(linhaArquivo);
+					docM.setDataHoraExtracao(dataInicio);
+					docM.setNomeUsuarioExtracao(nomeUsuario);
+					docM.addItem(docD);				
+		
+					
+				}
+			}
+			
+			
+		}
+		if (docM != null) {
+			couchDbClient.save(docM);							
 		}
 		
 		in.close();
