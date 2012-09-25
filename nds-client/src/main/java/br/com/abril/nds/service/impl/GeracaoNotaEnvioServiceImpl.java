@@ -33,8 +33,6 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.movimentacao.CotaAusente;
-import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
@@ -78,10 +76,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	@Autowired
 	private TelefoneCotaRepository telefoneCotaRepository;
-	
-	@Autowired
-	private CotaAusenteRepository cotaAusenteRepository;
-	
+
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
@@ -224,6 +219,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		cotaExemplares.setExemplares(quantidade.longValue());
 
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public NotaEnvio visualizar(Long idCota, Long idRota, String chaveAcesso,
+			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao,
+			Date dataEmissao, Intervalo<Date> periodo,
+			List<Long> listaIdFornecedores){
+		return gerar(idCota, idRota, chaveAcesso, codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao, periodo, listaIdFornecedores);
+	}
 
 	@Override
 	@Transactional
@@ -237,7 +241,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		if (cota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota
-					+ " não encontrada!");
+					+ " n�o encontrada!");
 		}
 		notaEnvio.setEmitente(carregarEmitente(distribuidor));
 		notaEnvio.setDestinatario(carregaDestinatario(cota, idRota));
@@ -291,7 +295,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		if (enderecoDistribuidor == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal do distribuidor não encontrada!");
+					"Endere�o principal do distribuidor n�o encontrada!");
 		}
 
 		try {
@@ -299,7 +303,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					.getEndereco()));
 		} catch (Exception exception) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Erro ao adicionar o endereço do distribuidor!");
+					"Erro ao adicionar o endere�o do distribuidor!");
 		}
 
 		TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository
@@ -318,7 +322,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	private IdentificacaoDestinatario carregaDestinatario(Cota cota, Long idRota) {
 		IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
-
+		destinatario.setNumeroCota(cota.getNumeroCota());
 		destinatario.setDocumento(cota.getPessoa().getDocumento());
 
 		EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota
@@ -334,7 +338,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			destinatario.setEndereco(cloneEndereco(enderecoCota.getEndereco()));
 		} catch (CloneNotSupportedException e) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Erro ao adicionar o endereço do Emitente!");
+					"Erro ao adicionar o endere�o do Emitente!");
 		}
 
 		if (cota.getPessoa() instanceof PessoaJuridica) {
@@ -360,17 +364,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setNomeBox(cota.getBox().getNome());
 
-		Rota rota = rotaRepository.buscarPorId(idRota);
-
-		if (rota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Rota n�o encontrada!");
+		if (idRota != null) {
+			Rota rota = rotaRepository.buscarPorId(idRota);
+			if (rota == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Rota n�o encontrada!");
+			}
+			destinatario.setRotaReferencia(rota);
+			destinatario.setCodigoRota(rota.getCodigoRota());
+			destinatario.setDescricaoRota(rota.getDescricaoRota());
 		}
-		destinatario.setRotaReferencia(rota);
-
-		destinatario.setCodigoRota(rota.getCodigoRota());
-		destinatario.setCodigoRota(rota.getDescricaoRota());
-
 		return destinatario;
 	}
 
@@ -394,36 +397,5 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		}
 		enderecoRepository.adicionar(novoEndereco);
 		return novoEndereco;
-	}
-
-	@Override
-	public List<ConsultaNotaEnvioDTO> oterCotasSuspensasAusentes(Intervalo<Integer> intervaloBox,
-			Intervalo<Integer> intervalorCota,
-			Intervalo<Date> intervaloDateMovimento,
-			List<Long> listIdFornecedor, Long idRoteiro, Long idRota, Date dataEmissao) {
-		
-		List<ConsultaNotaEnvioDTO> cotasNotaEnvio = this.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
-				null, null, null, null, null, idRoteiro, idRota);
-		
-		List<ConsultaNotaEnvioDTO> cotasSuspensasAusentes = new ArrayList<ConsultaNotaEnvioDTO>();
-				
-		for(ConsultaNotaEnvioDTO cotaNotaEnvio : cotasNotaEnvio) {
-			
-			Cota cota = this.cotaRepository.buscarPorId(cotaNotaEnvio.getIdCota());
-			
-			if (SituacaoCadastro.ATIVO.equals(cota.getSituacaoCadastro())) {
-				cotasSuspensasAusentes.add(cotaNotaEnvio);
-			
-			} else {
-				
-				CotaAusente cotaAusente = this.cotaAusenteRepository.obterCotaAusentePor(cotaNotaEnvio.getIdCota(), dataEmissao);
-				
-				if (cotaAusente != null) {
-					cotasSuspensasAusentes.add(cotaNotaEnvio);
-				}
-			}
-		}
-		
-		return cotasSuspensasAusentes;
 	}
 }
