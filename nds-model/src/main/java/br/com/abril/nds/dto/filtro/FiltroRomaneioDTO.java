@@ -8,10 +8,8 @@ import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-@Exportable
 public class FiltroRomaneioDTO implements Serializable {
 
 	private static final long serialVersionUID = -3783996689743491442L;
@@ -104,7 +102,6 @@ public class FiltroRomaneioDTO implements Serializable {
 		
 	}
 	
-	@Export(label = "Entrega / Box" , exhibitionOrder = 2, alignment = Alignment.LEFT)
 	public String getBox() {
 		
 		if(getIdBox() != null){
@@ -115,8 +112,7 @@ public class FiltroRomaneioDTO implements Serializable {
 			return "Todos";
 		}
 	}
-
-	@Export(label = "Rota" , exhibitionOrder = 3, alignment = Alignment.LEFT)
+	
 	public String getRota() {
 		
 		if(getIdRota() != null){
@@ -128,7 +124,6 @@ public class FiltroRomaneioDTO implements Serializable {
 		
 	}
 	
-	@Export(label = "Data Geração" , exhibitionOrder = 4, alignment = Alignment.LEFT)
 	public String getDataAtual(){
 		Date dataAtual = new Date();		
 		return DateUtil.formatarData(dataAtual, Constantes.DATE_PATTERN_PT_BR);
