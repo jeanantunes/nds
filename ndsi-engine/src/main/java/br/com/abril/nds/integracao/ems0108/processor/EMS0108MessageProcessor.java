@@ -6,13 +6,17 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -20,6 +24,13 @@ import br.com.abril.nds.repository.impl.AbstractRepository;
 public class EMS0108MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
 
+	
+	@Autowired
+	private NdsiLoggerFactory ndsiLoggerFactory;
+
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	private EMS0108MessageProcessor() {
 
 	}
@@ -36,53 +47,43 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	public void processMessage(Message message) {
 		EMS0108Input input = (EMS0108Input) message.getBody();
 		
-		
-		// TODO:Deverá procurar a publicacao
-		// se não existir loga
-		
-		
-		// Obter o produto
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT pe ");
-		sql.append("FROM   ProdutoEdicao pe ");
-		sql.append("	   JOIN FETCH pe.produto p ");
-		sql.append("WHERE ");
-		sql.append("	   pe.numeroEdicao = :numeroEdicao ");
-		sql.append("	   AND p.codigo    = :codigoProduto ");
-
-		Query query = getSession().createQuery(sql.toString());
-
-		query.setParameter("numeroEdicao", input.getEdicao());
-		query.setParameter("codigoProduto", input.getCodigoPublicacao()
-				.toString());
-
-		ProdutoEdicao produtoEdicao = null;
-		Produto produto = null;
-
-		int numeroDias;
-
-		produtoEdicao = ((ProdutoEdicao) query.uniqueResult());
-		if (null != produtoEdicao) {
-			produto = produtoEdicao.getProduto();
-			numeroDias = produtoEdicao.getPeb(); // REGRA CRIADA DA MENTE INSANA DO PROGRAMADOR (não esta na EMS) !!!!
+		// Verifica se existe Produto		
+		Produto produto = recuperaProduto(input.getCodigoPublicacao()); 
+		if (null == produto) {
+			ndsiLoggerFactory.getLogger().logWarning(
+					message,
+					EventoExecucaoEnum.HIERARQUIA,
+					String.format( "Produto %1$s não encontrado.", input.getCodigoPublicacao() )
+				);
+			return ;
 		} else {
-			// FIXME Não encontrou o produto. Realizar Log
-			// Passar para a próxima linha 
-			// ISSO TA ERRADO, deve-se INSERIR NA TABELA PRODUTO_EDICAO DE ACORDO COM A EMS!!!!
-			return;
+			// caso exista atualiza o peso do produto
+			produto.setPeso(input.getPesoProduto());
+		}
+		
+		
+		//Verifica se existe Produto Edicao 
+		ProdutoEdicao produtoEdicaoLancamento = this.recuperarProdutoEdicao(input.getCodigoPublicacao(), input.getEdicaoLancamento());		
+		if (null == produtoEdicaoLancamento) {
+			produtoEdicaoLancamento = inserirProdutoEdicao(input, produto);
+			ndsiLoggerFactory.getLogger().logWarning(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					String.format( "Produto %1$s Edicao %2$s cadastrada. Necessário atualizar o preço.", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() )
+				);
 		}
 
+		
+		
 		// Determinar datas. Realizar insert ou update
 		Date dataLcto = null;
 		Date dataRec = null;
-		Date dataCriacaoArquivo = (Date) message.getHeader().get(
-				"FILE_CREATION_DATE"); // ISSO DEVE SER A DATA DE OPERACAO!!!!
-
+		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		Lancamento lancamento = new Lancamento();
-
-		if (input.getEdicao() != null
+/*
+		if (input.getEdicaoRecolhimento() != null
 				&& input.getDataLancamentoRecolhimentoProduto().compareTo(
-						dataCriacaoArquivo) >= 0) {
+						dataOperacao) >= 0) {
 
 			dataLcto = input.getDataLancamentoRecolhimentoProduto();
 
@@ -100,7 +101,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento.setDataRecolhimentoPrevista(dataRec);
 			lancamento.setDataStatus(new Date());
 			lancamento.setNumeroReprogramacoes(null);
-			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setProdutoEdicao(produtoEdicaoLancamento);
 			lancamento.setReparte(BigInteger.valueOf(0));
 
 			// lancamento.setStatus(status);
@@ -110,7 +111,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 		if (input.getEdicaoRecolhimento() != null
 				&& input.getDataLancamentoRecolhimentoProduto().before(
-						dataCriacaoArquivo)) {
+						dataOperacao)) {
 			dataLcto = input.getDataLancamentoRecolhimentoProduto();
 			dataRec = input.getDataLancamentoRecolhimentoProduto();
 
@@ -120,7 +121,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			sql.append("WHERE  p.codigo = :codigoProduto ");
 
 			// edição de lançamento
-			if (input.getEdicao() != null) {
+			if (input.getEdicaoLancamento() != null) {
 				sql.append("	   la.dataLancamentoPrevista = :dataComparar ");
 			}
 			// edição recolhimento
@@ -149,9 +150,64 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento.setDataRecolhimentoPrevista(dataRec);
 			lancamento.setDataStatus(new Date());
 			lancamento.setNumeroReprogramacoes(null);
-			lancamento.setProdutoEdicao(produtoEdicao);
+			lancamento.setProdutoEdicao(produtoEdicaoLancamento);
 			lancamento.setAlteradoInteface(true);
 		}
+		*/
+	}
+
+	private ProdutoEdicao inserirProdutoEdicao(EMS0108Input input, Produto produto) {
+		
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		
+		produtoEdicao.setProduto(produto);
+		produtoEdicao.setNumeroEdicao(input.getEdicaoLancamento());
+		produtoEdicao.setPeso(input.getPesoProduto());
+		produtoEdicao.setCodigoDeBarras(input.getCodigoBarrasFisicoProduto());
+		
+		// setar default baseado no produto		
+		produtoEdicao.setAtivo(true);
+		produtoEdicao.setPacotePadrao(produto.getPacotePadrao());
+		produtoEdicao.setPeb(produto.getPeb());
+		
+		this.getSession().persist(produtoEdicao);
+		
+		return produtoEdicao;
+	}
+
+	private ProdutoEdicao recuperarProdutoEdicao(String codigoPublicacao,
+			Long edicao) {
+		
+		// Obter o produto
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT pe ");
+		sql.append("FROM   ProdutoEdicao pe ");
+		sql.append("	   JOIN FETCH pe.produto p ");
+		sql.append("WHERE ");
+		sql.append("	   pe.numeroEdicao = :numeroEdicao ");
+		sql.append("	   AND p.codigo    = :codigoProduto ");
+
+		Query query = getSession().createQuery(sql.toString());
+
+		query.setParameter("numeroEdicao", edicao);
+		query.setParameter("codigoProduto", codigoPublicacao);
+
+		return (ProdutoEdicao) query.uniqueResult();
+	}
+
+	private Produto recuperaProduto(String codigoPublicacao) {
+		// Obter o produto
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT p ");
+		sql.append("FROM   Produto p ");
+		sql.append("WHERE ");
+		sql.append("	   AND p.codigo    = :codigoProduto ");
+
+		Query query = getSession().createQuery(sql.toString());
+
+		query.setParameter("codigoProduto", codigoPublicacao);
+
+		return (Produto) query.uniqueResult();
 	}
 
 	@Override
