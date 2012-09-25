@@ -75,6 +75,10 @@ var geracaoNotaEnvioController = $.extend({
 				$(".checkboxCheckCotasAusentes").attr("checked", check);
 			});
 			
+			$("#geracaoNotaEnvio-btnVisualizarNE").click(function(e){
+				return _this.visualizarNE(e);
+			});	
+			
 		},
 		
 		/**
@@ -304,10 +308,47 @@ var geracaoNotaEnvioController = $.extend({
 			
 		},
 		
+		/**
+		 * Gera Notas de Envio para resultados da pesquisa e para cotas ausentes selecionadas
+		 */
 		gerarNotaEnvio : function() {
-			$.postJSON(this.path + 'gerarNotaEnvio', null, function(data) {
+			
+			var cotasSelecionadas = [];
+			
+			var cotasAusentes = $(".checkboxCheckCotasAusentes");
+			
+			for (var index in cotasAusentes) {
+				if (cotasAusentes[index].checked) {
+					cotasSelecionadas.push(cotasAusentes[index].value);
+				}
+			}
+			
+			var params = serializeArrayToPost("listaIdCotas", cotasSelecionadas);
+			
+			$.postJSON(this.path + 'gerarNotaEnvio', params, function(data) {
 				
+				if (!data) return;
+				
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+		
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagem(tipoMensagem, listaMensagens, "");
+				} 
 			});
+		},
+		
+		/**
+		 * Visualizar Nota Envio
+		 */
+		visualizarNE:function(e) {
+			var results = $("#geracaoNotaEnvio-flexigrid-pesquisa tr");
+			
+			if (results.length != 1) {
+				exibirMensagem("WARNING", ["Funcionalidade permitida apenas para pesquisas com um resultado."]);
+				
+				return false;
+			}
 		},
 		
 		/**
