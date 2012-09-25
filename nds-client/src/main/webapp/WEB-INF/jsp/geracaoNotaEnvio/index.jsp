@@ -29,7 +29,7 @@
         		</span>
 
         		<span id="geracaoNotaEnvio-btnVisualizarNE" class="bt_arq">
-        			<a href="javascript:;" title="Visualizar NE/NECA">
+        			<a href="${pageContext.request.contextPath}/expedicao/geracaoNotaEnvio/visualizarNE" title="Visualizar NE/NECA" target="_blank">
         				<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" alt="Visualizar NE/NECA" hspace="5" border="0">
         			</a>
         		</span>
@@ -71,7 +71,7 @@
     				<td width="91">Roteiro:</td>
    	 				<td width="215">
    	 					<select id="geracaoNotaEnvio-filtro-selectRoteiro" style="width:200px; font-size:11px!important">
-      						<option value="-1">Selecione...</option>
+      						<option value="">Selecione...</option>
       						<c:forEach items="${roteiros}" var="roteiro">
 								<option value="${roteiro.key }">${roteiro.value }</option>
 							</c:forEach>
@@ -81,7 +81,7 @@
     				<td width="93">Rota:</td>
     				<td>
     					<select id="geracaoNotaEnvio-filtro-selectRota" style="width:150px; font-size:11px!important">
-      						<option value="-1">Selecione...</option>
+      						<option value="">Selecione...</option>
       						<c:forEach items="${rotas}" var="rota">
 								<option value="${rota.key }">${rota.value }</option>
 							</c:forEach>
