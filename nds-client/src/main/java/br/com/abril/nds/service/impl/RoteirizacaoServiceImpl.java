@@ -424,26 +424,22 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 	
 	/**
-     * Obtem lista de Box do tipo lançamento
-     * @return List<Box>
-     */
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
-	public List<Box> obterListaBoxLancamento(){
-		List<Box> listaBox = new ArrayList<Box>();
-		listaBox = this.boxRepository.obterListaBox(TipoBox.LANCAMENTO);
-		return listaBox;
+	public List<Box> obterListaBoxLancamento(String nomeBox){
+		return boxRepository.obterListaBox(nomeBox, TipoBox.LANCAMENTO);
 	}
 	
 	/**
-     * Obtem lista de Roteiro por Box
-     * @return List<Roteiro>
-     */
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
-	public List<Roteiro> obterListaRoteiroPorBox(Long idBox){
+	public List<Roteiro> obterListaRoteiroPorBox(Long idBox, String descricaoRoteiro){
 		List<Roteiro> listaRoteiro = new ArrayList<Roteiro>();
-		listaRoteiro = this.roteiroRepository.buscarRoteiroDeBox(idBox);
+		listaRoteiro = this.roteiroRepository.buscarRoteiroDeBox(idBox, descricaoRoteiro);
 		return listaRoteiro;
 	}
 	

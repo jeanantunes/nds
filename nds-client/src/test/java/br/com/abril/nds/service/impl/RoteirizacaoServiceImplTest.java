@@ -136,7 +136,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterListaBoxLancamento() {
 		
-		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento();
+		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento(null);
         
 		Assert.assertEquals(listaBox.size(), 1);
 
@@ -145,7 +145,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterListaRoteiroBoxLancamento() {
 		
-		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(box.getId());
+		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(box.getId(), null);
         
 		Assert.assertEquals(listaRoteiro.size(), 3);
 

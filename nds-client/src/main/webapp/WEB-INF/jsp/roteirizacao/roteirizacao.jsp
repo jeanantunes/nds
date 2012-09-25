@@ -123,7 +123,7 @@
 
 
         <input name="nomeBox" type="text" id="nomeBox" style="width:240px; float:left; margin-bottom:5px;" />
-        <a href="javascript:;">
+        <a href="javascript:;" onclick="roteirizacao.pesquisarBox();">
             <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
                  alt="Adicionar Rota" width="16" height="16" border="0"
                  style="float:left; margin-left:5px; margin-top:5px;" /></a>
@@ -138,7 +138,7 @@
 
 
         <input name="descricaoRoteiro" type="text" id="descricaoRoteiro" style="width:240px; float:left; margin-bottom:5px;" />
-        <a href="javascript:;">
+        <a href="javascript:;" onclick="roteirizacao.pesquisarRoteiros()">
                 <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
                      alt="Adicionar Rota" width="16" height="16" border="0"
                      style="float:left; margin-left:5px; margin-top:5px;" /></a>

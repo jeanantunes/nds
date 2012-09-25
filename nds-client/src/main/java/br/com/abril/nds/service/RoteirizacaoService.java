@@ -145,15 +145,17 @@ public interface RoteirizacaoService {
     
 	/**
      * Obtem lista de Box do tipo lançamento
+     * @param nomeBox do box para consulta
      * @return List<Box>
      */
-	public List<Box> obterListaBoxLancamento();
+	public List<Box> obterListaBoxLancamento(String nomeBox);
 	
 	/**
      * Obtem lista de Roteiro por Box
+	 * @param descricaoRoteiro  descricao do roteiro para consulta
      * @return List<Roteiro>
      */
-	public List<Roteiro> obterListaRoteiroPorBox(Long idBox);
+	public List<Roteiro> obterListaRoteiroPorBox(Long idBox, String descricaoRoteiro);
 	
 	/**
      * Obtem lista de Rota por Roteiro

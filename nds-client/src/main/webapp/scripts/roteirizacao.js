@@ -4,6 +4,11 @@ var TipoTransferencia = {
     ROTEIRO : { value: 'ROTEIRO'}
 };
 
+var TipoEdicao =  {
+	NOVO : {value: 'NOVO'},
+	ALTERACAO : {value: 'ALTERACAO'}
+};
+
 var roteiroSelecionadoAutoComplete = false;	
 var transferirRotasComNovoRoteiro = false;
 var transferirRoteirizacaoComNovaRota= false;
@@ -12,9 +17,10 @@ var pesquisaPorCota = false;
 var roteirizacao = $.extend(true, {
 	
 		tipoTransferencia: null,
+		tipoEdicao: null,
         idBox : null,
         idRoteiro: null,
-        idsRotas: [],
+        idRota: null,
 		
 		definirTransferenciaCota : function() {
 			if (!roteirizacao.isTransferenciaCota()) {
@@ -44,6 +50,14 @@ var roteirizacao = $.extend(true, {
 		
 		isTransferenciaRoteiro : function() {
 			return TipoTransferencia.ROTEIRO == roteirizacao.tipoTransferencia;
+		},
+		
+		isNovo : function() {
+			return TipoEdicao.NOVO == roteirizacao.tipoEdicao;
+		},
+		
+		isAlteracao : function() {
+			return TipoEdicao.ALTERACAO == roteirizacao.tipoEdicao;
 		},
 	
 		abrirTelaRoteiro : function () {
@@ -228,19 +242,26 @@ var roteirizacao = $.extend(true, {
 		iniciaRotasGrid : function(){
 			
 			$(".rotasGrid", roteirizacao.workspace).flexigrid({
-				preProcess:roteirizacao.callBackRotaGrid,
+                preProcess: function(data) {
+                    $.each(data.rows, function(index, value) {
+                        var selecione = '<input type="radio" value="' + value.cell.id +'" name="rotaRadio" ';
+                        selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  value.cell.id  + '\');"/>';
+                        value.cell.selecione = selecione;
+                    });
+                    return data;
+                },
 				dataType : 'json',
 				colModel : [{
 					display : 'Ordem',
 					name : 'ordem',
 					width : 35,
-					sortable : true,
+					sortable : false,
 					align : 'left'
 				}, {
 					display : 'Nome',
 					name : 'descricaoRota',
 					width : 160,
-					sortable : true,
+					sortable : false,
 					align : 'left'
 				}, {
                     display : '',
@@ -251,48 +272,48 @@ var roteirizacao = $.extend(true, {
                 }],
 				sortname : "descricaoRota",
 				width : 270,
-				height : 140
+				height : 140,
+                disableSelect: true
 			});
 
+		},
+
+        rotaSelecionadaListener : function(idRota) {
+            roteirizacao.idRota = idRota;
+            roteirizacao.definirTransferenciaRota();
+        },
+
+        clearRotasGrid : function() {
+            roteirizacao.idRota = null;
+            $(".rotasGrid", roteirizacao.workspace).flexAddData({rows:[], page:0, total:0});
+        },
+
+        pesquisarRotas : function() {
             $(".rotasGrid", roteirizacao.workspace).flexOptions({
-                url : contextPath + "/cadastro/roteirizacao/carregarRotas",
-                params: [{name: 'idRoteiro', value: roteirizacao.idRoteiro}]
+                url : contextPath + "/cadastro/roteirizacao/obterRotasRoteiro",
+                params: [{name: 'idRoteiro', value: roteirizacao.idRoteiro},
+                         {name: 'descricaoRota', value: $('#descricaoRota', roteirizacao.workspace).val()}]
             });
-		
-		},
-		
-		callBackRotaGrid :  function (data){
-		
-			$.each(data.rows, function(index, value) {
-				var idRota = $.trim(value.cell.id);
-				var selecione = '<input type="checkbox" value="'+idRota +'" name="rotaCheckbox" id="rotaCheckbox"  onclick="roteirizacao.habilitaBotoesRota()" />';
-				var detalhe ='<a href="javascript:roteirizacao.cotaSelecionada('+idRota+');" ><img src="'+contextPath+'/images/ico_detalhes.png" border="0" alt="Detalhes" /></a>';
-				value.cell.selecione = selecione;
-				value.cell.detalhe = detalhe;
-			});
-			
-			$(".grids", roteirizacao.workspace).show();
-			
-			return data;
-		},
 
-
+            $(".rotasGrid", roteirizacao.workspace).flexReload();
+        },
+		
         iniciaBoxGrid : function(){
             $(".boxGrid", roteirizacao.workspace).flexigrid({
                 preProcess: function(data) {
                 	$.each(data.rows, function(index, value) {
-        				var selecione = '<input type="radio" value="' + value.cell.id +'" name="boxRadio"/>';
-        				value.cell.selecione = selecione;
+        				var selecione = '<input type="radio" value="' + value.cell.id +'" name="boxRadio" ';
+        				selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  value.cell.id  + '\');"/>';
+                        value.cell.selecione = selecione;
         			});
                 	return data;
                 },
                 dataType : 'json',
-                onSuccess: roteirizacao.iniciaRoteirosGrid,
                 colModel : [{
                     display : 'Nome',
                     name : 'nome',
-                    width : 180,
-                    sortable : true,
+                    width : 190,
+                    sortable : false,
                     align : 'left'
                 }, {
                     display : '',
@@ -303,31 +324,52 @@ var roteirizacao = $.extend(true, {
                 }],
                 sortname : "descricaoBox",
                 width : 270,
-                height : 140
+                height : 140,
+                disableSelect: true
             });
 
+            roteirizacao.pesquisarBox();
+        },
+
+        boxSelecionadoListener : function(idBox) {
+            roteirizacao.idBox = idBox;
+            roteirizacao.pesquisarRoteiros();
+
+        },
+
+        pesquisarBox : function() {
             $(".boxGrid", roteirizacao.workspace).flexOptions({
-                url : contextPath + "/cadastro/roteirizacao/obterBoxLancamento"
+                url : contextPath + "/cadastro/roteirizacao/obterBoxLancamento",
+                params: [{name: 'nomeBox', value: $('#nomeBox', roteirizacao.workspace).val()}]
             });
-           
+
             $(".boxGrid", roteirizacao.workspace).flexReload();
+            roteirizacao.idBox = null;
+            roteirizacao.clearRoteirosGrid();
         },
 
         iniciaRoteirosGrid : function(){
             $(".roteirosGrid", roteirizacao.workspace).flexigrid({
-                preProcess: false,
+                preProcess: function(data) {
+                    $.each(data.rows, function(index, value) {
+                        var selecione = '<input type="radio" value="' + value.cell.id +'" name="roteirosRadio" ';
+                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  value.cell.id  + '\');"/>';
+                        value.cell.selecione = selecione;
+                    });
+                    return data;
+                },
                 dataType : 'json',
                 colModel : [{
                     display : 'Ordem',
                     name : 'ordem',
                     width : 35,
-                    sortable : true,
+                    sortable : false,
                     align : 'left'
                 }, {
                     display : 'Nome',
                     name : 'descricaoRoteiro',
                     width : 160,
-                    sortable : true,
+                    sortable : false,
                     align : 'left'
                 }, {
                     display : '',
@@ -338,15 +380,33 @@ var roteirizacao = $.extend(true, {
                 }],
                 sortname : "descricaoBox",
                 width : 270,
-                height : 140
+                height : 140,
+                disableSelect: true
             });
 
+        },
+
+        clearRoteirosGrid : function() {
+            roteirizacao.idRoteiro == null;
+            $(".roteirosGrid", roteirizacao.workspace).flexAddData({rows:[], page:0, total:0});
+            roteirizacao.clearRotasGrid();
+        },
+
+        roteiroSelecionadoListener : function(idRoteiro) {
+            roteirizacao.idRoteiro = idRoteiro;
+            roteirizacao.definirTransferenciaRoteiro();
+            roteirizacao.pesquisarRotas();
+        },
+
+        pesquisarRoteiros : function() {
             $(".roteirosGrid", roteirizacao.workspace).flexOptions({
                 url : contextPath + "/cadastro/roteirizacao/obterRoteirosBox",
-                params: [{name: 'idBox', value: roteirizacao.idBox}]
+                params: [{name: 'idBox', value: roteirizacao.idBox},
+                         {name: 'descricaoRoteiro', value: $('#descricaoRoteiro', roteirizacao.workspace).val()}]
             });
-            
+
             $(".roteirosGrid", roteirizacao.workspace).flexReload();
+            roteirizacao.clearRotasGrid();
         },
 		
 		abrirTelaRota : function () {
@@ -1665,6 +1725,8 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 		$(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
 		$('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
         roteirizacao.iniciaBoxGrid();
+        roteirizacao.iniciaRoteirosGrid();
+        roteirizacao.iniciaRotasGrid();
      	roteirizacao.iniciaCotasDisponiveisGrid();
 		roteirizacao.iniciaCotasRotaGrid();
 		roteirizacao.desabilitaBotao('botaoTransfereciaRota', roteirizacao.workspace);

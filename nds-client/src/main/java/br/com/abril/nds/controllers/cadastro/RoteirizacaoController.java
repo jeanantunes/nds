@@ -709,8 +709,8 @@ public class RoteirizacaoController {
 	 */
 	@Post
 	@Path("/obterBoxLancamento")
-	public void obterBoxLancamento(){
-		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento();
+	public void obterBoxLancamento(String nomeBox){
+		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento(nomeBox);
 		result.use(FlexiGridJson.class).from(listaBox).total(listaBox.size()).page(1).serialize();
 	}
 	
@@ -718,10 +718,10 @@ public class RoteirizacaoController {
 	 * Obtém lista de roteiros do box
 	 * @param idBox
 	 */
-	@Get
+	@Post
 	@Path("/obterRoteirosBox")
-	public void obterRoteirosBox(Long idBox){
-		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(idBox);
+	public void obterRoteirosBox(Long idBox, String descricaoRoteiro){
+		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(idBox, descricaoRoteiro);
 		result.use(FlexiGridJson.class).from(listaRoteiro).total(listaRoteiro.size()).page(1).serialize();
 	}
 	
@@ -729,9 +729,9 @@ public class RoteirizacaoController {
 	 * Obtém lista de rotas do roteiro
 	 * @param idRoteiro
 	 */
-	@Get
+	@Post
 	@Path("/obterRotasRoteiro")
-	public void obterRotasRoteiro(Long idRoteiro){
+	public void obterRotasRoteiro(Long idRoteiro, String descricaoRota){
 		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro);
 		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
 	}
