@@ -291,8 +291,8 @@ var roteirizacao = $.extend(true, {
         pesquisarRotas : function() {
             $(".rotasGrid", roteirizacao.workspace).flexOptions({
                 url : contextPath + "/cadastro/roteirizacao/obterRotasRoteiro",
-                params: [{name: 'idRoteiro', value: roteirizacao.idRoteiro},
-                         {name: 'descricaoRota', value: $('#descricaoRota', roteirizacao.workspace).val()}]
+                params: [{name: 'roteiroId', value: roteirizacao.idRoteiro},
+                         {name: 'nomeRota', value: $('#descricaoRota', roteirizacao.workspace).val()}]
             });
 
             $(".rotasGrid", roteirizacao.workspace).flexReload();

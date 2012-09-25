@@ -134,7 +134,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome, MatchMode matchMode) {
-		return  rotaRepository.buscarRotaPorNome(roteiroId, rotaNome, matchMode);
+		return rotaRepository.buscarRotaPorNome(roteiroId, rotaNome, matchMode);
 	}
 	
 	@Override
@@ -444,15 +444,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 	
 	/**
-     * Obtem lista de Rota por Roteiro
-     * @return List<Rota>
-     */
+	 * {@inheritDoc} 
+	 */
 	@Transactional
 	@Override
-	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro){
-		List<Rota> listaRota = new ArrayList<Rota>();
-		listaRota = this.rotaRepository.buscarRotaPorRoteiro(idRoteiro, null, null);
-		return listaRota;
+	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota){
+		return  rotaRepository.buscarRotaPorRoteiro(idRoteiro, null, null);
 	}
 	
 	/**

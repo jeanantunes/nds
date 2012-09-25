@@ -1,10 +1,7 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -154,15 +151,15 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterListaRotaBoxLancamento() {
 		
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro1.getId());
+		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro1.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 		
-        listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro2.getId());
+        listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro2.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 		
-		listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro3.getId());
+		listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro3.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 

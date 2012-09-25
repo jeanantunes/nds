@@ -292,13 +292,11 @@ public class RoteirizacaoController {
 		return roteiro;
 	}
 	
-	@Path("/pesquisarRotaPorNome")
-	public void pesquisarRotaPorNome(Long roteiroId, String nomeRota,
-			String sortname, String sortorder, int rp, int page) {
-		List<Rota> lista = roteirizacaoService.buscarRotaPorNome(roteiroId, nomeRota, MatchMode.ANYWHERE) ;
-		int quantidade = lista.size();
-		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
-
+	@Post
+	@Path("/obterRotasRoteiro")
+	public void obterRotas(Long roteiroId, String nomeRota) {
+		List<Rota> lista = roteirizacaoService.buscarRotaPorNome(roteiroId, nomeRota, MatchMode.START) ;
+		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
 	@Path("/iniciaTelaCotas")
@@ -726,17 +724,6 @@ public class RoteirizacaoController {
 	}
 	
 	/**
-	 * Obtém lista de rotas do roteiro
-	 * @param idRoteiro
-	 */
-	@Post
-	@Path("/obterRotasRoteiro")
-	public void obterRotasRoteiro(Long idRoteiro, String descricaoRota){
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro);
-		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
-	}
-	
-	/**
 	 * Obtém dados da roteirização para edição
 	 * @param idCota
 	 * @param idRoteirizacao - Utilizado para obter as listas de box, roteiro e rota
@@ -747,8 +734,8 @@ public class RoteirizacaoController {
 	@Get
 	@Path("/editarRoteirizacao")
 	public void editarRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros){
-		
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(parametros.getIdRoteiro());
+		//TODO: refatorar edição
+		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(parametros.getIdRoteiro(), null);
 		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
 		
 	}

@@ -159,9 +159,11 @@ public interface RoteirizacaoService {
 	
 	/**
      * Obtem lista de Rota por Roteiro
+     * @param idRoteiro identificador do roteiro
+	 * @param descricaoRota descrição da rota para consulta
      * @return List<Rota>
      */
-	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro);
+	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
 	
 	/**
 	 * Obtem dados da roteirização

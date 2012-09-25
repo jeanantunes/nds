@@ -152,7 +152,7 @@
         <legend>Rotas</legend>
 
         <input name="descricaoRota" type="text" id="descricaoRota" style="width:240px; float:left; margin-bottom:5px;" />
-        <a href="javascript:;">
+        <a href="javascript:;" onclick="roteirizacao.pesquisarRotas();">
             <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
                  alt="Adicionar Rota" width="16" height="16" border="0"
                  style="float:left; margin-left:5px; margin-top:5px;" /></a>
