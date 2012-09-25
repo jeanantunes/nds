@@ -151,7 +151,7 @@ public class RomaneioController {
 			this.httpResponse.setContentType("application/xls");
 		}
 		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=romaneio." + fileType.getExtension());
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=romaneio" + fileType.getExtension());
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		

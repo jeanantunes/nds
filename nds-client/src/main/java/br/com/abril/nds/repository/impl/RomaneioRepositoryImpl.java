@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.RomaneioRepository;
 
 @Repository
@@ -124,8 +125,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	private String getSqlFromEWhereRomaneio(FiltroRomaneioDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-	
-
+		
 		hql.append(" from Cota cota, Lancamento lancamento, Estudo estudo, EstudoCota estudoCota ");
 		
 		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
@@ -145,7 +145,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(" JOIN lancDif.movimentoEstoqueCota as movEstCotaLancDif ");
 		}
 		
-		hql.append(" where estudoCota.estudo.id = estudo.id and estudoCota.cota.id = cota.id and lancamento.estudo.id = estudo.id ");
+		hql.append(" where estudoCota.estudo.id = estudo.id ");
+		hql.append(" and estudoCota.cota.id = cota.id ");
+		hql.append(" and lancamento.estudo.id = estudo.id ");
+		hql.append(" and cota.situacaoCadastro != :situacaoInativo ");
 		
 		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			
@@ -225,6 +228,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	}
 	
 	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query, boolean queryCount){
+		
+		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO);
 		
 		if(filtro.getIdBox() != null) { 
 			
