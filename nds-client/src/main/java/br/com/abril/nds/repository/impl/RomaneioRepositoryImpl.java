@@ -133,16 +133,16 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(", LancamentoDiferenca lancDif ");
 		}
 		
-		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" LEFT JOIN cota.box as box ");
-		hql.append(" LEFT JOIN box.roteiros as roteiro ");
-		hql.append(" LEFT JOIN roteiro.rotas as rota ");
-		hql.append(" LEFT JOIN lancamento.movimentoEstoqueCotas as movimentoEstoque ");
-		hql.append(" LEFT JOIN movimentoEstoque.listaItemNotaEnvio as itemNota ");
+		hql.append(" JOIN cota.pessoa as pessoa ");
+		hql.append(" JOIN cota.box as box ");
+		hql.append(" JOIN box.roteiros as roteiro ");
+		hql.append(" JOIN roteiro.rotas as rota ");
+		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movimentoEstoque ");
+		hql.append(" JOIN movimentoEstoque.listaItemNotaEnvio as itemNota ");
 		
 		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			
-			hql.append(" LEFT JOIN lancDif.movimentoEstoqueCota as movEstCotaLancDif ");
+			hql.append(" JOIN lancDif.movimentoEstoqueCota as movEstCotaLancDif ");
 		}
 		
 		hql.append(" where estudoCota.estudo.id = estudo.id and estudoCota.cota.id = cota.id and lancamento.estudo.id = estudo.id ");
