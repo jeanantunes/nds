@@ -118,7 +118,7 @@ public class RomaneioController {
 	
 	private TableModel<CellModelKeyValue<RomaneioDTO>> efetuarConsultaRomaneio(FiltroRomaneioDTO filtro) {
 		
-		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, "limitar");
+		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, true);
 		
 		TableModel<CellModelKeyValue<RomaneioDTO>> tableModel = new TableModel<CellModelKeyValue<RomaneioDTO>>();
 		
@@ -143,7 +143,13 @@ public class RomaneioController {
 		
 		byte[] arquivo = this.romaneioService.gerarRelatorio(filtro, "", fileType);
 		
-		this.httpResponse.setContentType("application/pdf");
+		if (FileType.PDF == fileType){
+		
+			this.httpResponse.setContentType("application/pdf");
+		} else if (FileType.XLS == fileType) {
+			
+			this.httpResponse.setContentType("application/xls");
+		}
 		
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=romaneio." + fileType.getExtension());
 
@@ -158,21 +164,9 @@ public class RomaneioController {
 	
 	private void validarEntrada(FiltroRomaneioDTO filtro) {
 		
-		List<String> msgs = new ArrayList<String>();
-		
-		if(filtro.getIdBox()==null && filtro.getIdRoteiro()==null && filtro.getIdRota()==null){
-			
-			msgs.add("Preencha box, roteiro ou rota!");
-		}
-		
 		if (filtro.getData() == null){
 			
-			msgs.add("Preencha a data!");
-		}
-		
-		if (!msgs.isEmpty()){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha a data!");
 		}
 	}
 	

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo02" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="1.331000000000008"/>
+	<property name="ireport.zoom" value="1.6105100000000099"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -9,11 +9,23 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="reparteTotal" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
+	<field name="codigoProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoProduto]]></fieldDescription>
 	</field>
-	<field name="nomeProduto" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
+	<field name="nomeProduto1" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto1]]></fieldDescription>
+	</field>
+	<field name="nomeProduto4" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto4]]></fieldDescription>
+	</field>
+	<field name="roteiro" class="java.lang.String">
+		<fieldDescription><![CDATA[roteiro]]></fieldDescription>
+	</field>
+	<field name="rota" class="java.lang.String">
+		<fieldDescription><![CDATA[rota]]></fieldDescription>
+	</field>
+	<field name="nomeProduto2" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto2]]></fieldDescription>
 	</field>
 	<field name="dataGeracao" class="java.util.Date">
 		<fieldDescription><![CDATA[dataGeracao]]></fieldDescription>
@@ -21,20 +33,29 @@
 	<field name="edicao" class="java.lang.Long">
 		<fieldDescription><![CDATA[edicao]]></fieldDescription>
 	</field>
-	<field name="codigoProduto" class="java.lang.String">
-		<fieldDescription><![CDATA[codigoProduto]]></fieldDescription>
+	<field name="reparteTotal" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
 	</field>
-	<field name="roteiro" class="java.lang.String">
-		<fieldDescription><![CDATA[roteiro]]></fieldDescription>
+	<field name="nomeProduto5" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto5]]></fieldDescription>
 	</field>
-	<field name="entregaBox" class="java.lang.Long">
+	<field name="pacotePadrao" class="java.lang.Long">
+		<fieldDescription><![CDATA[pacotePadrao]]></fieldDescription>
+	</field>
+	<field name="nomeProduto3" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto3]]></fieldDescription>
+	</field>
+	<field name="entregaBox" class="java.lang.String">
 		<fieldDescription><![CDATA[entregaBox]]></fieldDescription>
 	</field>
 	<field name="itens" class="java.util.List">
 		<fieldDescription><![CDATA[itens]]></fieldDescription>
 	</field>
-	<field name="rota" class="java.lang.String">
-		<fieldDescription><![CDATA[rota]]></fieldDescription>
+	<field name="nomeProduto0" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto0]]></fieldDescription>
+	</field>
+	<field name="nomeProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
 	</field>
 	<pageHeader>
 		<band height="130">
@@ -51,7 +72,7 @@
 				</graphicElement>
 			</rectangle>
 			<textField isBlankWhenNull="true">
-				<reportElement x="281" y="96" width="90" height="15"/>
+				<reportElement x="309" y="96" width="68" height="15"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{rota}]]></textFieldExpression>
 			</textField>
@@ -61,7 +82,7 @@
 				<text><![CDATA[RELAÇÃO DE COTAS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="253" y="96" width="28" height="15"/>
+				<reportElement x="281" y="96" width="28" height="15"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
@@ -75,11 +96,11 @@
 				<text><![CDATA[Roteiro:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="417" y="96" width="77" height="15"/>
+				<reportElement x="406" y="96" width="88" height="15"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Data Geração:]]></text>
+				<text><![CDATA[Data da Entrega:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="43" y="96" width="58" height="15"/>
@@ -87,12 +108,12 @@
 				<textFieldExpression><![CDATA[$F{roteiro}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="181" y="96" width="63" height="15"/>
+				<reportElement x="173" y="96" width="63" height="15"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{entregaBox}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="109" y="96" width="72" height="15"/>
+				<reportElement x="101" y="96" width="72" height="15"/>
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
@@ -168,6 +189,18 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 				<reportElement x="319" y="113" width="76" height="15"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="395" y="113" width="77" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pacote Padrão:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="472" y="113" width="83" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{pacotePadrao}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

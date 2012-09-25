@@ -45,7 +45,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 	
 	@Override
 	@Transactional
-	public List<RomaneioDTO> buscarRomaneio(FiltroRomaneioDTO filtro, String limitar) {
+	public List<RomaneioDTO> buscarRomaneio(FiltroRomaneioDTO filtro, boolean limitar) {
 		if(filtro == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
 		
@@ -76,7 +76,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 		
 		if (filtro != null){
 			
-			List<RomaneioDTO> listaDTOParaExportacao = this.buscarRomaneio(filtro, "naoLimitar");
+			List<RomaneioDTO> listaDTOParaExportacao = this.buscarRomaneio(filtro, false);
 			
 			if (!listaDTOParaExportacao.isEmpty()){
 			
@@ -101,8 +101,8 @@ public class RomaneioServiceImpl implements RomaneioService {
 			}
 			
 			RomaneioModelo01DTO dto = new RomaneioModelo01DTO();
-			dto.setDataGeracao(new Date());
-			dto.setEntregaBox(filtro.getIdBox() < 0 ? null : filtro.getIdBox());
+			dto.setDataGeracao(filtro.getData());
+			dto.setEntregaBox(filtro.getBox());
 			dto.setRota(filtro.getRota());
 			dto.setRoteiro(filtro.getRoteiro());
 			dto.setItens(listaDTOParaExportacao);
@@ -129,11 +129,10 @@ public class RomaneioServiceImpl implements RomaneioService {
 				dto.setCodigoProduto(produtoEdicao.getCodigo());
 				dto.setNomeProduto(produtoEdicao.getNomeComercial());
 				dto.setEdicao(produtoEdicao.getNumeroEdicao());
+				dto.setPacotePadrao(new Long(produtoEdicao.getPacotePadrao()));
 				
 				path = diretorioReports.toURI().getPath() + "/romaneio_modelo02.jasper";
 			} else {
-				
-				
 				
 				if (filtro.getProdutos().size() > 0){
 					
@@ -186,7 +185,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 
 				exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 				exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
-				exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "romaneio.xls");
+				exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "romaneio");
 
 				exporter.exportReport();
 

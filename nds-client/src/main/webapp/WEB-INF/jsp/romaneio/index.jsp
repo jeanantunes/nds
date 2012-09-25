@@ -34,8 +34,7 @@
 	              			<td width="24">Box:</td>
 								<td width="176">
 							  		<select name="idBox" id="idBox" style="width: 100px;">
-										<option value="" selected="selected">Selecione...</option>
-										<option value="-1" >Todos</option>
+										<option value="" >Todos</option>
 										<c:forEach var="box" items="${listaBox}">
 											<option value="${box.key}">${box.value}</option>
 										</c:forEach>
@@ -44,8 +43,7 @@
 	                		<td width="49" align="right">Roteiro:</td>
 	                		<td width="260">
 	                			<select name="idRoteiro" id="idRoteiro" style="width: 200px;">
-									<option value="" selected="selected">Selecione...</option>
-									<option value="-1" >Todos</option>
+									<option value="" >Todos</option>
 									<c:forEach var="roteiro" items="${listaRoteiro}">
 										<option value="${roteiro.key}">${roteiro.value}</option>
 									</c:forEach>
@@ -54,8 +52,7 @@
 	                		<td width="32" align="right">Rota:</td>
 	                		<td colspan="2">
 								<select name="idRota" id="idRota" style="width: 200px;">
-									<option value="" selected="selected">Selecione...</option>
-									<option value="-1" >Todos</option>
+									<option value="" >Todos</option>
 									<c:forEach var="rota" items="${listaRota}">
 										<option value="${rota.key}">${rota.value}</option>
 									</c:forEach>
@@ -71,6 +68,7 @@
 									</c:forEach>
 								</select>
 							</td>
+							<td></td>
 							<td width="208">
 	              				<span class="bt_pesquisar">
 	              					<a href="javascript:;" onclick="romaneiosController.pesquisar();">Pesquisar</a>

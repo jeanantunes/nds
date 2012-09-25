@@ -9,50 +9,50 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="reparteTotal" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
-	</field>
-	<field name="nomeProduto2" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeProduto2]]></fieldDescription>
-	</field>
-	<field name="nomeProduto3" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeProduto3]]></fieldDescription>
-	</field>
-	<field name="nomeProduto5" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeProduto5]]></fieldDescription>
-	</field>
-	<field name="dataGeracao" class="java.util.Date">
-		<fieldDescription><![CDATA[dataGeracao]]></fieldDescription>
-	</field>
-	<field name="rota" class="java.lang.String">
-		<fieldDescription><![CDATA[rota]]></fieldDescription>
-	</field>
-	<field name="nomeProduto0" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeProduto0]]></fieldDescription>
-	</field>
-	<field name="nomeProduto" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
-	</field>
-	<field name="entregaBox" class="java.lang.Long">
-		<fieldDescription><![CDATA[entregaBox]]></fieldDescription>
-	</field>
-	<field name="itens" class="java.util.List">
-		<fieldDescription><![CDATA[itens]]></fieldDescription>
-	</field>
-	<field name="nomeProduto1" class="java.lang.String">
-		<fieldDescription><![CDATA[nomeProduto1]]></fieldDescription>
-	</field>
-	<field name="codigoProduto" class="java.lang.String">
-		<fieldDescription><![CDATA[codigoProduto]]></fieldDescription>
-	</field>
 	<field name="roteiro" class="java.lang.String">
 		<fieldDescription><![CDATA[roteiro]]></fieldDescription>
 	</field>
 	<field name="nomeProduto4" class="java.lang.String">
 		<fieldDescription><![CDATA[nomeProduto4]]></fieldDescription>
 	</field>
+	<field name="nomeProduto1" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto1]]></fieldDescription>
+	</field>
+	<field name="rota" class="java.lang.String">
+		<fieldDescription><![CDATA[rota]]></fieldDescription>
+	</field>
+	<field name="nomeProduto5" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto5]]></fieldDescription>
+	</field>
+	<field name="nomeProduto3" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto3]]></fieldDescription>
+	</field>
+	<field name="itens" class="java.util.List">
+		<fieldDescription><![CDATA[itens]]></fieldDescription>
+	</field>
 	<field name="edicao" class="java.lang.Long">
 		<fieldDescription><![CDATA[edicao]]></fieldDescription>
+	</field>
+	<field name="reparteTotal" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
+	</field>
+	<field name="entregaBox" class="java.lang.String">
+		<fieldDescription><![CDATA[entregaBox]]></fieldDescription>
+	</field>
+	<field name="nomeProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
+	</field>
+	<field name="dataGeracao" class="java.util.Date">
+		<fieldDescription><![CDATA[dataGeracao]]></fieldDescription>
+	</field>
+	<field name="nomeProduto2" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto2]]></fieldDescription>
+	</field>
+	<field name="codigoProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoProduto]]></fieldDescription>
+	</field>
+	<field name="nomeProduto0" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto0]]></fieldDescription>
 	</field>
 	<pageHeader>
 		<band height="111">

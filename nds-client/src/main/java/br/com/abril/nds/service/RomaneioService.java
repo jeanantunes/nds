@@ -12,7 +12,7 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 
 public interface RomaneioService {
 	
-	List<RomaneioDTO> buscarRomaneio(FiltroRomaneioDTO filtro, String limitar);
+	List<RomaneioDTO> buscarRomaneio(FiltroRomaneioDTO filtro, boolean limitar);
 
 	Integer buscarTotalDeRomaneios(FiltroRomaneioDTO filtro);
 

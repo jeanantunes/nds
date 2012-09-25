@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.repository.RomaneioRepository;
 
 @Repository
@@ -21,7 +22,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro,String limitar) {
+	public List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, boolean limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -29,13 +30,13 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("pessoa.nome as nome, ");
 		hql.append("cota.id as idCota, ");
 		hql.append("rota.id as idRota, ");
-		hql.append("notaEnvio.numero as numeroNotaEnvio ");
+		hql.append("itemNota.itemNotaEnvioPK.notaEnvio.numero as numeroNotaEnvio ");
 		
 		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 		
-			hql.append(",(round(estudo.qtdeReparte / lancamento.produtoEdicao.pacotePadrao)) as pacote, ");
-			hql.append("(round(estudo.qtdeReparte - lancamento.produtoEdicao.pacotePadrao)) as quebra, ");
-			hql.append("estudo.qtdeReparte as reparteTotal ");
+			hql.append(", (round(estudo.qtdeReparte / lancamento.produtoEdicao.pacotePadrao)) as pacote ");
+			hql.append(", lancDif.diferenca.qtde as quebra ");
+			hql.append(", estudo.qtdeReparte as reparteTotal ");
 		}
 		
 		if (filtro.getProdutos() != null && filtro.getProdutos().size() > 1){
@@ -51,17 +52,19 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		this.setarParametrosRomaneio(filtro, query, false);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				RomaneioDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(RomaneioDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null){ 
+			
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		}
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar){ 
+			
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 				
 		return  popularEndereco(query.list());
-		
 	}
 	
 	private void getHQLProdutos(StringBuilder hql, FiltroRomaneioDTO filtro) {
@@ -88,7 +91,6 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append("endereco.cidade as cidade, ");
 			hql.append("endereco.uf as uf ");
 			
-
 			hql.append(" from EnderecoCota endCota ");
 			hql.append(" LEFT JOIN endCota.endereco as endereco ");
 			
@@ -101,16 +103,19 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			
 			query.setMaxResults(1);
 			
-			query.setResultTransformer(new AliasToBeanResultTransformer(
-					RomaneioDTO.class));
+			query.setResultTransformer(new AliasToBeanResultTransformer(Endereco.class));
 			
-			RomaneioDTO dto =  (RomaneioDTO) query.uniqueResult();
+			Endereco dto = (Endereco) query.uniqueResult();
+			
 			if(dto != null){
-				romaneio.setLogradouro(dto.getLogradouro());
-				romaneio.setBairro(dto.getBairro());
-				romaneio.setCidade(dto.getCidade());
-				romaneio.setUf(dto.getUf());
+				
+				romaneio.setLogradouro(
+					dto.getLogradouro() + ", " + 
+					dto.getBairro() + ", " + 
+					dto.getCidade() + " - " + 
+					dto.getUf());
 			}
+			
 			listaAux.add(romaneio);
 		}
 		return listaAux;
@@ -121,28 +126,49 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		StringBuilder hql = new StringBuilder();
 	
 
-		hql.append(" from Cota cota, Lancamento lancamento, Estudo estudo, EstudoCota estudoCota, NotaEnvio notaEnvio ");
+		hql.append(" from Cota cota, Lancamento lancamento, Estudo estudo, EstudoCota estudoCota ");
+		
+		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+			
+			hql.append(", LancamentoDiferenca lancDif ");
+		}
+		
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN cota.box as box ");
 		hql.append(" LEFT JOIN box.roteiros as roteiro ");
 		hql.append(" LEFT JOIN roteiro.rotas as rota ");
-		hql.append(" JOIN notaEnvio.listaItemNotaEnvio as item ");
-		hql.append(" JOIN item.listaMovimentoEstoqueCota as movimentoEstoque ");
+		hql.append(" LEFT JOIN lancamento.movimentoEstoqueCotas as movimentoEstoque ");
+		hql.append(" LEFT JOIN movimentoEstoque.listaItemNotaEnvio as itemNota ");
+		
+		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+			
+			hql.append(" LEFT JOIN lancDif.movimentoEstoqueCota as movEstCotaLancDif ");
+		}
 		
 		hql.append(" where estudoCota.estudo.id = estudo.id and estudoCota.cota.id = cota.id and lancamento.estudo.id = estudo.id ");
-		hql.append(" and movimentoEstoque.lancamento = lancamento.id ");
+		
+		if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
+			
+			hql.append(" and movEstCotaLancDif.id = movimentoEstoque.id ");
+		}
 
-		if(filtro.getIdBox() != null && filtro.getIdBox() != -1) {
+		if(filtro.getIdBox() != null) {
+			
 			hql.append( " and box.id = :idBox ");
 		}
-		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() != -1){
+		
+		if(filtro.getIdRoteiro() != null){
+			
 			hql.append( " and roteiro.id = :idRoteiro ");
 		}
-		if(filtro.getIdRota() != null && filtro.getIdRota() != -1){
+		
+		if(filtro.getIdRota() != null){
+			
 			hql.append( " and rota.id = :idRota ");
 		}
 		
 		if(filtro.getData() != null){
+			
 			hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
 		}
 		
@@ -159,21 +185,39 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
 		}
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" order by rota.id asc ");
 		
 		if(filtro.getIdRoteiro() == null && filtro.getIdRota() != null){
-			hql.append(" ,rota.ordem ");
+			
+			hql.append(", rota.ordem ");
 		}
+		
 		if(filtro.getIdRoteiro() != null && filtro.getIdRota() == null){
-			hql.append(" ,roteiro.ordem ");
+			
+			hql.append(", roteiro.ordem ");
 		}
+		
 		if(filtro.getIdRoteiro() != null && filtro.getIdRota() != null){
-			hql.append(" ,roteiro.ordem asc, rota.ordem asc ");
+			
+			hql.append(", roteiro.ordem asc, rota.ordem asc ");
+		}
+		
+		if ("numeroCota".equals(filtro.getPaginacao().getSortColumn())){
+			
+			hql.append(", cota.numeroCota ");
+		} else if ("nome".equals(filtro.getPaginacao().getSortColumn())){
+			
+			hql.append(", pessoa.nome ");
+		} else {
+			
+			hql.append(", itemNota.itemNotaEnvioPK.notaEnvio.numero ");
 		}
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
+			
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
 		}
 		
@@ -182,13 +226,18 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	
 	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query, boolean queryCount){
 		
-		if(filtro.getIdBox() != null && filtro.getIdBox() != -1) { 
+		if(filtro.getIdBox() != null) { 
+			
 			query.setParameter("idBox", filtro.getIdBox());
 		}
-		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() != -1){
+		
+		if(filtro.getIdRoteiro() != null){
+			
 			query.setParameter("idRoteiro", filtro.getIdRoteiro());
 		}
-		if(filtro.getIdRota() != null && filtro.getIdRota() != -1){
+		
+		if(filtro.getIdRota() != null){
+			
 			query.setParameter("idRota", filtro.getIdRota());
 		}
 		

@@ -5,46 +5,28 @@ var romaneiosController = $.extend(true, {
 			preProcess: romaneiosController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
+				display : 'Nº. NE',
+				name : 'numeroNotaEnvio',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
 				name : 'nome',
-				width : 180,
+				width : 310,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Endereço',
 				name : 'logradouro',
-				width : 260,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Bairro',
-				name : 'bairro',
-				width : 135,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Cidade',
-				name : 'cidade',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'UF',
-				name : 'uf',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Telefone',
-				name : 'numeroTelefone',
-				width : 100,
-				sortable : true,
+				width : 450,
+				sortable : false,
 				align : 'left'
 			}],
 			sortname : "cota",
@@ -122,6 +104,14 @@ var romaneiosController = $.extend(true, {
 			return resultado;
 		}
 		
+		$.each(resultado.rows, function(index, value){
+			
+			if (!value.cell.numeroNotaEnvio){
+				
+				value.cell.numeroNotaEnvio = '';
+			}
+		});
+		
 		$(".grids", romaneiosController.workspace).show();
 		
 		return resultado;
@@ -149,9 +139,11 @@ var romaneiosController = $.extend(true, {
 					
 					var itens = '';
 					
-					$.each(result, function(index, result) {
-						itens += '<option value="'+ result.key.$ +'">'+ result.value.$ +'</option>';
-					});
+					if (result){
+						$.each(result, function(index, result) {
+							itens += '<option value="'+ result.key.$ +'">'+ (result.value ? result.value.$ : '' ) +'</option>';
+						});
+					}
 					
 					$("#selectProdutos", romaneiosController.workspace).multiselect("destroy");
 					$("#selectProdutos", romaneiosController.workspace).html("");

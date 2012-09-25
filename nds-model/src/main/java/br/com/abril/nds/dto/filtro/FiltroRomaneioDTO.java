@@ -93,39 +93,37 @@ public class FiltroRomaneioDTO implements Serializable {
 	
 	@Export(label = "Roteiro" , exhibitionOrder = 1, alignment = Alignment.LEFT)
 	public String getRoteiro() {
+		
 		if(getIdRoteiro() != null){
-			if(getIdRoteiro() == -1){
-				return "Todos";
-		}
-			return   "("+ getIdRoteiro() + ")";
 			
+			return   "("+ getIdRoteiro() + ")";
 		}else{
-			return "-";
+			
+			return "Todos";
 		}
 		
 	}
 	
 	@Export(label = "Entrega / Box" , exhibitionOrder = 2, alignment = Alignment.LEFT)
 	public String getBox() {
+		
 		if(getIdBox() != null){
-			if(getIdBox() == -1){
-				return "Todos";
-			}			
+			
 			return getIdBox().toString();
 		}else{
-			return "-";
+			
+			return "Todos";
 		}
 	}
 
 	@Export(label = "Rota" , exhibitionOrder = 3, alignment = Alignment.LEFT)
 	public String getRota() {
+		
 		if(getIdRota() != null){
-			if(getIdRota() == -1){
-				return "Todos";
-			}			
+						
 			return "(" + getIdRota() + ") " + getNomeRota();		
 		}else{
-			return "-";
+			return "Todos";
 		}
 		
 	}
@@ -159,5 +157,4 @@ public class FiltroRomaneioDTO implements Serializable {
 	public void setProdutos(List<Long> produtos) {
 		this.produtos = produtos;
 	}
-
 }

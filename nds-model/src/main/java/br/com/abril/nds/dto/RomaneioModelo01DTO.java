@@ -14,7 +14,7 @@ public class RomaneioModelo01DTO implements Serializable {
 
 	private String roteiro;
 	
-	private Long entregaBox;
+	private String entregaBox;
 	
 	private String rota;
 	
@@ -41,6 +41,8 @@ public class RomaneioModelo01DTO implements Serializable {
 	private String nomeProduto4;
 	
 	private String nomeProduto5;
+	
+	private Long pacotePadrao;
 
 	public String getRoteiro() {
 		return roteiro;
@@ -50,11 +52,11 @@ public class RomaneioModelo01DTO implements Serializable {
 		this.roteiro = roteiro;
 	}
 
-	public Long getEntregaBox() {
+	public String getEntregaBox() {
 		return entregaBox;
 	}
 
-	public void setEntregaBox(Long entregaBox) {
+	public void setEntregaBox(String entregaBox) {
 		this.entregaBox = entregaBox;
 	}
 
@@ -160,5 +162,13 @@ public class RomaneioModelo01DTO implements Serializable {
 
 	public void setNomeProduto5(String nomeProduto5) {
 		this.nomeProduto5 = nomeProduto5;
+	}
+
+	public Long getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(Long pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
 	}
 }

@@ -255,7 +255,7 @@
 				<textElement verticalAlignment="Middle">
 					<font isStrikeThrough="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{logradouro} + ", " + $F{bairro} + ", " + $F{cidade} + " - " + $F{uf}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{logradouro}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" x="243" y="0" width="52" height="30"/>
