@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,9 +11,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.VisaoEstoqueConferenciaCegaVO;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
+import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -72,12 +75,12 @@ public class VisaoEstoqueController {
 	
 	
 	@Path("/pesquisar.json")
-	public void pesquisar(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+	public void pesquisar(FiltroConsultaVisaoEstoque filtro) {
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
-		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).page(page).serialize();
+		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).serialize();
 	}
 	
 	
@@ -91,19 +94,22 @@ public class VisaoEstoqueController {
 	}
 	
 	
-	@Path("/pesquisarTransferencia.json")
-	public void pesquisarTransferencia(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+	@Path("/transferir")
+	public void transferir(FiltroConsultaVisaoEstoque filtro) {
+	
+		visaoEstoqueService.transferirEstoque(filtro, this.getUsuario());
 		
-		List<VisaoEstoqueDetalheDTO> listTransferencia = visaoEstoqueService.obterVisaoEstoqueTransferencia(filtro);
-		result.use(FlexiGridJson.class).from(listTransferencia).total(listTransferencia.size()).page(page).serialize();
+		result.use(Results.json()).from(filtro, "result").serialize();
 	}
 	
 	
-	@Path("/pesquisarInventario.json")
-	public void pesquisarInventario(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+	@Path("/inventario")
+	public void inventario(FiltroConsultaVisaoEstoque filtro) {
+	
 		
-		List<VisaoEstoqueDetalheDTO> listInventario = visaoEstoqueService.obterVisaoEstoqueInventario(filtro);
-		result.use(FlexiGridJson.class).from(listInventario).total(listInventario.size()).page(page).serialize();
+		
+		
+		result.use(Results.json()).from(filtro, "result").serialize();
 	}
 	
 	
@@ -114,8 +120,8 @@ public class VisaoEstoqueController {
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
 		
-		FileExporter.to("consulta-box", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
+		FileExporter.to("visao-estoque", fileType).inHTTPResponse(
+				this.getNDSFileHeader(filtro.getDataMovimentacao()), null, null,
 				listVisaoEstoque, VisaoEstoqueDTO.class,
 				this.httpServletResponse);
 		
@@ -136,8 +142,8 @@ public class VisaoEstoqueController {
 			clazz = VisaoEstoqueDetalheJuramentadoDTO.class;
 		}
 		
-		FileExporter.to("consulta-box", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
+		FileExporter.to("visao-estoque", fileType).inHTTPResponse(
+				this.getNDSFileHeader(filtro.getDataMovimentacao()), null, null,
 				listDetalhe, clazz,
 				this.httpServletResponse);
 		
@@ -145,7 +151,40 @@ public class VisaoEstoqueController {
 	}
 	
 	
-	private NDSFileHeader getNDSFileHeader() {
+	@Path("/exportarConferenciaCega")
+	public void exportarConferenciaCega(FileType fileType, List<VisaoEstoqueTransferenciaDTO> listaTransferencia) throws IOException {
+		
+		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
+		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
+		
+		List<VisaoEstoqueConferenciaCegaVO> listaExport = new ArrayList<VisaoEstoqueConferenciaCegaVO>();
+		
+		for(VisaoEstoqueDetalheDTO dto : listDetalhe) {
+			
+			VisaoEstoqueConferenciaCegaVO vo = new VisaoEstoqueConferenciaCegaVO(dto);
+			
+			if (listaTransferencia != null) {
+				for(VisaoEstoqueTransferenciaDTO dtoTela : listaTransferencia) {
+					if(dtoTela.getProdutoEdicaoId().longValue() == dto.getProdutoEdicaoId().longValue()) {
+						vo.setEstoque(dtoTela.getQtde().toString());
+						break;
+					}
+				}
+			}
+			
+			listaExport.add(vo);
+		}
+		
+		FileExporter.to("visao-estoque-conferencia-cega", fileType).inHTTPResponse(
+				this.getNDSFileHeader(filtro.getDataMovimentacao()), null, null,
+				listaExport, VisaoEstoqueConferenciaCegaVO.class,
+				this.httpServletResponse);
+		
+		result.use(Results.json());
+	}
+	
+	
+	private NDSFileHeader getNDSFileHeader(Date data) {
 
 		NDSFileHeader ndsFileHeader = new NDSFileHeader();
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -155,7 +194,7 @@ public class VisaoEstoqueController {
 			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
 		}
 
-		ndsFileHeader.setData(new Date());
+		ndsFileHeader.setData(data);
 		ndsFileHeader.setNomeUsuario(getUsuario().getNome());
 		return ndsFileHeader;
 	}
