@@ -201,7 +201,7 @@ line-height: 28px;
 		<c:set  var="totalRepartes" value="0"/>
 		<c:forEach items="${notaEnvio.listaItemNotaEnvio}" var="itemNotaEnvio" varStatus="status">
 			<c:set var="totalPrecoCapa" value="${totalPrecoCapa + itemNotaEnvio.precoCapa}" />
-			<c:set var="totalComDesconto" value="${totalComDesconto + (itemNotaEnvio.precoCapa / (itemNotaEnvio.desconto - 100))}" />
+			<c:set var="totalComDesconto" value="${totalComDesconto + (itemNotaEnvio.precoCapa * (100 - itemNotaEnvio.desconto) / 100)}" />
 			<c:set var="totalRepartes" value="${totalRepartes + itemNotaEnvio.reparte}" />
 		
 			<tr class="class_linha_${(status.index % 2) +1}">
@@ -242,7 +242,7 @@ line-height: 28px;
 		<tr>
 			<td>&nbsp;</td>
 			<td align="right"><strong>DESCONTO %</strong></td>
-			<td align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalComDesconto * 100 / totalPrecoCapa}"  type="NUMBER"  maxFractionDigits="2"/></td>
+			<td align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${(totalPrecoCapa - totalComDesconto) * 100 / totalPrecoCapa}"  type="NUMBER"  maxFractionDigits="2"/></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
