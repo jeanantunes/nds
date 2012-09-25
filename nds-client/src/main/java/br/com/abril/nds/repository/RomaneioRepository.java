@@ -8,7 +8,7 @@ import br.com.abril.nds.model.cadastro.Box;
 
 public interface RomaneioRepository extends Repository<Box, Long> {
 	
-	List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, String limitar);
+	List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, boolean limitar);
 
 	Integer buscarTotal(FiltroRomaneioDTO filtro);
 
