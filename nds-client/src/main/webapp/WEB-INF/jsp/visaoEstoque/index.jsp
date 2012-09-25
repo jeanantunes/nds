@@ -2,9 +2,14 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/visaoEstoque.js"></script>
 	
 	<style type="text/css">
-		#dialog-visaoEstoque-detalhe, #dialog-visaoEstoque-detalhe-juramentado, #dialog-visaoEstoque-transferencia, #dialog-visaoEstoque-inventario{display:none;}
+		#dialog-visaoEstoque-detalhe, #dialog-visaoEstoque-detalhe-juramentado, #dialog-visaoEstoque-transferencia, 
+		#dialog-visaoEstoque-inventario, #dialog-visaoEstoque-inventario-confirm {display:none;}
 		#dialog-visaoEstoque-detalhe fieldset, #dialog-visaoEstoque-detalhe-juramentado fieldset{width:800px!important;}
 		#dialog-visaoEstoque-transferencia form{margin:0px!important; padding:0px!important; width:900px!important; overflow:hidden; }
+		
+		.bt_imprimir_conferencia_cega{background:url(${pageContext.request.contextPath}/images/ico_impressora.gif) no-repeat left center; width:300px; line-height:39px; float:left;}
+		.bt_imprimir_conferencia_cega a{padding-left:38px; color:#000; font-weight:bold; text-decoration:none;}
+		.bt_imprimir_conferencia_cega a:hover{color:#00649F; text-decoration:underline;}
 	</style>
 </head>
 
@@ -96,71 +101,17 @@
 		<fieldset style="width:870px!important;">
       		<legend>Estoque Selecionado: <span id="visaoEstoque_inventario_estoqueSelecionado"></span> - Data: <span id="visaoEstoque_inventario_dataMovimentacao"></span></legend>
             <table class="visaoEstoqueInventarioGrid"></table>
-      		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir Confer&ecirc;ncia Cega</a></span>
+      		<span class="bt_imprimir_conferencia_cega" title="Imprimir"><a href="javascript:visaoEstoqueController.imprimirConferenciaCega();">Imprimir Confer&ecirc;ncia Cega</a></span>
 		</fieldset>
 	</div>
 	
+	<div id="dialog-visaoEstoque-inventario-confirm" title="Confirmar Invent&aacute;rio do Estoque">
+		<fieldset style="width:300px!important;">
+      		<legend>Invent&aacute;rio</legend>
+      		<p>Confirma a atualiza&ccedil;&aacute;o do Saldo?</p>
+		</fieldset>
+	</div>
 
-
-
-
-
-
-
-
-<%--
-
-	<div id="dialog-inventario-confirm" title="Confirmar Inventário do Estoque">
-	<fieldset style="width:300px!important;">
-      <legend>Inventário</legend>
-      <p>Confirmação a atualização do Saldo?</p>
-	</fieldset>
-</div>
-
-<div id="dialog-inventario" title="Inventário do Estoque">
-	<fieldset style="width:870px!important;">
-      <legend>Estoque Selecionado: Lançamento - Data: 10/06/2012</legend>
-      
-      <table class="visaoEstoqueInventarioGrid"></table>
-      <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir Conferência Cega</a></span>
-	</fieldset>
-</div>
-
-
-
-<div id="dialog-juramentado" title="Visão Estoque Juramentado">
-	<fieldset>
-        <legend>Visão de Estoque / Juramentado</legend>
-        <table class="visaoJuramentadaGrid"></table>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-		  <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-	</fieldset>
-</div>
-
-
-<div id="dialog-suplementar" title="Visão Estoque Suplementar">
-	<fieldset>
-        <legend>Visão de Estoque / Suplementar</legend>
-        <table class="visaoEstoqueSuplementarGrid"></table>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-		  <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-	</fieldset>
-</div>
-
-<div id="dialog-encalhe" title="Visão Estoque Encalhe">
-	<fieldset>
-        <legend>Visão de Estoque / Encalhe</legend>
-        <table class="visaoEstoqueEncalheGrid"></table>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-		  <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-	</fieldset>
-</div>
- --%>
-	
-	
 	
 	<script type="text/javascript">
 		$(function(){

@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,18 +11,33 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.VisaoEstoqueService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 
 	@Autowired
 	private VisaoEstoqueRepository visaoEstoqueRepository;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
 	
 	@Override
 	@Transactional
@@ -87,5 +103,32 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		}
 		
 		return list;
+	}
+
+
+	@Override
+	public void transferirEstoque(FiltroConsultaVisaoEstoque filtro, Usuario usuario) {
+		
+		for (VisaoEstoqueTransferenciaDTO dto : filtro.getListaTransferencia()) {
+			
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					dto.getProdutoEdicaoId(), 
+					usuario.getId(), 
+					new BigInteger(dto.getQtde().toString()), 
+					null);
+		}
+	}
+	
+	
+	private TipoMovimentoEstoque buscaTipoMovimento() {
+		
+		TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE);
+		
+		if(tipoMovimento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para venda de encalhe!");
+		}
+		
+		return tipoMovimento;
 	}
 }

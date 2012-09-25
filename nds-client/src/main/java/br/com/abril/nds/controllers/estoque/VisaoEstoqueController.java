@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.VisaoEstoqueConferenciaCegaVO;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
@@ -73,12 +75,12 @@ public class VisaoEstoqueController {
 	
 	
 	@Path("/pesquisar.json")
-	public void pesquisar(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+	public void pesquisar(FiltroConsultaVisaoEstoque filtro) {
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
-		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).page(page).serialize();
+		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).serialize();
 	}
 	
 	
@@ -93,7 +95,16 @@ public class VisaoEstoqueController {
 	
 	
 	@Path("/transferir")
-	public void transferir(FiltroConsultaVisaoEstoque filtro, List<VisaoEstoqueTransferenciaDTO> listaTransferencia) {
+	public void transferir(FiltroConsultaVisaoEstoque filtro) {
+	
+		visaoEstoqueService.transferirEstoque(filtro, this.getUsuario());
+		
+		result.use(Results.json()).from(filtro, "result").serialize();
+	}
+	
+	
+	@Path("/inventario")
+	public void inventario(FiltroConsultaVisaoEstoque filtro) {
 	
 		
 		
@@ -137,6 +148,39 @@ public class VisaoEstoqueController {
 				this.httpServletResponse);
 		
 		result.use(Results.nothing());
+	}
+	
+	
+	@Path("/exportarConferenciaCega")
+	public void exportarConferenciaCega(FileType fileType, List<VisaoEstoqueTransferenciaDTO> listaTransferencia) throws IOException {
+		
+		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
+		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
+		
+		List<VisaoEstoqueConferenciaCegaVO> listaExport = new ArrayList<VisaoEstoqueConferenciaCegaVO>();
+		
+		for(VisaoEstoqueDetalheDTO dto : listDetalhe) {
+			
+			VisaoEstoqueConferenciaCegaVO vo = new VisaoEstoqueConferenciaCegaVO(dto);
+			
+			if (listaTransferencia != null) {
+				for(VisaoEstoqueTransferenciaDTO dtoTela : listaTransferencia) {
+					if(dtoTela.getProdutoEdicaoId().longValue() == dto.getProdutoEdicaoId().longValue()) {
+						vo.setEstoque(dtoTela.getQtde().toString());
+						break;
+					}
+				}
+			}
+			
+			listaExport.add(vo);
+		}
+		
+		FileExporter.to("visao-estoque-conferencia-cega", fileType).inHTTPResponse(
+				this.getNDSFileHeader(filtro.getDataMovimentacao()), null, null,
+				listaExport, VisaoEstoqueConferenciaCegaVO.class,
+				this.httpServletResponse);
+		
+		result.use(Results.json());
 	}
 	
 	

@@ -38,6 +38,17 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
+	imprimirConferenciaCega : function() {
+		
+		var params = visaoEstoqueController.parametrosInventario();
+		
+		$.post(
+			this.path + 'exportarConferenciaCega?fileType=PDF',
+			params
+		);
+	},
+	
+	
 	montaColunaAcao : function(data) {
 	
 		$.each(data.rows, function(index, value) {
@@ -92,6 +103,18 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
+	montaInputInventario : function(data) {
+		
+		$.each(data.rows, function(index, value) {
+				
+			value.cell.diferenca = value.cell.qtde;
+			value.cell.estoque = '<input type="text" class="inputVisaoEstoqueInventario" id="inputVisaoEstoqueInventario_' + value.cell.produtoEdicaoId + '" style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarDiferenca(this)"/>';
+		});
+		
+		return data;
+	},
+	
+	
 	ajustarSaldo : function(element) {
 		
 		var tr = element.parentNode.parentNode.parentNode;
@@ -99,6 +122,16 @@ var visaoEstoqueController = $.extend(true, {
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
 		
 		$('td[abbr="estoque"] >div', tr).html(qtde - qtdeTransferir);
+	},
+	
+	
+	ajustarDiferenca : function(element) {
+		
+		var tr = element.parentNode.parentNode.parentNode;
+		var qtdeInventario = parseInt($.trim(element.value) == "" ? 0 : element.value); 
+		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
+		
+		$('td[abbr="diferenca"] >div', tr).html(qtde - qtdeInventario);
 	},
 	
 	
@@ -153,12 +186,53 @@ var visaoEstoqueController = $.extend(true, {
 			var produtoEdicaoId = element.value;
 			var qtde = $('#inputVisaoEstoqueTransferencia_' + element.value).val();
 			
-			dados+='{name:"listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"listaTransferencia['+index+'].qtde",value:'+qtde+'}';
+			dados+='{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"filtro.listaTransferencia['+index+'].qtde",value:'+qtde+'}';
 			index++;
 		});
-		//dados += ',{name:"idRota",value:'+$('#rotaSelecionada', roteirizacao.workspace).val()+'}';
+
 		var params = '['+dados+']';
-        alert(params);
+		return eval(params);
+	},
+	
+	
+	confirmaInventario : function() {
+		
+		$('#dialog-visaoEstoque-inventario-confirm').dialog('close');
+		
+		var params = visaoEstoqueController.parametrosInventario();
+		
+		$.postJSON(
+			this.path + 'inventario?' + $('#pesquisarVisaoEstoqueForm').serialize(),
+			params,
+			function() {
+				$('#dialog-visaoEstoque-inventario').dialog('close');
+				visaoEstoqueController.pesquisar();
+			}
+		);
+	},
+	
+	
+	parametrosInventario : function() {
+		
+		var dados ="";
+		var index = 0;
+		$(".inputVisaoEstoqueInventario").each(function(i, element) {
+			
+			if (element.value != "") {
+			
+				if (dados != ""){
+					dados+=",";
+				}
+					
+				var produtoEdicaoId = element.id.substring(element.id.lastIndexOf("_")+1);
+				var qtde = element.value;
+				
+				dados+='{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"filtro.listaTransferencia['+index+'].qtde",value:'+qtde+'}';
+				index++;
+			}
+		});
+
+		var params = '['+dados+']';
 		return eval(params);
 	},
 	
@@ -248,7 +322,8 @@ var visaoEstoqueController = $.extend(true, {
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
 		$(".visaoEstoqueInventarioGrid", this.workspace).flexOptions({
-			url : this.path + 'pesquisarInventario.json?' + params, 
+			url : this.path + 'pesquisarDetalhe.json?' + params,
+			preProcess : visaoEstoqueController.montaInputInventario,
 			newp:1
 		});
 		
@@ -261,15 +336,35 @@ var visaoEstoqueController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
+					//$( this ).dialog( "close" );
 					$("#effect").show("highlight", {}, 1000, callback);
-					popConfirmaEstoque();
+					visaoEstoqueController.popupConfirmaInventario();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				},
 			},
 			
+		});
+	},
+	
+	
+	popupConfirmaInventario : function() {
+		
+		$("#dialog-visaoEstoque-inventario-confirm").dialog({
+			resizable: false,
+			height:'auto',
+			width:340,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$("#effect").show("highlight", {}, 1000, callback);
+					visaoEstoqueController.confirmaInventario();
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
 		});
 	},
 	
