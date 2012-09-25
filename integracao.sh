@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#folders=( "backup" "2707" "3107" "0108" "0208" "0308" "0608" "0708" "0808" "0908" "1008" "1308" "1408" "1508" "1608" "1708" "2008" "2108" "2208" "2308" "2408" "2708" "2808" "2908" "3008" "3108" "0309" "0409" "0509" "0609" "1009" "1109" "1209" "1309" "1409" )
-folders=( "1109" "1209" "1309" "1409" )
+folders=( "backup" "2707" "3107" "0108" "0208" "0308" "0608" "0708" "0808" "0908" "1008" "1308" "1408" "1508" "1608" "1708" "2008" "2108" "2208" "2308" "2408" "2708" "2808" "2908" "3008" "3108" "0309" "0409" "0509" "0609" "1009" "1109" "1209" "1309" "1409" )
+#folders=( "1109" "1209" "1309" "1409" )
 emsDServer=( 112 109 110 111 114 125 126 113 135 127 128 )
 emsDClient=( 112 109 110 111 114 125 126 113 135 127 128 )
-emsDClient_mdc=( 119 118 117 116 108 106 107 120 121 122 123 124 129 130 131 132 133 197 198 )
+emsDClient_mdc=( 117 106 107 )
 
 for i in "${folders[@]}"
 do
@@ -18,7 +18,7 @@ do
 		CMD="java -jar /opt/ndistrib/ndsi-couchdbinterface/ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar cron ${j}"
 		LOG="/opt/ndistrib/log/log_dserver_${i}_${j}.txt"
 		echo "${CMD} >> ${LOG}"
-		$CMD >> $LOG
+		#$CMD >> $LOG
 	done
 
 
@@ -28,7 +28,7 @@ do
 		CMD="java -jar /opt/ndistrib/ndsi-engine/ndsi-engine.jar br.com.abril.nds.integracao.ems0${j}.route.EMS0${j}Route"
 		LOG="/opt/ndistrib/log/log_dclient_${i}_${j}.txt"
 		echo "${CMD} >> ${LOG}"
-		$CMD >> $LOG
+		#$CMD >> $LOG
 	done
 
 
