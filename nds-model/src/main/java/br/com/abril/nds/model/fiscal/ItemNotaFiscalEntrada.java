@@ -103,10 +103,10 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	@OneToOne(mappedBy = "itemNotaFiscal")
 	private ItemRecebimentoFisico recebimentoFisico;
 	
-	@Column(name = "PRECO", nullable = false)
+	@Column(name = "PRECO", nullable = true)
 	private BigDecimal preco;
 	
-	@Column(name = "DESCONTO", nullable = false)
+	@Column(name = "DESCONTO", nullable = true)
 	private BigDecimal desconto;
 
 	public Long getId() {
