@@ -257,6 +257,39 @@ var followUpSistemaController = $.extend(true, {
 			height : 255
 		});
 		
+		$(".atualizacaoCadastralParcialGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
+			url : contextPath + '/followup/pesquisaDadosCadastroParcial',
+	        preProcess:  followUpSistemaController.exPreProcFollowupCadastroParcial, 
+			dataType : 'json',
+			colModel : [ {
+				display : 'Codigo',
+				name : 'codigoProduto',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeProduto',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edi&ccedil;&atilde;o',
+				name : 'numeroEdicao',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "codigoProduto",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 880,
+			height : 255
+		}));
+		
 	},
 		
 	exPreProcFollowupNegociacao : function (resultado) {
@@ -309,6 +342,10 @@ var followUpSistemaController = $.extend(true, {
 	
 	exPreProcFollowupPendenciasnfe : function(resultado) {        		
    		return resultado;
+	},
+	exPreProcFollowupCadastroParcial : function (resultado) {
+		//alert("exefollowPreProcessamentoNegociacao");
+		return resultado;
 	}
 	
 }, BaseController);
