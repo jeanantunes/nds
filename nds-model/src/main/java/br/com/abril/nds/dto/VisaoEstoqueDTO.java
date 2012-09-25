@@ -13,6 +13,8 @@ public class VisaoEstoqueDTO implements Serializable{
 
 	private static final long serialVersionUID = -4171186893803302134L;
 	
+	private String tipoEstoque;
+	
 	@Export(label = "Estoque", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String estoque;
 	
@@ -28,6 +30,16 @@ public class VisaoEstoqueDTO implements Serializable{
 	private String valorFormatado;
 	
 	private String acao = "";
+
+	
+	
+	public String getTipoEstoque() {
+		return tipoEstoque;
+	}
+
+	public void setTipoEstoque(String tipoEstoque) {
+		this.tipoEstoque = tipoEstoque;
+	}
 
 	public String getEstoque() {
 		return estoque;
