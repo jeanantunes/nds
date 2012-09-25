@@ -217,9 +217,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" JOIN cota.pdvs pdv ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" JOIN cota.parametroCobranca parametroCobranca ")
-		.append(" LEFT JOIN pdv.roteirizacao roteirizacao ")
-		.append(" LEFT JOIN roteirizacao.rota rota  ")
+		.append(" LEFT JOIN pdv.rotas rota  ")
 		.append(" LEFT JOIN rota.roteiro roteiro ")
+		.append(" LEFT JOIN roteiro.roteirizacao roteirizacao ")
 		.append(" LEFT JOIN cota.box box")
 		
 		.append(" WHERE ")

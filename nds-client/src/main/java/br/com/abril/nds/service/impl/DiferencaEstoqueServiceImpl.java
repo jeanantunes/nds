@@ -32,6 +32,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -141,9 +142,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	@Transactional
-	public Diferenca lancarDiferenca(Diferenca diferenca) {
+	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca) {
 		
-		this.processarMovimentoEstoque(diferenca, diferenca.getResponsavel().getId());
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
+		diferenca.setTipoEstoque(TipoEstoque.LANCAMENTO);
+		diferenca.setAutomatica(true);
+		diferenca.setDataMovimento(distribuidor.getDataOperacao());
 		
 		this.diferencaEstoqueRepository.adicionar(diferenca);
 		
@@ -154,32 +161,30 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	public void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
 			 					  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 								  FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
-								  Long idUsuario) {
-
-		if (listaNovasDiferencas != null 
-				&& !listaNovasDiferencas.isEmpty()) {
+								  Long idUsuario,Boolean isDiferencaNova) {
+		
+		salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova,StatusConfirmacao.CONFIRMADO);
+		
+		if(isDiferencaNova == null || !isDiferencaNova){
 			
-			this.confirmarNovosLancamentosDiferenca(
-				listaNovasDiferencas, mapaRateioCotas, idUsuario);
-			
-		} else {
-			
-			this.confirmarLancamentosDiferenca(
-				mapaRateioCotas, filtroPesquisa, idUsuario);
+			this.confirmarLancamentosDiferenca(filtroPesquisa, idUsuario);
 		}
 	} 
 	
 	@Transactional
 	public void salvarLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
 										   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
-										   Long idUsuario,boolean isDiferencaNova){
+										   Long idUsuario,Boolean isDiferencaNova){
 		
 		
-		salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario,isDiferencaNova);
+		salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario,isDiferencaNova,StatusConfirmacao.PENDENTE);
 	}
 
 	private void salvarDiferenca(Set<Diferenca> listaNovasDiferencas,
-			Map<Long, List<RateioCotaVO>> mapaRateioCotas, Long idUsuario, boolean isDiferencaNova) {
+								Map<Long, List<RateioCotaVO>> mapaRateioCotas, 
+								Long idUsuario, 
+								Boolean isDiferencaNova,
+								StatusConfirmacao statusConfirmacao) {
 		
 		Usuario usuario = usuarioService.buscar(idUsuario);
 		
@@ -187,15 +192,17 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 			Long idDiferencaTemporario = diferenca.getId();
 			
-			if(isDiferencaNova){
+			if(isDiferencaNova != null && isDiferencaNova){
 				diferenca.setId(null);
 			}
 			
 			diferenca = this.diferencaEstoqueRepository.merge(diferenca);
 			
+			List<RateioCotaVO> listaRateioCotas = null;
+			
 			if (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) {
 				
-				List<RateioCotaVO> listaRateioCotas = mapaRateioCotas.remove(idDiferencaTemporario);
+				listaRateioCotas = mapaRateioCotas.remove(idDiferencaTemporario);
 				
 				mapaRateioCotas.put(diferenca.getId(), listaRateioCotas);
 			}
@@ -209,11 +216,50 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				rateioDiferencaRepository.removerRateioDiferencaPorDiferenca(diferenca.getId());
 			}
 			
-			diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+			diferenca.setStatusConfirmacao(statusConfirmacao);
 			
 			diferenca.setResponsavel(usuario);
 			
 			this.diferencaEstoqueRepository.merge(diferenca);
+			
+			if(TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())){
+				
+				this.redirecionarDiferencaEstoque(listaRateioCotas, diferenca);
+			}
+		}
+	}
+	
+	private void redirecionarDiferencaEstoque(List<RateioCotaVO> rateiosDiferenca,Diferenca diferenca){
+		
+		if(rateiosDiferenca == null || rateiosDiferenca.isEmpty()){
+			return;
+		}
+		
+		BigInteger qntTotalRateio = BigInteger.ZERO;
+		
+		for(RateioCotaVO rateio : rateiosDiferenca){
+			qntTotalRateio = qntTotalRateio.add(rateio.getQuantidade());
+		}
+		
+		if(qntTotalRateio.compareTo(diferenca.getQtde()) < 0){
+			
+			Distribuidor distribuidor = distribuidorService.obter();
+			
+			Diferenca diferencaEstoque = new Diferenca();
+			
+			diferencaEstoque.setAutomatica(diferenca.isAutomatica());
+			diferencaEstoque.setDataMovimento(distribuidor.getDataOperacao());
+			diferencaEstoque.setProdutoEdicao(diferenca.getProdutoEdicao());
+			diferencaEstoque.setResponsavel(diferenca.getResponsavel());
+			diferencaEstoque.setTipoDiferenca(diferenca.getTipoDiferenca());
+			diferencaEstoque.setTipoEstoque(diferenca.getTipoEstoque());
+			diferencaEstoque.setItemRecebimentoFisico(diferenca.getItemRecebimentoFisico());
+			diferencaEstoque.setStatusConfirmacao(diferenca.getStatusConfirmacao());
+			
+			diferencaEstoque.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
+			diferencaEstoque.setQtde( diferenca.getQtde().subtract(qntTotalRateio) );
+			
+			diferencaEstoqueRepository.merge(diferencaEstoque);
 		}
 	}
 	
@@ -267,8 +313,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 	}
 	
-	private void confirmarLancamentosDiferenca(Map<Long, List<RateioCotaVO>> mapaRateioCotas,
-											   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
+	private void confirmarLancamentosDiferenca(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
 											   Long idUsuario) {
 		
 		filtroPesquisa.setPaginacao(null);
@@ -279,8 +324,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.diferencaEstoqueRepository.obterDiferencasLancamento(filtroPesquisa);
 		
 		for (Diferenca diferenca : listaDiferencas) {
-			
-			this.processarRateioCotas(diferenca, mapaRateioCotas, idUsuario);
 			
 			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
 			
