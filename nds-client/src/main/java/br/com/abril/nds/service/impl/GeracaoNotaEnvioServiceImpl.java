@@ -157,10 +157,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			BigDecimal percentualDesconto = descontoService
 					.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
-					precoVenda, percentualDesconto);
-
-			BigDecimal valorUnitario = precoVenda.subtract(valorDesconto);
 
 			BigInteger quantidade = movimentoEstoqueCota.getQtde();
 
@@ -177,7 +173,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
 			itemNotaEnvio.setDesconto(percentualDesconto);
 			itemNotaEnvio.setReparte(quantidade);
-			itemNotaEnvio.setPrecoCapa(valorUnitario);
+			itemNotaEnvio.setPrecoCapa(precoVenda);
 			itemNotaEnvio
 					.setListaMovimentoEstoqueCota(listaMovimentoEstoqueItem);
 
@@ -226,7 +222,32 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao,
 			Date dataEmissao, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores){
-		return gerar(idCota, idRota, chaveAcesso, codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao, periodo, listaIdFornecedores);
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		Cota cota = cotaRepository.buscarPorId(idCota);
+
+		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
+				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+				distribuidor, cota);
+
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
+				distribuidor, idCota, periodo, listaIdFornecedores);
+		
+		 List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaMovimentoEstoqueCota, idCota);
+		if (listaItemNotaEnvio.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"N�o � possivel gerar nota de envio para Cota "
+							+ cota.getNumeroCota());
+		}
+		int sequencia = 0;
+		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
+			itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,
+					++sequencia));
+			
+		}
+
+		notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);		
+		return notaEnvio;
 	}
 
 	@Override
@@ -235,21 +256,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao,
 			Date dataEmissao, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores) {
-		NotaEnvio notaEnvio = new NotaEnvio();
 		Distribuidor distribuidor = distribuidorRepository.obter();
-
 		Cota cota = cotaRepository.buscarPorId(idCota);
-		if (cota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota
-					+ " n�o encontrada!");
-		}
-		notaEnvio.setEmitente(carregarEmitente(distribuidor));
-		notaEnvio.setDestinatario(carregaDestinatario(cota, idRota));
 
-		notaEnvio.setChaveAcesso(chaveAcesso);
-		notaEnvio.setCodigoNaturezaOperacao(codigoNaturezaOperacao);
-		notaEnvio.setDescricaoNaturezaOperacao(descricaoNaturezaOperacao);
-		notaEnvio.setDataEmissao(dataEmissao);
+		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
+				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+				distribuidor, cota);
 
 		notaEnvioRepository.adicionar(notaEnvio);
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = obterItensNotaVenda(
@@ -271,6 +283,39 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
 
 		notaEnvio = notaEnvioRepository.merge(notaEnvio);
+		return notaEnvio;
+	}
+
+	/**
+	 * @param idCota
+	 * @param idRota
+	 * @param chaveAcesso
+	 * @param codigoNaturezaOperacao
+	 * @param descricaoNaturezaOperacao
+	 * @param dataEmissao
+	 * @param distribuidor
+	 * @param cota
+	 * @return
+	 * @throws ValidacaoException
+	 */
+	private NotaEnvio criarNotaEnvio(Long idCota, Long idRota,
+			String chaveAcesso, Integer codigoNaturezaOperacao,
+			String descricaoNaturezaOperacao, Date dataEmissao,
+			Distribuidor distribuidor, Cota cota) throws ValidacaoException {
+		NotaEnvio notaEnvio = new NotaEnvio();
+		
+		
+		if (cota == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota
+					+ " n�o encontrada!");
+		}
+		notaEnvio.setEmitente(carregarEmitente(distribuidor));
+		notaEnvio.setDestinatario(carregaDestinatario(cota, idRota));
+
+		notaEnvio.setChaveAcesso(chaveAcesso);
+		notaEnvio.setCodigoNaturezaOperacao(codigoNaturezaOperacao);
+		notaEnvio.setDescricaoNaturezaOperacao(descricaoNaturezaOperacao);
+		notaEnvio.setDataEmissao(dataEmissao);
 		return notaEnvio;
 	}
 
