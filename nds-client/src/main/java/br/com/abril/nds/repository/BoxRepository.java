@@ -79,7 +79,7 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @param id Id do {@link Box}
 	 * @return
 	 */
-	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id);
+	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long idBox);
 	
 	Integer obterCodigoBoxPadraoUsuario(Long idUsuario);
 
