@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -397,6 +396,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
 			
+			rateioDiferenca.setDataNotaEnvio(rateioCotaVO.getDataEnvioNota());
+			
 			rateioDiferenca = this.rateioDiferencaRepository.merge(rateioDiferenca);
 			
 			rateiosAssociadosDiferenca.add(rateioDiferenca.getId());
@@ -480,6 +481,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				rateioVO.setNomeCota(rateio.getCota().getPessoa().getNome());
 				rateioVO.setNumeroCota(rateio.getCota().getNumeroCota());
 				rateioVO.setQuantidade(rateio.getQtde());
+				rateioVO.setDataEnvioNota(rateio.getDataNotaEnvio());
 				
 				Long reparteCota = 
 						movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota
