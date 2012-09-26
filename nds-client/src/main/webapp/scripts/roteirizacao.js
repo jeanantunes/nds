@@ -406,6 +406,7 @@ var roteirizacao = $.extend(true, {
             });
 
             $(".roteirosGrid", roteirizacao.workspace).flexReload();
+            roteirizacao.idRoteiro = null;
             roteirizacao.clearRotasGrid();
         },
 		
