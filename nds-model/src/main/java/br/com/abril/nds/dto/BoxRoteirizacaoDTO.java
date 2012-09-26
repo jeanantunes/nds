@@ -1,6 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoxRoteirizacaoDTO implements Serializable {
 
@@ -13,6 +15,7 @@ public class BoxRoteirizacaoDTO implements Serializable {
 	private String nome;
 	
 	private Boolean selecionado;
+	
 
 	
 	public BoxRoteirizacaoDTO() {

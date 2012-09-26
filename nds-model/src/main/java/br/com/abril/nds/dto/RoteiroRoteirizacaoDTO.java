@@ -1,6 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoteiroRoteirizacaoDTO implements Serializable {
 
@@ -14,6 +16,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	
 	private Boolean selecionado;
 
+	private List<RotaRoteirizacaoDTO> rotas;
 	
 	public RoteiroRoteirizacaoDTO() {
 		
@@ -83,5 +86,25 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	/**
+	 * @return the listaRota
+	 */
+	public List<RotaRoteirizacaoDTO> getRotas() {
+		return rotas;
+	}
+
+	/**
+	 * @param listaRota the listaRota to set
+	 */
+	public void setRotas(List<RotaRoteirizacaoDTO> listaRota) {
+		this.rotas = listaRota;
+	}
 	
+	public void addRota(RotaRoteirizacaoDTO rota) {
+		if (rotas == null) {
+			rotas = new ArrayList<RotaRoteirizacaoDTO>();
+		}
+		rotas.add(rota);
+	}
 }
