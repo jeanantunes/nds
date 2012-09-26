@@ -5209,7 +5209,7 @@ public class DataLoader {
 			
 			save(session, diferenca);
 			
-			if (i < 5) {
+			if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(tipoDirecionamento)) {
 				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
 				session.save(rateio);
 			}
@@ -5230,7 +5230,7 @@ public class DataLoader {
 
 			session.save(diferenca);
 			
-			if (i < 5) {
+			if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(tipoDirecionamento)) {
 				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
 				session.save(rateio);
 			}

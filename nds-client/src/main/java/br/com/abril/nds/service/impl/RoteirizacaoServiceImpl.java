@@ -139,7 +139,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome, MatchMode matchMode) {
-		return  rotaRepository.buscarRotaPorNome(roteiroId, rotaNome, matchMode);
+		return rotaRepository.buscarRotaPorNome(roteiroId, rotaNome, matchMode);
 	}
 	
 	@Override
@@ -429,39 +429,32 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 	
 	/**
-     * Obtem lista de Box do tipo lançamento
-     * @return List<Box>
-     */
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
-	public List<Box> obterListaBoxLancamento(){
-		List<Box> listaBox = new ArrayList<Box>();
-		listaBox = this.boxRepository.obterListaBox(TipoBox.LANCAMENTO);
-		return listaBox;
+	public List<Box> obterListaBoxLancamento(String nomeBox){
+		return boxRepository.obterListaBox(nomeBox, TipoBox.LANCAMENTO);
 	}
 	
 	/**
-     * Obtem lista de Roteiro por Box
-     * @return List<Roteiro>
-     */
+	 * {@inheritDoc}
+	 */
 	@Transactional
 	@Override
-	public List<Roteiro> obterListaRoteiroPorBox(Long idBox){
+	public List<Roteiro> obterListaRoteiroPorBox(Long idBox, String descricaoRoteiro){
 		List<Roteiro> listaRoteiro = new ArrayList<Roteiro>();
-		listaRoteiro = this.roteiroRepository.buscarRoteiroDeBox(idBox);
+		listaRoteiro = this.roteiroRepository.buscarRoteiroDeBox(idBox, descricaoRoteiro);
 		return listaRoteiro;
 	}
 	
 	/**
-     * Obtem lista de Rota por Roteiro
-     * @return List<Rota>
-     */
+	 * {@inheritDoc} 
+	 */
 	@Transactional
 	@Override
-	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro){
-		List<Rota> listaRota = new ArrayList<Rota>();
-		listaRota = this.rotaRepository.buscarRotaPorRoteiro(idRoteiro, null, null);
-		return listaRota;
+	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota){
+		return  rotaRepository.buscarRotaPorRoteiro(idRoteiro, null, null);
 	}
 	
 	/**
@@ -491,7 +484,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO();
 		boxDTO.setId(box.getId());
 		boxDTO.setNome(box.getNome());
-		boxDTO.setOrdem(box.getOrdem());
 		boxDTO.setSelecionado(box.getId() == parametros.getIdBox());
 		listaBox.add(boxDTO);
 		
@@ -567,6 +559,25 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		roteirizacaDTO.setListaPdvs(listaPdv);
 
 		return roteirizacaDTO;
+	}
+
+	/**
+	 * Inclui Cota Pdv na Roteirização
+	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
+	 */
+	@Override
+	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> listaCotaPdv, Long idRota) {
+		
+		PDV pdv;
+		Rota rota = rotaRepository.buscarPorId(idRota);
+		for (PdvRoteirizacaoDTO item:listaCotaPdv){
+			
+			pdv = pdvRepository.buscarPorId(item.getId());
+			rota.getPdvs().add(pdv);
+			rotaRepository.alterar(rota);
+		}
+		
+		
 	}
 	
 }

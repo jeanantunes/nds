@@ -1,6 +1,5 @@
 package br.com.abril.nds.dto;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class InfoConsultaEncalheDTO {
@@ -9,14 +8,6 @@ public class InfoConsultaEncalheDTO {
 	
 	private Integer qtdeConsultaEncalhe;
 	
-	private Integer qtdProdutoPrimeiroRecolhimento;
-	
-	private BigDecimal qtdExemplarPrimeiroRecolhimento;
-
-	private Integer qtdProdutoDemaisRecolhimentos;
-	
-	private BigDecimal qtdExemplarDemaisRecolhimentos;
-
 	/**
 	 * Obtém listaConsultaEncalhe
 	 *
@@ -51,80 +42,6 @@ public class InfoConsultaEncalheDTO {
 	public void setQtdeConsultaEncalhe(Integer qtdeConsultaEncalhe) {
 		this.qtdeConsultaEncalhe = qtdeConsultaEncalhe;
 	}
-
-	/**
-	 * Obtém qtdProdutoPrimeiroRecolhimento
-	 *
-	 * @return Integer
-	 */
-	public Integer getQtdProdutoPrimeiroRecolhimento() {
-		return qtdProdutoPrimeiroRecolhimento;
-	}
-
-	/**
-	 * Atribuí qtdProdutoPrimeiroRecolhimento
-	 * @param qtdProdutoPrimeiroRecolhimento 
-	 */
-	public void setQtdProdutoPrimeiroRecolhimento(
-			Integer qtdProdutoPrimeiroRecolhimento) {
-		this.qtdProdutoPrimeiroRecolhimento = qtdProdutoPrimeiroRecolhimento;
-	}
-
-	/**
-	 * Obtém qtdExemplarPrimeiroRecolhimento
-	 *
-	 * @return BigDecimal
-	 */
-	public BigDecimal getQtdExemplarPrimeiroRecolhimento() {
-		return qtdExemplarPrimeiroRecolhimento;
-	}
-
-	/**
-	 * Atribuí qtdExemplarPrimeiroRecolhimento
-	 * @param qtdExemplarPrimeiroRecolhimento 
-	 */
-	public void setQtdExemplarPrimeiroRecolhimento(
-			BigDecimal qtdExemplarPrimeiroRecolhimento) {
-		this.qtdExemplarPrimeiroRecolhimento = qtdExemplarPrimeiroRecolhimento;
-	}
-
-	/**
-	 * Obtém qtdProdutoDemaisRecolhimentos
-	 *
-	 * @return Integer
-	 */
-	public Integer getQtdProdutoDemaisRecolhimentos() {
-		return qtdProdutoDemaisRecolhimentos;
-	}
-
-	/**
-	 * Atribuí qtdProdutoDemaisRecolhimentos
-	 * @param qtdProdutoDemaisRecolhimentos 
-	 */
-	public void setQtdProdutoDemaisRecolhimentos(
-			Integer qtdProdutoDemaisRecolhimentos) {
-		this.qtdProdutoDemaisRecolhimentos = qtdProdutoDemaisRecolhimentos;
-	}
-
-	/**
-	 * Obtém qtdExemplarDemaisRecolhimentos
-	 *
-	 * @return BigDecimal
-	 */
-	public BigDecimal getQtdExemplarDemaisRecolhimentos() {
-		return qtdExemplarDemaisRecolhimentos;
-	}
-
-	/**
-	 * Atribuí qtdExemplarDemaisRecolhimentos
-	 * @param qtdExemplarDemaisRecolhimentos 
-	 */
-	public void setQtdExemplarDemaisRecolhimentos(
-			BigDecimal qtdExemplarDemaisRecolhimentos) {
-		this.qtdExemplarDemaisRecolhimentos = qtdExemplarDemaisRecolhimentos;
-	}
-
-	
 
 	
 }

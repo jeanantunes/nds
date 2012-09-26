@@ -23,6 +23,21 @@ import javax.persistence.Table;
 @Table(name = "BOX")
 @SequenceGenerator(name="BOX_SEQ", initialValue = 1, allocationSize = 1)
 public class Box implements Serializable {
+    
+    /**
+     * Box "Especial" utilizado na funcionalidade de roteirização
+     * para identificar configuração de roteirização sem informação
+     * de Box 
+     */
+    public static final Box ESPECIAL;
+    
+    static {
+        ESPECIAL = new Box();
+        ESPECIAL.setId(Long.valueOf(-1));
+        ESPECIAL.setCodigo(Integer.valueOf(-1));
+        ESPECIAL.setNome("Especial");
+        ESPECIAL.setTipoBox(TipoBox.LANCAMENTO);
+    }
 
 	/**
 	 * Serial Version UID
@@ -49,9 +64,6 @@ public class Box implements Serializable {
 	
 	@OneToMany(mappedBy ="box")
 	private Set<Roteiro> roteiros;
-	
-	@Column(name="ORDEM", nullable = true)
-	private Integer ordem;
 
 	public Set<Cota> getCotas() {
 		return cotas;
@@ -111,20 +123,6 @@ public class Box implements Serializable {
 	 */
 	public void setRoteiros(Set<Roteiro> roteiros) {
 		this.roteiros = roteiros;
-	}
-	
-	/**
-	 * @return the ordem
-	 */
-	public Integer getOrdem() {
-		return ordem;
-	}
-
-	/**
-	 * @param ordem the ordem to set
-	 */
-	public void setOrdem(Integer ordem) {
-		this.ordem = ordem;
 	}
 
 	@Override
