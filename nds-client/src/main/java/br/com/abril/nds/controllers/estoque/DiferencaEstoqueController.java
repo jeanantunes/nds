@@ -2376,6 +2376,9 @@ public class DiferencaEstoqueController {
 		Set<Diferenca> diferencasSessao = 
 			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		
+		Map<Long, List<RateioCotaVO>> mapaRateioCotas =
+			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+		
 		List<ItemNotaEnvio> itensNotaEnvio = 
 			itemNotaEnvioService.obterItensNotaEnvio(dateNotaEnvio, numeroCota);
 		
@@ -2393,7 +2396,9 @@ public class DiferencaEstoqueController {
 			
 			produto = produtoEdicao.getProduto();
 			
-			if (this.containsDiferenca(diferencasSessao, produtoEdicao.getId())) {
+			if (this.containsDiferenca(
+					diferencasSessao, mapaRateioCotas,produtoEdicao.getId(),
+					dateNotaEnvio, numeroCota)) {
 				
 				continue;
 			}
@@ -2435,14 +2440,38 @@ public class DiferencaEstoqueController {
 		}
 	}
 
-	private boolean containsDiferenca(Set<Diferenca> diferencas, Long idProdutoEdicao) {
+	private boolean containsDiferenca(Set<Diferenca> diferencas,
+									  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
+									  Long idProdutoEdicao,
+									  Date dateNotaEnvio,
+									  Integer numeroCota) {
 		
-		if (diferencas != null) {
+		if (diferencas == null) {
 		
-			for (Diferenca diferenca : diferencas) {
+			return false;
+		}
+		
+		for (Diferenca diferenca : diferencas) {
+		
+			if (!diferenca.getTipoDirecionamento().equals(TipoDirecionamentoDiferenca.NOTA)
+					|| !diferenca.getProdutoEdicao().getId().equals(idProdutoEdicao)) {
 				
-				if (diferenca.getProdutoEdicao().getId().equals(idProdutoEdicao)) {
-					
+				continue;
+			}
+				
+			List<RateioCotaVO> listaRateio = mapaRateioCotas.get(diferenca.getId());
+			
+			if (listaRateio != null && !listaRateio.isEmpty()) { 
+			
+				continue;
+			}
+			
+			for (RateioCotaVO rateio : listaRateio) {
+				
+				if (rateio.getNumeroCota().equals(numeroCota)
+						&& rateio.getDataEnvioNota() != null
+						&& rateio.getDataEnvioNota().compareTo(dateNotaEnvio) == 0) {
+				
 					return true;
 				}
 			}
