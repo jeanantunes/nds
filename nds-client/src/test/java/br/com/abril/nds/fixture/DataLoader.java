@@ -4852,11 +4852,11 @@ public class DataLoader {
 	private static void criarDistribuicaoCota(Session session) {
 
 		ParametroDistribuicaoCota parametroGuilherme = 	Fixture.criarParametroDistribuidor(
-				100, "Joao da Silva", tipoEntregador, "Muito importante isso aeh!",
+				100, "Joao da Silva", DescricaoTipoEntrega.ENTREGADOR, "Muito importante isso aeh!",
 				true, true, true, true, true, true, true, true, true);
 
 		ParametroDistribuicaoCota parametroJoao = 	Fixture.criarParametroDistribuidor(
-				120, "Maria da Silva", tipoEntregaEmBanca, "Muito importante isso aeh também!",
+				120, "Maria da Silva", DescricaoTipoEntrega.ENTREGA_EM_BANCA, "Muito importante isso aeh também!",
 				false, false, false, false, false, false, false, false, false);
 
 		cotaJoao.setParametroDistribuicao(parametroJoao);
