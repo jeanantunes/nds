@@ -33,6 +33,10 @@ public class ConsultaEncalheDTO {
 	
 	private Integer recolhimento;
 	
+	private Long idFornecedor;
+	
+	private Long idCota;
+	
 	public ConsultaEncalheDTO() {}
 
 	/**
@@ -266,6 +270,34 @@ public class ConsultaEncalheDTO {
 	 */
 	public void setValorComDesconto(BigDecimal valorComDesconto) {
 		this.valorComDesconto = valorComDesconto;
+	}
+
+	/**
+	 * @return the idFornecedor
+	 */
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	/**
+	 * @param idFornecedor the idFornecedor to set
+	 */
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+
+	/**
+	 * @return the idCota
+	 */
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	/**
+	 * @param idCota the idCota to set
+	 */
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}
 
 	
