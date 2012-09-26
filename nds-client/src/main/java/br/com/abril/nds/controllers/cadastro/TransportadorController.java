@@ -28,7 +28,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.AssociacaoVeiculoMotoristaRota;
 import br.com.abril.nds.model.cadastro.Motorista;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaTransportador.PeriodicidadeCobranca;
+import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
