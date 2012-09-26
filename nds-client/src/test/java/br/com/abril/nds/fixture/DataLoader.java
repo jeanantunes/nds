@@ -220,6 +220,8 @@ public class DataLoader {
 
 	private static final String PARAM_SKIP_DATA = "skipData";
 	private static final String PARAM_CLEAN_DATA = "cleanData";
+	
+	private static PessoaJuridica juridicaTreelog;
 	private static PessoaJuridica juridicaAcme;
 	private static PessoaJuridica juridicaDinap;
 	private static PessoaJuridica juridicaFc;
@@ -951,6 +953,10 @@ public class DataLoader {
 	private static void carregarDados(Session session) {
 		carregarDadosClean(session);
 
+		criarPessoas(session);
+		criarFornecedores(session);
+
+		
 		//criarBanco(session);
 		criarUsuarios(session);
 		
@@ -1165,9 +1171,9 @@ public class DataLoader {
 		criarEventoExecucao(session);
 		criarAlgoritmos(session);
 				
-		criarPessoas(session);
+		criarPessoasClean(session);
 		criarTiposFornecedores(session);
-		criarFornecedores(session);
+		criarFornecedoresClean(session);
 		
 		tabelaNCM(session);
 		criarTiposProduto(session);
@@ -2500,43 +2506,43 @@ public class DataLoader {
 		
 		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
-		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
+		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose,1);
 		pdvJose.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJose);
 
-		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel,2);
 		pdvManoel.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvManoel);
 
-		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha);
+		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha,3);
 		pdvManoelCunha.setSegmentacao(segmentacaoPDV);
 		session.save(pdvManoelCunha);
 
-		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria);
+		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria,4);
 		pdvMaria.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMaria);
 
-		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis);
+		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis,5);
 		pdvLuis.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvLuis);
 
-		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
+		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao,6);
 		pdvJoao.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJoao);
 
-		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
+		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme,7);
 		pdvGuilherme.setSegmentacao(segmentacaoPDV);
 		session.save(pdvGuilherme);
 
-		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
+		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo,8);
 		pdvMurilo.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMurilo);
 
-		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
+		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana,9);
 		pdvMariana.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMariana);
 
-		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
+		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando,10);
 		pdvOrlando.setSegmentacao(segmentacaoPDV);
 		session.save(pdvOrlando);
 
@@ -2544,48 +2550,56 @@ public class DataLoader {
 
 	private static void criarRotaRoteiroCota(Session session) {
 
-		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
-		session.save(roteiro);
-
-		Rota rota = Fixture.rota("005", "Rota 005");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
-		session.save(roteirizacao);
+		Box boxA = Fixture.criarBox(1000, "BX-A", TipoBox.LANCAMENTO);
+		session.save(boxA);
+		
+		Box boxB = Fixture.criarBox(2000, "BX-B", TipoBox.LANCAMENTO);
+		session.save(boxB);
+		
+		
+		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(boxA);
+		session.save(roteirizacao1);
 	
-		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota,1);
-		session.save(roteirizacao);
+		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(boxB);
+		session.save(roteirizacao2);
 		
-		roteiro = Fixture.criarRoteiro("Interlagos", box1,TipoRoteiro.NORMAL);
-		session.save(roteiro);
+		Roteirizacao roteirizacao3 = Fixture.criarRoteirizacao(boxA);
+		session.save(roteirizacao3);;
 
-		rota = Fixture.rota("004", "Rota 004");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-
-		roteirizacao = Fixture.criarRoteirizacao(pdvJose, rota,1);
-		session.save(roteirizacao);
 		
-		roteirizacao = Fixture.criarRoteirizacao(pdvManoel, rota,1);
-		session.save(roteirizacao);
+		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,boxA,TipoRoteiro.NORMAL);
+		session.save(roteiroPinheiros);
 
-		rota = Fixture.rota("006", "Rota 006");
-		rota.setRoteiro(roteiro);
-		session.save(rota);
-
-		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",box2,TipoRoteiro.NORMAL);
+		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,boxB,TipoRoteiro.NORMAL);
+		session.save(roteiroInterlagos);
+		
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",roteirizacao3,boxA,TipoRoteiro.NORMAL);
 		session.save(roteiroTCD);
 
-		Rota rota10 = Fixture.rota("001", "Rota 001");
-		rota10.setRoteiro(roteiroTCD);
+		
+		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
+		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
+		
+		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose,11);
+		pdvcotaJose2.setSegmentacao(segmentacaoPDV);
+		session.save(pdvcotaJose2);
+
+		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel,12);
+		pdvcotaManoel2.setSegmentacao(segmentacaoPDV2);
+		session.save(pdvcotaManoel2);
+		
+		List<PDV> pdvs = Arrays.asList(pdvcotaJose2,pdvcotaManoel2);
+
+		
+		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros,pdvs);
+		session.save(rota1);
+		
+		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos,pdvs);
+		session.save(rota2);
+		
+		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
 		session.save(rota10);
-
-
-		roteirizacao = Fixture.criarRoteirizacao(pdvGuilherme, rota10,1);
-		session.save(roteirizacao);
-
-
+ 
 	}
 
 
@@ -3359,6 +3373,7 @@ public class DataLoader {
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.OUTBOUND_FOLDER, "/opt/interface/"));
 		save(session, Fixture.parametroSistema(TipoParametroSistema.CODIGO_DISTRIBUIDOR_DINAP, "6248116"));
+		save(session, Fixture.parametroSistema(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE, "1"));
 	}
 
 	private static void criarMovimentosEstoque(Session session) {
@@ -4850,13 +4865,8 @@ public class DataLoader {
 		save(session, cotaJoao, cotaGuilherme);
 	}
 
-	private static void criarFornecedores(Session session) {
+	private static void criarFornecedoresClean(Session session) {
 
-		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
-		fornecedorAcme.setCodigoInterface(123);
-		fornecedorAcme.setResponsavel("João");
-		fornecedorAcme.setOrigem(Origem.INTERFACE);
-		fornecedorAcme.setEmailNfe("joao@email.com");
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
 		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
@@ -4869,7 +4879,7 @@ public class DataLoader {
 		fornecedorFc.setOrigem(Origem.MANUAL);
 		fornecedorFc.setEmailNfe("acme@acme.com");
 
-		save(session, fornecedorAcme, fornecedorDinap, fornecedorFc);
+		save(session, fornecedorDinap, fornecedorFc);
 
 		Endereco enderecoPrincipal = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", "50", "Centro", "Mococa", "SP",3530508);
@@ -4877,11 +4887,6 @@ public class DataLoader {
 		Endereco endereco = Fixture.criarEndereco(
 				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", "50", "Centro", "Mococa", "SP",3530508);
 
-		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
-		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
-		enderecoFornecedorAcme.setPrincipal(true);
-		enderecoFornecedorAcme.setEndereco(enderecoPrincipal);
-		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.COMERCIAL);
 
 		EnderecoFornecedor enderecoFornecedorDinap = new EnderecoFornecedor();
 		enderecoFornecedorDinap.setFornecedor(fornecedorDinap);
@@ -4895,35 +4900,9 @@ public class DataLoader {
 		enderecoFornecedorFc.setEndereco(enderecoPrincipal);
 		enderecoFornecedorFc.setTipoEndereco(TipoEndereco.COMERCIAL);
 
-		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme, enderecoFornecedorDinap, enderecoFornecedorFc);
-
-		enderecoFornecedorAcme = new EnderecoFornecedor();
-		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
-		enderecoFornecedorAcme.setPrincipal(false);
-		enderecoFornecedorAcme.setEndereco(endereco);
-		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		enderecoFornecedorDinap = new EnderecoFornecedor();
-		enderecoFornecedorDinap.setFornecedor(fornecedorDinap);
-		enderecoFornecedorDinap.setPrincipal(false);
-		enderecoFornecedorDinap.setEndereco(endereco);
-		enderecoFornecedorDinap.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		enderecoFornecedorFc = new EnderecoFornecedor();
-		enderecoFornecedorFc.setFornecedor(fornecedorFc);
-		enderecoFornecedorFc.setPrincipal(false);
-		enderecoFornecedorFc.setEndereco(endereco);
-		enderecoFornecedorFc.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-
-		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme, enderecoFornecedorDinap, enderecoFornecedorFc);
-
-		Telefone telefonePrincipalAcme = Fixture.telefone("19", "3216549", null);
-		TelefoneFornecedor telefoneFornecedorAcme = new TelefoneFornecedor();
-		telefoneFornecedorAcme.setPrincipal(true);
-		telefoneFornecedorAcme.setFornecedor(fornecedorAcme);
-		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
-		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.CELULAR);
-
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorDinap, enderecoFornecedorFc);
+		
+		
 		Telefone telefonePrincipalDinap = Fixture.telefone("11", "18250104", null);
 		TelefoneFornecedor telefoneFornecedorDinap = new TelefoneFornecedor();
 		telefoneFornecedorDinap.setPrincipal(true);
@@ -4938,8 +4917,55 @@ public class DataLoader {
 		telefoneFornecedorFc.setTelefone(telefonePrincipalFc);
 		telefoneFornecedorFc.setTipoTelefone(TipoTelefone.CELULAR);
 
-		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc,
-					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
+		save(session, telefonePrincipalDinap, telefonePrincipalFc,
+					  telefoneFornecedorDinap, telefoneFornecedorFc);
+
+	}
+	
+	private static void criarFornecedores(Session session) {
+
+		fornecedorAcme = Fixture.fornecedorAcme(tipoFornecedorOutros);
+		fornecedorAcme.setCodigoInterface(123);
+		fornecedorAcme.setResponsavel("João");
+		fornecedorAcme.setOrigem(Origem.INTERFACE);
+		fornecedorAcme.setEmailNfe("joao@email.com");
+		
+
+		save(session, fornecedorAcme);
+
+		Endereco enderecoPrincipal = Fixture.criarEndereco(
+				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", "50", "Centro", "Mococa", "SP",3530508);
+
+		Endereco endereco = Fixture.criarEndereco(
+				TipoEndereco.RESIDENCIAL, "92130-330", "Avenida Brasil", "50", "Centro", "Mococa", "SP",3530508);
+
+		EnderecoFornecedor enderecoFornecedorAcme = new EnderecoFornecedor();
+		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
+		enderecoFornecedorAcme.setPrincipal(true);
+		enderecoFornecedorAcme.setEndereco(enderecoPrincipal);
+		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.COMERCIAL);
+
+
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme);
+
+		enderecoFornecedorAcme = new EnderecoFornecedor();
+		enderecoFornecedorAcme.setFornecedor(fornecedorAcme);
+		enderecoFornecedorAcme.setPrincipal(false);
+		enderecoFornecedorAcme.setEndereco(endereco);
+		enderecoFornecedorAcme.setTipoEndereco(TipoEndereco.RESIDENCIAL);
+
+
+		save(session, enderecoPrincipal, endereco, enderecoFornecedorAcme);
+
+		Telefone telefonePrincipalAcme = Fixture.telefone("19", "3216549", null);
+		TelefoneFornecedor telefoneFornecedorAcme = new TelefoneFornecedor();
+		telefoneFornecedorAcme.setPrincipal(true);
+		telefoneFornecedorAcme.setFornecedor(fornecedorAcme);
+		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
+		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.CELULAR);
+
+
+		save(session, telefonePrincipalAcme, telefoneFornecedorAcme);
 
 		telefonePrincipalAcme = Fixture.telefone("19", "75110240", null);
 		telefoneFornecedorAcme = new TelefoneFornecedor();
@@ -4948,22 +4974,8 @@ public class DataLoader {
 		telefoneFornecedorAcme.setTelefone(telefonePrincipalAcme);
 		telefoneFornecedorAcme.setTipoTelefone(TipoTelefone.RESIDENCIAL);
 
-		telefonePrincipalDinap = Fixture.telefone("11", "5407842", null);
-		telefoneFornecedorDinap = new TelefoneFornecedor();
-		telefoneFornecedorDinap.setPrincipal(false);
-		telefoneFornecedorDinap.setFornecedor(fornecedorDinap);
-		telefoneFornecedorDinap.setTelefone(telefonePrincipalDinap);
-		telefoneFornecedorDinap.setTipoTelefone(TipoTelefone.RESIDENCIAL);
 
-		telefonePrincipalFc = Fixture.telefone("19", "3210054", null);
-		telefoneFornecedorFc = new TelefoneFornecedor();
-		telefoneFornecedorFc.setPrincipal(false);
-		telefoneFornecedorFc.setFornecedor(fornecedorFc);
-		telefoneFornecedorFc.setTelefone(telefonePrincipalFc);
-		telefoneFornecedorFc.setTipoTelefone(TipoTelefone.RESIDENCIAL);
-
-		save(session, telefonePrincipalAcme, telefonePrincipalDinap, telefonePrincipalFc,
-					  telefoneFornecedorAcme, telefoneFornecedorDinap, telefoneFornecedorFc);
+		save(session, telefonePrincipalAcme, telefoneFornecedorAcme);
 
 		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros,123456);
 		fornecedor.setEmailNfe("email@email.com");
@@ -5546,15 +5558,24 @@ public class DataLoader {
 	}
 
 
-	private static void criarPessoas(Session session){
-		juridicaAcme = Fixture.pessoaJuridica("Acme",
-				"10000000000100", "000000000004", "sys.discover@gmail.com", "99.999-9");
+	private static void criarPessoasClean(Session session) {
+		juridicaTreelog = Fixture.pessoaJuridica("Treelog",
+				"61.438.248/0001-23", "000000000000", "sys.discover@gmail.com", "99.999-9");
 		juridicaDinap = Fixture.pessoaJuridica("Dinap",
 				"11111111000111", "111111111111", "sys.discover@gmail.com", "99.999-9");
 		juridicaFc = Fixture.pessoaJuridica("FC",
-				"22222222000122", "222222222222", "sys.discover@gmail.com", "99.999-9");
+				"28.322.873/0001-30", "222222222222", "sys.discover@gmail.com", "99.999-9");
+		
+		save(session, juridicaTreelog, juridicaDinap, juridicaFc);
+		
+	}
+	
+	private static void criarPessoas(Session session){
+				 
 		juridicaValida = Fixture.pessoaJuridica("Juridica Valida",
 				"93081738000101", "333333333333", "sys.discover@gmail.com", "99.999-9");
+		juridicaAcme = Fixture.pessoaJuridica("Acme",
+				"10000000000100", "000000000004", "sys.discover@gmail.com", "99.999-9");
 
 		manoel = Fixture.pessoaFisica("10732815665",
 				"sys.discover@gmail.com", "Manoel da Silva", "12654879-9", "SSP", "SP", DateUtil.parseDataPTBR("13/09/1979"), EstadoCivil.SOLTEIRO);
@@ -5584,7 +5605,7 @@ public class DataLoader {
 
 	    PessoaFisica joana  = Fixture.pessoaFisica("12345678905", "sys.discover@gmail.com", "Joana");
 
-		save(session, juridicaAcme, juridicaDinap, juridicaFc, juridicaValida,manoel,manoelCunha,jose,maria,
+		save(session, juridicaAcme, juridicaValida,manoel,manoelCunha,jose,maria,
 				guilherme,murilo,mariana,orlando,luis,joao, joana);
 
 	}

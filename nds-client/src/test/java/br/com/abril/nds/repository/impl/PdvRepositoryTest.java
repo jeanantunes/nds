@@ -85,7 +85,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		LicencaMunicipal licencaMunicipal = Fixture.criarLicencaMunicipal("Nome Licença", "1000", tipoLicencaMunicipal );
 		
 		PDV pdv  = Fixture.criarPDV("PDv Teste", new BigDecimal(10), TamanhoPDV.G, cotaManoel, true, StatusPDV.ATIVO, 
-									caracteristicas, licencaMunicipal, segmentacao);
+									caracteristicas, licencaMunicipal, segmentacao, 1);
 		save(pdv);
 		
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "logradouro", "10", "Bairro", "Mococa", "SP",1);

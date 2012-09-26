@@ -1,5 +1,9 @@
 package br.com.abril.nds.model.fiscal;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -12,6 +16,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -47,6 +52,10 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "CFOP_ID")
 	protected CFOP cfop;
+	
+	@OneToMany(mappedBy = "notaFiscal", cascade={CascadeType.ALL})
+	protected List<ItemNotaFiscalEntrada> itens = new ArrayList<ItemNotaFiscalEntrada>();	
+	
 	
 	public Long getId() {
 		return id;
@@ -86,6 +95,20 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 
 	public void setCfop(CFOP cfop) {
 		this.cfop = cfop;
+	}
+
+	/**
+	 * @return the itens
+	 */
+	public List<ItemNotaFiscalEntrada> getItens() {
+		return itens;
+	}
+
+	/**
+	 * @param itens the itens to set
+	 */
+	public void setItens(List<ItemNotaFiscalEntrada> itens) {
+		this.itens = itens;
 	}
 	
 }

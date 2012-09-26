@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0106.processor;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -34,7 +35,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorService distribuidorService;
 
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 	
@@ -176,7 +177,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

@@ -128,12 +128,14 @@ public class ProdutoEdicaoController {
 		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		dto.setNomeProduto(produto.getNome());
+		dto.setCodigoProduto(produto.getCodigo());
 		
 		String nomeFornecedor = "";
 		if (produto.getFornecedor() != null 
 				&& produto.getFornecedor().getJuridica() != null) {
 			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
 		}
+		
 		dto.setNomeFornecedor(nomeFornecedor);
 		dto.setFase(produto.getFase());
 		dto.setPacotePadrao(produto.getPacotePadrao());
@@ -149,7 +151,7 @@ public class ProdutoEdicaoController {
 			Long id = Long.valueOf(idProdutoEdicao);
 			ProdutoEdicao pe = peService.obterProdutoEdicao(id);
 			dto.setId(id);
-			dto.setCodigoProduto(pe.getCodigo());
+			
 			dto.setNomeComercialProduto(pe.getNomeComercial());
 			dto.setNumeroEdicao(pe.getNumeroEdicao());
 			dto.setPacotePadrao(pe.getPacotePadrao());
@@ -249,10 +251,11 @@ public class ProdutoEdicaoController {
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+		
 		dto.setId(idProdutoEdicao);
-		dto.setCodigoProduto(codigoProdutoEdicao);
 		dto.setNomeComercialProduto(nomeComercialProduto);
 		dto.setNumeroEdicao(numeroEdicao);
+		dto.setCodigoProduto(codigoProdutoEdicao);
 		dto.setPacotePadrao(pacotePadrao);
 		dto.setTipoLancamento(tipoLancamento);
 		dto.setPrecoPrevisto(precoPrevisto);
@@ -277,26 +280,33 @@ public class ProdutoEdicaoController {
 		dto.setDescricaoProduto(descricaoProduto);
 		
 		ValidacaoVO vo = null;
+		 
 		try {
-			this.validarProdutoEdicao(dto, codigoProduto);
 			
+			this.validarProdutoEdicao(dto, codigoProduto);
 			
 			// Dados da Imagem:
 			String contentType = null;
+			
 			InputStream imgInputStream = null;
+			
 			if (imagemCapa != null) {
 				contentType = imagemCapa.getContentType();
 				imgInputStream = imagemCapa.getFile();
 			}
 			
 			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
+			
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
+			
 		} catch (ValidacaoException e) {
 			
 			vo = e.getValidacao();
+
 		} catch (Throwable e) {
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
+		
 		} finally {
 			
 			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
@@ -311,16 +321,27 @@ public class ProdutoEdicaoController {
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
-		boolean origemInterface = false;
+		
+		boolean origemManual = false;
+		
 		ProdutoEdicao pe = null;
-		try {
-			pe = peService.obterProdutoEdicao(dto.getId());
-			origemInterface = pe.getOrigemInterface().booleanValue();
-		} catch (Exception e) {
-			origemInterface = false;
+		
+		if(codigoProduto == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Código do produto inválido!"));
 		}
 		
-		if (pe == null || !origemInterface) {
+		if(dto.getId()!=null) {
+
+			pe = peService.obterProdutoEdicao(dto.getId());
+			
+			if(pe == null) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
+			}
+			
+			origemManual = (pe.getOrigemInterface() == null) ? true : pe.getOrigemInterface().booleanValue();
+		}
+		
+		if (pe == null || origemManual) {
 			
 			// Distribuidor:
 			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {
@@ -329,7 +350,7 @@ public class ProdutoEdicaoController {
 			if (dto.getNomeComercialProduto() == null || dto.getNomeComercialProduto().trim().length() <= 0) {
 				listaMensagens.add("Campo 'Nome Comercial Produto' deve ser preenchido!");
 			}
-			if (dto.getNumeroEdicao() == null || Long.valueOf(0).equals(dto.getNumeroEdicao())) {
+			if (dto.getNumeroEdicao() == null || dto.getNumeroEdicao() == 0L) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Número de Edição'!");
 			}
 			if (dto.getPacotePadrao() <= 0) {
@@ -356,29 +377,28 @@ public class ProdutoEdicaoController {
 			if (dto.getCodigoDeBarrasCorporativo() == null || dto.getCodigoDeBarrasCorporativo().trim().length() <= 0) {
 				listaMensagens.add("Campo 'Código de Barras Corporativo' deve ser preenchido!");
 			}
+			
 		} else {
 			
 			// Interface:
 			if (dto.getPrecoVenda() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Preço Real'!");
 			}
+			
 		}
 		
 		if (dto.getCodigoDeBarras() == null || dto.getCodigoDeBarras().trim().length() <= 0) {
 			listaMensagens.add("Campo 'Código de Barras' deve ser preenchido!");
 		}
 		
-		if (codigoProduto != null
-				&& codigoProduto.trim().length() > 0
-				&& dto.getNumeroEdicao() != null
-				&& !Long.valueOf(0).equals(dto.getNumeroEdicao())) {
+		if (dto.getNumeroEdicao() != null && dto.getNumeroEdicao() != 0L) {
 			
-			ProdutoEdicao produtoEdicao = 
-					peService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
+			ProdutoEdicao produtoEdicao = peService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
 		
 			if (produtoEdicao != null && !produtoEdicao.getId().equals(dto.getId())) {
 				listaMensagens.add("O 'Número de Edição' deve ser unico para esse Produto!");
 			}
+			
 		}
 		
 		if (!listaMensagens.isEmpty()) {

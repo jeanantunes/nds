@@ -705,7 +705,8 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			StatusPDV.ATIVO, 
 			caracteristicas, 
 			licencaMunicipal, 
-			segmentacao
+			segmentacao,
+			1
 		);
 		
 		pdv.setEnderecos(getEnderecosPDV());
@@ -1028,7 +1029,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 
 		CotaGarantiaFiador garantiaFiador = new CotaGarantiaFiador();
 		
-		garantiaFiador.setData(Calendar.getInstance());
+		garantiaFiador.setData(new Date());
 		garantiaFiador.setFiador(fiador);
 		
 		return garantiaFiador;
@@ -1050,7 +1051,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		imoveis.add(imovel);
 
 		CotaGarantiaImovel cotaGarantiaImovel = new CotaGarantiaImovel();
-		cotaGarantiaImovel.setData(Calendar.getInstance());
+		cotaGarantiaImovel.setData(new Date());
 		cotaGarantiaImovel.setImoveis(imoveis);
 		
 		return cotaGarantiaImovel;
@@ -1078,8 +1079,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		caucaoLiquida.setValor(415.0);
 		List<CaucaoLiquida> caucoesLiquidas = new ArrayList<CaucaoLiquida>();
 		caucoesLiquidas.add(caucaoLiquida);
-		
-		garantiaCaucaoLiquida.setData(Calendar.getInstance());
+		garantiaCaucaoLiquida.setData(new Date());
 		garantiaCaucaoLiquida.setCaucaoLiquidas(caucoesLiquidas);
 
 		return garantiaCaucaoLiquida;
@@ -1097,15 +1097,15 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		cheque.setCorrentista("correntista");
 		cheque.setDvAgencia("dvAgencia");
 		cheque.setDvConta("dvConta");
-		cheque.setEmissao(Calendar.getInstance());
+		cheque.setEmissao(new Date() );
 		cheque.setNomeBanco("nomeBanco");
 		cheque.setNumeroBanco("numeroBanco");
 		cheque.setNumeroCheque("numeroCheque");
-		cheque.setValidade(Calendar.getInstance());
+		cheque.setValidade(new Date() );
 		cheque.setValor(150.0);
 
 		CotaGarantiaChequeCaucao garantiaChequeCaucao = new CotaGarantiaChequeCaucao();
-		garantiaChequeCaucao.setData(Calendar.getInstance());
+		garantiaChequeCaucao.setData(new Date());
 		garantiaChequeCaucao.setCheque(cheque);
 		
 		return garantiaChequeCaucao;
@@ -1119,10 +1119,10 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
 		notaPromissoria.setValor(1000.0);
 		notaPromissoria.setValorExtenso("Mil");
-		notaPromissoria.setVencimento(Calendar.getInstance());
+		notaPromissoria.setVencimento(new Date());
 		
 		CotaGarantiaNotaPromissoria garantiaNotaPromissoria = new CotaGarantiaNotaPromissoria();
-		garantiaNotaPromissoria.setData(Calendar.getInstance());
+		garantiaNotaPromissoria.setData(new Date());
 		garantiaNotaPromissoria.setNotaPromissoria(notaPromissoria);
 
 		return garantiaNotaPromissoria;

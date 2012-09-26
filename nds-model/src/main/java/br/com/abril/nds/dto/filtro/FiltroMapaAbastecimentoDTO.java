@@ -2,6 +2,7 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -15,7 +16,7 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private TipoConsulta tipoConsulta;
 	private Long box;
 	private Long Rota;
-	private String codigoProduto;
+	private List<String> codigosProduto;
 	private String nomeProduto;
 	private Integer codigoCota;
 	private Long edicaoProduto; 
@@ -147,17 +148,17 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	}
 
 	/**
-	 * @return the codigoProduto
+	 * @return the codigosProduto
 	 */
-	public String getCodigoProduto() {
-		return codigoProduto;
+	public List<String> getCodigosProduto() {
+		return codigosProduto;
 	}
 
 	/**
-	 * @param codigoProduto the codigoProduto to set
+	 * @param codigosProduto the codigosProduto to set
 	 */
-	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+	public void setCodigosProduto(List<String> codigosProduto) {
+		this.codigosProduto = codigosProduto;
 	}
 
 	/**

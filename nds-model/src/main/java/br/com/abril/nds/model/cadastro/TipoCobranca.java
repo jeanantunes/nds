@@ -6,7 +6,7 @@ public enum TipoCobranca {
 	BOLETO_EM_BRANCO("Boleto em branco"), 
 	CHEQUE("Cheque"), 
 	DEPOSITO("Depósito"), 
-	TRANSFERENCIA_BANCARIA("Transferência  Bancaria "),
+	TRANSFERENCIA_BANCARIA("Transferência  Bancária "),
 	DINHEIRO("Dinheiro"),
 	OUTROS("Outros");
 	

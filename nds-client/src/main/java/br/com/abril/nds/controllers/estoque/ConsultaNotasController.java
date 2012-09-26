@@ -25,6 +25,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -249,7 +250,7 @@ public class ConsultaNotasController {
 			
 			consultaNotaFiscalVO.setDataEmissao(notaFiscal.getDataEmissao());
 			consultaNotaFiscalVO.setDataExpedicao(notaFiscal.getDataExpedicao());
-			consultaNotaFiscalVO.setNomeFornecedor(notaFiscal.getFornecedor().getJuridica().getRazaoSocial());
+			consultaNotaFiscalVO.setNomeFornecedor(getRazaoSociais(notaFiscal));
 			consultaNotaFiscalVO.setNotaRecebida(notaRecebida);
 			consultaNotaFiscalVO.setNumeroNota(notaFiscal.getNumero());
 			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getTipoNotaFiscal().getDescricao());
@@ -266,9 +267,7 @@ public class ConsultaNotasController {
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
 		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
-			
-			
-			
+
 			String notaRecebida = 
 				StatusNotaFiscalEntrada.RECEBIDA.equals(notaFiscal.getStatusNotaFiscal()) ? "*" : " ";
 			
@@ -281,7 +280,7 @@ public class ConsultaNotasController {
 							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataEmissao())), 
 							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataExpedicao())), 
 							itemExibicaoToString(notaFiscal.getTipoNotaFiscal().getDescricao()), 
-							itemExibicaoToString(notaFiscal.getFornecedor().getJuridica().getRazaoSocial()),
+							itemExibicaoToString(getRazaoSociais(notaFiscal)),
 							itemExibicaoToString(decimalFormat.format(obterValorTotalNota(notaFiscal.getId()))),
 							notaRecebida, 
 							" ", 
@@ -295,6 +294,16 @@ public class ConsultaNotasController {
 		tableModel.setRows(listaCellModels);
 
 		return tableModel;
+	}
+
+	private String getRazaoSociais(NotaFiscalEntradaFornecedor notaFiscal) {
+		String razaoSocial = "";
+		for (ItemNotaFiscalEntrada item : notaFiscal.getItens() ) {
+			for (Fornecedor f : item.getProdutoEdicao().getProduto().getFornecedores()) {
+				razaoSocial += f.getJuridica().getRazaoSocial() + " ";
+			}
+		}
+		return razaoSocial;
 	}
 	
 	private BigDecimal obterValorTotalNota(Long idNotaFiscal) {

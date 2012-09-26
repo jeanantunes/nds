@@ -485,9 +485,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				.append(" JOIN produtoEdicao.produto produto ")
 				.append(" JOIN produtoEdicao.lancamentos lancamento ")
 				.append(" JOIN cota.pdvs pdv ")
-				.append(" LEFT JOIN pdv.roteirizacao roteirizacao ")
-				.append(" LEFT JOIN roteirizacao.rota rota  ")
-				.append(" LEFT JOIN rota.roteiro roteiro ");
+				.append(" LEFT JOIN pdv.rotas rota  ")
+				.append(" LEFT JOIN rota.roteiro roteiro ")
+				.append(" LEFT JOIN roteiro.roteirizacao roteirizacao ");
 
 		if (filtro.getFornecedor() != null) {
 			hql.append(" JOIN produto.fornecedores fornecedor ");
@@ -1258,8 +1258,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if(situacao != null){
 			criteria.add(Restrictions.eq("situacaoCadastro", situacao));
 		}
-		
-		criteria.createAlias("box.roteiros", "roteiro");
+		if(idRoteiro != null || idRoteiro != null){
+			criteria.createAlias("box.roteiros", "roteiro");
+		}		
 		
 		if (idRoteiro != null){
 			

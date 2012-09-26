@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0114.processor;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -32,7 +33,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -203,7 +204,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	
 	
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	
