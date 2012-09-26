@@ -57,5 +57,4 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 * @return Produto
 	 */
 	Produto obterProdutoPorNomeProdutoOuCodigo(String nome, String codigo);
-	
 }
