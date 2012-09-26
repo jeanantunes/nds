@@ -107,4 +107,11 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 				
 	}
 
+	
+	@Test
+	public void obterCotaAusentePor() {
+		CotaAusente cotaAusente = this.cotaAusenteRepository.obterCotaAusentePor(cotaManoel.getId(), data);
+		
+		Assert.assertNotNull(cotaAusente);
+	}
 }

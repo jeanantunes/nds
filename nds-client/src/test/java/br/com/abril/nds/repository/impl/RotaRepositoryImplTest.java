@@ -51,7 +51,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 				
-		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel,1);
 		save(pdvManoel);
 				
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);

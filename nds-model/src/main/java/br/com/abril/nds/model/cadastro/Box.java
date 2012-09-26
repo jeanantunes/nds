@@ -50,7 +50,8 @@ public class Box implements Serializable {
 	@OneToMany(mappedBy ="box")
 	private Set<Roteiro> roteiros;
 	
-	
+	@Column(name="ORDEM", nullable = true)
+	private Integer ordem;
 
 	public Set<Cota> getCotas() {
 		return cotas;
@@ -110,6 +111,20 @@ public class Box implements Serializable {
 	 */
 	public void setRoteiros(Set<Roteiro> roteiros) {
 		this.roteiros = roteiros;
+	}
+	
+	/**
+	 * @return the ordem
+	 */
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	/**
+	 * @param ordem the ordem to set
+	 */
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
 	}
 
 	@Override

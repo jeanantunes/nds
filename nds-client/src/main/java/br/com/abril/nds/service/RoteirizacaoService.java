@@ -145,27 +145,31 @@ public interface RoteirizacaoService {
     
 	/**
      * Obtem lista de Box do tipo lançamento
+     * @param nomeBox do box para consulta
      * @return List<Box>
      */
-	public List<Box> obterListaBoxLancamento();
+	public List<Box> obterListaBoxLancamento(String nomeBox);
 	
 	/**
      * Obtem lista de Roteiro por Box
+	 * @param descricaoRoteiro  descricao do roteiro para consulta
      * @return List<Roteiro>
      */
-	public List<Roteiro> obterListaRoteiroPorBox(Long idBox);
+	public List<Roteiro> obterListaRoteiroPorBox(Long idBox, String descricaoRoteiro);
 	
 	/**
      * Obtem lista de Rota por Roteiro
+     * @param idRoteiro identificador do roteiro
+	 * @param descricaoRota descrição da rota para consulta
      * @return List<Rota>
      */
-	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro);
+	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
 	
 	/**
-	 * Obtem dados da roteirização
-	 * @param parametros
-	 * @return RoteirizacaoDTO
-	 */
+     * Obtem dados da roteirização da cota
+     * @param FiltroConsultaRoteirizacaoDTO parametros
+     * @return RoteirizacaoDTO
+     */
 	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros);
 }
 	

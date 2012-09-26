@@ -69,7 +69,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box);
 		save(cotaManoel);
 				
-		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel,1);
 		save(pdvManoel);
 
 

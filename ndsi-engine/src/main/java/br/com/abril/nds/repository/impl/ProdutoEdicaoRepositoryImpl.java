@@ -560,6 +560,33 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return new HashSet<ProdutoEdicao>(query.list());
 	}
-	
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> buscarProdutosLancadosData(Date data) {
+		
+		StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
+		hql.append(" from Lancamento l ")
+		   .append(" where l.dataLancamentoDistribuidor = :data ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("data", data);
+		query.setMaxResults(6);
+		
+		return query.list();
+	}
+
+
+	@Override
+	public String buscarNomeComercial(Long idProdutoEdicao) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select nomeComercial from ProdutoEdicao where id = :idProdutoEdicao");
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (String) query.uniqueResult();
+	}
 }
- 

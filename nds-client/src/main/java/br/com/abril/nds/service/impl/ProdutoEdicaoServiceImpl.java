@@ -323,19 +323,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		ProdutoEdicao produtoEdicao = null;
 		
-		boolean indNovoProdutoEdicao = true;
+		boolean indNovoProdutoEdicao = (dto.getId() == null);
 		
-		if (dto.getId() == null) {
-			
-			// Novo ProdutoEdicao - create:
+		if (indNovoProdutoEdicao) {
 			produtoEdicao = new ProdutoEdicao();
 			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
 			produtoEdicao.setOrigemInterface(Boolean.FALSE);
 		} else {
-			
-			indNovoProdutoEdicao = false;
-			
-			// ProdutoEdicao existente - update:
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
 		}		
 		
@@ -361,7 +355,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
 		
-		
 	}
 	
 	/**
@@ -383,7 +376,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
 			
 			// Campo: Código do ProdutoEdicao:
-			if (!produtoEdicao.getCodigo().equals(dto.getCodigoProduto())) {
+			if (produtoEdicao.getCodigo()!=null && !produtoEdicao.getCodigo().equals(dto.getCodigoProduto())) {
 				throw new ValidacaoException(TipoMensagem.ERROR, 
 						"Não é permitido alterar o código de uma Edição já publicada!");
 			}
@@ -471,11 +464,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		// 02) Campos a serem persistidos e/ou alterados:
 		
-		BigInteger repartePrevisto = dto.getRepartePrevisto() == null 
+		BigInteger repartePrevisto = (dto.getRepartePrevisto() == null) 
 				? BigInteger.ZERO : dto.getRepartePrevisto();
-		BigInteger repartePromocional = dto.getRepartePromocional() == null 
+		
+		BigInteger repartePromocional = (dto.getRepartePromocional() == null) 
 				? BigInteger.ZERO : dto.getRepartePromocional();
-		if (!produtoEdicao.getOrigemInterface().booleanValue()) {
+		
+		boolean origemManual = (produtoEdicao.getOrigemInterface() == null) ? true :  !produtoEdicao.getOrigemInterface().booleanValue();
+		
+		if (origemManual) {
 			// Campos exclusivos para o Distribuidor::
 			
 			// Identificação:
@@ -553,7 +550,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
 		
 		// Só pode alterar quando o ProdutoEdicao for criado pelo Distribuidor:
-		if (produtoEdicao.getOrigemInterface().booleanValue()) {
+		
+		boolean origemInterface = (produtoEdicao.getOrigemInterface() == null) ?  false : produtoEdicao.getOrigemInterface().booleanValue();
+		
+		if (origemInterface) {
 			return;
 		}
 		

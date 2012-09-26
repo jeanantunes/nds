@@ -3,11 +3,9 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
@@ -19,18 +17,22 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 		super(ItemNotaEnvio.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemNotaEnvio> obterItensNotaEnvioPorDataEmissao(Date dataEmissao, Pessoa pessoa) {
+	@SuppressWarnings("unchecked")
+	public List<ItemNotaEnvio> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota) {
 		
-		Criteria criteria = getSession().createCriteria(ItemNotaEnvio.class);
+		String hql = "from ItemNotaEnvio itemNotaEnvio "
+				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
+				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
+				   + " where notaEnvio.dataEmissao = :dataEmissao"
+				   + " and movimentoEstoqueCota.cota.numeroCota = :numeroCota";
 		
-		criteria.createAlias("itemNotaEnvioPK.notaEnvio", "notaEnvio");
-		criteria.createAlias("itemNotaEnvioPK.notaEnvio.emitente.pessoa", "pessoa");
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("dataEmissao", dataEmissao);
+		query.setParameter("numeroCota", numeroCota);
 		
-		criteria.add(Restrictions.eq("notaEnvio.dataEmissao", dataEmissao));
-		criteria.add(Restrictions.eq("pessoa", pessoa));
-		
-		return criteria.list();
+		return query.list();
 	}
+	
 }

@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -15,6 +16,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.BoxRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 
@@ -35,19 +37,29 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		super(Box.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.BoxRepository#obterListaBox(br.com.abril.nds.model.cadastro.TipoBox)
+	/**
+	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Box> obterListaBox(TipoBox tipoBox) {
+	public List<Box> obterListaBox(String nomeBox, TipoBox tipoBox) {
 		
 		Criteria criteria = addRestrictions(null,tipoBox);
+		if (!StringUtil.isEmpty(nomeBox)) {
+		    criteria.add(Restrictions.ilike("nome", nomeBox, MatchMode.START));
+		}
 		
 		return criteria.list();
 		
 		
 	}
+	
+    /**
+     * {@inheritDoc} 
+     */
+	@Override
+    public List<Box> obterListaBox(TipoBox tipo) {
+        return obterListaBox(null, tipo);
+    }
 	
 	/*
 	 * (non-Javadoc)
@@ -374,6 +386,8 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		
 		return query.list().size();
 	}
+
+
 
 
 }

@@ -74,7 +74,7 @@ public class PeriodoFuncionamentoPDVRepositoryImplTest extends AbstractRepositor
 		LicencaMunicipal licencaMunicipal = Fixture.criarLicencaMunicipal("Nome Licença", "1000", tipoLicencaMunicipal );
 		
 		pdv  = Fixture.criarPDV("PDv Teste", new BigDecimal(10), TamanhoPDV.G, cotaManoel, true, StatusPDV.ATIVO, 
-									caracteristicas, licencaMunicipal, segmentacao);
+									caracteristicas, licencaMunicipal, segmentacao, 1);
 		save(pdv);
 		
 		periodoFuncionamento = Fixture.gerarPeriodoFuncionamentoPDV(new Date(),new Date(),pdv, TipoPeriodoFuncionamentoPDV.DIARIA);
