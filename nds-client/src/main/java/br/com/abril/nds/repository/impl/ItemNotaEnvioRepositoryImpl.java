@@ -21,7 +21,7 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 	@SuppressWarnings("unchecked")
 	public List<ItemNotaEnvio> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota) {
 		
-		String hql = "from ItemNotaEnvio itemNotaEnvio "
+		String hql = "select itemNotaEnvio from ItemNotaEnvio itemNotaEnvio "
 				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
 				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
 				   + " where notaEnvio.dataEmissao = :dataEmissao"
