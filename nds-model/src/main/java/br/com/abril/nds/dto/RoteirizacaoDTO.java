@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RoteirizacaoDTO implements Serializable{
@@ -10,65 +11,58 @@ public class RoteirizacaoDTO implements Serializable{
 	 */
 	private static final long serialVersionUID = 2456984121L;
 	
-	List<BoxRoteirizacaoDTO> listaBox;
-	List<RoteiroRoteirizacaoDTO> listaRoteiro;
-	List<RotaRoteirizacaoDTO> listaRota;
-	List<PdvRoteirizacaoDTO> listaPdv;
+	private Long id;
+	
+	private BoxRoteirizacaoDTO box;
+	
+	private List<RoteiroRoteirizacaoDTO> roteiros;
 	
 	/**
-	 * @return the listaBox
+	 * @return the id
 	 */
-	public List<BoxRoteirizacaoDTO> getListaBox() {
-		return listaBox;
-	}
-	
-	/**
-	 * @param listaBox the listaBox to set
-	 */
-	public void setListaBox(List<BoxRoteirizacaoDTO> listaBox) {
-		this.listaBox = listaBox;
-	}
-	
-	/**
-	 * @return the listaRoteiros
-	 */
-	public List<RoteiroRoteirizacaoDTO> getListaRoteiro() {
-		return listaRoteiro;
-	}
-	
-	/**
-	 * @param listaRoteiros the listaRoteiros to set
-	 */
-	public void setListaRoteiros(List<RoteiroRoteirizacaoDTO> listaRoteiro) {
-		this.listaRoteiro = listaRoteiro;
-	}
-	
-	/**
-	 * @return the listaRotas
-	 */
-	public List<RotaRoteirizacaoDTO> getListaRota() {
-		return listaRota;
-	}
-	
-	/**
-	 * @param listaRotas the listaRotas to set
-	 */
-	public void setListaRotas(List<RotaRoteirizacaoDTO> listaRota) {
-		this.listaRota = listaRota;
-	}
-	
-	/**
-	 * @return the listaPdvs
-	 */
-	public List<PdvRoteirizacaoDTO> getListaPdv() {
-		return listaPdv;
-	}
-	
-	/**
-	 * @param listaPdvs the listaPdvs to set
-	 */
-	public void setListaPdvs(List<PdvRoteirizacaoDTO> listaPdv) {
-		this.listaPdv = listaPdv;
+	public Long getId() {
+		return id;
 	}
 
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the box
+	 */
+	public BoxRoteirizacaoDTO getBox() {
+		return box;
+	}
+
+	/**
+	 * @param box the box to set
+	 */
+	public void setBox(BoxRoteirizacaoDTO box) {
+		this.box = box;
+	}
+
+	/**
+	 * @return the roteiros
+	 */
+	public List<RoteiroRoteirizacaoDTO> getRoteiros() {
+		return roteiros;
+	}
+
+	/**
+	 * @param roteiros the roteiros to set
+	 */
+	public void setRoteiros(List<RoteiroRoteirizacaoDTO> roteiros) {
+		this.roteiros = roteiros;
+	}
+
+	public void addRoteiro(RoteiroRoteirizacaoDTO roteiro) {
+		if (roteiros == null) {
+			roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
+		}
+		roteiros.add(roteiro);
+	}
 }
