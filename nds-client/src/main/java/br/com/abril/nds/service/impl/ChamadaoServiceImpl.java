@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -339,7 +338,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 */
 	private Set<Lancamento> getLancamentos(Set<Lancamento> lancamentosAntigos) {
 		
-		Set<Lancamento> lancamentosNovos = new TreeSet<Lancamento>();
+		Set<Lancamento> lancamentosNovos = new HashSet<Lancamento>();
 		
 		for (Lancamento lancamento : lancamentosAntigos) {
 			

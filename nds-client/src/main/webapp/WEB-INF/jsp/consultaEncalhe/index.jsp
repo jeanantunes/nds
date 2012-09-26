@@ -1,16 +1,12 @@
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
-<title>Consulta Encalhe</title>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
-<script type="text/javascript" src="scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
-<script language="javascript" type="text/javascript" src='scripts/jquery.numeric.js'></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/consultaEncalhe.js"></script>
 
-<script language="javascript" type="text/javascript" src='scripts/consultaEncalhe.js'></script>
-
-
-<script type="text/javascript">
+<script language="javascript" type="text/javascript">
 
 var pesquisaCotaConsultaEncalhe = new PesquisaCota();
 
@@ -43,13 +39,13 @@ $(function(){
 
 		<legend> Consulta Encalhe </legend>
 
-		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+		<table  border="0" cellpadding="2" cellspacing="1" class="filtro" style="width:950px;">
 		
 			<tr>
 			
 				<td width="46">Per&iacute;odo:</td>
 				
-				<td colspan="3">
+				<td width="113">
 					<input type="text" id="dataRecolhimentoInicial" class="datePicker"
 					style="width: 80px; float: left; margin-right: 5px;" />
 				</td>
@@ -121,106 +117,34 @@ $(function(){
 		
 			<table id="gridConsultaEncalhe"></table>
 			
-			<table width="950" border="0" cellspacing="1" cellpadding="1">
-				<tr>
-					<td width="280" valign="top">
-					
-						&nbsp;
-					
-					</td>
-
-					<td width="190">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-
-					<td width="226">
-
-						<fieldset class="box_field">
-							<legend>Primeiro Recolhimento</legend>
-							<table width="200" border="0" cellspacing="2" cellpadding="2">
+			<form name="form_detalhes_encalhe" id="form_detalhes_encalhe">
+				<div id="dialog-detalhes-encalhe" title="Consulta Encalhe" style="display:none;">
+					<fieldset class="fieldGrid" style="width:600px;">
+						<legend>Consulta Encalhe</legend>
+						<table width="423" cellspacing="2" cellpadding="2" border="0">
+							<tbody>
 								<tr>
-									<td width="8">&nbsp;</td>
-									<td width="178">
-										<div class="box_resumo">
-											<table width="150" border="0" cellspacing="1"
-												cellpadding="1">
-												
-												<tr>
-													<td width="83" height="23">
-														<strong>Produtos:</strong>
-													</td>
-													<td width="60">
-														<input id="qtdProdutoPrimeiroRecolhimento"
-														disabled="disabled" type="text" style="width: 60px;" />
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<strong>Exemplares:</strong>
-													</td>
-													<td>
-														<input id="qtdExemplarPrimeiroRecolhimento" 
-														disabled="disabled" type="text" style="width: 60px;" />
-													</td>
-												</tr>
-											</table>
-										</div></td>
+									<td width="91"><strong>Data Opera&ccedil;&atilde;o:</strong></td>
+									<td width="168" id="dataOperacao"></td>
+									<td width="42"><strong>C&oacute;digo:</strong></td>
+									<td width="96" id="codigoProduto"></td>
 								</tr>
-							</table>
-
-
-
-						</fieldset>
-					</td>
-					
-					<td width="10">&nbsp;&nbsp;</td>
-					
-					<td width="228">
-					
-						<fieldset class="box_field">
-						
-							<legend>Demais Recolhimento</legend>
-						
-							<table width="200" border="0" cellspacing="2" cellpadding="2">
-							
 								<tr>
-									<td width="8">&nbsp;</td>
-									<td width="178">
-										<div class="box_resumo">
-											<table width="150" border="0" cellspacing="1"
-												cellpadding="1">
-												
-												<tr>
-													<td width="83" height="23">
-														<strong>Produtos:</strong>
-													</td>
-													<td width="60">
-														<input id="qtdProdutoDemaisRecolhimentos" 
-														disabled="disabled" type="text" style="width: 60px;" />
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<strong>Exemplares:</strong>
-													</td>
-													<td>
-														<input id="qtdExemplarDemaisRecolhimentos" 
-														disabled="disabled" type="text" style="width: 60px;" />
-													</td>
-												</tr>
-											</table>
-										</div>
-									</td>
-									
+									<td><strong>Produto:</strong></td>
+									<td id="nomeProduto"></td>
+									<td><strong>Edi&ccedil;&atilde;o:</strong></td>
+									<td id="edicaoProduto"></td>
 								</tr>
-								
-							</table>
-
-						</fieldset>
-
-					</td>
-
-				</tr>
-			
-			</table>
+							</tbody>
+						</table>
+					</fieldset>
+	
+				    <div class="linha_separa_fields" style="width:550px!important;">&nbsp;</div>
+					<fieldset  class="fieldGrid" style="width:600px;">
+						<table id="dadosDetalheEncalheGrid"></table>
+					</fieldset>
+				</div>
+			</form> 
 
 		</div>
 
