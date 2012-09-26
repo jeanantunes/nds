@@ -7,6 +7,7 @@ import org.hibernate.criterion.MatchMode;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
@@ -171,5 +172,12 @@ public interface RoteirizacaoService {
      * @return RoteirizacaoDTO
      */
 	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros);
+	
+	/**
+	 * Inclui Cota Pdv na Roteirização
+	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
+	 * @param idRota
+	 */
+	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> cotaPdv, Long idRota);
 }
 	

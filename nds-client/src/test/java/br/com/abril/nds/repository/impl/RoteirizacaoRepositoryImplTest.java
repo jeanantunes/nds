@@ -3,12 +3,10 @@ package br.com.abril.nds.repository.impl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
@@ -160,7 +158,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertTrue(lista.get(1) != null);
 
-		Assert.assertEquals(lista.size(), 2);
+		Assert.assertEquals(lista.size(), 3);
 	}
 	
 	@Test

@@ -13,6 +13,7 @@ import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -708,7 +709,9 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/obterBoxLancamento")
 	public void obterBoxLancamento(String nomeBox){
+		
 		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento(nomeBox);
+
 		result.use(FlexiGridJson.class).from(listaBox).total(listaBox.size()).page(1).serialize();
 	}
 	
@@ -719,25 +722,40 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/obterRoteirosBox")
 	public void obterRoteirosBox(Long idBox, String descricaoRoteiro){
+		
 		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(idBox, descricaoRoteiro);
+
 		result.use(FlexiGridJson.class).from(listaRoteiro).total(listaRoteiro.size()).page(1).serialize();
 	}
 	
 	/**
+	 * Obtém lista de rotas do roteiro
+	 * @param idRoteiro
+	 */
+	@Get
+	@Path("/obterRotasRoteiro")
+	public void obterRotasRoteiro(Long idRoteiro, String descricaoRota){
+		
+		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro, descricaoRota);
+		
+		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
+	}
+	
+	/**
 	 * Obtém dados da roteirização para edição
-	 * @param idCota
-	 * @param idRoteirizacao - Utilizado para obter as listas de box, roteiro e rota
-	 * @param idBox - Box Selecionado
-	 * @param idRoteiro - Roteiro Selecionado
-	 * @param idRota - Rota Selecionada
+	 * @param parametros - idCota
+	 * @param parametros - idRoteirizacao - Utilizado para obter as listas de box, roteiro e rota
+	 * @param parametros - idBox - Box Selecionado
+	 * @param parametros - idRoteiro - Roteiro Selecionado
+	 * @param parametros - idRota - Rota Selecionada
 	 */
 	@Get
 	@Path("/editarRoteirizacao")
 	public void editarRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros){
-		//TODO: refatorar edição
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(parametros.getIdRoteiro(), null);
-		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
+        
+		RoteirizacaoDTO roteirizacao = this.roteirizacaoService.obterDadosRoteirizacao(parametros);
 		
+		result.use(Results.json()).from(roteirizacao, "result").serialize();
 	}
 	
 }
