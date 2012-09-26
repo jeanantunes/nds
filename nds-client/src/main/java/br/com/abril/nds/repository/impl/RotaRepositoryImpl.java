@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
@@ -92,10 +93,12 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome , MatchMode matchMode) {
+	public List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome, MatchMode matchMode) {
 		Criteria criteria = getSession().createCriteria(Rota.class);
 		criteria.add(Restrictions.eq("roteiro.id", roteiroId));
-		criteria.add(Restrictions.ilike("descricaoRota", rotaNome ,matchMode));
+		if (!StringUtil.isEmpty(rotaNome)) {
+		    criteria.add(Restrictions.ilike("descricaoRota", rotaNome, matchMode));
+		}
 		return criteria.list();
 	}
 	

@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,7 +148,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterListaBoxLancamento() {
 		
-		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento();
+		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento(null);
         
 		Assert.assertEquals(listaBox.size(), 2);
 
@@ -155,7 +157,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterListaRoteiroBoxLancamento() {
 		
-		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(box1.getId());
+		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(box1.getId(), null);
         
 		Assert.assertEquals(listaRoteiro.size(), 3);
 
@@ -164,15 +166,15 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterListaRotaBoxLancamento() {
 		
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro1.getId());
+		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro1.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 		
-        listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro2.getId());
+        listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro2.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 		
-		listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro3.getId());
+		listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro3.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 
