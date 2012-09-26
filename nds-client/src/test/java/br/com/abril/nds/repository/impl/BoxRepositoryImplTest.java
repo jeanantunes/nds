@@ -65,7 +65,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		cotaF.setSugereSuspensao(true);
 		save(cotaF);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaF);
+		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaF,1);
 		save(pdv);
 		
 		Cota cotaJ = Fixture
@@ -91,7 +91,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
-		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ);
+		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ,2);
 		save(pdv);
 		
 		roteirizacao = Fixture.criarRoteirizacao(box);

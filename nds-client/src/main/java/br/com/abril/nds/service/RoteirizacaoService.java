@@ -166,10 +166,10 @@ public interface RoteirizacaoService {
 	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
 	
 	/**
-	 * Obtem dados da roteirização
-	 * @param parametros
-	 * @return RoteirizacaoDTO
-	 */
+     * Obtem dados da roteirização da cota
+     * @param FiltroConsultaRoteirizacaoDTO parametros
+     * @return RoteirizacaoDTO
+     */
 	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros);
 }
 	

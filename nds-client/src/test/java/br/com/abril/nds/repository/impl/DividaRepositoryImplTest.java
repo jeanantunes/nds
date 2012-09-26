@@ -113,7 +113,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel);
+		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel,1);
 		save(pdv);
 		
 		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();

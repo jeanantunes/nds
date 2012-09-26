@@ -330,7 +330,7 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, box1, TipoRoteiro.NORMAL);
 		save(roteiro1);
 		
-		PDV pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		PDV pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel, 1);
 		save(pdvManoel);
 		
 		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1, Arrays.asList(pdvManoel));

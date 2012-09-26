@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -48,6 +47,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -62,6 +62,7 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ItemNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -132,6 +133,9 @@ public class DiferencaEstoqueController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ItemNotaEnvioService itemNotaEnvioService;
 	
 	private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
 	
@@ -2363,31 +2367,88 @@ public class DiferencaEstoqueController {
 	}
 
 	@Post
+	@SuppressWarnings("unchecked")
 	@Path("/lancamento/rateio/buscarProdutosCotaNota")
-	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota){
+	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota) {
 		
-		//TODO Aguardando o desenvolvimento da EMS 191
+		this.validarDadosBuscaProdutosNota(dateNotaEnvio, numeroCota);
+		
+		Set<Diferenca> diferencasSessao = 
+			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		
+		List<ItemNotaEnvio> itensNotaEnvio = 
+			itemNotaEnvioService.obterItensNotaEnvio(dateNotaEnvio, numeroCota);
+		
 		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
 		
-		DiferencaVO diferencaVO = new DiferencaVO();
-		diferencaVO.setCodigoProduto("123");
-		diferencaVO.setDescricaoProduto("nome produto");
-		diferencaVO.setNumeroEdicao("2");
-		diferencaVO.setPrecoVenda("12,98");
-		diferencaVO.setQuantidade(BigInteger.TEN);
+		DiferencaVO diferencaVO = null;
+		ProdutoEdicao produtoEdicao = null;
+		Produto produto = null;
 		
-		prods.add(diferencaVO);
+		for (ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
 		
-		diferencaVO = new DiferencaVO();
-		diferencaVO.setCodigoProduto("123");
-		diferencaVO.setDescricaoProduto("nome produto");
-		diferencaVO.setNumeroEdicao("2");
-		diferencaVO.setPrecoVenda("12.98");
-		diferencaVO.setQuantidade(BigInteger.TEN);
+			diferencaVO = new DiferencaVO();
+			
+			produtoEdicao = itemNotaEnvio.getProdutoEdicao();
+			
+			produto = produtoEdicao.getProduto();
+			
+			if (this.containsDiferenca(diferencasSessao, produtoEdicao.getId())) {
+				
+				continue;
+			}
+			
+			diferencaVO.setCodigoProduto(produto.getCodigo());
+			diferencaVO.setDescricaoProduto(produto.getNome());
+			diferencaVO.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
+			diferencaVO.setPrecoVenda(produtoEdicao.getPrecoVenda().toString());
+			diferencaVO.setQuantidade(itemNotaEnvio.getReparte());
 		
-		prods.add(diferencaVO);
+			prods.add(diferencaVO);
+		}
+		
+		if (prods.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
+		}
 		
 		result.use(FlexiGridJson.class).from(prods).total(prods.size()).page(1).serialize();
+	}
+
+	private void validarDadosBuscaProdutosNota(Date dateNotaEnvio, Integer numeroCota) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		if (dateNotaEnvio == null) {
+		
+			listaMensagens.add("A data da nota de envio é obrigatória!");
+		}
+		
+		if (numeroCota == null) {
+			
+			listaMensagens.add("O número da cota é obrigatório!");
+		}
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);
+		}
+	}
+
+	private boolean containsDiferenca(Set<Diferenca> diferencas, Long idProdutoEdicao) {
+		
+		if (diferencas != null) {
+		
+			for (Diferenca diferenca : diferencas) {
+				
+				if (diferenca.getProdutoEdicao().getId().equals(idProdutoEdicao)) {
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	@Post
