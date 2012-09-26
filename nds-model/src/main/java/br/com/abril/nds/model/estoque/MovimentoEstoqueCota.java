@@ -50,7 +50,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	
 	
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
-	private List<ItemNotaEnvio> listaProduto;
+	private List<ItemNotaEnvio> listaItemNotaEnvio;
 	
 	public Cota getCota() {
 		return cota;
@@ -123,6 +123,20 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	 */
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
+	}
+
+	/**
+	 * @return the listaItemNotaEnvio
+	 */
+	public List<ItemNotaEnvio> getListaItemNotaEnvio() {
+		return listaItemNotaEnvio;
+	}
+
+	/**
+	 * @param listaItemNotaEnvio the listaItemNotaEnvio to set
+	 */
+	public void setListaItemNotaEnvio(List<ItemNotaEnvio> listaItemNotaEnvio) {
+		this.listaItemNotaEnvio = listaItemNotaEnvio;
 	}
 
 }

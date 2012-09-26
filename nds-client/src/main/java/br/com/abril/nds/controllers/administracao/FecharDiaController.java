@@ -7,8 +7,9 @@ import br.com.abril.nds.dto.filtro.FecharDiaDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.CobrancaService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.FecharDiaService;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -20,13 +21,10 @@ import br.com.caelum.vraptor.view.Results;
 public class FecharDiaController {
 	
 	@Autowired
-	private CobrancaService cobrancaService;
+	private FecharDiaService fecharDiaService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
 	private Result result;
@@ -35,14 +33,15 @@ public class FecharDiaController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
 	public void index(){
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		result.include("dataOperacao", distribuidor.getDataOperacao());
+		result.include("dataOperacao", DateUtil.formatarData(distribuidor.getDataOperacao(), Constantes.DATE_PATTERN_PT_BR));
 	}
 	
 	@Post
 	public void inicializarValidacoes(){
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		FecharDiaDTO dto = new FecharDiaDTO();
-		dto.setBaixaBancaria(this.cobrancaService.existeCobrancaParaFecharDia(distribuidor.getDataOperacao()));
+		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(distribuidor.getDataOperacao()));
+		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico());
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}

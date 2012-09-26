@@ -126,15 +126,15 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		save(parametroCobrancaConta);
 		
-		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",box1,TipoRoteiro.NORMAL);
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
+		save(roteirizacao);
+		
+		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,box1,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		Rota rota = Fixture.rota("005", "Rota 005");
+		Rota rota = Fixture.rota("005", "Rota 005",roteiro,Arrays.asList(pdv));
 		rota.setRoteiro(roteiro);
 		save(rota);
-		
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota,1);
-		save(roteirizacao);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinenceiroRecebimentoReparte =
 			Fixture.tipoMovimentoFinanceiroRecebimentoReparte();

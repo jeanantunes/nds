@@ -248,7 +248,7 @@
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="104">Data da Operação:</td>
-              <td width="111">05/05/2012</td>
+              <td width="111">${dataOperacao}</td>
               <td width="185">
               	<span class="bt_novos" title="Iniciar Fechamento do Dia">
               		<a href="javascript:;" onclick="fecharDiaController.popup_processos();">

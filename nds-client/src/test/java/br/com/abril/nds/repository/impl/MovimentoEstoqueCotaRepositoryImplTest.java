@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -448,18 +449,30 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		box2 = Fixture.criarBox(2, "BX-002", TipoBox.LANCAMENTO);
 		save(box2);
 		
-		Roteiro roteiro1 = Fixture.criarRoteiro("", box1, TipoRoteiro.NORMAL);
-		Roteiro roteiro2 = Fixture.criarRoteiro("", box2, TipoRoteiro.NORMAL);
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		save(cotaManoel);
+		
+		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		save(pdv);
+		
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
+		save(roteirizacao);
+		
+		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		save(pdv2);
+		
+		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
+		save(roteirizacao2);
+		
+		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, box1, TipoRoteiro.NORMAL);
+		Roteiro roteiro2 = Fixture.criarRoteiro("",roteirizacao2, box2, TipoRoteiro.NORMAL);
 		save(roteiro1,roteiro2);
 		
-		rota1 = Fixture.rota("ROTA01", "Rota 1");
-		rota2 = Fixture.rota("ROTA01", "Rota 1");
+		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1, Arrays.asList(pdv));
+		rota2 = Fixture.rota("ROTA01", "Rota 1", roteiro2, Arrays.asList(pdv2));
 		rota1.setRoteiro(roteiro1);
 		rota2.setRoteiro(roteiro2);
 		save(rota1,rota2);
-		
-		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
-		save(cotaManoel);
 		
 		Cota cotaPedro = Fixture.cota(124, pedro, SituacaoCadastro.ATIVO, box2);
 		save(cotaPedro);
@@ -503,17 +516,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 				estoqueProdutoCota, BigInteger.valueOf(100), cotaPedro, StatusAprovacao.APROVADO, "");
 		save(mec3);
 			
-		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
-		save(pdv);
-		
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(pdv, rota1, 0);
-		save(roteirizacao);
-		
-		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
-		save(pdv2);
-		
-		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(pdv2, rota2, 0);
-		save(roteirizacao2);
 	}
 	
 	
@@ -748,7 +750,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		setUpForConsultaEncalhe();
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		filtro.setDataRecolhimento(Fixture.criarData(1, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(1, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(1, Calendar.MARCH, 2012));
 		
 		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, true);
 		
@@ -764,7 +767,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
 		
-		filtro.setDataRecolhimento(Fixture.criarData(2, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(2, Calendar.MARCH, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(2, Calendar.MARCH, 2012));
 		
 		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, true);
 		
@@ -796,7 +800,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		
 		ConsultaEncalheDTO cEncalhe_1 = listaConsultaEncalhe.get(0);
-		Assert.assertEquals((8*15), cEncalhe_1.getTotal().intValue());
+		Assert.assertEquals((8*15), cEncalhe_1.getValor().intValue());
 		
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -816,7 +820,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		
-		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdCota(cotaManoel.getId());
 		filtro.setIdFornecedor(fornecedorDinap.getId());
 		filtro.setOrdenacaoColuna(FiltroConsultaEncalheDTO.OrdenacaoColuna.RECOLHIMENTO);
@@ -960,7 +965,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
 
-		Assert.assertTrue(listaMovimento.size() == 2);
+		Assert.assertTrue(listaMovimento.size() == 1);
 	}	
 	
 	@Test
@@ -968,12 +973,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		setUpForMapaAbastecimento();
 		
+		List<String> codigosProduto = new ArrayList<String>();
+		
+		codigosProduto.add(veja1.getCodigo());
+		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setDataDate(new Date());
 		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
 		filtro.setBox(box1.getId());
 		filtro.setRota(rota1.getId());
-		filtro.setCodigoProduto(veja1.getCodigo());
+		filtro.setCodigosProduto(codigosProduto);
 		filtro.setCodigoCota(cotaManoel.getNumeroCota());
 		
 		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
@@ -986,12 +995,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		setUpForMapaAbastecimento();
 		
+		List<String> codigosProduto = new ArrayList<String>();
+		
+		codigosProduto.add(veja1.getCodigo());
+		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setDataDate(new Date());
 		filtro.setPaginacao(new PaginacaoVO(1, 10, "asc", "box"));
 		filtro.setBox(box1.getId());
 		filtro.setRota(rota1.getId());
-		filtro.setCodigoProduto(veja1.getCodigo());
+		filtro.setCodigosProduto(codigosProduto);
 		filtro.setCodigoCota(cotaManoel.getNumeroCota());
 		
 		Long count = movimentoEstoqueCotaRepository.countObterDadosAbastecimento(filtro);

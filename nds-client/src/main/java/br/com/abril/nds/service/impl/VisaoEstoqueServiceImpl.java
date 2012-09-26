@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,27 +11,77 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.VisaoEstoqueService;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
-public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
+public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 
 	@Autowired
 	private VisaoEstoqueRepository visaoEstoqueRepository;
 	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	
 	@Override
 	@Transactional
 	public List<VisaoEstoqueDTO> obterVisaoEstoque(FiltroConsultaVisaoEstoque filtro) {
+		
 		List<VisaoEstoqueDTO> list = new ArrayList<VisaoEstoqueDTO>();
+		
+		if (DateUtil.isHoje(filtro.getDataMovimentacao())) {
 
-		list.add(visaoEstoqueRepository.obterLancamento(filtro));
-		list.add(visaoEstoqueRepository.obterLancamentoJuramentado(filtro));
-		list.add(visaoEstoqueRepository.obterSuplementar(filtro));
-		list.add(visaoEstoqueRepository.obterRecolhimento(filtro));
-		list.add(visaoEstoqueRepository.obterProdutosDanificados(filtro));
+			// Busca na tabela estoque
+			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+			
+			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+			
+			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+			
+			filtro.setTipoEstoque(TipoEstoque.RECOLHIMENTO.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+			
+			filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+			
+		} else {
 
+			// Busca na tabela histórico
+			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
+			
+			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
+			
+			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
+			
+			filtro.setTipoEstoque(TipoEstoque.RECOLHIMENTO.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
+			
+			filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.toString());
+			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+		}
+		
 		return list;
 	}
 
@@ -37,28 +89,46 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService{
 	@Override
 	@Transactional
 	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
-		List<VisaoEstoqueDetalheDTO> list = new ArrayList<VisaoEstoqueDetalheDTO>();
-
-		list.add(visaoEstoqueRepository.obterLancamentoDetalhe(filtro));
-/*		list.add(visaoEstoqueRepository.obterLancamentoJuramentado(filtro));
-		list.add(visaoEstoqueRepository.obterSuplementar(filtro));
-		list.add(visaoEstoqueRepository.obterRecolhimento(filtro));
-		list.add(visaoEstoqueRepository.obterProdutosDanificados(filtro));*/
-
+		
+		List<? extends VisaoEstoqueDetalheDTO> list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
+		
+		BigDecimal precoCapa;
+		BigDecimal qtde;
+		
+		for (VisaoEstoqueDetalheDTO dto: list) {
+			
+			precoCapa = CurrencyUtil.converterValor(dto.getPrecoCapa());
+			qtde = CurrencyUtil.converterValor(dto.getQtde());
+			dto.setValor(precoCapa.multiply(qtde));
+		}
+		
 		return list;
 	}
 
 
 	@Override
-	@Transactional
-	public List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueTransferencia(FiltroConsultaVisaoEstoque filtro) {
-		return null;
+	public void transferirEstoque(FiltroConsultaVisaoEstoque filtro, Usuario usuario) {
+		
+		for (VisaoEstoqueTransferenciaDTO dto : filtro.getListaTransferencia()) {
+			
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					dto.getProdutoEdicaoId(), 
+					usuario.getId(), 
+					new BigInteger(dto.getQtde().toString()), 
+					null);
+		}
 	}
-
-
-	@Override
-	@Transactional
-	public List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueInventario(FiltroConsultaVisaoEstoque filtro) {
-		return null;
+	
+	
+	private TipoMovimentoEstoque buscaTipoMovimento() {
+		
+		TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE);
+		
+		if(tipoMovimento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não foi encontrado tipo de movimento de estoque para venda de encalhe!");
+		}
+		
+		return tipoMovimento;
 	}
 }

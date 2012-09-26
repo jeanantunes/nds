@@ -21,7 +21,7 @@
          <td>CPF:</td>
          <td><input type="text" name="cpf" id="cpf" style="width:150px" /></td>
          <td>R. G.:</td>
-         <td colspan="3"><input type="text" id="rg" style="width:150px" /></td>
+         <td colspan="3"><input type="text" id="rg" style="width:150px" maxlength="15" /></td>
        </tr>
        <tr>
          <td>Data Nascimento:</td>

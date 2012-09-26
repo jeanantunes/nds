@@ -23,6 +23,8 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -406,9 +408,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}
 		
 		List<Fornecedor> fornecedor =	fornecedorService.obterFornecedores(cnpj);
-		
-		((NotaFiscalEntradaFornecedor)notaFiscal).setFornecedor(fornecedor.get(0));
-		
+				
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscal.setOrigem(Origem.MANUAL);
@@ -572,6 +572,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		diferenca.setResponsavel(usuarioLogado);
 		diferenca.setProdutoEdicao(produtoEdicao);
 		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
+		diferenca.setTipoEstoque(TipoEstoque.LANCAMENTO);
+		
 		
 		if( calculoQdeDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
 		

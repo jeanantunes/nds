@@ -65,7 +65,7 @@ public interface DiferencaEstoqueService {
 	void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
 			 			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 						   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
-						   Long idUsuario);
+						   Long idUsuario,Boolean isDiferencaNova);
 
 	boolean validarDataLancamentoDiferenca(Date dataLancamentoDiferenca, Long idProdutoEdicao, TipoDiferenca tipoDiferenca);
 	
@@ -81,4 +81,20 @@ public interface DiferencaEstoqueService {
 	 * @return DetalheDiferencaCotaDTO
 	 */
 	DetalheDiferencaCotaDTO obterDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro);
+	
+	List<RateioCotaVO> obterRateiosCotaPorIdDiferenca(Long idDiferenca);
+	
+	void salvarLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
+			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
+			   Long idUsuario,Boolean isDiferencaNova);
+	
+	/**
+	 * Cancela as diferenças obtidas de acordo com o filtro informado.
+	 * 
+	 * @param filtro - filtro de pesquisa
+	 * @param idUsuario - identificador do usuário
+	 */
+	void cancelarDiferencas(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa, Long idUsuario);
+
+	void excluirLancamentoDiferenca(Long idDiferenca);
 }

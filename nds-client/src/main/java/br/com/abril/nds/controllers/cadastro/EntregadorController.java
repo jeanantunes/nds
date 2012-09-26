@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
@@ -175,10 +176,11 @@ public class EntregadorController {
 		HashMap<String, String> cpf = new HashMap<String, String>();
 		cpf.put(CPF, cpfEntregador);
 		
-		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
+		validarParametrosEntradaCadastroEntregadorPF(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
-												   cpf);
+												   cpf,
+												   pessoaFisica.getRg());
 
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 
@@ -267,7 +269,7 @@ public class EntregadorController {
 		HashMap<String, String> cnpj = new HashMap<String, String>();
 		cnpj.put(CNPJ, cnpjEntregador);
 		
-		validarParametrosEntradaCadastroEntregador(codigoEntregador, 
+		validarParametrosEntradaCadastroEntregadorPJ(codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
 												   cnpj);
@@ -639,7 +641,7 @@ public class EntregadorController {
 			if (rota != null){
 				
 				dados[1] = rota.getRoteiro() != null ? rota.getRoteiro().getDescricaoRoteiro() : "";
-				dados[2] = rota.getRoteiro() != null && rota.getRoteiro().getBox() != null ? rota.getRoteiro().getBox().getNome() : "";
+				dados[2] = rota.getRoteiro() != null && rota.getRoteiro().getRoteirizacao().getBox() != null ? rota.getRoteiro().getRoteirizacao().getBox().getNome() : "";
 				dados[3] = entregador.getRota() != null ? entregador.getRota().getDescricaoRota() : "";
 			} else {
 				
@@ -699,20 +701,52 @@ public class EntregadorController {
 		}
 	}
 	
+	private void validarParametrosEntradaCadastroEntregadorPF(Long codigoEntregador,
+			boolean isComissionado,
+			String percentualComissao,
+			HashMap<String, String> cpfCnpj,
+			String rg) {
+		
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		ValidacaoVO validacao = new ValidacaoVO();
+		validacao.setTipoMensagem(TipoMensagem.WARNING);
+		validacao.setListaMensagens(listaMensagens);
+		
+		if (rg != null && rg.length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
+			
+			listaMensagens.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
+		}
+		
+		validarParametrosEntradaCadastroEntregador(validacao, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
+		
+	}
+	
+	private void validarParametrosEntradaCadastroEntregadorPJ(Long codigoEntregador,
+			boolean isComissionado,
+			String percentualComissao,
+			HashMap<String, String> cpfCnpj) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		ValidacaoVO validacao = new ValidacaoVO();
+		validacao.setTipoMensagem(TipoMensagem.WARNING);
+		validacao.setListaMensagens(listaMensagens);
+		
+		validarParametrosEntradaCadastroEntregador(validacao, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
+		
+	}
+	
 	/*
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	private void validarParametrosEntradaCadastroEntregador(Long codigoEntregador,
+	private void validarParametrosEntradaCadastroEntregador(ValidacaoVO validacao,
+															Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
 															HashMap<String, String> cpfCnpj) {
 		
-		List<String> listaMensagens = new ArrayList<String>();
-		
-		ValidacaoVO validacao = new ValidacaoVO();
-		
-		validacao.setTipoMensagem(TipoMensagem.WARNING);
+		List<String> listaMensagens = validacao.getListaMensagens();
 						
 		if (codigoEntregador == null) {
 			
