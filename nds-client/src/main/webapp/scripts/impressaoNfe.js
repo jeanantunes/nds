@@ -2,12 +2,12 @@ var impressaoNfeController = $.extend(true, {
 	init : function() {
 		$( "#datepickerDe", impressaoNfeController.workspace ).datepicker({
 			showOn: "button",
-			buttonImage: contextPath + "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		$( "#datepickerAte", impressaoNfeController.workspace ).datepicker({
 			showOn: "button",
-			buttonImage: contextPath + "scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		$( "#datepickerMovDe", impressaoNfeController.workspace ).datepicker({

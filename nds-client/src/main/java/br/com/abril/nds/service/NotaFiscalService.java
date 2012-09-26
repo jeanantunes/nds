@@ -11,6 +11,8 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -128,4 +130,5 @@ public interface NotaFiscalService {
 	 * @return lista de notas referenciadas.
 	 */
 	List<NotaFiscalReferenciada> obterNotasReferenciadas(List<ItemNotaFiscal> listaItensNotaFiscal); 
+
 }

@@ -114,7 +114,10 @@ public class RomaneioController {
 		return tableModel;
 	}
 	
-	@Get
+
+
+	
+	
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroRomaneioDTO filtro = (FiltroRomaneioDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);

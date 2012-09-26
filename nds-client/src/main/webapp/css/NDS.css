@@ -147,7 +147,7 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 .bt_confirmar_1 a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_pesquisar{background:url(../images/ico_pesquisar.png) no-repeat center center; width:20px; line-height:20px; float:left;}
-.bt_pesquisar a{ color:#000; font-weight:bold; text-decoration:none; border:1px solid #fff; display:table-cell; width:20px; height:20px; }
+.bt_pesquisar a{ padding-left: 20px; color:#000; font-weight:bold; text-decoration:none; border:1px solid #fff; display:table-cell; width:20px; height:20px; }
 .bt_pesquisar a:hover{color:#00649F;  border:1px solid #06C; display:table-cell}
 
 
