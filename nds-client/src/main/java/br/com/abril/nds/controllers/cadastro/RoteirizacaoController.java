@@ -16,6 +16,7 @@ import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -771,5 +772,18 @@ public class RoteirizacaoController {
 		
 		result.use(Results.json()).from(roteirizacao, "result").serialize();
 	}
+	
+	/**
+	 * Obtém PDV's para a inclusão de rota pdv na roteirização
+	 */
+	@Get
+	@Path("/obterPdvsDisponiveis")
+	public void obterPdvsDisponiveis(){
+        
+		List<PdvRoteirizacaoDTO> pdvs = this.roteirizacaoService.obterPdvsDisponiveis();
+		
+		result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
+	}
+	
 	
 }
