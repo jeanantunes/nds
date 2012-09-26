@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
+import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -57,8 +58,16 @@ public class NegociacaoDividaController {
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA)
-	public void index()
-	{}
+	public void index(){
+		
+		Integer qntdParcelas = distribuidorService.obter().getNegociacaoAteParcelas();
+		List<Integer> parcelas = new ArrayList<Integer>();
+		for(int i = 1; i <= qntdParcelas; i++){
+			parcelas.add(i);
+		}
+		result.include("qntdParcelas", parcelas);
+		
+	}
 	
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
@@ -90,6 +99,36 @@ public class NegociacaoDividaController {
 			listDividas.add(ndd);
 		}*/
 		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(page).serialize();
+	}
+	
+	@Path("/calcularParcelas.json")
+	public void calcularParcelas(FiltroCalculaParcelas filtro) {
+		System.out.println(filtro.getMensalDia());
+		System.out.println(filtro.getPeriodicidade());
+		System.out.println(filtro.getQuinzenalDia1());
+		System.out.println(filtro.getQuinzenalDia2());
+		System.out.println(filtro.getValorSelecionado());
+		System.out.println(filtro.getQntdParcelas());
+		for (int i = 0; i < filtro.getSemanalDias().size(); i++) {
+			System.out.println(filtro.getSemanalDias().get(i));
+		}
+		System.out.println(filtro.getTipoPagamento().toString());
+		
+		
+		/*if(filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE.toString())){
+			//TODO
+		}else{
+			List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
+			for (int i = 0; i < filtro.getQntdParcelas(); i++) {
+				CalculaParcelasVO parcela = new CalculaParcelasVO();
+				parcela.setNumParcela(Integer.toString(i));
+				listParcelas.add(parcela);		
+			}
+			
+			
+			
+		}*/
+		
 	}
 	
 	@Path("/exportar")

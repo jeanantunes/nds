@@ -245,5 +245,8 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return {@link Set} de {@link ProdutoEdicao}
 	 */
 	Set<ProdutoEdicao> obterProdutosEdicaoPorFornecedor(Long idFornecedor);
-	
+
+	List<ProdutoEdicao> buscarProdutosLancadosData(Date data);
+
+	public String buscarNomeComercial(Long long1);
 }

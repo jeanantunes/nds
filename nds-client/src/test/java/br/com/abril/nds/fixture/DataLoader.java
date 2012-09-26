@@ -2506,43 +2506,43 @@ public class DataLoader {
 		
 		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
-		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
+		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose,1);
 		pdvJose.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJose);
 
-		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel,2);
 		pdvManoel.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvManoel);
 
-		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha);
+		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha,3);
 		pdvManoelCunha.setSegmentacao(segmentacaoPDV);
 		session.save(pdvManoelCunha);
 
-		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria);
+		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria,4);
 		pdvMaria.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMaria);
 
-		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis);
+		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis,5);
 		pdvLuis.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvLuis);
 
-		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
+		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao,6);
 		pdvJoao.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJoao);
 
-		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
+		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme,7);
 		pdvGuilherme.setSegmentacao(segmentacaoPDV);
 		session.save(pdvGuilherme);
 
-		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
+		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo,8);
 		pdvMurilo.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMurilo);
 
-		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
+		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana,9);
 		pdvMariana.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMariana);
 
-		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
+		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando,10);
 		pdvOrlando.setSegmentacao(segmentacaoPDV);
 		session.save(pdvOrlando);
 
@@ -2550,20 +2550,11 @@ public class DataLoader {
 
 	private static void criarRotaRoteiroCota(Session session) {
 
-
-		
-		
-
-		
-		
 		Box boxA = Fixture.criarBox(1000, "BX-A", TipoBox.LANCAMENTO);
 		session.save(boxA);
 		
 		Box boxB = Fixture.criarBox(2000, "BX-B", TipoBox.LANCAMENTO);
 		session.save(boxB);
-		
-		
-		
 		
 		
 		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(boxA);
@@ -2574,9 +2565,7 @@ public class DataLoader {
 		
 		Roteirizacao roteirizacao3 = Fixture.criarRoteirizacao(boxA);
 		session.save(roteirizacao3);;
-		
-		
-		
+
 		
 		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,boxA,TipoRoteiro.NORMAL);
 		session.save(roteiroPinheiros);
@@ -2588,25 +2577,19 @@ public class DataLoader {
 		session.save(roteiroTCD);
 
 		
-		
-		
-		
 		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
 		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
-		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose);
+		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose,11);
 		pdvcotaJose2.setSegmentacao(segmentacaoPDV);
 		session.save(pdvcotaJose2);
 
-		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel);
+		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel,12);
 		pdvcotaManoel2.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvcotaManoel2);
 		
 		List<PDV> pdvs = Arrays.asList(pdvcotaJose2,pdvcotaManoel2);
-		
-		
 
-		
 		
 		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros,pdvs);
 		session.save(rota1);
@@ -2616,12 +2599,7 @@ public class DataLoader {
 		
 		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
 		session.save(rota10);
-	
-
-		
-		
-	
-          
+ 
 	}
 
 

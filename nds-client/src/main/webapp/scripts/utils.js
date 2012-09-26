@@ -147,7 +147,9 @@ function esconde(isFromDialog, div) {
 	}*/
 
 	// Remove a div que deixa o fundo desabilitado e escuro 
-	$("#disabledBackground").remove();
+	while($("#disabledBackground").length != 0) {
+		$("#disabledBackground").remove();
+	}
 
 }
 

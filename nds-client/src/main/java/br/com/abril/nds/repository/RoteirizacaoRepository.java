@@ -88,5 +88,13 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	 * @return
 	 */
 	List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome, List<Long> idsRoteiros);
+	
+	/**
+	 * Obtem Roteirizacao por Box e Cota
+	 * @param idBox
+	 * @param numeroCota
+	 * @return Roteirizacao
+	 */
+	Roteirizacao obterRoteirizacaoPorBoxECota(Long idBox, Integer numeroCota);
 }
 

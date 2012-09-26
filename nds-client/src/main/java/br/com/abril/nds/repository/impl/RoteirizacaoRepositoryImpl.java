@@ -320,6 +320,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" join roteiro.rotas rota " )
 			.append(" Join rota.pdvs pdv ")
 			.append(" Join pdv.cota cota ")
+			.append(" join cota.pessoa pessoa ")
 			.append(" where roteiro.box.id = box.id "); 
 			
 		if(filtro.getIdBox()!= null){
@@ -515,6 +516,24 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		criteria.setResultTransformer(Transformers.aliasToBean(RotaRoteirizacaoDTO.class));
 		
 		return criteria.list();
+	}
+	
+	/**
+	 * Obtem Roteirizacao por Box e Cota
+	 * @param idBox
+	 * @param numeroCota
+	 * @return Roteirizacao
+	 */
+	@Override
+	public Roteirizacao obterRoteirizacaoPorBoxECota(Long idBox, Integer numeroCota) {
+		
+		Criteria criteria  = getSession().createCriteria(Roteirizacao.class, "roteirizacao");
+		criteria.createAlias("roteirizacao.box","box");
+		criteria.createAlias("box.cotas", "cota");
+		criteria.add(Restrictions.eq("box.id", idBox));
+		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
+		
+		return (Roteirizacao) criteria.uniqueResult();
 	}
 
 }
