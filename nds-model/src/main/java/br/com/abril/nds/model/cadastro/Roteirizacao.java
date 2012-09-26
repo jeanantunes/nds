@@ -8,8 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,8 +24,8 @@ public class Roteirizacao {
 	@Column(name = "ID")
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name = "BOX_ID",nullable=true)
+	@OneToOne
+	@JoinColumn(name = "BOX_ID")
 	private Box box;
 	
 	@OneToMany
