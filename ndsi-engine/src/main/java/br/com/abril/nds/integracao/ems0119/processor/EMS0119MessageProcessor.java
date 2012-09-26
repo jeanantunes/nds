@@ -11,7 +11,10 @@ import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
 import br.com.abril.nds.integracao.service.PeriodicidadeProdutoService;
+import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -40,35 +43,31 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 		EMS0119Input input = (EMS0119Input) message.getBody();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT pe ");
-		sql.append("FROM ProdutoEdicao pe ");
-		sql.append("JOIN FETCH pe.produto p ");
+		sql.append("SELECT p ");
+		sql.append("FROM Produto p ");
 		sql.append("WHERE p.codigo = :codigoProduto ");
-		sql.append("AND pe.numeroEdicao = :numEdicao");
 
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigoProduto", input.getCodigoDaPublicacao());
-		query.setParameter("numEdicao", input.getEdicao());
 
-		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
-		if (null != produtoEdicao) {
+		Produto produto = (Produto) query.uniqueResult();
+		if (null != produto) {
 
-			if (!produtoEdicao.getProduto().getNome()
+			if (!produto.getNome()
 					.equals(input.getNomeDaPublicacao())) {
-				produtoEdicao.getProduto().setNome(input.getNomeDaPublicacao());
+				produto.setNome(input.getNomeDaPublicacao());
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Atualizacao do Nome da Publicacao para: "
 								+ input.getNomeDaPublicacao());
 			}
-			if (!produtoEdicao
-					.getProduto()
+			if (!produto
 					.getPeriodicidade()
 					.toString()
 					.equals(pps.getPeriodicidadeProdutoAsArchive(input
 							.getPeriodicidade()))) {
-				produtoEdicao.getProduto().setPeriodicidade(
+				produto.setPeriodicidade(
 						pps.getPeriodicidadeProdutoAsArchive(input
 								.getPeriodicidade()));
 				ndsiLoggerFactory.getLogger().logInfo(
@@ -78,28 +77,49 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 								+ pps.getPeriodicidadeProdutoAsArchive(input
 										.getPeriodicidade()));
 			}
-			if (produtoEdicao.getProduto().getTipoProduto().getId() != input
+			if (produto.getTipoProduto().getId() != input
 					.getTipoDePublicacao()) {
-				produtoEdicao.getProduto().getTipoProduto()
-						.setId(input.getTipoDePublicacao());
-				ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Tipo de Publicacao para: "
-								+ input.getTipoDePublicacao());
+				
+				TipoProduto tp =  this.getTipoProduto(input.getTipoDePublicacao());
+				
+				if (null == tp) {
+					ndsiLoggerFactory.getLogger().logWarning(
+							message,
+							EventoExecucaoEnum.RELACIONAMENTO,
+							String.format( "Tipo de Produto %1$s não encontrado para o produto: %2$s ", input.getTipoDePublicacao().toString(), input.getCodigoDaPublicacao() )
+						);
+				} else {
+					produto.setTipoProduto(tp);
+					ndsiLoggerFactory.getLogger().logInfo(
+							message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Atualizacao do Tipo de Publicacao para: "
+									+ input.getTipoDePublicacao());
+
+				}								
 			}
-			if (produtoEdicao.getProduto().getEditor().getCodigo() != input
+			if (produto.getEditor().getCodigo() != input
 					.getCodigoDoEditor()) {
-				produtoEdicao.getProduto().getEditor()
-						.setCodigo(input.getCodigoDoEditor());
-				ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Codigo do Editor para: "
-								+ input.getCodigoDoEditor());
+				
+				Editor ed = this.getEditor(input.getCodigoDoEditor());			
+				if (null == ed) {
+					ndsiLoggerFactory.getLogger().logWarning(
+							message,
+							EventoExecucaoEnum.RELACIONAMENTO,
+							String.format( "Editor %1$s não encontrado para o produto: %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
+						);
+				} else {
+					produto.setEditor(ed);
+					ndsiLoggerFactory.getLogger().logInfo(
+							message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Atualizacao do Codigo do Editor para: "
+									+ input.getCodigoDoEditor());
+					
+				}				
 			}
-			if (produtoEdicao.getPacotePadrao() != input.getPacotePadrao()) {
-				produtoEdicao.setPacotePadrao(input.getPacotePadrao());
+			if (produto.getPacotePadrao() != input.getPacotePadrao()) {
+				produto.setPacotePadrao(input.getPacotePadrao());
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -108,8 +128,8 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 			}
 
-			if (produtoEdicao.getNomeComercial() != input.getNomeComercial()) {
-				produtoEdicao.setNomeComercial(input.getNomeComercial());
+			if (produto.getDescricao() != input.getNomeComercial()) {
+				produto.setDescricao(input.getNomeComercial());
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -117,8 +137,8 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 								+ input.getNomeComercial());
 			}
 
-			if (produtoEdicao.isAtivo() != input.getStatusDaPublicacao()) {
-				produtoEdicao.setAtivo(input.getStatusDaPublicacao());
+			if (produto.isAtivo() != input.getStatusDaPublicacao()) {
+				produto.setAtivo(input.getStatusDaPublicacao());
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -127,7 +147,70 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 			}
 
+		} else {
+			
+			produto = new Produto();
+			produto.setCodigo(input.getCodigoDaPublicacao());
+			produto.setNome(input.getNomeDaPublicacao());
+			produto.setPeriodicidade(pps.getPeriodicidadeProdutoAsArchive(input.getPeriodicidade()));
+			produto.setPacotePadrao(input.getPacotePadrao());
+			produto.setDescricao(input.getNomeComercial());
+			produto.setAtivo(input.getStatusDaPublicacao());			
+			//Default data
+			produto.setPeso(0l);
+			
+			TipoProduto tp =  this.getTipoProduto(input.getTipoDePublicacao());
+									
+			if (null == tp) {
+				ndsiLoggerFactory.getLogger().logWarning(
+						message,
+						EventoExecucaoEnum.RELACIONAMENTO,
+						String.format( "Tipo de Produto %1$s não encontrado para o produto: %2$s ", input.getTipoDePublicacao().toString(), input.getCodigoDaPublicacao() )
+					);
+			} else {
+				produto.setTipoProduto(tp);	
+			}
+			
+			Editor ed = this.getEditor(input.getCodigoDoEditor());			
+			if (null == ed) {
+				ndsiLoggerFactory.getLogger().logWarning(
+						message,
+						EventoExecucaoEnum.RELACIONAMENTO,
+						String.format( "Editor %1$s não encontrado para o produto: %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
+					);
+			} else {
+				produto.setEditor(ed);	
+			}
+			
+			if ((null != tp) && (null != ed)) {
+				this.getSession().persist(produto);
+			}						
+			
 		}
+	}
+
+	private Editor getEditor(Long codigoDoEditor) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT e ");
+		sql.append("FROM Editor e ");
+		sql.append("WHERE e.codigo = :codigoDoEditor ");
+
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("codigoDoEditor", codigoDoEditor);
+
+		return (Editor) query.uniqueResult();
+	}
+
+	private TipoProduto getTipoProduto(Long tipoDePublicacao) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT tp ");
+		sql.append("FROM TipoProduto tp ");
+		sql.append("WHERE tp.codigo = :tipoDePublicacao ");
+
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("tipoDePublicacao", tipoDePublicacao);
+
+		return (TipoProduto) query.uniqueResult();
 	}
 
 	@Override

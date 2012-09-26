@@ -3348,14 +3348,14 @@ public class DataLoader {
 				"C:\\contratos\\"));			// windows;
 //				"/opt/interface/contratos/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));	// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));		// linux;
 		
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
@@ -5762,14 +5762,39 @@ public class DataLoader {
 	}
 
 	private static void criarFeriado(Session session) {
+
+//Fixos
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("01/01/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Confraternização Universal",
+				false,
+				false,
+				true));
+
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("21/04/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Tiradentes",
+				false,
+				false,
+				true));		
 		
-		UnidadeFederacao saoPaulo = Fixture.criarUnidadeFederacao("GO");
-		save(session, saoPaulo);
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("01/05/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Dia Mundial do Trabalho",
+				false,
+				false,
+				true));	
 		
-		Localidade localidadeMococa  = Fixture.criarLocalidade(112L, "Mococa", 10L, saoPaulo);
-		save(session, localidadeMococa);
-		
-		Feriado feriadoIndependencia = Fixture.feriado(
+		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/09/2012"), 
 				TipoFeriado.FEDERAL, 
 				null, 
@@ -5777,21 +5802,69 @@ public class DataLoader {
 				"Independência do Brasil",
 				false,
 				false,
-				true);
-		save(session, feriadoIndependencia);
+				true));		
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("12/10/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Nossa Senhora Aparecida",
+				false,
+				false,
+				true));				
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("02/11/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Finados",
+				false,
+				false,
+				true));				
 
-		Feriado feriadoProclamacao =
-				Fixture.feriado(
-						DateUtil.parseDataPTBR("15/11/2012"), 
-						TipoFeriado.FEDERAL, 
-						null, 
-						null ,
-						"Proclamação da República",
-						false,
-						false,
-						false);
-
-		save(session, feriadoProclamacao);
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("15/11/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Proclamação da República",
+				false,
+				false,
+				true));	
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("25/12/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Natal",
+				false,
+				false,
+				true));	
+		
+//Moveis		
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("06/04/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Paixão de Cristo",
+				false,
+				false,
+				false));
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("07/06/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Corpus Christi",
+				false,
+				false,
+				false));
 		
 	}
 	
