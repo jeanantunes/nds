@@ -96,6 +96,9 @@
 		    				Imprimir Romaneio
 		    			</a>
 		    		</span>
+		    		<span style="float:right; margin-top:10px; margin-right:50px;">
+		    			<strong>Total de Entregas:</strong>&nbsp;<span id="totalCotas"></span>
+		    		</span>
 				</div>		
 			</fieldset>
 			<div class="linha_separa_fields">&nbsp;</div>

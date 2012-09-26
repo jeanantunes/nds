@@ -10,6 +10,6 @@ public interface RomaneioRepository extends Repository<Box, Long> {
 	
 	List<RomaneioDTO> buscarRomaneios(FiltroRomaneioDTO filtro, boolean limitar);
 
-	Integer buscarTotal(FiltroRomaneioDTO filtro);
+	Integer buscarTotal(FiltroRomaneioDTO filtro, boolean countCotas);
 
 }

@@ -267,10 +267,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	}
 
 	@Override
-	public Integer buscarTotal(FiltroRomaneioDTO filtro) {
+	public Integer buscarTotal(FiltroRomaneioDTO filtro, boolean countCotas) {
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cota.numeroCota) ");
+		hql.append(" select count( "+ (countCotas ? "distinct" : "") +"        cota.numeroCota) ");
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		
