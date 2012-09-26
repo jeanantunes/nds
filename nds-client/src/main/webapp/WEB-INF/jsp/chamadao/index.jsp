@@ -21,39 +21,60 @@
 <body>
 <input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
 <input type="hidden" value="${dataCotaFollowUp}" id="dataCotaFollowUp" name="dataCotaFollowUp">
+
 	<form id="form-confirm">
-	<div id="dialog-confirm" title="Chamadão">
-		
-		<jsp:include page="../messagesDialog.jsp" />
-		
-		<br />
-		<strong>Confirma a Programação do Chamadão?</strong>
-		<br />
-	</div>
+		<div id="dialog-confirm" title="Chamadão">
+			
+			<jsp:include page="../messagesDialog.jsp" />
+			
+			<br/>
+			
+			<strong>Confirma a Programação do Chamadão?</strong>
+			
+			<br/>
+			
+			<div id="divNovaDataChamadao">
+			
+				<br/>
+			
+				<p>
+				    <strong>Nova Data Chamadão:</strong>
+				    <input name="novaDataChamadao" id="novaDataChamadao" type="text"
+				    	   style="width:70px; margin-right:5px;" />
+			    </p>
+			    
+			    <br/>
+			    
+		    </div>
+		    
+		</div>
 	</form>
 	
 	<fieldset class="classFieldset">
-   	    <legend> Pesquisar        </legend>
+   	    <legend>Pesquisar</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   			<tr>
-			    <td width="29">Cota:</td>
-			    <td width="98">
+			    <td width="73">Cota:</td>
+			    <td width="175">
 			    	<input type="text" name="numeroCota" id="numeroCota" style="width:70px; float:left;
 						   margin-right:5px;" onchange="pesquisaCotaChamadao.pesquisarPorNumeroCota('#numeroCota', '#descricaoCota');" />
 			    </td>
-			    <td width="38">Nome:</td>
-			    <td width="178">
+			    <td width="37">Nome:</td>
+			    <td width="211">
 			    	<input name="descricaoCota" id="descricaoCota" type="text"
 		      		 	   class="nome_jornaleiro" maxlength="255" style="width:130px;"
 		      		 	   onkeyup="pesquisaCotaChamadao.autoCompletarPorNome('#descricaoCota');" 
 		      		 	   onblur="pesquisaCotaChamadao.pesquisarPorNomeCota('#numeroCota', '#descricaoCota');" />
 		      	</td>
-			    <td width="96">Data Chamadão:</td>
-			    <td width="102">
+			    <td width="94">Data Chamadão:</td>
+			    <td width="220">
 			    	<input type="text" name="dataChamadao" id="dataChamadao" style="width:70px; float:left; margin-right:5px;" />
 			    </td>
-			    <td width="68">Fornecedor:</td>
-			    <td width="191">
+				<td width="104">&nbsp;</td>
+  			</tr>
+  			<tr>
+  				<td>Fornecedor:</td>
+			    <td>
 			   		<select name="idFornecedor" id="idFornecedor" style="width:190px;">
       					<option selected="selected" value="">Todos</option>
 						<c:forEach var="fornecedor" items="${listaFornecedores}">
@@ -61,12 +82,26 @@
 						</c:forEach>
     				</select>
     			</td>
-    			<td width="104">
+			    <td align="right">
+			   		<input type="checkbox" name="comChamadaEncalhe" id="comChamadaEncalhe" />
+			   	</td>
+			    <td>Com CE</td>
+			    <td>Editor:</td>
+			    <td>
+			    	<select name="idEditor" id="idEditor" style="width:190px;">
+			      		<option selected="selected" value="">Todos</option>
+			      		<c:forEach var="editor" items="${listaEditores}">
+							<option value="${editor.key}">${editor.value}</option>
+						</c:forEach>
+			    	</select>
+			    </td>
+			    <td>
     				<span class="bt_pesquisar" title="Pesquisar">
     					<a href="javascript:;" onclick="chamadaoController.pesquisar();">Pesquisar</a>
     				</span>
     			</td>
-  			</tr>
+		  </tr>
+  			
 		</table>
 	</fieldset>
 	
@@ -79,12 +114,39 @@
 	        
 	        <table width="949" border="0" cellspacing="1" cellpadding="1">
 	   			<tr>
-	   				<td width="318" valign="top">
-	    				<span class="bt_confirmar_novo" title="Confirmar"><a onclick="chamadaoController.confirmar();" href="javascript:;"><img
-							  border="0" hspace="5"
-							  src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
-						</span>
-	
+	   				<td width="442" valign="top">
+	    			
+	    				<div id="divBotaoConfirmarChamadao">
+	    			
+		    				<span class="bt_confirmar_novo" title="Confirmar">
+		    					<a onclick="chamadaoController.confirmar();" href="javascript:;">
+		    						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+		    						Confirmar
+		    					</a>
+							</span>
+						
+						</div>
+						
+						<div id="divBotoesChamadaEncalhe">
+							
+							<span class="bt_novos" title="Reprogramar">
+								<a onclick="chamadaoController.confirmar();" href="javascript:;">
+									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
+									Reprogramar
+								</a>
+							</span>
+							
+							<span class="bt_novos" title="Cancelar">
+								<a href="javascript:;" onclick="chamadaoController.cancelarChamadao();">
+									<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" hspace="5" border="0" />
+									Cancelar
+								</a>
+							</span>
+							
+						</div>
+						
+						<br clear="all" />
+						
 	      				<span class="bt_novos" title="Gerar Arquivo">
 	      					<a href="${pageContext.request.contextPath}/devolucao/chamadao/exportar?fileType=XLS">
 								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />

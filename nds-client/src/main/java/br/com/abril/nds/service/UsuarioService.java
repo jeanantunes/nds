@@ -30,6 +30,8 @@ public interface UsuarioService {
 
 	public String getNomeUsuarioLogado();
 
+	public Usuario getUsuarioLogado();
+
 	public boolean existeUsuario(String login);
 
 	public void alterarSenha(Usuario usuario);

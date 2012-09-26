@@ -1,8 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +15,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -183,8 +180,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 			TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(codigoTipoProduto);
 			produto.setTipoProduto(tipoProduto);
 			
-			produto.setPeriodicidade(PeriodicidadeProduto.QUINZENAL);
-			produto.setPeso(new Long(10));
+			//TODO: Valor não informado na interface 
+			// de cadastro de produto
+			produto.setPeso(0L);
 
 			produto = this.produtoRepository.merge(produto);
 			
@@ -233,6 +231,13 @@ public class ProdutoServiceImpl implements ProdutoService {
 		}
 		
 		return listaProdutos;
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Produto> obterProdutos() {
+		
+		return produtoRepository.buscarTodos();
 	}
 	
 }

@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.util.IOUtils;
@@ -14,7 +15,7 @@ import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
-import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.GarantiaCotaOutros;
 import br.com.abril.nds.model.cadastro.Imovel;
@@ -22,6 +23,7 @@ import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -140,15 +142,24 @@ public class CotaGarantiaController {
 	}
 	
 	@Post("/getByCota.json")
-	public void getByCota(Long idCota) {
+	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
-		CotaGarantiaDTO cotaGarantia =	cotaGarantiaService.getByCota(idCota);
-
-		if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
-			result.use(CustomJson.class).from(cotaGarantia).serialize();		
-		}else{			
-			result.use(CustomJson.class).from("OK").serialize();		
-		}	
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
+	        
+	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {			
+	            result.use(CustomJson.class).from(cotaGarantia).exclude(EnderecoFiador.class, "fiador").serialize();		
+	        }else{			
+	            result.use(CustomJson.class).from("OK").serialize();		
+	        }	
+	    } else {
+	        CotaGarantiaDTO<?> cotaGarantia = cotaGarantiaService.obterGarantiaHistoricoTitularidadeCota(idCota, idHistorico);
+	        if (cotaGarantia != null) {
+	            result.use(CustomJson.class).from(cotaGarantia).serialize();  
+	        } else {
+	            result.use(CustomJson.class).from("OK").serialize();      
+	        }
+	    }
 	}
 	
 	/**
@@ -156,21 +167,19 @@ public class CotaGarantiaController {
 	 * @param idCota
 	 */
 	@Post("/getCaucaoLiquidaByCota.json")
-	public void getCaucaoLiquidaByCota(Long idCota) {
+	public void getCaucaoLiquidaByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 
-		if (idCota != null) {
-		
-			FormaCobrancaCaucaoLiquidaDTO dadosCaucaoLiquida = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
-			
-			if (dadosCaucaoLiquida != null) {			
-				result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();		
-			}else{			
-				result.use(CustomJson.class).from("OK").serialize();		
-			}	
-		}
-		else{
-			result.use(CustomJson.class).from("OK").serialize();
-		}
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            FormaCobrancaCaucaoLiquidaDTO dadosCaucaoLiquida = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
+            if (dadosCaucaoLiquida != null) {
+                result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();
+            } else {
+                result.use(CustomJson.class).from("OK").serialize();
+            }
+        } else {
+            FormaCobrancaCaucaoLiquidaDTO dto = cotaGarantiaService.obterCaucaoLiquidaHistoricoTitularidadeCota(idCota, idHistorico);
+            result.use(CustomJson.class).from(dto).serialize();
+        }
 	}
 
 	@Post("/getTipoGarantiaCadastrada.json")
@@ -377,7 +386,7 @@ public class CotaGarantiaController {
 		if (notaPromissoria.getVencimento() == null) {
 			listaMensagens
 					.add("O preenchimento do campo [Vencimento] é obrigatório");
-		}else if(notaPromissoria.getVencimento().compareTo(Calendar.getInstance()) <= 0  ) {
+		}else if(notaPromissoria.getVencimento().compareTo(new Date()) <= 0  ) {
 			listaMensagens
 			.add("O campo [Vencimento] deve ser uma data no futuro.");
 		}
@@ -515,18 +524,16 @@ public class CotaGarantiaController {
 		}
 	}
 	
-	@Post("/getFiador.json")
-	public void getFiador(Long idFiador, String documento) {
-		Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
-		if (fiador != null) {
-			
-			Endereco endereco = cotaGarantiaService.buscaEnderecoFiadorPrincipal(idFiador);
-			
-			result.use(CustomMapJson.class).put("fiador",fiador).put("endereco", endereco).serialize();
-		} else {
-			result.use(CustomJson.class).from("NotFound").serialize();
-		}
-	}
+    @Post("/getFiador.json")
+    public void getFiador(Long idFiador, String documento) {
+        Fiador fiador = cotaGarantiaService.getFiador(idFiador, documento);
+        if (fiador != null) {
+            result.use(CustomMapJson.class).put("fiador", fiador)
+                    .exclude(EnderecoFiador.class, "fiador").serialize();
+        } else {
+            result.use(CustomJson.class).from("NotFound").serialize();
+        }
+    }
 
 	@Post("/salvaFiador.json")
 	public void getFiador(Long idFiador, Long idCota)throws Exception  {
@@ -538,14 +545,17 @@ public class CotaGarantiaController {
 	}
 
 	
-	public Download getImageCheque(long idCheque) {		
-		
-		byte[] buff = cotaGarantiaService.getImageCheque(idCheque);
-		
-		if (buff == null) {
-			buff = new byte[0];
-		}
-		
+	public Download getImageCheque(long idCheque, ModoTela modoTela, Long idCota, Long idHistorico) {		
+	    byte[] buff = new byte[0];
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+	        buff = cotaGarantiaService.getImageCheque(idCheque);
+	    } else {
+	        buff = cotaGarantiaService.getImagemChequeCaucaoHistoricoTitularidade(idCota, idHistorico);
+	    }
+	    
+	    if (buff == null) {
+	        buff = new byte[0];
+	    }
 		return new ByteArrayDownload(buff, "image/jpeg", "cheque.jpg");
 	}
 	

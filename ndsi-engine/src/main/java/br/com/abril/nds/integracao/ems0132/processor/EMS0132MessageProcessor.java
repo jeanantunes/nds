@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	
 	
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -120,22 +121,16 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	private void escreverArquivo(Message message, Distribuidor distribuidor, List<Estudo> listaEstudo) {
 		
 		try {
+						
 			
 			if (listaEstudo == null || listaEstudo.isEmpty()) {
 				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Nenhum dado encontrado para geracao do arquivo.");
 				throw new RuntimeException("Nenhum dado encontrado para geracao do arquivo.");
 			}
 			
-			Calendar dataAtual = Calendar.getInstance();
+			Calendar dataAtual = Calendar.getInstance();			
 			
-			String fileName = getFileNamePath(message, dataAtual);
-			
-			if (fileName == null) {
-				this.ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, "Nome do arquivo invalido.");
-				throw new RuntimeException("Nome do arquivo invalido.");
-			}
-			
-			File arquivo = new File(fileName);
+			File arquivo = new File(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/LANCAMENTO.NEW");
 			
 			PrintWriter writer = 
 				new PrintWriter(
@@ -151,15 +146,16 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 					
 					for (Fornecedor fornecedor : produto.getFornecedores()) {
 
-						output.setCodigoDistribuidor(distribuidor.getCodigo());
-						output.setCodigoDistribuidor(1);
+						output.setCodigoDistribuidor( Long.valueOf( distribuidor.getCodigoDistribuidorDinap() ));						
 						output.setDataGeracaoArquivo(dataAtual.getTime());
 						output.setHotaGeracaoArquivo(dataAtual.getTime());
 						output.setMnemonicoTabela(CODIGO_LANP);
 						output.setCodigoContexto(produto.getCodigoContexto());
 						output.setCodigoFornecedor(fornecedor.getCodigoInterface());
-						output.setCodigoProduto(produto.getCodigo());
-						output.setNumeroLancamento(estudo.getId());
+						output.setCodigoProduto( estudo.getProdutoEdicao().getProduto().getCodigo() );
+						output.setNumeroEdicao(estudo.getProdutoEdicao().getNumeroEdicao());
+						output.setNumeroLancamento( 0L );
+						output.setNumeroFase(0);
 						output.setDataLancamento(estudo.getDataLancamento());
 					}
 				}
@@ -178,27 +174,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 	
-	/**
-	 * Retorna o nome do arquivo a ser gerado.
-	 * 
-	 * @param message
-	 * @param dataAtual
-	 * @return
-	 */
-	private String getFileNamePath(Message message, Calendar dataAtual) {
 
-		String data = DateUtil.formatarData(dataAtual.getTime(), "MMddyyyy");
-		String hora = DateUtil.formatarData(dataAtual.getTime(), "HHmmss");
-		
-		String ems0132PathName = (String) message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue());
-		
-		if (ems0132PathName == null) {
-			return null;
-		}
-		
-		return ems0132PathName + "/" + data + hora + ".drl";
-	}
-	
 	/**
 	 * Busca o Distribuidor.
 	 * 
@@ -210,7 +186,7 @@ public class EMS0132MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

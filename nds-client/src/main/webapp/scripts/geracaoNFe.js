@@ -56,6 +56,25 @@ GeracaoNFeController.prototype.init = function() {
 				$(this).dialog("close");
 				_this.gerar();
 			},
+			"Cancelar o Envio" : function (){
+				_this.$dialogCotasSuspensasConfirmar.dialog("open");
+			},
+			"Cancelar" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+	
+	this.$dialogCotasSuspensasConfirmar = $('#dialogCotasSuspensasConfirmar', this.workspace).dialog({
+		autoOpen : false,
+		resizable : false,
+		width : 400,
+		modal : true,
+		buttons : {
+			"Confirmar" : function() {
+				$(this).dialog("close");
+				_this.transferirSuplementar();
+			},
 			"Cancelar" : function() {
 				$(this).dialog("close");
 			}
@@ -93,6 +112,35 @@ GeracaoNFeController.prototype.gerar = function() {
 			exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 		}
 		
+		_this.gridReaload(_this.$gridNFe,'busca.json');
+		
+	});
+};
+
+GeracaoNFeController.prototype.transferirSuplementar = function() {
+	var params = [];
+	
+	var cotasSelecionadas = $(".checkboxCheckCotasSuspensas", GeracaoNFeController.workspace);
+	
+	for (var index in cotasSelecionadas) {
+		
+		if (cotasSelecionadas[index].checked) {
+			
+			params.push({name:"idsCota", value: cotasSelecionadas[index].value});
+		}
+	}
+	
+	var _this = this;
+	
+	$.postJSON(this.path + 'transferirSuplementar.json', params, function(data) {
+		var tipoMensagem = data.tipoMensagem;
+		var listaMensagens = data.listaMensagens;
+
+		if (tipoMensagem && listaMensagens) {
+			exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+		}
+		
+		_this.$dialogCotasSuspensas.dialog("close");
 		_this.gridReaload(_this.$gridNFe,'busca.json');
 		
 	});
@@ -225,7 +273,7 @@ GeracaoNFeController.prototype.gridReaload = function(grid, uri) {
 			&& ($("#inputIntervaloCotaAte", this.workspace).val().length > 0) 
 			&& (($("#datepickerIntervaloMovimentoDe", this.workspace).val().length == 0) 
 					||  ($("#datepickerIntervaloMovimentoAte", this.workspace).val().length == 0))) {
-		exibirMensagem("WARNING", ["Quando haver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
+		exibirMensagem("WARNING", ["Quando houver intervalo de [Cota], deve haver também intervalo de [Data de Movimento]"], "");
 		return;
 	}
 	
@@ -292,13 +340,13 @@ GeracaoNFeController.prototype.initGrid = function() {
 					align : 'center'
 				}, {
 					display : 'Total R$',
-					name : 'vlrTotal',
+					name : 'total',
 					width : 90,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Total Desconto R$',
-					name : 'totalDesc',
+					name : 'totalDesconto',
 					width : 105,
 					sortable : true,
 					align : 'right'

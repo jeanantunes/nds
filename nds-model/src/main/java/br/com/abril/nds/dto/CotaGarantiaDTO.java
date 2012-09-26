@@ -3,14 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 
 import br.com.abril.nds.model.cadastro.TipoGarantia;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaCaucaoLiquida;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
 
-public class CotaGarantiaDTO implements Serializable {
+public class CotaGarantiaDTO<T> implements Serializable {
 
 	/**
 	 * 
@@ -20,14 +14,14 @@ public class CotaGarantiaDTO implements Serializable {
 	
 	private TipoGarantia tipo;
 	
-	private CotaGarantia cotaGarantia;
+	private T cotaGarantia;
 	
 	
 	public CotaGarantiaDTO() {
 	}
 
 
-	public CotaGarantiaDTO(TipoGarantia tipo, CotaGarantia cotaGarantia) {
+	public CotaGarantiaDTO(TipoGarantia tipo, T cotaGarantia) {
 		super();
 		this.tipo = tipo;
 		this.cotaGarantia = cotaGarantia;
@@ -51,14 +45,14 @@ public class CotaGarantiaDTO implements Serializable {
 	/**
 	 * @return the cotaGarantia
 	 */
-	public CotaGarantia getCotaGarantia() {
+	public T getCotaGarantia() {
 		return cotaGarantia;
 	}
 
 	/**
 	 * @param cotaGarantia the cotaGarantia to set
 	 */
-	public void setCotaGarantia(CotaGarantia cotaGarantia) {
+	public void setCotaGarantia(T cotaGarantia) {
 		this.cotaGarantia = cotaGarantia;
 	}
 

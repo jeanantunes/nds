@@ -64,6 +64,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return dtos;
 	}
 	
+	@Transactional
+	public Boolean existeMatrizBalanceamentoConfirmado(Date data) {
+		return lancamentoRepository.existeMatrizBalanceamentoConfirmado(data);
+	}
+	
 	private LancamentoNaoExpedidoDTO montarDTOExpedicao(Lancamento lancamento) {
 	
 		String fornecedor;

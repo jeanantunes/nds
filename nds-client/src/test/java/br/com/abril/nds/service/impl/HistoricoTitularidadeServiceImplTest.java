@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFiador;
 import br.com.abril.nds.model.cadastro.Fiador;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaCobrancaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Imovel;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
@@ -52,9 +54,11 @@ import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneFiador;
+import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoEntrega;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
@@ -66,6 +70,7 @@ import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaChequeCaucao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaImovel;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaNotaPromissoria;
+import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoBoleto;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -394,8 +399,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		Assert.assertEquals(historicoDistribuicao.getInicioPeriodoCarencia(), distribuicao.getInicioPeriodoCarencia());
 		Assert.assertEquals(historicoDistribuicao.getPercentualFaturamentoEntrega(), distribuicao.getPercentualFaturamento());
 		Assert.assertEquals(historicoDistribuicao.getTaxaFixaEntrega(), distribuicao.getTaxaFixa());
-		Assert.assertEquals(historicoDistribuicao.getTipoEntrega(), distribuicao.getTipoEntrega().getDescricaoTipoEntrega().getValue());
-		Assert.assertEquals(historicoDistribuicao.getBaseCalculoEntrega(), distribuicao.getTipoEntrega().getBaseCalculo());
+		Assert.assertEquals(historicoDistribuicao.getTipoEntrega(), distribuicao.getTipoEntrega().getDescricaoTipoEntrega());
 	}
 	
 	private void assertSocios(Set<SocioCota> socios, Collection<HistoricoTitularidadeCotaSocio> historicoSocios) {
@@ -439,8 +443,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		
 		} else if (garantia instanceof CotaGarantiaCaucaoLiquida) {
 
-			assertCaucaoLiquida(
-				(List<CaucaoLiquida>) ((CotaGarantiaCaucaoLiquida) garantia).getCaucaoLiquidas(), 
+			assertCaucaoLiquida((CotaGarantiaCaucaoLiquida) garantia, 
 				(Collection<HistoricoTitularidadeCotaCaucaoLiquida>) historicoGarantias
 			);
 		
@@ -512,19 +515,19 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		}
 	}
 	
-	private void assertCaucaoLiquida(List<CaucaoLiquida> caucoesLiquidas, Collection<HistoricoTitularidadeCotaCaucaoLiquida> historicoGarantias) {
-		
+	private void assertCaucaoLiquida(CotaGarantiaCaucaoLiquida garantia, Collection<HistoricoTitularidadeCotaCaucaoLiquida> historicoGarantias) {
 		Iterator<HistoricoTitularidadeCotaCaucaoLiquida> iteratorHistorico = historicoGarantias.iterator();
-		Iterator<CaucaoLiquida> iteratorCaucaoLiquida = caucoesLiquidas.iterator();
+		HistoricoTitularidadeCotaCaucaoLiquida historicoCaucaoLiquida = iteratorHistorico.next();
 		
-		while (iteratorHistorico.hasNext() && iteratorCaucaoLiquida.hasNext()) {
-			
-			CaucaoLiquida caucaoLiquida = iteratorCaucaoLiquida.next();
-			HistoricoTitularidadeCotaCaucaoLiquida historicoCaucaoLiquida = iteratorHistorico.next();
+		Assert.assertEquals(garantia.getTipoCobranca(),  historicoCaucaoLiquida.getPagamento().getTipoCobranca());
 
-			Assert.assertEquals(historicoCaucaoLiquida.getAtualizacao(), caucaoLiquida.getAtualizacao().getTime());
-			Assert.assertEquals(historicoCaucaoLiquida.getValor(), new BigDecimal(caucaoLiquida.getValor()));
-		}
+		PagamentoBoleto formaPagamento = (PagamentoBoleto) garantia.getFormaPagamento();
+		Assert.assertEquals(formaPagamento.getValor(), historicoCaucaoLiquida.getValor());
+        Assert.assertEquals(formaPagamento.getQuantidadeParcelas(), historicoCaucaoLiquida.getPagamento().getQtdeParcelasBoleto());
+        Assert.assertEquals(formaPagamento.getValorParcela(), historicoCaucaoLiquida.getPagamento().getValorParcelasBoleto());
+        FormaCobrancaCaucaoLiquida formaCobrancaCaucaoLiquida = formaPagamento.getFormaCobrancaCaucaoLiquida();
+        Assert.assertEquals(formaCobrancaCaucaoLiquida.getTipoFormaCobranca(), historicoCaucaoLiquida.getPagamento().getPeriodicidadeBoleto());
+        Assert.assertEquals(formaCobrancaCaucaoLiquida.getDiasDoMes(), historicoCaucaoLiquida.getPagamento().getDiasMesBoleto());
 	}
 
 	private void assertImovel(List<Imovel> imoveis, Collection<HistoricoTitularidadeCotaImovel> historicoGarantias) {
@@ -702,7 +705,8 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			StatusPDV.ATIVO, 
 			caracteristicas, 
 			licencaMunicipal, 
-			segmentacao
+			segmentacao,
+			1
 		);
 		
 		pdv.setEnderecos(getEnderecosPDV());
@@ -1025,7 +1029,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 
 		CotaGarantiaFiador garantiaFiador = new CotaGarantiaFiador();
 		
-		garantiaFiador.setData(Calendar.getInstance());
+		garantiaFiador.setData(new Date());
 		garantiaFiador.setFiador(fiador);
 		
 		return garantiaFiador;
@@ -1047,7 +1051,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		imoveis.add(imovel);
 
 		CotaGarantiaImovel cotaGarantiaImovel = new CotaGarantiaImovel();
-		cotaGarantiaImovel.setData(Calendar.getInstance());
+		cotaGarantiaImovel.setData(new Date());
 		cotaGarantiaImovel.setImoveis(imoveis);
 		
 		return cotaGarantiaImovel;
@@ -1057,16 +1061,25 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 	 * Cria garantia do tipo Caução Líquida
 	 */
 	private CotaGarantiaCaucaoLiquida getCaucaoLiquida() {
-		
+
+	    CotaGarantiaCaucaoLiquida garantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
+	    garantiaCaucaoLiquida.setTipoCobranca(TipoCobrancaCotaGarantia.BOLETO);
+	    PagamentoBoleto pagamento = new PagamentoBoleto();
+	    FormaCobrancaCaucaoLiquida cobranca = new FormaCobrancaCaucaoLiquida();
+	    cobranca.setTipoFormaCobranca(TipoFormaCobranca.MENSAL);
+	    cobranca.setDiasDoMes(Arrays.asList(15));
+	    pagamento.setFormaCobrancaCaucaoLiquida(cobranca);
+	    pagamento.setQuantidadeParcelas(5);
+	    pagamento.setValor(BigDecimal.valueOf(400));
+	    pagamento.setValorParcela(BigDecimal.valueOf(80));
+	    garantiaCaucaoLiquida.setFormaPagamento(pagamento);
+	    
 		CaucaoLiquida caucaoLiquida = new CaucaoLiquida();
 		caucaoLiquida.setAtualizacao(Calendar.getInstance());
-		caucaoLiquida.setValor(400.0);
-		
+		caucaoLiquida.setValor(415.0);
 		List<CaucaoLiquida> caucoesLiquidas = new ArrayList<CaucaoLiquida>();
 		caucoesLiquidas.add(caucaoLiquida);
-		
-		CotaGarantiaCaucaoLiquida garantiaCaucaoLiquida = new CotaGarantiaCaucaoLiquida();
-		garantiaCaucaoLiquida.setData(Calendar.getInstance());
+		garantiaCaucaoLiquida.setData(new Date());
 		garantiaCaucaoLiquida.setCaucaoLiquidas(caucoesLiquidas);
 
 		return garantiaCaucaoLiquida;
@@ -1084,15 +1097,15 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		cheque.setCorrentista("correntista");
 		cheque.setDvAgencia("dvAgencia");
 		cheque.setDvConta("dvConta");
-		cheque.setEmissao(Calendar.getInstance());
+		cheque.setEmissao(new Date() );
 		cheque.setNomeBanco("nomeBanco");
 		cheque.setNumeroBanco("numeroBanco");
 		cheque.setNumeroCheque("numeroCheque");
-		cheque.setValidade(Calendar.getInstance());
+		cheque.setValidade(new Date() );
 		cheque.setValor(150.0);
 
 		CotaGarantiaChequeCaucao garantiaChequeCaucao = new CotaGarantiaChequeCaucao();
-		garantiaChequeCaucao.setData(Calendar.getInstance());
+		garantiaChequeCaucao.setData(new Date());
 		garantiaChequeCaucao.setCheque(cheque);
 		
 		return garantiaChequeCaucao;
@@ -1106,10 +1119,10 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
 		notaPromissoria.setValor(1000.0);
 		notaPromissoria.setValorExtenso("Mil");
-		notaPromissoria.setVencimento(Calendar.getInstance());
+		notaPromissoria.setVencimento(new Date());
 		
 		CotaGarantiaNotaPromissoria garantiaNotaPromissoria = new CotaGarantiaNotaPromissoria();
-		garantiaNotaPromissoria.setData(Calendar.getInstance());
+		garantiaNotaPromissoria.setData(new Date());
 		garantiaNotaPromissoria.setNotaPromissoria(notaPromissoria);
 
 		return garantiaNotaPromissoria;

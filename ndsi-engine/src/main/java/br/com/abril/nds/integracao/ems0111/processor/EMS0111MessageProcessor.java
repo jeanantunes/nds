@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -57,7 +58,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	private DistribuidorService distribuidorService;
 	
 	@Override
-	public void preProcess() {
+	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
 
@@ -249,7 +250,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// Atualizar lançamento Distribuidor:
 			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
 			
-			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status) || StatusLancamento.BALANCEADO_LANCAMENTO.equals(status); 
+			boolean isStatusBalanceado = StatusLancamento.BALANCEADO.equals(status); 
 			
 			final Date dtLancamentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataLancamentoDistribuidor());
 			
@@ -355,7 +356,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	}
 	
 	@Override
-	public void posProcess() {
+	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
 	

@@ -276,40 +276,6 @@ public class ImpressaoBoletosController {
 		efetuarConsulta(filtro);
 	}
 	
-	@Post
-	@Path("/pesquisarInfoCota")
-	public void pesquisarInfoCota(int numeroCota){
-		
-		Roteirizacao roteirizacao = roteirizacaoService.buscarRoteirizacaoDeCota(numeroCota);
-		
-		RotaRoteiroVO rotaRoteiroVO = new RotaRoteiroVO();
-		
-		if(roteirizacao!= null){
-			
-			rotaRoteiroVO.setBox( (roteirizacao.getPdv()!= null 
-									&& roteirizacao.getPdv().getCota()!= null 
-									&& roteirizacao.getPdv().getCota().getBox()!= null)
-									
-									? roteirizacao.getPdv().getCota().getBox().getId():null);
-			
-			
-			rotaRoteiroVO.setRota((roteirizacao.getRota()!= null)
-					
-									? roteirizacao.getRota().getId():null);
-			
-			rotaRoteiroVO.setRoteiro((roteirizacao.getRota()!= null 
-										&& roteirizacao.getRota().getRoteiro()!= null)
-					
-										?roteirizacao.getRota().getRoteiro().getId():null);
-			
-			FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(roteirizacao.getPdv().getCota().getId());
-			
-			rotaRoteiroVO.setTipoCobranca( (formaCobrancaPrincipal!= null)? formaCobrancaPrincipal.getTipoCobranca():null);
-		}
-		
-		result.use(Results.json()).from(rotaRoteiroVO,"result").serialize();
-	}
-	
 	/**
 	 * Exporta os dados da pesquisa.
 	 * 

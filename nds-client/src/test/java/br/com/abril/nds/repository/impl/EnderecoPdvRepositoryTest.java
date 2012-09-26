@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -74,7 +75,7 @@ public class EnderecoPdvRepositoryTest extends AbstractRepositoryImplTest {
 		LicencaMunicipal licencaMunicipal = Fixture.criarLicencaMunicipal("Nome Licença", "1000", tipoLicencaMunicipal );
 		
 		PDV pdv  = Fixture.criarPDV("PDv Teste", new BigDecimal(10), TamanhoPDV.G, cotaManoel, true, StatusPDV.ATIVO, 
-									caracteristicas, licencaMunicipal, segmentacao);
+									caracteristicas, licencaMunicipal, segmentacao,1);
 		save(pdv);
 		
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "logradouro", "10", "Bairro", "Mococa", "SP",1);
@@ -99,7 +100,7 @@ public class EnderecoPdvRepositoryTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterMunicipiosPdvPrincipal(){
 		
-		List<Endereco> endereco = enderecoPDVRepository.buscarMunicipioPdvPrincipal();
+		List<ItemDTO<Integer, String>> endereco = enderecoPDVRepository.buscarMunicipioPdvPrincipal();
 		
 		Assert.assertNotNull(endereco);
 		

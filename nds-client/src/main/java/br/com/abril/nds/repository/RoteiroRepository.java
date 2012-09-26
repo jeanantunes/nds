@@ -21,5 +21,12 @@ public interface RoteiroRepository extends Repository<Roteiro, Long> {
 	
     List<Roteiro> buscarRoteiroEspecial();
 
+    /**
+     * Busca os roteiros associados à um box com a descrição recebida
+     * @param idBox identificador do Box
+     * @param descricaoRoteiro descrição do roteiro para consulta
+     * @return lista de roteiros que satisfaçam os critérios da consulta
+     */
+    List<Roteiro> buscarRoteiroDeBox(Long idBox, String descricaoRoteiro);
 	
 }

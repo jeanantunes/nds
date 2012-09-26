@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 
 /**
  * 
@@ -41,4 +42,25 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	 * @return
 	 */
 	public PDV obterPDVPrincipal(Long idCota);
+	
+    /**
+     * Recupera os PDV's do histórico de titularidade da cota
+     * 
+     * @param filtro
+     *            filtro com os parâmetros para recuperação dos PDV's do
+     *            histórico de titularidade da cota
+     * @return Lista de {@link HistoricoTitularidadeCotaPDV} com os PDV's associados ao histórico de
+     *         titularidade da cota
+     */
+	List<HistoricoTitularidadeCotaPDV> obterPDVsHistoricoTitularidade(FiltroPdvDTO filtro);
+
+    /**
+     * Recupera o PDV associado ao histórico de titularidade da cota
+     * 
+     * @param idPdv
+     *            identificador do PDV associado ao histórico de titularidade da cota
+     * @return {@link HistoricoTitularidadeCotaPDV} associado ao histórico de
+     *         titularidade da cota
+     */
+	HistoricoTitularidadeCotaPDV obterPDVHistoricoTitularidade(Long idPdv);
 }

@@ -21,6 +21,9 @@ import br.com.abril.nds.model.cadastro.Editor;
 public interface EditorService {
 
 	public List<Editor> obterEditores();
+	
+	public Editor obterEditorPorId(Long idEditor);
+	
 
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO);
 	public ResultadoCurvaABCEditor obterCurvaABCEditorTotal(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO);

@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -40,6 +41,14 @@ public class LancamentoDiferenca implements Serializable {
 	@Column(name = "STATUS")
 	private StatusAprovacao status;
 
+	@OneToOne(optional = true)
+	@JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
+	private MovimentoEstoque movimentoEstoque;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")
+	private MovimentoEstoqueCota movimentoEstoqueCota;
+
 	public Long getId() {
 		return id;
 	}
@@ -70,5 +79,21 @@ public class LancamentoDiferenca implements Serializable {
 
 	public void setStatus(StatusAprovacao status) {
 		this.status = status;
+	}
+
+	public MovimentoEstoque getMovimentoEstoque() {
+		return movimentoEstoque;
+	}
+
+	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
+		this.movimentoEstoque = movimentoEstoque;
+	}
+
+	public MovimentoEstoqueCota getMovimentoEstoqueCota() {
+		return movimentoEstoqueCota;
+	}
+
+	public void setMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota) {
+		this.movimentoEstoqueCota = movimentoEstoqueCota;
 	}
 }

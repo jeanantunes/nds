@@ -124,7 +124,7 @@
     	<img id="idImagem" src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" width="191" height="136" alt="Banca"/>
     	    	
     	<br />
-    	<a href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a>
+    	<a id="PDVbtnUploadImagem" href="javascript:" onclick="PDV.popup_img();"><img src="${pageContext.request.contextPath}/images/bt_cadastros.png" alt="Editar Imagem" width="15" height="15" hspace="10" vspace="3" border="0"  /></a>
     	<a id="idBtnExcluir" href="javascript:" onclick="PDV.excluirImagem();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Imagem" width="15" height="15" hspace="10" vspace="3" border="0" /></a>
     </td>
   </tr>
@@ -145,7 +145,7 @@
     	<td width="179"><input type="text" name="inicioHorario" id="inicioHorario" style="width:60px;"/>
       		As
       	<input type="text" name="fimHorario" id="fimHorario" style="width:60px;"/></td>
-    	<td width="148"><span class="bt_add"><a href="javascript:;" onclick="PDV.adicionarDiaFuncionamento()">Incluir Novo</a></span></td>
+    	<td width="148"><span class="bt_add" id="PDVbtnAdicionarDiasFuncionamento"><a href="javascript:;" onclick="PDV.adicionarDiaFuncionamento()">Incluir Novo</a></span></td>
   	</tr>
 </table>
 

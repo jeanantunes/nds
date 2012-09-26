@@ -15,6 +15,8 @@ public class PessoaUtil {
 	public static final String SUFIXO_PESSOA_FISICA = " (PF)";
 
 	public static final String SUFIXO_PESSOA_JURIDICA = " (PJ)";
+	
+	public static final int RG_QUANTIDADE_DIGITOS = 15;
 
 	/**
 	 * Obtém o nome de exibição de acordo com o tipo de pessoa.

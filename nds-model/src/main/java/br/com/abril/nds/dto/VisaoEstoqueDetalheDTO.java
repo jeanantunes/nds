@@ -3,7 +3,10 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -22,10 +25,10 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	private String produto;
 	
 	@Export(label = "Edição", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	private BigInteger edicao;
+	private String edicao;
 	
 	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 6)
-	private BigDecimal precoCapa;
+	private String precoCapa;
 	
 	@Export(label = "Lcto", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	private String lcto;
@@ -34,10 +37,10 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	private String rclto;
 	
 	@Export(label = "Qtde", alignment=Alignment.CENTER, exhibitionOrder = 9)
-	private BigDecimal qtde;
+	private String qtde;
 	
 	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 10)
-	private BigDecimal valor;
+	private String valor;
 	
 	private String transferir;
 	
@@ -66,41 +69,41 @@ public class VisaoEstoqueDetalheDTO implements Serializable {
 	public void setProduto(String produto) {
 		this.produto = produto;
 	}
-	public BigInteger getEdicao() {
+	public String getEdicao() {
 		return edicao;
 	}
-	public void setEdicao(BigInteger edicao) {
-		this.edicao = edicao;
+	public void setEdicao(Long edicao) {
+		this.edicao = edicao.toString();
 	}
-	public BigDecimal getPrecoCapa() {
+	public String getPrecoCapa() {
 		return precoCapa;
 	}
 	public void setPrecoCapa(BigDecimal precoCapa) {
-		this.precoCapa = precoCapa;
+		this.precoCapa = CurrencyUtil.formatarValor(precoCapa);
 	}
 	public String getLcto() {
 		return lcto;
 	}
-	public void setLcto(String lcto) {
-		this.lcto = lcto;
+	public void setLcto(Date lcto) {
+		this.lcto = DateUtil.formatarDataPTBR(lcto);
 	}
 	public String getRclto() {
 		return rclto;
 	}
-	public void setRclto(String rclto) {
-		this.rclto = rclto;
+	public void setRclto(Date rclto) {
+		this.rclto = DateUtil.formatarDataPTBR(rclto);
 	}
-	public BigDecimal getQtde() {
+	public String getQtde() {
 		return qtde;
 	}
-	public void setQtde(BigDecimal qtde) {
-		this.qtde = qtde;
+	public void setQtde(BigInteger qtde) {
+		this.qtde = qtde.toString();
 	}
-	public BigDecimal getValor() {
+	public String getValor() {
 		return valor;
 	}
 	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+		this.valor = CurrencyUtil.formatarValor(valor);
 	}
 	public String getTransferir() {
 		return transferir;

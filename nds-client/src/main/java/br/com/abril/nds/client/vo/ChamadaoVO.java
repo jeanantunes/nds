@@ -22,23 +22,29 @@ public class ChamadaoVO {
 	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 3)
 	private String edicao;
 	
-	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 4)
+	@Export(label = "Brinde", alignment = Alignment.RIGHT, exhibitionOrder = 4)
+	private String brinde;
+	
+	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
 	private String precoVenda;
 	
-	@Export(label = "Preço Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
+	@Export(label = "Preço Desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 6)
 	private String precoDesconto;
 	
-	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 7)
 	private String reparte;
 	
-	@Export(label = "Fornecedor", alignment = Alignment.LEFT, exhibitionOrder = 7)
+	@Export(label = "Fornecedor", alignment = Alignment.LEFT, exhibitionOrder = 8)
 	private String fornecedor;
 	
-	@Export(label = "Recolhimento", alignment = Alignment.CENTER, exhibitionOrder = 8)
+	@Export(label = "Recolhimento", alignment = Alignment.CENTER, exhibitionOrder = 9)
 	private String dataRecolhimento;
 	
-	@Export(label = "Valor R$", alignment = Alignment.RIGHT, exhibitionOrder = 9)
+	@Export(label = "Valor R$", alignment = Alignment.RIGHT, exhibitionOrder = 10)
 	private String valorTotal;
+	
+	@Export(label = "Valor c/ desconto R$", alignment = Alignment.RIGHT, exhibitionOrder = 11)
+	private String valorTotalDesconto;
 	
 	private String idLancamento;
 
@@ -82,6 +88,20 @@ public class ChamadaoVO {
 	 */
 	public void setEdicao(String edicao) {
 		this.edicao = edicao;
+	}
+	
+	/**
+	 * @return the brinde
+	 */
+	public String getBrinde() {
+		return brinde;
+	}
+
+	/**
+	 * @param brinde the brinde to set
+	 */
+	public void setBrinde(String brinde) {
+		this.brinde = brinde;
 	}
 
 	/**
@@ -182,4 +202,18 @@ public class ChamadaoVO {
 		this.idLancamento = idLancamento;
 	}
 
+	/**
+	 * @return the valorTotalDesconto
+	 */
+	public String getValorTotalDesconto() {
+		return valorTotalDesconto;
+	}
+
+	/**
+	 * @param valorTotalDesconto the valorTotalDesconto to set
+	 */
+	public void setValorTotalDesconto(String valorTotalDesconto) {
+		this.valorTotalDesconto = valorTotalDesconto;
+	}
+	
 }

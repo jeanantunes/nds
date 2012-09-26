@@ -122,6 +122,9 @@
 							<td>
 								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="255"
 									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota(1));"/>
+								
+								<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden1"/>
+								
 							</td>
 							<td>
 								<input type="text" name="nomeInput" id="nomeInput1" style="width:180px;" maxlength="255"
@@ -202,10 +205,22 @@
 		<div id="dialog-tipo-estoque" title="Tipo de Estoque" style="display:none">
 			<fieldset>
 				<legend>Selecione o Tipo de Estoque</legend>
-			    <select id="selectTipoEstoque" name="" size="1" >
-			      
-			    </select>
-			
+			    
+			    <table><tr>
+			    	<td>
+			    		  <select id="selectTipoEstoque" name="" size="1" onchange="lancamentoNovoController.atualizarQuantidade()" ></select>
+			    	</td>
+			    	<td width="20px">
+			    		
+			    	</td>
+			    	<td>
+			    		Quantidade:
+			    	</td>
+			  	  	<td>
+				  	  	<input id="qtdeTipoDialog" type="text" style="width:30px;" disabled="disabled"/>
+			    	</td>
+			    </tr></table>
+			  				
 			</fieldset>
 		</div>
 	</form>

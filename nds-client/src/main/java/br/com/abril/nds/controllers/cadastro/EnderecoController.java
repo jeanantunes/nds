@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.endereco.vo.EnderecoVO;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.dne.Bairro;
@@ -21,8 +22,8 @@ import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -588,7 +589,7 @@ public class EnderecoController {
 	 */
 	private void validarDadosEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
 	
-		Endereco endereco = enderecoAssociacao.getEndereco();
+		EnderecoDTO endereco = enderecoAssociacao.getEndereco();
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		

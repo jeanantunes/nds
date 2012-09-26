@@ -11,12 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import br.com.abril.nds.util.Util;
 
 /**
  * @author francisco.garcia
@@ -27,6 +23,21 @@ import br.com.abril.nds.util.Util;
 @Table(name = "BOX")
 @SequenceGenerator(name="BOX_SEQ", initialValue = 1, allocationSize = 1)
 public class Box implements Serializable {
+    
+    /**
+     * Box "Especial" utilizado na funcionalidade de roteirização
+     * para identificar configuração de roteirização sem informação
+     * de Box 
+     */
+    public static final Box ESPECIAL;
+    
+    static {
+        ESPECIAL = new Box();
+        ESPECIAL.setId(Long.valueOf(-1));
+        ESPECIAL.setCodigo(Integer.valueOf(-1));
+        ESPECIAL.setNome("Especial");
+        ESPECIAL.setTipoBox(TipoBox.LANCAMENTO);
+    }
 
 	/**
 	 * Serial Version UID
@@ -53,8 +64,6 @@ public class Box implements Serializable {
 	
 	@OneToMany(mappedBy ="box")
 	private Set<Roteiro> roteiros;
-	
-	
 
 	public Set<Cota> getCotas() {
 		return cotas;
@@ -167,12 +176,5 @@ public class Box implements Serializable {
 		if (tipoBox != other.tipoBox)
 			return false;
 		return true;
-	}
-	
-	
-	@PrePersist
-	@PreUpdate
-	private void removeMaskCnpj(Box box){
-		System.out.println("\t\t\t BLA");
 	}
 }
