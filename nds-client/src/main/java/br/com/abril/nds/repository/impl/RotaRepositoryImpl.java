@@ -146,10 +146,13 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	@Override
 	public Rota obterRotaPorPDV(Long idPDV, Long idCota) {
 		
-		StringBuilder hql = new StringBuilder("select rot.rota from Roteirizacao rot ");
-		hql.append(" where rot.pdv.id = :idPDV ")
-		   .append(" and rot.pdv.caracteristicas.pontoPrincipal = :principal ")
-		   .append(" and rot.pdv.cota.id = :idCota ");
+		StringBuilder hql = new StringBuilder("select rot from Rota rot ");
+		
+		hql.append(" join rot.pdvs pdvRota ")
+		
+		   .append(" where pdvRota.id = :idPDV ")
+		   .append(" and pdvRota.caracteristicas.pontoPrincipal = :principal ")
+		   .append(" and pdvRota.cota.id = :idCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idPDV", idPDV);

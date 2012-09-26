@@ -1252,6 +1252,10 @@ public class CotaController {
 	
 	private void processarTipoEntrega (DistribuicaoDTO distribuicao) {
 		
+		if(distribuicao.getDescricaoTipoEntrega() == null) {
+			return;
+		}
+		
 		switch(distribuicao.getDescricaoTipoEntrega()) {
 			case ENTREGA_EM_BANCA:
 				if(!distribuicao.getTermoAdesaoRecebido())
@@ -1368,9 +1372,10 @@ public class CotaController {
 		List<ItemDTO<DescricaoTipoEntrega, String>> itens =
 			new ArrayList<ItemDTO<DescricaoTipoEntrega,String>>();
 				
-		for(TipoEntrega item: tipoEntregaService.obterTodos()) {
+		for(DescricaoTipoEntrega item: DescricaoTipoEntrega.values()) {
+			
 			itens.add(new ItemDTO<DescricaoTipoEntrega, String>(
-				item.getDescricaoTipoEntrega(), item.getDescricaoTipoEntrega().getValue()));
+				item, item.getValue() ));
 		}
 		
 		return itens;
