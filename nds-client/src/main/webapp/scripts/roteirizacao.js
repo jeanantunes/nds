@@ -18,9 +18,9 @@ var roteirizacao = $.extend(true, {
 	
 		tipoTransferencia: null,
 		tipoEdicao: null,
-        idBox : null,
-        idRoteiro: null,
-        idRota: null,
+        idBox : "",
+        idRoteiro: "",
+        idRota: "",
 		
 		definirTransferenciaCota : function() {
 			if (!roteirizacao.isTransferenciaCota()) {
@@ -284,7 +284,7 @@ var roteirizacao = $.extend(true, {
         },
 
         clearRotasGrid : function() {
-            roteirizacao.idRota = null;
+            roteirizacao.idRota = "";
             $(".rotasGrid", roteirizacao.workspace).flexAddData({rows:[], page:0, total:0});
         },
 
@@ -344,7 +344,7 @@ var roteirizacao = $.extend(true, {
             });
 
             $(".boxGrid", roteirizacao.workspace).flexReload();
-            roteirizacao.idBox = null;
+            roteirizacao.idBox = "";
             roteirizacao.clearRoteirosGrid();
         },
 
@@ -387,7 +387,7 @@ var roteirizacao = $.extend(true, {
         },
 
         clearRoteirosGrid : function() {
-            roteirizacao.idRoteiro == null;
+            roteirizacao.idRoteiro = "";
             $(".roteirosGrid", roteirizacao.workspace).flexAddData({rows:[], page:0, total:0});
             roteirizacao.clearRotasGrid();
         },
@@ -406,7 +406,7 @@ var roteirizacao = $.extend(true, {
             });
 
             $(".roteirosGrid", roteirizacao.workspace).flexReload();
-            roteirizacao.idRoteiro = null;
+            roteirizacao.idRoteiro = "";
             roteirizacao.clearRotasGrid();
         },
 		

@@ -10,8 +10,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -24,6 +27,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 
@@ -118,7 +122,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		rota1 = Fixture.rota("1", "ROTA01", roteiro, Arrays.asList(pdvManoel));
 		save(rota1);
 		
-		rota2 = Fixture.rota("2", "OTA02", roteiro, Arrays.asList(pdvManoel));
+		rota2 = Fixture.rota("2", "ROTA02", roteiro, Arrays.asList(pdvManoel));
 		save(rota2);
 		
 		rota3 = Fixture.rota("3", "ROTA03", roteiro1, Arrays.asList(pdvManoel));
@@ -157,6 +161,30 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertTrue(lista.get(1) != null);
 
 		Assert.assertEquals(lista.size(), 2);
+	}
+	
+	@Test
+	public void obterRoteirizacao() {
+	    FiltroConsultaRoteirizacaoDTO filtro = new FiltroConsultaRoteirizacaoDTO();
+	    filtro.setNumeroCota(123);
+	    filtro.setOrdenacaoColuna(OrdenacaoColunaConsulta.ROTA);
+	    filtro.setPaginacao(new PaginacaoVO(1, 10, "asc"));
+	  
+	    List<ConsultaRoteirizacaoDTO> resultado = roteirizacaoRepository.buscarRoteirizacao(filtro); 
+	    Assert.assertNotNull(resultado);
+	    Assert.assertEquals(4, resultado.size());
+	    
+	    ConsultaRoteirizacaoDTO resultado1 = resultado.get(0);
+	    Assert.assertEquals(String.format("%s - %s", rota.getCodigoRota(), rota.getDescricaoRota()), resultado1.getDescricaoRota());
+	    
+	    ConsultaRoteirizacaoDTO resultado2 = resultado.get(1);
+	    Assert.assertEquals(String.format("%s - %s", rota1.getCodigoRota(), rota1.getDescricaoRota()), resultado2.getDescricaoRota());
+	    
+	    ConsultaRoteirizacaoDTO resultado3 = resultado.get(2);
+	    Assert.assertEquals(String.format("%s - %s", rota2.getCodigoRota(), rota2.getDescricaoRota()), resultado3.getDescricaoRota());
+	    
+	    ConsultaRoteirizacaoDTO resultado4 = resultado.get(3);
+	    Assert.assertEquals(String.format("%s - %s", rota3.getCodigoRota(), rota3.getDescricaoRota()), resultado4.getDescricaoRota());
 	}
 
 }
