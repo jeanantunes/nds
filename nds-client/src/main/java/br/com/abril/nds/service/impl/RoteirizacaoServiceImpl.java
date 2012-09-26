@@ -484,7 +484,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO();
 		boxDTO.setId(box.getId());
 		boxDTO.setNome(box.getNome());
-		boxDTO.setOrdem(box.getOrdem());
 		boxDTO.setSelecionado(box.getId() == parametros.getIdBox());
 		listaBox.add(boxDTO);
 		
@@ -560,6 +559,25 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		roteirizacaDTO.setListaPdvs(listaPdv);
 
 		return roteirizacaDTO;
+	}
+
+	/**
+	 * Inclui Cota Pdv na Roteirização
+	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
+	 */
+	@Override
+	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> listaCotaPdv, Long idRota) {
+		
+		PDV pdv;
+		Rota rota = rotaRepository.buscarPorId(idRota);
+		for (PdvRoteirizacaoDTO item:listaCotaPdv){
+			
+			pdv = pdvRepository.buscarPorId(item.getId());
+			rota.getPdvs().add(pdv);
+			rotaRepository.alterar(rota);
+		}
+		
+		
 	}
 	
 }
