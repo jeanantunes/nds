@@ -28,6 +28,7 @@ import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.EstoqueDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
@@ -46,7 +47,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -2537,35 +2537,30 @@ public class DiferencaEstoqueController {
 		Map<Long, List<RateioCotaVO>> mapaRateioCotas =
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
-		List<ItemNotaEnvio> itensNotaEnvio = 
+		List<DetalheItemNotaFiscalDTO> itensNotaEnvio = 
 			itemNotaEnvioService.obterItensNotaEnvio(dateNotaEnvio, numeroCota);
 		
 		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
 		
 		DiferencaVO diferencaVO = null;
-		ProdutoEdicao produtoEdicao = null;
-		Produto produto = null;
 		
-		for (ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
 
+		for (DetalheItemNotaFiscalDTO detalheItemNota : itensNotaEnvio) {
+		
 			diferencaVO = new DiferencaVO();
 			
-			produtoEdicao = itemNotaEnvio.getProdutoEdicao();
-			
-			produto = produtoEdicao.getProduto();
-			
 			if (this.containsDiferenca(
-					diferencasSessao, mapaRateioCotas,produtoEdicao.getId(),
+					diferencasSessao, mapaRateioCotas, detalheItemNota.getIdProdutoEdicao(),
 					dateNotaEnvio, numeroCota)) {
 				
 				continue;
 			}
 			
-			diferencaVO.setCodigoProduto(produto.getCodigo());
-			diferencaVO.setDescricaoProduto(produto.getNome());
-			diferencaVO.setNumeroEdicao(produtoEdicao.getNumeroEdicao().toString());
-			diferencaVO.setPrecoVenda(produtoEdicao.getPrecoVenda().toString());
-			diferencaVO.setQtdeEstoque(itemNotaEnvio.getReparte());
+			diferencaVO.setCodigoProduto(detalheItemNota.getCodigoProduto());
+			diferencaVO.setDescricaoProduto(detalheItemNota.getNomeProduto());
+			diferencaVO.setNumeroEdicao(detalheItemNota.getNumeroEdicao().toString());
+			diferencaVO.setPrecoVenda(detalheItemNota.getPrecoVenda().toString());
+			diferencaVO.setQtdeEstoque(detalheItemNota.getQuantidadeExemplares());
 		
 			prods.add(diferencaVO);
 		}

@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 
@@ -14,7 +15,7 @@ public interface ItemNotaEnvioRepository  extends Repository<ItemNotaEnvio, Item
 	 * @param dataEmissao - data de emissão da nota
 	 * @param numeroCota - número da cota
 	 * 
-	 * @return List<ItemNotaEnvio>
+	 * @return List<DetalheItemNotaFiscalDTO>
 	 */
-	List<ItemNotaEnvio> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota);
+	List<DetalheItemNotaFiscalDTO> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota);
 }
