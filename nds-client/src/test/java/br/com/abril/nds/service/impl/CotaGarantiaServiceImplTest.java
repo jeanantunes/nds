@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -68,7 +69,7 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		NotaPromissoria notaPromissoria = new NotaPromissoria();
 		
 		notaPromissoria.setValor(10000D);
-		notaPromissoria.setVencimento(Calendar.getInstance());
+		notaPromissoria.setVencimento(new Date());
 		
 		notaPromissoria.setValorExtenso("Mil Conto");
 		
@@ -94,8 +95,8 @@ public class CotaGarantiaServiceImplTest extends AbstractRepositoryImplTest {
 		cheque.setDvConta("0");
 		cheque.setValor(2500000D);
 		cheque.setNumeroCheque("123456");
-		cheque.setEmissao(Calendar.getInstance());
-		cheque.setValidade(Calendar.getInstance());
+		cheque.setEmissao(new Date() );
+		cheque.setValidade(new Date() );
 		cheque.setCorrentista("Senor Abravanel");
 		
 		cotaGarantia = cotaGarantiaService.salvaChequeCaucao(cheque, cota.getId());

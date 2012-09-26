@@ -1,7 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -180,7 +180,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		CotaGarantiaNotaPromissoria cotaGarantiaNota = prepareCotaGarantia(
 				idCota, CotaGarantiaNotaPromissoria.class);
 
-		cotaGarantiaNota.setData(Calendar.getInstance());
+		cotaGarantiaNota.setData(new Date());
 
 		cotaGarantiaNota.setNotaPromissoria(notaPromissoria);
 
@@ -202,7 +202,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		CotaGarantiaChequeCaucao cotaGarantiaCheque = prepareCotaGarantia(
 				idCota, CotaGarantiaChequeCaucao.class);
 
-		cotaGarantiaCheque.setData(Calendar.getInstance());
+		cotaGarantiaCheque.setData(new Date());
 		
 		cotaGarantiaCheque.setCheque(cheque);
 
@@ -241,7 +241,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 					.deleteListaImoveis(cotaGarantiaImovel.getId());
 		}
 		
-		cotaGarantiaImovel.setData(Calendar.getInstance());
+		cotaGarantiaImovel.setData(new Date());
 		
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
@@ -316,7 +316,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 					"Fiador " + idFiador + " não existe."));
 		}
 		cotaGarantiaFiador.setFiador(fiador);
-		cotaGarantiaFiador.setData(Calendar.getInstance());
+		cotaGarantiaFiador.setData(new Date());
 
 		return (CotaGarantiaFiador) cotaGarantiaRepository
 				.merge(cotaGarantiaFiador);
@@ -382,7 +382,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().addAll(listaCaucaoLiquida);
 		
-		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());		
+		cotaGarantiaCaucaoLiquida.setData(new Date());		
 		
 		cotaGarantiaCaucaoLiquida.setContaBancariaDeposito(contaDepositoCaucaoLiquida);
 		
@@ -495,7 +495,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		CotaGarantiaOutros cotaGarantiaOutros = new CotaGarantiaOutros();
 		
 		cotaGarantiaOutros.setCota(getCota(idCota));
-		cotaGarantiaOutros.setData(Calendar.getInstance());
+		cotaGarantiaOutros.setData(new Date());
 		cotaGarantiaOutros.setOutros(listaOutros);
 		
 		cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantiaRepository
@@ -703,7 +703,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		cotaGarantiaCaucaoLiquida.getCaucaoLiquidas().addAll(listaCaucaoLiquida);
 		
-		cotaGarantiaCaucaoLiquida.setData(Calendar.getInstance());	
+		cotaGarantiaCaucaoLiquida.setData(new Date());	
 
 		cotaGarantiaCaucaoLiquida.setContaBancariaDeposito(contaDeposito);
 		

@@ -79,7 +79,7 @@ public class EmissaoCEController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_DEVOLUCAO_EMISSAO_CE)
+	@Rules(Permissao.ROLE_RECOLHIMENTO_EMISSAO_CE)
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);

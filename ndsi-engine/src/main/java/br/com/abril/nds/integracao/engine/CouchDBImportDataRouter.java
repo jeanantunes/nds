@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -28,6 +29,7 @@ import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
@@ -58,7 +60,12 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	public <T extends RouteTemplate> void routeData(T inputModel) {
 
 		final MessageProcessor messageProcessor = inputModel.getMessageProcessor();
-		Class<?> classLinha = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseLinha();
+		Class<?> classByTipoInterfaceEnum = null;
+		if(((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
+			classByTipoInterfaceEnum = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseLinha();
+		} else if (((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE ) {
+			classByTipoInterfaceEnum = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseMaster();
+		}
 		
 		this.consultaCodigoDistribuidor();
 		CouchDbClient couchDbClient = this.getCouchDBClient();
@@ -70,10 +77,11 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		view.key(inputModel.getRouteInterface().getName());
 		view.limit(couchDbProperties.getBachSize());
 		view.includeDocs(true);
-		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, classLinha);
+		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
 
+		AtomicReference<Object> tempVar = new AtomicReference<Object>();
 		// Processamento a ser executado ANTES do processamento principal:
-		messageProcessor.preProcess();
+		messageProcessor.preProcess(tempVar);
 
 		do {	
 			
@@ -90,6 +98,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 				message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
 				message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
 				message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), this.codDistribuidor);
+				message.setTempVar(tempVar);
 				
 				message.setBody(doc);
 				
@@ -127,11 +136,11 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			view.key(inputModel.getRouteInterface().getName());
 			view.limit(couchDbProperties.getBachSize());
 			view.includeDocs(true);
-			result = view.queryView(String.class, Void.class, classLinha);
+			result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
 		} while(!result.getRows().isEmpty());
 		
 		// Processamento a ser executado APÓS o processamento principal:
-		messageProcessor.posProcess();
+		messageProcessor.posProcess(tempVar);
 		
 		couchDbClient.shutdown();
 	}

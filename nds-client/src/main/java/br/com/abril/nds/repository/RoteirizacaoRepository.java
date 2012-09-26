@@ -43,17 +43,14 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	
 	List<ConsultaRoteirizacaoDTO>  buscarRoteirizacaoPorNumeroCota(Integer numeroCota, TipoRoteiro tipoRoteiro, String  orderBy, Ordenacao ordenacao, int initialResult, int maxResults);
 	
-	void atualizaOrdenacao(Roteirizacao roteirizacao );
-	
-	void atualizaOrdenacaoAsc(Roteirizacao roteirizacao);
-	
-	void atualizaOrdenacaoDesc(Roteirizacao roteirizacao );	
-	
 	List<ConsultaRoteirizacaoDTO> buscarRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro);
 
 	Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 
 	Integer buscarQuantidadeRoteirizacaoSumarizadoPorCota(FiltroConsultaRoteirizacaoDTO filtro); 
+	
+	
+	//NOVA ROTEIRIZAÇÃO
 	
 	/**
 	 * Obtém lista com dados de cotas relativas a determinado box, rota e roteiro.
@@ -91,5 +88,13 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	 * @return
 	 */
 	List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome, List<Long> idsRoteiros);
+	
+	/**
+	 * Obtem Roteirizacao por Box e Cota
+	 * @param idBox
+	 * @param numeroCota
+	 * @return Roteirizacao
+	 */
+	Roteirizacao obterRoteirizacaoPorBoxECota(Long idBox, Integer numeroCota);
 }
 

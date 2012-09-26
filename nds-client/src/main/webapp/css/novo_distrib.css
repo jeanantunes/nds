@@ -13,7 +13,7 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
    float: left;
    width: 100%;
    background-color:#F8F8F8;
-  
+   margin-bottom: 7px;  
 }
 
 #workspace .ui-tabs-nav li a {

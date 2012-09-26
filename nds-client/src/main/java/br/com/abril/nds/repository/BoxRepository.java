@@ -30,12 +30,22 @@ public interface BoxRepository extends Repository<Box,Long> {
 	
 	/**
 	 * Obtém lista de Box de acordo com tipoBox.
+	 * @param nomeBox nome do box para consulta
 	 * 
-	 * @param tipoBox
+	 * @param tipoBox tipo do box
 	 * 
 	 * @return List - Box
 	 */
-	List<Box> obterListaBox(TipoBox tipoBox);
+	List<Box> obterListaBox(String nomeBox, TipoBox tipoBox);
+	
+	/**
+     * Obtém lista de Box de acordo com tipoBox.
+     * 
+     * @param tipoBox tipo do box
+     * 
+     * @return List - Box
+     */
+    List<Box> obterListaBox(TipoBox tipoBox);
 
 	
 	/**
@@ -79,7 +89,7 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @param id Id do {@link Box}
 	 * @return
 	 */
-	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long id);
+	public abstract List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long idBox);
 	
 	Integer obterCodigoBoxPadraoUsuario(Long idUsuario);
 
@@ -114,4 +124,7 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return Número de Cotas encontradas
 	 */
 	int obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota);
+
+
+
 }

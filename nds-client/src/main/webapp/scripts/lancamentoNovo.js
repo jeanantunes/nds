@@ -111,6 +111,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#codigoProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
 		$("#nomeProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
 		$("#edicaoProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
+		$("#diferencaProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
 		
 	
 		lancamentoNovoController.redirecionarProdutosEstoque = false;
@@ -142,6 +143,14 @@ var lancamentoNovoController = $.extend(true, {
 				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result.idProdutoEdicao);
 				
 				lancamentoNovoController.idDiferenca = idDiferenca;
+				
+				if(diferenca.automatica && diferenca.automatica == true){
+					
+					$("#diferencaProdutoInput", lancamentoNovoController.workspace).attr("disabled", "disabled");
+				}
+				else{
+					$("#diferencaProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
+				}
 				
 				if (diferenca.codigoProduto){
 					
@@ -199,20 +208,6 @@ var lancamentoNovoController = $.extend(true, {
 		);
 	
 		lancamentoNovoController.openModalDiferenca();
-	},
-	
-	carregarRateiosDiferenca:function(idDiferenca){
-		
-		$.postJSON(
-				contextPath + "/estoque/diferenca/lancamento/rateio/carregarRateio", 
-				[{name:"idDiferenca",value:idDiferenca}],
-				function(result) {
-
-					lancamentoNovoController.renderizarlistaRateio(result);
-				},
-				null, 
-				true
-			);
 	},
 	
 	renderizarlistaRateio:function(result){

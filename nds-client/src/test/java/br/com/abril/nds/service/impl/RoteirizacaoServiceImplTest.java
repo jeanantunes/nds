@@ -1,9 +1,7 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -11,12 +9,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.RoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.RoteirizacaoService;
 
@@ -25,7 +30,19 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 	
-	private static Box box;
+	private PDV pdvManoel1;
+	
+	private PDV pdvManoel2;
+	
+	private Cota cotaManoel;
+	
+	private PessoaFisica manoel;
+	
+	private static Box box1;
+	
+	private static Box box2;
+	
+	private static Roteirizacao roteirizacao;
 	
 	private static Roteiro roteiro1;
 	
@@ -54,101 +71,93 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Before
 	public void setub(){
 		
-		box = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
-		save(box);
-
+		//BOX
+		box1 = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
+		save(box1);
 		
-		roteiro1 = Fixture.criarRoteiro("Roteiro 1", box, TipoRoteiro.NORMAL);
-		roteiro1.setBox(box);
+		box2 = Fixture.criarBox(400, "Box 400", TipoBox.LANCAMENTO);
+		save(box2);
+		
+		
+		//COTA
+		manoel = Fixture.pessoaFisica("10732815665",
+				"sys.discover@gmail.com", "Manoel da Silva");
+		save(manoel);
+		
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
+		save(cotaManoel);
+		
+				
+		//PDV
+		pdvManoel1 = Fixture.criarPDVPrincipal("PDV MANOEL 1", cotaManoel, 1);
+		save(pdvManoel1);
+
+		pdvManoel2 = Fixture.criarPDVPrincipal("PDV MANOEL 2", cotaManoel, 0);
+		save(pdvManoel2);
+		
+
+		//ROTEIRIZACAO
+		roteirizacao = Fixture.criarRoteirizacao(box1);
+		save(roteirizacao);
+		
+		
+		roteiro1 = Fixture.criarRoteiro("Roteiro 1", roteirizacao, box1, TipoRoteiro.NORMAL);
+		roteiro1.setBox(box1);
 		save(roteiro1);
 		
-		roteiro2 = Fixture.criarRoteiro("Roteiro 2", box, TipoRoteiro.NORMAL);
-		roteiro2.setBox(box);
+		roteiro2 = Fixture.criarRoteiro("Roteiro 2",roteirizacao, box1, TipoRoteiro.NORMAL);
+		roteiro2.setBox(box1);
 		save(roteiro2);
 		
-		roteiro3 = Fixture.criarRoteiro("Roteiro 3", box, TipoRoteiro.NORMAL);
-		roteiro3.setBox(box);
+		roteiro3 = Fixture.criarRoteiro("Roteiro 3", roteirizacao, box1, TipoRoteiro.NORMAL);
+		roteiro3.setBox(box1);
 		save(roteiro3);
+			
 		
-		Set<Roteiro> roteiros = new HashSet<Roteiro>();
-		roteiros.add(roteiro1);
-		roteiros.add(roteiro2);
-		roteiros.add(roteiro3);
-		box.setRoteiros(roteiros);
-		save(box);
-		
-		
-		rota1 = Fixture.rota("1", "Rota 1");
-		rota1.setRoteiro(roteiro1);
+		rota1 = Fixture.rota("1", "Rota 1", roteiro1, Arrays.asList(pdvManoel1,pdvManoel2));
 		save(rota1);
 		
-		rota2 = Fixture.rota("2", "Rota 2");
-		rota2.setRoteiro(roteiro1);
+		rota2 = Fixture.rota("2", "Rota 2", roteiro1, Arrays.asList(pdvManoel1,pdvManoel2));
 		save(rota2);
 		
-		rota3 = Fixture.rota("3", "Rota 3");
-		rota3.setRoteiro(roteiro1);
+		rota3 = Fixture.rota("3", "Rota 3", roteiro1, Arrays.asList(pdvManoel2));
 		save(rota3);
 		
-		List<Rota> rotas = new ArrayList<Rota>();
-		rotas.add(rota1);
-		rotas.add(rota2);
-		rotas.add(rota3);
-		roteiro1.setRotas(rotas);
 		
-		
-		rota4 = Fixture.rota("4", "Rota 4");
-		rota4.setRoteiro(roteiro2);
+		rota4 = Fixture.rota("4", "Rota 4", roteiro2, Arrays.asList(pdvManoel1));
 		save(rota4);
 		
-		rota5 = Fixture.rota("5", "Rota 5");
-		rota5.setRoteiro(roteiro2);
+		rota5 = Fixture.rota("5", "Rota 5", roteiro2, Arrays.asList(pdvManoel1));
 		save(rota5);
 		
-		rota6 = Fixture.rota("6", "Rota 6");
-		rota6.setRoteiro(roteiro2);
+		rota6 = Fixture.rota("6", "Rota 6", roteiro2, Arrays.asList(pdvManoel1));
 		save(rota6);
+
 		
-		rotas = new ArrayList<Rota>();
-		rotas.add(rota4);
-		rotas.add(rota5);
-		rotas.add(rota6);
-		roteiro2.setRotas(rotas);
-		
-		
-		rota7 = Fixture.rota("7", "Rota 7");
-		rota7.setRoteiro(roteiro3);
+		rota7 = Fixture.rota("7", "Rota 7", roteiro3, Arrays.asList(pdvManoel2));
 		save(rota7);
 		
-		rota8 = Fixture.rota("8", "Rota 8");
-		rota8.setRoteiro(roteiro3);
+		rota8 = Fixture.rota("8", "Rota 8", roteiro3, Arrays.asList(pdvManoel2));
 		save(rota8);
 		
-		rota9 = Fixture.rota("9", "Rota 9");
-		rota9.setRoteiro(roteiro3);
+		rota9 = Fixture.rota("9", "Rota 9", roteiro3, Arrays.asList(pdvManoel2));
 		save(rota9);
-		
-		rotas = new ArrayList<Rota>();
-		rotas.add(rota7);
-		rotas.add(rota8);
-		rotas.add(rota9);
-		roteiro3.setRotas(rotas);
 		
 	}
 
 	@Test
 	public void testeObterListaBoxLancamento() {
 		
-		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento();
+		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento(null);
         
-		Assert.assertEquals(listaBox.size(), 1);
+		Assert.assertEquals(listaBox.size(), 2);
 
 	}
 	
 	@Test
 	public void testeObterListaRoteiroBoxLancamento() {
 		
-		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(box.getId());
+		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(box1.getId(), null);
         
 		Assert.assertEquals(listaRoteiro.size(), 3);
 
@@ -157,18 +166,35 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterListaRotaBoxLancamento() {
 		
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro1.getId());
+		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro1.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 		
-        listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro2.getId());
+        listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro2.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 		
-		listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro3.getId());
+		listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro3.getId(), null);
         
 		Assert.assertEquals(listaRota.size(), 3);
 
+	}
+	
+	@Test
+	public void testeObterDadosRoteirizacao(){
+		
+		FiltroConsultaRoteirizacaoDTO parametros = new FiltroConsultaRoteirizacaoDTO();
+		parametros.setIdBox(box1.getId());
+		parametros.setNumeroCota(cotaManoel.getNumeroCota());
+		parametros.setIdRoteiro(roteiro1.getId());
+        parametros.setIdRota(rota1.getId());
+		
+		RoteirizacaoDTO roteirizacaoDTO = this.roteirizacaoService.obterDadosRoteirizacao(parametros);
+		
+		Assert.assertEquals(roteirizacaoDTO.getListaBox().size(), 1);
+		Assert.assertEquals(roteirizacaoDTO.getListaPdv().size(), 2);
+		Assert.assertEquals(roteirizacaoDTO.getListaRoteiro().size(), 3);
+		Assert.assertEquals(roteirizacaoDTO.getListaRota().size(), 9);	
 	}
 	
 

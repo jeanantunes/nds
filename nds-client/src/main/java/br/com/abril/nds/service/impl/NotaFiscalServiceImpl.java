@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
@@ -82,6 +83,7 @@ import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
+import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
@@ -153,6 +155,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	
 	@Autowired
 	private DescontoService descontoService;
+	
+	@Autowired
+	private RoteirizacaoRepository roterizacaoRepository;
 	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.NotaFiscalService#obterTotalItensNotaFiscalPorCotaEmLote(br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO)
@@ -1002,7 +1007,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		PDV pdv = this.pdvRepository.obterPDVPrincipal(idCota);
 
-		if (pdv != null && pdv.getRoteirizacao() != null && pdv.getRoteirizacao().isEmpty()) {
+		
+		
+		//OBTEM ROTEIRIZACAO POR COTA, VERIFICAR NECESSIDADE DE OBTER POR PDV, DEVIDO ÀS MUDANÇAS NO MODELO DE DADOS
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		Roteirizacao roteirizacao = this.roterizacaoRepository.buscarRoteirizacaoDeCota(cota.getNumeroCota());
+		
+		
+		
+		if (pdv != null && roteirizacao != null) {
 			transporte.setModalidadeFrente(0); //Por conta emitente
 			
 			//*****Comentado porque não é obrigatório*****//
