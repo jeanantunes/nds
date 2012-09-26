@@ -28,7 +28,7 @@ public class FiltroConsultaEncalheDTO {
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
-	
+
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 
@@ -61,6 +61,32 @@ public class FiltroConsultaEncalheDTO {
 		}
 		
 	}	
+
+	/**
+	 * Enum para ordenação das colunas do filtro.
+	 * 
+	 * @author Discover Technology
+	 *
+	 */
+	public enum OrdenacaoColunaDetalhe {
+		
+		NUMERO_COTA("numeroCota"),
+		NOME_COTA("nomeCota"),
+		OBSERVACAO("observacao");
+		
+		private String nomeColuna;
+		
+		private OrdenacaoColunaDetalhe(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+	}	
+
 	/**
 	 * Obtém idFornecedor
 	 *
@@ -274,5 +300,4 @@ public class FiltroConsultaEncalheDTO {
 			return false;
 		return true;
 	}
-
 }
