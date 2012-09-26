@@ -2614,7 +2614,7 @@ public class DiferencaEstoqueController {
 				
 			List<RateioCotaVO> listaRateio = mapaRateioCotas.get(diferenca.getId());
 			
-			if (listaRateio != null && !listaRateio.isEmpty()) { 
+			if (listaRateio == null || listaRateio.isEmpty()) { 
 			
 				continue;
 			}
