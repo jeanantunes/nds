@@ -320,6 +320,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" join roteiro.rotas rota " )
 			.append(" Join rota.pdvs pdv ")
 			.append(" Join pdv.cota cota ")
+			.append(" join cota.pessoa pessoa ")
 			.append(" where roteiro.box.id = box.id "); 
 			
 		if(filtro.getIdBox()!= null){
