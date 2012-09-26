@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
@@ -35,6 +38,7 @@ import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -709,10 +713,16 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/obterBoxLancamento")
 	public void obterBoxLancamento(String nomeBox){
-		
-		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento(nomeBox);
-
-		result.use(FlexiGridJson.class).from(listaBox).total(listaBox.size()).page(1).serialize();
+		List<Box> lista = new ArrayList<Box>();  
+		if (StringUtil.isEmpty(nomeBox)) {
+		    lista.add(Box.ESPECIAL);
+		} else { 
+		    if (Box.ESPECIAL.getNome().toUpperCase().startsWith(nomeBox.toUpperCase())) {
+		        lista.add(Box.ESPECIAL);
+		    }
+		}
+		lista.addAll(roteirizacaoService.obterListaBoxLancamento(nomeBox));
+		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
 	/**
@@ -722,10 +732,14 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/obterRoteirosBox")
 	public void obterRoteirosBox(Long idBox, String descricaoRoteiro){
-		
-		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(idBox, descricaoRoteiro);
-
-		result.use(FlexiGridJson.class).from(listaRoteiro).total(listaRoteiro.size()).page(1).serialize();
+	    List<Roteiro> lista = new ArrayList<Roteiro>();
+	    if (idBox != null) {
+	        if (Box.ESPECIAL.getId().equals(idBox)) {
+	            idBox = null;
+	        }
+	        lista = roteirizacaoService.obterListaRoteiroPorBox(idBox, descricaoRoteiro);
+	    }
+		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
 	/**
