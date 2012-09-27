@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
+import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
@@ -460,89 +460,62 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 	
 	/**
-     * Obtem dados da roteirização da cota
-     * @param FiltroConsultaRoteirizacaoDTO parametros
-     * @return RoteirizacaoDTO
-     */
-	@Transactional
+	 * {@inheritDoc}
+	 */
 	@Override
-	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros){
-		Roteirizacao roteirizacao = this.roteirizacaoRepository.obterRoteirizacaoPorBoxECota(parametros.getIdBox(),parametros.getNumeroCota());
-		
-		RoteirizacaoDTO roteirizacaDTO = new RoteirizacaoDTO();
+	@Transactional(readOnly = true)
+	public RoteirizacaoDTO obterRoteirizacaoPorId(Long id){
+		Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(id);
+		return criarRoteirizacaoDTO(roteirizacao);
+	}
+
+    /**
+     * Cria o DTO de roteirização à partir da Roteirização
+     * @param roteirizacao Roteirização para criação do DTO
+     * @return DTO com as informações da roteirização
+     */
+	private RoteirizacaoDTO criarRoteirizacaoDTO(Roteirizacao roteirizacao) {
+        RoteirizacaoDTO roteirizacaDTO = new RoteirizacaoDTO();
 		roteirizacaDTO.setId(roteirizacao.getId());
 
 		Box box = roteirizacao.getBox();
-		BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO();
-		boxDTO.setId(box.getId());
-		boxDTO.setNome(box.getNome());
-		boxDTO.setSelecionado(box.getId() == parametros.getIdBox());
-		roteirizacaDTO.setBox(boxDTO);
-		
-		RoteiroRoteirizacaoDTO roteiroDTO;
-		for(Roteiro itemRoteiro:roteirizacao.getRoteiros()){
-			
-			roteiroDTO = new RoteiroRoteirizacaoDTO();
-			
-			roteiroDTO.setId(itemRoteiro.getId());
-			roteiroDTO.setSelecionado(itemRoteiro.getId().compareTo(parametros.getIdRoteiro())==0);
-			roteiroDTO.setNome(itemRoteiro.getDescricaoRoteiro());
-			roteiroDTO.setOrdem(itemRoteiro.getOrdem());
-			
-			roteirizacaDTO.addRoteiro(roteiroDTO);
-			
-			for(Rota itemRota:itemRoteiro.getRotas()){
-				
-				RotaRoteirizacaoDTO rotaDTO = new RotaRoteirizacaoDTO();
-				
-				roteiroDTO.addRota(rotaDTO);
-				
-				rotaDTO.setId(itemRota.getId());
-				rotaDTO.setSelecionado(itemRota.getId().compareTo(parametros.getIdRota())==0);
-				rotaDTO.setNome(itemRota.getDescricaoRota());
-				rotaDTO.setOrdem(itemRota.getOrdem());				
-				
-				for(PDV itemPdv:itemRota.getPdvs()){
-					
-					PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO();
-					
-					rotaDTO.addPdv(pdvDTO);
-					
-					pdvDTO.setId(itemPdv.getId());
-					
-					pdvDTO.setSelecionado((itemPdv.getCota().getNumeroCota() == parametros.getNumeroCota()) && 
-							              (itemPdv.getCota().getBox().getId().compareTo(parametros.getIdBox())==0));
-					
-					pdvDTO.setNome(itemPdv.getCota().getPessoa().getNome());
-					pdvDTO.setOrdem(itemPdv.getOrdem());
-					pdvDTO.setCota(Integer.toString(itemPdv.getCota().getNumeroCota()));
-					
-					Endereco endereco = null;
-					EnderecoPDV enderecoPdvEntrega  = itemPdv.getEnderecoEntrega();
-					if (enderecoPdvEntrega !=null){
-						endereco = enderecoPdvEntrega .getEndereco();
-						pdvDTO.setOrigem("PDV");
-					}
-					else{
-						EnderecoCota enderecoPrincipalCota = itemPdv.getCota().getEnderecoPrincipal();
-						if (enderecoPrincipalCota !=null){
-						    endereco = enderecoPrincipalCota.getEndereco();
-						}    
-						pdvDTO.setOrigem("Cota");
-					}
-					
-					pdvDTO.setEndereco(endereco!=null?endereco.getLogradouro()+", "+endereco.getCidade()+", CEP:"+endereco.getCep():"");
-					
-					pdvDTO.setPdv(itemPdv.getNome());
-
-				}
-   
-			}
-			
+		if (box != null) {
+		    BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
+		    roteirizacaDTO.setBox(boxDTO);
 		}
 
+		for(Roteiro roteiro : roteirizacao.getRoteiros()){
+		    RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(roteiro.getId(), roteiro.getOrdem(), roteiro.getDescricaoRoteiro());
+			roteirizacaDTO.addRoteiro(roteiroDTO);
+
+			for(Rota rota : roteiro.getRotas()){
+			    RotaRoteirizacaoDTO rotaDTO = new RotaRoteirizacaoDTO(rota.getId(), rota.getOrdem(), rota.getDescricaoRota());
+				roteiroDTO.addRota(rotaDTO);
+
+				for(PDV pdv : rota.getPdvs()){
+					Cota cota = pdv.getCota();
+					String nomeCota = cota.getPessoa().getNome();
+					OrigemEndereco origemEndereco = null;
+
+					Endereco endereco = null;
+					EnderecoPDV enderecoPdvEntrega  = pdv.getEnderecoEntrega();
+					if (enderecoPdvEntrega != null){
+					    endereco = enderecoPdvEntrega .getEndereco();
+					    origemEndereco = OrigemEndereco.PDV;
+					} else {
+					    EnderecoCota enderecoPrincipalCota = pdv.getCota().getEnderecoPrincipal();
+					    if (enderecoPrincipalCota != null){
+					        endereco = enderecoPrincipalCota.getEndereco();
+					    }    
+					    origemEndereco = OrigemEndereco.COTA;
+					}
+					PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(pdv.getId(), pdv.getNome(), origemEndereco, endereco, cota.getNumeroCota(), nomeCota, pdv.getOrdem());
+					rotaDTO.addPdv(pdvDTO);
+				}
+			}
+		}
 		return roteirizacaDTO;
-	}
+    }
 	
 	/**
 	 * Obtém PDVS's disponiveis
@@ -567,20 +540,20 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			pdvDTO.setNome(itemPdv.getCota().getPessoa().getNome());
 			pdvDTO.setOrdem(itemPdv.getOrdem());
-			pdvDTO.setCota(Integer.toString(itemPdv.getCota().getNumeroCota()));
+			pdvDTO.setCota(itemPdv.getCota().getNumeroCota());
 			
 			Endereco endereco = null;
 			EnderecoPDV enderecoPdvEntrega  = itemPdv.getEnderecoEntrega();
 			if (enderecoPdvEntrega !=null){
 				endereco = enderecoPdvEntrega .getEndereco();
-				pdvDTO.setOrigem("PDV");
+				pdvDTO.setOrigem(OrigemEndereco.PDV);
 			}
 			else{
 				EnderecoCota enderecoPrincipalCota = itemPdv.getCota().getEnderecoPrincipal();
 				if (enderecoPrincipalCota !=null){
 				    endereco = enderecoPrincipalCota.getEndereco();
 				}    
-				pdvDTO.setOrigem("Cota");
+				pdvDTO.setOrigem(OrigemEndereco.COTA);
 			}
 			
 			pdvDTO.setEndereco(endereco!=null?endereco.getLogradouro()+", "+endereco.getCidade()+", CEP:"+endereco.getCep():"");
@@ -611,5 +584,18 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+    @Transactional(readOnly = true)
+    public RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox) {
+        Roteirizacao roteirizacao = roteirizacaoRepository.obterRoteirizacaoPorBox(idBox);
+        if (roteirizacao != null) {
+            return criarRoteirizacaoDTO(roteirizacao);
+        }
+        return null;
+    }
 	
 }

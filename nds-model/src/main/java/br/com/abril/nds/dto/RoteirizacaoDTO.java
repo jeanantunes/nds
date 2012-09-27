@@ -10,9 +10,20 @@ public class RoteirizacaoDTO implements Serializable{
 	
 	private Long id;
 	
+	/**
+	 * Box selecionado
+	 */
 	private BoxRoteirizacaoDTO box;
 	
+	/**
+	 * Roteiros selecionados
+	 */
 	private List<RoteiroRoteirizacaoDTO> roteiros;
+	
+	/**
+	 * Lista de box disponíveis
+	 */
+	private List<BoxRoteirizacaoDTO> boxDisponiveis;
 	
 	/**
 	 * @return the id
@@ -55,8 +66,22 @@ public class RoteirizacaoDTO implements Serializable{
 	public void setRoteiros(List<RoteiroRoteirizacaoDTO> roteiros) {
 		this.roteiros = roteiros;
 	}
-
+	
 	/**
+     * @return the boxDisponiveis
+     */
+    public List<BoxRoteirizacaoDTO> getBoxDisponiveis() {
+        return boxDisponiveis;
+    }
+
+    /**
+     * @param boxDisponiveis the boxDisponiveis to set
+     */
+    public void setBoxDisponiveis(List<BoxRoteirizacaoDTO> boxDisponiveis) {
+        this.boxDisponiveis = boxDisponiveis;
+    }
+
+    /**
 	 * Adiciona um novo roteiro à roteirização
 	 * @param roteiro roteiro para inclusão
 	 */

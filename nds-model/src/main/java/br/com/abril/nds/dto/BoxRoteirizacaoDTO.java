@@ -8,39 +8,16 @@ public class BoxRoteirizacaoDTO implements Serializable {
 
 	private Long id;
 	
-	private Integer ordem;
-	
 	private String nome;
 	
 	private Boolean selecionado;
 	
-
-	
 	public BoxRoteirizacaoDTO() {
-		
 	}
 	
-	public BoxRoteirizacaoDTO(Long id, Integer ordem, String nome,
-			Boolean selecionado) {
-		super();
+	public BoxRoteirizacaoDTO(Long id, String nome) {
 		this.id = id;
-		this.ordem = ordem;
 		this.nome = nome;
-		this.selecionado = selecionado;
-	}
-
-	/**
-	 * @return the ordem
-	 */
-	public Integer getOrdem() {
-		return ordem;
-	}
-
-	/**
-	 * @param ordem the ordem to set
-	 */
-	public void setOrdem(Integer ordem) {
-		this.ordem = ordem;
 	}
 
 	/**
@@ -84,6 +61,5 @@ public class BoxRoteirizacaoDTO implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
 	
 }

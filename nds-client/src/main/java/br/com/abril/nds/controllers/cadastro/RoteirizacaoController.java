@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
@@ -81,6 +83,11 @@ public class RoteirizacaoController {
 	private HttpSession session;
 
 	private static final String FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE="filtroPesquisa";
+	
+	/**
+	 * Chave para armazenamento do DTO de roteirização na sessão
+	 */
+	private static final String ROTEIRIZACAO_DTO_SESSION_KEY = "ROTEIRIZACAO_DTO_SESSION_KEY";
 
 
 	@Path("/")
@@ -713,6 +720,7 @@ public class RoteirizacaoController {
 	 */
 	@Post
 	@Path("/obterBoxLancamento")
+	//TODO: Alterar para trabalhar com Roteirização DTO
 	public void obterBoxLancamento(String nomeBox){
 		List<Box> lista = new ArrayList<Box>();  
 		if (StringUtil.isEmpty(nomeBox)) {
@@ -728,8 +736,20 @@ public class RoteirizacaoController {
 	
 	@Post
 	@Path("/boxSelecionado")
-	public void boxSelecionado(Long idBox) {
-	    
+	public void boxSelecionado(Long idBox, TipoEdicao tipoEdicao, Long idRoteirizacao) {
+	    RoteirizacaoDTO dto = null;
+	    if (TipoEdicao.NOVO == tipoEdicao) {
+	        if (!Box.ESPECIAL.getId().equals(idBox)) {
+	            dto = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
+	        } 
+	        if (dto == null) {
+	            dto = new RoteirizacaoDTO();
+	        }
+	        setDTO(dto);
+	    } else {
+	        dto = getDTO();
+	    }
+	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
 	/**
@@ -774,7 +794,7 @@ public class RoteirizacaoController {
 	@Path("/editarRoteirizacao")
 	public void editarRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros){
         
-		RoteirizacaoDTO roteirizacao = this.roteirizacaoService.obterDadosRoteirizacao(parametros);
+		RoteirizacaoDTO roteirizacao = this.roteirizacaoService.obterRoteirizacaoPorId(parametros.getIdRoteirizacao());
 		
 		result.use(Results.json()).from(roteirizacao, "result").serialize();
 	}
@@ -789,6 +809,44 @@ public class RoteirizacaoController {
 		List<PdvRoteirizacaoDTO> pdvs = this.roteirizacaoService.obterPdvsDisponiveis();
 		
 		result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
+	}
+	
+	/**
+	 * Recupera o DTO de roteirização da sessão
+	 * @return DTO armazenado na sessão ou null caso não exista
+	 */
+	public RoteirizacaoDTO getDTO() {
+	    return (RoteirizacaoDTO) session.getAttribute(ROTEIRIZACAO_DTO_SESSION_KEY);
+	}
+	
+	/**
+	 * Armazena o DTO de roteirização na sessão
+	 * @param dto DTO com as informações da roteirização 
+	 */
+	public void setDTO(RoteirizacaoDTO dto) {
+	    session.setAttribute(ROTEIRIZACAO_DTO_SESSION_KEY, dto);
+	}
+	
+	/**
+	 * Remove o DTO de roteirização da sessão da sessão
+	 */
+	public void clearDTO() {
+	    setDTO(null);
+	}
+	
+	/**
+	 * Tipo da edição tela
+	 * 
+	 */
+	public static enum TipoEdicao {
+	    /**
+	     * Nova Roteirização
+	     */
+	    NOVO,
+	    /**
+	     * Alteração Roteirzação existente
+	     */
+	    ALTERACAO;
 	}
 	
 	
