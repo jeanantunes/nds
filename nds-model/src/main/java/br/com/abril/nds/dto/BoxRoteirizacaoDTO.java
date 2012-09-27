@@ -1,12 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BoxRoteirizacaoDTO implements Serializable {
 
-	private static final long serialVersionUID = 6862359582349796624L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	

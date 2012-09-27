@@ -6,7 +6,7 @@ import java.util.List;
 
 public class RoteiroRoteirizacaoDTO implements Serializable {
 
-	private static final long serialVersionUID = 8921413536479578397L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	
@@ -101,6 +101,10 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 		this.rotas = listaRota;
 	}
 	
+	/**
+	 * Adiciona uma nova rota ao roteiro
+	 * @param rota rota para inclusão
+	 */
 	public void addRota(RotaRoteirizacaoDTO rota) {
 		if (rotas == null) {
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();

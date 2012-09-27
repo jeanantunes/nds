@@ -6,7 +6,7 @@ import java.util.List;
 
 public class RotaRoteirizacaoDTO implements Serializable {
 
-	private static final long serialVersionUID = -4264600745134340990L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	
@@ -101,6 +101,10 @@ public class RotaRoteirizacaoDTO implements Serializable {
 		this.pdvs = pdvs;
 	}
 	
+	/**
+	 * Adiciona um pdv à rota
+	 * @param pdv pdv para inclusão
+	 */
 	public void addPdv(PdvRoteirizacaoDTO pdv) {
 		if (pdvs == null) {
 			pdvs = new ArrayList<PdvRoteirizacaoDTO>();

@@ -2556,6 +2556,9 @@ public class DataLoader {
 		Box boxB = Fixture.criarBox(2000, "BX-B", TipoBox.LANCAMENTO);
 		session.save(boxB);
 		
+		Box boxC = Fixture.criarBox(3000, "BX-C", TipoBox.LANCAMENTO);
+	    session.save(boxC);
+		
 		
 		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(boxA);
 		session.save(roteirizacao1);
@@ -2563,7 +2566,7 @@ public class DataLoader {
 		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(boxB);
 		session.save(roteirizacao2);
 		
-		Roteirizacao roteirizacao3 = Fixture.criarRoteirizacao(boxA);
+		Roteirizacao roteirizacao3 = Fixture.criarRoteirizacao(boxC);
 		session.save(roteirizacao3);;
 
 		
