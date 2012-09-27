@@ -100,10 +100,9 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 				(TipoMovimentoEstoque) movimento.getTipoMovimento();
 				
 			MovimentoEstoqueCota movimentoEstoqueCota = (MovimentoEstoqueCota) movimento;
-			
+
 			this.movimentoEstoqueService.atualizarEstoqueProdutoCota(tipoMovimentoEstoque,
 																 	 movimentoEstoqueCota);
-			
 		}
 	}
 	

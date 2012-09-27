@@ -167,11 +167,17 @@ public interface RoteirizacaoService {
 	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
 	
 	/**
-     * Obtem dados da roteirização da cota
-     * @param FiltroConsultaRoteirizacaoDTO parametros
-     * @return RoteirizacaoDTO
+     * Obtém a roteirização pelo identificador
+     * @param id identificador da roteirização
+     * @return RoteirizacaoDTO DTO com as informações da roteirização
      */
-	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros);
+	RoteirizacaoDTO obterRoteirizacaoPorId(Long id);
+	
+	/**
+	 * Obtém PDVS's disponiveis
+	 * @return List<PdvRoteirizacaoDTO>
+	 */
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis();
 	
 	/**
 	 * Inclui Cota Pdv na Roteirização
@@ -179,5 +185,16 @@ public interface RoteirizacaoService {
 	 * @param idRota
 	 */
 	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> cotaPdv, Long idRota);
+	
+    /**
+     * Recupera a roteirização pelo Box
+     * 
+     * @param idBox
+     *            identificador do box para recuperação da roteirização
+     * @return roteirização associada ao box ou nulo caso não exista
+     *         roteirização associada ao Box
+     */
+	RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox);
+
 }
 	

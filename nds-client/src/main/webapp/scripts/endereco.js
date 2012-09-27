@@ -316,6 +316,11 @@ function Endereco(paramTela, paramMessage) {
 	
 		var cep = $("#"+paramTela+"cep").val();
 
+		$("#"+paramTela+"numero", Endereco.workspace).val("");
+		
+		$("#"+paramTela+"complemento", Endereco.workspace).val("");
+
+		
 		$.postJSON(
 			contextPath+'/cadastro/endereco/obterEnderecoPorCep',
 			{ "cep": cep },			 

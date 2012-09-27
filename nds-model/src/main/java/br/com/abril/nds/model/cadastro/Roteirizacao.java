@@ -25,7 +25,7 @@ public class Roteirizacao {
 	private Long id;
 	
 	@OneToOne
-	@JoinColumn(name = "BOX_ID")
+	@JoinColumn(name = "BOX_ID", unique = true)
 	private Box box;
 	
 	@OneToMany

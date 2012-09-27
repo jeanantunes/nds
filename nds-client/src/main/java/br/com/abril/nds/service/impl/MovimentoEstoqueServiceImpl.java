@@ -15,16 +15,21 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
@@ -45,40 +50,43 @@ import br.com.abril.nds.util.TipoMensagem;
 public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Autowired
-	EstoqueProdutoRespository estoqueProdutoRespository;
+	private EstoqueProdutoRespository estoqueProdutoRespository;
 	
 	@Autowired
-	ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
+	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
 	
 	@Autowired
-	MovimentoEstoqueRepository movimentoEstoqueRepository;
+	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
 	@Autowired
-	MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
-	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Autowired
-	EstudoCotaRepository estudoCotaRepository; 
+	private EstudoCotaRepository estudoCotaRepository; 
 	
 	@Autowired
-	CotaRepository cotaRepository;
+	private CotaRepository cotaRepository;
 	
 	@Autowired
-	UsuarioRepository usuarioRepository;
+	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
-	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
-	ProdutoEdicaoRepository produtoEdicaoRepository;
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Autowired
-	ControleAprovacaoService controleAprovacaoService;
+	private ControleAprovacaoService controleAprovacaoService;
 
 	@Autowired
-	LancamentoRepository lancamentoRepository;
+	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private EstoqueProdutoCotaJuramentadoRepository estoqueProdutoCotaJuramentadoRepository;
 
 	@Override
 	@Transactional
@@ -149,15 +157,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 			}
 		}
+	}
 	
-	
+	public MovimentoEstoque gerarMovimentoEstoqueJuramentado(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
+		
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		
+		return movimentoEstoque;
 	}
 	
 	@Override
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
 		
 		return movimentoEstoque;
 	}
@@ -166,7 +179,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque);
 		
 		return movimentoEstoque;
 	}
@@ -309,7 +322,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			estoqueProdutoCotaRepository.adicionar(estoqueProdutoCota);
 		}
-				
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
 		
@@ -348,6 +360,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		if (StatusAprovacao.APROVADO.equals(movimentoEstoqueCota.getStatus())) {
 			
+			if (tipoMovimentoEstoque.isIncideJuramentado()) {
+				
+				this.atualizarEstoqueProdutoCotaJuramentado(movimentoEstoqueCota, tipoMovimentoEstoque);
+			}
+			
 			EstoqueProdutoCota estoqueProdutoCota = movimentoEstoqueCota.getEstoqueProdutoCota();
 			
 			BigInteger novaQuantidade;
@@ -373,7 +390,61 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				estoqueProdutoCota.setQtdeDevolvida(novaQuantidade);
 			}
 			
-			estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+			this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+		}
+	}
+
+	/*
+	 * Atualiza o estoque do produto da cota juramentado.
+	 */
+	private void atualizarEstoqueProdutoCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCota,
+														TipoMovimentoEstoque tipoMovimentoEstoque) {
+		
+		Long idProdutoEdicao = movimentoEstoqueCota.getProdutoEdicao().getId();
+		Long idCota = movimentoEstoqueCota.getCota().getId();
+		
+		EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado =
+			this.estoqueProdutoCotaJuramentadoRepository.buscarEstoquePorProdutoECotaNaData(
+				idProdutoEdicao, idCota, new Date());
+		
+		if (estoqueProdutoCotaJuramentado == null) {
+			
+			ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+			
+			Cota cota = this.cotaRepository.buscarPorId(idCota);
+			
+			estoqueProdutoCotaJuramentado = new EstoqueProdutoCotaJuramentado();
+			
+			estoqueProdutoCotaJuramentado.setProdutoEdicao(produtoEdicao);
+			estoqueProdutoCotaJuramentado.setCota(cota);
+			estoqueProdutoCotaJuramentado.setData(new Date());
+		}
+		
+		BigInteger qtdeAtual = 
+			(estoqueProdutoCotaJuramentado.getQtde() == null) 
+				? BigInteger.ZERO : estoqueProdutoCotaJuramentado.getQtde();
+		
+		BigInteger qtdeMovimento = 
+			(movimentoEstoqueCota.getQtde() == null) ? BigInteger.ZERO : movimentoEstoqueCota.getQtde();
+		
+		if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
+			
+			estoqueProdutoCotaJuramentado.setQtde(qtdeAtual.add(qtdeMovimento));
+			
+		} else {
+			
+			estoqueProdutoCotaJuramentado.setQtde(qtdeAtual.subtract(qtdeMovimento));
+		}
+		
+		estoqueProdutoCotaJuramentado.getMovimentos().add(movimentoEstoqueCota);
+		
+		if (estoqueProdutoCotaJuramentado.getId() == null) {
+		
+			this.estoqueProdutoCotaJuramentadoRepository.adicionar(estoqueProdutoCotaJuramentado);
+			
+		} else {
+			
+			this.estoqueProdutoCotaJuramentadoRepository.alterar(estoqueProdutoCotaJuramentado);
 		}
 	}
 
@@ -491,6 +562,29 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe);
 			
 			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.MovimentoEstoqueService#devolverConsignadoNotaCanceladaParaDistribuidor(br.com.abril.nds.model.fiscal.nota.NotaFiscal)
+	 */
+	@Override
+	@Transactional
+	public void devolucaoConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada) {
+		
+		TipoMovimentoEstoque tipoMovimento = this.tipoMovimentoEstoqueRepository.
+				buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_CONSIGNADO);
+		
+		List<ProdutoServico> listaProdutosServicosNotaCancelada = notaFiscalCancelada.getProdutosServicos();
+		
+		for (ProdutoServico produtoServico : listaProdutosServicosNotaCancelada) {
+			
+			for (MovimentoEstoqueCota movimentoEstoqueCota : produtoServico.getListaMovimentoEstoqueCota()) {
+			
+					MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, 
+							movimentoEstoqueCota.getProdutoEdicao().getId(), movimentoEstoqueCota.getUsuario().getId(), 
+							movimentoEstoqueCota.getQtde(), tipoMovimento);
+			}
 		}
 	}
 
