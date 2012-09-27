@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
+import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -735,20 +736,8 @@ public class RoteirizacaoController {
 	
 	@Post
 	@Path("/boxSelecionado")
-	public void boxSelecionado(Long idBox, TipoEdicao tipoEdicao, Long idRoteirizacao) {
-	    RoteirizacaoDTO dto = null;
-	    if (TipoEdicao.NOVO == tipoEdicao) {
-	        if (!Box.ESPECIAL.getId().equals(idBox)) {
-	            dto = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
-	        } 
-	        if (dto == null) {
-	            dto = new RoteirizacaoDTO();
-	        }
-	        setDTO(dto);
-	    } else {
-	        dto = getDTO();
-	    }
-	    result.use(CustomJson.class).from(dto).serialize();
+	public void boxSelecionado(Long idBox, Long idRoteirizacao) {
+	   
 	}
 	
 	/**
@@ -779,23 +768,6 @@ public class RoteirizacaoController {
 		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro, descricaoRota);
 		
 		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
-	}
-	
-	/**
-	 * Obtém dados da roteirização para edição
-	 * @param parametros - idCota
-	 * @param parametros - idRoteirizacao - Utilizado para obter as listas de box, roteiro e rota
-	 * @param parametros - idBox - Box Selecionado
-	 * @param parametros - idRoteiro - Roteiro Selecionado
-	 * @param parametros - idRota - Rota Selecionada
-	 */
-	@Get
-	@Path("/editarRoteirizacao")
-	public void editarRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros){
-        
-		RoteirizacaoDTO roteirizacao = this.roteirizacaoService.obterRoteirizacaoPorId(parametros.getIdRoteirizacao());
-		
-		result.use(Results.json()).from(roteirizacao, "result").serialize();
 	}
 	
 	/**
@@ -833,19 +805,23 @@ public class RoteirizacaoController {
 	    setDTO(null);
 	}
 	
-	/**
-	 * Tipo da edição tela
-	 * 
-	 */
-	public static enum TipoEdicao {
-	    /**
-	     * Nova Roteirização
-	     */
-	    NOVO,
-	    /**
-	     * Alteração Roteirzação existente
-	     */
-	    ALTERACAO;
+	
+	@Get
+    @Path("/novaRoteirizacao")
+	public void novaRoteirizacao() {
+	    List<Box> disponiveis = roteirizacaoService.obterListaBoxLancamento(null);
+	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);
+	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
+	    setDTO(getDTO());
+	    result.use(CustomJson.class).from(dto).serialize();
+	}
+	
+	@Get
+	@Path("/editarRoteirizacao")
+	public void editarRoteirizacao(Long idRoteirizacao) {
+	    RoteirizacaoDTO dto = roteirizacaoService.obterRoteirizacaoPorId(idRoteirizacao);
+	    setDTO(dto);
+	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
 	

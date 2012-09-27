@@ -466,57 +466,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Transactional(readOnly = true)
 	public RoteirizacaoDTO obterRoteirizacaoPorId(Long id){
 		Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(id);
-		return criarRoteirizacaoDTO(roteirizacao);
+		return RoteirizacaoDTO.toDTO(roteirizacao);
 	}
-
-    /**
-     * Cria o DTO de roteirização à partir da Roteirização
-     * @param roteirizacao Roteirização para criação do DTO
-     * @return DTO com as informações da roteirização
-     */
-	private RoteirizacaoDTO criarRoteirizacaoDTO(Roteirizacao roteirizacao) {
-        RoteirizacaoDTO roteirizacaDTO = new RoteirizacaoDTO();
-		roteirizacaDTO.setId(roteirizacao.getId());
-
-		Box box = roteirizacao.getBox();
-		if (box != null) {
-		    BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
-		    roteirizacaDTO.setBox(boxDTO);
-		}
-
-		for(Roteiro roteiro : roteirizacao.getRoteiros()){
-		    RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(roteiro.getId(), roteiro.getOrdem(), roteiro.getDescricaoRoteiro());
-			roteirizacaDTO.addRoteiro(roteiroDTO);
-
-			for(Rota rota : roteiro.getRotas()){
-			    RotaRoteirizacaoDTO rotaDTO = new RotaRoteirizacaoDTO(rota.getId(), rota.getOrdem(), rota.getDescricaoRota());
-				roteiroDTO.addRota(rotaDTO);
-
-				for(PDV pdv : rota.getPdvs()){
-					Cota cota = pdv.getCota();
-					String nomeCota = cota.getPessoa().getNome();
-					OrigemEndereco origemEndereco = null;
-
-					Endereco endereco = null;
-					EnderecoPDV enderecoPdvEntrega  = pdv.getEnderecoEntrega();
-					if (enderecoPdvEntrega != null){
-					    endereco = enderecoPdvEntrega .getEndereco();
-					    origemEndereco = OrigemEndereco.PDV;
-					} else {
-					    EnderecoCota enderecoPrincipalCota = pdv.getCota().getEnderecoPrincipal();
-					    if (enderecoPrincipalCota != null){
-					        endereco = enderecoPrincipalCota.getEndereco();
-					    }    
-					    origemEndereco = OrigemEndereco.COTA;
-					}
-					PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(pdv.getId(), pdv.getNome(), origemEndereco, endereco, cota.getNumeroCota(), nomeCota, pdv.getOrdem());
-					rotaDTO.addPdv(pdvDTO);
-				}
-			}
-		}
-		return roteirizacaDTO;
-    }
-	
+  	
 	/**
 	 * Obtém PDVS's disponiveis
 	 * @return List<PdvRoteirizacaoDTO>
@@ -593,7 +545,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     public RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox) {
         Roteirizacao roteirizacao = roteirizacaoRepository.obterRoteirizacaoPorBox(idBox);
         if (roteirizacao != null) {
-            return criarRoteirizacaoDTO(roteirizacao);
+            return RoteirizacaoDTO.toDTO(roteirizacao);
         }
         return null;
     }
