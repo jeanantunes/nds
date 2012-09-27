@@ -246,8 +246,13 @@ var roteirizacao = $.extend(true, {
 			$(".rotasGrid", roteirizacao.workspace).flexigrid({
                 preProcess: function(data) {
                     $.each(data.rows, function(index, value) {
-                        var selecione = '<input type="radio" value="' + value.cell.id +'" name="rotaRadio" ';
-                        selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  value.cell.id  + '\');"/>';
+                        var id = value.cell.id;
+                        var selecione = '<input type="radio" value="' + id +'" name="rotaRadio" ';
+                        selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  id  + '\');"';
+                        if (id == roteirizacao.idRota) {
+                            selecione += 'checked';
+                        }
+                        selecione += '/>';
                         value.cell.selecione = selecione;
                     });
                     return data;
@@ -261,7 +266,7 @@ var roteirizacao = $.extend(true, {
 					align : 'left'
 				}, {
 					display : 'Nome',
-					name : 'descricaoRota',
+					name : 'nome',
 					width : 160,
 					sortable : false,
 					align : 'left'
@@ -373,8 +378,15 @@ var roteirizacao = $.extend(true, {
                                 roteirizacao.definirTipoEdicao(TipoEdicao.ALTERACAO);
                                 roteirizacao.idRoteirizacao = result.id;
                                 roteirizacao.popularGridBox(result.boxDisponiveis)
-                                roteirizacao.popularGridRoteiros(result.roteiros);
-                                //roteirizacao.popularGridRotas(result.roteiros);
+
+                                if (result.roteiros) {
+                                    roteirizacao.idRoteiro = result.roteiros[0].id;
+                                    roteirizacao.popularGridRoteiros(result.roteiros);
+                                    if (result.roteiros[0].rotas) {
+                                        roteirizacao.idRota =  result.roteiros[0].rotas[0].id;
+                                        roteirizacao.popularGridRotas(result.roteiros[0].rotas);
+                                    }
+                                }
                             }
                         }
                     },
@@ -388,8 +400,13 @@ var roteirizacao = $.extend(true, {
             $(".roteirosGrid", roteirizacao.workspace).flexigrid({
                 preProcess: function(data) {
                     $.each(data.rows, function(index, value) {
-                        var selecione = '<input type="radio" value="' + value.cell.id +'" name="roteirosRadio" ';
-                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  value.cell.id  + '\');"/>';
+                        var id = value.cell.id;
+                        var selecione = '<input type="radio" value="' + id +'" name="roteirosRadio" ';
+                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  id  + '\');"';
+                        if (id == roteirizacao.idRoteiro) {
+                            selecione += 'checked';
+                        }
+                        selecione += '/>'
                         value.cell.selecione = selecione;
                     });
                     return data;
