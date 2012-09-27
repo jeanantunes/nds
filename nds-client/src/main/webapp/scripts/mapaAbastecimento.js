@@ -248,6 +248,15 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		popup_detalhe_box();
 	},
 	
+	this.displayEntregador = function(display) {
+		
+		if(display===true)
+			$('.entregador').show();
+		else
+			$('.entregador').hide();
+		
+	},
+	
 	this.mudarTipoPesquisa = function(tipo) {
 		
 		switch (tipo) {
@@ -257,25 +266,36 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box');
 			T.bloquearLinkProdutos();
+			T.displayEntregador(false);
 			T.limparProdutosSelecionados();
 			break;
 		case 'ROTA':
 			T.atualizarBoxRota();
 			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('box','rota','roteiro');
+			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':
 			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','quebraPorCota');
 			T.desbloquearCampos('codigoCota','nomeCota');
+			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'PRODUTO':
 			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota');
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao','quebraPorCota');
+			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
+		case 'ENTREGADOR':
+			T.atualizarBoxRota();
+			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
+			T.desbloquearCampos('box','rota','roteiro');
+			T.displayEntregador(true);
+			T.bloquearLinkProdutos();
+			T.limparProdutosSelecionados();
 			break;			
 		default:
 			T.bloquearCampos('box','rota', 'roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');

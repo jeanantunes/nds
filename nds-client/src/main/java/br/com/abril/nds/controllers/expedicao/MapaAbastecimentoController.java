@@ -236,6 +236,10 @@ public class MapaAbastecimentoController {
 				if(filtroAtual.getRota()==null)
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Rota' não foi preenchida.");
 				break;
+			
+			case ENTREGADOR:
+				
+				break;
 			default:
 				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 		}
@@ -303,6 +307,11 @@ public class MapaAbastecimentoController {
 					else 
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
 					break;
+				
+				case ENTREGADOR:
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
+					break;
+					
 				default:
 					throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 			}
@@ -336,6 +345,38 @@ public class MapaAbastecimentoController {
 		
 	}
 	
+	public void impressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
+		
+		List<MapaProdutoCotasDTO> mapa = gerarMapaEntregadorFake();
+		
+		result.include("mapa", mapa);
+		
+	}
+	
+	private List<MapaProdutoCotasDTO> gerarMapaEntregadorFake() {
+		
+		List<MapaProdutoCotasDTO> mapa = new ArrayList<MapaProdutoCotasDTO>();
+		
+		MapaProdutoCotasDTO dto = null;
+		
+		for(Integer i=0; i<20; i++) {
+			dto = new MapaProdutoCotasDTO();
+			dto.setCodigoProduto("CODp" + i);
+			dto.setNomeProduto("Produto " + i);
+			dto.setNumeroEdicao(i.longValue());
+			dto.setPrecoCapa( i + ",00");
+			dto.setCotasQtdes(new HashMap<Integer, Integer>());
+			
+			for(Integer j=0; j<20; j++) {
+				dto.getCotasQtdes().put(i, j);
+			}
+			
+			mapa.add(dto);
+		}
+		
+		return mapa;
+	}
+
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 				
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);

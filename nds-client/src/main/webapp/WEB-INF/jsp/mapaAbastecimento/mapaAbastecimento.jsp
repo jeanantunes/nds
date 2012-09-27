@@ -3,8 +3,11 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaEntregador.js"></script>
 	<script language="javascript" type="text/javascript">
-		
+	
+		var pesquisaEntregadorMapaAbastecimento = new PesquisaEntregador();
+	
 		var pesquisaCotaMapaAbastecimento = new PesquisaCota();
 		
 		var pesquisaProdutoMapaAbastecimento = new PesquisaProduto();
@@ -88,11 +91,27 @@
       <option value="ROTA">Rota</option>
       <option value="COTA">Cota</option>
       <option value="PRODUTO">Produto</option>
+      <option value="ENTREGADOR">Entregador</option>      
 </select>
 			  
 			  </td>
-              <td>&nbsp;</td>
-              <td colspan="3">&nbsp;</td>
+              <td>
+              	<div class="entregador"style="display:none">
+					Entregador:               
+              	</div>
+              	
+              </td>
+              <td colspan="3">
+              
+              <div class="entregador" style="display:none">
+              
+<input id="entregador"  type="text" style="width:112px;"
+	   onkeyup="pesquisaEntregadorMapaAbastecimento.autoCompletarPorNome('#entregador');" 
+		 	   onblur="pesquisaEntregadorMapaAbastecimento.pesquisarPorNomeCota('#codigoCota', '#nomeCota');" />
+	   	
+	   		   </div>
+              
+              </td>
               <td>&nbsp;</td>
             </tr>
             <tr>
@@ -100,7 +119,7 @@
               <td>
 			  
 <!-- Box -->
-<select id="box" disabled="disabled" name="select" style="width:120px;">
+<select id="box" name="select" style="width:120px;">
        <option selected="selected" value="">Selecione...</option>
 	        
 </select>
@@ -180,14 +199,14 @@
 				</td>
               <td align="right">
 			  
-<input type="checkbox" name="checkbox" id="checkbox" />
+<input id="quebraPorCota" disabled="disabled" type="checkbox" name="checkbox" id="checkbox" />
 
 				</td>
               <td width="101">Quebra por Cota</td>
               <td width="20">
 			  
 <!-- Quebra por Cota -->              
-<input id="quebraPorCota" disabled="disabled" type="checkbox" name="checkbox"/>
+<input id="excluirProdutosSemReparte" disabled="disabled" type="checkbox" name="checkbox"/>
 
 			</td>
               <td width="156">Excluir Produtos s/Reparte</td>
