@@ -111,7 +111,7 @@ public class PdvRoteirizacaoDTO implements Serializable {
 	public void setSelecionado(Boolean selecionado) {
 		this.selecionado = selecionado;
 	}
-	
+
 	/**
 	 * Origem do endereço (Entrega do PDV/Principal da Cota) 
 	 *
@@ -147,4 +147,5 @@ public class PdvRoteirizacaoDTO implements Serializable {
 	        return null;
 	    }
 	}
+
 }

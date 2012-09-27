@@ -20,6 +20,12 @@ public class RoteirizacaoDTO implements Serializable{
 	 */
 	private List<RoteiroRoteirizacaoDTO> roteiros;
 	
+	enum AcaoRegistro{
+    	REGISTRO_NOVO,
+    	REGISTRO_EXCLUIDO,
+    	REGISTRO_ATUAL
+    }
+	
 	/**
 	 * Lista de box disponíveis
 	 */
