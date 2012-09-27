@@ -1657,7 +1657,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 
 	},
 	
-	popupRoteirizacao: function() {
+	novaRoteirizacao : function() {
 		roteirizacao.reiniciaTelaRoteirizacao();
 	    $( "#dialog-roteirizacao", roteirizacao.workspace ).dialog({
 				resizable: false,
