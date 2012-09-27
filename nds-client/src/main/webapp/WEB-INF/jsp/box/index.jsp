@@ -25,12 +25,12 @@ $(function(){
 	  
   		  		<span class="bt_novos">
 					<a href="${pageContext.request.contextPath}/cadastro/box/exportarDetalhes?fileType=XLS">
-						<img src="${pageContext.request.contextPath}/images/bt_excel.png" border="0" />
+						<img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
 					</a>
 				</span>
   		  		<span class="bt_novos">
 					<a href="${pageContext.request.contextPath}/cadastro/box/exportarDetalhes?fileType=PDF">
-						<img src="${pageContext.request.contextPath}/images/bt_imprimir.png" border="0" />
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
 					</a>
 				</span>
 		 </fieldset>

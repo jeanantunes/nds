@@ -181,8 +181,6 @@ public class DiferencaEstoqueController {
 			
 			String motivo = null;
 			
-			//TODO Corrigir o trecho de código abaixo, devido a mudanças no modelo de dados
-			
 			if ((diferenca.getLancamentoDiferenca() != null) &&
 					(diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null)) {
 				
@@ -311,7 +309,7 @@ public class DiferencaEstoqueController {
 
 				FiltroLancamentoDiferencaEstoqueDTO filtro = 
 					this.carregarFiltroPesquisaLancamentos(
-						dataMovimento, tipoDiferenca, sortorder, sortname, page, rp);
+						dataMovimento, null, sortorder, sortname, page, rp);
 				
 				processarDiferencasLancamentoNovos(listaNovasDiferencas, filtro);
 				
@@ -370,7 +368,7 @@ public class DiferencaEstoqueController {
 	public void cadastrarNovasDiferencasNotaEnvio(TipoDiferenca tipoDiferenca, Date dataNotaEnvio,
 										 		  Integer numeroCota,String nomeCota,List<DiferencaVO>diferencasProdutos,
 										 		  Long idDiferenca) {
-		//TODO implementar a nclusão de diferenças de Nota De Envio
+		
 		if (tipoDiferenca == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
 		}
@@ -944,22 +942,30 @@ public class DiferencaEstoqueController {
 				
 		if(diferencasProdutos == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado nenhum produto para diferença!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado nenhuma diferença para o(s) produto(s)!");
 		}
-		
-		boolean diferencainformada = false;
-		
-		for(DiferencaVO item : diferencasProdutos){
-			if(item.getQuantidade()!= null){
-				diferencainformada = true;
-				return ;
+			
+		List<Long> linhasComErro = new ArrayList<Long>();
+
+		for (DiferencaVO diferencaVO : diferencasProdutos) {
+			
+			if (diferencaVO.getQuantidade() == null
+					|| BigInteger.ZERO.equals(diferencaVO.getQuantidade())) {
+				
+				linhasComErro.add(diferencaVO.getId());
 			}
 		}
 		
-		if(!diferencainformada){
+		if (!linhasComErro.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado nenhum diferença para os produtos!");
+			ValidacaoVO validacao = 
+				new ValidacaoVO(TipoMensagem.WARNING, "Existe(m) diferença(s) preenchida(s) para o(s) produto(s) incorretamente!");
+			
+			validacao.setDados(linhasComErro);
+			
+			throw new ValidacaoException(validacao);
 		}
+		
 	}
 
 	

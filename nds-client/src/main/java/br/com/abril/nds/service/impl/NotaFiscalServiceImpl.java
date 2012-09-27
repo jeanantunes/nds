@@ -271,8 +271,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional(rollbackFor=Exception.class)
 	public void cancelarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 		
-		NotaFiscal  nota = this.notaFiscalDAO.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+		NotaFiscal notaFiscalCancelada = this.notaFiscalDAO.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 		
+		TipoNotaFiscal tipoNotaFiscal = notaFiscalCancelada.getIdentificacao().getTipoNotaFiscal();
+				
 		//TODO: identificar tipo da nota e chamar rotina de cancelamento adequada para a nota.
 		
 		atualizaRetornoNFe(dadosRetornoNFE);

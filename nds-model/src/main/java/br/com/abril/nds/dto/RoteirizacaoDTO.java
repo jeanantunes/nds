@@ -194,6 +194,15 @@ public class RoteirizacaoDTO implements Serializable{
         }
         return dto;
 	}
+	
+    /**
+     * Verifica se o DTO corresponde à uma nova rorteirização
+     * 
+     * @return true se é uma nova roteirização, false caso contrário
+     */
+	public boolean isNovo() {
+	    return TipoEdicao.NOVO == tipoEdicao;
+	}
 
     
 	/**

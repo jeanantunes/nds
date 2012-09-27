@@ -24,7 +24,6 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -42,6 +41,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 import br.com.abril.nds.util.TipoMensagem;
@@ -88,6 +88,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Autowired
 	private EstoqueProdutoCotaJuramentadoRepository estoqueProdutoCotaJuramentadoRepository;
 
+	@Autowired
+	private UsuarioService usuarioService;
+	
 	@Override
 	@Transactional
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataLancamento, Long idProdutoEdicao, Long idUsuario) {
@@ -575,17 +578,32 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		TipoMovimentoEstoque tipoMovimento = this.tipoMovimentoEstoqueRepository.
 				buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_CONSIGNADO);
 		
+		gerarMovimentoCancelamentoNotaFiscal(notaFiscalCancelada, tipoMovimento);
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.MovimentoEstoqueService#devolucaoRecolhimentoNotaCancelada(br.com.abril.nds.model.fiscal.nota.NotaFiscal)
+	 */
+	@Override
+	public void devolucaoRecolhimentoNotaCancelada(NotaFiscal notaFiscalCancelada) {
+		
+		TipoMovimentoEstoque tipoMovimento = this.tipoMovimentoEstoqueRepository.
+				buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_ENCALHE);
+		
+		gerarMovimentoCancelamentoNotaFiscal(notaFiscalCancelada, tipoMovimento);
+	}
+
+	private void gerarMovimentoCancelamentoNotaFiscal(NotaFiscal notaFiscalCancelada, 
+			TipoMovimentoEstoque tipoMovimento) {
 		List<ProdutoServico> listaProdutosServicosNotaCancelada = notaFiscalCancelada.getProdutosServicos();
+		
+		Long idUsuario = this.usuarioService.getUsuarioLogado().getId();
 		
 		for (ProdutoServico produtoServico : listaProdutosServicosNotaCancelada) {
 			
-			for (MovimentoEstoqueCota movimentoEstoqueCota : produtoServico.getListaMovimentoEstoqueCota()) {
-			
-					MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, 
-							movimentoEstoqueCota.getProdutoEdicao().getId(), movimentoEstoqueCota.getUsuario().getId(), 
-							movimentoEstoqueCota.getQtde(), tipoMovimento);
-			}
+			this.criarMovimentoEstoque(null, 
+					produtoServico.getProdutoEdicao().getId(), 
+					idUsuario, produtoServico.getQuantidade(), tipoMovimento);
 		}
 	}
-
 }

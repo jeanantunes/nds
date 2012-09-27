@@ -144,7 +144,7 @@ function Telefone(paramTela,message) {
         var retorno = '<a href="javascript:;" onclick="' + paramTela + '.editarTelefone('
 				+ idTelefone
 				+ ')" '
-				+ ' style="cursor:pointer;border:0px;margin:5px" title="'+ title +'">'
+				+ ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" title="'+ title +'">'
 				+ '<img src="/nds-client/images/ico_editar.gif" border="0px"/>'
 				+ '</a>';
 
@@ -152,7 +152,7 @@ function Telefone(paramTela,message) {
             retorno+='<a href="javascript:;" onclick="' + paramTela + '.removerTelefone('
                 + idTelefone
                 + ')" '
-                + ' style="cursor:pointer;border:0px;margin:5px" title="Excluir telefone">'
+                + ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" title="Excluir telefone">'
                 + '<img src="/nds-client/images/ico_excluir.gif" border="0px"/>'
                 + '</a>';
         }

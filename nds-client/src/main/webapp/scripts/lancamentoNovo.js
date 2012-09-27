@@ -21,8 +21,6 @@ var lancamentoNovoController = $.extend(true, {
 		$("#cotaInputNota", lancamentoNovoController.workspace).numeric();
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).mask("99/99/9999");
 		
-		//lancamentoNovoController.resetarCamposTela();
-		
 		$(".lanctoFaltasSobrasCota_3Grid", lancamentoNovoController.workspace).flexigrid({
 			preProcess: lancamentoNovoController.executarPreProcessamentoNovo,
 			onSuccess: function(){$("[name=diferencaProduto]", lancamentoNovoController.workspace).numeric();},
@@ -515,7 +513,7 @@ var lancamentoNovoController = $.extend(true, {
 			data,
 			function(result) {
 
-				lancamentoNovoController.processamentoSucessoCadastroNovaDiferenca(tipoDiferenca,isBotaoIncluirNovo);
+				lancamentoNovoController.processamentoSucessoCadastroNovaDiferenca(isBotaoIncluirNovo);
 				
 				$("#dialogConfirmacaoDirecionamentoDiferencaProdutoCota", lancamentoNovoController.workspace).dialog("close");
 			},
@@ -590,20 +588,21 @@ var lancamentoNovoController = $.extend(true, {
 				data,
 				function(result) {
 					
-					lancamentoNovoController.processamentoSucessoCadastroNovaDiferenca(tipoDiferenca,isBotaoIncluirNovo );
+					lancamentoNovoController.processamentoSucessoCadastroNovaDiferenca(isBotaoIncluirNovo );
 				},
 				function(result){
-					//TODO verificar o metodo de tratamento de retorno de erro	
-					lancamentoNovoController.tratarErroCadastroNovasDiferencas(result);
+					
+					lancamentoNovoController.tratarErroCadastroNovasDiferencasEnvioNota(result);
+
 				},
 				true
 			);
 	},
 	
-	processamentoSucessoCadastroNovaDiferenca:function(tipoDiferenca,isBotaoIncluirNovo ){
+	processamentoSucessoCadastroNovaDiferenca:function(isBotaoIncluirNovo ){
 		
 		var data = [
-					 {name: "tipoDiferenca", value: tipoDiferenca},
+					 {name: "tipoDiferenca", value: $("#selectTiposDiferenca", lancamentoNovoController.workspace).val()},
 					 {name: "dataMovimento", value: $("#datePickerDataMovimento", lancamentoNovoController.workspace).val()},
 					];
 		
@@ -632,6 +631,33 @@ var lancamentoNovoController = $.extend(true, {
 		var dadosValidacao = jsonData.mensagens.dados;
 		
 		var linhasDaGrid = $("#grid_1 tr", lancamentoNovoController.workspace);
+
+		$.each(linhasDaGrid, function(index, value) {
+
+			var linha = $(value);
+
+			if (dadosValidacao 
+					&& ($.inArray(index, dadosValidacao) > -1)) {
+
+				linha.removeClass('erow').addClass('linhaComErro');
+				
+			} else {
+
+				linha.removeClass('linhaComErro');					
+			}
+		});
+	},
+	
+	tratarErroCadastroNovasDiferencasEnvioNota : function(jsonData) {
+
+		if (!jsonData || !jsonData.mensagens) {
+
+			return;
+		}
+
+		var dadosValidacao = jsonData.mensagens.dados;
+		
+		var linhasDaGrid = $(".lanctoFaltasSobrasCota_3Grid tr", lancamentoNovoController.workspace);
 
 		$.each(linhasDaGrid, function(index, value) {
 
@@ -957,16 +983,21 @@ var lancamentoNovoController = $.extend(true, {
 	
 	alterarReparteAtual : function(indexDiv){
 		
+		var valorDiferencaProduto = 0;
+		
+		if(!$("#inputDiferencaProduto" + indexDiv, lancamentoNovoController.workspace).val().trim() == ''){
+			
+			valorDiferencaProduto = parseInt($("#inputDiferencaProduto" + indexDiv, lancamentoNovoController.workspace).val());
+		}
+		
 		if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_DE" || $("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_EM"){
 			
 			$("#qtdTotal" + indexDiv, lancamentoNovoController.workspace).text(
-				parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text()) + parseInt($("#inputDiferencaProduto" + indexDiv, lancamentoNovoController.workspace).val())
-			);
+				parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text()) + valorDiferencaProduto);
 		} else {
 			
 			$("#qtdTotal" + indexDiv, lancamentoNovoController.workspace).text(
-				parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text()) - parseInt($("#inputDiferencaProduto" + indexDiv, lancamentoNovoController.workspace).val())
-			);
+				parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text()) - valorDiferencaProduto);
 		}
 	},
 	

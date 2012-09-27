@@ -32,9 +32,21 @@ public interface MovimentoEstoqueService {
 	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput);
 	
 	/**
-	 * Gera movimento para cancelamento de nota, devolvendo produtos da nota para estoque do distribuidor
+	 * Gera movimento para cancelamento de nota, 
+	 * devolvendo produtos da nota para estoque de lançamento do distribuidor
 	 * 
 	 * @param notaFiscal
+	 * @param idUsuario
 	 */
 	void devolucaoConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada);
+	
+	
+	/**
+	 * Gera movimento para cancelamento de nota, 
+	 * devolvendo produtos da nota para estoque de recolhimento do distribuidor
+	 * 
+	 * @param notaFiscalCancelada
+	 * @param idUsuario
+	 */
+	void devolucaoRecolhimentoNotaCancelada(NotaFiscal notaFiscalCancelada);
 }
