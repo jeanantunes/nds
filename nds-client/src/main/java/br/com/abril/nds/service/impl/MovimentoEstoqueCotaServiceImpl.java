@@ -395,7 +395,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				
 				EstoqueProduto estoqueProduto = this.estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
 				
-				this.gerarMovimentoEstoqueCota(movimentoEstoqueCota.getUsuario(), tipoMovimento, 
+				Usuario usuario = this.usuarioService.getUsuarioLogado();
+				
+				this.gerarMovimentoEstoqueCota(usuario, tipoMovimento, 
 						new Date(), produtoEdicao, movimentoEstoqueCota.getQtde(), estoqueProduto);
 				
 			}

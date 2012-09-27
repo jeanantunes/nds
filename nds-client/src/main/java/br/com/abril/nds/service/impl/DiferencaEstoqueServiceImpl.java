@@ -330,24 +330,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 	}
 	
-	private void processarMovimentoEstoque(Diferenca diferenca, 
-								    	   Long idUsuario) {
-		
-		TipoMovimentoEstoque tipoMovimentoEstoque =
-			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
-		
-		MovimentoEstoque movimentoEstoque =
-			this.movimentoEstoqueService.gerarMovimentoEstoque(
-				new Date(), diferenca.getProdutoEdicao().getId(), idUsuario,
-					diferenca.getQtde(), tipoMovimentoEstoque);
-		
-		if (diferenca.getLancamentoDiferenca() != null) {
-
-			diferenca.getLancamentoDiferenca().setMovimentoEstoque(movimentoEstoque);
-		}
-	}
-	
 	private void processarRateioCotas(Diferenca diferenca,
 									  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 									  Long idUsuario) {
@@ -580,4 +562,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		diferencaEstoqueRepository.removerPorId(idDiferenca);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
+			  										 TipoEstoque tipoEstoque, Date dataMovimento) {
+		
+		return this.diferencaEstoqueRepository.obterQuantidadeTotalDiferencas(
+						codigoProduto, numeroEdicao, tipoEstoque, dataMovimento);
+	}
+	
 }

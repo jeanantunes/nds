@@ -32,16 +32,14 @@
             <div id="dialog-titular" title="Alterar Titularidade" style="display:none;">
               <fieldset>
                   <legend>Novo Titular</legend>
-                  <span class="bt_novos" title="Novo">
-                      <a href="javascript:;" onclick="MANTER_COTA.alterarTitular(true);">
+                  <span class="bt_novos">
+                      <a href="javascript:;" onclick="MANTER_COTA.alterarTitular(true);" rel="tipsy" title="Novo Titular Pessoa Física">
                         <img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
-                        CPF
                       </a>
                   </span>
-                  <span class="bt_novos" title="Novo" style="margin-left:10px;">
-                    <a href="javascript:;" onclick="MANTER_COTA.alterarTitular()">
+                  <span class="bt_novos" style="margin-left:50px;">
+                    <a href="javascript:;" onclick="MANTER_COTA.alterarTitular()" rel="tipsy" title="Novo Titular Pessoa Jurídica">
                       <img src="${pageContext.request.contextPath}/images/ico_usuarios.gif" border="0"/>
-                      CNPJ
                      </a>
                    </span>
               </fieldset>
