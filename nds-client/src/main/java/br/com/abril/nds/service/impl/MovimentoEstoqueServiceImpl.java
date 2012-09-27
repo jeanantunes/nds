@@ -21,6 +21,9 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -491,6 +494,29 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe);
 			
 			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.MovimentoEstoqueService#devolverConsignadoNotaCanceladaParaDistribuidor(br.com.abril.nds.model.fiscal.nota.NotaFiscal)
+	 */
+	@Override
+	@Transactional
+	public void devolucaoConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada) {
+		
+		TipoMovimentoEstoque tipoMovimento = this.tipoMovimentoEstoqueRepository.
+				buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_CONSIGNADO);
+		
+		List<ProdutoServico> listaProdutosServicosNotaCancelada = notaFiscalCancelada.getProdutosServicos();
+		
+		for (ProdutoServico produtoServico : listaProdutosServicosNotaCancelada) {
+			
+			for (MovimentoEstoqueCota movimentoEstoqueCota : produtoServico.getListaMovimentoEstoqueCota()) {
+			
+					MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, 
+							movimentoEstoqueCota.getProdutoEdicao().getId(), movimentoEstoqueCota.getUsuario().getId(), 
+							movimentoEstoqueCota.getQtde(), tipoMovimento);
+			}
 		}
 	}
 
