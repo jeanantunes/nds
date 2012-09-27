@@ -888,6 +888,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" select box.id as idBox, ");
 		hql.append(" 		box.codigo || '-'|| box.nome as box, ");
+		hql.append(" 		cota.numeroCota as codigoCota, ");
+		hql.append(" 		pessoa.nome as nomeCota, ");
 		hql.append(" 		count(distinct produtoEdicao.id) as totalProduto, ");
 		hql.append(" 		sum(movimentoCota.qtde) as totalReparte, ");
 		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox ");
@@ -896,8 +898,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id ");
 		
-		gerarOrdenacaoDadosAbastecimento(filtro, hql);		
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
 				
+		gerarOrdenacaoDadosAbastecimento(filtro, hql);		
+
 		Query query =  getSession().createQuery(hql.toString());
 				
 		for(String key : param.keySet()){
@@ -928,6 +935,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("	join produtoEdicao.produto produto ");		
 
 		hql.append("    join cota.pdvs pdv ");
+		hql.append("    join cota.pessoa pessoa ");
 		hql.append("    join pdv.rotas rota  ");
 		hql.append("    join rota.roteiro roteiro ");
 		hql.append("    join roteiro.roteirizacao roteirizacao ");
@@ -941,7 +949,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" where movimentoCota.tipoMovimento.grupoMovimentoEstoque='RECEBIMENTO_REPARTE' ");
 
-		
 		if(filtro.getDataDate() != null) {
 			hql.append(" and movimentoCota.data=:data ");
 			param.put("data", filtro.getDataDate());
@@ -976,8 +983,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			hql.append(" and cota.numeroCota =:codigoCota ");
 			param.put("codigoCota", filtro.getCodigoCota());
 		}
-		
-				
 	}
 	
 	private void gerarOrdenacaoDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro, StringBuilder hql) {
@@ -1000,6 +1005,39 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			case TOTAL_BOX:
 				nome = " totalBox ";
 				break;
+			case CODIGO_COTA:
+				nome = " codigoCota ";
+				break;
+			case CODIGO_ROTA:
+				nome = " codigoRota ";
+				break;
+			case NOME_COTA:
+				nome = " nomeCota ";
+				break;
+			case CODIGO_PRODUTO:
+				nome = " codigoProduto ";
+				break;
+			case NOME_PRODTO: 
+				nome = " nomeProduto ";
+				break;
+			case NUMERO_EDICAO:
+				nome = " numeroEdicao ";
+				break;
+			case REPARTE:
+				nome = " reparte ";
+				break;
+			case PRECO_CAPA:
+				nome = " precoCapa ";
+				break;
+			case TOTAL:
+				nome = " total ";
+				break;
+			case CODIGO_BOX:
+				nome = " codigoBox ";
+				break;
+			case MATERIAL_PROMOCIONAL:
+				nome = " materialPromocional ";
+				break;
 		}
 		hql.append( " order by " + nome + sortOrder + " ");
 	}
@@ -1013,10 +1051,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select count(distinct box.id) ");
+		hql.append("select count(*) ");
 			
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
-				
+		
+		hql.append(" group by box.id ");
+		
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
 		Query query =  getSession().createQuery(hql.toString());
 				
 		for(String key : param.keySet()){
@@ -1027,9 +1072,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			query.setParameterList(key, paramList.get(key));
 		}
 		
-		Long count = (Long) query.uniqueResult();
+		@SuppressWarnings("unchecked")
+		List<Long> count = query.list();
 		
-		return (count == 	null) ? 0 : count;
+		return (long) ((count == null || count.isEmpty()) ? 0 : count.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1056,8 +1102,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id ");
 		
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
 		gerarOrdenacaoDetalhesAbastecimento(filtro, hql);		
-				
+
 		Query query =  getSession().createQuery(hql.toString());
 				
 		for(String key : param.keySet()){
@@ -1099,6 +1150,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			case TOTAL:
 				nome = " total ";
 				break;
+			case CODIGO_BOX:
+				nome = " codigoBox ";
+				break;
 		}
 		hql.append( " order by " + nome + sortOrder + " ");
 	}
@@ -1126,8 +1180,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id, box.id ");
 		
-		hql.append(" order by box.codigo ");
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
 				
+		gerarOrdenacaoDadosAbastecimento(filtro, hql);
+
 		Query query =  getSession().createQuery(hql.toString());
 				
 		for(String key : param.keySet()){
@@ -1146,27 +1205,35 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBoxRota(FiltroMapaAbastecimentoDTO filtro) {
-		
+
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		
+
 		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
-		
+
 		StringBuilder hql = new StringBuilder();
-				
+
 		hql.append(" select box.codigo as codigoBox, ");
 		hql.append(" 		rota.codigoRota as codigoRota, ");
+		hql.append(" 		cota.numeroCota as codigoCota, ");
+		hql.append(" 		pessoa.nome as nomeCota, ");
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
+		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox, ");
+		hql.append("        count(distinct produtoEdicao.id) as totalProduto, ");
 		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
-		
-								
+
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
 		
-		hql.append(" order by box.codigo ");
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
+		gerarOrdenacaoDadosAbastecimento(filtro, hql);
 				
 		Query query =  getSession().createQuery(hql.toString());
 				
@@ -1180,7 +1247,49 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
 		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
 		return query.list();
+	}
+
+	@Override
+	public Long countObterMapaAbastecimentoPorBoxRota(FiltroMapaAbastecimentoDTO filtro) {
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select count(*) ");
+			
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
+
+		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
+		
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+	
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
+		}
+
+		@SuppressWarnings("unchecked")
+		List<Long> count = query.list();
+		
+		return (long) ((count == null || count.isEmpty()) ? 0 : count.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1200,6 +1309,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
+		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox, ");
 		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
 		
 								
@@ -1207,7 +1317,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id, rota.codigoRota ");
 		
-		hql.append(" order by box.codigo ");
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
+		gerarOrdenacaoDadosAbastecimento(filtro, hql);
 				
 		Query query =  getSession().createQuery(hql.toString());
 				
@@ -1220,8 +1335,53 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long countObterMapaAbastecimentoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {
+		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select count(*) ");
+		
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
+		
+		hql.append(" group by box.id, rota.codigoRota ");
+
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+	
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<Long> count = query.list();
+		
+		return (long) ((count == null || count.isEmpty()) ? 0 : count.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1234,11 +1394,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
 		
 		StringBuilder hql = new StringBuilder();
-				
+
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
+		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
+		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox, ");
 		hql.append(" 		lancamento.sequenciaMatriz as sequenciaMatriz ");
 		
 		filtro.setUseSM(true);
@@ -1247,7 +1409,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id ");
 		
-		hql.append(" order by lancamento.sequenciaMatriz ");
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
+		gerarOrdenacaoDadosAbastecimento(filtro, hql);
 				
 		Query query =  getSession().createQuery(hql.toString());
 				
@@ -1260,8 +1427,55 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+
 		return query.list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long countObterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro) {
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select count(*) ");
+		
+		filtro.setUseSM(true);
+
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
+		
+		hql.append(" group by produtoEdicao.id ");
+		
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+	
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<Long> count = query.list();
+		
+		return (long) ((count == null || count.isEmpty()) ? 0 : count.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1274,20 +1488,26 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
 		
 		StringBuilder hql = new StringBuilder();
-				
+
 		hql.append(" select cota.numeroCota as codigoCota, ");
+		hql.append(" 		pessoa.nome as nomeCota,");
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(movimentoCota.qtde) as reparte, ");
+		hql.append(" 		sum(movimentoCota.qtde * produtoEdicao.precoVenda) as totalBox, ");
 		hql.append(" 		produtoEdicao.precoCusto as precoCapa ");
-		
-								
+
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
 		hql.append(" group by cota.id ");
 		
-		hql.append(" order by cota.numeroCota ");
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
+		gerarOrdenacaoDadosAbastecimento(filtro, hql);
 				
 		Query query =  getSession().createQuery(hql.toString());
 				
@@ -1300,10 +1520,55 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();
 	}  
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Long countObterMapaDeImpressaoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro) {
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+
+		HashMap<String, List<String>> paramList = new HashMap<String, List<String>>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select count(*) ");
+
+		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
+		
+		hql.append(" group by cota.id ");
+
+		if (filtro.getExcluirProdutoSemReparte()) {
+
+			hql.append(" having sum(movimentoCota.qtde) > 0 ");
+		}
+		
+		Query query =  getSession().createQuery(hql.toString());
+				
+		for(String key : param.keySet()){
+			query.setParameter(key, param.get(key));
+		}
+	
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, paramList.get(key));
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<Long> count = query.list();
+		
+		return (long) ((count == null || count.isEmpty()) ? 0 : count.size());
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		

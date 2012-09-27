@@ -13,6 +13,8 @@ public class AbastecimentoDTO implements Serializable {
 	private String data;
 	private Long idBox;
 	private String box;
+	private Integer codigoCota;
+	private String nomeCota;
 	private Integer totalProduto;
 	private Integer totalReparte;
 	private String totalBox;
@@ -68,6 +70,34 @@ public class AbastecimentoDTO implements Serializable {
 	public void setBox(String box) {
 		this.box = box;
 	}
+	/**
+	 * @return the codigoCota
+	 */
+	public Integer getCodigoCota() {
+		return codigoCota;
+	}
+
+	/**
+	 * @param codigoCota the codigoCota to set
+	 */
+	public void setCodigoCota(Integer codigoCota) {
+		this.codigoCota = codigoCota;
+	}
+
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
 	/**
 	 * @return the totalProduto
 	 */
