@@ -8,6 +8,7 @@ import java.util.List;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -261,4 +262,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	public Integer obterQtdeConsultaEncalheDetalhe(FiltroConsultaEncalheDetalheDTO filtro);
 
+	/**
+	 * Obtém o valores totais.
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public ConsultaEncalheRodapeDTO obterValoresTotais(FiltroConsultaEncalheDTO filtro);
 }

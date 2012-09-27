@@ -780,19 +780,17 @@ public class RoteirizacaoController {
 	}
 	
 	
-	@Get
+	@Post
     @Path("/novaRoteirizacao")
 	public void novaRoteirizacao() {
-	    List<Box> disponiveis = new ArrayList<Box>();
-	    disponiveis.add(Box.ESPECIAL);
-	    disponiveis.addAll(roteirizacaoService.obterListaBoxLancamento(null));
+	    List<Box> disponiveis = roteirizacaoService.obterListaBoxLancamento(null);
 	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);
 	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
-	    setDTO(getDTO());
+	    setDTO(dto);
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
-	@Get
+	@Post
 	@Path("/editarRoteirizacao")
 	public void editarRoteirizacao(Long idRoteirizacao) {
 	    RoteirizacaoDTO dto = roteirizacaoService.obterRoteirizacaoPorId(idRoteirizacao);

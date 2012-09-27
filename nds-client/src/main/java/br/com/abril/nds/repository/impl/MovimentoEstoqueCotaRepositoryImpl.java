@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -740,6 +741,88 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
 		
 		return ((qtde == null) ? 0 : qtde.intValue());
+		
+	}	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ConsultaEncalheRodapeDTO obterValoresTotais(FiltroConsultaEncalheDTO filtro) {
+
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("	select ");
+
+		sql.append("	coalesce(sum( ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA * ");
+			
+		sql.append(" ( PRODUTO_EDICAO.PRECO_VENDA - ( PRODUTO_EDICAO.PRECO_VENDA  *  coalesce((");
+
+		sql.append(this.obterSQLDescontoObterResumoConsignadosParaChamadao());
+
+		sql.append(" ) / 100, 0) ) ) ), 0) as valorReparte,");
+			
+		sql.append("	coalesce(sum( ESTOQUE_PRODUTO_COTA.QTDE_DEVOLVIDA * ");
+			
+		sql.append(" ( PRODUTO_EDICAO.PRECO_VENDA - ( PRODUTO_EDICAO.PRECO_VENDA  *  coalesce((");
+
+		sql.append(this.obterSQLDescontoObterResumoConsignadosParaChamadao());
+
+		sql.append(" ) / 100, 0) ) ) ), 0) as valorEncalhe ");
+
+		sql.append("	from	");
+		
+		sql.append("	MOVIMENTO_ESTOQUE_COTA inner join CONFERENCIA_ENCALHE on ");
+		sql.append("	( CONFERENCIA_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID = MOVIMENTO_ESTOQUE_COTA.ID	) ");
+
+		sql.append("	inner join ESTOQUE_PRODUTO_COTA on                                         ");
+		sql.append("	( MOVIMENTO_ESTOQUE_COTA.ESTOQUE_PROD_COTA_ID = ESTOQUE_PRODUTO_COTA.ID )  ");
+		
+		sql.append("	inner join COTA on                                         ");
+		sql.append("	( MOVIMENTO_ESTOQUE_COTA.COTA_ID = COTA.ID )  ");
+		
+		sql.append("	inner join CHAMADA_ENCALHE_COTA on ");
+		sql.append("	( CHAMADA_ENCALHE_COTA.ID = CONFERENCIA_ENCALHE.CHAMADA_ENCALHE_COTA_ID ) ");
+		
+		sql.append("	inner join CHAMADA_ENCALHE on ");
+		sql.append("	( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
+ 		
+		sql.append("	inner join PRODUTO_EDICAO on ");
+		sql.append("	( PRODUTO_EDICAO.ID = MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID ) ");
+		
+		sql.append("	inner join PRODUTO_FORNECEDOR on ");
+		sql.append("	( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO_EDICAO.PRODUTO_ID ) ");
+		
+		sql.append("	where	");
+		
+		sql.append("	MOVIMENTO_ESTOQUE_COTA.DATA BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+		
+		if(filtro.getIdCota()!=null) {
+			sql.append(" and MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota  ");
+		}
+		
+		if(filtro.getIdFornecedor() != null) {
+			sql.append(" and PRODUTO_FORNECEDOR.FORNECEDORES_ID =  :idFornecedor ");
+		}
+		
+		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString())
+
+				.addScalar("valorReparte")
+				.addScalar("valorEncalhe");
+		
+		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheRodapeDTO.class));
+		
+		if(filtro.getIdCota()!=null) {
+			sqlquery.setParameter("idCota", filtro.getIdCota());
+		}
+
+		if(filtro.getIdFornecedor() != null) {
+			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		sqlquery.setParameter("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+
+		sqlquery.setParameter("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+
+		return (ConsultaEncalheRodapeDTO) sqlquery.uniqueResult();
 		
 	}	
 	
