@@ -99,6 +99,12 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			$(".grids", ConsultaEncalhe.workspace).show();
 			
+			$("#totalReparte").text(parseFloat(resultado.valorReparte).toFixed(2));
+			$("#totalEncalhe").text(parseFloat(resultado.valorEncalhe).toFixed(2));
+			$("#valorVendaDia").text(parseFloat(resultado.valorVendaDia).toFixed(2));
+			$("#totalOutrosValores").text(parseFloat(resultado.valorDebitoCredito).toFixed(2));
+			$("#valorAPagar").text(parseFloat(resultado.valorPagar).toFixed(2));
+			
 			return resultado.tableModel;
 			
 		},
