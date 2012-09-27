@@ -121,6 +121,7 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -486,6 +487,10 @@ public class DataLoader {
 	private static EstoqueProduto estoqueProdutoVeja2EncalheAnt;
 	private static EstoqueProduto estoqueProdutoSuper1EncalheAnt;
 	private static EstoqueProduto estoqueProdutoSuper2EncalheAnt;
+	
+	private static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentadoVeja;
+	private static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentadoCapricho;
+	private static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentadoInfoExame;
 
 	private static TipoFornecedor tipoFornecedorPublicacao;
 	private static TipoFornecedor tipoFornecedorOutros;
@@ -974,6 +979,7 @@ public class DataLoader {
 		criarNotasFiscais(session);
 		criarRecebimentosFisicos(session);
 		criarEstoquesProdutos(session);
+		criarEstoquesProdutosCotaJuramentados(session);
 		criarEstoqueProdutoCota(session);
 		criarMovimentosEstoque(session);
 		criarLancamentos(session);
@@ -3509,6 +3515,16 @@ public class DataLoader {
 			 estoqueProdutoVeja4, estoqueProdutoSuper1, estoqueProdutoCapricho1,
 			 estoqueProdutoInfoExame1,estoqueProdutoVeja1EncalheAnt,estoqueProdutoVeja2EncalheAnt,
 			 estoqueProdutoSuper1EncalheAnt,estoqueProdutoSuper2EncalheAnt);
+	}
+	
+	private static void criarEstoquesProdutosCotaJuramentados(Session session) {
+		estoqueProdutoCotaJuramentadoVeja = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoVeja1, cotaAcme, BigInteger.TEN);
+		
+		estoqueProdutoCotaJuramentadoCapricho = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoCapricho1, cotaAcme, BigInteger.TEN);
+		
+		estoqueProdutoCotaJuramentadoInfoExame = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoInfoExame1, cotaJoao, BigInteger.TEN);
+		
+		save(session, estoqueProdutoCotaJuramentadoVeja, estoqueProdutoCotaJuramentadoCapricho, estoqueProdutoCotaJuramentadoInfoExame);
 	}
 
 	private static void criarRecebimentosFisicos(Session session) {
