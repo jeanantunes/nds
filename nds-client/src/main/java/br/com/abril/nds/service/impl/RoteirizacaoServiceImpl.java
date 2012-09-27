@@ -366,23 +366,27 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 
 	@Override
+	@Transactional
 	public List<BoxRoteirizacaoDTO> obterBoxesPorNome(String nome) {
 		return roteirizacaoRepository.obterBoxesPorNome(nome);
 	}
 
 	@Override
+	@Transactional
 	public List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxes(String nome,
 			List<Long> idsBoxes) {
 		return roteirizacaoRepository.obterRoteirosPorNomeEBoxes(nome, idsBoxes);
 	}
 
 	@Override
+	@Transactional
 	public List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome,
 			List<Long> idsRoteiros) {
 		return roteirizacaoRepository.obterRotasPorNomeERoteiros(nome, idsRoteiros);
 	}
 
 	@Override
+	@Transactional
 	public Roteirizacao buscarRoteirizacaoPorId(Long idRoteirizacao){
 		
 		Roteirizacao roteirizacao = this.roteirizacaoRepository.buscarPorId(idRoteirizacao);
@@ -474,6 +478,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 * @return List<PdvRoteirizacaoDTO>
 	 */
 	@Override
+	@Transactional
 	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis() {
 		
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
@@ -519,10 +524,23 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 	
 	/**
+	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
+	 * @param idPdv
+	 * @return boolean - true:disponivel
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public boolean verificaDisponibilidadePdv(Long idPdv){
+		Box box = this.roteirizacaoRepository.obterBoxDoPDV(idPdv);
+		return (box==null);
+	}
+	
+	/**
 	 * Inclui Cota Pdv na Roteirização
 	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
 	 */
 	@Override
+	@Transactional
 	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> listaCotaPdv, Long idRota) {
 		
 		List<PDV> pdvs = new ArrayList<PDV>();

@@ -181,5 +181,12 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	    ConsultaRoteirizacaoDTO resultado4 = resultado.get(3);
 	    Assert.assertEquals(String.format("%s - %s", rota3.getCodigoRota(), rota3.getDescricaoRota()), resultado4.getDescricaoRota());
 	}
+	
+	@Test
+	public void obterBoxDoPDV() {
+		Box box = this.roteirizacaoRepository.obterBoxDoPDV(pdvManoel.getId());
+		Assert.assertTrue(box!=null);
+		Assert.assertEquals(box.getNome(), "Box 300");
+	}
 
 }

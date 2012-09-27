@@ -799,6 +799,7 @@ public class RoteirizacaoController {
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
+	
 	@Post
 	@Path("/editarRoteirizacao")
 	public void editarRoteirizacao(Long idRoteirizacao) {
@@ -808,24 +809,17 @@ public class RoteirizacaoController {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	private void validaNovoPdv(List<PdvRoteirizacaoDTO> pdvs){
+	/**
+	 * Verifica se PDV's podem ser adicionados na Roteirização
+	 * @param pdvs
+	 */
+	private void validaNovosPdvs(List<PdvRoteirizacaoDTO> pdvs){
 		
-		PDV pdv = null;
-		for(PdvRoteirizacaoDTO itemPdv:pdvs){
-			pdv = this.pdvService.obterPDVporId(itemPdv.getId());
-			if (pdv.getRotas()!=null && pdv.getRotas().size() > 0 ){
-				
+		for(PdvRoteirizacaoDTO itemPdvDTO:pdvs){
+			if (!this.roteirizacaoService.verificaDisponibilidadePdv(itemPdvDTO.getId())){
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV] já pertence à um [Box] roteirizado !"));
 			}
 		}
-		
 	}
 	
 	
@@ -837,13 +831,13 @@ public class RoteirizacaoController {
 	public void adicionarNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, Long idRota){
         
 		//BUSCAR EOREITIZACAO NA SESSAO
-		RoteirizacaoDTO roteirizacao = null;
+		RoteirizacaoDTO roteirizacaoDTO = null;
 		
 		
+		this.validaNovosPdvs(pdvs);
 		
 		
-		
-		for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacao.getRoteiros()){
+		for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
 			for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
 				if(itemRota.getId().equals(idRota)){
 					itemRota.addAllPdv(pdvs);
@@ -856,7 +850,7 @@ public class RoteirizacaoController {
 		//ADICIONAR ROTEIRIZACAO NA SESSAO
 		
 
-		result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
+		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
 	}
 	
 	

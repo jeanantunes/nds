@@ -531,5 +531,31 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		return (Roteirizacao) criteria.uniqueResult();
 	}
 
+	/**
+	 * Obtém o Box de um PDV
+	 * @param idPdv
+	 * @return
+	 */
+	@Override
+	public Box obterBoxDoPDV(Long idPdv) {
+		
+        StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select b from Box b, Roteirizacao r ");
+		hql.append(" join r.roteiros roteiro ");
+		hql.append(" join roteiro.rotas rota ");
+		hql.append(" join rota.pdvs pdv ");
+		hql.append(" where r.box = b ");
+		hql.append(" and  pdv.id = :idPdv ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+
+		query.setParameter("idPdv", idPdv);
+		
+		query.setMaxResults(1);
+		
+		return (Box) query.uniqueResult();
+	}
+
 }
 
