@@ -2314,6 +2314,11 @@ public class DiferencaEstoqueController {
 			List<RateioCotaVO> rateiosDiferenca = this.obterRateiosEdicaoDiferenca(idDiferenca);
 			
 			if(rateiosDiferenca!= null && !rateiosDiferenca.isEmpty()){
+			
+				if (TipoDirecionamentoDiferenca.NOTA.equals(diferencaVO.getTipoDirecionamento())) {
+					
+					diferencaVO.setQtdeEstoque(this.obterQuantidadeReparteNota(pe, rateiosDiferenca));
+				}
 				
 				result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).put("rateios",rateiosDiferenca).serialize();
 			}
@@ -2326,6 +2331,31 @@ public class DiferencaEstoqueController {
 			
 			result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).serialize();
 		}
+	}
+
+	private BigInteger obterQuantidadeReparteNota(ProdutoEdicao produtoEdicao,
+												  List<RateioCotaVO> rateiosDiferenca) {
+		
+		BigInteger quantidadeReparteNota = BigInteger.ZERO;
+			
+		Date dataEnvioNota = null;
+		Integer numeroCota = null;
+		
+		for (RateioCotaVO rateioCotaVO : rateiosDiferenca) {
+			
+			dataEnvioNota = rateioCotaVO.getDataEnvioNota();
+			numeroCota = rateioCotaVO.getNumeroCota();
+			
+			break;
+		}
+		
+		DetalheItemNotaFiscalDTO detalheItemNota = 
+			this.itemNotaEnvioService.obterItemNotaEnvio(
+				dataEnvioNota, numeroCota, produtoEdicao.getId());
+		
+		quantidadeReparteNota = detalheItemNota.getQuantidadeExemplares();
+			
+		return quantidadeReparteNota;
 	}
 	
 	
@@ -2349,6 +2379,11 @@ public class DiferencaEstoqueController {
 	private BigInteger obterReparteAtualProdutoEdicao(DiferencaVO diferencaVO, Long idProdutoEdicao) {
 		
 		EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(idProdutoEdicao);
+		
+		if (estoque == null) {
+			
+			return BigInteger.ZERO;
+		}
 		
 		if(diferencaVO.getTipoEstoque() == null){
 			return BigInteger.ZERO;
@@ -2538,7 +2573,7 @@ public class DiferencaEstoqueController {
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
 		List<DetalheItemNotaFiscalDTO> itensNotaEnvio = 
-			itemNotaEnvioService.obterItensNotaEnvio(dateNotaEnvio, numeroCota);
+			this.itemNotaEnvioService.obterItensNotaEnvio(dateNotaEnvio, numeroCota);
 		
 		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
 		

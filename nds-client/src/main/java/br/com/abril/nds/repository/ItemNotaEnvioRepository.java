@@ -18,4 +18,17 @@ public interface ItemNotaEnvioRepository  extends Repository<ItemNotaEnvio, Item
 	 * @return List<DetalheItemNotaFiscalDTO>
 	 */
 	List<DetalheItemNotaFiscalDTO> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota);
+	
+	/**
+	 * Obtém Item da Nota de Envio de acordo com os parâmetros informados.
+	 * 
+	 * @param dataEmissao - data de emissão da nota
+	 * @param numeroCota - número da cota
+	 * @param idProdutoEdicao - identificador do produto edição
+	 * 
+	 * @return DetalheItemNotaFiscalDTO
+	 */
+	DetalheItemNotaFiscalDTO obterItemNotaEnvio(Date dataEmissao,
+												Integer numeroCota,
+												Long idProdutoEdicao);
 }

@@ -24,4 +24,13 @@ public class ItemNovaEnvioServiceImpl implements ItemNotaEnvioService {
 		return itemNotaEnvioRepository.obterItensNotaEnvio(dataEmissao, numeroCota);
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public DetalheItemNotaFiscalDTO obterItemNotaEnvio(Date dataEmissao,
+													   Integer numeroCota,
+													   Long idProdutoEdicao) {
+		
+		return itemNotaEnvioRepository.obterItemNotaEnvio(dataEmissao, numeroCota, idProdutoEdicao);
+	}
+	
 }
