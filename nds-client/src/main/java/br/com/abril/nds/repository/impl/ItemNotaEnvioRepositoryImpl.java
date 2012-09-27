@@ -49,4 +49,36 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 		return query.list();
 	}
 	
+	@Override
+	public DetalheItemNotaFiscalDTO obterItemNotaEnvio(Date dataEmissao,
+													   Integer numeroCota,
+													   Long idProdutoEdicao) {
+		
+		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
+				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
+				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao "
+				   + " from ItemNotaEnvio itemNotaEnvio "
+				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
+				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
+				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
+				   + " join produtoEdicao.produto produto "
+				   + " where notaEnvio.dataEmissao = :dataEmissao "
+				   + " and movimentoEstoqueCota.cota.numeroCota = :numeroCota "
+				   + " and produtoEdicao.id = :idProdutoEdicao "
+				   + " group by produtoEdicao.id ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		ResultTransformer resultTransformer =
+			new AliasToBeanResultTransformer(DetalheItemNotaFiscalDTO.class); 
+
+		query.setParameter("dataEmissao", dataEmissao);
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setResultTransformer(resultTransformer);
+		
+		return (DetalheItemNotaFiscalDTO) query.uniqueResult();
+	}
+	
 }

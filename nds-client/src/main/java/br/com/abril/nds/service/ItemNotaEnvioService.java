@@ -9,4 +9,8 @@ public interface ItemNotaEnvioService {
 
 	List<DetalheItemNotaFiscalDTO> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota);
 	
+	DetalheItemNotaFiscalDTO obterItemNotaEnvio(Date dataEmissao,
+			   									Integer numeroCota,
+			   									Long idProdutoEdicao);
+	
 }
