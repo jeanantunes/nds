@@ -29,9 +29,11 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 
 /**
  * Entidade que representa o PDV associado
@@ -472,6 +474,15 @@ public class PDV implements Serializable {
 	 */
 	public void setArrendatario(boolean arrendatario) {
 		this.arrendatario = arrendatario;
+	}
+	
+	public EnderecoPDV getEnderecoEntrega(){
+		for(EnderecoPDV item:this.getEnderecos()){
+			if(item.getTipoEndereco()==TipoEndereco.LOCAL_ENTREGA){
+				return item;
+			}
+		}
+		return null;
 	}
 
 	@Override

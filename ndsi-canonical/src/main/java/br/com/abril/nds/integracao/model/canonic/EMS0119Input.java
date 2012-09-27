@@ -16,7 +16,6 @@ public class EMS0119Input extends IntegracaoDocument implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String codigoDaPublicacao; 
-	private Long edicao;
 	private String nomeDaPublicacao;
 	private String numeroDeEdicoes;
 	private Integer periodicidade; 
@@ -35,22 +34,14 @@ public class EMS0119Input extends IntegracaoDocument implements Serializable{
 	private String cromos; 
 	private String nomeComercial;
 	
-	@Field(offset = 1, length = 5)
+	@Field(offset = 1, length = 8)
 	public String getCodigoDaPublicacao() {
 		return codigoDaPublicacao;
 	}
 	public void setCodigoDaPublicacao(String codigoDaPublicacao) {
 		this.codigoDaPublicacao = codigoDaPublicacao;
 	}
-	
-	@Field(offset = 6, length = 3)
-	public Long getEdicao() {
-		return edicao;
-	}
-	public void setEdicao(Long edicao) {
-		this.edicao = edicao;
-	}
-	
+		
 	@Field(offset = 9, length = 20)
 	public String getNomeDaPublicacao() {
 		return nomeDaPublicacao;
@@ -157,7 +148,7 @@ public class EMS0119Input extends IntegracaoDocument implements Serializable{
 	}
 	
 	@Field(offset = 66, length = 8)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = true)
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
@@ -181,7 +172,7 @@ public class EMS0119Input extends IntegracaoDocument implements Serializable{
 		this.cromos = cromos;
 	}
 	
-	@Field(offset = 76, length = 46)
+	@Field(offset = 76, length = 45)
 	public String getNomeComercial() {
 		return nomeComercial;
 	}
@@ -228,7 +219,6 @@ public class EMS0119Input extends IntegracaoDocument implements Serializable{
 		result = prime * result + ((cromos == null) ? 0 : cromos.hashCode());
 		result = prime * result
 				+ ((desconto == null) ? 0 : desconto.hashCode());
-		result = prime * result + ((edicao == null) ? 0 : edicao.hashCode());
 		result = prime * result
 				+ ((nomeComercial == null) ? 0 : nomeComercial.hashCode());
 		result = prime
@@ -309,11 +299,6 @@ public class EMS0119Input extends IntegracaoDocument implements Serializable{
 				return false;
 		} else if (!desconto.equals(other.desconto))
 			return false;
-		if (edicao == null) {
-			if (other.edicao != null)
-				return false;
-		} else if (!edicao.equals(other.edicao))
-			return false;
 		if (nomeComercial == null) {
 			if (other.nomeComercial != null)
 				return false;
@@ -356,8 +341,7 @@ public class EMS0119Input extends IntegracaoDocument implements Serializable{
 	@Override
 	public String toString() {
 		return "EMS0119Input [codigoDaPublicacao=" + codigoDaPublicacao
-				+ ", edicao=" + edicao + ", nomeDaPublicacao="
-				+ nomeDaPublicacao + ", numeroDeEdicoes=" + numeroDeEdicoes
+				+ ", nomeDaPublicacao=" + nomeDaPublicacao + ", numeroDeEdicoes=" + numeroDeEdicoes
 				+ ", periodicidade=" + periodicidade + ", tipoDePublicacao="
 				+ tipoDePublicacao + ", statusDaPublicacao="
 				+ statusDaPublicacao + ", codigoDoEditor=" + codigoDoEditor

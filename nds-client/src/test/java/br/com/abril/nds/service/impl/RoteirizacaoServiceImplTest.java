@@ -9,7 +9,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
+import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
+import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
@@ -191,10 +195,64 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		RoteirizacaoDTO roteirizacaoDTO = this.roteirizacaoService.obterDadosRoteirizacao(parametros);
 		
-		Assert.assertEquals(roteirizacaoDTO.getListaBox().size(), 1);
-		Assert.assertEquals(roteirizacaoDTO.getListaPdv().size(), 2);
-		Assert.assertEquals(roteirizacaoDTO.getListaRoteiro().size(), 3);
-		Assert.assertEquals(roteirizacaoDTO.getListaRota().size(), 9);	
+		BoxRoteirizacaoDTO box = roteirizacaoDTO.getBox();
+		
+		Assert.assertEquals("Box 300",box.getNome());
+		
+		
+		
+		
+		List<RoteiroRoteirizacaoDTO> roteiros = roteirizacaoDTO.getRoteiros();
+		Assert.assertEquals(3,roteiros.size());
+		
+		
+
+		
+		RoteiroRoteirizacaoDTO roteiroDTO1 = roteiros.get(0);
+		Assert.assertEquals(roteiroDTO1.getNome(), "Roteiro 1");
+		
+		List<RotaRoteirizacaoDTO> rotas1 = roteiroDTO1.getRotas();
+		Assert.assertEquals(3,rotas1.size());
+		
+		
+		
+		
+		RoteiroRoteirizacaoDTO roteiroDTO2 = roteiros.get(1);
+		Assert.assertEquals(roteiroDTO2.getNome(), "Roteiro 2");
+		
+		List<RotaRoteirizacaoDTO> rotas2 = roteiroDTO2.getRotas();
+		Assert.assertEquals(3,rotas2.size());
+		
+		
+		
+		
+		RoteiroRoteirizacaoDTO roteiroDTO3 = roteiros.get(2);
+		Assert.assertEquals(roteiroDTO3.getNome(), "Roteiro 3");
+		
+		List<RotaRoteirizacaoDTO> rotas3 = roteiroDTO3.getRotas();
+		Assert.assertEquals(3,rotas3.size());
+		
+		
+		RotaRoteirizacaoDTO rotaDTO = rotas3.get(0);
+        Assert.assertEquals("Rota 7", rotaDTO.getNome());
+        
+		List<PdvRoteirizacaoDTO> pdvs = rotaDTO.getPdvs();
+        Assert.assertEquals(1, pdvs.size());
+		
+
+		
+	}
+	
+	@Test
+	public void testeObterPdvsDisponiveis(){
+		
+		List<PdvRoteirizacaoDTO> listaPdvDTO = this.roteirizacaoService.obterPdvsDisponiveis();
+		
+		Assert.assertTrue(listaPdvDTO!=null);
+		
+		Assert.assertTrue(listaPdvDTO.size()>0);
+		
+		Assert.assertEquals(listaPdvDTO.size(), 2);
 	}
 	
 

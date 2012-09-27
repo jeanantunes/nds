@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class BoxRoteirizacaoDTO implements Serializable {
 
-	private static final long serialVersionUID = 6862359582349796624L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	
@@ -13,6 +13,7 @@ public class BoxRoteirizacaoDTO implements Serializable {
 	private String nome;
 	
 	private Boolean selecionado;
+	
 
 	
 	public BoxRoteirizacaoDTO() {
