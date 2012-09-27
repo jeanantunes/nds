@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
+import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
@@ -81,6 +83,11 @@ public class RoteirizacaoController {
 	private HttpSession session;
 
 	private static final String FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE="filtroPesquisa";
+	
+	/**
+	 * Chave para armazenamento do DTO de roteirização na sessão
+	 */
+	private static final String ROTEIRIZACAO_DTO_SESSION_KEY = "ROTEIRIZACAO_DTO_SESSION_KEY";
 
 
 	@Path("/")
@@ -713,6 +720,7 @@ public class RoteirizacaoController {
 	 */
 	@Post
 	@Path("/obterBoxLancamento")
+	//TODO: Alterar para trabalhar com Roteirização DTO
 	public void obterBoxLancamento(String nomeBox){
 		List<Box> lista = new ArrayList<Box>();  
 		if (StringUtil.isEmpty(nomeBox)) {
@@ -728,8 +736,8 @@ public class RoteirizacaoController {
 	
 	@Post
 	@Path("/boxSelecionado")
-	public void boxSelecionado(Long idBox) {
-	    
+	public void boxSelecionado(Long idBox, Long idRoteirizacao) {
+	   
 	}
 	
 	/**
@@ -763,23 +771,6 @@ public class RoteirizacaoController {
 	}
 	
 	/**
-	 * Obtém dados da roteirização para edição
-	 * @param parametros - idCota
-	 * @param parametros - idRoteirizacao - Utilizado para obter as listas de box, roteiro e rota
-	 * @param parametros - idBox - Box Selecionado
-	 * @param parametros - idRoteiro - Roteiro Selecionado
-	 * @param parametros - idRota - Rota Selecionada
-	 */
-	@Get
-	@Path("/editarRoteirizacao")
-	public void editarRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros){
-        
-		RoteirizacaoDTO roteirizacao = this.roteirizacaoService.obterDadosRoteirizacao(parametros);
-		
-		result.use(Results.json()).from(roteirizacao, "result").serialize();
-	}
-	
-	/**
 	 * Obtém PDV's para a inclusão de rota pdv na roteirização
 	 */
 	@Get
@@ -789,6 +780,48 @@ public class RoteirizacaoController {
 		List<PdvRoteirizacaoDTO> pdvs = this.roteirizacaoService.obterPdvsDisponiveis();
 		
 		result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
+	}
+	
+	/**
+	 * Recupera o DTO de roteirização da sessão
+	 * @return DTO armazenado na sessão ou null caso não exista
+	 */
+	public RoteirizacaoDTO getDTO() {
+	    return (RoteirizacaoDTO) session.getAttribute(ROTEIRIZACAO_DTO_SESSION_KEY);
+	}
+	
+	/**
+	 * Armazena o DTO de roteirização na sessão
+	 * @param dto DTO com as informações da roteirização 
+	 */
+	public void setDTO(RoteirizacaoDTO dto) {
+	    session.setAttribute(ROTEIRIZACAO_DTO_SESSION_KEY, dto);
+	}
+	
+	/**
+	 * Remove o DTO de roteirização da sessão da sessão
+	 */
+	public void clearDTO() {
+	    setDTO(null);
+	}
+	
+	
+	@Get
+    @Path("/novaRoteirizacao")
+	public void novaRoteirizacao() {
+	    List<Box> disponiveis = roteirizacaoService.obterListaBoxLancamento(null);
+	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);
+	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
+	    setDTO(getDTO());
+	    result.use(CustomJson.class).from(dto).serialize();
+	}
+	
+	@Get
+	@Path("/editarRoteirizacao")
+	public void editarRoteirizacao(Long idRoteirizacao) {
+	    RoteirizacaoDTO dto = roteirizacaoService.obterRoteirizacaoPorId(idRoteirizacao);
+	    setDTO(dto);
+	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
 	

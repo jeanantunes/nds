@@ -19,16 +19,12 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	private List<RotaRoteirizacaoDTO> rotas;
 	
 	public RoteiroRoteirizacaoDTO() {
-		
 	}
 	
-	public RoteiroRoteirizacaoDTO(Long id, Integer ordem, String nome,
-			Boolean selecionado) {
-		super();
+	public RoteiroRoteirizacaoDTO(Long id, Integer ordem, String nome) {
 		this.id = id;
 		this.ordem = ordem;
 		this.nome = nome;
-		this.selecionado = selecionado;
 	}
 
 	/**

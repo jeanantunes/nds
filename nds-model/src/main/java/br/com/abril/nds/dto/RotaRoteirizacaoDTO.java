@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.abril.nds.dto.RoteirizacaoDTO.AcaoRegistro;
-
 public class RotaRoteirizacaoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -20,19 +18,13 @@ public class RotaRoteirizacaoDTO implements Serializable {
 
 	private List<PdvRoteirizacaoDTO> pdvs;
 	
-	private AcaoRegistro acao;
-	
 	public RotaRoteirizacaoDTO() {
-		
 	}
 	
-	public RotaRoteirizacaoDTO(Long id, Integer ordem, String nome,
-			Boolean selecionado) {
-		super();
+	public RotaRoteirizacaoDTO(Long id, Integer ordem, String nome) {
 		this.id = id;
 		this.ordem = ordem;
 		this.nome = nome;
-		this.selecionado = selecionado;
 	}
 
 	/**
@@ -116,18 +108,5 @@ public class RotaRoteirizacaoDTO implements Serializable {
 		pdvs.add(pdv);
 	}
 
-	/**
-	 * @return the acao
-	 */
-	public AcaoRegistro getAcao() {
-		return acao;
-	}
-
-	/**
-	 * @param acao the acao to set
-	 */
-	public void setAcao(AcaoRegistro acao) {
-		this.acao = acao;
-	}
 	
 }

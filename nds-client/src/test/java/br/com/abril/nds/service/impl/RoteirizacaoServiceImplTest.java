@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -210,14 +209,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void testeObterDadosRoteirizacao(){
-		
-		FiltroConsultaRoteirizacaoDTO parametros = new FiltroConsultaRoteirizacaoDTO();
-		parametros.setIdBox(box1.getId());
-		parametros.setNumeroCota(cotaManoel.getNumeroCota());
-		parametros.setIdRoteiro(roteiro1.getId());
-        parametros.setIdRota(rota1.getId());
-		
-		RoteirizacaoDTO roteirizacaoDTO = this.roteirizacaoService.obterDadosRoteirizacao(parametros);
+		RoteirizacaoDTO roteirizacaoDTO = this.roteirizacaoService.obterRoteirizacaoPorId(roteirizacao.getId());
 		
 		BoxRoteirizacaoDTO box = roteirizacaoDTO.getBox();
 		
