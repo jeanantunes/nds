@@ -780,7 +780,7 @@ public class RoteirizacaoController {
 	}
 	
 	
-	@Get
+	@Post
     @Path("/novaRoteirizacao")
 	public void novaRoteirizacao() {
 	    List<Box> disponiveis = new ArrayList<Box>();
@@ -792,7 +792,7 @@ public class RoteirizacaoController {
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
-	@Get
+	@Post
 	@Path("/editarRoteirizacao")
 	public void editarRoteirizacao(Long idRoteirizacao) {
 	    RoteirizacaoDTO dto = roteirizacaoService.obterRoteirizacaoPorId(idRoteirizacao);
