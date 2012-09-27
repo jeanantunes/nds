@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -1152,6 +1153,21 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Long qtde = movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(cotaManoel.getId(), veja1.getId(), tipoMovimentoCota.getId());
 		
 		Assert.assertTrue(qtde.equals(50L));
+	}
+	
+	@Test
+	public void obterValorTotalReparte() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+
+		ConsultaEncalheRodapeDTO valoresTotais = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
+		
+		Assert.assertNotNull(valoresTotais);
+		
 	}
 
 }
