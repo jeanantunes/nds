@@ -569,14 +569,22 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			pdvDTO.setOrdem(itemPdv.getOrdem());
 			pdvDTO.setCota(Integer.toString(itemPdv.getCota().getNumeroCota()));
 			
-			Set<EnderecoPDV> enderecosPdv = itemPdv.getEnderecos();
-			for (EnderecoPDV item:enderecosPdv){
-				if (item.isPrincipal()){
-					pdvDTO.setEndereco(item.getEndereco().getLogradouro()+", "+item.getEndereco().getCidade()+", CEP:"+item.getEndereco().getCep());
-				}
+			Endereco endereco = null;
+			EnderecoPDV enderecoPdvEntrega  = itemPdv.getEnderecoEntrega();
+			if (enderecoPdvEntrega !=null){
+				endereco = enderecoPdvEntrega .getEndereco();
+				pdvDTO.setOrigem("PDV");
+			}
+			else{
+				EnderecoCota enderecoPrincipalCota = itemPdv.getCota().getEnderecoPrincipal();
+				if (enderecoPrincipalCota !=null){
+				    endereco = enderecoPrincipalCota.getEndereco();
+				}    
+				pdvDTO.setOrigem("Cota");
 			}
 			
-			pdvDTO.setOrigem("");
+			pdvDTO.setEndereco(endereco!=null?endereco.getLogradouro()+", "+endereco.getCidade()+", CEP:"+endereco.getCep():"");
+
 			pdvDTO.setPdv(itemPdv.getNome());
 
 			listaPdvDTO.add(pdvDTO);

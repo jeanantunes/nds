@@ -18,13 +18,17 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.RoteirizacaoService;
@@ -39,6 +43,12 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	private PDV pdvManoel2;
 	
 	private Cota cotaManoel;
+	
+	private Endereco endereco;
+	
+	private EnderecoPDV enderecoPdv;
+	
+	private EnderecoCota enderecoCota;
 	
 	private PessoaFisica manoel;
 	
@@ -91,13 +101,27 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
-				
+			
 		//PDV
 		pdvManoel1 = Fixture.criarPDVPrincipal("PDV MANOEL 1", cotaManoel, 1);
 		save(pdvManoel1);
 
 		pdvManoel2 = Fixture.criarPDVPrincipal("PDV MANOEL 2", cotaManoel, 0);
 		save(pdvManoel2);
+		
+		
+		//ENDEREÇO
+		endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "Rua Dos Cerca Lorenço", "10", "Bairro", "Mococa", "SP",1);
+		save(endereco);
+		
+		
+		//ENDEREÇO COTA
+		enderecoCota = Fixture.enderecoCota(cotaManoel, endereco, true, TipoEndereco.LOCAL_ENTREGA);
+		
+		
+		//ENDEREÇO PDV
+		enderecoPdv = Fixture.criarEnderecoPDV(endereco, pdvManoel1, true, TipoEndereco.LOCAL_ENTREGA);
+		save(enderecoPdv);
 		
 
 		//ROTEIRIZACAO
@@ -201,19 +225,16 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		
 		
-		
 		List<RoteiroRoteirizacaoDTO> roteiros = roteirizacaoDTO.getRoteiros();
 		Assert.assertEquals(3,roteiros.size());
 		
 		
-
 		
 		RoteiroRoteirizacaoDTO roteiroDTO1 = roteiros.get(0);
 		Assert.assertEquals(roteiroDTO1.getNome(), "Roteiro 1");
 		
 		List<RotaRoteirizacaoDTO> rotas1 = roteiroDTO1.getRotas();
 		Assert.assertEquals(3,rotas1.size());
-		
 		
 		
 		
@@ -225,7 +246,6 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		
 		
-		
 		RoteiroRoteirizacaoDTO roteiroDTO3 = roteiros.get(2);
 		Assert.assertEquals(roteiroDTO3.getNome(), "Roteiro 3");
 		
@@ -233,14 +253,13 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(3,rotas3.size());
 		
 		
+		
 		RotaRoteirizacaoDTO rotaDTO = rotas3.get(0);
         Assert.assertEquals("Rota 7", rotaDTO.getNome());
         
 		List<PdvRoteirizacaoDTO> pdvs = rotaDTO.getPdvs();
         Assert.assertEquals(1, pdvs.size());
-		
-
-		
+	
 	}
 	
 	@Test
