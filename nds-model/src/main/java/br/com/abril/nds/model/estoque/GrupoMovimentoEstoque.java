@@ -145,9 +145,14 @@ public enum GrupoMovimentoEstoque  {
 	ENTRADA_SUPLEMENTAR_ENVIO_REPARTE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR),
 
 	/**
-	 * Cancelamento de NFe - Devolução de mercadorias das NFs canceladas para o estoque do distribuidor
+	 * Cancelamento de NFe - Devolução de mercadorias das NFs canceladas para o estoque de lancamento do distribuidor
 	 */
 	CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_CONSIGNADO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR),
+	
+	/**
+	 * Cancelamento de NFe - Devolução de mercadorias das NFs canceladas para o estoque de recolhimento do distribuidor
+	 */
+	CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_ENCALHE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR),
 	
 	/**
 	 * Cancelamento de NFe, envio do consignado da cota para o ditribuidor
