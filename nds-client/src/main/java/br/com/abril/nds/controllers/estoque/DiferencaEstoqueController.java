@@ -181,8 +181,6 @@ public class DiferencaEstoqueController {
 			
 			String motivo = null;
 			
-			//TODO Corrigir o trecho de código abaixo, devido a mudanças no modelo de dados
-			
 			if ((diferenca.getLancamentoDiferenca() != null) &&
 					(diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null)) {
 				
@@ -311,7 +309,7 @@ public class DiferencaEstoqueController {
 
 				FiltroLancamentoDiferencaEstoqueDTO filtro = 
 					this.carregarFiltroPesquisaLancamentos(
-						dataMovimento, tipoDiferenca, sortorder, sortname, page, rp);
+						dataMovimento, null, sortorder, sortname, page, rp);
 				
 				processarDiferencasLancamentoNovos(listaNovasDiferencas, filtro);
 				
@@ -370,7 +368,7 @@ public class DiferencaEstoqueController {
 	public void cadastrarNovasDiferencasNotaEnvio(TipoDiferenca tipoDiferenca, Date dataNotaEnvio,
 										 		  Integer numeroCota,String nomeCota,List<DiferencaVO>diferencasProdutos,
 										 		  Long idDiferenca) {
-		//TODO implementar a nclusão de diferenças de Nota De Envio
+		
 		if (tipoDiferenca == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
 		}
@@ -944,22 +942,30 @@ public class DiferencaEstoqueController {
 				
 		if(diferencasProdutos == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado nenhum produto para diferença!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado nenhuma diferença para o(s) produto(s)!");
 		}
-		
-		boolean diferencainformada = false;
-		
-		for(DiferencaVO item : diferencasProdutos){
-			if(item.getQuantidade()!= null){
-				diferencainformada = true;
-				return ;
+			
+		List<Long> linhasComErro = new ArrayList<Long>();
+
+		for (DiferencaVO diferencaVO : diferencasProdutos) {
+			
+			if (diferencaVO.getQuantidade() == null
+					|| BigInteger.ZERO.equals(diferencaVO.getQuantidade())) {
+				
+				linhasComErro.add(diferencaVO.getId());
 			}
 		}
 		
-		if(!diferencainformada){
+		if (!linhasComErro.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado nenhum diferença para os produtos!");
+			ValidacaoVO validacao = 
+				new ValidacaoVO(TipoMensagem.WARNING, "Existe(m) diferença(s) preenchida(s) para o(s) produto(s) incorretamente!");
+			
+			validacao.setDados(linhasComErro);
+			
+			throw new ValidacaoException(validacao);
 		}
+		
 	}
 
 	
@@ -2314,6 +2320,11 @@ public class DiferencaEstoqueController {
 			List<RateioCotaVO> rateiosDiferenca = this.obterRateiosEdicaoDiferenca(idDiferenca);
 			
 			if(rateiosDiferenca!= null && !rateiosDiferenca.isEmpty()){
+			
+				if (TipoDirecionamentoDiferenca.NOTA.equals(diferencaVO.getTipoDirecionamento())) {
+					
+					diferencaVO.setQtdeEstoque(this.obterQuantidadeReparteNota(pe, rateiosDiferenca));
+				}
 				
 				result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).put("rateios",rateiosDiferenca).serialize();
 			}
@@ -2326,6 +2337,31 @@ public class DiferencaEstoqueController {
 			
 			result.use(CustomMapJson.class).put("diferenca", diferencaVO).put("idProdutoEdicao", pe.getId()).serialize();
 		}
+	}
+
+	private BigInteger obterQuantidadeReparteNota(ProdutoEdicao produtoEdicao,
+												  List<RateioCotaVO> rateiosDiferenca) {
+		
+		BigInteger quantidadeReparteNota = BigInteger.ZERO;
+			
+		Date dataEnvioNota = null;
+		Integer numeroCota = null;
+		
+		for (RateioCotaVO rateioCotaVO : rateiosDiferenca) {
+			
+			dataEnvioNota = rateioCotaVO.getDataEnvioNota();
+			numeroCota = rateioCotaVO.getNumeroCota();
+			
+			break;
+		}
+		
+		DetalheItemNotaFiscalDTO detalheItemNota = 
+			this.itemNotaEnvioService.obterItemNotaEnvio(
+				dataEnvioNota, numeroCota, produtoEdicao.getId());
+		
+		quantidadeReparteNota = detalheItemNota.getQuantidadeExemplares();
+			
+		return quantidadeReparteNota;
 	}
 	
 	
@@ -2349,6 +2385,11 @@ public class DiferencaEstoqueController {
 	private BigInteger obterReparteAtualProdutoEdicao(DiferencaVO diferencaVO, Long idProdutoEdicao) {
 		
 		EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(idProdutoEdicao);
+		
+		if (estoque == null) {
+			
+			return BigInteger.ZERO;
+		}
 		
 		if(diferencaVO.getTipoEstoque() == null){
 			return BigInteger.ZERO;
@@ -2538,7 +2579,7 @@ public class DiferencaEstoqueController {
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
 		List<DetalheItemNotaFiscalDTO> itensNotaEnvio = 
-			itemNotaEnvioService.obterItensNotaEnvio(dateNotaEnvio, numeroCota);
+			this.itemNotaEnvioService.obterItensNotaEnvio(dateNotaEnvio, numeroCota);
 		
 		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
 		

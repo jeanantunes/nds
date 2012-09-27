@@ -1861,6 +1861,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
+		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		
+		tipoMovimentoEstoqueCota.setIncideJuramentado(juramentada);
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				movimentoEstoqueService.gerarMovimentoCota(
 						null, 
@@ -1911,7 +1915,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		produtoEdicao.setId(conferenciaEncalheDTO.getIdProdutoEdicao());
 		
 		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(
-				conferenciaEncalheDTO.getDataRecolhimento(), 
 				produtoEdicao.getId(), 
 				usuario.getId(), 
 				conferenciaEncalheDTO.getQtdExemplar(), 

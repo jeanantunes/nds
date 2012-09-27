@@ -348,23 +348,61 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 			EstoqueProduto estoqueProduto = this.estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
 
-			MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-
-			movimentoEstoque.setData(dataAtual);
-			movimentoEstoque.setDataAprovacao(dataAtual);
-			movimentoEstoque.setDataCriacao(dataAtual);
-			movimentoEstoque.setEstoqueProduto(estoqueProduto);
-			movimentoEstoque.setProdutoEdicao(produtoEdicao);
-			movimentoEstoque.setQtde(transferencia.getQuantidadeTransferir());
-			movimentoEstoque.setTipoMovimento(tipoMovimento);
-			movimentoEstoque.setUsuario(usuario);
-
-			if (movimentoEstoque.getTipoMovimento().isAprovacaoAutomatica()) {
-
-				this.controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
-			}
-
-			this.movimentoEstoqueRepository.adicionar(movimentoEstoque);
+			gerarMovimentoEstoqueCota(usuario, tipoMovimento, dataAtual,
+					produtoEdicao, transferencia.getQuantidadeTransferir(), estoqueProduto);
 		}
-	}	
+	}
+
+	private void gerarMovimentoEstoqueCota(Usuario usuario,	TipoMovimento tipoMovimento, Date dataAtual,
+			ProdutoEdicao produtoEdicao, BigInteger quantidade, EstoqueProduto estoqueProduto) {
+		
+		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
+
+		movimentoEstoque.setData(dataAtual);
+		movimentoEstoque.setDataAprovacao(dataAtual);
+		movimentoEstoque.setDataCriacao(dataAtual);
+		movimentoEstoque.setEstoqueProduto(estoqueProduto);
+		movimentoEstoque.setProdutoEdicao(produtoEdicao);
+		movimentoEstoque.setQtde(quantidade);
+		movimentoEstoque.setTipoMovimento(tipoMovimento);
+		movimentoEstoque.setUsuario(usuario);
+
+		if (movimentoEstoque.getTipoMovimento().isAprovacaoAutomatica()) {
+
+			this.controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
+		}
+
+		this.movimentoEstoqueRepository.adicionar(movimentoEstoque);
+	}
+
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.MovimentoEstoqueCotaService#envioConsignadoNotaCancelada(br.com.abril.nds.model.fiscal.nota.NotaFiscal)
+	 */
+	@Override
+	public void envioConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada) {
+		
+		TipoMovimentoEstoque tipoMovimento = 
+				this.tipoMovimentoEstoqueRepository.
+					buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO);
+		
+		List<ProdutoServico> listaProdutosServicosNotaCancelada = notaFiscalCancelada.getProdutosServicos();
+		
+		for (ProdutoServico produtoServico : listaProdutosServicosNotaCancelada) {
+			
+			for (MovimentoEstoqueCota movimentoEstoqueCota : produtoServico.getListaMovimentoEstoqueCota()) {
+				
+				ProdutoEdicao produtoEdicao = movimentoEstoqueCota.getProdutoEdicao();
+				
+				EstoqueProduto estoqueProduto = this.estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
+				
+				Usuario usuario = this.usuarioService.getUsuarioLogado();
+				
+				this.gerarMovimentoEstoqueCota(usuario, tipoMovimento, 
+						new Date(), produtoEdicao, movimentoEstoqueCota.getQtde(), estoqueProduto);
+				
+			}
+			
+		}
+		
+	}
 }

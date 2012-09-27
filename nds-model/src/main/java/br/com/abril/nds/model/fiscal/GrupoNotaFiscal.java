@@ -31,6 +31,10 @@ public enum GrupoNotaFiscal {
 	 */
 	NF_VENDA(TipoOperacao.SAIDA);
 	
+	
+	
+	
+	
 	private TipoOperacao tipoOperacao;
 	
 	private GrupoNotaFiscal(TipoOperacao tipoOperacao) {

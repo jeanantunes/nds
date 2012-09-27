@@ -519,20 +519,13 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 	
 	/**
-	 * Obtem Roteirizacao por Box e Cota
-	 * @param idBox
-	 * @param numeroCota
-	 * @return Roteirizacao
+	 * {@inheritDoc}
 	 */
 	@Override
-	public Roteirizacao obterRoteirizacaoPorBoxECota(Long idBox, Integer numeroCota) {
-		
+	public Roteirizacao obterRoteirizacaoPorBox(Long idBox) {
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class, "roteirizacao");
 		criteria.createAlias("roteirizacao.box","box");
-		criteria.createAlias("box.cotas", "cota");
 		criteria.add(Restrictions.eq("box.id", idBox));
-		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
-		
 		return (Roteirizacao) criteria.uniqueResult();
 	}
 

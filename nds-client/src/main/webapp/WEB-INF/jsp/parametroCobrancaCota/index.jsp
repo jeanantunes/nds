@@ -42,6 +42,9 @@ $(function(){
 #dialog-unificacao fieldset {
 	width: 440px !important;
 }
+#fornecedoresCota label{
+	margin:0px!important;
+}
 </style>
 
 
@@ -61,13 +64,14 @@ $(function(){
 <input type="hidden" name="tipoFormaCobranca" id="tipoFormaCobranca" />
 
 <div name="formFinanceiro" id="formFinanceiro">
-
+<fieldset style="width:880px!important; margin:5px;">
+ 	<legend>Financeiro</legend>
 
 	<table width="100%" border="0" cellspacing="1" cellpadding="1">
 		<tbody>
 			<tr>
-				<td width="175">Fator Vencimento de Cobrança em D+:</td>
-				<td width="175"><select id="fatorVencimento"
+				<td width="195">Fator Vencimento de Cobrança em D+:</td>
+				<td width="157"><select id="fatorVencimento"
 					name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
 						<option>1</option>
 						<option>2</option>
@@ -96,7 +100,7 @@ $(function(){
 					type="checkbox" style="float: left;"
 					onclick="parametroCobrancaCotaController.exibe_form_contrato(this.checked);" />
 				</td>
-				<td width="373">
+				<td width="377">
 					<div class="form-contrato-hidden-class">
 						<span name="botaoContrato" id="botaoContrato" class="bt_imprimir">
 							<a href="javascript:;"
@@ -117,12 +121,12 @@ $(function(){
 							class="periodos" style="">
 							<tbody>
 								<tr>
-									<td width="20%">Dt. Início:</td>
-									<td width="19%">
+									<td width="15%">Dt. Início:</td>
+									<td width="27%">
 									<input type="text" name="dateInicio" class="dataInputMask"
 										id="parametroCobrancaDateInicio" style="width: 70px;" 
 										onblur="parametroCobrancaCotaController.calcularDataTermino()"></td>
-									<td width="23%">Dt. Término:</td>
+									<td width="20%">Dt. Término:</td>
 									<td width="38%"><input type="text" name="dateTermino" class="dataInputMask"
 										id="parametroCobrancaDateTermino" style="width: 70px;"></td>
 								</tr>
@@ -195,7 +199,7 @@ $(function(){
 			</tr>
 		</tbody>
 	</table>
-
+	
 	<table width="770" border="0" cellspacing="1" cellpadding="1">
 		<tbody>
 			<tr>
@@ -222,22 +226,22 @@ $(function(){
 			</tr>
 		</tbody>
 	</table>
+	</fieldset>
 </div>
-
-<strong>Formas de Pagamento</strong>
-
-<table class="boletosUnificadosGrid"></table>
+<fieldset style="width:880px!important; margin:5px;">
+ 	<legend>Formas de Pagamento</legend>
+	<table class="boletosUnificadosGrid"></table>
 
 <br clear="all" />
 
-<span id="FINANCEIRObtnNovaFormaPagamento" class="bt_novos" title="Nova Unificação"> <a
+<span id="FINANCEIRObtnNovaFormaPagamento" class="bt_novos"> <a
 	href="javascript:;"
-	onclick="parametroCobrancaCotaController.popup_nova_unificacao();">
+	onclick="parametroCobrancaCotaController.popup_nova_unificacao();" rel="tipsy" title="Nova Forma de Pagamento">
 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"
-		hspace="5" border="0" /> Nova Forma de Pagamento
+		hspace="5" border="0" /> 
 </a>
 </span>
-
+</fieldset>
 
 <br clear="all" />
 
@@ -271,11 +275,7 @@ $(function(){
  
 				             </table>
 				             
-			                 <p><br clear="all" />
-				                 <br clear="all" />
-				                 <br clear="all" />
-				                 <br clear="all" />
-			                 </p>
+			                 
 			                 
 		                 </td>
 		                 
@@ -328,10 +328,10 @@ $(function(){
 		                     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="semanal">
 							        
 					             <tr>
-					                 <td>
+					                 <td width="12%">
 					                     <input type="checkbox" name="PS" id="PS" />
 					                 </td>    
-					                 <td>
+					                 <td width="88%">
 					                     <label for="PS">Segunda-feira</label>
 					                 </td>
 					             </tr>
