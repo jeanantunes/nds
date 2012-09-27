@@ -725,6 +725,12 @@ public class RoteirizacaoController {
 		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
+	@Post
+	@Path("/boxSelecionado")
+	public void boxSelecionado(Long idBox) {
+	    
+	}
+	
 	/**
 	 * Obtém lista de roteiros do box
 	 * @param idBox

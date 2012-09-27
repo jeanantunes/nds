@@ -5,15 +5,17 @@ import java.util.List;
 
 public class RoteirizacaoDTO implements Serializable{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2456984121L;
+	private static final long serialVersionUID = 1L;
 	
-	List<BoxRoteirizacaoDTO> listaBox;
-	List<RoteiroRoteirizacaoDTO> listaRoteiro;
-	List<RotaRoteirizacaoDTO> listaRota;
-	List<PdvRoteirizacaoDTO> listaPdv;
+	private Long id;
+
+	private List<BoxRoteirizacaoDTO> listaBox;
+	
+	private List<RoteiroRoteirizacaoDTO> listaRoteiro;
+	
+	private List<RotaRoteirizacaoDTO> listaRota;
+	
+	private List<PdvRoteirizacaoDTO> listaPdv;
 	
 	/**
 	 * @return the listaBox
