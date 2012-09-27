@@ -562,4 +562,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		diferencaEstoqueRepository.removerPorId(idDiferenca);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
+			  										 TipoEstoque tipoEstoque, Date dataMovimento) {
+		
+		return this.diferencaEstoqueRepository.obterQuantidadeTotalDiferencas(
+						codigoProduto, numeroEdicao, tipoEstoque, dataMovimento);
+	}
+	
 }
