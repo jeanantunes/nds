@@ -525,16 +525,20 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> listaCotaPdv, Long idRota) {
 		
-		PDV pdv;
+		List<PDV> pdvs = new ArrayList<PDV>();
 		Rota rota = rotaRepository.buscarPorId(idRota);
+		
 		for (PdvRoteirizacaoDTO item:listaCotaPdv){
-			
-			pdv = pdvRepository.buscarPorId(item.getId());
-			rota.getPdvs().add(pdv);
-			rotaRepository.alterar(rota);
+			PDV pdv = pdvRepository.buscarPorId(item.getId());
+			if (pdv!=null){
+			    pdvs.add(pdv);
+			}
 		}
 		
-		
+		if (pdvs.size() > 0){
+		    rota.addAllPdv(pdvs);
+	    	rotaRepository.merge(rota);
+		}
 	}
 
 	/**

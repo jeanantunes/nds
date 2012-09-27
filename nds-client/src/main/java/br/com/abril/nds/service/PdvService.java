@@ -3,6 +3,8 @@ package br.com.abril.nds.service;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -15,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
@@ -168,6 +171,13 @@ public interface PdvService {
      * @return imagem do PDV do histórico de titularidade da cota
      */
     byte[] obterImagemHistoricoTitularidadePDV(Long idPdv);
+    
+    /**
+     * Obtem PDV por id
+     * @param idPdv
+     * @return PDV
+     */
+    public PDV obterPDVporId(Long idPdv);
     
 }
 

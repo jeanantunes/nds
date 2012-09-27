@@ -185,7 +185,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
 		criteria.createAlias("rota", "rota") ;
 		criteria.createAlias("rota.roteiro", "roteiro") ;
-		criteria.createAlias("roteiro.box", "box") ;
+		criteria.createAlias("roteiro.roteirizacao", "roteirizacao") ;
+		criteria.createAlias("roteirizacao.box", "box") ;
 		criteria.createAlias("pdv", "pdv") ;
 		criteria.createAlias("pdv.cota", "cota") ;
 		criteria.createAlias("cota.pessoa", "pessoa") ;
@@ -316,12 +317,12 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		hql.append("from Roteirizacao roteirizacao ")
 			.append(" join roteirizacao.roteiros roteiro " )
-			.append(" join roteiro.box box ")
+			.append(" join roteirizacao.box box ")
 			.append(" join roteiro.rotas rota " )
 			.append(" Join rota.pdvs pdv ")
 			.append(" Join pdv.cota cota ")
 			.append(" join cota.pessoa pessoa ")
-			.append(" where roteiro.box.id = box.id "); 
+			.append(" where roteirizacao.box.id = box.id "); 
 			
 		if(filtro.getIdBox()!= null){
 			hql.append(" and box.id =:idBox ");
@@ -357,7 +358,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		.append(" join pdv.rotas rota 				")
 		.append(" join rota.roteiro roteiro 		")
 		
-		.append(" where roteiro.box.id = box.id 	"); 
+		.append(" where roteirizacao.box.id = box.id 	"); 
 			
 		if(idBox!= null){
 			hql.append(" and box.id =:idBox ");
@@ -478,7 +479,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			List<Long> idsBoxes) {
 		
 		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
-		criteria.createAlias("roteiro.box","box");
+		criteria.createAlias("roteiro.roteirizacao","roteirizacao");
+		criteria.createAlias("roteirizacao.box","box");
 		criteria.add(Restrictions.ilike("roteiro.descricaoRoteiro", "%" + nome.toLowerCase() + "%"));
 		criteria.add(Restrictions.in("box.id", idsBoxes));
 		

@@ -18,12 +18,16 @@ import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
+import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteirizacaoDTO.TipoEdicaoRoteirizacao;
+import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -33,12 +37,14 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
@@ -77,6 +83,9 @@ public class RoteirizacaoController {
 		
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private PdvService pdvService;
 	
 	@Autowired
 	private HttpSession session;
@@ -182,7 +191,7 @@ public class RoteirizacaoController {
 				roteiro.setRotas(null);
 				if ( roteiro.getRoteirizacao().getBox() != null ){ 
 					roteiro.getRoteirizacao().getBox().setCotas(null);
-					roteiro.getRoteirizacao().getBox().setRoteiros(null);
+					roteiro.getRoteirizacao().setRoteiros(null);
 				}	
 				listaRoteiroAutoComplete.add(new ItemAutoComplete(roteiro.getDescricaoRoteiro(), null,roteiro ));
 			}
@@ -796,6 +805,58 @@ public class RoteirizacaoController {
 	    RoteirizacaoDTO dto = roteirizacaoService.obterRoteirizacaoPorId(idRoteirizacao);
 	    setDTO(dto);
 	    result.use(CustomJson.class).from(dto).serialize();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void validaNovoPdv(List<PdvRoteirizacaoDTO> pdvs){
+		
+		PDV pdv = null;
+		for(PdvRoteirizacaoDTO itemPdv:pdvs){
+			pdv = this.pdvService.obterPDVporId(itemPdv.getId());
+			if (pdv.getRotas()!=null && pdv.getRotas().size() > 0 ){
+				
+			}
+		}
+		
+	}
+	
+	
+	/**
+	 * Adiciona PDV's selecionados no "popup de PSV's disponíveis" na lista principal de PDV's
+	 */
+	@Get
+	@Path("/adicionarNovosPdvs")
+	public void adicionarNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, Long idRota){
+        
+		//BUSCAR EOREITIZACAO NA SESSAO
+		RoteirizacaoDTO roteirizacao = null;
+		
+		
+		
+		
+		
+		for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacao.getRoteiros()){
+			for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
+				if(itemRota.getId().equals(idRota)){
+					itemRota.addAllPdv(pdvs);
+					break;
+				}
+			}
+		}
+
+		
+		//ADICIONAR ROTEIRIZACAO NA SESSAO
+		
+
+		result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
 	}
 	
 	

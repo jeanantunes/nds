@@ -2997,14 +2997,13 @@ public class Fixture {
 		return roteirizacao;
 	}
 	
-	public static Roteiro criarRoteiro(String descricaoRoteiro, Roteirizacao roteirizacao, Box box, TipoRoteiro tipoRoteiro ){
+	public static Roteiro criarRoteiro(String descricaoRoteiro, Roteirizacao roteirizacao, TipoRoteiro tipoRoteiro ){
 		
 		Roteiro roteiro = new Roteiro();
 		roteiro.setDescricaoRoteiro(descricaoRoteiro);
 		roteiro.setOrdem(0);
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		roteiro.setRoteirizacao(roteirizacao);
-		roteiro.setBox(box);
 		
 		return roteiro;
 	}
