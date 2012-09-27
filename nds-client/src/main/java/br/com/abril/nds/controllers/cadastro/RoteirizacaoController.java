@@ -783,12 +783,10 @@ public class RoteirizacaoController {
 	@Post
     @Path("/novaRoteirizacao")
 	public void novaRoteirizacao() {
-	    List<Box> disponiveis = new ArrayList<Box>();
-	    disponiveis.add(Box.ESPECIAL);
-	    disponiveis.addAll(roteirizacaoService.obterListaBoxLancamento(null));
+	    List<Box> disponiveis = roteirizacaoService.obterListaBoxLancamento(null);
 	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);
 	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
-	    setDTO(getDTO());
+	    setDTO(dto);
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
