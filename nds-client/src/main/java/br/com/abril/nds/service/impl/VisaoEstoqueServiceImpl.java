@@ -52,7 +52,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
-			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueJuramentado(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoque(filtro));
@@ -70,7 +70,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
-			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));
+			list.add(visaoEstoqueRepository.obterVisaoEstoqueJuramentado(filtro));
 			
 			filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
 			list.add(visaoEstoqueRepository.obterVisaoEstoqueHistorico(filtro));

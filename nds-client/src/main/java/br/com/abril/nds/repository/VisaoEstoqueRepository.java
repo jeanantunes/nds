@@ -13,6 +13,8 @@ public interface VisaoEstoqueRepository {
 	
 	VisaoEstoqueDTO obterVisaoEstoqueHistorico(FiltroConsultaVisaoEstoque filtro);
 	
+	VisaoEstoqueDTO obterVisaoEstoqueJuramentado(FiltroConsultaVisaoEstoque filtro);
+	
 	List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro);
 
 }
