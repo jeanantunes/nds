@@ -2,6 +2,8 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.dto.RoteirizacaoDTO.AcaoRegistro;
+
 public class PdvRoteirizacaoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -22,6 +24,7 @@ public class PdvRoteirizacaoDTO implements Serializable {
 	
 	private Boolean selecionado;
 	
+	private AcaoRegistro acao;
 	
 	public PdvRoteirizacaoDTO(){
 		
@@ -104,6 +107,19 @@ public class PdvRoteirizacaoDTO implements Serializable {
 	public void setSelecionado(Boolean selecionado) {
 		this.selecionado = selecionado;
 	}
-	
+
+	/**
+	 * @return the acao
+	 */
+	public AcaoRegistro getAcao() {
+		return acao;
+	}
+
+	/**
+	 * @param acao the acao to set
+	 */
+	public void setAcao(AcaoRegistro acao) {
+		this.acao = acao;
+	}
 
 }
