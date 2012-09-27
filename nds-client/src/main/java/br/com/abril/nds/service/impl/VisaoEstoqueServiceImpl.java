@@ -90,7 +90,13 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 	@Transactional
 	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
 		
-		List<? extends VisaoEstoqueDetalheDTO> list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
+		List<? extends VisaoEstoqueDetalheDTO> list = null;
+		
+		if (filtro.getTipoEstoque().equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
+			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
+		} else {
+			list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
+		}
 		
 		BigDecimal precoCapa;
 		BigDecimal qtde;

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
@@ -161,13 +162,53 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 	}
 	
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VisaoEstoqueDetalheJuramentadoDTO> obterVisaoEstoqueDetalheJuramentado(FiltroConsultaVisaoEstoque filtro) {
+		
+		String coluna = this.getColunaQtde(filtro.getTipoEstoque());
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT co.numeroCota as cota")
+		   .append("       ,co.pessoa.nome as nome")
+		   .append("       ,pe.id as produtoEdicaoId")
+		   .append("       ,pe.codigo as codigo")
+		   .append("       ,pe.nomeComercial as produto")
+		   .append("       ,pe.numeroEdicao as edicao")
+		   .append("       ,pe.precoVenda as precoCapa")
+		   .append("       ,lan.dataLancamentoDistribuidor as lcto")
+		   .append("       ,lan.dataRecolhimentoDistribuidor as rclto")
+		   .append("       ,ep." + coluna + " as qtde")
+		   .append("   FROM EstoqueProdutoCotaJuramentado as ep ")
+		   .append("   JOIN ep.cota as co ")
+		   .append("   JOIN ep.produtoEdicao as pe ")
+		   .append("   JOIN pe.lancamentos as lan ");
+		if(filtro.getIdFornecedor() != -1) {
+			hql.append("   JOIN pe.produto.fornecedores f ");
+		}
+		hql.append("  WHERE ep." + coluna + " > 0 ");
+		hql.append("    AND ep.data = :data ");
+		if(filtro.getIdFornecedor() != -1) {
+			hql.append("    AND f.id = :idFornecedor ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", filtro.getDataMovimentacao());
+		if(filtro.getIdFornecedor() != -1) {
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(VisaoEstoqueDetalheJuramentadoDTO.class));
+
+		return query.list();
+	}
+	
+	
 	private String getColunaQtde(String tipoEstoque) {
 		
 		if (tipoEstoque.equals(TipoEstoque.LANCAMENTO.toString())) {
 			return "qtde";
-		}
-		if (tipoEstoque.equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
-			return "qtdeJuramentado";
 		}
 		if (tipoEstoque.equals(TipoEstoque.SUPLEMENTAR.toString())) {
 			return "qtdeSuplementar";
