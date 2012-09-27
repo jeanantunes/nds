@@ -174,6 +174,12 @@ public interface RoteirizacaoService {
 	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros);
 	
 	/**
+	 * Obtém PDVS's disponiveis
+	 * @return List<PdvRoteirizacaoDTO>
+	 */
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis();
+	
+	/**
 	 * Inclui Cota Pdv na Roteirização
 	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
 	 * @param idRota

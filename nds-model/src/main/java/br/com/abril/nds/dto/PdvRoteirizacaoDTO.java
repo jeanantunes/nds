@@ -2,12 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.dto.RoteirizacaoDTO.AcaoRegistro;
+
 public class PdvRoteirizacaoDTO implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 201200000L;
+	private static final long serialVersionUID = 1L;
 	
 	private Long id;
 	
@@ -25,21 +24,12 @@ public class PdvRoteirizacaoDTO implements Serializable {
 	
 	private Boolean selecionado;
 	
+	private AcaoRegistro acao;
 	
 	public PdvRoteirizacaoDTO(){
 		
 	}
 
-	/**
-	 * @param id
-	 * @param pdv
-	 * @param origem
-	 * @param endereco
-	 * @param cota
-	 * @param nome
-	 * @param ordem
-	 * @param selecionado
-	 */
 	public PdvRoteirizacaoDTO(Long id, String pdv, String origem,
 			String endereco, String cota, String nome, Integer ordem,
 			Boolean selecionado) {
@@ -117,6 +107,19 @@ public class PdvRoteirizacaoDTO implements Serializable {
 	public void setSelecionado(Boolean selecionado) {
 		this.selecionado = selecionado;
 	}
-	
+
+	/**
+	 * @return the acao
+	 */
+	public AcaoRegistro getAcao() {
+		return acao;
+	}
+
+	/**
+	 * @param acao the acao to set
+	 */
+	public void setAcao(AcaoRegistro acao) {
+		this.acao = acao;
+	}
 
 }

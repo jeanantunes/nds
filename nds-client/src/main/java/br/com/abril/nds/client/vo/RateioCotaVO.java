@@ -54,6 +54,24 @@ public class RateioCotaVO implements Serializable {
 
 
 	/**
+	 * @return the dataEnvioNota
+	 */
+	public Date getDataEnvioNota() {
+		return dataEnvioNota;
+	}
+
+
+
+	/**
+	 * @param dataEnvioNota the dataEnvioNota to set
+	 */
+	public void setDataEnvioNota(Date dataEnvioNota) {
+		this.dataEnvioNota = dataEnvioNota;
+	}
+
+
+
+	/**
 	 * @param idRateio the idRateio to set
 	 */
 	public void setIdRateio(Long idRateio) {
@@ -164,19 +182,6 @@ public class RateioCotaVO implements Serializable {
 		this.quantidade = quantidade;
 	}
 
-	/**
-	 * @return the dataEnvioNota
-	 */
-	public Date getDataEnvioNota() {
-		return dataEnvioNota;
-	}
-
-	/**
-	 * @param dataEnvioNota the dataEnvioNota to set
-	 */
-	public void setDataEnvioNota(Date dataEnvioNota) {
-		this.dataEnvioNota = dataEnvioNota;
-	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

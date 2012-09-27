@@ -154,21 +154,24 @@
 				<tr>
 					<td width="73">Nota de Envio:</td>
 					<td width="124">
-						<input name="dateNotaEnvio" type="text" style="width:80px;" id="dateNotaEnvio" />
+						<div id="divDataNotaEnvio">
+							<input name="dateNotaEnvio" type="text" style="width:80px;" class="viewNotaEnvio" id="dateNotaEnvio" />
+						</div>
+						<input type="hidden" name="rateioIDInputHiddenNota"  id="rateioIDInputHiddenNota"/>
 					</td>
 					<td width="27">Cota:</td>
 					<td width="118">
-						<input type="text" style="width:80px; float:left; margin-right:5px;" id="cotaInputNota" maxlength="255"
+						<input class="viewNotaEnvio" type="text" style="width:80px; float:left; margin-right:5px;" id="cotaInputNota" maxlength="255"
 							onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInputNota, nomeCotaNota, true);" />
 					</td>
 					<td width="32">Nome:</td>
 					<td width="167">
-						<input type="text" style="width:160px;" id="nomeCotaNota" maxlength="255"
+						<input class="viewNotaEnvio" type="text" style="width:160px;" id="nomeCotaNota" maxlength="255"
 							onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeCotaNota);" 
 							onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInputNota, nomeCotaNota);" />
 					</td>
 					<td width="16">
-						<img src="${pageContext.request.contextPath}/images/ico_add.gif" width="16" height="16" alt="Incluir"
+						<img id="incluirNovosProduto" src="${pageContext.request.contextPath}/images/ico_add.gif" width="16" height="16" alt="Incluir"
 							onclick="lancamentoNovoController.pesquisarProdutosNota();"/>
 					</td>
           		</tr>
@@ -190,7 +193,7 @@
 
 	<br />
 	
-	<span class="bt_add">
+	<span id="viewIncluirNovaDiferenca" class="bt_add ">
 		<a href="javascript:;" onclick="lancamentoNovoController.incluirNovo();">Incluir Novo</a>
 	</span>
 	

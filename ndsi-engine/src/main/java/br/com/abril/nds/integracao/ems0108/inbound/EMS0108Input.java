@@ -16,8 +16,8 @@ public class EMS0108Input implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Date dataMovimento;
-	private Long codigoPublicacao;
-	private Long edicao;
+	private String codigoPublicacao;
+	private Long edicaoLancamento;
 	private Long edicaoRecolhimento;
 	private Date dataLancamentoRecolhimentoProduto;
 	private String condRelancamento;
@@ -27,8 +27,8 @@ public class EMS0108Input implements Serializable {
 	private String tipoRecolhimento;
 	private String condCobrancaTotal;
 	private String condProdutoEspecial;
-	private BigDecimal pesoProduto;
-	private Long codigoBarrasFisicoProduto;
+	private Long pesoProduto;
+	private String codigoBarrasFisicoProduto;
 
 	@Field(offset = 1, length = 8)
 	public Date getDataMovimento() {
@@ -40,21 +40,21 @@ public class EMS0108Input implements Serializable {
 	}
 
 	@Field(offset = 9, length = 8)
-	public Long getCodigoPublicacao() {
+	public String getCodigoPublicacao() {
 		return codigoPublicacao;
 	}
 
-	public void setCodigoPublicacao(Long codigoPublicacao) {
+	public void setCodigoPublicacao(String codigoPublicacao) {
 		this.codigoPublicacao = codigoPublicacao;
 	}
 
 	@Field(offset = 17, length = 4)
-	public Long getEdicao() {
-		return edicao;
+	public Long getEdicaoLancamento() {
+		return edicaoLancamento;
 	}
 
-	public void setEdicao(Long edicao) {
-		this.edicao = edicao;
+	public void setEdicaoLancamento(Long edicao) {
+		this.edicaoLancamento = edicao;
 	}
 
 	@Field(offset = 21, length = 4)
@@ -141,20 +141,20 @@ public class EMS0108Input implements Serializable {
 
 	@Field(offset = 40, length = 5)
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = false)
-	public BigDecimal getPesoProduto() {
+	public Long getPesoProduto() {
 		return pesoProduto;
 	}
 
-	public void setPesoProduto(BigDecimal pesoProduto) {
+	public void setPesoProduto(Long pesoProduto) {
 		this.pesoProduto = pesoProduto;
 	}
 
 	@Field(offset = 45, length = 18)
-	public Long getCodigoBarrasFisicoProduto() {
+	public String getCodigoBarrasFisicoProduto() {
 		return codigoBarrasFisicoProduto;
 	}
 
-	public void setCodigoBarrasFisicoProduto(Long codigoBarrasFisicoProduto) {
+	public void setCodigoBarrasFisicoProduto(String codigoBarrasFisicoProduto) {
 		this.codigoBarrasFisicoProduto = codigoBarrasFisicoProduto;
 	}
 
@@ -194,7 +194,7 @@ public class EMS0108Input implements Serializable {
 						: dataLancamentoRecolhimentoProduto.hashCode());
 		result = prime * result
 				+ ((dataMovimento == null) ? 0 : dataMovimento.hashCode());
-		result = prime * result + ((edicao == null) ? 0 : edicao.hashCode());
+		result = prime * result + ((edicaoLancamento == null) ? 0 : edicaoLancamento.hashCode());
 		result = prime
 				* result
 				+ ((edicaoRecolhimento == null) ? 0 : edicaoRecolhimento
@@ -265,10 +265,10 @@ public class EMS0108Input implements Serializable {
 				return false;
 		} else if (!dataMovimento.equals(other.dataMovimento))
 			return false;
-		if (edicao == null) {
-			if (other.edicao != null)
+		if (edicaoLancamento == null) {
+			if (other.edicaoLancamento != null)
 				return false;
-		} else if (!edicao.equals(other.edicao))
+		} else if (!edicaoLancamento.equals(other.edicaoLancamento))
 			return false;
 		if (edicaoRecolhimento == null) {
 			if (other.edicaoRecolhimento != null)
@@ -297,7 +297,7 @@ public class EMS0108Input implements Serializable {
 	public String toString() {
 		return "EMS0108Input [dataMovimento=" + dataMovimento
 				+ ", codigoPublicacao=" + codigoPublicacao + ", edicao="
-				+ edicao + ", edicaoRecolhimento=" + edicaoRecolhimento
+				+ edicaoLancamento + ", edicaoRecolhimento=" + edicaoRecolhimento
 				+ ", dataLancamentoRecolhimentoProduto="
 				+ dataLancamentoRecolhimentoProduto + ", condRelancamento="
 				+ condRelancamento + ", condImprimeBoleto=" + condImprimeBoleto

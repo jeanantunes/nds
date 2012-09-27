@@ -1,10 +1,14 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.abril.nds.dto.RoteirizacaoDTO.AcaoRegistro;
 
 public class RotaRoteirizacaoDTO implements Serializable {
 
-	private static final long serialVersionUID = -4264600745134340990L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	
@@ -14,6 +18,9 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	
 	private Boolean selecionado;
 
+	private List<PdvRoteirizacaoDTO> pdvs;
+	
+	private AcaoRegistro acao;
 	
 	public RotaRoteirizacaoDTO() {
 		
@@ -82,6 +89,45 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the listaPdv
+	 */
+	public List<PdvRoteirizacaoDTO> getPdvs() {
+		return pdvs;
+	}
+
+	/**
+	 * @param listaPdv the listaPdv to set
+	 */
+	public void setPdvs(List<PdvRoteirizacaoDTO> pdvs) {
+		this.pdvs = pdvs;
+	}
+	
+	/**
+	 * Adiciona um pdv à rota
+	 * @param pdv pdv para inclusão
+	 */
+	public void addPdv(PdvRoteirizacaoDTO pdv) {
+		if (pdvs == null) {
+			pdvs = new ArrayList<PdvRoteirizacaoDTO>();
+		}
+		pdvs.add(pdv);
+	}
+
+	/**
+	 * @return the acao
+	 */
+	public AcaoRegistro getAcao() {
+		return acao;
+	}
+
+	/**
+	 * @param acao the acao to set
+	 */
+	public void setAcao(AcaoRegistro acao) {
+		this.acao = acao;
 	}
 	
 }
