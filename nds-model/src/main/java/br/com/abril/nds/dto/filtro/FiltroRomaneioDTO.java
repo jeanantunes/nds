@@ -2,15 +2,14 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-@Exportable
 public class FiltroRomaneioDTO implements Serializable {
 
 	private static final long serialVersionUID = -3783996689743491442L;
@@ -18,7 +17,9 @@ public class FiltroRomaneioDTO implements Serializable {
 	private Long idBox;
 	private Long idRoteiro;
 	private Long idRota;
-	private String nomeRota;	
+	private String nomeRota;
+	private Date data;
+	private List<Long> produtos;
 	
 	private PaginacaoVO paginacao;
 	
@@ -90,44 +91,39 @@ public class FiltroRomaneioDTO implements Serializable {
 	
 	@Export(label = "Roteiro" , exhibitionOrder = 1, alignment = Alignment.LEFT)
 	public String getRoteiro() {
+		
 		if(getIdRoteiro() != null){
-			if(getIdRoteiro() == -1){
-				return "Todos";
-		}
-			return   "("+ getIdRoteiro() + ")";
 			
+			return   "("+ getIdRoteiro() + ")";
 		}else{
-			return "-";
+			
+			return "Todos";
 		}
 		
 	}
 	
-	@Export(label = "Entrega / Box" , exhibitionOrder = 2, alignment = Alignment.LEFT)
 	public String getBox() {
+		
 		if(getIdBox() != null){
-			if(getIdBox() == -1){
-				return "Todos";
-			}			
+			
 			return getIdBox().toString();
 		}else{
-			return "-";
+			
+			return "Todos";
 		}
 	}
-
-	@Export(label = "Rota" , exhibitionOrder = 3, alignment = Alignment.LEFT)
+	
 	public String getRota() {
+		
 		if(getIdRota() != null){
-			if(getIdRota() == -1){
-				return "Todos";
-			}			
+						
 			return "(" + getIdRota() + ") " + getNomeRota();		
 		}else{
-			return "-";
+			return "Todos";
 		}
 		
 	}
 	
-	@Export(label = "Data Geração" , exhibitionOrder = 4, alignment = Alignment.LEFT)
 	public String getDataAtual(){
 		Date dataAtual = new Date();		
 		return DateUtil.formatarData(dataAtual, Constantes.DATE_PATTERN_PT_BR);
@@ -141,4 +137,19 @@ public class FiltroRomaneioDTO implements Serializable {
 		this.nomeRota = nomeRota;
 	}
 
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public List<Long> getProdutos() {
+		return produtos;
+	}
+
+	public void setProdutos(List<Long> produtos) {
+		this.produtos = produtos;
+	}
 }

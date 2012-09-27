@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.repository.RoteiroRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
@@ -60,14 +61,9 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
 			
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Roteiro> buscarRoteiroDeBox(Long idBox) {
-		
-		Criteria criteria  = getSession().createCriteria(Roteiro.class);
-		criteria.add(Restrictions.eq("box.id", idBox));
-		criteria.addOrder(Order.asc("descricaoRoteiro"));
-		return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+	    return buscarRoteiroDeBox(idBox, null);
 	}
 	
 
@@ -86,6 +82,23 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
 		criteria.addOrder(Order.asc("descricaoRoteiro"));
 		return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+	@SuppressWarnings("unchecked")
+    @Override
+    public List<Roteiro> buscarRoteiroDeBox(Long idBox, String descricaoRoteiro) {
+        Criteria criteria  = getSession().createCriteria(Roteiro.class);
+        if (idBox != null) {
+            criteria.add(Restrictions.eq("box.id", idBox));
+        }
+        if (!StringUtil.isEmpty(descricaoRoteiro)) {
+            criteria.add(Restrictions.ilike("descricaoRoteiro", descricaoRoteiro, MatchMode.START));
+        }
+        criteria.addOrder(Order.asc("descricaoRoteiro"));
+        return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
 
 	@SuppressWarnings("unchecked")
 	@Override

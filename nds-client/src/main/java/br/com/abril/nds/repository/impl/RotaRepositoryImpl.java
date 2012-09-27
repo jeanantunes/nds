@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
@@ -92,10 +93,12 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome , MatchMode matchMode) {
+	public List<Rota> buscarRotaPorNome(Long roteiroId, String rotaNome, MatchMode matchMode) {
 		Criteria criteria = getSession().createCriteria(Rota.class);
 		criteria.add(Restrictions.eq("roteiro.id", roteiroId));
-		criteria.add(Restrictions.ilike("descricaoRota", rotaNome ,matchMode));
+		if (!StringUtil.isEmpty(rotaNome)) {
+		    criteria.add(Restrictions.ilike("descricaoRota", rotaNome, matchMode));
+		}
 		return criteria.list();
 	}
 	
@@ -146,10 +149,13 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	@Override
 	public Rota obterRotaPorPDV(Long idPDV, Long idCota) {
 		
-		StringBuilder hql = new StringBuilder("select rot.rota from Roteirizacao rot ");
-		hql.append(" where rot.pdv.id = :idPDV ")
-		   .append(" and rot.pdv.caracteristicas.pontoPrincipal = :principal ")
-		   .append(" and rot.pdv.cota.id = :idCota ");
+		StringBuilder hql = new StringBuilder("select rot from Rota rot ");
+		
+		hql.append(" join rot.pdvs pdvRota ")
+		
+		   .append(" where pdvRota.id = :idPDV ")
+		   .append(" and pdvRota.caracteristicas.pontoPrincipal = :principal ")
+		   .append(" and pdvRota.cota.id = :idCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idPDV", idPDV);

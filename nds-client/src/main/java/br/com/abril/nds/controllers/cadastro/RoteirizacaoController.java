@@ -4,15 +4,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
+import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -29,6 +35,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
@@ -75,6 +82,11 @@ public class RoteirizacaoController {
 	private HttpSession session;
 
 	private static final String FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE="filtroPesquisa";
+	
+	/**
+	 * Chave para armazenamento do DTO de roteirização na sessão
+	 */
+	private static final String ROTEIRIZACAO_DTO_SESSION_KEY = "ROTEIRIZACAO_DTO_SESSION_KEY";
 
 
 	@Path("/")
@@ -292,13 +304,11 @@ public class RoteirizacaoController {
 		return roteiro;
 	}
 	
-	@Path("/pesquisarRotaPorNome")
-	public void pesquisarRotaPorNome(Long roteiroId, String nomeRota,
-			String sortname, String sortorder, int rp, int page) {
-		List<Rota> lista = roteirizacaoService.buscarRotaPorNome(roteiroId, nomeRota, MatchMode.ANYWHERE) ;
-		int quantidade = lista.size();
-		result.use(FlexiGridJson.class).from(lista).total(quantidade).page(page).serialize();
-
+	@Post
+	@Path("/obterRotasRoteiro")
+	public void obterRotas(Long roteiroId, String nomeRota) {
+		List<Rota> lista = roteirizacaoService.buscarRotaPorNome(roteiroId, nomeRota, MatchMode.START) ;
+		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
 	@Path("/iniciaTelaCotas")
@@ -704,25 +714,20 @@ public class RoteirizacaoController {
 	
 	//NOVA ROTEIRIZAÇÃO
 	
-	/**
-	 * Obtém lista de box do tipo lançamento
-	 */
-	@Get
-	@Path("/obterBoxLancamento")
-	public void obterBoxLancamento(){
-		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento();
-		result.use(FlexiGridJson.class).from(listaBox).total(listaBox.size()).page(1).serialize();
-	}
-	
-	/**
-	 * Obtém lista de roteiros do box
-	 * @param idBox
-	 */
-	@Get
-	@Path("/obterRoteirosBox")
-	public void obterRoteirosBox(Long idBox){
-		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(idBox);
-		result.use(FlexiGridJson.class).from(listaRoteiro).total(listaRoteiro.size()).page(1).serialize();
+	@Post
+	@Path("/boxSelecionado")
+	public void boxSelecionado(Long idBox) {
+	   RoteirizacaoDTO dto = getDTO();
+	   if (dto.isNovo() && !Box.ESPECIAL.getId().equals(idBox)) {
+	       RoteirizacaoDTO existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
+	       if (existente != null) {
+	           dto = setDTO(existente);
+	       } else {
+	           Box box = boxService.buscarPorId(idBox);
+	           dto.setBox(new BoxRoteirizacaoDTO(box.getId(), box.getNome()));
+	       }
+	   }
+	   result.use(CustomJson.class).from(dto).serialize();
 	}
 	
 	/**
@@ -731,26 +736,69 @@ public class RoteirizacaoController {
 	 */
 	@Get
 	@Path("/obterRotasRoteiro")
-	public void obterRotasRoteiro(Long idRoteiro){
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro);
+	public void obterRotasRoteiro(Long idRoteiro, String descricaoRota){
+		
+		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro, descricaoRota);
+		
 		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
 	}
 	
 	/**
-	 * Obtém dados da roteirização para edição
-	 * @param idCota
-	 * @param idRoteirizacao - Utilizado para obter as listas de box, roteiro e rota
-	 * @param idBox - Box Selecionado
-	 * @param idRoteiro - Roteiro Selecionado
-	 * @param idRota - Rota Selecionada
+	 * Obtém PDV's para a inclusão de rota pdv na roteirização
 	 */
 	@Get
-	@Path("/editarRoteirizacao")
-	public void editarRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros){
+	@Path("/obterPdvsDisponiveis")
+	public void obterPdvsDisponiveis(){
+        
+		List<PdvRoteirizacaoDTO> pdvs = this.roteirizacaoService.obterPdvsDisponiveis();
 		
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(parametros.getIdRoteiro());
-		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
-		
+		result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
 	}
+	
+	/**
+	 * Recupera o DTO de roteirização da sessão
+	 * @return DTO armazenado na sessão ou null caso não exista
+	 */
+	public RoteirizacaoDTO getDTO() {
+	    return (RoteirizacaoDTO) session.getAttribute(ROTEIRIZACAO_DTO_SESSION_KEY);
+	}
+	
+	/**
+	 * Armazena o DTO de roteirização na sessão
+	 * @param dto DTO com as informações da roteirização 
+	 */
+	public RoteirizacaoDTO setDTO(RoteirizacaoDTO dto) {
+	    session.setAttribute(ROTEIRIZACAO_DTO_SESSION_KEY, dto);
+	    return dto;
+	}
+	
+	/**
+	 * Remove o DTO de roteirização da sessão da sessão
+	 */
+	public void clearDTO() {
+	    setDTO(null);
+	}
+	
+	
+	@Get
+    @Path("/novaRoteirizacao")
+	public void novaRoteirizacao() {
+	    List<Box> disponiveis = new ArrayList<Box>();
+	    disponiveis.add(Box.ESPECIAL);
+	    disponiveis.addAll(roteirizacaoService.obterListaBoxLancamento(null));
+	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);
+	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
+	    setDTO(getDTO());
+	    result.use(CustomJson.class).from(dto).serialize();
+	}
+	
+	@Get
+	@Path("/editarRoteirizacao")
+	public void editarRoteirizacao(Long idRoteirizacao) {
+	    RoteirizacaoDTO dto = roteirizacaoService.obterRoteirizacaoPorId(idRoteirizacao);
+	    setDTO(dto);
+	    result.use(CustomJson.class).from(dto).serialize();
+	}
+	
 	
 }

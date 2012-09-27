@@ -226,7 +226,7 @@ var MANTER_COTA = $.extend(true, {
 
             var paramCota =  "'" +row.cell.numero +"'," + "'"+ row.cell.idCota + "'" ;
 
-            var linkEdicao = '<a href="javascript:;" onclick="MANTER_COTA.editar('+ paramCota +');" style="cursor:pointer">' +
+            var linkEdicao = '<a href="javascript:;" onclick="MANTER_COTA.editar('+ paramCota +');" style="cursor:pointer; margin-right:10px;">' +
                 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar Cota" />' +
                 '</a>';
 
@@ -759,7 +759,7 @@ var COTA_DESCONTO = $.extend(true,
                 }, {
                     display : 'Produto',
                     name : 'nomeProduto',
-                    width : 350,
+                    width : 395,
                     sortable : true,
                     align : 'left'
                 }, {
@@ -783,7 +783,7 @@ var COTA_DESCONTO = $.extend(true,
                 }],
                 sortname : "dataAlteracao",
                 sortorder : "asc",
-                width : 810,
+                width : 860,
                 height : 150
             });
         },
@@ -807,7 +807,7 @@ var COTA_DESCONTO = $.extend(true,
                 }, {
                     display : 'Tipo',
                     name : 'descTipoDesconto',
-                    width : 120,
+                    width : 165,
                     sortable : true,
                     align : 'left'
                 }, {
@@ -819,7 +819,7 @@ var COTA_DESCONTO = $.extend(true,
                 }],
                 sortname : "dataAlteracao",
                 sortorder : "asc",
-                width : 810,
+                width : 860,
                 height : 150
             });
         },

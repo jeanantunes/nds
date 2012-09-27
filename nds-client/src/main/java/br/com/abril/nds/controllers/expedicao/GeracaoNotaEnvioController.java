@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
@@ -37,6 +38,7 @@ import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -133,10 +135,10 @@ public class GeracaoNotaEnvioController {
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
 		List<ConsultaNotaEnvioDTO> cotasAusentes =	
-				this.geracaoNotaEnvioService.oterCotasSuspensasAusentes(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
-						filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), filtro.getIdRoteiro(), 
-						filtro.getIdRota(), filtro.getDataEmissao());
-						
+				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
+						filtro.getIdFornecedores(), null, null, null, null, 
+						SituacaoCadastro.SUSPENSO, filtro.getIdRoteiro(), filtro.getIdRota());
+		
 		if (cotasAusentes != null && !cotasAusentes.isEmpty())
 			hasCotasAusentes = true;
 		
@@ -167,9 +169,9 @@ public class GeracaoNotaEnvioController {
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
 		List<ConsultaNotaEnvioDTO> cotasAusentes =	
-				this.geracaoNotaEnvioService.oterCotasSuspensasAusentes(filtro.getIntervaloBox(), filtro.getIntervaloCota(), 
-						filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), filtro.getIdRoteiro(), 
-						filtro.getIdRota(), filtro.getDataEmissao());
+				geracaoNotaEnvioService.busca(filtro.getIntervaloBox(), filtro.getIntervaloCota(), filtro.getIntervaloMovimento(), 
+						filtro.getIdFornecedores(), null, null, null, null, 
+						SituacaoCadastro.SUSPENSO, filtro.getIdRoteiro(), filtro.getIdRota());
 		
 		result.use(FlexiGridJson.class).from(cotasAusentes)
 				.page(filtro.getPaginacaoVO().getPaginaAtual())
@@ -192,8 +194,11 @@ public class GeracaoNotaEnvioController {
 	}
 	
 	@Post
-	public void gerarNotaEnvio() {
+	public void gerarNotaEnvio(List<Long> listaIdCotas) {
 		
+		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+		
+		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
 		//TODO: gerar notas de envio - Utilizar funcionalidade de impressão da EMS 231
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
@@ -291,6 +296,18 @@ public class GeracaoNotaEnvioController {
 		usuario.setNome("Jornaleiro da Silva");
 
 		return usuario;
+	}
+	
+	@Get
+	public void visualizarNE(){
+		
+		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+		
+		NotaEnvio notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
+				null, null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+		
+		result.include("notaEnvio",notaEnvio);
+		
 	}
 	
 }

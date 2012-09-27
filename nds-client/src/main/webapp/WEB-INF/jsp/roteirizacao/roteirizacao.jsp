@@ -115,81 +115,97 @@
 </form>
 
 <form id="form-roteirizacao">
-<div id="dialog-roteirizacao" title="Nova Roteiriza&ccedil;&atilde;o" style="display:none;">
-	<jsp:include page="../messagesDialog.jsp">
-		<jsp:param value="dialogRoteirizacao" name="messageDialog"/>
-	</jsp:include> 
-     <fieldset style="width:895px; float:left; margin-bottom:10px;">
-		<legend>Roteiros</legend>
-        <input name="lstRoteiros" type="text" id="lstRoteiros" style="width:240px; float:left;"  onkeyup="roteirizacao.autoCompletarRoteiroPorNome('#lstRoteiros',roteirizacao.populaDadosRoteiro)" onblur="roteirizacao.buscaRoteiroPorNome('#lstRoteiros')" />
-	<span class="bt_novos" title="Nova Roteiro"><a href="javascript:;" onclick="roteirizacao.abrirTelaRoteiro();" rel="tipsy" title="Novo Roteiro"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a></span>
-    <span style="float:right; margin-top:12px; margin-left:20px;" id="spanDadosRoteiro"><strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;</span>
-   <input type="hidden" id="idRoteiroSelecionado" name="idRoteiroSelecionado"  >   
-    </fieldset>
-	<br clear="all" />
-	<fieldset style="width:270px; float:left; margin-right:17px!important;">
-		<legend>Rotas</legend>
-        
 
-        <input name="nomeRota" type="text" id="nomeRota" readonly="readonly" style="width:210px; float:left; margin-bottom:5px;" onkeyup="roteirizacao.filtroGridRotasPorNome()"  />
-        <a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);" id="botaoNovaRotaNome" rel="tipsy" title="Nova Rota" >
-        	<img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" />
-        </a> 
-        <br />
+    <div id="dialog-roteirizacao" title="Nova Roteirização" style="display:none;">
+
+    <fieldset style="width:270px; float:left;">
+        <legend>Box</legend>
+
+
+        <input name="nomeBox" type="text" id="nomeBox" style="width:240px; float:left; margin-bottom:5px;" />
+        <a href="javascript:;" onclick="roteirizacao.pesquisarBox();">
+            <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
+                 alt="Adicionar Rota" width="16" height="16" border="0"
+                 style="float:left; margin-left:5px; margin-top:5px;" /></a>
+            <br/>
+        <table class="boxGrid"></table>
+    </fieldset>
+
+
+
+    <fieldset style="width:270px; float:left; margin-left:15px;">
+        <legend>Roteiros</legend>
+
+
+        <input name="descricaoRoteiro" type="text" id="descricaoRoteiro" style="width:240px; float:left; margin-bottom:5px;" />
+        <a href="javascript:;" onclick="roteirizacao.pesquisarRoteiros()">
+                <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
+                     alt="Adicionar Rota" width="16" height="16" border="0"
+                     style="float:left; margin-left:5px; margin-top:5px;" /></a>
+                <br/>
+        <table class="roteirosGrid"></table>
+    </fieldset>
+
+
+
+    <fieldset style="width:270px; float:left; margin-left:15px;">
+        <legend>Rotas</legend>
+
+        <input name="descricaoRota" type="text" id="descricaoRota" style="width:240px; float:left; margin-bottom:5px;" />
+        <a href="javascript:;" onclick="roteirizacao.pesquisarRotas();">
+            <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
+                 alt="Adicionar Rota" width="16" height="16" border="0"
+                 style="float:left; margin-left:5px; margin-top:5px;" /></a>
+            <br/>
         <table class="rotasGrid"></table>
-		<span class="bt_novos" title="Nova Rota"><a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);" id="botaoNovaRota" ><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Nova</a></span>
-        <span class="bt_novos" title="Transfer&ecirc;ncia de Rota"><a href="javascript:;"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);" id="botaoTransfereciaRota"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a></span>
-        <span class="bt_novos" title="Excluir Rota"><a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);" id="botaoExcluirRota"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a></span>
     </fieldset>
-    
-    
-    
-    <fieldset style="width:596px; float:left; overflow:hidden;">
-		<legend>Cotas da Rota </legend>
-		
-        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;" id="spanDadosRota"><strong> Rota Selecionada:</strong>&nbsp;&nbsp;&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;</span>
-        <input name="rotaSelecionada" type="hidden"  id="rotaSelecionada" style="width:240px; float:left; margin-bottom:5px;"  />
-        
-		<table class="cotasRotaGrid"></table>
-        <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" id="botaoCotaAusentes"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/> Adicionar</a></span>
-        <span class="bt_novos" title="Transfer&ecirc;ncia de Roteiro"><a href="javascript:;" id="botaoTransferenciaRoteiro"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/> Transferir</a></span>
-        <span class="bt_novos" title="Excluir Roteiriza&ccedil;&atilde;o"><a href="javascript:;"  id="botaoExcluirRoteirizacao"  style="cursor:default; opacity:0.4; filter:alpha(opacity=40);"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/> Excluir</a></span>
-	</fieldset>
-    
-    
-    
-    
-	<div class="linha_separa_fields">&nbsp;</div>
-</div>
-</form>
 
+    <fieldset style="width:875px; float:left; margin-left:5px; margin-top:10px; overflow:hidden;">
+        <legend>Cotas da Rota</legend>
+        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;">
+            <strong>Box:</strong><span id="boxSelecionado"/><strong>- Roteiro Selecionado:</strong><span id="roteiroSelecionado"/><strong> - Rota: </strong><span id="rotaSelecionada"/>
+        </span>
+        <br clear="all" />
+        <table class="cotasRotaGrid"></table>
 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+        <tr>
+            <td>
+                <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_novo_dado();">
+                    <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
+                </span>
 
-<!--<div id="dialog-roteirizacao" title="Nova Roteiriza&ccedil;&atilde;o" style="display:none;">
-     <fieldset style="width:430px; float:left;">
-		<legend>Roteiros</legend>
-		<table class="roteirosGrid"></table>
-        <span class="bt_novos" title="Nova Rota"><a href="javascript:;" onclick="popup_roteiro();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo Roteiro</a></span>
-        
-	</fieldset>
+                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="popup_cotas_ausentes();">
+                    <img src="${pageContext.request.contextPath}//images/ico_add.gif" hspace="5" border="0"/>Adicionar</a>
+                </span>
 
-	<fieldset style="width:430px; float:left; margin-left:15px;">
-		<legend>Rotas</legend>
-        <table class="rotasGrid"></table>
-		<span class="bt_novos" title="Nova Rota"><a href="javascript:;" onclick="popup_rota();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Nova Rota</a></span>
+                <span class="bt_novos trans_cota" title="Transferência de Roteiro"><a href="javascript:;" onclick="popup_tranferir_cota();">
+                     <img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a>
+                </span>
+
+                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="popup_copiar_cota();">
+                    <img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0"/>Copiar Cota</a>
+                </span>
+
+                <span class="bt_novos" title="Excluir"><a href="javascript:;" onclick="popup_excluir();">
+                    <img src="${pageContext.request.contextPath}//images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a>
+                </span>
+            </td>
+            <td>
+                 <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label>
+                    <input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:15px; "/>
+                </span>
+            </td>
+            <td></td>
+         </tr>
+    </table>
+
     </fieldset>
-    
-    
-    
-    <fieldset style="width:895px; float:left; margin-top:5px;">
-		<legend>Cotas da Rota</legend>
-		<table class="cotasRotaGrid"></table>
-        <span class="bt_novos" title="Cotas Ausentes"><a href="javascript:;" onclick="popup_cotas_ausentes();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Incluir Cota</a></span>
-        
-	</fieldset>
-    
-	<div class="linha_separa_fields">&nbsp;</div>
-</div>-->
+
+    <div class="linha_separa_fields">&nbsp;</div>
+    </div>
+
+    </form>
 
 	<form id="form-cotas-disponiveis">
 	<div id="dialog-cotas-disponiveis" title="Cotas Dispon&icirc;veis" style="display:none;">

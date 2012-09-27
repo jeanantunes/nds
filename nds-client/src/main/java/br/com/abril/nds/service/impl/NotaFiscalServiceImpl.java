@@ -268,11 +268,16 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=Exception.class)
 	public void cancelarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
+		
+		NotaFiscal notaFiscalCancelada = this.notaFiscalDAO.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+		
+		TipoNotaFiscal tipoNotaFiscal = notaFiscalCancelada.getIdentificacao().getTipoNotaFiscal();
+				
+		//TODO: identificar tipo da nota e chamar rotina de cancelamento adequada para a nota.
+		
 		atualizaRetornoNFe(dadosRetornoNFE);
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -303,40 +308,33 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	private void atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
 		
-		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(dadosRetornoNFE
-			.getIdNotaFiscal());
+		NotaFiscal notaFiscal = 
+				this.notaFiscalDAO.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
-		InformacaoEletronica informacaoEletronica = notaFiscal
-				.getInformacaoEletronica();
+		InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
 		
 		if (informacaoEletronica == null) {
 			notaFiscal.setInformacaoEletronica(new InformacaoEletronica());
-			informacaoEletronica = notaFiscal
-					.getInformacaoEletronica();
+			informacaoEletronica = notaFiscal.getInformacaoEletronica();
 		}
 
 		informacaoEletronica.setChaveAcesso(dadosRetornoNFE.getChaveAcesso());
 
 		RetornoComunicacaoEletronica retornoComunicacaoEletronica = new RetornoComunicacaoEletronica();
-		retornoComunicacaoEletronica.setDataRecebimento(dadosRetornoNFE
-				.getDataRecebimento());
+		retornoComunicacaoEletronica.setDataRecebimento(dadosRetornoNFE.getDataRecebimento());
 		retornoComunicacaoEletronica.setMotivo(dadosRetornoNFE.getMotivo());
-		retornoComunicacaoEletronica.setProtocolo(dadosRetornoNFE
-				.getProtocolo());
+		retornoComunicacaoEletronica.setProtocolo(dadosRetornoNFE.getProtocolo());
 		retornoComunicacaoEletronica.setStatus(dadosRetornoNFE.getStatus());
 
-		informacaoEletronica
-				.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
+		informacaoEletronica.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
 
 		notaFiscal.setInformacaoEletronica(informacaoEletronica);
-		notaFiscal
-				.setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
+		notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
 
 		this.notaFiscalDAO.merge(notaFiscal);	
 
-
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

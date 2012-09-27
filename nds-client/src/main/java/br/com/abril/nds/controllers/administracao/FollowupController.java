@@ -13,23 +13,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroDTO;
+import br.com.abril.nds.dto.ConsultaFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
-import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
-import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
-import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroDTO;
+import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupStatusCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
 import br.com.abril.nds.service.FollowupNegociacaoService;
@@ -39,8 +37,8 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -81,6 +79,10 @@ public class FollowupController {
 	private FollowupPendenciaNFeService followuppendencianfeService;
 	
 	@Autowired
+	private FollowupCadastroParcialService followupCadastroParcialService;
+	
+	
+	@Autowired
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
@@ -89,6 +91,7 @@ public class FollowupController {
 	private static final String FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroFollowupConsignados";
 	private static final String FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE = "filtroFollowupPendenciaNFE";
 	private static final String FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE = "filtroFollowupCadastro";
+	private static final String FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE = "filtroFollowupCadastroParcial";
 	private static final String FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE = "filtroFollowupStatusCota";
 	//private static final String QTD_REGISTROS_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosFollowupConsignados";
 
@@ -242,6 +245,45 @@ public class FollowupController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();		
 	}
 	
+	
+	
+	@Post
+	@Path("/pesquisaDadosCadastroParcial")
+	public void pesquisaDadosCadastroParcial( String sortorder, String sortname, int page, int rp ) {
+		FiltroFollowupCadastroParcialDTO filtro = new FiltroFollowupCadastroParcialDTO();
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		session.setAttribute(FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE, filtro);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupCadastroParcialDTO>> tableModel = efetuarConsultaDadosCadastralParcial(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+
+	
+    private TableModel<CellModelKeyValue<ConsultaFollowupCadastroParcialDTO>> efetuarConsultaDadosCadastralParcial(FiltroFollowupCadastroParcialDTO filtro) {
+		
+		List<ConsultaFollowupCadastroParcialDTO> lista = this.followupCadastroParcialService.obterCadastrosParcial(filtro);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupCadastroParcialDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupCadastroParcialDTO>>();
+		
+		Integer totalRegistros = filtro.getPaginacao().getQtdResultadosTotal();
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cadastro Parcial: Não foram encontrados resultados para Follow Up.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(totalRegistros);
+		
+		return tableModel;
+	}
+	
+	
+	
 	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> efetuarConsultaDadosPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
 		
 		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
@@ -379,6 +421,19 @@ public class FollowupController {
 			
 			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					listasdependencias, ConsultaFollowupCadastroDTO.class, this.httpResponse);
+		}else if(tipoExportacao.equals("cadastroParcial")){
+			
+			FiltroFollowupCadastroParcialDTO filtro = (FiltroFollowupCadastroParcialDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE);
+			
+			
+			List<ConsultaFollowupCadastroParcialDTO> lista = this.followupCadastroParcialService.obterCadastrosParcial(filtro);
+			
+			if(lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					lista, ConsultaFollowupCadastroParcialDTO.class, this.httpResponse);
 		}
 		
 		result.nothing();

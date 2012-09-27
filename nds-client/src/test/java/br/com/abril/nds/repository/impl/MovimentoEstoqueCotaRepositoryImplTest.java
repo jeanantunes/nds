@@ -16,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO.OrdenacaoColuna;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
@@ -452,13 +454,13 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
 		save(cotaManoel);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel,1 );
 		save(pdv);
 		
 		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
 		save(roteirizacao);
 		
-		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel );
+		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel,2 );
 		save(pdv2);
 		
 		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
@@ -793,7 +795,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		setUpForConsultaEncalhe();
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		try {
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+
 		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
 		
 		Assert.assertNotNull(listaConsultaEncalhe);
@@ -802,20 +806,56 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		ConsultaEncalheDTO cEncalhe_1 = listaConsultaEncalhe.get(0);
 		Assert.assertEquals((8*15), cEncalhe_1.getValor().intValue());
 		
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+
 //		ConsultaEncalheDTO cEncalhe_2 = listaConsultaEncalhe.get(1);
-//		Assert.assertEquals((50*15), cEncalhe_2.getTotal().intValue());
+//		Assert.assertEquals((50*15), cEncalhe_2.getValor().intValue());
 //		
 //		ConsultaEncalheDTO cEncalhe_3 = listaConsultaEncalhe.get(2);
-//		Assert.assertEquals((45*15), cEncalhe_3.getTotal().intValue());
+//		Assert.assertEquals((45*15), cEncalhe_3.getValor().intValue());
 		
 		
 	}
 
-	
-	
+	@Test
+	public void testObterListaConsultaEncalheDetalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdProdutoEdicao(veja1.getId());
+
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(listaConsultaEncalheDetalhe);
+		
+		int tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, listaConsultaEncalheDetalhe.size());
+		
+	}
+
+	@Test
+	public void testObterQtdeConsultaEncalheDetalhe() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
+		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setIdProdutoEdicao(veja1.getId());
+
+		Integer qtdeConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
+		
+		Assert.assertNotNull(qtdeConsultaEncalheDetalhe);
+		
+		Integer tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, qtdeConsultaEncalheDetalhe);
+		
+	}
+
 	private FiltroConsultaEncalheDTO obterFiltroConsultaEncalhe() {
 		
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
