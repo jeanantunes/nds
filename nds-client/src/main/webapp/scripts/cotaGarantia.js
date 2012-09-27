@@ -649,10 +649,10 @@ Imovel.prototype.initGrid = function() {
 
             ],
 
-            width : 740,
+            width : 880,
             height : 150,
             sortorder : "asc",
-            sortname : "",
+            sortname : "proprietario",
             singleSelect : true
         });
 };

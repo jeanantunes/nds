@@ -100,6 +100,13 @@ var lancamentoController = $.extend(true, {
 			$("#qtdeTotalDiferencas", lancamentoController.workspace).show();
 			$("#valorTotalDiferencas", lancamentoController.workspace).show();
 		}
+		
+		if(resultado.tableModel.rows.length < 1){
+			$("#btnsControleDiferenca", lancamentoController.workspace).hide();
+		}
+		else{
+			$("#btnsControleDiferenca", lancamentoController.workspace).show();
+		}
 
 		return resultado.tableModel;
 	},

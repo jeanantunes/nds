@@ -3,11 +3,12 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
@@ -19,18 +20,65 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 		super(ItemNotaEnvio.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemNotaEnvio> obterItensNotaEnvioPorDataEmissao(Date dataEmissao, Pessoa pessoa) {
+	@SuppressWarnings("unchecked")
+	public List<DetalheItemNotaFiscalDTO> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota) {
 		
-		Criteria criteria = getSession().createCriteria(ItemNotaEnvio.class);
+		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
+				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
+				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao "
+				   + " from ItemNotaEnvio itemNotaEnvio "
+				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
+				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
+				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
+				   + " join produtoEdicao.produto produto "
+				   + " where notaEnvio.dataEmissao = :dataEmissao "
+				   + " and movimentoEstoqueCota.cota.numeroCota = :numeroCota "
+				   + " group by produtoEdicao.id ";
 		
-		criteria.createAlias("itemNotaEnvioPK.notaEnvio", "notaEnvio");
-		criteria.createAlias("itemNotaEnvioPK.notaEnvio.emitente.pessoa", "pessoa");
+		Query query = super.getSession().createQuery(hql);
 		
-		criteria.add(Restrictions.eq("notaEnvio.dataEmissao", dataEmissao));
-		criteria.add(Restrictions.eq("pessoa", pessoa));
+		ResultTransformer resultTransformer =
+			new AliasToBeanResultTransformer(DetalheItemNotaFiscalDTO.class); 
+
+		query.setParameter("dataEmissao", dataEmissao);
+		query.setParameter("numeroCota", numeroCota);
 		
-		return criteria.list();
+		query.setResultTransformer(resultTransformer);
+		
+		return query.list();
 	}
+	
+	@Override
+	public DetalheItemNotaFiscalDTO obterItemNotaEnvio(Date dataEmissao,
+													   Integer numeroCota,
+													   Long idProdutoEdicao) {
+		
+		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
+				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
+				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao "
+				   + " from ItemNotaEnvio itemNotaEnvio "
+				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
+				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
+				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
+				   + " join produtoEdicao.produto produto "
+				   + " where notaEnvio.dataEmissao = :dataEmissao "
+				   + " and movimentoEstoqueCota.cota.numeroCota = :numeroCota "
+				   + " and produtoEdicao.id = :idProdutoEdicao "
+				   + " group by produtoEdicao.id ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		ResultTransformer resultTransformer =
+			new AliasToBeanResultTransformer(DetalheItemNotaFiscalDTO.class); 
+
+		query.setParameter("dataEmissao", dataEmissao);
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setResultTransformer(resultTransformer);
+		
+		return (DetalheItemNotaFiscalDTO) query.uniqueResult();
+	}
+	
 }

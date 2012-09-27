@@ -1,45 +1,28 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import br.com.abril.nds.model.cadastro.Box;
 
 public class BoxRoteirizacaoDTO implements Serializable {
 
-	private static final long serialVersionUID = 6862359582349796624L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	
-	private Integer ordem;
 	
 	private String nome;
 	
 	private Boolean selecionado;
-
 	
 	public BoxRoteirizacaoDTO() {
-		
 	}
 	
-	public BoxRoteirizacaoDTO(Long id, Integer ordem, String nome,
-			Boolean selecionado) {
-		super();
+	public BoxRoteirizacaoDTO(Long id, String nome) {
 		this.id = id;
-		this.ordem = ordem;
 		this.nome = nome;
-		this.selecionado = selecionado;
-	}
-
-	/**
-	 * @return the ordem
-	 */
-	public Integer getOrdem() {
-		return ordem;
-	}
-
-	/**
-	 * @param ordem the ordem to set
-	 */
-	public void setOrdem(Integer ordem) {
-		this.ordem = ordem;
 	}
 
 	/**
@@ -84,5 +67,20 @@ public class BoxRoteirizacaoDTO implements Serializable {
 		this.id = id;
 	}
 	
+    /**
+     * Cria uma lista de {@link BoxRoteirizacaoDTO} à partir da lista de box
+     * 
+     * @param colecao
+     *            de box
+     * @return lista de {@link BoxRoteirizacaoDTO} criada à partir da coleção de
+     *         box
+     */
+	public static List<BoxRoteirizacaoDTO> toDTOs(Collection<Box> colecao) {
+	    List<BoxRoteirizacaoDTO> dtos = new ArrayList<BoxRoteirizacaoDTO>();
+	    for(Box box : colecao) {
+	        dtos.add(new BoxRoteirizacaoDTO(box.getId(), box.getNome()));
+	    }
+	    return dtos;
+	}
 	
 }

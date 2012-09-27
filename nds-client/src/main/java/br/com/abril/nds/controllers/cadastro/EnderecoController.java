@@ -310,6 +310,10 @@ public class EnderecoController {
 				
 				Long chave = localidade.getCodigoMunicipioIBGE();
 				
+				if(chave == null) {
+					continue;
+				}
+				
 				listaAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, chave));
 			}
 		}

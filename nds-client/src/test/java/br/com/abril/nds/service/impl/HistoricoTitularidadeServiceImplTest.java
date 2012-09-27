@@ -399,7 +399,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 		Assert.assertEquals(historicoDistribuicao.getInicioPeriodoCarencia(), distribuicao.getInicioPeriodoCarencia());
 		Assert.assertEquals(historicoDistribuicao.getPercentualFaturamentoEntrega(), distribuicao.getPercentualFaturamento());
 		Assert.assertEquals(historicoDistribuicao.getTaxaFixaEntrega(), distribuicao.getTaxaFixa());
-		Assert.assertEquals(historicoDistribuicao.getTipoEntrega(), distribuicao.getTipoEntrega().getDescricaoTipoEntrega());
+		Assert.assertEquals(historicoDistribuicao.getTipoEntrega(), distribuicao.getDescricaoTipoEntrega());
 	}
 	
 	private void assertSocios(Set<SocioCota> socios, Collection<HistoricoTitularidadeCotaSocio> historicoSocios) {
@@ -705,7 +705,8 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			StatusPDV.ATIVO, 
 			caracteristicas, 
 			licencaMunicipal, 
-			segmentacao
+			segmentacao,
+			1
 		);
 		
 		pdv.setEnderecos(getEnderecosPDV());
@@ -859,19 +860,11 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 	 * Cria dados referentes a aba "Distribuição" do cadastro de cota.
 	 */
 	private ParametroDistribuicaoCota getDistribuicao() {
-		
-		TipoEntrega tipoEntrega = Fixture.criarTipoEntrega(1L, DescricaoTipoEntrega.ENTREGADOR, Periodicidade.MENSAL);
-		
-		tipoEntrega.setPercentualFaturamento(400f);
-		tipoEntrega.setBaseCalculo(BaseCalculo.FATURAMENTO_BRUTO);
-		tipoEntrega.setTaxaFixa(new BigDecimal(10));
-
-		tipoEntrega = merge(tipoEntrega);
 
 		ParametroDistribuicaoCota distribuicao = Fixture.criarParametroDistribuidor(
 			13, 
 			"Assistente", 
-			tipoEntrega, 
+			DescricaoTipoEntrega.ENTREGADOR, 
 			"observacao", 
 			true, 
 			true, 

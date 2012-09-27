@@ -2,10 +2,8 @@ package br.com.abril.nds.model.cadastro.pdv;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,7 +12,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,9 +29,11 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 
 /**
  * Entidade que representa o PDV associado
@@ -194,13 +193,14 @@ public class PDV implements Serializable {
 	@OneToOne(mappedBy = "pdv",cascade=CascadeType.REMOVE)	  	
 	private GeradorFluxoPDV geradorFluxoPDV;
 	
-
 	@ManyToMany
 	@JoinTable(name = "PDV_ROTA", joinColumns = {@JoinColumn(name = "PDV_ID")},
 	inverseJoinColumns = {@JoinColumn(name = "ROTA_ID")})
 	@NotFound(action=NotFoundAction.IGNORE)
 	private Set<Rota> rotas =  new HashSet<Rota>();
 	
+	@Column(name="ORDEM", nullable = true)
+	private Integer ordem;
 	
 	public Long getId() {
 		return id;
@@ -447,6 +447,43 @@ public class PDV implements Serializable {
 	public Boolean getExpositor() {
 		return expositor;
 	}
+	
+	/**
+	 * @return the ordem
+	 */
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	/**
+	 * @param ordem the ordem to set
+	 */
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
+	}
+	
+	/**
+	 * @return the arrendatario
+	 */
+	public boolean isArrendatario() {
+		return arrendatario;
+	}
+
+	/**
+	 * @param arrendatario the arrendatario to set
+	 */
+	public void setArrendatario(boolean arrendatario) {
+		this.arrendatario = arrendatario;
+	}
+	
+	public EnderecoPDV getEnderecoEntrega(){
+		for(EnderecoPDV item:this.getEnderecos()){
+			if(item.getTipoEndereco()==TipoEndereco.LOCAL_ENTREGA){
+				return item;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public int hashCode() {
@@ -471,20 +508,6 @@ public class PDV implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	/**
-	 * @return the arrendatario
-	 */
-	public boolean isArrendatario() {
-		return arrendatario;
-	}
-
-	/**
-	 * @param arrendatario the arrendatario to set
-	 */
-	public void setArrendatario(boolean arrendatario) {
-		this.arrendatario = arrendatario;
 	}
 
 }

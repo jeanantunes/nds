@@ -7,6 +7,7 @@ import org.hibernate.criterion.MatchMode;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
@@ -145,27 +146,55 @@ public interface RoteirizacaoService {
     
 	/**
      * Obtem lista de Box do tipo lançamento
+     * @param nomeBox do box para consulta
      * @return List<Box>
      */
-	public List<Box> obterListaBoxLancamento();
+	public List<Box> obterListaBoxLancamento(String nomeBox);
 	
 	/**
      * Obtem lista de Roteiro por Box
+	 * @param descricaoRoteiro  descricao do roteiro para consulta
      * @return List<Roteiro>
      */
-	public List<Roteiro> obterListaRoteiroPorBox(Long idBox);
+	public List<Roteiro> obterListaRoteiroPorBox(Long idBox, String descricaoRoteiro);
 	
 	/**
      * Obtem lista de Rota por Roteiro
+     * @param idRoteiro identificador do roteiro
+	 * @param descricaoRota descrição da rota para consulta
      * @return List<Rota>
      */
-	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro);
+	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
 	
 	/**
-	 * Obtem dados da roteirização
-	 * @param parametros
-	 * @return RoteirizacaoDTO
+     * Obtém a roteirização pelo identificador
+     * @param id identificador da roteirização
+     * @return RoteirizacaoDTO DTO com as informações da roteirização
+     */
+	RoteirizacaoDTO obterRoteirizacaoPorId(Long id);
+	
+	/**
+	 * Obtém PDVS's disponiveis
+	 * @return List<PdvRoteirizacaoDTO>
 	 */
-	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros);
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis();
+	
+	/**
+	 * Inclui Cota Pdv na Roteirização
+	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
+	 * @param idRota
+	 */
+	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> cotaPdv, Long idRota);
+	
+    /**
+     * Recupera a roteirização pelo Box
+     * 
+     * @param idBox
+     *            identificador do box para recuperação da roteirização
+     * @return roteirização associada ao box ou nulo caso não exista
+     *         roteirização associada ao Box
+     */
+	RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox);
+
 }
 	

@@ -2,8 +2,9 @@
  <div id="dadosCNPJ" style="display: none;">
   
  <form name="formDadosBasicoCnpj" id="formDadosBasicoCnpj">
- 
-  <table width="823" cellpadding="2" cellspacing="2" style="text-align:left;">
+ <fieldset style="width:880px!important; margin:5px;">
+ <legend>Dados Cadastrais</legend>
+  <table width="870" cellpadding="2" cellspacing="2" style="text-align:left;">
   <tr>
       <td><strong>Cota:</strong></td>
       <td><input name="cotaDTO.numeroCota" id="numeroCota" maxlength="16" type="text" style="width:100px" /></td>
@@ -23,9 +24,9 @@
       <td><input type="text" style="width:230px" maxlength="20" name="cotaDTO.inscricaoEstadual" id="inscricaoEstadual"/></td>
     </tr>
     <tr>
-        <td width="129">Inscrição Municipal:</td>
-        <td width="230"><input type="text" maxlength="20" style="width:150px" name="cotaDTO.inscricaoMunicipal" id="inscricaoMunicipal" /></td>
-        <td width="136">E-mail:</td>
+        <td width="104">Inscrição Municipal:</td>
+        <td width="312"><input type="text" maxlength="20" style="width:150px" name="cotaDTO.inscricaoMunicipal" id="inscricaoMunicipal" /></td>
+        <td width="126">E-mail:</td>
         <td width="300"><input type="text" maxlength="200" style="width:230px" name="cotaDTO.email" id="email" onblur="MANTER_COTA.validarEmail('#email')"/></td>
     </tr>
     <tr>
@@ -104,8 +105,8 @@
     </table>
    </td>
   </tr> 
-</table>    
-    
+</table>   
+</fieldset>
   </form>
   
   </div>

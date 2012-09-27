@@ -29,7 +29,8 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	 * @return List<Rota>
 	 */
 	List<Rota> buscarRotaPorRoteiro(Long roteiroId, String sortname, Ordenacao ordenacao );
-	 
+	
+ 
 	/**
 	 * atualiza a ordenação das rotas.
 	 * 

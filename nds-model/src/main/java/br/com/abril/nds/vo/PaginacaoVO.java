@@ -29,6 +29,8 @@ public class PaginacaoVO implements Serializable {
 	
 	private String sortColumn;
 	
+	private Integer qtdResultadosTotal = 0;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -219,6 +221,14 @@ public class PaginacaoVO implements Serializable {
 	 */
 	public void setSortColumn(String sortColumn) {
 		this.sortColumn = sortColumn;
+	}
+
+	public Integer getQtdResultadosTotal() {
+		return qtdResultadosTotal;
+	}
+
+	public void setQtdResultadosTotal(Integer qtdResultadosTotal) {
+		this.qtdResultadosTotal = qtdResultadosTotal;
 	}
 	
 }

@@ -525,4 +525,13 @@ public class Cota implements Serializable {
 	public void setCotaGarantia(CotaGarantia cotaGarantia) {
 		this.cotaGarantia = cotaGarantia;
 	}
+	
+	public EnderecoCota getEnderecoPrincipal(){
+		for(EnderecoCota item:this.getEnderecos()){
+			if(item.isPrincipal()){
+				return item;
+			}
+		}
+		return null;
+	}
 }

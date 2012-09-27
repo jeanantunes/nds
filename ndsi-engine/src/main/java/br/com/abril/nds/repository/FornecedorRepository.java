@@ -104,4 +104,15 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 * @return
 	 */
 	public abstract Integer obterMaxCodigoInterface();
+	
+	
+	
+	/**
+	 * Retorna o menor código interface disponível.
+	 * 
+	 * @return Integer
+	 */
+	public Integer obterMinCodigoInterfaceDisponivel();
+	
+
 }

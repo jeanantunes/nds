@@ -175,7 +175,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		
 		return (PDV) criteria.uniqueResult();
 	}
-	
+
 	public void setarPDVPrincipal(boolean principal, Long idCota){
 		
 		Query query = 

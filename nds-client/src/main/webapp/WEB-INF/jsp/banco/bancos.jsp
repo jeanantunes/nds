@@ -37,12 +37,12 @@ label {
 
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
-					<td width="106">Número Banco:</td>
-					<td width="215"><input type="text" name="newNumero" maxlength="17"
+					<td width="105">Número Banco:</td>
+					<td width="214"><input type="text" name="newNumero" maxlength="17"
 						id="newNumero" style="width: 143px;" />
 					</td>
-					<td width="68">Nome:</td>
-					<td width="216"><input type="text" name="newNome" maxlength="100"
+					<td width="67">Nome:</td>
+					<td width="219"><input type="text" name="newNome" maxlength="100"
 						id="newNome" style="width: 215px;" />
 					</td>
 				</tr>
@@ -63,7 +63,7 @@ label {
 						id="newDigito" style="width: 30px;" />
 					</td>
 					<td>Apelido:</td>
-					<td width="216"><input type="text" name="newApelido" maxlength="100"
+					<td width="219"><input type="text" name="newApelido" maxlength="100"
 						id="newApelido" style="width: 215px;" />
 					</td>
 				</tr>
