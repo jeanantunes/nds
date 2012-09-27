@@ -93,7 +93,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$('#botaoNovoProdutoOpaco', this.workspace).hide();
 		$('#botaoNovoProduto', this.workspace).hide();
 		$('#botaoAdicionarOpaco', this.workspace).hide();
-		$('#botaoAdicionar', this.workspace).hide();
+		//$('#botaoAdicionar', this.workspace).hide();
 		$('#botoesOpacos', this.workspace).hide();
 		
 	},
@@ -1090,7 +1090,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$('#botaoAdicionarOpaco', this.workspace).hide();
 			
-			$('#botaoAdicionar', this.workspace).show();
+			//$('#botaoAdicionar', this.workspace).show();
 			
 			$('#botoesOpacos', this.workspace).hide();
 			
@@ -1107,7 +1107,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$('#botaoAdicionarOpaco', this.workspace).show();
 			
-			$('#botaoAdicionar', this.workspace).hide();
+			//$('#botaoAdicionar', this.workspace).hide();
 			
 		}	
 		
