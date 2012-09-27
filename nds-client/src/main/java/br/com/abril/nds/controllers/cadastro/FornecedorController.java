@@ -230,7 +230,10 @@ public class FornecedorController {
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
-		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", this.fornecedorService.obterMaxCodigoInterface() + 1).serialize();
+		
+		Integer novoCodigoInterface = this.fornecedorService.obterMinCodigoInterfaceDisponivel();
+		
+		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", novoCodigoInterface).serialize();
 	}
 	
 	private void obterTiposFornecedor() {
@@ -244,9 +247,28 @@ public class FornecedorController {
 		
 		List<String> mensagens = new ArrayList<String>();
 		
+		Origem origemFornecedor = fornecedorDTO.getOrigem() == null ? Origem.MANUAL : fornecedorDTO.getOrigem(); 
+		
 		if (fornecedorDTO.getCodigoInterface() == null) {
 			
 			mensagens.add("O preenchimento do campo [Codigo] é obrigatório.");
+		
+		} else {
+			
+			if(	Origem.MANUAL.equals(origemFornecedor) && 
+				fornecedorDTO.getCodigoInterface() > Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL) {
+				
+				mensagens.add(	" Valor do campo [Codigo] não deve exceder "+ Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL + 
+								" para fornecedor de origem MANUAL.");
+				
+			} else {
+				Fornecedor fornecedor = fornecedorService.obterFornecedorPorCodigoInterface(fornecedorDTO.getCodigoInterface());
+				if(fornecedor!=null && !fornecedor.getId().equals(fornecedorDTO.getIdFornecedor())) {
+					mensagens.add(" Valor do campo [Codigo] já esta sendo utilizado.");
+				}
+			}
+			
+			
 		}
 		
 		if (fornecedorDTO.getRazaoSocial() == null || fornecedorDTO.getRazaoSocial().isEmpty()) {
