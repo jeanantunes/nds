@@ -2186,7 +2186,6 @@ public class DiferencaEstoqueController {
 		comparatorChain.addComparator(new BeanComparator("codigoProduto"));
 		comparatorChain.addComparator(new BeanComparator("numeroEdicao"));
 		comparatorChain.addComparator(new BeanComparator("tipoDirecionamento"));
-		comparatorChain.addComparator(new BeanComparator("tipoDiferenca"));
 		
 		Collections.sort(listaDiferencas, comparatorChain);
 		
@@ -2200,8 +2199,7 @@ public class DiferencaEstoqueController {
 				
 				if (diferencaVO.getCodigoProduto().trim().equalsIgnoreCase(ultimaDiferencaVO.getCodigoProduto())
 						&& diferencaVO.getNumeroEdicao().trim().equalsIgnoreCase(ultimaDiferencaVO.getNumeroEdicao())
-						&& diferencaVO.getTipoDirecionamento().equals(ultimaDiferencaVO.getTipoDirecionamento())
-						&& diferencaVO.getTipoDiferenca().equals(ultimaDiferencaVO.getTipoDiferenca())) {
+						&& diferencaVO.getTipoDirecionamento().equals(ultimaDiferencaVO.getTipoDirecionamento())) {
 					
 					if (!ultimaDiferencaVO.isCadastrado()) {
 						
