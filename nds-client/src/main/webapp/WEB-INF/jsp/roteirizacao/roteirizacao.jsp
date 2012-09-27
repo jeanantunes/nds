@@ -171,7 +171,7 @@
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
         <tr>
             <td>
-                <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_novo_dado();">
+                <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="roteirizacao.abrirTelaNovoRoteiroRota();">
                     <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
                 </span>
 
@@ -258,4 +258,46 @@
 	</fieldset>
 	<br clear="all" />
 	</div>
+	</form>
+	
+	<form id="formNovoDado">
+		<div id="dialog-novo-dado" title="Novo" style="display:none;">
+			<jsp:include page="../messagesDialog.jsp" /> 
+			<fieldset>
+	    		<legend>Novo</legend>
+	    		<table width="347" border="0" cellspacing="1" cellpadding="1">
+	    			<tr>
+						<td width="85">Incluir em:</td>
+						<td width="255">
+							<div id="nomeBoxRoteiro"></div>
+						</td>
+					</tr>
+				</table>
+	        	<table width="347" border="0" cellspacing="1" cellpadding="1" id="incluirRoteiro">
+	          		<tr>
+			            <td width="85">&nbsp;</td>
+			            <td width="255">&nbsp;</td>
+	          		</tr>
+	          		<tr>
+	            		<td>Ordem:</td>
+	            		<td>
+	            			<input id="inputOrdem" style="width:220px;" />
+	            		</td>
+	          		</tr>
+	          		<tr>
+	            		<td>Nome:</td>
+	            		<td>
+	            			<input id="inputNome" style="width:220px;" />
+	            		</td>
+	          		</tr>
+	          		<tr style="display: none;">
+	          			<td>Roteiro Especial:</td>
+	          			<td>
+	          				<input type="checkbox" name="tipoRoteiro" 
+	          					value="Especial" id="tipoRoteiro" onclick="roteirizacao.roteiroEspecialNovo()"  />
+	          			</td>
+	          		</tr>
+	      		</table>
+			</fieldset>
+		</div>
 	</form>
