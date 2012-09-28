@@ -724,15 +724,15 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/boxSelecionado")
 	public void boxSelecionado(Long idBox) {
+	   RoteirizacaoDTO existente = null; 
 	   RoteirizacaoDTO dto = getDTO();
-	   if (dto.isNovo() && !Box.ESPECIAL.getId().equals(idBox)) {
-	       RoteirizacaoDTO existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
-	       if (existente != null) {
-	           dto = setDTO(existente);
-	       } else {
-	           Box box = boxService.buscarPorId(idBox);
-	           dto.setBox(new BoxRoteirizacaoDTO(box.getId(), box.getNome()));
-	       }
+	   if (!Box.ESPECIAL.getId().equals(idBox)) {
+	       existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
+	   }
+	   if (existente != null) {
+	       dto = setDTO(existente);
+	   } else {
+	       dto.reset(idBox);
 	   }
 	   result.use(CustomJson.class).from(dto).serialize();
 	}

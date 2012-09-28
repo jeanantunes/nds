@@ -16,8 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.cadastro.pdv.PDV;
-
 @Entity
 @Table(name = "ROTEIRO")
 @SequenceGenerator(name="ROTEIRO_SEQ", initialValue = 1, allocationSize = 1)
