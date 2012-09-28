@@ -41,16 +41,8 @@ public class ExportHandler {
 				
 				ExportRow exportRow = new ExportRow();
 				
-				List<ExportColumn> exportColumns = new ArrayList<ExportColumn>();
-				
-				if (hasExportableSuperClass(exportableListClass)) {
-					
-					exportColumns = obtainExportColumns(
-						exportableListClass.getSuperclass(), exportHeaders, exportable);
-				}
-				
-				exportColumns.addAll(
-					obtainExportColumns(exportableListClass, exportHeaders, exportable));
+				List<ExportColumn> exportColumns = 
+					obtainExportColumns(exportableListClass, exportHeaders, exportable);
 				
 				exportRow.setColumns(exportColumns);
 				
@@ -81,6 +73,11 @@ public class ExportHandler {
 														    					   InvocationTargetException {
 		
 		List<ExportColumn> exportColumns = new ArrayList<ExportColumn>();
+		
+		if (hasExportableSuperClass(clazz)) {
+			
+			exportColumns.addAll(obtainExportColumns(clazz.getSuperclass(), exportHeaders, exportable));
+		}
 		
 		for (Method method : clazz.getMethods()) {
 			
@@ -142,22 +139,18 @@ public class ExportHandler {
 															  throws IllegalArgumentException, 
 																	 IllegalAccessException, 
 																	 InvocationTargetException {
-		
+
 		if (filter == null) {
 			
 			return null;
 		}
 		
-		List<ExportFilter> exportFilters = new ArrayList<ExportFilter>();;
-		
-		if (hasExportableSuperClass(filter.getClass())) {
+		if (!filter.getClass().isAnnotationPresent(Exportable.class)) {
 			
-			exportFilters = generateExportFilters(filter, filter.getClass().getSuperclass());
+			throw new RuntimeException("A classe de filtro utilizada não é exportável!");
 		}
-
-		exportFilters.addAll(generateExportFilters(filter, filter.getClass()));
 		
-		return exportFilters;
+		return generateExportFilters(filter, filter.getClass());
 	}
 	
 	private static <F> List<ExportFilter> generateExportFilters(F filter, 
@@ -166,13 +159,13 @@ public class ExportHandler {
 																	   IllegalAccessException, 
 																	   InvocationTargetException {
 		
-		if (!clazz.isAnnotationPresent(Exportable.class)) {
-			
-			throw new RuntimeException("A classe de filtro utilizada não é exportável!");
-		}
-
 		List<ExportFilter> exportFilters = new ArrayList<ExportFilter>();
 		
+		if (hasExportableSuperClass(clazz)) {
+		
+			exportFilters.addAll(generateExportFilters(filter, clazz.getSuperclass()));
+		}
+
 		for (Method method : clazz.getMethods()) {
 			
 			Export exportAnnotation = method.getAnnotation(Export.class);
@@ -233,29 +226,25 @@ public class ExportHandler {
 			return null;
 		}
 		
-		List<ExportFooter> exportFooters = new ArrayList<ExportFooter>();
-		
-		if (hasExportableSuperClass(footer.getClass())) {
-			
-			exportFooters = generateExportFooters(footer, footer.getClass().getSuperclass());
-		}
-		
-		exportFooters.addAll(generateExportFooters(footer, footer.getClass()));
+		if (!footer.getClass().isAnnotationPresent(Exportable.class)) {
 
-		return exportFooters;
+			throw new RuntimeException("A classe de rodapé utilizada não é exportável!");
+		}
+
+		return generateExportFooters(footer, footer.getClass());
 	}
 
 	private static <FT> List<ExportFooter> generateExportFooters(FT footer,
 																 Class<?> clazz)
 																 throws IllegalAccessException, 
 																  		InvocationTargetException {
-		
-		if (!clazz.isAnnotationPresent(Exportable.class)) {
-
-			throw new RuntimeException("A classe de rodapé utilizada não é exportável!");
-		}
 
 		List<ExportFooter> exportFooters = new ArrayList<ExportFooter>();
+		
+		if (hasExportableSuperClass(clazz)) {
+			
+			exportFooters.addAll(generateExportFooters(footer, clazz.getSuperclass()));
+		}
 
 		for (Method method : clazz.getMethods()) {
 
