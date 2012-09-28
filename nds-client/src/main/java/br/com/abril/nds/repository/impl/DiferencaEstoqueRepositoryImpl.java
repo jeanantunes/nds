@@ -494,7 +494,21 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select sum(diferenca.qtde) ")
+		hql.append("select sum( ")
+			
+			.append(" case when (diferenca.tipoDiferenca = 'FALTA_DE') then ")
+			.append(" (- diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then ")
+			.append(" (- diferenca.qtde) ")
+			
+			.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then ")
+			.append(" (diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then ")
+			.append(" (diferenca.qtde) ")
+			
+			.append(" else 0 end")
+			.append(" )")
+			
 			.append(" from Diferenca diferenca ")
 			.append(" join diferenca.produtoEdicao produtoEdicao ")
 			.append(" join produtoEdicao.produto produto ")
