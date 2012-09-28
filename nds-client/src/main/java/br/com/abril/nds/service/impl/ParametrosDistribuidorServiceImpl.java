@@ -161,6 +161,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Reutilização de Código de Cota
 		parametrosDistribuidor.setReutilizacaoCodigoCotaInativa(distribuidor.getQntDiasReutilizacaoCodigoCota());
+		
+		parametrosDistribuidor.setUtilizaSugestaoIncrementoCodigo(distribuidor.isUtilizaSugestaoIncrementoCodigo());
 
 		// Emissão de Documentos
 		for (ParametrosDistribuidorEmissaoDocumento emissaoDocumentos : distribuidor.getParametrosDistribuidorEmissaoDocumentos()) {
@@ -481,6 +483,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setCapacidadeDistribuicao(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento()));
 		distribuidor.setCapacidadeRecolhimento(new BigDecimal(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento()));
 		distribuidor.setQntDiasReutilizacaoCodigoCota(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa());
+		
+		distribuidor.setUtilizaSugestaoIncrementoCodigo(parametrosDistribuidor.isUtilizaSugestaoIncrementoCodigo());
 
 		// Emissão de Documentos
 		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoBoleto = new ParametrosDistribuidorEmissaoDocumento();
