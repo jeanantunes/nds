@@ -15,7 +15,7 @@
 			<tr>
 				<td width="122">Tipo de Diferença:</td>
     			<td width="239">
-					<select id="tipoDiferenca" style="width:200px;" onchange="lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(this.value)">
+					<select id="tipoDiferenca" style="width:200px;" onchange="lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(this.value);lancamentoNovoController.recalcularReparteAtualRateio()">
 						<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
 							<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 						</c:forEach>

@@ -79,9 +79,6 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(roteirizacao);
 		
 
-		box = Fixture.criarBox(0, "BOX00", TipoBox.LANCAMENTO);
-		save(box);
-
 		box1 = Fixture.criarBox(1, "BOX01", TipoBox.LANCAMENTO);
 		save(box1);
 
@@ -101,16 +98,16 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(box6);
 		
 
-		roteiro = Fixture.criarRoteiro("RT00", roteirizacao, box, TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("RT00", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		roteiro1 = Fixture.criarRoteiro("RT01", roteirizacao, box, TipoRoteiro.NORMAL);
+		roteiro1 = Fixture.criarRoteiro("RT01", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro1);
 
-		roteiro2 = Fixture.criarRoteiro("R02", roteirizacao, box, TipoRoteiro.NORMAL);
+		roteiro2 = Fixture.criarRoteiro("R02", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro2);
 
-		roteiro3 = Fixture.criarRoteiro("RT03", roteirizacao, box1, TipoRoteiro.NORMAL);
+		roteiro3 = Fixture.criarRoteiro("RT03", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro3);
 		
 		
@@ -136,7 +133,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertTrue(lista.get(3) != null);
 
-		Assert.assertEquals(lista.size(), 5);
+		Assert.assertEquals(4,lista.size());
 	}
 
 	@Test
@@ -147,7 +144,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
   		
   		Assert.assertTrue(lista.get(1) != null);
   		
-  		Assert.assertEquals(lista.size(), 2);
+  		Assert.assertEquals(3,lista.size());
   	}
 
 	@Test
@@ -183,6 +180,13 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	    
 	    ConsultaRoteirizacaoDTO resultado4 = resultado.get(3);
 	    Assert.assertEquals(String.format("%s - %s", rota3.getCodigoRota(), rota3.getDescricaoRota()), resultado4.getDescricaoRota());
+	}
+	
+	@Test
+	public void obterBoxDoPDV() {
+		Box box = this.roteirizacaoRepository.obterBoxDoPDV(pdvManoel.getId());
+		Assert.assertTrue(box!=null);
+		Assert.assertEquals(box.getNome(), "Box 300");
 	}
 
 }

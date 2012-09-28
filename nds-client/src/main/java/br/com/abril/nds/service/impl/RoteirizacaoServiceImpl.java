@@ -366,23 +366,27 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 
 	@Override
+	@Transactional
 	public List<BoxRoteirizacaoDTO> obterBoxesPorNome(String nome) {
 		return roteirizacaoRepository.obterBoxesPorNome(nome);
 	}
 
 	@Override
+	@Transactional
 	public List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxes(String nome,
 			List<Long> idsBoxes) {
 		return roteirizacaoRepository.obterRoteirosPorNomeEBoxes(nome, idsBoxes);
 	}
 
 	@Override
+	@Transactional
 	public List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome,
 			List<Long> idsRoteiros) {
 		return roteirizacaoRepository.obterRotasPorNomeERoteiros(nome, idsRoteiros);
 	}
 
 	@Override
+	@Transactional
 	public Roteirizacao buscarRoteirizacaoPorId(Long idRoteirizacao){
 		
 		Roteirizacao roteirizacao = this.roteirizacaoRepository.buscarPorId(idRoteirizacao);
@@ -481,6 +485,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 * @return List<PdvRoteirizacaoDTO>
 	 */
 	@Override
+	@Transactional
 	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis() {
 		
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
@@ -495,8 +500,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			pdvDTO.setId(itemPdv.getId());
 			
-			pdvDTO.setSelecionado(false);
-			
 			pdvDTO.setNome(itemPdv.getCota().getPessoa().getNome());
 			pdvDTO.setOrdem(itemPdv.getOrdem());
 			pdvDTO.setCota(itemPdv.getCota().getNumeroCota());
@@ -505,14 +508,14 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			EnderecoPDV enderecoPdvEntrega  = itemPdv.getEnderecoEntrega();
 			if (enderecoPdvEntrega !=null){
 				endereco = enderecoPdvEntrega .getEndereco();
-				pdvDTO.setOrigem(OrigemEndereco.PDV);
+				pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
 			}
 			else{
 				EnderecoCota enderecoPrincipalCota = itemPdv.getCota().getEnderecoPrincipal();
 				if (enderecoPrincipalCota !=null){
 				    endereco = enderecoPrincipalCota.getEndereco();
 				}    
-				pdvDTO.setOrigem(OrigemEndereco.COTA);
+				pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
 			}
 			
 			pdvDTO.setEndereco(endereco!=null?endereco.getLogradouro()+", "+endereco.getCidade()+", CEP:"+endereco.getCep():"");
@@ -526,22 +529,39 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 	
 	/**
+	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
+	 * @param idPdv
+	 * @return boolean - true:disponivel
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public boolean verificaDisponibilidadePdv(Long idPdv){
+		Box box = this.roteirizacaoRepository.obterBoxDoPDV(idPdv);
+		return (box==null);
+	}
+	
+	/**
 	 * Inclui Cota Pdv na Roteirização
 	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
 	 */
 	@Override
+	@Transactional
 	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> listaCotaPdv, Long idRota) {
 		
-		PDV pdv;
+		List<PDV> pdvs = new ArrayList<PDV>();
 		Rota rota = rotaRepository.buscarPorId(idRota);
+		
 		for (PdvRoteirizacaoDTO item:listaCotaPdv){
-			
-			pdv = pdvRepository.buscarPorId(item.getId());
-			rota.getPdvs().add(pdv);
-			rotaRepository.alterar(rota);
+			PDV pdv = pdvRepository.buscarPorId(item.getId());
+			if (pdv!=null){
+			    pdvs.add(pdv);
+			}
 		}
 		
-		
+		if (pdvs.size() > 0){
+		    rota.addAllPdv(pdvs);
+	    	rotaRepository.merge(rota);
+		}
 	}
 
 	/**

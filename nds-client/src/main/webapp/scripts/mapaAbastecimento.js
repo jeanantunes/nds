@@ -144,24 +144,159 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	
 	this.pesquisar = function() {
 		
-
-		$(".mapaAbastecimentoGrid", _workspace).flexOptions({			
-			url : pathTela + "/mapaAbastecimento/pesquisar",
-			dataType : 'json',
-			preProcess: T.processaRetornoPesquisa,
-			params:T.getDadosFiltro()
-		});
+		var tipoConsulta = $("#tipoConsulta").val();
 		
-		$(".mapaAbastecimentoGrid", _workspace).flexReload();
+		var params = T.getDadosFiltro();
+
+		$("#gridBox", _workspace).hide();
+		$("#gridBoxQuebraCota", _workspace).hide();
+		$("#gridCota", _workspace).hide();
+		$("#gridRota", _workspace).hide();
+		$("#gridRotaQuebraCota", _workspace).hide();
+		$("#gridProduto", _workspace).hide();
+		$("#gridProdutoEspecifico", _workspace).hide();
+		$("#gridProdutoCota", _workspace).hide();
+
+		switch (tipoConsulta) {
+
+		case 'BOX':
+
+			var quebraPorCota = T.get('quebraPorCota');
+			
+			var flexiGrid = quebraPorCota ? ".mapaAbastecimentoGridQuebraCota" : ".mapaAbastecimentoGrid";
+			var grid = quebraPorCota ? "#gridBoxQuebraCota" : "#gridBox";
+
+			T.preencherGrid(
+				flexiGrid, 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processaRetornoPesquisa, 
+				grid,
+				params
+			);
+
+			break;
+		case 'COTA':
+			
+			T.preencherGrid(
+				".mapaAbastecimentoCotaEspGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarRetornoPesquisaPorCota, 
+				"#gridCota",
+				params
+			);
+			
+			break;
+		case 'ROTA':
+
+			var quebraPorCota = T.get('quebraPorCota');
+			
+			var flexiGrid = quebraPorCota ? ".mapaAbastecimentoRotaGridQuebraCota" : ".mapaAbastecimentoRotaGrid";
+			var grid = quebraPorCota ? "#gridRotaQuebraCota" : "#gridRota";
+
+			T.preencherGrid(
+				flexiGrid, 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarMensagens, 
+				grid,
+				params
+			);
+
+			break;
+		case 'PRODUTO':
+			
+			T.preencherGrid(
+				".mapaAbastecimentoProdutoGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarMensagens, 
+				"#gridProduto",
+				params
+			);
+
+			break;
+		case 'PRODUTO_ESPECIFICO':
+
+			T.preencherGrid(
+				".mapaAbastecimentoProdEspGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarRetornoPesquisaPorProdutoEdicao, 
+				"#gridProdutoEspecifico",
+				params
+			);
+
+			break;
+		case 'PRODUTO_X_COTA':
+			
+			T.preencherGrid(
+				".mapaAbastecimentoProdCotaGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarMensagens, 
+				"#gridProdutoCota",
+				params
+			);
+
+			break;
+		default:
+			break;
+		}
+	},
+
+	this.preencherGrid = function(tableClass, url, preProcess, grid, params) {
+		
+		$(tableClass, _workspace).flexOptions({			
+			url : url,
+			dataType : 'json',
+			preProcess: preProcess,
+			params:params
+		});
+		$(tableClass, _workspace).flexReload();
+		$(grid, _workspace).show();
+	},
+	
+	this.processarMensagens = function(result) {
+
+		if(result.mensagens)
+			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
+		
+		return result;
 	},
 	
 	this.processaRetornoPesquisa = function(result) {
-		if(result.mensagens)
-			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
+
+		T.processarMensagens(result);
 		
 		T.mapas = [];
 		
 		$.each(result.rows, function(index,row){T.processarLinha(index,row.cell);} );
+		
+		return result;
+	},
+	
+	this.processarRetornoPesquisaPorCota = function(result) {
+		
+		T.processarMensagens(result);
+
+		var codigoCota = T.get('codigoCota');
+		var nomeCota = T.get('nomeCota');
+
+		$("#codigoCotaHeader").html(codigoCota);
+		$("#nomeCotaHeader").html(nomeCota);
+		
+		return result;
+	},
+	
+	this.processarRetornoPesquisaPorProdutoEdicao = function(result) {
+		
+		T.processarMensagens(result);
+
+		var produto = T.produtosSelecionados[0];
+		
+		var codigoProduto = produto.id;
+		var nomeProduto = produto.nome;
+		var edicaoProduto = T.get('edicao');
+
+		$("#codigoProdutoHeader").html(codigoProduto);
+		$("#nomeProdutoHeader").html(nomeProduto);
+		$("#edicaoProdutoHeader").html(edicaoProduto);
 		
 		return result;
 	},
@@ -263,31 +398,36 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			
 		case 'BOX':
 			T.atualizarBoxRota();
-			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('box');
+			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
+			T.desbloquearCampos('box','quebraPorCota');
 			T.bloquearLinkProdutos();
 			T.displayEntregador(false);
 			T.limparProdutosSelecionados();
 			break;
 		case 'ROTA':
 			T.atualizarBoxRota();
-			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('box','rota','roteiro');
+			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
+			T.desbloquearCampos('box','rota','roteiro','quebraPorCota');
 			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':
-			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','quebraPorCota');
-			T.desbloquearCampos('codigoCota','nomeCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao');
+			T.desbloquearCampos('codigoCota','nomeCota','quebraPorCota');
 			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'PRODUTO':
-			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota');
-			T.desbloquearCampos('codigoProduto','nomeProduto','edicao','quebraPorCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
+			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
 			T.displayEntregador(false);
+			T.desbloquearLinkProdutos();
+			break;
+		case 'PRODUTO_ESPECIFICO':
+			T.bloquearCampos('box','rota','codigoCota','nomeCota','quebraPorCota');
+			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
 			T.desbloquearLinkProdutos();
 			break;
 		case 'ENTREGADOR':
@@ -400,4 +540,426 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	T.limparProdutosSelecionados();
 }
 
+
+$(function() {	
+	
+	$(".mapaAbastecimentoGrid", BaseController.workspace).flexigrid($.extend({},{
+		colModel: [ {
+			display : 'Box',
+			name : 'box',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total de Produtos',
+			name : 'totalProduto',
+			width : 200,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Reparte',
+			name : 'totalReparte',
+			width : 200,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 200,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Material Promocional',
+			name : 'materialPromocional',
+			width : 135,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Ação',
+			name : 'acao',
+			width : 30,
+			sortable : true,
+			align : 'center'
+		}],		
+		sortname : "box",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	})); 
+	
+	$(".mapaAbastecimentoGridQuebraCota", BaseController.workspace).flexigrid($.extend({},{
+		colModel: [ {
+			display : 'Cota',
+			name : 'codigoCota',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Nome',
+			name : 'nomeCota',
+			width : 200,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Box',
+			name : 'box',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total de Produtos',
+			name : 'totalProduto',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Reparte',
+			name : 'totalReparte',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 100,
+			sortable : true,
+			align : 'right'
+		},  {
+			display : 'Material Promocional',
+			name : 'materialPromocional',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Ação',
+			name : 'acao',
+			width : 30,
+			sortable : false,
+			align : 'center'
+		}],
+		
+		sortname : "box",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	})); 
+	
+	$(".grids", BaseController.workspace).show();	
+	
+	$(".mapaAbastecimentoDetalheGrid", BaseController.workspace).flexigrid($.extend({},{
+		colModel : [ {	
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Reparte',
+				name : 'reparte',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Total R$',
+				name : 'total',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}],
+			sortname : "nomeProduto",
+			sortorder : "asc",
+			width : 650,
+			height : 255
+	})); 	
+	
+	$(".mapaAbastecimentoCotaEspGrid", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 290,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 250,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 250,
+			sortable : true,
+			align : 'right'
+		}],
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	}));
+	
+	$(".mapaAbastecimentoRotaGrid", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel: [ {
+			display : 'Box',
+			name : 'codigoBox',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Rota',
+			name : 'codigoRota',
+			width : 180,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total de Produtos',
+			name : 'totalProduto',
+			width : 150,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 150,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 150,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Material Promocional',
+			name : 'materialPromocional',
+			width : 135,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "codigoBox",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	}));
+	
+	$(".mapaAbastecimentoRotaGridQuebraCota", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel: [{
+			display : 'Cota',
+			name : 'codigoCota',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Nome',
+			name : 'nomeCota',
+			width : 150,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Box',
+			name : 'codigoBox',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Rota',
+			name : 'codigoRota',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total de Produtos',
+			name : 'totalProduto',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 100,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Material Promocional',
+			name : 'materialPromocional',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "codigoBox",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	}));
+	
+	$(".mapaAbastecimentoProdutoGrid", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 290,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 250,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 250,
+			sortable : true,
+			align : 'right'
+		}],
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	}));
+	
+	$(".mapaAbastecimentoProdEspGrid", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel : [ {
+			display : 'Box',
+			name : 'codigoBox',
+			width : 140,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 250,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 250,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Material Promocional',
+			name : 'materialPromocional',
+			width : 250,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "codigoBox",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	}));
+	
+	$(".mapaAbastecimentoProdCotaGrid", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel : [ {
+			display : 'Cota',
+			name : 'codigoCota',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Nome',
+			name : 'nomeCota',
+			width : 300,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 160,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 160,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Material Promocional',
+			name : 'materialPromocional',
+			width : 160,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "codigoCota",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	}));
+});
 //@ sourceURL=mapaAbastecimento.js

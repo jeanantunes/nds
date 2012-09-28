@@ -1259,7 +1259,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			criteria.add(Restrictions.eq("situacaoCadastro", situacao));
 		}
 		if(idRoteiro != null || idRoteiro != null){
-			criteria.createAlias("box.roteiros", "roteiro");
+			criteria.createAlias("pdvs.rotas", "rota");
+			criteria.createAlias("rota.roteiro", "roteiro");
 		}		
 		
 		if (idRoteiro != null){

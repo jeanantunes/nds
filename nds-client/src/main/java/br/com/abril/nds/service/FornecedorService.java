@@ -166,4 +166,10 @@ public interface FornecedorService {
 	List<Fornecedor> obterFornecedoresPorId(List<Long> idsFornecedores);
 
 	public abstract Integer obterMaxCodigoInterface();
+	
+	public Integer obterMinCodigoInterfaceDisponivel();
+	
+	public Fornecedor obterFornecedorPorCodigoInterface(Integer codigoInterface);
+
+
 }

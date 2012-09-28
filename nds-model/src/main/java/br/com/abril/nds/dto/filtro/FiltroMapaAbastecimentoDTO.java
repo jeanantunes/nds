@@ -25,6 +25,8 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Boolean quebraPorCota;
 	private Boolean useSM;
 	private Long idEntregador;
+	private Boolean excluirProdutoSemReparte;
+	
 			
 	private PaginacaoVO paginacao;
 	
@@ -36,6 +38,8 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		ROTA,
 		COTA,
 		PRODUTO,
+		PRODUTO_ESPECIFICO,
+		PRODUTO_X_COTA,
 		ENTREGADOR;		
 	}
 	
@@ -43,7 +47,18 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		BOX("box"),
 		TOTAL_PRODUTO("totalProduto"),
 		TOTAL_REPARTE("totalReparte"),
-		TOTAL_BOX("totalBox");	
+		TOTAL_BOX("totalBox"),
+		CODIGO_ROTA("codigoRota"),
+		NOME_COTA("nomeCota"),
+		REPARTE("reparte"),
+		CODIGO_BOX("codigoBox"),
+		PRECO_CAPA("precoCapa"),
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODTO("nomeProduto"),
+		NUMERO_EDICAO("numeroEdicao"),
+		TOTAL("total"),
+		MATERIAL_PROMOCIONAL("materialPromocional"),
+		CODIGO_COTA("codigoCota");	
 		
 		private String nomeColuna;
 		
@@ -71,7 +86,8 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		NUMERO_EDICAO("numeroEdicao"),
 		REPARTE("reparte"),
 		PRECO_CAPA("precoCapa"),
-		TOTAL("total");	
+		TOTAL("total"),
+		CODIGO_BOX("codigoBox");	
 		
 		private String nomeColuna;
 		
@@ -266,6 +282,20 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 
 	public void setUseSM(Boolean useSM) {
 		this.useSM = useSM;
+	}
+
+	/**
+	 * @return the excluirProdutoSemReparte
+	 */
+	public Boolean getExcluirProdutoSemReparte() {
+		return excluirProdutoSemReparte;
+	}
+
+	/**
+	 * @param excluirProdutoSemReparte the excluirProdutoSemReparte to set
+	 */
+	public void setExcluirProdutoSemReparte(Boolean excluirProdutoSemReparte) {
+		this.excluirProdutoSemReparte = excluirProdutoSemReparte;
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -69,5 +71,8 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	boolean buscarStatusDiferencaLancadaAutomaticamente(Long idDiferenca);
 
 	BigDecimal obterValorFinanceiroPorTipoDiferenca(TipoDiferenca tipoDiferenca);
+	
+	BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
+											  TipoEstoque tipoEstoque, Date dataMovimento);
 	
 }

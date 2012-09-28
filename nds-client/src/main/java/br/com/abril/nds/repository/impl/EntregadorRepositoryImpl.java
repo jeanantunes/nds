@@ -312,7 +312,7 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		hql.append("select new ").append(EntregadorCotaProcuracaoVO.class.getCanonicalName()).append("(")
 		   .append(" cota.numeroCota, cota.pessoa.nome, cota.parametroDistribuicao.procuracaoAssinada ")
 		   .append(") ")
-		   .append(" from Entregador e join e.rota.roteiro.box.cotas cota ")
+		   .append(" from Entregador e join e.rota.roteiro.roteirizacao.box.cotas cota ")
 		   .append(" where e.id = :idEntregador ");
 		
 		retorno.setTotalRegistros(obterQtdRegistrosCotaAtendidaPaginacao(hql.toString(), idEntregador).intValue());

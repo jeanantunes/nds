@@ -102,4 +102,26 @@ public class Rota implements Serializable {
 	public void setPdvs(List<PDV> pdvs) {
 		this.pdvs = pdvs;
 	}
+	
+	/**
+	 * Adiciona um novo PDV à Rota
+	 * @param pdv: PDV para inclusão
+	 */
+	public void addPdv(PDV pdv){
+		if (pdvs == null){
+			pdvs = new ArrayList<PDV>();
+		}
+		pdvs.add(pdv);
+	}
+	
+	/**
+	 * Adiciona novos PDV's à Rota
+	 * @param listaPdv: List<PDV> para inclusão
+	 */
+	public void addAllPdv(List<PDV> listaPdv){
+		if (pdvs == null){
+			pdvs = new ArrayList<PDV>();
+		}
+		pdvs.addAll(listaPdv);
+	}
 }

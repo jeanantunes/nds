@@ -231,7 +231,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				ajustarQuantidadeMovimentoPorProdutoEdicao(mapaEstornoEnvioCota, movimentoEstoqueCota);
 			}
 
-			gerarMovimentoEstorno(mapaEstornoEnvioCota, cota, usuario);
+			this.gerarMovimentoEstorno(mapaEstornoEnvioCota, cota, usuario);
 		}
 
 		this.gerarSuplementares(mapaSuplementar, usuario);
@@ -395,7 +395,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				
 				EstoqueProduto estoqueProduto = this.estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
 				
-				this.gerarMovimentoEstoqueCota(movimentoEstoqueCota.getUsuario(), tipoMovimento, 
+				Usuario usuario = this.usuarioService.getUsuarioLogado();
+				
+				this.gerarMovimentoEstoqueCota(usuario, tipoMovimento, 
 						new Date(), produtoEdicao, movimentoEstoqueCota.getQtde(), estoqueProduto);
 				
 			}

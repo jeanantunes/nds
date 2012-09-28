@@ -32,6 +32,12 @@ $(function(){
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
 				</a>
 			</span>
+
+			<span class="bt_arq"> 
+				<a href="" rel="tipsy" title="Reimpressão Slip">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
+				</a>
+			</span>
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
@@ -116,6 +122,30 @@ $(function(){
 		<div class="grids" style="display: none;">
 		
 			<table id="gridConsultaEncalhe"></table>
+
+			<br clear="all" />
+
+			<table width="950" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+					<td width="51"><strong>Reparte:</strong></td>
+					<td width="85" id="totalReparte"></td>
+					<td width="83"><strong> ( - ) Encalhe:</strong></td>
+					<td width="87" id="totalEncalhe"></td>
+					<td width="126" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;">
+						<strong>( = )Valor Venda Dia:</strong>
+					</td>
+					<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="valorVendaDia"></td>
+					<td width="130">&nbsp;&nbsp;
+						<strong>
+							<a href="javascript:;" onclick="ConferenciaEncalhe.popup_outros_valores();"> ( + )Outros valores </a>:
+						</strong>
+					</td>
+					<td width="68" id="totalOutrosValores"></td>
+					<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
+					<td width="77" id="valorAPagar"></td>
+					<td width="17">&nbsp;</td>
+				</tr>
+			</table>
 			
 			<form name="form_detalhes_encalhe" id="form_detalhes_encalhe">
 				<div id="dialog-detalhes-encalhe" title="Consulta Encalhe" style="display:none;">

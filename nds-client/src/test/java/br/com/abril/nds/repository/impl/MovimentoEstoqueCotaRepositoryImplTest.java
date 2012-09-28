@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -466,8 +467,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
 		save(roteirizacao2);
 		
-		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, box1, TipoRoteiro.NORMAL);
-		Roteiro roteiro2 = Fixture.criarRoteiro("",roteirizacao2, box2, TipoRoteiro.NORMAL);
+		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, TipoRoteiro.NORMAL);
+		Roteiro roteiro2 = Fixture.criarRoteiro("",roteirizacao2, TipoRoteiro.NORMAL);
 		save(roteiro1,roteiro2);
 		
 		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1, Arrays.asList(pdv));
@@ -1152,6 +1153,21 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Long qtde = movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(cotaManoel.getId(), veja1.getId(), tipoMovimentoCota.getId());
 		
 		Assert.assertTrue(qtde.equals(50L));
+	}
+	
+	@Test
+	public void obterValorTotalReparte() {
+		
+		setUpForConsultaEncalhe();
+		
+		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
+		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
+
+		ConsultaEncalheRodapeDTO valoresTotais = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
+		
+		Assert.assertNotNull(valoresTotais);
+		
 	}
 
 }
