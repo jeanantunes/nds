@@ -107,7 +107,10 @@
               
 <input id="entregador"  type="text" style="width:112px;"
 	   onkeyup="pesquisaEntregadorMapaAbastecimento.autoCompletarPorNome('#entregador');" 
-		 	   onblur="pesquisaEntregadorMapaAbastecimento.pesquisarPorNomeCota('#codigoCota', '#nomeCota');" />
+		 	   onblur="pesquisaEntregadorMapaAbastecimento.pesquisarPorNomeEntregador('#idEntregador', '#entregador');" />
+
+<input id="idEntregador"  type="hidden" />
+		 	   
 	   	
 	   		   </div>
               

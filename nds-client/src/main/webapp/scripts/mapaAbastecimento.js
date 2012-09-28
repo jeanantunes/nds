@@ -289,6 +289,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao','quebraPorCota');
 			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
+			break;
 		case 'ENTREGADOR':
 			T.atualizarBoxRota();
 			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
@@ -334,7 +335,8 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		data.push({name:'filtro.edicaoProduto',			value: T.get("edicao")});
 		data.push({name:'filtro.codigoCota',		value: T.get("codigoCota")});
 		data.push({name:'filtro.nomeCota',			value: T.get("nomeCota")});
-		data.push({name:'filtro.quebraPorCota',	value: T.get("quebraPorCota")});		
+		data.push({name:'filtro.quebraPorCota',	value: T.get("quebraPorCota")});
+		data.push({name:'filtro.idEntregador',	value: T.get("idEntregador")});
 		
 		return data;
 	},

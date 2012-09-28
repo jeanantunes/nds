@@ -24,6 +24,7 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private String nomeCota;
 	private Boolean quebraPorCota;
 	private Boolean useSM;
+	private Long idEntregador;
 			
 	private PaginacaoVO paginacao;
 	
@@ -279,6 +280,20 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	 */
 	public void setRoteiro(Long roteiro) {
 		this.roteiro = roteiro;
+	}
+
+	/**
+	 * @return the idEntregador
+	 */
+	public Long getIdEntregador() {
+		return idEntregador;
+	}
+
+	/**
+	 * @param idEntregador the idEntregador to set
+	 */
+	public void setIdEntregador(Long idEntregador) {
+		this.idEntregador = idEntregador;
 	}
 	
 	

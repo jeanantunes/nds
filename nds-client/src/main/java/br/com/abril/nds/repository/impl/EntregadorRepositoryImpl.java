@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -400,5 +400,34 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		query.setMaxResults(1);
 		
 		return ((Long)query.uniqueResult()) != null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Entregador> obterEntregadoresPorNome(String nome) {
+		
+
+		Criteria criteria = super.getSession().createCriteria(Entregador.class);
+
+		criteria.createAlias("pessoa", "pessoa");
+
+		criteria.add(Restrictions.or(Restrictions.ilike("pessoa.nome", nome,
+				MatchMode.ANYWHERE), Restrictions.ilike("pessoa.razaoSocial",
+				nome, MatchMode.ANYWHERE)));
+
+		return criteria.list();
+	}
+	
+	@Override
+	public Entregador obterPorNome(String nome) {
+
+		Criteria criteria = super.getSession().createCriteria(Entregador.class);
+
+		criteria.createAlias("pessoa", "pessoa");
+
+		criteria.add(Restrictions.or(Restrictions.like("pessoa.nome", nome, MatchMode.ANYWHERE),
+				Restrictions.like("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)));
+
+		return (Entregador) criteria.uniqueResult();
 	}
 }
