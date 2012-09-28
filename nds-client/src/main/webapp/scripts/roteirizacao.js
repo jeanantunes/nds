@@ -785,7 +785,16 @@ var roteirizacao = $.extend(true, {
                     sortable : false,
                     align : 'center'
                 }],
+                autoload : false,
                 sortname : "ordem",
+                sortorder: "asc",
+                url: contextPath + '/cadastro/roteirizacao/recarregarCotasRota',
+                onSubmit    : function(){
+                    $('.cotasRotaGrid').flexOptions({params: [
+                        {name:'idRota', value: roteirizacao.idRota}
+                    ]});
+                    return true;
+                },
                 width : 875,
                 height : 150
             });
