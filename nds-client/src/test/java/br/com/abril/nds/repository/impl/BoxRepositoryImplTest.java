@@ -77,14 +77,14 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		roteirizacao = Fixture.criarRoteirizacao(box);
 		save(roteirizacao);
 		
-		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,box,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 		
 		rota = Fixture.rota("005", "Rota 005",roteiro,Arrays.asList(pdv));
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
-		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao,box,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro);
 		
 		rota = Fixture.rota("004", "Rota 004",roteiro,Arrays.asList(pdv));
@@ -93,11 +93,6 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ,2);
 		save(pdv);
-		
-		roteirizacao = Fixture.criarRoteirizacao(box);
-		save(roteirizacao);
-		
-
 	}
 
 	@Test

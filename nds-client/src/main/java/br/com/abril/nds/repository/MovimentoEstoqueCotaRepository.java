@@ -197,6 +197,14 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			FiltroMapaAbastecimentoDTO filtro);
 
 	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaAbastecimentoPorBoxRota"
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	Long countObterMapaAbastecimentoPorBoxRota(FiltroMapaAbastecimentoDTO filtro);
+	
+	/**
 	 * Obtém dados do Mapa de Abastecimento por Produto Edição
 	 * 
 	 * @param filtro
@@ -205,6 +213,14 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoEdicao(
 			FiltroMapaAbastecimentoDTO filtro);
 
+	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaAbastecimentoPorProdutoEdicao"
+	 * 
+	 * @param filtro
+	 * @return Long - Quantidade
+	 */
+	Long countObterMapaAbastecimentoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro);
+	
 	/**
 	 * Obtém dados do Mapa de Abastecimento por Cota
 	 * 
@@ -215,6 +231,14 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			FiltroMapaAbastecimentoDTO filtro);
 
 	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaAbastecimentoPorCota"
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	Long countObterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro);
+	
+	/**
 	 * Obtém dados do Mapa de Abastecimento por com quebra por Cota
 	 * 
 	 * @param filtro
@@ -223,6 +247,13 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
 			FiltroMapaAbastecimentoDTO filtro);
 
+	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaDeImpressaoPorProdutoQuebrandoPorCota"
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	Long countObterMapaDeImpressaoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
 	
 	/**
 	 * Obtém Movimento Estoque Cota por parametros.

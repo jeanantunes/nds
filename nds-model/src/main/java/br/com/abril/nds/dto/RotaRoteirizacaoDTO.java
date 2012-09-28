@@ -15,7 +15,7 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	private String nome;
 	
 	private Boolean selecionado;
-
+	
 	private List<PdvRoteirizacaoDTO> pdvs;
 	
 	public RotaRoteirizacaoDTO() {
@@ -98,8 +98,8 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	}
 	
 	/**
-	 * Adiciona um pdv à rota
-	 * @param pdv pdv para inclusão
+	 * Adiciona um PDV à Rota
+	 * @param pdv: PDV para inclusão
 	 */
 	public void addPdv(PdvRoteirizacaoDTO pdv) {
 		if (pdvs == null) {
@@ -107,6 +107,16 @@ public class RotaRoteirizacaoDTO implements Serializable {
 		}
 		pdvs.add(pdv);
 	}
-
+	
+	/**
+	 * Adiciona novos PDV's à Rota
+	 * @param listaPdv: List<PdvRoteirizacaoDTO> para inclusão
+	 */
+	public void addAllPdv(List<PdvRoteirizacaoDTO> listaPdv){
+		if (pdvs == null){
+			pdvs = new ArrayList<PdvRoteirizacaoDTO>();
+		}
+		pdvs.addAll(listaPdv);
+	}
 	
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -588,5 +589,20 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		return (String) query.uniqueResult();
+	}
+
+
+	@Override
+	public Long obterUltimoNumeroEdicao(String codigoProduto) {
+		
+		Criteria criteria =  getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");	
+		
+		criteria.createCriteria("produto", "produto", Criteria.LEFT_JOIN);
+
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+
+		criteria.setProjection( Projections.projectionList().add(Projections.max("produtoEdicao.numeroEdicao"), "numeroEdicao"));
+		
+		return (Long) criteria.uniqueResult();
 	}
 }

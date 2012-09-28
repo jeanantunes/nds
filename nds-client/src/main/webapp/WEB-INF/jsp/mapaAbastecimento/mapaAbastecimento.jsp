@@ -86,8 +86,11 @@
       <option value="" selected="selected">Selecione...</option>
       <option value="BOX">Box</option>
       <option value="ROTA">Rota</option>
+      <option value="PRODUTO_ESPECIFICO">Produto Específico</option>
       <option value="COTA">Cota</option>
+      <option value="PRODUTO_X_COTA">Produto X Cota</option>
       <option value="PRODUTO">Produto</option>
+      <option value="ENTREGADOR">Entregador</option>
 </select>
 			  
 			  </td>
@@ -180,14 +183,15 @@
 				</td>
               <td align="right">
 			  
-<input type="checkbox" name="checkbox" id="checkbox" />
+<!-- Quebra por Cota -->
+<input id="quebraPorCota" disabled="disabled" type="checkbox" name="checkbox"/>
 
 				</td>
               <td width="101">Quebra por Cota</td>
               <td width="20">
 			  
-<!-- Quebra por Cota -->              
-<input id="quebraPorCota" disabled="disabled" type="checkbox" name="checkbox"/>
+<!-- Excluir Produto Sem Reparte -->              
+<input id="excluirProdutoSemReparte" type="checkbox" name="checkbox"/>
 
 			</td>
               <td width="156">Excluir Produtos s/Reparte</td>
@@ -207,7 +211,40 @@
       <fieldset class="classFieldset">
        	  <legend>Mapas de Abastecimentos</legend>
         <div class="grids" style="display:none;">
-       	  <table class="mapaAbastecimentoGrid"></table>
+			<div id="gridBox" style="display:none;">
+				<table class="mapaAbastecimentoGrid"></table>
+			</div>
+			<div id="gridRota" style="display:none;">
+				<table class="mapaAbastecimentoRotaGrid"></table>				
+			</div>
+			<div id="gridBoxQuebraCota" style="display:none;">
+				<table class="mapaAbastecimentoGridQuebraCota"></table>
+			</div>
+			<div id="gridRotaQuebraCota" style="display:none;">
+				<table class="mapaAbastecimentoRotaGridQuebraCota"></table>				
+			</div>
+			<div id="gridCota" style="display:none;">
+				<span>
+					<strong>Cota:</strong>  <span id="codigoCotaHeader">  </span> - 
+					<strong>Nome:</strong> <span id="nomeCotaHeader">  </span>
+				</span>
+				<table class="mapaAbastecimentoCotaEspGrid"></table>
+			</div>
+			<div id="gridProduto" style="display:none;">
+				<table class="mapaAbastecimentoProdutoGrid"></table>
+			</div>
+			<div id="gridProdutoEspecifico" style="display:none;">
+				<span>
+					<strong>Código:</strong>  <span id="codigoProdutoHeader">  </span> - 
+					<strong>Produto:</strong> <span id="nomeProdutoHeader">  </span> - 
+					<strong>Edição:</strong>  <span id="edicaoProdutoHeader">  </span>
+				</span>
+				<table class="mapaAbastecimentoProdEspGrid"></table>
+
+		   </div>
+		   <div id="gridProdutoCota" style="display:none;">
+				<table class="mapaAbastecimentoProdCotaGrid"></table>
+			</div>
           <br />
    		  <span class="bt_novos" id="map_1" title="Imprimir">
 
@@ -230,101 +267,5 @@
     
     </div>
 </div> 
-<script>
-
-
-$(function() {	
-	
-	$(".mapaAbastecimentoGrid", BaseController.workspace).flexigrid($.extend({},{
-		colModel : [ {
-				display : 'Box',
-				name : 'box',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Total de Produtos',
-				name : 'totalProduto',
-				width : 250,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Total Reparte',
-				name : 'totalReparte',
-				width : 250,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Total Box R$',
-				name : 'totalBox',
-				width : 250,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "box",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255
-	})); 
-	
-	$(".grids", BaseController.workspace).show();	
-	
-	$(".mapaAbastecimentoDetalheGrid", BaseController.workspace).flexigrid($.extend({},{
-		colModel : [ {	
-				display : 'Código',
-				name : 'codigoProduto',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'numeroEdicao',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Total R$',
-				name : 'total',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}],
-			sortname : "nomeProduto",
-			sortorder : "asc",
-			width : 650,
-			height : 255
-	})); 	
-});
-
-</script>
 </body>
 
-</body>
