@@ -137,12 +137,13 @@ public class InterfaceExecutor {
 		
 		// Recupera distribuidores
 		String diretorio = parametroSistemaDAO.getParametro("INBOUND_DIR");
+		String pastaInterna = parametroSistemaDAO.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(diretorio, interfaceExecucao, codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 		
-			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, interfaceExecucao, distribuidor);
+			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, pastaInterna, interfaceExecucao, distribuidor);
 			
 			if (arquivos == null || arquivos.isEmpty()) {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
@@ -404,11 +405,11 @@ public class InterfaceExecutor {
 	 * @param codigoDistribuidor código do distribuidor
 	 * @return lista de arquivos a serem processados
 	 */
-	private List<File> recuperaArquivosProcessar(String diretorio, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
+	private List<File> recuperaArquivosProcessar(String diretorio, String pastaInterna, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
 		
 		List<File> listaArquivos = new ArrayList<File>();
 		
-		File dir = new File(diretorio + codigoDistribuidor + File.separator);
+		File dir = new File(diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator);
 		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo()));
 		listaArquivos.addAll(Arrays.asList(files));
 		
