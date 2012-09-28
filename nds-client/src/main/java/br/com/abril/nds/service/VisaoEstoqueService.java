@@ -1,6 +1,8 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
@@ -14,4 +16,7 @@ public interface VisaoEstoqueService {
 	List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro);
 	
 	void transferirEstoque(FiltroConsultaVisaoEstoque filtro, Usuario usuario);
+	
+	void atualizarInventarioEstoque(Map<Long, BigInteger> mapaDiferencaProduto, Usuario usuario);
+	
 }

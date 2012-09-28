@@ -160,4 +160,11 @@ public interface ProdutoEdicaoService {
 	 */
 	ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras);
 	
+	/**
+	 * Retorna o DTO produtoEdicao
+	 * @param codigoProduto
+	 * @return
+	 */
+	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao);
+	
 }

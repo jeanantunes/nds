@@ -657,6 +657,23 @@ public class FornecedorServiceImpl implements FornecedorService {
 		return fornecedorRepository.obterMaxCodigoInterface();
 	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public Integer obterMinCodigoInterfaceDisponivel() {
+		
+		return fornecedorRepository.obterMinCodigoInterfaceDisponivel();
+		
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Fornecedor obterFornecedorPorCodigoInterface(Integer codigoInterface) {
+		
+		return fornecedorRepository.obterFornecedorPorCodigo(codigoInterface);
+		
+	}
+	
+	
 	
 }
 

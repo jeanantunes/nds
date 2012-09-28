@@ -18,12 +18,16 @@ import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
+import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
+import br.com.abril.nds.dto.RoteirizacaoDTO.TipoEdicaoRoteirizacao;
+import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -33,12 +37,14 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TipoMensagem;
@@ -77,6 +83,9 @@ public class RoteirizacaoController {
 		
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private PdvService pdvService;
 	
 	@Autowired
 	private HttpSession session;
@@ -182,7 +191,7 @@ public class RoteirizacaoController {
 				roteiro.setRotas(null);
 				if ( roteiro.getRoteirizacao().getBox() != null ){ 
 					roteiro.getRoteirizacao().getBox().setCotas(null);
-					roteiro.getRoteirizacao().getBox().setRoteiros(null);
+					roteiro.getRoteirizacao().setRoteiros(null);
 				}	
 				listaRoteiroAutoComplete.add(new ItemAutoComplete(roteiro.getDescricaoRoteiro(), null,roteiro ));
 			}
@@ -780,24 +789,68 @@ public class RoteirizacaoController {
 	}
 	
 	
-	@Get
+	@Post
     @Path("/novaRoteirizacao")
 	public void novaRoteirizacao() {
-	    List<Box> disponiveis = new ArrayList<Box>();
-	    disponiveis.add(Box.ESPECIAL);
-	    disponiveis.addAll(roteirizacaoService.obterListaBoxLancamento(null));
+	    List<Box> disponiveis = roteirizacaoService.obterListaBoxLancamento(null);
 	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);
 	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
-	    setDTO(getDTO());
+	    setDTO(dto);
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
-	@Get
+	
+	@Post
 	@Path("/editarRoteirizacao")
 	public void editarRoteirizacao(Long idRoteirizacao) {
 	    RoteirizacaoDTO dto = roteirizacaoService.obterRoteirizacaoPorId(idRoteirizacao);
 	    setDTO(dto);
 	    result.use(CustomJson.class).from(dto).serialize();
+	}
+	
+	
+	/**
+	 * Verifica se PDV's podem ser adicionados na Roteirização
+	 * @param pdvs
+	 */
+	private void validaNovosPdvs(List<PdvRoteirizacaoDTO> pdvs){
+		
+		for(PdvRoteirizacaoDTO itemPdvDTO:pdvs){
+			if (!this.roteirizacaoService.verificaDisponibilidadePdv(itemPdvDTO.getId())){
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV] já pertence à um [Box] roteirizado !"));
+			}
+		}
+	}
+	
+	
+	/**
+	 * Adiciona PDV's selecionados no "popup de PSV's disponíveis" na lista principal de PDV's
+	 */
+	@Get
+	@Path("/adicionarNovosPdvs")
+	public void adicionarNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, Long idRota){
+        
+		//BUSCAR EOREITIZACAO NA SESSAO
+		RoteirizacaoDTO roteirizacaoDTO = null;
+		
+		
+		this.validaNovosPdvs(pdvs);
+		
+		
+		for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
+			for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
+				if(itemRota.getId().equals(idRota)){
+					itemRota.addAllPdv(pdvs);
+					break;
+				}
+			}
+		}
+
+		
+		//ADICIONAR ROTEIRIZACAO NA SESSAO
+		
+
+		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
 	}
 	
 	

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import br.com.abril.nds.model.cadastro.Box;
 
 public class BoxRoteirizacaoDTO implements Serializable {
@@ -82,5 +81,4 @@ public class BoxRoteirizacaoDTO implements Serializable {
 	    }
 	    return dtos;
 	}
-	
 }

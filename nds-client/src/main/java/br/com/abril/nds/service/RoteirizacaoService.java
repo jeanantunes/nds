@@ -180,6 +180,13 @@ public interface RoteirizacaoService {
 	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis();
 	
 	/**
+	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
+	 * @param idPdv
+	 * @return boolean - true:disponivel
+	 */
+	public boolean verificaDisponibilidadePdv(Long idPdv);
+	
+	/**
 	 * Inclui Cota Pdv na Roteirização
 	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
 	 * @param idRota
