@@ -815,7 +815,7 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	buscarReparteAtualCota : function(idDiv){
-		
+	
 		$("#diferencaInput" + idDiv, lancamentoNovoController.workspace).focus();
 		
 		var idProdutoEdicao = $("#idProdutoEdicao", lancamentoNovoController.workspace).val();
@@ -834,6 +834,12 @@ var lancamentoNovoController = $.extend(true, {
 							 	{name: "numeroCota", value: $("#cotaInput" + idDiv, lancamentoNovoController.workspace).val()}
 							],
 							function(result) {
+								
+								if($("#cotaInput" + idDiv, lancamentoNovoController.workspace).val() == ''){
+									$("#cotaInput" + idDiv, lancamentoNovoController.workspace).focus();
+									return;
+								}
+								
 								$("#reparteText" + idDiv, lancamentoNovoController.workspace).text(result[0]);
 							},
 							null,
@@ -939,6 +945,17 @@ var lancamentoNovoController = $.extend(true, {
 	
 	calcularReparteAtual : function(idDiv){
 		
+		var numeroCota = $("#cotaInput" + idDiv, lancamentoNovoController.workspace).val();
+		
+		if( numeroCota == undefined || numeroCota == '' ){	
+			return;
+		}
+		
+		if ($("#reparteText" + idDiv, lancamentoNovoController.workspace).text() == ""){
+			
+			$("#reparteText" + idDiv, lancamentoNovoController.workspace).text(0);
+		}
+	
 		if ($("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val() == ""){
 			
 			$("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val(0);
@@ -1098,6 +1115,28 @@ var lancamentoNovoController = $.extend(true, {
 		
 		$("#dialogConfirmacaoDirecionamentoDiferencaProdutoCota", lancamentoNovoController.workspace).show();
 	},
+	
+	recalcularReparteAtualRateio:function(){
+		
+		var linhasDaGrid = $('#grid_1 tr',this.workspace);
+		
+		$.each(linhasDaGrid, function(index, value) {
+			
+			var linha = $(value);
+			
+			var numeroCota = $(linha.find("td")[0],this.workspace).find('input[name="cotaInput"]').val();
+			
+			var diferenca = $(linha.find("td")[3],this.workspace).find('input[name="diferencaInput"]').val();
+			
+			if( numeroCota == undefined || numeroCota == '' 
+					|| diferenca == undefined || diferenca == ''){
+				
+				return;
+			}
+			
+			lancamentoNovoController.calcularReparteAtual(index);
+		});
+	}
 	
 }, BaseController);
 
