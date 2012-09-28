@@ -9,6 +9,11 @@ var TipoEdicao =  {
 	ALTERACAO : {value: 'ALTERACAO'}
 };
 
+var TipoInclusao = {
+	ROTEIRO : {value: 'ROTEIRO'},
+	ROTA : {value: 'ROTA'}
+};
+
 var roteiroSelecionadoAutoComplete = false;	
 var transferirRotasComNovoRoteiro = false;
 var transferirRoteirizacaoComNovaRota= false;
@@ -22,6 +27,8 @@ var roteirizacao = $.extend(true, {
         idBox : "",
         idRoteiro: "",
         idRota: "",
+        nomeBoxRoteiro : "",
+        tipoInclusao: null,
 		
 		definirTransferenciaCota : function() {
 			if (!roteirizacao.isTransferenciaCota()) {
@@ -65,35 +72,61 @@ var roteirizacao = $.extend(true, {
 			return TipoEdicao.ALTERACAO == roteirizacao.tipoEdicao;
 		},
 	
-		abrirTelaRoteiro : function () {
+		abrirTelaNovoRoteiroRota : function () {
 			
-			$.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaRoteiro',null,
+			if (roteirizacao.tipoInclusao){
+				
+				roteirizacao.limparCamposNovaInclusao();
+				
+				var metodoObterOrdem = '';
+				
+				if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
+					
+					metodoObterOrdem = 'iniciaTelaRoteiro';
+				} else {
+					
+					metodoObterOrdem = 'iniciaTelaRota';
+				}
+				
+				$.postJSON(contextPath + '/cadastro/roteirizacao/' + metodoObterOrdem, null,
 					function(result) {
-							roteirizacao.limparTelaRoteiro();
-				            $('#ordemInclusaoRoteiro', roteirizacao.workspace).numeric();
-				            $("#ordemInclusaoRoteiro", roteirizacao.workspace).val(result.int);
-		   					$("#dialog-roteiro", roteirizacao.workspace ).dialog({
-		   						resizable: false,
-		   						height:240,
-		   						width:420,
-		   						modal: true,
-		   						buttons: {
-		   							"Confirmar": function() {
-		   								roteirizacao.confirmarInclusaoRoteiro();
-		   							},
-		   							"Cancelar": function() {
-		   								$( this ).dialog( "close" );
-		   							}
-		   						},
-		   						form: $("#dialog-roteiro", this.workspace).parents("form")
-		   					});
-					   },
-					   null,
-					   true
+						
+						roteirizacao.limparTelaRoteiro();
+			            $('#inputOrdem', roteirizacao.workspace).numeric();
+			            $("#inputOrdem", roteirizacao.workspace).val(result.int);
+			            
+			            $("#nomeBoxRoteiro").text(roteirizacao.nomeBoxRoteiro);
+			            
+	   					$("#dialog-novo-dado", roteirizacao.workspace ).dialog({
+	   						resizable: false,
+	   						height:240,
+	   						width:420,
+	   						modal: true,
+	   						title: (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO ? "Novo Roteiro" : "Nova Rota"),
+	   						buttons: {
+	   							"Confirmar": function() {
+	   								
+	   								if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
+	   									
+	   									roteirizacao.confirmarInclusaoRoteiro();
+	   								} else {
+	   									
+	   									roteirizacao.confirmarInclusaoRota();
+	   								}
+	   							},
+	   							"Cancelar": function() {
+	   								$( this ).dialog( "close" );
+	   							}
+	   						},
+	   						form: $("#dialog-novo-dado", this.workspace).parents("form")
+	   					});
+					},
+					null,
+					true
 				);
-			
-			this.init();
-
+				
+				this.init();
+			}
 		},
 		
 		
@@ -105,16 +138,16 @@ var roteirizacao = $.extend(true, {
 		   
 			$.postJSON(contextPath + '/cadastro/roteirizacao/incluirRoteiro',
 					 {
-						'idBox' :  $("#boxInclusaoRoteiro", roteirizacao.workspace).val(),
-						'ordem' :  $("#ordemInclusaoRoteiro", roteirizacao.workspace).val(),
-						'nome' :  $("#nomeInclusaoRoteiro", roteirizacao.workspace).val(),
+						'idBox' :  roteirizacao.idBox,
+						'ordem' :  $("#inputOrdem", roteirizacao.workspace).val(),
+						'nome' :  $("#inputNome", roteirizacao.workspace).val(),
 						'tipoRoteiro' : tipoRoteiro
 						
 					 },
 					   function(result) {
 							var tipoMensagem = result.tipoMensagem;
 							var listaMensagens = result.listaMensagens;
-							$('#dialog-roteiro', roteirizacao.workspace).dialog( "close" );
+							$('#dialog-novo-dado', roteirizacao.workspace).dialog( "close" );
 							if (tipoMensagem && listaMensagens) {
 								exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
 							}
@@ -307,14 +340,15 @@ var roteirizacao = $.extend(true, {
 
             $(".rotasGrid", roteirizacao.workspace).flexReload();
         },
-		
+        
         iniciarGridBox : function(){
             $(".boxGrid", roteirizacao.workspace).flexigrid({
                 preProcess: function(data) {
                 	$.each(data.rows, function(index, value) {
+        				
         				var id = value.cell.id;
                         var selecione = '<input type="radio" value="' + id +'" name="boxRadio" ';
-        				selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  id  + '\');"';
+        				selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  id  + '\', \'' + value.cell.nome + '\');"';
                         if (id == roteirizacao.idBox) {
                             selecione += 'checked';
                         }
@@ -351,14 +385,16 @@ var roteirizacao = $.extend(true, {
                 roteirizacao.limparGridBox();
             }
         },
-
+        
         limparGridBox : function() {
            $(".boxGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
         },
 
-        boxSelecionadoListener : function(idBox) {
+        boxSelecionadoListener : function(idBox, nomeBox) {
             if (roteirizacao.idBox != idBox) {
                 roteirizacao.idBox = idBox;
+                roteirizacao.nomeBoxRoteiro = nomeBox;
+                roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
                 $.postJSON(contextPath + '/cadastro/roteirizacao/boxSelecionado',
                     [{name: 'idBox', value: idBox}],
                     function(result) {
@@ -372,7 +408,7 @@ var roteirizacao = $.extend(true, {
                             } else {
                                 roteirizacao.definirTipoEdicao(TipoEdicao.ALTERACAO);
                                 roteirizacao.idRoteirizacao = result.id;
-                                roteirizacao.popularGridBox(result.boxDisponiveis)
+                                roteirizacao.popularGridBox(result.boxDisponiveis);
                                 roteirizacao.popularGridRoteiros(result.roteiros);
                                 //roteirizacao.popularGridRotas(result.roteiros);
                             }
@@ -389,7 +425,7 @@ var roteirizacao = $.extend(true, {
                 preProcess: function(data) {
                     $.each(data.rows, function(index, value) {
                         var selecione = '<input type="radio" value="' + value.cell.id +'" name="roteirosRadio" ';
-                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  value.cell.id  + '\');"/>';
+                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  value.cell.id  + '\', \''+ value.cell.descricaoRoteiro +'\');"/>';
                         value.cell.selecione = selecione;
                     });
                     return data;
@@ -435,10 +471,12 @@ var roteirizacao = $.extend(true, {
             $(".roteirosGrid", roteirizacao.workspace).flexAddData({rows:[], page:0, total:0});
         },
 
-        roteiroSelecionadoListener : function(idRoteiro) {
+        roteiroSelecionadoListener : function(idRoteiro, descricaoRoteiro) {
             roteirizacao.idRoteiro = idRoteiro;
+            roteirizacao.nomeBoxRoteiro = descricaoRoteiro;
             roteirizacao.definirTransferenciaRoteiro();
             roteirizacao.pesquisarRotas();
+            roteirizacao.tipoInclusao = TipoInclusao.ROTA;
         },
 
         pesquisarRoteiros : function() {
@@ -454,54 +492,30 @@ var roteirizacao = $.extend(true, {
         },
 		
 		abrirTelaRota : function () {
-			var idRoteiro =  $('#idRoteiroSelecionado', roteirizacao.workspace).val();
-			$('#nomeRotaInclusao', roteirizacao.workspace).val('');
-			$.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaRota', { 'idRoteiro' : idRoteiro } ,
-					function(result) {
-				 			$("#ordemRotaInclusao", roteirizacao.workspace).numeric();	
-		   					$("#ordemRotaInclusao", roteirizacao.workspace).val(result.int);
-		   					$( "#dialog-rota", roteirizacao.workspace ).dialog({
-		   						resizable: false,
-		   						height:210,
-		   						width:420,
-		   						modal: true,
-		   						buttons: {
-		   							"Confirmar": function() {
-		   								roteirizacao.confirmarInclusaoRota();
-		   							},
-		   							"Cancelar": function() {
-		   								$( this ).dialog( "close" );
-		   							}
-		   						},
-		   						form: $("#dialog-rota", this.workspace).parents("form")
-		   					});
-					   },
-					   null,
-					   true
-				);
+			
 
 		},
 		confirmarInclusaoRota : function() {
-			 	$.postJSON(contextPath + '/cadastro/roteirizacao/incluirRota',
-						 {
-							'roteiroId' :  $("#idRoteiroSelecionado").val(),
-							'ordem' :  $("#ordemRotaInclusao").val(),
-							'nome' :  $("#nomeRotaInclusao").val()
-							
-						 },
-						   function(result) {
-								var tipoMensagem = result.tipoMensagem;
-								var listaMensagens = result.listaMensagens;
-								$('#dialog-rota', roteirizacao.workspace).dialog( "close" );
-								if (tipoMensagem && listaMensagens) {
-									exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-								}
-								$(".rotasGrid", roteirizacao.workspace).flexReload();
-								
-						   },
-						   null,
-						   true
-				);
+		 	$.postJSON(contextPath + '/cadastro/roteirizacao/incluirRota',
+				 {
+					'roteiroId' :  roteirizacao.idRoteiro,
+					'ordem' :  $("#inputOrdem", roteirizacao.worksapce).val(),
+					'nome' :  $("#inputNome", roteirizacao.workspace).val()
+					
+				 },
+				   function(result) {
+					 	var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						$('#dialog-novo-dado', roteirizacao.workspace).dialog("close");
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+						}
+						$(".rotasGrid", roteirizacao.workspace).flexReload();
+						
+				   },
+				   null,
+				   true
+			);
 		},
 			
 		buscaRotasSelecionadas : function(){
@@ -1068,8 +1082,8 @@ var roteirizacao = $.extend(true, {
 	},
 	
 	limparTelaRoteiro:function(){
-		$('#boxInclusaoRoteiro', roteirizacao.workspace).val('')
-		$('#nomeInclusaoRoteiro', roteirizacao.workspace).val('');
+		$('#boxInclusaoRoteiro', roteirizacao.workspace).val('');
+		$('#inputNome', roteirizacao.workspace).val('');
 		$("#tipoRoteiro", roteirizacao.workspace).attr("checked",false);
 	
 	},
@@ -1930,9 +1944,14 @@ iniciarPesquisaRoteirizacaoGrid : function () {
 				height : 140
 			});
 
-		}
-	  
+		},
 		
+		limparCamposNovaInclusao : function(){
+			
+			$("#selectTipoNovoDado", roteirizacao.workspace).val("ROTEIRO");
+			$("#inputOrdem", roteirizacao.workspace).val("");
+			$("#inputNome", roteirizacao.workspace).val("");
+		}
 }, BaseController);
 
 $(function() {
