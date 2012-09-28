@@ -2,6 +2,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/roteirizacao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 
 <style>
 label{ vertical-align:super;}

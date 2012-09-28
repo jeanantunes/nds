@@ -30,7 +30,7 @@ var roteirizacao = $.extend(true, {
         idsCotas: [],
         nomeBoxRoteiro : "",
         tipoInclusao: null,
-        
+
         definirTransferenciaCota : function() {
             if (!roteirizacao.isTransferenciaCota()) {
                 roteirizacao.tipoTransferencia = TipoTransferencia.COTA;
@@ -397,43 +397,61 @@ var roteirizacao = $.extend(true, {
         },
 
         boxSelecionadoListener : function(idBox, nomeBox) {
-            if (roteirizacao.idBox != idBox) {
-                roteirizacao.idBox = idBox;
-                roteirizacao.nomeBoxRoteiro = nomeBox;
-                roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
-                $.postJSON(contextPath + '/cadastro/roteirizacao/boxSelecionado',
-                    [{name: 'idBox', value: idBox}],
-                    function(result) {
-                        var tipoMensagem = result.tipoMensagem;
-                        var listaMensagens = result.listaMensagens;
-                        if (tipoMensagem && listaMensagens) {
-                            exibirMensagem(tipoMensagem, listaMensagens);
-                        } else {
-                            if (TipoEdicao.NOVO.value == result.tipoEdicao) {
-                                roteirizacao.popularGridRoteiros(result.roteiros);
-                            } else {
-                                roteirizacao.definirTipoEdicao(TipoEdicao.ALTERACAO);
-                                roteirizacao.idRoteirizacao = result.id;
-                                roteirizacao.popularGridBox(result.boxDisponiveis)
+            var isAlteracaoBox = roteirizacao.idBox != idBox;
+            if (isAlteracaoBox) {
+                if (roteirizacao.isAlteracao()) {
+                   var dialog = new ConfirmDialog("Ao alterar o Box selecionado as informações não confirmadas serão perdidas.<br/>Confirma?", function() {
+                       roteirizacao.processarAlteracaoBox(idBox, nomeBox);
+                       return true;
+                   }, function() {
 
-                                if (result.roteiros) {
-                                    roteirizacao.idRoteiro = result.roteiros[0].id;
-                                    roteirizacao.popularGridRoteiros(result.roteiros);
-                                    if (result.roteiros[0].rotas) {
-                                        roteirizacao.idRota =  result.roteiros[0].rotas[0].id;
-                                        roteirizacao.popularGridRotas(result.roteiros[0].rotas);
-                                        if (result.roteiros[0].rotas[0].pdvs) {
-                                            roteirizacao.popularGridCotasRota(result.roteiros[0].rotas[0].pdvs);
-                                        }
-                                    }
+                   });
+                   dialog.open();
+                } else {
+                    roteirizacao.processarAlteracaoBox(idBox, nomeBox);
+                }
+            }
+        },
+
+        processarAlteracaoBox : function(idBox, nomeBox) {
+            roteirizacao.idBox = idBox;
+            roteirizacao.nomeBoxRoteiro = nomeBox;
+            roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
+            $.postJSON(contextPath + '/cadastro/roteirizacao/boxSelecionado',
+                [{name: 'idBox', value: idBox}],
+                function(result) {
+                    var tipoMensagem = result.tipoMensagem;
+                    var listaMensagens = result.listaMensagens;
+                    if (tipoMensagem && listaMensagens) {
+                        exibirMensagem(tipoMensagem, listaMensagens);
+                    } else {
+                        if (TipoEdicao.NOVO.value == result.tipoEdicao) {
+                            roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
+                        } else {
+                            roteirizacao.definirTipoEdicao(TipoEdicao.ALTERACAO);
+                            roteirizacao.idRoteirizacao = result.id;
+                        }
+                        roteirizacao.popularGridBox(result.boxDisponiveis);
+                        if (result.roteiros && result.roteiros.length > 0) {
+                            roteirizacao.idRoteiro = result.roteiros[0].id;
+                            roteirizacao.popularGridRoteiros(result.roteiros);
+                            if (result.roteiros[0].rotas) {
+                                roteirizacao.idRota =  result.roteiros[0].rotas[0].id;
+                                roteirizacao.popularGridRotas(result.roteiros[0].rotas);
+                                if (result.roteiros[0].rotas[0].pdvs) {
+                                     roteirizacao.popularGridCotasRota(result.roteiros[0].rotas[0].pdvs);
                                 }
                             }
+                        } else {
+                            roteirizacao.limparGridRoteiros();
+                            roteirizacao.limparGridRotas();
+                            roteirizacao.limparGridCotasRota();
                         }
-                    },
-                    null,
-                    true
-                );
-            }
+                    }
+                },
+                null,
+                true
+            );
         },
 
         iniciarGridRoteiros : function(){
@@ -810,7 +828,7 @@ var roteirizacao = $.extend(true, {
         },
         
         limparGridCotasRota : function() {
-             $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 1, total : data.length});
+             $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
         },
         
         populaDadosCota : function(rotaId) {

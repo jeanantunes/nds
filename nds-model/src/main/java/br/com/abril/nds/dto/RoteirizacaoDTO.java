@@ -235,6 +235,21 @@ public class RoteirizacaoDTO implements Serializable{
 	    return null;
 	}
 
+	/**
+	 * Reseta o DTO selecionando um novo box
+	 * @param idBox identificador do Box para a roteirização
+	 */
+	public void reset(Long idBox) {
+	    this.id = null;
+	    this.tipoEdicao = TipoEdicaoRoteirizacao.NOVO;
+	    for (BoxRoteirizacaoDTO box : boxDisponiveis) {
+	        if (box.getId().equals(idBox)) {
+	            this.box = box;
+	            break;
+	        }
+	    }
+	    this.roteiros.clear();
+	}
     
 	/**
      * Tipo da edição tela
@@ -250,5 +265,7 @@ public class RoteirizacaoDTO implements Serializable{
          */
         ALTERACAO;
     }
+
+
 
 }
