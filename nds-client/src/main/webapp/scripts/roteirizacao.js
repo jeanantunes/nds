@@ -27,6 +27,7 @@ var roteirizacao = $.extend(true, {
         idBox : "",
         idRoteiro: "",
         idRota: "",
+        idsCotas: [],
         nomeBoxRoteiro : "",
         tipoInclusao: null,
         

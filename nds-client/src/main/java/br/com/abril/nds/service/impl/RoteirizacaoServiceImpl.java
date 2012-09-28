@@ -469,8 +469,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	@Transactional(readOnly = true)
 	public RoteirizacaoDTO obterRoteirizacaoPorId(Long id){
-		Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(id);
-		return RoteirizacaoDTO.toDTO(roteirizacao);
+        List<Box> disponiveis = obterListaBoxLancamento(null);
+	    Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(id);
+		return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis);
 	}
   	
 	/**
@@ -564,8 +565,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     @Transactional(readOnly = true)
     public RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox) {
         Roteirizacao roteirizacao = roteirizacaoRepository.obterRoteirizacaoPorBox(idBox);
+        List<Box> disponiveis = obterListaBoxLancamento(null);
         if (roteirizacao != null) {
-            return RoteirizacaoDTO.toDTO(roteirizacao);
+            return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis);
         }
         return null;
     }
