@@ -2,7 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
@@ -42,16 +41,11 @@ public class RoteirizacaoDTO implements Serializable{
 	 * Box disponíveis
 	 */
 	private List<BoxRoteirizacaoDTO> boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
-	
-    private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao) {
-        this.tipoEdicao = tipoEdicao;
-    }
-
 
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
-        this(tipoEdicao);
+        this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
-        this.boxDisponiveis.add(new BoxRoteirizacaoDTO(Box.ESPECIAL.getId(), Box.ESPECIAL.getNome()));
+        this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
         this.boxDisponiveis.addAll(boxDisponiveis);
     }
 	
@@ -159,10 +153,11 @@ public class RoteirizacaoDTO implements Serializable{
      * 
      * @param roteirizacao
      *            roteirização existente para criação do DTO
+     * @param dtos lista de boxes disponíveis
      * @return DTO com as informações da roteirização existente
      */
-	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao) {
-	    RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO);
+	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao, List<Box> disponiveis) {
+	    RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO, BoxRoteirizacaoDTO.toDTOs(disponiveis));
 	    dto.setId(roteirizacao.getId());
 
         Box box = roteirizacao.getBox();
@@ -170,11 +165,9 @@ public class RoteirizacaoDTO implements Serializable{
         if (box != null) {
             boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
         } else {
-            boxDTO = new BoxRoteirizacaoDTO(Box.ESPECIAL.getId(), Box.ESPECIAL.getNome());
+            boxDTO = BoxRoteirizacaoDTO.ESPECIAL;
         }
         dto.setBox(boxDTO);
-        dto.setBoxDisponiveis(Arrays.asList(boxDTO));
-
         
         for(Roteiro roteiro : roteirizacao.getRoteiros()){
             RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(
