@@ -231,7 +231,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				ajustarQuantidadeMovimentoPorProdutoEdicao(mapaEstornoEnvioCota, movimentoEstoqueCota);
 			}
 
-			gerarMovimentoEstorno(mapaEstornoEnvioCota, cota, usuario);
+			this.gerarMovimentoEstorno(mapaEstornoEnvioCota, cota, usuario);
 		}
 
 		this.gerarSuplementares(mapaSuplementar, usuario);

@@ -13,8 +13,6 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	private Integer ordem;
 	
 	private String nome;
-	
-	private Boolean selecionado;
 
 	private List<RotaRoteirizacaoDTO> rotas;
 	
@@ -56,20 +54,6 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the selecionado
-	 */
-	public Boolean getSelecionado() {
-		return selecionado;
-	}
-
-	/**
-	 * @param selecionado the selecionado to set
-	 */
-	public void setSelecionado(Boolean selecionado) {
-		this.selecionado = selecionado;
-	}
-
-	/**
 	 * @return the id
 	 */
 	public Long getId() {
@@ -107,4 +91,30 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 		}
 		rotas.add(rota);
 	}
+	
+	/**
+	 * Adiciona novas Rotas ao Roteiro
+	 * @param listaRota: List<RotaRoteirizacaoDTO> para inclusão
+	 */
+	public void addAllRota(List<RotaRoteirizacaoDTO> listaRota){
+		if (rotas == null){
+			rotas = new ArrayList<RotaRoteirizacaoDTO>();
+		}
+		rotas.addAll(listaRota);
+	}
+
+    /**
+     * Recupera a rota pelo identificador
+     * @param id identificador da rota
+     * @return rota com o identificador recebido
+     */
+	public RotaRoteirizacaoDTO getRota(Long id) {
+        for (RotaRoteirizacaoDTO rota : rotas) {
+            if (rota.getId().equals(id)) {
+                return rota;
+            }
+        }
+        return null;
+    }
+	
 }

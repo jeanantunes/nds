@@ -128,16 +128,13 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		save(roteirizacao);
 		
 		
-		roteiro1 = Fixture.criarRoteiro("Roteiro 1", roteirizacao, box1, TipoRoteiro.NORMAL);
-		roteiro1.setBox(box1);
+		roteiro1 = Fixture.criarRoteiro("Roteiro 1", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro1);
 		
-		roteiro2 = Fixture.criarRoteiro("Roteiro 2",roteirizacao, box1, TipoRoteiro.NORMAL);
-		roteiro2.setBox(box1);
+		roteiro2 = Fixture.criarRoteiro("Roteiro 2",roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro2);
 		
-		roteiro3 = Fixture.criarRoteiro("Roteiro 3", roteirizacao, box1, TipoRoteiro.NORMAL);
-		roteiro3.setBox(box1);
+		roteiro3 = Fixture.criarRoteiro("Roteiro 3", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro3);
 			
 		

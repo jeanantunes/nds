@@ -16,6 +16,15 @@ public class ResultadoConsultaEncalheVO implements Serializable {
 
 	private TableModel<CellModelKeyValue<ConsultaEncalheVO>> tableModel;
 	
+	private String valorReparte;
+	
+	private String valorEncalhe;
+	
+	private String valorVendaDia;
+	
+	private String valorDebitoCredito;
+	
+	private String valorPagar;	
 	/**
 	 * Obtém tableModel
 	 *
@@ -32,6 +41,76 @@ public class ResultadoConsultaEncalheVO implements Serializable {
 	public void setTableModel(
 			TableModel<CellModelKeyValue<ConsultaEncalheVO>> tableModel) {
 		this.tableModel = tableModel;
+	}
+
+	/**
+	 * @return the valorEncalhe
+	 */
+	public String getValorEncalhe() {
+		return valorEncalhe;
+	}
+
+	/**
+	 * @param valorEncalhe the valorEncalhe to set
+	 */
+	public void setValorEncalhe(String valorEncalhe) {
+		this.valorEncalhe = valorEncalhe;
+	}
+
+	/**
+	 * @return the valorVendaDia
+	 */
+	public String getValorVendaDia() {
+		return valorVendaDia;
+	}
+
+	/**
+	 * @param valorVendaDia the valorVendaDia to set
+	 */
+	public void setValorVendaDia(String valorVendaDia) {
+		this.valorVendaDia = valorVendaDia;
+	}
+
+	/**
+	 * @return the valorDebitoCredito
+	 */
+	public String getValorDebitoCredito() {
+		return valorDebitoCredito;
+	}
+
+	/**
+	 * @param valorDebitoCredito the valorDebitoCredito to set
+	 */
+	public void setValorDebitoCredito(String valorDebitoCredito) {
+		this.valorDebitoCredito = valorDebitoCredito;
+	}
+
+	/**
+	 * @return the valorPagar
+	 */
+	public String getValorPagar() {
+		return valorPagar;
+	}
+
+	/**
+	 * @param valorPagar the valorPagar to set
+	 */
+	public void setValorPagar(String valorPagar) {
+		this.valorPagar = valorPagar;
+	}
+
+	/**
+	 * @return the valorReparte
+	 */
+	public String getValorReparte() {
+		return valorReparte;
+	}
+
+	/**
+	 * @param valorReparte the valorReparte to set
+	 */
+	public void setValorReparte(String valorReparte) {
+		this.valorReparte = valorReparte;
 	}
 
 }

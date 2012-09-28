@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
 /**
@@ -485,4 +487,44 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+	
+	@Override
+	public BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
+									  				 TipoEstoque tipoEstoque, Date dataMovimento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select sum( ")
+			
+			.append(" case when (diferenca.tipoDiferenca = 'FALTA_DE') then ")
+			.append(" (- diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then ")
+			.append(" (- diferenca.qtde) ")
+			
+			.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then ")
+			.append(" (diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then ")
+			.append(" (diferenca.qtde) ")
+			
+			.append(" else 0 end")
+			.append(" )")
+			
+			.append(" from Diferenca diferenca ")
+			.append(" join diferenca.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" where produto.codigo = :codigoProduto ")
+			.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ")
+			.append(" and diferenca.tipoEstoque = :tipoEstoque ")
+			.append(" and diferenca.dataMovimento = :dataMovimento ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+		query.setParameter("tipoEstoque", tipoEstoque);
+		query.setParameter("dataMovimento", dataMovimento);
+		
+		return (BigInteger) query.uniqueResult();
+	}
+	
 }

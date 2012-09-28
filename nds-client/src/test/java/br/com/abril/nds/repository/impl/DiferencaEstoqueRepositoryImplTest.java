@@ -320,4 +320,15 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		Assert.assertNotNull(flag);
 	}
 	
+	@Test
+	public void obterQuantidadeTotalDiferencas() {
+		
+		BigInteger quantidadeTotalDiferencas =
+			this.diferencaEstoqueRepository.obterQuantidadeTotalDiferencas(
+				produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao(),
+				TipoEstoque.LANCAMENTO, datalancamentoDiferenca);
+		
+		Assert.assertNotNull(quantidadeTotalDiferencas);
+	}
+	
 }

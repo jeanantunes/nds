@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
@@ -100,4 +101,13 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 */
 	List<CotaFaturamentoDTO> obterFaturamentoCotasPorPeriodo(List<Cota> cotas, Date dataInicial, Date dataFinal);
 
+	/**
+	 * Obtém o valor totald entre Debito e Cédito dos movimentos financeiros.
+	 * 
+	 * @param filtro
+	 * @param tiposMovimentoFinanceiroIgnorados
+	 * @return
+	 */
+	public BigDecimal obterDebitoCreditoSumarizadosPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+	
 }

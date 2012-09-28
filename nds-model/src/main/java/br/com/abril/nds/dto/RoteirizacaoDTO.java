@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 
+
 public class RoteirizacaoDTO implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -22,33 +23,30 @@ public class RoteirizacaoDTO implements Serializable{
 	private Long id;
 	
 	/**
-	 * Box da roteirizacao
+	 * Box da roteirização
 	 */
 	private BoxRoteirizacaoDTO box;
 	
 	/**
-	 * Roteiros selecionados
+	 * Roteiros da roteirização
 	 */
-	private List<RoteiroRoteirizacaoDTO> roteiros;
+	private List<RoteiroRoteirizacaoDTO> roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
 	
     /**
      * Tipo da Edição
      */
-	private TipoEdicao tipoEdicao;
+	private TipoEdicaoRoteirizacao tipoEdicao;
 	
 	/**
 	 * Box disponíveis
 	 */
-	private List<BoxRoteirizacaoDTO> boxDisponiveis;
-	
-    private RoteirizacaoDTO(TipoEdicao tipoEdicao) {
+	private List<BoxRoteirizacaoDTO> boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
+
+    private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
-    }
-
-
-    private RoteirizacaoDTO(TipoEdicao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
-        this(tipoEdicao);
-        this.boxDisponiveis = boxDisponiveis;
+        this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
+        this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
+        this.boxDisponiveis.addAll(boxDisponiveis);
     }
 	
 
@@ -109,11 +107,11 @@ public class RoteirizacaoDTO implements Serializable{
     }
     
     
-    public TipoEdicao getTipoEdicao() {
+    public TipoEdicaoRoteirizacao getTipoEdicao() {
         return tipoEdicao;
     }
     
-    public void setTipoEdicao(TipoEdicao tipoEdicao) {
+    public void setTipoEdicao(TipoEdicaoRoteirizacao tipoEdicao) {
         this.tipoEdicao = tipoEdicao;
     }
 
@@ -128,6 +126,17 @@ public class RoteirizacaoDTO implements Serializable{
 		roteiros.add(roteiro);
 	}
 	
+	/**
+	 * Adiciona novos Roteiros à Roteirizacao
+	 * @param listaRoteiro: List<RoteiroRoteirizacaoDTO> para inclusão
+	 */
+	public void addAllRoteiro(List<RoteiroRoteirizacaoDTO> listaRoteiro){
+		if (roteiros == null){
+			roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
+		}
+		roteiros.addAll(listaRoteiro);
+	}
+	
     /**
      * Constrói um dto para a criação de uma nova roteirização
      * 
@@ -136,7 +145,7 @@ public class RoteirizacaoDTO implements Serializable{
      * @return {@link RoteirizacaoDTO} para a criação de uma nova roteirização
      */
 	public static RoteirizacaoDTO novaRoteirizacao(List<BoxRoteirizacaoDTO> boxDisponiveis) {
-	    return new RoteirizacaoDTO(TipoEdicao.NOVO, boxDisponiveis);
+	    return new RoteirizacaoDTO(TipoEdicaoRoteirizacao.NOVO, boxDisponiveis);
 	}
 	
     /**
@@ -144,18 +153,22 @@ public class RoteirizacaoDTO implements Serializable{
      * 
      * @param roteirizacao
      *            roteirização existente para criação do DTO
+     * @param dtos lista de boxes disponíveis
      * @return DTO com as informações da roteirização existente
      */
-	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao) {
-	    RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicao.ALTERACAO);
+	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao, List<Box> disponiveis) {
+	    RoteirizacaoDTO dto = new RoteirizacaoDTO(TipoEdicaoRoteirizacao.ALTERACAO, BoxRoteirizacaoDTO.toDTOs(disponiveis));
 	    dto.setId(roteirizacao.getId());
 
         Box box = roteirizacao.getBox();
+        BoxRoteirizacaoDTO boxDTO = null;
         if (box != null) {
-            BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
-            dto.setBox(boxDTO);
+            boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
+        } else {
+            boxDTO = BoxRoteirizacaoDTO.ESPECIAL;
         }
-
+        dto.setBox(boxDTO);
+        
         for(Roteiro roteiro : roteirizacao.getRoteiros()){
             RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(
                     roteiro.getId(), roteiro.getOrdem(),
@@ -201,15 +214,48 @@ public class RoteirizacaoDTO implements Serializable{
      * @return true se é uma nova roteirização, false caso contrário
      */
 	public boolean isNovo() {
-	    return TipoEdicao.NOVO == tipoEdicao;
+	    return TipoEdicaoRoteirizacao.NOVO == tipoEdicao;
+	}
+	
+    /**
+     * Recupera a rota da roteirização pelo id
+     * 
+     * @param id
+     *            identificador da rota
+     * @return rota com o identificador recebido
+     */
+	public RotaRoteirizacaoDTO getRota(Long id) {
+	    RotaRoteirizacaoDTO rota = null;
+	    for(RoteiroRoteirizacaoDTO roteiro : roteiros) {
+	        rota = roteiro.getRota(id);
+	        if (rota != null) {
+	            return rota;
+	        }
+	    }
+	    return null;
 	}
 
+	/**
+	 * Reseta o DTO selecionando um novo box
+	 * @param idBox identificador do Box para a roteirização
+	 */
+	public void reset(Long idBox) {
+	    this.id = null;
+	    this.tipoEdicao = TipoEdicaoRoteirizacao.NOVO;
+	    for (BoxRoteirizacaoDTO box : boxDisponiveis) {
+	        if (box.getId().equals(idBox)) {
+	            this.box = box;
+	            break;
+	        }
+	    }
+	    this.roteiros.clear();
+	}
     
 	/**
      * Tipo da edição tela
      * 
      */
-    public static enum TipoEdicao {
+    public static enum TipoEdicaoRoteirizacao {
         /**
          * Nova Roteirização
          */
@@ -219,4 +265,7 @@ public class RoteirizacaoDTO implements Serializable{
          */
         ALTERACAO;
     }
+
+
+
 }

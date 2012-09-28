@@ -33,8 +33,6 @@ public enum GrupoNotaFiscal {
 	
 	
 	
-	
-	
 	private TipoOperacao tipoOperacao;
 	
 	private GrupoNotaFiscal(TipoOperacao tipoOperacao) {

@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.fixture.Fixture;
@@ -151,6 +152,31 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		@SuppressWarnings("unused")
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota =
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(numeroCota, dataOperacao, tiposMovimentoFinanceiroIgnorados);
+		
+	}
+	
+	@Test
+	public void obterDebitoCreditoSumarizadosPorPeriodoOperacao() {
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		
+		filtro.setIdCota(cotaManoel.getId());
+		filtro.setDataRecolhimentoInicial(new Date());
+		filtro.setDataRecolhimentoFinal(new Date());
+		
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		
+		tiposMovimentoFinanceiroIgnorados.add(
+				tipoMovimentoFinanceiroReparte
+		);
+
+		tiposMovimentoFinanceiroIgnorados.add( 
+				tipoMovimentoFinanceiroEnvioEncalhe
+		);
+
+		BigDecimal valorTotalDebitoCredito = movimentoFinanceiroCotaRepository.obterDebitoCreditoSumarizadosPorPeriodoOperacao(filtro, tiposMovimentoFinanceiroIgnorados);
+		
+		Assert.assertNotNull(valorTotalDebitoCredito);
 		
 	}
 	
