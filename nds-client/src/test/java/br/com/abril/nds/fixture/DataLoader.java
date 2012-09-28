@@ -2573,13 +2573,13 @@ public class DataLoader {
 		session.save(roteirizacao3);;
 
 		
-		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,boxA,TipoRoteiro.NORMAL);
+		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		session.save(roteiroPinheiros);
 
-		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,boxB,TipoRoteiro.NORMAL);
+		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,TipoRoteiro.NORMAL);
 		session.save(roteiroInterlagos);
 		
-		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",roteirizacao3,boxA,TipoRoteiro.NORMAL);
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",roteirizacao3,TipoRoteiro.NORMAL);
 		session.save(roteiroTCD);
 
 		

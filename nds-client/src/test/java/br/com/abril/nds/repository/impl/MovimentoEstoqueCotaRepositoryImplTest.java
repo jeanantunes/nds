@@ -467,8 +467,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
 		save(roteirizacao2);
 		
-		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, box1, TipoRoteiro.NORMAL);
-		Roteiro roteiro2 = Fixture.criarRoteiro("",roteirizacao2, box2, TipoRoteiro.NORMAL);
+		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, TipoRoteiro.NORMAL);
+		Roteiro roteiro2 = Fixture.criarRoteiro("",roteirizacao2, TipoRoteiro.NORMAL);
 		save(roteiro1,roteiro2);
 		
 		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1, Arrays.asList(pdv));

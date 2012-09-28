@@ -57,23 +57,20 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		save(box1);
 		
-		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box1);
-		save(roteirizacao2);
+		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
+		save(roteirizacao);
 		
-		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao2,box1,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 
 		rota = Fixture.rota("005", "Rota 005", roteiro, Arrays.asList(pdvManoel));
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
-		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
-		save(roteirizacao);
-		
-		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao, box1,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 		
-		roteiroTCD = Fixture.criarRoteiro("TCD", roteirizacao, box1,TipoRoteiro.NORMAL);
+		roteiroTCD = Fixture.criarRoteiro("TCD", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiroTCD);
 		
 		rota10 = Fixture.rota("001", "Rota 001", roteiroTCD, Arrays.asList(pdvManoel));
