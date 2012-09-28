@@ -14,8 +14,6 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	
 	private String nome;
 	
-	private Boolean selecionado;
-	
 	private List<PdvRoteirizacaoDTO> pdvs;
 	
 	public RotaRoteirizacaoDTO() {
@@ -53,20 +51,6 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	 */
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	/**
-	 * @return the selecionado
-	 */
-	public Boolean getSelecionado() {
-		return selecionado;
-	}
-
-	/**
-	 * @param selecionado the selecionado to set
-	 */
-	public void setSelecionado(Boolean selecionado) {
-		this.selecionado = selecionado;
 	}
 
 	/**
