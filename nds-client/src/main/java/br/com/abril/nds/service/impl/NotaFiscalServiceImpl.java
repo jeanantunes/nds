@@ -306,17 +306,54 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		TipoNotaFiscal tipoNotaFiscal = notaFiscalCancelada.getIdentificacao()
 				.getTipoNotaFiscal();
 
-		// TODO: identificar tipo da nota e chamar rotina de cancelamento
-		// adequada para a nota.
+		// TODO: Implementar as condições para cancelar notas fiscal Devolução de Mercadoria Recebida em Consignação(Distribuidor/TREELOG).
 
 		if (isRemessaMercadoriaConsignacao(tipoNotaFiscal)) {
 			movimentoEstoqueService.devolucaoConsignadoNotaCancelada(notaFiscalCancelada);
 			movimentoEstoqueCotaService.envioConsignadoNotaCancelada(notaFiscalCancelada);
+			
+		}else if(isDevolucaoMerdadoriaRecebiaConsignacao(tipoNotaFiscal)){			
+			if(isSobraMercadoria(tipoNotaFiscal) || isDevolucaoEncalhe(tipoNotaFiscal) ){
+				movimentoEstoqueService.devolucaoRecolhimentoNotaCancelada(notaFiscalCancelada);
+				
+			}else{
+				//Falta de mercadoria
+				movimentoEstoqueService.devolucaoConsignadoNotaCancelada(notaFiscalCancelada);
+				
+			}
 		}
 		atualizaRetornoNFe(dadosRetornoNFE);
 	}
 
 	
+	/**
+	 * TODO indetificar se a nota foi gerada com a condição de devolução de encalhe.
+	 * @param tipoNotaFiscal
+	 * @return
+	 */
+	private boolean isDevolucaoEncalhe(TipoNotaFiscal tipoNotaFiscal) {
+		return false;
+	}
+	
+	/**
+	 * TODO indentificar se a nota foi gerada com a condição de sobra de mercadoria.
+	 * @param tipoNotaFiscal
+	 * @return
+	 */
+	private boolean isSobraMercadoria(TipoNotaFiscal tipoNotaFiscal) {
+		return false;
+	}
+
+		/**
+		 * TODO Identifica se é um nota de Devolução de Mercadoria Recebida em Consignação.
+		 * @param tipoNotaFiscal
+		 * @return
+		 */
+	private boolean isDevolucaoMerdadoriaRecebiaConsignacao(TipoNotaFiscal tipoNotaFiscal) {
+		return false
+				&& tipoNotaFiscal.getEmitente() == TipoUsuarioNotaFiscal.DISTRIBUIDOR
+				&& tipoNotaFiscal.getDestinatario() == TipoUsuarioNotaFiscal.TREELOG;
+	}
 
 	/**
 	 * @param tipoNotaFiscal
