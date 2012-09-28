@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -221,6 +222,24 @@ public class RoteirizacaoDTO implements Serializable{
      */
 	public boolean isNovo() {
 	    return TipoEdicaoRoteirizacao.NOVO == tipoEdicao;
+	}
+	
+    /**
+     * Recupera a rota da roteirização pelo id
+     * 
+     * @param id
+     *            identificador da rota
+     * @return rota com o identificador recebido
+     */
+	public RotaRoteirizacaoDTO getRota(Long id) {
+	    RotaRoteirizacaoDTO rota = null;
+	    for(RoteiroRoteirizacaoDTO roteiro : roteiros) {
+	        rota = roteiro.getRota(id);
+	        if (rota != null) {
+	            return rota;
+	        }
+	    }
+	    return null;
 	}
 
     
