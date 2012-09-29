@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 
 
 public class RoteirizacaoDTO implements Serializable{
@@ -180,8 +181,9 @@ public class RoteirizacaoDTO implements Serializable{
                         rota.getId(), rota.getOrdem(), rota.getDescricaoRota());
                 roteiroDTO.addRota(rotaDTO);
 
-                for(PDV pdv : rota.getPdvs()){
-                    Cota cota = pdv.getCota();
+                for(RotaPDV rotaPdv : rota.getRotaPDVs()){
+                    PDV pdv = rotaPdv.getPdv();
+                    Cota cota = rotaPdv.getPdv().getCota();
                     String nomeCota = cota.getPessoa().getNome();
                     OrigemEndereco origemEndereco = null;
 
@@ -191,16 +193,16 @@ public class RoteirizacaoDTO implements Serializable{
                         endereco = enderecoPdvEntrega .getEndereco();
                         origemEndereco = OrigemEndereco.PDV;
                     } else {
-                        EnderecoCota enderecoPrincipalCota = pdv.getCota().getEnderecoPrincipal();
+                        EnderecoCota enderecoPrincipalCota = cota.getEnderecoPrincipal();
                         if (enderecoPrincipalCota != null){
                             endereco = enderecoPrincipalCota.getEndereco();
                         }    
                         origemEndereco = OrigemEndereco.COTA;
                     }
                     PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(
-                            pdv.getId(), pdv.getNome(), origemEndereco,
+                            rotaPdv.getId(), pdv.getNome(), origemEndereco,
                             endereco, cota.getNumeroCota(), nomeCota,
-                            pdv.getOrdem());
+                            rotaPdv.getOrdem());
                     rotaDTO.addPdv(pdvDTO);
                 }
             }

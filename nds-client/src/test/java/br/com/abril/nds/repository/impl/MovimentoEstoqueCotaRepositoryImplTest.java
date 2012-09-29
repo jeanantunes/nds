@@ -455,13 +455,13 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
 		save(cotaManoel);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel,1 );
+		PDV pdv = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel);
 		save(pdv);
 		
 		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
 		save(roteirizacao);
 		
-		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel,2 );
+		PDV pdv2 = Fixture.criarPDVPrincipal("Meu PDV", cotaManoel);
 		save(pdv2);
 		
 		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(box2);
@@ -471,8 +471,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Roteiro roteiro2 = Fixture.criarRoteiro("",roteirizacao2, TipoRoteiro.NORMAL);
 		save(roteiro1,roteiro2);
 		
-		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1, Arrays.asList(pdv));
-		rota2 = Fixture.rota("ROTA01", "Rota 1", roteiro2, Arrays.asList(pdv2));
+		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1);
+		rota1.addPDV(pdv, 1);
+		rota2 = Fixture.rota("ROTA01", "Rota 1", roteiro2);
+		rota2.addPDV(pdv2, 1);
 		rota1.setRoteiro(roteiro1);
 		rota2.setRoteiro(roteiro2);
 		save(rota1,rota2);
