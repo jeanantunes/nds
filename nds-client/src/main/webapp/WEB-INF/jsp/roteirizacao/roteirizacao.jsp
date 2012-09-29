@@ -263,13 +263,13 @@
 	<form id="formNovoDado">
 		<div id="dialog-novo-dado" title="Novo" style="display:none;">
 			<jsp:include page="../messagesDialog.jsp" /> 
-			<fieldset>
+			<fieldset style="width: 380px;">
 	    		<legend>Novo</legend>
 	    		<table width="347" border="0" cellspacing="1" cellpadding="1">
-	    			<tr>
+	    			<tr style="display: none;" id="trNomeRoteiro">
 						<td width="85">Incluir em:</td>
 						<td width="255">
-							<div id="nomeBoxRoteiro"></div>
+							<div id="nomeRoteiro"></div>
 						</td>
 					</tr>
 				</table>
