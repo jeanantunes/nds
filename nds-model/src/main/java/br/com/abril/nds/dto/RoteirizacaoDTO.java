@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
+import br.com.abril.nds.util.StringUtil;
 
 
 public class RoteirizacaoDTO implements Serializable{
@@ -42,12 +43,18 @@ public class RoteirizacaoDTO implements Serializable{
 	 * Box disponíveis
 	 */
 	private List<BoxRoteirizacaoDTO> boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
+	
+	/**
+     * Todos Box
+     */
+    private List<BoxRoteirizacaoDTO> todosBox = new ArrayList<BoxRoteirizacaoDTO>();
 
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
         this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
         this.boxDisponiveis.addAll(boxDisponiveis);
+        this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }
 	
 
@@ -252,6 +259,22 @@ public class RoteirizacaoDTO implements Serializable{
 	    }
 	    this.roteiros.clear();
 	}
+	
+    public void filtarBox(String nomeBox) {
+        if (!StringUtil.isEmpty(nomeBox)) {
+            List<BoxRoteirizacaoDTO> filtrados = new ArrayList<BoxRoteirizacaoDTO>();
+            for (BoxRoteirizacaoDTO box : todosBox) {
+                if (box.getNome().toUpperCase()
+                        .startsWith(nomeBox.toUpperCase())) {
+                    filtrados.add(box);
+                }
+            }
+            boxDisponiveis = filtrados;
+        } else {
+            boxDisponiveis.clear();
+            boxDisponiveis.addAll(todosBox);
+        }
+    }
     
 	/**
      * Tipo da edição tela
@@ -267,6 +290,8 @@ public class RoteirizacaoDTO implements Serializable{
          */
         ALTERACAO;
     }
+    
+    
 
 
 
