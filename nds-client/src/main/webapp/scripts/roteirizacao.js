@@ -397,19 +397,16 @@ var roteirizacao = $.extend(true, {
         },
 
         boxSelecionadoListener : function(idBox, nomeBox) {
-            var isAlteracaoBox = roteirizacao.idBox != idBox;
-            if (isAlteracaoBox) {
-                if (roteirizacao.isAlteracao()) {
-                   var dialog = new ConfirmDialog("Ao alterar o Box selecionado as informações não confirmadas serão perdidas.<br/>Confirma?", function() {
-                       roteirizacao.processarAlteracaoBox(idBox, nomeBox);
-                       return true;
-                   }, function() {
-
-                   });
-                   dialog.open();
-                } else {
-                    roteirizacao.processarAlteracaoBox(idBox, nomeBox);
-                }
+            var isBoxSelecionado = roteirizacao.idBox != "";
+            if (isBoxSelecionado) {
+              var dialog = new ConfirmDialog("Ao alterar o Box selecionado as informações não confirmadas serão perdidas.<br/>Confirma?", function() {
+                 roteirizacao.processarAlteracaoBox(idBox, nomeBox);
+                 return true;
+              }, function() {
+              });
+              dialog.open();
+            } else {
+                roteirizacao.processarAlteracaoBox(idBox, nomeBox);
             }
         },
 
