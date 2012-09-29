@@ -153,7 +153,7 @@ public class InterfaceExecutor {
 					
 					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario);
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
-					//arquivo.delete();
+					arquivo.delete();
 					
 				} catch (Throwable e) {
 					
