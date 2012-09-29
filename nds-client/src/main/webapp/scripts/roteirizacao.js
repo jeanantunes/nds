@@ -343,7 +343,9 @@ var roteirizacao = $.extend(true, {
 
         rotaSelecionadaListener : function(idRota) {
             roteirizacao.idRota = idRota;
+            roteirizacao.popularGridCotasRota();
             roteirizacao.definirTransferenciaRota();
+
         },
 
         limparGridRotas : function() {
@@ -360,6 +362,8 @@ var roteirizacao = $.extend(true, {
             });
 
             $(".rotasGrid", roteirizacao.workspace).flexReload();
+            roteirizacao.idRota = "";
+            roteirizacao.limparGridCotasRota();
         },
         
         iniciarGridBox : function(){
@@ -838,13 +842,14 @@ var roteirizacao = $.extend(true, {
               $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
         },
 
-    popularGridCotasRota : function(data) {
-        if (data) {
-            $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
-        } else {
-            roteirizacao.limparGridCotasRota();
-        }
-    },
+        popularGridCotasRota : function(data) {
+            if (!data) {
+                $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
+            } else {
+                $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
+            }
+            roteirizacao.idsCotas = [];
+         },
 
     limparGridCotasRota : function() {
         $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
