@@ -237,30 +237,6 @@ public class RoteirizacaoController {
 		}	
 	}
 	
-	/**
-	 * Obtém lista de rotas do roteiro
-	 * @param idRoteiro
-	 */
-	@Post
-	public void buscaRotasPorRoteiro(Long roteiroId, int rp, int page) {
-		
-		List<RotaRoteirizacaoDTO> dtosRota = this.getRotasPorRoteiro(roteiroId);
-		
-		List<Rota> listaRota = roteirizacaoService.buscarRotaPorRoteiro(roteiroId);
-		
-		for (Rota rota : listaRota){
-			
-			RotaRoteirizacaoDTO dto = new RotaRoteirizacaoDTO(rota.getId(), rota.getOrdem(), rota.getDescricaoRota());
-			
-			if (!dtosRota.contains(dto)){
-				
-				dtosRota.add(dto);
-			}
-		}
-		
-		result.use(Results.json()).from(dtosRota, "result").recursive().serialize();
-	}
-	
 	@Path("/incluirRota")
 	public void incluirRota(Long roteiroId, Integer ordem, String nome) {
 		
@@ -812,6 +788,25 @@ public class RoteirizacaoController {
 	    List<BoxRoteirizacaoDTO> boxes = roteirizacao.getBoxDisponiveis();
         result.use(FlexiGridJson.class).from(boxes).total(boxes.size()).page(1).serialize();
 	}
+	
+	@Post
+    @Path("/recarregarRoteiros")
+    public void recarregarRoteiros(String descricaoRoteiro) {
+        RoteirizacaoDTO roteirizacao = getDTO();
+        roteirizacao.filtarRoteiros(descricaoRoteiro);
+        List<RoteiroRoteirizacaoDTO> roteiros = roteirizacao.getRoteiros();
+        result.use(FlexiGridJson.class).from(roteiros).total(roteiros.size()).page(1).serialize();
+    }
+	
+	@Post
+    @Path("/recarregarRotas")
+    public void recarregarRotas(Long idRoteiro, String descricaoRota) {
+        RoteirizacaoDTO roteirizacao = getDTO();
+        RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+        roteiro.filtarRotas(descricaoRota);
+        List<RotaRoteirizacaoDTO> roteiros = roteiro.getRotas();
+        result.use(FlexiGridJson.class).from(roteiros).total(roteiros.size()).page(1).serialize();
+    }
 	
 	/**
 	 * Obtém PDV's para a inclusão de rota pdv na roteirização
