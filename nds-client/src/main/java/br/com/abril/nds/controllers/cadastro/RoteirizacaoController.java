@@ -242,7 +242,6 @@ public class RoteirizacaoController {
 		}	
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * Obtém lista de rotas do roteiro
 	 * @param idRoteiro
@@ -272,9 +271,7 @@ public class RoteirizacaoController {
 		
 		result.use(Results.json()).from(this.getDTO().getRoteiros(), "result").recursive().serialize();
 	}
-	
-=======
->>>>>>> remotes/origin/master
+
 	@Path("/incluirRota")
 	public void incluirRota(Long roteiroId, Integer ordem, String nome) {
 		
