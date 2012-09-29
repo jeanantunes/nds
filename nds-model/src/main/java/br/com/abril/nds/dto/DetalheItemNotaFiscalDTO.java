@@ -30,6 +30,8 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	
 	private Long idProdutoEdicao;
 	
+	protected Integer pacotePadrao;
+	
 	public DetalheItemNotaFiscalDTO() { }
 
 	/**
@@ -170,6 +172,20 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
 	}
 	
 }

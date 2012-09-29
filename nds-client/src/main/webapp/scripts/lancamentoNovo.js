@@ -28,27 +28,33 @@ var lancamentoNovoController = $.extend(true, {
 			colModel : [ {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 50,
+				width : 40,
 				sortable : false,
 				align : 'left'
 			},{
 				display : 'Produto',
 				name : 'descricaoProduto',
-				width : 90,
+				width : 70,
 				sortable : false,
 				align : 'left'
 			},{
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 50,
+				width : 40,
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Preço Capa R$',
+				display : 'Preço Venda R$',
 				name : 'precoVenda',
 				width : 75,
 				sortable : false,
 				align : 'right'
+			}, {
+				display : 'Pct Padrão',
+				name : 'pacotePadrao',
+				width : 55,
+				sortable : false,
+				align : 'center'
 			}, {
 				display : 'Reparte Total',
 				name : 'reparte',
@@ -64,7 +70,7 @@ var lancamentoNovoController = $.extend(true, {
 			}, {
 				display : 'Reparte Atual',
 				name : 'qtdeEstoqueAtual',
-				width : 80,
+				width : 65,
 				sortable : false,
 				align : 'center'
 			}],
@@ -422,6 +428,7 @@ var lancamentoNovoController = $.extend(true, {
 			
 			row.cell.codigoProduto = '<div name="codigoProdutoNota">'+ row.cell.codigoProduto +'</div>';
 			
+			row.cell.pacotePadrao = '<div id="pacotePadrao'+ index +'">'+ row.cell.pacotePadrao +'</div>';
 			row.cell.reparte = '<div id="reparte'+ index +'">'+ row.cell.qtdeEstoque +'</div>';
 			row.cell.qtdeEstoqueAtual = '<div id="qtdTotal'+ index +'">'+ valueEstoqueAtual +'</div>';
 			
@@ -1018,15 +1025,30 @@ var lancamentoNovoController = $.extend(true, {
 			valorDiferencaProduto = parseInt($("#inputDiferencaProduto" + indexDiv, lancamentoNovoController.workspace).val());
 		}
 		
-		if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_DE" || $("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_EM"){
+		var valorReparte = parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text());
+		
+		var pacotePadrao = parseInt($("#pacotePadrao" + indexDiv, lancamentoNovoController.workspace).text());
+		
+		var valorReparteAtual;
+		
+		if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_DE") {
 			
-			$("#qtdTotal" + indexDiv, lancamentoNovoController.workspace).text(
-				parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text()) + valorDiferencaProduto);
-		} else {
+			valorReparteAtual = valorReparte + (valorDiferencaProduto * pacotePadrao);
 			
-			$("#qtdTotal" + indexDiv, lancamentoNovoController.workspace).text(
-				parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text()) - valorDiferencaProduto);
+		} else if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_EM") {
+			
+			valorReparteAtual = valorReparte + valorDiferencaProduto;
+			
+		} else if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_DE") {
+			
+			valorReparteAtual = valorReparte - (valorDiferencaProduto * pacotePadrao);
+		
+		} else if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_EM") {
+			
+			valorReparteAtual = valorReparte - valorDiferencaProduto;
 		}
+		
+		$("#qtdTotal" + indexDiv, lancamentoNovoController.workspace).text(valorReparteAtual);
 	},
 	
 	tratarVisualizacaoOpcaoEstoque:function(value){
