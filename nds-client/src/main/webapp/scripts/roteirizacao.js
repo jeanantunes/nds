@@ -324,29 +324,21 @@ var roteirizacao = $.extend(true, {
         },
 
         popularGridRotas : function(data) {
-            
             if (!data){
-                
                 $.postJSON(contextPath + '/cadastro/roteirizacao/buscaRotasPorRoteiro',
-                     {
-                        'roteiroId' :  roteirizacao.idRoteiro
-                        
-                     },
+                     {'roteiroId' :  roteirizacao.idRoteiro},
                       function(result) {
-                            
                         $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(result), page : 1, total : result.length});
                         return;
                        },
                        null,
                        true
                 );
-            }
-            
-            if (data) {
-                $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
             } else {
-                roteirizacao.limparGridRotas();
+                $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
             }
+            roteirizacao.idRota = "";
+            roteirizacao.limparGridCotasRota();
         },
 
         rotaSelecionadaListener : function(idRota) {
