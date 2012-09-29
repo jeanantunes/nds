@@ -469,8 +469,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	@Transactional(readOnly = true)
 	public RoteirizacaoDTO obterRoteirizacaoPorId(Long id){
-		Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(id);
-		return RoteirizacaoDTO.toDTO(roteirizacao);
+        List<Box> disponiveis = obterListaBoxLancamento(null);
+	    Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(id);
+		return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis);
 	}
   	
 	/**
@@ -493,8 +494,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			pdvDTO.setId(itemPdv.getId());
 			
-			pdvDTO.setSelecionado(false);
-			
 			pdvDTO.setNome(itemPdv.getCota().getPessoa().getNome());
 			pdvDTO.setOrdem(itemPdv.getOrdem());
 			pdvDTO.setCota(itemPdv.getCota().getNumeroCota());
@@ -503,14 +502,14 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			EnderecoPDV enderecoPdvEntrega  = itemPdv.getEnderecoEntrega();
 			if (enderecoPdvEntrega !=null){
 				endereco = enderecoPdvEntrega .getEndereco();
-				pdvDTO.setOrigem(OrigemEndereco.PDV);
+				pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
 			}
 			else{
 				EnderecoCota enderecoPrincipalCota = itemPdv.getCota().getEnderecoPrincipal();
 				if (enderecoPrincipalCota !=null){
 				    endereco = enderecoPrincipalCota.getEndereco();
 				}    
-				pdvDTO.setOrigem(OrigemEndereco.COTA);
+				pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
 			}
 			
 			pdvDTO.setEndereco(endereco!=null?endereco.getLogradouro()+", "+endereco.getCidade()+", CEP:"+endereco.getCep():"");
@@ -566,8 +565,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     @Transactional(readOnly = true)
     public RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox) {
         Roteirizacao roteirizacao = roteirizacaoRepository.obterRoteirizacaoPorBox(idBox);
+        List<Box> disponiveis = obterListaBoxLancamento(null);
         if (roteirizacao != null) {
-            return RoteirizacaoDTO.toDTO(roteirizacao);
+            return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis);
         }
         return null;
     }

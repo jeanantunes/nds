@@ -9,7 +9,7 @@ public class PdvRoteirizacaoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static final String FORMATO_ENDERECO = "%s %s, %s - %s, %s CEP: %s";
+	private static final String FORMATO_ENDERECO = "%s %s, %s - %s, %s - CEP: %s";
 	
 	private Long id;
 	
@@ -24,8 +24,6 @@ public class PdvRoteirizacaoDTO implements Serializable {
 	private String nome;
 	
 	private Integer ordem;
-	
-	private Boolean selecionado;
 	
 	public PdvRoteirizacaoDTO(){
 	}
@@ -64,12 +62,12 @@ public class PdvRoteirizacaoDTO implements Serializable {
 		this.pdv = pdv;
 	}
 
-	public OrigemEndereco getOrigem() {
-		return OrigemEndereco.getByDescricao(origem);
+	public String getOrigem() {
+		return origem;
 	}
 
-	public void setOrigem(OrigemEndereco origem) {
-		this.origem = origem.getDescricao();
+	public void setOrigem(String origem) {
+		this.origem = origem;
 	}
 
 	public String getEndereco() {
@@ -102,14 +100,6 @@ public class PdvRoteirizacaoDTO implements Serializable {
 
 	public void setOrdem(Integer ordem) {
 		this.ordem = ordem;
-	}
-
-	public Boolean getSelecionado() {
-		return selecionado;
-	}
-
-	public void setSelecionado(Boolean selecionado) {
-		this.selecionado = selecionado;
 	}
 
 	/**

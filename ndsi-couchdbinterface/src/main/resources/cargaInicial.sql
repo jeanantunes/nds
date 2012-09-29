@@ -33,7 +33,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `parametro_sistema` WRITE;
 /*!40000 ALTER TABLE `parametro_sistema` DISABLE KEYS */;
-INSERT INTO `parametro_sistema` (`ID`, `TIPO_PARAMETRO_SISTEMA`, `VALOR`) VALUES (1,'INBOUND_DIR','c:\\interface\\prodin\\'),(2,'IMAGE_DIR','c:\\interface\\imagens\\'),(3,'CORREIOS_DIR','c:\\interface\\correios\\');
+INSERT INTO `parametro_sistema` (`ID`, `TIPO_PARAMETRO_SISTEMA`, `VALOR`) VALUES (1,'INBOUND_DIR','c:\\interface\\prodin\\'), (2,'IMAGE_DIR','c:\\interface\\imagens\\'),(3,'CORREIOS_DIR','c:\\interface\\correios\\'), (4,'INTERNAL_DIR','nds');
 /*!40000 ALTER TABLE `parametro_sistema` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

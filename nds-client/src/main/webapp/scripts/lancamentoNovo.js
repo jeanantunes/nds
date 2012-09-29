@@ -81,6 +81,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#nomeProdutoInput", lancamentoNovoController.workspace).val("");
 		$("#edicaoProdutoInput", lancamentoNovoController.workspace).val("");
 		$("#precoCapaProduto", lancamentoNovoController.workspace).text("");
+		$("#pacotePadrao", lancamentoNovoController.workspace).text("");
 		$("#reparteProduto", lancamentoNovoController.workspace).text("");
 		$("#diferencaProdutoInput", lancamentoNovoController.workspace).val("");
 		
@@ -212,6 +213,11 @@ var lancamentoNovoController = $.extend(true, {
 		} else{
 			
 			$("#precoCapaProduto", lancamentoNovoController.workspace).text(diferenca.precoVenda);
+		}
+		
+		if (diferenca.pacotePadrao){
+			
+			$("#pacotePadrao", lancamentoNovoController.workspace).text(diferenca.pacotePadrao);
 		}
 		
 		if (diferenca.quantidade){
@@ -455,6 +461,8 @@ var lancamentoNovoController = $.extend(true, {
 		var direcionadoParaEstoque = $('#paraEstoque', lancamentoNovoController.workspace).attr('checked') ? true : false;
 		
 		var reparteAtual = $("#reparteProduto", lancamentoNovoController.workspace).html();
+		
+		var pacotePadrao = $("#pacotePadrao", lancamentoNovoController.workspace).html();
 			
 		var data = [
 				 {name: "tipoDiferenca", value: tipoDiferenca},
@@ -465,7 +473,8 @@ var lancamentoNovoController = $.extend(true, {
 				 {name: "reparteAtual", value: reparteAtual},
 				 {name: "redirecionarProdutosEstoque", value: lancamentoNovoController.redirecionarProdutosEstoque},
 				 {name: "idDiferenca", value:lancamentoNovoController.idDiferenca},
-				 {name: "tipoEstoque", value:lancamentoNovoController.tipoEstoqueSelecionado}
+				 {name: "tipoEstoque", value:lancamentoNovoController.tipoEstoqueSelecionado},
+				 {name: "pacotePadrao", value:pacotePadrao}
 		 ];
 		
 		var linhasDaGrid = $('#grid_1 tr',this.workspace);
@@ -815,7 +824,7 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	buscarReparteAtualCota : function(idDiv){
-		
+	
 		$("#diferencaInput" + idDiv, lancamentoNovoController.workspace).focus();
 		
 		var idProdutoEdicao = $("#idProdutoEdicao", lancamentoNovoController.workspace).val();
@@ -834,6 +843,12 @@ var lancamentoNovoController = $.extend(true, {
 							 	{name: "numeroCota", value: $("#cotaInput" + idDiv, lancamentoNovoController.workspace).val()}
 							],
 							function(result) {
+								
+								if($("#cotaInput" + idDiv, lancamentoNovoController.workspace).val() == ''){
+									$("#cotaInput" + idDiv, lancamentoNovoController.workspace).focus();
+									return;
+								}
+								
 								$("#reparteText" + idDiv, lancamentoNovoController.workspace).text(result[0]);
 							},
 							null,
@@ -859,9 +874,10 @@ var lancamentoNovoController = $.extend(true, {
 			],
 			function(result) {
 				$("#precoCapaProduto", lancamentoNovoController.workspace).text(result[0]);
-				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result[1]);
+				$("#pacotePadrao", lancamentoNovoController.workspace).text(result[1]);
+				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result[2]);
 				
-				lancamentoNovoController.verificarTipoEstoque(result[2]);
+				lancamentoNovoController.verificarTipoEstoque(result[3]);
 				
 			},
 			null,
@@ -882,6 +898,7 @@ var lancamentoNovoController = $.extend(true, {
 	
 	limparProduto : function() {
 		$("#precoCapaProduto", lancamentoNovoController.workspace).text('');
+		$("#pacotePadrao", lancamentoNovoController.workspace).text('');
 		$("#reparteProduto", lancamentoNovoController.workspace).text('');
 		$("#diferencaProdutoInput", lancamentoNovoController.workspace).val('');
 		
@@ -939,6 +956,17 @@ var lancamentoNovoController = $.extend(true, {
 	
 	calcularReparteAtual : function(idDiv){
 		
+		var numeroCota = $("#cotaInput" + idDiv, lancamentoNovoController.workspace).val();
+		
+		if( numeroCota == undefined || numeroCota == '' ){	
+			return;
+		}
+		
+		if ($("#reparteText" + idDiv, lancamentoNovoController.workspace).text() == ""){
+			
+			$("#reparteText" + idDiv, lancamentoNovoController.workspace).text(0);
+		}
+	
 		if ($("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val() == ""){
 			
 			$("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val(0);
@@ -1098,6 +1126,28 @@ var lancamentoNovoController = $.extend(true, {
 		
 		$("#dialogConfirmacaoDirecionamentoDiferencaProdutoCota", lancamentoNovoController.workspace).show();
 	},
+	
+	recalcularReparteAtualRateio:function(){
+		
+		var linhasDaGrid = $('#grid_1 tr',this.workspace);
+		
+		$.each(linhasDaGrid, function(index, value) {
+			
+			var linha = $(value);
+			
+			var numeroCota = $(linha.find("td")[0],this.workspace).find('input[name="cotaInput"]').val();
+			
+			var diferenca = $(linha.find("td")[3],this.workspace).find('input[name="diferencaInput"]').val();
+			
+			if( numeroCota == undefined || numeroCota == '' 
+					|| diferenca == undefined || diferenca == ''){
+				
+				return;
+			}
+			
+			lancamentoNovoController.calcularReparteAtual(index);
+		});
+	}
 	
 }, BaseController);
 

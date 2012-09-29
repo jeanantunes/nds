@@ -12,6 +12,7 @@ import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
@@ -20,14 +21,12 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
-import br.com.abril.nds.dto.RoteirizacaoDTO.TipoEdicaoRoteirizacao;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
-import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -38,7 +37,6 @@ import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -721,17 +719,29 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/boxSelecionado")
 	public void boxSelecionado(Long idBox) {
+	   RoteirizacaoDTO existente = null; 
 	   RoteirizacaoDTO dto = getDTO();
-	   if (dto.isNovo() && !Box.ESPECIAL.getId().equals(idBox)) {
-	       RoteirizacaoDTO existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
-	       if (existente != null) {
-	           dto = setDTO(existente);
-	       } else {
-	           Box box = boxService.buscarPorId(idBox);
-	           dto.setBox(new BoxRoteirizacaoDTO(box.getId(), box.getNome()));
-	       }
+	   if (!Box.ESPECIAL.getId().equals(idBox)) {
+	       existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
+	   }
+	   if (existente != null) {
+	       dto = setDTO(existente);
+	   } else {
+	       dto.reset(idBox);
 	   }
 	   result.use(CustomJson.class).from(dto).serialize();
+	}
+	
+	
+	@Post
+	@Path("/recarregarCotasRota")
+	public void recarregarCotasRota(Long idRota, String sortname, String sortorder) {
+	    RoteirizacaoDTO roteirizacao = getDTO();
+	    RotaRoteirizacaoDTO rota = roteirizacao.getRota(idRota);
+	    List<PdvRoteirizacaoDTO> pdvs = rota.getPdvs();
+	    Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+	    PaginacaoUtil.ordenarEmMemoria(pdvs, ordenacao, sortname);
+	    result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
 	}
 	
 	/**

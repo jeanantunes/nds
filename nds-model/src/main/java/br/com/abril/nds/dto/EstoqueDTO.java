@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 
 public class EstoqueDTO implements Serializable {
@@ -9,11 +10,11 @@ public class EstoqueDTO implements Serializable {
 	
 	private String desc;
 	private String nameEnum;
-	private Integer qtde;
+	private BigInteger qtde;
 	
 	
 	
-	public EstoqueDTO(String nameEnum, String desc, Integer qtde) {
+	public EstoqueDTO(String nameEnum, String desc, BigInteger qtde) {
 		this.desc = desc;
 		this.nameEnum = nameEnum;
 		this.qtde = qtde;
@@ -45,13 +46,13 @@ public class EstoqueDTO implements Serializable {
 	/**
 	 * @return the qtde
 	 */
-	public Integer getQtde() {
+	public BigInteger getQtde() {
 		return qtde;
 	}
 	/**
 	 * @param qtde the qtde to set
 	 */
-	public void setQtde(Integer qtde) {
+	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
 	
