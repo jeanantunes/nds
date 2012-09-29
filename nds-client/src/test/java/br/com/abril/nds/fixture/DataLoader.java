@@ -2627,9 +2627,13 @@ public class DataLoader {
 		session.save(rota10);
  
 		
-		Rota rotaRoteiroCentro = Fixture.rota("999", "Rota 999", roteiroCentro);
-		rotaRoteiroCentro.addPDV(pdvJoao, 1);
-		session.save(rotaRoteiroCentro);
+		Rota rotaRoteiroCentro1 = Fixture.rota("999", "Rota 999", roteiroCentro);
+		rotaRoteiroCentro1.addPDV(pdvJoao, 1);
+		session.save(rotaRoteiroCentro1);
+		
+		Rota rotaRoteiroCentro2 = Fixture.rota("990", "Rota 990", roteiroCentro);
+        rotaRoteiroCentro2.addPDV(pdvMariana, 1);
+        session.save(rotaRoteiroCentro2);
         
         Rota rotaRoteiroBairro = Fixture.rota("998", "Rota 998", roteiroBairro);
         rotaRoteiroBairro.addPDV(pdvJoana, 1);

@@ -315,7 +315,6 @@ var roteirizacao = $.extend(true, {
                     sortable : false,
                     align : 'center'
                 }],
-                sortname : "nome",
                 width : 270,
                 height : 140,
                 disableSelect: true
@@ -396,10 +395,16 @@ var roteirizacao = $.extend(true, {
                     sortable : false,
                     align : 'center'
                 }],
-                sortname : "descricaoBox",
+                autoload : false,
+                disableSelect: true,
                 width : 270,
                 height : 140,
-                disableSelect: true
+
+                url: contextPath + '/cadastro/roteirizacao/recarregarBox',
+                onSubmit    : function(){
+                    $('.boxGrid').flexOptions({params: [{name: 'nomeBox', value: $('#nomeBox').val()}]});
+                    return true;
+                }
             });
         },
 
@@ -413,6 +418,14 @@ var roteirizacao = $.extend(true, {
         
         limparGridBox : function() {
            $(".boxGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
+        },
+
+        pesquisarBox : function() {
+            $(".boxGrid", roteirizacao.workspace).flexReload();
+            roteirizacao.idBox = "";
+            roteirizacao.limparGridRoteiros();
+            roteirizacao.limparGridRotas();
+            roteirizacao.limparGridCotasRota();
         },
 
         boxSelecionadoListener : function(idBox) {
@@ -504,7 +517,6 @@ var roteirizacao = $.extend(true, {
                     sortable : false,
                     align : 'center'
                 }],
-                sortname : "descricaoBox",
                 width : 270,
                 height : 140,
                 disableSelect: true
@@ -838,7 +850,8 @@ var roteirizacao = $.extend(true, {
     },
 
         limparGridCotasRota : function() {
-              $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
+            roteirizacao.idsCotas = [];
+            $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
         },
 
         popularGridCotasRota : function(data) {

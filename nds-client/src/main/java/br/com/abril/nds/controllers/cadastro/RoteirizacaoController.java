@@ -777,7 +777,7 @@ public class RoteirizacaoController {
 	
 	@Post
 	@Path("/boxSelecionado")
-	public void boxSelecionado(Long idBox) {
+	public void boxSelecionado(Long idBox, String nomeBox) {
 	   RoteirizacaoDTO existente = null; 
 	   RoteirizacaoDTO dto = getDTO();
 	   if (!Box.ESPECIAL.getId().equals(idBox)) {
@@ -785,6 +785,7 @@ public class RoteirizacaoController {
 	   }
 	   if (existente != null) {
 	       dto = setDTO(existente);
+	       dto.filtarBox(nomeBox);
 	   } else {
 	       dto.reset(idBox);
 	   }
@@ -801,6 +802,15 @@ public class RoteirizacaoController {
 	    Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 	    PaginacaoUtil.ordenarEmMemoria(pdvs, ordenacao, sortname);
 	    result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
+	}
+	
+	@Post
+	@Path("/recarregarBox")
+	public void recarregarBox(String nomeBox) {
+	    RoteirizacaoDTO roteirizacao = getDTO();
+	    roteirizacao.filtarBox(nomeBox);
+	    List<BoxRoteirizacaoDTO> boxes = roteirizacao.getBoxDisponiveis();
+        result.use(FlexiGridJson.class).from(boxes).total(boxes.size()).page(1).serialize();
 	}
 	
 	/**
