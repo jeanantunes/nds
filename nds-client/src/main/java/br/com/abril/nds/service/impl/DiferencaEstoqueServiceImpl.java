@@ -469,8 +469,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioVO.setReparteCota(new BigInteger(reparteCota.toString()));
 				
-				rateioVO.setReparteAtualCota(rateioVO.getReparteCota().subtract(rateio.getQtde()));
-				
 				listaRetorno.add(rateioVO);
 			}
 		}
