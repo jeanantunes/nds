@@ -348,6 +348,8 @@ var lancamentoNovoController = $.extend(true, {
 			});
 			
 			$("#fieldCota", lancamentoNovoController.workspace).show();
+			
+			lancamentoNovoController.recalcularReparteAtualRateio();
 	},
 	
 	openModalDiferenca:function(){
@@ -979,13 +981,38 @@ var lancamentoNovoController = $.extend(true, {
 			$("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val(0);
 		}
 		
-		if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_DE" || $("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_EM"){
+		var valorReparteAtual = 0;
+		
+		var valorReparteRateio = eval($("#reparteText" + idDiv, lancamentoNovoController.workspace).text());
+		
+		var valorDiferenca = eval($("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val());
+		
+		var valorPacotePadrao = eval($("#pacotePadrao", lancamentoNovoController.workspace).text()) ;
+		
+		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+		
+		if (tipoDiferenca == "SOBRA_DE" || tipoDiferenca == "SOBRA_EM"){
 			
-			$("#reparteAtualText" + idDiv, lancamentoNovoController.workspace).text(parseInt($("#reparteText" + idDiv, lancamentoNovoController.workspace).text()) + parseInt($("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val()));
+			if(tipoDiferenca == "SOBRA_DE"){
+				
+				valorReparteAtual = valorReparteRateio + ( valorDiferenca * valorPacotePadrao);
+			}
+			else{
+				valorReparteAtual = valorReparteRateio +  valorDiferenca;
+			}
+			
 		} else {
 			
-			$("#reparteAtualText" + idDiv, lancamentoNovoController.workspace).text(parseInt($("#reparteText" + idDiv, lancamentoNovoController.workspace).text()) - parseInt($("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val()));
+			if(tipoDiferenca == "FALTA_DE"){
+				
+				valorReparteAtual = valorReparteRateio -  ( valorDiferenca * valorPacotePadrao);
+			}
+			else{
+				valorReparteAtual = valorReparteRateio -  valorDiferenca;
+			}
 		}
+		
+		$("#reparteAtualText" + idDiv, lancamentoNovoController.workspace).text(valorReparteAtual);
 	},
 	
 	carregarProdutoEdicaoNotaEnvio:function(diferenca){
