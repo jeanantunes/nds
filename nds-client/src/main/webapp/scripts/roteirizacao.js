@@ -324,10 +324,10 @@ var roteirizacao = $.extend(true, {
 
         popularGridRotas : function(data) {
             if (!data){
-                $.postJSON(contextPath + '/cadastro/roteirizacao/buscaRotasPorRoteiro',
-                     {'roteiroId' :  roteirizacao.idRoteiro},
+                $.postJSON(contextPath + '/cadastro/roteirizacao/recarregarRotas',
+                     {'idRoteiro' :  roteirizacao.idRoteiro},
                       function(result) {
-                        $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(result), page : 1, total : result.length});
+                        $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: result.rows, page : result.page, total : result.total});
                         return;
                        },
                        null,
@@ -355,9 +355,9 @@ var roteirizacao = $.extend(true, {
         pesquisarRotas : function() {
             
             $(".rotasGrid", roteirizacao.workspace).flexOptions({
-                url : contextPath + "/cadastro/roteirizacao/buscaRotasPorRoteiro",
-                params: [{name: 'roteiroId', value: roteirizacao.idRoteiro},
-                         {name: 'nomeRota', value: $('#descricaoRota', roteirizacao.workspace).val()}]
+                url : contextPath + "/cadastro/roteirizacao/recarregarRotas",
+                params: [{name: 'idRoteiro', value: roteirizacao.idRoteiro},
+                         {name: 'descricaoRota', value: $('#descricaoRota', roteirizacao.workspace).val()}]
             });
 
             $(".rotasGrid", roteirizacao.workspace).flexReload();
@@ -547,7 +547,7 @@ var roteirizacao = $.extend(true, {
 
         pesquisarRoteiros : function() {
             $(".roteirosGrid", roteirizacao.workspace).flexOptions({
-                url : contextPath + "/cadastro/roteirizacao/obterRoteirosBox",
+                url : contextPath + "/cadastro/roteirizacao/recarregarRoteiros",
                 params: [{name: 'idBox', value: roteirizacao.idBox},
                          {name: 'descricaoRoteiro', value: $('#descricaoRoteiro', roteirizacao.workspace).val()}]
             });
@@ -555,6 +555,7 @@ var roteirizacao = $.extend(true, {
             $(".roteirosGrid", roteirizacao.workspace).flexReload();
             roteirizacao.idRoteiro = "";
             roteirizacao.limparGridRotas();
+            roteirizacao.limparGridCotasRota();
         },
         
         abrirTelaRota : function () {
