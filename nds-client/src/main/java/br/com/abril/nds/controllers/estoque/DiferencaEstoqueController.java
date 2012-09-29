@@ -2648,7 +2648,6 @@ public class DiferencaEstoqueController {
 		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
 		
 		DiferencaVO diferencaVO = null;
-		
 
 		for (DetalheItemNotaFiscalDTO detalheItemNota : itensNotaEnvio) {
 		
@@ -2666,6 +2665,7 @@ public class DiferencaEstoqueController {
 			diferencaVO.setNumeroEdicao(detalheItemNota.getNumeroEdicao().toString());
 			diferencaVO.setPrecoVenda(detalheItemNota.getPrecoVenda().toString());
 			diferencaVO.setQtdeEstoque(detalheItemNota.getQuantidadeExemplares());
+			diferencaVO.setPacotePadrao(detalheItemNota.getPacotePadrao().toString());
 		
 			prods.add(diferencaVO);
 		}
@@ -2698,18 +2698,25 @@ public class DiferencaEstoqueController {
 		}
 	}
 
-	private boolean containsDiferenca(Set<Diferenca> diferencas,
+	private boolean containsDiferenca(Set<Diferenca> diferencasSessao,
 									  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 									  Long idProdutoEdicao,
-									  Date dateNotaEnvio,
+									  Date dataNotaEnvio,
 									  Integer numeroCota) {
 		
-		if (diferencas == null) {
+		boolean existeDiferencaPorNota = 
+			this.diferencaEstoqueService.existeDiferencaPorNota(
+				idProdutoEdicao, dataNotaEnvio, numeroCota);
 		
+		if (existeDiferencaPorNota) {
+			return true;
+		}
+		
+		if (diferencasSessao == null) {
 			return false;
 		}
 		
-		for (Diferenca diferenca : diferencas) {
+		for (Diferenca diferenca : diferencasSessao) {
 		
 			if (!diferenca.getTipoDirecionamento().equals(TipoDirecionamentoDiferenca.NOTA)
 					|| !diferenca.getProdutoEdicao().getId().equals(idProdutoEdicao)) {
@@ -2728,7 +2735,7 @@ public class DiferencaEstoqueController {
 				
 				if (rateio.getNumeroCota().equals(numeroCota)
 						&& rateio.getDataEnvioNota() != null
-						&& rateio.getDataEnvioNota().compareTo(dateNotaEnvio) == 0) {
+						&& rateio.getDataEnvioNota().compareTo(dataNotaEnvio) == 0) {
 				
 					return true;
 				}
