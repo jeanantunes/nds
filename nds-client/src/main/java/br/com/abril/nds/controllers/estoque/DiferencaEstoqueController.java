@@ -2596,7 +2596,7 @@ public class DiferencaEstoqueController {
 	
 	@SuppressWarnings("unchecked")
 	public BigInteger obterQuantidadeDiferencaEstoque(String codigoProduto, Long numeroEdicao, TipoEstoque tipoEstoque,
-												   BigInteger quantidadeEstoque, Date dataOperacao) {
+												      BigInteger quantidadeEstoque, Date dataOperacao) {
 		
 		Set<DiferencaVO> listaNovasDiferencas =
 				(Set<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
