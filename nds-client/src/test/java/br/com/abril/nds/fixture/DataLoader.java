@@ -49,7 +49,6 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
-import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -2575,6 +2574,12 @@ public class DataLoader {
 		
 		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		session.save(roteiroPinheiros);
+		
+		Roteiro roteiroCentro = Fixture.criarRoteiro("Centro", roteirizacao1, TipoRoteiro.NORMAL);
+	    session.save(roteiroCentro);
+	    
+	    Roteiro roteiroBairro = Fixture.criarRoteiro("Bairro", roteirizacao1, TipoRoteiro.NORMAL);
+        session.save(roteiroBairro);
 
 		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,TipoRoteiro.NORMAL);
 		session.save(roteiroInterlagos);
@@ -2594,6 +2599,14 @@ public class DataLoader {
 		pdvcotaManoel2.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvcotaManoel2);
 		
+		PDV pdvJoao = Fixture.criarPDVPrincipal("PDV João", cotaJoao,  1);
+		pdvJoao.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvJoao);
+        
+        PDV pdvJoana = Fixture.criarPDVPrincipal("PDV Joana", cotaJoana,  1);
+        pdvJoana.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvJoana);
+		
 		List<PDV> pdvs = Arrays.asList(pdvcotaJose2,pdvcotaManoel2);
 
 		
@@ -2606,6 +2619,12 @@ public class DataLoader {
 		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
 		session.save(rota10);
  
+		
+		Rota rotaRoteiroCentro = Fixture.rota("999", "Rota 999", roteiroCentro, Arrays.asList(pdvJoao));
+        session.save(rotaRoteiroCentro);
+        
+        Rota rotaRoteiroBairro = Fixture.rota("998", "Rota 998", roteiroBairro, Arrays.asList(pdvJoana));
+        session.save(rotaRoteiroBairro);
 	}
 
 

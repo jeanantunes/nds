@@ -142,4 +142,20 @@ public interface EntregadorService {
 			int pagina, int resultadosPorPagina, String sortname, String sortorder);
 	
 	boolean verificarEntregador(Long idCota);
+	
+	/**
+	 * Retorna o menor codigo de entregador disponível.
+	 * 
+	 * @return Long
+	 */
+	public Long obterMinCodigoEntregadorDisponivel();
+
+	/**
+	 * Obtém o entregador através do codigo.
+	 * 
+	 * @param codigo
+	 * 
+	 * @return Entregador
+	 */
+	public Entregador obterEntregadorPorCodigo(Long codigo);
 }

@@ -12,6 +12,7 @@ import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
@@ -20,24 +21,22 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
-import br.com.abril.nds.dto.RoteirizacaoDTO.TipoEdicaoRoteirizacao;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
-import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -141,14 +140,11 @@ public class RoteirizacaoController {
 	@Path("/incluirRoteiro")
 	public void incluirRoteiro(Long idBox, Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
 		
-
-		Roteiro roteiro = populaRoteiro(idBox, ordem, nome, tipoRoteiro);
-		validarCampoObrigatoriosRoteiro(roteiro);
-		roteirizacaoService.incluirRoteiro(roteiro);
-		result.use(Results.json()).from(
-		new ValidacaoVO(TipoMensagem.SUCCESS, "Roreito cadastrado com sucesso."),
-						"result").recursive().serialize();
-
+		this.validarCampoObrigatoriosRoteiro(idBox, ordem, nome, tipoRoteiro);
+		
+		this.adicionarRoteiro(ordem, nome);
+		
+		result.use(Results.json()).from(this.getDTO(), "result").recursive().serialize();
 	}
 	
 	@Path("/iniciaTelaRoteiro")
@@ -158,17 +154,22 @@ public class RoteirizacaoController {
 		result.use(Results.json()).from(ordem).recursive().serialize();
 	}
 	
-	private void validarCampoObrigatoriosRoteiro(Roteiro roteiro) {
+	private void validarCampoObrigatoriosRoteiro(Long idBox, Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
 		
 		List<String> mensagens = new ArrayList<String>();
 		
-		if(TipoRoteiro.NORMAL.compareTo(roteiro.getTipoRoteiro()) == 0 &&  roteiro.getRoteirizacao().getBox() == null){
+		if(TipoRoteiro.NORMAL.compareTo(tipoRoteiro) == 0 &&  idBox == null){
+			
 			mensagens.add("O campo Box é obrigatório.");
 		}
-		if(roteiro.getOrdem() == null){
+		
+		if(ordem == null){
+			
 			mensagens.add("O campo Ordem é obrigatório.");
 		}
-		if("".equals(roteiro.getDescricaoRoteiro())){
+		
+		if(nome == null || nome.isEmpty()){
+		
 			mensagens.add("O campo Nome é obrigatório.");
 		}
 	
@@ -217,28 +218,17 @@ public class RoteirizacaoController {
 	
 	@Post
 	public void buscaRotasPorRoteiro(Long roteiroId, int rp, int page) {
-		
-		
-		List<Rota> listaRota = roteirizacaoService.buscarRotaPorRoteiro(roteiroId);
-		
-		
-		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(page).serialize();
+		result.use(Results.json()).from(this.getRotasPorRoteiro(roteiroId), "result").recursive().serialize();
 	}
 	
 	@Path("/incluirRota")
 	public void incluirRota(Long roteiroId, Integer ordem, String nome) {
-		Roteiro roteiro = new Roteiro();
-		roteiro.setId(roteiroId);
-		Rota rota = new Rota();
-		rota.setRoteiro(roteiro);
-		rota.setOrdem(ordem);
-		rota.setDescricaoRota(nome);
-		validarCampoObrigatoriosRota(rota);
-		roteirizacaoService.incluirRota(rota);
-		result.use(Results.json()).from(
-		new ValidacaoVO(TipoMensagem.SUCCESS, "Rota cadastrada com sucesso."),
-						"result").recursive().serialize();
-
+		
+		this.validarCampoObrigatoriosRota(ordem, nome);
+		
+		this.adicionarRota(roteiroId, ordem, nome);
+		
+		result.use(Results.json()).from(this.getRotasPorRoteiro(roteiroId), "result").recursive().serialize();
 	}
 	
 	@Path("/iniciaTelaRota")
@@ -251,14 +241,17 @@ public class RoteirizacaoController {
 		result.use(Results.json()).from(ordem).recursive().serialize();
 	}
 	
-	private void validarCampoObrigatoriosRota(Rota rota) {
+	private void validarCampoObrigatoriosRota(Integer ordem, String nome) {
 		
 		List<String> mensagens = new ArrayList<String>();
 		
-		if(rota.getOrdem() == null){
+		if(ordem == null){
+			
 			mensagens.add("O campo Ordem é obrigatório.");
 		}
-		if("".equals(rota.getDescricaoRota())){
+		
+		if(nome == null || nome.isEmpty()){
+			
 			mensagens.add("O campo Nome é obrigatório.");
 		}
 	
@@ -292,7 +285,7 @@ public class RoteirizacaoController {
 	@Path("/transferirRotasComNovoRoteiro")
 	public void transferirRotasComNovoRoteiro(List<Long> rotasId, Long idBox, Integer ordem, String roteiroNome, TipoRoteiro tipoRoteiro) {
 		Roteiro roteiro = populaRoteiro(idBox, ordem, roteiroNome, tipoRoteiro);
-		validarCampoObrigatoriosRoteiro(roteiro);
+		validarCampoObrigatoriosRoteiro(idBox, ordem, roteiroNome, tipoRoteiro);
 		roteirizacaoService.transferirListaRotaComNovoRoteiro(rotasId, roteiro);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas transferidas com sucesso."),"result").recursive().serialize();
@@ -305,19 +298,15 @@ public class RoteirizacaoController {
 		if ( idBox != null ){
 			Box box = new Box();
 			box.setId(idBox);
-			roteiro.getRoteirizacao().setBox(box);
+			
+			Roteirizacao roteirizacao = new Roteirizacao();
+			roteirizacao.setBox(box);
+			roteiro.setRoteirizacao(roteirizacao);
 		}	
 		roteiro.setOrdem(ordem);
 		roteiro.setDescricaoRoteiro(roteiroNome);
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		return roteiro;
-	}
-	
-	@Post
-	@Path("/obterRotasRoteiro")
-	public void obterRotas(Long roteiroId, String nomeRota) {
-		List<Rota> lista = roteirizacaoService.buscarRotaPorNome(roteiroId, nomeRota, MatchMode.START) ;
-		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
 	@Path("/iniciaTelaCotas")
@@ -726,30 +715,49 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/boxSelecionado")
 	public void boxSelecionado(Long idBox) {
+	   RoteirizacaoDTO existente = null; 
 	   RoteirizacaoDTO dto = getDTO();
-	   if (dto.isNovo() && !Box.ESPECIAL.getId().equals(idBox)) {
-	       RoteirizacaoDTO existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
-	       if (existente != null) {
-	           dto = setDTO(existente);
-	       } else {
-	           Box box = boxService.buscarPorId(idBox);
-	           dto.setBox(new BoxRoteirizacaoDTO(box.getId(), box.getNome()));
-	       }
+	   if (!Box.ESPECIAL.getId().equals(idBox)) {
+	       existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
+	   }
+	   if (existente != null) {
+	       dto = setDTO(existente);
+	   } else {
+	       dto.reset(idBox);
 	   }
 	   result.use(CustomJson.class).from(dto).serialize();
+	}
+	
+	
+	@Post
+	@Path("/recarregarCotasRota")
+	public void recarregarCotasRota(Long idRota, String sortname, String sortorder) {
+	    RoteirizacaoDTO roteirizacao = getDTO();
+	    RotaRoteirizacaoDTO rota = roteirizacao.getRota(idRota);
+	    List<PdvRoteirizacaoDTO> pdvs = rota.getPdvs();
+	    Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+	    PaginacaoUtil.ordenarEmMemoria(pdvs, ordenacao, sortname);
+	    result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
 	}
 	
 	/**
 	 * Obtém lista de rotas do roteiro
 	 * @param idRoteiro
 	 */
-	@Get
+	@Post
 	@Path("/obterRotasRoteiro")
-	public void obterRotasRoteiro(Long idRoteiro, String descricaoRota){
+	public void obterRotasRoteiro(Long roteiroId, String descricaoRota){
 		
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro, descricaoRota);
+		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiroId, descricaoRota);
 		
-		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
+		List<RotaRoteirizacaoDTO> lista = this.getRotasPorRoteiro(roteiroId);
+		
+		for (Rota rota : listaRota){
+			
+			lista.add(new RotaRoteirizacaoDTO(rota.getId(), rota.getOrdem(), rota.getDescricaoRota()));
+		}
+		
+		result.use(Results.json()).from(lista, "result").recursive().serialize();
 	}
 	
 	/**
@@ -853,5 +861,55 @@ public class RoteirizacaoController {
 		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
 	}
 	
+	private void adicionarRoteiro(Integer ordem, String nome){
+		
+		Long novoId = -1L;
+		
+		List<RoteiroRoteirizacaoDTO> dtos = this.getDTO().getRoteiros();
+		
+		for (RoteiroRoteirizacaoDTO dto : dtos){
+			
+			if (dto.getId() <= novoId){
+				
+				novoId = dto.getId() - 1;
+			}
+		}
+		
+		this.getDTO().addRoteiro(new RoteiroRoteirizacaoDTO(novoId, ordem, nome));
+	}
 	
+	private void adicionarRota(Long roteiroId, Integer ordem, String nome){
+		
+		List<RotaRoteirizacaoDTO> rotasDto = this.getRotasPorRoteiro(roteiroId);
+		
+		Long novoId = -1L;
+		
+		for (RotaRoteirizacaoDTO rota : rotasDto){
+			
+			if (rota.getId() <= novoId){
+				
+				novoId = rota.getId() - 1;
+			}
+		}
+		
+		rotasDto.add(new RotaRoteirizacaoDTO(novoId, ordem, nome));
+	}
+	
+	private List<RotaRoteirizacaoDTO> getRotasPorRoteiro(Long roteiroId) {
+		
+		for (RoteiroRoteirizacaoDTO dto : this.getDTO().getRoteiros()){
+			
+			if (dto.getId().equals(roteiroId)){
+				
+				if (dto.getRotas() == null){
+					
+					dto.setRotas(new ArrayList<RotaRoteirizacaoDTO>());
+				}
+				
+				return dto.getRotas();
+			}
+		}
+		
+		return new ArrayList<RotaRoteirizacaoDTO>();
+	}
 }

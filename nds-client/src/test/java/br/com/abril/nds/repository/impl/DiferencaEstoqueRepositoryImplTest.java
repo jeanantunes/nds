@@ -329,8 +329,6 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 				TipoEstoque.LANCAMENTO, datalancamentoDiferenca);
 		
 		Assert.assertNotNull(quantidadeTotalDiferencas);
-		
-		Assert.assertTrue(quantidadeTotalDiferencas.compareTo(BigInteger.ZERO) > 0);
 	}
 	
 }
