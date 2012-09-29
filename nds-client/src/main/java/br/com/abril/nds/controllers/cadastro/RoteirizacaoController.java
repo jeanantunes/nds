@@ -218,10 +218,6 @@ public class RoteirizacaoController {
 	
 	@Post
 	public void buscaRotasPorRoteiro(Long roteiroId, int rp, int page) {
-		
-		
-		//List<Rota> listaRota = roteirizacaoService.buscarRotaPorRoteiro(roteiroId);
-		
 		result.use(Results.json()).from(this.getRotasPorRoteiro(roteiroId), "result").recursive().serialize();
 	}
 	
