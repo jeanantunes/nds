@@ -242,6 +242,7 @@ public class RoteirizacaoController {
 		}	
 	}
 	
+<<<<<<< HEAD
 	/**
 	 * Obtém lista de rotas do roteiro
 	 * @param idRoteiro
@@ -272,6 +273,8 @@ public class RoteirizacaoController {
 		result.use(Results.json()).from(this.getDTO().getRoteiros(), "result").recursive().serialize();
 	}
 	
+=======
+>>>>>>> remotes/origin/master
 	@Path("/incluirRota")
 	public void incluirRota(Long roteiroId, Integer ordem, String nome) {
 		
@@ -827,7 +830,7 @@ public class RoteirizacaoController {
 	
 	@Post
 	@Path("/boxSelecionado")
-	public void boxSelecionado(Long idBox) {
+	public void boxSelecionado(Long idBox, String nomeBox) {
 	   RoteirizacaoDTO existente = null; 
 	   RoteirizacaoDTO dto = getDTO();
 	   if (!Box.ESPECIAL.getId().equals(idBox)) {
@@ -835,6 +838,7 @@ public class RoteirizacaoController {
 	   }
 	   if (existente != null) {
 	       dto = setDTO(existente);
+	       dto.filtarBox(nomeBox);
 	   } else {
 	       dto.reset(idBox);
 	   }
@@ -852,6 +856,34 @@ public class RoteirizacaoController {
 	    PaginacaoUtil.ordenarEmMemoria(pdvs, ordenacao, sortname);
 	    result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
 	}
+	
+	@Post
+	@Path("/recarregarBox")
+	public void recarregarBox(String nomeBox) {
+	    RoteirizacaoDTO roteirizacao = getDTO();
+	    roteirizacao.filtarBox(nomeBox);
+	    List<BoxRoteirizacaoDTO> boxes = roteirizacao.getBoxDisponiveis();
+        result.use(FlexiGridJson.class).from(boxes).total(boxes.size()).page(1).serialize();
+	}
+	
+	@Post
+    @Path("/recarregarRoteiros")
+    public void recarregarRoteiros(String descricaoRoteiro) {
+        RoteirizacaoDTO roteirizacao = getDTO();
+        roteirizacao.filtarRoteiros(descricaoRoteiro);
+        List<RoteiroRoteirizacaoDTO> roteiros = roteirizacao.getRoteiros();
+        result.use(FlexiGridJson.class).from(roteiros).total(roteiros.size()).page(1).serialize();
+    }
+	
+	@Post
+    @Path("/recarregarRotas")
+    public void recarregarRotas(Long idRoteiro, String descricaoRota) {
+        RoteirizacaoDTO roteirizacao = getDTO();
+        RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+        roteiro.filtarRotas(descricaoRota);
+        List<RotaRoteirizacaoDTO> roteiros = roteiro.getRotas();
+        result.use(FlexiGridJson.class).from(roteiros).total(roteiros.size()).page(1).serialize();
+    }
 	
 	/**
 	 * Obtém PDV's para a inclusão de rota pdv na roteirização

@@ -572,7 +572,7 @@ public class DiferencaEstoqueController {
 				tipoDirecionamento  = TipoDirecionamentoDiferenca.ESTOQUE;
 			}
 			
-			editarDiferenca(idDiferenca, diferenca,qntReparteRateio, rateioCotas, tipoDirecionamento,direcionadoParaEstoque,reparteAtual);
+			editarDiferenca(idDiferenca, diferenca,qntReparteRateio, rateioCotas, tipoDirecionamento,direcionadoParaEstoque,reparteAtual,new BigInteger(pacotePadrao));
 		}
 		
 		result.use(Results.json()).from("").serialize();
@@ -599,7 +599,7 @@ public class DiferencaEstoqueController {
 			
 			try {
 			
-				cadastrarRateioCotas(rateioCotas, diferencaVO);
+				cadastrarRateioCotas(rateioCotas, diferencaVO, new BigInteger(pacotePadrao));
 				
 			}catch(ValidacaoException e){
 				
@@ -635,7 +635,8 @@ public class DiferencaEstoqueController {
 								List<RateioCotaVO> rateiosCota,
 								TipoDirecionamentoDiferenca direcionamento,
 								boolean redirecionarProdutosEstoque,
-								BigInteger reparteAtual){
+								BigInteger reparteAtual,
+								BigInteger pacotePadrao){
 			
 		DiferencaVO diferencaEditavel = this.obterDiferencaPorId(idDiferenca);
 		
@@ -645,7 +646,7 @@ public class DiferencaEstoqueController {
 			 		
 			validarTipoDiferenca(tipoDiferencas, qntDiferenca, qntReparteRateio);
 			
-			String msgErro =  validarEstoqueDiferenca(diferencaEditavel.getQtdeEstoqueAtual(),qntDiferenca, tipoDiferencas);
+			String msgErro =  validarEstoqueDiferenca(diferencaEditavel.getQtdeEstoqueAtual(),qntDiferenca, tipoDiferencas,pacotePadrao, false);
 			
 			if(msgErro!= null){
 				throw new ValidacaoException(TipoMensagem.WARNING,msgErro);
@@ -657,7 +658,7 @@ public class DiferencaEstoqueController {
 				
 				removerRateiosCota(idDiferenca);
 				
-				cadastrarRateioCotas(rateiosCota, diferencaEditavel);
+				cadastrarRateioCotas(rateiosCota, diferencaEditavel,pacotePadrao);
 				
 				diferencaEditavel.setTipoDirecionamento(TipoDirecionamentoDiferenca.COTA);
 				
@@ -1011,7 +1012,7 @@ public class DiferencaEstoqueController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void cadastrarRateioCotas(List<RateioCotaVO> listaNovosRateios, DiferencaVO diferencaVO) {
+	private void cadastrarRateioCotas(List<RateioCotaVO> listaNovosRateios, DiferencaVO diferencaVO, BigInteger valorPacotePadrao) {
 		
 		validarNovosRateios(listaNovosRateios, diferencaVO);
 		
@@ -1038,7 +1039,7 @@ public class DiferencaEstoqueController {
 			
 			rateioCotaVO.setIdDiferenca(diferencaVO.getId());
 			
-			this.validarNovoRateio(rateioCotaVO,diferencaVO);
+			this.validarNovoRateio(rateioCotaVO,diferencaVO,valorPacotePadrao);
 
 			if (!listaRateiosCadastrados.contains(rateioCotaVO)) {
 				
@@ -2015,7 +2016,7 @@ public class DiferencaEstoqueController {
 			
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "A somatória das quantidades de rateio (" 
-					+ somaQtdeRateio + ") é maior que a quantidade da diferença (" 
+					+ somaQtdeRateio + ") é maior que a quantidade da diferença do produto (" 
 					+ diferencaVO.getQuantidade() + ")!");
 		}
 	}
@@ -2075,7 +2076,7 @@ public class DiferencaEstoqueController {
 	 * 
 	 * @param novoRateioCota - novo rateio
 	 */
-	private void validarNovoRateio(RateioCotaVO novoRateioCota, DiferencaVO diferencaVO) {
+	private void validarNovoRateio(RateioCotaVO novoRateioCota, DiferencaVO diferencaVO, BigInteger valorPacotePadrao) {
 		
 		List<Long> linhasComErro = new ArrayList<Long>();
 		
@@ -2092,17 +2093,13 @@ public class DiferencaEstoqueController {
 		
 		TipoDiferenca tipoDiferenca = diferencaVO.getTipoDiferenca();
 		
-		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
-				|| TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
+		String mensagemErro = this.validarEstoqueDiferenca(novoRateioCota.getReparteCota(), novoRateioCota.getQuantidade(), tipoDiferenca, valorPacotePadrao, true); 
+		
+		if(mensagemErro != null){
 			
-			if (novoRateioCota.getReparteCota() == null
-					|| novoRateioCota.getQuantidade().compareTo(novoRateioCota.getReparteCota()) > 0) {
-				
-				linhasComErro.add(novoRateioCota.getId());
-				
-				listaMensagensErro.add("Quantidade do rateio para o tipo de diferença '" +
-					tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do reparte da cota!");
-			}
+			listaMensagensErro.add(mensagemErro);
+			
+			linhasComErro.add(novoRateioCota.getId());
 		}
 		
 		if (!linhasComErro.isEmpty() && !listaMensagensErro.isEmpty()) {
@@ -2130,7 +2127,7 @@ public class DiferencaEstoqueController {
 			listaMensagensErro.add("Produto inválido: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
 		}
 		
-		String mensagemErro = validarEstoqueDiferenca(diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade() ,tipoDiferenca); 
+		String mensagemErro = validarEstoqueDiferenca(diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade() ,tipoDiferenca, new BigInteger(diferenca.getPacotePadrao()),false); 
 		
 		if(mensagemErro!= null){
 			
@@ -2151,17 +2148,46 @@ public class DiferencaEstoqueController {
 		}
 	}
 
-	private String validarEstoqueDiferenca(BigInteger qtdeEstoqueAtual, BigInteger quantidade, TipoDiferenca tipoDiferenca) {
+	private String validarEstoqueDiferenca(BigInteger qtdeEstoqueAtual, BigInteger quantidade, 
+											TipoDiferenca tipoDiferenca,BigInteger valorPacotePadrao, boolean isRateioCota) {
+		
+		if (quantidade.compareTo(BigInteger.ZERO) == 0) {
+			
+			return (!isRateioCota) ?
+							"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
+								+ "' não pode ser igual a zero!"
+								  
+								:"Quantidade do Rateio para o tipo de diferença '" +
+								  		tipoDiferenca.getDescricao() + "' não pode ser igual a zero!";
+		}
 		
 		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
 				|| TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
 		
-			if (qtdeEstoqueAtual == null 
-					|| (quantidade.compareTo(qtdeEstoqueAtual) > 0)) {
+			if(TipoDiferenca.FALTA_DE.equals(tipoDiferenca)){
 				
-				return
-					"Quantidade de Exemplares para o tipo de diferença '" + tipoDiferenca.getDescricao() 
-						+ "' não pode ser maior que a Quantidade em Estoque do produto!";
+				if(qtdeEstoqueAtual.compareTo(quantidade.multiply(valorPacotePadrao)) < 0){
+					
+					return (!isRateioCota)?
+								"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
+									+ "' não pode ser maior que a quantidade em estoque do produto!"
+										
+									:"Quantidade do Rateio para o tipo de diferença '" +
+										tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do reparte da cota!";
+				}
+				
+			}else{
+				
+				if (qtdeEstoqueAtual == null 
+						|| (quantidade.compareTo(qtdeEstoqueAtual) > 0)) {
+					
+					return (!isRateioCota) ?
+								"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
+									+ "' não pode ser maior que a quantidade em estoque do produto!"
+										
+									:"Quantidade do Rateio para o tipo de diferença '" +
+										tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do reparte da cota!";
+				}
 			}
 		}
 		
@@ -2570,7 +2596,7 @@ public class DiferencaEstoqueController {
 	
 	@SuppressWarnings("unchecked")
 	public BigInteger obterQuantidadeDiferencaEstoque(String codigoProduto, Long numeroEdicao, TipoEstoque tipoEstoque,
-												   BigInteger quantidadeEstoque, Date dataOperacao) {
+												      BigInteger quantidadeEstoque, Date dataOperacao) {
 		
 		Set<DiferencaVO> listaNovasDiferencas =
 				(Set<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
