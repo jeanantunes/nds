@@ -3,7 +3,9 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -95,7 +97,10 @@ public class RoteirizacaoController {
 	 * Chave para armazenamento do DTO de roteirização na sessão
 	 */
 	private static final String ROTEIRIZACAO_DTO_SESSION_KEY = "ROTEIRIZACAO_DTO_SESSION_KEY";
-
+	
+	private static final String SET_ROTAS_EXCLUIR = "SET_ROTAS_EXCLUIR";
+	
+	private static final String SET_ROTEIROS_EXCLUIR = "SET_ROTEIROS_EXCLUIR";
 
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO)
@@ -261,6 +266,12 @@ public class RoteirizacaoController {
 		result.use(Results.json()).from(dtosRota, "result").recursive().serialize();
 	}
 	
+	@Post
+	public void buscaRoteiros() {
+		
+		result.use(Results.json()).from(this.getDTO().getRoteiros(), "result").recursive().serialize();
+	}
+	
 	@Path("/incluirRota")
 	public void incluirRota(Long roteiroId, Integer ordem, String nome) {
 		
@@ -324,11 +335,50 @@ public class RoteirizacaoController {
 		}
 	}
 	
-	@Path("/excluiRotas")
-	public void excluiRotas(List<Long> rotasId, Long roteiroId) {
-		roteirizacaoService.excluirListaRota(rotasId, roteiroId);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas excluidas com sucesso."),"result").recursive().serialize();
-
+	@Path("/excluirRota")
+	public void excluirRota(Long rotaId, Long roteiroId) {
+		
+		List<RotaRoteirizacaoDTO> rotas = this.getRotasPorRoteiro(roteiroId);
+		
+		for (RotaRoteirizacaoDTO rota : rotas){
+			
+			if (rota.getId().equals(rotaId)){
+				
+				rotas.remove(rota);
+				break;
+			}
+		}
+		
+		if (rotaId >= 0){
+			
+			this.addRotaExclusao(rotaId);
+		}
+		
+		//roteirizacaoService.excluirListaRota(rotasId, roteiroId);
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Path("/excluirRoteiro")
+	public void excluirRoteiro(Long roteiroId) {
+		
+		List<RoteiroRoteirizacaoDTO> roteiros = this.getDTO().getRoteiros();
+		
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
+			
+			if (roteiro.getId().equals(roteiroId)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
+		}
+		
+		if (roteiroId >= 0){
+			
+			this.addRoteiroExclusao(roteiroId);
+		}
+		
+		//roteirizacaoService.excluirListaRota(rotasId, roteiroId);
+		result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	@Path("/transferirRotas")
@@ -954,5 +1004,35 @@ public class RoteirizacaoController {
 		}
 		
 		return new ArrayList<RotaRoteirizacaoDTO>();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addRotaExclusao(Long idRota){
+		
+		 Set<Long> idsRotasExclusao = (Set<Long>) this.session.getAttribute(SET_ROTAS_EXCLUIR);
+		 
+		 if (idsRotasExclusao == null){
+			 
+			 idsRotasExclusao = new HashSet<Long>();
+		 }
+		 
+		 idsRotasExclusao.add(idRota);
+		 
+		 this.session.setAttribute(SET_ROTAS_EXCLUIR, idsRotasExclusao);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addRoteiroExclusao(Long idRoteiro){
+		
+		Set<Long> idsRoteirosExclusao = (Set<Long>) this.session.getAttribute(SET_ROTEIROS_EXCLUIR);
+		 
+		 if (idsRoteirosExclusao == null){
+			 
+			 idsRoteirosExclusao = new HashSet<Long>();
+		 }
+		 
+		 idsRoteirosExclusao.add(idRoteiro);
+		 
+		 this.session.setAttribute(SET_ROTAS_EXCLUIR, idsRoteirosExclusao);
 	}
 }
