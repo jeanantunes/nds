@@ -290,7 +290,7 @@
 	            			<input id="inputNome" style="width:220px;" />
 	            		</td>
 	          		</tr>
-	          		<tr style="display: none;">
+	          		<tr style="display: none;" id="checkRoteiroEspecial">
 	          			<td>Roteiro Especial:</td>
 	          			<td>
 	          				<input type="checkbox" name="tipoRoteiro" 
