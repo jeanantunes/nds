@@ -29,6 +29,7 @@ var roteirizacao = $.extend(true, {
         idRota: "",
         nomeBoxRoteiro : "",
         tipoInclusao: null,
+        idsCotas: [],
         
         definirTransferenciaCota : function() {
             if (!roteirizacao.isTransferenciaCota()) {
@@ -282,9 +283,14 @@ var roteirizacao = $.extend(true, {
             
             $(".rotasGrid", roteirizacao.workspace).flexigrid({
                 preProcess: function(data) {
-                    $.each(data.rows ? data.rows : data, function(index, value) {
-                        var selecione = '<input type="radio" value="' + value.cell.id +'" name="rotaRadio" ';
-                        selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  value.cell.id  + '\');"/>';
+                    $.each(data.rows, function(index, value) {
+                        var id = value.cell.id;
+                        var selecione = '<input type="radio" value="' + id +'" name="rotaRadio" ';
+                        selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  id  + '\');"';
+                        if (id == roteirizacao.idRota) {
+                            selecione += 'checked';
+                        }
+                        selecione += '/>';
                         value.cell.selecione = selecione;
                     });
                     return data;
@@ -472,8 +478,13 @@ var roteirizacao = $.extend(true, {
             $(".roteirosGrid", roteirizacao.workspace).flexigrid({
                 preProcess: function(data) {
                     $.each(data.rows, function(index, value) {
-                        var selecione = '<input type="radio" value="' + value.cell.id +'" name="roteirosRadio" ';
-                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  value.cell.id  + '\', \''+ value.cell.nome +'\');"/>';
+                        var id = value.cell.id;
+                        var selecione = '<input type="radio" value="' + id +'" name="roteirosRadio" ';
+                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  id  + '\');"';
+                        if (id == roteirizacao.idRoteiro) {
+                            selecione += 'checked';
+                        }
+                        selecione += '/>'
                         value.cell.selecione = selecione;
                     });
                     return data;
