@@ -35,26 +35,12 @@ var descontoDistribuidorController = $.extend(true,{
 			
 			var fornecedores ="";
 			
-			 $("#selectFornecedorSelecionado_option option",this.workspace).each(function (index) {
-				 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
-			 });
-			
-			$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoGeral",
-						"desconto="+descontoGeral + "&" + fornecedores,				   
-					   function(result) {
-				        
-						   if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
-							   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
-					       }
-						   else{
-							   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
-							   tipoDescontoController.fecharDialogs();
-							   tipoDescontoController.pesquisar();
-							   $(".tiposDescGeralGrid",this.workspace).flexReload();
-						   }
-		               },
-					   null,
-					   true,"idModalDescontoGeral");
+		    $("#selectFornecedorSelecionado_option option",this.workspace).each(function (index) {
+		    	fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
+		    });
+
+		    var worker = new Worker(contextPath  + "/scripts/cadastroTipoDescontoDistribuidorSalvarWorker.js");
+
 		}, 
 		
 		init:function(){
@@ -117,4 +103,4 @@ var descontoDistribuidorController = $.extend(true,{
 				
 		}
 	}, BaseController);
-	
+//@ sourceURL=cadastroTipoDescontoDistribuidor.js	

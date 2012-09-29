@@ -88,11 +88,19 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/novoDescontoGeral")
-	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
+	public void novoDescontoGeral(final BigDecimal desconto, final List<Long> fornecedores){
 		
-		descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
-			
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
+			}
+		});
+		
+		thread.start();
+		
+		//result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 	}
 
 	@Post
