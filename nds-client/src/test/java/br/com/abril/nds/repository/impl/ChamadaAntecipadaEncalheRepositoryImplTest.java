@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -110,7 +109,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel,1);
+		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel);
 		save(pdv);
 		
 		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(box1);
@@ -122,21 +121,24 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		Rota rota = Fixture.rota("005", "Rota 005", roteiro,Arrays.asList(pdv));
+		Rota rota = Fixture.rota("005", "Rota 005", roteiro);
 		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1);
 		save(rota);
 		
 		Cota cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO,box1);
 		save(cotaJose);
 		
-		pdv = Fixture.criarPDVPrincipal("Jose", cotaJose,2);
+		pdv = Fixture.criarPDVPrincipal("Jose", cotaJose);
 		save(pdv);
 		
 		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		rota = Fixture.rota("005", "Rota 005", roteiro, Arrays.asList(pdv));
+		rota = Fixture.rota("005", "Rota 005", roteiro);
 		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1);
+		
 		save(rota);
 		
 		Cota cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO,box2);
@@ -149,7 +151,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 
 		save(tipoProdutoRevista);
 		
-		pdv = Fixture.criarPDVPrincipal("Maria", cotaMaria,3);
+		pdv = Fixture.criarPDVPrincipal("Maria", cotaMaria);
 		save(pdv);
 		
 	

@@ -495,7 +495,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			pdvDTO.setId(itemPdv.getId());
 			
 			pdvDTO.setNome(itemPdv.getCota().getPessoa().getNome());
-			pdvDTO.setOrdem(itemPdv.getOrdem());
+			//TODO: Refatorar
+			//pdvDTO.setOrdem(itemPdv.getOrdem());
 			pdvDTO.setCota(itemPdv.getCota().getNumeroCota());
 			
 			Endereco endereco = null;
@@ -552,10 +553,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			}
 		}
 		
-		if (pdvs.size() > 0){
-		    rota.addAllPdv(pdvs);
-	    	rotaRepository.merge(rota);
-		}
+		//TODO: Refatorar 
+//		if (pdvs.size() > 0){
+//		    rota.addAllPdv(pdvs);
+//	    	rotaRepository.merge(rota);
+//		}
 	}
 
 	/**
