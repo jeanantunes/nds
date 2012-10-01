@@ -248,7 +248,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return matrizConfirmada;
 	}
 
-	
+	@Override
+	@Transactional
+	public void excluiBalanceamento(Long idLancamento) {
+		
+		Lancamento lancamento =  lancamentoRepository.buscarPorId(idLancamento);
+		
+		if(lancamento == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não encontrado!");
+		}
+		
+		lancamento.setStatus(StatusLancamento.EXCLUIDO_RECOLHIMENTO);
+	}
 	
 	/**
 	 * Método que atualiza as informações dos lançamentos.

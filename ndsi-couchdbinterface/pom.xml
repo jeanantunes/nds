@@ -184,5 +184,10 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.7.RC1</version>
 		</dependency>
+		<dependency>
+			<groupId>jcifs</groupId>
+			<artifactId>jcifs</artifactId>
+			<version>1.3.17</version>
+		</dependency>            
 	</dependencies>
 </project>

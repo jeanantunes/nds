@@ -23,6 +23,21 @@ import javax.persistence.Table;
 @Table(name = "BOX")
 @SequenceGenerator(name="BOX_SEQ", initialValue = 1, allocationSize = 1)
 public class Box implements Serializable {
+    
+    /**
+     * Box "Especial" utilizado na funcionalidade de roteirização
+     * para identificar configuração de roteirização sem informação
+     * de Box 
+     */
+    public static final Box ESPECIAL;
+    
+    static {
+        ESPECIAL = new Box();
+        ESPECIAL.setId(Long.valueOf(-1));
+        ESPECIAL.setCodigo(Integer.valueOf(-1));
+        ESPECIAL.setNome("Especial");
+        ESPECIAL.setTipoBox(TipoBox.LANCAMENTO);
+    }
 
 	/**
 	 * Serial Version UID
@@ -46,12 +61,6 @@ public class Box implements Serializable {
 	
 	@OneToMany(mappedBy = "box")
 	private Set<Cota> cotas = new HashSet<Cota>();
-	
-	@OneToMany(mappedBy ="box")
-	private Set<Roteiro> roteiros;
-	
-	@Column(name="ORDEM", nullable = true)
-	private Integer ordem;
 
 	public Set<Cota> getCotas() {
 		return cotas;
@@ -99,33 +108,6 @@ public class Box implements Serializable {
 		this.tipoBox = tipoBox;
 	}
 
-	/**
-	 * @return the roteiros
-	 */
-	public Set<Roteiro> getRoteiros() {
-		return roteiros;
-	}
-
-	/**
-	 * @param roteiros the roteiros to set
-	 */
-	public void setRoteiros(Set<Roteiro> roteiros) {
-		this.roteiros = roteiros;
-	}
-	
-	/**
-	 * @return the ordem
-	 */
-	public Integer getOrdem() {
-		return ordem;
-	}
-
-	/**
-	 * @param ordem the ordem to set
-	 */
-	public void setOrdem(Integer ordem) {
-		this.ordem = ordem;
-	}
 
 	@Override
 	public int hashCode() {
@@ -135,8 +117,6 @@ public class Box implements Serializable {
 		result = prime * result + ((cotas == null) ? 0 : cotas.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
-		result = prime * result
-				+ ((roteiros == null) ? 0 : roteiros.hashCode());
 		result = prime * result + ((tipoBox == null) ? 0 : tipoBox.hashCode());
 		return result;
 	}
@@ -170,11 +150,6 @@ public class Box implements Serializable {
 				return false;
 		} else if (!nome.equals(other.nome))
 			return false;		
-		if (roteiros == null) {
-			if (other.roteiros != null)
-				return false;
-		} else if (!roteiros.equals(other.roteiros))
-			return false;
 		if (tipoBox != other.tipoBox)
 			return false;
 		return true;

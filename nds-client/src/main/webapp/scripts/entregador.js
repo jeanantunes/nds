@@ -69,10 +69,14 @@ var entregadorController = $.extend(true, {
 		$("#idEntregadorPJ", this.workspace).val("");
 		
 		var idCampoInicioAtividade = "#inicioAtividade";
+		
+		var idCampoCodigoEntregador = "#codigoEntregador";
 
 		if (isCadastroPF) {
 			
 			idCampoInicioAtividade += "PF";
+			
+			idCampoCodigoEntregador += "PF";
 			
 			$("#formDadosEntregadorPF", this.workspace)[0].reset();
 			$("#idEntregadorPF", this.workspace).val("");
@@ -82,6 +86,8 @@ var entregadorController = $.extend(true, {
 		} else {
 
 			idCampoInicioAtividade += "PJ";
+
+			idCampoCodigoEntregador += "PJ";
 			
 			$("#formDadosEntregadorPJ", this.workspace)[0].reset();
 			$("#idEntregadorPJ", this.workspace).val("");
@@ -96,7 +102,9 @@ var entregadorController = $.extend(true, {
 
 				$("#linkDadosCadastrais", this.workspace).click();
 				
-				$(idCampoInicioAtividade).html(result);
+				$(idCampoInicioAtividade, this.workspace).html(result.data);
+
+				$(idCampoCodigoEntregador, this.workspace).val(result.nextCodigo);
 
 				entregadorController.popup_novoEntregador(isCadastroPF);		
 			}

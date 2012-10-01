@@ -146,7 +146,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join roterizacao.pdv pdv ")
 		   .append(" join pdv.cota cotaPdv ")
 		   .append(" join rota.roteiro roteiro ")
-		   .append(" join roteiro.box box ")
+		   .append(" join roterizacao.box box ")
 		   .append(" where cotaPdv.id=cota.id ");
 		
 		

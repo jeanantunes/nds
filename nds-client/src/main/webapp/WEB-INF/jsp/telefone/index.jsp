@@ -17,6 +17,9 @@
 		<div id="${param.tela}dialog-excluir" title="Telefones" style="display: none;">
 			<p>Confirma esta Exclusão?</p>
 		</div>
+		
+		<fieldset style="width:880px!important; margin:5px;">
+ 		<legend>Telefone</legend>
 		<table width="280" cellpadding="2" cellspacing="2" style="text-align:left ">
 			<tr>
 				<td width="72">Tipo:</td>
@@ -58,14 +61,14 @@
 				<td>
 
 					<div id="${param.tela}wrapperBtnAdicionarTelefoneHabilitado" style="display: none">
-						<span class="bt_add">
-							<a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar">Incluir Novo</a>
+						<span class="bt_novos">
+							<a href="javascript:;" onclick="${param.tela}.adicionarTelefone();" id="${param.tela}botaoAddEditar" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a>
 						</span>
 					</div>
 					
 					<div id="${param.tela}wrapperBtnAdicionarTelefoneDesabilitado" style="display: none">
-					  	<span class="bt_add" style="opacity:0.4">
-					  		<a href="#" onclick="javascript:;">Incluir Novo</a>
+					  	<span class="bt_novos" style="opacity:0.4">
+					  		<a href="#" onclick="javascript:;" rel="tipsy" title="Incluir Novo Telefone"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a>
 					  	</span>
 				  	</div>
 				
@@ -74,15 +77,12 @@
 			</tr>
 
 		</table>
-		
+		</fieldset>
 		<br />
-		
-		<label><strong>Telefones Cadastrados</strong></label>
-		
-		<br />
-		
-		<table id="${param.tela}telefonesGrid"></table>
-		
+		<fieldset style="width:880px!important; margin:5px;">
+ 			<legend>Telefones Cadastrados</legend>
+ 			<table id="${param.tela}telefonesGrid"></table>
+		</fieldset>
 		<br/>
 		
 		<input type="hidden" id="${param.tela}referenciaHidden"/>

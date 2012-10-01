@@ -49,11 +49,11 @@
 </div>
 </form>
 
-<form id="form-excluir-rotas">
-<div id="dialog-excluir-rotas" title="Rotas" style="display:none;">
-	<fieldset>
+<form id="form-excluir-rota-roteiro">
+<div id="dialog-excluir-rota-roteiro" title="Rotas" style="display:none;">
+	<fieldset style="width: 360px;">
     	<legend>Excluir</legend>
-        <p>Confirma a exclus&atilde;o destas Rotas deste Roteiro</p>
+        <span id="msgConfExclusaoRotaRoteiro"> Confirma a exclus&atilde;o destas Rotas deste Roteiro</span>
     </fieldset>
 </div>
 </form>
@@ -138,7 +138,7 @@
 
 
         <input name="descricaoRoteiro" type="text" id="descricaoRoteiro" style="width:240px; float:left; margin-bottom:5px;" />
-        <a href="javascript:;" onclick="roteirizacao.pesquisarRoteiros()">
+        <a href="javascript:;" onclick="roteirizacao.pesquisarRoteiros();">
                 <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
                      alt="Adicionar Rota" width="16" height="16" border="0"
                      style="float:left; margin-left:5px; margin-top:5px;" /></a>
@@ -171,7 +171,7 @@
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
         <tr>
             <td>
-                <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_novo_dado();">
+                <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="roteirizacao.abrirTelaNovoRoteiroRota();">
                     <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
                 </span>
 
@@ -187,7 +187,7 @@
                     <img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0"/>Copiar Cota</a>
                 </span>
 
-                <span class="bt_novos" title="Excluir"><a href="javascript:;" onclick="popup_excluir();">
+                <span class="bt_novos" title="Excluir"><a href="javascript:;" onclick="roteirizacao.popupExcluirRotaRoteiro();">
                     <img src="${pageContext.request.contextPath}//images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a>
                 </span>
             </td>
@@ -258,4 +258,46 @@
 	</fieldset>
 	<br clear="all" />
 	</div>
+	</form>
+	
+	<form id="formNovoDado">
+		<div id="dialog-novo-dado" title="Novo" style="display:none;">
+			<jsp:include page="../messagesDialog.jsp" /> 
+			<fieldset style="width: 380px;">
+	    		<legend>Novo</legend>
+	    		<table width="347" border="0" cellspacing="1" cellpadding="1">
+	    			<tr style="display: none;" id="trNomeRoteiro">
+						<td width="85">Incluir em:</td>
+						<td width="255">
+							<div id="nomeRoteiro"></div>
+						</td>
+					</tr>
+				</table>
+	        	<table width="347" border="0" cellspacing="1" cellpadding="1" id="incluirRoteiro">
+	          		<tr>
+			            <td width="85">&nbsp;</td>
+			            <td width="255">&nbsp;</td>
+	          		</tr>
+	          		<tr>
+	            		<td>Ordem:</td>
+	            		<td>
+	            			<input id="inputOrdem" style="width:220px;" />
+	            		</td>
+	          		</tr>
+	          		<tr>
+	            		<td>Nome:</td>
+	            		<td>
+	            			<input id="inputNome" style="width:220px;" />
+	            		</td>
+	          		</tr>
+	          		<tr style="display: none;" id="checkRoteiroEspecial">
+	          			<td>Roteiro Especial:</td>
+	          			<td>
+	          				<input type="checkbox" name="tipoRoteiro" 
+	          					value="Especial" id="tipoRoteiro" onclick="roteirizacao.roteiroEspecialNovo()"  />
+	          			</td>
+	          		</tr>
+	      		</table>
+			</fieldset>
+		</div>
 	</form>

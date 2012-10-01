@@ -31,6 +31,8 @@ public class FiltroConsultaRoteirizacaoDTO extends FiltroDTO implements Serializ
 	@Export(label = "Nome", exhibitionOrder = 5)
 	private String nomeCota;
 	
+	private Long idRoteirizacao;
+	
 	private OrdenacaoColunaConsulta ordenacaoColuna;
 	
 	public enum OrdenacaoColunaConsulta {
@@ -181,5 +183,19 @@ public class FiltroConsultaRoteirizacaoDTO extends FiltroDTO implements Serializ
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
+
+    /**
+     * @return the idRoteirizacao
+     */
+    public Long getIdRoteirizacao() {
+        return idRoteirizacao;
+    }
+
+    /**
+     * @param idRoteirizacao the idRoteirizacao to set
+     */
+    public void setIdRoteirizacao(Long idRoteirizacao) {
+        this.idRoteirizacao = idRoteirizacao;
+    }
 	
 }

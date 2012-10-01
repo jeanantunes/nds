@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
@@ -29,6 +30,23 @@ public interface MovimentoEstoqueService {
 	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 
 	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput);
-
-
+	
+	/**
+	 * Gera movimento para cancelamento de nota, 
+	 * devolvendo produtos da nota para estoque de lançamento do distribuidor
+	 * 
+	 * @param notaFiscal
+	 * @param idUsuario
+	 */
+	void devolucaoConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada);
+	
+	
+	/**
+	 * Gera movimento para cancelamento de nota, 
+	 * devolvendo produtos da nota para estoque de recolhimento do distribuidor
+	 * 
+	 * @param notaFiscalCancelada
+	 * @param idUsuario
+	 */
+	void devolucaoRecolhimentoNotaCancelada(NotaFiscal notaFiscalCancelada);
 }

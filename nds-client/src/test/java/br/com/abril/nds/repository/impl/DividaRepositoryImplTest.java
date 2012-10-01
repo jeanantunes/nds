@@ -113,7 +113,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Cota cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel,1);
+		PDV pdv = Fixture.criarPDVPrincipal("Manoel", cotaManoel);
 		save(pdv);
 		
 		Set<FormaCobranca> formasCobranca = new HashSet<FormaCobranca>();
@@ -129,10 +129,11 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Roteirizacao roteirizacao = Fixture.criarRoteirizacao(box1);
 		save(roteirizacao);
 		
-		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,box1,TipoRoteiro.NORMAL);
+		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		Rota rota = Fixture.rota("005", "Rota 005",roteiro,Arrays.asList(pdv));
+		Rota rota = Fixture.rota("005", "Rota 005",roteiro);
+		rota.addPDV(pdv, 1);
 		rota.setRoteiro(roteiro);
 		save(rota);
 		

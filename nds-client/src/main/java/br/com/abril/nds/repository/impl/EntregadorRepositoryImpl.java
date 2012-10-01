@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -312,7 +313,7 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		hql.append("select new ").append(EntregadorCotaProcuracaoVO.class.getCanonicalName()).append("(")
 		   .append(" cota.numeroCota, cota.pessoa.nome, cota.parametroDistribuicao.procuracaoAssinada ")
 		   .append(") ")
-		   .append(" from Entregador e join e.rota.roteiro.box.cotas cota ")
+		   .append(" from Entregador e join e.rota.roteiro.roteirizacao.box.cotas cota ")
 		   .append(" where e.id = :idEntregador ");
 		
 		retorno.setTotalRegistros(obterQtdRegistrosCotaAtendidaPaginacao(hql.toString(), idEntregador).intValue());
@@ -385,12 +386,14 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	@Override
 	public boolean verificarEntregador(Long idCota){
 		
-		StringBuilder hql = new StringBuilder("select e.id from Cota c, Entregador e, Roteirizacao r ");
-		   hql.append(" join c.pdvs pdv ")
-		   .append(" where c.id = :idCota ")
+		StringBuilder hql = new StringBuilder("select e.id from Entregador e, Cota c, Rota r ");
+		   
+		hql.append(" join c.pdvs pdv 		")
+		   .append(" join r.pdvs rotaPdv 	")
+		   .append(" where c.id = :idCota 	")
 		   .append(" and pdv.caracteristicas.pontoPrincipal = :principal ")
-		   .append(" and r.pdv.id = pdv.id ")
-		   .append(" and e.rota.id = r.rota.id ");
+		   .append(" and rotaPdv.id = pdv.id 	")
+		   .append(" and e.rota.id = r.id 		");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
@@ -399,4 +402,39 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		return ((Long)query.uniqueResult()) != null;
 	}
+	
+	@Override
+	public Entregador obterEntregadorPorCodigo(Long codigo) {
+		
+		StringBuilder hql = new StringBuilder(" select e from Entregador e where e.codigo = :codigo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigo", codigo);
+		
+		return (Entregador) query.uniqueResult();
+	}
+	
+	
+	@Override
+	public Long obterMinCodigoEntregadorDisponivel() {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("	select min(codigo) from (                                          ");
+		hql.append("			select min(CODIGO + 1) as codigo from ENTREGADOR           ");
+		hql.append("			where (CODIGO + 1) not in (select CODIGO from ENTREGADOR)  ");
+		hql.append("			UNION                                                      ");
+		hql.append("			SELECT 1 AS codigo from dual WHERE  1 not in               ");
+		hql.append("			( select CODIGO from ENTREGADOR where CODIGO = 1 )         ");
+		hql.append("	) as TBL_CODIGO	                                                   ");
+		
+		Query query = super.getSession().createSQLQuery(hql.toString());
+		
+		BigInteger codInterface = (BigInteger) query.uniqueResult();
+		
+		return codInterface.longValue();
+		
+	}
+	
 }
