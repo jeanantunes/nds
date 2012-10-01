@@ -33,7 +33,7 @@ var fiadorController = $.extend(true, {
 			$("#fiadorController-dialog-fiador", fiadorController.workspace).dialog({
 				resizable: false,
 				height:560,
-				width:840,
+				width:950,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {

@@ -5,7 +5,7 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 			resizable: 
 				 false,
 			height:'auto',
-			width:280,
+			width:200,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -131,8 +131,8 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 			
 		$( "#dialog-nfe", consultaNFEEncalheTratamentoController.workspace ).dialog({
 			resizable: false,
-			height:300,
-			width:400,
+			height:280,
+			width:350,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -288,7 +288,7 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180
+				height : 'auto'
 			});
 		
 		
@@ -363,7 +363,7 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180
+				height : 'auto'
 			});
 		
 	},

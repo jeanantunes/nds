@@ -274,9 +274,7 @@ $(function(){
                                 <div id="fornecedoresCota"/>
  
 				             </table>
-				             
-			                 
-			                 
+
 		                 </td>
 		                 
 					     <td width="21" align="left" valign="top">&nbsp;</td>

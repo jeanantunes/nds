@@ -38,13 +38,30 @@
 	</fieldset>
 	</div>
 </form>
-
-
-<div class="corpo">
- 
-    <div class="container">
-    
-      <fieldset class="classFieldset">
+		
+		<div class="areaBts">
+			<div class="area">
+				<span class="bt_novos">
+					<!-- IMPRESSAO CE -->
+					<a href="${pageContext.request.contextPath}/emissaoCE/imprimirCE" target="blank" rel="tipsy" title="Imprimir CE">
+					<img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" /></a>
+				</span>
+				<span class="bt_arq">
+					<!-- ARQUIVO EXCEL -->
+					<a href="${pageContext.request.contextPath}/emissaoCE/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
+				</span>
+				
+			
+				<span class="bt_arq">
+					<!-- ARQUIVO PDF -->
+					<a href="${pageContext.request.contextPath}/emissaoCE/exportar?fileType=PDF" rel="tipsy" title="Imprimir Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
+				</span>	
+			</div>
+		</div>
+    	<div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldFiltro">
    	    <legend>Pesquisar CE´s</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
@@ -159,7 +176,7 @@
     
     
 <!-- Pesquisar -->    
-<a href="javascript:;" onclick="EmissaoCEController.cliquePesquisar();">Pesquisar</a></span></td>
+<a href="javascript:;" onclick="EmissaoCEController.cliquePesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 
 
     </tr>
@@ -168,42 +185,14 @@
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
       
-       <fieldset class="classFieldset">
+       <fieldset class="fieldGrid">
        	  <legend> Emissão CE</legend>
         <div class="grids">
 		  <table class="ceEmissaoGrid"></table>
-		  
-		  
-		      <span class="bt_novos" title="Gerar Arquivo">
-	            
-	<!-- ARQUIVO EXCEL -->
-	<a href="${pageContext.request.contextPath}/emissaoCE/exportar?fileType=XLS">
-			
-			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-			</span>
-			
-			
-			 <span class="bt_novos" title="Imprimir Arquivo">
-			
-	<!-- ARQUIVO PDF -->
-	<a href="${pageContext.request.contextPath}/emissaoCE/exportar?fileType=PDF">
-			
-			
-			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-			</span>			
-
-	<span class="bt_novos" title="Imprimir">
-
-<!-- IMPRESSAO CE -->
-<a href="${pageContext.request.contextPath}/emissaoCE/imprimirCE" target="blank">
-
-	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir CE</a></span>
+		  		      
         </div>
 		
       </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-    
-    </div>
-</div> 
+      
 
 </body>

@@ -1,6 +1,8 @@
 <div id="fiadorController-dialog-excluir-garantia" title="Garantias" style="display: none;">
 	<p>Confirma esta Exclusão?</p>
 </div>
+<fieldset style="margin:5px; width:880px;">
+<legend>Cadastrar Garantias</legend>
 <table width="750" cellpadding="2" cellspacing="2"
 	style="text-align: left; display: s;" class="fiadorPF">
 	<tr>
@@ -16,14 +18,15 @@
 	<tr>
 		<td>&nbsp;</td>
 		<td>
-			<span class="bt_add">
-				<a href="javascript:fiadorController.adicionarEditarGarantia();" id="fiadorController-garantia-botaoAddEditarGarantia">Incluir Novo</a>
+			<span class="bt_novos">
+				<a href="javascript:fiadorController.adicionarEditarGarantia();" id="fiadorController-garantia-botaoAddEditarGarantia" rel="tipsy" title="Incluir Nova Garantia"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a>
 			</span>
 		</td>
 	</tr>
 </table>
-<br />
-<label><strong>Garantias Cadastradas</strong></label>
-<br />
+</fieldset>
+<fieldset style="margin:5px; width:880px;">
+<legend>Garantias Cadastradas</legend>
 <table class="fiadorController-imoveisGrid"></table>
+</fieldset>
 <input type="hidden" id="fiadorController-referenciaGarantia"/>

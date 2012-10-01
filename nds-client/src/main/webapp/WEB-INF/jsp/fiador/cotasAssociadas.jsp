@@ -1,3 +1,5 @@
+<fieldset style="margin:5px; width:880px;">
+<legend>Associar Cotas</legend>
 <table width="280" cellpadding="2" cellspacing="2" style="text-align: left;">
 	<div class="fiadorController-cotasAssociadas-dialog-excluir" id="fiadorController-cotasAssociadas-dialog-excluir" title="Cotas Associadas" style="display: none;">
 		<p>Confirma esta Exclusão?</p>
@@ -14,10 +16,12 @@
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
-		<td><span class="bt_add"><a id="fiadorController-cotasAssociadas-adicionarCotaAssociacao">Incluir Novo</a></span></td>
+		<td><span class="bt_novos"><a id="fiadorController-cotasAssociadas-adicionarCotaAssociacao" rel="tipsy" title="Associar Nova Cota" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a></span></td>
 	</tr>
 </table>
-<br />
-<label><strong>Cotas Cadastradas</strong></label>
-<br />
+</fieldset>
+
+<fieldset style="margin:5px; width:880px;">
+<legend>Cotas Associadas</legend>
 <table class="fiadorController-cotasAssociadasGrid"></table>
+</fieldset>

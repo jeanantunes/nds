@@ -47,8 +47,7 @@
 			</ul>
 			
 	        <div id="fiadorController-tab-1">
-	        	<br />
-	        	<fieldset style="margin-left:10px;">
+	        	<fieldset style="margin:5px; width:880px;">
 	        		<legend>Dados Cadastrais</legend>
 		        	<div id="fiadorController-cadastroCnpj" style="display: none;">
 						<jsp:include page="dadosCadastraisCnpj.jsp"></jsp:include>
@@ -63,51 +62,31 @@
 	        </div>
 	        
 	        <div id="fiadorController-tab-2">
-	        	<br />
-	        	<fieldset style="margin-left:10px;">
-	        		<legend>Endereços</legend>
 		        	<div id='fiadorController-tab-socios'>
 						<jsp:include page="socios.jsp"></jsp:include>
 					</div>
-				</fieldset>
 			</div>
 	        
 			<div id="fiadorController-tab-3">
-				<br />
-				<fieldset style="margin-left:10px;">
-	        		<legend>Telefones</legend>
 					<jsp:include page="../endereco/index.jsp">
 						<jsp:param value="ENDERECO_FIADOR" name="telaEndereco"/>
 						<jsp:param value="dialog-fiador" name="message"/>
 					</jsp:include>
-				</fieldset>
 	    	</div>
 	    	
 	        <div id="fiadorController-tab-4">
-	        	<br />
-	        	<fieldset style="margin-left:10px;">
-	        		<legend>Garantias</legend>
 		        	<jsp:include page="../telefone/index.jsp">
 		        		<jsp:param value="FIADOR" name="tela"/>
 						<jsp:param value="dialog-fiador" name="message"/>
 		        	</jsp:include>
-	        	</fieldset>
 			</div>
 			
 			<div id="fiadorController-tab-5">
-				<br />
-				<fieldset style="margin-left:10px;">
-	        		<legend>Dados Cadastrais</legend>
 					<jsp:include page="garantias.jsp"></jsp:include>
-				</fieldset>
 	    	</div>
 	    
 			<div id="fiadorController-tab-6">
-				<br />
-				<fieldset style="margin-left:10px;">
-	        		<legend>Dados Cadastrais</legend>
 					<jsp:include page="cotasAssociadas.jsp"></jsp:include>
-				</fieldset>
 	    	</div>
 	    	<br clear="all" />
 		</div>
@@ -115,11 +94,11 @@
 	</div>
 	<div class="areaBts">
 		<div class="area">
-            <span class="bt_novos" title="Novo">
+            <span class="bt_novos">
             	<a href="javascript:;" onclick='$(".fiadorController-inicioAtividadeNovo").show();$(".fiadorController-inicioAtividadeEdicao").hide();fiadorController.popupCadastroFiadorCPF();' rel="tipsy" title="Incluir Novo Fiador Pessoa Física"><img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/></a>
             </span>
         	
-        	<span class="bt_novos" title="Novo">
+        	<span class="bt_novos">
         		<a href="javascript:;" onclick="fiadorController.popupCadastroFiadorCNPJ();" rel="tipsy" title="Incluir Novo Fiador Pessoa Jurídica"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/></a>
         	</span>
 		</div>
