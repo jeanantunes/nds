@@ -598,7 +598,7 @@ var roteirizacao = $.extend(true, {
                             
                             exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-novo-dado');
                         } else {
-                            roteirizacao.popularGridRotas(result);
+                            roteirizacao.popularGridRotas(result.rotas);
                             $('#dialog-novo-dado', roteirizacao.workspace).dialog("close");
                         }
                    },

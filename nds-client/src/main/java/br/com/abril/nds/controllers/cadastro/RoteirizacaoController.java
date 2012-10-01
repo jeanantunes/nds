@@ -249,19 +249,7 @@ public class RoteirizacaoController {
 	@Post
 	public void buscaRotasPorRoteiro(Long roteiroId, int rp, int page) {
 		
-		List<RotaRoteirizacaoDTO> dtosRota = this.getRotasPorRoteiro(roteiroId);
-		
-		List<Rota> listaRota = roteirizacaoService.buscarRotaPorRoteiro(roteiroId);
-		
-		for (Rota rota : listaRota){
-			
-			RotaRoteirizacaoDTO dto = new RotaRoteirizacaoDTO(rota.getId(), rota.getOrdem(), rota.getDescricaoRota());
-			
-			if (!dtosRota.contains(dto)){
-				
-				dtosRota.add(dto);
-			}
-		}
+		List<RotaRoteirizacaoDTO> dtosRota = this.getDTO().getRoteiro(roteiroId).getRotas();
 		
 		result.use(Results.json()).from(dtosRota, "result").recursive().serialize();
 	}
@@ -279,7 +267,7 @@ public class RoteirizacaoController {
 		
 		this.adicionarRota(roteiroId, ordem, nome);
 		
-		result.use(Results.json()).from(this.getRotasPorRoteiro(roteiroId), "result").recursive().serialize();
+		result.use(Results.json()).from(this.getDTO().getRoteiro(roteiroId), "result").recursive().serialize();
 	}
 	
 	@Path("/iniciaTelaRota")
@@ -293,7 +281,7 @@ public class RoteirizacaoController {
 		
 		ordem++;
 		
-		for (RotaRoteirizacaoDTO dto : this.getRotasPorRoteiro(idRoteiro)){
+		for (RotaRoteirizacaoDTO dto : this.getDTO().getRoteiro(idRoteiro).getRotas()){
 			
 			if (ordem <= dto.getOrdem()){
 				
@@ -320,7 +308,7 @@ public class RoteirizacaoController {
 		
 		if (ordem != null){
 			
-			for (RotaRoteirizacaoDTO dto : this.getRotasPorRoteiro(idRoteiro)){
+			for (RotaRoteirizacaoDTO dto : this.getDTO().getRoteiro(idRoteiro).getRotas()){
 				
 				if (ordem.equals(dto.getOrdem())){
 					
@@ -338,16 +326,7 @@ public class RoteirizacaoController {
 	@Path("/excluirRota")
 	public void excluirRota(Long rotaId, Long roteiroId) {
 		
-		List<RotaRoteirizacaoDTO> rotas = this.getRotasPorRoteiro(roteiroId);
-		
-		for (RotaRoteirizacaoDTO rota : rotas){
-			
-			if (rota.getId().equals(rotaId)){
-				
-				rotas.remove(rota);
-				break;
-			}
-		}
+		this.getDTO().getRoteiro(roteiroId).removerRota(rotaId);
 		
 		if (rotaId >= 0){
 			
@@ -1002,7 +981,7 @@ public class RoteirizacaoController {
 	
 	private void adicionarRota(Long roteiroId, Integer ordem, String nome){
 		
-		List<RotaRoteirizacaoDTO> rotasDto = this.getRotasPorRoteiro(roteiroId);
+		List<RotaRoteirizacaoDTO> rotasDto = this.getDTO().getRoteiro(roteiroId).getRotas();
 		
 		Long novoId = -1L;
 		
@@ -1014,25 +993,7 @@ public class RoteirizacaoController {
 			}
 		}
 		
-		rotasDto.add(new RotaRoteirizacaoDTO(novoId, ordem, nome));
-	}
-	
-	private List<RotaRoteirizacaoDTO> getRotasPorRoteiro(Long roteiroId) {
-		
-		for (RoteiroRoteirizacaoDTO dto : this.getDTO().getRoteiros()){
-			
-			if (dto.getId().equals(roteiroId)){
-				
-				if (dto.getRotas() == null){
-					
-					dto.setRotas(new ArrayList<RotaRoteirizacaoDTO>());
-				}
-				
-				return dto.getRotas();
-			}
-		}
-		
-		return new ArrayList<RotaRoteirizacaoDTO>();
+		this.getDTO().getRoteiro(roteiroId).addRota(new RotaRoteirizacaoDTO(novoId, ordem, nome));
 	}
 	
 	@SuppressWarnings("unchecked")
