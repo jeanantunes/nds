@@ -36,6 +36,8 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 	
 	private Long idCota;
 	
+	private Long idRoteirizacao;
+	
 	public ConsultaRoteirizacaoDTO() {}
 
 	/**
@@ -207,6 +209,20 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
 	}
+
+    /**
+     * @return the idRoteirizacao
+     */
+    public Long getIdRoteirizacao() {
+        return idRoteirizacao;
+    }
+
+    /**
+     * @param idRoteirizacao the idRoteirizacao to set
+     */
+    public void setIdRoteirizacao(Long idRoteirizacao) {
+        this.idRoteirizacao = idRoteirizacao;
+    }
 	
 	
 }
