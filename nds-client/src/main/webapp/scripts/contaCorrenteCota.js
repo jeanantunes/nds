@@ -57,6 +57,9 @@ var contaCorrenteCotaController = $.extend(true, {
 
 		$(".itemContaCorrenteCotaGrid", contaCorrenteCotaController.workspace).flexReload();
 		
+		contaCorrenteCotaController.carregarDadosEmail();
+
+		
 	},
 
 	/**
@@ -204,6 +207,76 @@ var contaCorrenteCotaController = $.extend(true, {
 		}	
 
 	},
+	
+	/**
+	 * ENVIA EMAIL
+	 */
+	enviarEmail : function(){
+		
+		var params = $('form-email', contaCorrenteCotaController.workspace).serialize();
+	
+		$.postJSON(ontextPath + '/financeiro/contaCorrenteCota/enviarEmail',
+				params,
+				function(result) {
+					
+				},
+				function() {
+					
+				}
+			
+		);
+		
+	},
+	
+	/**
+	 * CARREGA DADOS DA COTA PARA O ENVIO DO EMAIL
+	 */
+	carregarDadosEmail : function(){
+		$("#btn_email", contaCorrenteCotaController.workspace).show();
+		
+		var cota = $("#cota", contaCorrenteCotaController.workspace).val();
+
+		var params = [{name:'numeroCota', value:cota }];
+		
+		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/pesquisarCotaEmail',
+				params,
+				function(result) {
+					$("#numeroCotaEmail", contaCorrenteCotaController.workspace).html(result);
+					$("#nomeCotaEmail", contaCorrenteCotaController.workspace).html();
+					$("#emailCotaEmail", contaCorrenteCotaController.workspace).html();	
+				},
+				function() {
+					
+				}
+			
+		);
+		
+		
+	},
+	
+	/**
+	 * PESQUISA DADOS DA COTA PARA PREENCHER CAMPOS DO POP-UP EMAIL
+	 */
+	/*pesquisarCotaEmail : function(){
+		
+		var cota = $("#cota", contaCorrenteCotaController.workspace).val();
+
+		var params = [{name:'numeroCota', value:cota }];
+		
+		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/pesquisarCotaEmail',
+				params,
+				function(result) {
+				
+					
+				},
+				function() {
+					
+				}
+			
+		);
+		
+	},*/
+	
 
 
 	/**
@@ -529,6 +602,30 @@ var contaCorrenteCotaController = $.extend(true, {
 				}
 			}
 		});
+	},
+	
+	popup_email : function() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+			$("#dialog-email", contaCorrenteCotaController.workspace ).dialog({
+				resizable: false,
+				height:400,
+				width:490,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						$(".grids", contaCorrenteCotaController.workspace).show();
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+						$(".grids", contaCorrenteCotaController.workspace).show();
+					}
+					
+					
+				}
+				
+			});	
 	}
 	
 }, BaseController);

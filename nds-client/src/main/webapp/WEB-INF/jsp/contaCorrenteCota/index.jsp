@@ -15,7 +15,7 @@
 <style type="text/css">
   fieldset { width:auto!important; }
   
-  #dialog-venda-encalhe, #dialog-consignado {
+  #dialog-venda-encalhe, #dialog-consignado, #dialog-email, #bt_email{
   	display: none;
   }
   </style>
@@ -104,6 +104,44 @@
 </div>
 </form>
 
+<form id="form-email">
+<div id="dialog-email" title="Enviar por e-mail">
+	<fieldset>
+    	<legend>Dados da Conta</legend>
+        
+        <table width="437" border="0" cellspacing="2" cellpadding="2">
+	        <tr>
+	            <td width="82">Cota:</td>
+	            <td width="348"><span name ="assunto" id="numeroCotaEmail"></span>
+	            <!-- <span class="classPesquisar"><a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarItemContaCorrenteCotaEmail();">&nbsp;</span></td> -->
+	          </tr>
+	          <tr>
+	            <td>Nome:</td>
+	            <td><span id="nomeCotaEmail"></span></td>
+	          </tr>
+	          <tr>
+	            <td>E-mail:</td>
+	            <td><input name="destinatarios" id="emailCotaEmail" disabled="disabled" type="text" style="width:300px;" />
+	            	<a href="javascript:;" onclick="contaCorrenteCotaController.editarEmail();">
+	            		<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0" alt="Editar E-mail" />
+	            	</a>
+	            </td>
+	          </tr>
+	          <tr>
+	            <td>C&oacute;pia para:</td>
+	            <td><input name="destinatarios" id="copiaParaCotaEmail" type="text" style="width:300px;" /></td>
+	          </tr>
+	          <tr>
+	            <td valign="top">Mensagem:</td>
+	            <td><textarea name="mensagem" id="mensagemCotaEmail" cols="" rows="10" style="width:300px;"></textarea>
+	  			</td>
+	          </tr>
+        </table>
+
+  </fieldset>
+</div>
+</form>
+
 
 <form id="form-venda-encalhe">
 <div id="dialog-venda-encalhe" title="Venda de Encalhe">
@@ -152,6 +190,12 @@
 				<span class="bt_arq">
 					<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					</a>
+				</span>
+				
+				<span class="bt_novos" id="bt_email">
+					<a href="javascript:;"  onclick="contaCorrenteCotaController.popup_email();" rel="tipsy" title="Enviar por e-mail">
+						<img src="${pageContext.request.contextPath}/images/ico_email.png" hspace="5" border="0" />
 					</a>
 				</span>
 				

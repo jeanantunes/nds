@@ -22,6 +22,7 @@ import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
@@ -44,6 +45,9 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.MathUtil;
@@ -81,6 +85,9 @@ public class ContaCorrenteCotaController {
 
 	@Autowired
 	private ContaCorrenteCotaService contaCorrenteCotaService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -137,7 +144,7 @@ public class ContaCorrenteCotaController {
 				listaItensContaCorrenteCota);
 
 		TableModel<CellModel> tableModel = obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
-
+		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive()
 				.serialize();
 	}
@@ -686,7 +693,7 @@ public class ContaCorrenteCotaController {
 		String cota = filtro.getNumeroCota() + " - " + nomeCota;
 		filtro.setCota(cota);
 				
-		List<ConsignadoCotaDTO> listConsignadoCotaDTO =consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
+		List<ConsignadoCotaDTO> listConsignadoCotaDTO = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
 		HashMap<String, BigDecimal> totais = new HashMap<String, BigDecimal>();
 		
 		for(ConsignadoCotaDTO consignadoDTO: listConsignadoCotaDTO){
@@ -706,4 +713,12 @@ public class ContaCorrenteCotaController {
 		result.use(Results.nothing());
 	}
 	
+	public void enviarEmail(String assunto, String mensagem, String[]destinatarios) throws AutenticacaoEmailException{
+		
+		List<AnexoEmail> anexos = new ArrayList<AnexoEmail>();
+		emailService.enviar(assunto, mensagem, destinatarios, anexos);
+		
+	}
+	
+		
 }
