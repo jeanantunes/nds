@@ -2,6 +2,44 @@ var fecharDiaController =  $.extend(true, {
 	
 	init : function(){
 		
+		$(".recebeFisicoGrid", fecharDiaController.workspace).flexigrid({
+			preProcess: fecharDiaController.executarPreProcessamentoRecebimentoFisicoNaoConfirmado,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Nº Nota Fiscal',
+				name : 'numeroNotaFiscal',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Inconsistência',
+				name : 'inconsistencia',
+				width : 235,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 350,
+			height : 155
+		});
+		
+	},
+	
+	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-recebe-fisico", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-recebe-fisico", fecharDiaController.workspace).show();
+		
+		return resultado;
 	},
 	
 	popup : function() {	
@@ -183,18 +221,48 @@ var fecharDiaController =  $.extend(true, {
 		}
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeBaixaBancaria+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 		$('#tabela-validacao').append(baixaBancaria + imagem);
+		$('#tabela-validacao').remove(baixaBancaria + imagem);
 	},
 	
 	validacaoRecebimentoFisico : function(result){
-		var recebimentoFisico = "<tr class='class_linha_2'><td>Recebimento Físico:</td>";					
+		var recebimentoFisico = null;				
 		var iconeRecebimentoFisico = null;
 		if(result.recebimentoFisico){
+			recebimentoFisico = "<tr class='class_linha_2'><td>Recebimento Físico:</td>";
 			iconeRecebimentoFisico = 'ico_check.gif';
-		}else{			
+		}else{
+			recebimentoFisico = "<td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
 			iconeRecebimentoFisico = 'ico_bloquear.gif';
 		}
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 		$('#tabela-validacao').append(recebimentoFisico + imagem);
-	}	
+	},
+	
+	popup_recebimentoFisico : function() {
+		
+		$(".recebeFisicoGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterRecebimentoFisicoNaoConfirmado",
+			dataType : 'json',
+			params: []
+		});
+		
+		$(".recebeFisicoGrid", fecharDiaController.workspace).flexReload();
+	
+		$( "#dialog-recebe-fisico", fecharDiaController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:390,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				},
+			}
+		});
+	}
+
+	
+	
+	
 	
 }, BaseController);

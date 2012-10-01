@@ -1,6 +1,9 @@
 package br.com.abril.nds.service;
 
 import java.util.Date;
+import java.util.List;
+
+import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 
 public interface FecharDiaService {
 	
@@ -18,5 +21,13 @@ public interface FecharDiaService {
 	 * @return boolean
 	 */
 	boolean existeNotaFiscalSemRecebimentoFisico();
+	
+	/**
+	 * Retorna uma lista com as notas fiscais de entrada que não tiveram seu recebimento fisico confirmado
+	 * 
+	 * 
+	 * @return boolean
+	 */
+	List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado();
 
 }

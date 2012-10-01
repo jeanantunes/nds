@@ -1,11 +1,13 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.util.DateUtil;
@@ -27,6 +29,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Transactional
 	public boolean existeNotaFiscalSemRecebimentoFisico() {		 
 		return this.fecharDiaRepository.existeNotaFiscalSemRecebimentoFisico();
+	}
+
+	@Override
+	@Transactional
+	public List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado() {
+		
+		return this.fecharDiaRepository.obterNotaFiscalComRecebimentoFisicoNaoConfirmado();
 	}
 
 }

@@ -41,6 +41,20 @@
 		    </fieldset>
 		</div>
 	</form>
+	
+	<form id="form-popup-validacao-recebimento-fisico">
+		<div id="dialog-recebe-fisico" title="Recebimento Físico" style="display:none;">
+		<fieldset style="width:350px;">
+	    	<legend>Recebimento Físico</legend>
+	        <table class="recebeFisicoGrid"></table>
+	    </fieldset>
+	    <br clear="all" />
+	    <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+	
+		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		
+		</div>
+	</form>
 
 	<form id="form-cota-grid">
 		<div id="dialog-cota-grid" title="Cotas" style="display:none;">
