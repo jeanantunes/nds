@@ -39,8 +39,39 @@
 	</form>
 	
 	<form action="/devolucao/chamadaEncalheAntecipada/" id="dialog_consulta_chamdaEncalhe_form">
-	
-		<fieldset class="classFieldset">
+		<div class="areaBts">
+			<div class="area">
+				<span class="bt_novos" id="bt_confirmar_novo">
+			    	<a onclick="chamdaEncalheAnteipadaController.exibirDialogData('Novo');" href="javascript:;" rel="tipsy" title="Gravar">
+			    		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+			    	</a>
+			    </span>
+			    <span class="bt_novos" id="bt_reprogramar_CE">
+			    	<a onclick="chamdaEncalheAnteipadaController.exibirDialogData('');" href="javascript:;" rel="tipsy" title="Reprogramar">
+			    		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png">
+			    	</a>
+			    </span>   
+				<span class="bt_novos" id="bt_cancelar_programacao">
+					<a onclick="chamdaEncalheAnteipadaController.exibirDialogCancelamentoCE();" href="javascript:;" rel="tipsy" title="Cancelar Programação">
+						<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_bloquear.gif">
+					</a>
+				</span>
+			    <span class="bt_arq">
+			    	<a href="javascript:;" onclick="chamdaEncalheAnteipadaController.exportar('XLS')" rel="tipsy" title="Gerar Arquivo">
+			    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			    	</a>
+			    </span>
+			
+				<span class="bt_arq">
+					<a href="javascript:;" onclick="chamdaEncalheAnteipadaController.exportar('PDF')" rel="tipsy" title="Imprimir">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					</a>
+				</span>
+				
+			</div>
+		</div>
+		<div class="linha_separa_fields">&nbsp;</div>
+		<fieldset class="fieldFiltro">
 	   	   
 	   	   <legend> CE Produto</legend>
 	   	   
@@ -50,7 +81,7 @@
 	   	   <input type="hidden" id="codMunicipioHidden" name="codMunicipioHidden" value=""/>
 	   	   <input type="hidden" id="codTipoPontoPdvHidden" name="codTipoPontoPdvHidden" value=""/>
 	   	   
-	   	   <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	   	   <table width="950" border="0" cellpadding="2" cellspacing="1">
 			
 			<tbody>		
 			
@@ -174,8 +205,8 @@
 			  	<td>Com CE</td>
 				 <td>&nbsp;</td>
 			    <td width="136" colspan="2">
-			    	<span class="bt_pesquisar">
-			    		<a href="javascript:;" onclick="chamdaEncalheAnteipadaController.pesquisar();" id="btn_pesquisa_ce" class="botaoPesquisar">Pesquisar</a>
+			    	<span class="bt_novos">
+			    		<a href="javascript:;" onclick="chamdaEncalheAnteipadaController.pesquisar();" id="btn_pesquisa_ce" class="botaoPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 			    	</span>
 			    </td>
 			  </tr>
@@ -188,7 +219,7 @@
 	      
 	          <div class="grids" id="grids" style="display:none;">
 				
-				 <fieldset class="classFieldset">
+				 <fieldset class="fieldGrid">
 	       	  		<legend> CE Produto</legend>	  
 					  
 					  <div class="gridAntecipada" id="gridAntecipada" style="display:none;">
@@ -202,36 +233,8 @@
 			          <table width="950" border="0" cellspacing="1" cellpadding="1">
 						  
 					  		<tr>
-							   	<td width="468" valign="top">
-								    <span class="bt_confirmar_novo" title="Gravar" id="bt_confirmar_novo">
-								    	<a onclick="chamdaEncalheAnteipadaController.exibirDialogData('Novo');" href="javascript:;">
-								    		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Gravar
-								    	</a>
-								    </span>
+							   	<td width="468" valign="top">&nbsp;
 								    
-								    <span class="bt_confirmar_novo" title="Reprogramar" id="bt_reprogramar_CE" style="display: block;">
-								    	<a onclick="chamdaEncalheAnteipadaController.exibirDialogData('');" href="javascript:;">
-								    		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Reprogramar
-								    	</a>
-								    </span>
-								
-								    <span class="bt_novos" title="Gerar Arquivo">
-								    	<a href="javascript:;" onclick="chamdaEncalheAnteipadaController.exportar('XLS')">
-								    		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
-								    	</a>
-								    </span>
-								
-									<span class="bt_novos" title="Imprimir">
-										<a href="javascript:;" onclick="chamdaEncalheAnteipadaController.exportar('PDF')">
-											<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-										</a>
-									</span>
-									
-									<span title="Cancelar Programação" class="bt_novos" id="bt_cancelar_programacao" style="display: block;">
-										<a onclick="chamdaEncalheAnteipadaController.exibirDialogCancelamentoCE();" href="javascript:;">
-											<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_bloquear.gif">Cancelar Programação
-										</a>
-									</span>
 									
 							    </td>
 							      

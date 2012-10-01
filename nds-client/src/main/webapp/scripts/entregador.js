@@ -119,7 +119,7 @@ var entregadorController = $.extend(true, {
 		$( "#dialog-novoEntregador", this.workspace ).dialog({
 			resizable: false,
 			height:570,
-			width:840,
+			width:950,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
