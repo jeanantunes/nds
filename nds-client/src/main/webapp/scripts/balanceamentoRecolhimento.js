@@ -716,8 +716,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
 			url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
-			preProcess: executarPreProcessamento,
-			onSuccess: executarAposProcessamento,
+			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
+			onSuccess: balanceamentoRecolhimentoController.executarAposProcessamento,
 			params: null,
 		    newp: 1,
 		});
