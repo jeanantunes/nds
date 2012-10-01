@@ -1,5 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.util.Date;
+
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -12,6 +14,10 @@ public class FiltroViewContaCorrenteCotaDTO {
 	
 	@Export(label = "Nome")
 	private String nomeCota;
+	
+	private Date inicioPeriodo;
+	
+	private Date fimPeriodo;
 	
 	private PaginacaoVO paginacao = new PaginacaoVO();
 	
@@ -66,6 +72,34 @@ public class FiltroViewContaCorrenteCotaDTO {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
 	
+	/**
+	 * @return the inicioPeriodo
+	 */
+	public Date getInicioPeriodo() {
+		return inicioPeriodo;
+	}
+
+	/**
+	 * @param inicioPeriodo the inicioPeriodo to set
+	 */
+	public void setInicioPeriodo(Date inicioPeriodo) {
+		this.inicioPeriodo = inicioPeriodo;
+	}
+
+	/**
+	 * @return the fimPeriodo
+	 */
+	public Date getFimPeriodo() {
+		return fimPeriodo;
+	}
+
+	/**
+	 * @param fimPeriodo the fimPeriodo to set
+	 */
+	public void setFimPeriodo(Date fimPeriodo) {
+		this.fimPeriodo = fimPeriodo;
+	}
+
 	/**
 	 * @return the nomeCota
 	 */
