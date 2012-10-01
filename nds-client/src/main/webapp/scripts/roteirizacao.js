@@ -784,9 +784,9 @@ var roteirizacao = $.extend(true, {
             preProcess : function(data) {
                 $.each(data.rows, function(index, value) {
                     var id = value.cell.id;
-                    var selecione = '<input type="checkbox" name="checkboxCotasRota" value="'+ id +'"/>';
+                    var selecione = '<input type="checkbox"  name="checkboxCotasRota" value="'+ id +'"/>';
                     value.cell.selecione = selecione;
-                    var ordem = '<input type="text" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
+                    var ordem = '<input type="text" onchange="roteirizacao.ordemPdvChangeListener(this, \''+ id +'\'");" class="inputGridCotasRota" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
                     value.cell.ordem = ordem;
                 });
                 return data;
@@ -850,7 +850,11 @@ var roteirizacao = $.extend(true, {
         });
     },
 
-        limparGridCotasRota : function() {
+    ordemPdvChangeListener : function(element, idPdv) {
+    	alert("changed!");
+    },
+    
+    limparGridCotasRota : function() {
             roteirizacao.idsCotas = [];
             $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
         },
