@@ -21,7 +21,6 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.AssociacaoEndereco;
 import br.com.abril.nds.model.cadastro.AssociacaoTelefone;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
@@ -42,7 +41,6 @@ import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.NotaPromissoria;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.Periodicidade;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
@@ -57,7 +55,6 @@ import br.com.abril.nds.model.cadastro.TelefoneFiador;
 import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -705,8 +702,7 @@ public class HistoricoTitularidadeServiceImplTest extends AbstractRepositoryImpl
 			StatusPDV.ATIVO, 
 			caracteristicas, 
 			licencaMunicipal, 
-			segmentacao,
-			1
+			segmentacao
 		);
 		
 		pdv.setEnderecos(getEnderecosPDV());

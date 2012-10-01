@@ -85,7 +85,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			if (resumo.excedeCapacidadeDistribuidor) {
 				
 				rows += '<span class="span_1">Qtde. Exempl.:</span>';
-				rows += '<span name="qtdeExemplares" class="span_2 redLabel"'
+				rows += '<span name="qtdeExemplares" class="span_2 redLabel"';
 				rows += 'title="A quantidade de exemplares excede a capacidade de manuseio ';
 				rows += result.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
 				rows += resumo.qtdeExemplaresFormatada + '</span>';
@@ -227,14 +227,16 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
-
+			
 			var idProdutoEdicao = row.cell.idProdutoEdicao;
 			var nomeProduto = row.cell.nomeProduto;
+			var idLancamento = row.cell.idLancamento;
 			
 			row.cell.nomeProduto = balanceamentoRecolhimentoController.balanceamento.getColunaProduto(idProdutoEdicao, nomeProduto);
 			row.cell.sequencia = balanceamentoRecolhimentoController.gerarInputSequencia(row);
 			row.cell.novaData = balanceamentoRecolhimentoController.gerarHTMLNovaData(row);
 			row.cell.reprogramar = balanceamentoRecolhimentoController.gerarCheckReprogramar(row);
+			row.cell.acao = balanceamentoRecolhimentoController.gerarBtnAcoes(idLancamento);
 		});
 			
 		$(".grids", balanceamentoRecolhimentoController.workspace).show();
@@ -244,6 +246,15 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		return resultado;
 	},
 
+	gerarBtnAcoes : function(idLancamento) {
+		
+		var btnExcluir = '<a href="javascript:;" class="btn_excluir" '+
+						    'onclick="balanceamentoRecolhimentoController.excluirBalanceamento(' + idLancamento + ');">'+
+						    '<img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+		
+		return btnExcluir;
+	},
+	
 	gerarInputSequencia : function(row) {
 		
 		var retornoHTML;
@@ -627,6 +638,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				width : 45,
 				sortable : false,
 				align : 'center'
+			}, {
+				display: 'Ação',
+				name : 'acao',
+				width : 50,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "sequencia",
 			sortorder : "asc",
@@ -716,8 +733,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
 			url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
-			preProcess: executarPreProcessamento,
-			onSuccess: executarAposProcessamento,
+			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
+			onSuccess: balanceamentoRecolhimentoController.executarAposProcessamento,
 			params: null,
 		    newp: 1,
 		});
@@ -854,8 +871,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
 		
-		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
-				   linhaSelecionada
+		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",   linhaSelecionada
 				   		+ "&dataAntigaFormatada=" + dataAntiga,
 				   function(result) {
 				   
@@ -953,6 +969,17 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		    },
 		    form: $("#dialog-confirm-balanceamento", this.workspace).parents("form")
 		});
+	},
+	
+	excluirBalanceamento : function(idLancamento) {
+		
+		var params = {"idLancamento":idLancamento};
+		
+		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/excluirBalanceamento", params, null);
+				
 	}
 
 }, BaseController);
+
+
+//@ sourceURL=balanceamentoRecolhimento.js

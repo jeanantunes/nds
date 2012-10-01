@@ -24,7 +24,7 @@ label{ vertical-align:super;}
 .ui-tabs .ui-tabs-panel {
    padding: 6px!important;
 }
-.ldForm{float:left; width:652px!important; margin-left:15px;}
+.ldForm{float:left; width:666px!important; margin-left:15px;}
 fieldset {
     margin-right:0px!important;
 }
@@ -193,7 +193,7 @@ fieldset {
 							</tbody>
 						</table>
 					</fieldset>	
-				    <fieldset style="width: 630px !important; margin-bottom: 2px; float: left;">
+				    <fieldset style="width: 653px !important; margin-bottom: 2px; float: left;">
 				     <legend>Data Recolhimento</legend>
 					   	<table border="0" cellSpacing="1" cellPadding="1" width="562">
 					      <tbody><tr>

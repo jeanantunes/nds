@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.repository.PdvRepository;
 
@@ -188,12 +189,28 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 	}
 	
 	public PDV obterPDVPrincipal(Long idCota) {
+		
 		Criteria criteria = getSession().createCriteria(PDV.class);
 		criteria.createAlias("cota", "cota");
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
 		criteria.setMaxResults(1);
 		return (PDV) criteria.uniqueResult();
+	}
+	
+	/**
+	 * Obtém PDV's por Rota
+	 * @param idRota
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PDV> obterPDVPorRota(Long idRota) {
+		
+		Criteria criteria = getSession().createCriteria(RotaPDV.class);
+		criteria.createAlias("rota", "rota");
+		criteria.add(Restrictions.eq("rota.id", idRota));
+		return criteria.list();
 	}
 
     /**

@@ -27,12 +27,10 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
@@ -471,8 +469,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioVO.setReparteCota(new BigInteger(reparteCota.toString()));
 				
-				rateioVO.setReparteAtualCota(rateioVO.getReparteCota().subtract(rateio.getQtde()));
-				
 				listaRetorno.add(rateioVO);
 			}
 		}
@@ -570,6 +566,16 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		return this.diferencaEstoqueRepository.obterQuantidadeTotalDiferencas(
 						codigoProduto, numeroEdicao, tipoEstoque, dataMovimento);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean existeDiferencaPorNota(Long idProdutoEdicao,
+										  Date dataNotaEnvio,
+										  Integer numeroCota) {
+		
+		return this.diferencaEstoqueRepository.existeDiferencaPorNota(
+						idProdutoEdicao, dataNotaEnvio, numeroCota);
 	}
 	
 }

@@ -17,10 +17,15 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.Ordenacao
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -28,6 +33,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
@@ -70,8 +76,12 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	private Fornecedor fornecedor;
 	
 	private Date datalancamentoDiferenca = new Date();
+	
+	private Date datalancamentoDiferencaRateio;
 
 	private ProdutoEdicao produtoEdicao;
+	
+	private Cota cotaManoel;
 	
 	@Before
 	public void setup() {
@@ -202,6 +212,35 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 			
 			save(lancamento);
 		}
+		
+		datalancamentoDiferencaRateio = DateUtil.adicionarDias(datalancamentoDiferenca, 1);
+		
+		PessoaFisica manoel =
+			Fixture.pessoaFisica("123.456.789-00", "sys.discover@gmail.com", "Manoel da Silva");
+		
+		save(manoel);
+		
+		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
+		
+		save(box1);
+		
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
+		
+		save(cotaManoel);
+		
+		Diferenca diferenca = 
+			Fixture.diferenca(
+				quantidadeDiferenca, usuario, produtoEdicao, tipoDiferenca,
+				statusPendente, null, true, TipoEstoque.LANCAMENTO,
+				TipoDirecionamentoDiferenca.NOTA, datalancamentoDiferencaRateio);
+		
+		save(diferenca);
+		
+		RateioDiferenca rateioDiferenca =
+			Fixture.rateioDiferenca(
+				quantidadeDiferenca, cotaManoel, diferenca, null, datalancamentoDiferencaRateio);
+		
+		save(rateioDiferenca);
 	}
 	
 	@Test
@@ -329,8 +368,16 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 				TipoEstoque.LANCAMENTO, datalancamentoDiferenca);
 		
 		Assert.assertNotNull(quantidadeTotalDiferencas);
+	}
+	
+	@Test
+	public void obterDiferenca() {
 		
-		Assert.assertTrue(quantidadeTotalDiferencas.compareTo(BigInteger.ZERO) > 0);
+		boolean existeDiferencaPorNota =
+			this.diferencaEstoqueRepository.existeDiferencaPorNota(
+				produtoEdicao.getId(), datalancamentoDiferencaRateio, cotaManoel.getNumeroCota());
+				
+		Assert.assertTrue(existeDiferencaPorNota);
 	}
 	
 }

@@ -103,4 +103,6 @@ public interface DiferencaEstoqueService {
 	BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
 				 							  TipoEstoque tipoEstoque, Date dataMovimento);
 	
+	boolean existeDiferencaPorNota(Long idProdutoEdicao, Date dataNotaEnvio, Integer numeroCota);
+	
 }
