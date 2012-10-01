@@ -1300,7 +1300,17 @@ public class MatrizRecolhimentoController {
 			confirmacoesVO.add(
 				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
 		}
+		
 		return confirmacoesVO;
+	}
+	
+	@Post
+	public void excluirBalanceamento(Long idLancamento) {
+
+		this.recolhimentoService.excluiBalanceamento(idLancamento);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+			"Balanceamento excluído com sucesso!"), "result").recursive().serialize();
 	}
 	
 }
