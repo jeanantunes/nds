@@ -622,6 +622,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
+				display : 'Alternativo',
+				name : 'encalheAlternativo',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Exemplar',
 				name : 'encalhe',
 				width : 60,
