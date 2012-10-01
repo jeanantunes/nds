@@ -537,27 +537,44 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	/**
 	 * Inclui Cota Pdv na Roteirização
-	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
+	 * @param List<Long> idPdvs
 	 */
 	@Override
 	@Transactional
-	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> listaCotaPdv, Long idRota) {
+	public void incluirCotaPdv(List<Long> idPdvs, Long idRota) {
 		
-		List<PDV> pdvs = new ArrayList<PDV>();
 		Rota rota = rotaRepository.buscarPorId(idRota);
+		List<PDV> pdvs = pdvRepository.obterPDVPorRota(rota.getId());
 		
-		for (PdvRoteirizacaoDTO item:listaCotaPdv){
-			PDV pdv = pdvRepository.buscarPorId(item.getId());
+		for (Long itemId:idPdvs){
+			PDV pdv = pdvRepository.buscarPorId(itemId);
 			if (pdv!=null){
 			    pdvs.add(pdv);
 			}
 		}
+
+	    rotaRepository.merge(rota);
+	}
+	
+	/**
+	 * Exclui Cota Pdv na Roteirização
+	 * @param List<Long> idPdvs
+	 */
+	@Override
+	@Transactional
+	public void excluirCotaPdv(List<Long> idPdvs, Long idRota) {
 		
-		//TODO: Refatorar 
-//		if (pdvs.size() > 0){
-//		    rota.addAllPdv(pdvs);
-//	    	rotaRepository.merge(rota);
-//		}
+		Rota rota = rotaRepository.buscarPorId(idRota);
+		List<PDV> pdvs = pdvRepository.obterPDVPorRota(rota.getId());
+		
+		for (Long itemId:idPdvs){
+			PDV pdv = pdvRepository.buscarPorId(itemId);
+			if (pdv!=null){
+			    pdvs.remove(pdv);
+			}
+		}
+
+    	rotaRepository.merge(rota);
 	}
 
 	/**
