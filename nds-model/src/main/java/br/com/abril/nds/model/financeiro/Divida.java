@@ -57,10 +57,16 @@ public class Divida {
 	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "CONSOLIDADO_ID")
-	private ConsolidadoFinanceiroCota consolidado;
+	private ConsolidadoFinanceiroCota consolidado;	
 	
-	@OneToMany
+	// Divida -> acumulados
+	@OneToMany(mappedBy="dividaRaiz")
 	private Set<Divida> acumulado = new HashSet<Divida>();
+	
+	// Acumulados -> Divida
+	@ManyToOne(optional=true)
+	@JoinColumn(name="DIVIDA_RAIZ_ID")
+	private Divida dividaRaiz;
 	
 	@Column(name = "ACUMULADA")
 	private boolean acumulada;
@@ -143,5 +149,19 @@ public class Divida {
 
 	public void setAcumulada(boolean acumulada) {
 		this.acumulada = acumulada;
+	}
+
+	/**
+	 * @return the dividaRaiz
+	 */
+	public Divida getDividaRaiz() {
+		return dividaRaiz;
+	}
+
+	/**
+	 * @param dividaRaiz the dividaRaiz to set
+	 */
+	public void setDividaRaiz(Divida dividaRaiz) {
+		this.dividaRaiz = dividaRaiz;
 	}
 }
