@@ -43,7 +43,7 @@ var tipoDescontoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 			});
 			
 			$(".tiposDescEspecificoGrid", tipoDescontoController.workspace).flexigrid({
@@ -92,7 +92,7 @@ var tipoDescontoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 			});
 			
 			$(".tiposDescProdutoGrid", tipoDescontoController.workspace).flexigrid({
@@ -148,7 +148,7 @@ var tipoDescontoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 255
+				height : 'auto'
 			});
 
 			$("#produto", tipoDescontoController.workspace).autocomplete({source: ""});		

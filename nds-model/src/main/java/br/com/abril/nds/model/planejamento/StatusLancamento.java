@@ -5,11 +5,13 @@ public enum StatusLancamento {
 	PLANEJADO("Planejado"),
 	CONFIRMADO("Confirmado"),
 	BALANCEADO("Balanceado"),
+	EXCLUIDO("Excluído"),
 	ESTUDO_FECHADO("Estudo Fechado"),
 	FURO("Furo"),
 	EXPEDIDO("Expedido"),
 	EM_BALANCEAMENTO_RECOLHIMENTO("Em Balanceamento Recolhimento"),
 	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),
+	EXCLUIDO_RECOLHIMENTO("Excluído Recolhimento"),
 	RECOLHIDO("Recolhido"),
 	CANCELADO("Cancelado"),
 
@@ -22,9 +24,7 @@ public enum StatusLancamento {
 	LIBERAR_CALCULO("Liberar Cálculo"),
 	LANCADO("Lançado"),
 	EM_RECOLHIMENTO("Em Recolhimento"),
-	FECHADO("Fechado"),
-	
-	EXCLUIDO("Excluído");
+	FECHADO("Fechado");
 	
 	/** Descrição do status. */
 	private String descricao;
