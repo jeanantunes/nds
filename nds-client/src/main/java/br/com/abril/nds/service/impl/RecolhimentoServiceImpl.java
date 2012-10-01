@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -392,35 +393,54 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 			
-			List<EstoqueProdutoCota> listaEstoqueProdutoCota =
-				this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idsLancamento);
-			
-			if (listaEstoqueProdutoCota == null || listaEstoqueProdutoCota.isEmpty()) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING,
-					"Estoque produto cota não encontrado!");
-			}
-			
-			List<ChamadaEncalhe> listaChamadaEncalhe = new ArrayList<ChamadaEncalhe>();
-			
-			for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
-				
-				ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
-				
-				Cota cota = estoqueProdutoCota.getCota();
-				
-				ChamadaEncalhe chamadaEncalhe =
-					this.obterChamadaEncalheLista(
-						listaChamadaEncalhe, dataRecolhimento, produtoEdicao.getId());
-				
-				if (chamadaEncalhe == null) {
-				
-					chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao);
-				
-					listaChamadaEncalhe.add(chamadaEncalhe);
+			for (Long idLancamento : idsLancamento) {
+
+				Lancamento lancamento = this.lancamentoRepository
+						.buscarPorId(idLancamento);
+
+				List<EstoqueProdutoCota> listaEstoqueProdutoCota = this.estoqueProdutoCotaRepository
+						.buscarListaEstoqueProdutoCota(idLancamento);
+
+				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
+
+					throw new ValidacaoException(TipoMensagem.WARNING,
+							"Estoque produto cota não encontrado!");
 				}
-				
-				this.criarChamadaEncalheCota(estoqueProdutoCota, cota, chamadaEncalhe);
+
+				List<ChamadaEncalhe> listaChamadaEncalhe = new ArrayList<ChamadaEncalhe>();
+
+				for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
+
+					ProdutoEdicao produtoEdicao = estoqueProdutoCota
+							.getProdutoEdicao();
+
+					Cota cota = estoqueProdutoCota.getCota();
+
+					ChamadaEncalhe chamadaEncalhe = this.obterChamadaEncalheLista(listaChamadaEncalhe,
+									dataRecolhimento, produtoEdicao.getId());
+
+					if (chamadaEncalhe == null) {
+
+						chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao);
+
+						listaChamadaEncalhe.add(chamadaEncalhe);
+					}
+					
+					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
+					
+					if(lancamentos == null || lancamentos.isEmpty()) {
+						lancamentos = new HashSet<Lancamento>();
+					}
+					
+					lancamentos.add(lancamento);
+					
+					chamadaEncalhe.setLancamentos(lancamentos);
+					
+					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
+					
+					this.criarChamadaEncalheCota(estoqueProdutoCota, cota,
+							chamadaEncalhe);
+				}
 			}
 		}
 	}
@@ -469,8 +489,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-		
-		chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 		
 		return chamadaEncalhe;
 	}
