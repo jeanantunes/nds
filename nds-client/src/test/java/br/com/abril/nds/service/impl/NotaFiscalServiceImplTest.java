@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -472,5 +473,17 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		processos.add(Processo.GERACAO_NF_E);
 
 		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel.getId(), listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos);
+	}
+	
+	@Test
+	public void buscarNFeParaImpressao() {
+		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
+		notaFiscalService.buscarNFeParaImpressao(filtro);
+	}
+	
+	@Test
+	public void buscarNFeParaImpressaoQtd() {
+		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
+		notaFiscalService.buscarNFeParaImpressaoQtd(filtro);
 	}
 }

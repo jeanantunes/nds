@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -43,14 +44,13 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
@@ -111,7 +111,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
-	private NotaFiscalRepository notaFiscalDAO;
+	private NotaFiscalRepository notaFiscalRepository;
 
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
@@ -227,7 +227,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 			if (dadosRetornoNFE.getIdNotaFiscal() != null) {
 				
-				NotaFiscal notaFiscal = this.notaFiscalDAO
+				NotaFiscal notaFiscal = this.notaFiscalRepository
 						.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 	
 				if (notaFiscal != null) {
@@ -305,7 +305,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	private void atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
 		
-		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(dadosRetornoNFE
+		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE
 			.getIdNotaFiscal());
 
 		InformacaoEletronica informacaoEletronica = notaFiscal
@@ -334,7 +334,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal
 				.setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
 
-		this.notaFiscalDAO.merge(notaFiscal);	
+		this.notaFiscalRepository.merge(notaFiscal);	
 
 
 	}
@@ -350,11 +350,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public void enviarNotaFiscal(Long id) {
 
-		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(id);
+		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(id);
 		
 		if (notaFiscal != null) {
 			notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
-			this.notaFiscalDAO.merge(notaFiscal);
+			this.notaFiscalRepository.merge(notaFiscal);
 		}
 	}
 
@@ -698,7 +698,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		notaFiscal.setProcessos(processos);
 		
-		notaFiscalDAO.adicionar(notaFiscal);
+		notaFiscalRepository.adicionar(notaFiscal);
 		
 		
 		int sequencia = 1;
@@ -743,7 +743,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			produtoServicoRepository.adicionar(produtoServico);
 			notaFiscal.getProdutosServicos().add(produtoServico);
 		}
-		notaFiscalDAO.merge(notaFiscal);
+		notaFiscalRepository.merge(notaFiscal);
 		return notaFiscal.getId();
 	
 	}
@@ -1129,6 +1129,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 		enderecoRepository.adicionar(novoEndereco);
 		return novoEndereco;
+	}
+
+	public List<NotaEnvio> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
+		return notaFiscalRepository.buscarNFeParaImpressao(filtro);
+	}
+
+	public Integer buscarNFeParaImpressaoQtd(FiltroImpressaoNFEDTO filtro) {
+		return notaFiscalRepository.buscarNFeParaImpressaoQtd(filtro);
 	}
 	
 }

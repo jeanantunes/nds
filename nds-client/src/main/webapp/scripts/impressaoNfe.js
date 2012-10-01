@@ -1,6 +1,6 @@
 var impressaoNfeController = $.extend(true, {
 	init : function() {
-		$( "#datepickerDe", impressaoNfeController.workspace ).datepicker({
+		$( "#datepickerDataEmissao", impressaoNfeController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -57,7 +57,7 @@ var impressaoNfeController = $.extend(true, {
 			}, {
 				display : 'Impressão',
 				name : 'impressao',
-				width : 50,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -139,11 +139,16 @@ var impressaoNfeController = $.extend(true, {
 			url: contextPath + "/nfe/impressaoNFE/pesquisarImpressaoNFE",
 			dataType : 'json',
 			params: [
+			         	{name:'filtro.dataInicialMovimento', value:$('#datepickerMovDe', impressaoNfeController.workspace).val()},
+			         	{name:'filtro.dataFinalMovimento', value:$('#datepickerMovAte', impressaoNfeController.workspace).val()},
+						{name:'filtro.dataEmissao', value:$('#datepickerDataEmissao', impressaoNfeController.workspace).val()},
 						{name:'filtro.idRoteiro', value:$('#idRoteiro', impressaoNfeController.workspace).val()}
 						]
 		});
 		
 		$(".impressaoGrid", impressaoNfeController.workspace).flexReload();
+		
+		$(".grids").show();
 
 	},
 	
