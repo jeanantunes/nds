@@ -902,7 +902,7 @@ var roteirizacao = $.extend(true, {
             preProcess : function(data) {
                 $.each(data.rows, function(index, value) {
                     var id = value.cell.id;
-                    var selecione = '<input type="checkbox"  name="checkboxCotasRota" value="'+ id +'"/>';
+                    var selecione = '<input type="checkbox" class="checkboxCotasRota" name="checkboxCotasRota" value="'+ id +'"/>';
                     value.cell.selecione = selecione;
                     var ordem = '<input type="text" onchange="roteirizacao.ordemPdvChangeListener(this, \''+ id + '\');" class="inputGridCotasRota" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
                     value.cell.ordem = ordem;
@@ -967,6 +967,14 @@ var roteirizacao = $.extend(true, {
             height : 150
         });
     },
+    
+    selecionarTodosPdvs : function() {
+    	if ($('#selecionarTodosPdv', roteirizacao.workspace).is(':checked')) {
+    		$(".checkboxCotasRota", roteirizacao.workspace).prop('checked', true);
+    	} else {
+    		$(".checkboxCotasRota", roteirizacao.workspace).prop('checked', false);
+    	}
+    },
 
     ordemPdvChangeListener : function(element, idPdv) {
     	var ordemAntiga = element.defaultValue;
@@ -983,15 +991,11 @@ var roteirizacao = $.extend(true, {
                     if (!result) {
     		 	    	exibirMensagemDialog("WARNING", ["Ordem já utilizada!"],'dialogRoteirizacao');
                         $(element).val(ordemAntiga);
-                         
                     }
                 },
                 null,
                 true
              );
-            return true;
-
-    	
     },
     
     limparGridCotasRota : function() {

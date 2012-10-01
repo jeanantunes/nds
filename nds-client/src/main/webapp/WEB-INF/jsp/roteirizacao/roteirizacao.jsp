@@ -212,7 +212,7 @@
             </td>
             <td>
                  <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label>
-                    <input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:15px; "/>
+                    <input type="checkbox" id="selecionarTodosPdv" onclick="roteirizacao.selecionarTodosPdvs();" style="float:left; margin-right:15px; "/>
                 </span>
             </td>
             <td></td>
