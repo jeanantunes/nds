@@ -49,11 +49,11 @@
 </div>
 </form>
 
-<form id="form-excluir-rotas">
-<div id="dialog-excluir-rotas" title="Rotas" style="display:none;">
-	<fieldset>
+<form id="form-excluir-rota-roteiro">
+<div id="dialog-excluir-rota-roteiro" title="Rotas" style="display:none;">
+	<fieldset style="width: 360px;">
     	<legend>Excluir</legend>
-        <p>Confirma a exclus&atilde;o destas Rotas deste Roteiro</p>
+        <span id="msgConfExclusaoRotaRoteiro"> Confirma a exclus&atilde;o destas Rotas deste Roteiro</span>
     </fieldset>
 </div>
 </form>
@@ -187,7 +187,7 @@
                     <img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0"/>Copiar Cota</a>
                 </span>
 
-                <span class="bt_novos" title="Excluir"><a href="javascript:;" onclick="popup_excluir();">
+                <span class="bt_novos" title="Excluir"><a href="javascript:;" onclick="roteirizacao.popupExcluirRotaRoteiro();">
                     <img src="${pageContext.request.contextPath}//images/ico_excluir.gif" hspace="5" border="0"/>Excluir</a>
                 </span>
             </td>
