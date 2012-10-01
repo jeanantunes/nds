@@ -343,8 +343,6 @@ var roteirizacao = $.extend(true, {
             } else {
                 $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
             }
-            roteirizacao.idRota = "";
-            roteirizacao.limparGridCotasRota();
         },
 
         rotaSelecionadaListener : function(idRota, nomeRota) {
@@ -472,7 +470,7 @@ var roteirizacao = $.extend(true, {
                             roteirizacao.idRoteiro = result.roteiros[0].id;
                             roteirizacao.popularGridRoteiros(result.roteiros);
                             if (result.roteiros[0].rotas) {
-                                roteirizacao.idRota =  result.roteiros[0].rotas[0].id;
+                                roteirizacao.idRota = result.roteiros[0].rotas[0].id;
                                 roteirizacao.popularGridRotas(result.roteiros[0].rotas);
                                 if (result.roteiros[0].rotas[0].pdvs) {
                                      roteirizacao.popularGridCotasRota(result.roteiros[0].rotas[0].pdvs);
@@ -858,7 +856,7 @@ var roteirizacao = $.extend(true, {
                     var id = value.cell.id;
                     var selecione = '<input type="checkbox"  name="checkboxCotasRota" value="'+ id +'"/>';
                     value.cell.selecione = selecione;
-                    var ordem = '<input type="text" onchange="roteirizacao.ordemPdvChangeListener(this, \''+ id +'\'");" class="inputGridCotasRota" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
+                    var ordem = '<input type="text" onchange="roteirizacao.ordemPdvChangeListener(this, \''+ id + '\');" class="inputGridCotasRota" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
                     value.cell.ordem = ordem;
                 });
                 return data;
@@ -923,7 +921,29 @@ var roteirizacao = $.extend(true, {
     },
 
     ordemPdvChangeListener : function(element, idPdv) {
-    	alert("changed!");
+    	var ordemAntiga = element.defaultValue;
+        var ordem = $(element).val();
+    	var param = [{name: 'idRota', value: roteirizacao.idRota}, 
+    	             {name: 'idPdv', value: idPdv}, 
+    	             {name: 'ordem',  value: ordem}];
+    	
+    	 $.postJSON(contextPath + '/cadastro/roteirizacao/ordemPdvChangeListener', param,
+                function(result) {
+    		 	    if (result) {
+                         element.defaultValue = ordem;
+                    }
+                    if (!result) {
+    		 	    	exibirMensagemDialog("WARNING", ["Ordem já utilizada!"],'dialogRoteirizacao');
+                        $(element).val(ordemAntiga);
+                         
+                    }
+                },
+                null,
+                true
+             );
+            return true;
+
+    	
     },
     
     limparGridCotasRota : function() {

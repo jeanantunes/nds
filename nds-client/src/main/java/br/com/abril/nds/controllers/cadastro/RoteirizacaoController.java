@@ -882,6 +882,16 @@ public class RoteirizacaoController {
         result.use(FlexiGridJson.class).from(roteiros).total(roteiros.size()).page(1).serialize();
     }
 	
+	@Post
+    @Path("/ordemPdvChangeListener")
+	public void ordemPdvChangeListener(Long idRota, Long idPdv, Integer ordem) {
+        RoteirizacaoDTO roteirizacao = getDTO();
+        RotaRoteirizacaoDTO rota = roteirizacao.getRota(idRota);
+        boolean ordemValida = rota.alterarOrdemPdv(idPdv, ordem);
+        result.use(Results.json()).withoutRoot().from(ordemValida).serialize();
+        
+	}
+	
 	/**
 	 * Obtém PDV's para a inclusão de rota pdv na roteirização
 	 */
