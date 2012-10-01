@@ -3,13 +3,14 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
-public class FiltroCalculaParcelas implements Serializable{
+public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implements Serializable{
 
 	private static final long serialVersionUID = -1866576603729081522L;
 	
-	private String periodicidade;
+	private PeriodicidadeCobranca periodicidade;
 	
 	private List<Integer> semanalDias;
 	
@@ -24,12 +25,16 @@ public class FiltroCalculaParcelas implements Serializable{
 	private Integer qntdParcelas;
 	
 	private String valorSelecionado;
+	
+	private List<String> listDividas;
+	
+	private Long idBanco;
 
-	public String getPeriodicidade() {
+	public PeriodicidadeCobranca getPeriodicidade() {
 		return periodicidade;
 	}
 
-	public void setPeriodicidade(String periodicidade) {
+	public void setPeriodicidade(PeriodicidadeCobranca periodicidade) {
 		this.periodicidade = periodicidade;
 	}
 
@@ -88,6 +93,24 @@ public class FiltroCalculaParcelas implements Serializable{
 	public void setValorSelecionado(String valorSelecionado) {
 		this.valorSelecionado = valorSelecionado;
 	}
+
+	public List<String> getListDividas() {
+		return listDividas;
+	}
+
+	public void setListDividas(List<String> listDividas) {
+		this.listDividas = listDividas;
+	}
+
+	public Long getIdBanco() {
+		return idBanco;
+	}
+
+	public void setIdBanco(Long idBanco) {
+		this.idBanco = idBanco;
+	}
+
+	
 	
 	
 	

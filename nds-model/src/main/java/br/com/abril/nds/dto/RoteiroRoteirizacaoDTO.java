@@ -145,4 +145,30 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
         }
     }
 	
+    public void removerRota(Long idRota){
+    	
+    	if (this.rotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.rotas){
+    			
+    			if (rota.getId().equals(idRota)){
+    				
+    				this.rotas.remove(rota);
+    				break;
+    			}
+    		}
+    	}
+    	
+    	if (this.todasRotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.todasRotas){
+    			
+    			if (rota.getId().equals(idRota)){
+    				
+    				this.todasRotas.remove(rota);
+    				break;
+    			}
+    		}
+    	}
+    }
 }

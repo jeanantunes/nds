@@ -91,6 +91,7 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
     public List<Roteiro> buscarRoteiroDeBox(Long idBox, String descricaoRoteiro) {
         Criteria criteria  = getSession().createCriteria(Roteiro.class);
         if (idBox != null) {
+        	criteria.createAlias("roteirizacao.box", "box");
             criteria.add(Restrictions.eq("box.id", idBox));
         }
         if (!StringUtil.isEmpty(descricaoRoteiro)) {

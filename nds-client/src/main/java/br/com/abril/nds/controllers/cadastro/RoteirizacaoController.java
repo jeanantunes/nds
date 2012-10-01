@@ -102,6 +102,24 @@ public class RoteirizacaoController {
 	
 	private static final String SET_ROTEIROS_EXCLUIR = "SET_ROTEIROS_EXCLUIR";
 
+	/**
+	 * Chave para armazenamento do DTO de PDV's adicionados na sessão
+	 */
+	private static final String PDVS_EXCLUIDOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDV_EXCLUIDO_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
+
+	
+	/**
+	 * Chave para armazenamento do DTO de PDV's excluidos na sessão
+	 */
+	private static final String PDVS_ADICIONADOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDVS_ADICIONADOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
+
+	
+	/**
+	 * Chave para armazenamento do DTO de PDV's adicionados na sessão
+	 */
+	private static final String PDV_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDV_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
+
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO)
 	public void index() {
@@ -249,19 +267,7 @@ public class RoteirizacaoController {
 	@Post
 	public void buscaRotasPorRoteiro(Long roteiroId, int rp, int page) {
 		
-		List<RotaRoteirizacaoDTO> dtosRota = this.getRotasPorRoteiro(roteiroId);
-		
-		List<Rota> listaRota = roteirizacaoService.buscarRotaPorRoteiro(roteiroId);
-		
-		for (Rota rota : listaRota){
-			
-			RotaRoteirizacaoDTO dto = new RotaRoteirizacaoDTO(rota.getId(), rota.getOrdem(), rota.getDescricaoRota());
-			
-			if (!dtosRota.contains(dto)){
-				
-				dtosRota.add(dto);
-			}
-		}
+		List<RotaRoteirizacaoDTO> dtosRota = this.getDTO().getRoteiro(roteiroId).getRotas();
 		
 		result.use(Results.json()).from(dtosRota, "result").recursive().serialize();
 	}
@@ -279,7 +285,7 @@ public class RoteirizacaoController {
 		
 		this.adicionarRota(roteiroId, ordem, nome);
 		
-		result.use(Results.json()).from(this.getRotasPorRoteiro(roteiroId), "result").recursive().serialize();
+		result.use(Results.json()).from(this.getDTO().getRoteiro(roteiroId), "result").recursive().serialize();
 	}
 	
 	@Path("/iniciaTelaRota")
@@ -293,7 +299,7 @@ public class RoteirizacaoController {
 		
 		ordem++;
 		
-		for (RotaRoteirizacaoDTO dto : this.getRotasPorRoteiro(idRoteiro)){
+		for (RotaRoteirizacaoDTO dto : this.getDTO().getRoteiro(idRoteiro).getRotas()){
 			
 			if (ordem <= dto.getOrdem()){
 				
@@ -320,7 +326,7 @@ public class RoteirizacaoController {
 		
 		if (ordem != null){
 			
-			for (RotaRoteirizacaoDTO dto : this.getRotasPorRoteiro(idRoteiro)){
+			for (RotaRoteirizacaoDTO dto : this.getDTO().getRoteiro(idRoteiro).getRotas()){
 				
 				if (ordem.equals(dto.getOrdem())){
 					
@@ -338,16 +344,7 @@ public class RoteirizacaoController {
 	@Path("/excluirRota")
 	public void excluirRota(Long rotaId, Long roteiroId) {
 		
-		List<RotaRoteirizacaoDTO> rotas = this.getRotasPorRoteiro(roteiroId);
-		
-		for (RotaRoteirizacaoDTO rota : rotas){
-			
-			if (rota.getId().equals(rotaId)){
-				
-				rotas.remove(rota);
-				break;
-			}
-		}
+		this.getDTO().getRoteiro(roteiroId).removerRota(rotaId);
 		
 		if (rotaId >= 0){
 			
@@ -895,13 +892,13 @@ public class RoteirizacaoController {
 	/**
 	 * Obtém PDV's para a inclusão de rota pdv na roteirização
 	 */
-	@Get
+	@Post
 	@Path("/obterPdvsDisponiveis")
-	public void obterPdvsDisponiveis(){
+	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep ){
         
-		List<PdvRoteirizacaoDTO> pdvs = this.roteirizacaoService.obterPdvsDisponiveis();
+		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis();
 		
-		result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
+		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
 	/**
@@ -957,9 +954,14 @@ public class RoteirizacaoController {
 		
 		for(PdvRoteirizacaoDTO itemPdvDTO:pdvs){
 			if (!this.roteirizacaoService.verificaDisponibilidadePdv(itemPdvDTO.getId())){
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV] já pertence à um [Box] roteirizado !"));
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV "+itemPdvDTO.getId()+"] já pertence à um [Box] roteirizado !"));
 			}
 		}
+		
+		//VERIFICAR SE JA ESTA ADICIONADO NA LISTA ATUAL
+		
+		//VERIFICAR A ORDEM (NAO PODE REPETIR)
+		
 	}
 	
 	
@@ -970,24 +972,53 @@ public class RoteirizacaoController {
 	@Path("/adicionarNovosPdvs")
 	public void adicionarNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, Long idRota){
         
-		//BUSCAR EOREITIZACAO NA SESSAO
+		//BUSCAR ROTEIRIZACAO ATUAL NA SESSAO
 		RoteirizacaoDTO roteirizacaoDTO = null;
 		
 		
 		this.validaNovosPdvs(pdvs);
 		
 		
-		for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
+		roteiros : for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
 			for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
 				if(itemRota.getId().equals(idRota)){
 					itemRota.addAllPdv(pdvs);
-					break;
+					session.setAttribute(PDVS_ADICIONADOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE, pdvs);
+					break roteiros;
 				}
 			}
 		}
 
 		
-		//ADICIONAR ROTEIRIZACAO NA SESSAO
+		//ADICIONAR ROTEIRIZACAO ATUALIZADA NA SESSAO
+		
+
+		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
+	}
+	
+	/**
+	 * Remove PDV's selecionados da lista principal de PDV's
+	 */
+	@Get
+	@Path("/removerPdvs")
+	public void removerPdvs(List<PdvRoteirizacaoDTO> pdvs, Long idRota){
+        
+		//BUSCAR ROTEIRIZACAO ATUAL NA SESSAO
+		RoteirizacaoDTO roteirizacaoDTO = null;
+		
+		
+		roteiros : for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
+		   for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
+				if(itemRota.getId().equals(idRota)){
+					itemRota.getPdvs().removeAll(pdvs);
+					session.setAttribute(PDVS_EXCLUIDOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE, pdvs);
+					break roteiros;
+				}
+			}
+		}
+
+		
+		//ADICIONAR ROTEIRIZACAO ATUALIZADA NA SESSAO
 		
 
 		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
@@ -1012,7 +1043,7 @@ public class RoteirizacaoController {
 	
 	private void adicionarRota(Long roteiroId, Integer ordem, String nome){
 		
-		List<RotaRoteirizacaoDTO> rotasDto = this.getRotasPorRoteiro(roteiroId);
+		List<RotaRoteirizacaoDTO> rotasDto = this.getDTO().getRoteiro(roteiroId).getRotas();
 		
 		Long novoId = -1L;
 		
@@ -1024,25 +1055,7 @@ public class RoteirizacaoController {
 			}
 		}
 		
-		rotasDto.add(new RotaRoteirizacaoDTO(novoId, ordem, nome));
-	}
-	
-	private List<RotaRoteirizacaoDTO> getRotasPorRoteiro(Long roteiroId) {
-		
-		for (RoteiroRoteirizacaoDTO dto : this.getDTO().getRoteiros()){
-			
-			if (dto.getId().equals(roteiroId)){
-				
-				if (dto.getRotas() == null){
-					
-					dto.setRotas(new ArrayList<RotaRoteirizacaoDTO>());
-				}
-				
-				return dto.getRotas();
-			}
-		}
-		
-		return new ArrayList<RotaRoteirizacaoDTO>();
+		this.getDTO().getRoteiro(roteiroId).addRota(new RotaRoteirizacaoDTO(novoId, ordem, nome));
 	}
 	
 	@SuppressWarnings("unchecked")

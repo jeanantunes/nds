@@ -52,7 +52,7 @@
 			  </td>
 				
 			  
-<td width="30">Nome:</td>              <td width="189">
+              <td width="30">Nome:</td>              <td width="189">
 			      <input name="descricaoCota" 
 			      		 id="descricaoCota" 
 			      		 type="text" 
