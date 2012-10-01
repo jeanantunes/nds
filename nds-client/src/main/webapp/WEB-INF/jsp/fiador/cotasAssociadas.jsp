@@ -53,7 +53,7 @@
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
-		<td><span class="bt_novos"><a id="fiadorController-cotasAssociadas-adicionarCotaAssociacao" rel="tipsy" title="Associar Nova Cota" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a></span></td>
+		<td><span class="bt_novos"><a id="fiadorController-cotasAssociadas-adicionarCotaAssociacao" rel="tipsy" title="Associar Nova Cota" href="javascript:fiadorController.adicionarAssociacaoCota();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"/></a></span></td>
 	</tr>
 </table>
 </fieldset>
