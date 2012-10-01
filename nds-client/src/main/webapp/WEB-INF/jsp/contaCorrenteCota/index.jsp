@@ -4,6 +4,11 @@
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/vendaEncalheCota.js'></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/contaCorrenteCota.js'></script>
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tooltip/jquery.tipsy.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy-docs.css" />
+
+
 <script language="javascript" type="text/javascript">
 	var pesquisaCotaContaCorrentCota = new PesquisaCota();
 	

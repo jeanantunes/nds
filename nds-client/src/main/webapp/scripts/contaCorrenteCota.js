@@ -192,7 +192,7 @@ var contaCorrenteCotaController = $.extend(true, {
 			$.each(data.rows, function(index, value) {
 			
 			var valorPostergado = value.cell[1];
-			var dataRaizPostergado =  value.cell[13];
+			var dataRaizPostergado =  value.cell[11];
 			var consignado = value.cell[3];
 			var encalhe = value.cell[4];
 			var vendaEncalhe = value.cell[5];
@@ -304,7 +304,9 @@ var contaCorrenteCotaController = $.extend(true, {
 			width : 960,
 			height : 'auto',
 			onSuccess : function () {
-				$('a', this).tipsy({gravity: 'sw'});			
+				$('.itemContaCorrenteCotaGrid tr td', contaCorrenteCotaController.workspace).each( function(){ 
+					$('a', this).tipsy({gravity: 'sw'});
+				});  
 				return true;			
 			}  
 
