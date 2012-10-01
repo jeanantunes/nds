@@ -118,6 +118,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento', value: $('#capacidadeManuseioHomemHoraLancamento', this.workspace).val()},
 			{name:'parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento', value: $('#capacidadeManuseioHomemHoraRecolhimento', this.workspace).val()},
 			{name:'parametrosDistribuidor.reutilizacaoCodigoCotaInativa', value: $('#reutilizacaoCodigoCotaInativa', this.workspace).val()},
+			{name:'parametrosDistribuidor.utilizaSugestaoIncrementoCodigo', value: $('#utilizaSugestaoIncrementoCodigo', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.slipImpressao', value: $('#slipImpressao', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.slipEmail', value: $('#slipEmail', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.boletoImpressao', value: $('#boletoImpressao', this.workspace).is(':checked')},

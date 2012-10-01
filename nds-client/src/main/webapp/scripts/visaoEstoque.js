@@ -41,10 +41,14 @@ var visaoEstoqueController = $.extend(true, {
 	imprimirConferenciaCega : function() {
 		
 		var params = visaoEstoqueController.parametrosInventario();
+		var serializedForm = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
 		$.post(
-			this.path + 'exportarConferenciaCega?fileType=PDF',
-			params
+			this.path + 'gerarDadosConferenciaCega?' + serializedForm,
+			params,
+			function() {
+				window.location = visaoEstoqueController.path + 'exportarConferenciaCega?fileType=PDF';
+			}
 		);
 	},
 	

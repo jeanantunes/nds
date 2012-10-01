@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -186,6 +187,68 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		return query.list();
+	}
+	
+	@Override
+	public BigDecimal obterDebitoCreditoSumarizadosPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+		
+		StringBuilder hql = new StringBuilder(" select ");
+		
+		hql.append(" coalesce(sum(mfc.valor * ");
+		
+		hql.append(" case when mfc.tipoMovimento.operacaoFinaceira = :operacaoFinaceiraCredito then 1 ");
+		
+		hql.append(" when mfc.tipoMovimento.operacaoFinaceira = :operacaoFinaceiraDebito then -1 ");
+		
+		hql.append(" else 0 end), 0)");
+		
+		hql.append(" from MovimentoFinanceiroCota mfc ");
+		   
+		hql.append(" where ");
+		
+		hql.append(" mfc.data between :dataOperacaoInicial and :dataOperacaoFinal");
+		
+		hql.append(" and mfc.status = :statusAprovado ");
+		
+		hql.append(" and mfc.cota.id = :idCota ");
+		
+		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
+			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");
+		}
+		
+		hql.append(" and mfc.id not in ");
+		
+		hql.append(" (   ");
+		
+		hql.append(" select distinct(movimentos.id) ");
+
+		hql.append(" from ConsolidadoFinanceiroCota c join c.movimentos movimentos ");
+		
+		hql.append(" where ");
+		
+		hql.append(" c.cota.id = :idCota  ");
+		
+		hql.append(" ) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
+
+		query.setParameter("operacaoFinaceiraCredito", OperacaoFinaceira.CREDITO);
+		
+		query.setParameter("operacaoFinaceiraDebito", OperacaoFinaceira.DEBITO);
+		
+		query.setParameter("idCota", filtro.getIdCota());
+
+		query.setParameter("dataOperacaoInicial", filtro.getDataRecolhimentoInicial());
+
+		query.setParameter("dataOperacaoFinal", filtro.getDataRecolhimentoFinal());
+
+		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
+			query.setParameterList("tiposMovimentoFinanceiroIgnorados", tiposMovimentoFinanceiroIgnorados);
+		}
+		
+		return (BigDecimal) query.uniqueResult();
 	}
 
 	@Override

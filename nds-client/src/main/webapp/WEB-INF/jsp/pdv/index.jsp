@@ -1,12 +1,11 @@
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
-	
-<label><strong>PDVs Cadastrados</strong></label>
-<br />
-<table class="PDVsGrid"></table>
-<br />
-<span class="bt_novo" id="PDVbtnNovo"><a href="javascript:;" onclick="PDV.poupNovoPDV();">Novo</a></span>
-
+<fieldset style="width:880px!important; margin:5px;">
+ 	<legend>PDVs Cadastrados</legend>	
+	<table class="PDVsGrid"></table>
+	<br />
+	<span class="bt_novos" id="PDVbtnNovo"><a href="javascript:;" onclick="PDV.poupNovoPDV();" rel="tipsy" title="Incluir Novo PDV"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a></span>
+</fieldset>
 <br clear="all" />
 
 <form id="idFormPDVExcluir">

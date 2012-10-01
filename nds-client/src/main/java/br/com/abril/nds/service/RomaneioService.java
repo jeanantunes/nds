@@ -20,4 +20,6 @@ public interface RomaneioService {
 
 	byte[] gerarRelatorio(FiltroRomaneioDTO filtro, String limitar, FileType fileType)
 			throws URISyntaxException, JRException;
+
+	Integer buscarTotalDeCotas(FiltroRomaneioDTO filtro);
 }

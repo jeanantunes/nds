@@ -2,12 +2,14 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.util.Util;
+
 public class PdvRoteirizacaoDTO implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 201200000L;
+	private static final long serialVersionUID = 1L;
+	
+	private static final String FORMATO_ENDERECO = "%s %s, %s - %s, %s - CEP: %s";
 	
 	private Long id;
 	
@@ -17,41 +19,31 @@ public class PdvRoteirizacaoDTO implements Serializable {
 	
 	private String endereco;
 	
-	private String cota;
+	private Integer cota;
 	
 	private String nome;
 	
 	private Integer ordem;
 	
-	private Boolean selecionado;
-	
-	
 	public PdvRoteirizacaoDTO(){
-		
 	}
 
-	/**
-	 * @param id
-	 * @param pdv
-	 * @param origem
-	 * @param endereco
-	 * @param cota
-	 * @param nome
-	 * @param ordem
-	 * @param selecionado
-	 */
-	public PdvRoteirizacaoDTO(Long id, String pdv, String origem,
-			String endereco, String cota, String nome, Integer ordem,
-			Boolean selecionado) {
-		super();
+	public PdvRoteirizacaoDTO(Long id, String pdv, OrigemEndereco origem,
+			Endereco endereco, Integer cota, String nome, Integer ordem) {
 		this.id = id;
 		this.pdv = pdv;
-		this.origem = origem;
-		this.endereco = endereco;
+		this.origem = origem.getDescricao();
+		if (endereco != null) {
+            this.endereco = String.format(FORMATO_ENDERECO,
+                    Util.nvl(endereco.getTipoLogradouro(), ""), Util.nvl(endereco.getLogradouro(), ""),
+                    Util.nvl(endereco.getNumero(), ""), Util.nvl(endereco.getBairro(), ""),
+                    Util.nvl(endereco.getCidade(), ""), Util.nvl(endereco.getCep(), ""));
+		} else {
+		    this.endereco = "";
+		}
 		this.cota = cota;
 		this.nome = nome;
 		this.ordem = ordem;
-		this.selecionado = selecionado;
 	}
 
 	public Long getId() {
@@ -86,11 +78,11 @@ public class PdvRoteirizacaoDTO implements Serializable {
 		this.endereco = endereco;
 	}
 
-	public String getCota() {
+	public Integer getCota() {
 		return cota;
 	}
 
-	public void setCota(String cota) {
+	public void setCota(Integer cota) {
 		this.cota = cota;
 	}
 
@@ -110,13 +102,40 @@ public class PdvRoteirizacaoDTO implements Serializable {
 		this.ordem = ordem;
 	}
 
-	public Boolean getSelecionado() {
-		return selecionado;
+	/**
+	 * Origem do endereço (Entrega do PDV/Principal da Cota) 
+	 *
+	 */
+	public static enum OrigemEndereco {
+	    COTA("Cota"), 
+	    PDV("PDV");
+	    
+	    private String descricao;
+	    
+	    private OrigemEndereco(String descricao) {
+	        this.descricao = descricao;
+        }
+	    
+	    public String getDescricao() {
+            return descricao;
+        }
+	    
+        /**
+         * Recupera a origem do endereço pela descrição
+         * 
+         * @param descricao
+         *            descrição da origem para recuperação da origem
+         * @return origem do endereço ou null caso não exista origem com a
+         *         descrição recebida
+         */
+	    public static OrigemEndereco getByDescricao(String descricao) {
+	        for (OrigemEndereco origem : OrigemEndereco.values()) {
+	            if (origem.getDescricao().equals(descricao)) {
+	                return origem;
+	            }
+	        }
+	        return null;
+	    }
 	}
-
-	public void setSelecionado(Boolean selecionado) {
-		this.selecionado = selecionado;
-	}
-	
 
 }

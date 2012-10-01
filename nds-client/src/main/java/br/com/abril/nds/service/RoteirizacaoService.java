@@ -7,6 +7,7 @@ import org.hibernate.criterion.MatchMode;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
@@ -166,10 +167,48 @@ public interface RoteirizacaoService {
 	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
 	
 	/**
-     * Obtem dados da roteirização da cota
-     * @param FiltroConsultaRoteirizacaoDTO parametros
-     * @return RoteirizacaoDTO
+     * Obtém a roteirização pelo identificador
+     * @param id identificador da roteirização
+     * @return RoteirizacaoDTO DTO com as informações da roteirização
      */
-	public RoteirizacaoDTO obterDadosRoteirizacao(FiltroConsultaRoteirizacaoDTO parametros);
+	RoteirizacaoDTO obterRoteirizacaoPorId(Long id);
+	
+	/**
+	 * Obtém PDVS's disponiveis
+	 * @return List<PdvRoteirizacaoDTO>
+	 */
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis();
+	
+	/**
+	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
+	 * @param idPdv
+	 * @return boolean - true:disponivel
+	 */
+	public boolean verificaDisponibilidadePdv(Long idPdv);
+	
+	/**
+	 * Inclui Cota Pdv na Roteirização
+	 * @param List<Long> idPdvs
+	 * @param idRota
+	 */
+	public void incluirCotaPdv(List<Long> idPdvs, Long idRota);
+	
+	/**
+	 * Exclui Cota Pdv na Roteirização
+	 * @param List<Long> idPdvs
+	 * @param idRota
+	 */
+	public void excluirCotaPdv(List<Long> idPdvs, Long idRota);
+	
+    /**
+     * Recupera a roteirização pelo Box
+     * 
+     * @param idBox
+     *            identificador do box para recuperação da roteirização
+     * @return roteirização associada ao box ou nulo caso não exista
+     *         roteirização associada ao Box
+     */
+	RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox);
+
 }
 	

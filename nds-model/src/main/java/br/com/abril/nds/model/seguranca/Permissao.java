@@ -29,6 +29,7 @@ public enum Permissao
 	ROLE_LANCAMENTO_PARCIAIS("Parciais", 																   Permissao.ROLE_LANCAMENTO),
 	ROLE_LANCAMENTO_RELATORIO_VENDAS("Relatório de Vendas",											       Permissao.ROLE_LANCAMENTO),
 	ROLE_LANCAMENTO_VENDA_PRODUTO("Venda por Produto",												  	   Permissao.ROLE_LANCAMENTO),
+	ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS("Relatório Tipos de Produtos",							  	   Permissao.ROLE_LANCAMENTO),
 	ROLE_LANCAMENTO_HELP("Help",																		   Permissao.ROLE_LANCAMENTO),
 	
 	ROLE_ESTOQUE("Estoque",																	  			   null),

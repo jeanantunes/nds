@@ -46,16 +46,25 @@ public class RomaneioServiceImpl implements RomaneioService {
 	@Override
 	@Transactional
 	public List<RomaneioDTO> buscarRomaneio(FiltroRomaneioDTO filtro, boolean limitar) {
-		if(filtro == null) 
+		
+		if(filtro == null) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
+		}
 		
 		return this.romaneioRepository.buscarRomaneios(filtro, limitar);
 	}
 
 	@Override
 	@Transactional
-	public Integer buscarTotalDeRomaneios(FiltroRomaneioDTO filtro) {		
-		return this.romaneioRepository.buscarTotal(filtro);
+	public Integer buscarTotalDeRomaneios(FiltroRomaneioDTO filtro) {
+		
+		if(filtro == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
+		}
+		
+		return this.romaneioRepository.buscarTotal(filtro, false);
 	}
 	
 	@Override
@@ -199,5 +208,17 @@ public class RomaneioServiceImpl implements RomaneioService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido.");
 		}
+	}
+	
+	@Override
+	@Transactional
+	public Integer buscarTotalDeCotas(FiltroRomaneioDTO filtro) {		
+		
+		if(filtro == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
+		}
+		
+		return this.romaneioRepository.buscarTotal(filtro, true);
 	}
 }

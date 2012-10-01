@@ -39,6 +39,7 @@ import br.com.caelum.vraptor.view.Results;
 public class VisaoEstoqueController {
 	
 	private static final String FILTRO_VISAO_ESTOQUE = "FILTRO_VISAO_ESTOQUE";
+	private static final String LISTA_CONFERENCIA_CEGA = "LISTA_CONFERENCIA_CEGA";
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -151,10 +152,9 @@ public class VisaoEstoqueController {
 	}
 	
 	
-	@Path("/exportarConferenciaCega")
-	public void exportarConferenciaCega(FileType fileType, List<VisaoEstoqueTransferenciaDTO> listaTransferencia) throws IOException {
+	@Path("/gerarDadosConferenciaCega")
+	public void gerarDadosConferenciaCega(FiltroConsultaVisaoEstoque filtro) throws IOException {
 		
-		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
 		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
 		
 		List<VisaoEstoqueConferenciaCegaVO> listaExport = new ArrayList<VisaoEstoqueConferenciaCegaVO>();
@@ -163,8 +163,8 @@ public class VisaoEstoqueController {
 			
 			VisaoEstoqueConferenciaCegaVO vo = new VisaoEstoqueConferenciaCegaVO(dto);
 			
-			if (listaTransferencia != null) {
-				for(VisaoEstoqueTransferenciaDTO dtoTela : listaTransferencia) {
+			if (filtro.getListaTransferencia() != null) {
+				for(VisaoEstoqueTransferenciaDTO dtoTela : filtro.getListaTransferencia()) {
 					if(dtoTela.getProdutoEdicaoId().longValue() == dto.getProdutoEdicaoId().longValue()) {
 						vo.setEstoque(dtoTela.getQtde().toString());
 						break;
@@ -175,12 +175,23 @@ public class VisaoEstoqueController {
 			listaExport.add(vo);
 		}
 		
+		this.session.setAttribute(LISTA_CONFERENCIA_CEGA, listaExport);
+		result.use(Results.nothing());
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Path("/exportarConferenciaCega")
+	public void exportarConferenciaCega(FileType fileType) throws IOException {
+		
+		List<VisaoEstoqueConferenciaCegaVO> listaExport = (List<VisaoEstoqueConferenciaCegaVO>) this.session.getAttribute(LISTA_CONFERENCIA_CEGA);
+		
 		FileExporter.to("visao-estoque-conferencia-cega", fileType).inHTTPResponse(
-				this.getNDSFileHeader(filtro.getDataMovimentacao()), null, null,
+				this.getNDSFileHeader(new Date()), null, null,
 				listaExport, VisaoEstoqueConferenciaCegaVO.class,
 				this.httpServletResponse);
 		
-		result.use(Results.json());
+		result.use(Results.nothing());
 	}
 	
 	

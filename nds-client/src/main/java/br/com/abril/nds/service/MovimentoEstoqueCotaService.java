@@ -8,6 +8,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
 public interface MovimentoEstoqueCotaService {
@@ -38,4 +39,12 @@ public interface MovimentoEstoqueCotaService {
 	 */
 	void transferirReparteParaSuplementar(Distribuidor distribuidor, List<Long> idsCota, Intervalo<Date> periodo, 
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto, TipoNotaFiscal tipoNotaFiscal);
+	
+	/**
+	 * Gera movimento para cancelamento de nota, 
+	 * remove produtos da nota do estoque da Cota
+	 * 
+	 * @param notaFiscal
+	 */
+	void envioConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada);
 }

@@ -3,6 +3,7 @@ var romaneiosController = $.extend(true, {
 	init : function () {
 		$(".romaneiosGrid", romaneiosController.workspace).flexigrid({
 			preProcess: romaneiosController.executarPreProcessamento,
+			onSuccess: romaneiosController.carregarQuantidadeCotas,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Nº. NE',
@@ -87,7 +88,6 @@ var romaneiosController = $.extend(true, {
 		});
 		
 		$(".romaneiosGrid", romaneiosController.workspace).flexReload();
-
 	},
 
 	executarPreProcessamento : function(resultado) {
@@ -115,6 +115,25 @@ var romaneiosController = $.extend(true, {
 		$(".grids", romaneiosController.workspace).show();
 		
 		return resultado;
+	},
+	
+	carregarQuantidadeCotas : function(){
+		
+		$.postJSON(contextPath + "/romaneio/pesquisarQuantidadeCotasEntrega",
+			null,
+			function(result) {
+				
+				if (result.mensagens) {
+	
+					exibirMensagem(
+						result.mensagens.tipoMensagem, 
+						result.mensagens.listaMensagens
+					);
+				}
+				
+				$("#totalCotas", romaneiosController.workspace).text(result ? result.int : "");
+			}
+		);
 	},
 	
 	pesquisarProdutos : function(){

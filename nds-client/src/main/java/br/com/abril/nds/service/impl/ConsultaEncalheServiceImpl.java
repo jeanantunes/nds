@@ -1,6 +1,8 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +10,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
+import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConsultaEncalheService;
 
 @Service
@@ -18,6 +30,15 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	/*
 	 * (non-Javadoc)
@@ -32,26 +53,59 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		Integer qtdeRegistrosConsultaEncalhe = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
 		
-		BigDecimal qtdItemProdutoEdicaoEncalhePrimeiroDia =  movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-		Integer qtdProdutoEdicaoEncalhePrimeiroDia = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
+		ConsultaEncalheRodapeDTO consultaEncalheRodapeDTO = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
 
-		BigDecimal qtdItemProdutoEdicaoEncalheAposPrimeiroDia =  movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, true);
+		BigDecimal valorVendaDia = consultaEncalheRodapeDTO.getValorReparte().subtract(consultaEncalheRodapeDTO.getValorEncalhe());
 		
-		Integer qtdProdutoEdicaoEncalheAposPrimeiroDia = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, true);
-
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
+		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
+		
+		BigDecimal valorDebitoCredito = movimentoFinanceiroCotaRepository.obterDebitoCreditoSumarizadosPorPeriodoOperacao(filtro, tiposMovimentoFinanceiroIgnorados);
+		
+		BigDecimal valorPagar = valorVendaDia.add(valorDebitoCredito);
+		
 		info.setListaConsultaEncalhe(listaConsultaEncalhe);
 		
 		info.setQtdeConsultaEncalhe(qtdeRegistrosConsultaEncalhe);
 		
-		info.setQtdExemplarDemaisRecolhimentos(qtdItemProdutoEdicaoEncalheAposPrimeiroDia);
-		info.setQtdProdutoDemaisRecolhimentos(qtdProdutoEdicaoEncalheAposPrimeiroDia);
+		info.setValorReparte(consultaEncalheRodapeDTO.getValorReparte());
 		
-		info.setQtdExemplarPrimeiroRecolhimento(qtdItemProdutoEdicaoEncalhePrimeiroDia);
-		info.setQtdProdutoPrimeiroRecolhimento(qtdProdutoEdicaoEncalhePrimeiroDia);
+		info.setValorEncalhe(consultaEncalheRodapeDTO.getValorEncalhe());
+		
+		info.setValorVendaDia(valorVendaDia);
+		
+		info.setValorDebitoCredito(valorDebitoCredito);
+		
+		info.setValorPagar(valorPagar);
 		
 		return info;
 	}
 
+	@Transactional
+	public InfoConsultaEncalheDetalheDTO pesquisarEncalheDetalhe(FiltroConsultaEncalheDetalheDTO filtro) {
+		
+		InfoConsultaEncalheDetalheDTO info = new InfoConsultaEncalheDetalheDTO();
+		
+		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
+		
+		Integer qtdeRegistrosConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
+		
+		Date dataOperacao = filtro.getDataMovimento();
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(filtro.getIdProdutoEdicao());
+		
+		info.setListaConsultaEncalheDetalhe(listaConsultaEncalheDetalhe);
+		
+		info.setQtdeConsultaEncalheDetalhe(qtdeRegistrosConsultaEncalheDetalhe);
+		
+		info.setDataOperacao(dataOperacao);
+		
+		info.setProdutoEdicao(produtoEdicao);
+		
+		return info;
+	}
 	
 }
