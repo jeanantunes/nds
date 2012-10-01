@@ -559,14 +559,15 @@
          
            <td>
                
-           		<span class="bt_add"> 
-           			<a href="javascript:;" id="cotaGarantiaOutrosIncluirNovo">Incluir Novo</a>
+           		<span class="bt_novos"> 
+           			<a href="javascript:;" id="cotaGarantiaOutrosIncluirNovo" rel="tipsy" title="Incluir Novo">
+							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"></a>
 				</span>
 				
 				<span class="bt_novos">
 				
-		  			<a href="javascript:;" id="cotaGarantiaOutrosSalvaEdicao" style="display:none;">
-		  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
+		  			<a href="javascript:;" id="cotaGarantiaOutrosSalvaEdicao" style="display:none;" rel="tipsy" title="Salvar">
+		  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> </a>
 		  			
 		  		</span>
                

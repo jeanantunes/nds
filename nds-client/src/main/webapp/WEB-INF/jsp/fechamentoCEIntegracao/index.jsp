@@ -17,19 +17,52 @@
 </head>
 
 <body>
-
-<div class="corpo">  
-    <br clear="all"/>
-    <br />
-   
-    <div class="container">    
-    	
-      <fieldset class="classFieldset">
+    <div class="areaBts">
+    	<div class="area">
+    		<span class="bt_novos" id="btnFechamento" >
+		      	<a href="javascript:;" title="Fechamento" rel="tipsy" title="Fechamento">
+		      		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" id="imagemFechamento" />
+		      	</a>
+		      </span>
+		      
+		      <span class="bt_novos" id="btnReabertura">
+		      	<a href="javascript:;" title="Reabertura" rel="tipsy">
+		      		<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" id="imagemReabertura" /></a>
+		      </span>
+		
+			
+		    <span class="bt_novos">
+		    	<a href="javascript:;" rel="tipsy" title="Imprimir Boleto">
+		    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
+		    	</a>
+		    </span>
+		       
+		       <span class="bt_novos">
+		       	<a href="javascript:;" rel="tipsy" title="Imprimir Boleto em Branco">
+		       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0" />
+		       	</a>
+		       </span>
+		       
+		       
+		       <span class="bt_arq">
+				  	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				  		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					</a>
+			</span>
+		    <span class="bt_arq">
+    			<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+    				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+    			</a>
+    		</span>
+    	</div>
+    </div>
+    <div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldFiltro">
 		<legend> Pesquisar Fechamento  CE</legend>			
  	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td width="72">Fornecedor:</td>    
-				  	<td colspan="3">
+					<td width="69">Fornecedor:</td>    
+				  	<td width="223">
 						<select id="idFornecedor" name="idFornecedor" style="width:170px;">
 							<option value="-1"  selected="selected">Todos</option>
 							<c:forEach items="${listaFornecedores}" var="fornecedor">
@@ -37,23 +70,20 @@
 							</c:forEach>
 						</select>
 					</td>
-				  	<td width="52">
+				  	<td width="48">
 				  		Semana:
 				  	</td>
-				  	<td width="486">
+				  	<td width="151">
 				  		<input type="text" id="semana" name="semana" />
 				  	</td>
-				  	<td width="104">
-				  		<span class="bt_pesquisar">
-				  		<td width="107"><span id="btnPesquisar" class="bt_pesquisar"><a href="javascript:;" class="botaoPesquisar" >Pesquisar</a></span></td>
-				  	</td>
+			  		<td width="433"><span id="btnPesquisar" class="bt_novos"><a href="javascript:;" class="botaoPesquisar" ><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 				</tr>
 			</table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
       
-       <fieldset class="classFieldset">
+       <fieldset class="fieldGrid">
        	  <legend> Fechamento CE</legend>
           
         <div class="grids" style="display:none;">
@@ -62,62 +92,12 @@
           <div class="linha_separa_fields">&nbsp;</div>
           
 			<br clear="all" />
-			
-			<table width="950" border="0" cellspacing="1" cellpadding="1">
-			  <tr>
-			    <td width="472" valign="top">
-			      <span class="bt_novos" title="Fechamento" id="btnFechamento" >
-			      	<a href="javascript:;">
-			      		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" id="imagemFechamento" />
-			      		Fechamento
-			      	</a>
-			      </span>
-			      
-			      <span class="bt_novos" title="Reabertura" id="btnReabertura">
-			      	<a href="javascript:;">
-			      		<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" id="imagemReabertura" />Reabertura</a>
-			      </span>
-			      
-					<span class="bt_novos" title="Gerar Arquivo">
-					  	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS">
-					  		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-					  			Arquivo
-						</a>
-					</span>
-			      <br clear="all" /><br />
-			
-			
-			    <span class="bt_novos" title="Imprimir">
-	    			<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=PDF">
-	    				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-	    				Imprimir
-	    			</a>
-	    		</span>
-			    <span class="bt_novos" title="Imprimir Boleto">
-			    	<a href="javascript:;">
-			    		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-			    		Boleto
-			    	</a>
-			    </span>
-			       
-			       <span class="bt_novos" title="Imprimir Boleto">
-			       	<a href="javascript:;">
-			       		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-			       		Boleto em Branco
-			       	</a>
-			       </span>
-			    </td>			    
-			  </tr>
-			</table>
 			<div class="tabelaTotal" style="display:none;">
 					<span name="total" id="total" ></span>
 				</div>
 			</div>
 		
       		</fieldset>
-      		<div class="linha_separa_fields">&nbsp;</div>
-      
-    </div>
-</div>
+      		
 </body>
 </html>

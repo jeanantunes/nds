@@ -1,3 +1,13 @@
+
+<head>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+    <script type="text/javascript">
+
+        var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
+
+    </script> 
+</head>
+
 <form id="form-transfere-rota">
 <div id="dialog-transfere-rota" title="Transferir Rotas" style="display:none;">
 	<fieldset>
@@ -63,6 +73,15 @@
 	<fieldset>
     	<legend>Excluir</legend>
         <p>Confirma a exclus&atilde;o destas Cotas desta Rota?</p>
+    </fieldset>
+</div>
+</form>
+
+<form id="form-excluir-pdvs">
+<div id="dialog-excluir-pdvs" title="PDVs" style="display:none;">
+	<fieldset>
+    	<legend>Excluir</legend>
+        <p>Confirma a exclus&atilde;o destas PDVs desta Rota?</p>
     </fieldset>
 </div>
 </form>
@@ -175,7 +194,7 @@
                     <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
                 </span>
 
-                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="popup_cotas_ausentes();">
+                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.popupsPdvs();">
                     <img src="${pageContext.request.contextPath}//images/ico_add.gif" hspace="5" border="0"/>Adicionar</a>
                 </span>
 
@@ -193,7 +212,7 @@
             </td>
             <td>
                  <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label>
-                    <input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:15px; "/>
+                    <input type="checkbox" id="selecionarTodosPdv" onclick="roteirizacao.selecionarTodosPdvs();" style="float:left; margin-right:15px; "/>
                 </span>
             </td>
             <td></td>
@@ -207,57 +226,81 @@
 
     </form>
 
+
+
 	<form id="form-cotas-disponiveis">
-	<div id="dialog-cotas-disponiveis" title="Cotas Dispon&icirc;veis" style="display:none;">
-    
-   <jsp:include page="../messagesDialog.jsp">
-		<jsp:param value="dialogRoteirizacaoCotaDisponivel" name="messageDialog"/>
-	</jsp:include> 
-	
-	
-    <fieldset style="width:800px; float:left;">
-		<legend>Pesquisar Cotas</legend>
-		<table width="800" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="42">Cota:</td>
-              <td width="170"><input name="numeroCotaPesquisa" type="text" id="numeroCotaPesquisa" style="width:80px; float:left; margin-right:5px;" />
-              <span class="classPesquisar"><a href="javascript:;" onclick="roteirizacao.pesquisarPvsPorCota();">&nbsp;</a></span></td>
-              <td width="41">Nome:</td>
-              <td colspan="4"><span  id="cotaDisponivelPesquisa"> &nbsp;</span></td>
-            </tr>
-            <tr>
-              <td>UF:</td>
-              <td><select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">
-                
-              </select></td>
-              <td>Munic.</td>
-              <td><select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
-                <option>Todos</option>
-              </select></td>
-              <td>Bairro:</td>
-              <td width="168"><select name="comboBairro" id="comboBairro" style="width:150px;">
-                <option>Todos</option>
-              </select></td>
-              <td width="36">CEP:</td>
-              <td width="87"><input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" /></td>
-              <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
-            </tr>
-          </table>
-	</fieldset>
-    
-    <fieldset style="width:800px; float:left; margin-top:5px;">
-		<legend>Cotas Dispon&icirc;veis</legend>
-		<table class="cotasDisponiveisGrid"></table>
-        <table width="121" border="0" align="right" cellpadding="0" cellspacing="0">
-		  <tr>
-		    <td width="151" align="right"><label for="selecionaTodos" id="textoCheckAllCotas" >Marcar todos</label></td>
-		    <td width="31"><input type="checkbox" name="selecionaTodos" id="selecionaTodos" onclick="roteirizacao.checarTodasCotasGrid();"/></td>
-		  </tr>
-		</table>
-        
-	</fieldset>
-	<br clear="all" />
-	</div>
+		<div id="dialog-pdvs" title="Cotas Dispon&icirc;veis" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialogRoteirizacaoCotaDisponivel" name="messageDialog"/>
+			</jsp:include> 
+			
+		    <fieldset style="width:800px; float:left;">
+		    
+				<legend>Pesquisar Cotas</legend>
+				
+				<table width="800" border="0" cellpadding="2" cellspacing="1" class="filtro">
+				
+		            <tr>
+		              <td>Cota:</td>
+			              <td>
+			              	
+			              <input name="cotaPesquisaPdv" 
+					               id="cotaPesquisaPdv" 
+					               type="text"
+					               maxlength="11"
+					               style="width:70px; 
+					               float:left; margin-right:5px;"
+					               onchange="pesquisaCotaFiltroConsulta.pesquisarPorNumeroCota('#cotaPesquisaPdv', '#nomeCotaPesquisaPdv',false,null,null);"/>
+					              
+			              <td>Nome:</td>
+			              <td>
+			              	
+			              	<input  name="nomeCotaPesquisaPdv" 
+						      		 id="nomeCotaPesquisaPdv" 
+						      		 type="text" 
+						      		 class="nome_jornaleiro" 
+						      		 maxlength="255"
+						      		 style="width:130px;"
+						      		 onkeyup="pesquisaCotaFiltroConsulta.autoCompletarPorNome('#nomeCotaPesquisaPdv');" 
+						      		 onblur="pesquisaCotaFiltroConsulta.pesquisarPorNomeCota('#cotaPesquisaPdv', '#nomeCotaPesquisaPdv',false,null,null);" />
+			              
+			              </td>   
+		            </tr>
+		            
+		            <tr>
+		              <td>UF:</td>
+		              <td><select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">
+		                
+		              </select></td>
+		              <td>Munic.</td>
+		              <td><select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
+		                <option>Todos</option>
+		              </select></td>
+		              <td>Bairro:</td>
+		              <td width="168"><select name="comboBairro" id="comboBairro" style="width:150px;">
+		                <option>Todos</option>
+		              </select></td>
+		              <td width="36">CEP:</td>
+		              <td width="87"><input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" /></td>
+		              <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+		            </tr>
+		          </table>
+			</fieldset>
+			
+	        <div class="linha_separa_fields">&nbsp;</div>
+			<div class="grids" style="display: none;">
+				<fieldset style="width:800px; float:left; margin-top:5px;">
+			        <legend></legend>
+					<legend>Cotas Dispon&icirc;veis</legend>
+					
+						<table class="cotasDisponiveisGrid"></table>
+						
+				</fieldset>
+			</div>
+		        
+			<br clear="all" />
+		</div>
 	</form>
 	
 	<form id="formNovoDado">
@@ -300,4 +343,5 @@
 	      		</table>
 			</fieldset>
 		</div>
+
 	</form>

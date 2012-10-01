@@ -188,10 +188,17 @@ public interface RoteirizacaoService {
 	
 	/**
 	 * Inclui Cota Pdv na Roteirização
-	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
+	 * @param List<Long> idPdvs
 	 * @param idRota
 	 */
-	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> cotaPdv, Long idRota);
+	public void incluirCotaPdv(List<Long> idPdvs, Long idRota);
+	
+	/**
+	 * Exclui Cota Pdv na Roteirização
+	 * @param List<Long> idPdvs
+	 * @param idRota
+	 */
+	public void excluirCotaPdv(List<Long> idPdvs, Long idRota);
 	
     /**
      * Recupera a roteirização pelo Box

@@ -9,6 +9,17 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		$("#nomeCota", contaCorrenteCotaController.workspace).autocomplete({source: ""});
 		
+		$( "#periodoContaDe", contaCorrenteCotaController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$( "#periodoContaAte", contaCorrenteCotaController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
 		contaCorrenteCotaController.carregarItemContaCorrenteCotaGrid();
 		contaCorrenteCotaController.montarColunaConsignado();
 		contaCorrenteCotaController.montarColunaEncalheCota();
@@ -44,10 +55,12 @@ var contaCorrenteCotaController = $.extend(true, {
 	 * FAZ A PESQUISA DOS ITENS REFERENTES A CONTA CORRENTE COTA.
 	 */
 	pesquisarItemContaCorrenteCota : function() {
-		
-		var cota = $("#cota", contaCorrenteCotaController.workspace).val();
 
-		var parametroPesquisa = [{name:'filtroViewContaCorrenteCotaDTO.numeroCota', value:cota }];
+		var parametroPesquisa = [
+                 {name:'filtroViewContaCorrenteCotaDTO.numeroCota', value: $("#cota", contaCorrenteCotaController.workspace).val() },
+                 {name:'filtroViewContaCorrenteCotaDTO.inicioPeriodo', value:$("#periodoContaDe", contaCorrenteCotaController.workspace).val() },
+                 {name:'filtroViewContaCorrenteCotaDTO.fimPeriodo', value:$("#periodoContaAte", contaCorrenteCotaController.workspace).val() }
+		];
 
 		$(".itemContaCorrenteCotaGrid", contaCorrenteCotaController.workspace).flexOptions({
 			
@@ -191,8 +204,8 @@ var contaCorrenteCotaController = $.extend(true, {
 			
 			var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 			
-				value.cell[3] = '<a href="javascript:;" onclick="pesquisarConsignadoCota('+[lineId]+');"/>'+consignado+'</a>'+hiddeFields;
-				value.cell[4] = '<a href="javascript:;" onclick="pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
+				value.cell[3] = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+[lineId]+');"/>'+consignado+'</a>'+hiddeFields;
+				value.cell[4] = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
 				value.cell[5] = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell[10]+',\''+value.cell[0]+'\')"/>'+vendaEncalhe+'</a>'+hiddeFields;
 				value.cell[6] = '<a href="javascript:;"/>'+debCred+'</a>'+hiddeFields;
 				value.cell[7] = '<a href="javascript:;"/>'+encargos+'</a>'+hiddeFields;
@@ -524,7 +537,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					
 				},
 				
-			}
+			},
+			form: $("#dialog-consignado", this.workspace).parents("form")
 		});
 	},
 		
@@ -543,7 +557,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					$(".gridsEncalhe", contaCorrenteCotaController.workspace).show();
 					
 				}
-			}
+			},
+			form: $("#dialog-encalhe", this.workspace).parents("form")
 		});
 	},
 
@@ -562,7 +577,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					$(".grids", contaCorrenteCotaController.workspace).show();
 					
 				}
-			}
+			},
+			form: $("#dialog-encalhe_2", this.workspace).parents("form")
 		});
 	},
 			
@@ -581,7 +597,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					$(".grids", contaCorrenteCotaController.workspace).show();
 					
 				}
-			}
+			},
+			form: $("#dialog-conta", this.workspace).parents("form")
 		});
 	},
 		
@@ -600,7 +617,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					$(".grids", contaCorrenteCotaController.workspace).show();
 					
 				}
-			}
+			},
+			form: $("#dialog-encargos", this.workspace).parents("form")
 		});
 	},
 	
