@@ -347,7 +347,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 		$( "#dialog-novo-grupo", this.workspace ).dialog({
 			resizable: false,
-			height:450,
+			height:470,
 			width:750,
 			modal: true,
 			buttons: {

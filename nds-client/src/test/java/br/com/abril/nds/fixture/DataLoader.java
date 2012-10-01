@@ -49,7 +49,6 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
-import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -273,6 +272,9 @@ public class DataLoader {
 
 	private static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiro;
 
+	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado;
+	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFEnvioConsignado;
+	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
@@ -2506,43 +2508,43 @@ public class DataLoader {
 		
 		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
-		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose,1);
+		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
 		pdvJose.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJose);
 
-		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel,2);
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
 		pdvManoel.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvManoel);
 
-		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha,3);
+		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha);
 		pdvManoelCunha.setSegmentacao(segmentacaoPDV);
 		session.save(pdvManoelCunha);
 
-		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria,4);
+		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria);
 		pdvMaria.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMaria);
 
-		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis,5);
+		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis);
 		pdvLuis.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvLuis);
 
-		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao,6);
+		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
 		pdvJoao.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJoao);
 
-		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme,7);
+		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
 		pdvGuilherme.setSegmentacao(segmentacaoPDV);
 		session.save(pdvGuilherme);
 
-		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo,8);
+		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
 		pdvMurilo.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMurilo);
 
-		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana,9);
+		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
 		pdvMariana.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMariana);
 
-		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando,10);
+		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
 		pdvOrlando.setSegmentacao(segmentacaoPDV);
 		session.save(pdvOrlando);
 
@@ -2556,6 +2558,9 @@ public class DataLoader {
 		Box boxB = Fixture.criarBox(2000, "BX-B", TipoBox.LANCAMENTO);
 		session.save(boxB);
 		
+		Box boxC = Fixture.criarBox(3000, "BX-C", TipoBox.LANCAMENTO);
+	    session.save(boxC);
+		
 		
 		Roteirizacao roteirizacao1 = Fixture.criarRoteirizacao(boxA);
 		session.save(roteirizacao1);
@@ -2563,43 +2568,77 @@ public class DataLoader {
 		Roteirizacao roteirizacao2 = Fixture.criarRoteirizacao(boxB);
 		session.save(roteirizacao2);
 		
-		Roteirizacao roteirizacao3 = Fixture.criarRoteirizacao(boxA);
+		Roteirizacao roteirizacao3 = Fixture.criarRoteirizacao(boxC);
 		session.save(roteirizacao3);;
 
 		
-		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,boxA,TipoRoteiro.NORMAL);
+		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		session.save(roteiroPinheiros);
+		
+		Roteiro roteiroCentro = Fixture.criarRoteiro("Centro", roteirizacao1, TipoRoteiro.NORMAL);
+	    session.save(roteiroCentro);
+	    
+	    Roteiro roteiroBairro = Fixture.criarRoteiro("Bairro", roteirizacao1, TipoRoteiro.NORMAL);
+        session.save(roteiroBairro);
 
-		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,boxB,TipoRoteiro.NORMAL);
+		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,TipoRoteiro.NORMAL);
 		session.save(roteiroInterlagos);
 		
-		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",roteirizacao3,boxA,TipoRoteiro.NORMAL);
+		Roteiro roteiroTCD = Fixture.criarRoteiro("TCD",roteirizacao3,TipoRoteiro.NORMAL);
 		session.save(roteiroTCD);
 
 		
 		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
 		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
-		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose,11);
+		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose);
 		pdvcotaJose2.setSegmentacao(segmentacaoPDV);
 		session.save(pdvcotaJose2);
 
-		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel,12);
+		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel);
 		pdvcotaManoel2.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvcotaManoel2);
 		
-		List<PDV> pdvs = Arrays.asList(pdvcotaJose2,pdvcotaManoel2);
-
+		PDV pdvJoao = Fixture.criarPDVPrincipal("PDV João", cotaJoao);
+		pdvJoao.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvJoao);
+        
+        PDV pdvJoana = Fixture.criarPDVPrincipal("PDV Joana", cotaJoana);
+        pdvJoana.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvJoana);
+        
+        PDV pdvOrlando = Fixture.criarPDVPrincipal("PDV Orlando", cotaOrlando);
+        pdvOrlando.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvOrlando);
 		
-		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros,pdvs);
+		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
+		rota1.addPDV(pdvcotaJose2, 1);
+		rota1.addPDV(pdvcotaManoel2, 2);
 		session.save(rota1);
 		
-		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos,pdvs);
+		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
+	    rota2.addPDV(pdvcotaJose2, 1);
+	    rota2.addPDV(pdvcotaManoel2, 2);
 		session.save(rota2);
 		
-		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
+		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
+	    rota10.addPDV(pdvcotaJose2, 1);
+	    rota10.addPDV(pdvcotaManoel2, 2);
 		session.save(rota10);
  
+		
+		Rota rotaRoteiroCentro1 = Fixture.rota("999", "Rota 999", roteiroCentro);
+		rotaRoteiroCentro1.addPDV(pdvJoao, 1);
+		session.save(rotaRoteiroCentro1);
+		
+		Rota rotaRoteiroCentro2 = Fixture.rota("990", "Rota 990", roteiroCentro);
+        rotaRoteiroCentro2.addPDV(pdvMariana, 1);
+        session.save(rotaRoteiroCentro2);
+        
+        Rota rotaRoteiroBairro = Fixture.rota("998", "Rota 998", roteiroBairro);
+        rotaRoteiroBairro.addPDV(pdvJoana, 1);
+        rotaRoteiroBairro.addPDV(pdvOrlando, 2);
+        session.save(rotaRoteiroBairro);
 	}
 
 
@@ -2989,10 +3028,10 @@ public class DataLoader {
 				      dividaOrlando,
 				      dividaAcumuladaGuilherme1, dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 
-		dividaAcumuladaGuilherme1.getAcumulado().add(dividaGuilherme1);
-		dividaAcumuladaGuilherme2.getAcumulado().add(dividaGuilherme2);
-		dividaAcumuladaMariana1.getAcumulado().add(dividaMariana1);
-		dividaAcumuladaMurilo1.getAcumulado().add(dividaMurilo1);
+		dividaAcumuladaGuilherme1.setDividaRaiz(dividaGuilherme1);
+		dividaAcumuladaGuilherme2.setDividaRaiz(dividaGuilherme2);
+		dividaAcumuladaMariana1.setDividaRaiz(dividaMariana1);
+		dividaAcumuladaMurilo1.setDividaRaiz(dividaMurilo1);
 
 		save(session, dividaAcumuladaGuilherme1,dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 	}
@@ -3348,14 +3387,14 @@ public class DataLoader {
 				"C:\\contratos\\"));			// windows;
 //				"/opt/interface/contratos/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_IMPORTACAO, 
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));		// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_EXPORTACAO,
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));	// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));	// linux;
 		save(session, Fixture.parametroSistema(TipoParametroSistema.PATH_INTERFACE_MDC_BACKUP,
-				"C:\\interface_mdc\\"));		// windows;
-//				"/opt/interface_mdc/"));		// linux;
+//				"C:\\interface_mdc\\"));		// windows;
+				"/opt/interface_mdc/"));		// linux;
 		
 		
 		save(session, Fixture.parametroSistema(TipoParametroSistema.NDSI_EMS0106_IN_FILEMASK, "(?i:DEAPR19.NEW)"));
@@ -4852,11 +4891,11 @@ public class DataLoader {
 	private static void criarDistribuicaoCota(Session session) {
 
 		ParametroDistribuicaoCota parametroGuilherme = 	Fixture.criarParametroDistribuidor(
-				100, "Joao da Silva", tipoEntregador, "Muito importante isso aeh!",
+				100, "Joao da Silva", DescricaoTipoEntrega.ENTREGADOR, "Muito importante isso aeh!",
 				true, true, true, true, true, true, true, true, true);
 
 		ParametroDistribuicaoCota parametroJoao = 	Fixture.criarParametroDistribuidor(
-				120, "Maria da Silva", tipoEntregaEmBanca, "Muito importante isso aeh também!",
+				120, "Maria da Silva", DescricaoTipoEntrega.ENTREGA_EM_BANCA, "Muito importante isso aeh também!",
 				false, false, false, false, false, false, false, false, false);
 
 		cotaJoao.setParametroDistribuicao(parametroJoao);
@@ -5099,6 +5138,9 @@ public class DataLoader {
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebitoNA.setAprovacaoAutomatica(false);
 
+		tipoMovimentoCancelamentoNFDevolucaoConsignado = Fixture.tipoMovimentoCancelamentoNFDevolucaoConsignado();
+		tipoMovimentoCancelamentoNFEnvioConsignado = Fixture.tipoMovimentoCancelamentoNFEnvioConsignado();
+		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
@@ -5107,7 +5149,8 @@ public class DataLoader {
 				tipoMovimentoFinanceiroJuros, tipoMovimentoFinanceiroMulta,
 				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoRecebimentoEncalhe, tipoMovimentoRecebimentoEncalheJuramentado,
-				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao);
+				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao, 
+				tipoMovimentoCancelamentoNFDevolucaoConsignado, tipoMovimentoCancelamentoNFEnvioConsignado);
 
 	}
 
@@ -5209,7 +5252,7 @@ public class DataLoader {
 			
 			save(session, diferenca);
 			
-			if (i < 5) {
+			if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(tipoDirecionamento)) {
 				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
 				session.save(rateio);
 			}
@@ -5230,7 +5273,7 @@ public class DataLoader {
 
 			session.save(diferenca);
 			
-			if (i < 5) {
+			if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(tipoDirecionamento)) {
 				RateioDiferenca rateio = Fixture.criarRateioDiferenca(cotaManoel, new Date(), BigInteger.valueOf(i), estudoCotaManoel, diferenca);
 				session.save(rateio);
 			}
@@ -5762,14 +5805,39 @@ public class DataLoader {
 	}
 
 	private static void criarFeriado(Session session) {
+
+//Fixos
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("01/01/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Confraternização Universal",
+				false,
+				false,
+				true));
+
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("21/04/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Tiradentes",
+				false,
+				false,
+				true));		
 		
-		UnidadeFederacao saoPaulo = Fixture.criarUnidadeFederacao("GO");
-		save(session, saoPaulo);
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("01/05/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Dia Mundial do Trabalho",
+				false,
+				false,
+				true));	
 		
-		Localidade localidadeMococa  = Fixture.criarLocalidade(112L, "Mococa", 10L, saoPaulo);
-		save(session, localidadeMococa);
-		
-		Feriado feriadoIndependencia = Fixture.feriado(
+		save(session, Fixture.feriado(
 				DateUtil.parseDataPTBR("07/09/2012"), 
 				TipoFeriado.FEDERAL, 
 				null, 
@@ -5777,21 +5845,69 @@ public class DataLoader {
 				"Independência do Brasil",
 				false,
 				false,
-				true);
-		save(session, feriadoIndependencia);
+				true));		
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("12/10/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Nossa Senhora Aparecida",
+				false,
+				false,
+				true));				
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("02/11/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Finados",
+				false,
+				false,
+				true));				
 
-		Feriado feriadoProclamacao =
-				Fixture.feriado(
-						DateUtil.parseDataPTBR("15/11/2012"), 
-						TipoFeriado.FEDERAL, 
-						null, 
-						null ,
-						"Proclamação da República",
-						false,
-						false,
-						false);
-
-		save(session, feriadoProclamacao);
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("15/11/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Proclamação da República",
+				false,
+				false,
+				true));	
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("25/12/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Natal",
+				false,
+				false,
+				true));	
+		
+//Moveis		
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("06/04/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Paixão de Cristo",
+				false,
+				false,
+				false));
+		
+		save(session, Fixture.feriado(
+				DateUtil.parseDataPTBR("07/06/2012"), 
+				TipoFeriado.FEDERAL, 
+				null, 
+				null, 
+				"Corpus Christi",
+				false,
+				false,
+				false));
 		
 	}
 	

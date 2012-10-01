@@ -101,7 +101,7 @@ var PDV =  $.extend(true, {
 
                 var title = PDV.isReadOnly() ? 'Visualizar PDV' : 'Editar Endereço';
 
-				var linkEdicao = '<a href="javascript:;" onclick="PDV.editarPDV('+ param +');" style="cursor:pointer">' +
+				var linkEdicao = '<a href="javascript:;" onclick="PDV.editarPDV('+ param +');" style="cursor:pointer; margin-right:10px;">' +
 					 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="'+title+'" />' +
 					 '</a>';
 

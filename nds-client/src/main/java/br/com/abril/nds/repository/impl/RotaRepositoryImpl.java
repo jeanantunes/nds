@@ -106,7 +106,7 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	@Override
 	public List<Rota> buscarRotaDeBox(Long idBox) {
 		
-		String hql  = "select rota from Rota rota join rota.roteiro roteiro join roteiro.box box where box.id=:idBox group by rota ";
+		String hql  = "select rota from Rota rota join rota.roteiro roteiro join roteiro.roteirizacao.box box where box.id=:idBox group by rota ";
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("idBox", idBox);
@@ -130,9 +130,9 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	public List<Rota> obterRotasPorCota(Integer numeroCota){
 		
 		Criteria criteria =  getSession().createCriteria(Rota.class, "rota");
-		criteria.createAlias("rota.pdvs","pdv");
+		criteria.createAlias("rota.rotaPDVs","rotaPdv");
+		criteria.createAlias("rotaPdv.pdv","pdv");
 		criteria.createAlias("pdv.cota","cota");
-		
 		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
 		criteria.addOrder(Order.asc("rota.descricaoRota"));
 		
@@ -149,10 +149,13 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	@Override
 	public Rota obterRotaPorPDV(Long idPDV, Long idCota) {
 		
-		StringBuilder hql = new StringBuilder("select rot.rota from Roteirizacao rot ");
-		hql.append(" where rot.pdv.id = :idPDV ")
-		   .append(" and rot.pdv.caracteristicas.pontoPrincipal = :principal ")
-		   .append(" and rot.pdv.cota.id = :idCota ");
+		StringBuilder hql = new StringBuilder("select rot from Rota rot ");
+		
+		hql.append(" join rot.pdvs pdvRota ")
+		
+		   .append(" where pdvRota.id = :idPDV ")
+		   .append(" and pdvRota.caracteristicas.pontoPrincipal = :principal ")
+		   .append(" and pdvRota.cota.id = :idCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idPDV", idPDV);

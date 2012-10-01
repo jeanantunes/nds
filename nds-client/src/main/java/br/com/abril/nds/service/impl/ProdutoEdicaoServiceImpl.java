@@ -42,10 +42,13 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -82,6 +85,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
+	
+	@Autowired
+	private ProdutoService pService;
+	
+	@Autowired
+	private LancamentoService lService;	
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -655,6 +664,118 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras){
 		
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarras);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao) {
+		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
+
+		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+		dto.setNomeProduto(produto.getNome());
+		dto.setCodigoProduto(produto.getCodigo());
+		
+		String nomeFornecedor = "";
+		if (produto.getFornecedor() != null 
+				&& produto.getFornecedor().getJuridica() != null) {
+			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
+		}
+		
+		dto.setNomeFornecedor(nomeFornecedor);
+		dto.setFase(produto.getFase());
+		dto.setPacotePadrao(produto.getPacotePadrao());
+		dto.setPeso(produto.getPeso());
+		dto.setDescricaoDesconto("");
+		dto.setDescricaoProduto(produto.getDescricao());
+		dto.setDesconto(produto.getDescontoLogistica() == null 
+				? BigDecimal.ZERO : BigDecimal.valueOf(
+						produto.getDescontoLogistica().getPercentualDesconto()));
+
+		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
+
+			Long id = Long.valueOf(idProdutoEdicao);
+			ProdutoEdicao pe = this.obterProdutoEdicao(id);
+
+			dto.setId(id);
+			
+			dto.setNomeComercialProduto(pe.getNomeComercial());
+			dto.setNumeroEdicao(pe.getNumeroEdicao());
+			dto.setPacotePadrao(pe.getPacotePadrao());
+			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
+			BigDecimal precoVenda = pe.getPrecoVenda();
+            dto.setPrecoVenda(precoVenda);
+			dto.setExpectativaVenda(pe.getExpectativaVenda());
+			dto.setCodigoDeBarras(pe.getCodigoDeBarras());
+			dto.setCodigoDeBarrasCorporativo(pe.getCodigoDeBarraCorporativo());
+			dto.setChamadaCapa(pe.getChamadaCapa());
+			dto.setParcial(pe.isParcial());
+			dto.setPossuiBrinde(pe.isPossuiBrinde());
+			
+			BigDecimal percentualDesconto = Util.nvl(pe.getProduto().getDesconto(), BigDecimal.ZERO);
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+			dto.setDesconto(valorDesconto);
+
+			dto.setPeso(pe.getPeso());
+			dto.setBoletimInformativo(pe.getBoletimInformativo());
+			dto.setOrigemInterface(pe.getOrigemInterface());
+			dto.setNumeroLancamento(pe.getNumeroLancamento());
+			dto.setPeb(pe.getPeb());
+			dto.setEditor(pe.getProduto().getEditor().getPessoaJuridica().getNome());
+			if (pe.getBrinde() !=null) {
+				dto.setDescricaoBrinde(pe.getBrinde().getDescricao());
+			}
+			Dimensao dimEdicao = pe.getDimensao();
+			if (dimEdicao == null) {
+				dto.setComprimento(0);
+				dto.setEspessura(0);
+				dto.setLargura(0);
+			} else {
+				dto.setComprimento(dimEdicao.getComprimento());
+				dto.setEspessura(dimEdicao.getEspessura());
+				dto.setLargura(dimEdicao.getLargura());
+			}
+			
+			Lancamento uLancamento = lService.obterUltimoLancamentoDaEdicao(pe.getId());
+			if (uLancamento != null) {
+				dto.setSituacaoLancamento(uLancamento.getStatus());
+				dto.setTipoLancamento(uLancamento.getTipoLancamento());
+				if(uLancamento.getStatus() != StatusLancamento.EXCLUIDO){					
+					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+				}				
+				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
+				dto.setRepartePrevisto(uLancamento.getReparte());
+				dto.setRepartePromocional(uLancamento.getRepartePromocional());
+				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
+				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
+				dto.setSemanaRecolhimento(DateUtil.obterNumeroSemanaNoAno(uLancamento.getDataRecolhimentoDistribuidor()));
+			}
+		} else {
+			
+			// Edição criada pelo Distribuidor:
+			dto.setOrigemInterface(false);
+			
+			dto.setPeb(produto.getPeb());
+			
+			Long ultimaEdicao = produtoEdicaoRepository.obterUltimoNumeroEdicao(codigoProduto);
+			
+			if (ultimaEdicao == null) {
+				dto.setNumeroEdicao(1L);
+			} else {
+				dto.setNumeroEdicao(ultimaEdicao + 1);
+			}
+		}
+		
+		/* 
+		 * Regra: Se não houver edições já cadatradas para este produto, deve-se
+		 * obrigar a cadastrar o número 1. 
+		 */
+		
+		Long qtdEdicoes = this.countPesquisarEdicoes(codigoProduto, null, null, null, null, null, false);
+		if (qtdEdicoes == 0 || Long.valueOf(0).equals(qtdEdicoes)) {
+			dto.setNumeroEdicao(1L);
+		}
+		
+		return dto;
 	}
 	
 }

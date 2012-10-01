@@ -103,6 +103,7 @@ import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
@@ -1123,6 +1124,24 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoCancelamentoNFEnvioConsignado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saida de mercadorias das NFs canceladas para o estoque da Cota");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada de mercadorias das NFs canceladas para o estoque do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_CONSIGNADO);
+		return tipoMovimento;
+	}
+	
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -1170,7 +1189,7 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.MULTA);
 		return tipoMovimento;
 	}
-	
+		
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigInteger qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
@@ -2414,13 +2433,13 @@ public class Fixture {
 		
 		return parametro;
 	}
-	public static Rota rota(String codigoRota, String descricaoRota, Roteiro roteiro, List<PDV> pdvs){
+	
+	public static Rota rota(String codigoRota, String descricaoRota, Roteiro roteiro){
 		Rota rota = new Rota();
 		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
 		rota.setOrdem(0);
 		rota.setRoteiro(roteiro);
-		rota.setPdvs(pdvs);
 		return rota;
 	}
 	
@@ -2721,8 +2740,7 @@ public class Fixture {
 							   Boolean principal, StatusPDV status,
 							   CaracteristicasPDV caracteristicas,
 							   LicencaMunicipal licencaMunicipal, 
-							   SegmentacaoPDV segmentacao,
-							   Integer ordem){
+							   SegmentacaoPDV segmentacao){
 
 		PDV pdv = new PDV();
 		pdv.setNome(nome);
@@ -2735,9 +2753,6 @@ public class Fixture {
 		pdv.setLicencaMunicipal(licencaMunicipal);
 		
 		pdv.setSegmentacao(segmentacao);
-		
-		pdv.setOrdem(ordem);
-		
 		return pdv;
 	}
 	
@@ -2901,7 +2916,7 @@ public class Fixture {
 	}
 
 	public static ParametroDistribuicaoCota criarParametroDistribuidor(Integer qtdePDV,
-			String assistenteComercial, TipoEntrega tipoEntrega,
+			String assistenteComercial, DescricaoTipoEntrega descricaoTipoEntrega,
 			String observacao,
 			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
 			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
@@ -2912,7 +2927,7 @@ public class Fixture {
 		
 		parametroDistribuicaoCota.setQtdePDV(qtdePDV);
 		parametroDistribuicaoCota.setAssistenteComercial(assistenteComercial);
-		parametroDistribuicaoCota.setTipoEntrega(tipoEntrega);
+		parametroDistribuicaoCota.setDescricaoTipoEntrega(descricaoTipoEntrega);
 		parametroDistribuicaoCota.setObservacao(observacao);
 		parametroDistribuicaoCota.setRepartePorPontoVenda(repartePorPontoVenda);
 		parametroDistribuicaoCota.setSolicitaNumAtras(solicitaNumAtras);
@@ -2979,27 +2994,23 @@ public class Fixture {
 		return roteirizacao;
 	}
 	
-	public static Roteiro criarRoteiro(String descricaoRoteiro, Roteirizacao roteirizacao, Box box, TipoRoteiro tipoRoteiro ){
+	public static Roteiro criarRoteiro(String descricaoRoteiro, Roteirizacao roteirizacao, TipoRoteiro tipoRoteiro ){
 		
 		Roteiro roteiro = new Roteiro();
 		roteiro.setDescricaoRoteiro(descricaoRoteiro);
 		roteiro.setOrdem(0);
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		roteiro.setRoteirizacao(roteirizacao);
-		roteiro.setBox(box);
 		
 		return roteiro;
 	}
 	
-	public static  PDV criarPDVPrincipal(String nome, Cota cota,Integer ordem){
-		
+	public static  PDV criarPDVPrincipal(String nome, Cota cota){
 		PDV pdv = new PDV();
 		pdv.setNome(nome);
 		pdv.setCota(cota);
 		pdv.setCaracteristicas(new CaracteristicasPDV());
 		pdv.getCaracteristicas().setPontoPrincipal(true);
-		pdv.setOrdem(ordem);
-		
 		return pdv;
 	}
 

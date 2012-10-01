@@ -14,28 +14,29 @@
 		
 </script>
 
-
-<table width="780" cellpadding="4" cellspacing="4"
-	style="text-align: left;">
-	<tr>
-	
-		<td width="180">Tipo de Garantia:</td>
-		<td width="180"><select id="tipoGarantiaSelect"
-			onchange="tipoCotaGarantia.onChange($(this).val());"
-			style="width: 250px;">
-				<option value="" selected="selected">Selecione...</option>
-		</select></td>
+<fieldset style="width:880px!important; margin:5px;">
+ 	<legend>Tipos de Garantias</legend>	
+	<table width="860" cellpadding="2" cellspacing="2"
+		style="text-align: left;">
+		<tr>
 		
-		<td width="180">Classificação da Cota:</td>
-	    <td width="180" colspan="2">
-     	    <input disabled="disabled" name="cotaGarantiaClassificacaoCota" id="cotaGarantiaClassificacaoCota" style="width:300px;border: 0px; background-color: inherit; border-color: inherit;">
-        </td>
-		
-	</tr>
-</table>
-
+			<td width="90">Tipo de Garantia:</td>
+			<td width="256"><select id="tipoGarantiaSelect"
+				onchange="tipoCotaGarantia.onChange($(this).val());"
+				style="width: 250px;">
+					<option value="" selected="selected">Selecione...</option>
+			</select></td>
+			
+			<td width="128">Classificação da Cota:</td>
+		    <td width="358" colspan="2">
+	     	    <input disabled="disabled" name="cotaGarantiaClassificacaoCota" id="cotaGarantiaClassificacaoCota" style="width:300px;border: 0px; background-color: inherit; border-color: inherit;">
+	        </td>
+			
+		</tr>
+	</table>
+</fieldset>
 <div id="cotaGarantiaNotaPromissoriaPanel" style="display: none;">
-	<fieldset>
+	<fieldset style="width:880px!important; margin:5px;">
 		<legend>Nota Promiss&oacute;ria</legend>
 
 		<table width="755" cellpadding="2" cellspacing="2"
@@ -66,11 +67,11 @@
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
-				<td colspan="3"><span class="bt_novos" title="Imprimir"><a
+				<td colspan="3"><span class="bt_novos"><a
 						href="javascript:;"
-						id="cotaGarantiaNotaPromissoriaImprimir" target="_blank"><img
+						id="cotaGarantiaNotaPromissoriaImprimir" target="_blank" rel="tipsy" title="Imprimir Nota Promissória"><img
 							src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-							alt="Imprimir" hspace="5" border="0" />Imprimir</a></span></td>
+							hspace="5" border="0" /></a></span></td>
 			</tr>
 		</table>
 	</fieldset>
@@ -78,21 +79,21 @@
 
 <div id="cotaGarantiaFiadorPanel" style="display: none;">
 
-	<fieldset>
+	<fieldset style="width:880px!important; margin:5px;">
 
 		<legend>Fiador</legend>
 
 		<table width="755" cellpadding="2" cellspacing="2"
 			style="text-align: left;">
 			<tr>
-				<td width="150"><strong>Nome / Raz&atilde;o Social:</strong></td>
+				<td width="121"><strong>Nome / Raz&atilde;o Social:</strong></td>
 
-				<td width="212"><input type="text"
-					id="cotaGarantiaFiadorSearchName" /></td>
+				<td width="323"><input type="text"
+					id="cotaGarantiaFiadorSearchName"  style="width:300px;"/></td>
 
-				<td width="92"><strong>CPF/CNPJ:</strong></td>
+				<td width="60"><strong>CPF/CNPJ:</strong></td>
 
-				<td width="273"><input type="text"
+				<td width="223"><input type="text"
 					id="cotaGarantiaFiadorSearchDoc" style="width: 200px;" /></td>
 			</tr>
 
@@ -102,7 +103,7 @@
 
 	<br clear="all" /> <br />
 	<div id="cotaGarantiaFiadorDadosPanel" style="display: none;">
-		<fieldset>
+		<fieldset style="width:880px!important; margin:5px;">
 			<legend>Dados do Fiador</legend>
 			<table width="755" cellpadding="2" cellspacing="2"
 				style="text-align: left;">
@@ -134,7 +135,7 @@
 
 		</fieldset>
 		<br clear="all" /> <br />
-		<fieldset class="cotaGarantiaFiadorDadosPanel" style="">
+		<fieldset class="cotaGarantiaFiadorDadosPanel" style="width:880px!important;">
 			<legend>Garantias Cadastradas</legend>
 			<table id="cotaGarantiaFiadorGarantiasGrid"></table>
 		</fieldset>
@@ -142,7 +143,7 @@
 </div>
 
 <div id="cotaGarantiaChequeCaucaoPanel" style="display: none;">
-	<fieldset>
+	<fieldset style="width:880px!important; margin:5px;">
 		<legend>Dados Banc&aacute;rios</legend>
 		<table width="601" border="0" cellspacing="2" cellpadding="2">
 			<tr>
@@ -212,7 +213,7 @@
 	</fieldset>
 	<br clear="all" /> <br />
 	<div id="cotaGarantiaChequeCaucaoImagemPanel" style="display: none;">
-		<fieldset>
+		<fieldset style="width:880px!important; margin:5px;">
 			<legend>Foto Cheque</legend>
 			<br />
 			<div align="center" id="cotaGarantiaChequeCaucaoImagem"></div>
@@ -224,7 +225,7 @@
 	<div id="dialog-excluir-imovel" title="Excluir Im&oacute;vel" style="display:none;" >
 		<p>Confirma a exclus&atilde;o desse im&oacute;vel?</p>
 	</div>
-	<fieldset>
+	<fieldset style="width:880px!important; margin:5px;">
 		<legend>Im&oacute;vel</legend>
 		<table width="755" border="0" cellpadding="2" cellspacing="2"
 			style="text-align: left;">
@@ -260,13 +261,15 @@
 					<td>&nbsp;</td>
 					<td>
 					
-					<span class="bt_add"> <a href="javascript:;"
-							id="cotaGarantiaImovelIncluirNovo">Incluir Novo</a>
+					<span class="bt_novos"> <a href="javascript:;"
+							id="cotaGarantiaImovelIncluirNovo" rel="tipsy" title="Incluir Novo">
+							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0">
+							</a>
 					</span>
 					
 					<span class="bt_novos">
-			  			<a href="javascript:;" id="cotaGarantiaImovelSalvaEdicao" style="display:none;">
-			  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
+			  			<a href="javascript:;" id="cotaGarantiaImovelSalvaEdicao" style="display:none;" rel="tipsy" title="Salvar">
+			  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> </a>
 			  		</span>
 					
 					</td>
@@ -277,7 +280,7 @@
 	</fieldset>
 	<br clear="all"> <br>
 
-	<fieldset>
+	<fieldset style="width:880px!important; margin:5px;">
 		<legend>Im&oacute;veis Cadastradas</legend>
 		<div class="flexigrid" style="width: 740px;">
 			<table class="cotaGarantiaImovelGrid"></table>
@@ -294,14 +297,16 @@
     		<p>Confirma o Resgate da Cau&ccedil;&atilde;o L&iacute;quida?</p>
 		</fieldset>
 	</div>
-	<fieldset>
+	<fieldset style="width:880px!important; margin:5px;">
 	   	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
-        <table width="755" cellpadding="2" cellspacing="2" style="text-align:left;">
+        <table width="860" cellpadding="2" cellspacing="2" style="text-align:left;">
             <tbody>
+            	<tr>
+            		<td width="850">
 
                  <table width="755" border="0" cellspacing="2" cellpadding="2">
                      <tr>
-				        <td valign="top" width="140"><strong>Forma de Pagamento:</strong></td>
+				        <td valign="top" width="140">Forma de Pagamento:</td>
 					    <td valign="top" width="232">
 		
 					        <select name="tipoCobranca" id="tipoCobranca" style="width:150px;" onchange="CaucaoLiquida.prototype.opcaoPagto(this.value);">
@@ -311,12 +316,12 @@
 				        
 				        <td width="361">
 					        <div name="divFormaDeposito" id="divFormaDeposito" style="display: none;">
-								<strong>Valor R$</strong>
+								Valor R$
 								<input type="text" id="valorDeposito" style="text-align: right;" />
 							</div>
 							
 							<div name="divFormaDinheiro" id="divFormaDinheiro" style="display: none;">
-								<strong>Valor R$</strong>
+								Valor R$
 								<input type="text" id="valorDinheiro" style="text-align: right;" />
 							</div>
 				        </td>
@@ -329,13 +334,13 @@
 	                 <table width="50%" border="0" cellspacing="1" cellpadding="1">
 				         <tr>
 				             <td width="20"><input type="radio" name="diario" id="diario" value="radio" onclick="CaucaoLiquida.prototype.mostraDiario();" /></td>
-				             <td width="173">Diário</td>
+				             <td width="69">Diário</td>
 				             <td width="20"><input type="radio" name="semanal" id="semanal" value="radio" onclick="CaucaoLiquida.prototype.mostraSemanal();" /></td>
-				             <td width="173">Semanal</td>
+				             <td width="70">Semanal</td>
 				             <td width="20"><input type="radio" name="quinzenal" id="quinzenal" value="radio" onclick="CaucaoLiquida.prototype.mostraQuinzenal();" /></td>
-				             <td width="173">Quinzenal</td>
+				             <td width="76">Quinzenal</td>
 				             <td width="20"><input type="radio" name="mensal" id="mensal" value="radio" onclick="CaucaoLiquida.prototype.mostraMensal();" /></td>
-				             <td width="173">Mensal</td>
+				             <td width="105">Mensal</td>
 				         </tr>
 				     </table>
 							     
@@ -372,23 +377,23 @@
 							     </table>
 						     
 	 			        
-			                     <table width="80%" border="0" cellspacing="1" cellpadding="1" class="semanal">
+			                     <table width="96%" border="0" cellspacing="1" cellpadding="1" class="semanal">
 	
 			                        <tr>
 									    <td width="20"><input type="checkbox" name="PS" id="PS" /></td>
-									    <td width="70">Segunda-feira  </td>
+									    <td width="95">Segunda-feira  </td>
 									    <td width="20"><input type="checkbox" name="PT" id="PT" /></td>
-									    <td width="50">Terça-feira  </td>
+									    <td width="76">Terça-feira  </td>
 									    <td width="20"><input type="checkbox" name="PQ" id="PQ" /></td>
-									    <td width="50">Quarta-feira  </td>
+									    <td width="82">Quarta-feira  </td>
 									    <td width="20"><input type="checkbox" name="PQu" id="PQu" /></td>
-									    <td width="50">Quinta-feira  </td>
+									    <td width="79">Quinta-feira  </td>
 									    <td width="20"><input type="checkbox" name="PSex" id="PSex" /></td>
-									    <td width="50">Sexta-feira  </td>
+									    <td width="76">Sexta-feira  </td>
 									    <td width="20"><input type="checkbox" name="PSab" id="PSab" /></td>
-									    <td width="50">Sábado  </td>
+									    <td width="55">Sábado  </td>
 									    <td width="20"><input type="checkbox" name="PDom" id="PDom" /></td>
-									    <td width="50">Domingo  </td>
+									    <td width="73">Domingo  </td>
 									</tr>
 	
 								 </table>
@@ -402,10 +407,10 @@
 						  <tr>
 						    <td width="9%">Valor R$:</td>
 						    <td width="15%"><input name="valorBoleto" id="valorBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" onchange="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
-						    <td width="14%">Qtde. Parcelas </td>
-						    <td width="11%"><input name="qtdParcelaBoleto" id="qtdParcelaBoleto" type="text" maxlength="6" style="width:50px; text-align:center;" onchange="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
-						    <td width="16%">Valor Parcela R$:</td>
-						    <td width="35%"><input disabled="disabled" name="valorParcelaBoleto" id="valorParcelaBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" /></td>
+						    <td width="13%">Qtde. Parcelas </td>
+						    <td width="10%"><input name="qtdParcelaBoleto" id="qtdParcelaBoleto" type="text" maxlength="6" style="width:50px; text-align:center;" onchange="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
+						    <td width="15%">Valor Parcela R$:</td>
+						    <td width="38%"><input disabled="disabled" name="valorParcelaBoleto" id="valorParcelaBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" /></td>
 						  </tr>
 					 </table>
 	                 
@@ -416,27 +421,27 @@
 
                      <table width="100%" border="0" cellspacing="1" cellpadding="1">
 				        <tr>
-					    	<td colspan="6">Comissão da Cota:</td>
+					    	<td colspan="5"><strong>Comissão da Cota:</strong></td>
 					    </tr>
 					  	<tr>
-					    	<td width="10%">Valor R$:</td>
-					    	<td width="12%"><input maxlength="16" name="valorDesconto" id="valorDesconto" type="text" style="width:50px; text-align:right;" /></td>
-					    	<td width="15%">Desconto Atual:</td>
-					    	<td width="8%"><input maxlength="16" name="valorDescontoAtual" id="valorDescontoAtual" type="text" style="width:50px; text-align:right;" /></td>
-					    	<td width="3%">%</td>
-					    	<td width="52%">&nbsp;</td>
-					  	</tr>
+					    	<td width="6%">Valor R$:</td>
+					    	<td width="11%"><input maxlength="16" name="valorDesconto" id="valorDesconto" type="text" style="width:50px; text-align:right;" /></td>
+					    	<td width="11%">Desconto Atual:</td>
+					    	<td width="7%"><input maxlength="16" name="valorDescontoAtual" id="valorDescontoAtual" type="text" style="width:50px; text-align:right;" /></td>
+					    	<td width="65%">%</td>
+				    	</tr>
 					  	<tr>
 						    <td>Utilizar:</td>
 						    <td><input maxlength="16" name="utilizarDesconto" id="utilizarDesconto" type="text" style="width:50px; text-align:right;" /></td>
 						    <td>Desconto da Cota:</td>
 						    <td><input maxlength="16" name="descontoCotaDesconto" id="descontoCotaDesconto" type="text" style="width:50px; text-align:right;" /></td>
 						    <td>&nbsp;</td>
-						    <td>&nbsp;</td>
-					  	</tr>
+					    </tr>
 				     </table>
 
                  </div>
+                 </td>
+               </tr>
                         
             </tbody>
             
@@ -453,9 +458,9 @@
     <table>
 	    <tr>
 	       <td width="203">
-	           <span class="bt_confirmar_novo" title="Confirmar">
-	        	   <a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;">
-	        		   <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_negociar.png">Resgatar Valor Cau&ccedil;&atilde;o
+	           <span class="bt_novos">
+	        	   <a id="cotaGarantiaCaucaoLiquidaResgatar" href="javascript:;" rel="tipsy" title="Resgatar Valor Cau&ccedil;&atilde;o">
+	        		   <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_negociar.png">
 	        	   </a>
 	           </span>
 	       </td>
@@ -464,7 +469,7 @@
             
      
     
-    <fieldset>
+    <fieldset style="width:880px!important; margin:5px;">
     	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
     	
     	<div class="flexigrid" style="width: 740px; ">
@@ -478,7 +483,7 @@
     <br>
     
 	
-	<fieldset>
+	<fieldset style="width:880px!important; margin:5px;">
 	
    	    <legend>Caução Depositada na conta</legend>
     
@@ -518,7 +523,7 @@
 	
 	</div>
 	
-	<fieldset>
+	<fieldset style="width:880px!important; margin:5px;">
 
 	<legend>Informe</legend>
 	
@@ -554,14 +559,15 @@
          
            <td>
                
-           		<span class="bt_add"> 
-           			<a href="javascript:;" id="cotaGarantiaOutrosIncluirNovo">Incluir Novo</a>
+           		<span class="bt_novos"> 
+           			<a href="javascript:;" id="cotaGarantiaOutrosIncluirNovo" rel="tipsy" title="Incluir Novo">
+							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0"></a>
 				</span>
 				
 				<span class="bt_novos">
 				
-		  			<a href="javascript:;" id="cotaGarantiaOutrosSalvaEdicao" style="display:none;">
-		  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> Salvar</a>
+		  			<a href="javascript:;" id="cotaGarantiaOutrosSalvaEdicao" style="display:none;" rel="tipsy" title="Salvar">
+		  			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"> </a>
 		  			
 		  		</span>
                

@@ -127,83 +127,70 @@ $(function(){
      <p>Confirma a Geração arquivos Nf-e?</p>
 </div>
 </form>
-
-
-<div class="corpo">   
-    <br clear="all"/>
-    <br />
-   
-    <div class="container">
-    
-      <fieldset class="classFieldset">
-   	    <legend> Pesquisa NF-e Encalhe para Tratamento</legend>
-        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-  <tr>
-    <td width="31">Cota:</td>
-    <td width="120"><input type="text" id="codigoCota" name="codigoCota" style="width:80px; float:left; margin-right:5px;" onblur="consultaNFEEncalheTratamentoController.pesquisarCota();"/></td>
-    <td width="35">Nome:</td>    
-    <td width="259"><span name="nomeCota" id="nomeCota"></span></td>
-    <td width="35">Data:</td>
-    <td width="105"><input name="data" type="text" id="data" style="width:80px;"/></td>
-    <td width="42">Status:</td>
-    <td width="173">    
-		<select name="situacaoNfe" id="situacaoNfe" style="width:290px;" onchange="mostra_status(this.value);">
-		    <option value=""  selected="selected"></option>
-		    <c:forEach items="${comboStatusNota}" var="comboStatusNota">
-		      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
-		    </c:forEach>
-	    </select>
-    </td><td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.pesqEncalhe();">Pesquisar</a></span></td></tr>
-  </table>
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-      
-       <fieldset class="classFieldset">
-       	  <legend>NF-e Encalhe para Tratamento</legend>
-        <div class="grids" style="display:none;">
-		  
-          
-          <div id="notaRecebida" style="display:none;">
-          	<table class="notaRecebidaGrid"></table>
-          </div>
-          
-          <div id="pendenteRecEmissao" style="display:none;">
-          	<table class="encalheNfeGrid"></table>
-          </div>
-          
-          
-          
-			<span class="bt_novos" title="Gerar Arquivo">
-				<a href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=XLS">
-					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-					Arquivo
-				</a>
+	<div class="areaBts">
+		<div class="area">
+			
+			<span class="bt_novos"><a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.popup_nfe('0','0');" rel="tipsy" title="Registrar NF-e">
+           		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif"></a>
+            </span>
+           
+           <span class="bt_novos">
+           	<a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.popup_confirmar();" rel="tipsy" title="Gerar">
+           	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif"></a>
+           </span>
+			
+			<span class="bt_arq">
+			<a href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			</a>
 			</span>
-			<span class="bt_novos" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=PDF">
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-					Imprimir
 				</a>
 			</span>
-             
-            <span class="bt_confirmar_novo" title="Confirmar Cancelamento"><a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.popup_nfe('0','0');">
-            	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Registrar NF-e</a>
-            </span>
-            
-            <span class="bt_confirmar_novo" title="Confirmar Cancelamento">
-            	<a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.popup_confirmar();">
-            	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Gerar</a>
-            </span>
-            
-             
-             <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="consultaNFEEncalheTratamentoController.checkAll();" style="float:left; margin-right:25px;"/></span>
-             
 		</div>
-              
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-
-    </div>
-</div> 
-</body>
+	</div>
+    <div class="linha_separa_fields">&nbsp;</div>
+    <fieldset class="fieldFiltro">
+ 	    <legend> Pesquisa NF-e Encalhe para Tratamento</legend>
+      <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	  <tr>
+	    <td width="29">Cota:</td>
+	    <td width="89"><input type="text" id="codigoCota" name="codigoCota" style="width:80px; float:left; margin-right:5px;" onblur="consultaNFEEncalheTratamentoController.pesquisarCota();"/></td>
+	    <td width="41">Nome:</td>    
+	    <td width="241"><span name="nomeCota" id="nomeCota"></span></td>
+	    <td width="25">Data:</td>
+	    <td width="121"><input name="data" type="text" id="data" style="width:80px;"/></td>
+	    <td width="34">Status:</td>
+	    <td width="165">    
+			<select name="situacaoNfe" id="situacaoNfe" style="width:160px;" onchange="mostra_status(this.value);">
+			    <option value=""  selected="selected"></option>
+			    <c:forEach items="${comboStatusNota}" var="comboStatusNota">
+			      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
+			    </c:forEach>
+		    </select>
+	    </td><td width="159"><span class="bt_pesquisar"><a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.pesqEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td></tr>
+	  </table>
+ </fieldset>
+ <div class="linha_separa_fields">&nbsp;</div>
+     
+      <fieldset class="fieldGrid">
+      	  <legend>NF-e Encalhe para Tratamento</legend>
+       <div class="grids" style="display:none;">
+	  
+         
+         <div id="notaRecebida" style="display:none;">
+         	<table class="notaRecebidaGrid"></table>
+         </div>
+         
+         <div id="pendenteRecEmissao" style="display:none;">
+         	<table class="encalheNfeGrid"></table>
+         </div>        
+         <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="consultaNFEEncalheTratamentoController.checkAll();" style="float:left; margin-right:25px;"/></span>
+            
+	</div>
+             
+     </fieldset>
+ </body>
 </html>

@@ -43,12 +43,6 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	public void processMessage(Message message) {
 		
 		EMS0106Input input = (EMS0106Input) message.getBody();
-		if (input == null) {
-			this.ndsiLoggerFactory.getLogger().logError(
-					message, EventoExecucaoEnum.ERRO_INFRA, 
-					"NAO ENCONTROU o Arquivo");
-			return;
-		}
 		
 		String codigoPublicacao = input.getCodigoPublicacao();
 		Long edicao = input.getEdicao();
@@ -58,8 +52,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"NAO ENCONTROU ProdutoEdicao de codigo: " + codigoPublicacao
-					+ ", numeroEdicao: " + edicao);
+					"NAO ENCONTROU Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
 			return;
 		}
 			
@@ -67,9 +60,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 				produtoEdicao);
 		if (lancamento == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.RELACIONAMENTO,
-					"NAO ENCONTROU Lancamento para ProdutoEdicao: "
-					+ produtoEdicao.getId());
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
 			return;
 		}
 		
@@ -83,8 +75,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			estudo.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
-			estudo.setDataCadastro(new Date());
-			getSession().persist(estudo);
+			estudo.setDataCadastro(new Date());			
 			
 			// Associar novo estudo com o lançamento existente:
 			lancamento.setEstudo(estudo);
@@ -92,8 +83,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		} else {
 			
 			// Remoção dos EstudoCotas que ficaram desatualizados:
-			Query query = getSession().createQuery(
-					"DELETE EstudoCota e WHERE e.estudo = :estudo");
+			Query query = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo = :estudo");
 			query.setParameter("estudo", estudo);
 			query.executeUpdate();
 			estudo.setEstudoCotas(Collections.<EstudoCota>emptySet());
@@ -107,6 +97,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteracao da QUANTIDADE REPARTE do Estudo: "
 								+ estudo.getId()
+								+ ", do Produto: " + estudo.getProdutoEdicao().getProduto().getCodigo()
+								+ " / Edicao: " + estudo.getProdutoEdicao().getNumeroEdicao().toString()
 								+ ", de: " + qtdeReparteAtual
 								+ " para: " + qtdeReparteCorrente);
 				estudo.setQtdeReparte(qtdeReparteCorrente);

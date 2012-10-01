@@ -34,6 +34,8 @@ public abstract class Constantes {
 	
 	public static final String DATA_FMT_PESQUISA_MYSQL = "YYYY-MM-DD";
 	
+	public static final Integer MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL = 9999;
+	
 }
 
 

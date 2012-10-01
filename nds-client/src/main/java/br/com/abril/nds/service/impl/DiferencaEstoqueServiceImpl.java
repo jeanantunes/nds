@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,12 +27,10 @@ import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
-import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
@@ -331,24 +328,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 	}
 	
-	private void processarMovimentoEstoque(Diferenca diferenca, 
-								    	   Long idUsuario) {
-		
-		TipoMovimentoEstoque tipoMovimentoEstoque =
-			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
-		
-		MovimentoEstoque movimentoEstoque =
-			this.movimentoEstoqueService.gerarMovimentoEstoque(
-				new Date(), diferenca.getProdutoEdicao().getId(), idUsuario,
-					diferenca.getQtde(), tipoMovimentoEstoque);
-		
-		if (diferenca.getLancamentoDiferenca() != null) {
-
-			diferenca.getLancamentoDiferenca().setMovimentoEstoque(movimentoEstoque);
-		}
-	}
-	
 	private void processarRateioCotas(Diferenca diferenca,
 									  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 									  Long idUsuario) {
@@ -396,6 +375,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			}
 			
 			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
+			
+			rateioDiferenca.setDataNotaEnvio(rateioCotaVO.getDataEnvioNota());
 			
 			rateioDiferenca = this.rateioDiferencaRepository.merge(rateioDiferenca);
 			
@@ -480,14 +461,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				rateioVO.setNomeCota(rateio.getCota().getPessoa().getNome());
 				rateioVO.setNumeroCota(rateio.getCota().getNumeroCota());
 				rateioVO.setQuantidade(rateio.getQtde());
+				rateioVO.setDataEnvioNota(rateio.getDataNotaEnvio());
 				
 				Long reparteCota = 
 						movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota
 							(rateio.getDiferenca().getProdutoEdicao().getId(), rateio.getCota().getNumeroCota());
 				
 				rateioVO.setReparteCota(new BigInteger(reparteCota.toString()));
-				
-				rateioVO.setReparteAtualCota(rateioVO.getReparteCota().subtract(rateio.getQtde()));
 				
 				listaRetorno.add(rateioVO);
 			}
@@ -578,4 +558,24 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		diferencaEstoqueRepository.removerPorId(idDiferenca);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
+			  										 TipoEstoque tipoEstoque, Date dataMovimento) {
+		
+		return this.diferencaEstoqueRepository.obterQuantidadeTotalDiferencas(
+						codigoProduto, numeroEdicao, tipoEstoque, dataMovimento);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean existeDiferencaPorNota(Long idProdutoEdicao,
+										  Date dataNotaEnvio,
+										  Integer numeroCota) {
+		
+		return this.diferencaEstoqueRepository.existeDiferencaPorNota(
+						idProdutoEdicao, dataNotaEnvio, numeroCota);
+	}
+	
 }

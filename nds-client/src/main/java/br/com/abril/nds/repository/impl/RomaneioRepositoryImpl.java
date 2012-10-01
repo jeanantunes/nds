@@ -135,8 +135,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		hql.append(" JOIN cota.pessoa as pessoa ");
 		hql.append(" JOIN cota.box as box ");
-		hql.append(" JOIN box.roteiros as roteiro ");
-		hql.append(" JOIN roteiro.rotas as rota ");
+		hql.append(" JOIN cota.pdvs as pdv ");
+		hql.append(" JOIN pdv.rotas as rota ");
+		hql.append(" JOIN rota.roteiro as roteiro ");
 		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movimentoEstoque ");
 		hql.append(" JOIN movimentoEstoque.listaItemNotaEnvio as itemNota ");
 		
@@ -270,7 +271,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	public Integer buscarTotal(FiltroRomaneioDTO filtro, boolean countCotas) {
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count( "+ (countCotas ? "distinct" : "") +"        cota.numeroCota) ");
+		hql.append("select count( "+ (countCotas ? "distinct" : "") +" cota.numeroCota) ");
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		

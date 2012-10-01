@@ -5,7 +5,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoFeriado;
 
-public class CalendarioFeriadoDTO implements Serializable {
+public class CalendarioFeriadoDTO implements Serializable, Comparable<CalendarioFeriadoDTO> {
 
 	private Date dataFeriado;
 	
@@ -197,6 +197,16 @@ public class CalendarioFeriadoDTO implements Serializable {
 	public void setDescricaoFeriado(String descricaoFeriado) {
 		this.descricaoFeriado = descricaoFeriado;
 	}
-	
+
+	@Override
+	public int compareTo(CalendarioFeriadoDTO outroCalendarioFeriadoDTO) {
+		if (outroCalendarioFeriadoDTO.getDataFeriado().before(this.getDataFeriado())) {
+			return 1;
+		} else if (outroCalendarioFeriadoDTO.getDataFeriado().after(this.getDataFeriado())) {
+			return -1;
+		} else {
+			return 0;
+		}
+	}
 	
 }

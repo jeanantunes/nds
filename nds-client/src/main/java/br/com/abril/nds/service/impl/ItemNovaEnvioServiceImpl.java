@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.service.ItemNotaEnvioService;
 
@@ -19,9 +19,18 @@ public class ItemNovaEnvioServiceImpl implements ItemNotaEnvioService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ItemNotaEnvio> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota) {
+	public List<DetalheItemNotaFiscalDTO> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota) {
 		
 		return itemNotaEnvioRepository.obterItensNotaEnvio(dataEmissao, numeroCota);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public DetalheItemNotaFiscalDTO obterItemNotaEnvio(Date dataEmissao,
+													   Integer numeroCota,
+													   Long idProdutoEdicao) {
+		
+		return itemNotaEnvioRepository.obterItemNotaEnvio(dataEmissao, numeroCota, idProdutoEdicao);
 	}
 	
 }

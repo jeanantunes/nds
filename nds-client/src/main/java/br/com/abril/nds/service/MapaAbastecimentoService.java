@@ -84,4 +84,70 @@ public interface MapaAbastecimentoService {
 	MapaProdutoCotasDTO obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
 			FiltroMapaAbastecimentoDTO filtro);
 	
+	/**
+	 * Obtém dados do Mapa de Abastecimento por Box/Rota
+	 * 
+	 * @param filtro
+	 * @return List<ProdutoAbastecimentoDTO> - coleção de {@link br.com.abril.nds.dto.ProdutoAbastecimentoDTO}
+	 */
+	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBoxRota(FiltroMapaAbastecimentoDTO filtro);
+	
+	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaAbastecimentoPorBoxRota"
+	 * 
+	 * @param filtro
+	 * @return Long - Quantidade
+	 */
+	Long countObterMapaAbastecimentoPorBoxRota(FiltroMapaAbastecimentoDTO filtro);
+	
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento por Cota
+	 * 
+	 * @param filtro
+	 * @return List<ProdutoAbastecimentoDTO> - coleção de {@link br.com.abril.nds.dto.ProdutoAbastecimentoDTO}
+	 */
+	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro);
+	
+	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaAbastecimentoPorCota"
+	 * 
+	 * @param filtro
+	 * @return Long - Quantidade
+	 */
+	Long countObterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento por Produto Edição
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaAbastecimentoPorProdutoEdicao"
+	 * 
+	 * @param filtro
+	 * @return Long - Quantidade
+	 */
+	Long countObterMapaAbastecimentoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro);
+
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento por com quebra por Cota
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public List<ProdutoAbastecimentoDTO> obterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(
+			FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaDeImpressaoPorProdutoQuebrandoPorCota"
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	Long countObterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
 }

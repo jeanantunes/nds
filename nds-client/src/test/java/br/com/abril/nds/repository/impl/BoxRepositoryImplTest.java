@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -65,7 +64,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		cotaF.setSugereSuspensao(true);
 		save(cotaF);
 		
-		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaF,1);
+		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaF);
 		save(pdv);
 		
 		Cota cotaJ = Fixture
@@ -74,30 +73,31 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		save(cotaJ);
 		
-		roteirizacao = Fixture.criarRoteirizacao(box);
+		Box boxLancamento = Fixture.criarBox(9999, "Box 9999", TipoBox.LANCAMENTO);
+		save(boxLancamento);
+		
+		roteirizacao = Fixture.criarRoteirizacao(boxLancamento);
 		save(roteirizacao);
 		
-		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,box,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 		
-		rota = Fixture.rota("005", "Rota 005",roteiro,Arrays.asList(pdv));
+		
+		rota = Fixture.rota("005", "Rota 005",roteiro);
 		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1);
 		save(rota);
 		
-		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao,box,TipoRoteiro.NORMAL);
+		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro);
 		
-		rota = Fixture.rota("004", "Rota 004",roteiro,Arrays.asList(pdv));
+		rota = Fixture.rota("004", "Rota 004", roteiro);
 		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1);
 		save(rota);
 		
-		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ,2);
+		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ);
 		save(pdv);
-		
-		roteirizacao = Fixture.criarRoteirizacao(box);
-		save(roteirizacao);
-		
-
 	}
 
 	@Test
@@ -124,7 +124,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testQuantidade() {
 		long quantidade = boxRepository.quantidade(null, TipoBox.LANCAMENTO);
 
-		Assert.assertEquals(quantidade, 100l);
+		Assert.assertEquals(101, quantidade);
 
 	}
 

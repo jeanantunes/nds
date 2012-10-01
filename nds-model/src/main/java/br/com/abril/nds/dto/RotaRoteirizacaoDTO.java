@@ -1,10 +1,12 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RotaRoteirizacaoDTO implements Serializable {
 
-	private static final long serialVersionUID = -4264600745134340990L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	
@@ -13,19 +15,16 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	private String nome;
 	
 	private Boolean selecionado;
-
+	
+	private List<PdvRoteirizacaoDTO> pdvs;
 	
 	public RotaRoteirizacaoDTO() {
-		
 	}
 	
-	public RotaRoteirizacaoDTO(Long id, Integer ordem, String nome,
-			Boolean selecionado) {
-		super();
+	public RotaRoteirizacaoDTO(Long id, Integer ordem, String nome) {
 		this.id = id;
 		this.ordem = ordem;
 		this.nome = nome;
-		this.selecionado = selecionado;
 	}
 
 	/**
@@ -83,5 +82,115 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	/**
+	 * @return the listaPdv
+	 */
+	public List<PdvRoteirizacaoDTO> getPdvs() {
+		return pdvs;
+	}
+
+	/**
+	 * @param listaPdv the listaPdv to set
+	 */
+	public void setPdvs(List<PdvRoteirizacaoDTO> pdvs) {
+		this.pdvs = pdvs;
+	}
+	
+	/**
+	 * Adiciona um PDV à Rota
+	 * @param pdv: PDV para inclusão
+	 */
+	public void addPdv(PdvRoteirizacaoDTO pdv) {
+		if (pdvs == null) {
+			pdvs = new ArrayList<PdvRoteirizacaoDTO>();
+		}
+		pdvs.add(pdv);
+	}
+	
+	/**
+	 * Adiciona novos PDV's à Rota
+	 * @param listaPdv: List<PdvRoteirizacaoDTO> para inclusão
+	 */
+	public void addAllPdv(List<PdvRoteirizacaoDTO> listaPdv){
+		if (pdvs == null){
+			pdvs = new ArrayList<PdvRoteirizacaoDTO>();
+		}
+		pdvs.addAll(listaPdv);
+	}
+
+
+	/**
+	 * Altera a ordem do PDV 
+	 * @param idPdv identificador do PDV para alteração
+	 * @param ordem nova ordem do PDV
+	 * @return true indicando que a alteração de ordem foi executada
+	 * com sucesso, false caso a ordem não for válida
+	 */
+	public boolean alterarOrdemPdv(Long idPdv, Integer ordem) {
+	    PdvRoteirizacaoDTO pdvAlteracao = getPdv(idPdv);
+	    PdvRoteirizacaoDTO pdvExistente = getPdvByOrdem(ordem);
+	    if (pdvExistente != null && !pdvAlteracao.equals(pdvExistente)) {
+	        return false;
+	    }
+	    pdvAlteracao.setOrdem(ordem);
+	    return true;
+	}
+	
+	/**
+	 * Recupera o PDV pelo identificador
+	 * @param idPdv identificador do PDV para recuperação
+	 * @return {@link PdvRoteirizacaoDTO}  correspondente ao identificador
+	 * recebido ou null caso o PDV não for encontrado
+	 */
+	public PdvRoteirizacaoDTO getPdv(Long idPdv) {
+	    for (PdvRoteirizacaoDTO pdv : getPdvs()) {
+	        if (pdv.getId().equals(idPdv)) {
+	            return pdv;
+	        }
+	    }
+	    return null;
+	}
+	
+	/**
+	 * Recupera o PDV pela ordem
+	 * @param ordem ordem do PDV para recuperação
+	 * @return {@link PdvRoteirizacaoDTO} com a ordem recebida ou null
+	 * caso não exista um PDV com a ordem
+	 */
+	public PdvRoteirizacaoDTO getPdvByOrdem(Integer ordem) {
+	    for (PdvRoteirizacaoDTO pdv : getPdvs()) {
+            if (pdv.getOrdem().equals(ordem)) {
+                return pdv;
+            }
+        }
+        return null;
+	}
+
+	@Override
+	public int hashCode() {
+	    final int prime = 31;
+	    int result = 1;
+	    result = prime * result + ((id == null) ? 0 : id.hashCode());
+	    return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RotaRoteirizacaoDTO other = (RotaRoteirizacaoDTO) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
 	
 }

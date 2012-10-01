@@ -73,6 +73,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoEntrega;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -713,7 +714,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		dto.setAssistComercial(parametro.getAssistenteComercial());
 		dto.setGerenteComercial(parametro.getGerenteComercial());
-		dto.setDescricaoTipoEntrega((parametro.getTipoEntrega()==null) ? null : parametro.getTipoEntrega().getDescricaoTipoEntrega());
+		
+		dto.setDescricaoTipoEntrega(parametro.getDescricaoTipoEntrega());
+		
 		dto.setObservacao(parametro.getObservacao());
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
@@ -753,7 +756,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		return listaFornecedores;
 	}
-
+	
 	@Override
 	@Transactional
 	public void salvarDistribuicaoCota(DistribuicaoDTO dto) throws FileNotFoundException, IOException {
@@ -772,14 +775,7 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
 		parametros.setGerenteComercial(dto.getGerenteComercial());
-		
-		if(dto.getDescricaoTipoEntrega() == null) {
-			parametros.setTipoEntrega(null);
-		} else {
-			parametros.setTipoEntrega(
-				tipoEntregaRepository.buscarPorDescricaoTipoEntrega(dto.getDescricaoTipoEntrega()));
-		}
-			
+		parametros.setDescricaoTipoEntrega(dto.getDescricaoTipoEntrega());
 		parametros.setObservacao(dto.getObservacao());
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
@@ -1078,6 +1074,13 @@ public class CotaServiceImpl implements CotaService {
 		
 		ParametroSistema raiz = 
 				this.parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);					
+		
+		if(	raiz == null || raiz.getValor() == null || 
+			pathDocumento == null || pathDocumento.getValor() == null) {
+			
+			return;
+			
+		}
 		
 		String path = (raiz.getValor() + pathDocumento.getValor() + numCota).replace("\\", "/");
 		
@@ -1911,14 +1914,6 @@ public class CotaServiceImpl implements CotaService {
 					dto.setCidadeEntrega(enderecoPDV.getCidade());
 				}
 			}
-		}
-		
-		if (cota.getParametroDistribuicao() != null &&
-				cota.getParametroDistribuicao().getTipoEntrega() != null &&
-				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade() != null){
-		
-			dto.setPeriodicidade(
-				cota.getParametroDistribuicao().getTipoEntrega().getPeriodicidade().getDescricao());
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();

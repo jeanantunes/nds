@@ -20,7 +20,10 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Integer codigoBox;
 	private Long idProdutoEdicao;
 	private Integer codigoCota;
+	private String nomeCota;
 	private Integer sequenciaMatriz;
+	private String totalBox;
+	private Integer totalProduto;
 	
 	public ProdutoAbastecimentoDTO() {
 		
@@ -150,6 +153,46 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	public void setCodigoCota(Integer codigoCota) {
 		this.codigoCota = codigoCota;
 	}
-	
-	
+
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	/**
+	 * @return the totalBox
+	 */
+	public String getTotalBox() {
+		return totalBox;
+	}
+
+	/**
+	 * @param totalBox the totalBox to set
+	 */
+	public void setTotalBox(BigDecimal totalBox) {
+		this.totalBox = CurrencyUtil.formatarValor(totalBox);
+	}
+
+	/**
+	 * @return the totalProduto
+	 */
+	public Integer getTotalProduto() {
+		return totalProduto;
+	}
+
+	/**
+	 * @param totalProduto the totalProduto to set
+	 */
+	public void setTotalProduto(Long totalProduto) {
+		this.totalProduto = totalProduto.intValue();
+	}
 }

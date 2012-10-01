@@ -25,7 +25,7 @@ public class Roteirizacao {
 	private Long id;
 	
 	@OneToOne
-	@JoinColumn(name = "BOX_ID")
+	@JoinColumn(name = "BOX_ID", unique = true)
 	private Box box;
 	
 	@OneToMany
@@ -68,4 +68,25 @@ public class Roteirizacao {
 		this.roteiros = roteiros;
 	}
 
+	/**
+	 * Adiciona um novo roteiro à roteirização
+	 * @param roteiro: Roteiro para inclusão
+	 */
+	public void addRoteiro(Roteiro roteiro) {
+		if (roteiros == null) {
+			roteiros = new ArrayList<Roteiro>();
+		}
+		roteiros.add(roteiro);
+	}
+	
+	/**
+	 * Adiciona novos Roteiros à Roteirizacao
+	 * @param listaRoteiro: List<Roteiro> para inclusão
+	 */
+	public void addAllRoteiro(List<Roteiro> listaRoteiro){
+		if (roteiros == null){
+			roteiros = new ArrayList<Roteiro>();
+		}
+		roteiros.addAll(listaRoteiro);
+	}
 }

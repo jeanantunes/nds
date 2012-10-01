@@ -185,7 +185,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class);
 		criteria.createAlias("rota", "rota") ;
 		criteria.createAlias("rota.roteiro", "roteiro") ;
-		criteria.createAlias("roteiro.box", "box") ;
+		criteria.createAlias("roteiro.roteirizacao", "roteirizacao") ;
+		criteria.createAlias("roteirizacao.box", "box") ;
 		criteria.createAlias("pdv", "pdv") ;
 		criteria.createAlias("pdv.cota", "cota") ;
 		criteria.createAlias("cota.pessoa", "pessoa") ;
@@ -225,7 +226,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" roteiro.id as idRoteiro, 	")
 			.append(" cota.id as idCota,		")			
 			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome , ")
-			.append(" cota.numeroCota as numeroCota ");
+			.append(" cota.numeroCota as numeroCota, ")
+		    .append(" roteirizacao.id as idRoteirizacao ");
 			
 		hql.append( getHqlWhere(filtro));
 	
@@ -316,12 +318,13 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		hql.append("from Roteirizacao roteirizacao ")
 			.append(" join roteirizacao.roteiros roteiro " )
-			.append(" join roteiro.box box ")
+			.append(" join roteirizacao.box box ")
 			.append(" join roteiro.rotas rota " )
-			.append(" Join rota.pdvs pdv ")
+			.append(" Join rota.rotaPDVs rotaPdv ")
+			.append(" Join rotaPdv.pdv pdv ")
 			.append(" Join pdv.cota cota ")
 			.append(" join cota.pessoa pessoa ")
-			.append(" where roteiro.box.id = box.id "); 
+			.append(" where roteirizacao.box.id = box.id "); 
 			
 		if(filtro.getIdBox()!= null){
 			hql.append(" and box.id =:idBox ");
@@ -354,10 +357,11 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		.append(" Join box.cotas cota   			")
 		.append(" Join cota.pessoa pessoa 			")
 		.append(" join cota.pdvs pdv 		        ")
-		.append(" join pdv.rotas rota 				")
+		.append(" join pdv.rotas rotaPdv    		")
+		.append(" join rotaPdv.rota rota            ")
 		.append(" join rota.roteiro roteiro 		")
 		
-		.append(" where roteiro.box.id = box.id 	"); 
+		.append(" where roteirizacao.box.id = box.id 	"); 
 			
 		if(idBox!= null){
 			hql.append(" and box.id =:idBox ");
@@ -478,7 +482,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			List<Long> idsBoxes) {
 		
 		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
-		criteria.createAlias("roteiro.box","box");
+		criteria.createAlias("roteiro.roteirizacao","roteirizacao");
+		criteria.createAlias("roteirizacao.box","box");
 		criteria.add(Restrictions.ilike("roteiro.descricaoRoteiro", "%" + nome.toLowerCase() + "%"));
 		criteria.add(Restrictions.in("box.id", idsBoxes));
 		
@@ -519,21 +524,41 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 	
 	/**
-	 * Obtem Roteirizacao por Box e Cota
-	 * @param idBox
-	 * @param numeroCota
-	 * @return Roteirizacao
+	 * {@inheritDoc}
 	 */
 	@Override
-	public Roteirizacao obterRoteirizacaoPorBoxECota(Long idBox, Integer numeroCota) {
-		
+	public Roteirizacao obterRoteirizacaoPorBox(Long idBox) {
 		Criteria criteria  = getSession().createCriteria(Roteirizacao.class, "roteirizacao");
 		criteria.createAlias("roteirizacao.box","box");
-		criteria.createAlias("box.cotas", "cota");
 		criteria.add(Restrictions.eq("box.id", idBox));
-		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
-		
 		return (Roteirizacao) criteria.uniqueResult();
+	}
+
+	/**
+	 * Obtém o Box de um PDV
+	 * @param idPdv
+	 * @return
+	 */
+	@Override
+	public Box obterBoxDoPDV(Long idPdv) {
+		
+        StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select b from Box b, Roteirizacao r ");
+		hql.append(" join r.roteiros roteiro ");
+		hql.append(" join roteiro.rotas rota ");
+		hql.append(" join rota.rotaPDVs rotaPdv ");
+		hql.append(" join rotaPdv.pdv pdv ");
+		hql.append(" where r.box = b ");
+		hql.append(" and  pdv.id = :idPdv ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+
+		query.setParameter("idPdv", idPdv);
+		
+		query.setMaxResults(1);
+		
+		return (Box) query.uniqueResult();
 	}
 
 }
