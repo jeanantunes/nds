@@ -14,6 +14,8 @@ import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
+import br.com.abril.nds.util.StringUtil;
 
 
 public class RoteirizacaoDTO implements Serializable{
@@ -41,12 +43,23 @@ public class RoteirizacaoDTO implements Serializable{
 	 * Box disponíveis
 	 */
 	private List<BoxRoteirizacaoDTO> boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
+	
+	/**
+     * Todos Box
+     */
+    private List<BoxRoteirizacaoDTO> todosBox = new ArrayList<BoxRoteirizacaoDTO>();
+    
+    /**
+     * Todos os roteiros
+     */
+    private List<RoteiroRoteirizacaoDTO> todosRoteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
 
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
         this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
         this.boxDisponiveis.addAll(boxDisponiveis);
+        this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }
 	
 
@@ -124,6 +137,7 @@ public class RoteirizacaoDTO implements Serializable{
 			roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
 		}
 		roteiros.add(roteiro);
+		todosRoteiros.add(roteiro);
 	}
 	
 	/**
@@ -180,8 +194,9 @@ public class RoteirizacaoDTO implements Serializable{
                         rota.getId(), rota.getOrdem(), rota.getDescricaoRota());
                 roteiroDTO.addRota(rotaDTO);
 
-                for(PDV pdv : rota.getPdvs()){
-                    Cota cota = pdv.getCota();
+                for(RotaPDV rotaPdv : rota.getRotaPDVs()){
+                    PDV pdv = rotaPdv.getPdv();
+                    Cota cota = rotaPdv.getPdv().getCota();
                     String nomeCota = cota.getPessoa().getNome();
                     OrigemEndereco origemEndereco = null;
 
@@ -191,16 +206,16 @@ public class RoteirizacaoDTO implements Serializable{
                         endereco = enderecoPdvEntrega .getEndereco();
                         origemEndereco = OrigemEndereco.PDV;
                     } else {
-                        EnderecoCota enderecoPrincipalCota = pdv.getCota().getEnderecoPrincipal();
+                        EnderecoCota enderecoPrincipalCota = cota.getEnderecoPrincipal();
                         if (enderecoPrincipalCota != null){
                             endereco = enderecoPrincipalCota.getEndereco();
                         }    
                         origemEndereco = OrigemEndereco.COTA;
                     }
                     PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(
-                            pdv.getId(), pdv.getNome(), origemEndereco,
+                            rotaPdv.getId(), pdv.getNome(), origemEndereco,
                             endereco, cota.getNumeroCota(), nomeCota,
-                            pdv.getOrdem());
+                            rotaPdv.getOrdem());
                     rotaDTO.addPdv(pdvDTO);
                 }
             }
@@ -226,7 +241,7 @@ public class RoteirizacaoDTO implements Serializable{
      */
 	public RotaRoteirizacaoDTO getRota(Long id) {
 	    RotaRoteirizacaoDTO rota = null;
-	    for(RoteiroRoteirizacaoDTO roteiro : roteiros) {
+	    for(RoteiroRoteirizacaoDTO roteiro : todosRoteiros) {
 	        rota = roteiro.getRota(id);
 	        if (rota != null) {
 	            return rota;
@@ -250,6 +265,64 @@ public class RoteirizacaoDTO implements Serializable{
 	    }
 	    this.roteiros.clear();
 	}
+	
+    /**
+     * Filtra o box pelo nome
+     * @param nomeBox nome do box para filtragem
+     */
+	public void filtarBox(String nomeBox) {
+        if (!StringUtil.isEmpty(nomeBox)) {
+            List<BoxRoteirizacaoDTO> filtrados = new ArrayList<BoxRoteirizacaoDTO>();
+            for (BoxRoteirizacaoDTO box : todosBox) {
+                if (box.getNome().toUpperCase()
+                        .startsWith(nomeBox.toUpperCase())) {
+                    filtrados.add(box);
+                }
+            }
+            boxDisponiveis = filtrados;
+        } else {
+            boxDisponiveis.clear();
+            boxDisponiveis.addAll(todosBox);
+        }
+    }
+    
+    /**
+     * Filtra os roteiros pela descricao
+     * @param descricaoRoteiro descrição do roteiro para filtragem
+     */
+    public void filtarRoteiros(String descricaoRoteiro) {
+        if (!StringUtil.isEmpty(descricaoRoteiro)) {
+            List<RoteiroRoteirizacaoDTO> filtrados = new ArrayList<RoteiroRoteirizacaoDTO>();
+            for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros) {
+                if (roteiro.getNome().toUpperCase()
+                        .startsWith(descricaoRoteiro.toUpperCase())) {
+                    filtrados.add(roteiro);
+                }
+            }
+            roteiros = filtrados;
+        } else {
+            roteiros.clear();
+            roteiros.addAll(todosRoteiros);
+        }
+    }
+
+    /**
+     * Recupera o roteiro pelo identificador
+     * 
+     * @param idRoteiro
+     *            identificador do roteiro
+     * @return roteiro com o identificador fornecido ou null caso não exista
+     *         roteiro com o identificador fornecido
+     */
+    public RoteiroRoteirizacaoDTO getRoteiro(Long idRoteiro) {
+        for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros) {
+            if (roteiro.getId().equals(idRoteiro)) {
+                return roteiro;
+            }
+        }
+        return null;
+    }
+    
     
 	/**
      * Tipo da edição tela
@@ -265,7 +338,5 @@ public class RoteirizacaoDTO implements Serializable{
          */
         ALTERACAO;
     }
-
-
 
 }

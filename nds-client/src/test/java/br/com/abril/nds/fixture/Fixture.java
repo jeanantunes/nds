@@ -103,6 +103,7 @@ import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
@@ -2432,13 +2433,13 @@ public class Fixture {
 		
 		return parametro;
 	}
-	public static Rota rota(String codigoRota, String descricaoRota, Roteiro roteiro, List<PDV> pdvs){
+	
+	public static Rota rota(String codigoRota, String descricaoRota, Roteiro roteiro){
 		Rota rota = new Rota();
 		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
 		rota.setOrdem(0);
 		rota.setRoteiro(roteiro);
-		rota.setPdvs(pdvs);
 		return rota;
 	}
 	
@@ -2739,8 +2740,7 @@ public class Fixture {
 							   Boolean principal, StatusPDV status,
 							   CaracteristicasPDV caracteristicas,
 							   LicencaMunicipal licencaMunicipal, 
-							   SegmentacaoPDV segmentacao,
-							   Integer ordem){
+							   SegmentacaoPDV segmentacao){
 
 		PDV pdv = new PDV();
 		pdv.setNome(nome);
@@ -2753,9 +2753,6 @@ public class Fixture {
 		pdv.setLicencaMunicipal(licencaMunicipal);
 		
 		pdv.setSegmentacao(segmentacao);
-		
-		pdv.setOrdem(ordem);
-		
 		return pdv;
 	}
 	
@@ -3008,15 +3005,12 @@ public class Fixture {
 		return roteiro;
 	}
 	
-	public static  PDV criarPDVPrincipal(String nome, Cota cota,Integer ordem){
-		
+	public static  PDV criarPDVPrincipal(String nome, Cota cota){
 		PDV pdv = new PDV();
 		pdv.setNome(nome);
 		pdv.setCota(cota);
 		pdv.setCaracteristicas(new CaracteristicasPDV());
 		pdv.getCaracteristicas().setPontoPrincipal(true);
-		pdv.setOrdem(ordem);
-		
 		return pdv;
 	}
 

@@ -26,7 +26,8 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 		
 		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
 				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
-				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao "
+				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao, "
+				   + " produtoEdicao.pacotePadrao as pacotePadrao "
 				   + " from ItemNotaEnvio itemNotaEnvio "
 				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
 				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
@@ -56,7 +57,8 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 		
 		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
 				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
-				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao "
+				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao, "
+				   + " produtoEdicao.pacotePadrao as pacotePadrao "
 				   + " from ItemNotaEnvio itemNotaEnvio "
 				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
 				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "

@@ -1,9 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.taglibs.standard.lang.jstl.ArraySuffix;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +49,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
 		save(cotaManoel);
 				
-		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel,1);
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
 		save(pdvManoel);
 				
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
@@ -63,7 +61,8 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		rota = Fixture.rota("005", "Rota 005", roteiro, Arrays.asList(pdvManoel));
+		rota = Fixture.rota("005", "Rota 005", roteiro);
+		rota.addPDV(pdvManoel, 1);
 		rota.setRoteiro(roteiro);
 		save(rota);
 		
@@ -73,7 +72,8 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		roteiroTCD = Fixture.criarRoteiro("TCD", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiroTCD);
 		
-		rota10 = Fixture.rota("001", "Rota 001", roteiroTCD, Arrays.asList(pdvManoel));
+		rota10 = Fixture.rota("001", "Rota 001", roteiroTCD);
+		rota10.addPDV(pdvManoel, 1);
 		rota10.setRoteiro(roteiroTCD);
 		save(rota10);
 		

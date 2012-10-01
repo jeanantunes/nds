@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -330,15 +329,17 @@ public class GeracaoNotaEnvioServiceImplTest extends AbstractRepositoryImplTest 
 		Roteiro roteiro1 = Fixture.criarRoteiro("",roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro1);
 		
-		PDV pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel, 1);
-		save(pdvManoel);
-		
-		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1, Arrays.asList(pdvManoel));
-		rota1.setRoteiro(roteiro1);
-		save(rota1);
-		
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box1);
 		save(cotaManoel);
+
+		PDV pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		save(pdvManoel);
+		
+		rota1 = Fixture.rota("ROTA01", "Rota 1", roteiro1);
+		rota1.setRoteiro(roteiro1);
+		rota1.addPDV(pdvManoel, 1);
+		save(rota1);
+		
 		
 		Endereco enderecoCotaManotel = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", "50", "Centro", "Mococa", "SP",1);

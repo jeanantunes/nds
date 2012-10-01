@@ -485,7 +485,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				.append(" JOIN produtoEdicao.produto produto ")
 				.append(" JOIN produtoEdicao.lancamentos lancamento ")
 				.append(" JOIN cota.pdvs pdv ")
-				.append(" LEFT JOIN pdv.rotas rota  ")
+				.append(" LEFT JOIN pdv.rotas rotaPdv  ")
+				.append(" LEFT JOIN rotaPdv.rota rota  ")
 				.append(" LEFT JOIN rota.roteiro roteiro ")
 				.append(" LEFT JOIN roteiro.roteirizacao roteirizacao ");
 
