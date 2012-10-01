@@ -328,6 +328,7 @@ var roteirizacao = $.extend(true, {
                 height : 140,
                 disableSelect: true
             });
+            roteirizacao.limparGridRotas();
 
         },
 
@@ -414,6 +415,7 @@ var roteirizacao = $.extend(true, {
                     return true;
                 }
             });
+            roteirizacao.limparGridBox();
         },
 
         popularGridBox : function(data) {
@@ -543,6 +545,7 @@ var roteirizacao = $.extend(true, {
                 height : 140,
                 disableSelect: true
             });
+            roteirizacao.limparGridRoteiros();
 
         },
 
@@ -980,6 +983,7 @@ var roteirizacao = $.extend(true, {
             width : 875,
             height : 150
         });
+        roteirizacao.limparGridCotasRota();
     },
     
     selecionarTodosPdvs : function() {
@@ -1951,8 +1955,10 @@ var roteirizacao = $.extend(true, {
 	    },
     
 	    novaRoteirizacao : function() {
-	    	
-	        roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
+            roteirizacao.idBox = "";
+            roteirizacao.idRoteiro = "";
+            roteirizacao.idRota = "";
+            roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
 	        roteirizacao.prepararPopupRoteirizacao();
 	    },
 	        
@@ -2002,7 +2008,7 @@ var roteirizacao = $.extend(true, {
 	    },
     
 	    prepararPopupRoteirizacao : function(){
-	        roteirizacao.iniciarGridBox();
+  	        roteirizacao.iniciarGridBox();
             if (roteirizacao.isNovo()) {
                 $('#nomeBox', roteirizacao.workspace).prop('disabled', false);
                 $('#lnkPesquisarBox', roteirizacao.workspace).click(function() {roteirizacao.pesquisarBox()});
@@ -2501,8 +2507,6 @@ var roteirizacao = $.extend(true, {
 			});	
 			      
 		}
-		
-
 		
 		
 }, BaseController);
