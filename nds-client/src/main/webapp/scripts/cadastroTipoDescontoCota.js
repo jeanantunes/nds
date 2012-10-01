@@ -44,8 +44,7 @@ var descontoCotaController = $.extend(true,{
 		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEspecifico",
 				"numeroCota=" + cotaEspecifica	+				
 				"&desconto=" + descontoEspecifico + "&" +
-				fornecedores
-				,				   
+				fornecedores,				   
 				function(result) {
 			           
 						 if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      

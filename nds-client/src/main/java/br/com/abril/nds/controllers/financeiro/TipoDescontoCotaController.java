@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.singleton.VerificadorProgressoGravacaoDescontoGeralSingleton;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
@@ -93,7 +94,18 @@ public class TipoDescontoCotaController {
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
+
+				VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(true);
+				
+				try {
+					descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
+				} catch(ValidacaoException e) {
+					VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(false);
+					throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+				}
+				
+				VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(false);
+			
 			}
 		});
 		
@@ -456,4 +468,11 @@ public class TipoDescontoCotaController {
 		
 		result.use(FlexiGridJson.class).from(lista).total(fornecedores.size()).page(1).serialize();
 	}
+
+	@Get
+	@Path("/verificaProgressoGravacaoDescontoGeral")
+	public void verificaProgressoGravacaoDescontoGeral() {
+		result.use(Results.json()).from(VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().isAtivo(),"result").serialize();
+	}
+
 }

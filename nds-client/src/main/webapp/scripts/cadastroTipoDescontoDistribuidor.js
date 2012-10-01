@@ -1,3 +1,5 @@
+var verificadorProgressoGravacaoDescontoGeral = null;
+
 var descontoDistribuidorController = $.extend(true,{
 		
 		popup_geral:function () {
@@ -39,8 +41,34 @@ var descontoDistribuidorController = $.extend(true,{
 		    	fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
 		    });
 
-		    var worker = new Worker(contextPath  + "/scripts/cadastroTipoDescontoDistribuidorSalvarWorker.js");
+			$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoGeral",
+					"desconto="+descontoGeral + "&" + fornecedores,				   
+				   function(result) {
+			        
+					   if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
+						   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
+				       }
+					   else{
+						   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
+						   tipoDescontoController.fecharDialogs();
+						   tipoDescontoController.pesquisar();
+						   $(".tiposDescGeralGrid",this.workspace).flexReload();
+					   }
+		           },
+				   null,
+				   true,"idModalDescontoGeral");	
 
+		    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
+				$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoGeral",
+						   null,				   
+						   function(ativo) {
+						   		if (!ativo.boolean) {
+						   			alert("Fim!");
+						   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
+						   		}
+					   	   });
+		    }, 5000);
+			
 		}, 
 		
 		init:function(){

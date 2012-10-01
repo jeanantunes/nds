@@ -151,7 +151,7 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Override
 	@Transactional
-	public void incluirDescontoDistribuidor(BigDecimal valorDesconto, List<Long> fornecedores,Usuario usuario) {
+	public void incluirDescontoDistribuidor(BigDecimal valorDesconto, List<Long> fornecedores,Usuario usuario) throws ValidacaoException {
 		
 		if(fornecedores == null || fornecedores.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Fornecedores selecionados deve ser preenchido!");
