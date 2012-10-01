@@ -226,7 +226,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" roteiro.id as idRoteiro, 	")
 			.append(" cota.id as idCota,		")			
 			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome , ")
-			.append(" cota.numeroCota as numeroCota ");
+			.append(" cota.numeroCota as numeroCota, ")
+		    .append(" roteirizacao.id as idRoteirizacao ");
 			
 		hql.append( getHqlWhere(filtro));
 	
