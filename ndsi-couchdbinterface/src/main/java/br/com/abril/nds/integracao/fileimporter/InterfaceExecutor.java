@@ -1,7 +1,5 @@
 package br.com.abril.nds.integracao.fileimporter;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,9 +7,6 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -19,7 +14,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
@@ -137,19 +132,20 @@ public class InterfaceExecutor {
 		
 		// Recupera distribuidores
 		String diretorio = parametroSistemaDAO.getParametro("INBOUND_DIR");
+		String pastaInterna = parametroSistemaDAO.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(diretorio, interfaceExecucao, codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 		
-			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, interfaceExecucao, distribuidor);
+			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, pastaInterna, interfaceExecucao, distribuidor);
 			
 			if (arquivos == null || arquivos.isEmpty()) {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
 			}
 			
-			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 7, "0"));
+			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
 			
 			for (File arquivo: arquivos) {
 				
@@ -318,8 +314,14 @@ public class InterfaceExecutor {
 		
 		if (codigoDistribuidor == null) {
 			
+			FilenameFilter numericFilter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					 return name.matches("\\d+");  
+				}
+			};
+			
 			File dirDistribs = new File(diretorio);
-			distribuidores.addAll(Arrays.asList(dirDistribs.list()));
+			distribuidores.addAll(Arrays.asList(dirDistribs.list( numericFilter )));
 			
 		} else {
 			
@@ -404,13 +406,15 @@ public class InterfaceExecutor {
 	 * @param codigoDistribuidor código do distribuidor
 	 * @return lista de arquivos a serem processados
 	 */
-	private List<File> recuperaArquivosProcessar(String diretorio, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
+	private List<File> recuperaArquivosProcessar(String diretorio, String pastaInterna, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
 		
 		List<File> listaArquivos = new ArrayList<File>();
 		
-		File dir = new File(diretorio + codigoDistribuidor + File.separator);
-		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo()));
-		listaArquivos.addAll(Arrays.asList(files));
+		File dir = new File(diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator);
+		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo(), IOCase.INSENSITIVE));
+		if (null != files) {
+			listaArquivos.addAll(Arrays.asList(files));
+		}
 		
 		return listaArquivos;
 	}

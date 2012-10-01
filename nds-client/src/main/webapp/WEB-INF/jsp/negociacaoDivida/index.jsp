@@ -36,6 +36,7 @@
 					href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo"></a></span>
 				<span class="bt_arq"><a
 					href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/exportar?fileType=PDF" rel="tipsy" title="Imprimir"></a></span>
+
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
@@ -89,6 +90,8 @@
 				</tr>
 			</table>
 		</fieldset>
+		</form>
+		
 
 		<%-- POPUPS --%>
 
@@ -99,16 +102,18 @@
 				<br /> <strong>Saldo R$: </strong> <br />
 			</fieldset>
 		</div>
-
+	
 		<div id="dialog-formaPgto" title="Negociar D&iacute;vida">
 			<form id="formaPgtoForm">
+			<input type="hidden" name ="filtro.valorSelecionado" id="valorSelecionado"/>
+			<input type="hidden" name="filtro.numeroCota" id="numeroCota"/>
 			<fieldset style="width: 690px !important; margin-bottom: 5px;">
 				<legend>Dados da Cota</legend>
 				<p style="float: left;">
 					<span id="formaPgto_numEnomeCota"></span>
 				</p>
 				<p style="float: right;">
-					<span id="dividaSelecionada"></span>
+					<strong>Divida Selecionada:</strong> R$ <span id="dividaSelecionada"></span>
 				</p>
 			</fieldset>
 			<br clear="all" />
@@ -157,23 +162,18 @@
 							onclick="negociacaoDividaController.mostraPgto();" /></td>
 						<td width="126">Pagamento em:</td>
 						<td width="187"><select name="filtro.qntdParcelas" id="selectParcelas"
-							style="width: 100px;" class="pgtos" onchange="negociacaoDividaController.geraLinhasCheque(this.value); negociacaoDividaController.geraLinhasParcelas(this.value); negociacaoDividaController.calcularParcelas();" >
+							style="width: 100px;" class="pgtos" onchange="negociacaoDividaController.calcularParcelas();" >
 							<c:forEach items="${qntdParcelas}" var="parcela">
 								<option value="${parcela}" >${parcela}x</option>
 							</c:forEach>
 						</select></td>
-						<td width="133"><strong class="pgtos">Tipo de
-								Pagamento:</strong></td>
-						<td width="198"><select name="filtro.tipoPagamento"
+						<td width="133"><strong class="pgtos">Tipo de Pagamento:</strong></td>
+						<td width="198"><select name="filtro.tipoPagamento" id="selectPagamento"
 							onchange="negociacaoDividaController.opcaoFormasPagto(this.value); negociacaoDividaController.calcularParcelas();"  class="pgtos">
 								<option value="">Selecione</option>
-								<option value="BOLETO">Boleto</option>
-								<option value="BOLETO_EM_BRANCO">Boleto em Branco</option>
-								<option value="CHEQUE">Cheque</option>
-								<option value="DINHEIRO">Dinheiro</option>
-								<option value="DEPOSITO">Dep&oacute;sito</option>
-								<option value="TRANSFERENCIA_BANCARIA">Transfer&ecirc;ncia Banc&aacute;ria</option>
-								<option value="OUTROS">Outros</option>
+								<c:forEach items="${tipoPagamento}" var="pagamento">
+									<option value="${pagamento}" >${pagamento.descricao}</option>
+								</c:forEach>
 						</select></td>
 					</tr>
 				</table>
@@ -185,24 +185,30 @@
 						<strong class="pgtos">Cobran&ccedil;a</strong>
 					</tr> -->
 					<tr>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radio3"
-							value="di�rio"
+						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioDiario"
+							value="DIARIO" checked="yes"
 							onclick="negociacaoDividaController.mostraDiario();" /></td>
+							
 						<td width="5%">Di&aacute;rio</td>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radio"
-							value="semanal"
+						
+						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioSemanal"
+							value="SEMANAL"
 							onclick="negociacaoDividaController.mostraSemanal();" /></td>
+							
 						<td width="7%">Semanal</td>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radio2"
-							value="quinzenal"
+						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioQuinzenal"
+							value="QUINZENAL"
 							onclick="negociacaoDividaController.mostraQuinzenal();" /></td>
+							
 						<td width="9%">Quinzenal</td>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radio4"
-							value="mensal"
+						<td width="3%"><input type="radio" name="filtro.periodicidade" id="radioMensal"
+							value="MENSAL"
 							onclick="negociacaoDividaController.mostraMensal();" /></td>
+							
 						<td width="35%">Mensal</td>
-						<td width="4%"><input type="checkbox" name="checkbox2"
-							id="checkbox2" class="pgtos" /></td>
+						
+						<td width="4%"><input type="checkbox" 
+							id="checknegociacaoAvulsa" class="pgtos" /></td>
 						<td width="28%">Negocia&ccedil;&atilde;o Avulsa</td>
 					</tr>
 				</table>
@@ -213,10 +219,10 @@
 					<tr>
 						<td width="68">Todo dia:</td>
 						<td width="66"><input type="text" name="filtro.quinzenalDia1"
-							id="textfield3" style="width: 60px;" /></td>
+							id="quinzenalDia1" style="width: 60px;" /></td>
 						<td width="21">&nbsp; e:</td>
 						<td width="522"><input type="text" name="filtro.quinzenalDia2"
-							id="textfield5" style="width: 60px;" /></td>
+							id="quinzenalDia2" style="width: 60px;" /></td>
 					</tr>
 				</table>
 				
@@ -226,7 +232,7 @@
 					<tr>
 						<td width="68">Todo dia:</td>
 						<td width="615"><input type="text" name="filtro.mensalDia"
-							id="textfield3" style="width: 60px;" /></td>
+							id="mensalDia" style="width: 60px;" /></td>
 					</tr>
 				</table>
 				
@@ -235,25 +241,25 @@
 					class="semanal">
 					<tr>
 						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="0" id="checkbox7" /></td>
+							value="0" id="checkbSegunda" /></td>
 						<td width="86">Segunda-feira</td>
 						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="1"id="checkbox8" /></td>
+							value="1"id="checkTerca" /></td>
 						<td width="70">Ter&ccedil;a-feira</td>
 						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="2"id="checkbox9" /></td>
+							value="2"id="checkQuarta" /></td>
 						<td width="78">Quarta-feira</td>
 						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="3" id="checkbox10" /></td>
+							value="3" id="checkQuinta" /></td>
 						<td width="78">Quinta-feira</td>
 						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="4" id="checkbox11" /></td>
+							value="4" id="checkSexta" /></td>
 						<td width="70">Sexta-feira</td>
 						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="5"id="checkbox12" /></td>
+							value="5"id="checkSabado" /></td>
 						<td width="53">S&aacute;bado</td>
 						<td width="20"><input type="checkbox" name="filtro.semanalDias"
-							value="6" id="checkbox13" /></td>
+							value="6" id="checkDomingo" /></td>
 						<td width="72">Domingo</td>
 					</tr>
 				</table>
@@ -308,46 +314,24 @@
 						<td width="10" valign="top" style="width: 10px;">&nbsp;</td>
 						<td width="335" valign="top">
 
-							<div id="divBoleto" style="display: none;">
+							<div id="divBanco" style="display: none;">
 								<table width="270" border="0" cellpadding="2" cellspacing="2">
 									<tr>
 										<td colspan="2"><b>Dados do Banco</b></td>
 									</tr>
 									<tr>
 										<td width="53">Nome:</td>
-										<td width="203"><select name="select2" id="select3"
-											style="width: 160px;">
-												<option selected="selected"></option>
-												<option>Banco Ita&uacute;</option>
-												<option>Banco Real</option>
-												<option>Bradesco</option>
-												<option>Santander</option>
+										<td width="203"><select name="filtro.idBanco" id="selectBancosBoleto"
+											style="width: 160px;"  onchange="negociacaoDividaController.calcularParcelas();">
+											<c:forEach items="${bancos}" var="banco">
+													<option value="${banco.id}" >${banco.nome}</option>
+											</c:forEach>
 										</select></td>
 									</tr>
 									<tr>
 										<td align="right"><input type="checkbox" name="checkbox"
-											id="checkbox" /></td>
+											id="checkReceberEmail" /></td>
 										<td>Receber por E-mail?</td>
-									</tr>
-								</table>
-							</div>
-							
-
-							<div id="divTransferencia" style="display: none;">
-								<table width="270" border="0" cellpadding="2" cellspacing="2">
-									<tr>
-										<td colspan="2"><b>Dados do Banco</b></td>
-									</tr>
-									<tr>
-										<td width="47">Nome:</td>
-										<td width="209"><select name="select2" id="select3"
-											style="width: 160px;">
-												<option selected="selected"></option>
-												<option>Banco Ita&uacute;</option>
-												<option>Banco Real</option>
-												<option>Bradesco</option>
-												<option>Santander</option>
-										</select></td>
 									</tr>
 								</table>
 							</div>
@@ -360,25 +344,25 @@
 									</tr>
 									<tr>
 										<td width="93">Num. Banco:</td>
-										<td width="163"><input type="text" name="textfield3"
-											id="textfield3" style="width: 60px;" /></td>
+										<td width="163"><input type="text" name="numBancoCheque"
+											id="numBancoCheque" style="width: 60px;" /></td>
 									</tr>
 									<tr>
 										<td>Nome:</td>
-										<td><input type="text" name="textfield13"
-											id="textfield13" style="width: 150px;" /></td>
+										<td><input type="text" name="nomeBancoCheque"
+											id="nomeBancoCheque" style="width: 150px;" /></td>
 									</tr>
 									<tr>
 										<td>Ag&ecirc;ncia:</td>
-										<td><input type="text" name="textfield2" id="textfield2"
+										<td><input type="text" name="agencaiBancoCheque1" id="agenciaBancoCheque1"
 											style="width: 60px;" /> - <input type="text"
-											name="textfield4" id="textfield4" style="width: 30px;" /></td>
+											name="agenciaBancoChequ2" id="agenciaBancoCheque2" style="width: 30px;" /></td>
 									</tr>
 									<tr>
 										<td>Conta:</td>
-										<td><input type="text" name="textfield14"
-											id="textfield14" style="width: 60px;" /> - <input
-											type="text" name="textfield14" id="textfield15"
+										<td><input type="text" name="contaBancoCheque1"
+											id="contaBancoCheque1" style="width: 60px;" /> - <input
+											type="text" name="contaBancoCheque2" id="contaBancoCheque2"
 											style="width: 30px;" /></td>
 									</tr>
 								</table>
@@ -400,8 +384,7 @@
 			<p>Deseja confirmar Baixa Manual deste Boleto?</p>
 		</div>
 
-	</form>
-
+	
 	<script type="text/javascript">
 		$(function() {
 			negociacaoDividaController.init();

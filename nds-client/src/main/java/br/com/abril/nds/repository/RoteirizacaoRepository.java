@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
@@ -96,5 +97,12 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	 * exista Roteirização associada ao box
 	 */
 	Roteirizacao obterRoteirizacaoPorBox(Long idBox);
+	
+	/**
+	 * Obtém o Box de um PDV
+	 * @param idPdv
+	 * @return
+	 */
+	Box obterBoxDoPDV(Long idPdv);
 }
 

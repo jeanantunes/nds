@@ -178,29 +178,31 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.createAlias("cec.cota", "cota");
 		criteria.createAlias("cota.box", "box");
 		criteria.createAlias("cota.pessoa", "pessoa");
-		criteria.createAlias("box.roteiros", "roteiros");
-		criteria.createAlias("roteiros.rotas", "rotas");
+		criteria.createAlias("cota.pdvs", "pdvs");
+		criteria.createAlias("pdv.rotas", "rotas");
+		criteria.createAlias("rota.roteiro", "roteiro");
 		
 		criteria.setFetchMode("cec", FetchMode.JOIN);
 		criteria.setFetchMode("cota", FetchMode.JOIN);
 		criteria.setFetchMode("box", FetchMode.JOIN);
 		criteria.setFetchMode("pessoa", FetchMode.JOIN);
-		criteria.setFetchMode("roteiros", FetchMode.JOIN);
+		criteria.setFetchMode("pdvs", FetchMode.JOIN);
 		criteria.setFetchMode("rotas", FetchMode.JOIN);
+		criteria.setFetchMode("roteiro", FetchMode.JOIN);
 
 		criteria.setProjection(Projections.distinct(Projections.projectionList()
 				.add(Projections.property("cota.id"), "idCota")
 				.add(Projections.property("cota.numeroCota"), "numeroCota")
 				.add(Projections.property("pessoa.nome"), "colaboradorName")
 				.add(Projections.property("box.nome"), "boxName")
-				.add(Projections.property("roteiros.descricaoRoteiro"), "roteiroName")
+				.add(Projections.property("roteiro.descricaoRoteiro"), "roteiroName")
 				.add(Projections.property("rotas.descricaoRota"), "rotaName")
 				.add(Projections.property("cec.fechado"), "fechado")
 				.add(Projections.property("cec.postergado"), "postergado")
 				.add(Projections.property("ce.dataRecolhimento"), "dataEncalhe")));
 				
 		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
-		criteria.add(Restrictions.eq("roteiros.tipoRoteiro", TipoRoteiro.NORMAL));
+		criteria.add(Restrictions.eq("roteiro.tipoRoteiro", TipoRoteiro.NORMAL));
 
 		DetachedCriteria subQuery = DetachedCriteria.forClass(ControleConferenciaEncalheCota.class, "ccec");
 		subQuery.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));

@@ -9,16 +9,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 
 @Entity
 @Table(name = "ROTA")
@@ -44,13 +44,10 @@ public class Rota implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "ROTEIRO_ID", nullable = false )
 	private Roteiro roteiro;
-
 	
-	@ManyToMany
-	@JoinTable(name = "PDV_ROTA", joinColumns = {@JoinColumn(name = "ROTA_ID")},
-	inverseJoinColumns = {@JoinColumn(name = "PDV_ID")})
-	@NotFound(action=NotFoundAction.IGNORE)
-	private List<PDV> pdvs =  new ArrayList<PDV>();
+	@OneToMany(mappedBy = "rota")
+	@Cascade(value = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.SAVE_UPDATE})
+	private List<RotaPDV> rotaPDVs =  new ArrayList<RotaPDV>();
 	
 	@Column(name="ORDEM", nullable = false)
 	private Integer ordem;
@@ -95,11 +92,33 @@ public class Rota implements Serializable {
 		this.ordem = ordem;
 	}
 
-	public List<PDV> getPdvs() {
-		return pdvs;
-	}
+    /**
+     * @return the rotaPDVs
+     */
+    public List<RotaPDV> getRotaPDVs() {
+        return rotaPDVs;
+    }
 
-	public void setPdvs(List<PDV> pdvs) {
-		this.pdvs = pdvs;
-	}
+    /**
+     * @param rotaPDVs the rotaPDVs to set
+     */
+    public void setRotaPDVs(List<RotaPDV> rotaPDVs) {
+        this.rotaPDVs = rotaPDVs;
+    }
+    
+    /**
+     * Adiciona um PDV à Rota
+     * @param pdv pdv para inclusão
+     * @param ordem ordem do PDV na Rota
+     * @return {@link RotaPDV} que representa a associação
+     */
+    public RotaPDV addPDV(PDV pdv, Integer ordem) {
+        if (rotaPDVs == null) {
+            rotaPDVs = new ArrayList<RotaPDV>();
+        }
+        RotaPDV rotaPDV = new RotaPDV(this, pdv, ordem);
+        rotaPDVs.add(rotaPDV);
+        return rotaPDV;
+    }
+	
 }

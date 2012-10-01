@@ -23,7 +23,7 @@ USE `nds-server`;
 
 LOCK TABLES `interface_execucao` WRITE;
 /*!40000 ALTER TABLE `interface_execucao` DISABLE KEYS */;
-INSERT INTO `interface_execucao` (`ID`, `MASCARA_ARQUIVO`, `NOME`) VALUES (109,'([0-9]{8})\\.pub','EMS0109'),(110,'([0-9]{8})\\.prd','EMS0110'),(111,'([0-9]{8})\\.lan','EMS0111'),(112,'([0-9]{8})\\.edi','EMS0112'),(113,'([0-9]{8})\\.dsf','EMS0113'),(114,'([0-9]{8})\\.rec','EMS0114'),(125,'([0-9]{8})\\.chc','EMS0125'),(126,'([0-9]{8})\\.cdb','EMS0126'),(134,'.jpeg','EMS0134'),(135,'([0-9]{8})\\.nre','EMS0135'),(185,'.mdb','EMS0185');
+INSERT INTO `interface_execucao` (`ID`, `MASCARA_ARQUIVO`, `NOME`) VALUES (109,'([0-9]{8})\\.PUB','EMS0109'),(110,'([0-9]{8})\\.PRD','EMS0110'),(111,'([0-9]{8})\\.LAN','EMS0111'),(112,'([0-9]{8})\\.EDI','EMS0112'),(113,'([0-9]{8})\\.DSF','EMS0113'),(114,'([0-9]{8})\\.REC','EMS0114'),(125,'([0-9]{8})\\.CHC','EMS0125'),(126,'([0-9]{8})\\.CDB','EMS0126'),(134,'.jpeg','EMS0134'),(135,'([0-9]{8})\\.NRE','EMS0135'),(185,'.mdb','EMS0185');
 /*!40000 ALTER TABLE `interface_execucao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -33,7 +33,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `parametro_sistema` WRITE;
 /*!40000 ALTER TABLE `parametro_sistema` DISABLE KEYS */;
-INSERT INTO `parametro_sistema` (`ID`, `TIPO_PARAMETRO_SISTEMA`, `VALOR`) VALUES (1,'INBOUND_DIR','c:\\interface\\prodin\\'),(2,'IMAGE_DIR','c:\\interface\\imagens\\'),(3,'CORREIOS_DIR','c:\\interface\\correios\\');
+INSERT INTO `parametro_sistema` (`ID`, `TIPO_PARAMETRO_SISTEMA`, `VALOR`) VALUES (1,'INBOUND_DIR','c:\\interface\\prodin\\'), (2,'IMAGE_DIR','c:\\interface\\imagens\\'),(3,'CORREIOS_DIR','c:\\interface\\correios\\'), (4,'INTERNAL_DIR','nds');
 /*!40000 ALTER TABLE `parametro_sistema` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

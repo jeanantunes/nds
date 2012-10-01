@@ -408,18 +408,20 @@ public class LancamentoRepositoryImpl extends
 																 	 List<Long> fornecedores,
 																 	 GrupoProduto grupoCromo) {
 
-		String sql = getConsultaExpectativaEncalheData();
+		String sql = this.getConsultaExpectativaEncalheData();
 		
 		Query query = getSession().createSQLQuery(sql); 
 
+		List<String> statusParaBalanceamentoRecolhimento =
+			this.getStatusParaBalanceamentoRecolhimento();
+		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo);
 		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
-		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
-		query.setParameter("statusLancamentoBalanceamentoRecolhimento", StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
-		query.setParameter("statusLancamentoEmBalanceamentoRecolhimento", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
+		
+		query.setParameterList("statusParaBalanceamentoRecolhimento", statusParaBalanceamentoRecolhimento);
 
 		List<Object[]> expectativasEncalheDia = query.list();
 
@@ -435,6 +437,19 @@ public class LancamentoRepositoryImpl extends
 		}
 
 		return mapaExpectativaEncalheDia;
+	}
+
+	private List<String> getStatusParaBalanceamentoRecolhimento() {
+		
+		String[] arrayStatusParaBalanceamentoRecolhimento =
+			{StatusLancamento.EXPEDIDO.toString(),
+			 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString(),
+			 StatusLancamento.BALANCEADO_RECOLHIMENTO.toString()};
+		
+		List<String> statusParaBalanceamentoRecolhimento =
+			Arrays.asList(arrayStatusParaBalanceamentoRecolhimento);
+		
+		return statusParaBalanceamentoRecolhimento;
 	}
 	
 	private String getConsultaBalanceamentoRecolhimentoAnalitico() {
@@ -453,7 +468,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, ");
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
-		sql.append(" editor.pessoaJuridica.razaoSocial as nomeEditor, ");
+		sql.append(" pessoa.RAZAO_SOCIAL as nomeEditor, ");
 		
 		sql.append(" case ");
 		sql.append(" when (select box.TIPO_BOX from BOX box, COTA cota, ESTOQUE_PRODUTO_COTA epc ");
@@ -623,16 +638,19 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" on periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID=lancamentoParcial.ID ");
 		sql.append(" inner join ");
 		sql.append(" FORNECEDOR fornecedor  ");
-		sql.append(" on produtoFornecedor.fornecedores_ID=fornecedor.ID, ");
+		sql.append(" on produtoFornecedor.fornecedores_ID=fornecedor.ID ");
+		sql.append(" inner join ");
+		sql.append(" EDITOR editor ");
+		sql.append(" on produto.EDITOR_ID = editor.ID ");
+		sql.append(" inner join ");
+		sql.append(" PESSOA pessoa ");
+		sql.append(" on editor.JURIDICA_ID = pessoa.ID, ");
 		sql.append(" PESSOA pessoaFornecedor, ");
-		sql.append(" EDITOR editor, ");
 		sql.append(" TIPO_PRODUTO tipoProduto   ");
 
 		sql.append(" where ");
 		sql.append(" fornecedor.JURIDICA_ID=pessoaFornecedor.ID  ");
-		sql.append(" and (lancamento.STATUS = :statusLancamentoExpedido ");
-		sql.append(" or lancamento.STATUS = :statusLancamentoBalanceamentoRecolhimento ");
-		sql.append(" or lancamento.STATUS = :statusLancamentoEmBalanceamentoRecolhimento) ");
+		sql.append(" and lancamento.STATUS in (:statusParaBalanceamentoRecolhimento) ");
 		sql.append(" and produto.EDITOR_ID=editor.ID  ");
 		sql.append(" and produto.TIPO_PRODUTO_ID=tipoProduto.ID  ");
 		sql.append(" and ( ");
@@ -721,16 +739,18 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("sequencia", StandardBasicTypes.INTEGER)
 													  .addScalar("novaData");
 
+		List<String> statusParaBalanceamentoRecolhimento =
+			this.getStatusParaBalanceamentoRecolhimento();
+		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo);
 		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
-		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.toString());
-		query.setParameter("statusLancamentoBalanceamentoRecolhimento", StatusLancamento.BALANCEADO_RECOLHIMENTO.toString());
-		query.setParameter("statusLancamentoEmBalanceamentoRecolhimento", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString());
 		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.toString());
 		query.setParameter("tipoBoxPostoAvancado", TipoBox.POSTO_AVANCADO.toString());
+		
+		query.setParameterList("statusParaBalanceamentoRecolhimento", statusParaBalanceamentoRecolhimento);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoRecolhimentoDTO.class));
 		
