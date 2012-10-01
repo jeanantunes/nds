@@ -31,7 +31,13 @@ consolidado_financeiro_cota.VALOR_POSTERGADO AS VALOR_POSTERGADO,
 
 consolidado_financeiro_cota.VENDA_ENCALHE AS VENDA_ENCALHE, 
 
-'CONSOLIDADO' AS TIPO
+'CONSOLIDADO' AS TIPO,
+(SELECT 
+case when divida.DATA is not null then divida.DATA else acumulada.data END as data_raiz
+FROM divida acumulada
+LEFT JOIN DIVIDA divida ON
+divida.id = acumulada.divida_raiz_id 
+where acumulada.consolidado_id = consolidado_financeiro_cota.id) as DT_RAIZ_CONSOLIDADO
 
 
 FROM consolidado_financeiro_cota INNER JOIN cota on cota.id=consolidado_financeiro_cota.cota_ID)
@@ -66,7 +72,8 @@ NULL VALOR_POSTERGADO,
 
 NULL AS VENDA_ENCALHE,
 
-'COBRANCA' AS TIPO
+'COBRANCA' AS TIPO,
+cobranca.DT_EMISSAO, as DT_RAIZ_CONSOLIDADO
 
 FROM cobranca INNER JOIN cota on cota.id=cobranca.cota_ID WHERE cobranca.status_cobranca  = 'NAO_PAGO' 
     and cobranca.DT_VENCIMENTO > (select max(consolidado_financeiro_cota.DT_CONSOLIDADO) from consolidado_financeiro_cota))
