@@ -345,8 +345,6 @@ var roteirizacao = $.extend(true, {
             } else {
                 $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
             }
-            roteirizacao.idRota = "";
-            roteirizacao.limparGridCotasRota();
         },
 
         rotaSelecionadaListener : function(idRota, nomeRota) {
@@ -474,7 +472,7 @@ var roteirizacao = $.extend(true, {
                             roteirizacao.idRoteiro = result.roteiros[0].id;
                             roteirizacao.popularGridRoteiros(result.roteiros);
                             if (result.roteiros[0].rotas) {
-                                roteirizacao.idRota =  result.roteiros[0].rotas[0].id;
+                                roteirizacao.idRota = result.roteiros[0].rotas[0].id;
                                 roteirizacao.popularGridRotas(result.roteiros[0].rotas);
                                 if (result.roteiros[0].rotas[0].pdvs) {
                                      roteirizacao.popularGridCotasRota(result.roteiros[0].rotas[0].pdvs);
@@ -899,78 +897,104 @@ var roteirizacao = $.extend(true, {
             }
         },
 
-	    iniciarGridCotasRota : function(){
-	        $(".cotasRotaGrid").flexigrid({
-	            preProcess : function(data) {
-	                $.each(data.rows, function(index, value) {
-	                    var id = value.cell.id;
-	                    var selecione = '<input type="checkbox" name="checkboxCotasRota" value="'+ id +'"/>';
-	                    value.cell.selecione = selecione;
-	                    var ordem = '<input type="text" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
-	                    value.cell.ordem = ordem;
-	                });
-	                return data;
-	            },
-	            dataType : 'json',
-	            colModel : [ {
-	                display : 'PDV',
-	                name : 'pdv',
-	                width : 120,
-	                sortable : true,
-	                align : 'left'
-	            },{
-	                display : 'Origem',
-	                name : 'origem',
-	                width : 50,
-	                sortable : true,
-	                align : 'left'
-	            }, {
-	                display : 'Endereço',
-	                name : 'endereco',
-	                width : 325,
-	                sortable : true,
-	                align : 'left'
-	            }, {
-	                display : 'Cota',
-	                name : 'cota',
-	                width : 50,
-	                sortable : true,
-	                align : 'left'
-	            }, {
-	                display : 'Nome',
-	                name : 'nome',
-	                width : 170,
-	                sortable : true,
-	                align : 'left'
-	            }, {
-	                display : 'Ordem',
-	                name : 'ordem',
-	                width : 40,
-	                sortable : true,
-	                align : 'left'
-	            }, {
-	                display : '',
-	                name : 'selecione',
-	                width : 15,
-	                sortable : false,
-	                align : 'center'
-	            }],
-	            autoload : false,
-	            sortname : "ordem",
-	            sortorder: "asc",
-	            url: contextPath + '/cadastro/roteirizacao/recarregarCotasRota',
-	            onSubmit    : function(){
-	                $('.cotasRotaGrid').flexOptions({params: [
-	                    {name:'idRota', value: roteirizacao.idRota}
-	                ]});
-	                return true;
-	            },
-	            width : 875,
-	            height : 150
-	        });
-	    },
+    iniciarGridCotasRota : function(){
+        $(".cotasRotaGrid").flexigrid({
+            preProcess : function(data) {
+                $.each(data.rows, function(index, value) {
+                    var id = value.cell.id;
+                    var selecione = '<input type="checkbox"  name="checkboxCotasRota" value="'+ id +'"/>';
+                    value.cell.selecione = selecione;
+                    var ordem = '<input type="text" onchange="roteirizacao.ordemPdvChangeListener(this, \''+ id + '\');" class="inputGridCotasRota" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
+                    value.cell.ordem = ordem;
+                });
+                return data;
+            },
+            dataType : 'json',
+            colModel : [ {
+                display : 'PDV',
+                name : 'pdv',
+                width : 120,
+                sortable : true,
+                align : 'left'
+            },{
+                display : 'Origem',
+                name : 'origem',
+                width : 50,
+                sortable : true,
+                align : 'left'
+            }, {
+                display : 'Endereço',
+                name : 'endereco',
+                width : 325,
+                sortable : true,
+                align : 'left'
+            }, {
+                display : 'Cota',
+                name : 'cota',
+                width : 50,
+                sortable : true,
+                align : 'left'
+            }, {
+                display : 'Nome',
+                name : 'nome',
+                width : 170,
+                sortable : true,
+                align : 'left'
+            }, {
+                display : 'Ordem',
+                name : 'ordem',
+                width : 40,
+                sortable : true,
+                align : 'left'
+            }, {
+                display : '',
+                name : 'selecione',
+                width : 15,
+                sortable : false,
+                align : 'center'
+            }],
+            autoload : false,
+            sortname : "ordem",
+            sortorder: "asc",
+            url: contextPath + '/cadastro/roteirizacao/recarregarCotasRota',
+            onSubmit    : function(){
+                $('.cotasRotaGrid').flexOptions({params: [
+                    {name:'idRota', value: roteirizacao.idRota}
+                ]});
+                return true;
+            },
+            width : 875,
+            height : 150
+        });
+    },
 
-        limparGridCotasRota : function() {
+    ordemPdvChangeListener : function(element, idPdv) {
+    	var ordemAntiga = element.defaultValue;
+        var ordem = $(element).val();
+    	var param = [{name: 'idRota', value: roteirizacao.idRota}, 
+    	             {name: 'idPdv', value: idPdv}, 
+    	             {name: 'ordem',  value: ordem}];
+    	
+    	 $.postJSON(contextPath + '/cadastro/roteirizacao/ordemPdvChangeListener', param,
+                function(result) {
+    		 	    if (result) {
+                         element.defaultValue = ordem;
+                    }
+                    if (!result) {
+    		 	    	exibirMensagemDialog("WARNING", ["Ordem já utilizada!"],'dialogRoteirizacao');
+                        $(element).val(ordemAntiga);
+                         
+                    }
+                },
+                null,
+                true
+             );
+            return true;
+
+    	
+    },
+    
+    limparGridCotasRota : function() {
             roteirizacao.idsCotas = [];
             $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
         },
