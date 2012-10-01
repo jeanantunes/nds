@@ -230,13 +230,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			var idProdutoEdicao = row.cell.idProdutoEdicao;
 			var nomeProduto = row.cell.nomeProduto;
-			var idLancamento = row.cell.idLancamento;
 			
 			row.cell.nomeProduto = balanceamentoRecolhimentoController.balanceamento.getColunaProduto(idProdutoEdicao, nomeProduto);
 			row.cell.sequencia = balanceamentoRecolhimentoController.gerarInputSequencia(row);
 			row.cell.novaData = balanceamentoRecolhimentoController.gerarHTMLNovaData(row);
 			row.cell.reprogramar = balanceamentoRecolhimentoController.gerarCheckReprogramar(row);
-			row.cell.acao = balanceamentoRecolhimentoController.gerarBtnAcoes(idLancamento);
+			row.cell.acao = balanceamentoRecolhimentoController.gerarBtnAcoes(row);
 		});
 			
 		$(".grids", balanceamentoRecolhimentoController.workspace).show();
@@ -246,11 +245,19 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		return resultado;
 	},
 
-	gerarBtnAcoes : function(idLancamento) {
+	gerarBtnAcoes : function(row) {
 		
-		var btnExcluir = '<a href="javascript:;" class="btn_excluir" '+
-						    'onclick="balanceamentoRecolhimentoController.excluirBalanceamento(' + idLancamento + ');">'+
-						    '<img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+		var idLancamento = row.cell.idLancamento;
+		var btnExcluir;
+		
+		if (row.cell.bloqueioAlteracaoBalanceamento) {
+			btnExcluir = '<img src="' + contextPath + '/images/ico_excluir.gif" border="0" disabled="disabled" class="linkDisabled" />';
+		
+		} else {
+			btnExcluir = '<a href="javascript:;" class="btn_excluir" '+
+		    'onclick="balanceamentoRecolhimentoController.excluirBalanceamento(' + idLancamento + ');">'+
+		    '<img src="' + contextPath + '/images/ico_excluir.gif" border="0"  /></a>';
+		}
 		
 		return btnExcluir;
 	},
@@ -306,7 +313,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			retornoHTML = '<input type="checkbox" id="ch' + row.id + '"'
 	   		   			+       ' name="balanceamentoRecolhimentoController.checkReprogramar"'
-	   		   			+       ' value="' + row.id + '" disabled="disabled" />';
+	   		   			+       ' value="' + row.id + '" disabled="disabled"  />';
 		} else {
 			
 			retornoHTML = '<input type="checkbox" id="checkReprogramar' + row.id + '"'
@@ -352,7 +359,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		var bloqueioAlteracaoBalanceamento = $(divNovaData, balanceamentoRecolhimentoController.workspace).find("input[name='hiddenBloqueioAlteracaoBalanceamento']").val();
 		
 		if (inputCheck.attr("checked") == "checked"
-				|| eval(bloqueioAlteracaoBalanceamento)) {
+				|| eval(bloqueioAlteracaoBalanceamento)) {	
 		
 			$(inputNovaData, balanceamentoRecolhimentoController.workspace).disable();
 			
