@@ -1213,7 +1213,7 @@ public class RoteirizacaoController {
 		}
 		
 		RoteiroRoteirizacaoDTO novoDTO = new RoteiroRoteirizacaoDTO(novoId, novaOrdem, this.getDTO().getRoteiro(idRoteiro).getNome());
-		novoDTO.setRotas(this.getDTO().getRoteiro(idRoteiro).getRotas());
+		novoDTO.addAllRota(this.getDTO().getRoteiro(idRoteiro).getRotas());
 		
 		roteiros.add(novoDTO);
 		
