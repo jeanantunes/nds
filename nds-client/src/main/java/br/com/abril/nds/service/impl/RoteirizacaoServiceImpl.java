@@ -484,15 +484,19 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 */
 	@Override
 	@Transactional
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis() {
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep) {
 		
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
 		
-		List<PDV> listaPdv = this.pdvRepository.buscarTodos();
+		List<PDV> listaPdv = this.pdvRepository.obterPDVPorCotaEEndereco(numCota, municipio, uf, bairro, cep);
 
 		PdvRoteirizacaoDTO pdvDTO;
 		
+		Integer ordem=0;
+		
 		for(PDV itemPdv:listaPdv){
+		    
+			ordem++;
 			
 			pdvDTO = new PdvRoteirizacaoDTO();
 			
@@ -500,7 +504,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			pdvDTO.setNome(itemPdv.getCota().getPessoa().getNome());
 			//TODO: Refatorar
-			//pdvDTO.setOrdem(itemPdv.getOrdem());
+			
+			pdvDTO.setOrdem(ordem);
 			pdvDTO.setCota(itemPdv.getCota().getNumeroCota());
 			
 			Endereco endereco = null;
@@ -593,6 +598,15 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
             return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis);
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional
+    public void confirmarRoteirizacao(RoteirizacaoDTO dto) {
+       //TODO: Implementar informações de roteirização
     }
 	
 }

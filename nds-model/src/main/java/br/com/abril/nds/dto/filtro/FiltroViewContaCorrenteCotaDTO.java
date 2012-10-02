@@ -21,32 +21,9 @@ public class FiltroViewContaCorrenteCotaDTO {
 	
 	private PaginacaoVO paginacao = new PaginacaoVO();
 	
-	private	ColunaOrdenacao colunaOrdenacao;
+	private	String colunaOrdenacao;
 	
-	public enum ColunaOrdenacao {
-
-		DT_CONSOLIDADO("data"),
-		VALOR_POSTERGADO("vlrpostergado"),
-		NUMERO_ATRASADOS("na"),
-		CONSIGNADO("consignadoaVencer"),
-		ENCALHE("encalhe"),
-		VENDA_ENCALHE("vendaEncalhe"),
-		DEBITO_CREDITO("debCred"),	
-		ENCARGOS("encargos"),
-		PENDENTE("pendente"),
-		TOTAL("total");
-
-		private String nomeColuna;
-		
-		private ColunaOrdenacao(String nomeColuna) {
-			this.nomeColuna = nomeColuna;
-		}
-		
-		@Override
-		public String toString() {
-			return this.nomeColuna;
-		}
-	}
+	
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -64,11 +41,11 @@ public class FiltroViewContaCorrenteCotaDTO {
 		this.paginacao = paginacao;
 	}
 
-	public ColunaOrdenacao getColunaOrdenacao() {
+	public String getColunaOrdenacao() {
 		return colunaOrdenacao;
 	}
 
-	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
+	public void setColunaOrdenacao(String colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
 	
