@@ -14,6 +14,11 @@ var TipoInclusao = {
     ROTA : {value: 'ROTA'}
 };
 
+var TipoExclusao = {
+	ROTEIRO : {value: 'ROTEIRO'},
+	ROTA : {value: 'ROTA'}
+};
+
 var roteiroSelecionadoAutoComplete = false; 
 var transferirRotasComNovoRoteiro = false;
 var transferirRoteirizacaoComNovaRota= false;
@@ -25,10 +30,16 @@ var roteirizacao = $.extend(true, {
         tipoEdicao: null,
         idRoteirizacao : "",
         idBox : "",
+        nomeBox: "",
         idRoteiro: "",
         idRota: "",
-        nomeBoxRoteiro : "",
-        tipoInclusao: null,
+        nomeBox: "",
+        nomeRoteiro : "",
+        pdvsSelecionados: [],
+        nomeRota : "",
+        tipoInclusao: TipoInclusao.ROTEIRO,
+        tipoExclusao: null,
+        idsCotas: [],
         
         definirTransferenciaCota : function() {
             if (!roteirizacao.isTransferenciaCota()) {
@@ -74,87 +85,91 @@ var roteirizacao = $.extend(true, {
     
         abrirTelaNovoRoteiroRota : function () {
             
-            if (roteirizacao.tipoInclusao){
+        	roteirizacao.limparCamposNovaInclusao();
+            
+        	$("#trNomeRoteiro").hide();
+        	
+            var metodoObterOrdem = '';
+            
+            if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
                 
-                roteirizacao.limparCamposNovaInclusao();
+                metodoObterOrdem = 'iniciaTelaRoteiro';
+                $("#checkRoteiroEspecial", roteirizacao.workspace).show();
+            } else {
                 
-                var metodoObterOrdem = '';
-                
-                if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
+                metodoObterOrdem = 'iniciaTelaRota';
+                $("#trNomeRoteiro").show();
+                $("#nomeRoteiro").text(roteirizacao.nomeRoteiro);
+            }
+            
+            $.postJSON(contextPath + '/cadastro/roteirizacao/' + metodoObterOrdem, 
+            	[{name: 'idRoteiro', value: roteirizacao.idRoteiro}],
+                function(result) {
                     
-                    metodoObterOrdem = 'iniciaTelaRoteiro';
-                } else {
+                    roteirizacao.limparTelaRoteiro();
+                    $('#inputOrdem', roteirizacao.workspace).numeric();
+                    $("#inputOrdem", roteirizacao.workspace).val(result.int);
                     
-                    metodoObterOrdem = 'iniciaTelaRota';
-                }
-                
-                $.postJSON(contextPath + '/cadastro/roteirizacao/' + metodoObterOrdem, null,
-                    function(result) {
-                        
-                        roteirizacao.limparTelaRoteiro();
-                        $('#inputOrdem', roteirizacao.workspace).numeric();
-                        $("#inputOrdem", roteirizacao.workspace).val(result.int);
-                        
-                        $("#nomeBoxRoteiro").text(roteirizacao.nomeBoxRoteiro);
-                        
-                        $("#dialog-novo-dado", roteirizacao.workspace ).dialog({
-                            resizable: false,
-                            height:240,
-                            width:420,
-                            modal: true,
-                            title: (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO ? "Novo Roteiro" : "Nova Rota"),
-                            buttons: {
-                                "Confirmar": function() {
+                    $("#dialog-novo-dado", roteirizacao.workspace ).dialog({
+                        resizable: false,
+                        height:240,
+                        width:420,
+                        modal: true,
+                        title: (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO ? "Novo Roteiro" : "Nova Rota"),
+                        buttons: {
+                            "Confirmar": function() {
+                                
+                                if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
                                     
-                                    if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
-                                        
-                                        roteirizacao.confirmarInclusaoRoteiro();
-                                    } else {
-                                        
-                                        roteirizacao.confirmarInclusaoRota();
-                                    }
-                                },
-                                "Cancelar": function() {
-                                    $( this ).dialog( "close" );
+                                    roteirizacao.confirmarInclusaoRoteiro();
+                                } else {
+                                    
+                                    roteirizacao.confirmarInclusaoRota();
                                 }
                             },
-                            form: $("#dialog-novo-dado", this.workspace).parents("form")
-                        });
-                    },
-                    null,
-                    true
-                );
-                
-                this.init();
-            }
+                            "Cancelar": function() {
+                                $( this ).dialog( "close" );
+                            }
+                        },
+                        form: $("#dialog-novo-dado", this.workspace).parents("form")
+                    });
+                },
+                null,
+                true
+            );
+            
+            this.init();
         },
         
         
-       confirmarInclusaoRoteiro : function() {
+        confirmarInclusaoRoteiro : function() {
            var tipoRoteiro = 'NORMAL';
            if ( $('input[name=tipoRoteiro]').is(':checked') ){
                tipoRoteiro = 'ESPECIAL';
            } 
            
             $.postJSON(contextPath + '/cadastro/roteirizacao/incluirRoteiro',
-                     {
-                        'idBox' :  roteirizacao.idBox,
-                        'ordem' :  $("#inputOrdem", roteirizacao.workspace).val(),
-                        'nome' :  $("#inputNome", roteirizacao.workspace).val(),
-                        'tipoRoteiro' : tipoRoteiro
+                {
+                    'idBox' :  roteirizacao.idBox,
+                    'ordem' :  $("#inputOrdem", roteirizacao.workspace).val(),
+                    'nome' :  $("#inputNome", roteirizacao.workspace).val(),
+                    'tipoRoteiro' : tipoRoteiro
+                 },
+                 function(result) {
+                     var tipoMensagem = result.tipoMensagem;
+                     var listaMensagens = result.listaMensagens;
+                     
+                     if (tipoMensagem && listaMensagens) {
+                         exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+                     } else {
+                         
+                         roteirizacao.popularGridRoteiros(result.roteiros);
+                         $('#dialog-novo-dado', roteirizacao.workspace).dialog("close");
+                     }
                         
-                     },
-                       function(result) {
-                            var tipoMensagem = result.tipoMensagem;
-                            var listaMensagens = result.listaMensagens;
-                            $('#dialog-novo-dado', roteirizacao.workspace).dialog( "close" );
-                            if (tipoMensagem && listaMensagens) {
-                                exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-                            }
-                            
-                       },
-                       null,
-                       true
+                 },
+                 null,
+                 true
             );
         },
         
@@ -185,6 +200,7 @@ var roteirizacao = $.extend(true, {
                 );
             }
         },
+        
         //Exibe o auto complete no campo
         exibirAutoComplete : function(result, idCampo ,callBack) {
             $(idCampo, roteirizacao.workspace).autocomplete({
@@ -207,6 +223,7 @@ var roteirizacao = $.extend(true, {
                 delay : 0
             });
         },
+        
         //Busca dados para o auto complete do nome da cota
         buscaRoteiroPorNome : function(campo) {
             var descricao = $(campo).val();
@@ -281,7 +298,7 @@ var roteirizacao = $.extend(true, {
                     $.each(data.rows, function(index, value) {
                         var id = value.cell.id;
                         var selecione = '<input type="radio" value="' + id +'" name="rotaRadio" ';
-                        selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  id  + '\');"';
+                        selecione += 'onclick="roteirizacao.rotaSelecionadaListener(\'' +  id  + '\', \''+ value.cell.nome +'\');"';
                         if (id == roteirizacao.idRota) {
                             selecione += 'checked';
                         }
@@ -310,39 +327,71 @@ var roteirizacao = $.extend(true, {
                     sortable : false,
                     align : 'center'
                 }],
-                sortname : "descricaoRota",
                 width : 270,
                 height : 140,
                 disableSelect: true
             });
+            roteirizacao.limparGridRotas();
 
         },
 
         popularGridRotas : function(data) {
-            if (data) {
-                $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
+            if (!data){
+                $.postJSON(contextPath + '/cadastro/roteirizacao/recarregarRotas',
+                     {'idRoteiro' :  roteirizacao.idRoteiro},
+                      function(result) {
+                        $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: result.rows, page : result.page, total : result.total});
+                        return;
+                       },
+                       null,
+                       true
+                );
             } else {
-                roteirizacao.limparGridRotas();
+                $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
             }
+            roteirizacao.limparGridCotasRota();
+            roteirizacao.limparInfoCotasRota();
         },
 
-        rotaSelecionadaListener : function(idRota) {
+        rotaSelecionadaListener : function(idRota, nomeRota) {
             roteirizacao.idRota = idRota;
+            roteirizacao.nomeRota = nomeRota;
+            roteirizacao.popularGridCotasRota();
             roteirizacao.definirTransferenciaRota();
+            roteirizacao.tipoExclusao = TipoExclusao.ROTA;
+            roteirizacao.popularInfoCotasRota();
+            
+        },
+        
+        popularInfoCotasRota : function() {
+        	var info = '<strong>Box: </strong>' + roteirizacao.idBox + '-' + roteirizacao.nomeBox;
+        	info += ' <strong> - Roteiro Selecionado: </strong>' + roteirizacao.nomeRoteiro;
+        	info += ' <strong> - Rota: </strong>' + roteirizacao.nomeRota;
+        	$('#cotasRota', roteirizacao.workspace).html(info);
+        },
+        
+        limparInfoCotasRota : function() {
+            $('#cotasRota', roteirizacao.workspace).empty();
         },
 
         limparGridRotas : function() {
             roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
+            roteirizacao.limparInfoCotasRota();
             $(".rotasGrid", roteirizacao.workspace).flexAddData({rows:[], page:0, total:0});
         },
 
         pesquisarRotas : function() {
-            $(".rotasGrid", roteirizacao.workspace).flexOptions({
-                url : contextPath + "/cadastro/roteirizacao/obterRotasRoteiro",
-                params: [{name: 'roteiroId', value: roteirizacao.idRoteiro},
-                         {name: 'nomeRota', value: $('#descricaoRota', roteirizacao.workspace).val()}]
-            });
+            roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
+            roteirizacao.limparInfoCotasRota();
+            roteirizacao.limparGridCotasRota();
 
+            $(".rotasGrid", roteirizacao.workspace).flexOptions({
+                url : contextPath + "/cadastro/roteirizacao/recarregarRotas",
+                params: [{name: 'idRoteiro', value: roteirizacao.idRoteiro},
+                         {name: 'descricaoRota', value: $('#descricaoRota', roteirizacao.workspace).val()}]
+            });
             $(".rotasGrid", roteirizacao.workspace).flexReload();
         },
         
@@ -352,8 +401,9 @@ var roteirizacao = $.extend(true, {
                     $.each(data.rows, function(index, value) {
                         
                         var id = value.cell.id;
+                        var nome = value.cell.nome;
                         var selecione = '<input type="radio" value="' + id +'" name="boxRadio" ';
-                        selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  id  + '\', \'' + value.cell.nome + '\');"';
+                        selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  id  + '\',\'' + nome + '\');"';
                         if (id == roteirizacao.idBox) {
                             selecione += 'checked';
                         }
@@ -376,11 +426,18 @@ var roteirizacao = $.extend(true, {
                     sortable : false,
                     align : 'center'
                 }],
-                sortname : "descricaoBox",
+                autoload : false,
+                disableSelect: true,
                 width : 270,
                 height : 140,
-                disableSelect: true
+
+                url: contextPath + '/cadastro/roteirizacao/recarregarBox',
+                onSubmit    : function(){
+                    $('.boxGrid').flexOptions({params: [{name: 'nomeBox', value: $('#nomeBox').val()}]});
+                    return true;
+                }
             });
+            roteirizacao.limparGridBox();
         },
 
         popularGridBox : function(data) {
@@ -395,43 +452,87 @@ var roteirizacao = $.extend(true, {
            $(".boxGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
         },
 
-        boxSelecionadoListener : function(idBox, nomeBox) {
-            if (roteirizacao.idBox != idBox) {
-                roteirizacao.idBox = idBox;
-                roteirizacao.nomeBoxRoteiro = nomeBox;
-                roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
-                $.postJSON(contextPath + '/cadastro/roteirizacao/boxSelecionado',
-                    [{name: 'idBox', value: idBox}],
-                    function(result) {
-                        var tipoMensagem = result.tipoMensagem;
-                        var listaMensagens = result.listaMensagens;
-                        if (tipoMensagem && listaMensagens) {
-                            exibirMensagem(tipoMensagem, listaMensagens);
-                        } else {
-                            if (TipoEdicao.NOVO.value == result.tipoEdicao) {
-                                roteirizacao.popularGridRoteiros(result.roteiros);
-                            } else {
-                                roteirizacao.definirTipoEdicao(TipoEdicao.ALTERACAO);
-                                roteirizacao.idRoteirizacao = result.id;
-                                roteirizacao.popularGridBox(result.boxDisponiveis)
+        pesquisarBox : function() {
+            roteirizacao.limparInfoCotasRota();
+            $(".boxGrid", roteirizacao.workspace).flexReload();
+            roteirizacao.idBox = "";
+            roteirizacao.nomeBox = "";
+            roteirizacao.limparGridRoteiros();
+            roteirizacao.limparGridRotas();
+            roteirizacao.limparGridCotasRota();
+        },
 
-                                if (result.roteiros) {
-                                    roteirizacao.idRoteiro = result.roteiros[0].id;
-                                    roteirizacao.popularGridRoteiros(result.roteiros);
-                                    if (result.roteiros[0].rotas) {
-                                        roteirizacao.idRota =  result.roteiros[0].rotas[0].id;
-                                        roteirizacao.popularGridRotas(result.roteiros[0].rotas);
-                                        if (result.roteiros[0].rotas[0].pdvs) {
-                                            roteirizacao.popularGridCotasRota(result.roteiros[0].rotas[0].pdvs);
-                                        }
-                                    }
-                                }
-                            }
+        boxSelecionadoListener : function(idBox, nomeBox) {
+            var isBoxSelecionado = roteirizacao.idBox != "";
+            if (isBoxSelecionado) {
+              var dialog = new ConfirmDialog("Ao alterar o Box selecionado as informações não confirmadas serão perdidas.<br/>Confirma?", function() {
+                 roteirizacao.processarAlteracaoBox(idBox, nomeBox);
+                 return true;
+              }, function() {
+              });
+              dialog.open();
+            } else {
+                roteirizacao.processarAlteracaoBox(idBox, nomeBox);
+            }
+        },
+
+        processarAlteracaoBox : function(idBox, nomeBox) {
+            roteirizacao.idBox = idBox;
+            roteirizacao.nomeBox = nomeBox;
+            roteirizacao.idRoteiro = "";
+            roteirizacao.idRota = "";
+            roteirizacao.limparInfoCotasRota();
+
+            roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
+            $.postJSON(contextPath + '/cadastro/roteirizacao/boxSelecionado',
+                [{name: 'idBox', value: idBox}],
+                function(result) {
+                    var tipoMensagem = result.tipoMensagem;
+                    var listaMensagens = result.listaMensagens;
+                    if (tipoMensagem && listaMensagens) {
+                        exibirMensagem(tipoMensagem, listaMensagens);
+                    } else {
+                        if (TipoEdicao.NOVO.value == result.tipoEdicao) {
+                            roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
+                        } else {
+                            roteirizacao.definirTipoEdicao(TipoEdicao.ALTERACAO);
+                            roteirizacao.idRoteirizacao = result.id;
                         }
-                    },
-                    null,
-                    true
-                );
+                        roteirizacao.popularGrids(result);
+                    }
+                },
+                null,
+                true
+            );
+        },
+
+        popularGrids : function(data) {
+            if (data.box) {
+                roteirizacao.idBox = data.box.id;
+                roteirizacao.nomeBox = data.box.nome;
+            }
+            roteirizacao.popularGridBox(data.boxDisponiveis);
+            if (data.roteiros && data.roteiros.length > 0) {
+                    if (roteirizacao.idRoteiro == "") {
+                        roteirizacao.idRoteiro = data.roteiros[0].id;
+                        roteirizacao.nomeRoteiro = data.roteiros[0].nome;
+                    }
+                    roteirizacao.popularGridRoteiros(data.roteiros);
+                    if (data.roteiros[0].rotas) {
+                        if (roteirizacao.idRota == "" && data.roteiros[0].rotas[0]) {
+                            roteirizacao.idRota = data.roteiros[0].rotas[0].id;
+                            roteirizacao.nomeRota = data.roteiros[0].rotas[0].nome;
+                        }
+                        roteirizacao.popularGridRotas(data.roteiros[0].rotas);
+                        if (data.roteiros[0].rotas[0] && data.roteiros[0].rotas[0].pdvs) {
+                            roteirizacao.popularGridCotasRota(data.roteiros[0].rotas[0].pdvs);
+                        }
+                    }
+                roteirizacao.popularInfoCotasRota();
+            } else {
+                roteirizacao.limparGridRoteiros();
+                roteirizacao.limparGridRotas();
+                roteirizacao.limparGridCotasRota();
             }
         },
 
@@ -441,11 +542,11 @@ var roteirizacao = $.extend(true, {
                     $.each(data.rows, function(index, value) {
                         var id = value.cell.id;
                         var selecione = '<input type="radio" value="' + id +'" name="roteirosRadio" ';
-                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  id  + '\');"';
+                        selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  id  + '\', \'' + value.cell.nome + '\');"';
                         if (id == roteirizacao.idRoteiro) {
                             selecione += 'checked';
                         }
-                        selecione += '/>'
+                        selecione += '/>';
                         value.cell.selecione = selecione;
                     });
                     return data;
@@ -470,19 +571,29 @@ var roteirizacao = $.extend(true, {
                     sortable : false,
                     align : 'center'
                 }],
-                sortname : "descricaoBox",
                 width : 270,
                 height : 140,
                 disableSelect: true
             });
+            roteirizacao.limparGridRoteiros();
 
         },
 
         popularGridRoteiros : function(data) {
-            if (data) {
-                $(".roteirosGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
+            
+        	if (!data){
+                $.postJSON(contextPath + '/cadastro/roteirizacao/buscaRoteiros',
+                	null,
+                    function(result) {
+                		$(".roteirosGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(result), page : 1, total : result.length});
+                		roteirizacao.limparGridRotas();
+                        return;
+                	},
+                    null,
+                    true
+                );
             } else {
-                roteirizacao.limparGridRoteiros();
+                $(".roteirosGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
             }
         },
 
@@ -493,15 +604,18 @@ var roteirizacao = $.extend(true, {
 
         roteiroSelecionadoListener : function(idRoteiro, descricaoRoteiro) {
             roteirizacao.idRoteiro = idRoteiro;
-            roteirizacao.nomeBoxRoteiro = descricaoRoteiro;
+            roteirizacao.nomeRoteiro = descricaoRoteiro;
+            roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
             roteirizacao.definirTransferenciaRoteiro();
-            roteirizacao.pesquisarRotas();
+            roteirizacao.popularGridRotas();
             roteirizacao.tipoInclusao = TipoInclusao.ROTA;
+            roteirizacao.tipoExclusao = TipoExclusao.ROTEIRO;
         },
 
         pesquisarRoteiros : function() {
             $(".roteirosGrid", roteirizacao.workspace).flexOptions({
-                url : contextPath + "/cadastro/roteirizacao/obterRoteirosBox",
+                url : contextPath + "/cadastro/roteirizacao/recarregarRoteiros",
                 params: [{name: 'idBox', value: roteirizacao.idBox},
                          {name: 'descricaoRoteiro', value: $('#descricaoRoteiro', roteirizacao.workspace).val()}]
             });
@@ -509,12 +623,14 @@ var roteirizacao = $.extend(true, {
             $(".roteirosGrid", roteirizacao.workspace).flexReload();
             roteirizacao.idRoteiro = "";
             roteirizacao.limparGridRotas();
+            roteirizacao.limparGridCotasRota();
         },
         
         abrirTelaRota : function () {
             
 
         },
+        
         confirmarInclusaoRota : function() {
             $.postJSON(contextPath + '/cadastro/roteirizacao/incluirRota',
                  {
@@ -524,14 +640,17 @@ var roteirizacao = $.extend(true, {
                     
                  },
                    function(result) {
+                        
                         var tipoMensagem = result.tipoMensagem;
                         var listaMensagens = result.listaMensagens;
-                        $('#dialog-novo-dado', roteirizacao.workspace).dialog("close");
-                        if (tipoMensagem && listaMensagens) {
-                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-                        }
-                        $(".rotasGrid", roteirizacao.workspace).flexReload();
                         
+                        if (tipoMensagem && listaMensagens) {
+                            
+                            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-novo-dado');
+                        } else {
+                            roteirizacao.popularGridRotas(result.rotas);
+                            $('#dialog-novo-dado', roteirizacao.workspace).dialog("close");
+                        }
                    },
                    null,
                    true
@@ -546,6 +665,101 @@ var roteirizacao = $.extend(true, {
             
             return rotasSelecinadas;
         },
+        
+        excluirRota : function() {
+        	$.postJSON(contextPath + '/cadastro/roteirizacao/excluirRota',
+        		{
+			    	'rotaId' : roteirizacao.idRota,
+			    	'roteiroId' :  roteirizacao.idRoteiro
+        		},
+        		function(result) {
+        			var tipoMensagem = result.tipoMensagem;
+        			var listaMensagens = result.listaMensagens;
+        			$('#dialog-rota', roteirizacao.workspace).dialog( "close" );
+        			
+        			if (tipoMensagem && listaMensagens) {
+        				exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+        			}
+			     
+        			roteirizacao.popularGridRotas();
+        		},
+        		null,
+        		true
+        	);
+	    },
+	    
+	    excluirRoteiro : function(){
+	    	
+	    	$.postJSON(contextPath + '/cadastro/roteirizacao/excluirRoteiro',
+		        {
+		           'roteiroId' :  roteirizacao.idRoteiro
+		        },
+		        function(result) {
+		        	var tipoMensagem = result.tipoMensagem;
+				    var listaMensagens = result.listaMensagens;
+				    $('#dialog-rota', roteirizacao.workspace).dialog( "close" );
+				    
+				    if (tipoMensagem && listaMensagens) {
+				    	exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+				    }
+				    
+				    roteirizacao.popularGridRoteiros();
+		        },
+		        null,
+		        true
+	       );
+	    },
+	    
+	    popupExcluirRotaRoteiro : function() {
+	    	
+	    	if (roteirizacao.tipoExclusao == TipoExclusao.ROTA){
+	    		
+	    		$("#msgConfExclusaoRotaRoteiro", roteirizacao.workspace).text(
+	    				"Confirma a exclusão da rota " + roteirizacao.nomeRota + "?");
+	    		
+	    		$("#dialog-excluir-rota-roteiro", roteirizacao.workspace).attr("title", "Rotas");
+	    	} else if (roteirizacao.tipoExclusao == TipoExclusao.ROTEIRO){
+	    		
+	    		$("#msgConfExclusaoRotaRoteiro", roteirizacao.workspace).text(
+	    				"Confirma a exclusão do roteiro " + roteirizacao.nomeRoteiro + "?");
+	    		
+	    		$("#dialog-excluir-rota-roteiro", roteirizacao.workspace).attr("title", "Roteiros");
+	    	} else {
+	    		
+	    		//TODO tratar exclusão de associações
+	    	}
+	    	
+	    	
+	    	$( "#dialog-excluir-rota-roteiro", roteirizacao.workspace ).dialog({
+	            resizable: false,
+	            height:'auto',
+	            width:400,
+	            modal: true,
+	            buttons: {
+	                "Confirmar": function() {
+	                	
+	                	if (roteirizacao.tipoExclusao == TipoExclusao.ROTA){
+	                		
+	                		roteirizacao.excluirRota();
+	                	} else if (roteirizacao.tipoExclusao == TipoExclusao.ROTEIRO){
+	                		
+	                		roteirizacao.excluirRoteiro();
+	                	} else {
+	                		
+	                		//TODO tratar exclusão de associações
+	                	}
+	                	
+	                    $(this).dialog("close");
+	                },
+	                "Cancelar": function() {
+	                    $(this).dialog("close");
+	                }
+	            },
+	            form: $("#dialog-excluir-rota-roteiro", this.workspace).parents("form")
+	        }); 
+	              
+	    },
+
         excluiRotas : function() {
             $.postJSON(contextPath + '/cadastro/roteirizacao/excluiRotas',
                      {
@@ -566,105 +780,107 @@ var roteirizacao = $.extend(true, {
                        null,
                        true
             );
-    },
+        },
     
-    popupExcluirRotas : function() {
-    $( "#dialog-excluir-rotas", roteirizacao.workspace ).dialog({
-            resizable: false,
-            height:'auto',
-            width:400,
-            modal: true,
-            buttons: {
-                "Confirmar": function() {
-                    roteirizacao.excluiRotas();
-                    $( this ).dialog( "close" );
-                },
-                "Cancelar": function() {
-                    $( this ).dialog( "close" );
-                }
-            },
-            form: $("#dialog-excluir-rotas", this.workspace).parents("form")
-        }); 
-              
-    },
+	    popupExcluirRotas : function() {
+	    $( "#dialog-excluir-rotas", roteirizacao.workspace ).dialog({
+	            resizable: false,
+	            height:'auto',
+	            width:400,
+	            modal: true,
+	            buttons: {
+	                "Confirmar": function() {
+	                    roteirizacao.excluiRotas();
+	                    $( this ).dialog( "close" );
+	                },
+	                "Cancelar": function() {
+	                    $( this ).dialog( "close" );
+	                }
+	            },
+	            form: $("#dialog-excluir-rotas", this.workspace).parents("form")
+	        }); 
+	              
+	    },
+	    
+	    popupDetalhesCota : function(title, box, roteiro, rota) {
+	        
+	        $('#legendDetalhesCota').html(title);
+	        
+	        $( "#dialog-detalhes" ).dialog({
+	            resizable: false,
+	            height:'auto',
+	            width:420,
+	            modal: true,
+	            buttons: {
+	                "Fechar": function() {
+	                    $( this ).dialog( "close" );
+	                }
+	            },
+	            form: $("#dialog-detalhes", this.workspace).parents("form")
+	        });
+	    },
     
-    popupDetalhesCota : function(title, box, roteiro, rota) {
-        
-        $('#legendDetalhesCota').html(title);
-        
-        $( "#dialog-detalhes" ).dialog({
-            resizable: false,
-            height:'auto',
-            width:420,
-            modal: true,
-            buttons: {
-                "Fechar": function() {
-                    $( this ).dialog( "close" );
-                }
-            },
-            form: $("#dialog-detalhes", this.workspace).parents("form")
-        });
-    },
     
-    
-    popupTransferirRota : function() {
-        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
-        $("#roteiroTranferenciaNome", roteirizacao.workspace).val('');
-        $("#dialog-transfere-rota", roteirizacao.workspace ).dialog({
-            resizable: false,
-            height:'auto',
-            width:410,
-            modal: true,
-            buttons: {
-                "Confirmar": function() {
-                    if ( transferirRotasComNovoRoteiro ){
-                        roteirizacao.transferirRotasComNovoRoteiro();
-                    } else {
-                        roteirizacao.transferirRotas();
-                    }
-                    
-                    $( this ).dialog( "close" );
-                    
-                },
-                "Cancelar": function() {
-                    $( this ).dialog( "close" );
-                }
-            },
-            form: $("#dialog-transfere-rota", this.workspace).parents("form")
-        }); 
-              
-    },
-    transferirRotas : function() {
-        $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val(roteiro.id);
-        
-        var roteiroId = null;
-        
-        if ( $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val() != null &&   $.trim( $('#roteiroTranferenciaNome', roteirizacao.workspace).val()) == $('#roteiroTranferenciaSelecionadoNome', roteirizacao.workspace).val()) {
-            roteiroId =  $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val();
-        }
-        
-        $.postJSON(contextPath + '/cadastro/roteirizacao/transferirRotas',
-                 {
-                    'rotasId' : roteirizacao.buscaRotasSelecionadas(),
-                    'roteiroId' : roteiroId,
-                    'roteiroNome' : $('#roteiroTranferenciaNome', roteirizacao.workspace).val()
-                    
-                 },
-                   function(result) {
-                        var tipoMensagem = result.tipoMensagem;
-                        var listaMensagens = result.listaMensagens;
-                        $('#dialog-rota', roteirizacao.workspace).dialog( "close" );
-                        if (tipoMensagem && listaMensagens) {
-                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-                        }
-                        $(".rotasGrid").flexReload();
-                        
-                   },
-                   null,
-                   true
-        );
-     },
-     transferirRotasComNovoRoteiro : function() {
+	    popupTransferirRota : function() {
+	        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	        $("#roteiroTranferenciaNome", roteirizacao.workspace).val('');
+	        $("#dialog-transfere-rota", roteirizacao.workspace ).dialog({
+	            resizable: false,
+	            height:'auto',
+	            width:410,
+	            modal: true,
+	            buttons: {
+	                "Confirmar": function() {
+	                    if ( transferirRotasComNovoRoteiro ){
+	                        roteirizacao.transferirRotasComNovoRoteiro();
+	                    } else {
+	                        roteirizacao.transferirRotas();
+	                    }
+	                    
+	                    $( this ).dialog( "close" );
+	                    
+	                },
+	                "Cancelar": function() {
+	                    $( this ).dialog( "close" );
+	                }
+	            },
+	            form: $("#dialog-transfere-rota", this.workspace).parents("form")
+	        }); 
+	              
+	    },
+	    
+	    transferirRotas : function() {
+	        $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val(roteiro.id);
+	        
+	        var roteiroId = null;
+	        
+	        if ( $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val() != null &&   $.trim( $('#roteiroTranferenciaNome', roteirizacao.workspace).val()) == $('#roteiroTranferenciaSelecionadoNome', roteirizacao.workspace).val()) {
+	            roteiroId =  $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val();
+	        }
+	        
+	        $.postJSON(contextPath + '/cadastro/roteirizacao/transferirRotas',
+	                 {
+	                    'rotasId' : roteirizacao.buscaRotasSelecionadas(),
+	                    'roteiroId' : roteiroId,
+	                    'roteiroNome' : $('#roteiroTranferenciaNome', roteirizacao.workspace).val()
+	                    
+	                 },
+	                   function(result) {
+	                        var tipoMensagem = result.tipoMensagem;
+	                        var listaMensagens = result.listaMensagens;
+	                        $('#dialog-rota', roteirizacao.workspace).dialog( "close" );
+	                        if (tipoMensagem && listaMensagens) {
+	                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+	                        }
+	                        $(".rotasGrid").flexReload();
+	                        
+	                   },
+	                   null,
+	                   true
+	        );
+	    },
+	     
+        transferirRotasComNovoRoteiro : function() {
            var tipoRoteiro = 'NORMAL';
            if ( $('input[name=tipoRoteiroTranferencia]').is(':checked') ){
                tipoRoteiro = 'ESPECIAL';
@@ -693,27 +909,28 @@ var roteirizacao = $.extend(true, {
                        null,
                        true
             );
-         },
+        },
      
+	    selecionaRoteiroTranferencia : function(roteiro) {
+	         $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val(roteiro.id);
+	         $('#roteiroTranferenciaSelecionadoNome', roteirizacao.workspace).val(roteiro.descricaoRoteiro);
+	    },
+	     
+	    exibiRoteiroNovoTranferencia : function (){
+	         $('.roteiroNovo', roteirizacao.workspace).show();
+	         transferirRotasComNovoRoteiro = true;   
+	    },
      
-     
-     selecionaRoteiroTranferencia : function(roteiro) {
-         $('#roteiroTranferenciaSelecionadoId', roteirizacao.workspace).val(roteiro.id);
-         $('#roteiroTranferenciaSelecionadoNome', roteirizacao.workspace).val(roteiro.descricaoRoteiro);
-     },
-     exibiRoteiroNovoTranferencia : function (){
-            $('.roteiroNovo', roteirizacao.workspace).show();
-            transferirRotasComNovoRoteiro = true;   
-     },
-     escondeRoteiroNovoTranferencia : function (){
-            $('.roteiroNovo', roteirizacao.workspace).hide();
-            transferirRotasComNovoRoteiro = false;  
-      },
-        //Busca dados para o auto complete do nome da cota
-      filtroGridRotasPorNome : function() {
+	    escondeRoteiroNovoTranferencia : function (){
+	         $('.roteiroNovo', roteirizacao.workspace).hide();
+	         transferirRotasComNovoRoteiro = false;  
+	    },
+	     
+         //Busca dados para o auto complete do nome da cota
+        filtroGridRotasPorNome : function() {
           
-          if ( $.trim($('#nomeRota', roteirizacao.workspace).val()) != ''){
-            $(".rotasGrid", roteirizacao.workspace).flexOptions({
+            if ( $.trim($('#nomeRota', roteirizacao.workspace).val()) != ''){
+               $(".rotasGrid", roteirizacao.workspace).flexOptions({
                     'url' : contextPath + '/cadastro/roteirizacao/pesquisarRotaPorNome',
                     params : [{
                         name : 'roteiroId',
@@ -725,83 +942,130 @@ var roteirizacao = $.extend(true, {
                     newp:1
                 });
               
-              $(".rotasGrid", roteirizacao.workspace).flexReload();
-          }
-        },
-        
-        iniciarGridCotasRota : function(){
-            $(".cotasRotaGrid").flexigrid({
-                preProcess : function(data) {
-                    $.each(data.rows, function(index, value) {
-                        var id = value.cell.id;
-                        var selecione = '<input type="checkbox" name="checkboxCotasRota" value="'+ id +'"/>';
-                        value.cell.selecione = selecione;
-                        var ordem = '<input type="text" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
-                        value.cell.ordem = ordem;
-                    });
-                    return data;
-                },
-                dataType : 'json',
-                colModel : [ {
-                    display : 'PDV',
-                    name : 'pdv',
-                    width : 120,
-                    sortable : true,
-                    align : 'left'
-                },{
-                    display : 'Origem',
-                    name : 'origem',
-                    width : 50,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Endereço',
-                    name : 'endereco',
-                    width : 325,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Cota',
-                    name : 'cota',
-                    width : 50,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Nome',
-                    name : 'nome',
-                    width : 170,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Ordem',
-                    name : 'ordem',
-                    width : 40,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : '',
-                    name : 'selecione',
-                    width : 15,
-                    sortable : false,
-                    align : 'center'
-                }],
-                sortname : "ordem",
-                width : 875,
-                height : 150
-            });
-        },
-        
-        popularGridCotasRota : function(data) {
-            if (data) {
-                $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
-            } else {
-                roteirizacao.limparGridCotasRota();
+                $(".rotasGrid", roteirizacao.workspace).flexReload();
             }
         },
-        
-        limparGridCotasRota : function() {
-             $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 1, total : data.length});
+
+        iniciarGridCotasRota : function(){
+	        $(".cotasRotaGrid").flexigrid({
+	            preProcess : function(data) {
+	                $.each(data.rows, function(index, value) {
+	                    var id = value.cell.id;
+	                    var selecione = '<input type="checkbox" class="checkboxCotasRota" name="checkboxCotasRota" value="'+ id +'"/>';
+	                    value.cell.selecione = selecione;
+	                    var ordem = '<input type="text" onchange="roteirizacao.ordemPdvChangeListener(this, \''+ id + '\');" class="inputGridCotasRota" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
+	                    value.cell.ordem = ordem;
+	                });
+	                return data;
+	            },
+	            dataType : 'json',
+	            colModel : [ {
+	                display : 'PDV',
+	                name : 'pdv',
+	                width : 120,
+	                sortable : true,
+	                align : 'left'
+	            },{
+	                display : 'Origem',
+	                name : 'origem',
+	                width : 50,
+	                sortable : true,
+	                align : 'left'
+	            }, {
+	                display : 'Endereço',
+	                name : 'endereco',
+	                width : 325,
+	                sortable : true,
+	                align : 'left'
+	            }, {
+	                display : 'Cota',
+	                name : 'cota',
+	                width : 50,
+	                sortable : true,
+	                align : 'left'
+	            }, {
+	                display : 'Nome',
+	                name : 'nome',
+	                width : 170,
+	                sortable : true,
+	                align : 'left'
+	            }, {
+	                display : 'Ordem',
+	                name : 'ordem',
+	                width : 40,
+	                sortable : true,
+	                align : 'left'
+	            }, {
+	                display : '',
+	                name : 'selecione',
+	                width : 15,
+	                sortable : false,
+	                align : 'center'
+	            }],
+	            autoload : false,
+	            sortname : "ordem",
+	            sortorder: "asc",
+	            url: contextPath + '/cadastro/roteirizacao/recarregarCotasRota',
+	            onSubmit    : function(){
+	                $('.cotasRotaGrid').flexOptions({params: [
+	                    {name:'idRota', value: roteirizacao.idRota}
+	                ]});
+	                return true;
+	            },
+	            width : 875,
+	            height : 150
+	        });
+	        roteirizacao.limparGridCotasRota();
+	    },
+	    
+	    selecionarTodosPdvs : function() {
+	    	if ($('#selecionarTodosPdv', roteirizacao.workspace).is(':checked')) {
+	    		$(".checkboxCotasRota", roteirizacao.workspace).prop('checked', true);
+	    	} else {
+	    		$(".checkboxCotasRota", roteirizacao.workspace).prop('checked', false);
+	    	}
+	    },
+	
+	    ordemPdvChangeListener : function(element, idPdv) {
+	    	var ordemAntiga = element.defaultValue;
+	        var ordem = $(element).val();
+	    	var param = [{name: 'idRota', value: roteirizacao.idRota}, 
+	    	             {name: 'idPdv', value: idPdv}, 
+	    	             {name: 'ordem',  value: ordem}];
+	    	
+	    	 $.postJSON(contextPath + '/cadastro/roteirizacao/ordemPdvChangeListener', param,
+	                function(result) {
+	    		 	    if (result) {
+	                         element.defaultValue = ordem;
+	                    }
+	                    if (!result) {
+	    		 	    	exibirMensagemDialog("WARNING", ["Ordem já utilizada!"],'dialogRoteirizacao');
+	                        $(element).val(ordemAntiga);
+	                    }
+	                },
+	                null,
+	                true
+	             );
+	    },
+	    
+	    limparGridCotasRota : function() {
+           roteirizacao.idsCotas = [];
+           roteirizacao.limparInfoCotasRota();
+           $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
         },
+
+        popularGridCotasRota : function(data) {
+            if (!data) {
+                $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
+            } else {
+                $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
+            }
+            roteirizacao.idsCotas = [];
+        },
+
+	    limparGridCotasRota : function() {
+	        $(".cotasRotaGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
+	    },
         
         populaDadosCota : function(rotaId) {
             $.postJSON(contextPath + '/cadastro/roteirizacao/buscarRotaPorId',
@@ -826,23 +1090,27 @@ var roteirizacao = $.extend(true, {
            
         },
         
-        
-    
         abrirTelaCotas : function () {
+        	
+        	roteirizacao.iniciaCotasDisponiveisGrid();
+        	
             $("#cepPesquisa", roteirizacao.workspace).mask("99999-999");
             $("#numeroCotaPesquisa", roteirizacao.workspace).val('');
             $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas',null,
                     function(result) {
+            	     
                         roteirizacao.populaComboUf(result);
-                        roteirizacao.iniciaCotasDisponiveisGrid();
+                        
                         $( "#dialog-cotas-disponiveis", roteirizacao.workspace ).dialog({
                             resizable: false,
-                            height:470,
-                            width:870,
+                            height:530,
+                            width:880,
                             modal: true,
                             buttons: {
                                 "Confirmar": function() {
-                                    roteirizacao.confirmaRoteirizacao();
+
+                                    roteirizacao.adicionaPdvs();
+
                                     $( this ).dialog( "close" );
                                     
                                 },
@@ -856,7 +1124,6 @@ var roteirizacao = $.extend(true, {
                        null,
                        true
                 );
-
         },
         
         buscalistaMunicipio : function () {
@@ -889,9 +1156,10 @@ var roteirizacao = $.extend(true, {
                 );
 
         },
+        
         populaComboUf : function(result) {
             $('#comboUf > option', roteirizacao.workspace).remove();
-            $('#comboUf', roteirizacao.workspace).append('<option value=""> Selecione...</option>');
+            $('#comboUf', roteirizacao.workspace).append('<option value="">Todos</option>');
             roteirizacao.resetComboBairro();
             roteirizacao.resetComboMunicipio();
             
@@ -901,7 +1169,10 @@ var roteirizacao = $.extend(true, {
             );
             
         },
+        
         populaMunicipio : function(result) {
+        	$('#comboMunicipio > option', roteirizacao.workspace).remove();
+            $('#comboMunicipio', roteirizacao.workspace).append('<option value="">Todos</option>');
             roteirizacao.resetComboBairro();
             roteirizacao.resetComboMunicipio();
             $.each(result, function(index, row){
@@ -910,7 +1181,10 @@ var roteirizacao = $.extend(true, {
             );
             
         },
+        
         populaBairro : function(result) {
+        	$('#comboBairro > option', roteirizacao.workspace).remove();
+            $('#comboBairro', roteirizacao.workspace).append('<option value="">Todos</option>');
             roteirizacao.resetComboBairro();
             $.each(result, function(index, row){
                 $('#comboBairro', roteirizacao.workspace).append('<option>'+row.baiNo+'</option>');
@@ -923,63 +1197,90 @@ var roteirizacao = $.extend(true, {
             $('#comboMunicipio > option', roteirizacao.workspace).remove();
             $('#comboMunicipio', roteirizacao.workspace).append('<option value="" >Todos</option>');
         },
+        
         resetComboBairro : function(){
             $('#comboBairro > option', roteirizacao.workspace).remove();
             $('#comboBairro', roteirizacao.workspace).append('<option value="" >Todos</option>');
         },
         
+        buscaPdvsDisponiveis : function() {    
+        	
+        	var numCota = $("#cotaPesquisaPdv", this.workspace).val();
+		    var municipio = $("#comboMunicipio", this.workspace).val();
+			var uf = $("#comboUf", this.workspace).val();
+			var bairro = $("#comboBairro", this.workspace).val();
+			var cep = $("#cepPesquisa", this.workspace).val();	
+        	
+			$(".cotasDisponiveisGrid", this.workspace).flexOptions({
+				url: contextPath + "/cadastro/roteirizacao/obterPdvsDisponiveis",
+				params: [
+				         {name:'numCota', value:numCota},
+				         {name:'municipio', value:municipio},
+				         {name:'uf', value:uf},
+				         {name:'bairro', value:bairro},
+				         {name:'cep', value:cep}
+				        ] ,
+				        newp: 1
+			});
+
+			$(".cotasDisponiveisGrid", this.workspace).flexReload();
+			
+			$(".grids", this.workspace).show();
+		},
+		
         iniciaCotasDisponiveisGrid : function(){
             $(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
             $(".cotasDisponiveisGrid", roteirizacao.workspace).flexigrid({
                 preProcess:roteirizacao.callCotasDisponiveisGrid,
                 dataType : 'json',
-                colModel : [ {
-                    display : 'Pto. Venda',
-                    name : 'pontoVenda',
-                    width : 95,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Orig. End',
-                    name : 'origemEndereco',
-                    width : 60,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Endereço',
-                    name : 'endereco',
-                    width : 270,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Cota',
-                    name : 'numeroCota',
-                    width : 40,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Nome',
-                    name : 'nome',
-                    width : 150,
-                    sortable : true,
-                    align : 'left'
-                }, {
-                    display : 'Ordem',
-                    name : 'ordem',
-                    width : 55,
-                    sortable : true,
-                    align : 'center'
-                }, {
-                    display : '',
-                    name : 'selecione',
-                    width : 20,
-                    sortable : true,
-                    align : 'center'
-                }],
-                sortname : "cota",
-                width : 800,
-                height : 200
-            });
+				colModel : [ {
+					display : 'PDV',
+					name : 'pdv',
+					width : 95,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Origem',
+					name : 'origem',
+					width : 60,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Endereço',
+					name : 'endereco',
+					width : 270,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Cota',
+					name : 'cota',
+					width : 40,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Nome',
+					name : 'nome',
+					width : 150,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Ordem',
+					name : 'ordem',
+					width : 55,
+					sortable : false,
+					align : 'center'
+				}, {
+					display : '',
+					name : 'selecionado',
+					width : 20,
+					sortable : false,
+					align : 'center'
+				}],
+				sortname : "pdv",
+				sortorder : "asc",
+				width : 800,
+				height : 200
+			});    
         },
         
         callCotasDisponiveisGrid :  function (data){
@@ -990,10 +1291,11 @@ var roteirizacao = $.extend(true, {
             }
             
             $.each(data.rows, function(index, value) {
-                var idPontoVenda = value.cell.idPontoVenda;
-                var selecione = '<input type="checkbox" value="'+idPontoVenda +'" name="pdvCheckbox" id="pdvCheckbox" />';
-                var ordem ='<input type="input" value="'+index +'" name="pdvOrdem'+idPontoVenda+'" id="pdvOrdem'+idPontoVenda+'" size="6" length="6" />';
-                value.cell.selecione = selecione;
+            	var idPontoVenda = value.cell.id;
+                var valOrdem = value.cell.ordem;
+                var selecionado = '<input type="checkbox" value="'+idPontoVenda+'" name="pdvCheckbox" id="pdvCheckbox'+idPontoVenda+'" />';
+                var ordem ='<input type="input" value="'+valOrdem+'" name="pdvOrdem" id="pdvOrdem" size="6" length="6" />';
+                value.cell.selecionado = selecionado;
                 value.cell.ordem = ordem;
                 
             });
@@ -1008,7 +1310,6 @@ var roteirizacao = $.extend(true, {
             roteirizacao.carregarNomeCotasPesquisa('cotaDisponivelPesquisa',  $('#numeroCotaPesquisa', roteirizacao.workspace).val(), function(){roteirizacao.buscarPvsPorCota();} );
         
         },
-        
         
         buscarPvsPorCota : function() {
             pesquisaPorCota = true;
@@ -1032,803 +1333,971 @@ var roteirizacao = $.extend(true, {
                 });
               
               $(".cotasDisponiveisGrid", roteirizacao.workspace).flexReload();
-    },
-    
-
-    confirmaRoteirizacao : function () {
-        var params = roteirizacao.populaParamentrosContaSelecionadas();
-        $.postJSON(contextPath + '/cadastro/roteirizacao/confirmaRoteirizacao', params,
-                function(result) {
-                   // roteirizacao.populaBairro(result);
-                   $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
-                    var tipoMensagem = result.tipoMensagem;
-                    var listaMensagens = result.listaMensagens;
-                    if (tipoMensagem && listaMensagens) {
-                        exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-                    }
-                },
-                null,
-                true
-            );
-
-    },
-    
-    populaParamentrosContaSelecionadas : function(){
-        var dados ="";
-        var index = 0;
-        $("input[type=checkbox][name='pdvCheckbox']:checked", roteirizacao.workspace).each(function(){
-            if (dados != ""){
-                dados+=",";
-            }
-                
-            var idPontoVenda =  $(this).val();
-            var ordem = $('#pdvOrdem'+idPontoVenda).val();
-            dados+='{name:"lista['+index+'].idPontoVenda",value:'+idPontoVenda+'}, {name:"lista['+index+'].ordem",value:'+ordem+'}';
-            index++;
-        });
-        dados+=',{name:"idRota",value:'+$('#rotaSelecionada', roteirizacao.workspace).val()+'}';
-        var params = '['+dados+ ']';
-        
-        return eval(params);
-    },
-    limparTelaRoteirizacao:function(){
-        $("#lstRoteiros", roteirizacao.workspace).val('');
-        $(".rotasGrid", roteirizacao.workspace).clear();
-        $(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
-        $(".cotasRotaGrid", roteirizacao.workspace).clear();
-        $('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
-        $('#spanDadosRota', roteirizacao.workspace).html('<strong>Rota Selecionada:</strong>&nbsp;&nbsp;&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
-    
-    },
-    
-    limparTelaRoteiro:function(){
-        $('#boxInclusaoRoteiro', roteirizacao.workspace).val('');
-        $('#inputNome', roteirizacao.workspace).val('');
-        $("#tipoRoteiro", roteirizacao.workspace).attr("checked",false);
-    
-    },
-    popupTransferirCota : function() {
-        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
-        $('#lstRotaTranferencia', roteirizacao.workspace).val('');
-        $("#dialog-transfere-cotas", roteirizacao.workspace ).dialog({
-            resizable: false,
-            height:250,
-            width:410,
-            modal: true,
-            buttons: {
-                "Confirmar": function() {
-                    
-                    if ( transferirRoteirizacaoComNovaRota) {
-                        roteirizacao.transferirRoteirizacaoComNovaRota();
-                    } else {
-                        roteirizacao.transferirRoteirizacao();
-                    }
-                    roteirizacao.escondeRotaNovaTranferencia();
-                    $( this ).dialog( "close" );
-                    $("#effect", roteirizacao.workspace).hide("highlight", {}, 1000, callback);
-                    
-                },
-                "Cancelar": function() {
-                    roteirizacao.escondeRotaNovaTranferencia();
-                    $( this ).dialog( "close" );
-                }
-            },
-            form: $("#dialog-transfere-cotas", this.workspace).parents("form")
-        }); 
-              
-    },
-    
-    //Busca dados para o auto complete do nome da cota
-    autoCompletarRotaPorNome : function(idRota, callBack) {
-        
-        var descricao = $(idRota).val();
-        
-        descricao = $.trim(descricao);
-        
-        $(idRota).autocomplete({source: ""});
-        
-        if (descricao && descricao.length > 1) {
-            
-            $.postJSON(
-                contextPath + "/cadastro/roteirizacao/autoCompletarRotaPorDescricao",
-                 {
-                    'roteiroId' : $('#idRoteiroSelecionado').val(),
-                    'nomeRota' : descricao
-                    
-                 },
-                function(result) { 
-                     roteirizacao.exibirAutoComplete(result, idRota ,callBack); 
-                },
-                null, 
-                true
-            );
-        }
-    },
-    
-    //Busca dados para o auto complete do nome da cota
-    autoCompletarRotaPorNome : function(idRota, callBack) {
-        
-        var descricao = $(idRota).val();
-        
-        descricao = $.trim(descricao);
-        
-        $(idRota).autocomplete({source: ""});
-        
-        if (descricao && descricao.length > 1) {
-            
-            $.postJSON(
-                contextPath + "/cadastro/roteirizacao/autoCompletarRotaPorDescricao",
-                 {
-                    'roteiroId' : $('#idRoteiroSelecionado', roteirizacao.workspace).val(),
-                    'nomeRota' : descricao
-                    
-                 },
-                function(result) { 
-                     roteirizacao.exibirAutoComplete(result, idRota ,callBack); 
-                },
-                null, 
-                true
-            );
-        }
-    },
-    
-    transferirRoteirizacao : function() {
-        var descricao = $('#lstRotaTranferencia', roteirizacao.workspace).val();
-        descricao = $.trim(descricao);
-            $.postJSON(
-                contextPath + "/cadastro/roteirizacao/transferirRoteirizacao",
-                 {
-                    'roteirizacaoId' :roteirizacao.buscaRoteirizacaoSelecionadas(),
-                    'roteiroId' : $('#idRoteiroSelecionado', roteirizacao.workspace).val(),
-                    'rotaNome' : descricao
-                    
-                 },
-                function(result) { 
-                      $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
-                        var tipoMensagem = result.tipoMensagem;
-                        var listaMensagens = result.listaMensagens;
-                        if (tipoMensagem && listaMensagens) {
-                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-                        }
-                },
-                null, 
-                true
-            );
-    },
-    
-    transferirRoteirizacaoComNovaRota : function() {
-        var descricao = $('#lstRotaTranferencia', roteirizacao.workspace).val();
-        descricao = $.trim(descricao);
-            $.postJSON(
-                contextPath + "/cadastro/roteirizacao/transferirRoteirizacaoComNovaRota",
-                 {
-                    'roteirizacaoId' :roteirizacao.buscaRoteirizacaoSelecionadas(),
-                    'roteiroId' : $('#idRoteiroSelecionado', roteirizacao.workspace).val(),
-                    'rotaNome' : descricao,
-                    'ordem' : $('#ordemRotaTranferencia', roteirizacao.workspace).val()
-                    
-                    
-                 },
-                function(result) { 
-                      $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
-                        var tipoMensagem = result.tipoMensagem;
-                        var listaMensagens = result.listaMensagens;
-                        if (tipoMensagem && listaMensagens) {
-                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-                        }
-                },
-                null, 
-                true
-            );
-    },
-    
-    excluirRoteirizacao :  function(){
-        $.postJSON(
-                contextPath + "/cadastro/roteirizacao/excluirRoteirizacao",
-                 {
-                    'roteirizacaoId' :roteirizacao.buscaRoteirizacaoSelecionadas()
-                    
-                 },
-                function(result) { 
-                      $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
-                        var tipoMensagem = result.tipoMensagem;
-                        var listaMensagens = result.listaMensagens;
-                        if (tipoMensagem && listaMensagens) {
-                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
-                        }
-                },
-                null, 
-                true
-            );
-        
-    },
-    
-    popupExcluirRoteirizacao : function() {
-        
-        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
-    
-        $( "#dialog-excluir-cotas", roteirizacao.workspace ).dialog({
-            resizable: false,
-            height:'auto',
-            width:400,
-            modal: true,
-            buttons: {
-                "Confirmar": function() {
-                    roteirizacao.excluirRoteirizacao();
-                    $( this ).dialog( "close" );
-                },
-                "Cancelar": function() {
-                    $( this ).dialog( "close" );
-                }
-            },
-            form: $("#dialog-excluir-cotas", this.workspace).parents("form")
-        }); 
-              
-    },
-    
-    buscaRoteirizacaoSelecionadas : function(){
-         roteirizacaoSelecionadas = new Array();
-        $("input[type=checkbox][name='roteirizacaoCheckbox']:checked", roteirizacao.workspace).each(function(){
-            roteirizacaoSelecionadas.push(parseInt($(this).val()));
-        });
-        
-        return roteirizacaoSelecionadas;
-    },
-    
-    buscarPvsPorEndereco : function() {
-        pesquisaPorCota = false;
-        $('#cotaDisponivelPesquisa', roteirizacao.workspace).html('');
-        var municipio =  $('#comboMunicipio', roteirizacao.workspace).val() ;
-        
-        if ( municipio != "" ){
-            municipio = $('#comboMunicipio option:selected', roteirizacao.workspace).text();    
-        }
-        
-        
-        
-        
-        $(".cotasDisponiveisGrid", roteirizacao.workspace).flexOptions({
-                'url' : contextPath + '/cadastro/roteirizacao/buscarPvsPorEndereco',
-                params : [{
-                    name : 'CEP',
-                    value : $('#cepPesquisa', roteirizacao.workspace).val()
-                },
-                {
-                    name : 'uf',
-                    value : $('#comboUf', roteirizacao.workspace).val()
-                },
-                {
-                    name : 'municipio',
-                    value :municipio
-                },
-                {
-                    name : 'bairro',
-                    value : $('#comboBairro', roteirizacao.workspace).val()
-                },
-                {
-                    name : "rotaId",
-                    value : $('#rotaSelecionada', roteirizacao.workspace).val()
-                },
-                
-                {
-                    name : "roteiroId",
-                    value : $('#idRoteiroSelecionado', roteirizacao.workspace).val()
-                }
-                ],
-                newp:1
-            });
-          
-          $(".cotasDisponiveisGrid", roteirizacao.workspace).flexReload();
-},
-
- checarTodasCotasGrid : function() {
-    
-     if ( $("#selecionaTodos", roteirizacao.workspace).is(":checked") ) {
-            $("input[type=checkbox][name='pdvCheckbox']", roteirizacao.workspace).each(function(){
-                $(this).attr('checked', true);
-            });
-            var elem = $("#textoCheckAllCotas", roteirizacao.workspace);
-            elem.innerHTML = "Desmarcar todos";
-     } else {
-            $("input[type=checkbox][name='pdvCheckbox']", roteirizacao.workspace).each(function(){
-                $(this).attr('checked', false);
-            });
-            var elem = document.getElementById("textoCheckAllCotas", roteirizacao.workspace);
-            elem.innerHTML = "Marcar todos";
-     }
- } ,
-
-carregarComboRoteiro : function () {
-    roteirizacao.resetComboRoteiroPesquisa();
-    roteirizacao.resetComboRotaPesquisa();
-    $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiro',
-            { 
-                'boxId' :$('#boxPesquisa', roteirizacao.workspace).val()
-            }
-            ,
-            function(result) {
-                    $.each(result, function(index, row){
-                        $('#roteiroPesquisa', roteirizacao.workspace).append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
-                        }
-                    );
-            },
-            null,
-            true
-        );
-
-},
-
-carregarComboRota : function () {
-    roteirizacao.resetComboRotaPesquisa();
-    $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRota',
-            { 
-                'roteiroId' :$('#roteiroPesquisa', roteirizacao.workspace).val()
-            }
-            ,
-            function(result) {
-                $.each(result, function(index, row){
-                    $('#rotaPesquisa', roteirizacao.workspace).append('<option value="'+row.id+'">'+row.descricaoRota+'</option>');
-                    }
-                );
-        
-            },
-            null,
-            true
-        );
-
-},
-
-carregarComboRoteiroEspecial : function () {
-    roteirizacao.resetComboRoteiroPesquisa();
-    roteirizacao.resetComboRotaPesquisa();
-    $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiroEspecial',null ,
-            function(result) {
-                    $.each(result, function(index, row){
-                        $('#roteiroPesquisa', roteirizacao.workspace).append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
-                        }
-                    );
-            },
-            null,
-            true
-        );
-
-},
-
-resetComboRoteiroPesquisa : function(){
-    $('#roteiroPesquisa > option', roteirizacao.workspace).remove();
-    $('#roteiroPesquisa', roteirizacao.workspace).append('<option value="" >Selecione...</option>');
-},
-resetComboRotaPesquisa : function(){
-    $('#rotaPesquisa > option', roteirizacao.workspace).remove();
-    $('#rotaPesquisa', roteirizacao.workspace).append('<option value="" >Selecione...</option>');
-},
-
-pesquisaComRoteiroEspecial : function() {
-    
-     if ($("#tipoRoteiroPesquisa", roteirizacao.workspace).is(":checked") ) {
-         roteirizacao.resetComboRoteiroPesquisa();
-         roteirizacao.resetComboRotaPesquisa();
-         $('#boxPesquisa', roteirizacao.workspace).attr("disabled", "disabled");
-         $('#boxPesquisa', roteirizacao.workspace).val("");
-         roteirizacao.carregarComboRoteiroEspecial();
-          
-     } else {
-         roteirizacao.resetComboRoteiroPesquisa();
-         roteirizacao.resetComboRotaPesquisa();
-         $('#boxPesquisa', roteirizacao.workspace).val("");
-         $('#roteiroPesquisa', roteirizacao.workspace).removeAttr("disabled");
-     }
-} ,
-roteiroEspecial : function() {
-    
-     if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
-         $('#boxRoteiroTranferencia', roteirizacao.workspace).attr("disabled", "disabled");
-         $('#boxRoteiroTranferencia', roteirizacao.workspace).val("");
-          
-     } else {
-         $('#boxRoteiroTranferencia', roteirizacao.workspace).val("");
-         $('#boxRoteiroTranferencia', roteirizacao.workspace).removeAttr("disabled");
-     }
-} ,
-
-roteiroEspecialNovo : function() {
-    
-     if ($("#tipoRoteiro", roteirizacao.workspace).is(":checked") ) {
-         $('#boxInclusaoRoteiro', roteirizacao.workspace).attr("disabled", "disabled");
-         $('#boxInclusaoRoteiro', roteirizacao.workspace).val("");
-          
-     } else {
-         $('#boxInclusaoRoteiro', roteirizacao.workspace).val("");
-         $('#boxInclusaoRoteiro', roteirizacao.workspace).removeAttr("disabled");
-     }
-} ,
-
-
-iniciarPesquisaRoteirizacaoGrid : function () {
-    
-    $(".gridWrapper", this.workspace).empty();
-    
-    $(".gridWrapper", this.workspace).append($("<table>").attr("class", "rotaRoteirosGrid"));
-    
-    var rotaPesquisa    = $('#rotaPesquisa', roteirizacao.workspace).val();
-    
-    var cotaPesquisa    = $('#cotaPesquisa', roteirizacao.workspace).val();
-    
-    var indGridPorRotaOuCota = (rotaPesquisa != "" || cotaPesquisa != "");
-    
-    if(indGridPorRotaOuCota) {
-        
-        $(".rotaRoteirosGrid", roteirizacao.workspace).flexigrid({
-            preProcess: roteirizacao.callBackPesquisaRoteirizacaoGrid,
-            dataType : 'json',
-            colModel : [ {
-                display : 'Box',
-                name : 'nomeBox',
-                width : 100,
-                sortable : true,
-                align : 'left'
-            }, {
-                display : 'Roteiro',
-                name : 'descricaoRoteiro',
-                width : 180,
-                sortable : true,
-                align : 'left'
-            }, {
-                display : 'Rota',
-                name : 'descricaoRota',
-                width : 180,
-                sortable : true,
-                align : 'left'
-            }, {
-                display : 'Cota',
-                name : 'numeroCota',
-                width : 78,
-                sortable : true,
-                align : 'left'
-            }, {
-                display : 'Nome',
-                name : 'nome',
-                width : 180,
-                sortable : true,
-                align : 'left'
-            }, {
-                display : 'Ação',
-                name : 'acao',
-                width : 78,
-                sortable : true,
-                align : 'center'
-            }],
-            sortname : "nomeBox",
-            sortorder : "asc",
-            usepager : true,
-            useRp : true,
-            rp : 15,
-            showTableToggleBtn : true,
-            width : 960,
-            height : 'auto',
-            singleSelect : true
-            
-        });
-        
-    } else {
-        
-        $(".rotaRoteirosGrid", roteirizacao.workspace).flexigrid({
-            preProcess: roteirizacao.callBackPesquisaRoteirizacaoGridCotasSumarizadas,
-            dataType : 'json',
-            colModel : [ {
-                display : 'Box',
-                name : 'nomeBox',
-                width : 100,
-                sortable : true,
-                align : 'left'
-            }, {
-                display : 'Roteiro',
-                name : 'descricaoRoteiro',
-                width : 180,
-                sortable : true,
-                align : 'left'
-            }, {
-                display : 'Rota',
-                name : 'descricaoRota',
-                width : 180,
-                sortable : true,
-                align : 'left'
-            }, {
-                display : 'Qtd. Cotas',
-                name : 'qntCotas',
-                width : 78,
-                sortable : true,
-                align : 'left'
-            }],
-            sortname : "nomeBox",
-            sortorder : "asc",
-            usepager : true,
-            useRp : true,
-            rp : 15,
-            showTableToggleBtn : true,
-            width : 960,
-            height : 'auto',
-            singleSelect : true
-            
-        });
-        
-    }
-        
-},
-
-    callBackPesquisaRoteirizacaoGrid: function (data) {
-        
-        if (data.mensagens) {
-
-            exibirMensagem(
-                data.mensagens.tipoMensagem, 
-                data.mensagens.listaMensagens
-            );
-            
-            $(".grids", roteirizacao.workspace).hide();
-
-            roteirizacao.esconderBotoesExportacao();
-            
-            return data;
-        }
-        
-        var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
-
-        
-        $.each(data.rows, function(index, value) {
-            
-            var idBox       = value.cell.idBox;
-            var idCota      = value.cell.idCota;
-            var idRota      = value.cell.idRota;
-            var idRoteiro   = value.cell.idRoteiro;
-            
-            var parametros = idBox + ',' + idCota + ',' + idRota + ',' + idRoteiro;
-            
-            value.cell.acao =  '<a href="javascript:;" onclick="roteirizacao.detalharRotaRoteiro(' + parametros + ');">' + imgEdicao + '</a>';
-            
-            
-        });
-        
-        $(".grids", roteirizacao.workspace).show();
-        
-        roteirizacao.mostrarBotoesExportacao();
-                
-        return data;
-    },
-
-    callBackPesquisaRoteirizacaoGridCotasSumarizadas: function (data) {
-                
-        if (data.mensagens) {
-
-            exibirMensagem(
-                data.mensagens.tipoMensagem, 
-                data.mensagens.listaMensagens
-            );
-            
-            $(".grids", roteirizacao.workspace).hide();
-
-            roteirizacao.esconderBotoesExportacao();
-            
-            return data;
-        }
-
-        
-        $.each(data.rows, function(index, value) {
-            
-            var qntCotas = value.cell.qntCotas;
-
-            var idBox       = value.cell.idBox;
-            var idRota      = value.cell.idRota;
-            var idRoteiro   = value.cell.idRoteiro;
-
-            var title = value.cell.descricaoRota + ' - ' + value.cell.descricaoRoteiro;         
-            
-            value.cell.qntCotas =  '<a href="javascript:;" ' + 
-                'onclick="roteirizacao.detalharRotaRoteiroCotasSumarizadas(\''+title+'\','+idBox+','+idRota+','+idRoteiro+');">' + qntCotas + '</a>';
-        });
-        
-        $(".grids", roteirizacao.workspace).show();
-        
-        roteirizacao.mostrarBotoesExportacao();
-        
-        return data;
-    },
-
-    
-    detalharRotaRoteiro : function(idBox, idCota, idRota, idRoteiro) {
-        
-        //TODO: implementar js
-        
-        alert('Detalhando rota roteiro');
-        
-    },
-    
-    detalharRotaRoteiroCotasSumarizadas : function(title, idBox, idRota, idRoteiro) {
-        
-        var data = [];
-        
-        data.push({name:'idBox',        value: idBox });
-        data.push({name:'idRota',       value: idRota });
-        data.push({name:'idRoteiro',    value: idRoteiro });
-        
-        $("#cotasGrid", this.workspace).flexOptions({ params:data });       
-        $("#cotasGrid", this.workspace).flexReload();
-        
-        roteirizacao.popupDetalhesCota(title, idBox, idRoteiro, idRota);        
-    },
-    
-    pesquisarRoteirizacao: function () {
-        
-        roteirizacao.iniciarPesquisaRoteirizacaoGrid();
-                    
-        $(".rotaRoteirosGrid", roteirizacao.workspace).flexOptions({
-                url : contextPath + '/cadastro/roteirizacao/pesquisarRoteirizacao',
-                params : [{
-                    name : "boxId",
-                    value : $('#boxPesquisa', roteirizacao.workspace).val()
-                }, {
-                    name : "roteiroId",
-                    value : $('#roteiroPesquisa', roteirizacao.workspace).val()
-                }, {
-                    name : "rotaId",
-                    value : $('#rotaPesquisa', roteirizacao.workspace).val()
-                },
-                {
-                    name : "numeroCota",
-                    value : $('#cotaPesquisa', roteirizacao.workspace).val()
-                }],
-                
-                newp:1
-        });
-            
-        $(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
-    },
-    
-    carregarNomeCotas : function (campoExibicao, numeroCota, callBack) {
-        $('#'+campoExibicao).html('');
-        var result = false;
-        $.postJSON(contextPath + '/cadastro/roteirizacao/buscaCotaPorNumero',
-                {
-                  'numeroCota': numeroCota
-                } ,
-                function(result) {
-                      var tipoMensagem = result.tipoMensagem;
-                      var listaMensagens = result.listaMensagens;
-                      if (tipoMensagem && listaMensagens) {
-                            exibirMensagem(tipoMensagem, listaMensagens);
-                       } else {
-                           $('#'+campoExibicao).html(result.pessoa.nome);
-                           if (callBack){
-                               callBack();
-                           }
-                           
-                       }
-                      
-                    
-                    result = true;  
-                },
-                null,
-                true
-            );
-         return result; 
-
-    },
-    
-    novaRoteirizacao : function() {
-        roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
-        roteirizacao.prepararPopupRoteirizacao();
-
         },
-        
-    habilitaBotao: function(idBotao, funcao){
-        $('#'+idBotao, roteirizacao.workspace).css("cursor","");
-        $('#'+idBotao, roteirizacao.workspace).css("opacity","1");
-        $('#'+idBotao, roteirizacao.workspace).css("filter","alpha(opaity=100)");
-        $('#'+idBotao, roteirizacao.workspace).click(funcao);
-        
-    },
-    desabilitaBotao: function(idBotao){
-        $('#'+idBotao, roteirizacao.workspace).css("cursor","default");
-        $('#'+idBotao, roteirizacao.workspace).css("opacity","0.4");
-        $('#'+idBotao, roteirizacao.workspace).css("filter","alpha(opaity=40)");
-        $('#'+idBotao, roteirizacao.workspace).unbind('click');
-    },
     
-    habilitaBotoesRota : function() {
+        buscaPdvsSelecionados : function(){
+        	
+        	var linhasDaGrid = $(".cotasDisponiveisGrid tr");
+        	
+			var params = new Array();
+			
+			$.each(linhasDaGrid, function(index, value) {
+
+				var linha = $(value);
+				
+				var colunaPdv = linha.find("td")[0];
+				var colunaOrigem = linha.find("td")[1];
+				var colunaEndereco = linha.find("td")[2];
+				var colunaCota = linha.find("td")[3];
+				var colunaNome = linha.find("td")[4];
+				var colunaOrdem = linha.find("td")[5];
+				var colunaSelecionado = linha.find("td")[6];
+				
+				var pdv = 
+					$(colunaPdv).find("div").html();
+				
+				var origem = 
+					$(colunaOrigem).find("div").html();
+
+				var endereco = 
+					$(colunaEndereco).find("div").html();
+
+				var cota =
+					$(colunaCota).find("div").html();
+				
+				var nome =
+					$(colunaNome).find("div").html();
+				
+				var ordem =
+					$(colunaOrdem).find("div").find('input[name="pdvOrdem"]').val();
+				
+				var id =
+					$(colunaSelecionado).find("div").find('input[name="pdvCheckbox"]').val();
+				
+	
+				var checked = document.getElementById("pdvCheckbox"+id).checked;
+				if (checked == true) {
+
+				    params.push({name: "pdvs["+index+"].id", value: id});
+					params.push({name: "pdvs["+index+"].pdv", value: pdv});
+					params.push({name: "pdvs["+index+"].origem", value: origem});
+					params.push({name: "pdvs["+index+"].endereco", value: endereco});
+					params.push({name: "pdvs["+index+"].cota", value: cota});
+					params.push({name: "pdvs["+index+"].nome", value: nome});
+					params.push({name: "pdvs["+index+"].ordem", value: ordem});
+				}
+
+			});
+			
+			params.push({name: "idRota", value: roteirizacao.idRota});
+           			
+			return params;
+		},
+		
+		excluiPdvs : function() {
+			var params = roteirizacao.buscaPdvsSelecionados();
+		 	$.postJSON(contextPath + '/cadastro/roteirizacao/removerPdvs',
+		 			 params,
+					 function(result) {
+							
+					 },
+					 null,
+					 true
+			);
+		},
+		
+		adicionaPdvs : function() {
+			var params = roteirizacao.buscaPdvsSelecionados();
+		 	$.postJSON(contextPath + '/cadastro/roteirizacao/adicionarNovosPdvs',
+		 			 params,
+					 function(result) {
+							
+					 },
+					 null,
+					 true
+			);
+		},
+		
+		popupExcluirPdvs : function() {
+		$( "#dialog-excluir-pdvs", roteirizacao.workspace ).dialog({
+				resizable: false,
+				height:'auto',
+				width:400,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialog-excluir-pdvs", this.workspace).parents("form")
+			});	
+			      
+		},
         
-        listaRotas = roteirizacao.buscaRotasSelecionadas();
-        
-         if (listaRotas.length == 0 ) {
-             roteirizacao.desabilitaBotao('botaoTransfereciaRota');
-             roteirizacao.desabilitaBotao('botaoExcluirRota');
-             
-         } else {
-             roteirizacao.habilitaBotao('botaoTransfereciaRota', function(){roteirizacao.popupTransferirRota()});
-             roteirizacao.habilitaBotao('botaoExcluirRota',function(){roteirizacao.popupExcluirRotas()});
-         }
-    } ,
+	    confirmaRoteirizacao : function () {
+	        var params = roteirizacao.populaParamentrosContaSelecionadas();
+	        $.postJSON(contextPath + '/cadastro/roteirizacao/confirmaRoteirizacao', params,
+	                function(result) {
+	                   // roteirizacao.populaBairro(result);
+	                   $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
+	                    var tipoMensagem = result.tipoMensagem;
+	                    var listaMensagens = result.listaMensagens;
+	                    if (tipoMensagem && listaMensagens) {
+	                        exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+	                    }
+	                },
+	                null,
+	                true
+	            );
+	
+	    },
     
-    habilitaBotoesRoteirizacao : function() {
-        
-        listaRoteirizacao = roteirizacao.buscaRoteirizacaoSelecionadas()
-        
-         if (listaRoteirizacao.length == 0 ) {
-             roteirizacao.desabilitaBotao('botaoTransferenciaRoteiro', roteirizacao.workspace);
-                roteirizacao.desabilitaBotao('botaoExcluirRoteirizacao', roteirizacao.workspace);
-             
-         } else {
-             roteirizacao.habilitaBotao('botaoTransferenciaRoteiro', function(){roteirizacao.popupTransferirCota()});
-             roteirizacao.habilitaBotao('botaoExcluirRoteirizacao',function(){roteirizacao.popupExcluirRoteirizacao()});
-         }
-    } ,
+	    populaParamentrosContaSelecionadas : function(){
+	        var dados ="";
+	        var index = 0;
+	        $("input[type=checkbox][name='pdvCheckbox']:checked", roteirizacao.workspace).each(function(){
+	            if (dados != ""){
+	                dados+=",";
+	            }
+	                
+	            var idPontoVenda =  $(this).val();
+	            var ordem = $('#pdvOrdem'+idPontoVenda).val();
+	            dados+='{name:"lista['+index+'].idPontoVenda",value:'+idPontoVenda+'}, {name:"lista['+index+'].ordem",value:'+ordem+'}';
+	            index++;
+	        });
+	        dados+=',{name:"idRota",value:'+$('#rotaSelecionada', roteirizacao.workspace).val()+'}';
+	        var params = '['+dados+ ']';
+	        
+	        return eval(params);
+	    },
     
-    prepararPopupRoteirizacao : function(){
-        roteirizacao.iniciarGridBox();
-        roteirizacao.iniciarGridRoteiros();
-        roteirizacao.iniciarGridRotas();
-        roteirizacao.iniciarGridCotasRota();
+	    limparTelaRoteirizacao:function(){
+	        $("#lstRoteiros", roteirizacao.workspace).val('');
+	        $(".rotasGrid", roteirizacao.workspace).clear();
+	        $(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
+	        $(".cotasRotaGrid", roteirizacao.workspace).clear();
+	        $('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
+	        $('#spanDadosRota', roteirizacao.workspace).html('<strong>Rota Selecionada:</strong>&nbsp;&nbsp;&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
+	    
+	    },
+	    
+	    limparTelaRoteiro:function(){
+	        $('#boxInclusaoRoteiro', roteirizacao.workspace).val('');
+	        $('#inputNome', roteirizacao.workspace).val('');
+	        $("#tipoRoteiro", roteirizacao.workspace).attr("checked",false);
+	    
+	    },
+	    
+	    popupTransferirCota : function() {
+	        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	        $('#lstRotaTranferencia', roteirizacao.workspace).val('');
+	        $("#dialog-transfere-cotas", roteirizacao.workspace ).dialog({
+	            resizable: false,
+	            height:250,
+	            width:410,
+	            modal: true,
+	            buttons: {
+	                "Confirmar": function() {
+	                    
+	                    if ( transferirRoteirizacaoComNovaRota) {
+	                        roteirizacao.transferirRoteirizacaoComNovaRota();
+	                    } else {
+	                        roteirizacao.transferirRoteirizacao();
+	                    }
+	                    roteirizacao.escondeRotaNovaTranferencia();
+	                    $( this ).dialog( "close" );
+	                    $("#effect", roteirizacao.workspace).hide("highlight", {}, 1000, callback);
+	                    
+	                },
+	                "Cancelar": function() {
+	                    roteirizacao.escondeRotaNovaTranferencia();
+	                    $( this ).dialog( "close" );
+	                }
+	            },
+	            form: $("#dialog-transfere-cotas", this.workspace).parents("form")
+	        }); 
+	              
+	    },
+	    
+	    //Busca dados para o auto complete do nome da cota
+	    autoCompletarRotaPorNome : function(idRota, callBack) {
+	        
+	        var descricao = $(idRota).val();
+	        
+	        descricao = $.trim(descricao);
+	        
+	        $(idRota).autocomplete({source: ""});
+	        
+	        if (descricao && descricao.length > 1) {
+	            
+	            $.postJSON(
+	                contextPath + "/cadastro/roteirizacao/autoCompletarRotaPorDescricao",
+	                 {
+	                    'roteiroId' : $('#idRoteiroSelecionado').val(),
+	                    'nomeRota' : descricao
+	                    
+	                 },
+	                function(result) { 
+	                     roteirizacao.exibirAutoComplete(result, idRota ,callBack); 
+	                },
+	                null, 
+	                true
+	            );
+	        }
+	    },
+	    
+	    //Busca dados para o auto complete do nome da cota
+	    autoCompletarRotaPorNome : function(idRota, callBack) {
+	        
+	        var descricao = $(idRota).val();
+	        
+	        descricao = $.trim(descricao);
+	        
+	        $(idRota).autocomplete({source: ""});
+	        
+	        if (descricao && descricao.length > 1) {
+	            
+	            $.postJSON(
+	                contextPath + "/cadastro/roteirizacao/autoCompletarRotaPorDescricao",
+	                 {
+	                    'roteiroId' : $('#idRoteiroSelecionado', roteirizacao.workspace).val(),
+	                    'nomeRota' : descricao
+	                    
+	                 },
+	                function(result) { 
+	                     roteirizacao.exibirAutoComplete(result, idRota ,callBack); 
+	                },
+	                null, 
+	                true
+	            );
+	        }
+	    },
+	    
+	    transferirRoteirizacao : function() {
+	        var descricao = $('#lstRotaTranferencia', roteirizacao.workspace).val();
+	        descricao = $.trim(descricao);
+	            $.postJSON(
+	                contextPath + "/cadastro/roteirizacao/transferirRoteirizacao",
+	                 {
+	                    'roteirizacaoId' :roteirizacao.buscaRoteirizacaoSelecionadas(),
+	                    'roteiroId' : $('#idRoteiroSelecionado', roteirizacao.workspace).val(),
+	                    'rotaNome' : descricao
+	                    
+	                 },
+	                function(result) { 
+	                      $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
+	                        var tipoMensagem = result.tipoMensagem;
+	                        var listaMensagens = result.listaMensagens;
+	                        if (tipoMensagem && listaMensagens) {
+	                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+	                        }
+	                },
+	                null, 
+	                true
+	            );
+	    },
+	    
+	    transferirRoteirizacaoComNovaRota : function() {
+	        var descricao = $('#lstRotaTranferencia', roteirizacao.workspace).val();
+	        descricao = $.trim(descricao);
+	            $.postJSON(
+	                contextPath + "/cadastro/roteirizacao/transferirRoteirizacaoComNovaRota",
+	                 {
+	                    'roteirizacaoId' :roteirizacao.buscaRoteirizacaoSelecionadas(),
+	                    'roteiroId' : $('#idRoteiroSelecionado', roteirizacao.workspace).val(),
+	                    'rotaNome' : descricao,
+	                    'ordem' : $('#ordemRotaTranferencia', roteirizacao.workspace).val()
+	                    
+	                    
+	                 },
+	                function(result) { 
+	                      $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
+	                        var tipoMensagem = result.tipoMensagem;
+	                        var listaMensagens = result.listaMensagens;
+	                        if (tipoMensagem && listaMensagens) {
+	                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+	                        }
+	                },
+	                null, 
+	                true
+	            );
+	    },
+	    
+	    excluirRoteirizacao :  function(){
+	        $.postJSON(
+	                contextPath + "/cadastro/roteirizacao/excluirRoteirizacao",
+	                 {
+	                    'roteirizacaoId' :roteirizacao.buscaRoteirizacaoSelecionadas()
+	                    
+	                 },
+	                function(result) { 
+	                      $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
+	                        var tipoMensagem = result.tipoMensagem;
+	                        var listaMensagens = result.listaMensagens;
+	                        if (tipoMensagem && listaMensagens) {
+	                            exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacao');
+	                        }
+	                },
+	                null, 
+	                true
+	            );
+	        
+	    },
+	    
+	    popupExcluirRoteirizacao : function() {
+	        
+	        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	    
+	        $( "#dialog-excluir-cotas", roteirizacao.workspace ).dialog({
+	            resizable: false,
+	            height:'auto',
+	            width:400,
+	            modal: true,
+	            buttons: {
+	                "Confirmar": function() {
+	                    roteirizacao.excluirRoteirizacao();
+	                    $( this ).dialog( "close" );
+	                },
+	                "Cancelar": function() {
+	                    $( this ).dialog( "close" );
+	                }
+	            },
+	            form: $("#dialog-excluir-cotas", this.workspace).parents("form")
+	        }); 
+	              
+	    },
+	    
+	    buscaRoteirizacaoSelecionadas : function(){
+	         roteirizacaoSelecionadas = new Array();
+	        $("input[type=checkbox][name='roteirizacaoCheckbox']:checked", roteirizacao.workspace).each(function(){
+	            roteirizacaoSelecionadas.push(parseInt($(this).val()));
+	        });
+	        
+	        return roteirizacaoSelecionadas;
+	    },
+	    
+	    buscarPvsPorEndereco : function() {
+	        pesquisaPorCota = false;
+	        $('#cotaDisponivelPesquisa', roteirizacao.workspace).html('');
+	        var municipio =  $('#comboMunicipio', roteirizacao.workspace).val() ;
+	        
+	        if ( municipio != "" ){
+	            municipio = $('#comboMunicipio option:selected', roteirizacao.workspace).text();    
+	        }
+	        
+	        
+	        
+	        
+	        $(".cotasDisponiveisGrid", roteirizacao.workspace).flexOptions({
+	                'url' : contextPath + '/cadastro/roteirizacao/buscarPvsPorEndereco',
+	                params : [{
+	                    name : 'CEP',
+	                    value : $('#cepPesquisa', roteirizacao.workspace).val()
+	                },
+	                {
+	                    name : 'uf',
+	                    value : $('#comboUf', roteirizacao.workspace).val()
+	                },
+	                {
+	                    name : 'municipio',
+	                    value :municipio
+	                },
+	                {
+	                    name : 'bairro',
+	                    value : $('#comboBairro', roteirizacao.workspace).val()
+	                },
+	                {
+	                    name : "rotaId",
+	                    value : $('#rotaSelecionada', roteirizacao.workspace).val()
+	                },
+	                
+	                {
+	                    name : "roteiroId",
+	                    value : $('#idRoteiroSelecionado', roteirizacao.workspace).val()
+	                }
+	                ],
+	                newp:1
+	            });
+	          
+	          $(".cotasDisponiveisGrid", roteirizacao.workspace).flexReload();
+        },
 
-        var method = '';
-        var param = [];
-        if (roteirizacao.isNovo()) {
-            method = 'novaRoteirizacao';
-        } else {
-            method = 'editarRoteirizacao';
-            param.push({name: 'idRoteirizacao', value: roteirizacao.idRoteiro});
-        }
-        $.postJSON(contextPath + '/cadastro/roteirizacao/' + method,
-            param,
-            function(result) {
-                var tipoMensagem = result.tipoMensagem;
-                var listaMensagens = result.listaMensagens;
-                if (tipoMensagem && listaMensagens) {
-                    exibirMensagem(tipoMensagem, listaMensagens);
-                } else {
+		checarTodasCotasGrid : function() {
+		    
+		     if ( $("#selecionaTodos", roteirizacao.workspace).is(":checked") ) {
+		            $("input[type=checkbox][name='pdvCheckbox']", roteirizacao.workspace).each(function(){
+		                $(this).attr('checked', true);
+		            });
+		            var elem = $("#textoCheckAllCotas", roteirizacao.workspace);
+		            elem.innerHTML = "Desmarcar todos";
+		     } else {
+		            $("input[type=checkbox][name='pdvCheckbox']", roteirizacao.workspace).each(function(){
+		                $(this).attr('checked', false);
+		            });
+		            var elem = document.getElementById("textoCheckAllCotas", roteirizacao.workspace);
+		            elem.innerHTML = "Marcar todos";
+		     }
+		},
 
-                    roteirizacao.popularGridBox(result.boxDisponiveis);
-                }
-                $( "#dialog-roteirizacao", roteirizacao.workspace ).dialog({
-                    resizable: false,
-                    height:610,
-                    width:955,
-                    modal: true,
-                    buttons: {
-                        "Confirmar": function() {
-                            $( this ).dialog( "close" );
-                            $("#effect").show("highlight", {}, 1000, callback);
-                            $(".grids").show();
+		carregarComboRoteiro : function () {
+		    roteirizacao.resetComboRoteiroPesquisa();
+		    roteirizacao.resetComboRotaPesquisa('rotaPesquisa');
+		    $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiro',
+		            { 
+		                'boxId' :$('#boxPesquisa', roteirizacao.workspace).val()
+		            }
+		            ,
+		            function(result) {
+		                    $.each(result, function(index, row){
+		                        $('#roteiroPesquisa', roteirizacao.workspace).append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
+		                        }
+		                    );
+		            },
+		            null,
+		            true
+		        );
+		
+		},
 
-                        },
-                        "Cancelar": function() {
-                            $( this ).dialog( "close" );
+		carregarComboRota : function (idComboRota, idRoteiro) {
+		    roteirizacao.resetComboRotaPesquisa(idComboRota);
+			idComboRota = "#" + idComboRota;
+			if (!idRoteiro) {
+			
+				idRoteiro = $('#roteiroPesquisa', roteirizacao.workspace).val();
+			}
+
+		    $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRota',
+		            { 
+		                'roteiroId' : idRoteiro
+		            }
+		            ,
+		            function(result) {
+		                $.each(result, function(index, row){
+		                    $(idComboRota, roteirizacao.workspace).append('<option value="'+row.id+'">'+row.descricaoRota+'</option>');
+		                    }
+		                );
+		        
+		            },
+		            null,
+		            true
+		        );
+		
+		},
+
+		carregarComboRoteiroEspecial : function () {
+		    roteirizacao.resetComboRoteiroPesquisa();
+		    roteirizacao.resetComboRotaPesquisa('rotaPesquisa');
+		    $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiroEspecial',null ,
+		            function(result) {
+		                    $.each(result, function(index, row){
+		                        $('#roteiroPesquisa', roteirizacao.workspace).append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
+		                        }
+		                    );
+		            },
+		            null,
+		            true
+		        );
+		
+		},
+
+		resetComboRoteiroPesquisa : function(){
+		    $('#roteiroPesquisa > option', roteirizacao.workspace).remove();
+		    $('#roteiroPesquisa', roteirizacao.workspace).append('<option value="" >Selecione...</option>');
+		},
+		
+		resetComboRotaPesquisa : function(idComboRota){
+			idComboRota = "#" + idComboRota;
+			var option = idComboRota + '> option';
+		    $(option, roteirizacao.workspace).remove();
+		    $(idComboRota, roteirizacao.workspace).append('<option value="" >Selecione...</option>');
+		},
+
+		pesquisaComRoteiroEspecial : function() {
+		    
+		     if ($("#tipoRoteiroPesquisa", roteirizacao.workspace).is(":checked") ) {
+		         roteirizacao.resetComboRoteiroPesquisa();
+		         roteirizacao.resetComboRotaPesquisa('rotaPesquisa');
+		         $('#boxPesquisa', roteirizacao.workspace).attr("disabled", "disabled");
+		         $('#boxPesquisa', roteirizacao.workspace).val("");
+		         roteirizacao.carregarComboRoteiroEspecial();
+		          
+		     } else {
+		         roteirizacao.resetComboRoteiroPesquisa();
+		         roteirizacao.resetComboRotaPesquisa('rotaPesquisa');
+		         $('#boxPesquisa', roteirizacao.workspace).val("");
+		         $('#roteiroPesquisa', roteirizacao.workspace).removeAttr("disabled");
+		     }
+	    },
+
+		roteiroEspecial : function() {
+		    
+		     if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
+		         $('#boxRoteiroTranferencia', roteirizacao.workspace).attr("disabled", "disabled");
+		         $('#boxRoteiroTranferencia', roteirizacao.workspace).val("");
+		          
+		     } else {
+		         $('#boxRoteiroTranferencia', roteirizacao.workspace).val("");
+		         $('#boxRoteiroTranferencia', roteirizacao.workspace).removeAttr("disabled");
+		     }
+		},
+
+		roteiroEspecialNovo : function() {
+		    
+		     if ($("#tipoRoteiro", roteirizacao.workspace).is(":checked") ) {
+		         $('#boxInclusaoRoteiro', roteirizacao.workspace).attr("disabled", "disabled");
+		         $('#boxInclusaoRoteiro', roteirizacao.workspace).val("");
+		          
+		     } else {
+		         $('#boxInclusaoRoteiro', roteirizacao.workspace).val("");
+		         $('#boxInclusaoRoteiro', roteirizacao.workspace).removeAttr("disabled");
+		     }
+		},
+
+
+		iniciarPesquisaRoteirizacaoGrid : function () {
+		    
+		    $(".gridWrapper", this.workspace).empty();
+		    
+		    $(".gridWrapper", this.workspace).append($("<table>").attr("class", "rotaRoteirosGrid"));
+		    
+		    var rotaPesquisa    = $('#rotaPesquisa', roteirizacao.workspace).val();
+		    
+		    var cotaPesquisa    = $('#cotaPesquisa', roteirizacao.workspace).val();
+		    
+		    var indGridPorRotaOuCota = (rotaPesquisa != "" || cotaPesquisa != "");
+		    
+		    if(indGridPorRotaOuCota) {
+		        
+		        $(".rotaRoteirosGrid", roteirizacao.workspace).flexigrid({
+		            preProcess: roteirizacao.callBackPesquisaRoteirizacaoGrid,
+		            dataType : 'json',
+		            colModel : [ {
+		                display : 'Box',
+		                name : 'nomeBox',
+		                width : 100,
+		                sortable : true,
+		                align : 'left'
+		            }, {
+		                display : 'Roteiro',
+		                name : 'descricaoRoteiro',
+		                width : 180,
+		                sortable : true,
+		                align : 'left'
+		            }, {
+		                display : 'Rota',
+		                name : 'descricaoRota',
+		                width : 180,
+		                sortable : true,
+		                align : 'left'
+		            }, {
+		                display : 'Cota',
+		                name : 'numeroCota',
+		                width : 78,
+		                sortable : true,
+		                align : 'left'
+		            }, {
+		                display : 'Nome',
+		                name : 'nome',
+		                width : 180,
+		                sortable : true,
+		                align : 'left'
+		            }, {
+		                display : 'Ação',
+		                name : 'acao',
+		                width : 78,
+		                sortable : true,
+		                align : 'center'
+		            }],
+		            sortname : "nomeBox",
+		            sortorder : "asc",
+		            usepager : true,
+		            useRp : true,
+		            rp : 15,
+		            showTableToggleBtn : true,
+		            width : 960,
+		            height : 'auto',
+		            singleSelect : true
+		            
+		        });
+		        
+		    } else {
+		        
+		        $(".rotaRoteirosGrid", roteirizacao.workspace).flexigrid({
+		            preProcess: roteirizacao.callBackPesquisaRoteirizacaoGridCotasSumarizadas,
+		            dataType : 'json',
+		            colModel : [ {
+		                display : 'Box',
+		                name : 'nomeBox',
+		                width : 100,
+		                sortable : true,
+		                align : 'left'
+		            }, {
+		                display : 'Roteiro',
+		                name : 'descricaoRoteiro',
+		                width : 180,
+		                sortable : true,
+		                align : 'left'
+		            }, {
+		                display : 'Rota',
+		                name : 'descricaoRota',
+		                width : 180,
+		                sortable : true,
+		                align : 'left'
+		            }, {
+		                display : 'Qtd. Cotas',
+		                name : 'qntCotas',
+		                width : 78,
+		                sortable : true,
+		                align : 'left'
+		            }],
+		            sortname : "nomeBox",
+		            sortorder : "asc",
+		            usepager : true,
+		            useRp : true,
+		            rp : 15,
+		            showTableToggleBtn : true,
+		            width : 960,
+		            height : 'auto',
+		            singleSelect : true
+		            
+		        });
+		        
+		    }
+		        
+		},
+
+	    callBackPesquisaRoteirizacaoGrid: function (data) {
+	        
+	        if (data.mensagens) {
+	
+	            exibirMensagem(
+	                data.mensagens.tipoMensagem, 
+	                data.mensagens.listaMensagens
+	            );
+	            
+	            $(".grids", roteirizacao.workspace).hide();
+	
+	            roteirizacao.esconderBotoesExportacao();
+	            
+	            return data;
+	        }
+	        
+	        var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
+	
+	        
+	        $.each(data.rows, function(index, value) {
+	            
+	            var idRoteirizacao = value.cell.idRoteirizacao;
+                var idRoteiro   = value.cell.idRoteiro;
+                var idRota      = value.cell.idRota;
+
+	            var parametros = idRoteirizacao + ',' + idRoteiro + ',' + idRota;
+	            
+	            value.cell.acao =  '<a href="javascript:;" onclick="roteirizacao.editarRoteirizacao(' + parametros + ');">' + imgEdicao + '</a>';
+	            
+	            
+	        });
+	        
+	        $(".grids", roteirizacao.workspace).show();
+	        
+	        roteirizacao.mostrarBotoesExportacao();
+	                
+	        return data;
+	    },
+
+	    callBackPesquisaRoteirizacaoGridCotasSumarizadas: function (data) {
+	                
+	        if (data.mensagens) {
+	
+	            exibirMensagem(
+	                data.mensagens.tipoMensagem, 
+	                data.mensagens.listaMensagens
+	            );
+	            
+	            $(".grids", roteirizacao.workspace).hide();
+	
+	            roteirizacao.esconderBotoesExportacao();
+	            
+	            return data;
+	        }
+	
+	        
+	        $.each(data.rows, function(index, value) {
+	            
+	            var qntCotas = value.cell.qntCotas;
+	
+	            var idBox       = value.cell.idBox;
+	            var idRota      = value.cell.idRota;
+	            var idRoteiro   = value.cell.idRoteiro;
+	
+	            var title = value.cell.descricaoRota + ' - ' + value.cell.descricaoRoteiro;         
+	            
+	            value.cell.qntCotas =  '<a href="javascript:;" ' + 
+	                'onclick="roteirizacao.detalharRotaRoteiroCotasSumarizadas(\''+title+'\','+idBox+','+idRota+','+idRoteiro+');">' + qntCotas + '</a>';
+	        });
+	        
+	        $(".grids", roteirizacao.workspace).show();
+	        
+	        roteirizacao.mostrarBotoesExportacao();
+	        
+	        return data;
+	    },
+	
+	    
+	    editarRoteirizacao : function(idRoteirizacao, idRoteiro, idRota) {
+            roteirizacao.definirTipoEdicao(TipoEdicao.ALTERACAO);
+            roteirizacao.idRoteirizacao = idRoteirizacao;
+            roteirizacao.idRoteiro = idRoteiro;
+            roteirizacao.idRota = idRota;
+            roteirizacao.limparCamposPesquisaGrids();
+            roteirizacao.prepararPopupRoteirizacao();
+
+	    },
+	    
+	    detalharRotaRoteiroCotasSumarizadas : function(title, idBox, idRota, idRoteiro) {
+	        
+	        var data = [];
+	        
+	        data.push({name:'idBox',        value: idBox });
+	        data.push({name:'idRota',       value: idRota });
+	        data.push({name:'idRoteiro',    value: idRoteiro });
+	        
+	        $("#cotasGrid", this.workspace).flexOptions({ params:data });       
+	        $("#cotasGrid", this.workspace).flexReload();
+	        
+	        roteirizacao.popupDetalhesCota(title, idBox, idRoteiro, idRota);        
+	    },
+    
+	    pesquisarRoteirizacao: function () {
+	        
+	        roteirizacao.iniciarPesquisaRoteirizacaoGrid();
+	                    
+	        $(".rotaRoteirosGrid", roteirizacao.workspace).flexOptions({
+	                url : contextPath + '/cadastro/roteirizacao/pesquisarRoteirizacao',
+	                params : [{
+	                    name : "boxId",
+	                    value : $('#boxPesquisa', roteirizacao.workspace).val()
+	                }, {
+	                    name : "roteiroId",
+	                    value : $('#roteiroPesquisa', roteirizacao.workspace).val()
+	                }, {
+	                    name : "rotaId",
+	                    value : $('#rotaPesquisa', roteirizacao.workspace).val()
+	                },
+	                {
+	                    name : "numeroCota",
+	                    value : $('#cotaPesquisa', roteirizacao.workspace).val()
+	                }],
+	                
+	                newp:1
+	        });
+	            
+	        $(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
+	    },
+    
+	    carregarNomeCotas : function (campoExibicao, numeroCota, callBack) {
+	        $('#'+campoExibicao).html('');
+	        var result = false;
+	        $.postJSON(contextPath + '/cadastro/roteirizacao/buscaCotaPorNumero',
+	                {
+	                  'numeroCota': numeroCota
+	                } ,
+	                function(result) {
+	                      var tipoMensagem = result.tipoMensagem;
+	                      var listaMensagens = result.listaMensagens;
+	                      if (tipoMensagem && listaMensagens) {
+	                            exibirMensagem(tipoMensagem, listaMensagens);
+	                       } else {
+	                           $('#'+campoExibicao).html(result.pessoa.nome);
+	                           if (callBack){
+	                               callBack();
+	                           }
+	                           
+	                       }
+	                      
+	                    
+	                    result = true;  
+	                },
+	                null,
+	                true
+	            );
+	         return result; 
+	
+	    },
+
+	    novaRoteirizacao : function() {
+            roteirizacao.idBox = "";
+            roteirizacao.nomeBox = "";
+            roteirizacao.idRoteiro = "";
+            roteirizacao.nomeRoteiro = "";
+            roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
+            roteirizacao.limparCamposPesquisaGrids();
+            roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
+	        roteirizacao.prepararPopupRoteirizacao();
+	    },
+
+        limparCamposPesquisaGrids : function() {
+            $('#nomeBox', roteirizacao.workspace).val('');
+            $('#descricaoRoteiro', roteirizacao.workspace).val('');
+            $('#descricaoRota', roteirizacao.workspace).val('');
+        },
+	        
+	    habilitaBotao: function(idBotao, funcao){
+	    	
+	        $('#'+idBotao, roteirizacao.workspace).css("cursor","");
+	        $('#'+idBotao, roteirizacao.workspace).css("opacity","1");
+	        $('#'+idBotao, roteirizacao.workspace).css("filter","alpha(opaity=100)");
+	        $('#'+idBotao, roteirizacao.workspace).click(funcao);
+	        
+	    },
+	    
+	    desabilitaBotao: function(idBotao){
+	    	
+	        $('#'+idBotao, roteirizacao.workspace).css("cursor","default");
+	        $('#'+idBotao, roteirizacao.workspace).css("opacity","0.4");
+	        $('#'+idBotao, roteirizacao.workspace).css("filter","alpha(opaity=40)");
+	        $('#'+idBotao, roteirizacao.workspace).unbind('click');
+	    },
+    
+	    habilitaBotoesRota : function() {
+	        
+	        listaRotas = roteirizacao.buscaRotasSelecionadas();
+	        
+	         if (listaRotas.length == 0 ) {
+	             roteirizacao.desabilitaBotao('botaoTransfereciaRota');
+	             roteirizacao.desabilitaBotao('botaoExcluirRota');
+	             
+	         } else {
+	             roteirizacao.habilitaBotao('botaoTransfereciaRota', function(){roteirizacao.popupTransferirRota()});
+	             roteirizacao.habilitaBotao('botaoExcluirRota',function(){roteirizacao.popupExcluirRotaRoteiro()});
+	         }
+	    },
+
+	    habilitaBotoesRoteirizacao : function() {
+	        
+	        listaRoteirizacao = roteirizacao.buscaRoteirizacaoSelecionadas()
+	        
+	         if (listaRoteirizacao.length == 0 ) {
+	             roteirizacao.desabilitaBotao('botaoTransferenciaRoteiro', roteirizacao.workspace);
+	                roteirizacao.desabilitaBotao('botaoExcluirRoteirizacao', roteirizacao.workspace);
+	             
+	         } else {
+	             roteirizacao.habilitaBotao('botaoTransferenciaRoteiro', function(){roteirizacao.popupTransferirCota()});
+	             roteirizacao.habilitaBotao('botaoExcluirRoteirizacao',function(){roteirizacao.popupExcluirRoteirizacao()});
+	         }
+	    },
+    
+	    prepararPopupRoteirizacao : function(){
+  	        roteirizacao.iniciarGridBox();
+            if (roteirizacao.isNovo()) {
+                $('#nomeBox', roteirizacao.workspace).prop('disabled', false);
+                $('#lnkPesquisarBox', roteirizacao.workspace).click(function() {roteirizacao.pesquisarBox()});
+            } else {
+                $('#nomeBox', roteirizacao.workspace).prop('disabled', true);
+                $('#lnkPesquisarBox', roteirizacao.workspace).unbind('click');
+            }
+
+	        roteirizacao.iniciarGridRoteiros();
+	        roteirizacao.iniciarGridRotas();
+	        roteirizacao.iniciarGridCotasRota();
+	
+	        var method = '';
+	        var param = [];
+	        if (roteirizacao.isNovo()) {
+	            method = 'novaRoteirizacao';
+	        } else {
+	            method = 'editarRoteirizacao';
+	            param.push({name: 'idRoteirizacao', value: roteirizacao.idRoteirizacao});
+	        }
+	        $.postJSON(contextPath + '/cadastro/roteirizacao/' + method,
+	            param,
+	            function(result) {
+	                var tipoMensagem = result.tipoMensagem;
+	                var listaMensagens = result.listaMensagens;
+	                if (tipoMensagem && listaMensagens) {
+	                    exibirMensagem(tipoMensagem, listaMensagens);
+	                } else {
+	                    if (roteirizacao.isNovo()) {
+                            roteirizacao.popularGridBox(result.boxDisponiveis);
+                        } else {
+                            roteirizacao.popularGrids(result);
                         }
-                    },
-                    form: $("#dialog-roteirizacao", this.workspace).parents("form")
-                });
-            },
-            null,
-            true
-        );
-        $(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
-        $('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
-    },
+	                }
+	                $( "#dialog-roteirizacao", roteirizacao.workspace ).dialog({
+	                    resizable: false,
+	                    height:610,
+	                    width:955,
+	                    modal: true,
+                        title : roteirizacao.isNovo() ? 'Nova Roteirização' : 'Editar Roteirização',
+	                    buttons: {
+	                        "Confirmar": function() {
+	                           roteirizacao.confirmarRoteirizacao();
+
+	                        },
+	                        "Cancelar": function() {
+                                $.postJSON(contextPath + '/cadastro/roteirizacao/cancelarRoteirizacao',
+                                    null,
+                                    null,
+                                    null,
+                                    true
+                                );
+	                            $( this ).dialog( "close" );
+	                        }
+	                    },
+	                    form: $("#dialog-roteirizacao", this.workspace).parents("form")
+	                });
+	            },
+	            null,
+	            true
+	        );
+	
+	        $(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
+	        $('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
+	    },
+
+        confirmarRoteirizacao : function() {
+        	$.postJSON(contextPath + '/cadastro/roteirizacao/confirmarRoteirizacao',
+                     null,
+                     function(result) {
+                         var tipoMensagem = result.tipoMensagem;
+                         var listaMensagens = result.listaMensagens;
+                         if (tipoMensagem && listaMensagens) {
+                             if (tipoMensagem == 'SUCCESS') {
+                            	 $('#dialog-roteirizacao', roteirizacao.workspace).dialog("close");
+                             } 
+                          	 exibirMensagem(tipoMensagem, listaMensagens);
+                         }
+                     },
+                     null,
+                     true
+            );
+        },
+
     
-    abrirTelaRotaComNome :function(){
-        $('#nomeRotaInclusao', roteirizacao.workspace).val($('botaoNovaRotaNome', roteirizacao.workspace).val());
-        roteirizacao.abrirTelaRota();
-        
-        
-    },
-     exibiRotaNovaTranferencia : function (){
-            $('.rotaNovaTransferencia', roteirizacao.workspace).show();
-            transferirRoteirizacaoComNovaRota = true;   
-     },
-     escondeRotaNovaTranferencia : function (){
-            $('.rotaNovaTransferencia', roteirizacao.workspace).hide();
-            transferirRoteirizacaoComNovaRota = false;  
-      },
+	    abrirTelaRotaComNome :function(){
+	    	
+	        $('#nomeRotaInclusao', roteirizacao.workspace).val($('botaoNovaRotaNome', roteirizacao.workspace).val());
+	        roteirizacao.abrirTelaRota();
+	    },
+	    
+	    exibiRotaNovaTranferencia : function (){
+	        $('.rotaNovaTransferencia', roteirizacao.workspace).show();
+	        transferirRoteirizacaoComNovaRota = true;   
+	    },
+     
+	    escondeRotaNovaTranferencia : function (){
+	        $('.rotaNovaTransferencia', roteirizacao.workspace).hide();
+	        transferirRoteirizacaoComNovaRota = false;  
+	    },
       
-      atualizaOrdenacaoAsc : function(roteirizacaoId, ordem, idPontoVenda){
+        atualizaOrdenacaoAsc : function(roteirizacaoId, ordem, idPontoVenda){
           $.postJSON(contextPath + '/cadastro/roteirizacao/atualizaOrdenacaoAsc',
                     {
                             'roteirizacaoId' :roteirizacaoId,
@@ -1844,9 +2313,9 @@ iniciarPesquisaRoteirizacaoGrid : function () {
                     null,
                     true
                 );
-      },
+        },
       
-      atualizaOrdenacaoDesc : function(roteirizacaoId, ordem, idPontoVenda){
+        atualizaOrdenacaoDesc : function(roteirizacaoId, ordem, idPontoVenda){
           $.postJSON(contextPath + '/cadastro/roteirizacao/atualizaOrdenacaoAsc',
                     {
                             'roteirizacaoId' :roteirizacaoId,
@@ -1862,7 +2331,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
                     null,
                     true
                 );
-      },
+        },
       
         carregarNomeCotasPesquisa : function (campoExibicao, numeroCota, callBack) {
             $('#'+campoExibicao).html('');
@@ -1922,7 +2391,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
                 
         init : function() {
             
-            $("#cotasGrid",roteirizacao.workspace).flexigrid({
+        	$("#cotasGrid",roteirizacao.workspace).flexigrid({
                 autoload : false,
                 url : contextPath + '/cadastro/roteirizacao/obterCotasSumarizadas',
                 dataType : 'json',
@@ -1943,7 +2412,7 @@ iniciarPesquisaRoteirizacaoGrid : function () {
                 width : 380,
                 height : 140
             });
-
+        
         },
         
         limparCamposNovaInclusao : function(){
@@ -1951,11 +2420,362 @@ iniciarPesquisaRoteirizacaoGrid : function () {
             $("#selectTipoNovoDado", roteirizacao.workspace).val("ROTEIRO");
             $("#inputOrdem", roteirizacao.workspace).val("");
             $("#inputNome", roteirizacao.workspace).val("");
-        }
+            $("#checkRoteiroEspecial", roteirizacao.workspace).hide();
+        },
+        
+        popup_tranferir : function(){
+        	
+        	if (roteirizacao.isTransferenciaCota()){
+        		
+        		
+        	} else if (roteirizacao.isTransferenciaRota()){
+        		
+        		$("#nomeRoteiroAtual").val(roteirizacao.nomeRoteiro);
+        		
+        		$.postJSON(
+            		contextPath + '/cadastro/roteirizacao/carregarRoteirosTransferenciaRota',
+            		[
+            		 {name: 'idRoteiro', value: roteirizacao.idRoteiro}
+            		],
+                    function(result) {
+            			
+            			var opts = '';
+            			$("#selectNovoRoteiro", roteirizacao.workspace).html(opts);
+            			
+            			$.each(result, function(index, value){
+            				opts += "<option value='"+ value.id +"'>" + value.nome + "</option>";
+            			});
+            			
+            			$("#selectNovoRoteiro", roteirizacao.workspace).append(opts);
+            			
+            			$("#dialog-transfere-rota", roteirizacao.workspace).dialog({
+                            resizable: false,
+                            height:'auto',
+                            width:420,
+                            modal: true,
+                            buttons: {
+                                "Confirmar": function() {
+                                    
+                                	$.postJSON(
+                                		contextPath + '/cadastro/roteirizacao/transferirRota',
+                                		[
+                                		 {name: 'idRoteiroAnterior', value: roteirizacao.idRoteiro},
+                                		 {name: 'idRota', value: roteirizacao.idRota},
+                                		 {name: 'idRoteiroNovo', value: $("#selectNovoRoteiro", roteirizacao.workspace).val()}
+                                		],
+                                        function(result) {
+                                			
+                                			roteirizacao.popularGridRotas();
+                                			$("#dialog-transfere-rota", roteirizacao.workspace).dialog("close");
+                                		},
+                                        null,
+                                        true
+                                    );
+                                },
+                                "Cancelar": function() {
+                                	$("#dialog-transfere-rota", roteirizacao.workspace).dialog("close");
+                                }
+                            },
+                            form: $("#dialog-transfere-rota", roteirizacao.workspace).parents("form")
+                        });
+            		},
+                    null,
+                    true
+                );
+        		
+        	} else {
+        		
+        		$("#nomeBoxAtual", roteirizacao.workspace).val(roteirizacao.nomeBox);
+        		
+        		$.postJSON(
+            		contextPath + '/cadastro/roteirizacao/carregarBoxTransferenciaRoteiro',
+            		[
+            		 {name: 'idBox', value: roteirizacao.idBox}
+            		],
+                    function(result) {
+            			
+            			var opts = '';
+            			$("#selectNovoBox", roteirizacao.workspace).html(opts);
+            			
+            			$.each(result, function(index, value){
+            				opts += "<option value='"+ value.key.$ +"'>" + value.value.$ + "</option>";
+            			});
+            			
+            			$("#selectNovoBox", roteirizacao.workspace).append(opts);
+            			
+            			$("#dialog-transfere-roteiro", roteirizacao.workspace).dialog({
+                            resizable: false,
+                            height:'auto',
+                            width:420,
+                            modal: true,
+                            buttons: {
+                                "Confirmar": function() {
+                                    
+                                	$.postJSON(
+                                		contextPath + '/cadastro/roteirizacao/transferirRoteiro',
+                                		[
+                                		 {name: 'idBoxAnterior', value: roteirizacao.idBox}, 
+                                		 {name: 'idRoteiro', value: roteirizacao.idRoteiro},
+                                		 {name: 'idBoxNovo', value: $("#selectNovoBox", roteirizacao.workspace).val()}
+                                		],
+                                        function(result) {
+                                			
+                                			roteirizacao.popularGridRoteiros();
+                                			$("#dialog-transfere-roteiro", roteirizacao.workspace).dialog("close");
+                                		},
+                                        null,
+                                        true
+                                    );
+                                },
+                                "Cancelar": function() {
+                                	$("#dialog-transfere-roteiro", roteirizacao.workspace).dialog("close");
+                                }
+                            },
+                            form: $("#dialog-transfere-roteiro", roteirizacao.workspace).parents("form")
+                        });
+            		},
+                    null,
+                    true
+                );
+        	}
+        },
+	
+		abrirTelaRotaComNome :function(){
+			$('#nomeRotaInclusao', roteirizacao.workspace).val($('botaoNovaRotaNome', roteirizacao.workspace).val());
+			roteirizacao.abrirTelaRota();
+			
+			
+		},
+	    exibiRotaNovaTranferencia : function (){
+			$('.rotaNovaTransferencia', roteirizacao.workspace).show();
+			transferirRoteirizacaoComNovaRota = true;	
+	    },
+	    escondeRotaNovaTranferencia : function (){
+			$('.rotaNovaTransferencia', roteirizacao.workspace).hide();
+			transferirRoteirizacaoComNovaRota = false;	
+	    },
+	  
+	    atualizaOrdenacaoAsc : function(roteirizacaoId, ordem, idPontoVenda){
+		  $.postJSON(contextPath + '/cadastro/roteirizacao/atualizaOrdenacaoAsc',
+					{
+			  				'roteirizacaoId' :roteirizacaoId,
+			  				'rotaId':$('#rotaSelecionada', roteirizacao.workspace).val() ,
+			  				'roteiroId' :$('#idRoteiroSelecionado', roteirizacao.workspace).val(),
+			  				'ordem':ordem,
+			  				'pontoVendaId':idPontoVenda,
+			  				'ordenacao' : 'ASC'
+					} ,
+					function(result) {
+						 $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
+			    	},
+					null,
+					true
+				);
+	    },
+	  
+	    atualizaOrdenacaoDesc : function(roteirizacaoId, ordem, idPontoVenda){
+		  $.postJSON(contextPath + '/cadastro/roteirizacao/atualizaOrdenacaoAsc',
+					{
+			  				'roteirizacaoId' :roteirizacaoId,
+			  				'rotaId':$('#rotaSelecionada', roteirizacao.workspace).val() ,
+			  				'roteiroId' :$('#idRoteiroSelecionado', roteirizacao.workspace).val(),
+			  				'ordem':ordem,
+			  				'pontoVendaId':idPontoVenda,
+			  				'ordenacao' : 'DESC'
+					} ,
+					function(result) {
+						 $(".cotasRotaGrid", roteirizacao.workspace).flexReload();
+			    	},
+					null,
+					true
+				);
+	    },
+	  
+	    carregarNomeCotasPesquisa : function (campoExibicao, numeroCota, callBack) {
+			$('#'+campoExibicao).html('');
+			var result = false;
+			$.postJSON(contextPath + '/cadastro/roteirizacao/buscaCotaPorNumero',
+					{
+				      'numeroCota': numeroCota
+					} ,
+					function(result) {
+						  var tipoMensagem = result.tipoMensagem;
+						  var listaMensagens = result.listaMensagens;
+						  if (tipoMensagem && listaMensagens) {
+							  exibirMensagemDialog(tipoMensagem, listaMensagens,'dialogRoteirizacaoCotaDisponivel');
+						  } else {
+							  $('#'+campoExibicao, roteirizacao.workspace).html(result.pessoa.nome);
+							  if (callBack){
+								  callBack();
+							  }
+						  }
+						  
+						
+						result = true;	
+			    	},
+					null,
+					true
+				);
+			
+			return  result;
+
+		},
+		
+		exportar : function(fileType) {
+			 
+			 //TODO:
+			 var tipoRoteiro = "NORMAL";
+			 
+			 if ($("#tipoRoteiroTranferencia", roteirizacao.workspace).is(":checked") ) {
+				 tipoRoteiro = "ESPECIAL";
+			 }
+			 
+			window.location = 
+				contextPath + 
+				"/cadastro/roteirizacao/exportar?fileType=" + fileType;
+
+			return false;
+		},
+		
+		mostrarBotoesExportacao : function() {
+			
+			$("#botoesExportacao").show();
+		},
+		
+		esconderBotoesExportacao : function() {
+			
+			$("#botoesExportacao", roteirizacao.workspace).hide();
+		},
+
+	    obterDadoPDVsSelecionados: function () {
+
+	    	roteirizacao.pdvsSelecionados = new Array();
+
+	    	$("#cotasRotaGrid tbody", roteirizacao.workspace).children().map(function() {
+
+	    		var child = $(this);
+
+	    		if (child.is("tr")) {
+
+	    			var checked = $(child).find(":checkbox").attr("checked") ? true : false;
+
+	    			if (checked) {
+
+	    				var id =       $(child).find(":checkbox").val();
+	    				var pdv =      $(child).find("td[abbr='pdv'] div", this).html();
+	    				var cota =     $(child).find("td[abbr='cota'] div", this).html();
+	    				var nome =     $(child).find("td[abbr='nome'] div", this).html();
+	    				var ordem =    $(child).find("td[abbr='ordem'] div > input", this).val();
+	    				var origem =   $(child).find("td[abbr='origem'] div", this).html();
+	    				var endereco = $(child).find("td[abbr='endereco'] div", this).html();
+	    				
+	    				roteirizacao.pdvsSelecionados.push({
+	    					id: id,
+	    					pdv: pdv, 
+	    					cota: cota,
+	    					nome: nome,
+	    					ordem: ordem,
+	    					origem: origem,
+	    					endereco: endereco
+	    				});
+	    			}
+	    		}
+	    	});
+	    },
+
+	    prepararPopupCopiarCotas: function () {
+
+	    	roteirizacao.obterDadoPDVsSelecionados();
+	    	
+	    	$("#cotasParaCopiaGrid", roteirizacao.workspace).html(
+				'<tr class="header_table"><td width="85">Cota</td><td width="255">Nome</td></tr>'
+			);
+
+	        $.each(roteirizacao.pdvsSelecionados, function(index, value) {
+
+	    		var tdNomeCota = "<td> " + value.nome + " </td>";
+	    		var tdNumeroCota = "<td> " + value.cota + "</td>";
+
+	    		var trClass = index % 2 == 0 ? "<tr class='class_linha_1'>" : "<tr class='class_linha_2'>";
+	    		var linha = trClass + tdNumeroCota + tdNomeCota + "</tr>";
+
+	    		$("#cotasParaCopiaGrid", roteirizacao.workspace).append(linha);
+	    	});
+
+	        $("#rotaAtual").val(roteirizacao.idRota + " - " + roteirizacao.nomeRota);
+	        
+	        roteirizacao.carregarComboRota('selectNovasRotas', roteirizacao.idRoteiro);
+		},
+		
+		abrirPopupCopiarCotas: function() {
+
+			this.prepararPopupCopiarCotas();
+
+	    	$( "#dialogCopiarCota", roteirizacao.workspace ).dialog({
+				resizable: false,
+				height:'auto',
+				width:420,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						roteirizacao.copiarCotas();
+						$( this ).dialog( "close" );
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialogCopiarCota", roteirizacao.workspace).parents("form")
+			});
+		},
+
+		copiarCotas: function() {
+
+			$.postJSON(contextPath + '/cadastro/roteirizacao/copiarCotasRota', 
+            	roteirizacao.obterParametrosCopia(),
+                function(result) {
+				
+					if (result.tipoMensagem && result.listaMensagens) {
+						exibirMensagemDialog(result.tipoMensagem, result.listaMensagens,'dialog-roteirizacao');
+					}
+				},
+				function(result) {
+
+					if (result.tipoMensagem && result.listaMensagens) {
+						exibirMensagemDialog(result.tipoMensagem, result.listaMensagens,'dialog-roteirizacao');
+					}
+				},
+                true
+			);
+		},
+
+
+		obterParametrosCopia: function() {
+
+			var rotaCopia = new Array();
+
+			$.each(roteirizacao.pdvsSelecionados, function(index, value) {
+
+				rotaCopia.push({name: "rotaCopia.pdvs["+index+"].id", value:value.id});
+				rotaCopia.push({name: "rotaCopia.pdvs["+index+"].pdv", value: value.pdv});
+				rotaCopia.push({name: "rotaCopia.pdvs["+index+"].origem", value: value.origem});
+				rotaCopia.push({name: "rotaCopia.pdvs["+index+"].endereco", value: value.endereco});
+				rotaCopia.push({name: "rotaCopia.pdvs["+index+"].cota", value: value.cota});
+				rotaCopia.push({name: "rotaCopia.pdvs["+index+"].nome", value: value.nome});
+				rotaCopia.push({name: "rotaCopia.pdvs["+index+"].ordem", value: value.ordem});
+			});
+			
+			rotaCopia.push({name:"rotaCopia.id" , value: $("#selectNovasRotas").val()});
+			rotaCopia.push({name:"rotaCopia.nome" , value: $("#selectNovasRotas > option:selected").html()});
+
+			return rotaCopia;
+
+		}
+		
 }, BaseController);
 
 $(function() {
     roteirizacao.init();
 });
 
-//@ sourceURL=meuScriptRoteirizacao.js
+//@ sourceURL=.js

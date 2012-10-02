@@ -22,8 +22,7 @@
 			</ul>
 	
 			<div id="dadosCadastrais">
-				<br clear="all"/>
-				<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+				<fieldset style="width:765px; margin:5px;">
 					<legend>Entregador - Pessoa Física</legend>
 					<jsp:include page="dadosCadastraisPF.jsp" />
 					<jsp:include page="dadosCadastraisPJ.jsp" />
@@ -32,8 +31,7 @@
 			</div>
 			
 			<div id="manutencaoEnderecos">
-				<br clear="all"/>
-				<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+				<fieldset style="width:765px; margin:5px;">
 					<legend>Endereços</legend>
 						<jsp:include page="../endereco/index.jsp">
 						<jsp:param value="ENDERECO_ENTREGADOR" name="telaEndereco"/>
@@ -44,7 +42,7 @@
 			
 			<div id="manutencaoTelefones">
 				<br clear="all"/>
-					<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+					<fieldset style="width:765px; margin:5px;">
 						<legend>Endereços</legend>
 						<jsp:include page="../telefone/index.jsp">
 						<jsp:param value="ENTREGADOR" name="tela"/>
@@ -55,7 +53,7 @@
 			
 			<div id="cotas">
 				<br clear="all"/>
-					<fieldset style="width:770px; margin-left:10px; margin-bottom:5px;">
+					<fieldset style="width:765px; margin:5px;">
 						<legend>Endereços</legend>
 						<jsp:include page="cotas.jsp" />
 					</fieldset>

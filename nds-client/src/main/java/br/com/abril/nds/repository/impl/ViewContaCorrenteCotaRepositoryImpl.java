@@ -2,15 +2,14 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.repository.ViewContaCorrenteCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel<ViewContaCorrenteCota, Integer> implements ViewContaCorrenteCotaRepository {
@@ -20,62 +19,26 @@ public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel
 		super(ViewContaCorrenteCota.class);		
 	}
 	
+	@Override
+	public Long getQuantidadeViewContaCorrenteCota(FiltroViewContaCorrenteCotaDTO filtro){
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select count(viewContaCorrente) ");	
+			
+		Query query = corpoQuery(filtro, hql,null);
+		
+		return (Long) query.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<ViewContaCorrenteCota> getListaViewContaCorrenteCota(FiltroViewContaCorrenteCotaDTO filtro) {
-			
+		PaginacaoVO paginacao = filtro.getPaginacao();
 		StringBuffer hql = new StringBuffer("");
 		
 		hql.append(" select viewContaCorrente ");	
 			
-		hql.append(" from ViewContaCorrenteCota viewContaCorrente	");
+		Query query = corpoQuery(filtro, hql, getOrdenacaoConsulta(filtro,paginacao));
 		
-		hql.append(" where ");
-		
-		hql.append(" viewContaCorrente.numeroCota = :numeroCota ");
-		
-		PaginacaoVO paginacao = filtro.getPaginacao();
-		
-		ColunaOrdenacao colunaOrdenacao = filtro.getColunaOrdenacao();
-		
-		if (colunaOrdenacao != null) {
-			
-			if (ColunaOrdenacao.CONSIGNADO == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.consignado ");
-			} else if (ColunaOrdenacao.DEBITO_CREDITO == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.debitoCredito ");
-			} else if (ColunaOrdenacao.DT_CONSOLIDADO == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.dataConsolidado ");
-			} else if (ColunaOrdenacao.ENCALHE == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.encalhe ");
-			} else if (ColunaOrdenacao.ENCARGOS == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.encargos ");
-			} else if (ColunaOrdenacao.NUMERO_ATRASADOS == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.numeroAtrasados ");
-			} else if (ColunaOrdenacao.PENDENTE == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.pendente ");
-			} else if (ColunaOrdenacao.TOTAL == colunaOrdenacao) {
-					hql.append("order by viewContaCorrente.total ");
-			} else if (ColunaOrdenacao.VALOR_POSTERGADO == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.valorPostergado ");
-			} else if (ColunaOrdenacao.VENDA_ENCALHE == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.vendaEncalhe ");
-			}
-			
-			String ordenacao = "asc";
-			
-			if (paginacao != null) {
-				
-				if (paginacao.getOrdenacao().equals(Ordenacao.DESC)) {
-					ordenacao = "desc";
-				}
-			}
-			
-			hql.append(ordenacao);
-		}
-		
-		Query query  = getSession().createQuery(hql.toString());
-			
-		query.setParameter("numeroCota", filtro.getNumeroCota());
 		
 		if (paginacao != null) {
 			
@@ -91,6 +54,62 @@ public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel
 		}
 		
 		return query.list();
+	}
+
+	/**
+	 * @param filtro
+	 * @param hql
+	 * @return
+	 * @throws HibernateException
+	 */
+	private Query corpoQuery(FiltroViewContaCorrenteCotaDTO filtro,
+			StringBuffer hql, StringBuffer ordenacao) throws HibernateException {
+		hql.append(" from ViewContaCorrenteCota viewContaCorrente	");
+		
+		hql.append(" where ");
+		
+		hql.append(" viewContaCorrente.numeroCota = :numeroCota ");
+		
+		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+			
+			hql.append(" and viewContaCorrente.dataConsolidado between :inicioPeriodo and :fimPeriodo ");
+		}	
+	
+		
+		if (ordenacao != null) {
+			hql.append(ordenacao);
+		}
+		Query query  = getSession().createQuery(hql.toString());
+			
+		query.setParameter("numeroCota", filtro.getNumeroCota());
+		
+		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+			
+			query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+			query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+		}
+		
+		
+		return query;
+	}
+
+	private StringBuffer getOrdenacaoConsulta(FiltroViewContaCorrenteCotaDTO filtro,PaginacaoVO paginacao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		String colunaOrdenacao = filtro.getColunaOrdenacao();
+		
+		if (colunaOrdenacao != null) {
+			hql.append("order by viewContaCorrente.").append(colunaOrdenacao).append(" ");
+			
+			if (paginacao != null) {				
+				hql.append(paginacao.getOrdenacao());
+			}else{
+				hql.append("asc");
+			}
+		}
+		
+		return hql; 
 	}
 
 }

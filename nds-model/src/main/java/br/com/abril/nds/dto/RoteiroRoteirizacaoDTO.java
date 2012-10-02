@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.abril.nds.util.StringUtil;
+
 public class RoteiroRoteirizacaoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -14,7 +16,9 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	
 	private String nome;
 
-	private List<RotaRoteirizacaoDTO> rotas;
+	private List<RotaRoteirizacaoDTO> rotas = new ArrayList<RotaRoteirizacaoDTO>();
+	
+	private List<RotaRoteirizacaoDTO> todasRotas = new ArrayList<RotaRoteirizacaoDTO>();
 	
 	public RoteiroRoteirizacaoDTO() {
 	}
@@ -89,18 +93,92 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 		if (rotas == null) {
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
+		
+		for (RotaRoteirizacaoDTO dto : todasRotas){
+			
+			if (dto.getOrdem() <= rota.getOrdem()){
+				
+				rota.setOrdem(dto.getOrdem() + 1);
+			}
+		}
+		
 		rotas.add(rota);
+		todasRotas.add(rota);
 	}
 	
 	/**
-	 * Adiciona novas Rotas ao Roteiro
+	 * Adiciona novas Rotas       ao Roteiro
 	 * @param listaRota: List<RotaRoteirizacaoDTO> para inclusão
 	 */
 	public void addAllRota(List<RotaRoteirizacaoDTO> listaRota){
+		
 		if (rotas == null){
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
 		rotas.addAll(listaRota);
+		todasRotas.addAll(listaRota);
 	}
+
+    /**
+     * Recupera a rota pelo identificador
+     * @param id identificador da rota
+     * @return rota com o identificador recebido
+     */
+	public RotaRoteirizacaoDTO getRota(Long id) {
+        for (RotaRoteirizacaoDTO rota : todasRotas) {
+            if (rota.getId().equals(id)) {
+                return rota;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Filtra as rotas pela descricao
+     * 
+     * @param descricaoRota
+     *            descrição da rota para filtragem
+     */
+    public void filtarRotas(String descricaoRota) {
+        if (!StringUtil.isEmpty(descricaoRota)) {
+            List<RotaRoteirizacaoDTO> filtrados = new ArrayList<RotaRoteirizacaoDTO>();
+            for (RotaRoteirizacaoDTO rota : todasRotas) {
+                if (rota.getNome().toUpperCase()
+                        .startsWith(descricaoRota.toUpperCase())) {
+                    filtrados.add(rota);
+                }
+            }
+            rotas = filtrados;
+        } else {
+            rotas.clear();
+            rotas.addAll(todasRotas);
+        }
+    }
 	
+    public void removerRota(Long idRota){
+    	
+    	if (this.rotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.rotas){
+    			
+    			if (rota.getId().equals(idRota)){
+    				
+    				this.rotas.remove(rota);
+    				break;
+    			}
+    		}
+    	}
+    	
+    	if (this.todasRotas != null){
+    		
+    		for (RotaRoteirizacaoDTO rota : this.todasRotas){
+    			
+    			if (rota.getId().equals(idRota)){
+    				
+    				this.todasRotas.remove(rota);
+    				break;
+    			}
+    		}
+    	}
+    }
 }

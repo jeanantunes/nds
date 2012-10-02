@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
@@ -494,7 +495,21 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select sum(diferenca.qtde) ")
+		hql.append("select sum( ")
+			
+			.append(" case when (diferenca.tipoDiferenca = 'FALTA_DE') then ")
+			.append(" (- diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then ")
+			.append(" (- diferenca.qtde) ")
+			
+			.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then ")
+			.append(" (diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then ")
+			.append(" (diferenca.qtde) ")
+			
+			.append(" else 0 end")
+			.append(" )")
+			
 			.append(" from Diferenca diferenca ")
 			.append(" join diferenca.produtoEdicao produtoEdicao ")
 			.append(" join produtoEdicao.produto produto ")
@@ -511,6 +526,34 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		query.setParameter("dataMovimento", dataMovimento);
 		
 		return (BigInteger) query.uniqueResult();
+	}
+	
+	@Override
+	public boolean existeDiferencaPorNota(Long idProdutoEdicao, Date dataNotaEnvio,
+										  Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select diferenca.id ")
+			.append(" from Diferenca diferenca ")
+			.append(" join diferenca.produtoEdicao produtoEdicao ")
+			.append(" join diferenca.rateios rateio ")
+			.append(" join rateio.cota cota ")
+			.append(" where produtoEdicao.id = :idProdutoEdicao ")
+			.append(" and diferenca.tipoDirecionamento = :tipoDirecionamento ")
+			.append(" and rateio.dataNotaEnvio = :dataNotaEnvio ")
+			.append(" and cota.numeroCota = :numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("tipoDirecionamento", TipoDirecionamentoDiferenca.NOTA);
+		query.setParameter("dataNotaEnvio", dataNotaEnvio);
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setMaxResults(1);
+		
+		return ((Long) query.uniqueResult() != null);
 	}
 	
 }

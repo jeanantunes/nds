@@ -21,6 +21,7 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Long idProdutoEdicao;
 	private Integer codigoCota;
 	private String nomeCota;
+	private Integer materialPromocional;
 	private Integer sequenciaMatriz;
 	private String totalBox;
 	private Integer totalProduto;
@@ -139,6 +140,19 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+	/**
+	 * @return the materialPromocional
+	 */
+	public Integer getMaterialPromocional() {
+		return materialPromocional;
+	}
+
+	/**
+	 * @param materialPromocional the materialPromocional to set
+	 */
+	public void setMaterialPromocional(BigInteger materialPromocional) {
+		this.materialPromocional = materialPromocional == null ? 0 : materialPromocional.intValue();
 	}
 
 	public Integer getSequenciaMatriz() {

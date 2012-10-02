@@ -96,4 +96,14 @@ public interface EntregadorRepository extends Repository<Entregador, Long> {
 	 * @return
 	 */
 	Entregador obterPorNome(String nome);
+	
+	/**
+	 * Obtém o menor codigo de entregador disponível.
+	 * 
+	 * @return Long
+	 */
+	public Long obterMinCodigoEntregadorDisponivel();
+	
+	public Entregador obterEntregadorPorCodigo(Long codigo);
+
 }

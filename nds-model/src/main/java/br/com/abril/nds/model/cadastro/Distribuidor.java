@@ -193,6 +193,9 @@ public class Distribuidor {
 	@Column(name="QNT_DIAS_REUTILIZACAO_CODIGO_COTA")
 	private Long qntDiasReutilizacaoCodigoCota;
 	
+	@Column(name="UTILIZA_SUGESTAO_INCREMENTO")
+	private boolean utilizaSugestaoIncrementoCodigo;
+	
 	/**
 	 * Parâmetro relativo a quantidade de dias após a data de recolhimento 
 	 * que um envio de encalhe pode ser aceito pelo distribuidor.
@@ -548,6 +551,24 @@ public class Distribuidor {
 	 */
 	public void setQntDiasReutilizacaoCodigoCota(Long qntDiasReutilizacaoCodigoCota) {
 		this.qntDiasReutilizacaoCodigoCota = qntDiasReutilizacaoCodigoCota;
+	}
+	
+	/**
+	 * Obtém utilizaSugestaoIncrementoCodigo
+	 *
+	 * @return boolean
+	 */
+	public boolean isUtilizaSugestaoIncrementoCodigo() {
+		return utilizaSugestaoIncrementoCodigo;
+	}
+
+	/**
+	 * Atribuí utilizaSugestaoIncrementoCodigo
+	 * @param utilizaSugestaoIncrementoCodigo 
+	 */
+	public void setUtilizaSugestaoIncrementoCodigo(
+			boolean utilizaSugestaoIncrementoCodigo) {
+		this.utilizaSugestaoIncrementoCodigo = utilizaSugestaoIncrementoCodigo;
 	}
 
 	/**

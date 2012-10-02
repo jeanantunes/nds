@@ -185,7 +185,7 @@ public interface RoteirizacaoService {
 	 * Obtém PDVS's disponiveis
 	 * @return List<PdvRoteirizacaoDTO>
 	 */
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis();
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep);
 	
 	/**
 	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
@@ -196,10 +196,17 @@ public interface RoteirizacaoService {
 	
 	/**
 	 * Inclui Cota Pdv na Roteirização
-	 * @param List<PdvRoteirizacaoDTO> listaCotaPdv
+	 * @param List<Long> idPdvs
 	 * @param idRota
 	 */
-	public void incluirCotaPdv(List<PdvRoteirizacaoDTO> cotaPdv, Long idRota);
+	public void incluirCotaPdv(List<Long> idPdvs, Long idRota);
+	
+	/**
+	 * Exclui Cota Pdv na Roteirização
+	 * @param List<Long> idPdvs
+	 * @param idRota
+	 */
+	public void excluirCotaPdv(List<Long> idPdvs, Long idRota);
 	
     /**
      * Recupera a roteirização pelo Box
@@ -210,6 +217,13 @@ public interface RoteirizacaoService {
      *         roteirização associada ao Box
      */
 	RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox);
+
+    /**
+     * Processa as informações de roteirização 
+     * armazenadas no DTO
+     * @param dto dto com as informações de Roteirização
+     */
+	void confirmarRoteirizacao(RoteirizacaoDTO dto);
 
 }
 	

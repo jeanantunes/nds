@@ -12,14 +12,12 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.client.vo.ConsultaEncalheDetalheVO;
 import br.com.abril.nds.client.vo.ConsultaEncalheVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheDetalheVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheVO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
-import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -33,11 +31,9 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -84,9 +80,6 @@ public class ConsultaEncalheController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
-	@Autowired
-	private ConferenciaEncalheService conferenciaEncalheService;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalhe";
 	
@@ -324,27 +317,8 @@ public class ConsultaEncalheController {
 	@Path("/pesquisar")
 	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota,  String sortorder, String sortname, int page, int rp){
 		
-		if(idFornecedor == null || idFornecedor < 0) {
-			idFornecedor = null;
-		}
-		
-		Date dataRecDistribuidorInicial = validarDataRecolhimento(dataRecolhimentoInicial);
-		Date dataRecDistribuidorFinal = validarDataRecolhimento(dataRecolhimentoFinal);
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		
-		filtro.setDataRecolhimentoInicial(dataRecDistribuidorInicial);
-		filtro.setDataRecolhimentoFinal(dataRecDistribuidorFinal);
-		
-		filtro.setIdFornecedor(idFornecedor);
-		
-		if(numeroCota != null) {
-			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
-			if(cota!=null) {
-				filtro.setIdCota(cota.getId());
-			}
-			
-		}
+		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial,
+				dataRecolhimentoFinal, idFornecedor, numeroCota);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -442,30 +416,51 @@ public class ConsultaEncalheController {
 		
 	}
 	
-	public void gerarSlip() {
+	@Get
+	@Path("/gerarSlip")
+	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota) throws IOException {
 		
-//		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = ;
+		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial,
+				dataRecolhimentoFinal, idFornecedor, numeroCota);
 		
+		byte[] slip =  consultaEncalheService.gerarDocumentosConferenciaEncalhe(filtro);
 		
-		/*byte[] retorno = null; 
-		
-		if(dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto() && 
-				dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
-				!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
-			
-			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
-			byte[] boletoOuRecibo = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO);
-						
-			retorno = PDFUtil.mergePDFs(slip, boletoOuRecibo);
-			
-			escreverArquivoParaResponse(retorno, "slipBoleto");
-		} else {
-			
-			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
-			
+		if(slip != null) { 
 			escreverArquivoParaResponse(slip, "slip");
-		}*/
+		} else {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum slip encontra."));
+		}
 		
+	}
+
+	private FiltroConsultaEncalheDTO getFiltroConsultaEncalheDTO(String dataRecolhimentoInicial,
+			String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota) {
+		
+		if(idFornecedor == null || idFornecedor < 0) {
+			idFornecedor = null;
+		}
+		
+		Date dataRecDistribuidorInicial = validarDataRecolhimento(dataRecolhimentoInicial);
+		Date dataRecDistribuidorFinal = validarDataRecolhimento(dataRecolhimentoFinal);
+		
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		
+		filtro.setDataRecolhimentoInicial(dataRecDistribuidorInicial);
+		filtro.setDataRecolhimentoFinal(dataRecDistribuidorFinal);
+		
+		filtro.setIdFornecedor(idFornecedor);
+		
+		if(numeroCota != null) {
+			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
+			if(cota!=null) {
+				filtro.setIdCota(cota.getId());
+			}
+			
+		} else {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O preenchimento da cota é obrigatório."));
+		}
+		
+		return filtro;
 	}
 
 	/**
@@ -730,6 +725,13 @@ public class ConsultaEncalheController {
 		session.setAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE, filtro);
 	}
 	
+	/**
+	 * Disponibiliza o arquivo para a realização do download.
+	 * 
+	 * @param arquivo
+	 * @param nomeArquivo
+	 * @throws IOException
+	 */
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
 		this.httpResponse.setContentType("application/pdf");

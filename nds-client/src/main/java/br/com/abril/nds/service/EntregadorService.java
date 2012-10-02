@@ -156,4 +156,20 @@ public interface EntregadorService {
 	 * @return
 	 */
 	Entregador obterPorNome(String nome);
+	
+	/**
+	 * Retorna o menor codigo de entregador disponível.
+	 * 
+	 * @return Long
+	 */
+	public Long obterMinCodigoEntregadorDisponivel();
+
+	/**
+	 * Obtém o entregador através do codigo.
+	 * 
+	 * @param codigo
+	 * 
+	 * @return Entregador
+	 */
+	public Entregador obterEntregadorPorCodigo(Long codigo);
 }

@@ -33,7 +33,7 @@ var fiadorController = $.extend(true, {
 			$("#fiadorController-dialog-fiador", fiadorController.workspace).dialog({
 				resizable: false,
 				height:560,
-				width:840,
+				width:950,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -1166,32 +1166,9 @@ var fiadorController = $.extend(true, {
 		limparCamposCotasAssociadas:function (){
 			$("#fiadorController-cotasAssociadas-numeroCota", fiadorController.workspace).val("");
 			$("#fiadorController-cotasAssociadas-nomeCota", fiadorController.workspace).val("");
-		},
+		}
 		
-		buscarNomeCota:function (){
-			
-			var numeroCota = $("#fiadorController-cotasAssociadas-numeroCota", fiadorController.workspace).val();
-			
-			if (numeroCota.length > 0){
-			
-				$.postJSON(contextPath + '/cadastro/fiador/pesquisarNomeCotaPorNumeroCota', "numeroCota=" + numeroCota, 
-					function(result) {
-						if (result != ""){
-							
-							$("#fiadorController-cotasAssociadas-nomeCota", fiadorController.workspace).val(result);
-							$("#fiadorController-cotasAssociadas-adicionarCotaAssociacao", fiadorController.workspace).attr("href", "javascript:fiadorController.adicionarAssociacaoCota();");
-						} else {
-							
-							$("#fiadorController-cotasAssociadas-nomeCota", fiadorController.workspace).val("");
-							$("#fiadorController-cotasAssociadas-adicionarCotaAssociacao", fiadorController.workspace).removeAttr("href");
-						}
-					},
-					null,
-					true
-				);
-			} else {
-				$("#fiadorController-cotasAssociadas-nomeCota", fiadorController.workspace).val("");
-			}
-		}	
+		
+		
 }, BaseController);
 //@ sourceURL=fiador.js

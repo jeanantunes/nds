@@ -34,10 +34,13 @@ import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
@@ -45,6 +48,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.PessoaFisicaService;
@@ -98,6 +102,9 @@ public class EntregadorController {
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
 
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	private static final String CPF = "CPF";
 	
 	private static final String CNPJ = "CNPJ";
@@ -179,11 +186,12 @@ public class EntregadorController {
 		HashMap<String, String> cpf = new HashMap<String, String>();
 		cpf.put(CPF, cpfEntregador);
 		
-		validarParametrosEntradaCadastroEntregadorPF(codigoEntregador, 
-												   isComissionado, 
-												   percentualComissao, 
-												   cpf,
-												   pessoaFisica.getRg());
+		validarParametrosEntradaCadastroEntregadorPF( idEntregador, 
+													  codigoEntregador, 
+												      isComissionado, 
+												      percentualComissao, 
+												      cpf,
+												      pessoaFisica.getRg());
 
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 
@@ -272,7 +280,9 @@ public class EntregadorController {
 		HashMap<String, String> cnpj = new HashMap<String, String>();
 		cnpj.put(CNPJ, cnpjEntregador);
 		
-		validarParametrosEntradaCadastroEntregadorPJ(codigoEntregador, 
+		validarParametrosEntradaCadastroEntregadorPJ(
+												   idEntregador,
+												   codigoEntregador, 
 												   isComissionado, 
 												   percentualComissao, 
 												   cnpj);
@@ -480,7 +490,18 @@ public class EntregadorController {
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
-		this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(new Date()), "result").serialize();
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		boolean utilizaSugestaoIncrementoCodigo = distribuidor.isUtilizaSugestaoIncrementoCodigo();
+		
+		Long novoCodigoEntregador = null;
+		
+		if(utilizaSugestaoIncrementoCodigo) {
+			novoCodigoEntregador = this.entregadorService.obterMinCodigoEntregadorDisponivel();
+		}
+		
+		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", novoCodigoEntregador).serialize();
+		
 	}
 	
 	/**
@@ -704,7 +725,9 @@ public class EntregadorController {
 		}
 	}
 	
-	private void validarParametrosEntradaCadastroEntregadorPF(Long codigoEntregador,
+	private void validarParametrosEntradaCadastroEntregadorPF(
+			Long idEntregador,
+			Long codigoEntregador,
 			boolean isComissionado,
 			String percentualComissao,
 			HashMap<String, String> cpfCnpj,
@@ -721,11 +744,13 @@ public class EntregadorController {
 			listaMensagens.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
 		}
 		
-		validarParametrosEntradaCadastroEntregador(validacao, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
+		validarParametrosEntradaCadastroEntregador(validacao, idEntregador, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
 		
 	}
 	
-	private void validarParametrosEntradaCadastroEntregadorPJ(Long codigoEntregador,
+	private void validarParametrosEntradaCadastroEntregadorPJ(
+			Long idEntregador,
+			Long codigoEntregador,
 			boolean isComissionado,
 			String percentualComissao,
 			HashMap<String, String> cpfCnpj) {
@@ -735,7 +760,7 @@ public class EntregadorController {
 		validacao.setTipoMensagem(TipoMensagem.WARNING);
 		validacao.setListaMensagens(listaMensagens);
 		
-		validarParametrosEntradaCadastroEntregador(validacao, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
+		validarParametrosEntradaCadastroEntregador(validacao, idEntregador, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
 		
 	}
 	
@@ -744,6 +769,7 @@ public class EntregadorController {
 	 */
 	@SuppressWarnings("unchecked")
 	private void validarParametrosEntradaCadastroEntregador(ValidacaoVO validacao,
+															Long idEntregador,												
 															Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
@@ -754,6 +780,18 @@ public class EntregadorController {
 		if (codigoEntregador == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Código do entregador] é obrigatório.");
+			
+			
+		} else {
+			
+			Entregador entregador = entregadorService.obterEntregadorPorCodigo(codigoEntregador);
+
+			if(entregador!=null && !entregador.getId().equals(idEntregador)) {
+				
+				listaMensagens.add(" Valor do campo [Codigo] já esta sendo utilizado.");
+				
+			}
+			
 		}
 		
 		if (cpfCnpj.containsKey(CPF)) {
@@ -1147,8 +1185,9 @@ public class EntregadorController {
 			for (TelefoneEntregador telefoneEntregador : entregador.getTelefones()) {
 
 				if (telefoneEntregador.isPrincipal()) {
-
-					telefone = telefoneEntregador.getTelefone().getNumero();
+					
+					telefone = obterTelefoneFormatado(telefoneEntregador.getTelefone());
+					
 				}
 			}
 
@@ -1169,6 +1208,28 @@ public class EntregadorController {
 		return tableModel;
 	}
 
+	private String obterTelefoneFormatado(Telefone telefonePrincipal) {
+		
+		StringBuffer telefoneFormatado = new StringBuffer();
+		
+		if(telefonePrincipal == null) {
+			return "";
+		}
+		
+		if(telefonePrincipal.getDdd()!=null) {
+			telefoneFormatado.append("(");
+			telefoneFormatado.append(telefonePrincipal.getDdd());
+			telefoneFormatado.append(") ");
+		}
+		
+		if(telefonePrincipal.getNumero()!=null) {
+			telefoneFormatado.append(telefonePrincipal.getNumero());
+		}
+		
+		return telefoneFormatado.toString();
+		
+	}
+	
 	/*
 	 * Método que realiza a formatação dos dados a serem apresentados na grid. 
 	 */

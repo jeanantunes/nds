@@ -75,4 +75,7 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
 											  TipoEstoque tipoEstoque, Date dataMovimento);
 	
+	boolean existeDiferencaPorNota(Long idProdutoEdicao, Date dataNotaEnvio,
+			  					   Integer numeroCota);
+	
 }

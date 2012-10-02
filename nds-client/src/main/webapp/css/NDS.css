@@ -305,9 +305,9 @@ select, input{font-size: 12px; }
   
 .bt_sellAll label{ vertical-align:super!important;}
 
-.menu_fornecedor{display:block; position:absolute; border:1px solid #ccc; background:#FFF; width:170px; z-index:10;}
-.menu_fornecedor input{float:left; }
-.menu_fornecedor label{ margin-left:5px; margin-top:-5px;}
+.menu_fornecedor, .menu_produtos{display:block; position:absolute; border:1px solid #ccc; background:#FFF; width:170px; z-index:10;}
+.menu_fornecedor input, .menu_produtos input{float:left; }
+.menu_fornecedor label, .menu_produtos label{ margin-left:5px; margin-top:-5px;}
 
 
 .bt_configura_inicial{ border:1px solid #CCC; background:url(../images/bg_item_menu.jpg) repeat-x; float:right; margin:5px 0px 5px 0px; font-weight:bold;}

@@ -41,13 +41,15 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select roteirizacao from Roteirizacao roteirizacao " )
-			.append(" join roteirizacao.pdv pdv " )
+			.append(" join roteirizacao.roteiros roteiro " )
+			.append(" join roteiro.rotas rota ")
+			.append(" join rota.rotaPDVs rpdv " )
+			.append(" join rpdv.pdv pdv " )
 			.append(" join pdv.cota cota " )
-			.append(" join roteirizacao.rota rota " )
-			.append(" join rota.roteiro roteiro ")
+			
 			.append(" where pdv.caracteristicas.pontoPrincipal=:pontoPrincipal ")
 			.append(" and cota.numeroCota=:numeroCota ")
-			.append(" and roteiro.tipoRoteiro=:tipoRoteiro");
+			.append(" and roteiro.tipoRoteiro = :tipoRoteiro");
 		
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("pontoPrincipal", Boolean.TRUE);
@@ -226,7 +228,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" roteiro.id as idRoteiro, 	")
 			.append(" cota.id as idCota,		")			
 			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome , ")
-			.append(" cota.numeroCota as numeroCota ");
+			.append(" cota.numeroCota as numeroCota, ")
+		    .append(" roteirizacao.id as idRoteirizacao ");
 			
 		hql.append( getHqlWhere(filtro));
 	
@@ -319,7 +322,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" join roteirizacao.roteiros roteiro " )
 			.append(" join roteirizacao.box box ")
 			.append(" join roteiro.rotas rota " )
-			.append(" Join rota.pdvs pdv ")
+			.append(" Join rota.rotaPDVs rotaPdv ")
+			.append(" Join rotaPdv.pdv pdv ")
 			.append(" Join pdv.cota cota ")
 			.append(" join cota.pessoa pessoa ")
 			.append(" where roteirizacao.box.id = box.id "); 
@@ -355,7 +359,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		.append(" Join box.cotas cota   			")
 		.append(" Join cota.pessoa pessoa 			")
 		.append(" join cota.pdvs pdv 		        ")
-		.append(" join pdv.rotas rota 				")
+		.append(" join pdv.rotas rotaPdv    		")
+		.append(" join rotaPdv.rota rota            ")
 		.append(" join rota.roteiro roteiro 		")
 		
 		.append(" where roteirizacao.box.id = box.id 	"); 
@@ -544,7 +549,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" select b from Box b, Roteirizacao r ");
 		hql.append(" join r.roteiros roteiro ");
 		hql.append(" join roteiro.rotas rota ");
-		hql.append(" join rota.pdvs pdv ");
+		hql.append(" join rota.rotaPDVs rotaPdv ");
+		hql.append(" join rotaPdv.pdv pdv ");
 		hql.append(" where r.box = b ");
 		hql.append(" and  pdv.id = :idPdv ");
 		

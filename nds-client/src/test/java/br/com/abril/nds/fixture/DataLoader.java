@@ -49,7 +49,6 @@ import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
-import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -2514,43 +2513,43 @@ public class DataLoader {
 		
 		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
-		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose,1);
+		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
 		pdvJose.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJose);
 
-		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel,2);
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
 		pdvManoel.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvManoel);
 
-		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha,3);
+		pdvManoelCunha = Fixture.criarPDVPrincipal("PDV CUNHA", cotaManoelCunha);
 		pdvManoelCunha.setSegmentacao(segmentacaoPDV);
 		session.save(pdvManoelCunha);
 
-		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria,4);
+		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria);
 		pdvMaria.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMaria);
 
-		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis,5);
+		pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis);
 		pdvLuis.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvLuis);
 
-		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao,6);
+		pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
 		pdvJoao.setSegmentacao(segmentacaoPDV);
 		session.save(pdvJoao);
 
-		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme,7);
+		pdvGuilherme = Fixture.criarPDVPrincipal("PDV Guilherme", cotaGuilherme);
 		pdvGuilherme.setSegmentacao(segmentacaoPDV);
 		session.save(pdvGuilherme);
 
-		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo,8);
+		pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
 		pdvMurilo.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMurilo);
 
-		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana,9);
+		pdvMariana = Fixture.criarPDVPrincipal("PDV MARINA", cotaMariana);
 		pdvMariana.setSegmentacao(segmentacaoPDV);
 		session.save(pdvMariana);
 
-		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando,10);
+		pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
 		pdvOrlando.setSegmentacao(segmentacaoPDV);
 		session.save(pdvOrlando);
 
@@ -2580,6 +2579,12 @@ public class DataLoader {
 		
 		Roteiro roteiroPinheiros = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		session.save(roteiroPinheiros);
+		
+		Roteiro roteiroCentro = Fixture.criarRoteiro("Centro", roteirizacao1, TipoRoteiro.NORMAL);
+	    session.save(roteiroCentro);
+	    
+	    Roteiro roteiroBairro = Fixture.criarRoteiro("Bairro", roteirizacao1, TipoRoteiro.NORMAL);
+        session.save(roteiroBairro);
 
 		Roteiro roteiroInterlagos = Fixture.criarRoteiro("Interlagos",roteirizacao2,TipoRoteiro.NORMAL);
 		session.save(roteiroInterlagos);
@@ -2591,25 +2596,55 @@ public class DataLoader {
 		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVRevistaria, null);
 		SegmentacaoPDV segmentacaoPDV2 = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL, tipoPontoPDVBanca, null);
 		
-		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose,11);
+		PDV pdvcotaJose2 = Fixture.criarPDVPrincipal("PDV cotaJose 2", cotaJose);
 		pdvcotaJose2.setSegmentacao(segmentacaoPDV);
 		session.save(pdvcotaJose2);
 
-		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel,12);
+		PDV pdvcotaManoel2 = Fixture.criarPDVPrincipal("PDV cotaManoel 2", cotaManoel);
 		pdvcotaManoel2.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvcotaManoel2);
 		
 		List<PDV> pdvs = Arrays.asList(pdvcotaJose2,pdvcotaManoel2);
+		PDV pdvJoao = Fixture.criarPDVPrincipal("PDV João", cotaJoao);
+		pdvJoao.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvJoao);
+        
+        PDV pdvJoana = Fixture.criarPDVPrincipal("PDV Joana", cotaJoana);
+        pdvJoana.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvJoana);
+        
+        PDV pdvOrlando = Fixture.criarPDVPrincipal("PDV Orlando", cotaOrlando);
+        pdvOrlando.setSegmentacao(segmentacaoPDV2);
+        session.save(pdvOrlando);
 		
 		rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros,pdvs);
+		rota1.addPDV(pdvcotaJose2, 1);
+		rota1.addPDV(pdvcotaManoel2, 2);
 		session.save(rota1);
 		
 		rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos,pdvs);
+	    rota2.addPDV(pdvcotaJose2, 1);
+	    rota2.addPDV(pdvcotaManoel2, 2);
 		session.save(rota2);
 						
 		rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
+	    rota10.addPDV(pdvcotaJose2, 1);
+	    rota10.addPDV(pdvcotaManoel2, 2);
 		session.save(rota10);
  
+		
+		Rota rotaRoteiroCentro1 = Fixture.rota("999", "Rota 999", roteiroCentro);
+		rotaRoteiroCentro1.addPDV(pdvJoao, 1);
+		session.save(rotaRoteiroCentro1);
+		
+		Rota rotaRoteiroCentro2 = Fixture.rota("990", "Rota 990", roteiroCentro);
+        rotaRoteiroCentro2.addPDV(pdvMariana, 1);
+        session.save(rotaRoteiroCentro2);
+        
+        Rota rotaRoteiroBairro = Fixture.rota("998", "Rota 998", roteiroBairro);
+        rotaRoteiroBairro.addPDV(pdvJoana, 1);
+        rotaRoteiroBairro.addPDV(pdvOrlando, 2);
+        session.save(rotaRoteiroBairro);
 	}
 
 
@@ -2999,10 +3034,10 @@ public class DataLoader {
 				      dividaOrlando,
 				      dividaAcumuladaGuilherme1, dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 
-		dividaAcumuladaGuilherme1.getAcumulado().add(dividaGuilherme1);
-		dividaAcumuladaGuilherme2.getAcumulado().add(dividaGuilherme2);
-		dividaAcumuladaMariana1.getAcumulado().add(dividaMariana1);
-		dividaAcumuladaMurilo1.getAcumulado().add(dividaMurilo1);
+		dividaAcumuladaGuilherme1.setDividaRaiz(dividaGuilherme1);
+		dividaAcumuladaGuilherme2.setDividaRaiz(dividaGuilherme2);
+		dividaAcumuladaMariana1.setDividaRaiz(dividaMariana1);
+		dividaAcumuladaMurilo1.setDividaRaiz(dividaMurilo1);
 
 		save(session, dividaAcumuladaGuilherme1,dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 	}

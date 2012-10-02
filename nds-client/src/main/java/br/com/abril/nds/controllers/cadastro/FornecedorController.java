@@ -22,7 +22,9 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -70,6 +72,9 @@ public class FornecedorController {
 	
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private TipoFornecedorService tipoFornecedorService;
@@ -231,7 +236,15 @@ public class FornecedorController {
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
-		Integer novoCodigoInterface = this.fornecedorService.obterMinCodigoInterfaceDisponivel();
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		boolean utilizaSugestaoIncrementoCodigo = distribuidor.isUtilizaSugestaoIncrementoCodigo();
+		
+		Integer novoCodigoInterface = null;
+		
+		if(utilizaSugestaoIncrementoCodigo) {
+			novoCodigoInterface = this.fornecedorService.obterMinCodigoInterfaceDisponivel();
+		}
 		
 		this.result.use(CustomMapJson.class).put("data", DateUtil.formatarDataPTBR(new Date())).put("nextCodigo", novoCodigoInterface).serialize();
 	}

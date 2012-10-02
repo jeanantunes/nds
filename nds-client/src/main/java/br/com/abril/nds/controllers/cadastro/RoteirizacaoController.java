@@ -2,8 +2,13 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -12,6 +17,7 @@ import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ConsultaRoteirizacaoSumarizadoPorCotaVO;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
@@ -20,30 +26,29 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
-import br.com.abril.nds.dto.RoteirizacaoDTO.TipoEdicaoRoteirizacao;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
-import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -88,6 +93,9 @@ public class RoteirizacaoController {
 	private PdvService pdvService;
 	
 	@Autowired
+	private EnderecoService enderecoService;
+	
+	@Autowired
 	private HttpSession session;
 
 	private static final String FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE="filtroPesquisa";
@@ -96,11 +104,35 @@ public class RoteirizacaoController {
 	 * Chave para armazenamento do DTO de roteirização na sessão
 	 */
 	private static final String ROTEIRIZACAO_DTO_SESSION_KEY = "ROTEIRIZACAO_DTO_SESSION_KEY";
+	
+	private static final String SET_ROTAS_EXCLUIR = "SET_ROTAS_EXCLUIR";
+	
+	private static final String SET_ROTEIROS_EXCLUIR = "SET_ROTEIROS_EXCLUIR";
+	
+	private static final String MAP_ROTEIROS_TRANSFERIDOS = "MAP_ROTEIROS_TRANSFERIDOS";
 
+	/**
+	 * Chave para armazenamento do DTO de PDV's adicionados na sessão
+	 */
+	private static final String PDVS_EXCLUIDOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDV_EXCLUIDO_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
 
+	
+	/**
+	 * Chave para armazenamento do DTO de PDV's excluidos na sessão
+	 */
+	private static final String PDVS_ADICIONADOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDVS_ADICIONADOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
+
+	
+	/**
+	 * Chave para armazenamento do DTO de PDV's adicionados na sessão
+	 */
+	private static final String PDV_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDV_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
+
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO)
 	public void index() {
+		
 		carregarComboBox();
 	}
 
@@ -141,37 +173,60 @@ public class RoteirizacaoController {
 	@Path("/incluirRoteiro")
 	public void incluirRoteiro(Long idBox, Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
 		
-
-		Roteiro roteiro = populaRoteiro(idBox, ordem, nome, tipoRoteiro);
-		validarCampoObrigatoriosRoteiro(roteiro);
-		roteirizacaoService.incluirRoteiro(roteiro);
-		result.use(Results.json()).from(
-		new ValidacaoVO(TipoMensagem.SUCCESS, "Roreito cadastrado com sucesso."),
-						"result").recursive().serialize();
-
+		this.validarCamposRoteiro(ordem, nome, tipoRoteiro);
+		
+		this.adicionarRoteiro(ordem, nome);
+		
+		result.use(Results.json()).from(this.getDTO(), "result").recursive().serialize();
 	}
 	
 	@Path("/iniciaTelaRoteiro")
 	public void iniciaTelaRoteiro() {
 		Integer ordem = roteirizacaoService.buscarMaiorOrdemRoteiro();
+		
+		if (ordem == null){
+			
+			ordem = 0;
+		}
+		
 		ordem++;
+		
+		for (RoteiroRoteirizacaoDTO dto : this.getDTO().getRoteiros()){
+			
+			if (ordem <= dto.getOrdem()){
+				
+				ordem = dto.getOrdem() + 1;
+			}
+		}
+		
 		result.use(Results.json()).from(ordem).recursive().serialize();
 	}
 	
-	private void validarCampoObrigatoriosRoteiro(Roteiro roteiro) {
+	private void validarCamposRoteiro(Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
 		
 		List<String> mensagens = new ArrayList<String>();
 		
-		if(TipoRoteiro.NORMAL.compareTo(roteiro.getTipoRoteiro()) == 0 &&  roteiro.getRoteirizacao().getBox() == null){
-			mensagens.add("O campo Box é obrigatório.");
-		}
-		if(roteiro.getOrdem() == null){
+		if(ordem == null){
+			
 			mensagens.add("O campo Ordem é obrigatório.");
 		}
-		if("".equals(roteiro.getDescricaoRoteiro())){
+		
+		if(nome == null || nome.isEmpty()){
+		
 			mensagens.add("O campo Nome é obrigatório.");
 		}
-	
+		
+		if (ordem != null){
+			
+			for (RoteiroRoteirizacaoDTO dto : this.getDTO().getRoteiros()){
+				
+				if (ordem.equals(dto.getOrdem())){
+					
+					mensagens.add("O roteiro " + dto.getNome() + " já esta na ordem " + ordem);
+					break;
+				}
+			}
+		}
 		
 		if (!mensagens.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
@@ -215,64 +270,113 @@ public class RoteirizacaoController {
 		}	
 	}
 	
+	/**
+	 * Obtém lista de rotas do roteiro
+	 * @param idRoteiro
+	 */
 	@Post
 	public void buscaRotasPorRoteiro(Long roteiroId, int rp, int page) {
 		
+		List<RotaRoteirizacaoDTO> dtosRota = this.getDTO().getRoteiro(roteiroId).getRotas();
 		
-		List<Rota> listaRota = roteirizacaoService.buscarRotaPorRoteiro(roteiroId);
-		
-		
-		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(page).serialize();
+		result.use(Results.json()).from(dtosRota, "result").recursive().serialize();
 	}
 	
+	@Post
+	public void buscaRoteiros() {
+		
+		result.use(Results.json()).from(this.getDTO().getRoteiros(), "result").recursive().serialize();
+	}
+
 	@Path("/incluirRota")
 	public void incluirRota(Long roteiroId, Integer ordem, String nome) {
-		Roteiro roteiro = new Roteiro();
-		roteiro.setId(roteiroId);
-		Rota rota = new Rota();
-		rota.setRoteiro(roteiro);
-		rota.setOrdem(ordem);
-		rota.setDescricaoRota(nome);
-		validarCampoObrigatoriosRota(rota);
-		roteirizacaoService.incluirRota(rota);
-		result.use(Results.json()).from(
-		new ValidacaoVO(TipoMensagem.SUCCESS, "Rota cadastrada com sucesso."),
-						"result").recursive().serialize();
-
+		
+		this.validarCamposRota(roteiroId, ordem, nome);
+		
+		this.adicionarRota(roteiroId, ordem, nome);
+		
+		result.use(Results.json()).from(this.getDTO().getRoteiro(roteiroId), "result").recursive().serialize();
 	}
 	
 	@Path("/iniciaTelaRota")
 	public void iniciaTelaRota(Long idRoteiro) {
 		Integer ordem = roteirizacaoService.buscarMaiorOrdemRota(idRoteiro);
+		
 		if (ordem == null){
+			
 			ordem = 0;
 		}
+		
 		ordem++;
+		
+		for (RotaRoteirizacaoDTO dto : this.getDTO().getRoteiro(idRoteiro).getRotas()){
+			
+			if (ordem <= dto.getOrdem()){
+				
+				ordem = dto.getOrdem() + 1;
+			}
+		}
+		
 		result.use(Results.json()).from(ordem).recursive().serialize();
 	}
 	
-	private void validarCampoObrigatoriosRota(Rota rota) {
+	private void validarCamposRota(Long idRoteiro, Integer ordem, String nome) {
 		
 		List<String> mensagens = new ArrayList<String>();
 		
-		if(rota.getOrdem() == null){
+		if(ordem == null){
+			
 			mensagens.add("O campo Ordem é obrigatório.");
 		}
-		if("".equals(rota.getDescricaoRota())){
+		
+		if(nome == null || nome.isEmpty()){
+			
 			mensagens.add("O campo Nome é obrigatório.");
 		}
-	
+		
+		if (ordem != null){
+			
+			for (RotaRoteirizacaoDTO dto : this.getDTO().getRoteiro(idRoteiro).getRotas()){
+				
+				if (ordem.equals(dto.getOrdem())){
+					
+					mensagens.add("A rota " + dto.getNome() + " já esta na ordem " + ordem);
+					break;
+				}
+			}
+		}
 		
 		if (!mensagens.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 		}
 	}
 	
-	@Path("/excluiRotas")
-	public void excluiRotas(List<Long> rotasId, Long roteiroId) {
-		roteirizacaoService.excluirListaRota(rotasId, roteiroId);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas excluidas com sucesso."),"result").recursive().serialize();
-
+	@Path("/excluirRota")
+	public void excluirRota(Long rotaId, Long roteiroId) {
+		
+		this.getDTO().getRoteiro(roteiroId).removerRota(rotaId);
+		
+		if (rotaId >= 0){
+			
+			this.addRotaExclusao(rotaId);
+		}
+		
+		//roteirizacaoService.excluirListaRota(rotasId, roteiroId);
+		result.use(Results.json()).from("", "result").serialize();
+	}
+	
+	@Path("/excluirRoteiro")
+	public void excluirRoteiro(Long roteiroId) {
+		
+		this.getDTO().removerRoteiro(roteiroId);
+		
+		if (roteiroId >= 0){
+			
+			this.addRoteiroExclusao(roteiroId);
+		}
+		
+		//roteirizacaoService.excluirListaRota(rotasId, roteiroId);
+		result.use(Results.json()).from("", "result").serialize();
 	}
 	
 	@Path("/transferirRotas")
@@ -292,7 +396,7 @@ public class RoteirizacaoController {
 	@Path("/transferirRotasComNovoRoteiro")
 	public void transferirRotasComNovoRoteiro(List<Long> rotasId, Long idBox, Integer ordem, String roteiroNome, TipoRoteiro tipoRoteiro) {
 		Roteiro roteiro = populaRoteiro(idBox, ordem, roteiroNome, tipoRoteiro);
-		validarCampoObrigatoriosRoteiro(roteiro);
+		validarCamposRoteiro(ordem, roteiroNome, tipoRoteiro);
 		roteirizacaoService.transferirListaRotaComNovoRoteiro(rotasId, roteiro);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas transferidas com sucesso."),"result").recursive().serialize();
@@ -305,19 +409,15 @@ public class RoteirizacaoController {
 		if ( idBox != null ){
 			Box box = new Box();
 			box.setId(idBox);
-			roteiro.getRoteirizacao().setBox(box);
+			
+			Roteirizacao roteirizacao = new Roteirizacao();
+			roteirizacao.setBox(box);
+			roteiro.setRoteirizacao(roteirizacao);
 		}	
 		roteiro.setOrdem(ordem);
 		roteiro.setDescricaoRoteiro(roteiroNome);
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		return roteiro;
-	}
-	
-	@Post
-	@Path("/obterRotasRoteiro")
-	public void obterRotas(Long roteiroId, String nomeRota) {
-		List<Rota> lista = roteirizacaoService.buscarRotaPorNome(roteiroId, nomeRota, MatchMode.START) ;
-		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
 	@Path("/iniciaTelaCotas")
@@ -725,43 +825,106 @@ public class RoteirizacaoController {
 	
 	@Post
 	@Path("/boxSelecionado")
-	public void boxSelecionado(Long idBox) {
+	public void boxSelecionado(Long idBox, String nomeBox) {
+	   RoteirizacaoDTO existente = null; 
 	   RoteirizacaoDTO dto = getDTO();
-	   if (dto.isNovo() && !Box.ESPECIAL.getId().equals(idBox)) {
-	       RoteirizacaoDTO existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
-	       if (existente != null) {
-	           dto = setDTO(existente);
-	       } else {
-	           Box box = boxService.buscarPorId(idBox);
-	           dto.setBox(new BoxRoteirizacaoDTO(box.getId(), box.getNome()));
-	       }
+	   if (!Box.ESPECIAL.getId().equals(idBox)) {
+	       existente = roteirizacaoService.obterRoteirizacaoPorBox(idBox);
 	   }
+	   if (existente != null) {
+	       dto = setDTO(existente);
+	       dto.filtarBox(nomeBox);
+	   } else {
+	       dto.reset(idBox);
+	   }
+	   
+	   dto.addAllRoteiro(this.obterRoteirosTransferidos(idBox));
+	   
 	   result.use(CustomJson.class).from(dto).serialize();
+	}
+
+	@Post
+	@Path("/recarregarCotasRota")
+	public void recarregarCotasRota(Long idRota, String sortname, String sortorder) {
+	    RoteirizacaoDTO roteirizacao = getDTO();
+	    RotaRoteirizacaoDTO rota = roteirizacao.getRota(idRota);
+	    List<PdvRoteirizacaoDTO> pdvs = rota.getPdvs();
+	    
+	    if (pdvs != null){
+	    
+		    Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+		    PaginacaoUtil.ordenarEmMemoria(pdvs, ordenacao, sortname);
+		    result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
+	    } else {
+	    	
+	    	result.use(Results.json()).from("").serialize();
+	    }
+	}
+	
+	@Post
+	@Path("/recarregarBox")
+	public void recarregarBox(String nomeBox) {
+	    RoteirizacaoDTO roteirizacao = getDTO();
+	    roteirizacao.filtarBox(nomeBox);
+	    List<BoxRoteirizacaoDTO> boxes = roteirizacao.getBoxDisponiveis();
+        result.use(FlexiGridJson.class).from(boxes).total(boxes.size()).page(1).serialize();
+	}
+	
+	@Post
+    @Path("/recarregarRoteiros")
+    public void recarregarRoteiros(String descricaoRoteiro) {
+        RoteirizacaoDTO roteirizacao = getDTO();
+        roteirizacao.filtarRoteiros(descricaoRoteiro);
+        List<RoteiroRoteirizacaoDTO> roteiros = roteirizacao.getRoteiros();
+        result.use(FlexiGridJson.class).from(roteiros).total(roteiros.size()).page(1).serialize();
+    }
+	
+	@Post
+    @Path("/recarregarRotas")
+    public void recarregarRotas(Long idRoteiro, String descricaoRota) {
+        RoteirizacaoDTO roteirizacao = getDTO();
+        RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+        roteiro.filtarRotas(descricaoRota);
+        List<RotaRoteirizacaoDTO> roteiros = roteiro.getRotas();
+        result.use(FlexiGridJson.class).from(roteiros).total(roteiros.size()).page(1).serialize();
+    }
+	
+	@Post
+    @Path("/ordemPdvChangeListener")
+	public void ordemPdvChangeListener(Long idRota, Long idPdv, Integer ordem) {
+        RoteirizacaoDTO roteirizacao = getDTO();
+        RotaRoteirizacaoDTO rota = roteirizacao.getRota(idRota);
+        boolean ordemValida = rota.alterarOrdemPdv(idPdv, ordem);
+        result.use(Results.json()).withoutRoot().from(ordemValida).serialize();
+        
 	}
 	
 	/**
-	 * Obtém lista de rotas do roteiro
-	 * @param idRoteiro
+	 * Método responsável pela obtenção dos dados que irão preencher o combo de UF's.
+	 * @param tela
 	 */
-	@Get
-	@Path("/obterRotasRoteiro")
-	public void obterRotasRoteiro(Long idRoteiro, String descricaoRota){
+	@Post
+    @Path("/obterDadosComboUF")
+	public void obterDadosComboUF() {
 		
-		List<Rota> listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(idRoteiro, descricaoRota);
+		List<String> ufs = this.enderecoService.obterUnidadeFederacaoBrasil();
 		
-		result.use(FlexiGridJson.class).from(listaRota).total(listaRota.size()).page(1).serialize();
+		this.result.use(Results.json()).from(ufs, "result").serialize();
 	}
 	
 	/**
 	 * Obtém PDV's para a inclusão de rota pdv na roteirização
 	 */
-	@Get
+	@Post
 	@Path("/obterPdvsDisponiveis")
-	public void obterPdvsDisponiveis(){
+	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, String sortname, String sortorder ){
         
-		List<PdvRoteirizacaoDTO> pdvs = this.roteirizacaoService.obterPdvsDisponiveis();
+		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep);
 		
-		result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
+		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
+		
+		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
 	/**
@@ -796,6 +959,11 @@ public class RoteirizacaoController {
 	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);
 	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
 	    setDTO(dto);
+	    
+	    this.session.removeAttribute(SET_ROTAS_EXCLUIR);
+	    this.session.removeAttribute(SET_ROTEIROS_EXCLUIR);
+	    this.session.removeAttribute(MAP_ROTEIROS_TRANSFERIDOS);
+	    
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
@@ -808,50 +976,331 @@ public class RoteirizacaoController {
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
+	@Post
+    @Path("/confirmarRoteirizacao")
+	public void confirmarRoteirizacao() {
+	    RoteirizacaoDTO dto = getDTO();
+	    roteirizacaoService.confirmarRoteirizacao(dto);
+	    clearDTO();
+	    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Roteirização confirmada com sucesso."),"result").recursive().serialize();
+	}
+	
+	@Post
+    @Path("/cancelarRoteirizacao")
+	public void cancelarRoteirizacao() {
+	    clearDTO();
+	    result.nothing();
+	}
+	
 	
 	/**
 	 * Verifica se PDV's podem ser adicionados na Roteirização
 	 * @param pdvs
 	 */
-	private void validaNovosPdvs(List<PdvRoteirizacaoDTO> pdvs){
+	private void validaNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
 		
+        
 		for(PdvRoteirizacaoDTO itemPdvDTO:pdvs){
 			if (!this.roteirizacaoService.verificaDisponibilidadePdv(itemPdvDTO.getId())){
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV] já pertence à um [Box] roteirizado !"));
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV "+itemPdvDTO.getId()+"] já pertence à um [Box] roteirizado !"));
+			}
+		}
+		
+		this.verificaOrdemPdvs(pdvs, pdvsAtual);
+	}
+	
+	/**
+	 * Verifica o campo Ordem dos PDV's
+	 * @param pdvs
+	 * @param pdvsAtual
+	 */
+	private void verificaOrdemPdvs(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
+		
+		for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
+			for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
+				if (itemPdvDTOAtual.getOrdem().equals(itemPdvDTONovo.getOrdem())){
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é permitido mais de um campo [Ordem] com o mesmo valor !"));
+				}
 			}
 		}
 	}
 	
+	/**
+	 * Trata PDV's repetidos adicionados
+	 * @param pdvs
+	 * @param pdvsAtual
+	 * @return List<PdvRoteirizacaoDTO>
+	 */
+    private List<PdvRoteirizacaoDTO> trataPdvsRepetidos(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
+		
+    	for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
+			for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
+				if (itemPdvDTOAtual.getId().equals(itemPdvDTONovo.getId())){
+					pdvs.remove(itemPdvDTONovo);
+				}
+			}
+		}
+    	
+    	return pdvs;
+	}
 	
 	/**
 	 * Adiciona PDV's selecionados no "popup de PSV's disponíveis" na lista principal de PDV's
 	 */
-	@Get
+	@Post
 	@Path("/adicionarNovosPdvs")
-	public void adicionarNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, Long idRota){
+	public void adicionarNovosPdvs(Long idRota, List<PdvRoteirizacaoDTO> pdvs){
+		
+		if (idRota==null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma [Rota] foi selecionada para a inclusão dos [PDV's] !"));
+		}
+		
+		List<PdvRoteirizacaoDTO> pdvsAtual = this.getDTO().getRota(idRota).getPdvs();
         
-		//BUSCAR EOREITIZACAO NA SESSAO
+		pdvs = this.trataPdvsRepetidos(pdvs, pdvsAtual);
+		
+		this.validaNovosPdvs(pdvs, pdvsAtual);
+		
+		RoteirizacaoDTO roteirizacaoDTO = this.getDTO();
+		
+		roteirizacaoDTO.getRota(idRota).addAllPdv(pdvs);
+		
+		this.setDTO(roteirizacaoDTO);
+			
+	    this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
+	}
+	
+	/**
+	 * Remove PDV's selecionados da lista principal de PDV's
+	 */
+	@Post
+	@Path("/removerPdvs")
+	public void removerPdvs(Long idRota, List<PdvRoteirizacaoDTO> pdvs){
+        
+		//BUSCAR ROTEIRIZACAO ATUAL NA SESSAO
 		RoteirizacaoDTO roteirizacaoDTO = null;
 		
 		
-		this.validaNovosPdvs(pdvs);
-		
-		
-		for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
-			for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
+		roteiros : for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
+		   for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
 				if(itemRota.getId().equals(idRota)){
-					itemRota.addAllPdv(pdvs);
-					break;
+					itemRota.getPdvs().removeAll(pdvs);
+					session.setAttribute(PDVS_EXCLUIDOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE, pdvs);
+					break roteiros;
 				}
 			}
 		}
 
 		
-		//ADICIONAR ROTEIRIZACAO NA SESSAO
+		//ADICIONAR ROTEIRIZACAO ATUALIZADA NA SESSAO
 		
 
 		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
 	}
 	
+	@Post
+	public void copiarCotasRota(RotaRoteirizacaoDTO rotaCopia) {
+
+		RoteirizacaoDTO roteirizacao = this.getDTO();
+		
+		if (roteirizacao.getRotaCotasCopia() == null) {
+
+			roteirizacao.setRotaCotasCopia(new ArrayList<RotaRoteirizacaoDTO>());
+		}
+
+		roteirizacao.getRotaCotasCopia().add(rotaCopia);
+
+		setDTO(roteirizacao);
+
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cópia realizada com sucesso.");
+		
+		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
+	}
 	
+	private void adicionarRoteiro(Integer ordem, String nome){
+		
+		Long novoId = -1L;
+		
+		List<RoteiroRoteirizacaoDTO> dtos = this.getDTO().getRoteiros();
+		
+		for (RoteiroRoteirizacaoDTO dto : dtos){
+			
+			if (dto.getId() <= novoId){
+				
+				novoId = dto.getId() - 1;
+			}
+		}
+		
+		this.getDTO().addRoteiro(new RoteiroRoteirizacaoDTO(novoId, ordem, nome));
+	}
+	
+	private void adicionarRota(Long roteiroId, Integer ordem, String nome){
+		
+		List<RotaRoteirizacaoDTO> rotasDto = this.getDTO().getRoteiro(roteiroId).getRotas();
+		
+		Long novoId = -1L;
+		
+		for (RotaRoteirizacaoDTO rota : rotasDto){
+			
+			if (rota.getId() <= novoId){
+				
+				novoId = rota.getId() - 1;
+			}
+		}
+		
+		this.getDTO().getRoteiro(roteiroId).addRota(new RotaRoteirizacaoDTO(novoId, ordem, nome));
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addRotaExclusao(Long idRota){
+		
+		 Set<Long> idsRotasExclusao = (Set<Long>) this.session.getAttribute(SET_ROTAS_EXCLUIR);
+		 
+		 if (idsRotasExclusao == null){
+			 
+			 idsRotasExclusao = new HashSet<Long>();
+		 }
+		 
+		 idsRotasExclusao.add(idRota);
+		 
+		 this.session.setAttribute(SET_ROTAS_EXCLUIR, idsRotasExclusao);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addRoteiroExclusao(Long idRoteiro){
+		
+		Set<Long> idsRoteirosExclusao = (Set<Long>) this.session.getAttribute(SET_ROTEIROS_EXCLUIR);
+		 
+		 if (idsRoteirosExclusao == null){
+			 
+			 idsRoteirosExclusao = new HashSet<Long>();
+		 }
+		 
+		 idsRoteirosExclusao.add(idRoteiro);
+		 
+		 this.session.setAttribute(SET_ROTAS_EXCLUIR, idsRoteirosExclusao);
+	}
+	
+	@Post
+	public void carregarBoxTransferenciaRoteiro(Long idBox){
+		
+		List<Box> boxs = this.boxService.buscarPorTipo(TipoBox.LANCAMENTO);
+		
+		List<ItemDTO<Long, String>> lista =
+			new ArrayList<ItemDTO<Long,String>>();
+	
+		for (Box box : boxs) {
+			
+			if (!box.getId().equals(idBox)){
+				lista.add(
+					new ItemDTO<Long, String>(box.getId(), box.getNome()));
+			}
+		}
+		
+		this.result.use(Results.json()).from(lista, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void carregarRoteirosTransferenciaRota(Long idRoteiro){
+		
+		this.result.use(Results.json()).from(this.getDTO().getRoteiros(), "result").serialize();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Post
+	public void transferirRoteiro(Long idBoxAnterior, Long idRoteiro, Long idBoxNovo){
+		
+		Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = 
+				(Map<Long, Set<RoteiroRoteirizacaoDTO>>) this.session.getAttribute(MAP_ROTEIROS_TRANSFERIDOS);
+		
+		if (roteirosTransferidos == null){
+			
+			roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
+			this.session.setAttribute(MAP_ROTEIROS_TRANSFERIDOS, roteirosTransferidos);
+		}
+		
+		Set<RoteiroRoteirizacaoDTO> roteiros = roteirosTransferidos.get(idBoxNovo);
+		
+		if (roteiros == null){
+			
+			roteiros = new HashSet<RoteiroRoteirizacaoDTO>();
+			roteirosTransferidos.put(idBoxNovo, roteiros);
+		}
+		
+		long novoId = -1;
+		int novaOrdem = 1;
+		for (RoteiroRoteirizacaoDTO dto : roteiros){
+			
+			if (dto.getId() <= novoId){
+				
+				novoId = dto.getId() - 1;
+			}
+			
+			if (dto.getOrdem() >= novaOrdem){
+				
+				novaOrdem = dto.getOrdem() + 1;
+			}
+		}
+		
+		RoteiroRoteirizacaoDTO novoDTO = new RoteiroRoteirizacaoDTO(novoId, novaOrdem, this.getDTO().getRoteiro(idRoteiro).getNome());
+		novoDTO.setRotas(this.getDTO().getRoteiro(idRoteiro).getRotas());
+		
+		roteiros.add(novoDTO);
+		
+		roteiros = roteirosTransferidos.get(idBoxAnterior);
+		
+		if (roteiros != null){
+			
+			for (RoteiroRoteirizacaoDTO dto : roteiros){
+				
+				if (dto.getId().equals(idRoteiro)){
+					
+					roteiros.remove(dto);
+					break;
+				}
+			}
+		}
+		
+		this.excluirRoteiro(idRoteiro);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Collection<RoteiroRoteirizacaoDTO> obterRoteirosTransferidos(Long idBox) {
+		
+		Map<Long, Set<RoteiroRoteirizacaoDTO>> transf = (Map<Long, Set<RoteiroRoteirizacaoDTO>>) 
+				this.session.getAttribute(MAP_ROTEIROS_TRANSFERIDOS);
+		
+		if (transf != null){
+			
+			return transf.get(idBox);
+		}
+		
+		return new ArrayList<RoteiroRoteirizacaoDTO>();
+	}
+	
+	@Post
+	public void transferirRota(Long idRoteiroAnterior, Long idRota, Long idRoteiroNovo){
+		
+		RoteiroRoteirizacaoDTO roteiroDTO = this.getDTO().getRoteiro(idRoteiroAnterior);
+		
+		RotaRoteirizacaoDTO rotaDTO = null;
+		
+		if (roteiroDTO != null){
+			
+			rotaDTO = roteiroDTO.getRota(idRota);
+			roteiroDTO.removerRota(idRota);
+		}
+		
+		if (rotaDTO != null){
+			
+			roteiroDTO = this.getDTO().getRoteiro(idRoteiroNovo);
+			
+			if (roteiroDTO != null){
+				
+				roteiroDTO.addRota(rotaDTO);
+			}
+		}
+		
+		this.result.use(Results.json()).from("").serialize();
+	}
 }

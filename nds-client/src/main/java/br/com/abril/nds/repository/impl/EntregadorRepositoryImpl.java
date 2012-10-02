@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -401,6 +402,41 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		return ((Long)query.uniqueResult()) != null;
 	}
+	
+	@Override
+	public Entregador obterEntregadorPorCodigo(Long codigo) {
+		
+		StringBuilder hql = new StringBuilder(" select e from Entregador e where e.codigo = :codigo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigo", codigo);
+		
+		return (Entregador) query.uniqueResult();
+	}
+	
+	
+	@Override
+	public Long obterMinCodigoEntregadorDisponivel() {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("	select min(codigo) from (                                          ");
+		hql.append("			select min(CODIGO + 1) as codigo from ENTREGADOR           ");
+		hql.append("			where (CODIGO + 1) not in (select CODIGO from ENTREGADOR)  ");
+		hql.append("			UNION                                                      ");
+		hql.append("			SELECT 1 AS codigo from dual WHERE  1 not in               ");
+		hql.append("			( select CODIGO from ENTREGADOR where CODIGO = 1 )         ");
+		hql.append("	) as TBL_CODIGO	                                                   ");
+		
+		Query query = super.getSession().createSQLQuery(hql.toString());
+		
+		BigInteger codInterface = (BigInteger) query.uniqueResult();
+		
+		return codInterface.longValue();
+		
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

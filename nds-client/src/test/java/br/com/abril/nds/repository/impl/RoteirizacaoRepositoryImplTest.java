@@ -1,12 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
@@ -71,7 +72,7 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box);
 		save(cotaManoel);
 				
-		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel,1);
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
 		save(pdvManoel);
 
 
@@ -111,16 +112,20 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(roteiro3);
 		
 		
-		rota = Fixture.rota("0", "ROTA00", roteiro, Arrays.asList(pdvManoel));
+		rota = Fixture.rota("0", "ROTA00", roteiro);
+		rota.addPDV(pdvManoel, 1);
 		save(rota);
 		
-		rota1 = Fixture.rota("1", "ROTA01", roteiro, Arrays.asList(pdvManoel));
+		rota1 = Fixture.rota("1", "ROTA01", roteiro);
+		rota1.addPDV(pdvManoel, 1);
 		save(rota1);
 		
-		rota2 = Fixture.rota("2", "ROTA02", roteiro, Arrays.asList(pdvManoel));
+		rota2 = Fixture.rota("2", "ROTA02", roteiro);
+		rota2.addPDV(pdvManoel, 1);
 		save(rota2);
 		
-		rota3 = Fixture.rota("3", "ROTA03", roteiro1, Arrays.asList(pdvManoel));
+		rota3 = Fixture.rota("3", "ROTA03", roteiro1);
+		rota3.addPDV(pdvManoel, 1);
 		rota3.setRoteiro(roteiro1);
 		save(rota3);
 
@@ -188,5 +193,13 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertTrue(box!=null);
 		Assert.assertEquals(box.getNome(), "Box 300");
 	}
+	
+	@Test
+	public void buscarRoteirizacaoDeCota() {
 
+		Roteirizacao roteirizacao = roteirizacaoRepository.buscarRoteirizacaoDeCota(123);
+
+		Assert.assertTrue(roteirizacao != null);
+	}
+	
 }

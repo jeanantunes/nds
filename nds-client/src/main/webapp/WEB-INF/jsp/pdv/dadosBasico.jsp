@@ -17,7 +17,7 @@
 	</div>
 </form>
 
-<fieldset>
+<fieldset style="width:820px!important; margin:5px!important;">
 <legend>Dados Básicos</legend>
 <table width="777" border="0" cellspacing="2" cellpadding="2">
   <tr>
