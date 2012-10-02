@@ -31,6 +31,7 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -130,9 +131,9 @@ public class ExtratoEdicaoController {
 									  Long numeroEdicao,
 									  String nomeProduto,
 									  BigDecimal precoCapa,
-									  String nomeFornecedor) throws ValidacaoException {
+									  String nomeFornecedor, int page, int rp) throws ValidacaoException {
 		
-		this.montarFiltro(codigoProduto, nomeProduto, numeroEdicao, precoCapa, nomeFornecedor);
+		FiltroExtratoEdicaoDTO filtroExtratoEdicaoDTO = this.montarFiltro(codigoProduto, nomeProduto, numeroEdicao, precoCapa, nomeFornecedor, page, rp);
 		
 		TableModel<CellModel> tableModel = null;
 		
@@ -144,7 +145,7 @@ public class ExtratoEdicaoController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaWarningMsg));
 		}
 		
-		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(codigoProduto, numeroEdicao);
+		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = extratoEdicaoService.obterInfoGeralExtratoEdicao(filtroExtratoEdicaoDTO);
 		
 		if(	infoGeralExtratoEdicao == null || 
 			infoGeralExtratoEdicao.getListaExtratoEdicao()==null ||
@@ -190,7 +191,7 @@ public class ExtratoEdicaoController {
 		
 		infoGeralExtratoEdicao = 
 			extratoEdicaoService.obterInfoGeralExtratoEdicao(
-				filtro.getCodigoProduto(), filtro.getNumeroEdicao());
+					filtro);
 
 		if (	infoGeralExtratoEdicao == null || 
 				infoGeralExtratoEdicao.getListaExtratoEdicao() == null ||
@@ -221,7 +222,7 @@ public class ExtratoEdicaoController {
 											    String nomeProduto,
 											    Long numeroEdicao,
 											    BigDecimal precoCapa,
-											    String nomeFornecedor) {
+											    String nomeFornecedor, int page, int rp) {
 		
 		FiltroExtratoEdicaoDTO filtro = new FiltroExtratoEdicaoDTO();
 
@@ -234,6 +235,12 @@ public class ExtratoEdicaoController {
 		filtro.setPrecoCapa(precoCapa);
 		
 		filtro.setNomeFornecedor(nomeFornecedor);
+		
+		PaginacaoVO vo = new PaginacaoVO();
+		vo.setPaginaAtual(page);
+		vo.setQtdResultadosPorPagina(rp);
+		
+		filtro.setPaginacao(vo);
 		
 		this.session.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtro);
 		
