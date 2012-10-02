@@ -33,49 +33,24 @@ public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		hql.append(" viewContaCorrente.numeroCota = :numeroCota ");
 		
+		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+			
+			hql.append(" and viewContaCorrente.dataConsolidado between :inicioPeriodo and :fimPeriodo ");
+		}
+		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		
-		ColunaOrdenacao colunaOrdenacao = filtro.getColunaOrdenacao();
-		
-		if (colunaOrdenacao != null) {
-			
-			if (ColunaOrdenacao.CONSIGNADO == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.consignado ");
-			} else if (ColunaOrdenacao.DEBITO_CREDITO == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.debitoCredito ");
-			} else if (ColunaOrdenacao.DT_CONSOLIDADO == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.dataConsolidado ");
-			} else if (ColunaOrdenacao.ENCALHE == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.encalhe ");
-			} else if (ColunaOrdenacao.ENCARGOS == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.encargos ");
-			} else if (ColunaOrdenacao.NUMERO_ATRASADOS == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.numeroAtrasados ");
-			} else if (ColunaOrdenacao.PENDENTE == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.pendente ");
-			} else if (ColunaOrdenacao.TOTAL == colunaOrdenacao) {
-					hql.append("order by viewContaCorrente.total ");
-			} else if (ColunaOrdenacao.VALOR_POSTERGADO == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.valorPostergado ");
-			} else if (ColunaOrdenacao.VENDA_ENCALHE == colunaOrdenacao) {
-				hql.append("order by viewContaCorrente.vendaEncalhe ");
-			}
-			
-			String ordenacao = "asc";
-			
-			if (paginacao != null) {
-				
-				if (paginacao.getOrdenacao().equals(Ordenacao.DESC)) {
-					ordenacao = "desc";
-				}
-			}
-			
-			hql.append(ordenacao);
-		}
+		hql.append( getOrdenacaoConsulta(filtro,paginacao) );
 		
 		Query query  = getSession().createQuery(hql.toString());
 			
 		query.setParameter("numeroCota", filtro.getNumeroCota());
+		
+		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+			
+			query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+			query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+		}
 		
 		if (paginacao != null) {
 			
@@ -91,6 +66,73 @@ public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel
 		}
 		
 		return query.list();
+	}
+
+	private StringBuffer getOrdenacaoConsulta(FiltroViewContaCorrenteCotaDTO filtro,PaginacaoVO paginacao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		ColunaOrdenacao colunaOrdenacao = filtro.getColunaOrdenacao();
+		
+		if (colunaOrdenacao != null) {
+			
+			switch (colunaOrdenacao) {
+				
+				case CONSIGNADO :
+					hql.append("order by viewContaCorrente.consignado ");
+					break;
+
+				case DEBITO_CREDITO :
+					hql.append("order by viewContaCorrente.debitoCredito ");			
+					break;
+				
+				case DT_CONSOLIDADO :
+					hql.append("order by viewContaCorrente.dataConsolidado ");
+					break;
+				
+				case ENCALHE:
+					hql.append("order by viewContaCorrente.encalhe ");
+					break;
+				
+				case ENCARGOS:
+					hql.append("order by viewContaCorrente.encargos ");
+					break;
+					
+				case NUMERO_ATRASADOS :
+					hql.append("order by viewContaCorrente.numeroAtrasados ");
+					break;
+				
+				case PENDENTE:
+					hql.append("order by viewContaCorrente.pendente ");
+					break;
+				
+				case TOTAL :
+					hql.append("order by viewContaCorrente.total ");
+					break;
+				
+				case VALOR_POSTERGADO :
+					hql.append("order by viewContaCorrente.valorPostergado ");
+					break;
+				
+				case VENDA_ENCALHE :
+					hql.append("order by viewContaCorrente.vendaEncalhe ");
+					break;
+
+			}
+			
+			String ordenacao = "asc";
+			
+			if (paginacao != null) {
+				
+				if (paginacao.getOrdenacao().equals(Ordenacao.DESC)) {
+					ordenacao = "desc";
+				}
+			}
+			
+			hql.append(ordenacao);
+		}
+		
+		return hql; 
 	}
 
 }

@@ -4,6 +4,11 @@
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/vendaEncalheCota.js'></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/contaCorrenteCota.js'></script>
 
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tooltip/jquery.tipsy.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy-docs.css" />
+
+
 <script language="javascript" type="text/javascript">
 	var pesquisaCotaContaCorrentCota = new PesquisaCota();
 	
@@ -168,7 +173,29 @@
               </td>
               <td width="41">Nome:</td>
               <td width="240"><input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
-              <td width="518"><span class="bt_novos"><a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarItemContaCorrenteCota();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+              
+			   <td width="10"></td>
+			  
+              <td width="53">Período:</td>
+              
+              <td width="199">
+              		<input type="text" name="periodoContaDe" id="periodoContaDe" style="width:80px;"/>
+              </td>
+              
+              <td width="22">Até:</td>
+              
+              <td width="199">
+              		<input type="text" name="periodoContaAte" id="periodoContaAte" style="width:80px;" >
+              </td>
+              
+              <td width="518">
+              		<span class="bt_novos">
+              				<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarItemContaCorrenteCota();">
+              					<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+              				</a>
+              		</span>
+              </td>
+              
             </tr>
           </table>
 

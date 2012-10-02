@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -38,7 +39,7 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 	@Export(label = "Box", alignment = Alignment.CENTER)
 	private Integer box;
 	@Export(label = "Exemplares", alignment = Alignment.CENTER)
-	private BigDecimal exemplares;
+	private BigInteger exemplares;
 	@Export(label = "Fornecedor")
 	private String nomeFornecedor;
 
@@ -111,11 +112,11 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 		this.box = box;
 	}
 
-	public BigDecimal getExemplares() {
+	public BigInteger getExemplares() {
 		return exemplares;
 	}
 
-	public void setExemplares(BigDecimal exemplares) {
+	public void setExemplares(BigInteger exemplares) {
 		this.exemplares = exemplares;
 	}
 

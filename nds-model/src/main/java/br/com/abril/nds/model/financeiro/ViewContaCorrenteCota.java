@@ -69,6 +69,10 @@ public class ViewContaCorrenteCota  implements Serializable{
 	@Column(name = "TOTAL", nullable = true)
 	private BigDecimal total;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name="DT_RAIZ_CONSOLIDADO")
+	private Date dataRaizConsolidado;
+	
 	@ManyToOne
 	private Cota cota;
 
@@ -182,6 +186,20 @@ public class ViewContaCorrenteCota  implements Serializable{
 
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
+	}
+
+	/**
+	 * @return the dataRaizConsolidado
+	 */
+	public Date getDataRaizConsolidado() {
+		return dataRaizConsolidado;
+	}
+
+	/**
+	 * @param dataRaizConsolidado the dataRaizConsolidado to set
+	 */
+	public void setDataRaizConsolidado(Date dataRaizConsolidado) {
+		this.dataRaizConsolidado = dataRaizConsolidado;
 	}
 
 	

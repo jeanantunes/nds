@@ -62,7 +62,9 @@ public class RoteirizacaoDTO implements Serializable{
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
-        this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
+        if (TipoEdicaoRoteirizacao.NOVO == tipoEdicao || boxDisponiveis.isEmpty()) {
+            this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
+        }
         this.boxDisponiveis.addAll(boxDisponiveis);
         this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }

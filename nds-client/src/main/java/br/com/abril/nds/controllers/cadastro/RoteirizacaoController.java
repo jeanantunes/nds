@@ -945,6 +945,20 @@ public class RoteirizacaoController {
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
+	@Post
+    @Path("/confirmarRoteirizacao")
+	public void confirmarRoteirizacao() {
+	    //TODO: implementar confirmação roteirização
+	    result.nothing();
+	}
+	
+	@Post
+    @Path("/cancelarRoteirizacao")
+	public void cancelarRoteirizacao() {
+	    clearDTO();
+	    result.nothing();
+	}
+	
 	
 	/**
 	 * Verifica se PDV's podem ser adicionados na Roteirização

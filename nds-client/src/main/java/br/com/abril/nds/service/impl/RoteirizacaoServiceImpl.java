@@ -469,8 +469,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	@Transactional(readOnly = true)
 	public RoteirizacaoDTO obterRoteirizacaoPorId(Long id){
-        List<Box> disponiveis = obterListaBoxLancamento(null);
 	    Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(id);
+	    List<Box> disponiveis = new ArrayList<Box>();
+	    Box box = roteirizacao.getBox();
+        if (box != null) {
+            disponiveis.add(box);
+        }
 		return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis);
 	}
   	
