@@ -22,7 +22,6 @@ import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
-import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
@@ -720,5 +719,11 @@ public class ContaCorrenteCotaController {
 		
 	}
 	
+	public void pesquisarEmailCota(Integer numeroCota){
+		String email = cotaService.obterPorNumeroDaCota(numeroCota).getPessoa().getEmail();
+		
+		result.use(Results.json()).from(email, "result")
+		.recursive().serialize();
+	}
 		
 }

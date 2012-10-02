@@ -227,8 +227,8 @@ var contaCorrenteCotaController = $.extend(true, {
 	enviarEmail : function(){
 		
 		var params = $('form-email', contaCorrenteCotaController.workspace).serialize();
-	
-		$.postJSON(ontextPath + '/financeiro/contaCorrenteCota/enviarEmail',
+		alert(params);
+		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/enviarEmail',
 				params,
 				function(result) {
 					
@@ -238,6 +238,20 @@ var contaCorrenteCotaController = $.extend(true, {
 				}
 			
 		);
+		
+	},
+	
+	editarEmail : function(){
+		var editar = $("#emailCotaEmail");
+		
+		
+		if(editar.is(":disabled")){
+			editar.removeAttr("disabled");
+			
+		}else{
+			editar.attr("disabled", true);
+		}
+		
 		
 	},
 	
@@ -245,18 +259,19 @@ var contaCorrenteCotaController = $.extend(true, {
 	 * CARREGA DADOS DA COTA PARA O ENVIO DO EMAIL
 	 */
 	carregarDadosEmail : function(){
-		$("#btn_email", contaCorrenteCotaController.workspace).show();
 		
-		var cota = $("#cota", contaCorrenteCotaController.workspace).val();
-
-		var params = [{name:'numeroCota', value:cota }];
+		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();
+		var nomeCota = $("#nomeCota", contaCorrenteCotaController.workspace).val();
+		var parametroPesquisa = [{name:'numeroCota', value:numeroCota }];
 		
-		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/pesquisarCotaEmail',
-				params,
+		$("#numeroCotaEmail", contaCorrenteCotaController.workspace).html(numeroCota);
+		$("#nomeCotaEmail", contaCorrenteCotaController.workspace).html(nomeCota);
+	
+		
+		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/pesquisarEmailCota',
+				parametroPesquisa,
 				function(result) {
-					$("#numeroCotaEmail", contaCorrenteCotaController.workspace).html(result);
-					$("#nomeCotaEmail", contaCorrenteCotaController.workspace).html();
-					$("#emailCotaEmail", contaCorrenteCotaController.workspace).html();	
+					$("#emailCotaEmail").val(result);
 				},
 				function() {
 					
@@ -264,32 +279,8 @@ var contaCorrenteCotaController = $.extend(true, {
 			
 		);
 		
-		
+		$("#bt_email", contaCorrenteCotaController.workspace).show();
 	},
-	
-	/**
-	 * PESQUISA DADOS DA COTA PARA PREENCHER CAMPOS DO POP-UP EMAIL
-	 */
-	/*pesquisarCotaEmail : function(){
-		
-		var cota = $("#cota", contaCorrenteCotaController.workspace).val();
-
-		var params = [{name:'numeroCota', value:cota }];
-		
-		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/pesquisarCotaEmail',
-				params,
-				function(result) {
-				
-					
-				},
-				function() {
-					
-				}
-			
-		);
-		
-	},*/
-	
 
 
 	/**
@@ -624,26 +615,28 @@ var contaCorrenteCotaController = $.extend(true, {
 	
 	popup_email : function() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-			$("#dialog-email", contaCorrenteCotaController.workspace ).dialog({
-				resizable: false,
-				height:400,
-				width:490,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-						$(".grids", contaCorrenteCotaController.workspace).show();
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-						$(".grids", contaCorrenteCotaController.workspace).show();
-					}
+		$("#dialog-email", contaCorrenteCotaController.workspace ).dialog({
+			resizable: false,
+			height:400,
+			width:490,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					contaCorrenteCotaController.enviarEmail();
 					
-					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+
 				}
 				
-			});	
+				
+			},
+			form: $("#dialog-email", this.workspace).parents("form")
+		});	
+		$("#copiaParaCotaEmail").val("");
+		$("#mensagemCotaEmail").val("");
 	}
 	
 }, BaseController);
