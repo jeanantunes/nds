@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.administracao;
+package br.com.abril.nds.controllers.financeiro;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.model.seguranca.Permissao;

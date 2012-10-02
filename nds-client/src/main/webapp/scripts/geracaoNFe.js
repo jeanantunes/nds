@@ -111,7 +111,7 @@ GeracaoNFeController.prototype.gerar = function() {
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 		}
-		
+		exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
 		_this.gridReaload(_this.$gridNFe,'busca.json');
 		
 	});
@@ -358,7 +358,7 @@ GeracaoNFeController.prototype.initGrid = function() {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180
+				height : 'auto'
 			});
 	this.$gridCotasSuspensas = $("#gridCotasSuspensas", this.workspace).flexigrid(
 			{

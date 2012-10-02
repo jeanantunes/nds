@@ -9,6 +9,17 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		$("#nomeCota", contaCorrenteCotaController.workspace).autocomplete({source: ""});
 		
+		$( "#periodoContaDe", contaCorrenteCotaController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$( "#periodoContaAte", contaCorrenteCotaController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
 		contaCorrenteCotaController.carregarItemContaCorrenteCotaGrid();
 		contaCorrenteCotaController.montarColunaConsignado();
 		contaCorrenteCotaController.montarColunaEncalheCota();
@@ -44,10 +55,12 @@ var contaCorrenteCotaController = $.extend(true, {
 	 * FAZ A PESQUISA DOS ITENS REFERENTES A CONTA CORRENTE COTA.
 	 */
 	pesquisarItemContaCorrenteCota : function() {
-		
-		var cota = $("#cota", contaCorrenteCotaController.workspace).val();
 
-		var parametroPesquisa = [{name:'filtroViewContaCorrenteCotaDTO.numeroCota', value:cota }];
+		var parametroPesquisa = [
+                 {name:'filtroViewContaCorrenteCotaDTO.numeroCota', value: $("#cota", contaCorrenteCotaController.workspace).val() },
+                 {name:'filtroViewContaCorrenteCotaDTO.inicioPeriodo', value:$("#periodoContaDe", contaCorrenteCotaController.workspace).val() },
+                 {name:'filtroViewContaCorrenteCotaDTO.fimPeriodo', value:$("#periodoContaAte", contaCorrenteCotaController.workspace).val() }
+		];
 
 		$(".itemContaCorrenteCotaGrid", contaCorrenteCotaController.workspace).flexOptions({
 			
@@ -178,6 +191,17 @@ var contaCorrenteCotaController = $.extend(true, {
 			
 			$.each(data.rows, function(index, value) {
 			
+			var valorPostergado = value.cell[1];
+			var dataRaizPostergado =  value.cell[11];			
+			if(dataRaizPostergado.length==0){
+				dataRaizPostergado = value.cell[0];
+			}
+			var valorPendente = value.cell[8];
+			var dataRaizPendente =  value.cell[12];
+			
+			if(dataRaizPendente.length==0){
+				dataRaizPendente = value.cell[0];
+			}
 			var consignado = value.cell[3];
 			var encalhe = value.cell[4];
 			var vendaEncalhe = value.cell[5];
@@ -188,11 +212,17 @@ var contaCorrenteCotaController = $.extend(true, {
 			
 			var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
 			
-				value.cell[3] = '<a href="javascript:;" onclick="pesquisarConsignadoCota('+[lineId]+');"/>'+consignado+'</a>'+hiddeFields;
-				value.cell[4] = '<a href="javascript:;" onclick="pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
+				value.cell[3] = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+[lineId]+');"/>'+consignado+'</a>'+hiddeFields;
+				value.cell[4] = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
 				value.cell[5] = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell[10]+',\''+value.cell[0]+'\')"/>'+vendaEncalhe+'</a>'+hiddeFields;
 				value.cell[6] = '<a href="javascript:;"/>'+debCred+'</a>'+hiddeFields;
 				value.cell[7] = '<a href="javascript:;"/>'+encargos+'</a>'+hiddeFields;
+				
+				
+				
+				
+				value.cell[1] = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +valorPostergado +'</a></span>';
+				value.cell[8] = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'" href="javascript:;">' +valorPendente +'</a></span>';
 						
 			});
 			
@@ -282,7 +312,14 @@ var contaCorrenteCotaController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 'auto'
+			height : 'auto',
+			onSuccess : function () {
+				$('.itemContaCorrenteCotaGrid tr td', contaCorrenteCotaController.workspace).each( function(){ 
+					$('a', this).tipsy({gravity: 'sw'});
+				});  
+				return true;			
+			}  
+
 		});
 	},
 
@@ -451,7 +488,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					
 				},
 				
-			}
+			},
+			form: $("#dialog-consignado", this.workspace).parents("form")
 		});
 	},
 		
@@ -470,7 +508,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					$(".gridsEncalhe", contaCorrenteCotaController.workspace).show();
 					
 				}
-			}
+			},
+			form: $("#dialog-encalhe", this.workspace).parents("form")
 		});
 	},
 
@@ -489,7 +528,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					$(".grids", contaCorrenteCotaController.workspace).show();
 					
 				}
-			}
+			},
+			form: $("#dialog-encalhe_2", this.workspace).parents("form")
 		});
 	},
 			
@@ -508,7 +548,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					$(".grids", contaCorrenteCotaController.workspace).show();
 					
 				}
-			}
+			},
+			form: $("#dialog-conta", this.workspace).parents("form")
 		});
 	},
 		
@@ -527,7 +568,8 @@ var contaCorrenteCotaController = $.extend(true, {
 					$(".grids", contaCorrenteCotaController.workspace).show();
 					
 				}
-			}
+			},
+			form: $("#dialog-encargos", this.workspace).parents("form")
 		});
 	}
 	

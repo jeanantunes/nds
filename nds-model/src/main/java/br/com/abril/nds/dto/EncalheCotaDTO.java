@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -84,7 +85,7 @@ public class EncalheCotaDTO implements Serializable {
 	private BigDecimal precoComDesconto;
 	
 	@Export(label = "Encalhe", alignment = Alignment.CENTER)
-	private BigDecimal encalhe;
+	private BigInteger encalhe;
 	
 	@Export(label = "Fornecedor")
 	private String nomeFornecedor;
@@ -94,11 +95,11 @@ public class EncalheCotaDTO implements Serializable {
 
 	private BigDecimal desconto;
 
-	public BigDecimal getEncalhe() {
+	public BigInteger getEncalhe() {
 		return encalhe;
 	}
 
-	public void setEncalhe(BigDecimal encalhe) {
+	public void setEncalhe(BigInteger encalhe) {
 		this.encalhe = encalhe;
 	}
 

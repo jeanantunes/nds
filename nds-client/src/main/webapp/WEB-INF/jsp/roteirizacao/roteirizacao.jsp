@@ -142,7 +142,7 @@
 
 
         <input name="nomeBox" type="text" id="nomeBox" style="width:240px; float:left; margin-bottom:5px;" />
-        <a href="javascript:;" onclick="roteirizacao.pesquisarBox();">
+        <a  id="lnkPesquisarBox" href="javascript:;">
             <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
                  alt="Adicionar Rota" width="16" height="16" border="0"
                  style="float:left; margin-left:5px; margin-top:5px;" /></a>
@@ -181,11 +181,11 @@
 
     <fieldset style="width:875px; float:left; margin-left:5px; margin-top:10px; overflow:hidden;">
         <legend>Cotas da Rota</legend>
-        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;">
-            <strong>Box:</strong><span id="boxSelecionado"/><strong>- Roteiro Selecionado:</strong><span id="roteiroSelecionado"/><strong> - Rota: </strong><span id="rotaSelecionada"/>
+        <span id="cotasRota" style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;">
+            
         </span>
         <br clear="all" />
-        <table class="cotasRotaGrid"></table>
+        <table class="cotasRotaGrid" id="cotasRotaGrid"></table>
 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
         <tr>
@@ -202,7 +202,7 @@
                      <img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a>
                 </span>
 
-                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="popup_copiar_cota();">
+                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="roteirizacao.abrirPopupCopiarCotas();">
                     <img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0"/>Copiar Cota</a>
                 </span>
 
@@ -212,7 +212,7 @@
             </td>
             <td>
                  <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label>
-                    <input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:15px; "/>
+                    <input type="checkbox" id="selecionarTodosPdv" onclick="roteirizacao.selecionarTodosPdvs();" style="float:left; margin-right:15px; "/>
                 </span>
             </td>
             <td></td>
@@ -343,5 +343,8 @@
 	      		</table>
 			</fieldset>
 		</div>
-
+	</form>
+	
+	<form id="formCopiaCotaRota">
+		<jsp:include page="copiarCotaDialog.jsp"></jsp:include>
 	</form>

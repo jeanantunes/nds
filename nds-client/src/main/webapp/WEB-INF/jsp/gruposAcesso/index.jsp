@@ -85,7 +85,7 @@
 	</form>
 	<form action="/administracao/gruposAcesso" id="novo_usuario_form">
 	<div id="dialog-novo-usuario" title="Usuário" style="display:none;">
-		<fieldset>
+		<fieldset style="width:710px;">
     	<legend>Dados do Usuário</legend>
 		  <input type="hidden" name="usuarioDTO.id" id="usuarioId" />
           <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -151,9 +151,9 @@
           </fieldset>
          <br clear="all" />
          
-         <fieldset>
+         <fieldset style="width:710px; margin-top:5px;">
     	<legend>Grupos</legend>
-         <table width="582" border="0" align="center" cellpadding="2" cellspacing="2">
+         <table width="582" border="0" align="center" cellpadding="2" cellspacing="2" style="margin-left:20px;">
 			 <tr class="especialidades">
 			    <td width="264" valign="top">
 			    	<fieldset>
@@ -176,9 +176,9 @@
 			 </tr>
 		</table>
 		</fieldset>
-		<fieldset>
+		<fieldset style="width:710px; margin-top:5px;">
     	<legend>Regras</legend>
-         <table width="582" border="0" align="center" cellpadding="2" cellspacing="2">
+         <table width="582" border="0" align="center" cellpadding="2" cellspacing="2" style="margin-left:20px;">
 			 <tr class="especialidades">
 			    <td width="264" valign="top">
 			    	<fieldset>
