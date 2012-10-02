@@ -239,8 +239,15 @@ public class ExtratoEdicaoController {
 		PaginacaoVO vo = new PaginacaoVO();
 		vo.setPaginaAtual(page);
 		vo.setQtdResultadosPorPagina(rp);
-		
 		filtro.setPaginacao(vo);
+		
+		
+		FiltroExtratoEdicaoDTO filtroSessao = (FiltroExtratoEdicaoDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
+			
+			filtro.getPaginacao().setPaginaAtual(1);
+			
+		}
 		
 		this.session.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtro);
 		
