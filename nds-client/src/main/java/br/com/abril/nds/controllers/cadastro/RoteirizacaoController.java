@@ -948,8 +948,10 @@ public class RoteirizacaoController {
 	@Post
     @Path("/confirmarRoteirizacao")
 	public void confirmarRoteirizacao() {
-	    //TODO: implementar confirmação roteirização
-	    result.nothing();
+	    RoteirizacaoDTO dto = getDTO();
+	    roteirizacaoService.confirmarRoteirizacao(dto);
+	    clearDTO();
+	    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Roteirização confirmada com sucesso."),"result").recursive().serialize();
 	}
 	
 	@Post

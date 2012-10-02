@@ -210,5 +210,12 @@ public interface RoteirizacaoService {
      */
 	RoteirizacaoDTO obterRoteirizacaoPorBox(Long idBox);
 
+    /**
+     * Processa as informações de roteirização 
+     * armazenadas no DTO
+     * @param dto dto com as informações de Roteirização
+     */
+	void confirmarRoteirizacao(RoteirizacaoDTO dto);
+
 }
 	
