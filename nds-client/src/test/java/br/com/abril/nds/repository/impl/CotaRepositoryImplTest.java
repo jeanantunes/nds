@@ -384,6 +384,19 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
+	public void obterQuantidadeCota(){
+
+		
+		FiltroCotaDTO filtro = new FiltroCotaDTO();
+		filtro.setNumeroCota(cota.getNumeroCota());
+		
+	    Long qtde = cotaRepository.obterQuantidadeCotasPesquisadas(filtro);
+		
+		Assert.assertNotNull(qtde);
+
+	}
+	
+	@Test
 	public void buscarCotasPorIN() {
 		
 		List<Long> idsCotas = new ArrayList<Long>();

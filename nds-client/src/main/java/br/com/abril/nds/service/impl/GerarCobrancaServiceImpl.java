@@ -693,7 +693,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										new Date());
 						
 						divida.setAcumulada(true);
-						novaDivida.getAcumulado().add(divida);
+						novaDivida.setDividaRaiz(divida);
 						
 						historicoAcumuloDivida = new HistoricoAcumuloDivida();
 						historicoAcumuloDivida.setDataInclusao(new Date());

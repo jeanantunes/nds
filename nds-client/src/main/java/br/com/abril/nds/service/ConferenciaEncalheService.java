@@ -182,4 +182,13 @@ public interface ConferenciaEncalheService {
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario) throws EncalheExcedeReparteException;
+	
+	/**
+	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * @param incluirNumeroSlip
+	 * @return
+	 */
+	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
 }

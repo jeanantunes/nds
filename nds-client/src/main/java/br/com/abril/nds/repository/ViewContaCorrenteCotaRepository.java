@@ -7,5 +7,7 @@ import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 
 public interface ViewContaCorrenteCotaRepository extends Repository<ViewContaCorrenteCota,Integer>{
 
-	List<ViewContaCorrenteCota> getListaViewContaCorrenteCota(FiltroViewContaCorrenteCotaDTO filtro); 
+	List<ViewContaCorrenteCota> getListaViewContaCorrenteCota(FiltroViewContaCorrenteCotaDTO filtro);
+
+	public abstract Long getQuantidadeViewContaCorrenteCota(FiltroViewContaCorrenteCotaDTO filtro); 
 }
