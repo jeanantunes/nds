@@ -455,6 +455,7 @@ var roteirizacao = $.extend(true, {
             roteirizacao.limparInfoCotasRota();
             $(".boxGrid", roteirizacao.workspace).flexReload();
             roteirizacao.idBox = "";
+            roteirizacao.nomeBox = "";
             roteirizacao.limparGridRoteiros();
             roteirizacao.limparGridRotas();
             roteirizacao.limparGridCotasRota();
@@ -507,6 +508,7 @@ var roteirizacao = $.extend(true, {
         popularGrids : function(data) {
             if (data.box) {
                 roteirizacao.idBox = data.box.id;
+                roteirizacao.nomeBox = data.box.nome;
             }
             roteirizacao.popularGridBox(data.boxDisponiveis);
             if (data.roteiros && data.roteiros.length > 0) {
@@ -1994,8 +1996,11 @@ var roteirizacao = $.extend(true, {
     
 	    novaRoteirizacao : function() {
             roteirizacao.idBox = "";
+            roteirizacao.nomeBox = "";
             roteirizacao.idRoteiro = "";
+            roteirizacao.nomeRoteiro = "";
             roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
             roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
 	        roteirizacao.prepararPopupRoteirizacao();
 	    },
@@ -2089,10 +2094,8 @@ var roteirizacao = $.extend(true, {
                         title : roteirizacao.isNovo() ? 'Nova Roteirização' : 'Editar Roteirização',
 	                    buttons: {
 	                        "Confirmar": function() {
-	                            roteirizacao.confirmarRoteirizacao();
-                                $( this ).dialog( "close" );
+	                           roteirizacao.confirmarRoteirizacao();
 
-	
 	                        },
 	                        "Cancelar": function() {
                                 $.postJSON(contextPath + '/cadastro/roteirizacao/cancelarRoteirizacao',
@@ -2116,12 +2119,21 @@ var roteirizacao = $.extend(true, {
 	    },
 
         confirmarRoteirizacao : function() {
-        	 $.postJSON(contextPath + '/cadastro/roteirizacao/confirmarRoteirizacao',
+        	$.postJSON(contextPath + '/cadastro/roteirizacao/confirmarRoteirizacao',
                      null,
-                     null,
+                     function(result) {
+                         var tipoMensagem = result.tipoMensagem;
+                         var listaMensagens = result.listaMensagens;
+                         if (tipoMensagem && listaMensagens) {
+                             if (tipoMensagem == 'SUCCESS') {
+                            	 $('#dialog-roteirizacao', roteirizacao.workspace).dialog("close");
+                             } 
+                          	 exibirMensagem(tipoMensagem, listaMensagens);
+                         }
+                     },
                      null,
                      true
-                 );
+            );
         },
 
     
@@ -2592,7 +2604,7 @@ var roteirizacao = $.extend(true, {
 	    					nome: nome,
 	    					ordem: ordem,
 	    					origem: origem,
-	    					endereco: endereco,
+	    					endereco: endereco
 	    				});
 	    			}
 	    		}
