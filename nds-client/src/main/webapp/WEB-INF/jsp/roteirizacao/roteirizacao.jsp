@@ -181,11 +181,11 @@
 
     <fieldset style="width:875px; float:left; margin-left:5px; margin-top:10px; overflow:hidden;">
         <legend>Cotas da Rota</legend>
-        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;">
-            <strong>Box:</strong><span id="boxSelecionado"/><strong>- Roteiro Selecionado:</strong><span id="roteiroSelecionado"/><strong> - Rota: </strong><span id="rotaSelecionada"/>
+        <span id="cotasRota" style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;">
+            
         </span>
         <br clear="all" />
-        <table class="cotasRotaGrid"></table>
+        <table class="cotasRotaGrid" id="cotasRotaGrid"></table>
 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
         <tr>
@@ -194,7 +194,7 @@
                     <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
                 </span>
 
-                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.popupsPdvs();">
+                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.abrirTelaCotas();">
                     <img src="${pageContext.request.contextPath}//images/ico_add.gif" hspace="5" border="0"/>Adicionar</a>
                 </span>
 
@@ -202,7 +202,7 @@
                      <img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a>
                 </span>
 
-                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="popup_copiar_cota();">
+                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="roteirizacao.abrirPopupCopiarCotas();">
                     <img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0"/>Copiar Cota</a>
                 </span>
 
@@ -229,7 +229,7 @@
 
 
 	<form id="form-cotas-disponiveis">
-		<div id="dialog-pdvs" title="Cotas Dispon&icirc;veis" style="display:none;">
+		<div id="dialog-cotas-disponiveis" title="Cotas Dispon&icirc;veis" style="display:none;">
 		    
 		    <jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialogRoteirizacaoCotaDisponivel" name="messageDialog"/>
@@ -269,22 +269,42 @@
 		            </tr>
 		            
 		            <tr>
-		              <td>UF:</td>
-		              <td><select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">
-		                
-		              </select></td>
+		            			            
+		            
+		              <td>UF:</td>	       
+		              <td>
+		                  <select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">   
+		                  </select>
+		              </td>
+		              
 		              <td>Munic.</td>
-		              <td><select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
-		                <option>Todos</option>
-		              </select></td>
+		              <td>
+			              <select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
+			              </select>
+		              </td>
+		              
 		              <td>Bairro:</td>
-		              <td width="168"><select name="comboBairro" id="comboBairro" style="width:150px;">
-		                <option>Todos</option>
-		              </select></td>
+		              <td width="168">
+			              <select name="comboBairro" id="comboBairro" style="width:150px;">
+			              </select>
+		              </td>
+		              
 		              <td width="36">CEP:</td>
-		              <td width="87"><input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" /></td>
-		              <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+		              <td width="87">
+		                  <input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" />
+		              </td>
+		              
+		              <td width="79">
+		                  <span class="bt_novos">
+		                      <a href="javascript:;" onclick="roteirizacao.buscaPdvsDisponiveis();">
+		                          <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+		                      </a>
+		                  </span>
+		              </td>
+		            
+		            
 		            </tr>
+ 
 		          </table>
 			</fieldset>
 			
@@ -343,5 +363,8 @@
 	      		</table>
 			</fieldset>
 		</div>
-
+	</form>
+	
+	<form id="formCopiaCotaRota">
+		<jsp:include page="copiarCotaDialog.jsp"></jsp:include>
 	</form>
