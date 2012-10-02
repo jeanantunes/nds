@@ -14,6 +14,8 @@ import java.util.TreeMap;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -1416,4 +1418,24 @@ public class LancamentoRepositoryImpl extends
 		
 		return query.list();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Lancamento obterProximoLancamento(Lancamento lancamentoAtual) {
+
+		Criteria criteria = getSession().createCriteria(Lancamento.class);
+
+		criteria.add(Restrictions.eq("produtoEdicao.id", lancamentoAtual.getProdutoEdicao().getId()));
+
+		criteria.add(Restrictions.gt("dataLancamentoPrevista", lancamentoAtual.getDataLancamentoPrevista()));
+
+		criteria.addOrder(Order.asc("dataLancamentoPrevista"));
+		
+		criteria.setMaxResults(1);
+		
+		return (Lancamento) criteria.uniqueResult();
+	}
+	
 }
