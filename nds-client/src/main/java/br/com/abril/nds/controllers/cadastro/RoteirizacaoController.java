@@ -105,10 +105,6 @@ public class RoteirizacaoController {
 	 */
 	private static final String ROTEIRIZACAO_DTO_SESSION_KEY = "ROTEIRIZACAO_DTO_SESSION_KEY";
 	
-	private static final String SET_ROTAS_EXCLUIR = "SET_ROTAS_EXCLUIR";
-	
-	private static final String SET_ROTEIROS_EXCLUIR = "SET_ROTEIROS_EXCLUIR";
-	
 	private static final String MAP_ROTEIROS_TRANSFERIDOS = "MAP_ROTEIROS_TRANSFERIDOS";
 	
 	@Path("/")
@@ -338,11 +334,6 @@ public class RoteirizacaoController {
 		
 		this.getDTO().getRoteiro(roteiroId).removerRota(rotaId);
 		
-		if (rotaId >= 0){
-			
-			this.addRotaExclusao(rotaId);
-		}
-		
 		result.use(Results.json()).from("", "result").serialize();
 	}
 	
@@ -350,11 +341,6 @@ public class RoteirizacaoController {
 	public void excluirRoteiro(Long roteiroId) {
 		
 		this.getDTO().removerRoteiro(roteiroId);
-		
-		if (roteiroId >= 0){
-			
-			this.addRoteiroExclusao(roteiroId);
-		}
 		
 		result.use(Results.json()).from("", "result").serialize();
 	}
@@ -940,8 +926,6 @@ public class RoteirizacaoController {
 	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
 	    setDTO(dto);
 	    
-	    this.session.removeAttribute(SET_ROTAS_EXCLUIR);
-	    this.session.removeAttribute(SET_ROTEIROS_EXCLUIR);
 	    this.session.removeAttribute(MAP_ROTEIROS_TRANSFERIDOS);
 	    
 	    result.use(CustomJson.class).from(dto).serialize();
@@ -1156,34 +1140,12 @@ public class RoteirizacaoController {
 		this.getDTO().getRoteiro(roteiroId).addRota(new RotaRoteirizacaoDTO(novoId, ordem, nome));
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void addRotaExclusao(Long idRota){
-		
-		 Set<Long> idsRotasExclusao = (Set<Long>) this.session.getAttribute(SET_ROTAS_EXCLUIR);
-		 
-		 if (idsRotasExclusao == null){
-			 
-			 idsRotasExclusao = new HashSet<Long>();
-		 }
-		 
-		 idsRotasExclusao.add(idRota);
-		 
-		 this.session.setAttribute(SET_ROTAS_EXCLUIR, idsRotasExclusao);
-	}
-	
-	@SuppressWarnings("unchecked")
 	private void addRoteiroExclusao(Long idRoteiro){
-		
-		Set<Long> idsRoteirosExclusao = (Set<Long>) this.session.getAttribute(SET_ROTEIROS_EXCLUIR);
 		 
-		 if (idsRoteirosExclusao == null){
-			 
-			 idsRoteirosExclusao = new HashSet<Long>();
-		 }
-		 
-		 idsRoteirosExclusao.add(idRoteiro);
-		 
-		 this.session.setAttribute(SET_ROTAS_EXCLUIR, idsRoteirosExclusao);
+		if (idRoteiro != null && idRoteiro >= 0){
+			
+			 this.getDTO().addRoteiroExclusao(idRoteiro);
+		}
 	}
 	
 	@Post
