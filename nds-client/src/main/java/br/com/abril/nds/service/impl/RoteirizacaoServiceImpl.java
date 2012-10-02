@@ -594,5 +594,14 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         }
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+    @Transactional
+    public void confirmarRoteirizacao(RoteirizacaoDTO dto) {
+       //TODO: Implementar informações de roteirização
+    }
 	
 }
