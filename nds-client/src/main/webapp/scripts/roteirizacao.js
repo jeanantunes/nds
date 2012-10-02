@@ -30,6 +30,7 @@ var roteirizacao = $.extend(true, {
         tipoEdicao: null,
         idRoteirizacao : "",
         idBox : "",
+        nomeBox: "",
         idRoteiro: "",
         idRota: "",
         nomeBox: "",
@@ -518,12 +519,12 @@ var roteirizacao = $.extend(true, {
                     }
                     roteirizacao.popularGridRoteiros(data.roteiros);
                     if (data.roteiros[0].rotas) {
-                        if (roteirizacao.idRota == "") {
+                        if (roteirizacao.idRota == "" && data.roteiros[0].rotas[0]) {
                             roteirizacao.idRota = data.roteiros[0].rotas[0].id;
                             roteirizacao.nomeRota = data.roteiros[0].rotas[0].nome;
                         }
                         roteirizacao.popularGridRotas(data.roteiros[0].rotas);
-                        if (data.roteiros[0].rotas[0].pdvs) {
+                        if (data.roteiros[0].rotas[0] && data.roteiros[0].rotas[0].pdvs) {
                             roteirizacao.popularGridCotasRota(data.roteiros[0].rotas[0].pdvs);
                         }
                     }
@@ -2423,10 +2424,124 @@ var roteirizacao = $.extend(true, {
             $("#inputOrdem", roteirizacao.workspace).val("");
             $("#inputNome", roteirizacao.workspace).val("");
             $("#checkRoteiroEspecial", roteirizacao.workspace).hide();
-
-		    $(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
-		    $('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
-	    },
+        },
+        
+        popup_tranferir : function(){
+        	
+        	if (roteirizacao.isTransferenciaCota()){
+        		
+        		
+        	} else if (roteirizacao.isTransferenciaRota()){
+        		
+        		$("#nomeRoteiroAtual").val(roteirizacao.nomeRoteiro);
+        		
+        		$.postJSON(
+            		contextPath + '/cadastro/roteirizacao/carregarRoteirosTransferenciaRota',
+            		[
+            		 {name: 'idRoteiro', value: roteirizacao.idRoteiro}
+            		],
+                    function(result) {
+            			
+            			var opts = '';
+            			$("#selectNovoRoteiro", roteirizacao.workspace).html(opts);
+            			
+            			$.each(result, function(index, value){
+            				opts += "<option value='"+ value.id +"'>" + value.nome + "</option>";
+            			});
+            			
+            			$("#selectNovoRoteiro", roteirizacao.workspace).append(opts);
+            			
+            			$("#dialog-transfere-rota", roteirizacao.workspace).dialog({
+                            resizable: false,
+                            height:'auto',
+                            width:420,
+                            modal: true,
+                            buttons: {
+                                "Confirmar": function() {
+                                    
+                                	$.postJSON(
+                                		contextPath + '/cadastro/roteirizacao/transferirRota',
+                                		[
+                                		 {name: 'idRoteiroAnterior', value: roteirizacao.idRoteiro},
+                                		 {name: 'idRota', value: roteirizacao.idRota},
+                                		 {name: 'idRoteiroNovo', value: $("#selectNovoRoteiro", roteirizacao.workspace).val()}
+                                		],
+                                        function(result) {
+                                			
+                                			roteirizacao.popularGridRotas();
+                                			$("#dialog-transfere-rota", roteirizacao.workspace).dialog("close");
+                                		},
+                                        null,
+                                        true
+                                    );
+                                },
+                                "Cancelar": function() {
+                                	$("#dialog-transfere-rota", roteirizacao.workspace).dialog("close");
+                                }
+                            },
+                            form: $("#dialog-transfere-rota", roteirizacao.workspace).parents("form")
+                        });
+            		},
+                    null,
+                    true
+                );
+        		
+        	} else {
+        		
+        		$("#nomeBoxAtual", roteirizacao.workspace).val(roteirizacao.nomeBox);
+        		
+        		$.postJSON(
+            		contextPath + '/cadastro/roteirizacao/carregarBoxTransferenciaRoteiro',
+            		[
+            		 {name: 'idBox', value: roteirizacao.idBox}
+            		],
+                    function(result) {
+            			
+            			var opts = '';
+            			$("#selectNovoBox", roteirizacao.workspace).html(opts);
+            			
+            			$.each(result, function(index, value){
+            				opts += "<option value='"+ value.key.$ +"'>" + value.value.$ + "</option>";
+            			});
+            			
+            			$("#selectNovoBox", roteirizacao.workspace).append(opts);
+            			
+            			$("#dialog-transfere-roteiro", roteirizacao.workspace).dialog({
+                            resizable: false,
+                            height:'auto',
+                            width:420,
+                            modal: true,
+                            buttons: {
+                                "Confirmar": function() {
+                                    
+                                	$.postJSON(
+                                		contextPath + '/cadastro/roteirizacao/transferirRoteiro',
+                                		[
+                                		 {name: 'idBoxAnterior', value: roteirizacao.idBox}, 
+                                		 {name: 'idRoteiro', value: roteirizacao.idRoteiro},
+                                		 {name: 'idBoxNovo', value: $("#selectNovoBox", roteirizacao.workspace).val()}
+                                		],
+                                        function(result) {
+                                			
+                                			roteirizacao.popularGridRoteiros();
+                                			$("#dialog-transfere-roteiro", roteirizacao.workspace).dialog("close");
+                                		},
+                                        null,
+                                        true
+                                    );
+                                },
+                                "Cancelar": function() {
+                                	$("#dialog-transfere-roteiro", roteirizacao.workspace).dialog("close");
+                                }
+                            },
+                            form: $("#dialog-transfere-roteiro", roteirizacao.workspace).parents("form")
+                        });
+            		},
+                    null,
+                    true
+                );
+        	}
+        },
 	
 		abrirTelaRotaComNome :function(){
 			$('#nomeRotaInclusao', roteirizacao.workspace).val($('botaoNovaRotaNome', roteirizacao.workspace).val());
@@ -2666,4 +2781,4 @@ $(function() {
     roteirizacao.init();
 });
 
-//@ sourceURL=roteirizacao.js
+//@ sourceURL=.js

@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
@@ -62,7 +63,7 @@ public class RoteirizacaoDTO implements Serializable{
     /**
      * Cotas destinadas a copia para determinada rota.
      */
-    private RotaRoteirizacaoDTO rotaCotasCopia;
+    private List<RotaRoteirizacaoDTO> rotaCotasCopia;
     
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
@@ -143,14 +144,14 @@ public class RoteirizacaoDTO implements Serializable{
 	/**
 	 * @return the rotaCotasCopia
 	 */
-	public RotaRoteirizacaoDTO getRotaCotasCopia() {
+	public List<RotaRoteirizacaoDTO> getRotaCotasCopia() {
 		return rotaCotasCopia;
 	}
 
 	/**
 	 * @param rotaCotasCopia the rotaCotasCopia to set
 	 */
-	public void setRotaCotasCopia(RotaRoteirizacaoDTO rotaCotasCopia) {
+	public void setRotaCotasCopia(List<RotaRoteirizacaoDTO> rotaCotasCopia) {
 		this.rotaCotasCopia = rotaCotasCopia;
 	}
 	
@@ -195,11 +196,15 @@ public class RoteirizacaoDTO implements Serializable{
 	 * Adiciona novos Roteiros à Roteirizacao
 	 * @param listaRoteiro: List<RoteiroRoteirizacaoDTO> para inclusão
 	 */
-	public void addAllRoteiro(List<RoteiroRoteirizacaoDTO> listaRoteiro){
+	public void addAllRoteiro(Collection<RoteiroRoteirizacaoDTO> listaRoteiro){
 		if (roteiros == null){
 			roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
 		}
-		roteiros.addAll(listaRoteiro);
+		
+		if (listaRoteiro != null){
+			roteiros.addAll(listaRoteiro);
+			todosRoteiros.addAll(listaRoteiro);
+		}
 	}
 	
     /**
@@ -390,4 +395,25 @@ public class RoteirizacaoDTO implements Serializable{
         ALTERACAO;
     }
 
+
+	public void removerRoteiro(Long roteiroId) {
+		
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
+			
+			if (roteiro.getId().equals(roteiroId)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
+		}
+		
+		for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros){
+			
+			if (roteiro.getId().equals(roteiroId)){
+				
+				todosRoteiros.remove(roteiro);
+				break;
+			}
+		}
+	}
 }

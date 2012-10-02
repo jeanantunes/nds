@@ -260,7 +260,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				align : 'right',
 			}, {
 				display : 'Déb/Cred.',
-				name : 'encalhe',
+				name : 'debitoCredito',
 				width : 60,
 				sortable : true,
 				align : 'right'
