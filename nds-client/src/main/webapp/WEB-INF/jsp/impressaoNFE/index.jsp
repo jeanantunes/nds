@@ -80,23 +80,16 @@ $(document).ready(function(){
 </head>
 
 <body>
-
-
-
-<div class="corpo">
-    <br clear="all"/>
-    <br />
-   
-    <div class="container">
-    
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Arquivos Nf-e < evento > com < status >.</b></p>
+<div class="areaBts">
+	<div class="area">
+		 <span class="bt_arq"><a href="javascript:;" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+         <span class="bt_arq"><a href="../nota_envio.html" target="_blank" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
 	</div>
-    	
-      <fieldset class="classFieldset">
-   	    <legend> Pesquisar NF-e</legend>
-        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+</div>
+<div class="linha_separa_fields">&nbsp;</div>
+ <fieldset class="fieldFiltro">
+   <legend> Pesquisar NF-e</legend>
+   <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="82">Tipo de Nota:</td>
     <td width="209"><select name="select3" id="select3" style="width:200px; font-size:11px!important">
@@ -170,7 +163,7 @@ $(document).ready(function(){
     <td>&nbsp;</td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
-    <td><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
+    <td><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
   </tr>
   <td colspan="3">
     </td>
@@ -178,32 +171,16 @@ $(document).ready(function(){
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
       
-       <fieldset class="classFieldset">
+       <fieldset class="fieldGrid">
        	  <legend>Impressão  NF-e</legend>
         <div class="grids" style="display:none;">
 		  <table class="impressaoGrid"></table>
-            
-            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-           <span class="bt_novos" title="Imprimir"><a href="../nota_envio.html" target="_blank"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Documento</a></span>
-		
-        
-        <span class="bt_sellAll" style="float:right;" id="btSel"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:30px;"/></span>
+         
+        <span class="bt_sellAll" style="float:right;" id="btSel"><label for="sel" style="margin-top:-5px;">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="checkAll();" style="float:left; margin-right:30px;"/></span>
 		</div>
-
-              
-              
-            
-
-
 		
       </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
 
-        
-
-    
-    </div>
-</div> 
 <script>
 	$(".impressaoGrid").flexigrid({
 			url : '../xml/impressao_nfe-xml.xml',
@@ -258,7 +235,7 @@ $(document).ready(function(){
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 'auto'
 		});
 		
 		

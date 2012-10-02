@@ -24,7 +24,42 @@
 		<form id="pesquisaDividasForm"
 				name="pesquisaDividasForm" 
 				method="post">
-			<fieldset class="classFieldset">
+			<div class="areaBts">
+				<div class="area">
+					<span class="bt_novos">
+						<a href="javascript:impressaoBoletosController.imprimirDividas('BOLETO')" rel="tipsy" title="Imprimir Boletos">
+							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
+						</a>
+					</span>
+					
+					<span class="bt_novos">
+						<a href="javascript:impressaoBoletosController.imprimirDividas('DIVIDA')" rel="tipsy" title="Imprimir Dividas">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						</a>
+					</span>
+				
+					<div id="divGerarDivida" style="display: none">
+   						<span class="bt_novos" style="margin-left:20px;">
+   							<a href="javascript:impressaoBoletosController.gerarDivida();" id="btnGerarDivida" rel="tipsy" title="Gerar Dívida">
+   								<img src="${pageContext.request.contextPath}/images/ico_redistribuicao_complementar.gif" hspace="5" border="0" />
+   							</a>
+   						</span>
+  					</div>
+  					
+  					<span class="bt_arq">
+          				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+          					<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
+          				</a>
+          			</span>
+					<span class="bt_arq">
+						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						</a>
+					</span>
+				</div>
+			</div>
+			<div class="linha_separa_fields">&nbsp;</div>
+			<fieldset class="fieldFiltro">
 		   	    <legend> Gerar Dívida</legend>
 		   	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	  					<tr>
@@ -96,17 +131,10 @@
 						    </td>
 						    <td>&nbsp;</td>
 						    <td>
-						    	<span class="bt_pesquisar">
-						    		<a href="javascript:impressaoBoletosController.validarPesquisa();">Pesquisar</a>
+						    	<span class="bt_novos">
+						    		<a href="javascript:impressaoBoletosController.validarPesquisa();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 						    	</span>
-	    						<div id="divGerarDivida" style="display: none">
-		    						<span class="bt_novos" title="Gerar Dívida" style="margin-left:20px;">
-		    							<a href="javascript:impressaoBoletosController.gerarDivida();" id="btnGerarDivida">
-		    								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
-		    								Gerar Dívida
-		    							</a>
-		    						</span>
-	    					   </div>
+	    						
 	   						</td>
 	    				</tr>
 		  		</table>
@@ -115,36 +143,11 @@
 		 
 		<div class="linha_separa_fields">&nbsp;</div>
 			
-		<fieldset class="classFieldset">
+		<fieldset class="fieldGrid">
 			<legend>Dividas Geradas</legend>
 				<div class="grids" id="grids" style="display:none;">
 					<table class="impressosGrid" id="impressosGrid"></table>
-          			<span class="bt_novos" title="Gerar Arquivo">
-          				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS">
-          					<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
-          					Arquivo
-          				</a>
-          			</span>
-					<span class="bt_novos" title="Imprimir">
-						<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=PDF">
-							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir
-						</a>
-					</span>
-					
-					<span class="bt_novos" title="Imprimir Boletos">
-						<a href="javascript:impressaoBoletosController.imprimirDividas('BOLETO')">
-							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir Boletos
-						</a>
-					</span>
-					
-					<span class="bt_novos" title="Imprimir Dividas">
-						<a href="javascript:impressaoBoletosController.imprimirDividas('DIVIDA')">
-							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir Dívidas
-						</a>
-					</span>
+          			
 					
 				</div>
       	</fieldset>

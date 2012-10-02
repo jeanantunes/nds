@@ -63,4 +63,11 @@ public interface PdvRepository extends Repository<PDV, Long> {
      *         titularidade da cota
      */
 	HistoricoTitularidadeCotaPDV obterPDVHistoricoTitularidade(Long idPdv);
+	
+	/**
+	 * Obtém PDV's por Rota
+	 * @param idRota
+	 * @return
+	 */
+	List<PDV> obterPDVPorRota(Long idRota);
 }

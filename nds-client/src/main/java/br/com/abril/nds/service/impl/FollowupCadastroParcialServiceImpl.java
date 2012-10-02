@@ -6,23 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.ConsultaFollowupCadastroDTO;
-import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroDTO;
-import br.com.abril.nds.repository.FollowupCadastroRepository;
-import br.com.abril.nds.service.FollowupCadastroService;
+import br.com.abril.nds.dto.ConsultaFollowupCadastroParcialDTO;
+import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroParcialDTO;
+import br.com.abril.nds.repository.FollowupCadastroParcialRepository;
+import br.com.abril.nds.service.FollowupCadastroParcialService;
 
 @Service
-public class FollowupCadastroParcialServiceImpl implements FollowupCadastroService {
+public class FollowupCadastroParcialServiceImpl implements FollowupCadastroParcialService {
 	
 	@Autowired
-	private FollowupCadastroRepository followupCadastroRepository;
+	private FollowupCadastroParcialRepository repository;
+
 
 	@Override
 	@Transactional
-	public List<ConsultaFollowupCadastroDTO> obterCadastros(
-			FiltroFollowupCadastroDTO filtro) {
-		 
-		return this.followupCadastroRepository.obterConsignadosParaChamadao(filtro);
+	public List<ConsultaFollowupCadastroParcialDTO> obterCadastrosParcial(
+			FiltroFollowupCadastroParcialDTO filtro) {
+		return this.repository.obterConsignadosParaChamadao(filtro);
 	}
 
 }

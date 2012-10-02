@@ -58,7 +58,9 @@ public class RoteirizacaoDTO implements Serializable{
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
-        this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
+        if (TipoEdicaoRoteirizacao.NOVO == tipoEdicao || boxDisponiveis.isEmpty()) {
+            this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
+        }
         this.boxDisponiveis.addAll(boxDisponiveis);
         this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }
@@ -152,6 +154,7 @@ public class RoteirizacaoDTO implements Serializable{
 		
 		if (listaRoteiro != null){
 			roteiros.addAll(listaRoteiro);
+			todosRoteiros.addAll(listaRoteiro);
 		}
 	}
 	
@@ -343,4 +346,25 @@ public class RoteirizacaoDTO implements Serializable{
         ALTERACAO;
     }
 
+
+	public void removerRoteiro(Long roteiroId) {
+		
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
+			
+			if (roteiro.getId().equals(roteiroId)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
+		}
+		
+		for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros){
+			
+			if (roteiro.getId().equals(roteiroId)){
+				
+				todosRoteiros.remove(roteiro);
+				break;
+			}
+		}
+	}
 }
