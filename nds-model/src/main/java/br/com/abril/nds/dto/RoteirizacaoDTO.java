@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
@@ -53,6 +54,11 @@ public class RoteirizacaoDTO implements Serializable{
      * Todos os roteiros
      */
     private List<RoteiroRoteirizacaoDTO> todosRoteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
+    
+    /**
+     * Coleção de identificadores de roteiros para exclusão
+     */
+    private List<Long> roteirosExclusao = new ArrayList<Long>();
     
     /**
      * Cotas destinadas a copia para determinada rota.
@@ -148,7 +154,31 @@ public class RoteirizacaoDTO implements Serializable{
 	public void setRotaCotasCopia(List<RotaRoteirizacaoDTO> rotaCotasCopia) {
 		this.rotaCotasCopia = rotaCotasCopia;
 	}
+	
+	public List<RoteiroRoteirizacaoDTO> getTodosRoteiros() {
+        return todosRoteiros;
+    }
+	
+    /**
+     * @return the roteirosExclusao
+     */
+    public List<Long> getRoteirosExclusao() {
+        return roteirosExclusao;
+    }
 
+
+    /**
+     * Adiciona o identificador do roteiro para exclusão
+     * 
+     * @param idRoteiro
+     *            identificador do roteiro
+     */
+	public void addRoteiroExclusao(Long idRoteiro) {
+	    if (roteirosExclusao == null) {
+	        roteirosExclusao = new ArrayList<Long>();
+	    }
+	    roteirosExclusao.add(idRoteiro);
+	}
 
 	/**
 	 * Adiciona um novo roteiro à roteirização
@@ -166,11 +196,15 @@ public class RoteirizacaoDTO implements Serializable{
 	 * Adiciona novos Roteiros à Roteirizacao
 	 * @param listaRoteiro: List<RoteiroRoteirizacaoDTO> para inclusão
 	 */
-	public void addAllRoteiro(List<RoteiroRoteirizacaoDTO> listaRoteiro){
+	public void addAllRoteiro(Collection<RoteiroRoteirizacaoDTO> listaRoteiro){
 		if (roteiros == null){
 			roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
 		}
-		roteiros.addAll(listaRoteiro);
+		
+		if (listaRoteiro != null){
+			roteiros.addAll(listaRoteiro);
+			todosRoteiros.addAll(listaRoteiro);
+		}
 	}
 	
     /**
@@ -345,7 +379,6 @@ public class RoteirizacaoDTO implements Serializable{
         return null;
     }
     
-    
 	/**
      * Tipo da edição tela
      * 
@@ -361,4 +394,25 @@ public class RoteirizacaoDTO implements Serializable{
         ALTERACAO;
     }
 
+
+	public void removerRoteiro(Long roteiroId) {
+		
+		for (RoteiroRoteirizacaoDTO roteiro : roteiros){
+			
+			if (roteiro.getId().equals(roteiroId)){
+				
+				roteiros.remove(roteiro);
+				break;
+			}
+		}
+		
+		for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros){
+			
+			if (roteiro.getId().equals(roteiroId)){
+				
+				todosRoteiros.remove(roteiro);
+				break;
+			}
+		}
+	}
 }
