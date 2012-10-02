@@ -7,11 +7,9 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.repository.ViewContaCorrenteCotaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel<ViewContaCorrenteCota, Integer> implements ViewContaCorrenteCotaRepository {
@@ -99,64 +97,16 @@ public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		StringBuffer hql = new StringBuffer();
 		
-		ColunaOrdenacao colunaOrdenacao = filtro.getColunaOrdenacao();
+		String colunaOrdenacao = filtro.getColunaOrdenacao();
 		
 		if (colunaOrdenacao != null) {
+			hql.append("order by viewContaCorrente.").append(colunaOrdenacao).append(" ");
 			
-			switch (colunaOrdenacao) {
-				
-				case CONSIGNADO :
-					hql.append("order by viewContaCorrente.consignado ");
-					break;
-
-				case DEBITO_CREDITO :
-					hql.append("order by viewContaCorrente.debitoCredito ");			
-					break;
-				
-				case DT_CONSOLIDADO :
-					hql.append("order by viewContaCorrente.dataConsolidado ");
-					break;
-				
-				case ENCALHE:
-					hql.append("order by viewContaCorrente.encalhe ");
-					break;
-				
-				case ENCARGOS:
-					hql.append("order by viewContaCorrente.encargos ");
-					break;
-					
-				case NUMERO_ATRASADOS :
-					hql.append("order by viewContaCorrente.numeroAtrasados ");
-					break;
-				
-				case PENDENTE:
-					hql.append("order by viewContaCorrente.pendente ");
-					break;
-				
-				case TOTAL :
-					hql.append("order by viewContaCorrente.total ");
-					break;
-				
-				case VALOR_POSTERGADO :
-					hql.append("order by viewContaCorrente.valorPostergado ");
-					break;
-				
-				case VENDA_ENCALHE :
-					hql.append("order by viewContaCorrente.vendaEncalhe ");
-					break;
-
+			if (paginacao != null) {				
+				hql.append(paginacao.getOrdenacao());
+			}else{
+				hql.append("asc");
 			}
-			
-			String ordenacao = "asc";
-			
-			if (paginacao != null) {
-				
-				if (paginacao.getOrdenacao().equals(Ordenacao.DESC)) {
-					ordenacao = "desc";
-				}
-			}
-			
-			hql.append(ordenacao);
 		}
 		
 		return hql; 
