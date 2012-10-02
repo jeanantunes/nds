@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,6 +14,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 
 @Entity
 @Table(name = "ROTEIRIZACAO")
@@ -28,8 +34,9 @@ public class Roteirizacao {
 	@JoinColumn(name = "BOX_ID", unique = true)
 	private Box box;
 	
-	@OneToMany
+	@OneToMany(orphanRemoval = true)
 	@JoinColumn( name="ROTEIRIZACAO_ID")
+	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
 	
 	public Long getId() {
@@ -76,6 +83,7 @@ public class Roteirizacao {
 		if (roteiros == null) {
 			roteiros = new ArrayList<Roteiro>();
 		}
+		roteiro.setRoteirizacao(this);
 		roteiros.add(roteiro);
 	}
 	
@@ -89,4 +97,21 @@ public class Roteirizacao {
 		}
 		roteiros.addAll(listaRoteiro);
 	}
+
+    /**
+     * Desassocia os roteiros da roteirização de acordo com os identificadores
+     * recebidos
+     * 
+     * @param idsRoteiros
+     *            identificadores dos roteiros para desassociação
+     */
+	public void desassociarRoteiros(Collection<Long> idsRoteiros) {
+        Iterator<Roteiro> iterator = roteiros.iterator();
+        while(iterator.hasNext()) {
+            Roteiro roteiro = iterator.next();
+            if (idsRoteiros.contains(roteiro.getId())) {
+                iterator.remove();
+            }
+        }
+    }
 }
