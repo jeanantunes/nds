@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -246,14 +245,8 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	@Test
 	public void buscarEstoqueProdutoCotaPorIdProdutEdicao() {
 		
-		Set<Long> idsLancamento = new TreeSet<Long>();
-		
-		idsLancamento.add(lancamentoVeja1.getId());
-		idsLancamento.add(lancamentoCaras1.getId());
-		
 		List<EstoqueProdutoCota> listaEstoqueProdutoCota = 
-			this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(
-				idsLancamento);
+			this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(lancamentoVeja1.getId());
 		
 		Assert.assertNotNull(listaEstoqueProdutoCota);
 		

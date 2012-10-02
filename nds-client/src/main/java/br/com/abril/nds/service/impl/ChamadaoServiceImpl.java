@@ -243,14 +243,21 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 			chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.CHAMADAO);
 			
-			Set<Lancamento> lancamentos = new HashSet<Lancamento>();
-			Lancamento lancamento = this.lancamentoRepository.buscarPorId(consignadoCotaChamadao.getIdLancamento());
-			lancamentos.add(lancamento);
-			
-			chamadaEncalhe.setLancamentos(lancamentos);
-			
-			chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 		}
+		
+		Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
+		Lancamento lancamento = this.lancamentoRepository.buscarPorId(consignadoCotaChamadao.getIdLancamento());
+		
+		if (lancamentos == null || lancamentos.isEmpty()) {
+			lancamentos = new HashSet<Lancamento>();
+		}
+		
+		lancamentos.add(lancamento);
+		
+		chamadaEncalhe.setLancamentos(lancamentos);
+		
+		chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
+		
 		
 		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
 		

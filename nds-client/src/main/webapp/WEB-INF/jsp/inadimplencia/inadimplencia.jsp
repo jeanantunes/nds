@@ -25,9 +25,28 @@ $(function(){
 <div id="dialog-detalhes" title="Detalhe da Divida">     
 </div>
 </form>
-    <div class="container">
-    
-      <fieldset class="classFieldset">
+    <div class="areaBts">
+    	<div class="area">
+    		<span class="bt_arq">
+                
+<!-- EXCEL -->
+<a href="${pageContext.request.contextPath}/inadimplencia/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+
+				<span class="bt_arq">
+
+<!-- PDF -->
+<a href="${pageContext.request.contextPath}/inadimplencia/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+
+				
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
+
+				</span>
+    	</div>
+    </div>
+    <div class="linha_separa_fields">&nbsp;</div>
+      <fieldset class="fieldFiltro">
    	    <legend> Hist&oacutericos de Inadimpl&ecircncias</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -149,36 +168,21 @@ $(function(){
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
-              <td><span class="bt_pesquisar"><a href="javascript:;" onclick="inadimplenciaController.cliquePesquisar();">Pesquisar</a></span></td>
+              <td><span class="bt_novos"><a href="javascript:;" onclick="inadimplenciaController.cliquePesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>
           </table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
       
-       <fieldset class="classFieldset">
+       <fieldset class="fieldGrid">
        	  <legend> Cotas Inadimplentes</legend>
         <div class="grids" style="display:none;">
 			<table class="inadimplenciaGrid"></table>
           	
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td width="23%"><span class="bt_novos" title="Gerar Arquivo">
-                
-<!-- EXCEL -->
-<a href="${pageContext.request.contextPath}/inadimplencia/exportar?fileType=XLS">
-
-				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-				<span class="bt_novos" title="Imprimir">
-
-<!-- PDF -->
-<a href="${pageContext.request.contextPath}/inadimplencia/exportar?fileType=PDF">
-
-				
-				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-
-				</span></td>
+                <td width="23%">&nbsp;</td>
                 <td width="8%"><strong>Qtde Cotas:</strong></td>
                 <td width="5%">
                 	<div id="idQtde">0</div>  
@@ -201,12 +205,6 @@ $(function(){
 </div>
 		
       </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>
-
-        
-
-    
-    </div>
-</div> 
+      
 
 </body>
