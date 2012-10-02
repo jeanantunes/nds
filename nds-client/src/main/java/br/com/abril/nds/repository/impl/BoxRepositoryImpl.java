@@ -309,20 +309,22 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		hql.append(" select distinct cota from Cota cota");
 		
 		if(idRoteiro!=null && idRoteiro>0){
-		    hql.append(", Roteiro roteiro ");
+		    hql.append(", Roteiro roteiro, Roteirizacao roteirizacao ");
 		    if (idRota!=null && idRota>0){
-				hql.append(", Roteirizacao roteirizacao, Rota rota ");
+				hql.append(", Rota rota ");
 			}
 		}  
 		
 		hql.append(" where cota.box.id = :idBox");
 		
 		if(idRoteiro!=null && idRoteiro>0){
-		    hql.append(" and roteiro.box = cota.box ");
+			
+			hql.append(" and roteiro.roteirizacao = roteirizacao ");
+		    hql.append(" and roteirizacao.box = cota.box ");
 		    hql.append(" and roteiro.id = :idRoteiro ");
+		    
 		    if (idRota!=null && idRota>0){
-		    	
-		    	hql.append(" and roteiro.roteirizacao = roteirizacao ");
+		 
 		    	hql.append(" and rota.roteiro = roteiro ");
 		    	hql.append(" and rota.id = :idRota ");
 		    	

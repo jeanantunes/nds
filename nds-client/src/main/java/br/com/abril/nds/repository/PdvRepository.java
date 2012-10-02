@@ -63,4 +63,22 @@ public interface PdvRepository extends Repository<PDV, Long> {
      *         titularidade da cota
      */
 	HistoricoTitularidadeCotaPDV obterPDVHistoricoTitularidade(Long idPdv);
+	
+	/**
+	 * Obtém PDV's por Rota
+	 * @param idRota
+	 * @return
+	 */
+	List<PDV> obterPDVPorRota(Long idRota);
+	
+	/**
+     * Obtem PDV's por Cota e informações de Endereço
+     * @param numCota
+     * @param municipio
+     * @param uf
+     * @param bairro
+     * @param cep
+     * @return List<PDV>
+     */
+	List<PDV> obterPDVPorCotaEEndereco(Integer numCota, String municipio, String uf, String bairro, String cep);
 }

@@ -544,7 +544,8 @@ public class DiferencaEstoqueController {
 										 BigInteger qntReparteRateio,
 										 List<RateioCotaVO> rateioCotas,
 										 Long idDiferenca,
-										 TipoEstoque tipoEstoque) {
+										 TipoEstoque tipoEstoque,
+										 String pacotePadrao) {
 		
 		if (tipoDiferenca == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
@@ -556,7 +557,7 @@ public class DiferencaEstoqueController {
 													codigoProduto,edicaoProduto, 
 													diferenca,reparteAtual,
 													qntReparteRateio,rateioCotas,
-													tipoEstoque);
+													tipoEstoque, pacotePadrao);
 		}
 		else{
 			
@@ -571,7 +572,7 @@ public class DiferencaEstoqueController {
 				tipoDirecionamento  = TipoDirecionamentoDiferenca.ESTOQUE;
 			}
 			
-			editarDiferenca(idDiferenca, diferenca,qntReparteRateio, rateioCotas, tipoDirecionamento,direcionadoParaEstoque,reparteAtual);
+			editarDiferenca(idDiferenca, diferenca,qntReparteRateio, rateioCotas, tipoDirecionamento,direcionadoParaEstoque,reparteAtual,new BigInteger(pacotePadrao));
 		}
 		
 		result.use(Results.json()).from("").serialize();
@@ -585,19 +586,20 @@ public class DiferencaEstoqueController {
 													BigInteger reparteAtual, 
 													BigInteger qntReparteRateio,
 													List<RateioCotaVO> rateioCotas,
-													TipoEstoque tipoEstoque) {
+													TipoEstoque tipoEstoque,
+													String pacotePadrao) {
 		if(!direcionadoParaEstoque){
 			
 			validarTipoDiferenca(tipoDiferenca, diferenca, qntReparteRateio);
 				
-			DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca,codigoProduto,edicaoProduto, diferenca, reparteAtual,tipoEstoque);
+			DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca,codigoProduto,edicaoProduto, diferenca, reparteAtual,tipoEstoque,pacotePadrao);
 			diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.COTA);
 			
 			incluirDiferencaEstoque(diferencaVO, tipoDiferenca);
 			
 			try {
 			
-				cadastrarRateioCotas(rateioCotas, diferencaVO);
+				cadastrarRateioCotas(rateioCotas, diferencaVO, new BigInteger(pacotePadrao));
 				
 			}catch(ValidacaoException e){
 				
@@ -608,7 +610,7 @@ public class DiferencaEstoqueController {
 		}
 		else{
 			
-			DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca,codigoProduto,edicaoProduto, diferenca, reparteAtual,tipoEstoque);
+			DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca,codigoProduto,edicaoProduto, diferenca, reparteAtual,tipoEstoque,pacotePadrao);
 			diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
 				
 			incluirDiferencaEstoque(diferencaVO,tipoDiferenca);		
@@ -633,7 +635,8 @@ public class DiferencaEstoqueController {
 								List<RateioCotaVO> rateiosCota,
 								TipoDirecionamentoDiferenca direcionamento,
 								boolean redirecionarProdutosEstoque,
-								BigInteger reparteAtual){
+								BigInteger reparteAtual,
+								BigInteger pacotePadrao){
 			
 		DiferencaVO diferencaEditavel = this.obterDiferencaPorId(idDiferenca);
 		
@@ -643,7 +646,7 @@ public class DiferencaEstoqueController {
 			 		
 			validarTipoDiferenca(tipoDiferencas, qntDiferenca, qntReparteRateio);
 			
-			String msgErro =  validarEstoqueDiferenca(diferencaEditavel.getQtdeEstoqueAtual(),qntDiferenca, tipoDiferencas);
+			String msgErro =  validarEstoqueDiferenca(diferencaEditavel.getQtdeEstoqueAtual(),qntDiferenca, tipoDiferencas,pacotePadrao, false);
 			
 			if(msgErro!= null){
 				throw new ValidacaoException(TipoMensagem.WARNING,msgErro);
@@ -655,7 +658,7 @@ public class DiferencaEstoqueController {
 				
 				removerRateiosCota(idDiferenca);
 				
-				cadastrarRateioCotas(rateiosCota, diferencaEditavel);
+				cadastrarRateioCotas(rateiosCota, diferencaEditavel,pacotePadrao);
 				
 				diferencaEditavel.setTipoDirecionamento(TipoDirecionamentoDiferenca.COTA);
 				
@@ -723,12 +726,12 @@ public class DiferencaEstoqueController {
 
 		if(listaDiferencas!= null){
 		
-			for(Diferenca df : listaDiferencas){
+			for(Diferenca diferenca : listaDiferencas){
 				
-				if(df.getId().equals(idDiferenca)){
-					df.setQtde(qntDiferenca);
-					df.setTipoDirecionamento(diferencaEditavel.getTipoDirecionamento());
-					df.setValorTotalDiferenca(valorTotalDiferenca);
+				if(diferenca.getId().equals(idDiferenca)){
+					diferenca.setQtde(qntDiferenca);
+					diferenca.setTipoDirecionamento(diferencaEditavel.getTipoDirecionamento());
+					diferenca.setValorTotalDiferenca(valorTotalDiferenca);
 					break;
 				}
 			}
@@ -740,10 +743,12 @@ public class DiferencaEstoqueController {
 		
 		if(listaNovasDiferencasVO!= null){
 		
-			for(DiferencaVO df : listaNovasDiferencasVO){
+			for(DiferencaVO diferenca : listaNovasDiferencasVO){
 				
-				if(df.getId().equals(idDiferenca)){
-					df = diferencaEditavel;
+				if(diferenca.getId().equals(idDiferenca)){
+					diferenca.setQuantidade(qntDiferenca);
+					diferenca.setTipoDirecionamento(diferencaEditavel.getTipoDirecionamento());
+					diferenca.setValorTotalDiferenca(CurrencyUtil.formatarValor(valorTotalDiferenca));
 					break;
 				}
 			}
@@ -763,7 +768,7 @@ public class DiferencaEstoqueController {
 		}
 	}
 	
-	private DiferencaVO obterDiferencaVO(TipoDiferenca tipoDiferenca,String codigoProduto,Integer edicaoProduto, BigInteger diferenca, BigInteger reparteAtual,TipoEstoque tipoEstoque) {
+	private DiferencaVO obterDiferencaVO(TipoDiferenca tipoDiferenca,String codigoProduto,Integer edicaoProduto, BigInteger diferenca, BigInteger reparteAtual,TipoEstoque tipoEstoque, String pacotePadrao) {
 		
 		DiferencaVO diferencaVO =  new DiferencaVO();
 		
@@ -774,6 +779,7 @@ public class DiferencaEstoqueController {
 		diferencaVO.setTipoDiferenca(tipoDiferenca);
 		diferencaVO.setTipoEstoque(tipoEstoque);
 		diferencaVO.setCadastrado(true);
+		diferencaVO.setPacotePadrao(pacotePadrao);
 		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
@@ -1006,7 +1012,7 @@ public class DiferencaEstoqueController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void cadastrarRateioCotas(List<RateioCotaVO> listaNovosRateios, DiferencaVO diferencaVO) {
+	private void cadastrarRateioCotas(List<RateioCotaVO> listaNovosRateios, DiferencaVO diferencaVO, BigInteger valorPacotePadrao) {
 		
 		validarNovosRateios(listaNovosRateios, diferencaVO);
 		
@@ -1033,7 +1039,7 @@ public class DiferencaEstoqueController {
 			
 			rateioCotaVO.setIdDiferenca(diferencaVO.getId());
 			
-			this.validarNovoRateio(rateioCotaVO,diferencaVO);
+			this.validarNovoRateio(rateioCotaVO,diferencaVO,valorPacotePadrao);
 
 			if (!listaRateiosCadastrados.contains(rateioCotaVO)) {
 				
@@ -2010,7 +2016,7 @@ public class DiferencaEstoqueController {
 			
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "A somatória das quantidades de rateio (" 
-					+ somaQtdeRateio + ") é maior que a quantidade da diferença (" 
+					+ somaQtdeRateio + ") é maior que a quantidade da diferença do produto (" 
 					+ diferencaVO.getQuantidade() + ")!");
 		}
 	}
@@ -2070,7 +2076,7 @@ public class DiferencaEstoqueController {
 	 * 
 	 * @param novoRateioCota - novo rateio
 	 */
-	private void validarNovoRateio(RateioCotaVO novoRateioCota, DiferencaVO diferencaVO) {
+	private void validarNovoRateio(RateioCotaVO novoRateioCota, DiferencaVO diferencaVO, BigInteger valorPacotePadrao) {
 		
 		List<Long> linhasComErro = new ArrayList<Long>();
 		
@@ -2087,17 +2093,13 @@ public class DiferencaEstoqueController {
 		
 		TipoDiferenca tipoDiferenca = diferencaVO.getTipoDiferenca();
 		
-		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
-				|| TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
+		String mensagemErro = this.validarEstoqueDiferenca(novoRateioCota.getReparteCota(), novoRateioCota.getQuantidade(), tipoDiferenca, valorPacotePadrao, true); 
+		
+		if(mensagemErro != null){
 			
-			if (novoRateioCota.getReparteCota() == null
-					|| novoRateioCota.getQuantidade().compareTo(novoRateioCota.getReparteCota()) > 0) {
-				
-				linhasComErro.add(novoRateioCota.getId());
-				
-				listaMensagensErro.add("Quantidade do rateio para o tipo de diferença '" +
-					tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do reparte da cota!");
-			}
+			listaMensagensErro.add(mensagemErro);
+			
+			linhasComErro.add(novoRateioCota.getId());
 		}
 		
 		if (!linhasComErro.isEmpty() && !listaMensagensErro.isEmpty()) {
@@ -2125,7 +2127,7 @@ public class DiferencaEstoqueController {
 			listaMensagensErro.add("Produto inválido: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
 		}
 		
-		String mensagemErro = validarEstoqueDiferenca(diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade() ,tipoDiferenca); 
+		String mensagemErro = validarEstoqueDiferenca(diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade() ,tipoDiferenca, new BigInteger(diferenca.getPacotePadrao()),false); 
 		
 		if(mensagemErro!= null){
 			
@@ -2146,17 +2148,46 @@ public class DiferencaEstoqueController {
 		}
 	}
 
-	private String validarEstoqueDiferenca(BigInteger qtdeEstoqueAtual, BigInteger quantidade, TipoDiferenca tipoDiferenca) {
+	private String validarEstoqueDiferenca(BigInteger qtdeEstoqueAtual, BigInteger quantidade, 
+											TipoDiferenca tipoDiferenca,BigInteger valorPacotePadrao, boolean isRateioCota) {
+		
+		if (quantidade.compareTo(BigInteger.ZERO) == 0) {
+			
+			return (!isRateioCota) ?
+							"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
+								+ "' não pode ser igual a zero!"
+								  
+								:"Quantidade do Rateio para o tipo de diferença '" +
+								  		tipoDiferenca.getDescricao() + "' não pode ser igual a zero!";
+		}
 		
 		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
 				|| TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
 		
-			if (qtdeEstoqueAtual == null 
-					|| (quantidade.compareTo(qtdeEstoqueAtual) > 0)) {
+			if(TipoDiferenca.FALTA_DE.equals(tipoDiferenca)){
 				
-				return
-					"Quantidade de Exemplares para o tipo de diferença '" + tipoDiferenca.getDescricao() 
-						+ "' não pode ser maior que a Quantidade em Estoque do produto!";
+				if(qtdeEstoqueAtual.compareTo(quantidade.multiply(valorPacotePadrao)) < 0){
+					
+					return (!isRateioCota)?
+								"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
+									+ "' não pode ser maior que a quantidade em estoque do produto!"
+										
+									:"Quantidade do Rateio para o tipo de diferença '" +
+										tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do reparte da cota!";
+				}
+				
+			}else{
+				
+				if (qtdeEstoqueAtual == null 
+						|| (quantidade.compareTo(qtdeEstoqueAtual) > 0)) {
+					
+					return (!isRateioCota) ?
+								"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
+									+ "' não pode ser maior que a quantidade em estoque do produto!"
+										
+									:"Quantidade do Rateio para o tipo de diferença '" +
+										tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do reparte da cota!";
+				}
 			}
 		}
 		
@@ -2384,38 +2415,68 @@ public class DiferencaEstoqueController {
 	@SuppressWarnings("incomplete-switch")
 	private BigInteger obterReparteAtualProdutoEdicao(DiferencaVO diferencaVO, Long idProdutoEdicao) {
 		
-		EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(idProdutoEdicao);
-		
-		if (estoque == null) {
-			
-			return BigInteger.ZERO;
-		}
-		
 		if(diferencaVO.getTipoEstoque() == null){
 			return BigInteger.ZERO;
 		}
 		
-		switch (diferencaVO.getTipoEstoque()) {
-			case DEVOLUCAO_ENCALHE:
-				return estoque.getQtdeDevolucaoEncalhe();
-				
-			case DEVOLUCAO_FORNECEDOR:
-				return estoque.getQtdeDevolucaoFornecedor();
-				
-			case LANCAMENTO:
-				return estoque.getQtde();
-				
-			case SUPLEMENTAR:
-				return estoque.getQtdeSuplementar();
-			
-			case JURAMENTADO:
-				return estoque.getQtdeJuramentado();
-				
-			case DANIFICADO:
-				return  estoque.getQtdeDanificado();
+		EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(idProdutoEdicao);
+		
+		if (estoque == null) {
+			return BigInteger.ZERO;
 		}
 		
-		return BigInteger.ZERO;
+		BigInteger quantidadeEstoque = BigInteger.ZERO;
+		
+		switch (diferencaVO.getTipoEstoque()) {
+			case DEVOLUCAO_ENCALHE:
+				quantidadeEstoque =  estoque.getQtdeDevolucaoEncalhe();
+				break;
+			case DEVOLUCAO_FORNECEDOR:
+				quantidadeEstoque =  estoque.getQtdeDevolucaoFornecedor();
+				break;
+			case LANCAMENTO:
+				quantidadeEstoque =  estoque.getQtde();
+				break;
+			case SUPLEMENTAR:
+				quantidadeEstoque =  estoque.getQtdeSuplementar();
+				break;
+			case DANIFICADO:
+				quantidadeEstoque =  estoque.getQtdeDanificado();
+				break;
+		}
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
+		
+		BigInteger quantidadeAtualEstoque =
+			this.obterQuantidadeDiferencaEstoque(diferencaVO.getCodigoProduto(),
+												 Long.valueOf(diferencaVO.getNumeroEdicao()),
+												 diferencaVO.getTipoEstoque(),
+												 quantidadeEstoque, dataOperacao);
+		
+		BigInteger pacotePadrao = new BigInteger(diferencaVO.getPacotePadrao());
+		
+		if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.FALTA_EM)) {
+			
+			quantidadeAtualEstoque = quantidadeAtualEstoque.add(diferencaVO.getQuantidade());
+		
+		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)) {
+			
+			quantidadeAtualEstoque =
+				quantidadeAtualEstoque.add(diferencaVO.getQuantidade().multiply(pacotePadrao));
+		
+		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
+			
+			quantidadeAtualEstoque = quantidadeAtualEstoque.subtract(diferencaVO.getQuantidade());
+		
+		} else if (diferencaVO.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
+			
+			quantidadeAtualEstoque =
+				quantidadeAtualEstoque.subtract(diferencaVO.getQuantidade().multiply(pacotePadrao));
+		}
+		
+		return quantidadeAtualEstoque;
 	}
 	
 	@Post
@@ -2439,7 +2500,7 @@ public class DiferencaEstoqueController {
 	
 	@Post
 	@Path("/lancamento/rateio/buscarPrecoProdutoEdicao")
-	public void buscarPrecoProdutoEdicao(String codigoProduto, Integer numeroEdicao){
+	public void buscarPrecoProdutoEdicao(String codigoProduto, Long numeroEdicao){
 		
 		if(numeroEdicao == null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número da Edição não informado."));
@@ -2455,20 +2516,25 @@ public class DiferencaEstoqueController {
 		if(estoque == null) 
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Produto sem estoque cadastrado."));
 						
-		Object[] dados = new Object[3];
+		Object[] dados = new Object[4];
 		dados[0] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
-		dados[1] = pe.getId();
+		dados[1] = pe.getPacotePadrao();
+		dados[2] = pe.getId();
 		
-		List<EstoqueDTO> estoques = gerarEstoques(estoque,codigoProduto,numeroEdicao.toString());
+		List<EstoqueDTO> estoques = gerarEstoques(estoque,codigoProduto,numeroEdicao);
 				
-		dados[2] = estoques;  	
+		dados[3] = estoques;  	
 		
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
 		
-	private List<EstoqueDTO> gerarEstoques(EstoqueProduto estoque,String codigoPrduto,String numeroEdicao) {
+	private List<EstoqueDTO> gerarEstoques(EstoqueProduto estoque,String codigoPrduto,Long numeroEdicao) {
 
 		List<EstoqueDTO> estoques = new ArrayList<EstoqueDTO>();
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
 		
 		if(estoque.getQtde() != null && estoque.getQtde().intValue() > 0) {
 			
@@ -2476,7 +2542,7 @@ public class DiferencaEstoqueController {
 					new EstoqueDTO(
 							TipoEstoque.LANCAMENTO.name(), 
 							TipoEstoque.LANCAMENTO.getDescricao(),
-							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.LANCAMENTO,estoque.getQtde()) 
+							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.LANCAMENTO,estoque.getQtde(), dataOperacao) 
 							) 
 					); 
 		}
@@ -2487,7 +2553,7 @@ public class DiferencaEstoqueController {
 					new EstoqueDTO(
 							TipoEstoque.SUPLEMENTAR.name(), 
 							TipoEstoque.SUPLEMENTAR.getDescricao(),
-							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.SUPLEMENTAR,estoque.getQtdeSuplementar()) 
+							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.SUPLEMENTAR,estoque.getQtdeSuplementar(), dataOperacao) 
 							) 
 					);
 		}
@@ -2498,7 +2564,7 @@ public class DiferencaEstoqueController {
 					new EstoqueDTO(
 							TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
 							TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
-							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.DEVOLUCAO_ENCALHE,estoque.getQtdeDevolucaoEncalhe()) 
+							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.DEVOLUCAO_ENCALHE,estoque.getQtdeDevolucaoEncalhe(), dataOperacao) 
 							) 
 					); 
 		}
@@ -2509,18 +2575,7 @@ public class DiferencaEstoqueController {
 					new EstoqueDTO(
 							TipoEstoque.DEVOLUCAO_FORNECEDOR.name(), 
 							TipoEstoque.DEVOLUCAO_FORNECEDOR.getDescricao(),
-							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.DEVOLUCAO_FORNECEDOR,estoque.getQtdeDevolucaoFornecedor()) 
-							) 
-					); 
-		}
-		
-		if(estoque.getQtdeJuramentado() != null && estoque.getQtdeJuramentado().intValue() > 0) {
-			
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.JURAMENTADO.name(), 
-							TipoEstoque.JURAMENTADO.getDescricao(),
-							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.JURAMENTADO,estoque.getQtdeJuramentado()) 
+							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.DEVOLUCAO_FORNECEDOR,estoque.getQtdeDevolucaoFornecedor(), dataOperacao) 
 							) 
 					); 
 		}
@@ -2531,7 +2586,7 @@ public class DiferencaEstoqueController {
 					new EstoqueDTO(
 							TipoEstoque.DANIFICADO.name(), 
 							TipoEstoque.DANIFICADO.getDescricao(),
-							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.DANIFICADO,estoque.getQtdeDanificado()) 
+							obterQuantidadeDiferencaEstoque(codigoPrduto,numeroEdicao,TipoEstoque.DANIFICADO,estoque.getQtdeDanificado(), dataOperacao) 
 							) 
 					); 
 		}
@@ -2540,29 +2595,64 @@ public class DiferencaEstoqueController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Integer obterQuantidadeDiferencaEstoque(String codigoProduto,String numeroEdicao,TipoEstoque tipoEstoque, BigInteger quantidadeEstoque){
+	public BigInteger obterQuantidadeDiferencaEstoque(String codigoProduto, Long numeroEdicao, TipoEstoque tipoEstoque,
+												      BigInteger quantidadeEstoque, Date dataOperacao) {
 		
-		Set<DiferencaVO> listaDiferencasCadastradas =
+		Set<DiferencaVO> listaNovasDiferencas =
 				(Set<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
 		
-		if(listaDiferencasCadastradas!= null && !listaDiferencasCadastradas.isEmpty()){
+		BigInteger quatidadeReparteCadastrada =
+			this.diferencaEstoqueService.obterQuantidadeTotalDiferencas(
+				codigoProduto, numeroEdicao, tipoEstoque, dataOperacao);
+		
+		if (quatidadeReparteCadastrada != null) {
 			
-			BigInteger reparte = BigInteger.ZERO;
+			quantidadeEstoque = quantidadeEstoque.add(quatidadeReparteCadastrada);
+		}
+		
+		if(listaNovasDiferencas!= null && !listaNovasDiferencas.isEmpty()) {
 			
-			for(DiferencaVO diferenca : listaDiferencasCadastradas){
+			for(DiferencaVO diferenca : listaNovasDiferencas) {
 				
 				if(diferenca.getCodigoProduto().equals(codigoProduto)
-						&& diferenca.getNumeroEdicao().equals(numeroEdicao)
+						&& diferenca.getNumeroEdicao().equals(numeroEdicao.toString())
 						&& diferenca.getTipoEstoque().equals(tipoEstoque)){
 					
-					reparte = reparte.add(diferenca.getQuantidade());
+					quantidadeEstoque =
+						this.calcularQuantidadesFaltasSobras(quantidadeEstoque, diferenca);
 				}
 			}
 			
-			return quantidadeEstoque.subtract(reparte).intValue();
+			return quantidadeEstoque;
 		}
 		
-		return quantidadeEstoque.intValue();
+		return quantidadeEstoque;
+	}
+
+	private BigInteger calcularQuantidadesFaltasSobras(BigInteger quantidadeEstoque, DiferencaVO diferenca) {
+		
+		BigInteger pacotePadrao = new BigInteger(diferenca.getPacotePadrao());
+		
+		if (diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_EM)) {
+			
+			quantidadeEstoque = quantidadeEstoque.subtract(diferenca.getQuantidade());
+		
+		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)) {
+			
+			quantidadeEstoque =
+				quantidadeEstoque.subtract(diferenca.getQuantidade().multiply(pacotePadrao));
+		
+		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
+			
+			quantidadeEstoque = quantidadeEstoque.add(diferenca.getQuantidade());
+		
+		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
+			
+			quantidadeEstoque =
+				quantidadeEstoque.add(diferenca.getQuantidade().multiply(pacotePadrao));
+		}
+		
+		return quantidadeEstoque;
 	}
 
 	@Post
@@ -2584,7 +2674,6 @@ public class DiferencaEstoqueController {
 		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
 		
 		DiferencaVO diferencaVO = null;
-		
 
 		for (DetalheItemNotaFiscalDTO detalheItemNota : itensNotaEnvio) {
 		
@@ -2602,6 +2691,7 @@ public class DiferencaEstoqueController {
 			diferencaVO.setNumeroEdicao(detalheItemNota.getNumeroEdicao().toString());
 			diferencaVO.setPrecoVenda(detalheItemNota.getPrecoVenda().toString());
 			diferencaVO.setQtdeEstoque(detalheItemNota.getQuantidadeExemplares());
+			diferencaVO.setPacotePadrao(detalheItemNota.getPacotePadrao().toString());
 		
 			prods.add(diferencaVO);
 		}
@@ -2634,18 +2724,25 @@ public class DiferencaEstoqueController {
 		}
 	}
 
-	private boolean containsDiferenca(Set<Diferenca> diferencas,
+	private boolean containsDiferenca(Set<Diferenca> diferencasSessao,
 									  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 									  Long idProdutoEdicao,
-									  Date dateNotaEnvio,
+									  Date dataNotaEnvio,
 									  Integer numeroCota) {
 		
-		if (diferencas == null) {
+		boolean existeDiferencaPorNota = 
+			this.diferencaEstoqueService.existeDiferencaPorNota(
+				idProdutoEdicao, dataNotaEnvio, numeroCota);
 		
+		if (existeDiferencaPorNota) {
+			return true;
+		}
+		
+		if (diferencasSessao == null) {
 			return false;
 		}
 		
-		for (Diferenca diferenca : diferencas) {
+		for (Diferenca diferenca : diferencasSessao) {
 		
 			if (!diferenca.getTipoDirecionamento().equals(TipoDirecionamentoDiferenca.NOTA)
 					|| !diferenca.getProdutoEdicao().getId().equals(idProdutoEdicao)) {
@@ -2664,7 +2761,7 @@ public class DiferencaEstoqueController {
 				
 				if (rateio.getNumeroCota().equals(numeroCota)
 						&& rateio.getDataEnvioNota() != null
-						&& rateio.getDataEnvioNota().compareTo(dateNotaEnvio) == 0) {
+						&& rateio.getDataEnvioNota().compareTo(dataNotaEnvio) == 0) {
 				
 					return true;
 				}

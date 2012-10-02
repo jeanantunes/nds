@@ -82,4 +82,14 @@ public interface EntregadorRepository extends Repository<Entregador, Long> {
 	Entregador obterEntregadorPorRota(Long idRota);
 
 	boolean verificarEntregador(Long idCota);
+	
+	/**
+	 * Obtém o menor codigo de entregador disponível.
+	 * 
+	 * @return Long
+	 */
+	public Long obterMinCodigoEntregadorDisponivel();
+	
+	public Entregador obterEntregadorPorCodigo(Long codigo);
+
 }

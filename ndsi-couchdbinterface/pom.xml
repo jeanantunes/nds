@@ -183,6 +183,6 @@
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
 			<version>0.9.7.RC1</version>
-		</dependency>
+		</dependency>         
 	</dependencies>
 </project>

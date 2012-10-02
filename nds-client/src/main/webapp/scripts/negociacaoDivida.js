@@ -66,22 +66,37 @@ var negociacaoDividaController = $.extend(true, {
 		$.each(data.rows, function(index, value) {
 			
 			var detalhes = '<a href="javascript:;" onclick="negociacaoDividaController.popup_detalhe();" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
-			var acao = '<input type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
+			var acao = '<input name="filtro.listDividas['+index+']" value="'+ value.cell.idDivida +'" type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
 			
 			total = sumPrice(value.cell.total, total);
 		});
 
-		$("#total", this.workspace).html(total);
+		$('#total', this.workspace).html(total);
+		
 		
 		return data;
 	},
 	
 	calcularParcelas : function(){
-		
+		if($('#selectPagamento').val() != ""){
 		var params = $("#formaPgtoForm").serialize();
-		alert(params);
+			
+			$.postJSON(contextPath + '/financeiro/negociacaoDivida/calcularParcelas.json?'+params,
+					null,
+					function(result) {
+						if($('#selectPagamento').val() == 'CHEQUE'){
+							negociacaoDividaController.geraLinhasCheque(result);
+						}else{
+							negociacaoDividaController.geraLinhasParcelas(result);
+						}
+					},
+					function() {
+						
+					}
+			);
+		}
 	},
 	
 	
@@ -103,9 +118,10 @@ var negociacaoDividaController = $.extend(true, {
 	
 	popup_formaPgto : function() {
 		$('#formaPgto_numEnomeCota').html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota').val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html());
-		$('#dividaSelecionada').html('<strong>Divida Selecionada:</strong> ' + $('#totalSelecionado').html());
-		$("#dialog-formaPgto").dialog({
-			form: $("#dialog-formaPgto", this.workspace).parents("formaPgtoForm"),
+		$('#dividaSelecionada').html($('#totalSelecionado').html());
+		$('#valorSelecionado').val($('#totalSelecionado').html());
+		$('#numeroCota').val($('#negociacaoDivida_numCota').val());
+		$("#dialog-formaPgto", this.workspace).dialog({
 			resizable: false,
 			height:550,
 			width:760,
@@ -118,58 +134,86 @@ var negociacaoDividaController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
 		});
 	},
 	
-	geraLinhasCheque :function(value) {
-		var tabela = $('#tabelaCheque').get(0);
-		
-		while(tabela.rows.length > 1){
-			tabela.deleteRow(1);
-		}
-		for (var i=1; i <= value; i++){
-			var linha = tabela.insertRow(i);
-			var coluna1 = linha.insertCell(0);
-			var coluna2 = linha.insertCell(1);
-			var coluna3 = linha.insertCell(2);
-			var coluna4 = linha.insertCell(3);
+	geraLinhasCheque :function(result) {
+		if($('#selectPagamento').val() != ""){
+			var tabela = $('#tabelaCheque').get(0);
 			
-			for (var j=0; j < tabela.rows[i].cells.length; j++){
-				tabela.rows[i].cells[j].style.textAlign = "center";
+			while(tabela.rows.length > 1){
+				tabela.deleteRow(1);
 			}
-			
-			coluna1.innerHTML = '<td><input type="text" name="textfield" id="textfield" style="width:100px;" /></td>';
-			coluna2.innerHTML = '<td><input type="text" name="textfield2" id="textfield2" style="width:100px; text-align:right;" /></td>';
-			coluna3.innerHTML = '<td><input type="text" name="textfield3" id="textfield3" style="width:100px;" /></td>';
-			coluna4.innerHTML = '<td align="center"><img src="'+contextPath+'/images/ico_excluir.gif" border="0" align="Excluir Linha" /></td>';
+			for (var i=1; i <= result.length; i++){
+				var linha = tabela.insertRow(i);
+				var coluna1 = linha.insertCell(0);
+				var coluna2 = linha.insertCell(1);
+				var coluna3 = linha.insertCell(2);
+				var coluna4 = linha.insertCell(3);
+				
+				for (var j=0; j < tabela.rows[i].cells.length; j++){
+					tabela.rows[i].cells[j].style.textAlign = "center";
+				}
+				
+				coluna1.innerHTML = '<td><input type="text" name="vencimentoCheque'+i+'" id="vencimentoCheque'+i+'"style="width:100px;" /></td>';
+				coluna2.innerHTML = '<td><input type="text" name="valor'+i+'" id="valor'+i+'" style="width:100px; text-align:right;" /></td>';
+				coluna3.innerHTML = '<td><input type="text" name="numCheque'+i+'" id="numCheque'+i+'"  style="width:100px;" /></td>';
+				coluna4.innerHTML = '<td align="center"><img src="'+contextPath+'/images/ico_excluir.gif" border="0" align="Excluir Linha" /></td>';
+			}
 		}
 	},
 	
-	geraLinhasParcelas : function(value) {
-		var tabela = $('#tabelaParcelas').get(0);
-		
-		while(tabela.rows.length > 2){
-			tabela.deleteRow(2);
-		}
-		for (var i=1; i <= value; i++){
-			var linha = tabela.insertRow(i+1);
-			var coluna1 = linha.insertCell(0);
-			var coluna2 = linha.insertCell(1);
-			var coluna3 = linha.insertCell(2);
-			var coluna4 = linha.insertCell(3);
-			var coluna5 = linha.insertCell(4);
-			var coluna6 = linha.insertCell(5);
+	geraLinhasParcelas : function(result) {
+		if($('#selectPagamento').val() != ""){
+			var tabela = $('#tabelaParcelas').get(0);
+			var totalParcela = '0,00';
+			var totalEncargos = '0,00';
+			var totalParcTotal = '0,00';
 			
-			for (var j=0; j < tabela.rows[i+1].cells.length; j++){
-				tabela.rows[i+1].cells[j].style.textAlign = "center";
+			while(tabela.rows.length > 2){
+				tabela.deleteRow(2);
 			}
-			coluna1.innerHTML = i+'&ordf;';
-			coluna2.innerHTML = '<input type="text" name="textfield" id="textfield" style="width: 65px;" />';
-			coluna3.innerHTML = '<input type="text" name="textfield3" id="textfield3" style="width: 60px; text-align: right;" />';
-			coluna4.innerHTML = '<input type="text" name="textfield13" id="textfield13" style="width: 60px; text-align: right;" />';
-			coluna5.innerHTML = '<input type="text" name="textfield2" id="textfield2" style="width: 60px; text-align: right;" />';
-			coluna6.innerHTML = '<input type="radio" name="radio" id="radio" value="radio" />';
+			for (var i=1; i <= result.length; i++){
+				var linha = tabela.insertRow(i+1);
+				var coluna1 = linha.insertCell(0);
+				var coluna2 = linha.insertCell(1);
+				var coluna3 = linha.insertCell(2);
+				var coluna4 = linha.insertCell(3);
+				var coluna5 = linha.insertCell(4);
+				var coluna6 = linha.insertCell(5);
+				
+				for (var j=0; j < tabela.rows[i+1].cells.length; j++){
+					tabela.rows[i+1].cells[j].style.textAlign = "center";
+				}
+
+				coluna1.innerHTML = result[i-1].numParcela+'&ordf;';
+				coluna2.innerHTML = '<input type="text" name="vencimentoParcela'+i+'" id="vencimentoParcela'+i+'" style="width: 70px;" value="'+result[i-1].dataVencimento+'"/>';
+				coluna3.innerHTML = '<input type="text" name="parcela'+i+'" id="parcela'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcela+'"/>';
+				coluna4.innerHTML = '<input type="text" name="encargos'+i+'" id="encargos'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].encargos+'"/>';
+				coluna5.innerHTML = '<input type="text" name="parcTotal'+i+'" id="parcTotal'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcTotal+'"/>';
+				coluna6.innerHTML = '<input type="radio" name="radio" id="ativarAoPagar'+i+'" value="radio" />';
+				
+				totalParcela = sumPrice(result[i-1].parcela, totalParcela);
+				totalEncargos = sumPrice(result[i-1].encargos, totalEncargos);
+				totalParcTotal = sumPrice(result[i-1].parcTotal, totalParcTotal);
+				
+			}
+			
+			var linha = tabela.insertRow(tabela.rows.length);
+			linha.insertCell(0);
+			linha.insertCell(1);
+			var colunaParcela = linha.insertCell(2);
+			var colunaEncargos = linha.insertCell(3);
+			var colunaParcTotal = linha.insertCell(4);	
+			linha.insertCell(5);
+			
+			colunaParcela.style.textAlign = "center";
+			colunaParcela.innerHTML = 'R$ '+totalParcela;
+			colunaEncargos.style.textAlign = "center";
+			colunaEncargos.innerHTML = 'R$ '+totalEncargos;
+			colunaParcTotal.style.textAlign = "center";
+			colunaParcTotal.innerHTML = 'R$ '+totalParcTotal;
 			
 		}
 	},
@@ -183,8 +227,7 @@ var negociacaoDividaController = $.extend(true, {
 		$('#gridVenctos').hide();
 		$('#gridCheque').hide();
 		$('#divChequeDeposito').hide();
-		$('#divBoleto').hide();
-		$('#divTransferencia').hide();
+		$('#divBanco').hide();
 		
 	},
 	
@@ -223,36 +266,26 @@ var negociacaoDividaController = $.extend(true, {
 	opcaoFormasPagto : function(value){
 		
 		
-		if (value == 1 || value == 2 || value == 4){
+		if (value == 'BOLETO' || value == 'BOLETO_EM_BRANCO' || value == 'DEPOSITO' || value == 'TRANSFERENCIA_BANCARIA'){
 			$('#gridVenctos').show();
 			$('#gridCheque').hide();
-			negociacaoDividaController.geraLinhasParcelas($('#selectParcelas').val());
-			if(value == 1){
+			
+			if(value != 'DEPOSITO'){
 				$('#divChequeDeposito').hide();
-				$('#divBoleto').show();
-				$('#divTransferencia').hide();
-			}else if(value == 2){
-				$('#divChequeDeposito').hide();
-				$('#divBoleto').hide();
-				$('#divTransferencia').show();
-			}else{
-				$('#divChequeDeposito').show();
-				$('#divBoleto').hide();
-				$('#divTransferencia').hide();
+				$('#divBanco').show();
 			}
-		}else if (value == 3){
+		}else if (value == 'CHEQUE'){
 			$('#gridVenctos').hide();
 			$('#gridCheque').show();
 			$('#divChequeDeposito').show();
-			$('#divBoleto').hide();
-			$('#divTransferencia').hide();
-			negociacaoDividaController.geraLinhasCheque($('#selectParcelas').val());
+			$('#divBanco').hide();
+
 		}else {
 			$('#gridVenctos').hide();
 			$('#gridCheque').hide();
 			$('#divChequeDeposito').hide();
-			$('#divBoleto').hide();
-			$('#divTransferencia').hide();
+			$('#divBanco').hide();
+
 		}
 	},
 	

@@ -106,7 +106,7 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	@Override
 	public List<Rota> buscarRotaDeBox(Long idBox) {
 		
-		String hql  = "select rota from Rota rota join rota.roteiro roteiro join roteiro.box box where box.id=:idBox group by rota ";
+		String hql  = "select rota from Rota rota join rota.roteiro roteiro join roteiro.roteirizacao.box box where box.id=:idBox group by rota ";
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("idBox", idBox);
@@ -130,9 +130,9 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	public List<Rota> obterRotasPorCota(Integer numeroCota){
 		
 		Criteria criteria =  getSession().createCriteria(Rota.class, "rota");
-		criteria.createAlias("rota.pdvs","pdv");
+		criteria.createAlias("rota.rotaPDVs","rotaPdv");
+		criteria.createAlias("rotaPdv.pdv","pdv");
 		criteria.createAlias("pdv.cota","cota");
-		
 		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
 		criteria.addOrder(Order.asc("rota.descricaoRota"));
 		

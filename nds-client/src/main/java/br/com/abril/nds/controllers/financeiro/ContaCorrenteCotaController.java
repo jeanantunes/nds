@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,11 +40,12 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -54,7 +54,6 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -116,30 +115,23 @@ public class ContaCorrenteCotaController {
 			FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,
 			String sortname, String sortorder, int rp, int page) {
 
-		this.validarDadosEntradaPesquisa(filtroViewContaCorrenteCotaDTO
-				.getNumeroCota());
+		this.validarDadosEntradaPesquisa(filtroViewContaCorrenteCotaDTO);
 
-		prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname,
-				page, rp);
+		prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname,page, rp);
 
 		tratarFiltro(filtroViewContaCorrenteCotaDTO);
-
-		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService
-				.obterListaConsolidadoPorCota(filtroViewContaCorrenteCotaDTO);
-
-		if (listaItensContaCorrenteCota == null
-				|| listaItensContaCorrenteCota.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nenhum registro encontrado.");
+		
+		Long total = contaCorrenteCotaService.getQuantidadeViewContaCorrenteCota(filtroViewContaCorrenteCotaDTO);
+		if (total == 0) {			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		}
 
-		request.getSession().setAttribute(ITENS_CONTA_CORRENTE,
-				listaItensContaCorrenteCota);
+		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = 
+				contaCorrenteCotaService.obterListaConsolidadoPorCota(filtroViewContaCorrenteCotaDTO);	
 
-		TableModel<CellModel> tableModel = obterTableModelParaListItensContaCorrenteCota(listaItensContaCorrenteCota);
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive()
-				.serialize();
+		request.getSession().setAttribute(ITENS_CONTA_CORRENTE,listaItensContaCorrenteCota);
+		
+		result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
 	}
 
 	/**
@@ -476,9 +468,7 @@ public class ContaCorrenteCotaController {
 		paginacao.setPaginaAtual(page);
 
 		filtroViewContaCorrenteCotaDTO
-				.setColunaOrdenacao(Util.getEnumByStringValue(
-						FiltroViewContaCorrenteCotaDTO.ColunaOrdenacao.values(),
-						sortname));
+				.setColunaOrdenacao(sortname);
 	}
 
 	/**
@@ -503,85 +493,27 @@ public class ContaCorrenteCotaController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE,
 				filtroViewContaCorrenteCotaDTO);
 	}
-
-	/**
-	 * Obtem uma lista de Conta Corrente cota e prepara o Grid para receber os
-	 * valores
-	 * 
-	 * @param itensContaCorrenteCota
-	 * @return
-	 */
-	private TableModel<CellModel> obterTableModelParaListItensContaCorrenteCota(
-			List<ViewContaCorrenteCota> itensContaCorrenteCota) {
-
-		TableModel<CellModel> tableModel = new TableModel<CellModel>();
-
-		List<CellModel> listaModeloGenerico = new LinkedList<CellModel>();
-
-		// /int counter = 1;
-
-		Integer codCota = null;
-
-		for (ViewContaCorrenteCota dto : itensContaCorrenteCota) {
-
-			codCota = dto.getNumeroCota();
-			String data = dto.getDataConsolidado().toString();
-			String valorPostergado = (dto.getValorPostergado() == null) ? "0.0"
-					: dto.getValorPostergado().toString();
-			String NA = (dto.getNumeroAtrasados() == null) ? "0.0" : dto
-					.getNumeroAtrasados().toString();
-			String consignado = (dto.getConsignado() == null) ? "0.0" : dto
-					.getConsignado().toString();
-			String encalhe = (dto.getEncalhe() == null) ? "0.0" : dto
-					.getEncalhe().toString();
-			String vendaEncalhe = (dto.getVendaEncalhe() == null) ? "0.0" : dto
-					.getVendaEncalhe().toString();
-			String debCred = (dto.getDebitoCredito() == null) ? "0.0" : dto
-					.getDebitoCredito().toString();
-			String encargos = (dto.getEncargos() == null) ? "0.0" : dto
-					.getEncargos().toString();
-			String pendente = (dto.getPendente() == null) ? "0.0" : dto
-					.getPendente().toString();
-			String total = (dto.getTotal() == null) ? "0.0" : dto.getTotal()
-					.toString();
-
-			listaModeloGenerico.add(new CellModel(dto.getId().intValue(), data,
-					valorPostergado, NA, consignado, encalhe, vendaEncalhe,
-					debCred, encargos, pendente, total, dto.getId()));
-
-			// counter++;
-		}
-
-		Cota cota = cotaService.obterPorNumeroDaCota(codCota);
-
-		result.include("cotaNome",
-				cota.getNumeroCota() + " " + cota.getPessoa());
-
-		tableModel.setPage(1);
-		tableModel.setTotal(listaModeloGenerico.size());
-		tableModel.setRows(listaModeloGenerico);
-
-		return tableModel;
-
-	}
 	
-	private void validarDadosEntradaPesquisa(Integer numeroCota) {
-		List<String> listaMensagemValidacao = new ArrayList<String>();
-
-		if (numeroCota == null) {
-			listaMensagemValidacao
-					.add("O Preenchimento do campo Cota é obrigatório.");
-		} else {
-			if (!Util.isNumeric(numeroCota.toString())) {
-				listaMensagemValidacao
-						.add("A Cota permite apenas valores números.");
-			}
+	private void validarDadosEntradaPesquisa(FiltroViewContaCorrenteCotaDTO filtro) {
+		
+		if (filtro.getNumeroCota() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"O Preenchimento do campo Cota é obrigatório!");
+		} 
+		
+		if(filtro.getInicioPeriodo() != null && filtro.getFimPeriodo()== null){
+				
+			throw new ValidacaoException(TipoMensagem.WARNING,"O Preenchimento do campo Até é obrigatório!");
 		}
-
-		if (!listaMensagemValidacao.isEmpty()) {
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING,
-					listaMensagemValidacao);
-			throw new ValidacaoException(validacaoVO);
+		
+		if(filtro.getInicioPeriodo() == null && filtro.getFimPeriodo()!= null ){
+				
+			throw new ValidacaoException(TipoMensagem.WARNING,"O Preenchimento do campo Período é obrigatório!");
+		}
+			
+		if (DateUtil.isDataInicialMaiorDataFinal(filtro.getInicioPeriodo(),filtro.getFimPeriodo())) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Período não pode ser maior que o campo Até!");	
 		}
 	}
 

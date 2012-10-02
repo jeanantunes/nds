@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -377,6 +378,27 @@ public class FornecedorRepositoryImpl extends
 		criteria.setMaxResults(1);
 
 		return (Fornecedor) criteria.uniqueResult();
+	}
+	
+	@Override
+	public Integer obterMinCodigoInterfaceDisponivel() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+				hql.append(" select min(codInterface) from (											");
+				hql.append(" select min(COD_INTERFACE + 1) as codInterface from FORNECEDOR           	");
+				hql.append(" where (COD_INTERFACE + 1) not in (select COD_INTERFACE from FORNECEDOR) 	"); 
+				hql.append(" UNION															  			");
+				hql.append(" SELECT 1 AS codInteface from dual WHERE  1 not in				  			");
+				hql.append(" ( select COD_INTERFACE from FORNECEDOR where COD_INTERFACE = 1 ) 			"); 
+				hql.append(" ) as TBL_COD_INTEFACE 														");
+		
+		Query query = super.getSession().createSQLQuery(hql.toString());
+		
+		BigInteger codInterface = (BigInteger) query.uniqueResult();
+		
+		return codInterface.intValue();
+		
 	}
 	
 	@Override

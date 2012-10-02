@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import br.com.abril.nds.model.cadastro.Cota;
 
@@ -68,6 +69,22 @@ public class ViewContaCorrenteCota  implements Serializable{
 	
 	@Column(name = "TOTAL", nullable = true)
 	private BigDecimal total;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name="DT_RAIZ_CONSOLIDADO")
+	private Date dataRaizConsolidado;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name="DT_RAIZ_PENDENTE")
+	private Date dataRaizPendente;
+	
+	@Transient
+	private BigDecimal valorPago;
+	
+	@Transient
+	private BigDecimal saldo;
+	
+	
 	
 	@ManyToOne
 	private Cota cota;
@@ -182,6 +199,62 @@ public class ViewContaCorrenteCota  implements Serializable{
 
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
+	}
+
+	/**
+	 * @return the dataRaizConsolidado
+	 */
+	public Date getDataRaizConsolidado() {
+		return dataRaizConsolidado;
+	}
+
+	/**
+	 * @param dataRaizConsolidado the dataRaizConsolidado to set
+	 */
+	public void setDataRaizConsolidado(Date dataRaizConsolidado) {
+		this.dataRaizConsolidado = dataRaizConsolidado;
+	}
+
+	/**
+	 * @return the dataRaizPendente
+	 */
+	public Date getDataRaizPendente() {
+		return dataRaizPendente;
+	}
+
+	/**
+	 * @param dataRaizPendente the dataRaizPendente to set
+	 */
+	public void setDataRaizPendente(Date dataRaizPendente) {
+		this.dataRaizPendente = dataRaizPendente;
+	}
+
+	/**
+	 * @return the valorPago
+	 */
+	public BigDecimal getValorPago() {
+		return valorPago;
+	}
+
+	/**
+	 * @param valorPago the valorPago to set
+	 */
+	public void setValorPago(BigDecimal valorPago) {
+		this.valorPago = valorPago;
+	}
+
+	/**
+	 * @return the saldo
+	 */
+	public BigDecimal getSaldo() {
+		return saldo;
+	}
+
+	/**
+	 * @param saldo the saldo to set
+	 */
+	public void setSaldo(BigDecimal saldo) {
+		this.saldo = saldo;
 	}
 
 	

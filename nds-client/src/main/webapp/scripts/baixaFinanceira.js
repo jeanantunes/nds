@@ -68,7 +68,7 @@ var baixaFinanceiraController = $.extend(true, {
 				           text:"Confirmar", 
 				           click: function() {
 				        	   
-				        	   popup_confirma_baixa_dividas();
+				        	   baixaFinanceiraController.popup_confirma_baixa_dividas();
 				           }
 			           },
 			           {
@@ -82,7 +82,7 @@ var baixaFinanceiraController = $.extend(true, {
 			beforeClose: function() {
 				clearMessageDialogTimeout();
 		    },
-		    form: $("#dialog-baixa-divida", this.workspace).parents("form")
+		    form: $("#div-baixa-dividas", this.workspace)
 		});
 	},
 
@@ -97,7 +97,7 @@ var baixaFinanceiraController = $.extend(true, {
 				           id:"bt_confirmar",
 				           text:"Confirmar", 
 				           click: function() {
-				        	   popup_confirma_pendente();
+				        	   baixaFinanceiraController.popup_confirma_pendente();
 								
 							   $( this ).dialog( "close" );
 				           }
@@ -128,7 +128,7 @@ var baixaFinanceiraController = $.extend(true, {
 				           id:"bt_sim",
 				           text:"Sim", 
 				           click: function() {
-				        	   baixaManualDividas(true);
+				        	   baixaFinanceiraController.baixaManualDividas(true);
 								
 							   $( this ).dialog( "close" );
 				           }
@@ -137,7 +137,7 @@ var baixaFinanceiraController = $.extend(true, {
 				           id:"bt_nao",
 				           text:"Não", 
 				           click: function() {
-				        	   baixaManualDividas(false);
+				        	   baixaFinanceiraController.baixaManualDividas(false);
 								
 							   $( this ).dialog( "close" );
 				           }
@@ -537,7 +537,7 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorTotal", baixaFinanceiraController.workspace).html($("#valorTotalHidden", baixaFinanceiraController.workspace).val());
 		$("#valorBoleto", baixaFinanceiraController.workspace).html($("#valorBoletoHidden", baixaFinanceiraController.workspace).val());
 		
-		dividaManualNossoNumero();
+		baixaFinanceiraController.dividaManualNossoNumero();
 	},
 	
 	errorCallbackPesquisarBoleto : function() {
@@ -614,8 +614,8 @@ var baixaFinanceiraController = $.extend(true, {
 	//OBTEM DADOS CALCULADOS REFERENTES ÀS DAS DIVIDAS MARCADAS PARA A TELA DE BAIXA POR COTA
     obterPagamentoDividas : function() {
 		$.postJSON(contextPath + "/financeiro/obterPagamentoDividas",
-				   obterCobrancasDividasMarcadas(),
-				   sucessCallbackPagamentoDivida,
+				   baixaFinanceiraController.obterCobrancasDividasMarcadas(),
+				   baixaFinanceiraController.sucessCallbackPagamentoDivida,
 				   null);
 	},
 	
@@ -682,7 +682,7 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
 		$("#valorDividas", baixaFinanceiraController.workspace).html($("#valorDividasHidden", baixaFinanceiraController.workspace).val());
 		
-		popup_baixa_dividas();
+		baixaFinanceiraController.popup_baixa_dividas();
 	},
     
     
@@ -756,7 +756,7 @@ var baixaFinanceiraController = $.extend(true, {
 				   "&valorSaldo="+ valorSaldoDividas+
 				   "&tipoPagamento="+ formaRecebimentoDividas+
 				   "&observacoes="+ observacoesDividas +
-				   "&"+obterCobrancasDividasMarcadas(),
+				   "&"+baixaFinanceiraController.obterCobrancasDividasMarcadas(),
 				   function(mensagens) {
 					   
 			           $("#dialog-baixa-dividas", baixaFinanceiraController.workspace).dialog("close");
@@ -769,7 +769,7 @@ var baixaFinanceiraController = $.extend(true, {
 					       }
 		        	   }
 			           
-					   buscaManual();
+					   baixaFinanceiraController.buscaManual();
 	               },
 	               null,
 	               true);
@@ -802,13 +802,28 @@ var baixaFinanceiraController = $.extend(true, {
 		$('#formBaixaAutomatica', baixaFinanceiraController.workspace).submit();
 	},
 	
+	
+	
+	
+	
+	
+	replaceAll : function(string, token, newtoken) {
+		while (string.indexOf(token) != -1) {
+	 		string = string.replace(token, newtoken);
+		}
+		return string;
+	},
+	
+	
+	
+	
 	tratarRespostaBaixaAutomatica : function(data) {
 		
-		data = replaceAll(data, "<pre>", "");
-		data = replaceAll(data, "</pre>", "");
+		data = baixaFinanceiraController.replaceAll(data, "<pre>", "");
+		data = baixaFinanceiraController.replaceAll(data, "</pre>", "");
 		
-		data = replaceAll(data, "<PRE>", "");
-		data = replaceAll(data, "</PRE>", "");
+		data = baixaFinanceiraController.replaceAll(data, "<PRE>", "");
+		data = baixaFinanceiraController.replaceAll(data, "</PRE>", "");
 		
 		var responseJson = jQuery.parseJSON(data);
 		
@@ -832,7 +847,7 @@ var baixaFinanceiraController = $.extend(true, {
 			$("#quantidadeRejeitados", baixaFinanceiraController.workspace).html(responseJson.result.quantidadeRejeitados);
 			$("#quantidadeBaixadosComDivergencia", baixaFinanceiraController.workspace).html(responseJson.result.quantidadeBaixadosComDivergencia);
 			
-			limparCamposBaixaAutomatica();
+			baixaFinanceiraController.limparCamposBaixaAutomatica();
 			
 			$('#resultadoIntegracao', baixaFinanceiraController.workspace).show();
 		}
@@ -946,3 +961,5 @@ var baixaFinanceiraController = $.extend(true, {
 	}
 
 }, BaseController);
+
+//@ sourceURL=baixaFinanceira.js

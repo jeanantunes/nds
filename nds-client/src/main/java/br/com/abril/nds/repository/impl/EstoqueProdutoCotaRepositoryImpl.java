@@ -3,7 +3,6 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -57,7 +56,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Set<Long> idsLancamento) {
+	public List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Long idLancamento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -68,11 +67,11 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		   
 		   .append(" where estoqueProdutoCota.produtoEdicao = estudo.produtoEdicao ")
 		   .append(" and estoqueProdutoCota.cota = estudoCota.cota")
-		   .append(" and lancamento.id in (:idsLancamento)");
+		   .append(" and lancamento.id = :idLancamento");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameterList("idsLancamento", idsLancamento);
+		query.setParameter("idLancamento", idLancamento);
 		
 		return query.list();
 	}

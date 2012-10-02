@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -102,10 +101,10 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		
 			
 		//PDV
-		pdvManoel1 = Fixture.criarPDVPrincipal("PDV MANOEL 1", cotaManoel, 1);
+		pdvManoel1 = Fixture.criarPDVPrincipal("PDV MANOEL 1", cotaManoel);
 		save(pdvManoel1);
 
-		pdvManoel2 = Fixture.criarPDVPrincipal("PDV MANOEL 2", cotaManoel, 0);
+		pdvManoel2 = Fixture.criarPDVPrincipal("PDV MANOEL 2", cotaManoel);
 		save(pdvManoel2);
 		
 		
@@ -128,46 +127,52 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		save(roteirizacao);
 		
 		
-		roteiro1 = Fixture.criarRoteiro("Roteiro 1", roteirizacao, box1, TipoRoteiro.NORMAL);
-		roteiro1.setBox(box1);
+		roteiro1 = Fixture.criarRoteiro("Roteiro 1", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro1);
 		
-		roteiro2 = Fixture.criarRoteiro("Roteiro 2",roteirizacao, box1, TipoRoteiro.NORMAL);
-		roteiro2.setBox(box1);
+		roteiro2 = Fixture.criarRoteiro("Roteiro 2",roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro2);
 		
-		roteiro3 = Fixture.criarRoteiro("Roteiro 3", roteirizacao, box1, TipoRoteiro.NORMAL);
-		roteiro3.setBox(box1);
+		roteiro3 = Fixture.criarRoteiro("Roteiro 3", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro3);
 			
 		
-		rota1 = Fixture.rota("1", "Rota 1", roteiro1, Arrays.asList(pdvManoel1,pdvManoel2));
+		rota1 = Fixture.rota("1", "Rota 1", roteiro1);
+		rota1.addPDV(pdvManoel1, 1);
+		rota1.addPDV(pdvManoel2, 2);
 		save(rota1);
 		
-		rota2 = Fixture.rota("2", "Rota 2", roteiro1, Arrays.asList(pdvManoel1,pdvManoel2));
+		rota2 = Fixture.rota("2", "Rota 2", roteiro1);
+		rota2.addPDV(pdvManoel1, 1);
+	    rota2.addPDV(pdvManoel2, 2);
 		save(rota2);
 		
-		rota3 = Fixture.rota("3", "Rota 3", roteiro1, Arrays.asList(pdvManoel2));
+		rota3 = Fixture.rota("3", "Rota 3", roteiro1);
+  	    rota3.addPDV(pdvManoel1, 1);
 		save(rota3);
-		
-		
-		rota4 = Fixture.rota("4", "Rota 4", roteiro2, Arrays.asList(pdvManoel1));
+
+		rota4 = Fixture.rota("4", "Rota 4", roteiro2);
+	    rota4.addPDV(pdvManoel1, 1);
 		save(rota4);
 		
-		rota5 = Fixture.rota("5", "Rota 5", roteiro2, Arrays.asList(pdvManoel1));
+		rota5 = Fixture.rota("5", "Rota 5", roteiro2);
+	    rota5.addPDV(pdvManoel1, 1);
 		save(rota5);
 		
-		rota6 = Fixture.rota("6", "Rota 6", roteiro2, Arrays.asList(pdvManoel1));
+		rota6 = Fixture.rota("6", "Rota 6", roteiro2);
+	    rota6.addPDV(pdvManoel1, 1);
 		save(rota6);
 
-		
-		rota7 = Fixture.rota("7", "Rota 7", roteiro3, Arrays.asList(pdvManoel2));
+		rota7 = Fixture.rota("7", "Rota 7", roteiro3);
+	    rota7.addPDV(pdvManoel2, 1);
 		save(rota7);
 		
-		rota8 = Fixture.rota("8", "Rota 8", roteiro3, Arrays.asList(pdvManoel2));
+		rota8 = Fixture.rota("8", "Rota 8", roteiro3);
+	    rota8.addPDV(pdvManoel2, 1);
 		save(rota8);
 		
-		rota9 = Fixture.rota("9", "Rota 9", roteiro3, Arrays.asList(pdvManoel2));
+		rota9 = Fixture.rota("9", "Rota 9", roteiro3);
+	    rota9.addPDV(pdvManoel1, 1);
 		save(rota9);
 		
 	}
@@ -257,13 +262,13 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterPdvsDisponiveis(){
 		
-		List<PdvRoteirizacaoDTO> listaPdvDTO = this.roteirizacaoService.obterPdvsDisponiveis();
+		List<PdvRoteirizacaoDTO> listaPdvDTO = this.roteirizacaoService.obterPdvsDisponiveis(null,null,null,null,null);
 		
 		Assert.assertTrue(listaPdvDTO!=null);
 		
 		Assert.assertTrue(listaPdvDTO.size()>0);
 		
-		Assert.assertEquals(listaPdvDTO.size(), 2);
+		Assert.assertEquals(listaPdvDTO.size(), 1);
 	}
 	
 

@@ -42,6 +42,8 @@ public class ProdutoRecolhimentoVO {
 	
 	private BigDecimal encalheAtendida;
 	
+	private BigDecimal encalheAlternativo;
+	
 	private BigDecimal encalhe;
 	
 	private BigDecimal valorTotal;
@@ -258,6 +260,20 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setEncalheAtendida(BigDecimal encalheAtendida) {
 		this.encalheAtendida = encalheAtendida;
+	}
+
+	/**
+	 * @return the encalheAlternativo
+	 */
+	public BigDecimal getEncalheAlternativo() {
+		return encalheAlternativo;
+	}
+
+	/**
+	 * @param encalheAlternativo the encalheAlternativo to set
+	 */
+	public void setEncalheAlternativo(BigDecimal encalheAlternativo) {
+		this.encalheAlternativo = encalheAlternativo;
 	}
 
 	/**

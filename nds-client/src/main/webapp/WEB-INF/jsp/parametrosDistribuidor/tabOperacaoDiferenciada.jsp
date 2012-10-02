@@ -5,7 +5,7 @@
 
        <table class="gruposGrid"></table>
        
-       <span class="bt_novos" title="Incluir Novo"><a href="javascript:;" onclick="OperacaoDiferenciadaController.novoGrupo();" rel="tipsy" title="Incluir Novo Grupo"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" /></a></span>
+       <span class="bt_novos"><a href="javascript:;" onclick="OperacaoDiferenciadaController.novoGrupo();" rel="tipsy" title="Incluir Novo Grupo"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" /></a></span>
        
    </fieldset>
    <br clear="all" />

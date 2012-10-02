@@ -769,6 +769,9 @@ public class MatrizRecolhimentoController {
 			produtoRecolhimentoVO.setEncalheAtendida(
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAtendida(), 2));
 				
+			produtoRecolhimentoVO.setEncalheAlternativo(
+				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
+			
 			produtoRecolhimentoVO.setEncalhe(
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalhe(), 2));
 			
@@ -887,6 +890,9 @@ public class MatrizRecolhimentoController {
 		
 		produtoRecolhimentoFormatado.setEncalheAtendida(
 			(produtoRecolhimento.getEncalheAtendida() != null) ? produtoRecolhimento.getEncalheAtendida().toString() : null);
+		
+		produtoRecolhimentoFormatado.setEncalheAlternativo(
+			(produtoRecolhimento.getEncalheAlternativo() != null) ? produtoRecolhimento.getEncalheAlternativo().toString() : null);
 			
 		produtoRecolhimentoFormatado.setEncalhe(
 			(produtoRecolhimento.getEncalhe() != null) ? produtoRecolhimento.getEncalhe().toString() : null);
@@ -1300,7 +1306,17 @@ public class MatrizRecolhimentoController {
 			confirmacoesVO.add(
 				new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
 		}
+		
 		return confirmacoesVO;
+	}
+	
+	@Post
+	public void excluirBalanceamento(Long idLancamento) {
+
+		this.recolhimentoService.excluiBalanceamento(idLancamento);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+			"Balanceamento excluído com sucesso!"), "result").recursive().serialize();
 	}
 	
 }

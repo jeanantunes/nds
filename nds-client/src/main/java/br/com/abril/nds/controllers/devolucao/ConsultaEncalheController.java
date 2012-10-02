@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,12 +12,14 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.client.vo.ConsultaEncalheDetalheVO;
 import br.com.abril.nds.client.vo.ConsultaEncalheVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheDetalheVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheVO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -30,9 +33,11 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -79,6 +84,9 @@ public class ConsultaEncalheController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private ConferenciaEncalheService conferenciaEncalheService;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalhe";
 	
@@ -389,7 +397,17 @@ public class ConsultaEncalheController {
 	 */
 	private void carregarResultadoConsultaEncalhe(ResultadoConsultaEncalheVO resultadoPesquisa, InfoConsultaEncalheDTO infoConsultaEncalhe) {
 		
-		//TODO:Buscar Campos de rodapé
+		String valorReparte = ( infoConsultaEncalhe.getValorReparte() != null ) ? infoConsultaEncalhe.getValorReparte().toString() : "0" ; 
+		String valorEncalhe = ( infoConsultaEncalhe.getValorEncalhe() != null ) ? infoConsultaEncalhe.getValorEncalhe().toString() : "0" ;
+		String valorVendaDia = ( infoConsultaEncalhe.getValorVendaDia() != null ) ? infoConsultaEncalhe.getValorVendaDia().toString() : "0" ;
+		String valorDebitoCredito = ( infoConsultaEncalhe.getValorDebitoCredito() != null ) ? infoConsultaEncalhe.getValorDebitoCredito().toString() : "0" ;
+		String valorPagar = ( infoConsultaEncalhe.getValorPagar() != null ) ? infoConsultaEncalhe.getValorPagar().toString() : "0" ;
+		
+		resultadoPesquisa.setValorReparte(valorReparte);
+		resultadoPesquisa.setValorEncalhe(valorEncalhe);
+		resultadoPesquisa.setValorVendaDia(valorVendaDia);
+		resultadoPesquisa.setValorDebitoCredito(valorDebitoCredito);
+		resultadoPesquisa.setValorPagar(valorPagar);
 		
 	}
 	
@@ -421,6 +439,32 @@ public class ConsultaEncalheController {
 		tratarFiltroDetalhe(filtro);
 		
 		efetuarPesquisaDetalhe(filtro);
+		
+	}
+	
+	public void gerarSlip() {
+		
+//		DadosDocumentacaoConfEncalheCotaDTO dadosDocumentacaoConfEncalheCota = ;
+		
+		
+		/*byte[] retorno = null; 
+		
+		if(dadosDocumentacaoConfEncalheCota.isUtilizaSlipBoleto() && 
+				dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
+				!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
+			
+			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
+			byte[] boletoOuRecibo = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO);
+						
+			retorno = PDFUtil.mergePDFs(slip, boletoOuRecibo);
+			
+			escreverArquivoParaResponse(retorno, "slipBoleto");
+		} else {
+			
+			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
+			
+			escreverArquivoParaResponse(slip, "slip");
+		}*/
 		
 	}
 
@@ -686,5 +730,20 @@ public class ConsultaEncalheController {
 		session.setAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE, filtro);
 	}
 	
-	
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
+		
+		this.httpResponse.setContentType("application/pdf");
+		
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		
+		output.write(arquivo);
+
+		httpResponse.getOutputStream().close();
+		
+		result.use(Results.nothing());
+		
+	}
+
 }
