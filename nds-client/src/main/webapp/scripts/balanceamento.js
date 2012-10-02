@@ -74,7 +74,7 @@ function Balanceamento(pathTela, descInstancia) {
 	this.popup_detalhes_prod = function(dialog){
 		$( dialog ).dialog({
 			resizable: false,
-			height:300,
+			height:400,
 			width:760,
 			modal: true,
 			buttons: [
