@@ -55,6 +55,11 @@ public class RoteirizacaoDTO implements Serializable{
     private List<RoteiroRoteirizacaoDTO> todosRoteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
     
     /**
+     * Coleção de identificadores de roteiros para exclusão
+     */
+    private List<Long> roteirosExclusao = new ArrayList<Long>();
+    
+    /**
      * Cotas destinadas a copia para determinada rota.
      */
     private RotaRoteirizacaoDTO rotaCotasCopia;
@@ -148,7 +153,31 @@ public class RoteirizacaoDTO implements Serializable{
 	public void setRotaCotasCopia(RotaRoteirizacaoDTO rotaCotasCopia) {
 		this.rotaCotasCopia = rotaCotasCopia;
 	}
+	
+	public List<RoteiroRoteirizacaoDTO> getTodosRoteiros() {
+        return todosRoteiros;
+    }
+	
+    /**
+     * @return the roteirosExclusao
+     */
+    public List<Long> getRoteirosExclusao() {
+        return roteirosExclusao;
+    }
 
+
+    /**
+     * Adiciona o identificador do roteiro para exclusão
+     * 
+     * @param idRoteiro
+     *            identificador do roteiro
+     */
+	public void addRoteiroExclusao(Long idRoteiro) {
+	    if (roteirosExclusao == null) {
+	        roteirosExclusao = new ArrayList<Long>();
+	    }
+	    roteirosExclusao.add(idRoteiro);
+	}
 
 	/**
 	 * Adiciona um novo roteiro à roteirização

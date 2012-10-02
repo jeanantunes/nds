@@ -16,7 +16,7 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	
 	private Boolean selecionado;
 	
-	private List<PdvRoteirizacaoDTO> pdvs;
+	private List<PdvRoteirizacaoDTO> pdvs = new ArrayList<PdvRoteirizacaoDTO>();
 	
 	public RotaRoteirizacaoDTO() {
 	}

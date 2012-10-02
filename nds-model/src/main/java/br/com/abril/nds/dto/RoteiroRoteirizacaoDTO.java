@@ -85,6 +85,10 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 		this.rotas = listaRota;
 	}
 	
+	public List<RotaRoteirizacaoDTO> getTodasRotas() {
+        return todasRotas;
+    }
+	
 	/**
 	 * Adiciona uma nova rota ao roteiro
 	 * @param rota rota para inclusão

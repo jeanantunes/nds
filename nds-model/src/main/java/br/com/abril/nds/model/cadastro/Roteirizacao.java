@@ -13,6 +13,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
+
 @Entity
 @Table(name = "ROTEIRIZACAO")
 @SequenceGenerator(name="ROTEIRIZACAO_SEQ", initialValue = 1, allocationSize = 1)
@@ -30,6 +34,7 @@ public class Roteirizacao {
 	
 	@OneToMany
 	@JoinColumn( name="ROTEIRIZACAO_ID")
+	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
 	
 	public Long getId() {
@@ -76,6 +81,7 @@ public class Roteirizacao {
 		if (roteiros == null) {
 			roteiros = new ArrayList<Roteiro>();
 		}
+		roteiro.setRoteirizacao(this);
 		roteiros.add(roteiro);
 	}
 	
@@ -89,4 +95,10 @@ public class Roteirizacao {
 		}
 		roteiros.addAll(listaRoteiro);
 	}
+
+    public void desassociarRoteiros(List<Long> idsRoteiros) {
+        Iterator<Roteiro> iterator = roteiros.iterator();
+        
+        
+    }
 }

@@ -52,7 +52,15 @@ public class Rota implements Serializable {
 	@Column(name="ORDEM", nullable = false)
 	private Integer ordem;
 	
-	public Long getId() {
+    public Rota() {
+    }
+	
+	public Rota(String descricaoRota, Integer ordem) {
+        this.descricaoRota = descricaoRota;
+        this.ordem = ordem;
+    }
+
+    public Long getId() {
 		return id;
 	}
 
