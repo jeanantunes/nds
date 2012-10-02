@@ -134,7 +134,7 @@ var cotaAusenteController = $.extend(true, {
 	gerarBotaoExcluir : function(idCotaAusente) {
 		
 		if(idCotaAusente) {
-			return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
+			return "<a href=\"javascript:;\" onclick=\"cotaAusenteController.popup_excluir("+idCotaAusente+");\"> "+
 			 "<img src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
 		} else {
 			return  "<img style=\"opacity: 0.5\" src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" />";
@@ -172,7 +172,8 @@ var cotaAusenteController = $.extend(true, {
 					$("#idNomeNovaCota", cotaAusenteController.workspace).attr("value","");
 					
 					$( this ).dialog( "close" );
-				}
+				},
+				form: $("#dialog-novo", cotaAusenteController.workspace).parents("form")
 			}
 		});
 	},
@@ -204,7 +205,8 @@ var cotaAusenteController = $.extend(true, {
 						
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-confirm", cotaAusenteController.workspace ).parents("form")
 			});
 	},
 
@@ -548,7 +550,8 @@ var cotaAusenteController = $.extend(true, {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $( "#dialog-novo", cotaAusenteController.workspace ).parents("form")
 			});
 	},	
 
@@ -583,7 +586,8 @@ var cotaAusenteController = $.extend(true, {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $( "#dialog-excluir", cotaAusenteController.workspace ).parents("form")
 			});
 	},
 
