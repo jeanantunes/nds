@@ -1024,6 +1024,20 @@ public class RoteirizacaoController {
 		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
 	}
 	
+	@Post
+	public void copiarCotasRota(RotaRoteirizacaoDTO rotaCopia) {
+
+		RoteirizacaoDTO roteirizacao = this.getDTO();
+		
+		roteirizacao.setRotaCotasCopia(rotaCopia);
+
+		setDTO(roteirizacao);
+
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cópia realizada com sucesso.");
+		
+		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
+	}
+	
 	private void adicionarRoteiro(Integer ordem, String nome){
 		
 		Long novoId = -1L;
