@@ -71,7 +71,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		query.setParameter("data", filtro.getDataMovimentacao());
+		query.setDate("data", filtro.getDataMovimentacao());
 		if(filtro.getIdFornecedor() != -1) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
@@ -106,7 +106,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("data", filtro.getDataMovimentacao());
+		query.setDate("data", filtro.getDataMovimentacao());
 		if(filtro.getIdFornecedor() != -1) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
@@ -166,11 +166,9 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 	@Override
 	public List<VisaoEstoqueDetalheJuramentadoDTO> obterVisaoEstoqueDetalheJuramentado(FiltroConsultaVisaoEstoque filtro) {
 		
-		String coluna = this.getColunaQtde(filtro.getTipoEstoque());
-		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT co.numeroCota as cota")
-		   .append("       ,co.pessoa.nome as nome")
+		   .append("       ,pess.nome as nome")
 		   .append("       ,pe.id as produtoEdicaoId")
 		   .append("       ,pe.codigo as codigo")
 		   .append("       ,pe.nomeComercial as produto")
@@ -178,15 +176,16 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		   .append("       ,pe.precoVenda as precoCapa")
 		   .append("       ,lan.dataLancamentoDistribuidor as lcto")
 		   .append("       ,lan.dataRecolhimentoDistribuidor as rclto")
-		   .append("       ,ep." + coluna + " as qtde")
+		   .append("       ,ep.qtde as qtde")
 		   .append("   FROM EstoqueProdutoCotaJuramentado as ep ")
 		   .append("   JOIN ep.cota as co ")
+		   .append("   JOIN co.pessoa as pess ")
 		   .append("   JOIN ep.produtoEdicao as pe ")
 		   .append("   JOIN pe.lancamentos as lan ");
 		if(filtro.getIdFornecedor() != -1) {
 			hql.append("   JOIN pe.produto.fornecedores f ");
 		}
-		hql.append("  WHERE ep." + coluna + " > 0 ");
+		hql.append("  WHERE ep.qtde > 0 ");
 		hql.append("    AND ep.data = :data ");
 		if(filtro.getIdFornecedor() != -1) {
 			hql.append("    AND f.id = :idFornecedor ");
@@ -194,7 +193,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("data", filtro.getDataMovimentacao());
+		query.setDate("data", filtro.getDataMovimentacao());
 		if(filtro.getIdFornecedor() != -1) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}

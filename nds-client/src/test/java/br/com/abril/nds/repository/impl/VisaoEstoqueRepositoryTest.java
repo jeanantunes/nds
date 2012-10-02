@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
@@ -56,5 +57,18 @@ public class VisaoEstoqueRepositoryTest extends AbstractRepositoryImplTest {
 		VisaoEstoqueDTO dto = visaoEstoqueRepository.obterVisaoEstoqueJuramentado(filtro);
 		
 		Assert.assertTrue(dto != null);
+	}
+	
+	
+	@Test 
+	public void obterVisaoEstoqueDetalheJuramentado() {
+		
+		FiltroConsultaVisaoEstoque filtro = new FiltroConsultaVisaoEstoque();
+		filtro.setDataMovimentacao(new Date());
+		filtro.setIdFornecedor(-1L);
+		
+		List<VisaoEstoqueDetalheJuramentadoDTO> list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
+		
+		Assert.assertTrue(list != null && !list.isEmpty());
 	}
 }

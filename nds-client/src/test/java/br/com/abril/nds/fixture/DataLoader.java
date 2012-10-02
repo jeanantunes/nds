@@ -3518,9 +3518,9 @@ public class DataLoader {
 	}
 	
 	private static void criarEstoquesProdutosCotaJuramentados(Session session) {
-		estoqueProdutoCotaJuramentadoVeja = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoVeja1, cotaAcme, BigInteger.TEN);
+		estoqueProdutoCotaJuramentadoVeja = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoVeja1, cotaMaria, BigInteger.TEN);
 		
-		estoqueProdutoCotaJuramentadoCapricho = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoCapricho1, cotaAcme, BigInteger.TEN);
+		estoqueProdutoCotaJuramentadoCapricho = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoCapricho1, cotaMaria, BigInteger.TEN);
 		
 		estoqueProdutoCotaJuramentadoInfoExame = Fixture.estoqueProdutoCotaJuramentado(new Date(), produtoEdicaoInfoExame1, cotaJoao, BigInteger.TEN);
 		
