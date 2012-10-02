@@ -57,7 +57,7 @@ public class RoteirizacaoDTO implements Serializable{
     /**
      * Cotas destinadas a copia para determinada rota.
      */
-    private RotaRoteirizacaoDTO rotaCotasCopia;
+    private List<RotaRoteirizacaoDTO> rotaCotasCopia;
     
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
@@ -138,14 +138,14 @@ public class RoteirizacaoDTO implements Serializable{
 	/**
 	 * @return the rotaCotasCopia
 	 */
-	public RotaRoteirizacaoDTO getRotaCotasCopia() {
+	public List<RotaRoteirizacaoDTO> getRotaCotasCopia() {
 		return rotaCotasCopia;
 	}
 
 	/**
 	 * @param rotaCotasCopia the rotaCotasCopia to set
 	 */
-	public void setRotaCotasCopia(RotaRoteirizacaoDTO rotaCotasCopia) {
+	public void setRotaCotasCopia(List<RotaRoteirizacaoDTO> rotaCotasCopia) {
 		this.rotaCotasCopia = rotaCotasCopia;
 	}
 
