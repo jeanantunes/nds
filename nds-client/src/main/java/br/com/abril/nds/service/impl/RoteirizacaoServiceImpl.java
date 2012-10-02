@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.LogBairro;
 import br.com.abril.nds.model.LogLocalidade;
 import br.com.abril.nds.model.cadastro.Box;
@@ -36,6 +37,7 @@ import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
@@ -612,8 +614,46 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
      */
 	@Override
     @Transactional
-    public void confirmarRoteirizacao(RoteirizacaoDTO dto) {
-       //TODO: Implementar informações de roteirização
+    public Roteirizacao confirmarRoteirizacao(RoteirizacaoDTO dto) {
+	    Roteirizacao roteirizacao = null;
+	    TipoRoteiro tipoRoteiro = TipoRoteiro.ESPECIAL;
+	    BoxRoteirizacaoDTO boxDTO = dto.getBox();
+	    if (dto.isNovo()) {
+	        roteirizacao = new Roteirizacao();
+	        if (!BoxRoteirizacaoDTO.ESPECIAL.equals(boxDTO)) {
+	            tipoRoteiro = TipoRoteiro.NORMAL;
+	            Box box = boxRepository.buscarPorId(boxDTO.getId());
+	            Roteirizacao existente = roteirizacaoRepository.obterRoteirizacaoPorBox(box.getId());
+	            if (existente != null) {
+	                throw new ValidacaoException(TipoMensagem.ERROR, "Box já está associado a uma Roteirização!");
+	            }
+	            roteirizacao.setBox(box);
+	        } 
+	        for (RoteiroRoteirizacaoDTO roteiroDTO : dto.getTodosRoteiros()) {
+	            Roteiro roteiro = new Roteiro(roteiroDTO.getNome(), roteiroDTO.getOrdem(), tipoRoteiro);
+                roteirizacao.addRoteiro(roteiro);
+                for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getRotas()) {
+                    Rota rota = new Rota(rotaDTO.getNome(), rotaDTO.getOrdem());
+                    roteiro.addRota(rota);
+                    for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
+                        PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
+                        rota.addPDV(pdv, pdvDTO.getOrdem());
+                    } 
+                }
+	        }
+	        roteirizacaoRepository.adicionar(roteirizacao);
+	    } else {
+	        roteirizacao = roteirizacaoRepository.buscarPorId(dto.getId());
+	        roteirizacao.desassociarRoteiros(dto.getRoteirosExclusao());
+	        for (RoteiroRoteirizacaoDTO roteiroDTO : dto.getTodosRoteiros()) {
+	            if (roteiroDTO.isNovo()) {
+	                Roteiro roteiro = new Roteiro(roteiroDTO.getNome(), roteiroDTO.getOrdem(), tipoRoteiro);
+	                roteirizacao.addRoteiro(roteiro);
+	            }
+	        }
+	        roteirizacaoRepository.alterar(roteirizacao);
+	    }
+	    return roteirizacao;
     }
 	
 }

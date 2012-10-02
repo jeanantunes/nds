@@ -222,8 +222,9 @@ public interface RoteirizacaoService {
      * Processa as informações de roteirização 
      * armazenadas no DTO
      * @param dto dto com as informações de Roteirização
+     * @return {@link Roteirizacao} roteirização confirmada
      */
-	void confirmarRoteirizacao(RoteirizacaoDTO dto);
+	Roteirizacao confirmarRoteirizacao(RoteirizacaoDTO dto);
 
 }
 	

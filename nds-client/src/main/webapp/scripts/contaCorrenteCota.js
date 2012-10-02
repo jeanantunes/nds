@@ -70,6 +70,9 @@ var contaCorrenteCotaController = $.extend(true, {
 
 		$(".itemContaCorrenteCotaGrid", contaCorrenteCotaController.workspace).flexReload();
 		
+		$("#bt_email", contaCorrenteCotaController.workspace).show();
+
+		
 	},
 
 	/**
@@ -217,6 +220,70 @@ var contaCorrenteCotaController = $.extend(true, {
 			return data;
 		}	
 
+	},
+	
+	/**
+	 * ENVIA EMAIL
+	 */
+	enviarEmail : function(){
+		
+		var params = $('#form-email', contaCorrenteCotaController.workspace).serialize();
+
+		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/enviarEmail',
+				params,
+				function(result) {
+					
+				},
+				function() {
+					
+				}
+			
+		);
+		
+	},
+	
+	/**
+	 * POSSIBILITA EDITAR EMAIL
+	 */
+	editarEmail : function(){
+		var editar = $("#emailCotaEmail");
+		
+		
+		if(editar.is("[readonly]")){
+			editar.removeAttr("readonly");
+			
+		}else{
+			editar.attr("readonly", true);
+		}
+		
+		
+	},
+	
+	/**
+	 * CARREGA DADOS DA COTA PARA O ENVIO DO EMAIL
+	 */
+	carregarDadosEmail : function(){
+		
+		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();
+		var nomeCota = $("#nomeCota", contaCorrenteCotaController.workspace).val();
+		
+		var parametroPesquisa = [{name:'numeroCota', value:numeroCota}];
+		
+		$("#numeroCotaEmail", contaCorrenteCotaController.workspace).val(numeroCota);
+		$("#nomeCotaEmail", contaCorrenteCotaController.workspace).val(nomeCota);
+	
+		
+		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/pesquisarEmailCota',
+				parametroPesquisa,
+				function(result) {
+					$("#emailCotaEmail").val(result);
+				},
+				function() {
+					
+				}
+			
+		);
+		
 	},
 
 
@@ -561,6 +628,34 @@ var contaCorrenteCotaController = $.extend(true, {
 			},
 			form: $("#dialog-encargos", this.workspace).parents("form")
 		});
+	},
+	
+	popup_email : function() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		contaCorrenteCotaController.carregarDadosEmail();
+		$("#dialog-email", contaCorrenteCotaController.workspace ).dialog({
+			resizable: false,
+			height:400,
+			width:490,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					contaCorrenteCotaController.enviarEmail();
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+
+				}
+				
+				
+			},
+			form: $("#dialog-email", this.workspace).parents("form")
+		});	
+		$("#copiaParaCotaEmail").val("");
+		$("#mensagemCotaEmail").val("");
+		$("#emailCotaEmail").attr("readonly", true);
 	}
 	
 }, BaseController);
