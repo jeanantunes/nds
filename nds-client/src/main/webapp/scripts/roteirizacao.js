@@ -362,8 +362,8 @@ var roteirizacao = $.extend(true, {
         },
         
         popularInfoCotasRota : function() {
-        	var info = '<strong>Box: </strong>' + roteirizacao.idBox;
-        	info += ' <strong>- Roteiro Selecionado: </strong>' + roteirizacao.nomeRoteiro;
+        	var info = '<strong>Box: </strong>' + roteirizacao.idBox + '-' + roteirizacao.nomeBox;
+        	info += ' <strong> - Roteiro Selecionado: </strong>' + roteirizacao.nomeRoteiro;
         	info += ' <strong> - Rota: </strong>' + roteirizacao.nomeRota;
         	$('#cotasRota', roteirizacao.workspace).html(info);
         },
@@ -399,8 +399,9 @@ var roteirizacao = $.extend(true, {
                     $.each(data.rows, function(index, value) {
                         
                         var id = value.cell.id;
+                        var nome = value.cell.nome;
                         var selecione = '<input type="radio" value="' + id +'" name="boxRadio" ';
-                        selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  id  + '\');"';
+                        selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  id  + '\',\'' + nome + '\');"';
                         if (id == roteirizacao.idBox) {
                             selecione += 'checked';
                         }
@@ -458,22 +459,23 @@ var roteirizacao = $.extend(true, {
             roteirizacao.limparGridCotasRota();
         },
 
-        boxSelecionadoListener : function(idBox) {
+        boxSelecionadoListener : function(idBox, nomeBox) {
             var isBoxSelecionado = roteirizacao.idBox != "";
             if (isBoxSelecionado) {
               var dialog = new ConfirmDialog("Ao alterar o Box selecionado as informações não confirmadas serão perdidas.<br/>Confirma?", function() {
-                 roteirizacao.processarAlteracaoBox(idBox);
+                 roteirizacao.processarAlteracaoBox(idBox, nomeBox);
                  return true;
               }, function() {
               });
               dialog.open();
             } else {
-                roteirizacao.processarAlteracaoBox(idBox);
+                roteirizacao.processarAlteracaoBox(idBox, nomeBox);
             }
         },
 
-        processarAlteracaoBox : function(idBox) {
+        processarAlteracaoBox : function(idBox, nomeBox) {
             roteirizacao.idBox = idBox;
+            roteirizacao.nomeBox = nomeBox;
             roteirizacao.idRoteiro = "";
             roteirizacao.idRota = "";
             roteirizacao.limparInfoCotasRota();
