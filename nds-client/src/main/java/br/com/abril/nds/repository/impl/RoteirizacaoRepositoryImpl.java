@@ -41,13 +41,15 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select roteirizacao from Roteirizacao roteirizacao " )
-			.append(" join roteirizacao.pdv pdv " )
+			.append(" join roteirizacao.roteiros roteiro " )
+			.append(" join roteiro.rotas rota ")
+			.append(" join rota.rotaPDVs rpdv " )
+			.append(" join rpdv.pdv pdv " )
 			.append(" join pdv.cota cota " )
-			.append(" join roteirizacao.rota rota " )
-			.append(" join rota.roteiro roteiro ")
+			
 			.append(" where pdv.caracteristicas.pontoPrincipal=:pontoPrincipal ")
 			.append(" and cota.numeroCota=:numeroCota ")
-			.append(" and roteiro.tipoRoteiro=:tipoRoteiro");
+			.append(" and roteiro.tipoRoteiro = :tipoRoteiro");
 		
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("pontoPrincipal", Boolean.TRUE);

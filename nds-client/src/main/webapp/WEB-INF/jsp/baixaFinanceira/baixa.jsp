@@ -362,69 +362,71 @@
 			    <p>Deseja confirmar Baixa Manual ?</p>
 		    </div>
 		
-			<div id="dialog-baixa-dividas" title="Baixa Bancária">
-			
-			    
-			    <jsp:include page="../messagesDialog.jsp"></jsp:include>
-			    
-			
-				<table width="433" border="0" cellpadding="2" cellspacing="2">
-				  <tr>
-				    <td width="153"><strong>Valor Dívida R$:</strong>
+			<div id="div-baixa-dividas">
+				
+				<div id="dialog-baixa-dividas" title="Baixa Bancária">
+				
 				    
-				    </td>
-				    <td width="266" id="valorDividas" ></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Multa R$:</strong></td>
-				    <td><input  maxlength="16" id="multaDividas" name="multaDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Juros R$:</strong></td>
-				    <td><input maxlength="16" id="jurosDividas" name="jurosDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Desconto R$:</strong></td>
-				    <td><input maxlength="16" id="descontoDividas" name="descontoDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Valor pago R$:</strong></td>
-				    <td><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" onblur="baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
-				  </tr>
-				  <tr>
-				    <td>&nbsp;</td>
-				    <td style="border-bottom:1px solid #000;">&nbsp;</td>
-				  </tr>
-				  <tr>
-				    <td><strong>Saldo R$:</strong></td>
-				    <td id="valorSaldoDividas" ></td>
-				  </tr>
-				  
-				  
-				  <tr>
-				    <td><strong>Forma Recebimento:</strong></td>
-				    <td>
-				        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas" style="width:150px;">
-	                        <option value="">Selecione</option>
-	                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
-			                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
-			                </c:forEach>
-	                    </select> 
-				    </td>
-				  </tr>
-				  
-				  
-				  <tr>
-				    <td>&nbsp;</td>
-				    <td align="right"></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Observação:</strong></td>
-				    <td><textarea maxlength="150" name="observacoesDividas" id="observacoesDividas" cols="45" rows="3" style="width:260px;"></textarea></td>
-				  </tr>
-				</table>
-			</div>
-
+				    <jsp:include page="../messagesDialog.jsp"></jsp:include>
+				    
+				
+					<table width="433" border="0" cellpadding="2" cellspacing="2">
+					  <tr>
+					    <td width="153"><strong>Valor Dívida R$:</strong>
+					    
+					    </td>
+					    <td width="266" id="valorDividas" ></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Multa R$:</strong></td>
+					    <td><input  maxlength="16" id="multaDividas" name="multaDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Juros R$:</strong></td>
+					    <td><input maxlength="16" id="jurosDividas" name="jurosDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Desconto R$:</strong></td>
+					    <td><input maxlength="16" id="descontoDividas" name="descontoDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Valor pago R$:</strong></td>
+					    <td><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" onblur="baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					  </tr>
+					  <tr>
+					    <td>&nbsp;</td>
+					    <td style="border-bottom:1px solid #000;">&nbsp;</td>
+					  </tr>
+					  <tr>
+					    <td><strong>Saldo R$:</strong></td>
+					    <td id="valorSaldoDividas" ></td>
+					  </tr>
+					  
+					  
+					  <tr>
+					    <td><strong>Forma Recebimento:</strong></td>
+					    <td>
+					        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas" style="width:150px;">
+		                        <option value="">Selecione</option>
+		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
+				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
+				                </c:forEach>
+		                    </select> 
+					    </td>
+					  </tr>
+					  
+					  
+					  <tr>
+					    <td>&nbsp;</td>
+					    <td align="right"></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Observação:</strong></td>
+					    <td><textarea maxlength="150" name="observacoesDividas" id="observacoesDividas" cols="45" rows="3" style="width:260px;"></textarea></td>
+					  </tr>
+					</table>
+				</div>
+           </div>  
 
 
 			<div id="dialog-detalhes-divida" title="Detalhes da Dívida">
