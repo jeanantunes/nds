@@ -32,6 +32,7 @@ var roteirizacao = $.extend(true, {
         idBox : "",
         idRoteiro: "",
         idRota: "",
+        nomeBox: "",
         nomeRoteiro : "",
         pdvsSelecionados: [],
         nomeRota : "",
@@ -347,6 +348,7 @@ var roteirizacao = $.extend(true, {
             } else {
                 $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
             }
+            roteirizacao.limparGridCotasRota();
             roteirizacao.limparInfoCotasRota();
         },
 
@@ -373,20 +375,23 @@ var roteirizacao = $.extend(true, {
 
         limparGridRotas : function() {
             roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
+            roteirizacao.limparInfoCotasRota();
             $(".rotasGrid", roteirizacao.workspace).flexAddData({rows:[], page:0, total:0});
         },
 
         pesquisarRotas : function() {
-            
+            roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
+            roteirizacao.limparInfoCotasRota();
+            roteirizacao.limparGridCotasRota();
+
             $(".rotasGrid", roteirizacao.workspace).flexOptions({
                 url : contextPath + "/cadastro/roteirizacao/recarregarRotas",
                 params: [{name: 'idRoteiro', value: roteirizacao.idRoteiro},
                          {name: 'descricaoRota', value: $('#descricaoRota', roteirizacao.workspace).val()}]
             });
-
             $(".rotasGrid", roteirizacao.workspace).flexReload();
-            roteirizacao.idRota = "";
-            roteirizacao.limparGridCotasRota();
         },
         
         iniciarGridBox : function(){
@@ -595,6 +600,8 @@ var roteirizacao = $.extend(true, {
         roteiroSelecionadoListener : function(idRoteiro, descricaoRoteiro) {
             roteirizacao.idRoteiro = idRoteiro;
             roteirizacao.nomeRoteiro = descricaoRoteiro;
+            roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
             roteirizacao.definirTransferenciaRoteiro();
             roteirizacao.popularGridRotas();
             roteirizacao.tipoInclusao = TipoInclusao.ROTA;
