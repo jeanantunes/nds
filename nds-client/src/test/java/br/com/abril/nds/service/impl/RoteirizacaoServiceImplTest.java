@@ -465,6 +465,17 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
             Assert.assertTrue(ex.getValidacao().getListaMensagens().contains("Box já está associado a uma Roteirização!"));
         }
     }
+	
+	@Test
+    public void confirmaRoteirizacaoExistente() {
+        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(this.roteirizacao, Arrays.asList(box1));
+        roteirizacaoDTO.addRoteiroExclusao(roteiro3.getId());
+        
+        roteirizacaoService.confirmarRoteirizacao(roteirizacaoDTO);
+        flushClear();
+        Roteirizacao roteirizacao = (Roteirizacao) getSession().get(Roteirizacao.class, this.roteirizacao.getId());    
+    }
+
 
 
 }

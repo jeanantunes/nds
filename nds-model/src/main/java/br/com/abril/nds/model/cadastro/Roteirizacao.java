@@ -1,6 +1,8 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -32,7 +34,7 @@ public class Roteirizacao {
 	@JoinColumn(name = "BOX_ID", unique = true)
 	private Box box;
 	
-	@OneToMany
+	@OneToMany(orphanRemoval = true)
 	@JoinColumn( name="ROTEIRIZACAO_ID")
 	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
@@ -96,9 +98,21 @@ public class Roteirizacao {
 		roteiros.addAll(listaRoteiro);
 	}
 
-    public void desassociarRoteiros(List<Long> idsRoteiros) {
+    /**
+     * Desassocia os roteiros da roteirização de acordo com os identificadores
+     * recebidos
+     * 
+     * @param idsRoteiros
+     *            identificadores dos roteiros para desassociação
+     */
+	public void desassociarRoteiros(Collection<Long> idsRoteiros) {
         Iterator<Roteiro> iterator = roteiros.iterator();
-        
-        
+        while(iterator.hasNext()) {
+            Roteiro roteiro = iterator.next();
+            if (idsRoteiros.contains(roteiro.getId())) {
+                
+                iterator.remove();
+            }
+        }
     }
 }

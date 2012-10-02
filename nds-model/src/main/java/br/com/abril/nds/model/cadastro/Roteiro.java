@@ -38,12 +38,12 @@ public class Roteiro implements Serializable {
 	private String descricaoRoteiro;
 	
 	@ManyToOne
-	@JoinColumn(name = "ROTEIRIZACAO_ID", nullable = false )
+	@JoinColumn(name = "ROTEIRIZACAO_ID")
 	private Roteirizacao roteirizacao;
 	
-	@OneToMany
+	@OneToMany(orphanRemoval = true)
 	@JoinColumn( name="ROTEIRO_ID")
-	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
+	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE, CascadeType.DELETE})
 	private List<Rota> rotas = new ArrayList<Rota>();
 	
 	@Column(name="ORDEM", nullable = false)

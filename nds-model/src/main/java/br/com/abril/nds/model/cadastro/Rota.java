@@ -42,11 +42,11 @@ public class Rota implements Serializable {
 	private String descricaoRota;
 	
 	@ManyToOne
-	@JoinColumn(name = "ROTEIRO_ID", nullable = false )
+	@JoinColumn(name = "ROTEIRO_ID")
 	private Roteiro roteiro;
 	
-	@OneToMany(mappedBy = "rota")
-	@Cascade(value = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.SAVE_UPDATE})
+	@OneToMany(mappedBy = "rota", orphanRemoval = true)
+	@Cascade(value = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.SAVE_UPDATE, CascadeType.DELETE})
 	private List<RotaPDV> rotaPDVs =  new ArrayList<RotaPDV>();
 	
 	@Column(name="ORDEM", nullable = false)

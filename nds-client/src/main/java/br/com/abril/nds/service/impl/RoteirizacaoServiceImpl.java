@@ -637,9 +637,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	        roteirizacaoRepository.adicionar(roteirizacao);
 	    } else {
 	        roteirizacao = roteirizacaoRepository.buscarPorId(dto.getId());
+	        roteirizacao.desassociarRoteiros(dto.getRoteirosExclusao());
 	        
-	        
-	        roteirizacaoRepository.alterar(roteirizacao);
+	        roteirizacaoRepository.merge(roteirizacao);
 	    }
 	    return roteirizacao;
     }
