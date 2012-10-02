@@ -62,7 +62,9 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private BigDecimal expectativaEncalheSede;
 
 	private BigDecimal expectativaEncalheAtendida;
-
+	
+	private BigDecimal expectativaEncalheAlternativo;
+	
 	private BigDecimal expectativaEncalhe;
 
 	private BigDecimal valorTotal;
@@ -349,6 +351,21 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public void setExpectativaEncalheAtendida(BigDecimal expectativaEncalheAtendida) {
 		this.expectativaEncalheAtendida = expectativaEncalheAtendida;
+	}
+
+	/**
+	 * @return the expectativaEncalheAlternativo
+	 */
+	public BigDecimal getExpectativaEncalheAlternativo() {
+		return expectativaEncalheAlternativo;
+	}
+
+	/**
+	 * @param expectativaEncalheAlternativo the expectativaEncalheAlternativo to set
+	 */
+	public void setExpectativaEncalheAlternativo(
+			BigDecimal expectativaEncalheAlternativo) {
+		this.expectativaEncalheAlternativo = expectativaEncalheAlternativo;
 	}
 
 	/**

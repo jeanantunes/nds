@@ -2,7 +2,6 @@ package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 
@@ -47,11 +46,11 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	/**
 	 * Obtém uma lista de estoque de produto da cota de acordo o parâmetro informado.
 	 * 
-	 * @param idsLancamento - identificadores de lancamento
+	 * @param idLancamento - identificador do lancamento
 	 * 
 	 * @return {@link List<EstoqueProdutoCota>}
 	 */
-	List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Set<Long> idsLancamento);
+	List<EstoqueProdutoCota> buscarListaEstoqueProdutoCota(Long idLancamento);
 
 	BigDecimal obterConsignado(boolean cotaInadimplente);
 

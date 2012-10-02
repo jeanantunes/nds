@@ -194,6 +194,17 @@ var contaCorrenteCotaController = $.extend(true, {
 			
 			$.each(data.rows, function(index, value) {
 			
+			var valorPostergado = value.cell[1];
+			var dataRaizPostergado =  value.cell[11];			
+			if(dataRaizPostergado.length==0){
+				dataRaizPostergado = value.cell[0];
+			}
+			var valorPendente = value.cell[8];
+			var dataRaizPendente =  value.cell[12];
+			
+			if(dataRaizPendente.length==0){
+				dataRaizPendente = value.cell[0];
+			}
 			var consignado = value.cell[3];
 			var encalhe = value.cell[4];
 			var vendaEncalhe = value.cell[5];
@@ -209,6 +220,12 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell[5] = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell[10]+',\''+value.cell[0]+'\')"/>'+vendaEncalhe+'</a>'+hiddeFields;
 				value.cell[6] = '<a href="javascript:;"/>'+debCred+'</a>'+hiddeFields;
 				value.cell[7] = '<a href="javascript:;"/>'+encargos+'</a>'+hiddeFields;
+				
+				
+				
+				
+				value.cell[1] = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +valorPostergado +'</a></span>';
+				value.cell[8] = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'" href="javascript:;">' +valorPendente +'</a></span>';
 						
 			});
 			
@@ -359,7 +376,14 @@ var contaCorrenteCotaController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 'auto'
+			height : 'auto',
+			onSuccess : function () {
+				$('.itemContaCorrenteCotaGrid tr td', contaCorrenteCotaController.workspace).each( function(){ 
+					$('a', this).tipsy({gravity: 'sw'});
+				});  
+				return true;			
+			}  
+
 		});
 	},
 
