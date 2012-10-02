@@ -1918,7 +1918,7 @@ var roteirizacao = $.extend(true, {
             roteirizacao.idRoteirizacao = idRoteirizacao;
             roteirizacao.idRoteiro = idRoteiro;
             roteirizacao.idRota = idRota;
-
+            roteirizacao.limparCamposPesquisaGrids();
             roteirizacao.prepararPopupRoteirizacao();
 
 	    },
@@ -1993,7 +1993,7 @@ var roteirizacao = $.extend(true, {
 	         return result; 
 	
 	    },
-    
+
 	    novaRoteirizacao : function() {
             roteirizacao.idBox = "";
             roteirizacao.nomeBox = "";
@@ -2001,9 +2001,16 @@ var roteirizacao = $.extend(true, {
             roteirizacao.nomeRoteiro = "";
             roteirizacao.idRota = "";
             roteirizacao.nomeRota = "";
+            roteirizacao.limparCamposPesquisaGrids();
             roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
 	        roteirizacao.prepararPopupRoteirizacao();
 	    },
+
+        limparCamposPesquisaGrids : function() {
+            $('#nomeBox', roteirizacao.workspace).val('');
+            $('#descricaoRoteiro', roteirizacao.workspace).val('');
+            $('#descricaoRota', roteirizacao.workspace).val('');
+        },
 	        
 	    habilitaBotao: function(idBotao, funcao){
 	    	
