@@ -22,7 +22,7 @@ FROM cobranca
 INNER JOIN cota ON cota.id=cobranca.cota_ID
 WHERE cobranca.status_cobranca = 'NAO_PAGO' AND cobranca.DT_VENCIMENTO > (
 SELECT MAX(consolidado_financeiro_cota.DT_CONSOLIDADO)
-FROM consolidado_financeiro_cota))
+FROM consolidado_financeiro_cota));
 --Apaga a tabela criada na exportação do entidade (ViewDesconto)
 
 DROP TABLE IF EXISTS VIEW_DESCONTO;
