@@ -185,7 +185,7 @@
             
         </span>
         <br clear="all" />
-        <table class="cotasRotaGrid"></table>
+        <table class="cotasRotaGrid" id="cotasRotaGrid"></table>
 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
         <tr>
@@ -202,7 +202,7 @@
                      <img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a>
                 </span>
 
-                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="popup_copiar_cota();">
+                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="roteirizacao.abrirPopupCopiarCotas();">
                     <img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0"/>Copiar Cota</a>
                 </span>
 
@@ -343,5 +343,8 @@
 	      		</table>
 			</fieldset>
 		</div>
-
+	</form>
+	
+	<form id="formCopiaCotaRota">
+		<jsp:include page="copiarCotaDialog.jsp"></jsp:include>
 	</form>

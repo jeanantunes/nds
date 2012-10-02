@@ -53,7 +53,12 @@ public class RoteirizacaoDTO implements Serializable{
      * Todos os roteiros
      */
     private List<RoteiroRoteirizacaoDTO> todosRoteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
-
+    
+    /**
+     * Cotas destinadas a copia para determinada rota.
+     */
+    private RotaRoteirizacaoDTO rotaCotasCopia;
+    
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
@@ -129,8 +134,23 @@ public class RoteirizacaoDTO implements Serializable{
     public void setTipoEdicao(TipoEdicaoRoteirizacao tipoEdicao) {
         this.tipoEdicao = tipoEdicao;
     }
+    
+	/**
+	 * @return the rotaCotasCopia
+	 */
+	public RotaRoteirizacaoDTO getRotaCotasCopia() {
+		return rotaCotasCopia;
+	}
 
-    /**
+	/**
+	 * @param rotaCotasCopia the rotaCotasCopia to set
+	 */
+	public void setRotaCotasCopia(RotaRoteirizacaoDTO rotaCotasCopia) {
+		this.rotaCotasCopia = rotaCotasCopia;
+	}
+
+
+	/**
 	 * Adiciona um novo roteiro à roteirização
 	 * @param roteiro roteiro para inclusão
 	 */

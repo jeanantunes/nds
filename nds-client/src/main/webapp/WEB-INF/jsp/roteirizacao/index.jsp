@@ -51,7 +51,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
               </td>
                 <td width="54">Roteiro:</td>
                 <td width="209">
-                	<select name="roteiroPesquisa" id="roteiroPesquisa"  onchange="roteirizacao.carregarComboRota()" style="width: 200px;">
+                	<select name="roteiroPesquisa" id="roteiroPesquisa"  onchange="roteirizacao.carregarComboRota('rotaPesquisa')" style="width: 200px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="roteiro" items="${listaRoteiro}">
 							<option value="${roteiro.key}">${roteiro.value}</option>
