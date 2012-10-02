@@ -238,6 +238,11 @@ public class DataLoader {
 	private static PessoaFisica joao;
 	private static PessoaFisica luis;
 
+	private static Rota rota1;
+	private static Rota rota2;
+	private static Rota rota3;
+	private static Rota rota10;
+	
 	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
 	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
 	private static TipoMovimentoEstoque tipoMovimentoSobraEm;
@@ -2595,15 +2600,14 @@ public class DataLoader {
 		session.save(pdvcotaManoel2);
 		
 		List<PDV> pdvs = Arrays.asList(pdvcotaJose2,pdvcotaManoel2);
-
 		
-		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros,pdvs);
+		rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros,pdvs);
 		session.save(rota1);
 		
-		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos,pdvs);
+		rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos,pdvs);
 		session.save(rota2);
-		
-		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
+						
+		rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
 		session.save(rota10);
  
 	}
@@ -8059,12 +8063,14 @@ public class DataLoader {
 		Entregador entregador = Fixture.criarEntregador(
 				234L, true, new Date(),
 				BigDecimal.TEN, juridicaAcme, false, null);
-
+		
+		entregador.setRota(rota2);
 		save(session, juridicaAcme, entregador);
 
 		entregador = Fixture.criarEntregador(
 				123L, false, new Date(),
 				null, juridicaFc, false, null);
+		entregador.setRota(rota10);
 		save(session, juridicaFc, entregador);
 
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", "50", "Centro", "Mococa", "SP",3530508);
@@ -8101,6 +8107,7 @@ public class DataLoader {
 		entregador = Fixture.criarEntregador(
 				456L, false, new Date(),
 				null, maria, false, null);
+		entregador.setRota(rota1);
 
 		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", "10", "Centro", "São Paulo", "SP",3550308);
 

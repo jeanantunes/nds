@@ -91,6 +91,8 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
     public List<Roteiro> buscarRoteiroDeBox(Long idBox, String descricaoRoteiro) {
         Criteria criteria  = getSession().createCriteria(Roteiro.class);
         if (idBox != null) {
+        	criteria.createAlias("roteiro.roteirizacao", "roteirizacao");
+			criteria.createAlias("roteirizacao.box", "box");
             criteria.add(Restrictions.eq("box.id", idBox));
         }
         if (!StringUtil.isEmpty(descricaoRoteiro)) {
@@ -107,9 +109,10 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
 		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
 		
 		if(numeroCota != null) {
-			criteria.createAlias("roteiro.box", "box");
-			criteria.createAlias("box.cotas", "cotas");
-			criteria.add(Restrictions.eq("cotas.numeroCota", numeroCota));
+			criteria.createAlias("roteiro.rotas", "rotas");
+			criteria.createAlias("rotas.pdvs", "pdvs");
+			criteria.createAlias("pdvs.cota", "cota");
+			criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
 		}
 		
 		criteria.addOrder(Order.asc("roteiro.descricaoRoteiro"));

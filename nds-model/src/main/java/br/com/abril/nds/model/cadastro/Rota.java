@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -45,6 +46,8 @@ public class Rota implements Serializable {
 	@JoinColumn(name = "ROTEIRO_ID", nullable = false )
 	private Roteiro roteiro;
 
+	@OneToOne(mappedBy="rota")
+	private Entregador entregador;
 	
 	@ManyToMany
 	@JoinTable(name = "PDV_ROTA", joinColumns = {@JoinColumn(name = "ROTA_ID")},
@@ -123,5 +126,19 @@ public class Rota implements Serializable {
 			pdvs = new ArrayList<PDV>();
 		}
 		pdvs.addAll(listaPdv);
+	}
+
+	/**
+	 * @return the entregador
+	 */
+	public Entregador getEntregador() {
+		return entregador;
+	}
+
+	/**
+	 * @param entregador the entregador to set
+	 */
+	public void setEntregador(Entregador entregador) {
+		this.entregador = entregador;
 	}
 }

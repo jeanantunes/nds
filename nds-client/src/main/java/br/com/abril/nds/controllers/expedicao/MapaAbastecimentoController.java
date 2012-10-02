@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +23,9 @@ import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -29,6 +33,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -69,7 +74,13 @@ public class MapaAbastecimentoController {
 	private RoteirizacaoService roteirizacaoService;
 	
 	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
 	private ProdutoService produtoService;
+	
+	@Autowired
+	private EntregadorService entregadorService;
 	
 	public void mapaAbastecimento() {
 		
@@ -214,8 +225,7 @@ public class MapaAbastecimentoController {
 			this.popularGridPorProdutoCota(filtro);
 			break;
 		case ENTREGADOR:
-			//TODO
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não implementado.");
+			this.popularGridPorEntregador(filtro);
 		default:
 			break;
 		}
@@ -275,8 +285,9 @@ public class MapaAbastecimentoController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Rota' não foi preenchida.");
 				break;
 			case ENTREGADOR:
-				//TODO
-				throw new ValidacaoException(TipoMensagem.WARNING, "Não implementado.");
+				if(filtroAtual.getIdEntregador()==null)
+					throw new ValidacaoException(TipoMensagem.WARNING, "'Entregador' não foi preenchido.");
+				break;
 			default:
 				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 		}
@@ -345,8 +356,8 @@ public class MapaAbastecimentoController {
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
 					break;
 				
-				case ENTREGADOR:
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
+				case ENTREGADOR:				
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
 					break;
 					
 				default:
@@ -384,34 +395,20 @@ public class MapaAbastecimentoController {
 	
 	public void impressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
 		
-		List<MapaProdutoCotasDTO> mapa = gerarMapaEntregadorFake();
+		HashMap<Long, MapaProdutoCotasDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro);
+		
+		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
+				
+		result.include("distribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+		
+		result.include("entregador", entregador);
+		
+		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		
+		result.include("data",data);
 		
 		result.include("mapa", mapa);
 		
-	}
-	
-	private List<MapaProdutoCotasDTO> gerarMapaEntregadorFake() {
-		
-		List<MapaProdutoCotasDTO> mapa = new ArrayList<MapaProdutoCotasDTO>();
-		
-		MapaProdutoCotasDTO dto = null;
-		
-		for(Integer i=0; i<20; i++) {
-			dto = new MapaProdutoCotasDTO();
-			dto.setCodigoProduto("CODp" + i);
-			dto.setNomeProduto("Produto " + i);
-			dto.setNumeroEdicao(i.longValue());
-			dto.setPrecoCapa( i + ",00");
-			dto.setCotasQtdes(new HashMap<Integer, Integer>());
-			
-			for(Integer j=0; j<20; j++) {
-				dto.getCotasQtdes().put(i, j);
-			}
-			
-			mapa.add(dto);
-		}
-		
-		return mapa;
 	}
 
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
@@ -495,4 +492,15 @@ public class MapaAbastecimentoController {
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
 	}
+	
+	private void popularGridPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
+		
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaDeAbastecimentoPorEntregador(filtro);
+		
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaDeAbastecimentoPorEntregador(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+		
+	}
+
 }

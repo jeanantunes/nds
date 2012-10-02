@@ -143,7 +143,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	},
 	
 	this.pesquisar = function() {
-		
+				
 		var tipoConsulta = $("#tipoConsulta").val();
 		
 		var params = T.getDadosFiltro();
@@ -235,6 +235,19 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			);
 
 			break;
+		
+		case 'ENTREGADOR':
+			
+			T.preencherGrid(
+				".mapaAbastecimentoEntregadorGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarMensagens, 
+				"#gridEntregador",
+				params
+			);
+
+			break;
+			
 		default:
 			break;
 		}
@@ -432,11 +445,11 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			break;
 		case 'ENTREGADOR':
 			T.atualizarBoxRota();
-			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('box','rota','roteiro');
+			T.bloquearCampos('quebraPorCota');
+			T.desbloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
 			T.displayEntregador(true);
 			T.bloquearLinkProdutos();
-			T.limparProdutosSelecionados();
+			T.desbloquearLinkProdutos();
 			break;			
 		default:
 			T.bloquearCampos('box','rota', 'roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
@@ -961,5 +974,79 @@ $(function() {
 		width : 960,
 		height : 255
 	}));
+	
+	$(".mapaAbastecimentoEntregadorGrid").flexigrid({
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 130,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Edição',
+			name : 'numeroEdicao',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Cód. Barras',
+			name : 'codigoBarra',
+			width : 125,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Pct. Padrão',
+			name : 'pacotePadrao',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte',
+			name : 'reparte',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Preço Capa R$',
+			name : 'precoCapa',
+			width : 80,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Cota',
+			name : 'codigoCota',
+			width : 40,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Nome',
+			name : 'nomeCota',
+			width : 120,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Qtde Exml',
+			name : 'qtdeExms',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	});
+
 });
 //@ sourceURL=mapaAbastecimento.js

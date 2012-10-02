@@ -80,6 +80,40 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		}
 	}
 	
+	public enum ColunaOrdenacaoEntregador {
+		
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODTO("nomeProduto"),
+		EDICAO_PRODUTO("numeroEdicao"),
+		NUMERO_EDICAO("numeroEdicao"),
+		CODIGO_BARRA("codigoBarra"),
+		PACOTE_PADRAO("pacotePadrao"),
+		REPARTE("reparte"),
+		PRECO_CAPA("precoCapa"),
+		CODIGO_COTA("codigoCota"),
+		NOME_COTA("nomeCota"),
+		QTDE_EXEMPLARES("qtdeExms");
+		
+		private String nomeColuna;
+		
+		private ColunaOrdenacaoEntregador(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacaoEntregador getPorDescricao(String descricao) {
+			for(ColunaOrdenacaoEntregador coluna: ColunaOrdenacaoEntregador.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
+	
 	public enum ColunaOrdenacaoDetalhes {
 		CODIGO_PRODUTO("codigoProduto"),
 		NOME_PRODTO("nomeProduto"),

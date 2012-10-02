@@ -191,7 +191,7 @@
 			onchange="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
 
 			  
-			  <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+			  </td>
               <td>Nome:</td>
               <td>
 			  
@@ -266,11 +266,17 @@
 		   <div id="gridProdutoCota" style="display:none;">
 				<table class="mapaAbastecimentoProdCotaGrid"></table>
 			</div>
+			
+			 <div id="gridEntregador" style="display:none;">
+            	<span><strong>Nome:</strong> Nome do Entregador</span>
+            	<table class="mapaAbastecimentoEntregadorGrid"></table>
+            </div>
+			
           <br />
    		  <span class="bt_novos" id="map_1" title="Imprimir">
 
 <!-- IMPRIMIR MAPA -->   		  
-<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="blank">
+<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="_blank">
 
 		
 		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Mapa</a>

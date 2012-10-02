@@ -39,7 +39,7 @@ function imprimir(){
     <td width="301" align="center" valign="middle"><h3>TREELOG S/A<br />
       LOGÍSTICA E DISTRIBUIÇÃO</h3></td>
     <td width="359" align="right" valign="middle"><h1>Mapa de Abastecimento</h1>
-     <strong>Distribuidor:</strong> Nome do Distribuidor</td>
+     <strong>Distribuidor:</strong> ${distribuidor}</td>
   </tr>
   <tr>
     <td colspan="3" align="center" valign="middle"></td>
@@ -50,390 +50,79 @@ function imprimir(){
     <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="100%" border="0" cellspacing="1" cellpadding="1">
       <tr>
         <td width="10%"><strong>Box:</strong></td>
-        <td width="13%">402</td>
+        <td width="13%">${entregador.rota.roteiro.roteirizacao.box.codigo}</td>
         <td width="7%"><strong>Roteiro:</strong></td>
-        <td width="20%">Roteiro 1</td>
+        <td width="20%">${entregador.rota.roteiro.descricaoRoteiro}</td>
         <td width="5%"><strong>Rota:</strong></td>
-        <td width="28%">Rota 1</td>
+        <td width="28%">${entregador.rota.descricaoRota}</td>
         <td width="5%"><strong>Data:</strong></td>
-        <td width="12%">10/07/2012</td>
+        <td width="12%">${data}</td>
       </tr>
     </table></td>
   </tr>
 </table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
-  <tr class="class_linha_3">
-    <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="793" border="0" cellspacing="1" cellpadding="1">
-      <tr>
-        <td width="52"><strong>Produto</strong>:</td>
-        <td width="195">SUPER INTERESSANTE</td>
-        <td width="45"><strong>Edição:</strong></td>
-        <td width="44">402</td>
-        <td width="119"><strong>Código de Barras:</strong></td>
-        <td width="154">34080928456789876543</td>
-        <td width="96"><strong>Preço Capa R$:</strong></td>
-        <td width="63">9,90</td>
-      </tr>
-    </table></td>
-  </tr>
-</table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0"  style="margin-top:5px;">
-  <tr class="class_linha_3">
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-  </tr>
-  <tr class="class_linha_2">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="class_linha_2">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="class_linha_2">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-  </tr>
-</table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0"  style="margin-top:5px;">
-  <tr class="class_linha_3">
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-  </tr>
-  <tr class="class_linha_2">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="$( "#btImpressao", BaseController.workspace ).hide();">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="class_linha_2">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-  </tr>
-</table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
-  <tr class="class_linha_3">
-    <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="793" border="0" cellspacing="1" cellpadding="1">
-      <tr>
-        <td width="52"><strong>Produto</strong>:</td>
-        <td width="195">SUPER INTERESSANTE</td>
-        <td width="45"><strong>Edição:</strong></td>
-        <td width="44">402</td>
-        <td width="119"><strong>Código de Barras:</strong></td>
-        <td width="154">34080928456789876543</td>
-        <td width="96"><strong>Preço Capa R$:</strong></td>
-        <td width="63">9,90</td>
-      </tr>
-    </table></td>
-  </tr>
-</table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0"  style="margin-top:5px;">
-  <tr class="class_linha_3">
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-    <td width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-    <td width="51" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Qtde</strong></td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0001</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">6</td>
-  </tr>
-  <tr class="class_linha_2">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0034</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0103</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="class_linha_2">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0105</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="class_linha_1">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0263</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">5</td>
-  </tr>
-  <tr class="class_linha_2">
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">0330</td>
-    <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">3</td>
-  </tr>
-</table>
+
+
+<c:forEach items="${mapa}" var="produto">
+	
+	<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
+	  <tr class="class_linha_3">
+	    <td width="660"  style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="793" border="0" cellspacing="1" cellpadding="1">
+	      <tr>
+	        <td width="52"><strong>Produto</strong>:</td>
+	        <td width="195">${produto.value.nomeProduto}</td>
+	        <td width="45"><strong>Edição:</strong></td>
+	        <td width="44">${produto.value.numeroEdicao}</td>
+	        <td width="119"><strong>Código de Barras:</strong></td>
+	        <td width="154">${produto.value.codigoProduto}</td>
+	        <td width="96"><strong>Preço Capa R$:</strong></td>
+	        <td width="63">${produto.value.precoCapa}</td>
+	      </tr>
+	    </table></td>
+	  </tr>
+	</table>
+	
+	<c:set scope="session" var="qtdeColuna" value="${(produto.value.cotasQtdes.size() + (7==(7 - produto.value.cotasQtdes.size() % 7)? 0 : (7 - produto.value.cotasQtdes.size() % 7))) /7}"/>					 
+	<c:set scope="session" var="qtdeTotal" value="${produto.value.cotasQtdes.size()}"/>
+		
+	<table width="800" align="center" cellpadding="0" cellspacing="0" border="0">
+		
+		<tr class="nivel0">
+			 
+			<c:forEach begin="0" end="${ qtdeTotal%qtdeColuna>0 ? qtdeTotal/qtdeColuna : qtdeTotal/qtdeColuna -1}" varStatus="coluna">
+				
+				<td width="158" valign="top">		
+				
+					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0"  style="margin-top:5px;border-right:1px">
+								  
+					  <tr class="class_linha_3">
+					    <td class="nivel1" width="48" style="padding-left:5px; border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
+					    <td class="nivel1" width="51" align="center" style=" border:1px solid #000;"><strong>Qtde</strong></td>
+					  </tr> 
+					 
+					 <c:forEach items="${produto.value.cotasQtdes}" var="item" 
+						 		begin="${coluna.index * qtdeColuna }" 
+						 		end="${qtdeTotal > qtdeColuna * (coluna.index+1)-1 ? qtdeColuna * (coluna.index+1)-1 : qtdeTotal-1}" >
+					  
+					  <tr class="class_linha_1">
+					    <td style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${item.key}</td>
+					   <td align="center" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${item.value}</td>
+					  </tr>
+					  
+					  </c:forEach>
+					  
+					</table>
+					    
+				</td>				 
+				    
+		 </c:forEach>
+			
+		</tr>
+	
+		
+	</table>
+	
+</c:forEach>
+
 </body>
 </html>
