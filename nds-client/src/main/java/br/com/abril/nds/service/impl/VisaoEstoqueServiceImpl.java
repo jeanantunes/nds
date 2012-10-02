@@ -106,7 +106,11 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		if (filtro.getTipoEstoque().equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
 			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
 		} else {
-			list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
+			if (DateUtil.isHoje(filtro.getDataMovimentacao())) {
+				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
+			} else {
+				list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
+			}
 		}
 		
 		BigDecimal precoCapa;

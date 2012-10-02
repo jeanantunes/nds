@@ -164,6 +164,49 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements Vi
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalheHistorico(FiltroConsultaVisaoEstoque filtro) {
+		
+		String coluna = this.getColunaQtde(filtro.getTipoEstoque());
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" SELECT pe.id as produtoEdicaoId")
+		   .append("       ,pe.codigo as codigo")
+		   .append("       ,pe.nomeComercial as produto")
+		   .append("       ,pe.numeroEdicao as edicao")
+		   .append("       ,pe.precoVenda as precoCapa")
+		   .append("       ,lan.dataLancamentoDistribuidor as lcto")
+		   .append("       ,lan.dataRecolhimentoDistribuidor as rclto")
+		   .append("       ,ep." + coluna + " as qtde")
+		   .append("   FROM HistoricoEstoqueProduto as ep ")
+		   .append("   JOIN ep.produtoEdicao as pe ")
+		   .append("   JOIN pe.lancamentos as lan ");
+		
+		if(filtro.getIdFornecedor() != -1) {
+			hql.append("   JOIN pe.produto.fornecedores f ");
+		}
+		   
+		hql.append("  WHERE ep." + coluna + " > 0 ");
+		hql.append("    AND ep.data = :data ");
+		
+		if(filtro.getIdFornecedor() != -1) {
+			hql.append("    AND f.id = :idFornecedor ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setDate("data", filtro.getDataMovimentacao());
+		if(filtro.getIdFornecedor() != -1) {
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(VisaoEstoqueDetalheDTO.class));
+
+		return query.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<VisaoEstoqueDetalheJuramentadoDTO> obterVisaoEstoqueDetalheJuramentado(FiltroConsultaVisaoEstoque filtro) {
 		
 		StringBuilder hql = new StringBuilder();
