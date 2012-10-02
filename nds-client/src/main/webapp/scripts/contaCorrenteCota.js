@@ -187,42 +187,26 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			
-		}else{
-			
-			$.each(data.rows, function(index, value) {
-			
-			var valorPostergado = value.cell[1];
-			var dataRaizPostergado =  value.cell[11];			
-			if(dataRaizPostergado.length==0){
-				dataRaizPostergado = value.cell[0];
-			}
-			var valorPendente = value.cell[8];
-			var dataRaizPendente =  value.cell[12];
-			
-			if(dataRaizPendente.length==0){
-				dataRaizPendente = value.cell[0];
-			}
-			var consignado = value.cell[3];
-			var encalhe = value.cell[4];
-			var vendaEncalhe = value.cell[5];
-			var debCred = value.cell[6];
-			var encargos = value.cell[7];
+		}else{			
+			$.each(data.rows, function(index, value) {			
+				var dataRaizPostergado =  value.cell.dataRaizConsolidado;			
+				if(!dataRaizPostergado){
+					dataRaizPostergado = value.cell.dataConsolidado;
+				}
+				var dataRaizPendente =  value.cell.dataRaizPendente;
+				
+				if(!dataRaizPendente){
+					dataRaizPendente = value.cell.dataConsolidado;
+				}			
+									
+				value.cell.consignado = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+[value.cell.id]+');"/>'+value.cell.consignado+'</a>';
+				value.cell.encalhe = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+[value.cell.id]+');"/>'+value.cell.encalhe+'</a>';
+				value.cell.vendaEncalhe = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell.id+',\''+value.cell.dataConsolidado+'\')"/>'+value.cell.vendaEncalhe+'</a>';
+				value.cell.debitoCredito = '<a href="javascript:;"/>'+value.cell.debitoCredito+'</a>';
+				value.cell.encargos = '<a href="javascript:;"/>'+value.cell.encargos+'</a>';
 					
-			var lineId = value.id;
-			
-			var hiddeFields = '<input type="hidden" name="lineId" value="'+lineId+'"/>';
-			
-				value.cell[3] = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+[lineId]+');"/>'+consignado+'</a>'+hiddeFields;
-				value.cell[4] = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+[lineId]+');"/>'+encalhe+'</a>'+hiddeFields;
-				value.cell[5] = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell[10]+',\''+value.cell[0]+'\')"/>'+vendaEncalhe+'</a>'+hiddeFields;
-				value.cell[6] = '<a href="javascript:;"/>'+debCred+'</a>'+hiddeFields;
-				value.cell[7] = '<a href="javascript:;"/>'+encargos+'</a>'+hiddeFields;
-				
-				
-				
-				
-				value.cell[1] = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +valorPostergado +'</a></span>';
-				value.cell[8] = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'" href="javascript:;">' +valorPendente +'</a></span>';
+				value.cell.valorPostergado = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +value.cell.valorPostergado +'</a></span>';
+				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'" href="javascript:;">' +value.cell.pendente +'</a></span>';
 						
 			});
 			
@@ -244,75 +228,80 @@ var contaCorrenteCotaController = $.extend(true, {
 		$(".itemContaCorrenteCotaGrid", contaCorrenteCotaController.workspace).flexigrid({
 			preProcess: contaCorrenteCotaController.getDataFromResult,
 			dataType : 'json',
-			colModel : [ {
+			colModel :  [ {
 				display : 'Data',
-				name : 'data',
-				width : 70,
+				name : 'dataConsolidado',
+				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Vlr. Postergado R$',
-				name : 'vlrpostergado',
-				width : 100,
+				display : 'Consignado',
+				name : 'consignado',
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'NA R$',
-				name : 'na',
-				width : 77,
+				display : 'Encalhe',
+				name : 'encalhe',
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Consignado R$',
-				name : 'consignadoaVencer',
-				width : 95,
+				display : 'Vlr. Postergado R$', 
+				name : 'valorPostergado',
+				width : 105,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Encalhe R$',
-				name : 'encalhe	',
-				width : 75,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Venda Encalhe R$',
+				display : 'Venda Encalhe',
 				name : 'vendaEncalhe',
-				width : 95,
+				width : 80,
 				sortable : true,
 				align : 'right',
 			}, {
-				display : 'Déb/Cred. R$',
-				name : 'debCred',
-				width : 85,
+				display : 'Déb/Cred.',
+				name : 'encalhe',
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Encargos R$',
+				display : 'Encargos',
 				name : 'encargos',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Pendente R$',
+				display : 'Pendente',
 				name : 'pendente',
-				width : 70,
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Total R$',
 				name : 'total',
-				width : 90,
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Vlr.Pago R$',
+				name : 'valorPago',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Saldo R$',
+				name : 'saldo',
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}],
-			sortname : "data",
-			sortorder : "desc",
+			sortname : "dataConsolidado",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 'auto',
+			height : 255,
 			onSuccess : function () {
 				$('.itemContaCorrenteCotaGrid tr td', contaCorrenteCotaController.workspace).each( function(){ 
 					$('a', this).tipsy({gravity: 'sw'});
