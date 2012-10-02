@@ -2604,7 +2604,6 @@ public class DataLoader {
 		pdvcotaManoel2.setSegmentacao(segmentacaoPDV2);
 		session.save(pdvcotaManoel2);
 		
-		List<PDV> pdvs = Arrays.asList(pdvcotaJose2,pdvcotaManoel2);
 		PDV pdvJoao = Fixture.criarPDVPrincipal("PDV João", cotaJoao);
 		pdvJoao.setSegmentacao(segmentacaoPDV2);
         session.save(pdvJoao);
@@ -2617,17 +2616,17 @@ public class DataLoader {
         pdvOrlando.setSegmentacao(segmentacaoPDV2);
         session.save(pdvOrlando);
 		
-		rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros,pdvs);
+		rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
 		rota1.addPDV(pdvcotaJose2, 1);
 		rota1.addPDV(pdvcotaManoel2, 2);
 		session.save(rota1);
 		
-		rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos,pdvs);
+		rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
 	    rota2.addPDV(pdvcotaJose2, 1);
 	    rota2.addPDV(pdvcotaManoel2, 2);
 		session.save(rota2);
 						
-		rota10 = Fixture.rota("001", "Rota 010",roteiroTCD,pdvs);
+		rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
 	    rota10.addPDV(pdvcotaJose2, 1);
 	    rota10.addPDV(pdvcotaManoel2, 2);
 		session.save(rota10);
