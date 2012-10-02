@@ -110,24 +110,6 @@ public class RoteirizacaoController {
 	private static final String SET_ROTEIROS_EXCLUIR = "SET_ROTEIROS_EXCLUIR";
 	
 	private static final String MAP_ROTEIROS_TRANSFERIDOS = "MAP_ROTEIROS_TRANSFERIDOS";
-
-	/**
-	 * Chave para armazenamento do DTO de PDV's adicionados na sessão
-	 */
-	private static final String PDVS_EXCLUIDOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDV_EXCLUIDO_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
-
-	
-	/**
-	 * Chave para armazenamento do DTO de PDV's excluidos na sessão
-	 */
-	private static final String PDVS_ADICIONADOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDVS_ADICIONADOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
-
-	
-	/**
-	 * Chave para armazenamento do DTO de PDV's adicionados na sessão
-	 */
-	private static final String PDV_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE = "PDV_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE";
-
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO)
@@ -361,7 +343,6 @@ public class RoteirizacaoController {
 			this.addRotaExclusao(rotaId);
 		}
 		
-		//roteirizacaoService.excluirListaRota(rotasId, roteiroId);
 		result.use(Results.json()).from("", "result").serialize();
 	}
 	
@@ -375,7 +356,6 @@ public class RoteirizacaoController {
 			this.addRoteiroExclusao(roteiroId);
 		}
 		
-		//roteirizacaoService.excluirListaRota(rotasId, roteiroId);
 		result.use(Results.json()).from("", "result").serialize();
 	}
 	
@@ -1075,27 +1055,19 @@ public class RoteirizacaoController {
 	 */
 	@Post
 	@Path("/removerPdvs")
-	public void removerPdvs(Long idRota, List<PdvRoteirizacaoDTO> pdvs){
+	public void removerPdvs(Long idRoteiro, Long idRota, List<PdvRoteirizacaoDTO> pdvs){
         
-		//BUSCAR ROTEIRIZACAO ATUAL NA SESSAO
-		RoteirizacaoDTO roteirizacaoDTO = null;
-		
-		
-		roteiros : for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
-		   for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
-				if(itemRota.getId().equals(idRota)){
-					itemRota.getPdvs().removeAll(pdvs);
-					session.setAttribute(PDVS_EXCLUIDOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE, pdvs);
-					break roteiros;
-				}
+		if (pdvs != null && !pdvs.isEmpty()){
+			
+			RotaRoteirizacaoDTO rotaDto = this.getDTO().getRoteiro(idRoteiro).getRota(idRota);
+			
+			for (int i = 0 ; i < pdvs.size() ; i++){
+				
+				rotaDto.getPdvs().remove(pdvs.get(i));
 			}
-		}
+		}		
 
-		
-		//ADICIONAR ROTEIRIZACAO ATUALIZADA NA SESSAO
-		
-
-		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
+		result.use(CustomJson.class).from("").serialize();
 	}
 	
 	@Post

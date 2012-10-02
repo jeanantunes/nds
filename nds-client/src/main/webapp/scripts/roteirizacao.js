@@ -1389,7 +1389,9 @@ var roteirizacao = $.extend(true, {
 			});
 			
 			params.push({name: "idRota", value: roteirizacao.idRota});
-           			
+           	
+			
+			
 			return params;
 		},
 		
@@ -1398,7 +1400,14 @@ var roteirizacao = $.extend(true, {
 		 	$.postJSON(contextPath + '/cadastro/roteirizacao/removerPdvs',
 		 			 params,
 					 function(result) {
-							
+		 				
+		 				if (result.tipoMensagem && result.listaMensagens){
+		 					
+		 					exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+		 					return;
+		 				}
+		 		
+		 				roteirizacao.popularGridCotasRota();
 					 },
 					 null,
 					 true
