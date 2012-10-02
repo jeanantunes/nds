@@ -1103,8 +1103,8 @@ var roteirizacao = $.extend(true, {
                         
                         $( "#dialog-cotas-disponiveis", roteirizacao.workspace ).dialog({
                             resizable: false,
-                            height:500,
-                            width:870,
+                            height:530,
+                            width:880,
                             modal: true,
                             buttons: {
                                 "Confirmar": function() {
@@ -1267,16 +1267,16 @@ var roteirizacao = $.extend(true, {
 					display : 'Ordem',
 					name : 'ordem',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '',
 					name : 'selecionado',
 					width : 20,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
-				sortname : "ordem",
+				sortname : "pdv",
 				sortorder : "asc",
 				width : 800,
 				height : 200
@@ -1339,7 +1339,7 @@ var roteirizacao = $.extend(true, {
         	
         	var linhasDaGrid = $(".cotasDisponiveisGrid tr");
         	
-			var params = "";
+			var params = new Array();
 			
 			$.each(linhasDaGrid, function(index, value) {
 
@@ -1377,25 +1377,21 @@ var roteirizacao = $.extend(true, {
 	
 				var checked = document.getElementById("pdvCheckbox"+id).checked;
 				if (checked == true) {
-					
-					var pdv;
-					pdv+='{name:"pdvs['+index+'].id",value:'+id+'}';
-					pdv+=',{name:"pdvs['+index+'].pdv",value:'+pdv+'}';
-					pdv+=',{name:"pdvs['+index+'].origem",value:'+origem+'}';
-					pdv+=',{name:"pdvs['+index+'].endereco",value:'+endereco+'}';
-				    pdv+=',{name:"pdvs['+index+'].cota",value:'+cota+'}';
-				    pdv+=',{name:"pdvs['+index+'].nome",value:'+nome+'}';
-				    pdv+=',{name:"pdvs['+index+'].ordem",value:'+ordem+'}';
 
-					params = (params + pdv);
+				    params.push({name: "pdvs["+index+"].id", value: id});
+					params.push({name: "pdvs["+index+"].pdv", value: pdv});
+					params.push({name: "pdvs["+index+"].origem", value: origem});
+					params.push({name: "pdvs["+index+"].endereco", value: endereco});
+					params.push({name: "pdvs["+index+"].cota", value: cota});
+					params.push({name: "pdvs["+index+"].nome", value: nome});
+					params.push({name: "pdvs["+index+"].ordem", value: ordem});
 				}
 
 			});
 			
-			params+=',{name:"idRota",value:'+$('#rotaSelecionada', roteirizacao.workspace).val()+'}';
-            params = '['+params+']';
-			
-			return eval(params);
+			params.push({name: "idRota", value: roteirizacao.idRota});
+           			
+			return params;
 		},
 		
 		excluiPdvs : function() {
@@ -1411,6 +1407,7 @@ var roteirizacao = $.extend(true, {
 		},
 		
 		adicionaPdvs : function() {
+			var params = roteirizacao.buscaPdvsSelecionados();
 		 	$.postJSON(contextPath + '/cadastro/roteirizacao/adicionarNovosPdvs',
 		 			 params,
 					 function(result) {

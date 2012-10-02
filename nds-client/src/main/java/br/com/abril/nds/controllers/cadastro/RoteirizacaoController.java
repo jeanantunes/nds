@@ -921,6 +921,9 @@ public class RoteirizacaoController {
         
 		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep);
 		
+		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
+		
 		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
 	
@@ -1027,20 +1030,52 @@ public class RoteirizacaoController {
 	 * Verifica se PDV's podem ser adicionados na Roteirização
 	 * @param pdvs
 	 */
-	private void validaNovosPdvs(List<PdvRoteirizacaoDTO> pdvs){
+	private void validaNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
 		
+        
 		for(PdvRoteirizacaoDTO itemPdvDTO:pdvs){
 			if (!this.roteirizacaoService.verificaDisponibilidadePdv(itemPdvDTO.getId())){
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV "+itemPdvDTO.getId()+"] já pertence à um [Box] roteirizado !"));
 			}
 		}
 		
-		//VERIFICAR SE JA ESTA ADICIONADO NA LISTA ATUAL
-		
-		//VERIFICAR A ORDEM (NAO PODE REPETIR)
-		
+		this.verificaOrdemPdvs(pdvs, pdvsAtual);
 	}
 	
+	/**
+	 * Verifica o campo Ordem dos PDV's
+	 * @param pdvs
+	 * @param pdvsAtual
+	 */
+	private void verificaOrdemPdvs(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
+		
+		for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
+			for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
+				if (itemPdvDTOAtual.getOrdem().equals(itemPdvDTONovo.getOrdem())){
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é permitido mais de um campo [Ordem] com o mesmo valor !"));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Trata PDV's repetidos adicionados
+	 * @param pdvs
+	 * @param pdvsAtual
+	 * @return List<PdvRoteirizacaoDTO>
+	 */
+    private List<PdvRoteirizacaoDTO> trataPdvsRepetidos(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
+		
+    	for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
+			for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
+				if (itemPdvDTOAtual.getId().equals(itemPdvDTONovo.getId())){
+					pdvs.remove(itemPdvDTONovo);
+				}
+			}
+		}
+    	
+    	return pdvs;
+	}
 	
 	/**
 	 * Adiciona PDV's selecionados no "popup de PSV's disponíveis" na lista principal de PDV's
@@ -1048,29 +1083,24 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/adicionarNovosPdvs")
 	public void adicionarNovosPdvs(Long idRota, List<PdvRoteirizacaoDTO> pdvs){
-        
-		//BUSCAR ROTEIRIZACAO ATUAL NA SESSAO
-		RoteirizacaoDTO roteirizacaoDTO = null;
 		
-		
-		this.validaNovosPdvs(pdvs);
-		
-		
-		roteiros : for(RoteiroRoteirizacaoDTO itemRoteiro:roteirizacaoDTO.getRoteiros()){
-			for(RotaRoteirizacaoDTO itemRota:itemRoteiro.getRotas()){
-				if(itemRota.getId().equals(idRota)){
-					itemRota.addAllPdv(pdvs);
-					session.setAttribute(PDVS_ADICIONADOS_ROTEIRIZACAO_DTO_SESSION_ATTRIBUTE, pdvs);
-					break roteiros;
-				}
-			}
+		if (idRota==null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma [Rota] foi selecionada para a inclusão dos [PDV's] !"));
 		}
-
 		
-		//ADICIONAR ROTEIRIZACAO ATUALIZADA NA SESSAO
+		List<PdvRoteirizacaoDTO> pdvsAtual = this.getDTO().getRota(idRota).getPdvs();
+        
+		pdvs = this.trataPdvsRepetidos(pdvs, pdvsAtual);
 		
-
-		result.use(CustomJson.class).from(roteirizacaoDTO).serialize();
+		this.validaNovosPdvs(pdvs, pdvsAtual);
+		
+		RoteirizacaoDTO roteirizacaoDTO = this.getDTO();
+		
+		roteirizacaoDTO.getRota(idRota).addAllPdv(pdvs);
+		
+		this.setDTO(roteirizacaoDTO);
+			
+	    this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
 	}
 	
 	/**
