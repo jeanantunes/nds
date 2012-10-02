@@ -468,9 +468,7 @@ public class ContaCorrenteCotaController {
 		paginacao.setPaginaAtual(page);
 
 		filtroViewContaCorrenteCotaDTO
-				.setColunaOrdenacao(Util.getEnumByStringValue(
-						FiltroViewContaCorrenteCotaDTO.ColunaOrdenacao.values(),
-						sortname));
+				.setColunaOrdenacao(sortname);
 	}
 
 	/**
