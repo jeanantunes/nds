@@ -88,6 +88,16 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	public List<RotaRoteirizacaoDTO> getTodasRotas() {
         return todasRotas;
     }
+
+    /**
+     * Método que verifica se o roteiro é um novo roteiro
+     * 
+     * @return true indicando que é um novo roteiro, false indica que é um
+     *         roteiro já cadastrado
+     */
+	public boolean isNovo() {
+	    return id != null && id < 0;
+	}
 	
 	/**
 	 * Adiciona uma nova rota ao roteiro

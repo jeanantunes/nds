@@ -379,7 +379,6 @@ public class RoteirizacaoDTO implements Serializable{
         return null;
     }
     
-    
 	/**
      * Tipo da edição tela
      * 

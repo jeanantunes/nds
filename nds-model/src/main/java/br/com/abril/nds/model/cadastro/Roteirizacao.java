@@ -110,7 +110,6 @@ public class Roteirizacao {
         while(iterator.hasNext()) {
             Roteiro roteiro = iterator.next();
             if (idsRoteiros.contains(roteiro.getId())) {
-                
                 iterator.remove();
             }
         }

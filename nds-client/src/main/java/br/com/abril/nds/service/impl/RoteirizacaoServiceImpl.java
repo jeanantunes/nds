@@ -609,9 +609,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     @Transactional
     public Roteirizacao confirmarRoteirizacao(RoteirizacaoDTO dto) {
 	    Roteirizacao roteirizacao = null;
+	    TipoRoteiro tipoRoteiro = TipoRoteiro.ESPECIAL;
 	    BoxRoteirizacaoDTO boxDTO = dto.getBox();
 	    if (dto.isNovo()) {
-	        TipoRoteiro tipoRoteiro = TipoRoteiro.ESPECIAL;
 	        roteirizacao = new Roteirizacao();
 	        if (!BoxRoteirizacaoDTO.ESPECIAL.equals(boxDTO)) {
 	            tipoRoteiro = TipoRoteiro.NORMAL;
@@ -638,8 +638,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	    } else {
 	        roteirizacao = roteirizacaoRepository.buscarPorId(dto.getId());
 	        roteirizacao.desassociarRoteiros(dto.getRoteirosExclusao());
-	        
-	        roteirizacaoRepository.merge(roteirizacao);
+	        for (RoteiroRoteirizacaoDTO roteiroDTO : dto.getTodosRoteiros()) {
+	            if (roteiroDTO.isNovo()) {
+	                Roteiro roteiro = new Roteiro(roteiroDTO.getNome(), roteiroDTO.getOrdem(), tipoRoteiro);
+	                roteirizacao.addRoteiro(roteiro);
+	            }
+	        }
+	        roteirizacaoRepository.alterar(roteirizacao);
 	    }
 	    return roteirizacao;
     }

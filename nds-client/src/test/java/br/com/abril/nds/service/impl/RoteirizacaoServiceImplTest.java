@@ -468,12 +468,14 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
     public void confirmaRoteirizacaoExistente() {
-        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(this.roteirizacao, Arrays.asList(box1));
+        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(roteirizacao, Arrays.asList(box1));
         roteirizacaoDTO.addRoteiroExclusao(roteiro3.getId());
         
         roteirizacaoService.confirmarRoteirizacao(roteirizacaoDTO);
         flushClear();
-        Roteirizacao roteirizacao = (Roteirizacao) getSession().get(Roteirizacao.class, this.roteirizacao.getId());    
+        Roteirizacao confirmado = (Roteirizacao) getSession().get(Roteirizacao.class, roteirizacao.getId()); 
+        List<Roteiro> roteiros = confirmado.getRoteiros();
+        Assert.assertEquals(2, roteiros.size());
     }
 
 
