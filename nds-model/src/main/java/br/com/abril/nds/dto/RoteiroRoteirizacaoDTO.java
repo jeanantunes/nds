@@ -93,15 +93,25 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 		if (rotas == null) {
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
+		
+		for (RotaRoteirizacaoDTO dto : todasRotas){
+			
+			if (dto.getOrdem() <= rota.getOrdem()){
+				
+				rota.setOrdem(dto.getOrdem() + 1);
+			}
+		}
+		
 		rotas.add(rota);
 		todasRotas.add(rota);
 	}
 	
 	/**
-	 * Adiciona novas Rotas ao Roteiro
+	 * Adiciona novas Rotas       ao Roteiro
 	 * @param listaRota: List<RotaRoteirizacaoDTO> para inclusão
 	 */
 	public void addAllRota(List<RotaRoteirizacaoDTO> listaRota){
+		
 		if (rotas == null){
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
