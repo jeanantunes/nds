@@ -107,10 +107,11 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	}
 	
 	/**
-	 * Adiciona novas Rotas ao Roteiro
+	 * Adiciona novas Rotas       ao Roteiro
 	 * @param listaRota: List<RotaRoteirizacaoDTO> para inclusão
 	 */
 	public void addAllRota(List<RotaRoteirizacaoDTO> listaRota){
+		
 		if (rotas == null){
 			rotas = new ArrayList<RotaRoteirizacaoDTO>();
 		}
