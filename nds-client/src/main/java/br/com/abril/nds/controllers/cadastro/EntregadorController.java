@@ -1182,8 +1182,9 @@ public class EntregadorController {
 			for (TelefoneEntregador telefoneEntregador : entregador.getTelefones()) {
 
 				if (telefoneEntregador.isPrincipal()) {
-
-					telefone = telefoneEntregador.getTelefone().getNumero();
+					
+					telefone = obterTelefoneFormatado(telefoneEntregador.getTelefone());
+					
 				}
 			}
 
@@ -1204,6 +1205,28 @@ public class EntregadorController {
 		return tableModel;
 	}
 
+	private String obterTelefoneFormatado(Telefone telefonePrincipal) {
+		
+		StringBuffer telefoneFormatado = new StringBuffer();
+		
+		if(telefonePrincipal == null) {
+			return "";
+		}
+		
+		if(telefonePrincipal.getDdd()!=null) {
+			telefoneFormatado.append("(");
+			telefoneFormatado.append(telefonePrincipal.getDdd());
+			telefoneFormatado.append(") ");
+		}
+		
+		if(telefonePrincipal.getNumero()!=null) {
+			telefoneFormatado.append(telefonePrincipal.getNumero());
+		}
+		
+		return telefoneFormatado.toString();
+		
+	}
+	
 	/*
 	 * Método que realiza a formatação dos dados a serem apresentados na grid. 
 	 */
