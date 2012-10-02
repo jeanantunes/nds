@@ -27,15 +27,15 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	@Override
 	@Transactional
-	public boolean existeNotaFiscalSemRecebimentoFisico() {		 
-		return this.fecharDiaRepository.existeNotaFiscalSemRecebimentoFisico();
+	public boolean existeNotaFiscalSemRecebimentoFisico(Date dataOperacaoDistribuidor) {		 
+		return this.fecharDiaRepository.existeNotaFiscalSemRecebimentoFisico(dataOperacaoDistribuidor);
 	}
 
 	@Override
 	@Transactional
-	public List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado() {
+	public List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado(Date dataOperacaoDistribuidor) {
 		
-		return this.fecharDiaRepository.obterNotaFiscalComRecebimentoFisicoNaoConfirmado();
+		return this.fecharDiaRepository.obterNotaFiscalComRecebimentoFisicoNaoConfirmado(dataOperacaoDistribuidor);
 	}
 
 }

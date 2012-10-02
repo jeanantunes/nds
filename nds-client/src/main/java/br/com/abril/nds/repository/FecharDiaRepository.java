@@ -9,8 +9,8 @@ public interface FecharDiaRepository {
 	
 	boolean existeCobrancaParaFecharDia(Date diaDeOperaoMenosUm);
 
-	boolean existeNotaFiscalSemRecebimentoFisico();
+	boolean existeNotaFiscalSemRecebimentoFisico(Date dataOperacaoDistribuidor);
 
-	List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado();
+	List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado(Date dataOperacaoDistribuidor);
 
 }

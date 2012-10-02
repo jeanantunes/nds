@@ -17,17 +17,19 @@ public interface FecharDiaService {
 	
 	/**
 	 * Verifica se tem nota fiscal com recebimento lógico mas não tem recebimento fisíco
+	 * @param dataOperacaoDistribuidor 
 	 * 
 	 * @return boolean
 	 */
-	boolean existeNotaFiscalSemRecebimentoFisico();
+	boolean existeNotaFiscalSemRecebimentoFisico(Date dataOperacaoDistribuidor);
 	
 	/**
 	 * Retorna uma lista com as notas fiscais de entrada que não tiveram seu recebimento fisico confirmado
+	 * @param dataOperacaoDistribuidor 
 	 * 
 	 * 
 	 * @return boolean
 	 */
-	List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado();
+	List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado(Date dataOperacaoDistribuidor);
 
 }

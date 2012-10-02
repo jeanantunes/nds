@@ -221,21 +221,20 @@ var fecharDiaController =  $.extend(true, {
 		}
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeBaixaBancaria+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 		$('#tabela-validacao').append(baixaBancaria + imagem);
-		$('#tabela-validacao').remove(baixaBancaria + imagem);
 	},
 	
 	validacaoRecebimentoFisico : function(result){
 		var recebimentoFisico = null;				
-		var iconeRecebimentoFisico = null;
+		var iconeRecebimentoFisico = null;		
 		if(result.recebimentoFisico){
 			recebimentoFisico = "<tr class='class_linha_2'><td>Recebimento Físico:</td>";
 			iconeRecebimentoFisico = 'ico_check.gif';
 		}else{
 			recebimentoFisico = "<td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
 			iconeRecebimentoFisico = 'ico_bloquear.gif';
-		}
+		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(recebimentoFisico + imagem);
+		$('#tabela-validacao').append(recebimentoFisico + imagem);		
 	},
 	
 	popup_recebimentoFisico : function() {
@@ -261,8 +260,4 @@ var fecharDiaController =  $.extend(true, {
 		});
 	}
 
-	
-	
-	
-	
 }, BaseController);

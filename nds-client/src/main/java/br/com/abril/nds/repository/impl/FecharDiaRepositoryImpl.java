@@ -32,35 +32,35 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 	}
 
 	@Override
-	public boolean existeNotaFiscalSemRecebimentoFisico() {
+	public boolean existeNotaFiscalSemRecebimentoFisico(Date dataOperacaoDistribuidor) {
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");
-		
-		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF ");
+		hql.append(" select notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
+		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF AND notaFiscal.dataEmissao = :dataOperacao ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("statusNF", StatusNotaFiscalEntrada.RECEBIDA);
+		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
 		
 		return query.list().isEmpty() ? true : false;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado() {
+	public List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado(Date dataOperacaoDistribuidor) {
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select numero as numeroNotaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");
-		
-		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF ");
+		hql.append(" select numero as numeroNotaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
+		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF AND notaFiscal.dataEmissao = :dataOperacao ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoRecebimentoFisicoFecharDiaDTO.class));
 		
 		query.setParameter("statusNF", StatusNotaFiscalEntrada.RECEBIDA);
+		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
 		
 		return query.list();
 	}
