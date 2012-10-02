@@ -346,6 +346,7 @@ var roteirizacao = $.extend(true, {
             } else {
                 $(".rotasGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
             }
+            roteirizacao.limparGridCotasRota();
             roteirizacao.limparInfoCotasRota();
         },
 
@@ -594,6 +595,8 @@ var roteirizacao = $.extend(true, {
         roteiroSelecionadoListener : function(idRoteiro, descricaoRoteiro) {
             roteirizacao.idRoteiro = idRoteiro;
             roteirizacao.nomeRoteiro = descricaoRoteiro;
+            roteirizacao.idRota = "";
+            roteirizacao.nomeRota = "";
             roteirizacao.definirTransferenciaRoteiro();
             roteirizacao.popularGridRotas();
             roteirizacao.tipoInclusao = TipoInclusao.ROTA;
