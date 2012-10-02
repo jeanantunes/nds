@@ -263,6 +263,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();
 		var nomeCota = $("#nomeCota", contaCorrenteCotaController.workspace).val();
+		
 		var parametroPesquisa = [{name:'numeroCota', value:numeroCota }];
 		
 		$("#numeroCotaEmail", contaCorrenteCotaController.workspace).html(numeroCota);
