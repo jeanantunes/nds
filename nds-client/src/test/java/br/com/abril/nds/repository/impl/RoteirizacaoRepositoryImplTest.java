@@ -194,4 +194,15 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(box.getNome(), "Box 300");
 	}
 
+	@Test
+	public void buscarRoteirizacaoDeCota() {
+
+		Roteirizacao roteirizacao = roteirizacaoRepository.buscarRoteirizacaoDeCota(pdvManoel.getCota().getNumeroCota());
+
+		Assert.assertTrue(roteirizacao != null);
+
+	}
+
+
+	
 }
