@@ -88,15 +88,21 @@ var cotaAusenteController = $.extend(true, {
 		var numcota = $('#idCota', cotaAusenteController.workspace).attr('value');
 		var nomeCota = $('#idNomeCota', cotaAusenteController.workspace).attr('value');
 		var box = $('#idBox', cotaAusenteController.workspace).attr('value');
-			
+		var idRota = $("#selectRota", cotaAusenteController.workspace).attr('value');
+		var idRoteiro = $("#selectRoteiro", cotaAusenteController.workspace).attr('value');
+		
+		var params = [{name:'dataAusencia',value:dataAusencia},
+			          {name:'numCota',value:numcota},
+			          {name:'nomeCota',value:nomeCota},
+			          {name:'box',value:box},
+			          {name:'idRota', value:idRota},
+			          {name:'idRoteiro', value:idRoteiro}];
+		
 		$(".ausentesGrid", cotaAusenteController.workspace).flexOptions({			
 			url : contextPath + '/cotaAusente/pesquisarCotasAusentes',
 			dataType : 'json',
 			preProcess:cotaAusenteController.processaRetornoPesquisa,
-			params:[{name:'dataAusencia',value:dataAusencia},
-			        {name:'numCota',value:numcota},
-			        {name:'nomeCota',value:nomeCota},
-			        {name:'box',value:box}]		
+			params:params		
 		});
 		
 		$(".ausentesGrid", cotaAusenteController.workspace).flexReload();

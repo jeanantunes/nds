@@ -16,20 +16,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaAusenteService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
@@ -50,30 +55,50 @@ public class CotaAusenteController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroCotaAusente";
 	
 	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+	
 	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente nesta data.";
+	
 	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
+	
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
+	
 	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
+	
 	private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
+	
 	private static final String ERRO_PESQUISAR_COTAS_AUSENTES = "Erro ao pesquisar cotas ausentes.";
+	
 	private static final String ERRO_CANCELAR_COTA_AUSENTE = "Erro inesperado ao realizar cancelamento de cota ausente.";
+	
 	private static final String ERRO_RATEIO = "Erro inesperado ao realizar rateio.";
+	
 	private static final String SUCESSO_ENVIO_SUPLEMENTAR = "Envio de suplementar realizado com sucesso.";
+	
 	private static final String SUCESSO_CANCELAR_COTA_AUSENTE = "Cancelamento de cota ausente realizado com sucesso.";
+	
 	private static final String SUCESSO_RATEIO = "Rateio realizado com sucesso.";
+	
 	@Autowired
 	private CotaAusenteService cotaAusenteService;
+	
 	@Autowired
 	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
+	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
 	@Autowired
 	private HttpSession session;
+	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
 	@Autowired
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CotaAusenteController.class);
+	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
 	
 	private final Result result;
 		
@@ -90,6 +115,28 @@ public class CotaAusenteController {
 	 */
 	@Rules(Permissao.ROLE_EXPEDICAO_COTA_AUSENTE)
 	public void index() {
+		
+		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
+		
+		List<ItemDTO<Long, String>> listRoteiro = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Roteiro roteiro : roteiros){
+			
+			listRoteiro.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
+		}
+		
+		result.include("roteiros", listRoteiro);
+		
+		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
+		
+		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Rota rota : rotas){
+			
+			listRota.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
+		}
+		
+		result.include("rotas", listRota);
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 		
@@ -118,7 +165,8 @@ public class CotaAusenteController {
 	 */
 	@Post
 	public void pesquisarCotasAusentes(String dataAusencia, Integer numCota, 
-			String box,String sortorder, String sortname, int page, int rp) {
+			Long idRota, Long idRoteiro, String box,String sortorder, 
+			String sortname, int page, int rp) {
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -126,26 +174,27 @@ public class CotaAusenteController {
 
 		TableModel<CellModelKeyValue<CotaAusenteDTO>> grid = null;
 		
+		box = (StringUtil.isEmpty(box)) ? null : box;
+		
 		try {
 			Date data = validaData(dataAusencia);
 								
-			FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(
-					data, 
-					(box==null || box.isEmpty()) ? null:box, 
-					numCota, 
+			FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(data, box, numCota, idRota, idRoteiro,
 					new PaginacaoVO(page, rp, sortorder), 
 					ColunaOrdenacao.valueOf(sortname));
 					
-			tratarFiltro(filtro);
+			this.tratarFiltro(filtro);
 			
-			grid = efetuarConsulta(filtro);
+			grid = this.efetuarConsulta(filtro);
+			
 		} catch(ValidacaoException e) {
 		
 			mensagens.clear();
-		
 			mensagens.addAll(e.getValidacao().getListaMensagens());
 			status=TipoMensagem.WARNING;	
+			
 		}catch(Exception e) {
+			
 			mensagens.clear();
 			mensagens.add(ERRO_PESQUISAR_COTAS_AUSENTES);
 			status=TipoMensagem.ERROR;
@@ -174,7 +223,6 @@ public class CotaAusenteController {
 		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
 		listaCotasAusentes = cotaAusenteService.obterCotasAusentes(filtro) ;
-		
 		
 		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);

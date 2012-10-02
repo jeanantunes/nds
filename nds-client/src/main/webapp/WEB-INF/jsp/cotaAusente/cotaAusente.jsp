@@ -42,67 +42,100 @@ $(function(){
 	<jsp:include page="../messagesDialog.jsp" />
 
     <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td>Cota:</td>
+		<tr>
+        	<td>Cota:</td>
              
-              <td width="446" colspan="3">
- <!-- NOVA COTA - NUM -->     
-<input id="idNovaCota" name="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
-	onchange="pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota',true);" />
+            <td width="446" colspan="3">
+ 					
+ 				<!-- NOVA COTA - NUM -->     
+				<input id="idNovaCota" 
+					   name="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
+					   onchange="pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota',true);" />
 	
-<!-- PESQUISAR NOVA COTA -->           
-	<label style="margin-left:10px;">
-           			Nome:
+					
+				<!-- PESQUISAR NOVA COTA -->           
+				<label style="margin-left:10px;">Nome:</label>
            		
-           		</label>
-           		
- <!-- NOVA COTA - NOME -->
-<input id="idNomeNovaCota" name="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
-	onkeyup="pesquisaCotaCotaAusente.autoCompletarPorNome('#idNomeNovaCota');" 
-		 	   onblur="pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota',true);" />
+ 					
+ 				<!-- NOVA COTA - NOME -->
+				<input id="idNomeNovaCota" name="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
+					   onkeyup="pesquisaCotaCotaAusente.autoCompletarPorNome('#idNomeNovaCota');" 
+		 	    	   onblur="pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota',true);" />
 		 	   
-       			</td>
-            
-            </tr>
-          </table>
-    </div>
+       		</td>
+		</tr>
+	</table>
+</div>
 </form>
    
-    <div class="container">
+<div class="container">
     
-      <fieldset class="classFieldset">
-   	    <legend> Pesquisar Cotas Ausentes</legend>
+	<fieldset class="classFieldset">
+   		
+   		<legend> Pesquisar Cotas Ausentes</legend>
+        
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-            <tr>
-              <td width="35">Data:</td>
-              <td colspan="3">
-<!--DATA-->
-<input id="idData" value="${data}" type="text" name="datepickerDe" style="width:80px;" /></td>
+        	<tr>
+            	<td width="35">Data:</td>
+            	<td>
+					<!--DATA-->
+					<input id="idData" value="${data}" type="text" name="datepickerDe" style="width:80px;" />
+				</td>
               
                 <td width="38">Cota:</td>
                 <td width="123">
-<!-- COTA -->                
-<input id="idCota" name="idCota" type="text" style="width:80px; float:left; margin-right:5px;" 
-	onchange="pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idCota', '#idNomeCota');"/>
-	
-<!-- PESQUISAR NOME COTA -->
-<td width="40">Nome:</td>
-                <td width="296">
-<!-- NOME -->            
-<input id="idNomeCota" name="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;" 
-	onkeyup="pesquisaCotaCotaAusente.autoCompletarPorNome('#idNomeCota');" 
-		 	   onblur="pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idCota', '#idNomeCota');"
-	/>
+					<!-- COTA -->                
+					<input id="idCota" name="idCota" type="text" style="width:80px; float:left; margin-right:5px;" 
+						   onchange="pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idCota', '#idNomeCota');"/>
 				</td>
+				
+				<!-- PESQUISAR NOME COTA -->
+				<td width="40">Nome:</td>
+                <td width="296">
+					<!-- NOME -->            
+					<input id="idNomeCota" name="idNomeCota" type="text" class="nome_jornaleiro" style="width:280px;" 
+						   onkeyup="pesquisaCotaCotaAusente.autoCompletarPorNome('#idNomeCota');" 
+		 	   			   onblur="pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idCota', '#idNomeCota');"/>
+				</td>
+                
                 <td width="27">Box:</td>
                 <td width="111">
-<!-- BOX -->
-<input id="idBox" type="text" name="textfield" id="textfield" style="width:80px;"/></td>
-              <td width="114"><span class="bt_pesquisar">
-<!-- PESQUISAR -->
-<a href="javascript:;" onclick="cotaAusenteController.cliquePesquisar();">Pesquisar</a></span></td>
-            </tr>
-          </table>
+					<!-- BOX -->
+					<input id="idBox" type="text" name="textfield" id="textfield" style="width:80px;"/>
+				</td>
+              </tr>
+              <tr>
+	           		<td width="91">Roteiro:</td>
+   	 				<td width="215">
+   	 					<select id="selectRoteiro" style="width:200px; font-size:11px!important">
+      						<option value="">Selecione...</option>
+      						<c:forEach items="${roteiros}" var="roteiro">
+								<option value="${roteiro.key }">${roteiro.value }</option>
+							</c:forEach>
+    					</select>
+    				</td>
+    					
+    				<td width="93">Rota:</td>
+    				<td>
+    					<select id="selectRota" style="width:150px; font-size:11px!important">
+      						<option value="">Selecione...</option>
+      						<c:forEach items="${rotas}" var="rota">
+								<option value="${rota.key }">${rota.value }</option>
+							</c:forEach>
+    					</select>
+    				</td>
+    				
+              	<td width="114">
+					<!-- PESQUISAR -->
+					<span class="bt_novos">
+						<a href="javascript:;" onclick="cotaAusenteController.cliquePesquisar();">
+							<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+						</a>
+					</span>
+				</td>
+				<td></td>
+			  </tr>
+		</table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -128,7 +161,9 @@ $(function(){
         </div>
         <span class="bt_novos" title="Novo">
 <!-- NOVO -->
-<a href="javascript:;" onclick="cotaAusenteController.popupNovaCotaAusente();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+
+		<a href="javascript:;" onclick="cotaAusenteController.popupNovaCotaAusente();">
+		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
