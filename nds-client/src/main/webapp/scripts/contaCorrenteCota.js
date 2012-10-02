@@ -70,7 +70,7 @@ var contaCorrenteCotaController = $.extend(true, {
 
 		$(".itemContaCorrenteCotaGrid", contaCorrenteCotaController.workspace).flexReload();
 		
-		contaCorrenteCotaController.carregarDadosEmail();
+		$("#bt_email", contaCorrenteCotaController.workspace).show();
 
 		
 	},
@@ -227,8 +227,8 @@ var contaCorrenteCotaController = $.extend(true, {
 	 */
 	enviarEmail : function(){
 		
-		var params = $('form-email', contaCorrenteCotaController.workspace).serialize();
-		alert(params);
+		var params = $('#form-email', contaCorrenteCotaController.workspace).serialize();
+
 		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/enviarEmail',
 				params,
 				function(result) {
@@ -242,15 +242,18 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 	},
 	
+	/**
+	 * POSSIBILITA EDITAR EMAIL
+	 */
 	editarEmail : function(){
 		var editar = $("#emailCotaEmail");
 		
 		
-		if(editar.is(":disabled")){
-			editar.removeAttr("disabled");
+		if(editar.is("[readonly]")){
+			editar.removeAttr("readonly");
 			
 		}else{
-			editar.attr("disabled", true);
+			editar.attr("readonly", true);
 		}
 		
 		
@@ -264,10 +267,10 @@ var contaCorrenteCotaController = $.extend(true, {
 		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();
 		var nomeCota = $("#nomeCota", contaCorrenteCotaController.workspace).val();
 		
-		var parametroPesquisa = [{name:'numeroCota', value:numeroCota }];
+		var parametroPesquisa = [{name:'numeroCota', value:numeroCota}];
 		
-		$("#numeroCotaEmail", contaCorrenteCotaController.workspace).html(numeroCota);
-		$("#nomeCotaEmail", contaCorrenteCotaController.workspace).html(nomeCota);
+		$("#numeroCotaEmail", contaCorrenteCotaController.workspace).val(numeroCota);
+		$("#nomeCotaEmail", contaCorrenteCotaController.workspace).val(nomeCota);
 	
 		
 		$.postJSON(contextPath + '/financeiro/contaCorrenteCota/pesquisarEmailCota',
@@ -281,7 +284,6 @@ var contaCorrenteCotaController = $.extend(true, {
 			
 		);
 		
-		$("#bt_email", contaCorrenteCotaController.workspace).show();
 	},
 
 
@@ -630,6 +632,7 @@ var contaCorrenteCotaController = $.extend(true, {
 	
 	popup_email : function() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		contaCorrenteCotaController.carregarDadosEmail();
 		$("#dialog-email", contaCorrenteCotaController.workspace ).dialog({
 			resizable: false,
 			height:400,
@@ -652,6 +655,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		});	
 		$("#copiaParaCotaEmail").val("");
 		$("#mensagemCotaEmail").val("");
+		$("#emailCotaEmail").attr("readonly", true);
 	}
 	
 }, BaseController);

@@ -117,16 +117,16 @@
         <table width="437" border="0" cellspacing="2" cellpadding="2">
 	        <tr>
 	            <td width="82">Cota:</td>
-	            <td width="348"><span name ="assunto" id="numeroCotaEmail"></span>
+	            <td width="348"><input name="assuntos[0]" id="numeroCotaEmail"  readOnly="true" type="text" style="width:300px;" />
 	            <!-- <span class="classPesquisar"><a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarItemContaCorrenteCotaEmail();">&nbsp;</span></td> -->
 	          </tr>
 	          <tr>
 	            <td>Nome:</td>
-	            <td><span id="nomeCotaEmail"></span></td>
+	            <td><input name="assuntos[1]" id="nomeCotaEmail" readOnly="true" type="text" style="width:300px;" /></td>
 	          </tr>
 	          <tr>
 	            <td>E-mail:</td>
-	            <td><input name="destinatarios" id="emailCotaEmail" disabled="disabled" type="text" style="width:300px;" />
+	            <td><input name="destinatarios[0]" id="emailCotaEmail" readOnly="true" type="text" style="width:300px;" />
 	            	<a href="javascript:;" onclick="contaCorrenteCotaController.editarEmail();">
 	            		<img src="${pageContext.request.contextPath}/images/ico_editar.gif" border="0" alt="Editar E-mail" />
 	            	</a>
@@ -134,7 +134,7 @@
 	          </tr>
 	          <tr>
 	            <td>C&oacute;pia para:</td>
-	            <td><input name="destinatarios" id="copiaParaCotaEmail" type="text" style="width:300px;" /></td>
+	            <td><input name="destinatarios[1]" id="copiaParaCotaEmail" type="text" style="width:300px;" /></td>
 	          </tr>
 	          <tr>
 	            <td valign="top">Mensagem:</td>

@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -47,6 +49,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
@@ -644,18 +647,101 @@ public class ContaCorrenteCotaController {
 		result.use(Results.nothing());
 	}
 	
-	public void enviarEmail(String assunto, String mensagem, String[]destinatarios) throws AutenticacaoEmailException{
+	public void enviarEmail(String[] assuntos, String mensagem, String[] destinatarios) throws IOException {
+		
+		AnexoEmail anexoXLS = new AnexoEmail("conta-corrente-cota", this.gerarAnexo(FileType.XLS), TipoAnexo.XLS);
+		AnexoEmail anexoPDF = new AnexoEmail("conta-corrente-cota", this.gerarAnexo(FileType.PDF), TipoAnexo.PDF);
 		
 		List<AnexoEmail> anexos = new ArrayList<AnexoEmail>();
-		emailService.enviar(assunto, mensagem, destinatarios, anexos);
+		anexos.add(anexoXLS);
+		anexos.add(anexoPDF);
+		
+		if(destinatarios[1] != ""){
+			String destinatario = destinatarios[0];
+			String[] copiaPara = destinatarios[1].split("[;]");
+			destinatarios  = new String[copiaPara.length+1];
+			destinatarios[0] = destinatario;
+			for (int i = 0; i < copiaPara.length; i++) {
+				destinatarios[i+1] = copiaPara[i].trim();
+			}
+		}else{
+			String destinatario = destinatarios[0];
+			destinatarios  = new String[1];
+			destinatarios[0] = destinatario;
+		}
+		
+		String assunto = assuntos[0].trim().toUpperCase().concat(" - "+assuntos[1].trim().toUpperCase());
+		try {
+			emailService.enviar(assunto, mensagem, destinatarios, anexos);
+			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso");
+		} catch (AutenticacaoEmailException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível enviar o e-mail");
+		}
 		
 	}
 	
 	public void pesquisarEmailCota(Integer numeroCota){
 		String email = cotaService.obterPorNumeroDaCota(numeroCota).getPessoa().getEmail();
 		
-		result.use(Results.json()).from(email, "result")
-		.recursive().serialize();
+		result.use(Results.json()).from(email, "result").recursive().serialize();
 	}
+	
+	private byte[] gerarAnexo(FileType tipo) throws IOException{
+	
+		ByteArrayOutputStream os =  new ByteArrayOutputStream();
+		
+		if(tipo.equals(FileType.XLS)){
+			exportarAnexo(FileType.XLS, os);
+		}else{
+			exportarAnexo(FileType.PDF, os);
+		}
+		
+		return os.toByteArray();
+	}
+	
+	public void exportarAnexo(FileType fileType, OutputStream output) throws IOException {
+
+		FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
+
+		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService
+				.obterListaConsolidadoPorCota(filtro);
+
+		List<ContaCorrenteCotaVO> listaItensContaCorrenteCotaVO = new ArrayList<ContaCorrenteCotaVO>();
+
+		for (ViewContaCorrenteCota contaCorrenteCota : listaItensContaCorrenteCota) {
+
+			ContaCorrenteCotaVO contaCorrenteCotaVO = new ContaCorrenteCotaVO();
+
+			contaCorrenteCotaVO.setConsignado(MathUtil
+					.defaultValue(contaCorrenteCota.getConsignado()));
+			contaCorrenteCotaVO.setDataConsolidado(contaCorrenteCota
+					.getDataConsolidado());
+			contaCorrenteCotaVO.setDebitoCredito(MathUtil
+					.defaultValue(contaCorrenteCota.getDebitoCredito()));
+			contaCorrenteCotaVO.setEncalhe(MathUtil
+					.defaultValue(contaCorrenteCota.getEncalhe()));
+			contaCorrenteCotaVO.setEncargos(MathUtil
+					.defaultValue(contaCorrenteCota.getEncargos()));
+			contaCorrenteCotaVO.setNumerosAtrasados(MathUtil
+					.defaultValue(contaCorrenteCota.getNumeroAtrasados()));
+			contaCorrenteCotaVO.setPendente(MathUtil
+					.defaultValue(contaCorrenteCota.getPendente()));
+			contaCorrenteCotaVO.setTotal(MathUtil
+					.defaultValue(contaCorrenteCota.getTotal()));
+			contaCorrenteCotaVO.setValorPostergado(MathUtil
+					.defaultValue(contaCorrenteCota.getValorPostergado()));
+			contaCorrenteCotaVO.setVendaEncalhe(MathUtil
+					.defaultValue(contaCorrenteCota.getVendaEncalhe()));
+
+			listaItensContaCorrenteCotaVO.add(contaCorrenteCotaVO);
+		}
+		
+
+		FileExporter.to("conta-corrente-cota", fileType).inOutputStream(
+				this.getNDSFileHeader(), filtro, null,
+				listaItensContaCorrenteCotaVO, ContaCorrenteCotaVO.class,
+				output);
+	}
+	
 		
 }
