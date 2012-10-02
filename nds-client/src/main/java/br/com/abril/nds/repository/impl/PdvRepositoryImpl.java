@@ -302,8 +302,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
      */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PDV> obterPDVPorCotaEEndereco(Integer numCota,
-			String municipio, String uf, String bairro, String cep) {
+	public List<PDV> obterPDVPorCotaEEndereco(Integer numCota, String municipio, String uf, String bairro, String cep) {
 
 		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
 		criteria.setFetchMode("cota", FetchMode.JOIN);

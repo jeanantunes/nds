@@ -489,7 +489,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
 		
 		List<PDV> listaPdv = this.pdvRepository.obterPDVPorCotaEEndereco(numCota, municipio, uf, bairro, cep);
-
+		
 		PdvRoteirizacaoDTO pdvDTO;
 		
 		Integer ordem=0;
