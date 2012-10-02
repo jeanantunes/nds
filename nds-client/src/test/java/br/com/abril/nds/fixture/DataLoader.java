@@ -3028,10 +3028,10 @@ public class DataLoader {
 				      dividaOrlando,
 				      dividaAcumuladaGuilherme1, dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 
-		dividaAcumuladaGuilherme1.setDividaRaiz(dividaGuilherme1);
-		dividaAcumuladaGuilherme2.setDividaRaiz(dividaGuilherme2);
-		dividaAcumuladaMariana1.setDividaRaiz(dividaMariana1);
-		dividaAcumuladaMurilo1.setDividaRaiz(dividaMurilo1);
+		dividaAcumuladaGuilherme1.getAcumulado().add(dividaGuilherme1);
+		dividaAcumuladaGuilherme2.getAcumulado().add(dividaGuilherme2);
+		dividaAcumuladaMariana1.getAcumulado().add(dividaMariana1);
+		dividaAcumuladaMurilo1.getAcumulado().add(dividaMurilo1);
 
 		save(session, dividaAcumuladaGuilherme1,dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 	}
