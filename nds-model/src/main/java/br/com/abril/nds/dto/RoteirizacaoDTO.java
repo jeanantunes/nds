@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
@@ -144,11 +145,14 @@ public class RoteirizacaoDTO implements Serializable{
 	 * Adiciona novos Roteiros à Roteirizacao
 	 * @param listaRoteiro: List<RoteiroRoteirizacaoDTO> para inclusão
 	 */
-	public void addAllRoteiro(List<RoteiroRoteirizacaoDTO> listaRoteiro){
+	public void addAllRoteiro(Collection<RoteiroRoteirizacaoDTO> listaRoteiro){
 		if (roteiros == null){
 			roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
 		}
-		roteiros.addAll(listaRoteiro);
+		
+		if (listaRoteiro != null){
+			roteiros.addAll(listaRoteiro);
+		}
 	}
 	
     /**

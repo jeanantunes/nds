@@ -1,32 +1,23 @@
 <form id="form-transfere-rota">
-<div id="dialog-transfere-rota" title="Transferir Rotas" style="display:none;">
+<div id="dialog-transfere-rota" title="Transferir Rota" style="display:none;">
 	<fieldset>
-    	<legend>Transferir Rotas para:</legend>
-        <p>Pesquise ou Digite o nome de um Novo Roteiro para estas Rotas.</p>
-        <input name="roteiroTranferenciaNome" type="text" id="roteiroTranferenciaNome" onkeyup="roteirizacao.autoCompletarRoteiroPorNome('#roteiroTranferenciaNome',roteirizacao.selecionaRoteiroTranferencia)" style="width:300px; float:left; margin-bottom:5px;" />
-        <input name="roteiroTranferenciaSelecionadoId" type="hidden" id="roteiroTranferenciaSelecionado"  />
-        <input name="roteiroTranferenciaSelecionadoNome" type="hidden" id="roteiroTranferenciaSelecionadoNome"  />
-        <a href="javascript:;" onclick="roteirizacao.exibiRoteiroNovoTranferencia();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" /></a>
-        <br clear="all" />
-        <div class="roteiroNovo" style="display:none;">
-        <a href="javascript:;" onclick="roteirizacao.escondeRoteiroNovoTranferencia();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" border="0" align="right" /></a>
-        <br clear="all" />
-        <label>Box:</label>
-        <select name="boxRoteiroTranferencia" id="boxRoteiroTranferencia" style="width:230px;  float:left; margin-bottom:5px;">
-            <option>Selecione...</option>
-           <c:forEach var="box" items="${listaBox}">
-				<option value="${box.key}">${box.value}</option>
-			</c:forEach>
-        </select>
-        <br clear="all" />
-
-        <label>Ordem:</label>
-        <input name="ordemRoteiroTranferencia" id="ordemRoteiroTranferencia" type="text" style="width:225px; float:left; margin-bottom:5px;" />    
-        <br clear="all" />
-        <label>Roteiro Especial:</label>
-        <input type="checkbox" name="tipoRoteiroTranferencia" value="Especial" id="tipoRoteiroTranferencia" onclick="roteirizacao.roteiroEspecial()"  />
-        <br clear="all" />  
-</div>
+    	<legend>Transferir Rota</legend>
+		<table width="347" border="0" cellspacing="1" cellpadding="1">
+			<tr>
+           		<td>Roteiro Atual:</td>
+           		<td>
+           			<input type="text" id="nomeRoteiroAtual" style="width:220px;" disabled="disabled" />
+           		</td>
+         	</tr>
+         	<tr>
+           		<td>
+           			<strong>Novo Roteiro:</strong>
+           		</td>
+           		<td>
+           			<select name="select" id="selectNovoRoteiro" style="width:227px;"></select>
+           		</td>
+         	</tr>
+       	</table>
     </fieldset>
 </div>
 </form>
@@ -47,6 +38,30 @@
 </div>
     </fieldset>
 </div>
+</form>
+
+<form id="form-transfere-roteiro">
+	<div id="dialog-transfere-roteiro" title="Transferir Roteiro" style="display: none;">
+		<fieldset>
+			<legend>Transferir Roteiros</legend>
+			<table width="347" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+            		<td>Box Atual:</td>
+            		<td>
+            			<input type="text" id="nomeBoxAtual" style="width:220px;" disabled="disabled" />
+            		</td>
+          		</tr>
+          		<tr>
+            		<td>
+            			<strong>Novo Box:</strong>
+            		</td>
+            		<td>
+            			<select name="select" id="selectNovoBox" style="width:227px;"></select>
+            		</td>
+          		</tr>
+        	</table>
+		</fieldset>
+	</div>
 </form>
 
 <form id="form-excluir-rota-roteiro">
@@ -179,7 +194,7 @@
                     <img src="${pageContext.request.contextPath}//images/ico_add.gif" hspace="5" border="0"/>Adicionar</a>
                 </span>
 
-                <span class="bt_novos trans_cota" title="Transferência de Roteiro"><a href="javascript:;" onclick="popup_tranferir_cota();">
+                <span class="bt_novos trans_cota" title="Transferência de Roteiro"><a href="javascript:;" onclick="roteirizacao.popup_tranferir();">
                      <img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a>
                 </span>
 
