@@ -45,6 +45,7 @@ import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -89,6 +90,9 @@ public class RoteirizacaoController {
 	private PdvService pdvService;
 	
 	@Autowired
+	private EnderecoService enderecoService;
+	
+	@Autowired
 	private HttpSession session;
 
 	private static final String FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE="filtroPesquisa";
@@ -123,6 +127,7 @@ public class RoteirizacaoController {
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO)
 	public void index() {
+		
 		carregarComboBox();
 	}
 
@@ -890,13 +895,26 @@ public class RoteirizacaoController {
 	}
 	
 	/**
+	 * Método responsável pela obtenção dos dados que irão preencher o combo de UF's.
+	 * @param tela
+	 */
+	@Post
+    @Path("/obterDadosComboUF")
+	public void obterDadosComboUF() {
+		
+		List<String> ufs = this.enderecoService.obterUnidadeFederacaoBrasil();
+		
+		this.result.use(Results.json()).from(ufs, "result").serialize();
+	}
+	
+	/**
 	 * Obtém PDV's para a inclusão de rota pdv na roteirização
 	 */
 	@Post
 	@Path("/obterPdvsDisponiveis")
-	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep ){
+	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, String sortname, String sortorder ){
         
-		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis();
+		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep);
 		
 		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
 	}
@@ -984,9 +1002,9 @@ public class RoteirizacaoController {
 	/**
 	 * Adiciona PDV's selecionados no "popup de PSV's disponíveis" na lista principal de PDV's
 	 */
-	@Get
+	@Post
 	@Path("/adicionarNovosPdvs")
-	public void adicionarNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, Long idRota){
+	public void adicionarNovosPdvs(Long idRota, List<PdvRoteirizacaoDTO> pdvs){
         
 		//BUSCAR ROTEIRIZACAO ATUAL NA SESSAO
 		RoteirizacaoDTO roteirizacaoDTO = null;
@@ -1015,9 +1033,9 @@ public class RoteirizacaoController {
 	/**
 	 * Remove PDV's selecionados da lista principal de PDV's
 	 */
-	@Get
+	@Post
 	@Path("/removerPdvs")
-	public void removerPdvs(List<PdvRoteirizacaoDTO> pdvs, Long idRota){
+	public void removerPdvs(Long idRota, List<PdvRoteirizacaoDTO> pdvs){
         
 		//BUSCAR ROTEIRIZACAO ATUAL NA SESSAO
 		RoteirizacaoDTO roteirizacaoDTO = null;

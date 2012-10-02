@@ -70,4 +70,15 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	 * @return
 	 */
 	List<PDV> obterPDVPorRota(Long idRota);
+	
+	/**
+     * Obtem PDV's por Cota e informações de Endereço
+     * @param numCota
+     * @param municipio
+     * @param uf
+     * @param bairro
+     * @param cep
+     * @return List<PDV>
+     */
+	List<PDV> obterPDVPorCotaEEndereco(Integer numCota, String municipio, String uf, String bairro, String cep);
 }
