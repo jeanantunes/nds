@@ -360,6 +360,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				align : 'right'
 			}],
 			sortname : "dataConsolidado",
+			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

@@ -194,7 +194,7 @@
                     <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
                 </span>
 
-                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.popupsPdvs();">
+                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.abrirTelaCotas();">
                     <img src="${pageContext.request.contextPath}//images/ico_add.gif" hspace="5" border="0"/>Adicionar</a>
                 </span>
 
@@ -229,7 +229,7 @@
 
 
 	<form id="form-cotas-disponiveis">
-		<div id="dialog-pdvs" title="Cotas Dispon&icirc;veis" style="display:none;">
+		<div id="dialog-cotas-disponiveis" title="Cotas Dispon&icirc;veis" style="display:none;">
 		    
 		    <jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialogRoteirizacaoCotaDisponivel" name="messageDialog"/>
@@ -269,22 +269,42 @@
 		            </tr>
 		            
 		            <tr>
-		              <td>UF:</td>
-		              <td><select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">
-		                
-		              </select></td>
+		            			            
+		            
+		              <td>UF:</td>	       
+		              <td>
+		                  <select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">   
+		                  </select>
+		              </td>
+		              
 		              <td>Munic.</td>
-		              <td><select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
-		                <option>Todos</option>
-		              </select></td>
+		              <td>
+			              <select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
+			              </select>
+		              </td>
+		              
 		              <td>Bairro:</td>
-		              <td width="168"><select name="comboBairro" id="comboBairro" style="width:150px;">
-		                <option>Todos</option>
-		              </select></td>
+		              <td width="168">
+			              <select name="comboBairro" id="comboBairro" style="width:150px;">
+			              </select>
+		              </td>
+		              
 		              <td width="36">CEP:</td>
-		              <td width="87"><input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" /></td>
-		              <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+		              <td width="87">
+		                  <input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" />
+		              </td>
+		              
+		              <td width="79">
+		                  <span class="bt_novos">
+		                      <a href="javascript:;" onclick="roteirizacao.buscaPdvsDisponiveis();">
+		                          <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+		                      </a>
+		                  </span>
+		              </td>
+		            
+		            
 		            </tr>
+ 
 		          </table>
 			</fieldset>
 			

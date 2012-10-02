@@ -262,13 +262,13 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testeObterPdvsDisponiveis(){
 		
-		List<PdvRoteirizacaoDTO> listaPdvDTO = this.roteirizacaoService.obterPdvsDisponiveis();
+		List<PdvRoteirizacaoDTO> listaPdvDTO = this.roteirizacaoService.obterPdvsDisponiveis(null,null,null,null,null);
 		
 		Assert.assertTrue(listaPdvDTO!=null);
 		
 		Assert.assertTrue(listaPdvDTO.size()>0);
 		
-		Assert.assertEquals(listaPdvDTO.size(), 2);
+		Assert.assertEquals(listaPdvDTO.size(), 1);
 	}
 	
 
