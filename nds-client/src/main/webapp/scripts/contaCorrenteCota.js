@@ -192,7 +192,16 @@ var contaCorrenteCotaController = $.extend(true, {
 			$.each(data.rows, function(index, value) {
 			
 			var valorPostergado = value.cell[1];
-			var dataRaizPostergado =  value.cell[11];
+			var dataRaizPostergado =  value.cell[11];			
+			if(dataRaizPostergado.length==0){
+				dataRaizPostergado = value.cell[0];
+			}
+			var valorPendente = value.cell[8];
+			var dataRaizPendente =  value.cell[12];
+			
+			if(dataRaizPendente.length==0){
+				dataRaizPendente = value.cell[0];
+			}
 			var consignado = value.cell[3];
 			var encalhe = value.cell[4];
 			var vendaEncalhe = value.cell[5];
@@ -213,6 +222,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				
 				value.cell[1] = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +valorPostergado +'</a></span>';
+				value.cell[8] = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'" href="javascript:;">' +valorPendente +'</a></span>';
 						
 			});
 			

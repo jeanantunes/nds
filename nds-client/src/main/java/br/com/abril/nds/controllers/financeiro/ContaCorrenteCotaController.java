@@ -543,7 +543,7 @@ public class ContaCorrenteCotaController {
 
 			listaModeloGenerico.add(new CellModel(dto.getId().intValue(), data,
 					valorPostergado, NA, consignado, encalhe, vendaEncalhe,
-					debCred, encargos, pendente, total, dto.getId(), DateUtil.formatarDataPTBR(dto.getDataRaizConsolidado())));
+					debCred, encargos, pendente, total, dto.getId(), DateUtil.formatarDataPTBR(dto.getDataRaizConsolidado()),DateUtil.formatarDataPTBR(dto.getDataRaizPendente())));
 		}
 
 		Cota cota = cotaService.obterPorNumeroDaCota(codCota);
