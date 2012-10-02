@@ -111,7 +111,7 @@ GeracaoNFeController.prototype.gerar = function() {
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 		}
-		
+		exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
 		_this.gridReaload(_this.$gridNFe,'busca.json');
 		
 	});
