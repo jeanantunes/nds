@@ -181,8 +181,8 @@
 
     <fieldset style="width:875px; float:left; margin-left:5px; margin-top:10px; overflow:hidden;">
         <legend>Cotas da Rota</legend>
-        <span style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;">
-            <strong>Box:</strong><span id="boxSelecionado"/><strong>- Roteiro Selecionado:</strong><span id="roteiroSelecionado"/><strong> - Rota: </strong><span id="rotaSelecionada"/>
+        <span id="cotasRota" style="float:left; margin-bottom:10px; margin-left:3px; margin-top:5px;">
+            
         </span>
         <br clear="all" />
         <table class="cotasRotaGrid"></table>

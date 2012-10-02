@@ -354,6 +354,19 @@ var roteirizacao = $.extend(true, {
             roteirizacao.popularGridCotasRota();
             roteirizacao.definirTransferenciaRota();
             roteirizacao.tipoExclusao = TipoExclusao.ROTA;
+            roteirizacao.popularInfoCotasRota();
+            
+        },
+        
+        popularInfoCotasRota : function() {
+        	var info = '<strong>Box:</strong>' + roteirizacao.idBox;
+        	info += '<strong>- Roteiro Selecionado:</strong>' + roteirizacao.nomeRoteiro;
+        	info += '<strong> - Rota: </strong>' + roteirizacao.nomeTota;
+        	$('#cotasRota', roteirizacao.workspace).html(info);
+        },
+        
+        limparInfoCotasRota : function() {
+        	$('#cotasRota', roteirizacao.workspace).html('');
         },
 
         limparGridRotas : function() {
@@ -2048,14 +2061,21 @@ var roteirizacao = $.extend(true, {
 	                    height:610,
 	                    width:955,
 	                    modal: true,
+                        title : roteirizacao.isNovo() ? 'Nova Roteirização' : 'Editar Roteirização',
 	                    buttons: {
 	                        "Confirmar": function() {
-	                            $( this ).dialog( "close" );
-	                            $("#effect").show("highlight", {}, 1000, callback);
-	                            $(".grids").show();
+	                            roteirizacao.confirmarRoteirizacao();
+                                $( this ).dialog( "close" );
+
 	
 	                        },
 	                        "Cancelar": function() {
+                                $.postJSON(contextPath + '/cadastro/roteirizacao/cancelarRoteirizacao',
+                                    null,
+                                    null,
+                                    null,
+                                    true
+                                );
 	                            $( this ).dialog( "close" );
 	                        }
 	                    },
@@ -2069,6 +2089,16 @@ var roteirizacao = $.extend(true, {
 	        $(".cotasDisponiveisGrid", roteirizacao.workspace).clear();
 	        $('#spanDadosRoteiro', roteirizacao.workspace).html('<strong>Roteiro Selecionado:</strong>&nbsp;&nbsp; <strong>Box: </strong>&nbsp;&nbsp; <strong>Ordem: </strong>&nbsp;');
 	    },
+
+        confirmarRoteirizacao : function() {
+        	 $.postJSON(contextPath + '/cadastro/roteirizacao/confirmarRoteirizacao',
+                     null,
+                     null,
+                     null,
+                     true
+                 );
+        },
+
     
 	    abrirTelaRotaComNome :function(){
 	    	
