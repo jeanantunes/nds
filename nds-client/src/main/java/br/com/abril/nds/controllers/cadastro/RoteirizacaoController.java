@@ -1063,7 +1063,12 @@ public class RoteirizacaoController {
 
 		RoteirizacaoDTO roteirizacao = this.getDTO();
 		
-		roteirizacao.setRotaCotasCopia(rotaCopia);
+		if (roteirizacao.getRotaCotasCopia() == null) {
+
+			roteirizacao.setRotaCotasCopia(new ArrayList<RotaRoteirizacaoDTO>());
+		}
+
+		roteirizacao.getRotaCotasCopia().add(rotaCopia);
 
 		setDTO(roteirizacao);
 
