@@ -158,12 +158,12 @@ var entregadorController = $.extend(true, {
 			data.push({name: 'codigoEntregador', value: $("#codigoEntregadorPF", this.workspace).val()});
 			data.push({name: 'isComissionado', value: $("#comissionadoPF", this.workspace).is(":checked")});
 			data.push({name: 'percentualComissao', value: $("#percentualComissaoPF", this.workspace).val()});
-
+			data.push({name: 'dataNascimento', value: $("#dataNascimento", this.workspace).val()});
+			
 			data.push({name: 'pessoaFisica.cpf', value: $("#cpf", this.workspace).val()});
 			data.push({name: 'pessoaFisica.nome', value: $("#nomeEntregador", this.workspace).val()});
 			data.push({name: 'pessoaFisica.apelido', value: $("#apelido", this.workspace).val()});
 			data.push({name: 'pessoaFisica.rg', value: $("#rg", this.workspace).val()});
-			data.push({name: 'pessoaFisica.dataNascimento', value: $("#dataNascimento", this.workspace).val()});
 			data.push({name: 'pessoaFisica.orgaoEmissor', value: $("#orgaoEmissor", this.workspace).val()});
 			data.push({name: 'pessoaFisica.ufOrgaoEmissor', value: $("#ufOrgaoEmissor", this.workspace).val()});
 			data.push({name: 'pessoaFisica.estadoCivil', value: $("#estadoCivil", this.workspace).val()});
