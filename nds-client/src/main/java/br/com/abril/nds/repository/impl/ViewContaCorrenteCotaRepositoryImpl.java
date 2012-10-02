@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -20,37 +21,26 @@ public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel
 		super(ViewContaCorrenteCota.class);		
 	}
 	
+	@Override
+	public Long getQuantidadeViewContaCorrenteCota(FiltroViewContaCorrenteCotaDTO filtro){
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select count(viewContaCorrente) ");	
+			
+		Query query = corpoQuery(filtro, hql,null);
+		
+		return (Long) query.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<ViewContaCorrenteCota> getListaViewContaCorrenteCota(FiltroViewContaCorrenteCotaDTO filtro) {
-			
+		PaginacaoVO paginacao = filtro.getPaginacao();
 		StringBuffer hql = new StringBuffer("");
 		
 		hql.append(" select viewContaCorrente ");	
 			
-		hql.append(" from ViewContaCorrenteCota viewContaCorrente	");
+		Query query = corpoQuery(filtro, hql, getOrdenacaoConsulta(filtro,paginacao));
 		
-		hql.append(" where ");
-		
-		hql.append(" viewContaCorrente.numeroCota = :numeroCota ");
-		
-		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
-			
-			hql.append(" and viewContaCorrente.dataConsolidado between :inicioPeriodo and :fimPeriodo ");
-		}
-		
-		PaginacaoVO paginacao = filtro.getPaginacao();
-		
-		hql.append( getOrdenacaoConsulta(filtro,paginacao) );
-		
-		Query query  = getSession().createQuery(hql.toString());
-			
-		query.setParameter("numeroCota", filtro.getNumeroCota());
-		
-		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
-			
-			query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
-			query.setParameter("fimPeriodo", filtro.getFimPeriodo());
-		}
 		
 		if (paginacao != null) {
 			
@@ -66,6 +56,43 @@ public class ViewContaCorrenteCotaRepositoryImpl extends AbstractRepositoryModel
 		}
 		
 		return query.list();
+	}
+
+	/**
+	 * @param filtro
+	 * @param hql
+	 * @return
+	 * @throws HibernateException
+	 */
+	private Query corpoQuery(FiltroViewContaCorrenteCotaDTO filtro,
+			StringBuffer hql, StringBuffer ordenacao) throws HibernateException {
+		hql.append(" from ViewContaCorrenteCota viewContaCorrente	");
+		
+		hql.append(" where ");
+		
+		hql.append(" viewContaCorrente.numeroCota = :numeroCota ");
+		
+		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+			
+			hql.append(" and viewContaCorrente.dataConsolidado between :inicioPeriodo and :fimPeriodo ");
+		}	
+	
+		
+		if (ordenacao != null) {
+			hql.append(ordenacao);
+		}
+		Query query  = getSession().createQuery(hql.toString());
+			
+		query.setParameter("numeroCota", filtro.getNumeroCota());
+		
+		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+			
+			query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+			query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+		}
+		
+		
+		return query;
 	}
 
 	private StringBuffer getOrdenacaoConsulta(FiltroViewContaCorrenteCotaDTO filtro,PaginacaoVO paginacao) {

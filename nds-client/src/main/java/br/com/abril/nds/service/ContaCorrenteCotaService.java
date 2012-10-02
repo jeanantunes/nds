@@ -9,4 +9,6 @@ public interface ContaCorrenteCotaService {
 	
 	List<ViewContaCorrenteCota> obterListaConsolidadoPorCota(FiltroViewContaCorrenteCotaDTO filtro);
 
+	public abstract Long getQuantidadeViewContaCorrenteCota(FiltroViewContaCorrenteCotaDTO filtro);
+
 }
