@@ -61,6 +61,8 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private LancamentoRepository lancamentoRepository;
 	
 	private Lancamento lancamentoVeja;
+	private Lancamento proximoLancamentoVeja;
+	private Lancamento ultimoLancamentoVeja;
 	private Lancamento lancamentoQuatroRodas;
 	private Lancamento lancamentoInfoExame;
 	private Lancamento lancamentoCapricho;
@@ -231,6 +233,22 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				StatusLancamento.CONFIRMADO, itemRecebimentoFisico1Veja, 1);
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 		
+		proximoLancamentoVeja = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja1,
+				Fixture.criarData(23, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new Date(),
+				new Date(),
+				BigInteger.valueOf(100),
+				StatusLancamento.CONFIRMADO, null, 1);
+		
+		ultimoLancamentoVeja = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja1,
+				Fixture.criarData(24, Calendar.FEBRUARY, 2012),
+				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
+				new Date(),
+				new Date(),
+				BigInteger.valueOf(100),
+				StatusLancamento.CONFIRMADO, null, 1);
+		
 		lancamentoQuatroRodas = Fixture.lancamento(TipoLancamento.LANCAMENTO, quatroRoda2,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(22, Calendar.MARCH, 2012),
@@ -266,7 +284,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Estudo estudo = Fixture.estudo(BigInteger.valueOf(100),
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012), veja1);
 		
-		save(lancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
+		save(lancamentoVeja, proximoLancamentoVeja, ultimoLancamentoVeja, lancamentoQuatroRodas, lancamentoInfoExame,
 				lancamentoCapricho, lancamentoCromoReiLeao, estudo);
 		
 		Calendar calendar = Calendar.getInstance();
@@ -444,8 +462,16 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 				1L, Calendar.getInstance(), Calendar.getInstance(),
 				"precoDesconto", Ordenacao.ASC, 0, 15);
 	}
-	
-	
-	
-	
+
+	@Test
+	public void obterProximoLancamento() {
+		
+		Lancamento proximoLancamentoObtido = this.lancamentoRepository.obterProximoLancamento(lancamentoVeja);
+		
+		Assert.assertNotNull(proximoLancamentoObtido);
+		
+		Assert.assertTrue(proximoLancamentoObtido.getDataLancamentoPrevista().after(lancamentoVeja.getDataLancamentoPrevista()));
+
+		Assert.assertEquals(proximoLancamentoObtido.getId(), proximoLancamentoVeja.getId());
+	}
 }

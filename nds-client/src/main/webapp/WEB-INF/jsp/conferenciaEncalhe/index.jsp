@@ -36,10 +36,18 @@
 	</jsp:include>
 
 	<jsp:include page="dialog.jsp" />
-
-	<div class="container">
-
-		<fieldset class="classFieldset">
+		
+		<div class="areaBts">
+			<div class="area">
+				<span class="bt_novos">
+							<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()" rel="tipsy" title="Contingência">
+								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />
+							</a>
+						</span>
+			</div>
+		</div>
+		<div class="linha_separa_fields">&nbsp;</div>
+		<fieldset class="fieldFiltro">
 
 			<legend> Pesquisar Encalhe</legend>
 
@@ -77,11 +85,7 @@
 			<table width="950" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="126">
-						<span class="bt_novos" title="Contingência">
-							<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()">
-								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />Contingência
-							</a>
-						</span>
+						&nbsp;
 					</td>
 					<td width="314">&nbsp;</td>
 					<td width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
@@ -95,7 +99,7 @@
 
 		<div class="linha_separa_fields">&nbsp;</div>
 
-		<fieldset class="classFieldset">
+		<fieldset class="fieldGrid">
 
 			<legend>Encalhe</legend>
 
@@ -185,8 +189,4 @@
 				</table>
 			</div>
 		</fieldset>
-		
-		<div class="linha_separa_fields">&nbsp;</div>
-		
-	</div>
 </body>

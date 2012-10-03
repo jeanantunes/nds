@@ -103,7 +103,6 @@ import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
-import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
@@ -2202,13 +2201,14 @@ public class Fixture {
 		return banco;
 	}
 	
-	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel) {
+	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel, Banco banco) {
 	
 		ControleBaixaBancaria controleBaixaBancaria = new ControleBaixaBancaria();
 		
 		controleBaixaBancaria.setData(data);
 		controleBaixaBancaria.setStatus(status);
 		controleBaixaBancaria.setResponsavel(responsavel);
+		controleBaixaBancaria.setBanco(banco);
 		
 		return controleBaixaBancaria;
 	}
@@ -2248,7 +2248,7 @@ public class Fixture {
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
 			BigDecimal valorConsignado,BigDecimal valorVendaEncalhe,
 			BigDecimal encalhe, BigDecimal debitoCredito, BigDecimal encargos, 
-			BigDecimal valorPostergado, BigDecimal atrasados, BigDecimal pendente) {
+			BigDecimal valorPostergado, BigDecimal pendente) {
 		
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
 		consolidado.setMovimentos(movimentos);
@@ -2261,10 +2261,9 @@ public class Fixture {
 		consolidado.setDebitoCredito(debitoCredito);
 		consolidado.setEncargos(encargos);
 		consolidado.setValorPostergado(valorPostergado);
-		consolidado.setNumeroAtrasados(atrasados);
 		consolidado.setPendente(pendente);
 		
-		consolidado.setTotal(valorConsignado.subtract(encalhe).add(valorVendaEncalhe).add(debitoCredito).add(encargos).add(valorPostergado).add(atrasados).add(pendente));
+		consolidado.setTotal(valorConsignado.subtract(encalhe).add(valorVendaEncalhe).add(debitoCredito).add(encargos).add(valorPostergado).add(pendente));
 		
 		consolidado.setVendaEncalhe(valorVendaEncalhe);
 		
@@ -2440,6 +2439,7 @@ public class Fixture {
 		rota.setDescricaoRota(descricaoRota);
 		rota.setOrdem(0);
 		rota.setRoteiro(roteiro);
+		roteiro.addRota(rota);
 		return rota;
 	}
 	
@@ -3001,6 +3001,7 @@ public class Fixture {
 		roteiro.setOrdem(0);
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		roteiro.setRoteirizacao(roteirizacao);
+		roteirizacao.addRoteiro(roteiro);
 		
 		return roteiro;
 	}

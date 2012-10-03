@@ -147,7 +147,7 @@ var usuariosPermissaoController = $.extend(true, {
 			$( "#dialog-novo-usuario" , usuariosPermissaoController.workspace).dialog({
 				resizable: false,
 				height:620,
-				width:750,
+				width:770,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {

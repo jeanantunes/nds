@@ -40,6 +40,8 @@ public class ProdutoRecolhimentoFormatadoVO {
 	
 	private String encalheAtendida;
 	
+	private String encalheAlternativo;
+	
 	private String encalhe;
 	
 	private String valorTotal;
@@ -256,6 +258,20 @@ public class ProdutoRecolhimentoFormatadoVO {
 	 */
 	public void setEncalheAtendida(String encalheAtendida) {
 		this.encalheAtendida = (encalheAtendida != null) ? encalheAtendida : "";
+	}
+
+	/**
+	 * @return the encalheAlternativo
+	 */
+	public String getEncalheAlternativo() {
+		return encalheAlternativo;
+	}
+
+	/**
+	 * @param encalheAlternativo the encalheAlternativo to set
+	 */
+	public void setEncalheAlternativo(String encalheAlternativo) {
+		this.encalheAlternativo = (encalheAlternativo != null ) ? encalheAlternativo : "";
 	}
 
 	/**

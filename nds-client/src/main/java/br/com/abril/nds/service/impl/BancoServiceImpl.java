@@ -57,7 +57,7 @@ public class BancoServiceImpl implements BancoService {
 	@Transactional(readOnly=true)
 	@Override
 	public Banco obterbancoPorNumero(String numero) {
-		return bancoRepository.obterbancoPorNumero(numero);
+		return bancoRepository.obterBancoPorNumero(numero);
 	}
 
 	/**

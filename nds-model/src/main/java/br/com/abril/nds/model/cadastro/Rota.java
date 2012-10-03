@@ -2,6 +2,8 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -42,17 +45,27 @@ public class Rota implements Serializable {
 	private String descricaoRota;
 	
 	@ManyToOne
-	@JoinColumn(name = "ROTEIRO_ID", nullable = false )
+	@JoinColumn(name = "ROTEIRO_ID")
 	private Roteiro roteiro;
+	@OneToOne(mappedBy="rota")
+	private Entregador entregador;
 	
-	@OneToMany(mappedBy = "rota")
-	@Cascade(value = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.SAVE_UPDATE})
+	@OneToMany(mappedBy = "rota", orphanRemoval = true)
+	@Cascade(value = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.SAVE_UPDATE, CascadeType.DELETE})
 	private List<RotaPDV> rotaPDVs =  new ArrayList<RotaPDV>();
 	
 	@Column(name="ORDEM", nullable = false)
 	private Integer ordem;
 	
-	public Long getId() {
+    public Rota() {
+    }
+	
+	public Rota(String descricaoRota, Integer ordem) {
+        this.descricaoRota = descricaoRota;
+        this.ordem = ordem;
+    }
+
+    public Long getId() {
 		return id;
 	}
 
@@ -121,4 +134,62 @@ public class Rota implements Serializable {
         return rotaPDV;
     }
 	
+
+	/**
+	 * @return the entregador
+	 */
+	public Entregador getEntregador() {
+		return entregador;
+	}
+
+	/**
+	 * @param entregador the entregador to set
+	 */
+	public void setEntregador(Entregador entregador) {
+		this.entregador = entregador;
+	}
+	
+    /**
+     * Desassocia os PDVs da Rota de acordo com os identificadores de PDV
+     * recebidos
+     * 
+     * @param pdvsExclusao
+     *            coleção de identificadores de PDV para exclusão
+     */
+	public void desassociarPDVs(Collection<Long> pdvsExclusao) {
+	    Iterator<RotaPDV> iterator = rotaPDVs.iterator();
+	    while(iterator.hasNext()) {
+	        RotaPDV rotaPDV = iterator.next();
+	        if (pdvsExclusao.contains(rotaPDV.getPdv().getId())) {
+	            iterator.remove();
+	        }
+	    }
+	}
+	
+    /**
+     * Recupera a associacao RotaPDV pelo identificador do PDV
+     * 
+     * @param idPDV
+     *            identificador do PDV para recuperação da associação
+     * @return PDV com o identificador ou null caso o PDV não esteja associado
+     * à Rota
+     */
+	public RotaPDV getRotaPDVPorPDV(Long idPDV) {
+	    for (RotaPDV rotaPdv : rotaPDVs) {
+	        PDV pdv = rotaPdv.getPdv();
+	        if (pdv.getId().equals(idPDV)) {
+	            return rotaPdv;
+	        }
+	    }
+	    return null;
+	}
+
+	@Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("Id: ");
+        builder.append(id).append(" - Ordem: ").append(ordem)
+                .append(" - Descrição: ").append(descricaoRota);
+        return builder.toString();
+    }
+
 }

@@ -18,4 +18,12 @@ public interface ConsultaEncalheService {
 	public InfoConsultaEncalheDTO pesquisarEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	public InfoConsultaEncalheDetalheDTO pesquisarEncalheDetalhe(FiltroConsultaEncalheDetalheDTO filtro);
+	
+	/**
+	 * Gera arquivo Documento Slip.
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro);
 }

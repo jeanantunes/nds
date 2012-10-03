@@ -51,6 +51,8 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	
 	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file, String nomeArquivo) {
 		
+		// TODO: setar banco, agencia e conta
+		
 		validarDadosEntrada(file, nomeArquivo);
 		
 		ArquivoPagamentoBancoDTO arquivoPagamentoBanco = null;
