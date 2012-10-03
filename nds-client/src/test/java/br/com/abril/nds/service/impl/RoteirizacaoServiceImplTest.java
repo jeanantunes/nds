@@ -31,6 +31,7 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -159,6 +160,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 
 		rota4 = Fixture.rota("4", "Rota 4", roteiro2);
 	    rota4.addPDV(pdvManoel1, 1);
+	    rota4.addPDV(pdvManoel2, 2);
 		save(rota4);
 		
 		rota5 = Fixture.rota("5", "Rota 5", roteiro2);
@@ -180,6 +182,8 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		rota9 = Fixture.rota("9", "Rota 9", roteiro3);
 	    rota9.addPDV(pdvManoel1, 1);
 		save(rota9);
+		
+		save(roteirizacao);
 		
 	}
 
@@ -468,14 +472,102 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
     public void confirmaRoteirizacaoExistente() {
-        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(roteirizacao, Arrays.asList(box1));
-        roteirizacaoDTO.addRoteiroExclusao(roteiro3.getId());
+        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(RoteirizacaoServiceImplTest.roteirizacao, Arrays.asList(box1));
+        roteirizacaoDTO.addRoteiroExclusao(RoteirizacaoServiceImplTest.roteiro3.getId());
+        
+        RoteiroRoteirizacaoDTO novoRoteiro = new RoteiroRoteirizacaoDTO(Long.valueOf(-1), 5, "Novo Roteiro");
+        roteirizacaoDTO.addRoteiro(novoRoteiro);
+        
+        RoteiroRoteirizacaoDTO roteiro1DTO = roteirizacaoDTO.getRoteiro(RoteirizacaoServiceImplTest.roteiro1.getId());
+        roteiro1DTO.removerRota(RoteirizacaoServiceImplTest.rota1.getId());
+        roteiro1DTO.adicionarRotaExclusao(RoteirizacaoServiceImplTest.rota1.getId());
+       
+        RotaRoteirizacaoDTO rota2DTO = roteiro1DTO.getRota(rota2.getId());
+        //TODO: Refatorar
+        rota2DTO.getPdvs().remove(1);
+        rota2DTO.getPdvsExclusao().add(pdvManoel2.getId());
+        
+        RotaRoteirizacaoDTO novaRota = new RotaRoteirizacaoDTO(Long.valueOf(-1), 10, "Nova Rota");
+        roteiro1DTO.addRota(novaRota);
+        
+        RoteiroRoteirizacaoDTO roteiro2DTO = roteirizacaoDTO.getRoteiro(RoteirizacaoServiceImplTest.roteiro2.getId());
+        RotaRoteirizacaoDTO  rota4DTO = roteiro2DTO.getRota(rota4.getId());
+        PdvRoteirizacaoDTO pdvDTO = rota4DTO.getPdv(pdvManoel2.getId());
+        pdvDTO.setOrdem(10);
+        
+        RotaRoteirizacaoDTO rota6DTO = roteiro2DTO.getRota(rota6.getId());
+        PdvRoteirizacaoDTO pdvManoel2DTO = new PdvRoteirizacaoDTO(
+                pdvManoel2.getId(), pdvManoel2.getNome(), OrigemEndereco.PDV,
+                null, pdvManoel2.getCota().getNumeroCota(), pdvManoel2
+                        .getCota().getPessoa().getNome(), 3);
+        rota6DTO.addPdv(pdvManoel2DTO);
+        
         
         roteirizacaoService.confirmarRoteirizacao(roteirizacaoDTO);
         flushClear();
-        Roteirizacao confirmado = (Roteirizacao) getSession().get(Roteirizacao.class, roteirizacao.getId()); 
+        
+        Roteirizacao confirmado = (Roteirizacao) getSession().get(Roteirizacao.class, RoteirizacaoServiceImplTest.roteirizacao.getId()); 
         List<Roteiro> roteiros = confirmado.getRoteiros();
-        Assert.assertEquals(2, roteiros.size());
+        Assert.assertEquals(3, roteiros.size());
+        
+        Roteiro roteiro1 = roteiros.get(0);
+        Assert.assertEquals(RoteirizacaoServiceImplTest.roteiro1.getDescricaoRoteiro(), roteiro1.getDescricaoRoteiro());
+        List<Rota> rotas = roteiro1.getRotas();
+        Assert.assertEquals(3, rotas.size());
+      
+        Rota rota1 = rotas.get(0);
+        Assert.assertEquals(RoteirizacaoServiceImplTest.rota2.getDescricaoRota(), rota1.getDescricaoRota());
+        List<RotaPDV> rotaPDVs = rota1.getRotaPDVs();
+        Assert.assertEquals(1, rotaPDVs.size());
+  
+        RotaPDV rotaPDV1 = rotaPDVs.get(0);
+        Assert.assertEquals(Integer.valueOf(1), rotaPDV1.getOrdem());
+        Assert.assertEquals(pdvManoel1, rotaPDV1.getPdv());
+        
+        Rota rota2 = rotas.get(1);
+        Assert.assertEquals(RoteirizacaoServiceImplTest.rota3.getDescricaoRota(), rota2.getDescricaoRota());
+        
+        Rota rota3 = rotas.get(2);
+        Assert.assertEquals(novaRota.getNome(), rota3.getDescricaoRota());
+        
+        Roteiro roteiro2 = roteiros.get(1);
+        Assert.assertEquals(RoteirizacaoServiceImplTest.roteiro2.getDescricaoRoteiro(), roteiro2.getDescricaoRoteiro());
+        List<Rota> rotasRoteiro2 = roteiro2.getRotas();
+        Assert.assertEquals(3, rotasRoteiro2.size());
+        
+        Rota rota1Roteiro2 = rotasRoteiro2.get(0);
+        Assert.assertEquals(rota4.getDescricaoRota(), rota1Roteiro2.getDescricaoRota());
+        List<RotaPDV> rota1Roteiro2PDVs = rota1Roteiro2.getRotaPDVs();
+        Assert.assertEquals(2, rota1Roteiro2PDVs.size());
+        
+        RotaPDV rota1Roteiro2PDV1 = rota1Roteiro2PDVs.get(0);
+        Assert.assertEquals(Integer.valueOf(1), rota1Roteiro2PDV1.getOrdem());
+        Assert.assertEquals(pdvManoel1, rota1Roteiro2PDV1.getPdv());
+        
+        RotaPDV rota1Roteiro2PDV2 = rota1Roteiro2PDVs.get(1);
+        Assert.assertEquals(pdvDTO.getOrdem(), rota1Roteiro2PDV2.getOrdem());
+        Assert.assertEquals(pdvManoel2, rota1Roteiro2PDV2.getPdv());
+        
+        Rota rota2Roteiro2 = rotasRoteiro2.get(1);
+        Assert.assertEquals(rota5.getDescricaoRota(), rota2Roteiro2.getDescricaoRota());
+        
+        Rota rota3Roteiro2 = rotasRoteiro2.get(2);
+        Assert.assertEquals(rota6.getDescricaoRota(), rota3Roteiro2.getDescricaoRota());
+        
+        List<RotaPDV> rota3Roteiro2PDVs = rota3Roteiro2.getRotaPDVs();
+        Assert.assertEquals(2, rota1Roteiro2PDVs.size());
+        
+        RotaPDV rota3Roteiro2PDV1 = rota3Roteiro2PDVs.get(0);
+        Assert.assertEquals(Integer.valueOf(1), rota3Roteiro2PDV1.getOrdem());
+        Assert.assertEquals(pdvManoel1, rota3Roteiro2PDV1.getPdv());
+        
+        RotaPDV rota3Roteiro2PDV2 = rota3Roteiro2PDVs.get(1);
+        Assert.assertEquals(pdvManoel2DTO.getOrdem(), rota3Roteiro2PDV2.getOrdem());
+        Assert.assertEquals(pdvManoel2, rota3Roteiro2PDV2.getPdv());
+        
+        
+        Roteiro roteiro3 = roteiros.get(2);
+        Assert.assertEquals(novoRoteiro.getNome(), roteiro3.getDescricaoRoteiro());
     }
 
 

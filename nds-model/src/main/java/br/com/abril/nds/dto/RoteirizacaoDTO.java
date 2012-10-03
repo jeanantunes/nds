@@ -271,7 +271,7 @@ public class RoteirizacaoDTO implements Serializable{
                         origemEndereco = OrigemEndereco.COTA;
                     }
                     PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(
-                            rotaPdv.getId(), pdv.getNome(), origemEndereco,
+                            pdv.getId(), pdv.getNome(), origemEndereco,
                             endereco, cota.getNumeroCota(), nomeCota,
                             rotaPdv.getOrdem());
                     rotaDTO.addPdv(pdvDTO);

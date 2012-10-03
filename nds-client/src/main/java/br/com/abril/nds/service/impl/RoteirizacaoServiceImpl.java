@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.RotaRepository;
@@ -644,11 +646,35 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	        roteirizacaoRepository.adicionar(roteirizacao);
 	    } else {
 	        roteirizacao = roteirizacaoRepository.buscarPorId(dto.getId());
-	        roteirizacao.desassociarRoteiros(dto.getRoteirosExclusao());
+	        Set<Long> roteirosExclusao = dto.getRoteirosExclusao();
+            roteirizacao.desassociarRoteiros(roteirosExclusao);
 	        for (RoteiroRoteirizacaoDTO roteiroDTO : dto.getTodosRoteiros()) {
 	            if (roteiroDTO.isNovo()) {
 	                Roteiro roteiro = new Roteiro(roteiroDTO.getNome(), roteiroDTO.getOrdem(), tipoRoteiro);
 	                roteirizacao.addRoteiro(roteiro);
+	            } else {
+	                if (!roteirosExclusao.contains(roteiroDTO.getId())) {
+	                    Roteiro roteiroExistente = roteirizacao.getRoteiro(roteiroDTO.getId());
+	                    roteiroExistente.desassociarRotas(roteiroDTO.getRotasExclusao());
+	                    for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getRotas()) {
+	                        if (rotaDTO.isNovo()) {
+	                            Rota rota = new Rota(rotaDTO.getNome(), rotaDTO.getOrdem());
+	                            roteiroExistente.addRota(rota);
+	                        } else {
+	                            Rota rotaExistente = roteiroExistente.getRota(rotaDTO.getId());
+	                            rotaExistente.desassociarPDVs(rotaDTO.getPdvsExclusao());
+	                            for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
+	                                RotaPDV rotaPDVExistente = rotaExistente.getRotaPDVPorPDV(pdvDTO.getId());
+	                                if (rotaPDVExistente == null) {
+	                                    PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
+	                                    rotaExistente.addPDV(pdv, pdvDTO.getOrdem());
+	                                } else {
+	                                    rotaPDVExistente.setOrdem(pdvDTO.getOrdem());
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
 	            }
 	        }
 	        roteirizacaoRepository.alterar(roteirizacao);
