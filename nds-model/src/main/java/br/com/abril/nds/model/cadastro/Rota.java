@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -44,6 +45,8 @@ public class Rota implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "ROTEIRO_ID")
 	private Roteiro roteiro;
+	@OneToOne(mappedBy="rota")
+	private Entregador entregador;
 	
 	@OneToMany(mappedBy = "rota", orphanRemoval = true)
 	@Cascade(value = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.SAVE_UPDATE, CascadeType.DELETE})
@@ -129,4 +132,18 @@ public class Rota implements Serializable {
         return rotaPDV;
     }
 	
+
+	/**
+	 * @return the entregador
+	 */
+	public Entregador getEntregador() {
+		return entregador;
+	}
+
+	/**
+	 * @param entregador the entregador to set
+	 */
+	public void setEntregador(Entregador entregador) {
+		this.entregador = entregador;
+	}
 }

@@ -19,11 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaJuridicaVO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EntregadorDTO;
 import br.com.abril.nds.dto.ProcuracaoCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoWrapper;
@@ -54,6 +56,7 @@ import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -1260,4 +1263,56 @@ public class EntregadorController {
 		return valor;
 	}
 	
+	/**
+	 * Efetua consulta pelo nome da cota informado, utilizado para auto complete da tela
+	 * 
+	 * @param nomeCota - nome da cota
+	 */
+	@Post
+	public void autoCompletarPorNome(String nome) {
+		
+		nome = PessoaUtil.removerSufixoDeTipo(nome);
+		
+		List<Entregador> listaEntregador = this.entregadorService.obterEntregadoresPorNome(nome);
+		
+		List<ItemAutoComplete> listaEntregadorAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (listaEntregador != null && !listaEntregador.isEmpty()) {
+			
+			for (Entregador entregador : listaEntregador) {
+				
+				String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(entregador.getPessoa());
+					
+				EntregadorDTO entregadorDTO = new EntregadorDTO(entregador.getId(), nomeExibicao);
+	
+				listaEntregadorAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, entregadorDTO));
+			}
+		}
+		
+		this.result.use(Results.json()).from(listaEntregadorAutoComplete, "result").include("value", "chave").serialize();
+	}
+
+	/**
+	 * Efetua consulta pelo nome da cota informado
+	 * 
+	 * @param nomeCota - nome da cota
+	 */
+	@Post
+	public void pesquisarPorNome(String nome) {
+		
+		nome = PessoaUtil.removerSufixoDeTipo(nome);
+		
+		Entregador entregador = this.entregadorService.obterPorNome(nome);
+		
+		if (entregador == null) {
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Entregador \"" + nome + "\" não encontrada!");
+		}
+		
+		String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(entregador.getPessoa());
+				
+		EntregadorDTO entregadorDTO = new EntregadorDTO(entregador.getId(), nomeExibicao);
+			
+		this.result.use(Results.json()).from(entregadorDTO, "result").serialize();
+	}
 }
