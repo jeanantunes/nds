@@ -2,6 +2,8 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -133,4 +135,46 @@ public class Roteiro implements Serializable {
 		}
 		rotas.addAll(listaRota);
 	}
+
+    /**
+     * Desassocia as rotas de acordo com os identificadores
+     * recebidos 
+     * @param idsRotas coleção de identificadores das rotas
+     * para desassociação
+     */
+	public void desassociarRotas(Collection<Long> idsRotas) {
+	    Iterator<Rota> iterator = rotas.iterator();
+	    while(iterator.hasNext()) {
+	        Rota rota = iterator.next();
+	        if (idsRotas.contains(rota.getId())) {
+	            iterator.remove();
+	        }
+	    }
+    }
+	
+    /**
+     * Recupera a rota pelo identificador
+     * 
+     * @param idRota
+     *            identificador da rota para recuperação
+     * @return Rota com o identificador ou null caso não exista rota com este
+     *         identificador
+     */
+	public Rota getRota(Long idRota) {
+	    for (Rota rota : rotas) {
+	        if (rota.getId().equals(idRota)) {
+	            return rota;
+	        }
+	    }
+	    return null;
+	}
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("Id: ");
+        builder.append(id).append(" - Ordem: ").append(ordem)
+                .append(" - Descrição: ").append(descricaoRoteiro);
+        return builder.toString();
+    }
+
 }

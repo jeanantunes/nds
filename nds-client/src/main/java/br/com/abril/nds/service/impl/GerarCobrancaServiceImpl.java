@@ -459,7 +459,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					vlMovFinanTotal = vlMovFinanTotal.add(movimentoFinanceiroCota.getValor());
 					vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
 				break;
-				
+				case COMPRA_NUMEROS_ATRAZADOS:
 				case DEBITO:
 					vlMovFinanTotal = 
 							vlMovFinanTotal.add(

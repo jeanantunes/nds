@@ -3,8 +3,10 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
@@ -66,6 +68,8 @@ public class RoteirizacaoDTO implements Serializable{
      * Cotas destinadas a copia para determinada rota.
      */
     private List<RotaRoteirizacaoDTO> rotaCotasCopia;
+    
+    private Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
     
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
@@ -271,7 +275,7 @@ public class RoteirizacaoDTO implements Serializable{
                         origemEndereco = OrigemEndereco.COTA;
                     }
                     PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(
-                            rotaPdv.getId(), pdv.getNome(), origemEndereco,
+                            pdv.getId(), pdv.getNome(), origemEndereco,
                             endereco, cota.getNumeroCota(), nomeCota,
                             rotaPdv.getOrdem());
                     rotaDTO.addPdv(pdvDTO);
@@ -288,6 +292,16 @@ public class RoteirizacaoDTO implements Serializable{
      */
 	public boolean isNovo() {
 	    return TipoEdicaoRoteirizacao.NOVO == tipoEdicao;
+	}
+	
+    /**
+     * Verifica se a roteirização utiliza o Box Especial
+     * 
+     * @return true se a roteirização utiliza Box Especial, false em caso
+     *         contrário
+     */
+	public boolean isBoxEspecial() {
+	    return BoxRoteirizacaoDTO.ESPECIAL.equals(box);
 	}
 	
     /**
@@ -421,5 +435,16 @@ public class RoteirizacaoDTO implements Serializable{
 			
 			this.addRoteiroExclusao(roteiroId);
 		}
+	}
+
+
+	public Map<Long, Set<RoteiroRoteirizacaoDTO>> getRoteirosTransferidos() {
+		return roteirosTransferidos;
+	}
+
+
+	public void setRoteirosTransferidos(
+			Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos) {
+		this.roteirosTransferidos = roteirosTransferidos;
 	}
 }

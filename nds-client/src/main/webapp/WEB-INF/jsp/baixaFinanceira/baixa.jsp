@@ -415,6 +415,18 @@
 					    </td>
 					  </tr>
 					  
+					   <tr>
+					    <td><strong>Banco:</strong></td>
+					    <td>
+					        <select name="idBanco" id="bancoDividas" style="width:150px;">
+		                        <option value="">Selecione</option>
+		                        <c:forEach items="${bancos}" var="banco">
+									<option value="${banco.id}" >${banco.nome}</option>
+								</c:forEach>
+		                    </select> 
+					    </td>
+					  </tr>
+					  
 					  
 					  <tr>
 					    <td>&nbsp;</td>

@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -27,6 +28,8 @@ public class PagamentoDividasDTO {
 	private Usuario usuario;
 	
 	private String observacoes;
+	
+	private Banco banco;
 
 	public Date getDataPagamento() {
 		return dataPagamento;
@@ -106,6 +109,14 @@ public class PagamentoDividasDTO {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public Banco getBanco() {
+		return banco;
+	}
+
+	public void setBanco(Banco banco) {
+		this.banco = banco;
 	}
 	
 }

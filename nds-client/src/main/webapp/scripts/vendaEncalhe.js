@@ -942,6 +942,12 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		}, {
+			display : 'Usuário',
+			name : 'nomeUsuario',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		}, {
 			display : 'Ação',
 			name : 'acao',
 			width : 50,
