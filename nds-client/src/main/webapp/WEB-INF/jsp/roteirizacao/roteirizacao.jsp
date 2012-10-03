@@ -290,7 +290,7 @@
 		            
 		            </tr>
  
-		          </table>
+		        </table>
 			</fieldset>
 			
 	        <div class="linha_separa_fields">&nbsp;</div>
@@ -299,11 +299,32 @@
 			        <legend></legend>
 					<legend>Cotas Dispon&icirc;veis</legend>
 					
-						<table class="cotasDisponiveisGrid"></table>
+					<table class="cotasDisponiveisGrid"></table>
 						
 				</fieldset>
 			</div>
 		        
+		    <table width="100%">
+		        <tr>
+		        
+		            <td width="70%"></td>
+			        <td width="15%">
+			            <label for="textoSelTodos" id="textoSelTodos">
+                            Marcar Todos
+                        </label>
+			        </td>
+			        
+				    <td width="15%">
+				                
+		                 <span class="checar">
+		                     <input title="Selecionar todos" type="checkbox" id="selTodos" name="selTodos" onclick="roteirizacao.selecionarTodosNovosPdvs(this.checked);" style="float:left;"/>
+		                 </span>
+		
+		            </td>
+		            
+	             </tr> 
+             </table>   
+    
 			<br clear="all" />
 		</div>
 	</form>
