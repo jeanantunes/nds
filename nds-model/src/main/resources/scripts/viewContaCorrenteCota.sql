@@ -38,7 +38,7 @@ SELECT
 			and consolidado_financeiro_cota.ID
 		),0) AS VALOR_PAGO,
 		
-	   TOTAL - coalesce((select sum(baixa_cobranca.VALOR_PAGO)
+	   coalesce((select sum(baixa_cobranca.VALOR_PAGO)
 			from baixa_cobranca INNER JOIN cobranca ON cobranca.ID = baixa_cobranca.COBRANCA_ID   
 			INNER JOIN divida ON divida.ID = cobranca.DIVIDA_ID
 			where baixa_cobranca.STATUS NOT IN ('NAO_PAGO_DIVERGENCIA_VALOR',
@@ -48,7 +48,7 @@ SELECT
 			and cota.ID = cobranca.COTA_ID
 			and divida.CONSOLIDADO_ID = consolidado_financeiro_cota.ID
 			and consolidado_financeiro_cota.ID
-		),0) AS SALDO
+		),0) - TOTAL AS SALDO
 		
 FROM consolidado_financeiro_cota
 INNER JOIN cota ON cota.id=consolidado_financeiro_cota.cota_ID
