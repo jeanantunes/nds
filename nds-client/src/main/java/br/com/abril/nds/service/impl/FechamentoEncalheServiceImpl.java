@@ -94,7 +94,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
 			for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
 				
-				conferencia.setTotal(conferencia.getExemplaresDevolucao().multiply(conferencia.getPrecoCapa()));
+				conferencia.setTotal(conferencia.getPrecoCapa().multiply(new BigDecimal(conferencia.getExemplaresDevolucao())));
 				conferencia.setFechado(fechado);
 				
 				for (FechamentoEncalhe fechamento : listaFechamento) {
@@ -110,7 +110,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			List<FechamentoEncalheBox> listaFechamentoBox = fechamentoEncalheBoxRepository.buscarFechamentoEncalheBox(filtro);
 			for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
 				
-				conferencia.setTotal(conferencia.getExemplaresDevolucao().multiply(conferencia.getPrecoCapa()));
+				conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapa()));
 				conferencia.setFechado(fechado);
 				
 				for (FechamentoEncalheBox fechamento : listaFechamentoBox) {
@@ -339,7 +339,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         BigDecimal soma = BigDecimal.ZERO;
         
         for (FechamentoFisicoLogicoDTO dto : list) {
-               soma = soma.add(dto.getExemplaresDevolucao().multiply(dto.getPrecoCapa()));
+               soma = soma.add(new BigDecimal(dto.getExemplaresDevolucao()).multiply(dto.getPrecoCapa()));
         }
         
         return soma;
@@ -350,8 +350,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional
 	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
 
-		Integer totalCotasAusentes = 
-			this.buscarQuantidadeCotasAusentes(dataEncalhe);
+		Integer totalCotasAusentes = this.buscarQuantidadeCotasAusentes(dataEncalhe);
 		
 		if (totalCotasAusentes > 0) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cotas ausentes existentes!");
@@ -364,7 +363,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		try {
 			
 			ControleFechamentoEncalhe controleFechamentoEncalhe = new ControleFechamentoEncalhe();
-			
 			controleFechamentoEncalhe.setDataEncalhe(dataEncalhe);
 			
 			this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);

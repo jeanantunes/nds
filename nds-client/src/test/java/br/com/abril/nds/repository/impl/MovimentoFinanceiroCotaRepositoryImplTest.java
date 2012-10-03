@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -104,14 +105,19 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box);
 		save(cotaManoel);
 		
-		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
+		MovimentoFinanceiroCota movimentoFinanceiroCota1 = Fixture.movimentoFinanceiroCota(
 				cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
 				new BigDecimal(200), null, StatusAprovacao.APROVADO, new Date(), true);
-		save(movimentoFinanceiroCota);
+
+		MovimentoFinanceiroCota movimentoFinanceiroCota2 = Fixture.movimentoFinanceiroCota(
+				cotaManoel, tipoMovimentoFinanceiroCredito, usuarioJoao,
+				new BigDecimal(100), null, StatusAprovacao.APROVADO, new Date(), true);
+
+		save(movimentoFinanceiroCota1, movimentoFinanceiroCota2);
 		
 		
 		List<MovimentoFinanceiroCota> lista = new ArrayList<MovimentoFinanceiroCota>();
-		lista.add(movimentoFinanceiroCota);
+		lista.add(movimentoFinanceiroCota1);
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = 
 				Fixture.consolidadoFinanceiroCota(lista, cotaManoel, new Date(), BigDecimal.TEN, new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidadoFinanceiroCota);
@@ -156,7 +162,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	}
 	
 	@Test
-	public void obterDebitoCreditoSumarizadosPorPeriodoOperacao() {
+	public void obterDebitoCreditoPorPeriodoOperacao() {
 		
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		
@@ -174,7 +180,23 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 				tipoMovimentoFinanceiroEnvioEncalhe
 		);
 
-		BigDecimal valorTotalDebitoCredito = movimentoFinanceiroCotaRepository.obterDebitoCreditoSumarizadosPorPeriodoOperacao(filtro, tiposMovimentoFinanceiroIgnorados);
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO = movimentoFinanceiroCotaRepository.obterDebitoCreditoPorPeriodoOperacao(filtro, tiposMovimentoFinanceiroIgnorados); 
+		
+		Assert.assertNotNull(listaDebitoCreditoCotaDTO);
+		
+		int tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, listaDebitoCreditoCotaDTO.size());
+		
+		BigDecimal valorTotalDebitoCredito = BigDecimal.ZERO;
+		
+		for(DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCotaDTO) {
+			if(OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+				valorTotalDebitoCredito = valorTotalDebitoCredito.add(debitoCreditoCotaDTO.getValor());
+			} else if(OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+				valorTotalDebitoCredito = valorTotalDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
+			}
+		}
 		
 		Assert.assertNotNull(valorTotalDebitoCredito);
 		
