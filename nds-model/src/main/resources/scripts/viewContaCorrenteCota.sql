@@ -11,7 +11,6 @@ SELECT
 		 consolidado_financeiro_cota.DEBITO_CREDITO AS DEBITO_CREDITO, 
 		 consolidado_financeiro_cota.ENCALHE AS ENCALHE, 
 		 consolidado_financeiro_cota.ENCARGOS AS ENCARGOS, 
-		 consolidado_financeiro_cota.NUMERO_ATRASADOS AS NUMERO_ATRASADOS, 
 		 consolidado_financeiro_cota.PENDENTE AS PENDENTE, 
 		 consolidado_financeiro_cota.TOTAL AS TOTAL, 
 		 consolidado_financeiro_cota.VALOR_POSTERGADO AS VALOR_POSTERGADO, 
