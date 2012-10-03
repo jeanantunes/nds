@@ -5,7 +5,7 @@
 
 <script  type="text/javascript">
 $(function(){
-	ContagemDevolucao.init("${userProfileOperador}");
+	digitacaoContagemDevolucaoController.init("${userProfileOperador}");
 });
 </script>
 
@@ -27,22 +27,29 @@ $(function(){
 			</div>
 		  	
 			  <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+											 
 				 <tr>
 				     <td width="73">Período de:</td>
 				    <td width="121"><input name="dataDe" type="text" id="dataDe" style="width:80px; float:left; margin-right:5px;"/></td>
 				    <td width="22">Até:</td>
 				    <td width="131"><input name="dataAte" type="text" id="dataAte" style="width:80px; float:left; margin-right:5px;"/></td>
-				    <td colspan="77">Fornecedor:</td>
-				    <td width="287">
-				    <select name="idFornecedor" id="idFornecedor" style="width:250px;">
+				    <td >Fornecedor:</td>
+				    <td width="230">
+				    <select name="idFornecedor" id="idFornecedor" style="width:200px;">
 				      <option value="-1"  selected="selected">Todos</option>
 				      <c:forEach items="${listaFornecedores}" var="fornecedor">
 				      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
 				      </c:forEach>
 				    </select></td>
-				    <td width="203">
+				    
+				    <td>CE:</td>
+				    <td>
+				 		<input type="text" name="semanaConferenciaEncalhe" id="semanaConferenciaEncalhe" style="width:80px; float:left; margin-right:5px;"/>
+				 		<span>(semana)</span>
+				 	</td>
+				    <td width="104">
 				    	<span class="bt_pesquisar">
-				    		<a id="btnPesquisar" href="javascript:;" onclick="ContagemDevolucao.pesquisar();">Pesquisar</a>
+				    		<a id="btnPesquisar" href="javascript:;" onclick="digitacaoContagemDevolucaoController.pesquisar();">Pesquisar</a>
 				    	</span>
 				    </td>
 				  </tr>
@@ -64,40 +71,49 @@ $(function(){
 			<table width="100%" border="0" cellspacing="2" cellpadding="2">
 				<tr>
 					<td width="51%">
-							
+						
 							<span class="bt_novos" title="Gerar Arquivo">
-							
 							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=XLS">
 								<img src="${pageContext.request.contextPath}/images/ico_excel.png"
-								hspace="5" border="0" /> Arquivo </a> 
-							</span> 
-								
-							
-							<span class="bt_novos" title="Imprimir"> 
-							
-							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=PDF">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-								hspace="5" border="0" /> 
-								Imprimir 
-							</a>
-							 
+								hspace="5" border="0" /> Arquivo 
+							</a> 
 							</span> 
 							
 							<span id="btnSalvar" class="bt_novos" title="Salvar"> 
-						
-							<a href="javascript:ContagemDevolucao.salvar();"> 
+							<a href="javascript:digitacaoContagemDevolucaoController.salvar();"> 
 							<img border="0" hspace="5" alt="Salvar"
 								src="${pageContext.request.contextPath}/images/ico_salvar.gif" />
 								Salvar
 							</a> 
 							</span> 
 							
-							<span id="btnConfirmar" class="bt_confirmar_novo" title="Confirmar"> 
-							<a href="javascript:ContagemDevolucao.popupConfirmar();"> 
+							<span class="bt_novos" title="Incluir Produtos">
+							<a href="javascript:;" >
+							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0">
+									Incluir Edições
+							</a>
+							</span>
+							
+							<span class="bt_novos" title="Gerar NF-e de Dev. ao Fornecedor">
+							<a href="javascript:;">
+								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
+								Gerar NF-e
+							</a>
+							</span>
+							
+							<span id="btnConfirmar" class="bt_confirmar_novo" title="Devolução Parcial"> 
+							<a href="javascript:digitacaoContagemDevolucaoController.popupConfirmar();"> 
 								<img border="0" hspace="5" alt="Confirmar"
 								src="${pageContext.request.contextPath}/images/ico_check.gif">
-							Confirmar
+							Devolução Parcial
 							</a> 
+							</span>
+							
+							<span class="bt_novos" title="Replicar Quantidades">
+							<a href="javascript:;">
+							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0">
+							Replicar
+							</a>
 							</span>
 							
 					</td>
@@ -105,13 +121,36 @@ $(function(){
 					<td width="17%">
 						<strong>Total Geral R$:</strong>
 					</td>
-					
 					<td width="14%" id="totalGeral"></td>
-					
+
+					</tr>
+						<td>
+							<span class="bt_novos" title="Imprimir CE Devolução">
+							<a href="javascript:;">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
+							CE Devolução
+							</a>
+							</span>
+							
+							<span class="bt_novos" title="Imprimir Conferência Cega">
+							<a href="javascript:;">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
+							Conferência Cega
+							</a>
+							</span>
+								
+							<span class="bt_novos" title="Imprimir"> 
+							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=PDF">
+								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+								hspace="5" border="0" /> 
+								Imprimir 
+							</a>
+							</span>
+						</td>
 					<td width="18%">
 						<span id="bt_sellAll" class="bt_sellAll">
 							<label for="sel">Selecionar Todos</label> 
-							<input type="checkbox" name="Todos" id="sel" onclick="ContagemDevolucao.checkAllReplicarValor(this, 'checkgroup');"
+							<input type="checkbox" name="Todos" id="sel" onclick="digitacaoContagemDevolucaoController.checkAllReplicarValor(this, 'checkgroup');"
 							style="float: left;" /> 
 						</span>
 					</td>

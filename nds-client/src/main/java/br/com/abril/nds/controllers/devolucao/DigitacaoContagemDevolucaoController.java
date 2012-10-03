@@ -116,7 +116,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe,String dataAte,Long idFornecedor,String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
@@ -124,7 +124,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		PeriodoVO periodo =  obterPeriodoValidado(dataDe, dataAte);
 		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor);
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe, idDestinatario);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -505,12 +505,12 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		if (dataInicial == null || dataInicial.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo Período de é obrigatório");
+			mensagens.add("O preenchimento do campo Período [De] é obrigatório");
 		} 
 		
 		if (dataFinal == null || dataFinal.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo Até é obrigatório");
+			mensagens.add("O preenchimento do campo [Até] é obrigatório");
 		} 
 		
 		return mensagens;

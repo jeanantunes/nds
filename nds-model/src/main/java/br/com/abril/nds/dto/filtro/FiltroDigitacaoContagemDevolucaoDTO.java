@@ -26,6 +26,10 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	@Export(label="Fornecedor")
 	private String nomeFornecedor;
 	
+	private Integer semanaCE;
+	
+	private Long idDestinatario;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
@@ -42,6 +46,18 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	}	
 	
 	
+	public FiltroDigitacaoContagemDevolucaoDTO(PeriodoVO periodo,
+			Long idFornecedor, Integer semanaCE, Long idDestinatario) {
+		super();
+		this.periodo = periodo;
+		this.idFornecedor = idFornecedor;
+		this.semanaCE = semanaCE;
+		this.idDestinatario = idDestinatario;
+	}
+
+
+
+
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 
@@ -168,6 +184,38 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 
+	
+	/**
+	 * @return the semanaCE
+	 */
+	public Integer getSemanaCE() {
+		return semanaCE;
+	}
+
+
+	/**
+	 * @param semanaCE the semanaCE to set
+	 */
+	public void setSemanaCE(Integer semanaCE) {
+		this.semanaCE = semanaCE;
+	}
+
+
+	/**
+	 * @return the idDestinatario
+	 */
+	public Long getIdDestinatario() {
+		return idDestinatario;
+	}
+
+
+	/**
+	 * @param idDestinatario the idDestinatario to set
+	 */
+	public void setIdDestinatario(Long idDestinatario) {
+		this.idDestinatario = idDestinatario;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -177,12 +225,18 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
+				+ ((idDestinatario == null) ? 0 : idDestinatario.hashCode());
+		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
+		result = prime * result
+				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
 		result = prime * result + ((periodo == null) ? 0 : periodo.hashCode());
+		result = prime * result
+				+ ((semanaCE == null) ? 0 : semanaCE.hashCode());
 		return result;
 	}
 
@@ -199,10 +253,20 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroDigitacaoContagemDevolucaoDTO other = (FiltroDigitacaoContagemDevolucaoDTO) obj;
+		if (idDestinatario == null) {
+			if (other.idDestinatario != null)
+				return false;
+		} else if (!idDestinatario.equals(other.idDestinatario))
+			return false;
 		if (idFornecedor == null) {
 			if (other.idFornecedor != null)
 				return false;
 		} else if (!idFornecedor.equals(other.idFornecedor))
+			return false;
+		if (nomeFornecedor == null) {
+			if (other.nomeFornecedor != null)
+				return false;
+		} else if (!nomeFornecedor.equals(other.nomeFornecedor))
 			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;
@@ -216,10 +280,12 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 				return false;
 		} else if (!periodo.equals(other.periodo))
 			return false;
+		if (semanaCE == null) {
+			if (other.semanaCE != null)
+				return false;
+		} else if (!semanaCE.equals(other.semanaCE))
+			return false;
 		return true;
 	}
-
-	
-	
 	
 }
