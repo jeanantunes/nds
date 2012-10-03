@@ -76,27 +76,75 @@ var cotaAusenteController = $.extend(true, {
 			height : 255
 		})); 	
 		
+		cotaAusenteController.initGridProdutosEstoqueSuplementar();
+		
 		$(".grids", cotaAusenteController.workspace).show();		
 	
 		$( "#tabs-pop", cotaAusenteController.workspace ).tabs();
 
 	},
 
+	
+	initGridProdutosEstoqueSuplementar : function() {
+		
+		$("#flexiGridProdutoEstoqueSuplementar", cotaAusenteController.workspace).flexigrid($.extend({},{
+			dataType : 'json',
+			colModel : [{
+				display : 'Código',
+				name : 'codigoProdutoEdicao',
+				width : 100,
+				sortable : false,
+				align : 'left' 
+			},{
+				display : 'Produto',
+				name : 'nomeProdutoEdicao',
+				width : 100,
+				sortable : false,
+				align : 'left' 
+			},{
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 70,
+				sortable : false,
+				align : 'left' 
+			},{
+				display : 'Reparte',
+				name : 'reparte',
+				width : 70,
+				sortable : false,
+				align : 'left' 
+			},{
+				display : 'Qtd. Disponível',
+				name : 'quantidadeDisponivel',
+				width : 100,
+				sortable : false,
+				align : 'left' 
+			}],
+			width : 520,
+		}));
+	},
+	
 	cliquePesquisar : function() {
 		
 		var dataAusencia = $('#idData', cotaAusenteController.workspace).attr('value');
 		var numcota = $('#idCota', cotaAusenteController.workspace).attr('value');
 		var nomeCota = $('#idNomeCota', cotaAusenteController.workspace).attr('value');
 		var box = $('#idBox', cotaAusenteController.workspace).attr('value');
-			
+		var idRota = $("#selectRota", cotaAusenteController.workspace).attr('value');
+		var idRoteiro = $("#selectRoteiro", cotaAusenteController.workspace).attr('value');
+		
+		var params = [{name:'dataAusencia',value:dataAusencia},
+			          {name:'numCota',value:numcota},
+			          {name:'nomeCota',value:nomeCota},
+			          {name:'box',value:box},
+			          {name:'idRota', value:idRota},
+			          {name:'idRoteiro', value:idRoteiro}];
+		
 		$(".ausentesGrid", cotaAusenteController.workspace).flexOptions({			
 			url : contextPath + '/cotaAusente/pesquisarCotasAusentes',
 			dataType : 'json',
 			preProcess:cotaAusenteController.processaRetornoPesquisa,
-			params:[{name:'dataAusencia',value:dataAusencia},
-			        {name:'numCota',value:numcota},
-			        {name:'nomeCota',value:nomeCota},
-			        {name:'box',value:box}]		
+			params:params		
 		});
 		
 		$(".ausentesGrid", cotaAusenteController.workspace).flexReload();
@@ -128,7 +176,7 @@ var cotaAusenteController = $.extend(true, {
 	gerarBotaoExcluir : function(idCotaAusente) {
 		
 		if(idCotaAusente) {
-			return "<a href=\"javascript:;\" onclick=\"popup_excluir("+idCotaAusente+");\"> "+
+			return "<a href=\"javascript:;\" onclick=\"cotaAusenteController.popup_excluir("+idCotaAusente+");\"> "+
 			 "<img src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
 		} else {
 			return  "<img style=\"opacity: 0.5\" src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" />";
@@ -166,7 +214,8 @@ var cotaAusenteController = $.extend(true, {
 					$("#idNomeNovaCota", cotaAusenteController.workspace).attr("value","");
 					
 					$( this ).dialog( "close" );
-				}
+				},
+				form: $("#dialog-novo", cotaAusenteController.workspace).parents("form")
 			}
 		});
 	},
@@ -198,7 +247,8 @@ var cotaAusenteController = $.extend(true, {
 						
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $("#dialog-confirm", cotaAusenteController.workspace ).parents("form")
 			});
 	},
 
@@ -542,7 +592,8 @@ var cotaAusenteController = $.extend(true, {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $( "#dialog-novo", cotaAusenteController.workspace ).parents("form")
 			});
 	},	
 
@@ -558,10 +609,12 @@ var cotaAusenteController = $.extend(true, {
 		
 	popup_excluir : function(idCotaAusente) {
 		
+			cotaAusenteController.exibirProdutoEstoqueDisponivel(idCotaAusente);
+		
 			$( "#dialog-excluir", cotaAusenteController.workspace ).dialog({
 				resizable: false,
 				height:'auto',
-				width:300,
+				width:'auto',
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -577,10 +630,23 @@ var cotaAusenteController = $.extend(true, {
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
-				}
+				},
+				form: $( "#dialog-excluir", cotaAusenteController.workspace ).parents("form")
 			});
 	},
-
+	
+	exibirProdutoEstoqueDisponivel : function(idCotaAusente) {
+		var params = [{name:'idCotaAusente',value:idCotaAusente}];
+		
+		$("#flexiGridProdutoEstoqueSuplementar", cotaAusenteController.workspace).flexOptions({			
+			url : contextPath + '/cotaAusente/exibirProdutosSuplementaresDisponiveis',
+			params:params,
+			newp : 1
+		});
+		
+		$("#flexiGridProdutoEstoqueSuplementar", cotaAusenteController.workspace).flexReload();
+	},
+	
 	abre_linha_1 : function(){
 		$( '.linha_1', cotaAusenteController.workspace ).show();
 		textfield5.focus();

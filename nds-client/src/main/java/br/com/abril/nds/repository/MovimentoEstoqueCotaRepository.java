@@ -300,4 +300,30 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return
 	 */
 	public ConsultaEncalheRodapeDTO obterValoresTotais(FiltroConsultaEncalheDTO filtro);
+
+	/**
+	 * Obtém Dados para Grid de Mapa por Entregador
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public List<ProdutoAbastecimentoDTO> obterMapaDeAbastecimentoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro);
+	/**
+	 * Count  de mapa por entregador
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public Long countObterMapaDeAbastecimentoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro);
+	
+
+	/**
+	 * Obtém dados do Mapa de Abastecimento por Entregador
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro);
 }

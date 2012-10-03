@@ -9,34 +9,25 @@
 </head>
 
 <form id="form-transfere-rota">
-<div id="dialog-transfere-rota" title="Transferir Rotas" style="display:none;">
+<div id="dialog-transfere-rota" title="Transferir Rota" style="display:none;">
 	<fieldset>
-    	<legend>Transferir Rotas para:</legend>
-        <p>Pesquise ou Digite o nome de um Novo Roteiro para estas Rotas.</p>
-        <input name="roteiroTranferenciaNome" type="text" id="roteiroTranferenciaNome" onkeyup="roteirizacao.autoCompletarRoteiroPorNome('#roteiroTranferenciaNome',roteirizacao.selecionaRoteiroTranferencia)" style="width:300px; float:left; margin-bottom:5px;" />
-        <input name="roteiroTranferenciaSelecionadoId" type="hidden" id="roteiroTranferenciaSelecionado"  />
-        <input name="roteiroTranferenciaSelecionadoNome" type="hidden" id="roteiroTranferenciaSelecionadoNome"  />
-        <a href="javascript:;" onclick="roteirizacao.exibiRoteiroNovoTranferencia();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" /></a>
-        <br clear="all" />
-        <div class="roteiroNovo" style="display:none;">
-        <a href="javascript:;" onclick="roteirizacao.escondeRoteiroNovoTranferencia();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" border="0" align="right" /></a>
-        <br clear="all" />
-        <label>Box:</label>
-        <select name="boxRoteiroTranferencia" id="boxRoteiroTranferencia" style="width:230px;  float:left; margin-bottom:5px;">
-            <option>Selecione...</option>
-           <c:forEach var="box" items="${listaBox}">
-				<option value="${box.key}">${box.value}</option>
-			</c:forEach>
-        </select>
-        <br clear="all" />
-
-        <label>Ordem:</label>
-        <input name="ordemRoteiroTranferencia" id="ordemRoteiroTranferencia" type="text" style="width:225px; float:left; margin-bottom:5px;" />    
-        <br clear="all" />
-        <label>Roteiro Especial:</label>
-        <input type="checkbox" name="tipoRoteiroTranferencia" value="Especial" id="tipoRoteiroTranferencia" onclick="roteirizacao.roteiroEspecial()"  />
-        <br clear="all" />  
-</div>
+    	<legend>Transferir Rota</legend>
+		<table width="347" border="0" cellspacing="1" cellpadding="1">
+			<tr>
+           		<td>Roteiro Atual:</td>
+           		<td>
+           			<input type="text" id="nomeRoteiroAtual" style="width:220px;" disabled="disabled" />
+           		</td>
+         	</tr>
+         	<tr>
+           		<td>
+           			<strong>Novo Roteiro:</strong>
+           		</td>
+           		<td>
+           			<select name="select" id="selectNovoRoteiro" style="width:227px;"></select>
+           		</td>
+         	</tr>
+       	</table>
     </fieldset>
 </div>
 </form>
@@ -57,6 +48,30 @@
 </div>
     </fieldset>
 </div>
+</form>
+
+<form id="form-transfere-roteiro">
+	<div id="dialog-transfere-roteiro" title="Transferir Roteiro" style="display: none;">
+		<fieldset>
+			<legend>Transferir Roteiros</legend>
+			<table width="347" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+            		<td>Box Atual:</td>
+            		<td>
+            			<input type="text" id="nomeBoxAtual" style="width:220px;" disabled="disabled" />
+            		</td>
+          		</tr>
+          		<tr>
+            		<td>
+            			<strong>Novo Box:</strong>
+            		</td>
+            		<td>
+            			<select name="select" id="selectNovoBox" style="width:227px;"></select>
+            		</td>
+          		</tr>
+        	</table>
+		</fieldset>
+	</div>
 </form>
 
 <form id="form-excluir-rota-roteiro">
@@ -96,36 +111,6 @@
         
         <label>Nome:</label>
         <input name="nomeRotaInclusao" id="nomeRotaInclusao" type="text" style="width:200px; float:left;" />       
-        <br clear="all" />
-        
-
-    </fieldset>
-</div>
-</form>
-
-<form id="form-roteiro">
-<div id="dialog-roteiro" title="Roteiro" style="display:none;">
-<jsp:include page="../messagesDialog.jsp" /> 
-	<fieldset>
-    	<legend>Novo Roteiro</legend>
-        <label>Box:</label>
-        <select name="boxInclusaoRoteiro" id="boxInclusaoRoteiro" style="width:200px;  float:left; margin-bottom:5px;">
-			<option value="" selected="selected">Selecione...</option>
-			<c:forEach var="box" items="${listaBox}">
-				<option value="${box.key}">${box.value}</option>
-			</c:forEach>
- 		</select>
-        
-        <br clear="all" />
-        <label>Ordem:</label>
-        <input name="ordemInclusaoRoteiro" id="ordemInclusaoRoteiro" type="text" style="width:200px; float:left; margin-bottom:5px;" />       
-        <br clear="all" />
-        
-        <label>Nome:</label>
-        <input name="nomeInclusaoRoteiro" id="nomeInclusaoRoteiro"  type="text" style="width:200px; float:left;" />
-         <br clear="all" />
-        <label>Roteiro Especial:</label>
-        <input type="checkbox" name="tipoRoteiro" value="Especial" id="tipoRoteiro" onclick="roteirizacao.roteiroEspecialNovo()"  />        
         <br clear="all" />
         
 
@@ -185,7 +170,7 @@
             
         </span>
         <br clear="all" />
-        <table class="cotasRotaGrid"></table>
+        <table class="cotasRotaGrid" id="cotasRotaGrid"></table>
 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
         <tr>
@@ -194,15 +179,15 @@
                     <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a>
                 </span>
 
-                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.popupsPdvs();">
+                 <span class="bt_novos" title="Adicionar"><a href="javascript:;" onclick="roteirizacao.abrirTelaCotas();">
                     <img src="${pageContext.request.contextPath}//images/ico_add.gif" hspace="5" border="0"/>Adicionar</a>
                 </span>
 
-                <span class="bt_novos trans_cota" title="Transferência de Roteiro"><a href="javascript:;" onclick="popup_tranferir_cota();">
+                <span class="bt_novos trans_cota" title="Transferência de Roteiro"><a href="javascript:;" onclick="roteirizacao.popup_tranferir();">
                      <img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0"/>Transferir</a>
                 </span>
 
-                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="popup_copiar_cota();">
+                <span class="bt_novos" title="Copiar Cota"><a href="javascript:;" onclick="roteirizacao.abrirPopupCopiarCotas();">
                     <img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0"/>Copiar Cota</a>
                 </span>
 
@@ -229,7 +214,7 @@
 
 
 	<form id="form-cotas-disponiveis">
-		<div id="dialog-pdvs" title="Cotas Dispon&icirc;veis" style="display:none;">
+		<div id="dialog-cotas-disponiveis" title="Cotas Dispon&icirc;veis" style="display:none;">
 		    
 		    <jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialogRoteirizacaoCotaDisponivel" name="messageDialog"/>
@@ -269,22 +254,42 @@
 		            </tr>
 		            
 		            <tr>
-		              <td>UF:</td>
-		              <td><select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">
-		                
-		              </select></td>
+		            			            
+		            
+		              <td>UF:</td>	       
+		              <td>
+		                  <select name="comboUf" id="comboUf" onchange="roteirizacao.buscalistaMunicipio()" style="width:100px;">   
+		                  </select>
+		              </td>
+		              
 		              <td>Munic.</td>
-		              <td><select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
-		                <option>Todos</option>
-		              </select></td>
+		              <td>
+			              <select name="comboMunicipio" id="comboMunicipio" onchange="roteirizacao.buscalistaBairro()" style="width:150px;">
+			              </select>
+		              </td>
+		              
 		              <td>Bairro:</td>
-		              <td width="168"><select name="comboBairro" id="comboBairro" style="width:150px;">
-		                <option>Todos</option>
-		              </select></td>
+		              <td width="168">
+			              <select name="comboBairro" id="comboBairro" style="width:150px;">
+			              </select>
+		              </td>
+		              
 		              <td width="36">CEP:</td>
-		              <td width="87"><input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" /></td>
-		              <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="roteirizacao.buscarPvsPorEndereco();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+		              <td width="87">
+		                  <input name="cepPesquisa" type="text" id="cepPesquisa" style="width:80px;" />
+		              </td>
+		              
+		              <td width="79">
+		                  <span class="bt_novos">
+		                      <a href="javascript:;" onclick="roteirizacao.buscaPdvsDisponiveis();">
+		                          <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+		                      </a>
+		                  </span>
+		              </td>
+		            
+		            
 		            </tr>
+ 
 		          </table>
 			</fieldset>
 			
@@ -333,15 +338,11 @@
 	            			<input id="inputNome" style="width:220px;" />
 	            		</td>
 	          		</tr>
-	          		<tr style="display: none;" id="checkRoteiroEspecial">
-	          			<td>Roteiro Especial:</td>
-	          			<td>
-	          				<input type="checkbox" name="tipoRoteiro" 
-	          					value="Especial" id="tipoRoteiro" onclick="roteirizacao.roteiroEspecialNovo()"  />
-	          			</td>
-	          		</tr>
 	      		</table>
 			</fieldset>
 		</div>
-
+	</form>
+	
+	<form id="formCopiaCotaRota">
+		<jsp:include page="copiarCotaDialog.jsp"></jsp:include>
 	</form>

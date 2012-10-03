@@ -34,7 +34,7 @@ $(function(){
 			</span>
 
 			<span class="bt_arq"> 
-				<a href="" rel="tipsy" title="Reimpressão Slip">
+				<a href="javascript:;" onclick="ConsultaEncalhe.gerarSlip()" rel="tipsy" title="Reimpress&atilde;o Slip">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
 				</a>
 			</span>
@@ -177,6 +177,9 @@ $(function(){
 			</form> 
 
 		</div>
+		<form name="form_impressao_slip" id="form_impressao_slip">
+			<iframe src="" id="download-iframe" style="display:none;"></iframe>
+		</form>
 
 	</fieldset>
 </body>

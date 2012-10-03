@@ -2225,7 +2225,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		case SLIP :
 			
-			return gerarSlip(idControleConferenciaEncalheCota);
+			return gerarSlip(idControleConferenciaEncalheCota, true);
 		
 		case BOLETO_OU_RECIBO:
 			
@@ -2375,10 +2375,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return d;
 	}
 	
-	private byte[] gerarSlip(Long idControleConferenciaEncalheCota) {
+	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
+		
+		if(incluirNumeroSlip || controleConferenciaEncalheCota.getNumeroSlip() == null) {
+			controleConferenciaEncalheCota.setNumeroSlip(controleNumeracaoSlipService.obterProximoNumeroSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE));
+			controleConferenciaEncalheCotaRepository.alterar(controleConferenciaEncalheCota);
+		}
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		Date dataOperacao = distribuidor.getDataOperacao();
@@ -2395,7 +2400,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
 		Date dataConferencia 	= controleConferenciaEncalheCota.getDataOperacao();
 		Integer codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
-		Long numeroSlip 		= controleNumeracaoSlipService.obterProximoNumeroSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE);
+		Long numeroSlip 		= controleConferenciaEncalheCota.getNumeroSlip();
 		
 		BigInteger qtdeTotalProdutos 	= null;
 		BigDecimal valorTotalEncalhe 	= null;
