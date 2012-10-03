@@ -140,7 +140,6 @@ var roteirizacao = $.extend(true, {
             this.init();
         },
         
-        
         confirmarInclusaoRoteiro : function() {
            var tipoRoteiro = 'NORMAL';
            if ( $('input[name=tipoRoteiro]').is(':checked') ){
@@ -819,7 +818,6 @@ var roteirizacao = $.extend(true, {
 	        });
 	    },
     
-    
 	    popupTransferirRota : function() {
 	        //$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	        $("#roteiroTranferenciaNome", roteirizacao.workspace).val('');
@@ -1419,7 +1417,8 @@ var roteirizacao = $.extend(true, {
 		 	$.postJSON(contextPath + '/cadastro/roteirizacao/adicionarNovosPdvs',
 		 			 params,
 					 function(result) {
-							
+		 		
+		 			     $(".cotasDisponiveisGrid", roteirizacao.workspace).flexReload();		
 					 },
 					 null,
 					 true
@@ -2043,7 +2042,6 @@ var roteirizacao = $.extend(true, {
 	        
 	        return data;
 	    },
-	
 	    
 	    editarRoteirizacao : function(idRoteirizacao, idRoteiro, idRota) {
             roteirizacao.definirTipoEdicao(TipoEdicao.ALTERACAO);
@@ -2274,7 +2272,6 @@ var roteirizacao = $.extend(true, {
                      true
             );
         },
-
     
 	    abrirTelaRotaComNome :function(){
 	    	
@@ -2743,7 +2740,6 @@ var roteirizacao = $.extend(true, {
                 true
 			);
 		},
-
 
 		obterParametrosCopia: function() {
 

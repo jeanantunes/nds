@@ -989,14 +989,12 @@ public class RoteirizacaoController {
 	    result.nothing();
 	}
 	
-	
 	/**
 	 * Verifica se PDV's podem ser adicionados na Roteirização
 	 * @param pdvs
 	 */
 	private void validaNovosPdvs(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
 		
-        
 		for(PdvRoteirizacaoDTO itemPdvDTO:pdvs){
 			if (!this.roteirizacaoService.verificaDisponibilidadePdv(itemPdvDTO.getId())){
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O [PDV "+itemPdvDTO.getId()+"] já pertence à um [Box] roteirizado !"));
@@ -1013,10 +1011,22 @@ public class RoteirizacaoController {
 	 */
 	private void verificaOrdemPdvs(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
 		
-		for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
-			for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
-				if (itemPdvDTOAtual.getOrdem().equals(itemPdvDTONovo.getOrdem())){
-					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é permitido mais de um campo [Ordem] com o mesmo valor !"));
+		List<PdvRoteirizacaoDTO> pdvsAux = pdvs;
+		
+		for (int i=0; i < pdvs.size(); i++) {
+			for (int j=i+1; j < pdvsAux.size(); j++) {
+	            if (pdvsAux.get(j).getOrdem().equals(pdvs.get(i).getOrdem())) {
+	            	throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "[Ordem] inválida !"));
+	            }
+	        }
+		}
+		
+		if(pdvsAtual!=null){
+			for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
+				for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
+					if (itemPdvDTOAtual.getOrdem().equals(itemPdvDTONovo.getOrdem())){
+						throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é permitido mais de um campo [Ordem] com o mesmo valor !"));
+					}
 				}
 			}
 		}
@@ -1030,14 +1040,16 @@ public class RoteirizacaoController {
 	 */
     private List<PdvRoteirizacaoDTO> trataPdvsRepetidos(List<PdvRoteirizacaoDTO> pdvs, List<PdvRoteirizacaoDTO> pdvsAtual){
 		
-    	for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
-			for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
-				if (itemPdvDTOAtual.getId().equals(itemPdvDTONovo.getId())){
-					pdvs.remove(itemPdvDTONovo);
+    	if(pdvsAtual!=null){
+	    	for(PdvRoteirizacaoDTO itemPdvDTOAtual:pdvsAtual){
+				for(PdvRoteirizacaoDTO itemPdvDTONovo:pdvs){
+					if (itemPdvDTOAtual.getId().equals(itemPdvDTONovo.getId())){
+						pdvs.remove(itemPdvDTONovo);
+					}
 				}
 			}
-		}
-    	
+    	}
+    
     	return pdvs;
 	}
 	
@@ -1047,24 +1059,34 @@ public class RoteirizacaoController {
 	@Post
 	@Path("/adicionarNovosPdvs")
 	public void adicionarNovosPdvs(Long idRota, List<PdvRoteirizacaoDTO> pdvs){
-		
+
 		if (idRota==null){
+			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma [Rota] foi selecionada para a inclusão dos [PDV's] !"));
 		}
 		
-		List<PdvRoteirizacaoDTO> pdvsAtual = this.getDTO().getRota(idRota).getPdvs();
-        
-		pdvs = this.trataPdvsRepetidos(pdvs, pdvsAtual);
-		
-		this.validaNovosPdvs(pdvs, pdvsAtual);
-		
 		RoteirizacaoDTO roteirizacaoDTO = this.getDTO();
 		
-		roteirizacaoDTO.getRota(idRota).addAllPdv(pdvs);
+		List<PdvRoteirizacaoDTO> pdvsAtual = null;
 		
-		this.setDTO(roteirizacaoDTO);
+		if (roteirizacaoDTO==null || roteirizacaoDTO.getRota(idRota)==null){
+		
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cadastre [Box], [Roteiro] e [Rota] antes de cadastrar [PDV].")); 
+		}
+		else{
 			
-	    this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
+			pdvsAtual = roteirizacaoDTO.getRota(idRota).getPdvs();
+				
+			pdvs = this.trataPdvsRepetidos(pdvs, pdvsAtual);
+			
+			this.validaNovosPdvs(pdvs, pdvsAtual);
+			
+			roteirizacaoDTO.getRota(idRota).addAllPdv(pdvs);
+			
+			this.setDTO(roteirizacaoDTO);
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
+		}    
 	}
 	
 	/**
