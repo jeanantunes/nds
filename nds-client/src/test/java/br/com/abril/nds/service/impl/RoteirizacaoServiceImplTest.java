@@ -484,9 +484,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
         roteiro1DTO.adicionarRotaExclusao(RoteirizacaoServiceImplTest.rota1.getId());
        
         RotaRoteirizacaoDTO rota2DTO = roteiro1DTO.getRota(rota2.getId());
-        //TODO: Refatorar
-        rota2DTO.getPdvs().remove(1);
-        rota2DTO.getPdvsExclusao().add(pdvManoel2.getId());
+        rota2DTO.removerPdv(pdvManoel2.getId());
         
         RotaRoteirizacaoDTO novaRota = new RotaRoteirizacaoDTO(Long.valueOf(-1), 10, "Nova Rota");
         roteiro1DTO.addRota(novaRota);
@@ -502,7 +500,6 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
                 null, pdvManoel2.getCota().getNumeroCota(), pdvManoel2
                         .getCota().getPessoa().getNome(), 3);
         rota6DTO.addPdv(pdvManoel2DTO);
-        
         
         roteirizacaoService.confirmarRoteirizacao(roteirizacaoDTO);
         flushClear();

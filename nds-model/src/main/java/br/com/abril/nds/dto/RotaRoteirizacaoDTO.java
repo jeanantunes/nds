@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -169,6 +170,21 @@ public class RotaRoteirizacaoDTO implements Serializable {
             }
         }
         return null;
+	}
+	
+	/**
+	 * Remove o Pdv da Rota
+	 * @param idPdv identificador do PDV para remoção
+	 */
+	public void removerPdv(Long idPdv) {
+	    Iterator<PdvRoteirizacaoDTO> iterator = pdvs.iterator();
+	    while(iterator.hasNext()) {
+	        PdvRoteirizacaoDTO pdv = iterator.next();
+	        if (pdv.getId().equals(idPdv)) {
+	            iterator.remove();
+	            pdvsExclusao.add(idPdv);
+	        }
+	    }
 	}
 
 	/**
