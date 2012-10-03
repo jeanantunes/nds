@@ -72,6 +72,46 @@ var ConsultaEncalhe = $.extend(true, {
 
 		},
 	
+		gerarSlip: function() {
+			
+			var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
+			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
+			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
+			var numeroCota				= $("#cota", ConsultaEncalhe.workspace).val();
+			
+			var link = contextPath + '/devolucao/consultaEncalhe/gerarSlip' +
+									'?dataRecolhimentoInicial=' + dataRecolhimentoInicial +
+									'&dataRecolhimentoFinal=' + dataRecolhimentoFinal +
+									'&idFornecedor=' + idFornecedor +
+									'&numeroCota=' + numeroCota;
+
+			$("#download-iframe", ConsultaEncalhe.workspace).attr('src', link);
+			
+			/*var formData = [
+			        
+			        {name:'dataRecolhimentoInicial', value: dataRecolhimentoInicial},
+			        {name:'dataRecolhimentoFinal', value: dataRecolhimentoFinal},
+			        {name:'idFornecedor', value: idFornecedor},
+			        {name:'numeroCota', value: numeroCota }
+			];
+			
+			$.postJSON(contextPath + "/devolucao/consultaEncalhe/gerarSlip", formData,
+					function(result) {
+						if (result != null) {
+							var mensagens = (result.mensagens) ? result.mensagens : result;   
+							var tipoMensagem = mensagens.tipoMensagem;
+							var listaMensagens = mensagens.listaMensagens;
+			
+							if (tipoMensagem && listaMensagens) {
+								exibirMensagem(tipoMensagem, listaMensagens);
+							}
+						}
+		
+					},
+					null, true);*/
+
+		},
+
 		executarPreProcessamento: function(resultado) {
 			
 			//Verifica mensagens de erro do retorno da chamada ao controller.
