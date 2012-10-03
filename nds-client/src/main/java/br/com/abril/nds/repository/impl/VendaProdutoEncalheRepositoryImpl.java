@@ -116,13 +116,15 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			.append(" produto.codigo as codigoProduto ,")
 			.append(" produtoEdicao.precoVenda - (produtoEdicao.precoVenda * " + this.obterSQLDesconto() + " / 100) as precoDesconto ,")
 			.append(" venda.valorTotalVenda as valoTotalProduto ,")
-			.append(" venda.qntProduto as qntProduto ");
+			.append(" venda.qntProduto as qntProduto, ")
+			.append(" usuario as usuario ");
 		}
 	
 		hql.append(" from VendaProduto venda ")
 		    .append(" join venda.produtoEdicao as produtoEdicao ")
 		    .append(" join produtoEdicao.produto as produto ")
 		    .append(" join produto.fornecedores as fornecedores ")
+		    .append(" join venda.usuario as usuario ")
 			.append(" where venda.cota.numeroCota=:numeroCota ")
 			.append(" and venda.dataVenda between :periodoInicial and :periodoFinal ");
 		
