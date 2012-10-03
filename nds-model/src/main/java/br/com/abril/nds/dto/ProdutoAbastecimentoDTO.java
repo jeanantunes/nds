@@ -21,9 +21,13 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Long idProdutoEdicao;
 	private Integer codigoCota;
 	private String nomeCota;
+	private Integer materialPromocional;
 	private Integer sequenciaMatriz;
 	private String totalBox;
 	private Integer totalProduto;
+	private String codigoBarra;
+	private Integer pacotePadrao;
+	private Long qtdeExms;
 	
 	public ProdutoAbastecimentoDTO() {
 		
@@ -137,6 +141,19 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
+	/**
+	 * @return the materialPromocional
+	 */
+	public Integer getMaterialPromocional() {
+		return materialPromocional;
+	}
+
+	/**
+	 * @param materialPromocional the materialPromocional to set
+	 */
+	public void setMaterialPromocional(BigInteger materialPromocional) {
+		this.materialPromocional = materialPromocional == null ? 0 : materialPromocional.intValue();
+	}
 
 	public Integer getSequenciaMatriz() {
 		return sequenciaMatriz;
@@ -194,5 +211,47 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	 */
 	public void setTotalProduto(Long totalProduto) {
 		this.totalProduto = totalProduto.intValue();
+	}
+
+	/**
+	 * @return the codigoBarra
+	 */
+	public String getCodigoBarra() {
+		return codigoBarra;
+	}
+
+	/**
+	 * @param codigoBarra the codigoBarra to set
+	 */
+	public void setCodigoBarra(String codigoBarra) {
+		this.codigoBarra = codigoBarra;
+	}
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	/**
+	 * @return the qtdeExms
+	 */
+	public Long getQtdeExms() {
+		return qtdeExms;
+	}
+
+	/**
+	 * @param qtdeExms the qtdeExms to set
+	 */
+	public void setQtdeExms(Long qtdeExms) {
+		this.qtdeExms = qtdeExms;
 	}
 }

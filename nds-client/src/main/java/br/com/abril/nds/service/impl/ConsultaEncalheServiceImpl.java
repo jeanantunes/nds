@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.util.PDFUtil;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
@@ -19,10 +20,13 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 
 @Service
@@ -39,6 +43,12 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository;
+	
+	@Autowired
+	private ConferenciaEncalheService conferenciaEncalheService;
 	
 	/*
 	 * (non-Javadoc)
@@ -106,6 +116,28 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		info.setProdutoEdicao(produtoEdicao);
 		
 		return info;
+	}
+	
+	@Transactional
+	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro) {
+		byte[] retorno = null; 
+		byte[] arquivo; 
+		
+		List<ControleConferenciaEncalheCota> listaConferenciaEncalheCotas = 
+				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCotaPorFiltro(filtro); 
+		
+		if (listaConferenciaEncalheCotas != null) {
+			for(ControleConferenciaEncalheCota conferenciaEncalheCota: listaConferenciaEncalheCotas) {
+				arquivo = conferenciaEncalheService.gerarSlip(conferenciaEncalheCota.getId(), false);
+				if(retorno == null) {
+					retorno = arquivo;
+				} else {
+					retorno = PDFUtil.mergePDFs(retorno, arquivo);
+				}
+			}
+		}
+		
+		return retorno;
 	}
 	
 }

@@ -164,7 +164,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * @param tipoBox Tipo do Box {@link TipoBox}
 	 * @return
 	 */
-	private Criteria addRestrictions(Integer codigoBox, TipoBox tipoBox) {
+	private Criteria addRestrictions(Integer codigoBox, TipoBox tipoBox ) {
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
 		if( codigoBox != null ){
@@ -173,7 +173,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		
 		if(tipoBox != null){
 			criteria.add(Restrictions.eq("tipoBox", tipoBox));
-		}		
+		}
 		
 		return criteria;
 	}

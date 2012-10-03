@@ -17,6 +17,7 @@ public class AbastecimentoDTO implements Serializable {
 	private String nomeCota;
 	private Integer totalProduto;
 	private Integer totalReparte;
+	private Integer materialPromocional;
 	private String totalBox;
 	
 	public AbastecimentoDTO() {
@@ -122,6 +123,20 @@ public class AbastecimentoDTO implements Serializable {
 	public void setTotalReparte(BigInteger totalReparte) {
 		this.totalReparte = totalReparte.intValue();
 	}
+	/**
+	 * @return the materialPromocional
+	 */
+	public Integer getMaterialPromocional() {
+		return materialPromocional;
+	}
+
+	/**
+	 * @param materialPromocional the materialPromocional to set
+	 */
+	public void setMaterialPromocional(BigInteger materialPromocional) {
+		this.materialPromocional = materialPromocional == null ? 0 : materialPromocional.intValue();
+	}
+
 	/**
 	 * @return the totalBox
 	 */

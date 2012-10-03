@@ -42,6 +42,13 @@ public interface CotaAusenteService {
 	
 	Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro);
 	
+	/**
+	 * Cancela uma Cota Ausente
+	 * 
+	 * @param idCotaAusente
+	 * @param idUsuario
+	 * @throws TipoMovimentoEstoqueInexistenteException
+	 */
 	void cancelarCotaAusente(Long idCotaAusente, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException;
 
 }
