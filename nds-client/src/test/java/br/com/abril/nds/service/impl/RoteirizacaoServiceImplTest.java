@@ -19,17 +19,13 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
-import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
-import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
@@ -40,149 +36,199 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
-	
-	
-	
-	private PDV pdvManoel1;
-	
-	private PDV pdvManoel2;
-	
+
 	private Cota cotaManoel;
+	private Cota cotaJose;
+	private Cota cotaMaria;
+	private Cota cotaMariana;
+	private Cota cotaOrlando;
+	private Cota cotaLuis;
+	private Cota cotaJoao;
+	private Cota cotaGuilherme;
+	private Cota cotaMurilo;
+	private Cota cotaJoana;
+	private Cota cotaCarlos;
+	private Cota cotaJoaquim;
+	private Cota cotaBenedito;
+	private Cota cotaClaudio;
 	
-	private Endereco endereco;
+	private PDV pdvManoel;
+	private PDV pdvJose;
+	private PDV pdvMaria;
+	private PDV pdvMariana;
+	private PDV pdvOrlando;
+	private PDV pdvLuis;
+	private PDV pdvJoao;
+	private PDV pdvGuilherme;
+	private PDV pdvMurilo;
+	private PDV pdvJoana;
+	private PDV pdvCarlos;
+	private PDV pdvJoaquim;
+	private PDV pdvBenedito;
+	private PDV pdvClaudio;
 	
-	private EnderecoPDV enderecoPdv;
+	private Box box300;
+	private Box box400;
+	private Box box500;
 	
-	private EnderecoCota enderecoCota;
+	private Roteirizacao roteirizacao;
 	
-	private PessoaFisica manoel;
+	private Roteiro roteiro1;
+	private Roteiro roteiro2;
+	private Roteiro roteiro3;
 	
-	private static Box box1;
-	
-	private static Box box2;
-	
-	private static Roteirizacao roteirizacao;
-	
-	private static Roteiro roteiro1;
-	
-	private static Roteiro roteiro2;
-	
-	private static Roteiro roteiro3;
-	
-	private static Rota rota1;
-	
-	private static Rota rota2;
-	
-	private static Rota rota3;
-	
-	private static Rota rota4;
-	
-	private static Rota rota5;
-	
-	private static Rota rota6;
-	
-	private static Rota rota7;
-	
-	private static Rota rota8;
-	
-	private static Rota rota9;
+	private Rota rota1Roteiro1;
+	private Rota rota2Roteiro1;
+	private Rota rota3roteiro1;
+	private Rota rota1Roteiro2;
+	private Rota rota2Roteiro2;
+	private Rota rota3Roteiro2;
+	private Rota rota1Roteiro3;
 	
 	@Before
 	public void setub(){
+		box300 = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
+		box400 = Fixture.criarBox(400, "Box 400", TipoBox.LANCAMENTO);
+		box500 = Fixture.criarBox(500, "Box 500", TipoBox.LANCAMENTO);
+        save(box300, box400, box500);
 		
-		//BOX
-		box1 = Fixture.criarBox(300, "Box 300", TipoBox.LANCAMENTO);
-		save(box1);
+		PessoaFisica manoel = Fixture.pessoaFisica("10732815665", "sys.discover@gmail.com", "Manoel da Silva");
+		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO, box300);
+		save(manoel, cotaManoel);
 		
-		box2 = Fixture.criarBox(400, "Box 400", TipoBox.LANCAMENTO);
-		save(box2);
-		
-		
-		//COTA
-		manoel = Fixture.pessoaFisica("10732815665",
-				"sys.discover@gmail.com", "Manoel da Silva");
-		save(manoel);
-		
-		cotaManoel = Fixture.cota(123, manoel, SituacaoCadastro.ATIVO,box1);
-		save(cotaManoel);
-		
-			
-		//PDV
-		pdvManoel1 = Fixture.criarPDVPrincipal("PDV MANOEL 1", cotaManoel);
-		save(pdvManoel1);
+		PessoaFisica jose = Fixture.pessoaFisica("12345678901", "sys.discover@gmail.com", "Jose da Silva");
+	    cotaJose = Fixture.cota(1234, jose, SituacaoCadastro.ATIVO, box300);
+	    save(jose, cotaJose);
+	      
+	    PessoaFisica maria = Fixture.pessoaFisica("12345678902", "sys.discover@gmail.com", "Maria da Silva");
+	    cotaMaria = Fixture.cota(12345, maria, SituacaoCadastro.ATIVO, box400);
+	    save(maria, cotaMaria);
 
-		pdvManoel2 = Fixture.criarPDVPrincipal("PDV MANOEL 2", cotaManoel);
-		save(pdvManoel2);
-		
-		
-		//ENDEREÇO
-		endereco = Fixture.criarEndereco(TipoEndereco.RESIDENCIAL, "13720-000", "Rua Dos Cerca Lorenço", "10", "Bairro", "Mococa", "SP",1);
-		save(endereco);
-		
-		
-		//ENDEREÇO COTA
-		enderecoCota = Fixture.enderecoCota(cotaManoel, endereco, true, TipoEndereco.LOCAL_ENTREGA);
-		
-		
-		//ENDEREÇO PDV
-		enderecoPdv = Fixture.criarEnderecoPDV(endereco, pdvManoel1, true, TipoEndereco.LOCAL_ENTREGA);
-		save(enderecoPdv);
-		
+	    PessoaFisica mariana = Fixture.pessoaFisica("99933355533", "sys.discover@gmail.com", "Mariana");
+	    cotaMariana = Fixture.cota(32345, mariana, SituacaoCadastro.ATIVO, box400);
+	    save(mariana, cotaMariana);
+	    
+	    PessoaFisica orlando = Fixture.pessoaFisica("99933355544", "sys.discover@gmail.com", "Orlando");
+	    cotaOrlando = Fixture.cota(4444, orlando, SituacaoCadastro.ATIVO, box500);
+	    save(orlando, cotaOrlando);
 
-		//ROTEIRIZACAO
-		roteirizacao = Fixture.criarRoteirizacao(box1);
+        PessoaFisica luis  = Fixture.pessoaFisica("12345678903",  "sys.discover@gmail.com", "Luis Silva");
+        cotaLuis = Fixture.cota(888, luis, SituacaoCadastro.ATIVO, box500);
+        save(luis, cotaLuis);
+
+        PessoaFisica joao = Fixture.pessoaFisica("12345678904", "sys.discover@gmail.com", "João da Silva");
+        cotaJoao = Fixture.cota(9999, joao, SituacaoCadastro.ATIVO, box500);
+        save(joao, cotaJoao);
+        
+        PessoaFisica guilherme = Fixture.pessoaFisica("99933355511", "sys.discover@gmail.com", "Guilherme de Morais Leandro");
+        cotaGuilherme = Fixture.cota(333, guilherme, SituacaoCadastro.ATIVO, box500);
+        save(guilherme, cotaGuilherme);
+        
+        PessoaFisica murilo = Fixture.pessoaFisica("99933355522", "sys.discover@gmail.com", "Murilo");
+        cotaMurilo = Fixture.cota(22345, murilo, SituacaoCadastro.ATIVO, box500);
+        save(murilo, cotaMurilo);
+        
+        PessoaFisica joana = Fixture.pessoaFisica("99933355583", "sys.discover@gmail.com", "Joana");
+        cotaJoana = Fixture.cota(567, joana, SituacaoCadastro.ATIVO, box500);
+        save(joana, cotaJoana);
+        
+        PessoaFisica carlos = Fixture.pessoaFisica("77733355533", "sys.discover@gmail.com", "Carlos");
+        cotaCarlos = Fixture.cota(998, carlos, SituacaoCadastro.ATIVO, box500);
+        save(carlos, cotaCarlos);
+        
+        PessoaFisica joaquim = Fixture.pessoaFisica("5553355533", "sys.discover@gmail.com", "Joaquim");
+        cotaJoaquim = Fixture.cota(994, joaquim, SituacaoCadastro.ATIVO, box500);
+        save(joaquim, cotaJoaquim);
+        
+        PessoaFisica benedito = Fixture.pessoaFisica("7893355533", "sys.discover@gmail.com", "Benedito");
+        cotaBenedito = Fixture.cota(894, benedito, SituacaoCadastro.ATIVO, box500);
+        save(benedito, cotaBenedito);
+        
+        PessoaFisica claudio = Fixture.pessoaFisica("87989733555", "sys.discover@gmail.com", "Claudio");
+        cotaClaudio = Fixture.cota(794, claudio, SituacaoCadastro.ATIVO, box500);
+        save(claudio, cotaClaudio);
+		
+		pdvManoel = Fixture.criarPDVPrincipal("PDV MANOEL", cotaManoel);
+		save(pdvManoel);
+
+		pdvJose = Fixture.criarPDVPrincipal("PDV JOSE", cotaJose);
+		save(pdvJose);
+		
+		pdvMaria = Fixture.criarPDVPrincipal("PDV MARIA", cotaMaria);
+        save(pdvMaria);
+        
+        pdvMariana = Fixture.criarPDVPrincipal("PDV MARIANA", cotaMariana);
+        save(pdvMariana);
+        
+        pdvOrlando = Fixture.criarPDVPrincipal("PDV ORLANDO", cotaOrlando);
+        save(pdvOrlando);
+        
+        pdvLuis = Fixture.criarPDVPrincipal("PDV LUIS", cotaLuis);
+        save(pdvLuis);
+        
+        pdvJoao = Fixture.criarPDVPrincipal("PDV JOAO", cotaJoao);
+        save(pdvJoao);
+        
+        pdvGuilherme = Fixture.criarPDVPrincipal("PDV GUILHERME", cotaGuilherme);
+        save(pdvGuilherme);
+        
+        pdvMurilo = Fixture.criarPDVPrincipal("PDV MURILO", cotaMurilo);
+        save(pdvMurilo);
+        
+        pdvJoana = Fixture.criarPDVPrincipal("PDV JOANA", cotaJoana);
+        save(pdvJoana);
+        
+        pdvCarlos = Fixture.criarPDVPrincipal("PDV CARLOS", cotaCarlos);
+        save(pdvCarlos);
+        
+        pdvJoaquim = Fixture.criarPDVPrincipal("PDV CARLOS", cotaJoaquim);
+        save(pdvJoaquim);
+        
+        pdvBenedito = Fixture.criarPDVPrincipal("PDV BENEDITO", cotaBenedito);
+        save(pdvBenedito);
+        
+        pdvClaudio = Fixture.criarPDVPrincipal("PDV CLAUDIO", cotaClaudio);
+        save(pdvClaudio);
+	
+		roteirizacao = Fixture.criarRoteirizacao(box300);
 		save(roteirizacao);
 		
-		
 		roteiro1 = Fixture.criarRoteiro("Roteiro 1", roteirizacao, TipoRoteiro.NORMAL);
-		save(roteiro1);
-		
-		roteiro2 = Fixture.criarRoteiro("Roteiro 2",roteirizacao, TipoRoteiro.NORMAL);
-		save(roteiro2);
-		
+		roteiro2 = Fixture.criarRoteiro("Roteiro 2", roteirizacao, TipoRoteiro.NORMAL);
 		roteiro3 = Fixture.criarRoteiro("Roteiro 3", roteirizacao, TipoRoteiro.NORMAL);
-		save(roteiro3);
+		save(roteiro1, roteiro2, roteiro3);
 			
+		rota1Roteiro1 = Fixture.rota("1", "Rota 1 - Roteiro 1", roteiro1);
+		rota1Roteiro1.addPDV(pdvManoel, 1);
+		rota1Roteiro1.addPDV(pdvJose, 2);
+		save(rota1Roteiro1);
 		
-		rota1 = Fixture.rota("1", "Rota 1", roteiro1);
-		rota1.addPDV(pdvManoel1, 1);
-		rota1.addPDV(pdvManoel2, 2);
-		save(rota1);
+		rota2Roteiro1 = Fixture.rota("2", "Rota 2", roteiro1);
+		rota2Roteiro1.addPDV(pdvMaria, 1);
+	    rota2Roteiro1.addPDV(pdvMariana, 2);
+		save(rota2Roteiro1);
 		
-		rota2 = Fixture.rota("2", "Rota 2", roteiro1);
-		rota2.addPDV(pdvManoel1, 1);
-	    rota2.addPDV(pdvManoel2, 2);
-		save(rota2);
-		
-		rota3 = Fixture.rota("3", "Rota 3", roteiro1);
-  	    rota3.addPDV(pdvManoel1, 1);
-		save(rota3);
+		rota3roteiro1 = Fixture.rota("3", "Rota 3", roteiro1);
+  	    rota3roteiro1.addPDV(pdvOrlando, 1);
+		save(rota3roteiro1);
 
-		rota4 = Fixture.rota("4", "Rota 4", roteiro2);
-	    rota4.addPDV(pdvManoel1, 1);
-	    rota4.addPDV(pdvManoel2, 2);
-		save(rota4);
+		rota1Roteiro2 = Fixture.rota("4", "Rota 4", roteiro2);
+	    rota1Roteiro2.addPDV(pdvLuis, 1);
+	    rota1Roteiro2.addPDV(pdvJoao, 2);
+		save(rota1Roteiro2);
 		
-		rota5 = Fixture.rota("5", "Rota 5", roteiro2);
-	    rota5.addPDV(pdvManoel1, 1);
-		save(rota5);
+		rota2Roteiro2 = Fixture.rota("5", "Rota 5", roteiro2);
+	    rota2Roteiro2.addPDV(pdvGuilherme, 1);
+		save(rota2Roteiro2);
 		
-		rota6 = Fixture.rota("6", "Rota 6", roteiro2);
-	    rota6.addPDV(pdvManoel1, 1);
-		save(rota6);
+		rota3Roteiro2 = Fixture.rota("6", "Rota 6", roteiro2);
+	    rota3Roteiro2.addPDV(pdvMurilo, 1);
+		save(rota3Roteiro2);
 
-		rota7 = Fixture.rota("7", "Rota 7", roteiro3);
-	    rota7.addPDV(pdvManoel2, 1);
-		save(rota7);
-		
-		rota8 = Fixture.rota("8", "Rota 8", roteiro3);
-	    rota8.addPDV(pdvManoel2, 1);
-		save(rota8);
-		
-		rota9 = Fixture.rota("9", "Rota 9", roteiro3);
-	    rota9.addPDV(pdvManoel1, 1);
-		save(rota9);
-		
+		rota1Roteiro3 = Fixture.rota("7", "Rota 7", roteiro3);
+	    rota1Roteiro3.addPDV(pdvJoana, 1);
+		save(rota1Roteiro3);
+				
 		save(roteirizacao);
 		
 	}
@@ -192,14 +238,14 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		List<Box> listaBox = this.roteirizacaoService.obterListaBoxLancamento(null);
         
-		Assert.assertEquals(listaBox.size(), 2);
+		Assert.assertEquals(3, listaBox.size());
 
 	}
 	
 	@Test
 	public void testeObterListaRoteiroBoxLancamento() {
 		
-		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(box1.getId(), null);
+		List<Roteiro> listaRoteiro = this.roteirizacaoService.obterListaRoteiroPorBox(box300.getId(), null);
         
 		Assert.assertEquals(listaRoteiro.size(), 3);
 
@@ -218,7 +264,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		
 		listaRota = this.roteirizacaoService.obterListaRotaPorRoteiro(roteiro3.getId(), null);
         
-		Assert.assertEquals(listaRota.size(), 3);
+		Assert.assertEquals(1, listaRota.size());
 
 	}
 	
@@ -257,7 +303,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(roteiroDTO3.getNome(), "Roteiro 3");
 		
 		List<RotaRoteirizacaoDTO> rotas3 = roteiroDTO3.getRotas();
-		Assert.assertEquals(3,rotas3.size());
+		Assert.assertEquals(1,rotas3.size());
 		
 		
 		
@@ -267,18 +313,6 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		List<PdvRoteirizacaoDTO> pdvs = rotaDTO.getPdvs();
         Assert.assertEquals(1, pdvs.size());
 	
-	}
-	
-	@Test
-	public void testeObterPdvsDisponiveis(){
-		
-		List<PdvRoteirizacaoDTO> listaPdvDTO = this.roteirizacaoService.obterPdvsDisponiveis(null,null,null,null,null);
-		
-		Assert.assertTrue(listaPdvDTO!=null);
-		
-		Assert.assertTrue(listaPdvDTO.size()>0);
-		
-		Assert.assertEquals(listaPdvDTO.size(), 1);
 	}
 	
 	@Test
@@ -296,30 +330,30 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
         roteirizacaoDTO.addRoteiro(roteiroDTO2);
         
         RotaRoteirizacaoDTO rotaDTO1 = new RotaRoteirizacaoDTO(null, 1, "Rota 1 - Roteiro 1");
-        PdvRoteirizacaoDTO pdvRotaDTO1 = new PdvRoteirizacaoDTO(pdvManoel1.getId(), pdvManoel1
-                .getNome(), OrigemEndereco.PDV, null, pdvManoel1.getCota().getNumeroCota(),
-                pdvManoel1.getCota().getPessoa().getNome(), 1);
+        PdvRoteirizacaoDTO pdvRotaDTO1 = new PdvRoteirizacaoDTO(pdvCarlos.getId(), pdvCarlos
+                .getNome(), OrigemEndereco.PDV, null, pdvCarlos.getCota().getNumeroCota(),
+                pdvCarlos.getCota().getPessoa().getNome(), 1);
         rotaDTO1.addPdv(pdvRotaDTO1);
         roteiroDTO1.addRota(rotaDTO1);
         
         RotaRoteirizacaoDTO rotaDTO2 = new RotaRoteirizacaoDTO(null, 2, "Rota 2 - Roteiro 1");
-        PdvRoteirizacaoDTO pdvRotaDTO2 = new PdvRoteirizacaoDTO(pdvManoel2.getId(), pdvManoel2
-                .getNome(), OrigemEndereco.PDV, null, pdvManoel2.getCota().getNumeroCota(),
-                pdvManoel2.getCota().getPessoa().getNome(), 1);
+        PdvRoteirizacaoDTO pdvRotaDTO2 = new PdvRoteirizacaoDTO(pdvJoaquim.getId(), pdvJoaquim
+                .getNome(), OrigemEndereco.PDV, null, pdvJoaquim.getCota().getNumeroCota(),
+                pdvJoaquim.getCota().getPessoa().getNome(), 1);
         rotaDTO2.addPdv(pdvRotaDTO2);
         roteiroDTO1.addRota(rotaDTO2);
         
         RotaRoteirizacaoDTO rotaDTO3 = new RotaRoteirizacaoDTO(null, 1, "Rota 1 - Roteiro 2");
-        PdvRoteirizacaoDTO pdvRotaDTO3 = new PdvRoteirizacaoDTO(pdvManoel1.getId(), pdvManoel1
-                .getNome(), OrigemEndereco.PDV, null, pdvManoel1.getCota().getNumeroCota(),
-                pdvManoel1.getCota().getPessoa().getNome(), 1);
+        PdvRoteirizacaoDTO pdvRotaDTO3 = new PdvRoteirizacaoDTO(pdvBenedito.getId(), pdvBenedito
+                .getNome(), OrigemEndereco.PDV, null, pdvBenedito.getCota().getNumeroCota(),
+                pdvBenedito.getCota().getPessoa().getNome(), 1);
         rotaDTO3.addPdv(pdvRotaDTO3);
         roteiroDTO2.addRota(rotaDTO3);
         
         RotaRoteirizacaoDTO rotaDTO4 = new RotaRoteirizacaoDTO(null, 2, "Rota 2 - Roteiro 2");
-        PdvRoteirizacaoDTO pdvRotaDTO4 = new PdvRoteirizacaoDTO(pdvManoel2.getId(), pdvManoel2
-                .getNome(), OrigemEndereco.PDV, null, pdvManoel2.getCota().getNumeroCota(),
-                pdvManoel2.getCota().getPessoa().getNome(), 1);
+        PdvRoteirizacaoDTO pdvRotaDTO4 = new PdvRoteirizacaoDTO(pdvClaudio.getId(), pdvClaudio
+                .getNome(), OrigemEndereco.PDV, null, pdvClaudio.getCota().getNumeroCota(),
+                pdvClaudio.getCota().getPessoa().getNome(), 1);
         rotaDTO4.addPdv(pdvRotaDTO4);
         roteiroDTO2.addRota(rotaDTO4);
         
@@ -391,16 +425,16 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
         roteirizacaoDTO.addRoteiro(roteiroDTO1);
         
         RotaRoteirizacaoDTO rotaDTO1 = new RotaRoteirizacaoDTO(null, 1, "Rota 1 - Roteiro 1");
-        PdvRoteirizacaoDTO pdvRotaDTO1 = new PdvRoteirizacaoDTO(pdvManoel1.getId(), pdvManoel1
-                .getNome(), OrigemEndereco.PDV, null, pdvManoel1.getCota().getNumeroCota(),
-                pdvManoel1.getCota().getPessoa().getNome(), 1);
+        PdvRoteirizacaoDTO pdvRotaDTO1 = new PdvRoteirizacaoDTO(pdvCarlos.getId(), pdvCarlos
+                .getNome(), OrigemEndereco.PDV, null, pdvCarlos.getCota().getNumeroCota(),
+                pdvCarlos.getCota().getPessoa().getNome(), 1);
         rotaDTO1.addPdv(pdvRotaDTO1);
         roteiroDTO1.addRota(rotaDTO1);
         
         RotaRoteirizacaoDTO rotaDTO2 = new RotaRoteirizacaoDTO(null, 2, "Rota 2 - Roteiro 1");
-        PdvRoteirizacaoDTO pdvRotaDTO2 = new PdvRoteirizacaoDTO(pdvManoel2.getId(), pdvManoel2
-                .getNome(), OrigemEndereco.PDV, null, pdvManoel2.getCota().getNumeroCota(),
-                pdvManoel2.getCota().getPessoa().getNome(), 1);
+        PdvRoteirizacaoDTO pdvRotaDTO2 = new PdvRoteirizacaoDTO(pdvJoaquim.getId(), pdvJoaquim
+                .getNome(), OrigemEndereco.PDV, null, pdvJoaquim.getCota().getNumeroCota(),
+                pdvJoaquim.getCota().getPessoa().getNome(), 1);
         rotaDTO2.addPdv(pdvRotaDTO2);
         roteiroDTO1.addRota(rotaDTO2);
         
@@ -440,25 +474,25 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
     public void confirmaNovaRoteirizacaoBoxJaUtilizadoRoteirizacao() {
-	    BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO(box1.getId(), box1.getNome());
+	    BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO(box300.getId(), box300.getNome());
         
         RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.novaRoteirizacao(Arrays.asList(boxDTO));
         roteirizacaoDTO.setBox(boxDTO);
         
-        RoteiroRoteirizacaoDTO roteiroDTO1 = new RoteiroRoteirizacaoDTO(null, 1, "Roteiro 1");
+        RoteiroRoteirizacaoDTO roteiroDTO1 = new RoteiroRoteirizacaoDTO(Long.valueOf(-1), 1, "Roteiro 1");
         roteirizacaoDTO.addRoteiro(roteiroDTO1);
         
         RotaRoteirizacaoDTO rotaDTO1 = new RotaRoteirizacaoDTO(null, 1, "Rota 1 - Roteiro 1");
-        PdvRoteirizacaoDTO pdvRotaDTO1 = new PdvRoteirizacaoDTO(pdvManoel1.getId(), pdvManoel1
-                .getNome(), OrigemEndereco.PDV, null, pdvManoel1.getCota().getNumeroCota(),
-                pdvManoel1.getCota().getPessoa().getNome(), 1);
+        PdvRoteirizacaoDTO pdvRotaDTO1 = new PdvRoteirizacaoDTO(pdvCarlos.getId(), pdvCarlos
+                .getNome(), OrigemEndereco.PDV, null, pdvCarlos.getCota().getNumeroCota(),
+                pdvCarlos.getCota().getPessoa().getNome(), 1);
         rotaDTO1.addPdv(pdvRotaDTO1);
         roteiroDTO1.addRota(rotaDTO1);
         
         RotaRoteirizacaoDTO rotaDTO2 = new RotaRoteirizacaoDTO(null, 2, "Rota 2 - Roteiro 1");
-        PdvRoteirizacaoDTO pdvRotaDTO2 = new PdvRoteirizacaoDTO(pdvManoel2.getId(), pdvManoel2
-                .getNome(), OrigemEndereco.PDV, null, pdvManoel2.getCota().getNumeroCota(),
-                pdvManoel2.getCota().getPessoa().getNome(), 1);
+        PdvRoteirizacaoDTO pdvRotaDTO2 = new PdvRoteirizacaoDTO(pdvJoaquim.getId(), pdvJoaquim
+                .getNome(), OrigemEndereco.PDV, null, pdvJoaquim.getCota().getNumeroCota(),
+                pdvJoaquim.getCota().getPessoa().getNome(), 1);
         rotaDTO2.addPdv(pdvRotaDTO2);
         roteiroDTO1.addRota(rotaDTO2);
         
@@ -472,108 +506,104 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
     public void confirmaRoteirizacaoExistente() {
-        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(RoteirizacaoServiceImplTest.roteirizacao, Arrays.asList(box1));
-        roteirizacaoDTO.removerRoteiro(RoteirizacaoServiceImplTest.roteiro3.getId());
-        roteirizacaoDTO.addRoteiroExclusao(RoteirizacaoServiceImplTest.roteiro3.getId());
+        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(roteirizacao, Arrays.asList(box300));
+        roteirizacaoDTO.removerRoteiro(roteiro3.getId());
+        roteirizacaoDTO.addRoteiroExclusao(roteiro3.getId());
         
         RoteiroRoteirizacaoDTO novoRoteiro = new RoteiroRoteirizacaoDTO(Long.valueOf(-1), 5, "Novo Roteiro");
         roteirizacaoDTO.addRoteiro(novoRoteiro);
         
         RotaRoteirizacaoDTO novaRotaNovoRoteiro = new RotaRoteirizacaoDTO(Long.valueOf(-1), 10, "Nova Rota - Novo Roteiro");
         novoRoteiro.addRota(novaRotaNovoRoteiro);
-        novaRotaNovoRoteiro.addPdv(new PdvRoteirizacaoDTO(
-                pdvManoel2.getId(), pdvManoel2.getNome(), OrigemEndereco.PDV,
-                null, pdvManoel2.getCota().getNumeroCota(), pdvManoel2
+        novaRotaNovoRoteiro.addPdv(new PdvRoteirizacaoDTO(pdvCarlos.getId(), pdvCarlos.getNome(), OrigemEndereco.PDV,
+                null, pdvCarlos.getCota().getNumeroCota(), pdvCarlos
                         .getCota().getPessoa().getNome(), 1));
         
-        
-        RoteiroRoteirizacaoDTO roteiro1DTO = roteirizacaoDTO.getRoteiro(RoteirizacaoServiceImplTest.roteiro1.getId());
-        roteiro1DTO.removerRota(RoteirizacaoServiceImplTest.rota1.getId());
-        roteiro1DTO.adicionarRotaExclusao(RoteirizacaoServiceImplTest.rota1.getId());
+        RoteiroRoteirizacaoDTO roteiro1DTO = roteirizacaoDTO.getRoteiro(roteiro1.getId());
+        roteiro1DTO.removerRota(rota1Roteiro1.getId());
+        roteiro1DTO.adicionarRotaExclusao(rota1Roteiro1.getId());
        
-        RotaRoteirizacaoDTO rota2DTO = roteiro1DTO.getRota(rota2.getId());
-        rota2DTO.removerPdv(pdvManoel2.getId());
+        RotaRoteirizacaoDTO rota2Roteiro1DTO = roteiro1DTO.getRota(rota2Roteiro1.getId());
+        rota2Roteiro1DTO.removerPdv(pdvMariana.getId());
         
-        RotaRoteirizacaoDTO novaRota = new RotaRoteirizacaoDTO(Long.valueOf(-1), 10, "Nova Rota");
-        roteiro1DTO.addRota(novaRota);
-        novaRota.addPdv(new PdvRoteirizacaoDTO(
-                pdvManoel2.getId(), pdvManoel2.getNome(), OrigemEndereco.PDV,
-                null, pdvManoel2.getCota().getNumeroCota(), pdvManoel2
+        RotaRoteirizacaoDTO novaRotaRoteiro1DTO = new RotaRoteirizacaoDTO(Long.valueOf(-1), 10, "Nova Rota");
+        roteiro1DTO.addRota(novaRotaRoteiro1DTO);
+        novaRotaRoteiro1DTO.addPdv(new PdvRoteirizacaoDTO(pdvJoaquim.getId(), pdvJoaquim.getNome(), OrigemEndereco.PDV,
+                null, pdvJoaquim.getCota().getNumeroCota(), pdvJoaquim
                         .getCota().getPessoa().getNome(), 1));
                 
-        RoteiroRoteirizacaoDTO roteiro2DTO = roteirizacaoDTO.getRoteiro(RoteirizacaoServiceImplTest.roteiro2.getId());
-        RotaRoteirizacaoDTO  rota4DTO = roteiro2DTO.getRota(rota4.getId());
-        PdvRoteirizacaoDTO pdvDTO = rota4DTO.getPdv(pdvManoel2.getId());
+        RoteiroRoteirizacaoDTO roteiro2DTO = roteirizacaoDTO.getRoteiro(roteiro2.getId());
+        RotaRoteirizacaoDTO  rota1Roteiro2DTO = roteiro2DTO.getRota(rota1Roteiro2.getId());
+        PdvRoteirizacaoDTO pdvDTO = rota1Roteiro2DTO.getPdv(pdvJoao.getId());
         pdvDTO.setOrdem(10);
         
-        RotaRoteirizacaoDTO rota6DTO = roteiro2DTO.getRota(rota6.getId());
-        PdvRoteirizacaoDTO pdvManoel2DTO = new PdvRoteirizacaoDTO(
-                pdvManoel2.getId(), pdvManoel2.getNome(), OrigemEndereco.PDV,
-                null, pdvManoel2.getCota().getNumeroCota(), pdvManoel2
+        RotaRoteirizacaoDTO rota3Roteiro2DTO = roteiro2DTO.getRota(rota3Roteiro2.getId());
+        PdvRoteirizacaoDTO pdvManoel2DTO = new PdvRoteirizacaoDTO(pdvBenedito.getId(), pdvBenedito.getNome(), OrigemEndereco.PDV,
+                null, pdvBenedito.getCota().getNumeroCota(), pdvBenedito
                         .getCota().getPessoa().getNome(), 3);
-        rota6DTO.addPdv(pdvManoel2DTO);
+        rota3Roteiro2DTO.addPdv(pdvManoel2DTO);
         
         roteirizacaoService.confirmarRoteirizacao(roteirizacaoDTO);
         flushClear();
         
-        Roteirizacao confirmado = (Roteirizacao) getSession().get(Roteirizacao.class, RoteirizacaoServiceImplTest.roteirizacao.getId()); 
+        Roteirizacao confirmado = (Roteirizacao) getSession().get(Roteirizacao.class, roteirizacao.getId()); 
         List<Roteiro> roteiros = confirmado.getRoteiros();
         Assert.assertEquals(3, roteiros.size());
         
         Roteiro roteiro1 = roteiros.get(0);
-        Assert.assertEquals(RoteirizacaoServiceImplTest.roteiro1.getDescricaoRoteiro(), roteiro1.getDescricaoRoteiro());
+        Assert.assertEquals(roteiro1.getDescricaoRoteiro(), roteiro1.getDescricaoRoteiro());
         List<Rota> rotas = roteiro1.getRotas();
         Assert.assertEquals(3, rotas.size());
       
         Rota rota1 = rotas.get(0);
-        Assert.assertEquals(RoteirizacaoServiceImplTest.rota2.getDescricaoRota(), rota1.getDescricaoRota());
+        Assert.assertEquals(rota2Roteiro1.getDescricaoRota(), rota1.getDescricaoRota());
         List<RotaPDV> rotaPDVs = rota1.getRotaPDVs();
         Assert.assertEquals(1, rotaPDVs.size());
   
         RotaPDV rotaPDV1 = rotaPDVs.get(0);
         Assert.assertEquals(Integer.valueOf(1), rotaPDV1.getOrdem());
-        Assert.assertEquals(pdvManoel1, rotaPDV1.getPdv());
+        Assert.assertEquals(pdvMaria, rotaPDV1.getPdv());
         
         Rota rota2 = rotas.get(1);
-        Assert.assertEquals(RoteirizacaoServiceImplTest.rota3.getDescricaoRota(), rota2.getDescricaoRota());
+        Assert.assertEquals(rota3roteiro1.getDescricaoRota(), rota2.getDescricaoRota());
         
         Rota rota3 = rotas.get(2);
-        Assert.assertEquals(novaRota.getNome(), rota3.getDescricaoRota());
+        Assert.assertEquals(novaRotaRoteiro1DTO.getNome(), rota3.getDescricaoRota());
         
         Roteiro roteiro2 = roteiros.get(1);
-        Assert.assertEquals(RoteirizacaoServiceImplTest.roteiro2.getDescricaoRoteiro(), roteiro2.getDescricaoRoteiro());
+        Assert.assertEquals(roteiro2.getDescricaoRoteiro(), roteiro2.getDescricaoRoteiro());
         List<Rota> rotasRoteiro2 = roteiro2.getRotas();
         Assert.assertEquals(3, rotasRoteiro2.size());
         
         Rota rota1Roteiro2 = rotasRoteiro2.get(0);
-        Assert.assertEquals(rota4.getDescricaoRota(), rota1Roteiro2.getDescricaoRota());
+        Assert.assertEquals(rota1Roteiro2.getDescricaoRota(), rota1Roteiro2.getDescricaoRota());
         List<RotaPDV> rota1Roteiro2PDVs = rota1Roteiro2.getRotaPDVs();
         Assert.assertEquals(2, rota1Roteiro2PDVs.size());
         
         RotaPDV rota1Roteiro2PDV1 = rota1Roteiro2PDVs.get(0);
         Assert.assertEquals(Integer.valueOf(1), rota1Roteiro2PDV1.getOrdem());
-        Assert.assertEquals(pdvManoel1, rota1Roteiro2PDV1.getPdv());
+        Assert.assertEquals(pdvLuis, rota1Roteiro2PDV1.getPdv());
         
         RotaPDV rota1Roteiro2PDV2 = rota1Roteiro2PDVs.get(1);
         Assert.assertEquals(pdvDTO.getOrdem(), rota1Roteiro2PDV2.getOrdem());
-        Assert.assertEquals(pdvManoel2, rota1Roteiro2PDV2.getPdv());
+        Assert.assertEquals(pdvJoao, rota1Roteiro2PDV2.getPdv());
         
         Rota rota2Roteiro2 = rotasRoteiro2.get(1);
-        Assert.assertEquals(rota5.getDescricaoRota(), rota2Roteiro2.getDescricaoRota());
+        Assert.assertEquals(rota2Roteiro2.getDescricaoRota(), rota2Roteiro2.getDescricaoRota());
         
         Rota rota3Roteiro2 = rotasRoteiro2.get(2);
-        Assert.assertEquals(rota6.getDescricaoRota(), rota3Roteiro2.getDescricaoRota());
+        Assert.assertEquals(rota3Roteiro2.getDescricaoRota(), rota3Roteiro2.getDescricaoRota());
         
         List<RotaPDV> rota3Roteiro2PDVs = rota3Roteiro2.getRotaPDVs();
         Assert.assertEquals(2, rota1Roteiro2PDVs.size());
         
         RotaPDV rota3Roteiro2PDV1 = rota3Roteiro2PDVs.get(0);
         Assert.assertEquals(Integer.valueOf(1), rota3Roteiro2PDV1.getOrdem());
-        Assert.assertEquals(pdvManoel1, rota3Roteiro2PDV1.getPdv());
+        Assert.assertEquals(pdvMurilo, rota3Roteiro2PDV1.getPdv());
         
         RotaPDV rota3Roteiro2PDV2 = rota3Roteiro2PDVs.get(1);
         Assert.assertEquals(pdvManoel2DTO.getOrdem(), rota3Roteiro2PDV2.getOrdem());
-        Assert.assertEquals(pdvManoel2, rota3Roteiro2PDV2.getPdv());
+        Assert.assertEquals(pdvBenedito, rota3Roteiro2PDV2.getPdv());
         
         Roteiro roteiro3 = roteiros.get(2);
         Assert.assertEquals(novoRoteiro.getNome(), roteiro3.getDescricaoRoteiro());
