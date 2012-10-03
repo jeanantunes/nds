@@ -152,27 +152,27 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		ConsolidadoFinanceiroCota consolidado1 =
 			Fixture.consolidadoFinanceiroCota(Arrays.asList(movimentoFinanceiroCota),
 										      cota, new Date(), new BigDecimal(200),
-										      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+										      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado1);
 		
 		ConsolidadoFinanceiroCota consolidado2 =
 			Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200),
-				      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+				      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado2);
 		
 		ConsolidadoFinanceiroCota consolidado3 =
 				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200),
-					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 			save(consolidado3);
 		
 		ConsolidadoFinanceiroCota consolidado4 =
 				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200),
-					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado4);
 		
 		ConsolidadoFinanceiroCota consolidado5 =
 				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200),
-					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado5);
 			
 		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(),

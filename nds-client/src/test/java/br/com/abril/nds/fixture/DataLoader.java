@@ -237,11 +237,6 @@ public class DataLoader {
 	private static PessoaFisica joao;
 	private static PessoaFisica luis;
 
-	private static Rota rota1;
-	private static Rota rota2;
-	private static Rota rota3;
-	private static Rota rota10;
-	
 	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
 	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
 	private static TipoMovimentoEstoque tipoMovimentoSobraEm;
@@ -2039,7 +2034,7 @@ public class DataLoader {
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
  		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 		save(session,consolidadoFinanceiroCota);
 
 
@@ -2151,7 +2146,7 @@ public class DataLoader {
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCompraEncalhe);
 
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 		save(session, consolidadoFinanceiroCota);
 	}
 
@@ -2616,17 +2611,17 @@ public class DataLoader {
         pdvOrlando.setSegmentacao(segmentacaoPDV2);
         session.save(pdvOrlando);
 		
-		rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
+		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
 		rota1.addPDV(pdvcotaJose2, 1);
 		rota1.addPDV(pdvcotaManoel2, 2);
 		session.save(rota1);
 		
-		rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
+		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
 	    rota2.addPDV(pdvcotaJose2, 1);
 	    rota2.addPDV(pdvcotaManoel2, 2);
 		session.save(rota2);
-						
-		rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
+		
+		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
 	    rota10.addPDV(pdvcotaJose2, 1);
 	    rota10.addPDV(pdvcotaManoel2, 2);
 		session.save(rota10);
@@ -2742,7 +2737,7 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado1 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(1, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(1, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota2, movimentoFinanceiroCota14, movimentoFinanceiroCota20,movimentoFinanceiroCota23,
@@ -2751,56 +2746,56 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado2 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(2, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(2, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota3);
 
 		ConsolidadoFinanceiroCota consolidado3 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(3, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(3, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota4);
 
 		ConsolidadoFinanceiroCota consolidado4 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(4, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(4, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota5);
 
 		ConsolidadoFinanceiroCota consolidado5 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(5, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(5, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota6);
 
 		ConsolidadoFinanceiroCota consolidado6 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(6, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(6, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota7);
 
 		ConsolidadoFinanceiroCota consolidado7 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(7, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(7, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota8);
 
 		ConsolidadoFinanceiroCota consolidado8 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(8, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(8, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota9);
 
 		ConsolidadoFinanceiroCota consolidado9 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoel,
-						Fixture.criarData(9, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(9, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota10);
@@ -2808,7 +2803,7 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado15 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoelCunha,
-						Fixture.criarData(10, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(10, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota11);
@@ -2816,7 +2811,7 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado16 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoelCunha,
-						Fixture.criarData(11, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(11, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 		movimentosF = Arrays.asList(movimentoFinanceiroCota12);
@@ -2824,7 +2819,7 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado17 = Fixture
 				.consolidadoFinanceiroCota(
 						movimentosF, cotaManoelCunha,
-						Fixture.criarData(12, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(12, 6, 2012), getTotalConsignado(movimentosF), getTotalVendaEncalhe(movimentosF), getTotalEncalhe(movimentosF), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 
 
 
@@ -2832,89 +2827,89 @@ public class DataLoader {
 		ConsolidadoFinanceiroCota consolidado10 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaMaria,
-						Fixture.criarData(13, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(13, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidado11 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaLuis,
-						Fixture.criarData(14, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(14, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidado12 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaJoao,
-						Fixture.criarData(15, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(15, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidado13 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaJose,
-						Fixture.criarData(16, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(16, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidado14 = Fixture
 				.consolidadoFinanceiroCota(
 						null, cotaJose,
-						Fixture.criarData(17, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(17, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidadoGuilherme1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(1, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(1, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoGuilherme2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(2, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(2, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoGuilherme3 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(3, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(3, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(4, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(4, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(5, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(5, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMurilo3 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(6, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(6, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMariana1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(7, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(7, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoMariana2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(8, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(8, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoOrlando1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaOrlando ,
-						Fixture.criarData(9, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(9, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoOrlando2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaOrlando ,
-						Fixture.criarData(10, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(10, 1, 2010), new BigDecimal(200), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(1, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(1, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaGuilherme,
-						Fixture.criarData(2, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(2, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloMurilo1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMurilo,
-						Fixture.criarData(4, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(4, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		ConsolidadoFinanceiroCota consolidadoAcumuloMariana1 = Fixture
 				.consolidadoFinanceiroCota(null, cotaMariana,
-						Fixture.criarData(7, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(170), new BigDecimal(25));
+						Fixture.criarData(7, 2, 2010), new BigDecimal(210), new BigDecimal(230), new BigDecimal(180), new BigDecimal(180), new BigDecimal(180), new BigDecimal(45), new BigDecimal(25));
 
 		save(session,consolidado1, consolidado2, consolidado3,
 					 consolidado4, consolidado5, consolidado6,
@@ -3033,10 +3028,10 @@ public class DataLoader {
 				      dividaOrlando,
 				      dividaAcumuladaGuilherme1, dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 
-		dividaAcumuladaGuilherme1.getAcumulado().add(dividaGuilherme1);
-		dividaAcumuladaGuilherme2.getAcumulado().add(dividaGuilherme2);
-		dividaAcumuladaMariana1.getAcumulado().add(dividaMariana1);
-		dividaAcumuladaMurilo1.getAcumulado().add(dividaMurilo1);
+		dividaAcumuladaGuilherme1.setDividaRaiz(dividaGuilherme1);
+		dividaAcumuladaGuilherme2.setDividaRaiz(dividaGuilherme2);
+		dividaAcumuladaMariana1.setDividaRaiz(dividaMariana1);
+		dividaAcumuladaMurilo1.setDividaRaiz(dividaMurilo1);
 
 		save(session, dividaAcumuladaGuilherme1,dividaAcumuladaGuilherme2,dividaAcumuladaMariana1,dividaAcumuladaMurilo1);
 	}
@@ -8097,14 +8092,12 @@ public class DataLoader {
 		Entregador entregador = Fixture.criarEntregador(
 				234L, true, new Date(),
 				BigDecimal.TEN, juridicaAcme, false, null);
-		
-		entregador.setRota(rota2);
+
 		save(session, juridicaAcme, entregador);
 
 		entregador = Fixture.criarEntregador(
 				123L, false, new Date(),
 				null, juridicaFc, false, null);
-		entregador.setRota(rota10);
 		save(session, juridicaFc, entregador);
 
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", "50", "Centro", "Mococa", "SP",3530508);
@@ -8141,7 +8134,6 @@ public class DataLoader {
 		entregador = Fixture.criarEntregador(
 				456L, false, new Date(),
 				null, maria, false, null);
-		entregador.setRota(rota1);
 
 		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", "10", "Centro", "São Paulo", "SP",3550308);
 
