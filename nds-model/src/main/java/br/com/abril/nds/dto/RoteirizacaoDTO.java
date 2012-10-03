@@ -3,7 +3,9 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -58,7 +60,7 @@ public class RoteirizacaoDTO implements Serializable{
     /**
      * Coleção de identificadores de roteiros para exclusão
      */
-    private List<Long> roteirosExclusao = new ArrayList<Long>();
+    private Set<Long> roteirosExclusao = new HashSet<Long>();
     
     /**
      * Cotas destinadas a copia para determinada rota.
@@ -162,7 +164,7 @@ public class RoteirizacaoDTO implements Serializable{
     /**
      * @return the roteirosExclusao
      */
-    public List<Long> getRoteirosExclusao() {
+    public Set<Long> getRoteirosExclusao() {
         return roteirosExclusao;
     }
 
@@ -175,7 +177,7 @@ public class RoteirizacaoDTO implements Serializable{
      */
 	public void addRoteiroExclusao(Long idRoteiro) {
 	    if (roteirosExclusao == null) {
-	        roteirosExclusao = new ArrayList<Long>();
+	        roteirosExclusao = new HashSet<Long>();
 	    }
 	    roteirosExclusao.add(idRoteiro);
 	}
@@ -413,6 +415,11 @@ public class RoteirizacaoDTO implements Serializable{
 				todosRoteiros.remove(roteiro);
 				break;
 			}
+		}
+		
+		if (roteiroId >= 0){
+			
+			this.addRoteiroExclusao(roteiroId);
 		}
 	}
 }

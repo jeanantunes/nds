@@ -118,36 +118,6 @@
 </div>
 </form>
 
-<form id="form-roteiro">
-<div id="dialog-roteiro" title="Roteiro" style="display:none;">
-<jsp:include page="../messagesDialog.jsp" /> 
-	<fieldset>
-    	<legend>Novo Roteiro</legend>
-        <label>Box:</label>
-        <select name="boxInclusaoRoteiro" id="boxInclusaoRoteiro" style="width:200px;  float:left; margin-bottom:5px;">
-			<option value="" selected="selected">Selecione...</option>
-			<c:forEach var="box" items="${listaBox}">
-				<option value="${box.key}">${box.value}</option>
-			</c:forEach>
- 		</select>
-        
-        <br clear="all" />
-        <label>Ordem:</label>
-        <input name="ordemInclusaoRoteiro" id="ordemInclusaoRoteiro" type="text" style="width:200px; float:left; margin-bottom:5px;" />       
-        <br clear="all" />
-        
-        <label>Nome:</label>
-        <input name="nomeInclusaoRoteiro" id="nomeInclusaoRoteiro"  type="text" style="width:200px; float:left;" />
-         <br clear="all" />
-        <label>Roteiro Especial:</label>
-        <input type="checkbox" name="tipoRoteiro" value="Especial" id="tipoRoteiro" onclick="roteirizacao.roteiroEspecialNovo()"  />        
-        <br clear="all" />
-        
-
-    </fieldset>
-</div>
-</form>
-
 <form id="form-roteirizacao">
 
     <div id="dialog-roteirizacao" title="Nova Roteirização" style="display:none;">
@@ -367,13 +337,6 @@
 	            		<td>
 	            			<input id="inputNome" style="width:220px;" />
 	            		</td>
-	          		</tr>
-	          		<tr style="display: none;" id="checkRoteiroEspecial">
-	          			<td>Roteiro Especial:</td>
-	          			<td>
-	          				<input type="checkbox" name="tipoRoteiro" 
-	          					value="Especial" id="tipoRoteiro" onclick="roteirizacao.roteiroEspecialNovo()"  />
-	          			</td>
 	          		</tr>
 	      		</table>
 			</fieldset>

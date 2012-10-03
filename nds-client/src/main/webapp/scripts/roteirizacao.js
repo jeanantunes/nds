@@ -94,7 +94,6 @@ var roteirizacao = $.extend(true, {
             if (roteirizacao.tipoInclusao == TipoInclusao.ROTEIRO){
                 
                 metodoObterOrdem = 'iniciaTelaRoteiro';
-                $("#checkRoteiroEspecial", roteirizacao.workspace).show();
             } else {
                 
                 metodoObterOrdem = 'iniciaTelaRota';
@@ -1390,7 +1389,9 @@ var roteirizacao = $.extend(true, {
 			});
 			
 			params.push({name: "idRota", value: roteirizacao.idRota});
-           			
+           	
+			
+			
 			return params;
 		},
 		
@@ -1399,7 +1400,14 @@ var roteirizacao = $.extend(true, {
 		 	$.postJSON(contextPath + '/cadastro/roteirizacao/removerPdvs',
 		 			 params,
 					 function(result) {
-							
+		 				
+		 				if (result.tipoMensagem && result.listaMensagens){
+		 					
+		 					exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+		 					return;
+		 				}
+		 		
+		 				roteirizacao.popularGridCotasRota();
 					 },
 					 null,
 					 true
@@ -1846,19 +1854,6 @@ var roteirizacao = $.extend(true, {
 		         $('#boxRoteiroTranferencia', roteirizacao.workspace).removeAttr("disabled");
 		     }
 		},
-
-		roteiroEspecialNovo : function() {
-		    
-		     if ($("#tipoRoteiro", roteirizacao.workspace).is(":checked") ) {
-		         $('#boxInclusaoRoteiro', roteirizacao.workspace).attr("disabled", "disabled");
-		         $('#boxInclusaoRoteiro', roteirizacao.workspace).val("");
-		          
-		     } else {
-		         $('#boxInclusaoRoteiro', roteirizacao.workspace).val("");
-		         $('#boxInclusaoRoteiro', roteirizacao.workspace).removeAttr("disabled");
-		     }
-		},
-
 
 		iniciarPesquisaRoteirizacaoGrid : function () {
 		    
@@ -2420,7 +2415,6 @@ var roteirizacao = $.extend(true, {
             $("#selectTipoNovoDado", roteirizacao.workspace).val("ROTEIRO");
             $("#inputOrdem", roteirizacao.workspace).val("");
             $("#inputNome", roteirizacao.workspace).val("");
-            $("#checkRoteiroEspecial", roteirizacao.workspace).hide();
         },
         
         popup_tranferir : function(){
@@ -2521,6 +2515,7 @@ var roteirizacao = $.extend(true, {
                                         function(result) {
                                 			
                                 			roteirizacao.popularGridRoteiros();
+                                			roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
                                 			$("#dialog-transfere-roteiro", roteirizacao.workspace).dialog("close");
                                 		},
                                         null,
