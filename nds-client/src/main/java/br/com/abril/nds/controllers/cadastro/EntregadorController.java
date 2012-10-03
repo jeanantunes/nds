@@ -63,6 +63,8 @@ import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.stella.format.CNPJFormatter;
+import br.com.caelum.stella.format.CPFFormatter;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
@@ -1113,11 +1115,36 @@ public class EntregadorController {
 		return telefonesSessao;
 	}
 	
+	private String obterDocumentoFormatado(CNPJFormatter cnpjFormatter, CPFFormatter cpfFormatter, Pessoa pessoa) {
+		
+		String documento = null;
+		
+		if(pessoa instanceof PessoaJuridica) {
+			documento = ((PessoaJuridica) pessoa).getCnpj();
+			try {
+				return cnpjFormatter.format(documento);
+			} catch(Exception e) {
+				return "";
+			}
+		} else {
+			documento = ((PessoaFisica) pessoa).getCpf();
+			try {
+				return cpfFormatter.format(documento);
+			} catch(Exception e) {
+				return "";
+			}
+		}
+		
+	}
+	
 	/*
 	 * Método que cria um table model baseado no retorno da pesquisa de entregadores.
 	 */
 	private TableModel<CellModel> obterTableModel(List<Entregador> listaEntregador) {
 
+		CNPJFormatter cnpjFormatter = new CNPJFormatter();
+		CPFFormatter cpfFormatter = new CPFFormatter();
+		
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
 
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
@@ -1128,10 +1155,9 @@ public class EntregadorController {
 					((PessoaJuridica) entregador.getPessoa()).getRazaoSocial() :
 						((PessoaFisica) entregador.getPessoa()).getNome();
 
-			String documento = entregador.getPessoa() instanceof PessoaJuridica ? 
-					((PessoaJuridica) entregador.getPessoa()).getCnpj() :
-						((PessoaFisica) entregador.getPessoa()).getCpf(); 
-
+			String documento = obterDocumentoFormatado(cnpjFormatter, cpfFormatter, entregador.getPessoa());
+					
+					
 			String apelido = entregador.getPessoa() instanceof PessoaJuridica ? 
 					((PessoaJuridica) entregador.getPessoa()).getNomeFantasia() :
 						((PessoaFisica) entregador.getPessoa()).getApelido();
