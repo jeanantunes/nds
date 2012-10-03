@@ -49,6 +49,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
+import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
@@ -629,6 +631,13 @@ public class VendaEncalheController {
 		usuario.setNome("Jornaleiro da Silva");
 			
 		return usuario;
+	}
+	
+	
+	@Get("/reimprimirComprovanteVenda/{idVenda}")
+	public Download reimprimirComprovanteVenda(Long idVenda){		
+		byte[] relatorio =  vendaEncalheService.geraImpressaoComprovanteVenda(idVenda);		
+		return new ByteArrayDownload(relatorio,"application/pdf", "comprovanteVenda.pdf");
 	}
 }
 	
