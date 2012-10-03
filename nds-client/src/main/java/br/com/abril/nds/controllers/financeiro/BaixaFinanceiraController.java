@@ -26,11 +26,13 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -41,6 +43,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
@@ -84,6 +87,9 @@ public class BaixaFinanceiraController {
 	private HttpServletResponse httpResponse;
 	
 	private ServletContext servletContext;
+	
+	@Autowired
+	private BancoService bancoService;
 	
 	@Autowired
 	private BoletoService boletoService;
@@ -135,6 +141,12 @@ public class BaixaFinanceiraController {
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DINHEIRO, TipoCobranca.DINHEIRO.getDescTipoCobranca()));
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DEPOSITO, TipoCobranca.DEPOSITO.getDescTipoCobranca()));
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.TRANSFERENCIA_BANCARIA, TipoCobranca.TRANSFERENCIA_BANCARIA.getDescTipoCobranca()));
+		
+		FiltroConsultaBancosDTO filtro = new FiltroConsultaBancosDTO();
+		filtro.setAtivo(true);
+		List<Banco> bancos = bancoService.obterBancos(filtro);
+
+		result.include("bancos", bancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
 	}
 	
@@ -497,7 +509,8 @@ public class BaixaFinanceiraController {
 								   String valorPagamento,
 	                               TipoCobranca tipoPagamento,
 	                               String observacoes,
-	                               List<Long> idCobrancas){
+	                               List<Long> idCobrancas,
+	                               Banco banco){
 		
 		BigDecimal valorDividasConvertido = CurrencyUtil.converterValor(valorDividas);
 		BigDecimal valorMultaConvertido = CurrencyUtil.converterValor(valorMulta);
