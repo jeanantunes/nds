@@ -117,12 +117,12 @@
         <table width="437" border="0" cellspacing="2" cellpadding="2">
 	        <tr>
 	            <td width="82">Cota:</td>
-	            <td width="348"><input name="assuntos[0]" id="numeroCotaEmail"  readOnly="true" type="text" style="width:300px;" />
+	            <td width="348"><input id="numeroCotaEmail"  readOnly="true" type="text" style="width:300px;" />
 	            <!-- <span class="classPesquisar"><a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarItemContaCorrenteCotaEmail();">&nbsp;</span></td> -->
 	          </tr>
 	          <tr>
 	            <td>Nome:</td>
-	            <td><input name="assuntos[1]" id="nomeCotaEmail" readOnly="true" type="text" style="width:300px;" /></td>
+	            <td><input id="nomeCotaEmail" readOnly="true" type="text" style="width:300px;" /></td>
 	          </tr>
 	          <tr>
 	            <td>E-mail:</td>
