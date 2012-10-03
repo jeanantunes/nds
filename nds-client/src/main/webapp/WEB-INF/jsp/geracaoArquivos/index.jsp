@@ -2,7 +2,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/geracaoNFe.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/geracaoArquivos.js"></script>
 <style type="text/css">
   fieldset label {width: auto; margin-bottom: 0px!important;
 }
@@ -12,7 +12,7 @@
 <script type="text/javascript">
 var geracaoNFeController;
 $(function(){
-	geracaoNFeController = $.extend(true, new GeracaoNFeController(),  BaseController);
+	geracaoArquivos = $.extend(true, new GeracaoArquivos(),  BaseController);
 	
 });
 </script>
@@ -23,11 +23,11 @@ $(function(){
 		class="filtro">
 		<tr>
 			<td width="99">Tipo de Arquivo:</td>
-			<td width="206"><select name="select" id="select"
+			<td width="206"><select name="tipoArquivo" id="tipoArquivo"
 				style="width: 150px;" onchange="opcaoGerarArq(this.value);">
 					<option value="">Selecione...</option>
-					<option value="1">Reparte</option>
-					<option value="2" selected="selected">Encalhe</option>
+					<option value="REPARTE">Reparte</option>
+					<option value="ENCALHE" selected="selected">Encalhe</option>
 			</select></td>
 			<td width="105">
 				<div id="dtLancto" style="display: none;">Data Lançamento:</div>
@@ -38,8 +38,8 @@ $(function(){
 						style="width: 70px;" />
 				</div></td>
 			<td width="128"><span class="bt_confirmar_novo"
-				title="Confirmar"><a href="javascript:;" onclick="mostrar();"><img
-						border="0" hspace="5" src="../images/ico_check.gif">Gerar
+				title="Confirmar"><a id="btnGerar" href="javascript:;" onclick="mostrar();"><img
+						border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Gerar
 						Arquivos</a></span></td>
 		</tr>
 	</table>

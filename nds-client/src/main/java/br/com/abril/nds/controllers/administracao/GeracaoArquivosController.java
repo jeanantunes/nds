@@ -49,7 +49,12 @@ public class GeracaoArquivosController {
 
 	@Autowired
 	private ApplicationContext applicationContext;
-
+	
+	@Autowired
+	private EMS0197Route route197;		
+	
+	@Autowired
+	private EMS0198Route route198;		
 	
 	@Autowired
 	DistribuidorService distribuidorService;
@@ -70,18 +75,34 @@ public class GeracaoArquivosController {
 		
 	}
 
-	public void gerar(Usuario usuario, Date dataLctoPrevisto, String operacao) {
+	@Post
+	public void gerar(Date dataLctoPrevisto, String operacao) {
 		// Inclui o pacote na classe
-		
-		if (operacao.equals("REPARTE")) {
-			EMS0197Route route = new EMS0197Route();		
-			route.execute(usuario.getLogin(), dataLctoPrevisto);
-		} else {
-			EMS0198Route route = new EMS0198Route();		
-			route.execute(usuario.getLogin(), dataLctoPrevisto);			
+				
+		try {
+			if (operacao.equals("REPARTE")) {
+				route197.execute(getUsuario().getLogin(), dataLctoPrevisto);
+			} else {
+				route198.execute(getUsuario().getLogin(), dataLctoPrevisto);			
+			}
+		} catch	(RuntimeException e) {
+			if (e.getMessage().equals("Nenhum registro encontrado!")) {
+				
+			}
 		}
 		
 	}
 
-	
+	/**
+	 * Retorna o usuário logado
+	 * @return
+	 */
+	// TODO: Implementar quando funcionar
+	private Usuario getUsuario() {
+		Usuario usuario = new Usuario();
+		usuario.setId(1L);
+		usuario.setNome("Jornaleiro da Silva");
+		usuario.setLogin("jorlaleiroLogin");
+		return usuario;
+	}	
 }
