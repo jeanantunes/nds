@@ -43,9 +43,9 @@
 	</form>
 	
 	<form id="form-popup-validacao-recebimento-fisico">
-		<div id="dialog-recebe-fisico" title="Recebimento F�sico" style="display:none;">
+		<div id="dialog-recebe-fisico" title="Recebimento F�sico" style="display:none;">
 		<fieldset style="width:350px;">
-	    	<legend>Recebimento F�sico</legend>
+	    	<legend>Recebimento Físico</legend>
 	        <table class="recebeFisicoGrid"></table>
 	    </fieldset>
 	    <br clear="all" />
@@ -53,6 +53,18 @@
 	
 		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		
+		</div>
+	</form>
+	
+	<form id="form-popup-validacao-confirmacao-expedicao">
+		<div id="dialog-confirma-expedicao" title="Confirmação de Expedição" style="display:none;">
+		<fieldset style="width:650px;">
+	    	<legend>Confirmar Expedição</legend>
+	        <table class="confirmaExpedicaoGrid"></table>
+	        
+	    </fieldset>
+	    <br clear="all" />
+	    
 		</div>
 	</form>
 
@@ -277,7 +289,7 @@
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display:noneA;">
       <fieldset class="classFieldset">
-       	  <legend> Confirmação de Valores em: 05/05/2012</legend>
+       	  <legend> Confirmação de Valores em: ${dataOperacao}</legend>
           
           <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #000;">
   <tr>

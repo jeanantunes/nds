@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 
 public interface FecharDiaService {
@@ -28,8 +29,27 @@ public interface FecharDiaService {
 	 * @param dataOperacaoDistribuidor 
 	 * 
 	 * 
-	 * @return boolean
+	 * @return List<ValidacaoRecebimentoFisicoFecharDiaDTO>
 	 */
 	List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado(Date dataOperacaoDistribuidor);
+	
+	/**
+	 * Verifica se tem algum produto que não teve sua expedição confirmada.
+	 * @param dataOperacaoDistribuidor 
+	 * 
+	 * 
+	 * @return boolean
+	 */
+	Boolean existeConfirmacaoDeExpedicao(Date dataOperacao);
+	
+
+	/**
+	 * Retorna uma lista com os produtos que não tiveram sua expedição confirmada
+	 * @param dataOperacaoDistribuidor 
+	 * 
+	 * 
+	 * @return List<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO>
+	 */
+	List<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO> obterConfirmacaoDeExpedicao(Date dataOperacaoDistribuidor);
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.filtro.FecharDiaDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -34,19 +35,21 @@ public class FecharDiaController {
 	@Autowired
 	private Result result;
 	
+	private static Distribuidor distribuidor;
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
 	public void index(){
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		distribuidor = this.distribuidorService.obter();
 		result.include("dataOperacao", DateUtil.formatarData(distribuidor.getDataOperacao(), Constantes.DATE_PATTERN_PT_BR));
 	}
 	
 	@Post
-	public void inicializarValidacoes(){
-		Distribuidor distribuidor = this.distribuidorService.obter();
+	public void inicializarValidacoes(){		
 		FecharDiaDTO dto = new FecharDiaDTO();
 		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(distribuidor.getDataOperacao()));
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
+		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(distribuidor.getDataOperacao()));
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}
@@ -54,8 +57,6 @@ public class FecharDiaController {
 	@Post
 	@Path("/obterRecebimentoFisicoNaoConfirmado")
 	public void obterRecebimentoFisicoNaoConfirmado(){
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
 		
 		List<ValidacaoRecebimentoFisicoFecharDiaDTO> listaRecebimentoFisicoNaoConfirmado = this.fecharDiaService.obterNotaFiscalComRecebimentoFisicoNaoConfirmado(distribuidor.getDataOperacao());
 		
@@ -66,6 +67,22 @@ public class FecharDiaController {
 		tableModel.setTotal(listaRecebimentoFisicoNaoConfirmado.size());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
+	@Path("/obterConfirmacaoDeExpedicao")
+	public void obterConfirmacaoDeExpedicao(){
+		
+		List<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO> listaConfirmacaoDeExpedicao = this.fecharDiaService.obterConfirmacaoDeExpedicao(distribuidor.getDataOperacao());
+		
+		TableModel<CellModelKeyValue<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO>> tableModel = new TableModel<CellModelKeyValue<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaConfirmacaoDeExpedicao));
+		
+		tableModel.setTotal(listaConfirmacaoDeExpedicao.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
 	}
 
 }

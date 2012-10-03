@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.service.FecharDiaService;
@@ -17,7 +18,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private FecharDiaRepository fecharDiaRepository;
-
+	
 	@Override
 	@Transactional
 	public boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor) {
@@ -36,6 +37,18 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	public List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado(Date dataOperacaoDistribuidor) {
 		
 		return this.fecharDiaRepository.obterNotaFiscalComRecebimentoFisicoNaoConfirmado(dataOperacaoDistribuidor);
+	}
+
+	@Override
+	@Transactional
+	public Boolean existeConfirmacaoDeExpedicao(Date dataOperacao) {		 
+		return this.fecharDiaRepository.existeConfirmacaoDeExpedicao(dataOperacao);
+	}
+
+	@Override
+	@Transactional
+	public List<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO> obterConfirmacaoDeExpedicao(Date dataOperacaoDistribuidor) {		 
+		return this.fecharDiaRepository.obterConfirmacaoDeExpedicao(dataOperacaoDistribuidor);
 	}
 
 }

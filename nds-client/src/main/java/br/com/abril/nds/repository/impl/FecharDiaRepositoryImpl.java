@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,9 +8,11 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.FecharDiaRepository;
 
 @Repository
@@ -63,6 +66,59 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
 		
 		return query.list();
+	}
+
+	@Override
+	public Boolean existeConfirmacaoDeExpedicao(Date dataOperacaoDistribuidor) {
+		StringBuilder jpql = new StringBuilder();
+
+		jpql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
+		jpql.append(" FROM Lancamento lancamento ");
+		jpql.append(" WHERE lancamento.dataLancamentoDistribuidor = :dataOperacao ")
+		    .append("   AND lancamento.status NOT IN (:status) ");
+		
+		Query query = getSession().createQuery(jpql.toString());
+		
+		List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
+		
+		listaLancamentos.add(StatusLancamento.EXPEDIDO);
+		listaLancamentos.add(StatusLancamento.CANCELADO);
+		
+		query.setParameterList("status", listaLancamentos);
+		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
+		
+		return !(Boolean) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO> obterConfirmacaoDeExpedicao(Date dataOperacaoDistribuidor) {
+		
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" SELECT produto.codigo AS codigo,");
+		jpql.append(" produto.descricao AS nomeProduto,");
+		jpql.append(" pe.numeroEdicao AS edicao ");
+		
+		jpql.append("FROM Lancamento AS lancamento ");
+		jpql.append("JOIN lancamento.produtoEdicao AS pe ");
+		jpql.append("JOIN pe.produto AS produto ");
+		jpql.append("WHERE  lancamento.dataLancamentoDistribuidor = :dataOperacaoDistribuidor ");
+		jpql.append("AND  lancamento.status NOT IN (:status) ");		
+		
+		Query query = super.getSession().createQuery(jpql.toString());
+		
+		List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
+		listaLancamentos.add(StatusLancamento.EXPEDIDO);
+		listaLancamentos.add(StatusLancamento.CANCELADO);
+		
+		query.setParameterList("status", listaLancamentos);
+		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO.class));
+		
+		return query.list();
+		 
 	}
 
 }

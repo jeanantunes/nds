@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 
 public interface FecharDiaRepository {
@@ -12,5 +13,9 @@ public interface FecharDiaRepository {
 	boolean existeNotaFiscalSemRecebimentoFisico(Date dataOperacaoDistribuidor);
 
 	List<ValidacaoRecebimentoFisicoFecharDiaDTO> obterNotaFiscalComRecebimentoFisicoNaoConfirmado(Date dataOperacaoDistribuidor);
+
+	Boolean existeConfirmacaoDeExpedicao(Date dataOperacao);
+
+	List<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO> obterConfirmacaoDeExpedicao(Date dataOperacaoDistribuidor);
 
 }

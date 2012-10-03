@@ -22,6 +22,38 @@ var fecharDiaController =  $.extend(true, {
 			height : 155
 		});
 		
+		$(".confirmaExpedicaoGrid", fecharDiaController.workspace).flexigrid({
+			preProcess: fecharDiaController.executarPreProcessamentoConfirmacaoDeExpedicao,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 40,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 90,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 40,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Inconsistência',
+				name : 'inconsistencia',
+				width : 410,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 650,
+			height : 165
+		});
+		
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -40,6 +72,25 @@ var fecharDiaController =  $.extend(true, {
 		$("#dialog-recebe-fisico", fecharDiaController.workspace).show();
 		
 		return resultado;
+	},
+	
+	executarPreProcessamentoConfirmacaoDeExpedicao : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-confirma-expedicao", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-confirma-expedicao", fecharDiaController.workspace).show();
+		
+		return resultado;
+		
 	},
 	
 	popup : function() {	
@@ -208,6 +259,7 @@ var fecharDiaController =  $.extend(true, {
 				function(result){
 					fecharDiaController.validacaoBaixaBancaria(result);
 					fecharDiaController.validacaoRecebimentoFisico(result);
+					fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
 				});
 	},
 	
@@ -251,6 +303,44 @@ var fecharDiaController =  $.extend(true, {
 			resizable: false,
 			height:'auto',
 			width:390,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				},
+			}
+		});
+	},
+	
+	validacaoConfirmacaoDeExpedicao : function(result){		
+		var confirmacaoDeExpedicao = null;				
+		var iconeConfirmacaoDeExpedicao = null;		
+		if(result.confirmacaoDeExpedicao){
+			confirmacaoDeExpedicao = "<tr class='class_linha_2'><td>Confirmação de Expedição:</td>";
+			iconeConfirmacaoDeExpedicao = 'ico_check.gif';
+		}else{
+			confirmacaoDeExpedicao = "<td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
+			iconeConfirmacaoDeExpedicao = 'ico_bloquear.gif';
+		}		
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConfirmacaoDeExpedicao+"' alt='Com Diferença' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao').append(confirmacaoDeExpedicao + imagem);
+		
+	},
+	
+	popup_confirma_expedicao : function() {
+		
+		$(".confirmaExpedicaoGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterConfirmacaoDeExpedicao",
+			dataType : 'json',
+			params: []
+		});
+		
+		$(".confirmaExpedicaoGrid", fecharDiaController.workspace).flexReload();
+	
+		$( "#dialog-confirma-expedicao", fecharDiaController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:700,
 			modal: true,
 			buttons: {
 				"Fechar": function() {

@@ -15,7 +15,7 @@ public class FecharDiaDTO implements Serializable {
 	
 	private Boolean recebimentoFisico;
 	
-	
+	private Boolean confirmacaoDeExpedicao;	
 
 	public Boolean getBaixaBancaria() {
 		return baixaBancaria;
@@ -39,6 +39,14 @@ public class FecharDiaDTO implements Serializable {
 
 	public void setRecebimentoFisico(Boolean recebimentoFisico) {
 		this.recebimentoFisico = recebimentoFisico;
+	}
+
+	public Boolean getConfirmacaoDeExpedicao() {
+		return confirmacaoDeExpedicao;
+	}
+
+	public void setConfirmacaoDeExpedicao(Boolean confirmacaoDeExpedicao) {
+		this.confirmacaoDeExpedicao = confirmacaoDeExpedicao;
 	}
 	
 }
