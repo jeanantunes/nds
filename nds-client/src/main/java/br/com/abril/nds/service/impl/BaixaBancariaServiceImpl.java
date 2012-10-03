@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,18 +16,21 @@ import br.com.abril.nds.service.BaixaBancariaSerivice;
 public class BaixaBancariaServiceImpl implements BaixaBancariaSerivice{
 
 	@Autowired
+	private ControleBaixaBancariaRepository controleBaixaBancariaRepository;
 	
-	private ControleBaixaBancariaRepository baixaBancariaRepository;
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public boolean verificarBaixaBancariaNaData(Date data) {
 		
-		ControleBaixaBancaria controle =  baixaBancariaRepository.obterPorData(data);
-		if ( controle != null 
-				&& controle.getStatus() != null 
-				&& controle.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
+		List<ControleBaixaBancaria> listaControleBaixaBancaria =
+			this.controleBaixaBancariaRepository.obterListaControleBaixaBancaria(
+				data, StatusControle.CONCLUIDO_SUCESSO);
+		
+		if (listaControleBaixaBancaria != null && !listaControleBaixaBancaria.isEmpty()) {
+			
 			return true;
 		}
+		
 		return false;
 	}
 

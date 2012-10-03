@@ -15,11 +15,22 @@ public class FiltroCotaAusenteDTO implements Serializable {
 
 	@Export(label = "Data")
 	private Date data;
-	@Export(label = "Box")
 	
+	@Export(label = "Box")
 	private String box;
+
 	@Export(label = "Cota")
 	private Integer numCota;
+	
+	private Long idRota;
+	
+	@Export(label = "Rota")
+	private String descricaoRota;
+	
+	@Export(label = "Roteiro")
+	private String descricaoRoteiro;
+	
+	private Long idRoteiro;
 	
 	private PaginacaoVO paginacao;
 	
@@ -29,12 +40,14 @@ public class FiltroCotaAusenteDTO implements Serializable {
 		
 	}
 	
-	public FiltroCotaAusenteDTO(Date data, String box, Integer numCota,
+	public FiltroCotaAusenteDTO(Date data, String box, Integer numCota, Long idRota, Long idRoteiro,
 			PaginacaoVO paginacao, ColunaOrdenacao colunaOrdenacao) {
 		super();
 		this.data = data;
 		this.box = box;
 		this.numCota = numCota;
+		this.idRota = idRota;
+		this.idRoteiro = idRoteiro;
 		this.paginacao = paginacao;
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
@@ -100,6 +113,47 @@ public class FiltroCotaAusenteDTO implements Serializable {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
 
+	/**
+	 * @return the idRota
+	 */
+	public Long getIdRota() {
+		return idRota;
+	}
+
+	/**
+	 * @param idRota the idRota to set
+	 */
+	public void setIdRota(Long idRota) {
+		this.idRota = idRota;
+	}
+
+	public String getDescricaoRota() {
+		return descricaoRota;
+	}
+
+	public void setDescricaoRota(String descricaoRota) {
+		this.descricaoRota = descricaoRota;
+	}
+
+	public String getDescricaoRoteiro() {
+		return descricaoRoteiro;
+	}
+
+	public void setDescricaoRoteiro(String descricaoRoteiro) {
+		this.descricaoRoteiro = descricaoRoteiro;
+	}
+
+	public Long getIdRoteiro() {
+		return idRoteiro;
+	}
+
+	public void setIdRoteiro(Long idRoteiro) {
+		this.idRoteiro = idRoteiro;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -108,12 +162,23 @@ public class FiltroCotaAusenteDTO implements Serializable {
 		result = prime * result
 				+ ((colunaOrdenacao == null) ? 0 : colunaOrdenacao.hashCode());
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result
+				+ ((descricaoRota == null) ? 0 : descricaoRota.hashCode());
+		result = prime
+				* result
+				+ ((descricaoRoteiro == null) ? 0 : descricaoRoteiro.hashCode());
+		result = prime * result + ((idRota == null) ? 0 : idRota.hashCode());
+		result = prime * result
+				+ ((idRoteiro == null) ? 0 : idRoteiro.hashCode());
 		result = prime * result + ((numCota == null) ? 0 : numCota.hashCode());
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -135,6 +200,26 @@ public class FiltroCotaAusenteDTO implements Serializable {
 				return false;
 		} else if (!data.equals(other.data))
 			return false;
+		if (descricaoRota == null) {
+			if (other.descricaoRota != null)
+				return false;
+		} else if (!descricaoRota.equals(other.descricaoRota))
+			return false;
+		if (descricaoRoteiro == null) {
+			if (other.descricaoRoteiro != null)
+				return false;
+		} else if (!descricaoRoteiro.equals(other.descricaoRoteiro))
+			return false;
+		if (idRota == null) {
+			if (other.idRota != null)
+				return false;
+		} else if (!idRota.equals(other.idRota))
+			return false;
+		if (idRoteiro == null) {
+			if (other.idRoteiro != null)
+				return false;
+		} else if (!idRoteiro.equals(other.idRoteiro))
+			return false;
 		if (numCota == null) {
 			if (other.numCota != null)
 				return false;
@@ -147,6 +232,5 @@ public class FiltroCotaAusenteDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
-		
+
 }

@@ -2,7 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.util.StringUtil;
 
@@ -19,6 +21,8 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	private List<RotaRoteirizacaoDTO> rotas = new ArrayList<RotaRoteirizacaoDTO>();
 	
 	private List<RotaRoteirizacaoDTO> todasRotas = new ArrayList<RotaRoteirizacaoDTO>();
+	
+	private Set<Long> rotasExclusao = new HashSet<Long>();
 	
 	public RoteiroRoteirizacaoDTO() {
 	}
@@ -83,6 +87,20 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	 */
 	public void setRotas(List<RotaRoteirizacaoDTO> listaRota) {
 		this.rotas = listaRota;
+	}
+	
+	public List<RotaRoteirizacaoDTO> getTodasRotas() {
+        return todasRotas;
+    }
+
+    /**
+     * Método que verifica se o roteiro é um novo roteiro
+     * 
+     * @return true indicando que é um novo roteiro, false indica que é um
+     *         roteiro já cadastrado
+     */
+	public boolean isNovo() {
+	    return id != null && id < 0;
 	}
 	
 	/**
@@ -180,5 +198,24 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
     			}
     		}
     	}
+    	
+    	if (idRota >= 0){
+    		
+    		this.adicionarRotaExclusao(idRota);
+    	}
     }
+
+	public Set<Long> getRotasExclusao() {
+		return rotasExclusao;
+	}
+	
+	public void adicionarRotaExclusao(Long idRota){
+		
+		if (this.rotasExclusao == null){
+			
+			this.rotasExclusao = new HashSet<Long>();
+		}
+		
+		this.rotasExclusao.add(idRota);
+	}
 }

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -35,9 +36,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 	
 	@Transactional
 	@Override
-	public InfoGeralExtratoEdicaoDTO obterInfoGeralExtratoEdicao(String codigoProduto, Long numeroEdicao){
+	public InfoGeralExtratoEdicaoDTO obterInfoGeralExtratoEdicao(FiltroExtratoEdicaoDTO filtroExtratoEdicao){
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(codigoProduto, numeroEdicao, StatusAprovacao.APROVADO);
+		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
 		
 		BigInteger saldoTotalEdicao = BigInteger.ZERO;
 		

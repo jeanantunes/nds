@@ -45,10 +45,7 @@ public class ViewContaCorrenteCota  implements Serializable{
 	
 	@Column(name = "VALOR_POSTERGADO", nullable = true)
 	private BigDecimal valorPostergado;
-
-	@Column(name = "NUMERO_ATRASADOS", nullable = false)
-	private BigDecimal numeroAtrasados;
-	
+		
 	@Column(name = "CONSIGNADO", nullable = true)
 	private BigDecimal consignado;
 	
@@ -78,10 +75,10 @@ public class ViewContaCorrenteCota  implements Serializable{
 	@Column(name="DT_RAIZ_PENDENTE")
 	private Date dataRaizPendente;
 	
-	@Transient
+	@Column(name="VALOR_PAGO",nullable = true)
 	private BigDecimal valorPago;
 	
-	@Transient
+	@Column(name="SALDO",nullable = true)
 	private BigDecimal saldo;
 	
 	
@@ -113,14 +110,7 @@ public class ViewContaCorrenteCota  implements Serializable{
 		this.valorPostergado = valorPostergado;
 	}
 
-	public BigDecimal getNumeroAtrasados() {
-		return numeroAtrasados;
-	}
-
-	public void setNumeroAtrasados(BigDecimal numeroAtrasados) {
-		this.numeroAtrasados = numeroAtrasados;
-	}
-
+	
 	public BigDecimal getConsignado() {
 		return consignado;
 	}

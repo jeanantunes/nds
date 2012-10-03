@@ -33,21 +33,33 @@
 </form>
 
 <form id="form-transfere-cotas">
-<div id="dialog-transfere-cotas" title="Transferir Cotas" style="display:none;">
-	<fieldset>
-    	<legend>Transferir Cotas para:</legend>
-        <p>Pesquise ou Digite o nome de uma Nova Rota para estas Cotas.</p>
-        <input name="lstRotaTranferencia" type="text" id="lstRotaTranferencia"  onkeyup="roteirizacao.autoCompletarRotaPorNome('#lstRotaTranferencia')" style="width:300px; float:left; margin-bottom:5px;" />
-        <a href="javascript:;"   onclick="roteirizacao.exibiRotaNovaTranferencia();"><img src="${pageContext.request.contextPath}/images/ico_add.gif" alt="Adicionar Rota" width="16" height="16" border="0" style="float:left; margin-left:5px; margin-top:5px;" /></a>
-        <div class="rotaNovaTransferencia" style="display:none;">
-	        <a href="javascript:;" onclick="roteirizacao.escondeRotaNovaTranferencia();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" border="0" align="right" /></a>
-	        <br clear="all" />
-	        <label>Ordem:</label>
-	        <input name="ordemRotaTranferencia" id="ordemRotaTranferencia" type="text" style="width:225px; float:left; margin-bottom:5px;" />    
-        <br clear="all" />  
-</div>
-    </fieldset>
-</div>
+	<div id="dialog-transfere-cotas" title="Transferir Cotas" style="display:none;">
+		<fieldset>
+    		<legend>Transferir Cotas</legend>
+    			
+   			<table width="347" border="0" cellspacing="1" cellpadding="1">
+				<tr class="header_table">
+					<td width="85">Cota</td>
+					<td width="255">Nome</td>
+				</tr>
+         		<tr id="trDadosCotaNome" class="class_linha_1"></tr>
+         		<tr>
+			    	<td>Rota Atual:</td>
+			        <td>
+			        	<input type="text" id="nomeRotaAtual" style="width:220px;" disabled="disabled" />
+			        </td>
+         		</tr>
+         		<tr>
+	           		<td>
+	           			<strong>Nova Rota:</strong>
+	           		</td>
+	           		<td>
+	           			<select id="selectNovaRota" style="width:227px;"></select>
+	           		</td>
+         		</tr>
+       		</table>
+		</fieldset>
+	</div>
 </form>
 
 <form id="form-transfere-roteiro">
@@ -66,7 +78,7 @@
             			<strong>Novo Box:</strong>
             		</td>
             		<td>
-            			<select name="select" id="selectNovoBox" style="width:227px;"></select>
+            			<select id="selectNovoBox" style="width:227px;"></select>
             		</td>
           		</tr>
         	</table>
@@ -111,36 +123,6 @@
         
         <label>Nome:</label>
         <input name="nomeRotaInclusao" id="nomeRotaInclusao" type="text" style="width:200px; float:left;" />       
-        <br clear="all" />
-        
-
-    </fieldset>
-</div>
-</form>
-
-<form id="form-roteiro">
-<div id="dialog-roteiro" title="Roteiro" style="display:none;">
-<jsp:include page="../messagesDialog.jsp" /> 
-	<fieldset>
-    	<legend>Novo Roteiro</legend>
-        <label>Box:</label>
-        <select name="boxInclusaoRoteiro" id="boxInclusaoRoteiro" style="width:200px;  float:left; margin-bottom:5px;">
-			<option value="" selected="selected">Selecione...</option>
-			<c:forEach var="box" items="${listaBox}">
-				<option value="${box.key}">${box.value}</option>
-			</c:forEach>
- 		</select>
-        
-        <br clear="all" />
-        <label>Ordem:</label>
-        <input name="ordemInclusaoRoteiro" id="ordemInclusaoRoteiro" type="text" style="width:200px; float:left; margin-bottom:5px;" />       
-        <br clear="all" />
-        
-        <label>Nome:</label>
-        <input name="nomeInclusaoRoteiro" id="nomeInclusaoRoteiro"  type="text" style="width:200px; float:left;" />
-         <br clear="all" />
-        <label>Roteiro Especial:</label>
-        <input type="checkbox" name="tipoRoteiro" value="Especial" id="tipoRoteiro" onclick="roteirizacao.roteiroEspecialNovo()"  />        
         <br clear="all" />
         
 
@@ -320,7 +302,7 @@
 		            
 		            </tr>
  
-		          </table>
+		        </table>
 			</fieldset>
 			
 	        <div class="linha_separa_fields">&nbsp;</div>
@@ -329,11 +311,32 @@
 			        <legend></legend>
 					<legend>Cotas Dispon&icirc;veis</legend>
 					
-						<table class="cotasDisponiveisGrid"></table>
+					<table class="cotasDisponiveisGrid"></table>
 						
 				</fieldset>
 			</div>
 		        
+		    <table width="100%">
+		        <tr>
+		        
+		            <td width="70%"></td>
+			        <td width="15%">
+			            <label for="textoSelTodos" id="textoSelTodos">
+                            Marcar Todos
+                        </label>
+			        </td>
+			        
+				    <td width="15%">
+				                
+		                 <span class="checar">
+		                     <input title="Selecionar todos" type="checkbox" id="selTodos" name="selTodos" onclick="roteirizacao.selecionarTodosNovosPdvs(this.checked);" style="float:left;"/>
+		                 </span>
+		
+		            </td>
+		            
+	             </tr> 
+             </table>   
+    
 			<br clear="all" />
 		</div>
 	</form>
@@ -367,13 +370,6 @@
 	            		<td>
 	            			<input id="inputNome" style="width:220px;" />
 	            		</td>
-	          		</tr>
-	          		<tr style="display: none;" id="checkRoteiroEspecial">
-	          			<td>Roteiro Especial:</td>
-	          			<td>
-	          				<input type="checkbox" name="tipoRoteiro" 
-	          					value="Especial" id="tipoRoteiro" onclick="roteirizacao.roteiroEspecialNovo()"  />
-	          			</td>
 	          		</tr>
 	      		</table>
 			</fieldset>

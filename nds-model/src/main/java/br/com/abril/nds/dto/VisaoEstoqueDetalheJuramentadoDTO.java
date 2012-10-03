@@ -10,16 +10,16 @@ public class VisaoEstoqueDetalheJuramentadoDTO extends VisaoEstoqueDetalheDTO {
 	private static final long serialVersionUID = -3060314962002173216L;
 	
 	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
-	private Long cota;
+	private Integer cota;
 	
 	@Export(label = "Nome", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private String nome;
 	
 	
-	public Long getCota() {
+	public Integer getCota() {
 		return cota;
 	}
-	public void setCota(Long cota) {
+	public void setCota(Integer cota) {
 		this.cota = cota;
 	}
 	public String getNome() {

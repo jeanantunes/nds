@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class ProdutoEdicaoSlipDTO implements Serializable {
 
+	private static final long serialVersionUID = 9175726845943514469L;
+
 	private Long idChamadaEncalhe;
 	
 	private String nomeProduto;

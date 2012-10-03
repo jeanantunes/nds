@@ -128,15 +128,21 @@ var negociacaoDividaController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					 $("#dialog-formaPgto", this.workspace).dialog("close");
+//					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+				//	$( this ).dialog( "close" );
+					 $("#dialog-formaPgto", this.workspace).dialog("close");
 				}
 			},
+			 form: $("#dialog-formaPgto", this.workspace).parents("form")
+
 		});
 	},
+	
+	
+	
 	
 	geraLinhasCheque :function(result) {
 		if($('#selectPagamento').val() != ""){
@@ -414,3 +420,5 @@ var negociacaoDividaController = $.extend(true, {
 	},
 
 }, BaseController);
+
+//@ sourceURL=negociacaoDivida.js

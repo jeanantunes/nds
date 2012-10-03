@@ -102,6 +102,14 @@ var VENDA_PRODUTO = {
                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
                  '</a>';		 					 
 				
+				var acaoReimprimirComprovante = contextPath + "/devolucao/vendaEncalhe/reimprimirComprovanteVenda/" + row.cell.idVenda
+				
+				
+				linkReimpressao  ='<a href="'+acaoReimprimirComprovante+'" target="_blank" style="cursor:pointer">' +
+                '<img src="'+ contextPath +'/images/ico_impressora.gif" hspace="5" border="0px" title="Reimpressão do Comprovante de Venda" />' +
+                 '</a>';	
+				
+				
 			}
 			else{
 				
@@ -111,11 +119,14 @@ var VENDA_PRODUTO = {
 			 
 				linkExclusao ='<a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
                '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
-                '</a>';		 					 
+                '</a>';		
+				linkReimpressao  ='<a href="javascript:;" yle="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+                '<img src="'+ contextPath +'/images/ico_impressora.gif" hspace="5" border="0px" title="Reimpressão do Comprovante de Venda" />' +
+                 '</a>';	
 			
 			}
 		
-           row.cell.acao = linkEdicao + linkExclusao ; 
+           row.cell.acao = linkReimpressao + linkEdicao + linkExclusao ; 
 		});
 		
 		$("#totalGeral", VENDA_PRODUTO.workspace).html(resultado.totalGeral);
@@ -123,8 +134,7 @@ var VENDA_PRODUTO = {
 		VENDA_PRODUTO.processarVisualizcaoImpressao(true);
 		
 		return resultado.tableModel;
-	},
-	
+	},	
 	editar:function(idVenda){
 		
 		VENDA_PRODUTO.limparDadosModalVenda();
@@ -942,9 +952,15 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		}, {
+			display : 'Usuário',
+			name : 'nomeUsuario',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		}, {
 			display : 'Ação',
 			name : 'acao',
-			width : 50,
+			width : 60,
 			sortable : true,
 			align : 'center'
 		}],
