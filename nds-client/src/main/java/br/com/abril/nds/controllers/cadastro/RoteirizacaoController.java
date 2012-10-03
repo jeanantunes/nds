@@ -955,31 +955,10 @@ public class RoteirizacaoController {
 	 * @param dto DTO com as informações de roteirização para confirmação
 	 */
 	private void validarRoteirizacao(RoteirizacaoDTO dto) {
-        List<String> erros = new ArrayList<String>();
-        if (dto.getBox() == null) {
-            erros.add("É necessário selecionar um Box para Roteirização!");
-        } else {
-            if (dto.getTodosRoteiros().isEmpty()) {
-                erros.add("É necessário ao menos um Roteiro para a Roteirização!");
-            } else {
-                for (RoteiroRoteirizacaoDTO roteiro : dto.getTodosRoteiros()) {
-                    if (roteiro.getTodasRotas().isEmpty()) {
-                        erros.add(String.format("Roteiro [%s] sem Rota associada!", roteiro.getNome()));
-                    } else {
-                        for (RotaRoteirizacaoDTO rota : roteiro.getTodasRotas()) {
-                            if (rota.getPdvs().isEmpty()) {
-                                erros.add(String.format("Rota [%s] sem PDV associado!", rota.getNome()));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (!erros.isEmpty()) {
-            ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.ERROR, erros);
+	    ValidacaoVO validacao = roteirizacaoService.validarRoteirizacao(dto);
+        if (!TipoMensagem.SUCCESS.equals(validacao.getTipoMensagem())) {
             throw new ValidacaoException(validacao);
         }
-        
     }
 
     @Post
