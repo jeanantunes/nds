@@ -2,7 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RotaRoteirizacaoDTO implements Serializable {
 
@@ -17,6 +19,8 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	private Boolean selecionado;
 	
 	private List<PdvRoteirizacaoDTO> pdvs = new ArrayList<PdvRoteirizacaoDTO>();
+	
+	private Set<Long> pdvsExclusao;
 	
 	public RotaRoteirizacaoDTO() {
 	}
@@ -174,6 +178,37 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	    result = prime * result + ((id == null) ? 0 : id.hashCode());
 	    return result;
 	}
+	
+	public void setPdvsExclusao(Set<Long> pdvsExclusao) {
+		this.pdvsExclusao = pdvsExclusao;
+	}
+	
+	public void removerPdv(Long idPdv){
+		
+		for (PdvRoteirizacaoDTO dto : this.pdvs){
+			
+			if (dto.getId().equals(idPdv)){
+				
+				this.pdvs.remove(dto);
+				break;
+			}
+		}
+		
+		if (idPdv >= 0){
+			
+			this.adicionarPdvExclusao(idPdv);
+		}
+	}
+	
+	public void adicionarPdvExclusao(Long idPdv){
+		
+		if (this.pdvsExclusao == null){
+			
+			this.pdvsExclusao = new HashSet<Long>();
+		}
+		
+		this.pdvsExclusao.add(idPdv);
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -191,6 +226,4 @@ public class RotaRoteirizacaoDTO implements Serializable {
 			return false;
 		return true;
 	}
-
-	
 }
