@@ -165,6 +165,14 @@ public interface RoteirizacaoService {
      * @return List<Rota>
      */
 	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
+
+	/**
+	 * Obtém lista de Roteiros
+	 * 
+	 * @param numeroCota
+	 * @return
+	 */
+	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota);
 	
 	/**
      * Obtém a roteirização pelo identificador

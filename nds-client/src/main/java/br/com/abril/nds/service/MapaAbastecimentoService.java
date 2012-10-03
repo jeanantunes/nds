@@ -150,4 +150,31 @@ public interface MapaAbastecimentoService {
 	 * @return
 	 */
 	Long countObterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Obtém Dados para Grid de Mapa por Entregador
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	List<ProdutoAbastecimentoDTO> obterMapaDeAbastecimentoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro);
+
+	/**
+	 * Count  de pesquisa por entregador
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	Long countObterMapaDeAbastecimentoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro);
+	
+	/**
+	 * Obtém Mapa de Entregador
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	HashMap<Long, MapaProdutoCotasDTO> obterMapaDeImpressaoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro);
 }

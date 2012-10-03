@@ -464,6 +464,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota){
 		return  rotaRepository.buscarRotaPorRoteiro(idRoteiro, null, null);
 	}
+
+	@Override
+	@Transactional
+	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota) {
+		
+		return roteiroRepository.obterRoteirosPorCota(numeroCota);
+	}
 	
 	/**
 	 * {@inheritDoc}

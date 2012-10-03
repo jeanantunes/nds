@@ -25,6 +25,9 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Integer sequenciaMatriz;
 	private String totalBox;
 	private Integer totalProduto;
+	private String codigoBarra;
+	private Integer pacotePadrao;
+	private Long qtdeExms;
 	
 	public ProdutoAbastecimentoDTO() {
 		
@@ -208,5 +211,47 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	 */
 	public void setTotalProduto(Long totalProduto) {
 		this.totalProduto = totalProduto.intValue();
+	}
+
+	/**
+	 * @return the codigoBarra
+	 */
+	public String getCodigoBarra() {
+		return codigoBarra;
+	}
+
+	/**
+	 * @param codigoBarra the codigoBarra to set
+	 */
+	public void setCodigoBarra(String codigoBarra) {
+		this.codigoBarra = codigoBarra;
+	}
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	/**
+	 * @return the qtdeExms
+	 */
+	public Long getQtdeExms() {
+		return qtdeExms;
+	}
+
+	/**
+	 * @param qtdeExms the qtdeExms to set
+	 */
+	public void setQtdeExms(Long qtdeExms) {
+		this.qtdeExms = qtdeExms;
 	}
 }
