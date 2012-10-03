@@ -31,7 +31,14 @@ $(function(){
 
 <form id="form-excluir">
 <div id="dialog-excluir" title="Cota Ausente">
-	<p>Confirma a exclusão desse Cota Ausente?</p>
+	<fieldset class="classFieldset" style="width:520px !important;">
+		<legend>Quantidade de Produtos Estoque Suplementar</legend>
+		
+		<p style="padding: 10px;">Confirma a exclusão dessa Cota Ausente?</p>
+		
+		<div id="flexiGridProdutoEstoqueSuplementar"></div>
+		
+	</fieldset>
 </div>
 </form>
 
@@ -167,11 +174,6 @@ $(function(){
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-       
-
-        
-
-    
     </div>
 </div> 
 

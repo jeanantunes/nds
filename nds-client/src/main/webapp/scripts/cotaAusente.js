@@ -76,12 +76,54 @@ var cotaAusenteController = $.extend(true, {
 			height : 255
 		})); 	
 		
+		cotaAusenteController.initGridProdutosEstoqueSuplementar();
+		
 		$(".grids", cotaAusenteController.workspace).show();		
 	
 		$( "#tabs-pop", cotaAusenteController.workspace ).tabs();
 
 	},
 
+	
+	initGridProdutosEstoqueSuplementar : function() {
+		
+		$("#flexiGridProdutoEstoqueSuplementar", cotaAusenteController.workspace).flexigrid($.extend({},{
+			dataType : 'json',
+			colModel : [{
+				display : 'Código',
+				name : 'codigoProdutoEdicao',
+				width : 100,
+				sortable : false,
+				align : 'left' 
+			},{
+				display : 'Produto',
+				name : 'nomeProdutoEdicao',
+				width : 100,
+				sortable : false,
+				align : 'left' 
+			},{
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 70,
+				sortable : false,
+				align : 'left' 
+			},{
+				display : 'Reparte',
+				name : 'reparte',
+				width : 70,
+				sortable : false,
+				align : 'left' 
+			},{
+				display : 'Qtd. Disponível',
+				name : 'quantidadeDisponivel',
+				width : 100,
+				sortable : false,
+				align : 'left' 
+			}],
+			width : 520,
+		}));
+	},
+	
 	cliquePesquisar : function() {
 		
 		var dataAusencia = $('#idData', cotaAusenteController.workspace).attr('value');
@@ -567,10 +609,12 @@ var cotaAusenteController = $.extend(true, {
 		
 	popup_excluir : function(idCotaAusente) {
 		
+			cotaAusenteController.exibirProdutoEstoqueDisponivel(idCotaAusente);
+		
 			$( "#dialog-excluir", cotaAusenteController.workspace ).dialog({
 				resizable: false,
 				height:'auto',
-				width:300,
+				width:'auto',
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -590,7 +634,19 @@ var cotaAusenteController = $.extend(true, {
 				form: $( "#dialog-excluir", cotaAusenteController.workspace ).parents("form")
 			});
 	},
-
+	
+	exibirProdutoEstoqueDisponivel : function(idCotaAusente) {
+		var params = [{name:'idCotaAusente',value:idCotaAusente}];
+		
+		$("#flexiGridProdutoEstoqueSuplementar", cotaAusenteController.workspace).flexOptions({			
+			url : contextPath + '/cotaAusente/exibirProdutosSuplementaresDisponiveis',
+			params:params,
+			newp : 1
+		});
+		
+		$("#flexiGridProdutoEstoqueSuplementar", cotaAusenteController.workspace).flexReload();
+	},
+	
 	abre_linha_1 : function(){
 		$( '.linha_1', cotaAusenteController.workspace ).show();
 		textfield5.focus();

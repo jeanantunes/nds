@@ -18,6 +18,8 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
+import br.com.abril.nds.dto.ProdutoServicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -28,7 +30,9 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaAusenteService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
@@ -41,6 +45,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -86,6 +91,9 @@ public class CotaAusenteController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 	
 	@Autowired
 	private HttpSession session;
@@ -286,6 +294,25 @@ public class CotaAusenteController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
+	
+	/**
+	 * Obtém os produtos edição disponíveis para uma cota ausente que 
+	 * foi buscar seu reparte
+	 * 
+	 * @param idCotaAusente
+	 */
+	@Post
+	public void exibirProdutosSuplementaresDisponiveis(Long idCotaAusente) {
+		
+		FiltroCotaAusenteDTO filtro = this.getFiltroSessao();
+		
+		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis = 
+				this.estoqueProdutoService.obterProdutosEdicaoSuplementarDisponivel(filtro.getData(), idCotaAusente);
+		
+		result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1).total(listaProdutosEdicaoDisponíveis.size()).serialize();
+	}
+	
+	
 	/**
 	 * 
 	 * @param idCotaAusente
@@ -480,7 +507,7 @@ public class CotaAusenteController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		FiltroCotaAusenteDTO filtro = (FiltroCotaAusenteDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroCotaAusenteDTO filtro = getFiltroSessao();
 		
 		List<CotaAusenteDTO> listaCotaAusente = cotaAusenteService.obterCotasAusentes(filtro) ;
 		
@@ -488,5 +515,16 @@ public class CotaAusenteController {
 				listaCotaAusente, CotaAusenteDTO.class, this.httpResponse);
 		
 		result.nothing();
+	}
+	
+	private FiltroCotaAusenteDTO getFiltroSessao() {
+	
+		FiltroCotaAusenteDTO filtro = (FiltroCotaAusenteDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "É necessário fazer uma pesquisa primeiro"));
+		}
+		
+		return filtro;
 	}
 }
