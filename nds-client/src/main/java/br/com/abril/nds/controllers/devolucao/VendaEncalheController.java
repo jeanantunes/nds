@@ -414,7 +414,8 @@ public class VendaEncalheController {
 		vendaEncalheVO.setValoTotalProduto(CurrencyUtil.formatarValor(dto.getValoTotalProduto()));
 		vendaEncalheVO.setCodigoBarras(tratarValor(dto.getCodigoBarras()));
 		vendaEncalheVO.setQntDisponivelProduto(tratarValor(dto.getQntDisponivelProduto()));
-		vendaEncalheVO.setFormaVenda(tratarValor(dto.getFormaVenda()));
+		vendaEncalheVO.setFormaVenda(tratarValor(dto.getFormaVenda()));		
+		vendaEncalheVO.setNomeUsuario(dto.getUsuario().getNome());
 	
 		return vendaEncalheVO;
 	}

@@ -54,6 +54,9 @@ public class VendaEncalheVO implements Serializable {
 	
 	private Boolean edicaoExclusaoItem;
 	
+	@Export(label = "Usuário", alignment = Alignment.LEFT)
+	private String nomeUsuario;
+	
 	/**
 	 * @return the edicaoExclusaoItem
 	 */
@@ -262,6 +265,20 @@ public class VendaEncalheVO implements Serializable {
 	 */
 	public void setTipoVendaEncalhe(String tipoVendaEncalhe) {
 		this.tipoVendaEncalhe = tipoVendaEncalhe;
+	}
+
+	/**
+	 * @return the nomeUsuario
+	 */
+	public String getNomeUsuario() {
+		return nomeUsuario;
+	}
+
+	/**
+	 * @param nomeUsuario the nomeUsuario to set
+	 */
+	public void setNomeUsuario(String nomeUsuario) {
+		this.nomeUsuario = nomeUsuario;
 	}
 	
 	
