@@ -136,6 +136,19 @@ public class BaixaFinanceiraController {
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DEPOSITO, TipoCobranca.DEPOSITO.getDescTipoCobranca()));
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.TRANSFERENCIA_BANCARIA, TipoCobranca.TRANSFERENCIA_BANCARIA.getDescTipoCobranca()));
 		result.include("listaTiposCobranca",listaTiposCobranca);
+		result.include("dataOperacao", getDataOperacaoDistribuidor());
+	}
+	
+	private String getDataOperacaoDistribuidor() {
+
+		Distribuidor distribuidor = distribuidorService.obter();
+
+		if (distribuidor != null) {
+
+			return DateUtil.formatarDataPTBR(distribuidor.getDataOperacao());
+		}
+
+		return null;
 	}
 	
 	@Post
