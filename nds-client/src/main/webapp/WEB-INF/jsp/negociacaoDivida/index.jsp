@@ -1,19 +1,9 @@
 <head>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/negociacaoDivida.js"></script>
-<style>
-#dadosArquivo,.comissaoAtual,.pgtos {
-	display: none;
-}
 
-#dialog-detalhe,#dialog-formaPgto {
-	display: none;
-}
 
-.semanal,.mensal,.quinzenal {
-	display: none;
-}
-</style>
+
 </head>
 
 <body>
@@ -81,7 +71,7 @@
 
 		<%-- POPUPS --%>
 
-		<div id="dialog-detalhe" title="Detalhes da D&iacute;vida">
+		<div id="dialog-detalhe" title="Detalhes da D&iacute;vida" style="display:none;">
 			<fieldset>
 				<legend>Dados da D&iacute;vida</legend>
 				<table class="negociacaoDetalheGrid"></table>
@@ -89,8 +79,10 @@
 			</fieldset>
 		</div>
 	
-		<div id="dialog-formaPgto" title="Negociar D&iacute;vida">
-			<form id="formaPgtoForm">
+	<form id="formaPgtoForm">
+		<div id="dialog-formaPgto" title="Negociar D&iacute;vida" style="display:none;">
+			
+	
 			<input type="hidden" name ="filtro.valorSelecionado" id="valorSelecionado"/>
 			<input type="hidden" name="filtro.numeroCota" id="numeroCota"/>
 			<fieldset style="width: 690px !important; margin-bottom: 5px;">
@@ -372,7 +364,7 @@
 			</form> 
 		</div>
 
-		<div id="dialog-excluir" title="Baixa Bancária">
+		<div id="dialog-excluir" title="Baixa Bancária" style="display:none;">
 			<p>Deseja confirmar Baixa Manual deste Boleto?</p>
 		</div>
 
