@@ -22,6 +22,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
+import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
@@ -113,6 +115,9 @@ public class BoletoServiceImpl implements BoletoService {
 	@Autowired
 	protected TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
+	@Autowired
+	protected BancoRepository bancoRepository;
+	
 	/**
 	 * Método responsável por obter boletos por numero da cota
 	 * @param filtro
@@ -148,9 +153,18 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
+	public ResumoBaixaBoletosDTO obterResumoBaixa(Date data) {
+		
+		return null;
+	}
+	
+	@Override
 	@Transactional
-	public ResumoBaixaBoletosDTO baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
-							  				   			 BigDecimal valorFinanceiro, Usuario usuario) {
+	public void baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
+							  			BigDecimal valorFinanceiro, Usuario usuario) {
+		
+		// TODO: retirar resumo
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -162,11 +176,21 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Date dataOperacao = distribuidor.getDataOperacao();
 		
+		Banco banco = this.bancoRepository.obterBanco(arquivoPagamento.getNumeroBanco(),
+													  arquivoPagamento.getNumeroAgencia(),
+													  arquivoPagamento.getNumeroConta());
+		
+		if (banco == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+				"Banco não encontrado!");
+		}
+		
 		ControleBaixaBancaria controleBaixa =
-				controleBaixaRepository.obterPorData(dataOperacao);
+			this.controleBaixaRepository.obterControleBaixaBancaria(dataOperacao, banco);
 		
 		if (controleBaixa != null
-			&& controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
+				&& controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, 
 				"Já foi realizada baixa automática na data de operação atual!");
@@ -189,8 +213,8 @@ public class BoletoServiceImpl implements BoletoService {
 					"Política de cobrança para boletos não encontrada!");
 		}
 		
-		controleBaixaService.alterarControleBaixa(StatusControle.INICIADO,
-												  dataOperacao, usuario);
+		this.controleBaixaService.alterarControleBaixa(StatusControle.INICIADO,
+												  	   dataOperacao, usuario, banco);
 		
 		ResumoBaixaBoletosDTO resumoBaixaBoletos = new ResumoBaixaBoletosDTO();
 		
@@ -201,30 +225,28 @@ public class BoletoServiceImpl implements BoletoService {
 				
 				for (PagamentoDTO pagamento : arquivoPagamento.getListaPagemento()) {
 				
-					baixarBoleto(TipoBaixaCobranca.AUTOMATICA, pagamento, usuario,
-								 arquivoPagamento.getNomeArquivo(), politicaCobranca,
-								 distribuidor, dataNovoMovimento, resumoBaixaBoletos);
+					this.baixarBoleto(TipoBaixaCobranca.AUTOMATICA, pagamento, usuario,
+								 	  arquivoPagamento.getNomeArquivo(), politicaCobranca,
+								 	  distribuidor, dataNovoMovimento, resumoBaixaBoletos);
 				}
 				
-				controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO,
-						  								  dataOperacao, usuario);
+				this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO,
+						  								  	   dataOperacao, usuario, banco);
 				
 			} else {
 				
-				controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
-						  								  dataOperacao, usuario);
+				this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
+															   dataOperacao, usuario, banco);
 			}
 			
 			resumoBaixaBoletos.setNomeArquivo(arquivoPagamento.getNomeArquivo());
 			resumoBaixaBoletos.setDataCompetencia(DateUtil.formatarDataPTBR(dataOperacao));
 			resumoBaixaBoletos.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
 			
-			return resumoBaixaBoletos;
-			
 		} catch (Exception e) {
 			
-			controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
-					  								  dataOperacao, usuario);
+			this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
+														   dataOperacao, usuario, banco);
 			
 			if (e instanceof ValidacaoException) {
 				

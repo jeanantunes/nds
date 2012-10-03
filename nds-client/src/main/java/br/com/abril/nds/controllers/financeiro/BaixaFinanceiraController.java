@@ -165,12 +165,11 @@ public class BaixaFinanceiraController {
 			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile);
 			
 			ArquivoPagamentoBancoDTO arquivoPagamento =
-					leitorArquivoBancoService.obterPagamentosBanco(fileArquivoBanco,
-																   uploadedFile.getFileName());
+				this.leitorArquivoBancoService.obterPagamentosBanco(fileArquivoBanco,
+																    uploadedFile.getFileName());
 			
-			resumoBaixaBoleto = 
-				boletoService.baixarBoletosAutomatico(arquivoPagamento, valorFinanceiroConvertido,
-													  obterUsuario());
+			this.boletoService.baixarBoletosAutomatico(
+				arquivoPagamento, valorFinanceiroConvertido, obterUsuario());
 		
 		} finally {
 			
@@ -180,6 +179,11 @@ public class BaixaFinanceiraController {
 		
 		result.use(PlainJSONSerialization.class)
 			.from(resumoBaixaBoleto, "result").recursive().serialize();
+	}
+	
+	private ResumoBaixaBoletosDTO obterResumoBaixaFinanceira(Date data) {
+		
+		return null;
 	}
 	
 	private File gravarArquivoTemporario(UploadedFile uploadedFile) {
