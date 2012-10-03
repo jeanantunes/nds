@@ -2438,6 +2438,7 @@ public class Fixture {
 		rota.setDescricaoRota(descricaoRota);
 		rota.setOrdem(0);
 		rota.setRoteiro(roteiro);
+		roteiro.addRota(rota);
 		return rota;
 	}
 	
@@ -2999,6 +3000,7 @@ public class Fixture {
 		roteiro.setOrdem(0);
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		roteiro.setRoteirizacao(roteirizacao);
+		roteirizacao.addRoteiro(roteiro);
 		
 		return roteiro;
 	}

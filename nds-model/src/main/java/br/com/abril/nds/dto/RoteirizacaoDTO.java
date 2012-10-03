@@ -271,7 +271,7 @@ public class RoteirizacaoDTO implements Serializable{
                         origemEndereco = OrigemEndereco.COTA;
                     }
                     PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(
-                            rotaPdv.getId(), pdv.getNome(), origemEndereco,
+                            pdv.getId(), pdv.getNome(), origemEndereco,
                             endereco, cota.getNumeroCota(), nomeCota,
                             rotaPdv.getOrdem());
                     rotaDTO.addPdv(pdvDTO);
@@ -288,6 +288,16 @@ public class RoteirizacaoDTO implements Serializable{
      */
 	public boolean isNovo() {
 	    return TipoEdicaoRoteirizacao.NOVO == tipoEdicao;
+	}
+	
+    /**
+     * Verifica se a roteirização utiliza o Box Especial
+     * 
+     * @return true se a roteirização utiliza Box Especial, false em caso
+     *         contrário
+     */
+	public boolean isBoxEspecial() {
+	    return BoxRoteirizacaoDTO.ESPECIAL.equals(box);
 	}
 	
     /**

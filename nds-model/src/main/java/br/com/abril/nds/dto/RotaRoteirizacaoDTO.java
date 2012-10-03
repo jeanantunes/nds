@@ -2,7 +2,10 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class RotaRoteirizacaoDTO implements Serializable {
 
@@ -17,6 +20,8 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	private Boolean selecionado;
 	
 	private List<PdvRoteirizacaoDTO> pdvs = new ArrayList<PdvRoteirizacaoDTO>();
+	
+	private Set<Long> pdvsExclusao = new HashSet<Long>();
 	
 	public RotaRoteirizacaoDTO() {
 	}
@@ -166,6 +171,36 @@ public class RotaRoteirizacaoDTO implements Serializable {
         }
         return null;
 	}
+	
+	/**
+	 * Remove o Pdv da Rota
+	 * @param idPdv identificador do PDV para remoção
+	 */
+	public void removerPdv(Long idPdv) {
+	    Iterator<PdvRoteirizacaoDTO> iterator = pdvs.iterator();
+	    while(iterator.hasNext()) {
+	        PdvRoteirizacaoDTO pdv = iterator.next();
+	        if (pdv.getId().equals(idPdv)) {
+	            iterator.remove();
+	            pdvsExclusao.add(idPdv);
+	        }
+	    }
+	}
+
+	/**
+     * Método que verifica se a rota é uma nova rota
+     * 
+     * @return true indicando que é uma nova rota, false indica que é uma
+     *         rota já cadastrada
+     */
+	public boolean isNovo() {
+	    return id != null && id < 0;
+	}
+	
+	
+	public Set<Long> getPdvsExclusao() {
+        return pdvsExclusao;
+    }
 
 	@Override
 	public int hashCode() {
@@ -191,6 +226,7 @@ public class RotaRoteirizacaoDTO implements Serializable {
 			return false;
 		return true;
 	}
+
 
 	
 }
