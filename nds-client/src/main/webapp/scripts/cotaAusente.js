@@ -214,9 +214,10 @@ var cotaAusenteController = $.extend(true, {
 					$("#idNomeNovaCota", cotaAusenteController.workspace).attr("value","");
 					
 					$( this ).dialog( "close" );
-				},
-				form: $("#dialog-novo", cotaAusenteController.workspace).parents("form")
-			}
+				}				
+			},
+			form: $("#dialog-novo", cotaAusenteController.workspace).parents("form")
+		
 		});
 	},
 
@@ -230,7 +231,7 @@ var cotaAusenteController = $.extend(true, {
 				width:350,
 				modal: true,
 				buttons: {
-					"Sim": function() {
+					"Suplementar": function() {
 						
 						$.postJSON(contextPath + "/cotaAusente/enviarParaSuplementar", 
 								"numCota="+numcota, 
@@ -239,11 +240,11 @@ var cotaAusenteController = $.extend(true, {
 						$( "#dialog-confirm", cotaAusenteController.workspace ).dialog("close");
 						
 					},
-					"Não": function() {
+					"Redistribuir": function() {
 						
 						$.postJSON(contextPath + "/cotaAusente/carregarDadosRateio", 
 								"numCota="+numcota, 
-								popupRateio);
+								cotaAusenteController.popupRateio);
 						
 						$( this ).dialog( "close" );
 					}
@@ -301,7 +302,7 @@ var cotaAusenteController = $.extend(true, {
 			produto.innerHTML = movimento.nomeProd;
 			edicao.innerHTML = movimento.edicaoProd;
 			reparte.innerHTML = movimento.qtdeReparte;
-			botao.innerHTML = "<a onclick=\"gerarGridRateios("+index+");\" href=\"javascript:;\"><img src=\"" + contextPath + "/images/ico_negociar.png\" border=\"0\" /></a>";
+			botao.innerHTML = "<a onclick=\"cotaAusenteController.gerarGridRateios("+index+");\" href=\"javascript:;\"><img src=\"" + contextPath + "/images/ico_negociar.png\" border=\"0\" /></a>";
 			
 			novaLinha.append(codigo);
 			novaLinha.append(produto);
@@ -339,7 +340,7 @@ var cotaAusenteController = $.extend(true, {
 			
 			$.each(mov[indice].rateios, function(index, rateio) {
 				
-				gerarLinhaNova(index,rateio.numCota,rateio.nomeCota,rateio.qtde);
+				cotaAusenteController.gerarLinhaNova(index,rateio.numCota,rateio.nomeCota,rateio.qtde);
 			});
 			
 		}  else {
@@ -347,14 +348,14 @@ var cotaAusenteController = $.extend(true, {
 			proxIndice = 0;
 		}	
 		
-		gerarLinhaNova(proxIndice,"","","");
+		cotaAusenteController.gerarLinhaNova(proxIndice,"","","");
 		
 		var qtdeRateios = mov[indiceAtual].rateios.length;
 		document.getElementById('idNum'+ qtdeRateios).focus();
 	},
 		
 	gerarNovoRateio : function(indiceLinhaAlterada) {
-		
+				
 		var numCota = $("#idNum" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
 		var nomeCota = $("#idNom" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
 		var qtde = $("#idQtde" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
@@ -386,9 +387,9 @@ var cotaAusenteController = $.extend(true, {
 			
 			mov[indiceAtual].rateios.push({"numCota":numCota, "nomeCota":nomeCota, "qtde":qtde});
 					
-			gerarLinhaNova( (qtdeRateios + 1) ,"","","");
+			cotaAusenteController.gerarLinhaNova( (qtdeRateios + 1) ,"","","");
 					
-			alterarEvento(
+			cotaAusenteController.alterarEvento(
 					"idQtde"+indiceLinhaAlterada,
 					'idNum'+ (qtdeRateios +1), 
 					"onblur");
@@ -397,7 +398,7 @@ var cotaAusenteController = $.extend(true, {
 			
 			mov[indiceAtual].rateios[indiceLinhaAlterada] = {"numCota":numCota, "nomeCota":nomeCota, "qtde":qtde};
 			
-			alterarEvento(
+			cotaAusenteController.alterarEvento(
 					"idQtde"+indiceLinhaAlterada,
 					'idNum'+ qtdeRateios, 
 					"onblur");
@@ -408,7 +409,7 @@ var cotaAusenteController = $.extend(true, {
 			
 			mov[indiceAtual].rateios.splice(indiceLinhaAlterada,indiceLinhaAlterada + 1);
 			
-			gerarGridRateios(indiceAtual);
+			cotaAusenteController.gerarGridRateios(indiceAtual);
 			return;
 		}
 	},
@@ -437,7 +438,7 @@ var cotaAusenteController = $.extend(true, {
 		var nomeCota = $(document.createElement("TD"));
 		var qtde = $(document.createElement("TD"));
 				
-		numCota.append(getInput(
+		numCota.append(cotaAusenteController.getInput(
 				num,
 				"idNum"+indice ,
 				"60px",
@@ -445,7 +446,7 @@ var cotaAusenteController = $.extend(true, {
 				null,
 				"pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNum"+indice+"', '#idNom"+indice+"',true)"));
 		
-		nomepesquisaCotaCotaAusente.append(getInput(
+		nomeCota.append(cotaAusenteController.getInput(
 				nome,
 				"idNom"+indice ,
 				"180px",
@@ -454,7 +455,7 @@ var cotaAusenteController = $.extend(true, {
 				null,
 				"pesquisaCotaCotaAusente.autoCompletarPorNome('#idNom"+indice+"')"));
 		
-		qtde.append(getInput(
+		qtde.append(cotaAusenteController.getInput(
 				qtd,
 				"idQtde"+indice ,
 				"60px",
@@ -539,7 +540,7 @@ var cotaAusenteController = $.extend(true, {
 					
 					$( this ).dialog( "close" );
 				}
-			}
+			},form: $( "#dialog-suplementar", cotaAusenteController.workspace ).parents("form")
 		});
 	},
 
