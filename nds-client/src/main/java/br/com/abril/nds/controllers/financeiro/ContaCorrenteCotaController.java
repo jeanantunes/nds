@@ -411,8 +411,6 @@ public class ContaCorrenteCotaController {
 					.defaultValue(contaCorrenteCota.getEncalhe()));
 			contaCorrenteCotaVO.setEncargos(MathUtil
 					.defaultValue(contaCorrenteCota.getEncargos()));
-			contaCorrenteCotaVO.setNumerosAtrasados(MathUtil
-					.defaultValue(contaCorrenteCota.getNumeroAtrasados()));
 			contaCorrenteCotaVO.setPendente(MathUtil
 					.defaultValue(contaCorrenteCota.getPendente()));
 			contaCorrenteCotaVO.setTotal(MathUtil
@@ -722,8 +720,6 @@ public class ContaCorrenteCotaController {
 					.defaultValue(contaCorrenteCota.getEncalhe()));
 			contaCorrenteCotaVO.setEncargos(MathUtil
 					.defaultValue(contaCorrenteCota.getEncargos()));
-			contaCorrenteCotaVO.setNumerosAtrasados(MathUtil
-					.defaultValue(contaCorrenteCota.getNumeroAtrasados()));
 			contaCorrenteCotaVO.setPendente(MathUtil
 					.defaultValue(contaCorrenteCota.getPendente()));
 			contaCorrenteCotaVO.setTotal(MathUtil

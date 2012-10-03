@@ -418,7 +418,7 @@
 					   <tr>
 					    <td><strong>Banco:</strong></td>
 					    <td>
-					        <select name="filtro.idBanco" id="bancoDividas" style="width:150px;">
+					        <select name="idBanco" id="bancoDividas" style="width:150px;">
 		                        <option value="">Selecione</option>
 		                        <c:forEach items="${bancos}" var="banco">
 									<option value="${banco.id}" >${banco.nome}</option>

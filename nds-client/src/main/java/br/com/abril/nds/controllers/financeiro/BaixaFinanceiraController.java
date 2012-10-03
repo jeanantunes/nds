@@ -510,7 +510,7 @@ public class BaixaFinanceiraController {
 	                               TipoCobranca tipoPagamento,
 	                               String observacoes,
 	                               List<Long> idCobrancas,
-	                               Banco banco){
+	                               Long idBanco){
 		
 		BigDecimal valorDividasConvertido = CurrencyUtil.converterValor(valorDividas);
 		BigDecimal valorMultaConvertido = CurrencyUtil.converterValor(valorMulta);
