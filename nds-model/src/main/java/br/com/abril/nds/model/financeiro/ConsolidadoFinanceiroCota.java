@@ -41,9 +41,6 @@ public class ConsolidadoFinanceiroCota {
 	
 	@Column(name = "VALOR_POSTERGADO")
 	private BigDecimal valorPostergado;
-
-	@Column(name = "NUMERO_ATRASADOS")
-	private BigDecimal numeroAtrasados;
 	
 	@Column(name = "CONSIGNADO")
 	private BigDecimal consignado;
@@ -97,14 +94,6 @@ public class ConsolidadoFinanceiroCota {
 
 	public void setValorPostergado(BigDecimal valorPostergado) {
 		this.valorPostergado = valorPostergado;
-	}
-
-	public BigDecimal getNumeroAtrasados() {
-		return numeroAtrasados;
-	}
-
-	public void setNumeroAtrasados(BigDecimal numeroAtrasados) {
-		this.numeroAtrasados = numeroAtrasados;
 	}
 
 	public BigDecimal getConsignado() {
