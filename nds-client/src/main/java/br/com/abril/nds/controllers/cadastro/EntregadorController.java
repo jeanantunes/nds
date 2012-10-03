@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +41,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
-import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProcuracaoEntregador;
@@ -180,18 +181,20 @@ public class EntregadorController {
 												Long codigoEntregador,
 												boolean isComissionado,
 												String percentualComissao,
-												String cpfEntregador, 
+												String cpfEntregador,
+												String dataNascimento,
 												PessoaFisica pessoaFisica) {
 		
 		HashMap<String, String> cpf = new HashMap<String, String>();
 		cpf.put(CPF, cpfEntregador);
 		
-		validarParametrosEntradaCadastroEntregadorPF( idEntregador, 
-													  codigoEntregador, 
-												      isComissionado, 
-												      percentualComissao, 
-												      cpf,
-												      pessoaFisica.getRg());
+		validarParametrosEntradaCadastroEntregador(pessoaFisica,
+													dataNascimento,
+													idEntregador, 
+													codigoEntregador, 
+												    isComissionado, 
+												    percentualComissao, 
+												    cpf);
 
 		String mensagemSucesso = "Cadastro realizado com sucesso.";
 
@@ -272,15 +275,14 @@ public class EntregadorController {
 												  Long codigoEntregador,
 												  boolean isComissionado,
 												  String percentualComissao,
-												  
 												  String cnpjEntregador,
-												  
 												  PessoaJuridica pessoaJuridica) {
 		
 		HashMap<String, String> cnpj = new HashMap<String, String>();
 		cnpj.put(CNPJ, cnpjEntregador);
 		
-		validarParametrosEntradaCadastroEntregadorPJ(
+		validarParametrosEntradaCadastroEntregador(pessoaJuridica,
+												   null,
 												   idEntregador,
 												   codigoEntregador, 
 												   isComissionado, 
@@ -725,62 +727,23 @@ public class EntregadorController {
 		}
 	}
 	
-	private void validarParametrosEntradaCadastroEntregadorPF(
-			Long idEntregador,
-			Long codigoEntregador,
-			boolean isComissionado,
-			String percentualComissao,
-			HashMap<String, String> cpfCnpj,
-			String rg) {
-		
-		
-		List<String> listaMensagens = new ArrayList<String>();
-		ValidacaoVO validacao = new ValidacaoVO();
-		validacao.setTipoMensagem(TipoMensagem.WARNING);
-		validacao.setListaMensagens(listaMensagens);
-		
-		if (rg != null && rg.length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
-			
-			listaMensagens.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
-		}
-		
-		validarParametrosEntradaCadastroEntregador(validacao, idEntregador, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
-		
-	}
-	
-	private void validarParametrosEntradaCadastroEntregadorPJ(
-			Long idEntregador,
-			Long codigoEntregador,
-			boolean isComissionado,
-			String percentualComissao,
-			HashMap<String, String> cpfCnpj) {
-		
-		List<String> listaMensagens = new ArrayList<String>();
-		ValidacaoVO validacao = new ValidacaoVO();
-		validacao.setTipoMensagem(TipoMensagem.WARNING);
-		validacao.setListaMensagens(listaMensagens);
-		
-		validarParametrosEntradaCadastroEntregador(validacao, idEntregador, codigoEntregador, isComissionado, percentualComissao, cpfCnpj);
-		
-	}
-	
 	/*
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	private void validarParametrosEntradaCadastroEntregador(ValidacaoVO validacao,
+	private void validarParametrosEntradaCadastroEntregador(Pessoa pessoa,
+														    String dataNascimento,
 															Long idEntregador,												
 															Long codigoEntregador,
 															boolean isComissionado,
 															String percentualComissao,
 															HashMap<String, String> cpfCnpj) {
 		
-		List<String> listaMensagens = validacao.getListaMensagens();
+		List<String> listaMensagens = new LinkedList<String>();
 						
 		if (codigoEntregador == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Código do entregador] é obrigatório.");
-			
 			
 		} else {
 			
@@ -795,6 +758,42 @@ public class EntregadorController {
 		}
 		
 		if (cpfCnpj.containsKey(CPF)) {
+			
+			
+			
+			if( ((PessoaFisica)pessoa).getRg() == null || ((PessoaFisica)pessoa).getRg().trim().isEmpty()) {
+				
+				listaMensagens.add("O preenchimento do campo [RG] é obrigatório.");
+				
+			} else if (((PessoaFisica)pessoa).getRg() != null && ((PessoaFisica)pessoa).getRg().length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
+				
+				listaMensagens.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
+			}
+
+			if( ((PessoaFisica)pessoa).getOrgaoEmissor() == null || ((PessoaFisica)pessoa).getOrgaoEmissor().trim().isEmpty()) {
+				listaMensagens.add("O preenchimento do campo [Orgão Emissor] é obrigatório.");
+			}
+			
+			if( ((PessoaFisica)pessoa).getNome() == null || ((PessoaFisica)pessoa).getNome().isEmpty() ) {
+
+				listaMensagens.add("O preenchimento do campo [Nome] é obrigatório.");
+				
+			}
+			
+			if( ((PessoaFisica)pessoa).getSexo() == null ) {
+				
+				listaMensagens.add("O preenchimento do campo [Sexo] é obrigatório.");
+			}
+			
+			if(dataNascimento ==  null || dataNascimento.isEmpty()) {
+				
+				listaMensagens.add("O preenchimento do campo [Data Nascimento] é obrigatório.");
+				
+			} else if(!DateUtil.isValidDatePTBR(dataNascimento)){
+				
+				listaMensagens.add("Campo [Data Nascimento] inválido.");
+				
+			}
 			
 			String cpfEntregador = cpfCnpj.get(CPF);
 			
@@ -818,6 +817,20 @@ public class EntregadorController {
 			
 		} else if (cpfCnpj.containsKey(CNPJ)) {
 			
+			if( ((PessoaJuridica)pessoa).getInscricaoEstadual() == null || ((PessoaJuridica)pessoa).getInscricaoEstadual().isEmpty()) {
+				listaMensagens.add("O preenchimento do campo [Inscrição Estadual] é obrigatório.");
+			}
+			
+			if( ((PessoaJuridica)pessoa).getRazaoSocial() == null || ((PessoaJuridica)pessoa).getRazaoSocial().isEmpty() ) {
+				listaMensagens.add("O preenchimento do campo [Razão Social] é obrigatório.");
+			}
+
+			if( ((PessoaJuridica)pessoa).getNomeFantasia() == null || ((PessoaJuridica)pessoa).getNomeFantasia().isEmpty() ) {
+
+				listaMensagens.add("O preenchimento do campo [Nome Fantasia] é obrigatório.");
+				
+			}
+			
 			String cnpjEntregador = cpfCnpj.get(CNPJ);
 			
 			if (cnpjEntregador == null || cnpjEntregador.isEmpty()) {
@@ -837,6 +850,11 @@ public class EntregadorController {
 					listaMensagens.add("CNPJ inválido.");
 				}
 			}
+			
+			validarTelefone(listaMensagens);
+			
+			validarEndereco(listaMensagens);
+			
 		}
 		
 		if (isComissionado && percentualComissao == null) {
@@ -855,10 +873,49 @@ public class EntregadorController {
 			}
 		}
 			
+		
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);
+		}
+	}
+	
+	private void validarEndereco(List<String> listaMensagens) {
+		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
 				(List<EnderecoAssociacaoDTO>) this.session.getAttribute(
 						LISTA_ENDERECOS_SALVAR_SESSAO);
 		
+		
+		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
+			
+			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
+				
+				if (enderecoAssociacao.isEnderecoPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+
+			if (!temPrincipal) {
+				
+				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
+			}
+		}
+
+		
+	}
+	
+	private void validarTelefone(List<String> listaMensagens) {
+	
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
 		if (map.keySet().isEmpty()) {
@@ -886,37 +943,8 @@ public class EntregadorController {
 				listaMensagens.add("Deve haver ao menos um telefone principal para o entregador.");
 			}
 		}
-		
-		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
-			
-			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
-		
-		} else {
-			
-			boolean temPrincipal = false;
-			
-			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
-				
-				if (enderecoAssociacao.isEnderecoPrincipal()) {
-					
-					temPrincipal = true;
-					
-					break;
-				}
-			}
 
-			if (!temPrincipal) {
-				
-				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
-			}
-		}
 		
-		if (!listaMensagens.isEmpty()) {
-			
-			validacao.setListaMensagens(listaMensagens);
-			
-			throw new ValidacaoException(validacao);
-		}
 	}
 	
 	/*
@@ -1083,76 +1111,6 @@ public class EntregadorController {
 		}
 
 		return telefonesSessao;
-	}
-
-	/*
-	 * Método que retorna uma pessoa Juridica com suas devidas validações.
-	 */
-	private PessoaJuridica validarPessoaJuridica(PessoaJuridica pessoaJuridica) {
-		
-		if (pessoaJuridica == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa Juridica não pode estar nula.");
-		}
-
-		if (pessoaJuridica.getCnpj() == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "O CNPJ da Pessoa Juridica não pode ser nulo.");
-		}
-		
-		PessoaJuridica pessoaJuridicaValidada = 
-				this.pessoaJuridicaService.buscarPorCnpj(pessoaJuridica.getCnpj());
-		
-		if (pessoaJuridicaValidada == null) {
-			
-			pessoaJuridicaValidada = this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridica);
-		}
-
-		pessoaJuridicaValidada.setEmail(pessoaJuridica.getEmail());
-		pessoaJuridicaValidada.setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
-		pessoaJuridicaValidada.setNomeFantasia(pessoaJuridica.getNomeFantasia());
-		pessoaJuridicaValidada.setRazaoSocial(pessoaJuridica.getRazaoSocial());
-
-		return this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridicaValidada);
-	}
-	
-	/*
-	 * Método que retorna uma pessoa Juridica com suas devidas validações.
-	 */
-	private PessoaFisica validarPessoaFisica(PessoaFisica pessoaFisica) {
-		
-		if (pessoaFisica == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Pessoa Juridica não pode estar nula.");
-		}
-		
-		if (pessoaFisica.getCpf() == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "O CNPJ da Pessoa Física não pode ser nulo.");
-		}
-
-		PessoaFisica pessoaFisicaValidada = 
-				this.pessoaFisicaService.buscarPorCpf(pessoaFisica.getCpf());
-
-		if (pessoaFisicaValidada == null) {
-
-			pessoaFisicaValidada = this.pessoaFisicaService.salvarPessoaFisica(pessoaFisica);
-		}
-
-		pessoaFisicaValidada.setEmail(pessoaFisica.getEmail());
-		pessoaFisicaValidada.setApelido(pessoaFisica.getApelido());
-		pessoaFisicaValidada.setNome(pessoaFisica.getNome());
-		pessoaFisicaValidada.setDataNascimento(pessoaFisica.getDataNascimento());
-		pessoaFisicaValidada.setEstadoCivil(pessoaFisica.getEstadoCivil());
-		pessoaFisicaValidada.setNacionalidade(pessoaFisica.getNacionalidade());
-		pessoaFisicaValidada.setNatural(pessoaFisica.getNatural());
-		pessoaFisicaValidada.setOrgaoEmissor(pessoaFisica.getOrgaoEmissor());
-		pessoaFisicaValidada.setRg(pessoaFisica.getRg());
-		pessoaFisicaValidada.setSexo(pessoaFisica.getSexo());
-		pessoaFisicaValidada.setSocioPrincipal(pessoaFisica.isSocioPrincipal());
-		pessoaFisicaValidada.setUfOrgaoEmissor(pessoaFisica.getUfOrgaoEmissor());
-		
-		return this.pessoaFisicaService.salvarPessoaFisica(pessoaFisicaValidada);
 	}
 	
 	/*

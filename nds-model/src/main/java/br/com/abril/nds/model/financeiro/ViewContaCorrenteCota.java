@@ -75,10 +75,10 @@ public class ViewContaCorrenteCota  implements Serializable{
 	@Column(name="DT_RAIZ_PENDENTE")
 	private Date dataRaizPendente;
 	
-	@Transient
+	@Column(name="VALOR_PAGO",nullable = true)
 	private BigDecimal valorPago;
 	
-	@Transient
+	@Column(name="SALDO",nullable = true)
 	private BigDecimal saldo;
 	
 	
