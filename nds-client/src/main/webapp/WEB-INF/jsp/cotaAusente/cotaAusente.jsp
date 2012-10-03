@@ -25,7 +25,7 @@ $(function(){
 
 <form id="form-confirm">
 <div id="dialog-confirm" title="Suplementar">
-	<p>Confirma Suplementar?</p>
+	<p>Para onde deseja direcionar o reparte desta cota?</p>
 </div>
 </form>
 
