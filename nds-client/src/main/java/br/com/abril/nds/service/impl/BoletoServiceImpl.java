@@ -193,7 +193,7 @@ public class BoletoServiceImpl implements BoletoService {
 				&& controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, 
-				"Já foi realizada baixa automática na data de operação atual!");
+				"Já foi realizada baixa automática na data de operação atual para o banco " + banco.getNome() + "!");
 		}
 		
 		if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null
@@ -205,12 +205,12 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 		
 		PoliticaCobranca politicaCobranca =
-			politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO);
+			this.politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO);
 		
 		if (politicaCobranca == null) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, 
-					"Política de cobrança para boletos não encontrada!");
+				"Política de cobrança para boletos não encontrada!");
 		}
 		
 		this.controleBaixaService.alterarControleBaixa(StatusControle.INICIADO,

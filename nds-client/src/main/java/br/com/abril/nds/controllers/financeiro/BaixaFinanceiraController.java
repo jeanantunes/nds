@@ -71,6 +71,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+import br.com.caelum.vraptor.serialization.JSONSerialization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -151,13 +152,11 @@ public class BaixaFinanceiraController {
 	}
 	
 	@Post
-	public void realizarBaixaAutomatica(UploadedFile uploadedFile, String valorFinanceiro) {
+	public void realizarBaixaAutomatica(Date data, UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		validarEntradaDados(uploadedFile, valorFinanceiro);
 		
 		BigDecimal valorFinanceiroConvertido = CurrencyUtil.converterValor(valorFinanceiro);
-		
-		ResumoBaixaBoletosDTO resumoBaixaBoleto = null;
 		
 		try {
 		
@@ -177,11 +176,24 @@ public class BaixaFinanceiraController {
 			deletarArquivoTemporario();
 		}
 		
+		ResumoBaixaBoletosDTO resumoBaixaBoletos = this.obterResumoBaixaFinanceira(data);
+		
 		result.use(PlainJSONSerialization.class)
-			.from(resumoBaixaBoleto, "result").recursive().serialize();
+			.from(resumoBaixaBoletos, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void mostrarResumoBaixaFinanceira(Date data) {
+		
+		ResumoBaixaBoletosDTO resumoBaixaBoletos = this.obterResumoBaixaFinanceira(data);
+		
+		result.use(JSONSerialization.class)
+			.from(resumoBaixaBoletos, "result").recursive().serialize();
 	}
 	
 	private ResumoBaixaBoletosDTO obterResumoBaixaFinanceira(Date data) {
+		
+		//TODO: 
 		
 		return null;
 	}
