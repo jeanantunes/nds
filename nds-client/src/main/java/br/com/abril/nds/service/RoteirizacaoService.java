@@ -165,6 +165,14 @@ public interface RoteirizacaoService {
      * @return List<Rota>
      */
 	public List<Rota> obterListaRotaPorRoteiro(Long idRoteiro, String descricaoRota);
+
+	/**
+	 * Obtém lista de Roteiros
+	 * 
+	 * @param numeroCota
+	 * @return
+	 */
+	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota);
 	
 	/**
      * Obtém a roteirização pelo identificador
@@ -214,8 +222,9 @@ public interface RoteirizacaoService {
      * Processa as informações de roteirização 
      * armazenadas no DTO
      * @param dto dto com as informações de Roteirização
+     * @return {@link Roteirizacao} roteirização confirmada
      */
-	void confirmarRoteirizacao(RoteirizacaoDTO dto);
+	Roteirizacao confirmarRoteirizacao(RoteirizacaoDTO dto);
 
 }
 	

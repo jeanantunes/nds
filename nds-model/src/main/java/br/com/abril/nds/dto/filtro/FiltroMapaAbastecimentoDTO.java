@@ -15,7 +15,8 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Date dataDate;
 	private TipoConsulta tipoConsulta;
 	private Long box;
-	private Long Rota;
+	private Long rota;
+	private Long roteiro;
 	private List<String> codigosProduto;
 	private String nomeProduto;
 	private Integer codigoCota;
@@ -23,6 +24,7 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private String nomeCota;
 	private Boolean quebraPorCota;
 	private Boolean useSM;
+	private Long idEntregador;
 	private Boolean excluirProdutoSemReparte;
 	
 			
@@ -71,6 +73,40 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		
 		public static ColunaOrdenacao getPorDescricao(String descricao) {
 			for(ColunaOrdenacao coluna: ColunaOrdenacao.values()) {
+				if(coluna.toString().equals(descricao))
+					return coluna;
+			}
+			return null;
+		}
+	}
+	
+	public enum ColunaOrdenacaoEntregador {
+		
+		CODIGO_PRODUTO("codigoProduto"),
+		NOME_PRODTO("nomeProduto"),
+		EDICAO_PRODUTO("numeroEdicao"),
+		NUMERO_EDICAO("numeroEdicao"),
+		CODIGO_BARRA("codigoBarra"),
+		PACOTE_PADRAO("pacotePadrao"),
+		REPARTE("reparte"),
+		PRECO_CAPA("precoCapa"),
+		CODIGO_COTA("codigoCota"),
+		NOME_COTA("nomeCota"),
+		QTDE_EXEMPLARES("qtdeExms");
+		
+		private String nomeColuna;
+		
+		private ColunaOrdenacaoEntregador(String nomeColuna) {
+			this.nomeColuna = nomeColuna;
+		}
+		
+		@Override
+		public String toString() {
+			return this.nomeColuna;
+		}
+		
+		public static ColunaOrdenacaoEntregador getPorDescricao(String descricao) {
+			for(ColunaOrdenacaoEntregador coluna: ColunaOrdenacaoEntregador.values()) {
 				if(coluna.toString().equals(descricao))
 					return coluna;
 			}
@@ -154,14 +190,14 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	 * @return the rota
 	 */
 	public Long getRota() {
-		return Rota;
+		return rota;
 	}
 
 	/**
 	 * @param rota the rota to set
 	 */
 	public void setRota(Long rota) {
-		Rota = rota;
+		this.rota = rota;
 	}
 
 	/**
@@ -295,4 +331,34 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	public void setExcluirProdutoSemReparte(Boolean excluirProdutoSemReparte) {
 		this.excluirProdutoSemReparte = excluirProdutoSemReparte;
 	}
+
+	/**
+	 * @return the roteiro
+	 */
+	public Long getRoteiro() {
+		return roteiro;
+	}
+
+	/**
+	 * @param roteiro the roteiro to set
+	 */
+	public void setRoteiro(Long roteiro) {
+		this.roteiro = roteiro;
+	}
+
+	/**
+	 * @return the idEntregador
+	 */
+	public Long getIdEntregador() {
+		return idEntregador;
+	}
+
+	/**
+	 * @param idEntregador the idEntregador to set
+	 */
+	public void setIdEntregador(Long idEntregador) {
+		this.idEntregador = idEntregador;
+	}
+	
+	
 }

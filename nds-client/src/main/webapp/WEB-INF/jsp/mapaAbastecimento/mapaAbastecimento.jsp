@@ -3,8 +3,11 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaEntregador.js"></script>
 	<script language="javascript" type="text/javascript">
-		
+	
+		var pesquisaEntregadorMapaAbastecimento = new PesquisaEntregador();
+	
 		var pesquisaCotaMapaAbastecimento = new PesquisaCota();
 		
 		var pesquisaProdutoMapaAbastecimento = new PesquisaProduto();
@@ -94,8 +97,26 @@
 </select>
 			  
 			  </td>
-              <td>&nbsp;</td>
-              <td colspan="3">&nbsp;</td>
+              <td>
+              	<div class="entregador"style="display:none">
+					Entregador:               
+              	</div>
+              	
+              </td>
+              <td colspan="3">
+              
+              <div class="entregador" style="display:none">
+              
+<input id="entregador"  type="text" style="width:112px;"
+	   onkeyup="pesquisaEntregadorMapaAbastecimento.autoCompletarPorNome('#entregador');" 
+		 	   onblur="pesquisaEntregadorMapaAbastecimento.pesquisarPorNomeEntregador('#idEntregador', '#entregador');" />
+
+<input id="idEntregador"  type="hidden" />
+		 	   
+	   	
+	   		   </div>
+              
+              </td>
               <td>&nbsp;</td>
             </tr>
             <tr>
@@ -103,7 +124,7 @@
               <td>
 			  
 <!-- Box -->
-<select id="box" disabled="disabled" name="select" style="width:120px;">
+<select id="box" name="select" style="width:120px;">
        <option selected="selected" value="">Selecione...</option>
 	        
 </select>
@@ -114,10 +135,10 @@
               <td>Roteiro:</td>
               <td>
 			  
-			  
-			  <select name="select4" id="select4" style="width:140px;">
-              </select>
-			  
+<select id="roteiro" disabled="disabled" name="select" style="width:140px;">
+       <option selected="selected" value="">Selecione...</option>
+	        
+</select>	  			  
 			  
 			  </td>
               <td>Rota:</td>
@@ -170,7 +191,7 @@
 			onchange="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
 
 			  
-			  <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
+			  </td>
               <td>Nome:</td>
               <td>
 			  
@@ -245,11 +266,17 @@
 		   <div id="gridProdutoCota" style="display:none;">
 				<table class="mapaAbastecimentoProdCotaGrid"></table>
 			</div>
+			
+			 <div id="gridEntregador" style="display:none;">
+            	<span><strong>Nome:</strong> Nome do Entregador</span>
+            	<table class="mapaAbastecimentoEntregadorGrid"></table>
+            </div>
+			
           <br />
    		  <span class="bt_novos" id="map_1" title="Imprimir">
 
 <!-- IMPRIMIR MAPA -->   		  
-<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="blank">
+<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="_blank">
 
 		
 		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Mapa</a>

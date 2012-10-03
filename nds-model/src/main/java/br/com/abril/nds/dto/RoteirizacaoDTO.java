@@ -3,7 +3,9 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
 import br.com.abril.nds.model.cadastro.Box;
@@ -54,6 +56,11 @@ public class RoteirizacaoDTO implements Serializable{
      * Todos os roteiros
      */
     private List<RoteiroRoteirizacaoDTO> todosRoteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
+    
+    /**
+     * Coleção de identificadores de roteiros para exclusão
+     */
+    private Set<Long> roteirosExclusao = new HashSet<Long>();
     
     /**
      * Cotas destinadas a copia para determinada rota.
@@ -149,7 +156,31 @@ public class RoteirizacaoDTO implements Serializable{
 	public void setRotaCotasCopia(List<RotaRoteirizacaoDTO> rotaCotasCopia) {
 		this.rotaCotasCopia = rotaCotasCopia;
 	}
+	
+	public List<RoteiroRoteirizacaoDTO> getTodosRoteiros() {
+        return todosRoteiros;
+    }
+	
+    /**
+     * @return the roteirosExclusao
+     */
+    public Set<Long> getRoteirosExclusao() {
+        return roteirosExclusao;
+    }
 
+
+    /**
+     * Adiciona o identificador do roteiro para exclusão
+     * 
+     * @param idRoteiro
+     *            identificador do roteiro
+     */
+	public void addRoteiroExclusao(Long idRoteiro) {
+	    if (roteirosExclusao == null) {
+	        roteirosExclusao = new HashSet<Long>();
+	    }
+	    roteirosExclusao.add(idRoteiro);
+	}
 
 	/**
 	 * Adiciona um novo roteiro à roteirização
@@ -350,7 +381,6 @@ public class RoteirizacaoDTO implements Serializable{
         return null;
     }
     
-    
 	/**
      * Tipo da edição tela
      * 
@@ -385,6 +415,11 @@ public class RoteirizacaoDTO implements Serializable{
 				todosRoteiros.remove(roteiro);
 				break;
 			}
+		}
+		
+		if (roteiroId >= 0){
+			
+			this.addRoteiroExclusao(roteiroId);
 		}
 	}
 }
