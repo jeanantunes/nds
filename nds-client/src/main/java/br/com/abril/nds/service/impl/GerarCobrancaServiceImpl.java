@@ -167,11 +167,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
 		if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
-			ControleBaixaBancaria controleBaixaBancaria = this.controleBaixaBancariaRepository.obterPorData(new Date());
 			
-			if (controleBaixaBancaria == null || StatusControle.INICIADO.equals(controleBaixaBancaria.getStatus())){
+			List<ControleBaixaBancaria> listaControleBaixaBancaria =
+				this.controleBaixaBancariaRepository.obterListaControleBaixaBancaria(
+					new Date(), StatusControle.CONCLUIDO_SUCESSO);
+			
+			if (listaControleBaixaBancaria == null || listaControleBaixaBancaria.isEmpty()) {
+				
 				throw new GerarCobrancaValidacaoException(
-						new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada."));
+					new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada."));
 			}
 		}
 		

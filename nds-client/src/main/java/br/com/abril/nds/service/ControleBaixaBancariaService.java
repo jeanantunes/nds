@@ -3,7 +3,7 @@ package br.com.abril.nds.service;
 import java.util.Date;
 
 import br.com.abril.nds.model.StatusControle;
-import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -20,10 +20,9 @@ public interface ControleBaixaBancariaService {
 	 * @param statusControle - status de controle da baixa
 	 * @param dataOperacao - data de operação
 	 * @param usuario - usuário
-	 * 
-	 * @return controle baixa bancária
+	 * @param banco - banco
 	 */
-	ControleBaixaBancaria alterarControleBaixa(StatusControle statusControle,
-			  								   Date dataOperacao, Usuario usuario);
+	void alterarControleBaixa(StatusControle statusControle, Date dataOperacao,
+			 				  Usuario usuario, Banco banco);
 	
 }
