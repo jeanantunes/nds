@@ -411,8 +411,6 @@ public class ContaCorrenteCotaController {
 					.defaultValue(contaCorrenteCota.getEncalhe()));
 			contaCorrenteCotaVO.setEncargos(MathUtil
 					.defaultValue(contaCorrenteCota.getEncargos()));
-			contaCorrenteCotaVO.setNumerosAtrasados(MathUtil
-					.defaultValue(contaCorrenteCota.getNumeroAtrasados()));
 			contaCorrenteCotaVO.setPendente(MathUtil
 					.defaultValue(contaCorrenteCota.getPendente()));
 			contaCorrenteCotaVO.setTotal(MathUtil
@@ -647,7 +645,7 @@ public class ContaCorrenteCotaController {
 		result.use(Results.nothing());
 	}
 	
-	public void enviarEmail(String[] assuntos, String mensagem, String[] destinatarios) throws IOException {
+	public void enviarEmail(String mensagem, String[] destinatarios) throws IOException {
 		
 		AnexoEmail anexoXLS = new AnexoEmail("conta-corrente-cota", this.gerarAnexo(FileType.XLS), TipoAnexo.XLS);
 		AnexoEmail anexoPDF = new AnexoEmail("conta-corrente-cota", this.gerarAnexo(FileType.PDF), TipoAnexo.PDF);
@@ -657,7 +655,7 @@ public class ContaCorrenteCotaController {
 		anexos.add(anexoPDF);
 		
 		if(destinatarios[1] != ""){
-			String destinatario = destinatarios[0];
+			String destinatario = destinatarios[0].trim();
 			String[] copiaPara = destinatarios[1].split("[;]");
 			destinatarios  = new String[copiaPara.length+1];
 			destinatarios[0] = destinatario;
@@ -665,17 +663,17 @@ public class ContaCorrenteCotaController {
 				destinatarios[i+1] = copiaPara[i].trim();
 			}
 		}else{
-			String destinatario = destinatarios[0];
+			String destinatario = destinatarios[0].trim();
 			destinatarios  = new String[1];
 			destinatarios[0] = destinatario;
 		}
 		
-		String assunto = assuntos[0].trim().toUpperCase().concat(" - "+assuntos[1].trim().toUpperCase());
+		String assunto = "Resumo Conta Corrente";
 		try {
 			emailService.enviar(assunto, mensagem, destinatarios, anexos);
 			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso");
 		} catch (AutenticacaoEmailException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível enviar o e-mail");
+			throw new ValidacaoException(TipoMensagem.ERROR, "[E-mail inválido] Não foi possível enviar o e-mail. Utilize ';' para separar e-mails.");
 		}
 		
 	}
@@ -722,8 +720,6 @@ public class ContaCorrenteCotaController {
 					.defaultValue(contaCorrenteCota.getEncalhe()));
 			contaCorrenteCotaVO.setEncargos(MathUtil
 					.defaultValue(contaCorrenteCota.getEncargos()));
-			contaCorrenteCotaVO.setNumerosAtrasados(MathUtil
-					.defaultValue(contaCorrenteCota.getNumeroAtrasados()));
 			contaCorrenteCotaVO.setPendente(MathUtil
 					.defaultValue(contaCorrenteCota.getPendente()));
 			contaCorrenteCotaVO.setTotal(MathUtil

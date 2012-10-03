@@ -113,7 +113,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		List<MovimentoFinanceiroCota> lista = new ArrayList<MovimentoFinanceiroCota>();
 		lista.add(movimentoFinanceiroCota);
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = 
-				Fixture.consolidadoFinanceiroCota(lista, cotaManoel, new Date(), BigDecimal.TEN, new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+				Fixture.consolidadoFinanceiroCota(lista, cotaManoel, new Date(), BigDecimal.TEN, new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidadoFinanceiroCota);
 	}
 	

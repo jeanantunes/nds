@@ -177,7 +177,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		consolidado = Fixture
 				.consolidadoFinanceiroCota(
 						Arrays.asList(movimentoFinanceiroCota), cotaManoel,
-						new Date(), new BigDecimal(200), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						new Date(), new BigDecimal(200), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado);
 		
 		Divida divida = Fixture.divida(consolidado, cotaManoel, new Date(),
@@ -192,7 +192,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cotaManoel, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cotaManoel, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado1);
 		
 		Divida divida1 = Fixture.divida(consolidado1, cotaManoel, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
@@ -218,7 +218,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme2 = Fixture
 				.consolidadoFinanceiroCota(null, cotaManoel,
-						Fixture.criarData(2, 2, 2010), new BigDecimal(210), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						Fixture.criarData(2, 2, 2010), new BigDecimal(210), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		
 		Divida dividaAcumuladaGuilherme2 = Fixture.divida(consolidadoAcumuloGuilherme2, cotaManoel, Fixture.criarData(2, 2, 2010),
 				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),false);
