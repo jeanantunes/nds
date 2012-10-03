@@ -24,6 +24,7 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.repository.impl.AbstractRepository;
+import br.com.abril.nds.service.DescontoService;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -36,15 +37,16 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DistribuidorService distribuidorService;
 
+	@Autowired
+	private DescontoService descontoService; 	
+	
+	private Date dataLctoDistrib;
+
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 	
 	@Override
 	public void processMessage(Message message) {
-
 		
-		// RECEBE DATA DO SISTEMA PARA FILTRAR A CONSULTA
-		//Date dataLctoDistrib = (Date) message.getHeader().get("dataLctoDistrib");
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		
 		// OBTER LISTA DE JORNALEIROS PARA DEFINIR QTDE DE ARQUIVOS
 		StringBuffer sql = new StringBuffer();
@@ -63,7 +65,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 
 		Query query = getSession().createQuery(sql.toString());
-	    query.setParameter("dataInformada", dataOperacao);
+	    query.setParameter("dataInformada", this.dataLctoDistrib);
 
 		try {
 			@SuppressWarnings("unchecked")
@@ -77,7 +79,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 				try{
 					
 					//CRIA O NOME DO ARQUIVO COM O NUMERO DA COTA + DATA INFORMADA
-					String nomeArquivo = ""+jornaleiro.getCota().getNumeroCota()+"".concat(sdf.format(dataOperacao));
+					String nomeArquivo = String.format("%1$04d%2$s", jornaleiro.getCota().getNumeroCota(), sdf.format(dataLctoDistrib)); 														
 					
 					PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())+"/"+nomeArquivo+".rep"));	
 					
@@ -86,7 +88,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 					
 					outHeader.setCodigoCota(jornaleiro.getCota().getNumeroCota().toString());
 					outHeader.setNomePDV(jornaleiro.getNome());
-					outHeader.setDataLctoDistrib(sdf.format(dataOperacao));//data recebida pela interface
+					outHeader.setDataLctoDistrib(sdf.format(dataLctoDistrib));//data recebida pela interface
 					
 					print.println(fixedFormatManager.export(outHeader));
 					
@@ -100,8 +102,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 						outDetalhe.setNomeProduto(pe.getProdutoEdicao().getProduto().getNome());
 						outDetalhe.setCodigoDeBarrasPE(pe.getProdutoEdicao().getCodigoDeBarras());
 						outDetalhe.setPrecoCustoPE(pe.getProdutoEdicao().getPrecoCusto().toString());
-						outDetalhe.setPrecoVendaPE(pe.getProdutoEdicao().getPrecoVenda().toString());
-						outDetalhe.setDescontoPE(pe.getProdutoEdicao().getDescontoLogistica().toString());
+						outDetalhe.setPrecoVendaPE(pe.getProdutoEdicao().getPrecoVenda().toString());												
+						outDetalhe.setDescontoPE(descontoService.obterDescontoPorCotaProdutoEdicao(jornaleiro.getCota(), pe.getProdutoEdicao()).toString());						
 						outDetalhe.setQtdeMEC(pe.getQtde().toString());
 					
 						print.println(fixedFormatManager.export(outDetalhe));
@@ -138,6 +140,10 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setDataLctoDistrib(Date dataLctoDistrib) {
+		this.dataLctoDistrib = dataLctoDistrib;		
 	}
 				
 }

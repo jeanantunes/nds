@@ -22,12 +22,14 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.repository.impl.AbstractRepository;
+import br.com.abril.nds.service.DescontoService;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -41,7 +43,12 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
+	private DescontoService descontoService;
+	
+	@Autowired
 	private DistribuidorService distribuidorService;
+
+	private Date dataLctoDistrib;
 
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 
@@ -50,19 +57,18 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		List<PDV> pdvs = findListPDV(message);
 
-		Date data = getDataLancDistrib(message);
 		
 		int numeroCota = pdvs.get(0).getCota().getNumeroCota();
 
 		int qtdeRegistros = 0;
 		
-		PrintWriter print =  geraArquivo(message, data, pdvs.get(0).getNome(), numeroCota);
+		PrintWriter print =  geraArquivo(message, this.dataLctoDistrib, pdvs.get(0).getNome(), numeroCota);
 							
 		for (PDV pdv: pdvs) {
 			
 			if (numeroCota == pdv.getCota().getNumeroCota()) {
 				
-				qtdeRegistros += criaDetalhes(print, numeroCota, pdv.getCota().getMovimentoEstoqueCotas());
+				qtdeRegistros += criaDetalhes(print, pdv.getCota(), pdv.getCota().getMovimentoEstoqueCotas());
 				
 			} else {
 				
@@ -73,7 +79,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				
 				numeroCota = pdv.getCota().getNumeroCota();
 				
-				print = geraArquivo(message, data, pdvs.get(0).getNome(), numeroCota);
+				print = geraArquivo(message, this.dataLctoDistrib, pdvs.get(0).getNome(), numeroCota);
 				
 				qtdeRegistros = 0;
 				
@@ -91,9 +97,10 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	private PrintWriter geraArquivo(Message message, Date data, String nome, int numeroCota) {
 		
 		try {
-			
+			String nomeArquivo = String.format("%1$04d%2$s", numeroCota, sdf.format(dataLctoDistrib)); 														
+
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(
-					MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/" + numeroCota + sdf.format(data) + ".enc"));
+					MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/" + nomeArquivo + ".enc"));
 			
 			criaHeader(print, numeroCota, nome, data);
 			
@@ -109,25 +116,9 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 						
 	}
 	
-	private Date getDataLancDistrib(Message message) {
-		
-		//Date data = (Date) message.getHeader().get("DATA_LCTO_DISTRIB");
-		Date data = distribuidorService.obter().getDataOperacao();
-		
-		if (data == null) {
-			
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Data nao informada!");
-
-			throw new RuntimeException("Execute a interface EMS0129 passando a dataLancamentoDistribuidor !");
-		}
-		
-		return data;
-	}
 	
 	private List<PDV> findListPDV(Message message) {
 		
-		Date data = getDataLancDistrib(message);
 			
 		StringBuilder sql = new StringBuilder();
 
@@ -147,7 +138,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" order by co.numeroCota");
 
 		Query query = this.getSession().createQuery(sql.toString());
-		query.setParameter("dataLancDistrib", data);
+		query.setParameter("dataLancDistrib", this.dataLctoDistrib);
 		query.setParameter("tipoMovimento", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 
 		@SuppressWarnings("unchecked")
@@ -190,7 +181,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
-	private Integer criaDetalhes(PrintWriter print, Integer numeroCota, Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
+	private Integer criaDetalhes(PrintWriter print, Cota cota, Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
 		
 		EMS0198Detalhe outdetalhe = new EMS0198Detalhe();
 		
@@ -198,34 +189,22 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		for (MovimentoEstoqueCota moviEstCota : movimentoEstoqueCotas) {
 
-			outdetalhe.setCodigoCota(numeroCota.toString());
+			outdetalhe.setCodigoCota(cota.getNumeroCota().toString());
 			outdetalhe.setCodigoProduto(moviEstCota.getProdutoEdicao().getProduto().getCodigo());
 			outdetalhe.setEdicao(moviEstCota.getProdutoEdicao().getNumeroEdicao().toString());
 			outdetalhe.setNomePublicacao(moviEstCota.getProdutoEdicao().getProduto().getNome());
 			outdetalhe.setCodigoDeBarras(moviEstCota.getProdutoEdicao().getCodigoDeBarras());
 			outdetalhe.setPrecoCusto(moviEstCota.getProdutoEdicao().getPrecoCusto().toString());
-			outdetalhe.setPrecoVenda(moviEstCota.getProdutoEdicao().getPrecoVenda().toString());
-			outdetalhe.setDesconto(moviEstCota.getProdutoEdicao().getDescontoLogistica().toString());
+			outdetalhe.setPrecoVenda(moviEstCota.getProdutoEdicao().getPrecoVenda().toString());			
+			outdetalhe.setDesconto(descontoService.obterDescontoPorCotaProdutoEdicao(cota, moviEstCota.getProdutoEdicao()).toString());												
 			outdetalhe.setQuantidade(moviEstCota.getQtde().toString());
 						
 			if (!moviEstCota.getProdutoEdicao().getChamadaEncalhes().isEmpty()) {
 
 				for (ChamadaEncalhe chamadaEncalhe : moviEstCota.getProdutoEdicao().getChamadaEncalhes()) {
 
-					Calendar dataAtual = Calendar.getInstance();
-					Calendar dataRecolhimento = Calendar.getInstance();
-						
-					dataRecolhimento.setTime(chamadaEncalhe.getDataRecolhimento());
-					
-					Long diferenca = dataRecolhimento.getTimeInMillis() - dataAtual.getTimeInMillis();
-					
-					// Quantidade de milissegundos em um dia
-					int tempoDia = 1000 * 60 * 60 * 24;
-				
-					Long diasDiferenca = diferenca / tempoDia + 1;
-
-					outdetalhe.setDataEncalhe(chamadaEncalhe.getDataRecolhimento().toString());
-					outdetalhe.setDiaChamada("" + diasDiferenca);
+					outdetalhe.setDataEncalhe(sdf.format(chamadaEncalhe.getDataRecolhimento()));
+					outdetalhe.setDiaChamada("1");
 					
 					print.println(fixedFormatManager.export(outdetalhe));
 					qtdeRegistros++;
@@ -233,6 +212,8 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				}
 
 			} else {
+				outdetalhe.setDataEncalhe("");
+				outdetalhe.setDiaChamada("");
 
 				print.println(fixedFormatManager.export(outdetalhe));
 				qtdeRegistros++;
@@ -254,6 +235,11 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	public void setDataLctoDistrib(Date data) {
+		this.dataLctoDistrib = data;
 		
 	}
 }
