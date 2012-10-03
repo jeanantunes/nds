@@ -100,7 +100,7 @@ public class VisaoEstoqueController {
 	
 		visaoEstoqueService.transferirEstoque(filtro, this.getUsuario());
 		
-		result.use(Results.json()).from(filtro, "result").serialize();
+		this.pesquisar(filtro);
 	}
 	
 	
