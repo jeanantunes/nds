@@ -291,6 +291,16 @@ public class RoteirizacaoDTO implements Serializable{
 	}
 	
     /**
+     * Verifica se a roteirização utiliza o Box Especial
+     * 
+     * @return true se a roteirização utiliza Box Especial, false em caso
+     *         contrário
+     */
+	public boolean isBoxEspecial() {
+	    return BoxRoteirizacaoDTO.ESPECIAL.equals(box);
+	}
+	
+    /**
      * Recupera a rota da roteirização pelo id
      * 
      * @param id
