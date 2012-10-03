@@ -255,11 +255,35 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		Lancamento lancamento =  lancamentoRepository.buscarPorId(idLancamento);
 		
+		this.realizarTransferenciaReparteProximoLancamento(lancamento);
+		
 		if(lancamento == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não encontrado!");
 		}
 		
 		lancamento.setStatus(StatusLancamento.EXCLUIDO_RECOLHIMENTO);
+	}
+
+	/*
+	 * Método responsável pela transferência de reparte de um lançamento para o próximo, 
+	 * devido a exclusão deste na matriz de recolhimento.
+	 * 
+	 * @param lancamento
+	 */
+	private void realizarTransferenciaReparteProximoLancamento(Lancamento lancamento) {
+		
+		Lancamento proximoLancamento = this.lancamentoRepository.obterProximoLancamento(lancamento);
+		
+		if (proximoLancamento == null) { 
+
+			return;
+		}
+
+		BigInteger novoReparte = lancamento.getReparte().add(proximoLancamento.getReparte());
+
+		proximoLancamento.setReparte(novoReparte);
+		
+		this.lancamentoRepository.alterar(proximoLancamento);
 	}
 	
 	/**

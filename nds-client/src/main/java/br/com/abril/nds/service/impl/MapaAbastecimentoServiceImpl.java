@@ -310,6 +310,46 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		return pcMapaDTO;
 	}
+	
+	@Override
+	@Transactional
+	public HashMap<Long, MapaProdutoCotasDTO>  obterMapaDeImpressaoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro) {
+		
+		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
+		
+		if(produtosBoxRota.size() == 0)
+			return null;
+		
+		HashMap<Long, MapaProdutoCotasDTO> mapas = new HashMap<Long, MapaProdutoCotasDTO>();
+		
+		MapaProdutoCotasDTO pcMapaDTO = null;
+		
+		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
+						
+			if(!mapas.containsKey(item.getIdProdutoEdicao())) {
+				
+				pcMapaDTO = new MapaProdutoCotasDTO(
+						item.getCodigoProduto(), 
+						item.getNomeProduto(), 
+						item.getNumeroEdicao().longValue(), 
+						item.getPrecoCapa(),  
+						new HashMap<Integer, Integer>());
+				
+				mapas.put(item.getIdProdutoEdicao(), pcMapaDTO);
+			}			
+			
+			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota()))
+				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+						
+			Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
+			pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+			
+		}
+		
+		return mapas;
+	}
+
 
 	/**
 	 * {@inheritDoc}
@@ -389,5 +429,20 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	public Long countObterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 
 		return this.movimentoEstoqueCotaRepository.countObterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+	}
+
+	@Override
+	@Transactional
+	public List<ProdutoAbastecimentoDTO> obterMapaDeAbastecimentoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro) {
+		
+		return this.movimentoEstoqueCotaRepository.obterMapaDeAbastecimentoPorEntregador(filtro);
+	}
+
+	@Override
+	@Transactional
+	public Long countObterMapaDeAbastecimentoPorEntregador(
+			FiltroMapaAbastecimentoDTO filtro) {
+		return movimentoEstoqueCotaRepository.countObterMapaDeAbastecimentoPorEntregador(filtro);
 	}
 }

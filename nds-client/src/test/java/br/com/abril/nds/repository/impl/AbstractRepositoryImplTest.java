@@ -23,7 +23,7 @@ public abstract class AbstractRepositoryImplTest {
 		getSession().clear();
 	}
 	
-	private Session getSession() {
+	protected Session getSession() {
 		return sf.getCurrentSession();
 	}
 	
