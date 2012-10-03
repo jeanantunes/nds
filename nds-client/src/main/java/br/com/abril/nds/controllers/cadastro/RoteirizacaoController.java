@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -104,8 +103,6 @@ public class RoteirizacaoController {
 	 * Chave para armazenamento do DTO de roteirização na sessão
 	 */
 	private static final String ROTEIRIZACAO_DTO_SESSION_KEY = "ROTEIRIZACAO_DTO_SESSION_KEY";
-	
-	private static final String MAP_ROTEIROS_TRANSFERIDOS = "MAP_ROTEIROS_TRANSFERIDOS";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO)
@@ -343,20 +340,6 @@ public class RoteirizacaoController {
 		this.getDTO().removerRoteiro(roteiroId);
 		
 		result.use(Results.json()).from("", "result").serialize();
-	}
-	
-	@Path("/transferirRotas")
-	public void transferirRotas(List<Long> rotasId, Long roteiroId, String roteiroNome) {
-		if ( roteiroId == null ) {
-			List<Roteiro> listaRoteiros  = roteirizacaoService.buscarRoteiroPorDescricao(roteiroNome, MatchMode.EXACT);
-			if (!listaRoteiros.isEmpty() ){
-				roteiroId = listaRoteiros.get(0).getId();
-			} 
-			
-		}
-		roteirizacaoService.transferirListaRota(rotasId, roteiroId) ;
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Rotas transferidas com sucesso."),"result").recursive().serialize();
-
 	}
 	
 	@Path("/transferirRotasComNovoRoteiro")
@@ -926,8 +909,6 @@ public class RoteirizacaoController {
 	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
 	    setDTO(dto);
 	    
-	    this.session.removeAttribute(MAP_ROTEIROS_TRANSFERIDOS);
-	    
 	    result.use(CustomJson.class).from(dto).serialize();
 	}
 	
@@ -1073,17 +1054,17 @@ public class RoteirizacaoController {
 	 */
 	@Post
 	@Path("/removerPdvs")
-	public void removerPdvs(Long idRoteiro, Long idRota, List<PdvRoteirizacaoDTO> pdvs){
+	public void removerPdvs(Long idRoteiro, Long idRota, List<Long> pdvs){
         
-		if (pdvs != null && !pdvs.isEmpty()){
+		RotaRoteirizacaoDTO rota = this.getDTO().getRoteiro(idRoteiro).getRota(idRota);
+		
+		if (pdvs != null){
 			
-			RotaRoteirizacaoDTO rotaDto = this.getDTO().getRoteiro(idRoteiro).getRota(idRota);
-			
-			for (int i = 0 ; i < pdvs.size() ; i++){
+			for (Long cotaId : pdvs){
 				
-				rotaDto.getPdvs().remove(pdvs.get(i));
+				rota.removerPdv(cotaId);
 			}
-		}		
+		}	
 
 		result.use(CustomJson.class).from("").serialize();
 	}
@@ -1141,14 +1122,6 @@ public class RoteirizacaoController {
 		this.getDTO().getRoteiro(roteiroId).addRota(new RotaRoteirizacaoDTO(novoId, ordem, nome));
 	}
 	
-	private void addRoteiroExclusao(Long idRoteiro){
-		 
-		if (idRoteiro != null && idRoteiro >= 0){
-			
-			 this.getDTO().addRoteiroExclusao(idRoteiro);
-		}
-	}
-	
 	@Post
 	public void carregarBoxTransferenciaRoteiro(Long idBox){
 		
@@ -1174,19 +1147,10 @@ public class RoteirizacaoController {
 		this.result.use(Results.json()).from(this.getDTO().getRoteiros(), "result").serialize();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Post
 	public void transferirRoteiro(Long idBoxAnterior, Long idRoteiro, Long idBoxNovo){
 		
-		Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = 
-				(Map<Long, Set<RoteiroRoteirizacaoDTO>>) this.session.getAttribute(MAP_ROTEIROS_TRANSFERIDOS);
-		
-		if (roteirosTransferidos == null){
-			
-			roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
-			this.session.setAttribute(MAP_ROTEIROS_TRANSFERIDOS, roteirosTransferidos);
-		}
-		
+		Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = getDTO().getRoteirosTransferidos();
 		Set<RoteiroRoteirizacaoDTO> roteiros = roteirosTransferidos.get(idBoxNovo);
 		
 		if (roteiros == null){
@@ -1232,11 +1196,9 @@ public class RoteirizacaoController {
 		this.excluirRoteiro(idRoteiro);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Collection<RoteiroRoteirizacaoDTO> obterRoteirosTransferidos(Long idBox) {
 		
-		Map<Long, Set<RoteiroRoteirizacaoDTO>> transf = (Map<Long, Set<RoteiroRoteirizacaoDTO>>) 
-				this.session.getAttribute(MAP_ROTEIROS_TRANSFERIDOS);
+		Map<Long, Set<RoteiroRoteirizacaoDTO>> transf = this.getDTO().getRoteirosTransferidos();
 		
 		if (transf != null){
 			

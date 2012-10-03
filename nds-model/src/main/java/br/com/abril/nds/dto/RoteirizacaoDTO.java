@@ -3,8 +3,10 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
@@ -66,6 +68,8 @@ public class RoteirizacaoDTO implements Serializable{
      * Cotas destinadas a copia para determinada rota.
      */
     private List<RotaRoteirizacaoDTO> rotaCotasCopia;
+    
+    private Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
     
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis) {
         this.tipoEdicao = tipoEdicao;
@@ -431,5 +435,16 @@ public class RoteirizacaoDTO implements Serializable{
 			
 			this.addRoteiroExclusao(roteiroId);
 		}
+	}
+
+
+	public Map<Long, Set<RoteiroRoteirizacaoDTO>> getRoteirosTransferidos() {
+		return roteirosTransferidos;
+	}
+
+
+	public void setRoteirosTransferidos(
+			Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos) {
+		this.roteirosTransferidos = roteirosTransferidos;
 	}
 }
