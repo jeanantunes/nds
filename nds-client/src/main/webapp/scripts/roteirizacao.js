@@ -1082,7 +1082,9 @@ var roteirizacao = $.extend(true, {
         	roteirizacao.iniciaCotasDisponiveisGrid();
         	
             $("#cepPesquisa", roteirizacao.workspace).mask("99999-999");
-            $("#numeroCotaPesquisa", roteirizacao.workspace).val('');
+            $("#cotaPesquisaPdv", roteirizacao.workspace).val('');
+            $("#nomeCotaPesquisaPdv", roteirizacao.workspace).val('');
+            
             $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas',null,
                     function(result) {
             	     
@@ -1090,8 +1092,8 @@ var roteirizacao = $.extend(true, {
                         
                         $( "#dialog-cotas-disponiveis", roteirizacao.workspace ).dialog({
                             resizable: false,
-                            height:530,
-                            width:880,
+                            height:550,
+                            width:900,
                             modal: true,
                             buttons: {
                                 "Confirmar": function() {
@@ -1254,7 +1256,7 @@ var roteirizacao = $.extend(true, {
 					display : 'Ordem',
 					name : 'ordem',
 					width : 55,
-					sortable : false,
+					sortable : true,
 					align : 'center'
 				}, {
 					display : '',
@@ -1263,10 +1265,10 @@ var roteirizacao = $.extend(true, {
 					sortable : false,
 					align : 'center'
 				}],
-				sortname : "pdv",
+				sortname : "ordem",
 				sortorder : "asc",
 				width : 800,
-				height : 200
+				height : 250
 			});    
         },
         
@@ -1280,7 +1282,7 @@ var roteirizacao = $.extend(true, {
             $.each(data.rows, function(index, value) {
             	var idPontoVenda = value.cell.id;
                 var valOrdem = value.cell.ordem;
-                var selecionado = '<input type="checkbox" value="'+idPontoVenda+'" name="pdvCheckbox" id="pdvCheckbox'+idPontoVenda+'" />';
+                var selecionado = '<input type="checkbox" value="'+idPontoVenda+'" name="pdvCheckbox" id="pdvCheckbox'+idPontoVenda+'"class=" checkboxNovosPdvs" />';
                 var ordem ='<input type="input" value="'+valOrdem+'" name="pdvOrdem" id="pdvOrdem" size="6" length="6" />';
                 value.cell.selecionado = selecionado;
                 value.cell.ordem = ordem;
@@ -1291,7 +1293,21 @@ var roteirizacao = $.extend(true, {
             
             return data;
         },
-        
+
+	    selecionarTodosNovosPdvs : function(checked){
+    		
+    		$(".checkboxNovosPdvs", roteirizacao.workspace).prop('checked', checked);
+    		
+    		var elem = document.getElementById("textoSelTodos", roteirizacao.workspace);
+    		
+    		if (checked){
+    			elem.innerHTML = "Desmarcar todos";	      
+            }
+    		else{
+    			elem.innerHTML = "Marcar todos";
+    		}
+    	},
+
         pesquisarPvsPorCota : function(){
             $('#cotaDisponivelPesquisa', roteirizacao.workspace).html('');
             roteirizacao.carregarNomeCotasPesquisa('cotaDisponivelPesquisa',  $('#numeroCotaPesquisa', roteirizacao.workspace).val(), function(){roteirizacao.buscarPvsPorCota();} );
@@ -1387,7 +1403,12 @@ var roteirizacao = $.extend(true, {
 		 			 params,
 					 function(result) {
 		 		
-		 			     $(".cotasDisponiveisGrid", roteirizacao.workspace).flexReload();		
+				 		if (result.tipoMensagem && result.listaMensagens){
+		 				
+		 					exibirMensagemDialog(result.tipoMensagem, result.listaMensagens);
+		 				}
+		 		
+				 		$(".cotasRotaGrid", roteirizacao.workspace).flexReload();		
 					 },
 					 null,
 					 true
