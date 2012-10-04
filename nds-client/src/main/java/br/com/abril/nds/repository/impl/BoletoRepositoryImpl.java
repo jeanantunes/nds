@@ -1,11 +1,16 @@
 package br.com.abril.nds.repository.impl;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.repository.BoletoRepository;
@@ -193,9 +198,33 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return (Boleto) criteria.uniqueResult();
 	}
+	
+	@Override
+	public ResumoBaixaBoletosDTO obterResumoBaixaFinanceiraBoletos(Date data) {
+		
+		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
+				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
+				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao, "
+				   + " produtoEdicao.pacotePadrao as pacotePadrao "
+				   + " from ItemNotaEnvio itemNotaEnvio "
+				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
+				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
+				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
+				   + " join produtoEdicao.produto produto "
+				   + " where notaEnvio.dataEmissao = :dataEmissao "
+				   + " and movimentoEstoqueCota.cota.numeroCota = :numeroCota "
+				   + " group by produtoEdicao.id ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		ResultTransformer resultTransformer =
+			new AliasToBeanResultTransformer(ResumoBaixaBoletosDTO.class); 
 
+		query.setParameter("data", data);
+		
+		query.setResultTransformer(resultTransformer);
+		
+		return (ResumoBaixaBoletosDTO) query.uniqueResult();
+	}
 	
 }
-
-
-

@@ -31,7 +31,7 @@ public interface BoletoService {
 
 	long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 
-	ResumoBaixaBoletosDTO obterResumoBaixa(Date data);
+	ResumoBaixaBoletosDTO obterResumoBaixaFinanceiraBoletos(Date data);
 	
 	void baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
 					   			 BigDecimal valorFinanceiro, Usuario usuario);

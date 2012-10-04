@@ -175,12 +175,14 @@ public class BaixaFinanceiraController {
 		
 		BigDecimal valorFinanceiroConvertido = CurrencyUtil.converterValor(valorFinanceiro);
 		
+		ArquivoPagamentoBancoDTO arquivoPagamento = null;
+		
 		try {
 		
 			//Grava o arquivo em disco e retorna o File do arquivo
 			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile);
 			
-			ArquivoPagamentoBancoDTO arquivoPagamento =
+			arquivoPagamento =
 				this.leitorArquivoBancoService.obterPagamentosBanco(fileArquivoBanco,
 																    uploadedFile.getFileName());
 			
@@ -193,7 +195,8 @@ public class BaixaFinanceiraController {
 			deletarArquivoTemporario();
 		}
 		
-		ResumoBaixaBoletosDTO resumoBaixaBoletos = this.obterResumoBaixaFinanceira(data);
+		ResumoBaixaBoletosDTO resumoBaixaBoletos =
+			this.obterResumoBaixaFinanceira(data, arquivoPagamento);
 		
 		result.use(PlainJSONSerialization.class)
 			.from(resumoBaixaBoletos, "result").recursive().serialize();
@@ -202,25 +205,34 @@ public class BaixaFinanceiraController {
 	@Post
 	public void mostrarResumoBaixaFinanceira(Date data) {
 		
-		ResumoBaixaBoletosDTO resumoBaixaBoletos = this.obterResumoBaixaFinanceira(data);
+		ResumoBaixaBoletosDTO resumoBaixaBoletos = this.obterResumoBaixaFinanceira(data, null);
 		
 		result.use(JSONSerialization.class)
 			.from(resumoBaixaBoletos, "result").recursive().serialize();
 	}
 	
-	private ResumoBaixaBoletosDTO obterResumoBaixaFinanceira(Date data) {
+	private ResumoBaixaBoletosDTO obterResumoBaixaFinanceira(Date data, ArquivoPagamentoBancoDTO arquivoPagamento) {
 		
 		// TODO: obter resumo baixa financeira
 		
+//		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = 
+//			this.boletoService.obterResumoBaixaFinanceira(data);
+		
 		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = new ResumoBaixaBoletosDTO();
 		
-		resumoBaixaBoletosDTO.setDataCompetencia(new Date().toString());
-		resumoBaixaBoletosDTO.setNomeArquivo("aaa");
 		resumoBaixaBoletosDTO.setQuantidadeBaixados(10);
 		resumoBaixaBoletosDTO.setQuantidadeBaixadosComDivergencia(10);
 		resumoBaixaBoletosDTO.setQuantidadeLidos(10);
 		resumoBaixaBoletosDTO.setQuantidadeRejeitados(10);
-		resumoBaixaBoletosDTO.setSomaPagamentos(BigDecimal.TEN);
+		
+		//Fim todo
+		
+		if (arquivoPagamento != null) {
+		
+			resumoBaixaBoletosDTO.setNomeArquivo(arquivoPagamento.getNomeArquivo());
+			resumoBaixaBoletosDTO.setDataCompetencia(DateUtil.formatarDataPTBR(data));
+			resumoBaixaBoletosDTO.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
+		}
 		
 		return resumoBaixaBoletosDTO;
 	}

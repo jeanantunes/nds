@@ -154,9 +154,9 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public ResumoBaixaBoletosDTO obterResumoBaixa(Date data) {
+	public ResumoBaixaBoletosDTO obterResumoBaixaFinanceiraBoletos(Date data) {
 		
-		return null;
+		return this.boletoRepository.obterResumoBaixaFinanceiraBoletos(data);
 	}
 	
 	@Override
