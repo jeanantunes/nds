@@ -1198,7 +1198,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1418,7 +1418,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1463,7 +1463,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1541,7 +1541,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id, box.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1590,7 +1590,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!=null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1633,7 +1633,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1680,7 +1680,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id, rota.codigoRota ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1726,7 +1726,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id, rota.codigoRota ");
 
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1866,7 +1866,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by cota.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1912,7 +1912,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by cota.id ");
 
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
