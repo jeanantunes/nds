@@ -47,14 +47,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			.add(Projections.property("p.codigo"), "codigo")
 			.add(Projections.property("p.nome"), "produto")
 			.add(Projections.property("pe.numeroEdicao"), "edicao")
-			.add(Projections.property("pe.precoVenda"), "precoCapa")
+			.add(Projections.property("pe.precoVenda"),"precoCapa")
 			.add(Projections.property("pe.id"), "produtoEdicao")
+			.add(Projections.property("pe.parcial"), "parcial")
+			.add(Projections.property("che.dataRecolhimento"), "dataRecolhimento")
 			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
 			.add(Projections.groupProperty("p.codigo"))
 			.add(Projections.groupProperty("p.nome"))
 			.add(Projections.groupProperty("pe.numeroEdicao"))
 			.add(Projections.groupProperty("pe.precoVenda"))
 			.add(Projections.groupProperty("pe.id"))
+			.add(Projections.groupProperty("pe.parcial"))
+			.add(Projections.groupProperty("che.dataRecolhimento"))
+			
 		);
 		
 		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
@@ -66,8 +71,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.createAlias("mec.produtoEdicao", "pe");
 		criteria.setFetchMode("pe", FetchMode.JOIN);
 		
+		
 		criteria.createAlias("pe.produto", "p");
 		criteria.setFetchMode("p", FetchMode.JOIN);
+		
+		criteria.createAlias("ce.chamadaEncalheCota", "cec");
+		criteria.setFetchMode("cec", FetchMode.JOIN);
+		
+		criteria.createAlias("cec.chamadaEncalhe", "che");
+		criteria.setFetchMode("che", FetchMode.JOIN);
 		
 		if (filtro.getFornecedorId() != null) {
 			criteria.createAlias("pe.fornecedores", "pf");
