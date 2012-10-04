@@ -82,6 +82,20 @@ public interface EntregadorRepository extends Repository<Entregador, Long> {
 	Entregador obterEntregadorPorRota(Long idRota);
 
 	boolean verificarEntregador(Long idCota);
+
+	/**
+	 * Obtém lista de Entregadores por nome
+	 * @param nome
+	 * @return
+	 */
+	List<Entregador> obterEntregadoresPorNome(String nome);
+
+	/**
+	 * Obtém entregador por nome
+	 * @param nome
+	 * @return
+	 */
+	Entregador obterPorNome(String nome);
 	
 	/**
 	 * Obtém o menor codigo de entregador disponível.

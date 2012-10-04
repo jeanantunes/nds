@@ -220,7 +220,13 @@ var jsExtratoEdicao = $.extend(true, {
 
 							showTableToggleBtn : true,
 							width : 960,
-							height : 180
+							height : 180,
+							sortname : "dataInclusao",
+							sortorder : "asc",
+							usepager : true,
+							useRp : true,
+							rp : 15,
+							showTableToggleBtn : true
 						});
 
 	}

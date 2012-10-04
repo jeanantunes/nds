@@ -68,4 +68,11 @@ public interface VendaEncalheService {
 	
 	byte[] geraImpressaoVenda(FiltroVendaEncalheDTO filtro);
 	
+	/**
+	 * Gera a compravante de impressão apartir do id da venda.
+	 * @param idVenda
+	 * @return
+	 */
+	public abstract byte[] geraImpressaoComprovanteVenda(Long idVenda);
+	
 }

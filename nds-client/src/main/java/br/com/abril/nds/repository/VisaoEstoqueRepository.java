@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 
 
@@ -13,6 +14,11 @@ public interface VisaoEstoqueRepository {
 	
 	VisaoEstoqueDTO obterVisaoEstoqueHistorico(FiltroConsultaVisaoEstoque filtro);
 	
+	VisaoEstoqueDTO obterVisaoEstoqueJuramentado(FiltroConsultaVisaoEstoque filtro);
+	
 	List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro);
-
+	
+	List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalheHistorico(FiltroConsultaVisaoEstoque filtro);
+	
+	List<VisaoEstoqueDetalheJuramentadoDTO> obterVisaoEstoqueDetalheJuramentado(FiltroConsultaVisaoEstoque filtro);
 }

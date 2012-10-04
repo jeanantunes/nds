@@ -269,6 +269,14 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 */
 	public Boolean existeMatrizBalanceamentoConfirmado(Date data);
 	
+	/**
+	 * Retorna um lançamento logo após o que foi especificado por parâmetro.
+	 * 
+	 * @param lancamentoAtual - Lançamento atual.
+	 * 
+	 * @return {@link br.com.abril.nds.model.planejamento.Lancamento}
+	 */
+	Lancamento obterProximoLancamento(Lancamento lancamentoAtual);
 }
 	
 	

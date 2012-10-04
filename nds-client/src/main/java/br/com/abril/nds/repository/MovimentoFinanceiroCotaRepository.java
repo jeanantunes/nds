@@ -108,6 +108,6 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @param tiposMovimentoFinanceiroIgnorados
 	 * @return
 	 */
-	public BigDecimal obterDebitoCreditoSumarizadosPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+	List<DebitoCreditoCotaDTO> obterDebitoCreditoPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
 	
 }

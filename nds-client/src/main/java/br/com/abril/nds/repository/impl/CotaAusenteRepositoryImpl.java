@@ -50,6 +50,9 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 
 		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
 		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
+		queryNative.append("LEFT JOIN ROTEIRIZACAO roteirizacao ON (box.ID = roteirizacao.BOX_ID)               ");
+		queryNative.append("LEFT JOIN ROTEIRO roteiro ON (roteirizacao.ID = roteiro.ROTEIRIZACAO_ID)            ");
+		queryNative.append("LEFT JOIN ROTA rota ON (roteiro.ID = rota.ROTEIRO_ID)					            ");
 		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
 		
 		queryNative.append("WHERE ca.ativo =:ativo 											 					");
@@ -66,6 +69,14 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		if(filtro.getBox() != null){
 			
 			queryNative.append("and box.NOME = :box 															");
+		}
+		
+		if(filtro.getIdRoteiro() != null) {
+			queryNative.append(" and roteiro.ID = :idRoteiro ");
+		}
+	
+		if(filtro.getIdRota() != null) {
+			queryNative.append(" and rota.ID = :idRota ");
 		}
 		
 		queryNative.append("group by 		");
@@ -124,6 +135,14 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 			query.setParameter("box", filtro.getBox());
 		}
 		
+		if(filtro.getIdRoteiro() != null) {
+			query.setParameter("idRoteiro", filtro.getIdRoteiro());
+		}
+	
+		if(filtro.getIdRota() != null) {
+			query.setParameter("idRota", filtro.getIdRota());
+		}
+		
 		if(filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 			query.setParameter("inicio", filtro.getPaginacao().getPosicaoInicial());
 			query.setParameter("qtdeResult", filtro.getPaginacao().getQtdResultadosPorPagina());
@@ -161,6 +180,9 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append("FROM COTA cota																		");
 		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
 		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
+		queryNative.append("LEFT JOIN ROTEIRIZACAO roteirizacao ON (box.ID = roteirizacao.BOX_ID)               ");
+		queryNative.append("LEFT JOIN ROTEIRO roteiro ON (roteirizacao.ID = roteiro.ROTEIRIZACAO_ID)            ");
+		queryNative.append("LEFT JOIN ROTA rota ON (roteiro.ID = rota.ROTEIRO_ID)					            ");
 		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
 		queryNative.append("WHERE ca.ativo =:ativo "																	 );
 		
@@ -175,7 +197,15 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		if(filtro.getBox() != null){			
 			queryNative.append("and box.NOME = :box 															");
 		}
-				
+		
+		if(filtro.getIdRoteiro() != null) {
+			queryNative.append(" and roteiro.ID = :idRoteiro ");
+		}
+	
+		if(filtro.getIdRota() != null) {
+			queryNative.append(" and rota.ID = :idRota ");
+		}
+		
 		Query query  = getSession().createSQLQuery(queryNative.toString());
 		
 		
@@ -191,6 +221,14 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		
 		if(filtro.getBox() != null){
 			query.setParameter("box", filtro.getBox());
+		}
+		
+		if(filtro.getIdRoteiro() != null) {
+			query.setParameter("idRoteiro", filtro.getIdRoteiro());
+		}
+	
+		if(filtro.getIdRota() != null) {
+			query.setParameter("idRota", filtro.getIdRota());
 		}
 		
 		return ( (BigInteger) query.uniqueResult() ).longValue();

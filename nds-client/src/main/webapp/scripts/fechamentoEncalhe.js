@@ -622,8 +622,13 @@ var fechamentoEncalheController = $.extend(true, {
 				var listaMensagens = result.listaMensagens;
 				
 				if (tipoMensagem && listaMensagens) {
-					$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0])
-					fechamentoEncalheController.popup_mensagem_consistencia_dados();
+					if (tipoMensagem == "ERROR"  ){
+						exibirMensagem(tipoMensagem, listaMensagens);
+					//	fechamentoEncalheController.pesquisar(false);
+					} else {
+						$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0])
+						fechamentoEncalheController.popup_mensagem_consistencia_dados();
+					}
 				} else {
 					fechamentoEncalheController.pesquisar(false);
 				}

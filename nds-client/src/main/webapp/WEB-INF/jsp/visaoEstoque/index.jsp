@@ -67,8 +67,8 @@
 		<fieldset>
 	        <legend>Vis&atilde;o de Estoque / Juramentado</legend>
 	        <table class="visaoEstoqueDetalheJuramentadoGrid"></table>
-	        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalheJuramentado?fileType=XLS">Arquivo</a></span>
-			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalheJuramentado?fileType=PDF">Imprimir</a></span>
+	        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=XLS">Arquivo</a></span>
+			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=PDF">Imprimir</a></span>
 		</fieldset>
 	</div>
 
