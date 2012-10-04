@@ -215,5 +215,68 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		Assert.assertNotNull(boleto);	
 	}
+	
+	@Test
+	public void obterQuantidadePrevisaoBoletos() {
+		
+		Long quantidadeBoletosPrevistos =
+			this.boletoRepository.obterQuantidadeBoletosPrevistos(new Date());
+		
+		Assert.assertNotNull(quantidadeBoletosPrevistos);
+	}
+	
+	@Test
+	public void obterQuantidadeBoletosLidos() {
+		
+		Long quantidadeBoletosLidos =
+			this.boletoRepository.obterQuantidadeBoletosLidos(new Date());
+		
+		Assert.assertNotNull(quantidadeBoletosLidos);
+	}
+	
+	@Test
+	public void obterQuantidadeBoletosBaixados() {
+		
+		Long quantidadeBoletosBaixados =
+			this.boletoRepository.obterQuantidadeBoletosBaixados(new Date());
+		
+		Assert.assertNotNull(quantidadeBoletosBaixados);
+	}
+	
+	@Test
+	public void obterQuantidadeBoletosRejeitados() {
+		
+		Long quantidadeBoletosBaixados =
+			this.boletoRepository.obterQuantidadeBoletosRejeitados(new Date());
+		
+		Assert.assertNotNull(quantidadeBoletosBaixados);
+	}
+	
+	@Test
+	public void obterQuantidadeBoletosBaixadosComDivergencia() {
+		
+		Long quantidadeBoletosBaixados =
+			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(new Date());
+		
+		Assert.assertNotNull(quantidadeBoletosBaixados);
+	}
+	
+	@Test
+	public void obterQuantidadeBoletosInadimplentes() {
+		
+		Long quantidadeBoletosInadimplentes =
+			this.boletoRepository.obterQuantidadeBoletosInadimplentes(new Date());
+		
+		Assert.assertNotNull(quantidadeBoletosInadimplentes);
+	}
+	
+	@Test
+	public void obterValorTotalBancario() {
+		
+		BigDecimal valorTotalBancario =
+			this.boletoRepository.obterValorTotalBancario(new Date());
+		
+		Assert.assertNotNull(valorTotalBancario);
+	}
 
 }

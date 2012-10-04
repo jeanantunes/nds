@@ -156,7 +156,30 @@ public class BoletoServiceImpl implements BoletoService {
 	@Transactional(readOnly = true)
 	public ResumoBaixaBoletosDTO obterResumoBaixaFinanceiraBoletos(Date data) {
 		
-		return this.boletoRepository.obterResumoBaixaFinanceiraBoletos(data);
+		ResumoBaixaBoletosDTO resumoBaixaBoletos = new ResumoBaixaBoletosDTO();
+		
+		resumoBaixaBoletos.setQuantidadePrevisao(
+			this.boletoRepository.obterQuantidadeBoletosPrevistos(data).intValue());
+		
+		resumoBaixaBoletos.setQuantidadeLidos(
+			this.boletoRepository.obterQuantidadeBoletosLidos(data).intValue());
+		
+		resumoBaixaBoletos.setQuantidadeBaixados(
+			this.boletoRepository.obterQuantidadeBoletosBaixados(data).intValue());
+		
+		resumoBaixaBoletos.setQuantidadeRejeitados(
+			this.boletoRepository.obterQuantidadeBoletosRejeitados(data).intValue());
+		
+		resumoBaixaBoletos.setQuantidadeBaixadosComDivergencia(
+			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(data).intValue());
+		
+		resumoBaixaBoletos.setQuantidadeInadimplentes(
+			this.boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
+		
+		resumoBaixaBoletos.setValorTotalBancario(
+			this.boletoRepository.obterValorTotalBancario(data));
+		
+		return resumoBaixaBoletos;
 	}
 	
 	@Override
