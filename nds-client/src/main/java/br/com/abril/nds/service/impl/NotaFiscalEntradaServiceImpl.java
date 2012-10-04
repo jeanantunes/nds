@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -59,11 +60,8 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		this.notaFiscalRepository.inserirNotaFiscal(notaFiscal); 
 	}
 
-	@Override
-	@Transactional
-	public List<NotaFiscalEntradaFornecedor> obterNotasFiscaisCadastradas(
-			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
-
+	private void validarPeriodo(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
+	
 		PeriodoVO periodo = filtroConsultaNotaFiscal.getPeriodo(); 
 
 		if (periodo == null) {
@@ -107,6 +105,24 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 			periodo.setDataFinal(DateUtil.removerTimestamp(data.getTime()));
 		}
+
+		
+	}
+
+	@Override
+	@Transactional
+	public List<ItemDTO<Long, String>> obterFornecedorNotaFiscal(List<Long> listaIdNotaFiscal) {
+
+		return notaFiscalDAO.obterListaFornecedorNotaFiscal(listaIdNotaFiscal);
+
+	}
+	
+	
+	@Override
+	@Transactional
+	public List<NotaFiscalEntradaFornecedor> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
+		
+		validarPeriodo(filtroConsultaNotaFiscal);
 
 		return notaFiscalDAO.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
 	}
