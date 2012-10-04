@@ -34,8 +34,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			if (digitacaoContagemDevolucaoController.isRoleOperador(userProfileOperador)){
 				
 				//Oculta os campos que não serão visíveis pelo perfil de usuário Operador
-				$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
-				$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
+				//$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
+				//$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
 			}
 			
 			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
@@ -458,3 +458,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		}
 		
 }, BaseController);
+
+
+
+//@ sourceURL=digitacaoContagemDevolucao.js
+
