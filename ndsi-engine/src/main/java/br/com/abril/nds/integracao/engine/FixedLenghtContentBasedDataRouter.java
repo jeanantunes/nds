@@ -108,6 +108,8 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			if (!file.renameTo(processingFile)) {
 				throw new RuntimeException("Não Conseguiu renomear o Arquivo");
 			}
+			throw new RuntimeException("Não Conseguiu renomear o Arquivo");
+			/*
 			FileReader in = new FileReader(processingFile);
 			
 			int lineNumber = 0;
@@ -195,6 +197,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			
 			// Processamento a ser executado APÓS o processamento principal:
 			messageProcessor.posProcess(tempVar);
+			*/
 		}
 		catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
