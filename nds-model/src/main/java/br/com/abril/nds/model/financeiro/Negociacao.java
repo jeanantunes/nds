@@ -25,6 +25,27 @@ public class Negociacao {
 	@Column(name = "ID")
 	private Long id;
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@OneToOne
+	@JoinColumn(name = "COBRANCA_ORIGINARIA_ID")
+	private Cobranca cobrancaOriginaria;
+	
 	@OneToMany
 	private List<Cobranca> parcelas;
 	
@@ -50,6 +71,14 @@ public class Negociacao {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Cobranca getCobrancaOriginaria() {
+		return cobrancaOriginaria;
+	}
+
+	public void setCobrancaOriginaria(Cobranca cobrancaOriginaria) {
+		this.cobrancaOriginaria = cobrancaOriginaria;
 	}
 
 	public List<Cobranca> getParcelas() {
