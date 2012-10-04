@@ -35,7 +35,7 @@ public class EMS0197Route extends FileOutputRoute{
 	}
 	
 	public void execute(String userName, Date dataLctoPrevisto ) {
-		getParameters().put("dataLctoDistrib", dataLctoPrevisto);
+		messageProcessor.setDataLctoDistrib(dataLctoPrevisto);
 		execute(userName);
 	}
 	

@@ -110,8 +110,9 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
 		
 		if(numeroCota != null) {
 			criteria.createAlias("roteiro.rotas", "rotas");
-			criteria.createAlias("rotas.pdvs", "pdvs");
-			criteria.createAlias("pdvs.cota", "cota");
+			criteria.createAlias("rotas.rotaPDVs", "rotaPDV");
+			criteria.createAlias("rotaPDV.pdv", "pdv");
+			criteria.createAlias("pdv.cota", "cota");
 			criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
 		}
 		

@@ -136,9 +136,9 @@ public class RomaneioController {
 		return tableModel;
 	}
 	
+
 	@Post
 	public void pesquisarQuantidadeCotasEntrega(){
-		
 		FiltroRomaneioDTO filtro = (FiltroRomaneioDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS);
 		
 		this.result.use(Results.json()).from(this.romaneioService.buscarTotalDeCotas(filtro)).serialize();

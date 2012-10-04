@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
@@ -38,7 +37,7 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	private String nomeFornecedor;
 	
 	@Export(label = "Valor R$")
-	private BigDecimal valor;
+	private String valor;
 	
 	@Export(label = "Nota Recebida")
 	private String notaRecebida;
@@ -137,14 +136,14 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	/**
 	 * @return the valor
 	 */
-	public BigDecimal getValor() {
+	public String getValor() {
 		return valor;
 	}
 
 	/**
 	 * @param valor the valor to set
 	 */
-	public void setValor(BigDecimal valor) {
+	public void setValor(String valor) {
 		this.valor = valor;
 	}
 	

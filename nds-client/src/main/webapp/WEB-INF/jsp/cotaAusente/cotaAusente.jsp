@@ -47,30 +47,10 @@ $(function(){
 <div id="dialog-novo" title="Incluir Cota Ausente"> 
 
 	<jsp:include page="../messagesDialog.jsp" />
-
-    <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
-		<tr>
-        	<td>Cota:</td>
-             
-            <td width="446" colspan="3">
- 					
- 				<!-- NOVA COTA - NUM -->     
-				<input id="idNovaCota" 
-					   name="idNovaCota" type="text" style="width:80px; float:left; margin-right:5px;" 
-					   onchange="pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNovaCota', '#idNomeNovaCota',true);" />
-	
-					
-				<!-- PESQUISAR NOVA COTA -->           
-				<label style="margin-left:10px;">Nome:</label>
-           		
- 					
- 				<!-- NOVA COTA - NOME -->
-				<input id="idNomeNovaCota" name="idNomeNovaCota" type="text" class="nome_jornaleiro" style="width:280px;" 
-					   onkeyup="pesquisaCotaCotaAusente.autoCompletarPorNome('#idNomeNovaCota');" 
-		 	    	   onblur="pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idNovaCota', '#idNomeNovaCota',true);" />
-		 	   
-       		</td>
-		</tr>
+  
+ 
+    <table id="idCotas" width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
+		
 	</table>
 </div>
 </form>

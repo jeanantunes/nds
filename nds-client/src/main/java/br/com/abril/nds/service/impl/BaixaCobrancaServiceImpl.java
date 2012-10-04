@@ -1,11 +1,13 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.BaixaCobrancaService;
 
@@ -36,6 +38,12 @@ public class BaixaCobrancaServiceImpl implements BaixaCobrancaService {
 	@Transactional(readOnly=true)
 	public Date buscarDiaUltimaBaixaAutomatica() {
 		return baixaCobrancaRepository.buscarDiaUltimaBaixaAutomatica();
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota,String nossoNumero) {
+		return baixaCobrancaRepository.buscarCobrancasBaixadas(numCota, nossoNumero);
 	}
 
 }

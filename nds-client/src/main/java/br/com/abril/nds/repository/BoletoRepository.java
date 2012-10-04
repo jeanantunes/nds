@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
@@ -51,5 +53,68 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return {@link Boleto}
 	 */
 	public Boleto obterPorNossoNumeroCompleto(String nossoNumeroCompleto, Boolean dividaAcumulada);
+
+	/**
+	 * Obtém a quantidade de boletos previstos.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return quantidade de boletos previstos
+	 */
+	Long obterQuantidadeBoletosPrevistos(Date data);
+	
+	/**
+	 * Obtém a quantidade de boletos lidos.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return quantidade de boletos lidos
+	 */
+	Long obterQuantidadeBoletosLidos(Date data);
+	
+	/**
+	 * Obtém a quantidade de boletos baixados.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return quantidade de boletos baixados
+	 */
+	Long obterQuantidadeBoletosBaixados(Date data);
+	
+	/**
+	 * Obtém a quantidade de boletos rejeitados.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return quantidade de boletos rejeitados
+	 */
+	Long obterQuantidadeBoletosRejeitados(Date data);
+	
+	/**
+	 * Obtém a quantidade de boletos baixados com divergência.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return quantidade de boletos baixados com divergência
+	 */
+	Long obterQuantidadeBoletosBaixadosComDivergencia(Date data);
+	
+	/**
+	 * Obtém a quantidade de boletos inadimplentes.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return quantidade de boletos inadimplentes
+	 */
+	Long obterQuantidadeBoletosInadimplentes(Date data);
+	
+	/**
+	 * Obtém o valor total bancário.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return valor total bancário
+	 */
+	BigDecimal obterValorTotalBancario(Date data);
 	
 }

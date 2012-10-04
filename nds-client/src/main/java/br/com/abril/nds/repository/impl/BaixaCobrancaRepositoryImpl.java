@@ -1,13 +1,20 @@
 package br.com.abril.nds.repository.impl;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 
 
@@ -52,6 +59,44 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		criteria.setProjection(Projections.max("dataBaixa"));
 		criteria.add(Restrictions.isNotNull("nomeArquivo"));
 		return (Date) criteria.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota, String nossoNumero) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT cast(cobranca.id as string) as codigo, ");
+		hql.append(" pessoa.nome as nome, ");
+		hql.append(" cast(cobranca.dataEmissao as string) as dataEmissao, ");
+		hql.append(" cast(cobranca.dataVencimento as string) as dataVencimento, ");
+		hql.append(" cast(cobranca.valor as string) as valor ");
+		hql.append(" FROM BaixaManual baixaManual ");
+		hql.append(" JOIN baixaManual.cobranca cobranca ");
+		hql.append(" JOIN cobranca.divida divida ");
+		hql.append(" JOIN divida.cota cota ");
+		hql.append(" JOIN cota.pessoa pessoa ");
+		hql.append(" WHERE baixaManual.statusAprovacao = :statusAprovacao ");
+		hql.append(" AND cobranca.statusCobranca = :statusCobranca ");
+		hql.append(" AND divida.status = :statusDivida ");
+		hql.append(" AND cota.numeroCota = :numCota ");
+		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
+			hql.append(" AND cobranca.nossoNumero = :nossoNumero ");
+		}
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numCota", numCota);
+		query.setParameter("statusCobranca", StatusCobranca.PAGO);
+		query.setParameter("statusDivida", StatusDivida.QUITADA);
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+		
+		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
+			query.setParameter("nossoNumero", nossoNumero);
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(CobrancaVO.class));
+		
+		return query.list();
 	}
 
 }
