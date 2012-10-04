@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
@@ -98,16 +101,13 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			AtomicReference<Object> tempVar = null;
 			// Processamento a ser executado ANTES do processamento principal:
 			messageProcessor.preProcess(tempVar);
-			
-			
+					
 			File processingFile = new File(normalizeFileName(file.getParent()), file.getName() + ".processing");
 
 			// RENOMEIA O ARQUIVO PARA PROCESSANDO
-
-			//System.getSecurityManager().checkWrite(processingFile.getName());
+			Files.copy(file.toPath(), processingFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
+			Files.delete(file.toPath());
 			
-			renameFile(file, processingFile);			
-
 			FileReader in = new FileReader(processingFile);
 			
 			int lineNumber = 0;
@@ -207,7 +207,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	}
 
 
-	private void renameFile(File file, File processingFile) {
+	private synchronized void renameFile(File file, File processingFile) {
 		if (!file.renameTo(processingFile)) {
 			throw new RuntimeException("Não Conseguiu renomear o Arquivo");
 		}
