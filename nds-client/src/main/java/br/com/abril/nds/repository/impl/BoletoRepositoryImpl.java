@@ -1,13 +1,15 @@
 package br.com.abril.nds.repository.impl;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.repository.BoletoRepository;
@@ -197,115 +199,31 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	}
 	
 	@Override
-	public Long obterQuantidadeBoletosPrevistos(Date data) {
+	public ResumoBaixaBoletosDTO obterResumoBaixaFinanceiraBoletos(Date data) {
 		
-		StringBuilder hql = new StringBuilder();
+		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
+				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
+				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao, "
+				   + " produtoEdicao.pacotePadrao as pacotePadrao "
+				   + " from ItemNotaEnvio itemNotaEnvio "
+				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
+				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
+				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
+				   + " join produtoEdicao.produto produto "
+				   + " where notaEnvio.dataEmissao = :dataEmissao "
+				   + " and movimentoEstoqueCota.cota.numeroCota = :numeroCota "
+				   + " group by produtoEdicao.id ";
 		
-		hql.append(" select ");
-		hql.append(" count(cobranca) as quantidadePrevisao from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
+		Query query = super.getSession().createQuery(hql);
 		
-		Query query = super.getSession().createQuery(hql.toString());
-		
+		ResultTransformer resultTransformer =
+			new AliasToBeanResultTransformer(ResumoBaixaBoletosDTO.class); 
+
 		query.setParameter("data", data);
 		
-		return (Long) query.uniqueResult();
-	}
-	
-	@Override
-	public Long obterQuantidadeBoletosLidos(Date data) {
+		query.setResultTransformer(resultTransformer);
 		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		hql.append(" count(cobranca) as quantidadeLidos from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("data", data);
-		
-		return (Long) query.uniqueResult();
-	}
-	
-	@Override
-	public Long obterQuantidadeBoletosBaixados(Date data) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		hql.append(" count(cobranca) as quantidadeBaixados from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("data", data);
-		
-		return (Long) query.uniqueResult();
-	}
-	
-	@Override
-	public Long obterQuantidadeBoletosRejeitados(Date data) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		hql.append(" count(cobranca) as quantidadeRejeitados from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("data", data);
-		
-		return (Long) query.uniqueResult();
-	}
-	
-	@Override
-	public Long obterQuantidadeBoletosBaixadosComDivergencia(Date data) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		hql.append(" count(cobranca) as quantidadeBaixadosComDivergencia from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("data", data);
-		
-		return (Long) query.uniqueResult();
-	}
-	
-	@Override
-	public Long obterQuantidadeBoletosInadimplentes(Date data) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		hql.append(" count(cobranca) as quantidadeInadimplentes from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("data", data);
-		
-		return (Long) query.uniqueResult();
-	}
-	
-	@Override
-	public BigDecimal obterValorTotalBancario(Date data) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		hql.append(" sum(cobranca.valor) as valorTotalBancario from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("data", data);
-		
-		return (BigDecimal) query.uniqueResult();
+		return (ResumoBaixaBoletosDTO) query.uniqueResult();
 	}
 	
 }
