@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.AnaliticoEncalheVO;
+import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
@@ -419,4 +422,28 @@ public class FechamentoEncalheController {
 		}
 	}
 	
+	
+	//------------------
+	// Analítico Encalhe
+	//------------------
+	
+	@Path("/analitico")
+	public void analiticoEncalhe() {
+		this.index();
+	}
+	
+	
+	@Path("/pesquisarAnalitico.json")
+	public void pesquisarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+	
+		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro);
+		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
+		
+		for (AnaliticoEncalheDTO dto : listDTO) {
+			listVO.add(new AnaliticoEncalheVO(dto));
+		}
+		
+		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
+	}
+		
 }
