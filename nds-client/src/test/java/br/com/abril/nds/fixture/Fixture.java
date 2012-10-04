@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
 
@@ -229,6 +230,10 @@ import br.com.abril.nds.util.DateUtil;
 
 
 public class Fixture {
+    
+    private static final AtomicInteger ORDEM_ROTA = new AtomicInteger(1);
+    
+    private static final AtomicInteger ORDEM_ROTEIRO = new AtomicInteger(1);
 	
 	public static PessoaJuridica juridicaAbril() {
 		return pessoaJuridica("Editora Abril", "00000000000200", "010000000000",
@@ -2447,7 +2452,7 @@ public class Fixture {
 		Rota rota = new Rota();
 		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
-		rota.setOrdem(0);
+		rota.setOrdem(ORDEM_ROTA.getAndIncrement());
 		rota.setRoteiro(roteiro);
 		roteiro.addRota(rota);
 		return rota;
@@ -3008,7 +3013,7 @@ public class Fixture {
 		
 		Roteiro roteiro = new Roteiro();
 		roteiro.setDescricaoRoteiro(descricaoRoteiro);
-		roteiro.setOrdem(0);
+		roteiro.setOrdem(ORDEM_ROTEIRO.getAndIncrement());
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		roteiro.setRoteirizacao(roteirizacao);
 		roteirizacao.addRoteiro(roteiro);
