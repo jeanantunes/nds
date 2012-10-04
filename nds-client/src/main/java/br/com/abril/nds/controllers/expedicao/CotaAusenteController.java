@@ -359,7 +359,7 @@ public class CotaAusenteController {
 	 * @param numCota - Número da Cota
 	 */
 	@Post
-	public void enviarParaSuplementar(Integer numCota) {
+	public void enviarParaSuplementar(List<Integer> numCotas) {
 	
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -367,10 +367,10 @@ public class CotaAusenteController {
 		
 		try {
 			
-			if(numCota == null) 
+			if(numCotas == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 						
-			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCota, new Date(), this.getUsuario().getId());
+			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCotas, new Date(), this.getUsuario().getId());
 			
 			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
 			
@@ -407,10 +407,10 @@ public class CotaAusenteController {
 	 * @param numCota
 	 */
 	@Post
-	public void carregarDadosRateio(Integer numCota) {
+	public void carregarDadosRateio(List<Integer> numCotas) {
 		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
-				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(new Date(), numCota, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(new Date(), numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
