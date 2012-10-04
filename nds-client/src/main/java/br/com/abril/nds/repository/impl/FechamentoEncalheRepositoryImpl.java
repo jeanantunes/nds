@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
@@ -346,5 +349,36 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.setProjection(Projections.max("dataEncalhe"));
 		return (Date) criteria.uniqueResult();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+
+		StringBuffer hql = new StringBuffer();
+		hql.append("   SELECT cota.numeroCota as numeroCota,");
+		hql.append("          pess.nome as nomeCota,");
+		hql.append("          box.nome as boxEncalhe,");
+		hql.append("          ce.qtdeInformada * pe.precoVenda as total");
+		//hql.append("           as statusCobranca");
+		hql.append("     FROM ConferenciaEncalhe ce");
+		hql.append("     JOIN ce.controleConferenciaEncalheCota as ccec");
+		hql.append("     JOIN ccec.cota as cota");
+		hql.append("     JOIN cota.pessoa as pess");
+		hql.append("     JOIN ccec.box as box");
+		hql.append("     JOIN ce.produtoEdicao as pe");
+		hql.append("    WHERE ce.data = :data");
+		
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliticoEncalheDTO.class));
+		
+		query.setDate("data", filtro.getDataEncalhe());
+		
+		
+		
+
+		return query.list();
+	}
+	
 	
 }

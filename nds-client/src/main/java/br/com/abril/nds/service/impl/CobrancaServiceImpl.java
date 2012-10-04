@@ -42,6 +42,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -66,6 +67,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Autowired
 	protected DistribuidorService distribuidorService;
+	
+	@Autowired
+	private BancoService bancoService;
 	
 	@Autowired
 	protected CalendarioService calendarioService;
@@ -489,9 +493,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 		BigDecimal valorDesconto = pagamento.getValorDesconto();
 		
 		BigDecimal valorPagamentoCobranca = pagamento.getValorPagamento().subtract(valorJuros).subtract(valorMulta).add(valorDesconto);
-
+		
 		BigDecimal saldoDivida = BigDecimal.ZERO;
 		BigDecimal valorPagar = BigDecimal.ZERO;
+		
 		
 		List<Cobranca> cobrancasOrdenadas = this.cobrancaRepository.obterCobrancasOrdenadasPorVencimento(idCobrancas);
 		
@@ -507,6 +512,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	itemCobranca.setDataPagamento(pagamento.getDataPagamento());
 		    	itemCobranca.setStatusCobranca(StatusCobranca.PAGO);
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
+		    	itemCobranca.setBanco(pagamento.getBanco());
 		    	this.cobrancaRepository.merge(itemCobranca);
 		    	this.lancamentoBaixaParcial(itemCobranca,pagamento,valorPagar,StatusBaixa.PAGO,  statusAprovacao);
 		    }
@@ -542,6 +548,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		baixaManual.setStatus(status);
 		baixaManual.setStatusAprovacao(statusAprovacao);
 		baixaManual.setObservacao(pagamento.getObservacoes());
+		baixaManual.setBanco(pagamento.getBanco());
 		
 		baixaCobrancaRepository.adicionar(baixaManual);
 

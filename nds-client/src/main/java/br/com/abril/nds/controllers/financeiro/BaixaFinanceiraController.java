@@ -46,6 +46,7 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.BaixaCobrancaService;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
@@ -115,6 +116,9 @@ public class BaixaFinanceiraController {
 	private CotaService cotaService;
 	
 	@Autowired
+	private BaixaCobrancaService baixaCobrancaService;
+	
+	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
 	
 	@Autowired
@@ -153,7 +157,7 @@ public class BaixaFinanceiraController {
 
 		result.include("bancos", bancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
-		result.include("dataOperacao", getDataOperacaoDistribuidor());
+		result.include("dataOperacao", DateUtil.parseDataPTBR(getDataOperacaoDistribuidor()));
 	}
 	
 	private String getDataOperacaoDistribuidor() {
@@ -213,29 +217,15 @@ public class BaixaFinanceiraController {
 	
 	private ResumoBaixaBoletosDTO obterResumoBaixaFinanceira(Date data, ArquivoPagamentoBancoDTO arquivoPagamento) {
 		
-		// TODO: obter resumo baixa financeira
+		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = 
+			this.boletoService.obterResumoBaixaFinanceiraBoletos(data);
 		
-//		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = 
-//			this.boletoService.obterResumoBaixaFinanceira(data);
+		if (arquivoPagamento != null) {
 		
-		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = new ResumoBaixaBoletosDTO();
-		
-		resumoBaixaBoletosDTO.setQuantidadeBaixados(10);
-		resumoBaixaBoletosDTO.setQuantidadeBaixadosComDivergencia(10);
-		resumoBaixaBoletosDTO.setQuantidadeLidos(10);
-		resumoBaixaBoletosDTO.setQuantidadeRejeitados(10);
-		resumoBaixaBoletosDTO.setQuantidadeInadimplentes(10);
-		resumoBaixaBoletosDTO.setQuantidadePrevisao(10);
-		resumoBaixaBoletosDTO.setValorTotalBancario(new BigDecimal(10));
-		
-		//Fim todo
-		
-//		if (arquivoPagamento != null) {
-		
-			resumoBaixaBoletosDTO.setNomeArquivo("Nome do Arquivo.");//arquivoPagamento.getNomeArquivo());
+			resumoBaixaBoletosDTO.setNomeArquivo(arquivoPagamento.getNomeArquivo());
 			resumoBaixaBoletosDTO.setDataCompetencia(DateUtil.formatarDataPTBR(data));
-			resumoBaixaBoletosDTO.setSomaPagamentos(new BigDecimal(1000));//arquivoPagamento.getSomaPagamentos());
-//		}
+			resumoBaixaBoletosDTO.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
+		}
 		
 		return resumoBaixaBoletosDTO;
 	}
@@ -625,7 +615,7 @@ public class BaixaFinanceiraController {
 		
 		//BUSCA COBRANCAS
 		List<CobrancaVO> cobrancasVO = this.cobrancaService.obterDadosCobrancasPorCota(filtroAtual);
-		
+
 		if ((cobrancasVO==null)||(cobrancasVO.size()<=0)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dividas em aberto nesta data para esta Cota.");
 		} 
@@ -654,7 +644,66 @@ public class BaixaFinanceiraController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 
 	}
-	
+	@Post
+	@Path("/buscaDividasBaixadas")
+	public void buscaDividasBaixadas(Integer numCota,
+							String nossoNumero,
+			                 String sortorder, 
+			                 String sortname,
+			                 int page, 
+			                 int rp){
+		if (numCota==null){
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
+		}
+
+		//OBTER DISTRIBUIDOR PARA BUSCAR DATA DE OPERAÇÃO
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+        //CONFIGURAR PAGINA DE PESQUISA
+		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.PAGO);
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		filtroAtual.setPaginacao(paginacao);
+		filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaDividas.values(), sortname));
+	    
+		FiltroConsultaDividasCotaDTO filtroSessao = (FiltroConsultaDividasCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		
+		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
+		
+		
+		//BUSCA COBRANCAS
+		List<CobrancaVO> cobrancasVO = this.baixaCobrancaService.buscarCobrancasBaixadas(numCota, nossoNumero); 
+
+		if ((cobrancasVO==null)||(cobrancasVO.size()<=0)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças baixadas nesta data para esta Cota.");
+		} 
+		
+
+    	//TRATAMENTO DE DIVIDAS SELECIONADAS
+		DataHolder dataHolder = (DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		if (dataHolder != null) {
+		    for (CobrancaVO itemCobrancaVO:cobrancasVO){
+		    	String dividaMarcada = dataHolder.getData("baixaManual", itemCobrancaVO.getCodigo(), "checado");
+		    	if (dividaMarcada!=null){
+		    	    itemCobrancaVO.setCheck(dividaMarcada.equals("true")?true:false); 
+		    	}
+		    }
+		}
+		
+
+		int qtdRegistros = this.cobrancaService.obterQuantidadeCobrancasPorCota(filtroAtual);
+			
+		TableModel<CellModelKeyValue<CobrancaVO>> tableModel = new TableModel<CellModelKeyValue<CobrancaVO>>();
+			
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(cobrancasVO));
+		tableModel.setPage(page);
+		tableModel.setTotal(qtdRegistros);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
 	
 	/**
 	 * Método responsável por obter detalhes da Dívida(Cobrança)
@@ -738,6 +787,9 @@ public class BaixaFinanceiraController {
 		if (tipoPagamento==null){
 			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Forma de Recebimento].");
 		}
+		if(idBanco == null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Banco].");
+		}
 		
 		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
 		pagamento.setValorDividas(valorDividasConvertido);
@@ -750,6 +802,7 @@ public class BaixaFinanceiraController {
 		pagamento.setObservacoes(observacoes);
 		pagamento.setDataPagamento(this.distribuidorService.obter().getDataOperacao());
 		pagamento.setUsuario(this.obterUsuario());
+		pagamento.setBanco(bancoService.obterBancoPorId(idBanco));
 		
 		try{
 		    this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);

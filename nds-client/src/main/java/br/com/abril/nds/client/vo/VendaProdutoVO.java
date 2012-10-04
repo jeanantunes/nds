@@ -35,7 +35,7 @@ public class VendaProdutoVO implements Serializable{
 	
 	private String formaVenda;
 	
-	private Integer codBox;
+	private String codBox;
 	
 	private String dataVencimentoDebito;
 	
@@ -48,6 +48,23 @@ public class VendaProdutoVO implements Serializable{
 	private TipoVendaEncalhe tipoVenda;
 	
 	private BigDecimal valorTotal;
+	
+	private String descTipoVenda;
+	
+
+	/**
+	 * @return the descTipoVenda
+	 */
+	public String getDescTipoVenda() {
+		return descTipoVenda;
+	}
+
+	/**
+	 * @param descTipoVenda the descTipoVenda to set
+	 */
+	public void setDescTipoVenda(String descTipoVenda) {
+		this.descTipoVenda = descTipoVenda;
+	}
 
 	/**
 	 * @return the valorTotal
@@ -94,14 +111,14 @@ public class VendaProdutoVO implements Serializable{
 	/**
 	 * @return the codBox
 	 */
-	public Integer getCodBox() {
+	public String getCodBox() {
 		return codBox;
 	}
 
 	/**
 	 * @param codBox the codBox to set
 	 */
-	public void setCodBox(Integer codBox) {
+	public void setCodBox(String codBox) {
 		this.codBox = codBox;
 	}
 

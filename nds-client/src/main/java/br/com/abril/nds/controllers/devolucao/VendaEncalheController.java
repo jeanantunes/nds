@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoVendaEncalheVO;
 import br.com.abril.nds.client.vo.VendaEncalheVO;
 import br.com.abril.nds.client.vo.VendaProdutoVO;
+import br.com.abril.nds.controllers.cadastro.CotaController;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -31,11 +33,13 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -94,6 +98,10 @@ public class VendaEncalheController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private DescontoService descontoService;
+	
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE)
@@ -195,7 +203,12 @@ public class VendaEncalheController {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
 		
-		String codBox = (cota == null || cota.getBox() == null)?"":cota.getBox().getCodigo().toString();
+		String codBox ="";
+		
+		if(cota!= null && cota.getBox()!= null){
+			
+			codBox = cota.getBox().getCodigo() + " - " + cota.getBox().getNome(); 
+		}
 		
 		result.use(CustomMapJson.class).put("box", codBox).serialize();
 	}
@@ -235,9 +248,14 @@ public class VendaEncalheController {
 	}
 	
 	@Post
-	public void obterDadosDoProduto(String codigoProduto, Long numeroEdicao, TipoVendaEncalhe tipoVenda){
+	public void obterDadosDoProduto(String codigoProduto, Long numeroEdicao, Long numeroCota){
 		
-		VendaEncalheDTO encalheDTO = vendaEncalheService.buscarProdutoComEstoque(codigoProduto, numeroEdicao,tipoVenda);
+		if(numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Cota deve ser preenchido!");
+		}
+		
+		VendaEncalheDTO encalheDTO = vendaEncalheService.buscarProdutoComEstoque(codigoProduto, numeroEdicao, numeroCota);
 		
 		if(encalheDTO == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto não possui itens em estoque para venda!");
@@ -312,9 +330,11 @@ public class VendaEncalheController {
 		produtoVO.setIdVendaEncalhe(venda.getIdVenda());
 		produtoVO.setTipoVenda(venda.getTipoVendaEncalhe());
 		produtoVO.setValorTotal(venda.getValoTotalProduto());
+		produtoVO.setDescTipoVenda(venda.getTipoVendaEncalhe().getVenda());
 		
-		BigDecimal qntDisponivel = new BigDecimal((venda.getQntDisponivelProduto()==null)?0:venda.getQntDisponivelProduto());
-		qntDisponivel = qntDisponivel.add(new BigDecimal(venda.getQntProduto()));
+		BigInteger qntDisponivel = venda.getQntDisponivelProduto();
+		
+		qntDisponivel = qntDisponivel.add(venda.getQntProduto());
 		
 		produtoVO.setQntDisponivel(qntDisponivel.intValue());
 		
@@ -326,6 +346,53 @@ public class VendaEncalheController {
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPesquisaProduto));
 		
 		tableModel.setTotal(qtdeInicialPadrao);
+		
+		tableModel.setPage(1);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
+	public void recalcularValorDescontoItensVenda(List<VendaProdutoVO> listaVendas, Integer numeroCota){
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		if(cota != null){
+			
+			for(VendaProdutoVO venda : listaVendas){
+				
+				ProdutoEdicao produtoEdicao = 
+						produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(venda.getCodigoProduto(),venda.getNumeroEdicao().toString());
+				
+				BigDecimal descontoProduto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+				
+				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+	    
+				BigDecimal valorComDesconto = precoVenda.subtract(MathUtil.calculatePercentageValue(precoVenda, descontoProduto));
+				
+				BigDecimal valorTotal =  valorComDesconto.multiply(new BigDecimal(venda.getQntSolicitada()));
+				
+				venda.setPrecoDesconto(CurrencyUtil.formatarValor(valorComDesconto));
+				venda.setValorTotal(valorTotal);
+				venda.setTotal(CurrencyUtil.formatarValor(valorTotal));
+			}
+		
+		}
+			
+		for (int i = listaVendas.size(); i < 50; i++) {
+			
+			VendaProdutoVO produtoVO = new VendaProdutoVO();
+			produtoVO.setId(i);
+			
+			listaVendas.add(produtoVO);
+		}
+		
+		TableModel<CellModelKeyValue<VendaProdutoVO>> tableModel =
+						new TableModel<CellModelKeyValue<VendaProdutoVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaVendas));
+		
+		tableModel.setTotal(1);
 		
 		tableModel.setPage(1);
 		
@@ -417,7 +484,7 @@ public class VendaEncalheController {
 		vendaEncalheVO.setCodigoBarras(tratarValor(dto.getCodigoBarras()));
 		vendaEncalheVO.setQntDisponivelProduto(tratarValor(dto.getQntDisponivelProduto()));
 		vendaEncalheVO.setFormaVenda(tratarValor(dto.getFormaVenda()));		
-		vendaEncalheVO.setNomeUsuario(dto.getUsuario().getNome());
+		vendaEncalheVO.setNomeUsuario((dto.getUsuario()!= null)? dto.getUsuario().getNome():"");
 	
 		return vendaEncalheVO;
 	}

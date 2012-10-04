@@ -18,7 +18,7 @@
 
 		#resultadoIntegracao{display:none;}
         #tableBaixaManual, #tableBaixaAuto, #extratoBaixaManual, #porNossoNumero, #porCota, #dialog-divida{display:none;}
-        #dialog-baixa-dividas,#dialog-detalhes-divida{display:none;}
+        #dialog-baixa-dividas,#dialog-detalhes-divida, #bancoDividas, #labelBanco{display:none;}
         #dialog-confirma-baixa-numero,#dialog-confirma-baixa,#dialog-confirma-pendente,#dialog-postergar{display:none;}
         
 	</style>
@@ -137,7 +137,7 @@
 				
 				<td width="39">Nome:</td>
              	
-             	<td width="210">
+             	<td width="185">
 		        	<input name="descricaoCota" 
 		      		 	   id="descricaoCota" 
 		      		 	   type="text"
@@ -148,9 +148,11 @@
 		      		 	   onblur="pesquisaCotaBaixaFinanceira.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
 		        </td>
 			  
-				<td width="97">Nosso Número:</td>
-				<td width="333"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
-				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();">Pesquisar</a></span></td>
+				<td width="100">Nosso Número:</td>
+				<td width="240"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 200px;" /></td>
+				<td width="240">Exibir apenas Cobran&ccedil;as Baixadas:</td>
+				<td width="50"><input type="checkbox" id="checkCobrancasBaixadas"/></td>
+				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a></span></td>
 			</tr>
         </table>
         
@@ -296,9 +298,9 @@
 		                </td>
 
 		                <td width="30%">   
-		                    <span class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
-		                    <span class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
-		                    <span class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
+		                    <span id="bt_aVista" class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
+		                    <span id="bt_negociar" class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+		                    <span id="bt_postergar" class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
 		                </td>
 		                
 		                <td width="14%">
@@ -375,7 +377,7 @@
 					  <tr>
 					    <td><strong>Forma Recebimento:</strong></td>
 					    <td>
-					        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas" style="width:150px;">
+					        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas"  onchange="baixaFinanceiraController.mostrarBancos(this.value);" style="width:150px;">
 		                        <option value="">Selecione</option>
 		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
 				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
@@ -385,7 +387,7 @@
 					  </tr>
 					  
 					   <tr>
-					    <td><strong>Banco:</strong></td>
+					    <td><strong><span id="labelBanco">Banco:</span></strong></td>
 					    <td>
 					        <select name="idBanco" id="bancoDividas" style="width:150px;">
 		                        <option value="">Selecione</option>

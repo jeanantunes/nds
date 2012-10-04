@@ -17,7 +17,7 @@ public class PagamentoDTO {
 	
 	private BigDecimal valorDesconto;
 	
-	private Integer numeroRegistro;
+	private Long numeroRegistro;
 
 	/**
 	 * @return the nossoNumero
@@ -106,14 +106,14 @@ public class PagamentoDTO {
 	/**
 	 * @return the numeroRegistro
 	 */
-	public Integer getNumeroRegistro() {
+	public Long getNumeroRegistro() {
 		return numeroRegistro;
 	}
 
 	/**
 	 * @param numeroRegistro the numeroRegistro to set
 	 */
-	public void setNumeroRegistro(Integer numeroRegistro) {
+	public void setNumeroRegistro(Long numeroRegistro) {
 		this.numeroRegistro = numeroRegistro;
 	}
 	
