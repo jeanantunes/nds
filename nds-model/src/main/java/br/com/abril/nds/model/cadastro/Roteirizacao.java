@@ -114,4 +114,21 @@ public class Roteirizacao {
             }
         }
     }
+
+    /**
+     * Recupera o roteiro pelo identificador
+     * 
+     * @param id
+     *            identificador do roteiro
+     * @return Roteiro com o identificador recebido ou null caso não exista
+     *         roteiro com o identificador
+     */
+	public Roteiro getRoteiro(Long id) {
+        for (Roteiro roteiro : roteiros) {
+            if (roteiro.getId().equals(id)) {
+                return roteiro;
+            }
+        }
+        return null;
+    }
 }

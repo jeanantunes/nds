@@ -179,7 +179,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.createAlias("cota.box", "box");
 		criteria.createAlias("cota.pessoa", "pessoa");
 		criteria.createAlias("cota.pdvs", "pdvs");
-		criteria.createAlias("pdv.rotas", "rotas");
+		criteria.createAlias("pdvs.rotas", "rotas");
+		criteria.createAlias("rotas.rota", "rota");
 		criteria.createAlias("rota.roteiro", "roteiro");
 		
 		criteria.setFetchMode("cec", FetchMode.JOIN);
@@ -196,7 +197,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 				.add(Projections.property("pessoa.nome"), "colaboradorName")
 				.add(Projections.property("box.nome"), "boxName")
 				.add(Projections.property("roteiro.descricaoRoteiro"), "roteiroName")
-				.add(Projections.property("rotas.descricaoRota"), "rotaName")
+				.add(Projections.property("rota.descricaoRota"), "rotaName")
 				.add(Projections.property("cec.fechado"), "fechado")
 				.add(Projections.property("cec.postergado"), "postergado")
 				.add(Projections.property("ce.dataRecolhimento"), "dataEncalhe")));

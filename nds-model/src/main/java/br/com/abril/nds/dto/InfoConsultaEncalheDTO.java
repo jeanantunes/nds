@@ -3,9 +3,13 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.vo.DebitoCreditoCotaVO;
+
 public class InfoConsultaEncalheDTO {
 
 	private List<ConsultaEncalheDTO> listaConsultaEncalhe;
+	
+	private List<DebitoCreditoCotaVO> listaDebitoCreditoCota;
 	
 	private Integer qtdeConsultaEncalhe;
 	
@@ -122,6 +126,21 @@ public class InfoConsultaEncalheDTO {
 	 */
 	public void setValorPagar(BigDecimal valorPagar) {
 		this.valorPagar = valorPagar;
+	}
+
+	/**
+	 * @return the listaDebitoCreditoCota
+	 */
+	public List<DebitoCreditoCotaVO> getListaDebitoCreditoCota() {
+		return listaDebitoCreditoCota;
+	}
+
+	/**
+	 * @param listaDebitoCreditoCota the listaDebitoCreditoCota to set
+	 */
+	public void setListaDebitoCreditoCota(
+			List<DebitoCreditoCotaVO> listaDebitoCreditoCota) {
+		this.listaDebitoCreditoCota = listaDebitoCreditoCota;
 	}
 
 }

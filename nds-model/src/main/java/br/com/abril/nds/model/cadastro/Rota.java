@@ -2,6 +2,8 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -10,8 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -146,4 +148,48 @@ public class Rota implements Serializable {
 	public void setEntregador(Entregador entregador) {
 		this.entregador = entregador;
 	}
+	
+    /**
+     * Desassocia os PDVs da Rota de acordo com os identificadores de PDV
+     * recebidos
+     * 
+     * @param pdvsExclusao
+     *            coleção de identificadores de PDV para exclusão
+     */
+	public void desassociarPDVs(Collection<Long> pdvsExclusao) {
+	    Iterator<RotaPDV> iterator = rotaPDVs.iterator();
+	    while(iterator.hasNext()) {
+	        RotaPDV rotaPDV = iterator.next();
+	        if (pdvsExclusao.contains(rotaPDV.getPdv().getId())) {
+	            iterator.remove();
+	        }
+	    }
+	}
+	
+    /**
+     * Recupera a associacao RotaPDV pelo identificador do PDV
+     * 
+     * @param idPDV
+     *            identificador do PDV para recuperação da associação
+     * @return PDV com o identificador ou null caso o PDV não esteja associado
+     * à Rota
+     */
+	public RotaPDV getRotaPDVPorPDV(Long idPDV) {
+	    for (RotaPDV rotaPdv : rotaPDVs) {
+	        PDV pdv = rotaPdv.getPdv();
+	        if (pdv.getId().equals(idPDV)) {
+	            return rotaPdv;
+	        }
+	    }
+	    return null;
+	}
+
+	@Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("Id: ");
+        builder.append(id).append(" - Ordem: ").append(ordem)
+                .append(" - Descrição: ").append(descricaoRota);
+        return builder.toString();
+    }
+
 }

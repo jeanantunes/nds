@@ -62,20 +62,30 @@
 				   class="filtro" id="tableBaixaAuto">
 				
 					<tr>
+						<td width="100">Data:</td>
+						<td width="200">
+							<input type="text" name="dataBaixa" id="dataBaixa" 
+								   onchange="baixaFinanceiraController.alterarEstadoInputsBaixaAutomatica();"
+								   style="width: 90px; text-align: right;" value="${dataOperacao}" />
+						</td>
 						<td width="65">Arquivo:</td>
 						<td colspan="3">
-							<input name="uploadedFile" type="file" id="uploadedFile" size="25" />
+							<input name="uploadedFile" type="file" id="uploadedFile" size="25" 
+								   onchange="baixaFinanceiraController.habilitarIntegracao();" />
 						</td>
 						
-						<td width="133">Valor Financeiro R$:</td>
+						<td width="200">Valor Financeiro R$:</td>
 						<td width="288">
 							<input type="text" name="valorFinanceiro"
 								   id="valorFinanceiro" style="width: 90px; text-align: right;" />
 						</td>
 						
 						<td width="111">
-							<span class="bt_integrar" title="Integrar">
+							<span class="bt_integrar" title="Integrar" id="btnIntegrar" style="display:none">
 								<a href="javascript:;" onclick="baixaFinanceiraController.integrar();">Integrar</a>
+							</span>
+							<span class="bt_pesquisar" title="Exibir Resumo" id="btnExibirResumos">
+								<a href="javascript:;" onclick="baixaFinanceiraController.exibirResumo();" id="btnPesquisar"></a>
 							</span>
 						</td>
 					</tr>			
@@ -411,6 +421,18 @@
 		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
 				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
 				                </c:forEach>
+		                    </select> 
+					    </td>
+					  </tr>
+					  
+					   <tr>
+					    <td><strong>Banco:</strong></td>
+					    <td>
+					        <select name="idBanco" id="bancoDividas" style="width:150px;">
+		                        <option value="">Selecione</option>
+		                        <c:forEach items="${bancos}" var="banco">
+									<option value="${banco.id}" >${banco.nome}</option>
+								</c:forEach>
 		                    </select> 
 					    </td>
 					  </tr>

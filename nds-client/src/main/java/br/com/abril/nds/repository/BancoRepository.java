@@ -33,7 +33,18 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	 * @param numero
 	 * @return {@link br.com.abril.nds.model.cadastro.Banco} 
 	 */
-    Banco obterbancoPorNumero(String numero);
+    Banco obterBancoPorNumero(String numero);
+    
+    /**
+	 * Obtém Banco de acordo com os parametros informados
+	 * 
+	 * @param numeroBanco - número do banco
+	 * @param numeroAgencia - número da agência
+	 * @param numeroConta - número da conta
+	 * 
+	 * @return {@link br.com.abril.nds.model.cadastro.Banco} 
+	 */
+    Banco obterBanco(String numeroBanco, Long numeroAgencia, Long numeroConta);
 	
     /**
      * Obtém Banco por nome

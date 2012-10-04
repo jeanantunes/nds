@@ -27,10 +27,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	@Export(label = "Vlr. Postergado", alignment = Alignment.RIGHT)
 	private BigDecimal valorPostergado;
-	
-	@Export(label = "NA", alignment = Alignment.RIGHT)
-	private BigDecimal numerosAtrasados;
-	
+		
 	@Export(label = "Consignado", alignment = Alignment.RIGHT)
 	private BigDecimal consignado;
 	
@@ -87,21 +84,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 		this.valorPostergado = valorPostergado;
 	}
 
-	/**
-	 * @return the numerosAtrasados
-	 */
-	public BigDecimal getNumerosAtrasados() {
-		return numerosAtrasados;
-	}
-
-	/**
-	 * @param numerosAtrasados the numerosAtrasados to set
-	 */
-	public void setNumerosAtrasados(BigDecimal numerosAtrasados) {
-		this.numerosAtrasados = numerosAtrasados;
-	}
-
-	/**
+		/**
 	 * @return the consignado
 	 */
 	public BigDecimal getConsignado() {
