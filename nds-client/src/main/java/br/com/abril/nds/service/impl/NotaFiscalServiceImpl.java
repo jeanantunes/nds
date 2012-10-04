@@ -1341,12 +1341,22 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return novoEndereco;
 	}
 
-	public List<NotaEnvio> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
-		return notaFiscalRepository.buscarNFeParaImpressao(filtro);
+	public List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
+		List<NotaFiscal> listNFs = notaFiscalRepository.buscarNFeParaImpressao(filtro);
+		List<NfeImpressaoDTO> listNFes = new ArrayList<NfeImpressaoDTO>();
+		
+		for(NotaFiscal nf :  listNFs) {
+			NfeImpressaoDTO nfe = new NfeImpressaoDTO();
+			nfe.setIdNotaFiscal(nf.getId());
+			listNFes.add(nfe);
+		}
+		
+		return listNFes;
 	}
 
-	public Integer buscarNFeParaImpressaoQtd(FiltroImpressaoNFEDTO filtro) {
-		return notaFiscalRepository.buscarNFeParaImpressaoQtd(filtro);
+	public byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

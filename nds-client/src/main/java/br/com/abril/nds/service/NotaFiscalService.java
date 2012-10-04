@@ -21,6 +21,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.service.impl.NfeImpressaoDTO;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -142,14 +143,14 @@ public interface NotaFiscalService {
 	 * @param filtro
 	 * @return
 	 */
-	List<NotaEnvio> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro);
+	List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro);
 	
 	/**
-	 * Obtem o número toral de NFe baseada no filtro informado
+	 * Retorna um PDF com as Notas de Envio passadas como argumento
 	 * 
-	 * @param filtro
+	 * @param notasEnvio
 	 * @return
 	 */
-	Integer buscarNFeParaImpressaoQtd(FiltroImpressaoNFEDTO filtro);
-	
+	byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio);
+		
 }
