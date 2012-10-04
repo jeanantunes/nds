@@ -487,7 +487,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         if (box != null) {
             disponiveis.add(box);
         }
-		return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis);
+		return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis, false);
 	}
   	
 	/**
@@ -545,14 +545,16 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	/**
 	 * Verifica se pdv esta disponivel (não vinculado a um box roteirizado)
-	 * @param idPdv
-	 * @return boolean - true:disponivel
+	 * @param idPdv identificador do PDV
+	 * @param idBox identificador do BOX
+	 * @return boolean true box está disponível para roteirização, false
+	 * caso contrário
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public boolean verificaDisponibilidadePdv(Long idPdv){
+	public boolean verificaDisponibilidadePdv(Long idPdv, Long idBox) {
 		Box box = this.roteirizacaoRepository.obterBoxDoPDV(idPdv);
-		return (box==null);
+		return box == null || box.getId().equals(idBox);
 	}
 	
 	/**
@@ -606,7 +608,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         Roteirizacao roteirizacao = roteirizacaoRepository.obterRoteirizacaoPorBox(idBox);
         List<Box> disponiveis = obterListaBoxLancamento(null);
         if (roteirizacao != null) {
-            return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis);
+            return RoteirizacaoDTO.toDTO(roteirizacao, disponiveis, true);
         }
         return null;
     }
@@ -637,7 +639,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
             for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getRotas()) {
                 Rota rota = novaRotaRoteiro(roteiro, rotaDTO);
                 for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
-                    novoPDVRota(rota, pdvDTO, dto.isBoxEspecial());
+                    novoPDVRota(rota, pdvDTO, roteirizacao.getBox());
                 } 
             }
         }
@@ -667,7 +669,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                     for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
                         RotaPDV rotaPDVExistente = rotaExistente.getRotaPDVPorPDV(pdvDTO.getId());
                         if (rotaPDVExistente == null) {
-                            novoPDVRota(rotaExistente, pdvDTO, dto.isBoxEspecial());
+                            novoPDVRota(rotaExistente, pdvDTO, roteirizacao.getBox());
                         } else {
                             rotaPDVExistente.setOrdem(pdvDTO.getOrdem());
                         }
@@ -708,13 +710,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
      *            Rota para associação
      * @param pdvDTO
      *            PDV para associação
-     * @param roteirizacaoEspecial
-     *            flag indicando que a rota está associada à uma roteirizacao
-     *            especial
-     */
-    private void novoPDVRota(Rota rota, PdvRoteirizacaoDTO pdvDTO, boolean roteirizacaoEspecial) {
-        if (!roteirizacaoEspecial) {
-            boolean pdvDisponivel = verificaDisponibilidadePdv(pdvDTO.getId());
+     * @param box Box ao qual a roteirização está associada 
+     **/
+    private void novoPDVRota(Rota rota, PdvRoteirizacaoDTO pdvDTO, Box box) {
+        if (box != null) {
+            boolean pdvDisponivel = verificaDisponibilidadePdv(pdvDTO.getId(), box.getId());
             if (!pdvDisponivel) {
                 throw new ValidacaoException(
                         TipoMensagem.ERROR,
