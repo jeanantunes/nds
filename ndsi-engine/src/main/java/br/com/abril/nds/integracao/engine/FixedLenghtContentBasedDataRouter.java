@@ -94,7 +94,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	
 	
 	public void processFile(FileRouteTemplate fileRouteTemplate, File file) {
-		try {
+		//try {
 			
 			final MessageProcessor messageProcessor = fileRouteTemplate.getMessageProcessor();
 			AtomicReference<Object> tempVar = null;
@@ -197,13 +197,14 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			
 			// Processamento a ser executado APÓS o processamento principal:
 			messageProcessor.posProcess(tempVar);
-			*/
+			
 		}
 		catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		*/
 	}
 	
 	private static Class<?> findType(String line,
