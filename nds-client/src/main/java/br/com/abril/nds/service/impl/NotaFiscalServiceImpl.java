@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.ParametroSistemaService;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -43,6 +44,7 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -111,7 +113,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
-	private NotaFiscalRepository notaFiscalDAO;
+	private NotaFiscalRepository notaFiscalRepository;
 
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
@@ -245,8 +247,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		for (RetornoNFEDTO dadosRetornoNFE : listaDadosRetornoNFE) {
 
 			if (dadosRetornoNFE.getIdNotaFiscal() != null) {
-
-				NotaFiscal notaFiscal = this.notaFiscalDAO
+				
+				NotaFiscal notaFiscal = this.notaFiscalRepository
 						.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
 				if (notaFiscal != null) {
@@ -300,8 +302,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional(rollbackFor = Exception.class)
 	public void cancelarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 
-		NotaFiscal notaFiscalCancelada = this.notaFiscalDAO
-				.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+		NotaFiscal notaFiscalCancelada = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
 		TipoNotaFiscal tipoNotaFiscal = notaFiscalCancelada.getIdentificacao()
 				.getTipoNotaFiscal();
@@ -392,9 +393,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param dadosRetornoNFE
 	 */
 	private void atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
-
-		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(dadosRetornoNFE
-				.getIdNotaFiscal());
+		
+		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE
+			.getIdNotaFiscal());
 
 		InformacaoEletronica informacaoEletronica = notaFiscal
 				.getInformacaoEletronica();
@@ -421,7 +422,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal
 				.setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
 
-		this.notaFiscalDAO.merge(notaFiscal);
+		this.notaFiscalRepository.merge(notaFiscal);	
 
 	}
 
@@ -436,12 +437,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public void enviarNotaFiscal(Long id) {
 
-		NotaFiscal notaFiscal = this.notaFiscalDAO.buscarPorId(id);
-
+		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(id);
+		
 		if (notaFiscal != null) {
-			notaFiscal
-					.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
-			this.notaFiscalDAO.merge(notaFiscal);
+			notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
+			this.notaFiscalRepository.merge(notaFiscal);
 		}
 	}
 
@@ -799,8 +799,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				.setStatusProcessamentoInterno(StatusProcessamentoInterno.GERADA);
 
 		notaFiscal.setProcessos(processos);
-
-		notaFiscalDAO.adicionar(notaFiscal);
+		
+		notaFiscalRepository.adicionar(notaFiscal);
 
 		int sequencia = 1;
 		for (ItemNotaFiscal itemNotaFiscal : listItemNotaFiscal) {
@@ -854,7 +854,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			produtoServicoRepository.adicionar(produtoServico);
 			notaFiscal.getProdutosServicos().add(produtoServico);
 		}
-		notaFiscalDAO.merge(notaFiscal);
+		notaFiscalRepository.merge(notaFiscal);
 		return notaFiscal.getId();
 
 	}
@@ -1341,4 +1341,22 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return novoEndereco;
 	}
 
+	public List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
+		List<NotaFiscal> listNFs = notaFiscalRepository.buscarNFeParaImpressao(filtro);
+		List<NfeImpressaoDTO> listNFes = new ArrayList<NfeImpressaoDTO>();
+		
+		for(NotaFiscal nf :  listNFs) {
+			NfeImpressaoDTO nfe = new NfeImpressaoDTO();
+			nfe.setIdNotaFiscal(nf.getId());
+			listNFes.add(nfe);
+		}
+		
+		return listNFes;
+	}
+
+	public byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
