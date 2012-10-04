@@ -82,10 +82,10 @@ public class Fornecedor implements Serializable {
 	private Set<TelefoneFornecedor> telefones = new HashSet<TelefoneFornecedor>();
 
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "TIPO_FORNECEDOR_ID")
 	private TipoFornecedor tipoFornecedor;
-
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
