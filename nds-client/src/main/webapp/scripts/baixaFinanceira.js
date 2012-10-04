@@ -1,8 +1,16 @@
 var baixaFinanceiraController = $.extend(true, {
-	
+
+	dataOperacaoDistribuidor: null,
+
 	init : function() {
 		$("#filtroNumCota", baixaFinanceiraController.workspace).numeric();
 		$("#descricaoCota", baixaFinanceiraController.workspace).autocomplete({source: ""});
+		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker({
+			showOn : "button",
+			buttonImage : contextPath + "/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat : 'dd/mm/yy',
+		});
 		$("filtroNossoNumero", baixaFinanceiraController.workspace).numeric();
 		this.initGradeDividas();
 		this.initGridDadosDivida();
@@ -26,8 +34,10 @@ var baixaFinanceiraController = $.extend(true, {
 			centsSeparator: ',',
 		    thousandsSeparator: '.'
 		});
-		
+
 		$("#radioBaixaManual", baixaFinanceiraController.workspace).focus();
+
+		baixaFinanceiraController.dataOperacaoDistribuidor = $("#dataBaixa").datepicker( "getDate" );
 	},
 	
     //BAIXA MANUAL--------------------------------------
@@ -854,11 +864,22 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
 	limparCamposBaixaAutomatica : function() {
-		
+
 		$("#uploadedFile", baixaFinanceiraController.workspace).replaceWith(
-			"<input name='uploadedFile' type='file' id='uploadedFile' size='25' />");
+			"<input name='uploadedFile' type='file' id='uploadedFile' size='25' " 
+				+ "onchange='baixaFinanceiraController.habilitarIntegracao();' />"
+		);
 		
 		$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+
+		baixaFinanceiraController.habilitarBaixaAutomatica(true);
+
+		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
+			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
+		);
+
+		$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "none");
+		$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
 	},
 	
 	//-----------------------------------------------------
@@ -958,8 +979,49 @@ var baixaFinanceiraController = $.extend(true, {
 
 	buscarValueCheckBox : function(checkName) {
 		return $("#"+checkName, baixaFinanceiraController.workspace).is(":checked");
+	},
+	
+	alterarEstadoInputsBaixaAutomatica: function() {
+		
+		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
+		
+		baixaFinanceiraController.habilitarIntegracao();
+
+		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
+				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
+
+			baixaFinanceiraController.habilitarBaixaAutomatica(false);
+		
+		} else {
+			
+			baixaFinanceiraController.limparCamposBaixaAutomatica();
+		}
+	},
+
+	habilitarBaixaAutomatica: function(habilitar) {
+
+		$("#uploadedFile", baixaFinanceiraController.workspace).enable(habilitar);
+		$("#valorFinanceiro", baixaFinanceiraController.workspace).enable(habilitar);
+	},
+
+	habilitarIntegracao: function() {
+
+		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
+
+		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
+				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
+
+			$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "none");
+			$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
+
+		} else {
+
+			$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "block");
+			$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "none");
+		}
 	}
 
+	
 }, BaseController);
 
 //@ sourceURL=baixaFinanceira.js
