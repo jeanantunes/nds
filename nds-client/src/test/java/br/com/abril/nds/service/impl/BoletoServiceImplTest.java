@@ -288,7 +288,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		pagamento.setDataPagamento(DateUtil.adicionarDias(new Date(), 1));
 		pagamento.setNossoNumero("1234567890127");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
 		PoliticaCobranca politicaPrincipal = this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
@@ -306,7 +306,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		PagamentoDTO pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1234567890123456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(10.0));
 		
 		listaPagemento.add(pagamento);
@@ -315,7 +315,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1234567890124456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
 		listaPagemento.add(pagamento);
@@ -324,7 +324,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1234567890125456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(200.00));
 		
 		listaPagemento.add(pagamento);
@@ -333,7 +333,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1234567890126456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(10.00));
 		
 		listaPagemento.add(pagamento);
@@ -342,7 +342,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(DateUtil.adicionarDias(new Date(), 1));
 		pagamento.setNossoNumero("1234567890127456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(10.00));
 		
 		listaPagemento.add(pagamento);
@@ -351,7 +351,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1111111111111111");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(10.0));
 		
 		listaPagemento.add(pagamento);
