@@ -104,7 +104,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			
 			// RENOMEIA O ARQUIVO PARA PROCESSANDO
 			if (!file.renameTo(processingFile)) {
-				throw new SecurityException("Não Conseguiu renomear o Arquivo");
+				throw new RuntimeException("Não Conseguiu renomear o Arquivo");
 			}
 			FileReader in = new FileReader(processingFile);
 			
