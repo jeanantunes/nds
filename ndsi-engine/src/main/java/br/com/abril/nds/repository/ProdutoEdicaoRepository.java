@@ -7,6 +7,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -256,5 +257,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return
 	 */
 	public Long obterUltimoNumeroEdicao(String codigoProduto);
+
+	/**
+	 * Retorna os produtoEdicao de distribuidores que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
+	 * @param fornecedores
+	 * @return
+	 */
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoDistribuidor(Set<Fornecedor> fornecedores);
 	
 }

@@ -12,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -93,6 +95,14 @@ public class Fornecedor implements Serializable {
 	@Column(name = "EMAIL_NFE")
 	private String emailNfe;
 
+	/**
+	 * Fornecedores associados à Cota
+	 */
+	@ManyToMany
+	@JoinTable(name = "COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORNECEDOR_ID")}, 
+	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
+	private Set<Cota> cotas = new HashSet<Cota>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -223,6 +233,14 @@ public class Fornecedor implements Serializable {
 	 */
 	public void setEmailNfe(String emailNfe) {
 		this.emailNfe = emailNfe;
+	}
+
+	public Set<Cota> getCotas() {
+		return cotas;
+	}
+
+	public void setCotas(Set<Cota> cotas) {
+		this.cotas = cotas;
 	}
 
 	@Override

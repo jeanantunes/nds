@@ -357,7 +357,21 @@ public class DescontoServiceImpl implements DescontoService {
 	@Transactional
 	public void processarDescontoDistribuidor(Set<Fornecedor> fornecedores, BigDecimal valorDesconto) {
 		
-		this.processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto, null);
+		Set<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.filtrarDescontoProdutoEdicaoDistribuidor(fornecedores);
+		
+		for (Fornecedor fornecedor : fornecedores) {
+			
+			for (Cota cota : fornecedor.getCotas()) {
+			
+				for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+					produtoEdicao.getProduto().getFornecedor();
+					this.descontoComponent.persistirDesconto(TipoDesconto.GERAL, fornecedor, cota, produtosEdicao, valorDesconto, null);
+				}
+				
+			}
+		}
+		
+		//this.processarDesconto(TipoDesconto.GERAL, fornecedores, null, null, valorDesconto, null);
 	}
 	
 

@@ -57,14 +57,14 @@ public class Produto implements Serializable {
 	@Column(name = "DESCRICAO")
 	private String descricao;
 	
-	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToMany(fetch=FetchType.LAZY)
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM")
 	private Origem origem;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
 	
@@ -82,7 +82,7 @@ public class Produto implements Serializable {
 	/**
 	 * Editor do produto
 	 */
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "EDITOR_ID")
 	private Editor editor;
 	
@@ -137,7 +137,7 @@ public class Produto implements Serializable {
 	@Column(name = "PERC_LIMITE_REPARTE_FIXACAO", nullable = true)
 	private Double percentualLimiteReparteFixacao;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch=FetchType.LAZY, optional = true)
 	@JoinColumn(name = "ALGORITMO_ID")
 	private Algoritmo algoritmo;
 

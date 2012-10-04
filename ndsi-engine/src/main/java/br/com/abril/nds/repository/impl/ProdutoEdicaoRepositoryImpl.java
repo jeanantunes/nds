@@ -16,8 +16,10 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -604,5 +606,51 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		criteria.setProjection( Projections.projectionList().add(Projections.max("produtoEdicao.numeroEdicao"), "numeroEdicao"));
 		
 		return (Long) criteria.uniqueResult();
+	}
+
+	@Override
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoDistribuidor(Set<Fornecedor> fornecedores) {
+
+		StringBuilder idsFornecedores = new StringBuilder();
+		for (Fornecedor fornecedor : fornecedores) {
+			if (!idsFornecedores.toString().isEmpty()) {
+				idsFornecedores.append(", ");
+			}
+			idsFornecedores.append(fornecedor.getId());
+		}
+		
+		String queryString = "SELECT "
+			+ 	"produtoEdicao "
+			+ "FROM "
+			+ 	"ProdutoEdicao produtoEdicao "
+			+ "WHERE "
+			+ 	"produtoEdicao.id NOT IN (SELECT "
+			+         "produtoEdicao.id "
+			+         "FROM "
+			+             "DescontoProdutoEdicao descontoProdutoEdicao "
+			+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+			+         "JOIN produtoEdicao.produto produto "
+			+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
+			+         "WHERE "
+			+             "fornecedor.id IN (" + idsFornecedores + ") "
+			+                 "AND produto.id IN (SELECT produto.id FROM Produto produto JOIN produto.fornecedores fornecedor WHERE fornecedor.id IN (" + idsFornecedores + ") ) "
+			+                 "AND descontoProdutoEdicao.tipoDesconto = ('PRODUTO')) "
+			+ 	"AND produtoEdicao.id NOT IN (SELECT "
+			+             "produtoEdicao.id "
+			+         "FROM "
+			+             "DescontoProdutoEdicao descontoProdutoEdicao "
+			+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+			+         "JOIN descontoProdutoEdicao.cota cota "
+			+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
+			+         "WHERE "
+			+             "fornecedor.id IN (" + idsFornecedores + ") "
+			+                 "AND cota.id IN (SELECT cota.id FROM Cota cota JOIN cota.fornecedores fornecedor WHERE fornecedor.id IN (" + idsFornecedores + ")) "
+			+                 "AND descontoProdutoEdicao.tipoDesconto = ('ESPECIFICO'))";
+	                        
+		//queryString += whereString;
+		
+		Query query = this.getSession().createQuery(queryString);
+		
+		return new HashSet<ProdutoEdicao>(query.list());
 	}
 }
