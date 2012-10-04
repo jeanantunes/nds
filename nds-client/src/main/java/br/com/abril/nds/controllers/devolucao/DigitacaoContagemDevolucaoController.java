@@ -91,7 +91,7 @@ public class DigitacaoContagemDevolucaoController  {
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
+		result.include(USUARIO_PERFIL_OPERADOR, isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
@@ -116,7 +116,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, String sortorder, String sortname, int page, int rp){
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
@@ -124,7 +124,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		PeriodoVO periodo =  obterPeriodoValidado(dataDe, dataAte);
 		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe, idDestinatario);
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		

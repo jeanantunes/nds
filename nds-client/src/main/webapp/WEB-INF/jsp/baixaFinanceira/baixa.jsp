@@ -27,6 +27,21 @@
 
 <body>
 
+	<form id="formDialogPrevisao">
+		<div id="dialog-previsao" title="Previsão" style="display: none;">
+			<fieldset style="width:750px!important;">
+		    	
+		    	<legend>Previsão - Vencimento: 10/05/2012</legend>
+		    	
+		    	<table class="previsaoGrid"></table>
+		        
+		        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+		        
+		    </fieldset>
+		</div>
+	</form>
+	
 	<fieldset class="classFieldset">
 		
 		<legend> Baixa Financeira</legend>
@@ -57,6 +72,7 @@
 			  method="post" enctype="multipart/form-data" >
 		
 			<input type="hidden" name="formUploadAjax" value="true" />
+			<input type="hidden" id="dataHidden" value="10/10/2012" />
 		
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				   class="filtro" id="tableBaixaAuto">
@@ -70,8 +86,10 @@
 						</td>
 						<td width="65">Arquivo:</td>
 						<td colspan="3">
+							
 							<input name="uploadedFile" type="file" id="uploadedFile" size="25" 
 								   onchange="baixaFinanceiraController.habilitarIntegracao();" />
+							
 						</td>
 						
 						<td width="200">Valor Financeiro R$:</td>
@@ -91,7 +109,13 @@
 					</tr>			
 			</table>
 		</form>
-		<!--  -->
+		
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosPrevisao();">previsto</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosBaixados();">baixados</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosRejeitados();">rejeitados</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosBaixadosComDivergencia();">divergentes</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosInadimplentes();">inadimplentes</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridTotalBancario();">totalBancario</a>
 		
 		
 		<!-- BAIXA MANUAL -->

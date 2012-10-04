@@ -1,7 +1,9 @@
 package br.com.abril.nds.integracao.engine;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
@@ -101,7 +103,9 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			File processingFile = new File(normalizeFileName(file.getParent()), file.getName() + ".processing");
 			
 			// RENOMEIA O ARQUIVO PARA PROCESSANDO
-			file.renameTo(processingFile);
+			if (!file.renameTo(processingFile)) {
+				throw new SecurityException("Não Conseguiu renomear o Arquivo");
+			}
 			FileReader in = new FileReader(processingFile);
 			
 			int lineNumber = 0;

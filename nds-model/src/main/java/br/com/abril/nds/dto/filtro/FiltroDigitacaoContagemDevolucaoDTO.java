@@ -28,8 +28,6 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	
 	private Integer semanaCE;
 	
-	private Long idDestinatario;
-	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
@@ -47,12 +45,11 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	
 	
 	public FiltroDigitacaoContagemDevolucaoDTO(PeriodoVO periodo,
-			Long idFornecedor, Integer semanaCE, Long idDestinatario) {
+			Long idFornecedor, Integer semanaCE) {
 		super();
 		this.periodo = periodo;
 		this.idFornecedor = idFornecedor;
 		this.semanaCE = semanaCE;
-		this.idDestinatario = idDestinatario;
 	}
 
 
@@ -201,22 +198,6 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	}
 
 
-	/**
-	 * @return the idDestinatario
-	 */
-	public Long getIdDestinatario() {
-		return idDestinatario;
-	}
-
-
-	/**
-	 * @param idDestinatario the idDestinatario to set
-	 */
-	public void setIdDestinatario(Long idDestinatario) {
-		this.idDestinatario = idDestinatario;
-	}
-
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -225,11 +206,7 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((idDestinatario == null) ? 0 : idDestinatario.hashCode());
-		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
-		result = prime * result
-				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
 		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		result = prime * result
@@ -253,20 +230,10 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroDigitacaoContagemDevolucaoDTO other = (FiltroDigitacaoContagemDevolucaoDTO) obj;
-		if (idDestinatario == null) {
-			if (other.idDestinatario != null)
-				return false;
-		} else if (!idDestinatario.equals(other.idDestinatario))
-			return false;
 		if (idFornecedor == null) {
 			if (other.idFornecedor != null)
 				return false;
 		} else if (!idFornecedor.equals(other.idFornecedor))
-			return false;
-		if (nomeFornecedor == null) {
-			if (other.nomeFornecedor != null)
-				return false;
-		} else if (!nomeFornecedor.equals(other.nomeFornecedor))
 			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;
@@ -287,5 +254,6 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 			return false;
 		return true;
 	}
+
 	
 }

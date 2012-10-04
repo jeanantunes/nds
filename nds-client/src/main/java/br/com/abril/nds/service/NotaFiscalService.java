@@ -10,15 +10,18 @@ import java.util.Set;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
+import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.service.impl.NfeImpressaoDTO;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -133,4 +136,21 @@ public interface NotaFiscalService {
 	 * @return lista de notas referenciadas.
 	 */
 	List<NotaFiscalReferenciada> obterNotasReferenciadas(List<ItemNotaFiscal> listaItensNotaFiscal); 
+
+	/**
+	 * Obtem uma lista de NFe baseada no filtro informado
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	List<br.com.abril.nds.dto.NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro);
+	
+	/**
+	 * Retorna um PDF com as Notas de Envio passadas como argumento
+	 * 
+	 * @param notasEnvio
+	 * @return
+	 */
+	byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio);
+		
 }
