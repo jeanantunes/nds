@@ -104,7 +104,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 
 			// RENOMEIA O ARQUIVO PARA PROCESSANDO
 
-			System.getSecurityManager().checkWrite(processingFile.getName());
+			//System.getSecurityManager().checkWrite(processingFile.getName());
 			
 			if (!file.renameTo(processingFile)) {
 				throw new RuntimeException("Não Conseguiu renomear o Arquivo");
