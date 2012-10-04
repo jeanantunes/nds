@@ -92,7 +92,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	
 	
 	public void processFile(FileRouteTemplate fileRouteTemplate, File file) {
-		//try {
+		try {
 			
 			final MessageProcessor messageProcessor = fileRouteTemplate.getMessageProcessor();
 			AtomicReference<Object> tempVar = null;
@@ -106,8 +106,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			if (!file.renameTo(processingFile)) {
 				throw new RuntimeException("Não Conseguiu renomear o Arquivo");
 			}
-			throw new RuntimeException("Não Conseguiu renomear o Arquivo");
-			/*
+
 			FileReader in = new FileReader(processingFile);
 			
 			int lineNumber = 0;
@@ -202,7 +201,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		*/
+		
 	}
 	
 	private static Class<?> findType(String line,
