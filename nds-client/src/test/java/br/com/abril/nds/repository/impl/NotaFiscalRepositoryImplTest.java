@@ -498,7 +498,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 		FiltroImpressaoNFEDTO filtro = obterFiltroImpressaoNfeDTOOrdenadoPorCota();
 		
-		List<NotaEnvio> listaNotaFiscal = notaFiscalRepository.buscarNFeParaImpressao(filtro);
+		List<NotaFiscal> listaNotaFiscal = notaFiscalRepository.buscarNFeParaImpressao(filtro);
 		
 		Assert.assertNotNull(listaNotaFiscal);
 		
