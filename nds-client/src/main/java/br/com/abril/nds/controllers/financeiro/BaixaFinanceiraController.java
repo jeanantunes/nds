@@ -216,7 +216,7 @@ public class BaixaFinanceiraController {
 		// TODO: obter resumo baixa financeira
 		
 //		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = 
-//			this.boletoService.obterResumoBaixaFinanceira(data);
+//			this.boletoService.obterResumoBaixaFinanceiraBoletos(data);
 		
 		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = new ResumoBaixaBoletosDTO();
 		
