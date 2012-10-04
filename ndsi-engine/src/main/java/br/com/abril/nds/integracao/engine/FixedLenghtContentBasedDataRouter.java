@@ -106,9 +106,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 
 			//System.getSecurityManager().checkWrite(processingFile.getName());
 			
-			if (!file.renameTo(processingFile)) {
-				throw new RuntimeException("Não Conseguiu renomear o Arquivo");
-			}
+			renameFile(file, processingFile);			
 
 			FileReader in = new FileReader(processingFile);
 			
@@ -206,6 +204,13 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			throw new RuntimeException(e);
 		}
 		
+	}
+
+
+	private void renameFile(File file, File processingFile) {
+		if (!file.renameTo(processingFile)) {
+			throw new RuntimeException("Não Conseguiu renomear o Arquivo");
+		}
 	}
 	
 	private static Class<?> findType(String line,
