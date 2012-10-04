@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0123.outbound;
 import java.math.BigInteger;
 import java.util.Date;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
@@ -75,7 +76,7 @@ public class EMS0123Detalhe {
 		this.codigoCota = codigoCota;
 	}
 	
-	@Field(offset=26, length=8, paddingChar='0')
+	@Field(offset=26, length=8, align=Align.RIGHT, paddingChar='0')
 	public Long getQuantidadeEncalhe() {
 		return quantidadeEncalhe;
 	}
