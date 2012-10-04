@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -598,6 +599,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional
 	public Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe) {
 		return fechamentoEncalheRepository.buscarUltimoFechamentoEncalheDia(dataFechamentoEncalhe);
+	}
+
+	@Override
+	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+		return fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro);
 	}
 
 }

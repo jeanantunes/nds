@@ -11,7 +11,7 @@ public class ArquivoPagamentoBancoDTO {
 	
 	private String nomeArquivo;
 	
-	private String numeroBanco;
+	private String codigoBanco;
 	
 	private Long numeroAgencia;
 	
@@ -60,17 +60,17 @@ public class ArquivoPagamentoBancoDTO {
 	}
 
 	/**
-	 * @return the numeroBanco
+	 * @return the codigoBanco
 	 */
-	public String getNumeroBanco() {
-		return numeroBanco;
+	public String getCodigoBanco() {
+		return codigoBanco;
 	}
 
 	/**
-	 * @param numeroBanco the numeroBanco to set
+	 * @param codigoBanco the codigoBanco to set
 	 */
-	public void setNumeroBanco(String numeroBanco) {
-		this.numeroBanco = numeroBanco;
+	public void setCodigoBanco(String codigoBanco) {
+		this.codigoBanco = codigoBanco;
 	}
 
 	/**

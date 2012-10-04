@@ -118,23 +118,37 @@ public class Roteiro implements Serializable {
 	 * @param rota: Rota para inclusão
 	 */
 	public void addRota(Rota rota) {
-		if (rotas == null) {
+	    if (rota.getOrdem() <= 0) {
+            throw new IllegalArgumentException("Ordem [" + rota.getOrdem()  + "] para o Rota não é válida!");
+        }
+        Rota rotaExistente = getRotaByOrdem(rota.getOrdem());
+        if (rotaExistente != null) {
+            throw new IllegalArgumentException("Ordem [" + rota.getOrdem()  + "] para a Rota já utilizada!");
+        }
+	    
+	    if (rotas == null) {
 			rotas = new ArrayList<Rota>();
 		}
 		rota.setRoteiro(this);
 		rotas.add(rota);
 	}
 	
-	/**
-	 * Adiciona novas Rotas ao Roteiro
-	 * @param listaRota: List<Rota> para inclusão
-	 */
-	public void addAllRota(List<Rota> listaRota){
-		if (rotas == null){
-			rotas = new ArrayList<Rota>();
-		}
-		rotas.addAll(listaRota);
-	}
+    /**
+     * Recupera a Rota pela Ordem
+     * 
+     * @param ordem
+     *            ordem para recuperação da Rota
+     * @return Rota com a ordem recebida ou null caso não exista Rota com a
+     *         ordem recebida
+     */
+	private Rota getRotaByOrdem(Integer ordem) {
+        for (Rota rota : rotas) {
+            if (rota.getOrdem().equals(ordem)) {
+                return rota;
+            }
+        }
+        return null;
+    }
 
     /**
      * Desassocia as rotas de acordo com os identificadores
