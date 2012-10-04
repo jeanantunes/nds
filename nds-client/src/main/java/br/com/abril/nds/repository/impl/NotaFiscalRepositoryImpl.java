@@ -14,8 +14,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.NfeDTO;
+import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -562,22 +564,26 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return sqlQuery.list();
 	}	
 
+	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<NotaFiscal> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
-
-		StringBuffer sql = new StringBuffer();
-		sql.append("from NotaFiscal nf ");
+	public List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
 		
-		sql.append("inner join nf.identificacaoDestinatario AS idest ");
-		sql.append("inner join idest.pessoaDestinatarioReferencia AS p ");
-		//sql.append("inner join Cota.pessoa AS c ");
-		//sql.append("AND nf.identificacaoDestinatario.pessoa.id = c.pessoa.id ");
+		StringBuffer sql = new StringBuffer();
+		sql.append("select new ");
+		sql.append(NfeImpressaoDTO.class.getCanonicalName());
+		sql.append("(nf, c) ");
+		sql.append("from NotaFiscal nf ");
+		sql.append(", Cota c ");
+		sql.append("where 1 = 1 ");
+		sql.append("and nf.identificacaoDestinatario.pessoaDestinatarioReferencia.id = c.pessoa.id ");
+
+		if(filtro.getTipoNFe() != null && Long.parseLong(filtro.getTipoNFe()) > 0) {
+			sql.append("and nf.identificacao.tipoNotaFiscal.id = "+ Long.parseLong(filtro.getTipoNFe()) +" ");
+		}
 		
 		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > 0) {
 			
 		}
-		
-		sql.append("WHERE 1 = 1 ");		
 		
 		Query q = getSession().createQuery(sql.toString());
 		

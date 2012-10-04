@@ -18,7 +18,7 @@
 				class="filtro">
 				<tr>
 					<td width="82">Tipo de Nota:</td>
-					<td width="209"><select name="select3" id="select3"
+					<td width="209"><select name="tipoNotaFiscal" id="tipoNotaFiscal"
 						style="width: 200px; font-size: 11px !important">
 							<option value="-1">Selecione...</option>
 							<c:forEach items="${tipoNotas}" var="tipoNota">
@@ -26,13 +26,13 @@
 							</c:forEach>
 					</select></td>
 					<td width="97">Data Movimento:</td>
-					<td width="238"><input name="datepickerMovDe" type="text"
-						id="datepickerMovDe" style="width: 76px;" />
-						&nbsp;&nbsp;Até&nbsp; <input name="datepickerMovAte" type="text"
-						id="datepickerMovAte" style="width: 76px;" /></td>
+					<td width="238"><input name="dataInicialMovimento" type="text"
+						id="dataInicialMovimento" style="width: 76px;" />
+						&nbsp;&nbsp;Até&nbsp; <input name="dataFinalMovimento" type="text"
+						id="dataFinalMovimento" style="width: 76px;" /></td>
 					<td width="83">Data Emissão:</td>
-					<td width="210"><input name="datepickerDataEmissao"
-						type="text" id="datepickerDataEmissao" style="width: 80px;"
+					<td width="210"><input name="dataEmissao"
+						type="text" id="dataEmissao" style="width: 80px;"
 						value="${dataAtual}" /></td>
 				</tr>
 				<tr>

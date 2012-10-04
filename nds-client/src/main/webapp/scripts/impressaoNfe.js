@@ -26,13 +26,13 @@ var impressaoNfeController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'idCota',
 				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 465,
 				sortable : true,
 				align : 'left'
@@ -50,7 +50,7 @@ var impressaoNfeController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Total Desc. R$',
-				name : 'totalDesc',
+				name : 'vlrTotalDesconto',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -139,9 +139,10 @@ var impressaoNfeController = $.extend(true, {
 			url: contextPath + "/nfe/impressaoNFE/pesquisarImpressaoNFE",
 			dataType : 'json',
 			params: [
-			         	{name:'filtro.dataInicialMovimento', value:$('#datepickerMovDe', impressaoNfeController.workspace).val()},
-			         	{name:'filtro.dataFinalMovimento', value:$('#datepickerMovAte', impressaoNfeController.workspace).val()},
-						{name:'filtro.dataEmissao', value:$('#datepickerDataEmissao', impressaoNfeController.workspace).val()},
+			         	{name:'filtro.tipoNFe', value:$('#tipoNotaFiscal', impressaoNfeController.workspace).val()},
+			         	{name:'filtro.dataInicialMovimento', value:$('#dataInicialMovimento', impressaoNfeController.workspace).val()},
+			         	{name:'filtro.dataFinalMovimento', value:$('#dataFinalMovimento', impressaoNfeController.workspace).val()},
+						{name:'filtro.dataEmissao', value:$('#dataEmissao', impressaoNfeController.workspace).val()},
 						{name:'filtro.idRoteiro', value:$('#idRoteiro', impressaoNfeController.workspace).val()}
 						]
 		});

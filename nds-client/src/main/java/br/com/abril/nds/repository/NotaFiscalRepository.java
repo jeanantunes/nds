@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.dto.NfeDTO;
+import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -29,7 +30,7 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	 * @param filtro
 	 * @return
 	 */
-	public List<NotaFiscal> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro);
+	public List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro);
 	
 	/**
 	 * Retorna a quantidade de NF-e's baseado no filtro informado

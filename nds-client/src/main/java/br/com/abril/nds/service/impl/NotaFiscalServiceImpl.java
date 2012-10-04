@@ -1343,14 +1343,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 
 	public List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
-		List<NotaFiscal> listNFs = notaFiscalRepository.buscarNFeParaImpressao(filtro);
-		List<NfeImpressaoDTO> listNFes = new ArrayList<NfeImpressaoDTO>();
-		
-		for(NotaFiscal nf :  listNFs) {
-			NfeImpressaoDTO nfe = new NfeImpressaoDTO();
-			nfe.setIdNotaFiscal(nf.getId());
-			listNFes.add(nfe);
-		}
+		List<NfeImpressaoDTO> listNFes = notaFiscalRepository.buscarNFeParaImpressao(filtro);
 		
 		return listNFes;
 	}

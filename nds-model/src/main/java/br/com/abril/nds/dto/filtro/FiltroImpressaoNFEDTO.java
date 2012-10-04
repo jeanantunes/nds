@@ -88,7 +88,7 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("PT_BR"));
 		Set<HashMap<String, String>> erros = new HashSet<HashMap<String,String>>();
 		
-		if(	(this.getTipoNFe() != null && !this.getTipoNFe().isEmpty()) ) {
+		if(	(this.getTipoNFe() == null || (this.getTipoNFe() != null && this.getTipoNFe().isEmpty())) ) {
 			HashMap<String, String> erro = new HashMap<String, String>();
 			erro.put("tipoNFe", "O Tipo de NF-e é inválido.");
 			erros.add(erro);
