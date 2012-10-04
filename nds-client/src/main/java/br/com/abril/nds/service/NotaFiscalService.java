@@ -21,7 +21,6 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
-import br.com.abril.nds.service.impl.NfeImpressaoDTO;
 import br.com.abril.nds.util.Intervalo;
 
 /**

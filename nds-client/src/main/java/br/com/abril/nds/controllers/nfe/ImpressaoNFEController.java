@@ -12,11 +12,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
@@ -107,16 +107,15 @@ public class ImpressaoNFEController {
 		}
 				
 		//notaFiscalService.obterItensNotaFiscalPor(distribuidor, cota, periodo, listaIdFornecedores, listaIdProdutos, tipoNotaFiscal)
-		List<NotaEnvio> listaNFe = notaFiscalService.buscarNFeParaImpressao(filtro);
+		List<NfeImpressaoDTO> listaNFe = notaFiscalService.buscarNFeParaImpressao(filtro);
 		
-		TableModel<CellModelKeyValue<NotaEnvio>> tableModel = new TableModel<CellModelKeyValue<NotaEnvio>>();
+		TableModel<CellModelKeyValue<NfeImpressaoDTO>> tableModel = new TableModel<CellModelKeyValue<NfeImpressaoDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNFe));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
 		tableModel.setTotal(listaNFe.size());
-		
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}

@@ -481,9 +481,4 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		notaFiscalService.buscarNFeParaImpressao(filtro);
 	}
 	
-	@Test
-	public void buscarNFeParaImpressaoQtd() {
-		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
-		notaFiscalService.buscarNFeParaImpressaoQtd(filtro);
-	}
 }
