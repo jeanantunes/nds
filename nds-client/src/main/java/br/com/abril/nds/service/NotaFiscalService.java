@@ -143,7 +143,7 @@ public interface NotaFiscalService {
 	 * @param filtro
 	 * @return
 	 */
-	List<NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro);
+	List<br.com.abril.nds.dto.NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro);
 	
 	/**
 	 * Retorna um PDF com as Notas de Envio passadas como argumento
