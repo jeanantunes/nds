@@ -219,7 +219,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			.append(" venda.qntProduto as qntProduto ,")
 			.append(" venda.produtoEdicao.codigoDeBarras as codigoBarras ,")
 			.append(" venda.tipoComercializacaoVenda as formaVenda ,")
-			.append(" venda.cota.box.codigo as codBox ,")
+			.append(" venda.cota.box.codigo || '-' || venda.cota.box.nome as codBox ,")
 			.append(" venda.tipoVenda as tipoVendaEncalhe ,")
 			.append(" venda.dataVencimentoDebito as dataVencimentoDebito ")
 	        .append(" from VendaProduto venda ")
