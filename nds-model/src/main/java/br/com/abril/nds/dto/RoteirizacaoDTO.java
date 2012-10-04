@@ -319,6 +319,8 @@ public class RoteirizacaoDTO implements Serializable{
 	        }
 	    }
 	    this.roteiros.clear();
+	    this.todosRoteiros.clear();
+	    this.roteirosExclusao.clear();
 	}
 	
     /**

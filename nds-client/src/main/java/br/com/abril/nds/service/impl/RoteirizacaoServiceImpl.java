@@ -636,7 +636,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         processarBoxRoteirizacao(dto, roteirizacao); 
         for (RoteiroRoteirizacaoDTO roteiroDTO : dto.getTodosRoteiros()) {
             Roteiro roteiro = novoRoteiroRoteirizacao(roteirizacao, tipoRoteiro, roteiroDTO);
-            for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getRotas()) {
+            for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getTodasRotas()) {
                 Rota rota = novaRotaRoteiro(roteiro, rotaDTO);
                 for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
                     novoPDVRota(rota, pdvDTO, roteirizacao.getBox());
@@ -660,7 +660,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 roteiro = roteirizacao.getRoteiro(roteiroDTO.getId());
                 roteiro.desassociarRotas(roteiroDTO.getRotasExclusao());
             }
-            for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getRotas()) {
+            for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getTodasRotas()) {
                 if (rotaDTO.isNovo()) {
                     novaRotaRoteiro(roteiro, rotaDTO);
                 } else {
@@ -671,7 +671,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                         if (rotaPDVExistente == null) {
                             novoPDVRota(rotaExistente, pdvDTO, roteirizacao.getBox());
                         } else {
-                            rotaPDVExistente.setOrdem(pdvDTO.getOrdem());
+                            rotaExistente.alterarOrdemPdv(pdvDTO.getId(), pdvDTO.getOrdem());
                         }
                     }
                 }
@@ -719,7 +719,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 throw new ValidacaoException(
                         TipoMensagem.ERROR,
                         String.format(
-                                "O PDV [%s] já pertence a uma roteirização associada a um Box",
+                                "O PDV [%s] já pertence a uma roteirização associada a um Box!",
                                 pdvDTO.getPdv()));
             }
         }
