@@ -168,7 +168,7 @@ var inadimplenciaController = $.extend(true, {
 		
 		$.each(grid.rows, function(index, row) {
 			
-			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome);		
+			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome) + "," + inadimplenciaController.gerarBotaoDetalhesComissaCota(row.cell.idDivida,row.cell.nome);		
 			
 	  	});
 		
@@ -184,12 +184,24 @@ var inadimplenciaController = $.extend(true, {
 		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 		
 	},
+	
+	gerarBotaoDetalhesComissaCota : function(idDivida, nome) {
+		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhesComissaoCota("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+		
+	},
 
 	getDetalhes : function(idDivida, nome) {
 		nomeCota = nome;
 		$.postJSON(contextPath + "/inadimplencia/getDetalhesDivida", 
 				"idDivida="+idDivida+"&method='get'", 
 				inadimplenciaController.popupDetalhes);	
+	},
+	
+	getDetalhesComissaoCota : function(idDivida, nome) {
+		nomeCota = nome;
+		$.postJSON(contextPath + "/inadimplencia/getDetalhesDivida", 
+				"idDivida="+idDivida+"&method='get'", 
+				inadimplenciaController.popupDetalhesComissaoCota);	
 	},
 
 	popupDetalhes : function(result) {
@@ -210,6 +222,26 @@ var inadimplenciaController = $.extend(true, {
 				},
 				form: $("#dialog-detalhes", this.workspace).parents("form")
 			});
+	},
+	
+	popupDetalhesComissaoCota : function(result) {
+		
+		inadimplenciaController.gerarTabelaDetalhesComissaoCota(result, nomeCota);
+	
+		$( "#dialog-detalhes-comissao", inadimplenciaController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:480,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					
+					
+				},
+			},
+			form: $("#dialog-detalhes-comissao", this.workspace).parents("form")
+		});
 	},
 		
 	gerarTabelaDetalhes : function(dividas, nome) {
@@ -285,6 +317,67 @@ var inadimplenciaController = $.extend(true, {
 		 	tbody.appendChild(linha);
 			 
 		 });		 		
+	},
+	
+	gerarTabelaDetalhesComissaoCota : function(dividas, nome) {
+		
+		var div = $("#dialog-detalhes-comissao", inadimplenciaController.workspace);
+
+		$(div).html("");
+		
+		var fieldset  = document.createElement("FIELDSET");
+		
+		fieldset.style.cssText = "width:450px;" + fieldset.style.cssText;
+
+		$(div).append(fieldset);
+		
+		var legend = document.createElement("LEGEND");
+		legend.innerHTML = "Comissão Cota: ".bold() + " - " + nome;
+		
+		fieldset.appendChild(legend);
+		
+		var table = document.createElement("TABLE");
+		table.id = "tabelaDetalhesComissaoId";
+		table.width = "430";
+		table.border = "0";
+		table.cellspacing = "1";
+		table.cellpadding = "1";
+		
+		fieldset.appendChild(table);
+		
+		var tbody = document.createElement("TBODY");
+		
+		table.appendChild(tbody);
+		
+	 	var cabecalho = document.createElement("TR");
+	 	cabecalho.className="header_table";
+	 	
+	 	var tdPercentual = document.createElement("TD");
+	 	tdPercentual.width="125";
+	 	tdPercentual.align="left";
+	 	tdPercentual.innerHTML="Percentual Utilizado".bold();
+	 	cabecalho.appendChild(tdPercentual);
+	 	
+	 	var tdSaldoDivida = document.createElement("TD");
+	 	tdSaldoDivida.width="100";
+	 	tdSaldoDivida.align="right";
+	 	tdSaldoDivida.innerHTML="Valor da Dívida R$".bold();		 	
+	 	cabecalho.appendChild(tdSaldoDivida);
+	 	
+	 	var tdValorPago = document.createElement("TD");
+	 	tdValorPago.width="100";
+	 	tdValorPago.align="right";
+	 	tdValorPago.innerHTML="Valor Pago R$".bold();		 	
+	 	cabecalho.appendChild(tdValorPago);
+	 	
+	 	var tdSaldoResidual = document.createElement("TD");
+	 	tdSaldoResidual.width="100";
+	 	tdSaldoResidual.align="right";
+	 	tdSaldoResidual.innerHTML="Saldo Residual R$".bold();		 	
+	 	cabecalho.appendChild(tdSaldoResidual);
+	 	
+	 	tbody.appendChild(cabecalho);
+				 		
 	}
 	
 }, BaseController);
