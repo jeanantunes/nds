@@ -38,7 +38,8 @@ public class BaixaManual extends BaixaCobranca {
 	@Column(name = "OBSERVACAO")
 	private String observacao;
 	
-	@Column(name= "BANCO_ID")
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "BANCO_ID")
 	private Banco banco;
 	
 	public Usuario getResponsavel() {
