@@ -103,6 +103,9 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			File processingFile = new File(normalizeFileName(file.getParent()), file.getName() + ".processing");
 
 			// RENOMEIA O ARQUIVO PARA PROCESSANDO
+
+			System.getSecurityManager().checkWrite(processingFile.getName());
+			
 			if (!file.renameTo(processingFile)) {
 				throw new RuntimeException("Não Conseguiu renomear o Arquivo");
 			}
@@ -195,8 +198,9 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			// Processamento a ser executado APÓS o processamento principal:
 			messageProcessor.posProcess(tempVar);
 			
-		}
-		catch (FileNotFoundException e) {
+		} catch (SecurityException e) {			
+			throw new RuntimeException("Não Conseguiu renomear o Arquivo", e);
+		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
