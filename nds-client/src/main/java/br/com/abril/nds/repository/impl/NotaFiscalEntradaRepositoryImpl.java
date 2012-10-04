@@ -8,6 +8,7 @@ import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
@@ -27,20 +28,55 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 
 	public Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 
-		String hql = getConsultaNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
-
-		hql = hql.replaceFirst("select notaFiscal", "select count(notaFiscal)");
+		String hql = getConsultaNotasFiscaisCadastradas(filtroConsultaNotaFiscal, true);
 
 		Query query = criarQueryComParametrosObterNotasFiscaisCadastradas(hql, filtroConsultaNotaFiscal);
 
 		return ((Long) query.uniqueResult()).intValue();
 	}
 
+	/**
+	 * Obtém lista de razão social do fornecedores dos itens associados 
+	 * as notas fiscais de entrada passadas por parâmetro. 
+	 * 
+	 * @param listaIdNotaFiscal
+	 * 
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	@Override
+	public List<ItemDTO<Long, String>> obterListaFornecedorNotaFiscal(List<Long> listaIdNotaFiscal){
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select	")
+		
+		.append(" notaFiscal.id as key, ")
+		.append(" f.juridica.razaoSocial as value ")
+		
+		.append(" from NotaFiscalEntradaFornecedor notaFiscal ")
+		.append(" join notaFiscal.tipoNotaFiscal 	")
+		.append(" join notaFiscal.itens i 			")
+		.append(" join i.produtoEdicao pe			")
+		.append(" join pe.produto p					")
+		.append(" join p.fornecedores f				")
+		
+		.append(" where notaFiscal.id in (:listaIdNotaFiscal) ")
+		
+		.append(" group by notaFiscal.id, f.juridica.id, f.juridica.razaoSocial ");
+		
+		Query query = getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		
+		query.setParameterList("listaIdNotaFiscal", listaIdNotaFiscal);
+		
+		return query.list();
+		
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<NotaFiscalEntradaFornecedor> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) {
 
-		String hql = getConsultaNotasFiscaisCadastradas(filtroConsultaNotaFiscal);
+		String hql = getConsultaNotasFiscaisCadastradas(filtroConsultaNotaFiscal, false);
 		
 		Query query = criarQueryComParametrosObterNotasFiscaisCadastradas(hql, filtroConsultaNotaFiscal);
 		
@@ -60,17 +96,26 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		return query.list();
 	}
 
-	private String getConsultaNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal) { 
+	private String getConsultaNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, boolean isCount) { 
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ")
-		   .append(" join notaFiscal.tipoNotaFiscal ")
-		   .append(" join notaFiscal.itens i ")
-		   .append(" join i.produtoEdicao pe")
-		   .append(" join pe.produto p")
-		   .append(" join p.fornecedores f");
+		if(isCount) {
+			hql.append("select count( distinct notaFiscal.id )");
+			
+		}else {
+			hql.append("select distinct(notaFiscal)");
+			
+		}
 		
+		   
+		hql.append(" from NotaFiscalEntradaFornecedor notaFiscal ")
+
+		   .append(" join notaFiscal.tipoNotaFiscal 	")
+		   .append(" join notaFiscal.itens i 			")
+		   .append(" join i.produtoEdicao pe			")
+		   .append(" join pe.produto p					")
+		   .append(" join p.fornecedores f				");
 		
 		String condicoes = "";
 		

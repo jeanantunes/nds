@@ -44,7 +44,10 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -57,6 +60,7 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.repository.VendaProdutoEncalheRepository;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.VendaEncalheService;
@@ -118,9 +122,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 	@Autowired
 	private DescontoService descontoService;
-
-	private SlipVendaEncalheDTO obterDadosSlipVenda(VendaProduto... vendas) {
-
+	
+	@Autowired
+	private LancamentoService lancamentoService;
+	
+	private SlipVendaEncalheDTO obterDadosSlipVenda(VendaProduto... vendas){
+		
 		SlipVendaEncalheDTO slipVendaEncalhe = new SlipVendaEncalheDTO();
 
 		if (vendas != null) {
@@ -273,22 +280,19 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	@Transactional(readOnly = true)
 	public VendaEncalheDTO buscarVendaEncalhe(Long idVendaEncalhe) {
 
-		VendaEncalheDTO vendaEncalheDTO = vendaProdutoRepository
-				.buscarVendaProdutoEncalhe(idVendaEncalhe);
-
-		if (vendaEncalheDTO != null) {
-
-			ProdutoEdicao produtoEdicao = produtoEdicaoRepository
-					.obterProdutoEdicaoPorCodProdutoNumEdicao(vendaEncalheDTO
-							.getCodigoProduto(), vendaEncalheDTO
-							.getNumeroEdicao().longValue());
-
-			if (produtoEdicao != null) {
-
-				Integer qntProduto = getQntProdutoEstoque(
-						vendaEncalheDTO.getTipoVendaEncalhe(),
-						produtoEdicao.getId());
-
+		VendaEncalheDTO vendaEncalheDTO = vendaProdutoRepository.buscarVendaProdutoEncalhe(idVendaEncalhe);
+		
+		if(vendaEncalheDTO!= null){
+			
+			ProdutoEdicao produtoEdicao  =  produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vendaEncalheDTO.getCodigoProduto(), 
+																											 vendaEncalheDTO.getNumeroEdicao().longValue());
+			
+			if(produtoEdicao!= null){
+				
+				EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
+				
+				BigInteger qntProduto = getQntProdutoEstoque(vendaEncalheDTO.getTipoVendaEncalhe(), estoqueProduto);
+			
 				vendaEncalheDTO.setQntDisponivelProduto(qntProduto);
 			}
 		}
@@ -323,15 +327,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 	@Override
 	@Transactional
-	public byte[] efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO,
-			Long numeroCota, Date dataVencimentoDebito, Usuario usuario) {
+	public byte[] efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO,Long numeroCota, Date dataVencimentoDebito, Usuario usuario) {
 
 		List<VendaProduto> vendasEfetivadas = new ArrayList<VendaProduto>();
 
 		for (VendaEncalheDTO vnd : vendaEncalheDTO) {
 
-			vendasEfetivadas.add(processarVendaEncalhe(vnd, numeroCota,
-					dataVencimentoDebito, usuario));
+			vendasEfetivadas.add(processarVendaEncalhe(vnd, numeroCota,dataVencimentoDebito, usuario));
 		}
 
 		byte[] relatorio = gerarArquivoSlipVenda(vendaEncalheDTO.get(0)
@@ -355,17 +357,15 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param dataVencimentoDebito
 	 * @param usuario
 	 */
-	private VendaProduto processarVendaEncalhe(VendaEncalheDTO vnd,
-			Long numeroCota, Date dataVencimentoDebito, Usuario usuario) {
+	private VendaProduto processarVendaEncalhe(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario) {
 
 		if (TipoVendaEncalhe.ENCALHE.equals(vnd.getTipoVendaEncalhe())) {
 
-			return criarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito,
-					usuario);
+			return criarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito,usuario);
+			
 		} else {
 
-			return criarVendaSuplementar(vnd, numeroCota, dataVencimentoDebito,
-					usuario);
+			return criarVendaSuplementar(vnd, numeroCota, dataVencimentoDebito,usuario);
 		}
 	}
 
@@ -1111,92 +1111,128 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	public VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,
-			Long numeroEdicao, TipoVendaEncalhe tipoVendaEncalhe) {
-
+	@Transactional(readOnly=true)
+	public VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, Long numeroCota){
+		
 		VendaEncalheDTO vendaEncalheDTO = new VendaEncalheDTO();
-
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository
-				.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,
-						numeroEdicao);
-
-		if (produtoEdicao != null) {
-
-			Integer qntProduto = getQntProdutoEstoque(tipoVendaEncalhe,
-					produtoEdicao.getId());
-
-			if (qntProduto != null) {
-
+		
+		ProdutoEdicao produtoEdicao  =  produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+		
+		if(produtoEdicao!= null){
+			
+			EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
+			
+			TipoVendaEncalhe tipoVendaEncalhe= this.obterTipoVenda(estoqueProduto);
+			
+			BigInteger qntProduto = this.getQntProdutoEstoque(tipoVendaEncalhe, estoqueProduto);
+			
+			if(qntProduto!= null){
+			    
 				vendaEncalheDTO.setQntDisponivelProduto(qntProduto);
-				vendaEncalheDTO.setCodigoProduto(produtoEdicao.getProduto()
-						.getCodigo());
-				vendaEncalheDTO.setNomeProduto(produtoEdicao.getProduto()
-						.getNome());
-				vendaEncalheDTO
-						.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-
-				// TODO: Considerar a cota no cálculo do desconto, requer
-				// refactor na tela
-				// pois após o grid populado com os produtos, pode ser informada
-				// uma cota diferente
-				// Esta alteração será considerada nos ajustes previstos desta
-				// funcionalidade
+				vendaEncalheDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+				vendaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+				vendaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+				
+				Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
+				
+				BigDecimal descontoProduto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+		
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-				BigDecimal percentualDesconto = Util.nvl(produtoEdicao
-						.getProduto().getDesconto(), BigDecimal.ZERO);
-				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
-						precoVenda, percentualDesconto);
-
-				vendaEncalheDTO.setPrecoDesconto(precoVenda
-						.subtract(valorDesconto));
-				vendaEncalheDTO.setCodigoBarras(produtoEdicao
-						.getCodigoDeBarras());
-
-				if (TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)) {
-					if (isVendaConsignadoCota(produtoEdicao)) {
-						vendaEncalheDTO
-								.setFormaVenda(FormaComercializacao.CONSIGNADO);
-					} else {
-						vendaEncalheDTO
-								.setFormaVenda(FormaComercializacao.CONTA_FIRME);
-					}
-				} else {
-					vendaEncalheDTO
-							.setFormaVenda(FormaComercializacao.CONTA_FIRME);
-				}
-			} else {
-				throw new ValidacaoException(TipoMensagem.WARNING,
-						"Não existe produto disponível em estoque para venda de encalhe!");
+        
+				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, descontoProduto);
+				
+				vendaEncalheDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));				
+				vendaEncalheDTO.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
+				vendaEncalheDTO.setFormaVenda(this.obetrFormaComercializacaoVenda(produtoEdicao,tipoVendaEncalhe));
+				vendaEncalheDTO.setTipoVendaEncalhe(tipoVendaEncalhe);
+			}
+			else{
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não existe produto disponível em estoque para venda!");
 			}
 		}
 
 		return vendaEncalheDTO;
 	}
 
-	private Integer getQntProdutoEstoque(TipoVendaEncalhe tipoVendaEncalhe,
-			Long idProdutoEdicao) {
+	private FormaComercializacao obetrFormaComercializacaoVenda(ProdutoEdicao produtoEdicao,TipoVendaEncalhe tipoVendaEncalhe) {
+		
+		FormaComercializacao formaComercializacao = null;
+		
+		if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)){
+			if (isVendaConsignadoCota(produtoEdicao)){
+				formaComercializacao = FormaComercializacao.CONSIGNADO;
+			}
+			else{
+				formaComercializacao = FormaComercializacao.CONTA_FIRME;
+			}
+		}
+		else{
+			
+			if(this.isConsignadoVendaEncalhe(produtoEdicao)){
+				
+				formaComercializacao = FormaComercializacao.CONSIGNADO;
+			}else{
+				
+				formaComercializacao = FormaComercializacao.CONTA_FIRME;
+			}					
+		}
+		
+		return formaComercializacao;
+	}
+	
+	private boolean isConsignadoVendaEncalhe(ProdutoEdicao produtoEdicao) {
+		
+		if(!produtoEdicao.isParcial()){
+			return false;
+		}
+		
+		Lancamento lancamento =  lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+		
+		if(lancamento == null || lancamento.getPeriodoLancamentoParcial() == null){
+			return false;
+		}
+		
+		PeriodoLancamentoParcial periodo = lancamento.getPeriodoLancamentoParcial();
+		
+		if(TipoLancamentoParcial.FINAL.equals(periodo.getTipo())){
+			return false;
+		}
+		
+		return true;
+	}
 
-		EstoqueProduto estoqueProduto = estoqueProdutoRespository
-				.buscarEstoquePorProduto(idProdutoEdicao);
+	private TipoVendaEncalhe obterTipoVenda(EstoqueProduto estoqueProduto){
+		
+		if(estoqueProduto.getQtdeSuplementar()!= null
+					&& estoqueProduto.getQtdeSuplementar().compareTo(BigInteger.ZERO) <= 0){
+			
+			return  TipoVendaEncalhe.ENCALHE;		
+				
+		}
+		else{
+				
+			return TipoVendaEncalhe.SUPLEMENTAR;
+		}
 
-		Integer qntProduto = null;
-
-		if (estoqueProduto != null) {
-
-			if (TipoVendaEncalhe.ENCALHE.equals(tipoVendaEncalhe)
-					&& estoqueProduto.getQtdeDevolucaoEncalhe() != null
-					&& estoqueProduto.getQtdeDevolucaoEncalhe().compareTo(
-							BigInteger.ZERO) > 0) {
-
-				qntProduto = estoqueProduto.getQtdeDevolucaoEncalhe()
-						.intValue();
-			} else if (TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)
-					&& estoqueProduto.getQtdeSuplementar() != null
-					&& estoqueProduto.getQtdeSuplementar().compareTo(
-							BigInteger.ZERO) > 0) {
-
-				qntProduto = estoqueProduto.getQtdeSuplementar().intValue();
+	}
+	
+	private BigInteger getQntProdutoEstoque(TipoVendaEncalhe tipoVendaEncalhe, EstoqueProduto estoqueProduto){
+		
+		BigInteger qntProduto =  BigInteger.ZERO;
+		
+		if(estoqueProduto!= null ){
+			
+			if(TipoVendaEncalhe.ENCALHE.equals(tipoVendaEncalhe)
+					&& estoqueProduto.getQtdeDevolucaoEncalhe()!= null
+					&& estoqueProduto.getQtdeDevolucaoEncalhe().compareTo(BigInteger.ZERO) > 0){
+			
+				qntProduto = estoqueProduto.getQtdeDevolucaoEncalhe();
+			}
+			else if (TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)
+					&& estoqueProduto.getQtdeSuplementar()!= null
+					&& estoqueProduto.getQtdeSuplementar().compareTo(BigInteger.ZERO) > 0){
+				
+				qntProduto = estoqueProduto.getQtdeSuplementar();
 			}
 		}
 

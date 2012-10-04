@@ -1,8 +1,11 @@
 package br.com.abril.nds.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import br.com.abril.nds.client.vo.CobrancaVO;
 
 /**
  * Classe de interface de serviços referentes a entidade
@@ -24,5 +27,7 @@ public interface BaixaCobrancaService {
 	 * @return Date
 	 */
 	public Date buscarDiaUltimaBaixaAutomatica();
+	
+	public List<CobrancaVO> buscarCobrancasBaixadas(Integer numCota, String nossoNumero);
 	
 }

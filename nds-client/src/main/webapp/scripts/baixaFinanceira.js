@@ -57,6 +57,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
     popup_baixa_dividas : function() {
+    	baixaFinanceiraController.mostrarBancos($("#formaRecebimentoDividas").val());
 		$( "#dialog-baixa-dividas", baixaFinanceiraController.workspace ).dialog({
 			resizable: false,
 			height:430,
@@ -69,6 +70,7 @@ var baixaFinanceiraController = $.extend(true, {
 				           click: function() {
 				        	   
 				        	   baixaFinanceiraController.popup_confirma_baixa_dividas();
+				        	   
 				           }
 			           },
 			           {
@@ -456,13 +458,20 @@ var baixaFinanceiraController = $.extend(true, {
 		var nossoNumero = $("#filtroNossoNumero", baixaFinanceiraController.workspace).val();
 		var numCota = $("#filtroNumCota", baixaFinanceiraController.workspace).val();
 		
-		if (nossoNumero==''){
-			
-			/*BAIXA MANUAL DE DÍVIDAS*/
+		var btAVista =$("#bt_aVista");
+		var btNegociar =$("#bt_negociar");
+		var btPostergar =$("#bt_postergar");
+	
+		if($("#checkCobrancasBaixadas", baixaFinanceiraController.workspace).is(':checked')){
+			btAVista.hide();
+			btNegociar.hide();
+			btPostergar.hide();
+			/*BAIXA MANUAL DE DIVIDAS BAIXADAS*/
 			$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexOptions({
-				url: contextPath + "/financeiro/buscaDividas",
+				url: contextPath + "/financeiro/buscaDividasBaixadas",
 				params: [
-				         {name:'numCota', value: numCota}
+				         {name:'numCota', value: numCota},
+				         {name:'nossoNumero', value: nossoNumero}
 				        ] ,
 				        newp: 1
 			});
@@ -472,18 +481,40 @@ var baixaFinanceiraController = $.extend(true, {
 			$(".grids", baixaFinanceiraController.workspace).show();
 			
 			baixaFinanceiraController.dividaManualCota();
+			
+		}else{
+			btAVista.show();
+			btNegociar.show();
+			btPostergar.show();
+			if (nossoNumero==''){
+				
+				/*BAIXA MANUAL DE DIVIDAS*/
+				$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexOptions({
+					url: contextPath + "/financeiro/buscaDividas",
+					params: [
+					         {name:'numCota', value: numCota}
+					        ] ,
+					        newp: 1
+				});
+				
+				$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexReload();
+				
+				$(".grids", baixaFinanceiraController.workspace).show();
+				
+				baixaFinanceiraController.dividaManualCota();
+			}
+			
+			else{
+				
+				/*BAIXA INDIVIDUAL DE COBRANÇA(BOLETO)*/
+				var data = [{name: 'nossoNumero', value: nossoNumero}];
+				$.postJSON(contextPath + "/financeiro/buscaBoleto",
+						   data,
+						   baixaFinanceiraController.sucessCallbackPesquisarBoleto, 
+						   baixaFinanceiraController.errorCallbackPesquisarBoleto);
+				
+			}
 		}
-		
-		else{
-			
-			/*BAIXA INDIVIDUAL DE COBRANÇA(BOLETO)*/
-			var data = [{name: 'nossoNumero', value: nossoNumero}];
-			$.postJSON(contextPath + "/financeiro/buscaBoleto",
-					   data,
-					   baixaFinanceiraController.sucessCallbackPesquisarBoleto, 
-					   baixaFinanceiraController.errorCallbackPesquisarBoleto);
-			
-		}	
 	},
 	
 	sucessCallbackPesquisarBoleto : function(resultado) {
@@ -745,7 +776,7 @@ var baixaFinanceiraController = $.extend(true, {
     	var valorSaldoDividas = $("#valorSaldoDividas", baixaFinanceiraController.workspace).html();
     	var formaRecebimentoDividas = $("#formaRecebimentoDividas", baixaFinanceiraController.workspace).val();
     	var observacoesDividas = $("#observacoesDividas", baixaFinanceiraController.workspace).val();
-
+    	var idBanco = $("#bancoDividas", baixaFinanceiraController.workspace).val();
 		$.postJSON(contextPath + "/financeiro/baixaManualDividas",
 				   "manterPendente="+manterPendente+
 				   "&valorDividas="+valorDividas+
@@ -756,6 +787,7 @@ var baixaFinanceiraController = $.extend(true, {
 				   "&valorSaldo="+ valorSaldoDividas+
 				   "&tipoPagamento="+ formaRecebimentoDividas+
 				   "&observacoes="+ observacoesDividas +
+				   "&idBanco="+ idBanco +
 				   "&"+baixaFinanceiraController.obterCobrancasDividasMarcadas(),
 				   function(mensagens) {
 					   
@@ -786,7 +818,7 @@ var baixaFinanceiraController = $.extend(true, {
 	//-----------------------------------------------------
 	
 
-	//BAIXA AUTOMÁTICA-------------------------------------
+	//BAIXA AUTOMATICA-------------------------------------
 
 	mostrarBaixaAuto : function() {
 		
@@ -958,6 +990,18 @@ var baixaFinanceiraController = $.extend(true, {
 
 	buscarValueCheckBox : function(checkName) {
 		return $("#"+checkName, baixaFinanceiraController.workspace).is(":checked");
+	},
+	
+	mostrarBancos : function(value) {
+		$("#bancoDividas", baixaFinanceiraController.workspace).prop("selectedIndex",0);
+		if(value == 'DEPOSITO' || value == 'TRANSFERENCIA_BANCARIA'){
+			$("#bancoDividas", baixaFinanceiraController.workspace).show();
+			$("#labelBanco", baixaFinanceiraController.workspace).show();
+		}else{
+			$("#bancoDividas", baixaFinanceiraController.workspace).hide();
+			$("#labelBanco", baixaFinanceiraController.workspace).hide();
+		}
+		
 	}
 
 }, BaseController);

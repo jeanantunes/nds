@@ -18,7 +18,7 @@
 
 		#resultadoIntegracao{display:none;}
         #tableBaixaManual, #tableBaixaAuto, #extratoBaixaManual, #porNossoNumero, #porCota, #dialog-divida{display:none;}
-        #dialog-baixa-dividas,#dialog-detalhes-divida{display:none;}
+        #dialog-baixa-dividas,#dialog-detalhes-divida, #bancoDividas, #labelBanco{display:none;}
         #dialog-confirma-baixa-numero,#dialog-confirma-baixa,#dialog-confirma-pendente,#dialog-postergar{display:none;}
         
 	</style>
@@ -27,6 +27,21 @@
 
 <body>
 
+	<form id="formDialogPrevisao">
+		<div id="dialog-previsao" title="Previsão" style="display: none;">
+			<fieldset style="width:750px!important;">
+		    	
+		    	<legend>Previsão - Vencimento: 10/05/2012</legend>
+		    	
+		    	<table class="previsaoGrid"></table>
+		        
+		        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+		        
+		    </fieldset>
+		</div>
+	</form>
+	
 	<fieldset class="classFieldset">
 		
 		<legend> Baixa Financeira</legend>
@@ -57,31 +72,50 @@
 			  method="post" enctype="multipart/form-data" >
 		
 			<input type="hidden" name="formUploadAjax" value="true" />
+			<input type="hidden" id="dataHidden" value="10/10/2012" />
 		
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				   class="filtro" id="tableBaixaAuto">
 				
 					<tr>
+						<td width="100">Data:</td>
+						<td width="200">
+							<input type="text" name="dataBaixa" id="dataBaixa" 
+								   onchange="baixaFinanceiraController.alterarEstadoInputsBaixaAutomatica();"
+								   style="width: 90px; text-align: right;" value="${dataOperacao}" />
+						</td>
 						<td width="65">Arquivo:</td>
 						<td colspan="3">
-							<input name="uploadedFile" type="file" id="uploadedFile" size="25" />
+							
+							<input name="uploadedFile" type="file" id="uploadedFile" size="25" 
+								   onchange="baixaFinanceiraController.habilitarIntegracao();" />
+							
 						</td>
 						
-						<td width="133">Valor Financeiro R$:</td>
+						<td width="200">Valor Financeiro R$:</td>
 						<td width="288">
 							<input type="text" name="valorFinanceiro"
 								   id="valorFinanceiro" style="width: 90px; text-align: right;" />
 						</td>
 						
 						<td width="111">
-							<span class="bt_integrar" title="Integrar">
+							<span class="bt_integrar" title="Integrar" id="btnIntegrar" style="display:none">
 								<a href="javascript:;" onclick="baixaFinanceiraController.integrar();">Integrar</a>
+							</span>
+							<span class="bt_pesquisar" title="Exibir Resumo" id="btnExibirResumos">
+								<a href="javascript:;" onclick="baixaFinanceiraController.exibirResumo();" id="btnPesquisar"></a>
 							</span>
 						</td>
 					</tr>			
 			</table>
 		</form>
-		<!--  -->
+		
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosPrevisao();">previsto</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosBaixados();">baixados</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosRejeitados();">rejeitados</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosBaixadosComDivergencia();">divergentes</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosInadimplentes();">inadimplentes</a>
+		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridTotalBancario();">totalBancario</a>
 		
 		
 		<!-- BAIXA MANUAL -->
@@ -103,7 +137,7 @@
 				
 				<td width="39">Nome:</td>
              	
-             	<td width="210">
+             	<td width="185">
 		        	<input name="descricaoCota" 
 		      		 	   id="descricaoCota" 
 		      		 	   type="text"
@@ -114,9 +148,11 @@
 		      		 	   onblur="pesquisaCotaBaixaFinanceira.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
 		        </td>
 			  
-				<td width="97">Nosso Número:</td>
-				<td width="333"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
-				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();">Pesquisar</a></span></td>
+				<td width="100">Nosso Número:</td>
+				<td width="240"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 200px;" /></td>
+				<td width="240">Exibir apenas Cobran&ccedil;as Baixadas:</td>
+				<td width="50"><input type="checkbox" id="checkCobrancasBaixadas"/></td>
+				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a></span></td>
 			</tr>
         </table>
         
@@ -327,9 +363,9 @@
 		                </td>
 
 		                <td width="30%">   
-		                    <span class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
-		                    <span class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
-		                    <span class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
+		                    <span id="bt_aVista" class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
+		                    <span id="bt_negociar" class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+		                    <span id="bt_postergar" class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
 		                </td>
 		                
 		                <td width="14%">
@@ -406,7 +442,7 @@
 					  <tr>
 					    <td><strong>Forma Recebimento:</strong></td>
 					    <td>
-					        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas" style="width:150px;">
+					        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas"  onchange="baixaFinanceiraController.mostrarBancos(this.value);" style="width:150px;">
 		                        <option value="">Selecione</option>
 		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
 				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
@@ -416,7 +452,7 @@
 					  </tr>
 					  
 					   <tr>
-					    <td><strong>Banco:</strong></td>
+					    <td><strong><span id="labelBanco">Banco:</span></strong></td>
 					    <td>
 					        <select name="idBanco" id="bancoDividas" style="width:150px;">
 		                        <option value="">Selecione</option>

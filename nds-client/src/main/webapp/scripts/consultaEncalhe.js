@@ -4,6 +4,7 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			var colunas = ConsultaEncalhe.obterColModel();
 			var colunasDetalhes = ConsultaEncalhe.obterColModelDetalhes();
+			var colunasOutrosValores = ConsultaEncalhe.obterColModelOutrosValores();
 			
 			$("#cota", ConsultaEncalhe.workspace).numeric();
 			
@@ -37,6 +38,14 @@ var ConsultaEncalhe = $.extend(true, {
 				height : 180
 			});
 			
+			$("#outrosValoresGrid", ConsultaEncalhe.workspace).flexigrid({
+				dataType : 'json',
+				colModel : colunasOutrosValores,
+				width : 540,
+				height : 250,
+				disableSelect: true
+			});
+
 			$('.datePicker', ConsultaEncalhe.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -87,28 +96,26 @@ var ConsultaEncalhe = $.extend(true, {
 
 			$("#download-iframe", ConsultaEncalhe.workspace).attr('src', link);
 			
-			/*var formData = [
-			        
-			        {name:'dataRecolhimentoInicial', value: dataRecolhimentoInicial},
-			        {name:'dataRecolhimentoFinal', value: dataRecolhimentoFinal},
-			        {name:'idFornecedor', value: idFornecedor},
-			        {name:'numeroCota', value: numeroCota }
-			];
-			
-			$.postJSON(contextPath + "/devolucao/consultaEncalhe/gerarSlip", formData,
-					function(result) {
-						if (result != null) {
-							var mensagens = (result.mensagens) ? result.mensagens : result;   
-							var tipoMensagem = mensagens.tipoMensagem;
-							var listaMensagens = mensagens.listaMensagens;
-			
-							if (tipoMensagem && listaMensagens) {
-								exibirMensagem(tipoMensagem, listaMensagens);
-							}
-						}
-		
-					},
-					null, true);*/
+		},
+
+		popupOutrosValores: function() {
+
+			$("#dialog-outros-valores", ConsultaEncalhe.workspace).dialog({
+				resizable : false,
+				height : 430,
+				width : 600,
+				modal : true,
+				buttons : [ 
+					          {
+						           id:"bt_fechar",
+						           text:"Fechar", 
+						           click: function() {
+						        	   $( this ).dialog( "close" );
+						           }
+					           }
+					      ],
+				form: $("#dialog-outros-valores", this.workspace).parents("form")
+			});
 
 		},
 
@@ -135,6 +142,12 @@ var ConsultaEncalhe = $.extend(true, {
 			
 				row.cell.acao = detalhes;
 				
+			});
+			
+			$("#outrosValoresGrid", ConsultaEncalhe.workspace).flexAddData({
+				page: resultado.tableModelDebitoCredito.page, 
+				total: resultado.tableModelDebitoCredito.total, 
+				rows: resultado.tableModelDebitoCredito.rows
 			});
 			
 			$(".grids", ConsultaEncalhe.workspace).show();
@@ -318,6 +331,37 @@ var ConsultaEncalhe = $.extend(true, {
 			align : 'left'
 		}];	
 		
+		return colModel;
+	},
+	
+	obterColModelOutrosValores : function() {
+		
+		var colModel = [{
+			display : 'Data',
+			name : 'dataLancamento',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Tipo de Lançamento',
+			name : 'tipoLancamento',
+			width : 140,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Observações',
+			name : 'observacoes',
+			width : 140,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Valor R$',
+			name : 'valor',
+			width : 100,
+			sortable : true,
+			align : 'right'
+		}];
+	
 		return colModel;
 	}
 	

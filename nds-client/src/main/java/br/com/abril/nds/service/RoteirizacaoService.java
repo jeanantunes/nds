@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface RoteirizacaoService {
@@ -192,7 +193,7 @@ public interface RoteirizacaoService {
 	 * @param idPdv
 	 * @return boolean - true:disponivel
 	 */
-	public boolean verificaDisponibilidadePdv(Long idPdv);
+	 public boolean verificaDisponibilidadePdv(Long idPdv, Long idBox);
 	
 	/**
 	 * Inclui Cota Pdv na Roteirização
@@ -225,6 +226,15 @@ public interface RoteirizacaoService {
      * @return {@link Roteirizacao} roteirização confirmada
      */
 	Roteirizacao confirmarRoteirizacao(RoteirizacaoDTO dto);
+	
+    /**
+     * Valida as informações da roteirização
+     * 
+     * @param dto
+     *            DTO com as informações da roteirização
+     * @return {@link ValidacaoVO} com a validação da roteirização
+     */
+	ValidacaoVO validarRoteirizacao(RoteirizacaoDTO dto);
 
 }
 	

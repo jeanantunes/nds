@@ -1,4 +1,6 @@
 package br.com.abril.nds.repository.impl;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -193,9 +195,117 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return (Boleto) criteria.uniqueResult();
 	}
-
+	
+	@Override
+	public Long obterQuantidadeBoletosPrevistos(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		hql.append(" count(cobranca) as quantidadePrevisao from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosLidos(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		hql.append(" count(cobranca) as quantidadeLidos from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosBaixados(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		hql.append(" count(cobranca) as quantidadeBaixados from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosRejeitados(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		hql.append(" count(cobranca) as quantidadeRejeitados from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosBaixadosComDivergencia(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		hql.append(" count(cobranca) as quantidadeBaixadosComDivergencia from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosInadimplentes(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		hql.append(" count(cobranca) as quantidadeInadimplentes from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterValorTotalBancario(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		hql.append(" sum(cobranca.valor) as valorTotalBancario from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 	
 }
-
-
-

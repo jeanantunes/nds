@@ -94,9 +94,7 @@ public class FechamentoEncalheController {
 		filtro.setBoxId(boxId);
 		
 		if (aplicaRegraMudancaTipo){
-			if (boxId == null) {
-				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtro);
-			} else {
+			if (boxId != null) {
 				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
 				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 				fechamentoEncalheService.removeFechamentoDetalhado(filtroRevomecao);
@@ -387,7 +385,7 @@ public class FechamentoEncalheController {
 		filtro.setBoxId(boxId);
 		if (boxId == null){
 			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
-				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Você está tentando fazer uma pesquisa em modo consolidado (soma de todos os boxes). Já existem dados salvos em modo de pesquisa por box. Se você continuar, os dados serão sumarizados e não será possível desfazer a operação. Tem certeza que deseja continuar ?"), "result").recursive().serialize();
+				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Você está tentando fazer uma pesquisa em modo consolidado (soma de todos os boxes). Já existem dados salvos em modo de pesquisa por box. Não será possível realizar a pesquisa."), "result").recursive().serialize();
 			} else {
 				this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
 			}
