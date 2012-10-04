@@ -217,19 +217,8 @@ public class BaixaFinanceiraController {
 	
 	private ResumoBaixaBoletosDTO obterResumoBaixaFinanceira(Date data, ArquivoPagamentoBancoDTO arquivoPagamento) {
 		
-		// TODO: obter resumo baixa financeira
-		
-//		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = 
-//			this.boletoService.obterResumoBaixaFinanceiraBoletos(data);
-		
-		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = new ResumoBaixaBoletosDTO();
-		
-		resumoBaixaBoletosDTO.setQuantidadeBaixados(10);
-		resumoBaixaBoletosDTO.setQuantidadeBaixadosComDivergencia(10);
-		resumoBaixaBoletosDTO.setQuantidadeLidos(10);
-		resumoBaixaBoletosDTO.setQuantidadeRejeitados(10);
-		
-		//Fim todo
+		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = 
+			this.boletoService.obterResumoBaixaFinanceiraBoletos(data);
 		
 		if (arquivoPagamento != null) {
 		

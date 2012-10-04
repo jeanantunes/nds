@@ -715,6 +715,10 @@ var fechamentoEncalheController = $.extend(true, {
 			   	false
 			);
 			
-	}
-
+	},
+	
+	analiticoEncalhe : function() {
+		$('#workspace').tabs('addTab', "Anal&iacute;tico Encalhe", "/nds-client/devolucao/fechamentoEncalhe/analitico");
+	},
+	
 }, BaseController);
