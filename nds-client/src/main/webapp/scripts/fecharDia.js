@@ -54,6 +54,38 @@ var fecharDiaController =  $.extend(true, {
 			height : 165
 		});
 		
+		$(".lctoFaltasSobrasGrid").flexigrid({
+			preProcess: fecharDiaController.executarPreProcessamentoLancamentoFaltaESobra,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'edicao',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Inconsistência',
+				name : 'inconsistencia',
+				width : 180,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 500,
+			height : 155
+		});
+		
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -88,6 +120,25 @@ var fecharDiaController =  $.extend(true, {
 		}
 		
 		$("#dialog-confirma-expedicao", fecharDiaController.workspace).show();
+		
+		return resultado;
+		
+	},
+	
+	executarPreProcessamentoLancamentoFaltaESobra : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-lancto-faltas-sobras", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).show();
 		
 		return resultado;
 		
@@ -260,6 +311,7 @@ var fecharDiaController =  $.extend(true, {
 					fecharDiaController.validacaoBaixaBancaria(result);
 					fecharDiaController.validacaoRecebimentoFisico(result);
 					fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
+					fecharDiaController.validacaoLancamentoFaltasESobras(result);
 				});
 	},
 	
@@ -282,7 +334,7 @@ var fecharDiaController =  $.extend(true, {
 			recebimentoFisico = "<tr class='class_linha_2'><td>Recebimento Físico:</td>";
 			iconeRecebimentoFisico = 'ico_check.gif';
 		}else{
-			recebimentoFisico = "<td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
+			recebimentoFisico = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
 			iconeRecebimentoFisico = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
@@ -316,10 +368,10 @@ var fecharDiaController =  $.extend(true, {
 		var confirmacaoDeExpedicao = null;				
 		var iconeConfirmacaoDeExpedicao = null;		
 		if(result.confirmacaoDeExpedicao){
-			confirmacaoDeExpedicao = "<tr class='class_linha_2'><td>Confirmação de Expedição:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_1'><td>Confirmação de Expedição:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_check.gif';
 		}else{
-			confirmacaoDeExpedicao = "<td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_1'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConfirmacaoDeExpedicao+"' alt='Com Diferença' width='16' height='16' /></td></tr>";
@@ -341,6 +393,43 @@ var fecharDiaController =  $.extend(true, {
 			resizable: false,
 			height:'auto',
 			width:700,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				},
+			}
+		});
+	},
+	
+	validacaoLancamentoFaltasESobras : function(result){
+		var lancamentoFaltasESobras = null;				
+		var iconeLancamentoFaltasESobras = null;		
+		if(result.lancamentoFaltasESobras){
+			lancamentoFaltasESobras = "<tr class='class_linha_2'><td>Lançamento de Faltas e Sobras:</td>";
+			iconeLancamentoFaltasESobras = 'ico_check.gif';
+		}else{
+			lancamentoFaltasESobras = "<tr class='class_linha_2'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
+			iconeLancamentoFaltasESobras = 'ico_bloquear.gif';
+		}		
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeLancamentoFaltasESobras+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao').append(lancamentoFaltasESobras + imagem);		
+	},
+	
+	popup_lctoFaltas : function() {
+		
+		$(".lctoFaltasSobrasGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterLancamentoFaltaESobra",
+			dataType : 'json',
+			params: []
+		});
+		
+		$(".lctoFaltasSobrasGrid", fecharDiaController.workspace).flexReload();
+	
+		$( "#dialog-lancto-faltas-sobras", fecharDiaController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:550,
 			modal: true,
 			buttons: {
 				"Fechar": function() {

@@ -67,6 +67,27 @@
 	    
 		</div>
 	</form>
+	
+	<form id="form-popup-validacao-lancamento-faltas-sobras" ></form>
+		<div id="dialog-lancto-faltas-sobras" title="Lançamento de Faltas e Sobras" style="display:none;">
+		<fieldset style="width:500px;">
+	    	<legend>Lançamento de Faltas e Sobras</legend>
+		        <table class="lctoFaltasSobrasGrid"></table>
+		        <br clear="all" />
+		        <p>Diferenças não direcionadas, caso não seja direcionadas serão transferidas para o estoque Ganhos/Perdas!</p>
+				<p>Deseja realizar o direcionamento?
+		        <br clear="all" />
+		        <span class="bt_novos"><a href="../Estoque/lancamento_faltas_sobras.htm"><img src="../images/ico_check.gif" hspace="5" border="0" />Sim</a></span>
+		        
+		        <span class="bt_novos"><a href="javascript:;" onclick="popup_transferencias();"><img src="../images/ico_excluir.gif" hspace="5" border="0" />Não</a></span>
+		
+				</p>
+	    </fieldset>
+	    <br clear="all" />
+	
+	
+	</div>
+	</form>
 
 	<form id="form-cota-grid">
 		<div id="dialog-cota-grid" title="Cotas" style="display:none;">
@@ -229,11 +250,7 @@
 		        <tr class="class_linha_1">
 		          <td>Lançamento de Faltas e Sobras:</td>
 		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-		        </tr>
-		        <tr class="class_linha_2">
-		          <td>Confirmação de Expedição:</td>
-		          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
-		        </tr>
+		        </tr>		        
 		        <tr class="class_linha_1">
 		          <td>Fechamento de Encalhe:</td>
 		          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>

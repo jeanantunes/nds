@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
+import br.com.abril.nds.model.estoque.Diferenca;
 
 public interface FecharDiaService {
 	
@@ -51,5 +53,23 @@ public interface FecharDiaService {
 	 * @return List<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO>
 	 */
 	List<ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO> obterConfirmacaoDeExpedicao(Date dataOperacaoDistribuidor);
+	
+	/**
+	 * Verifica se tem algum produto com lançamento de faltas e sobras pendentes
+	 * @param dataOperacaoDistribuidor 
+	 * 
+	 * 
+	 * @return boolean
+	 */
+	Boolean existeLancamentoFaltasESobrasPendentes(Date dataOperacaoDistribuidor);
+	
+	/**
+	 * Retorna uma lista de produtos com diferenças 
+	 * @param dataOperacaoDistribuidor 
+	 * 
+	 * 
+	 * @return List<ValidacaoLancamentoFaltaESobraFecharDiaDTO>
+	 */
+	List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> obterLancamentoFaltasESobras(Date dataOperacaoDistribuidor);
 
 }

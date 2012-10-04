@@ -9,8 +9,10 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.FecharDiaRepository;
@@ -119,6 +121,32 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		return query.list();
 		 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> existeLancamentoFaltasESobrasPendentes(Date dataOperacaoDistribuidor) {		 
+		StringBuilder jpql = new StringBuilder();
+
+		jpql.append("SELECT produto.codigo AS codigo,");
+		jpql.append(" produto.descricao AS nomeProduto,");
+		jpql.append(" pe.numeroEdicao AS edicao, ");
+		jpql.append(" diferenca.tipoDiferenca AS inconsistencia ");
+		
+		jpql.append(" FROM Diferenca as diferenca ");
+		jpql.append(" JOIN diferenca.produtoEdicao as pe ");
+		jpql.append(" JOIN pe.produto as produto ");
+		jpql.append(" WHERE diferenca.statusConfirmacao = :statusConfirmacao ")
+		    .append(" AND  diferenca.dataMovimento = :dataOperacaoDistribuidor ");
+		
+		Query query = getSession().createQuery(jpql.toString());
+		
+		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
+		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoLancamentoFaltaESobraFecharDiaDTO.class));
+		
+		return query.list();
 	}
 
 }
