@@ -173,7 +173,6 @@ function PesquisaCota(workspace) {
 			$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
 			
 			if (successCallBack) {
-				
 				successCallBack();
 			}
 		}
