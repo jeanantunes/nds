@@ -16,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
-import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.envio.nota.IdentificacaoDestinatario;
-import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -566,9 +563,23 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}	
 
 	@Transactional
-	public List<NotaEnvio> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
+	public List<NotaFiscal> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro) {
 
-		Query q = getSession().createQuery("FROM NotaEnvio ne ");
+		StringBuffer sql = new StringBuffer();
+		sql.append("from NotaFiscal nf ");
+		
+		sql.append("inner join nf.identificacaoDestinatario AS idest ");
+		sql.append("inner join idest.pessoaDestinatarioReferencia AS p ");
+		//sql.append("inner join Cota.pessoa AS c ");
+		//sql.append("AND nf.identificacaoDestinatario.pessoa.id = c.pessoa.id ");
+		
+		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > 0) {
+			
+		}
+		
+		sql.append("WHERE 1 = 1 ");		
+		
+		Query q = getSession().createQuery(sql.toString());
 		
 		return q.list();
 		
