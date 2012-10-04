@@ -25,23 +25,6 @@ public class Negociacao {
 	@Column(name = "ID")
 	private Long id;
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	@OneToOne
 	@JoinColumn(name = "COBRANCA_ORIGINARIA_ID")
 	private Cobranca cobrancaOriginaria;
