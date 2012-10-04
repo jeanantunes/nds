@@ -506,7 +506,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
     public void confirmaRoteirizacaoExistente() {
-        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(roteirizacao, Arrays.asList(box300));
+        RoteirizacaoDTO roteirizacaoDTO = RoteirizacaoDTO.toDTO(roteirizacao, Arrays.asList(box300), false);
         roteirizacaoDTO.removerRoteiro(roteiro3.getId());
         roteirizacaoDTO.addRoteiroExclusao(roteiro3.getId());
         
