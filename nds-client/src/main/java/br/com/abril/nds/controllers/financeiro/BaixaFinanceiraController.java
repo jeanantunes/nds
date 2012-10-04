@@ -22,6 +22,8 @@ import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.DetalheBaixaBancoDTO;
+import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
@@ -29,6 +31,8 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBancoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
@@ -206,7 +210,166 @@ public class BaixaFinanceiraController {
 	
 	private ResumoBaixaBoletosDTO obterResumoBaixaFinanceira(Date data) {
 		
-		//TODO: 
+		// TODO: obter resumo baixa financeira
+		
+		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = new ResumoBaixaBoletosDTO();
+		
+		resumoBaixaBoletosDTO.setDataCompetencia(new Date().toString());
+		resumoBaixaBoletosDTO.setNomeArquivo("aaa");
+		resumoBaixaBoletosDTO.setQuantidadeBaixados(10);
+		resumoBaixaBoletosDTO.setQuantidadeBaixadosComDivergencia(10);
+		resumoBaixaBoletosDTO.setQuantidadeLidos(10);
+		resumoBaixaBoletosDTO.setQuantidadeRejeitados(10);
+		resumoBaixaBoletosDTO.setSomaPagamentos(BigDecimal.TEN);
+		
+		return resumoBaixaBoletosDTO;
+	}
+	
+	@Post
+	public void mostrarGridBoletosPrevisao(Date data, String sortorder,
+										   String sortname, int page, int rp) {
+		
+		FiltroDetalheBaixaBoletoDTO filtro =
+			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
+		
+		// TODO: realizar consulta
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		
+		// TODO: realizar consulta total
+		int qtdeTotalRegistros = 0;
+		
+		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+	}
+
+	@Post
+	public void mostrarGridBoletosBaixados(Date data, String sortorder,
+			   							   String sortname, int page, int rp) {
+		
+		FiltroDetalheBaixaBoletoDTO filtro =
+			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
+		
+		// TODO: realizar consulta
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		
+		// TODO: realizar consulta total
+		int qtdeTotalRegistros = 0;
+		
+		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+	}
+	
+	@Post
+	public void mostrarGridBoletosRejeitados(Date data, String sortorder,
+			   								 String sortname, int page, int rp) {
+		
+		FiltroDetalheBaixaBoletoDTO filtro =
+			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
+		
+		// TODO: realizar consulta
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		
+		// TODO: realizar consulta total
+		int qtdeTotalRegistros = 0;
+		
+		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+	}
+	
+	@Post
+	public void mostrarGridBoletosBaixadosComDivergencia(Date data, String sortorder,
+			   											 String sortname, int page, int rp) {
+		
+		FiltroDetalheBaixaBoletoDTO filtro =
+			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
+		
+		// TODO: realizar consulta
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		
+		// TODO: realizar consulta total
+		int qtdeTotalRegistros = 0;
+		
+		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+	}
+	
+	@Post
+	public void mostrarGridBoletosInadimplentes(Date data, String sortorder,
+			   									String sortname, int page, int rp) {
+		
+		FiltroDetalheBaixaBoletoDTO filtro =
+			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
+		
+		// TODO: realizar consulta
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		
+		// TODO: realizar consulta total
+		int qtdeTotalRegistros = 0;
+		
+		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+	}
+	
+	@Post
+	public void mostrarGridTotalBancario(Date data, String sortorder,
+										 String sortname, int page, int rp) {
+		
+		FiltroDetalheBaixaBancoDTO filtro =
+			this.carregarFiltroDetalheBanco(data, sortorder, sortname, page, rp);
+		
+		// TODO: realizar consulta
+		List<DetalheBaixaBancoDTO> listaDetalheBaixaBanco = this.getListaDetalheBaixaBancoMock();
+		
+		// TODO: realizar consulta total
+		int qtdeTotalRegistros = 0;
+		
+		TableModel<CellModelKeyValue<DetalheBaixaBancoDTO>> tableModel =
+			new TableModel<CellModelKeyValue<DetalheBaixaBancoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalheBaixaBanco));
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setTotal(qtdeTotalRegistros);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private void criarTableModel(FiltroDetalheBaixaBoletoDTO filtro,
+								 List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto,
+								 int qtdeTotalRegistros) {
+
+		TableModel<CellModelKeyValue<DetalheBaixaBoletoDTO>> tableModel =
+			new TableModel<CellModelKeyValue<DetalheBaixaBoletoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalheBaixaBoleto));
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setTotal(qtdeTotalRegistros);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private FiltroDetalheBaixaBoletoDTO carregarFiltroDetalheBoleto(Date data, String sortorder,
+																	String sortname, int page,
+																	int rp) {
+		
+		// TODO: montarFiltro
+		
+		return null;
+	}
+	
+	private FiltroDetalheBaixaBancoDTO carregarFiltroDetalheBanco(Date data, String sortorder,
+																  String sortname, int page,
+																  int rp) {
+
+		// TODO: montarFiltro
+
+		return null;
+	}
+	
+	private List<DetalheBaixaBoletoDTO> getListaDetalheBaixaBoletoMock() {
+		
+		// TODO criar lista Mock
+		
+		return null;
+	}
+	
+	private List<DetalheBaixaBancoDTO> getListaDetalheBaixaBancoMock() {
+		
+		// TODO criar lista Mock
 		
 		return null;
 	}
