@@ -157,6 +157,19 @@ public class BaixaFinanceiraController {
 
 		result.include("bancos", bancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
+		result.include("dataOperacao", getDataOperacaoDistribuidor());
+	}
+	
+	private String getDataOperacaoDistribuidor() {
+
+		Distribuidor distribuidor = distribuidorService.obter();
+
+		if (distribuidor != null) {
+
+			return DateUtil.formatarDataPTBR(distribuidor.getDataOperacao());
+		}
+
+		return null;
 	}
 	
 	@Post
@@ -204,10 +217,10 @@ public class BaixaFinanceiraController {
 	
 	private ResumoBaixaBoletosDTO obterResumoBaixaFinanceira(Date data, ArquivoPagamentoBancoDTO arquivoPagamento) {
 		
-		//TODO: 
+		// TODO: obter resumo baixa financeira
 		
 //		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = 
-//			this.boletoService.obterResumoBaixaFinanceira(data);
+//			this.boletoService.obterResumoBaixaFinanceiraBoletos(data);
 		
 		ResumoBaixaBoletosDTO resumoBaixaBoletosDTO = new ResumoBaixaBoletosDTO();
 		
@@ -350,6 +363,29 @@ public class BaixaFinanceiraController {
 																	int rp) {
 		
 		// TODO: montarFiltro
+		
+		return null;
+	}
+	
+	private FiltroDetalheBaixaBancoDTO carregarFiltroDetalheBanco(Date data, String sortorder,
+																  String sortname, int page,
+																  int rp) {
+
+		// TODO: montarFiltro
+
+		return null;
+	}
+	
+	private List<DetalheBaixaBoletoDTO> getListaDetalheBaixaBoletoMock() {
+		
+		// TODO criar lista Mock
+		
+		return null;
+	}
+	
+	private List<DetalheBaixaBancoDTO> getListaDetalheBaixaBancoMock() {
+		
+		// TODO criar lista Mock
 		
 		return null;
 	}
