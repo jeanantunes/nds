@@ -224,15 +224,18 @@ public class BaixaFinanceiraController {
 		resumoBaixaBoletosDTO.setQuantidadeBaixadosComDivergencia(10);
 		resumoBaixaBoletosDTO.setQuantidadeLidos(10);
 		resumoBaixaBoletosDTO.setQuantidadeRejeitados(10);
+		resumoBaixaBoletosDTO.setQuantidadeInadimplentes(10);
+		resumoBaixaBoletosDTO.setQuantidadePrevisao(10);
+		resumoBaixaBoletosDTO.setValorTotalBancario(new BigDecimal(10));
 		
 		//Fim todo
 		
-		if (arquivoPagamento != null) {
+//		if (arquivoPagamento != null) {
 		
-			resumoBaixaBoletosDTO.setNomeArquivo(arquivoPagamento.getNomeArquivo());
+			resumoBaixaBoletosDTO.setNomeArquivo("Nome do Arquivo.");//arquivoPagamento.getNomeArquivo());
 			resumoBaixaBoletosDTO.setDataCompetencia(DateUtil.formatarDataPTBR(data));
-			resumoBaixaBoletosDTO.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
-		}
+			resumoBaixaBoletosDTO.setSomaPagamentos(new BigDecimal(1000));//arquivoPagamento.getSomaPagamentos());
+//		}
 		
 		return resumoBaixaBoletosDTO;
 	}
