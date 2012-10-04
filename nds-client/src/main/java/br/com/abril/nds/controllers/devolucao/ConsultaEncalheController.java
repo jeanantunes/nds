@@ -43,6 +43,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.DebitoCreditoCotaVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -359,6 +360,8 @@ public class ConsultaEncalheController {
 		resultadoPesquisa.setTableModel(tableModel);
 		
 		carregarResultadoConsultaEncalhe(resultadoPesquisa, infoConsultaEncalhe);
+		
+		carregaListaDebitoCreditoCota(resultadoPesquisa, infoConsultaEncalhe.getListaDebitoCreditoCota());
 		
 		result.use(Results.json()).withoutRoot().from(resultadoPesquisa).recursive().serialize();
 	}
@@ -745,6 +748,22 @@ public class ConsultaEncalheController {
 		httpResponse.getOutputStream().close();
 		
 		result.use(Results.nothing());
+		
+	}
+	
+	/**
+	 * Carrega a lista de debitos e créditos [List<DebitoCreditoCotaDTO>] para o obejto ResultadoConsultaEncalheVO.
+	 * 
+	 * @param resultadoConsultaEncalheVO
+	 * @param listaDebitoCreditoCota
+	 */
+	private void carregaListaDebitoCreditoCota(ResultadoConsultaEncalheVO resultadoConsultaEncalheVO, List<DebitoCreditoCotaVO> listaDebitoCreditoCota) {
+	
+		resultadoConsultaEncalheVO.setTableModelDebitoCredito(new TableModel<CellModelKeyValue<DebitoCreditoCotaVO>>());
+		
+		resultadoConsultaEncalheVO.getTableModelDebitoCredito().setRows(CellModelKeyValue.toCellModelKeyValue(listaDebitoCreditoCota));
+		resultadoConsultaEncalheVO.getTableModelDebitoCredito().setTotal((listaDebitoCreditoCota!= null) ? listaDebitoCreditoCota.size() : 0);
+		resultadoConsultaEncalheVO.getTableModelDebitoCredito().setPage(1);
 		
 	}
 

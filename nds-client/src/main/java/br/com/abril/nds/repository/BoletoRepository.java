@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
 
@@ -51,5 +53,14 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return {@link Boleto}
 	 */
 	public Boleto obterPorNossoNumeroCompleto(String nossoNumeroCompleto, Boolean dividaAcumulada);
+
+	/**
+	 * Obtém o resumo da baixa financeira de boletos.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return resumo da baixa de boletos
+	 */
+	ResumoBaixaBoletosDTO obterResumoBaixaFinanceiraBoletos(Date data);
 	
 }

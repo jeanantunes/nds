@@ -89,7 +89,7 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
 	@SuppressWarnings("unchecked")
     @Override
     public List<Roteiro> buscarRoteiroDeBox(Long idBox, String descricaoRoteiro) {
-        Criteria criteria  = getSession().createCriteria(Roteiro.class);
+        Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
         if (idBox != null) {
         	criteria.createAlias("roteiro.roteirizacao", "roteirizacao");
 			criteria.createAlias("roteirizacao.box", "box");

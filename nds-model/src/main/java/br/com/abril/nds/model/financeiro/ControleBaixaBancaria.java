@@ -14,12 +14,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.StatusControle;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "CONTROLE_BAIXA_BANCARIA")
+@Table(name = "CONTROLE_BAIXA_BANCARIA",
+	   uniqueConstraints = {@UniqueConstraint(columnNames = {"DATA", "BANCO_ID"})})
 @SequenceGenerator(name = "CTRL_BAIXA_BANCARIA_SEQ", initialValue = 1, allocationSize = 1)
 public class ControleBaixaBancaria {
 	
@@ -28,7 +31,7 @@ public class ControleBaixaBancaria {
 	@Column(name = "ID")
 	private Long id;
 	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA", nullable = false, unique = true)
+	@Column(name = "DATA", nullable = false)
 	private Date data;
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = false)
@@ -36,6 +39,10 @@ public class ControleBaixaBancaria {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario responsavel;
+	
+	@ManyToOne
+	@JoinColumn(name = "BANCO_ID", nullable = false)
+	private Banco banco;
 	
 	public Long getId() {
 		return id;
@@ -69,4 +76,18 @@ public class ControleBaixaBancaria {
 		this.responsavel = responsavel;
 	}
 
+	/**
+	 * @return the banco
+	 */
+	public Banco getBanco() {
+		return banco;
+	}
+
+	/**
+	 * @param banco the banco to set
+	 */
+	public void setBanco(Banco banco) {
+		this.banco = banco;
+	}
+	
 }

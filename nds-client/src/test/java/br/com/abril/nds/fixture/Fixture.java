@@ -122,6 +122,7 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -1832,6 +1833,15 @@ public class Fixture {
 		return estoqueProduto;
 	}
 	
+	public static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado(Date data, ProdutoEdicao produtoEdicao, Cota cota, BigInteger qtde) {
+		EstoqueProdutoCotaJuramentado ep = new EstoqueProdutoCotaJuramentado();
+		ep.setCota(cota);
+		ep.setData(data);
+		ep.setProdutoEdicao(produtoEdicao);
+		ep.setQtde(qtde);
+		return ep;
+	}
+	
 	public static EstoqueProdutoCota estoqueProdutoCota(ProdutoEdicao produtoEdicao, BigInteger qtde,
 			Cota cota, List<MovimentoEstoqueCota> movimentos) {
 		EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
@@ -2201,13 +2211,14 @@ public class Fixture {
 		return banco;
 	}
 	
-	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel) {
+	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel, Banco banco) {
 	
 		ControleBaixaBancaria controleBaixaBancaria = new ControleBaixaBancaria();
 		
 		controleBaixaBancaria.setData(data);
 		controleBaixaBancaria.setStatus(status);
 		controleBaixaBancaria.setResponsavel(responsavel);
+		controleBaixaBancaria.setBanco(banco);
 		
 		return controleBaixaBancaria;
 	}
@@ -2438,6 +2449,7 @@ public class Fixture {
 		rota.setDescricaoRota(descricaoRota);
 		rota.setOrdem(0);
 		rota.setRoteiro(roteiro);
+		roteiro.addRota(rota);
 		return rota;
 	}
 	
@@ -2999,6 +3011,7 @@ public class Fixture {
 		roteiro.setOrdem(0);
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		roteiro.setRoteirizacao(roteirizacao);
+		roteirizacao.addRoteiro(roteiro);
 		
 		return roteiro;
 	}

@@ -139,10 +139,24 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 	}
 	
 	@Override
-	public Banco obterbancoPorNumero(String numero) {
+	public Banco obterBancoPorNumero(String numero) {
 		Criteria criteria = super.getSession().createCriteria(Banco.class);
 		criteria.add(Restrictions.eq("numeroBanco", numero));
 		criteria.setMaxResults(1);
+		return (Banco) criteria.uniqueResult();
+	}
+	
+	@Override
+	public Banco obterBanco(String numeroBanco, Long numeroAgencia, Long numeroConta) {
+		
+		Criteria criteria = super.getSession().createCriteria(Banco.class);
+		
+		criteria.add(Restrictions.eq("numeroBanco", numeroBanco));
+		criteria.add(Restrictions.eq("agencia", numeroAgencia));
+		criteria.add(Restrictions.eq("conta", numeroConta));
+		
+		criteria.setMaxResults(1);
+		
 		return (Banco) criteria.uniqueResult();
 	}
 

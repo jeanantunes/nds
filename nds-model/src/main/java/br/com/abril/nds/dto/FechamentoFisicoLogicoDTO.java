@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
@@ -21,7 +22,7 @@ public class FechamentoFisicoLogicoDTO {
 	
 	private Long produtoEdicao;
 	private BigDecimal precoCapa;
-	private BigDecimal exemplaresDevolucao;
+	private BigInteger exemplaresDevolucao;
 	private BigDecimal total;
 	
 	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 7)
@@ -92,10 +93,10 @@ public class FechamentoFisicoLogicoDTO {
 		this.precoCapa = precoCapa;
 		this.precoCapaFormatado = CurrencyUtil.formatarValor(this.precoCapa); 
 	}
-	public BigDecimal getExemplaresDevolucao() {
+	public BigInteger getExemplaresDevolucao() {
 		return exemplaresDevolucao;
 	}
-	public void setExemplaresDevolucao(BigDecimal exemplaresDevolucao) {
+	public void setExemplaresDevolucao(BigInteger exemplaresDevolucao) {
 		this.exemplaresDevolucao = exemplaresDevolucao;
 		this.exemplaresDevolucaoFormatado = CurrencyUtil.formatarValorTruncado(this.exemplaresDevolucao).replaceAll("\\D", "");
 	}

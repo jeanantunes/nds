@@ -2,7 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +22,7 @@ public class RoteiroRoteirizacaoDTO implements Serializable {
 	
 	private List<RotaRoteirizacaoDTO> todasRotas = new ArrayList<RotaRoteirizacaoDTO>();
 	
-	private Set<Long> rotasExclusao;
+	private Set<Long> rotasExclusao = new HashSet<Long>();
 	
 	public RoteiroRoteirizacaoDTO() {
 	}

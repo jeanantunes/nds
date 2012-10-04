@@ -94,6 +94,7 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA("Follow Up do Sistema",									  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_GRUPOS_ACESSO("Grupos de Acesso",											  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CALENDARIO("Calendario",													  		   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_GERACAO_ARQUIVO("Geracao De Arquivos",									           Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipos de NF-e",													  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros de Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros Distribuidor",	 						 	   Permissao.ROLE_ADMINISTRACAO),

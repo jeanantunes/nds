@@ -189,19 +189,20 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public BigDecimal obterDebitoCreditoSumarizadosPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+	public  List<DebitoCreditoCotaDTO> obterDebitoCreditoPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		
 		StringBuilder hql = new StringBuilder(" select ");
 		
-		hql.append(" coalesce(sum(mfc.valor * ");
+		hql.append(" mfc.tipoMovimento.operacaoFinaceira as tipoLancamento, ");
 		
-		hql.append(" case when mfc.tipoMovimento.operacaoFinaceira = :operacaoFinaceiraCredito then 1 ");
+		hql.append(" mfc.valor as valor, ");
 		
-		hql.append(" when mfc.tipoMovimento.operacaoFinaceira = :operacaoFinaceiraDebito then -1 ");
+		hql.append(" mfc.data as dataLancamento, ");
 		
-		hql.append(" else 0 end), 0)");
-		
+		hql.append(" mfc.observacao as observacoes");
+
 		hql.append(" from MovimentoFinanceiroCota mfc ");
 		   
 		hql.append(" where ");
@@ -230,14 +231,12 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		hql.append(" ) ");
 		
-		Query query = this.getSession().createQuery(hql.toString());
+		hql.append(" order by mfc.data ");
+		
+		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
 		
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
 
-		query.setParameter("operacaoFinaceiraCredito", OperacaoFinaceira.CREDITO);
-		
-		query.setParameter("operacaoFinaceiraDebito", OperacaoFinaceira.DEBITO);
-		
 		query.setParameter("idCota", filtro.getIdCota());
 
 		query.setParameter("dataOperacaoInicial", filtro.getDataRecolhimentoInicial());
@@ -248,7 +247,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			query.setParameterList("tiposMovimentoFinanceiroIgnorados", tiposMovimentoFinanceiroIgnorados);
 		}
 		
-		return (BigDecimal) query.uniqueResult();
+		return query.list();
 	}
 
 	@Override
