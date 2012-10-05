@@ -194,7 +194,7 @@ public class Distribuidor {
 	private Long qntDiasReutilizacaoCodigoCota;
 	
 	@Column(name="UTILIZA_SUGESTAO_INCREMENTO")
-	private Boolean utilizaSugestaoIncrementoCodigo;
+	private boolean utilizaSugestaoIncrementoCodigo;
 	
 	/**
 	 * Parâmetro relativo a quantidade de dias após a data de recolhimento 
