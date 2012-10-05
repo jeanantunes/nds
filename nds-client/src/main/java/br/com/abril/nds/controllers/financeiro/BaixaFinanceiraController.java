@@ -795,8 +795,11 @@ public class BaixaFinanceiraController {
 		if (tipoPagamento==null){
 			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Forma de Recebimento].");
 		}
+		
 		if(idBanco == null){
-			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Banco].");
+			if (!TipoCobranca.DINHEIRO.equals(tipoPagamento)&&!TipoCobranca.OUTROS.equals(tipoPagamento)){
+			    throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Banco].");
+		    }
 		}
 		
 		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
@@ -810,7 +813,7 @@ public class BaixaFinanceiraController {
 		pagamento.setObservacoes(observacoes);
 		pagamento.setDataPagamento(this.distribuidorService.obter().getDataOperacao());
 		pagamento.setUsuario(this.obterUsuario());
-		pagamento.setBanco(bancoService.obterBancoPorId(idBanco));
+		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		
 		try{
 		    this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
