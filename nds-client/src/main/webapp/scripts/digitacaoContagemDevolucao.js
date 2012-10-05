@@ -1,6 +1,8 @@
 var digitacaoContagemDevolucaoController = $.extend(true, {
 
 		init : function(userProfileOperador) {
+			
+			this.hashInserirEdicoesFechadas = {};
 			/**
 			 * Renderiza componente de Data(período) da tela
 			 */
@@ -34,11 +36,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			if (digitacaoContagemDevolucaoController.isRoleOperador(userProfileOperador)){
 				
 				//Oculta os campos que não serão visíveis pelo perfil de usuário Operador
-				//$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
-				//$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
+				$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
+				$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
 			}
 			
 			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
+			
+			this.montaGridEdicoesFechadas();
 			
 		},
 		
@@ -367,37 +371,31 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 100,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 50,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoVenda',
-				width : 85,
+				width : 90,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Exemplar Devolução',
 				name : 'qtdDevolucao',
-				width : 110,
+				width : 120,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotal',
-				width : 70,
-				sortable : false,
-				align : 'right'
-			}, {
-				display : 'Total c/ Desc. R$',
-				name : 'valorTotalComDesconto',
-				width : 90,
+				width : 80,
 				sortable : false,
 				align : 'right'
 			}, {
@@ -409,7 +407,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
-				width : 70,
+				width : 80,
 				sortable : false,
 				align : 'center'
 			},{
@@ -461,11 +459,134 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}];
 			
 			return colModel;
+		},
+		
+		
+		incluirProdutoDialog :function(){					
+			this.hashInserirEdicoesFechadas = {};
+			$( "#dialogEdicoesFechadas", this.workspace ).dialog({
+				resizable: false,
+				height:500,
+				width:945,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {						
+						var listInserirEdicoesFechadas = new Array();
+						for(var id in digitacaoContagemDevolucaoController.hashInserirEdicoesFechadas){ 
+							listInserirEdicoesFechadas.add(digitacaoContagemDevolucaoController.hashInserirEdicoesFechadas[id]);							
+						}
+						
+						//TODO: adcionar listInserirEdicoesFechadas na grid
+					},
+					
+					"Cancelar": function() {
+						delete digitacaoContagemDevolucaoController.hashInserirEdicoesFechadas;
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialogEdicoesFechadas", this.workspace).parents("form")
+			});
+			
+			$(".consultaEdicoesFechadasGrid", this.workspace).flexOptions({
+				"url" : contextPath + '/devolucao/digitacao/contagem/pesquisaEdicoesFechadas',
+				
+			}).flexReload();
+		},
+		
+		clickEdicoesFechada : function(idProdutoEdicao,codigoProduto,edicaoProduto, parcial, checkbox){
+			if($(checkbox, digitacaoContagemDevolucaoController.workspace).is(":checked")){
+				this.hashInserirEdicoesFechadas[idProdutoEdicao] = {codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao};
+			}else{
+				delete this.hashInserirEdicoesFechadas[idProdutoEdicao];
+			}
+		},
+		montaGridEdicoesFechadas :function(){
+			$(".consultaEdicoesFechadasGrid", this.workspace).flexigrid({
+				
+				preProcess: function(data) {
+					if( typeof data.mensagens == "object") {
+
+						exibirMensagemDialog(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+
+					} else {
+						$.each(data.rows, function(index, value) {
+							
+							var onClick = 'digitacaoContagemDevolucaoController.clickEdicoesFechada('+value.cell.idProdutoEdicao+','+value.cell.codigoProduto+', ' +value.cell.edicaoProduto+','+value.cell.parcial+',this )';
+							var sel = '<input type="checkbox" name="checkbox" id="checkbox" onclick="'+onClick+'" />';
+							value.cell.parcial = (value.cell.parcial)?"Sim":"Não";				
+							
+							value.cell.sel = sel;
+						});
+
+						return data;
+					}
+				},
+				dataType : 'json',
+				colModel : [ {
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 70,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 140,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'edicaoProduto',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Fornecedor',
+					name : 'nomeFornecedor',
+					width : 180,
+					sortable : true,
+					align : 'left'
+				},  {
+					display : 'Lançamento',
+					name : 'dataLancamento',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Recolhimento',
+					name : 'dataRecolhimento',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Parcial',
+					name : 'parcial',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Saldo',
+					name : 'saldo',
+					width : 50,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : '',
+					name : 'sel',
+					width : 30,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "nomeFornecedor",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 900,
+				height : 280
+			});
+
 		}
 		
 }, BaseController);
-
-
-
-//@ sourceURL=digitacaoContagemDevolucao.js
-

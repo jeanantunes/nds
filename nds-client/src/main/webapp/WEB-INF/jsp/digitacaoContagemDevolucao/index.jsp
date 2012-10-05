@@ -12,7 +12,21 @@ $(function(){
 </head>
 
 <body>
-	
+	<form id="formEdicoesFechadas">
+		<div id="dialogEdicoesFechadas" title="Edi&ccedil;&otilde;es Fechadas com Saldo"
+		style="display: none;">
+		<fieldset style="width: 900px;">
+			<legend>Edi&ccedil;&otilde;es Fechadas com Saldo</legend>
+
+			<table class="consultaEdicoesFechadasGrid"></table>
+			<span class="bt_sellAll" style="float: right;"><input
+				type="checkbox" id="dialogEdicoesFechadasSel" name="Todos" onclick="checkAll();"
+				style="float: right; margin-right: 30px;" /> <label for="dialogEdicoesFechadasSel">Selecionar
+					Todos</label></span>
+
+		</fieldset>
+	</div></form>
+
 	<fieldset class="classFieldset">
 		
 		  <legend> Pesquisar Fornecedor</legend>
@@ -101,14 +115,14 @@ $(function(){
 							</a>
 							</span>
 							
-							<span id="btnConfirmar" class="bt_novos" title="Devolução Parcial"> 
+							<span id="btnConfirmar" class="bt_confirmar_novo" title="Devolução Parcial"> 
 							<a href="javascript:digitacaoContagemDevolucaoController.popupConfirmar();"> 
 								<img border="0" hspace="5" alt="Confirmar"
-								src="${pageContext.request.contextPath}/images/bt_expedicao.png">
+								src="${pageContext.request.contextPath}/images/ico_check.gif">
 							Devolução Parcial
 							</a> 
 							</span>
-												
+							
 							<span class="bt_novos" title="Replicar Quantidades">
 							<a href="javascript:;">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0">
@@ -147,11 +161,11 @@ $(function(){
 							</a>
 							</span>
 						</td>
-					<td>
+					<td width="18%">
 						<span id="bt_sellAll" class="bt_sellAll">
-							<label for="sel" style="margin-right: 20px;">Selecionar Todos</label> 
-							<input type="checkbox" name="Todos" id="sel" 
-								   onclick="digitacaoContagemDevolucaoController.checkAllReplicarValor(this, 'checkgroup');" /> 
+							<label for="sel">Selecionar Todos</label> 
+							<input type="checkbox" name="Todos" id="sel" onclick="digitacaoContagemDevolucaoController.checkAllReplicarValor(this, 'checkgroup');"
+							style="float: left;" /> 
 						</span>
 					</td>
 				</tr>
