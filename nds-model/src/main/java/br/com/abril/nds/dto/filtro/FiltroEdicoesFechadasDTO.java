@@ -15,7 +15,7 @@ public class FiltroEdicoesFechadasDTO extends FiltroDTO implements Serializable 
 	
 	private Date dataAte;
 	
-	private String codigoFornecedor;
+	private Long codigoFornecedor;
 	
 	private PaginacaoVO paginacao;
 	
@@ -79,11 +79,11 @@ public class FiltroEdicoesFechadasDTO extends FiltroDTO implements Serializable 
 		this.dataAte = dataAte;
 	}
 
-	public String getCodigoFornecedor() {
+	public Long getCodigoFornecedor() {
 		return codigoFornecedor;
 	}
 
-	public void setCodigoFornecedor(String codigoFornecedor) {
+	public void setCodigoFornecedor(Long codigoFornecedor) {
 		this.codigoFornecedor = codigoFornecedor;
 	}
 
