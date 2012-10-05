@@ -238,7 +238,12 @@ public class FornecedorController {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		boolean utilizaSugestaoIncrementoCodigo = distribuidor.isUtilizaSugestaoIncrementoCodigo();
+		boolean utilizaSugestaoIncrementoCodigo = false;
+		
+		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
+			
+			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
+		}
 		
 		Integer novoCodigoInterface = null;
 		

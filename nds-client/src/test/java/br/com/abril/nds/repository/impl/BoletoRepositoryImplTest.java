@@ -301,12 +301,12 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	@Test
 	public void obterQuantidadeBoletosRejeitados() {
 		
-		Long quantidadeBoletosBaixados =
+		Long quantidadeBoletosRejeitados =
 			this.boletoRepository.obterQuantidadeBoletosRejeitados(dataAtual);
 		
-		Assert.assertNotNull(quantidadeBoletosBaixados);
+		Assert.assertNotNull(quantidadeBoletosRejeitados);
 		
-		Assert.assertTrue(!quantidadeBoletosBaixados.equals(0L));
+		Assert.assertTrue(!quantidadeBoletosRejeitados.equals(0L));
 	}
 	
 	@Test

@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
-import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoVO;
 import br.com.abril.nds.client.vo.EntregadorPessoaFisicaVO;
@@ -496,7 +495,12 @@ public class EntregadorController {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		boolean utilizaSugestaoIncrementoCodigo = distribuidor.isUtilizaSugestaoIncrementoCodigo();
+		boolean utilizaSugestaoIncrementoCodigo = false;
+		
+		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
+			
+			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
+		}
 		
 		Long novoCodigoEntregador = null;
 		

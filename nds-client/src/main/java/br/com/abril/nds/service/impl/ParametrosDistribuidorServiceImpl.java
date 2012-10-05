@@ -162,7 +162,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Reutilização de Código de Cota
 		parametrosDistribuidor.setReutilizacaoCodigoCotaInativa(distribuidor.getQntDiasReutilizacaoCodigoCota());
 		
-		parametrosDistribuidor.setUtilizaSugestaoIncrementoCodigo(distribuidor.isUtilizaSugestaoIncrementoCodigo());
+		boolean utilizaSugestaoIncrementoCodigo = false;
+		
+		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
+			
+			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
+		}
+		
+		parametrosDistribuidor.setUtilizaSugestaoIncrementoCodigo(utilizaSugestaoIncrementoCodigo);
 
 		// Emissão de Documentos
 		for (ParametrosDistribuidorEmissaoDocumento emissaoDocumentos : distribuidor.getParametrosDistribuidorEmissaoDocumentos()) {

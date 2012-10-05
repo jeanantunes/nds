@@ -211,7 +211,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" select count(boleto) as quantidadePrevisao ");
 		hql.append(" from Boleto boleto ");
-		hql.append(" where boleto.dataVencimento = :data ");
+		hql.append(" where boleto.dataVencimento >= :data ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
