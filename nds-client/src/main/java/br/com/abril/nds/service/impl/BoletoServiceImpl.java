@@ -1090,6 +1090,24 @@ public class BoletoServiceImpl implements BoletoService {
 	@Override
 	@Transactional
 	public List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		this.validarFiltroBaixaBoleto(filtro);
+		
+		return this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		this.validarFiltroBaixaBoleto(filtro);
+		
+		return this.boletoRepository.obterBoletosRejeitados(filtro);
+	}
+	
+	private void validarFiltroBaixaBoleto(FiltroDetalheBaixaBoletoDTO filtro) {
 		
 		if (filtro == null) {
 			
@@ -1100,9 +1118,5 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Uma data deve ser informada para a pesquisa.");
 		}
-		
-		return this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
 	}
-
-	
 }

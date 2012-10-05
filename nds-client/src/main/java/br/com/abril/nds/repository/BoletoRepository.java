@@ -127,4 +127,13 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return List<DetalheBaixaBoletoDTO> - Boletos baixados com divergência de data e/ou valor.
 	 */
 	List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém os boletos que foram rejeitados na baixa em determinada data.
+	 * 
+	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO> - Boletos rejeitados.
+	 */
+	List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro);
 }
