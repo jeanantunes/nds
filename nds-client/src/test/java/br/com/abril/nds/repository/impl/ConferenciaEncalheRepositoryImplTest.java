@@ -154,7 +154,7 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
@@ -178,7 +178,7 @@ public class ConferenciaEncalheRepositoryImplTest extends AbstractRepositoryImpl
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 

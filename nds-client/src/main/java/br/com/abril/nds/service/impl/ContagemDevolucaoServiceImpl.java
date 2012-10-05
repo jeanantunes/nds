@@ -715,14 +715,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			throw new IllegalStateException("TipoNotaFiscal não parametrizada");
 		}
 		
-		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();
-		
 		Long numeroNF = controleNumeracaoNotaFiscalService.obterProximoNumeroNotaFiscal(serieNF);
 		
 		nfSaidaFornecedor.setCfop(cfop);
 		nfSaidaFornecedor.setDataEmissao(dataAtual);
 		nfSaidaFornecedor.setDataExpedicao(dataAtual);
-		nfSaidaFornecedor.setEmitente(pessoaJuridica);
 		nfSaidaFornecedor.setFornecedor(fornecedor);
 
 		nfSaidaFornecedor.setNumero(numeroNF);

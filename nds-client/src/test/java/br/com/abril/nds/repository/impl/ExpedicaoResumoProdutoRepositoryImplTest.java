@@ -118,7 +118,7 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 			for(int x= 1; x< 3 ;x++){
 				
 				NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-						.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+						.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal,
 								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 				save(notaFiscalFornecedor);
 				

@@ -1,10 +1,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/consultaNFEEncalheTratamento.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/entradaNFETerceiros.js"></script>
 <script language="javascript" type="text/javascript">
 $(function(){
-	consultaNFEEncalheTratamentoController.init();
+	entradaNFETerceirosController.init();
 });
 </script>
 <style type="text/css">
@@ -71,7 +71,7 @@ $(function(){
   <tr>
     <td width="84">Cota:</td>
     <td width="193"><input type="text" id="cotaCadastroNota" name="cotaCadastroNota" style="width:80px; float:left; margin-right:5px;"/>
-      <span class="classPesquisar"><a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.pesqEncalhe();">&nbsp;</a></span></td>
+      <span class="classPesquisar"><a href="javascript:;" onclick="entradaNFETerceirosController.pesqEncalhe();">&nbsp;</a></span></td>
   </tr>
   <tr>
     <td>Nome:</td>
@@ -130,12 +130,12 @@ $(function(){
 	<div class="areaBts">
 		<div class="area">
 			
-			<span class="bt_novos"><a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.popup_nfe('0','0');" rel="tipsy" title="Registrar NF-e">
+			<span class="bt_novos"><a href="javascript:;" onclick="entradaNFETerceirosController.popup_nfe('0','0');" rel="tipsy" title="Registrar NF-e">
            		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif"></a>
             </span>
            
            <span class="bt_novos">
-           	<a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.popup_confirmar();" rel="tipsy" title="Gerar">
+           	<a href="javascript:;" onclick="entradaNFETerceirosController.popup_confirmar();" rel="tipsy" title="Gerar">
            	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif"></a>
            </span>
 			
@@ -157,7 +157,7 @@ $(function(){
       <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	  <tr>
 	    <td width="29">Cota:</td>
-	    <td width="89"><input type="text" id="codigoCota" name="codigoCota" style="width:80px; float:left; margin-right:5px;" onblur="consultaNFEEncalheTratamentoController.pesquisarCota();"/></td>
+	    <td width="89"><input type="text" id="codigoCota" name="codigoCota" style="width:80px; float:left; margin-right:5px;" onblur="entradaNFETerceirosController.pesquisarCota();"/></td>
 	    <td width="41">Nome:</td>    
 	    <td width="241"><span name="nomeCota" id="nomeCota"></span></td>
 	    <td width="25">Data:</td>
@@ -170,7 +170,7 @@ $(function(){
 			      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
 			    </c:forEach>
 		    </select>
-	    </td><td width="159"><span class="bt_pesquisar"><a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.pesqEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td></tr>
+	    </td><td width="159"><span class="bt_pesquisar"><a href="javascript:;" onclick="entradaNFETerceirosController.pesqEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td></tr>
 	  </table>
  </fieldset>
  <div class="linha_separa_fields">&nbsp;</div>
@@ -187,7 +187,7 @@ $(function(){
          <div id="pendenteRecEmissao" style="display:none;">
          	<table class="encalheNfeGrid"></table>
          </div>        
-         <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="consultaNFEEncalheTratamentoController.checkAll();" style="float:left; margin-right:25px;"/></span>
+         <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="entradaNFETerceirosController.checkAll();" style="float:left; margin-right:25px;"/></span>
             
 	</div>
              
