@@ -35,8 +35,8 @@
 		    	
 		    	<table class="previsaoGrid"></table>
 		        
-		        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-		        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+		        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
 		        
 		    </fieldset>
 		</div>
@@ -80,7 +80,7 @@
 					<tr>
 						<td width="100">Data:</td>
 						<td width="200">
-							<input type="text" name="dataBaixa" id="dataBaixa" 
+							<input type="text" name="data" id="dataBaixa" 
 								   onchange="baixaFinanceiraController.alterarEstadoInputsBaixaAutomatica();"
 								   style="width: 90px; text-align: right;" value="${dataOperacao}" />
 						</td>
@@ -103,7 +103,7 @@
 								<a href="javascript:;" onclick="baixaFinanceiraController.integrar();">Integrar</a>
 							</span>
 							<span class="bt_pesquisar" title="Exibir Resumo" id="btnExibirResumos">
-								<a href="javascript:;" onclick="baixaFinanceiraController.exibirResumo();" id="btnPesquisar"></a>
+								<a href="javascript:;" onclick="baixaFinanceiraController.obterResumoBaixaFinanceira();" id="btnPesquisar"></a>
 							</span>
 						</td>
 					</tr>			
@@ -170,72 +170,7 @@
 		<legend> Baixa Financeira Integrada</legend>
 		<br />
 
-		<table border="0" align="center" cellpadding="2" cellspacing="2">
-			<tr>
-				<td valign="top">
-					<table width="269" border="0" align="center" cellpadding="2"
-						cellspacing="1" style="display: inline; margin-right: 15px;">
-						<tr>
-							<td colspan="2" align="center" class="header_table">Dados do
-								Arquivo</td>
-						</tr>
-						<tr>
-							<td width="121" align="left" class="linha_borda"><strong>Nome
-									do Arquivo:</strong></td>
-							<td id="nomeArquivo" width="137" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Data
-									Competência:</strong></td>
-							<td id="dataCompetencia" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Valor
-									R$:</strong></td>
-							<td id="somaPagamentos" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda">&nbsp;</td>
-							<td align="right" class="linha_borda">&nbsp;</td>
-						</tr>
-						<tr>
-							<td colspan="2" align="left"
-								style="line-height: 28px; border: 1px solid #0C0;"><img
-								src="${pageContext.request.contextPath}/images/bt_check.gif" width="22" height="22"
-								alt="Arquivo Integrado com Sucesso" align="left" /> <span><strong>Arquivo
-										Integrado com Sucesso!</strong></span></td>
-						</tr>
-					</table>
-				</td>
-				<td valign="top"><table width="275" border="0" align="center"
-						cellpadding="2" cellspacing="1" style="display: inline;">
-						<tr>
-							<td colspan="2" align="center" class="header_table"
-								class="linha_borda">Baixa Automática</td>
-						</tr>
-						<tr>
-							<td width="162" align="left" class="linha_borda"><strong>Registros
-									Lidos:</strong></td>
-							<td id="quantidadeLidos" width="102" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Registros
-									Baixados:</strong></td>
-							<td id="quantidadeBaixados" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Registros
-									Rejeitados:</strong></td>
-							<td id="quantidadeRejeitados" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Baixados
-									com Divergência:</strong></td>
-							<td id="quantidadeBaixadosComDivergencia" align="right" class="linha_borda"></td>
-						</tr>
-					</table></td>
-			</tr>
-		</table>
+		<jsp:include page="resumoBaixaAutomatica.jsp"></jsp:include>
 		
 		<br /> <br />
 		

@@ -333,7 +333,7 @@ public class DigitacaoContagemDevolucaoController  {
 			digitacaoContagemDevolucaoVO.setNumeroEdicao(String.valueOf(dto.getNumeroEdicao()));
 			digitacaoContagemDevolucaoVO.setPrecoVenda(CurrencyUtil.formatarValor(dto.getPrecoVenda()));
 			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf( (dto.getQtdDevolucao()==null)?BigDecimal.ZERO.intValue():dto.getQtdDevolucao().intValue()));
-			
+			digitacaoContagemDevolucaoVO.setDesconto(String.valueOf((dto.getDesconto()==null)?BigDecimal.ZERO.intValue():dto.getDesconto().intValue()));
 			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
 			
 			if(dto.getQtdNota()==null) {
@@ -343,6 +343,7 @@ public class DigitacaoContagemDevolucaoController  {
 			}
 			
 			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
+			digitacaoContagemDevolucaoVO.setValorTotalComDesconto(dto.getTotalComDesconto()==null ? "" : (CurrencyUtil.formatarValor(dto.getTotalComDesconto())));
 			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
