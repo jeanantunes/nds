@@ -175,16 +175,16 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	    Assert.assertEquals(4, resultado.size());
 	    
 	    ConsultaRoteirizacaoDTO resultado1 = resultado.get(0);
-	    Assert.assertEquals(String.format("%s - %s", rota.getCodigoRota(), rota.getDescricaoRota()), resultado1.getDescricaoRota());
+	    Assert.assertEquals(rota.getDescricaoRota(), resultado1.getDescricaoRota());
 	    
 	    ConsultaRoteirizacaoDTO resultado2 = resultado.get(1);
-	    Assert.assertEquals(String.format("%s - %s", rota1.getCodigoRota(), rota1.getDescricaoRota()), resultado2.getDescricaoRota());
+	    Assert.assertEquals(rota1.getDescricaoRota(), resultado2.getDescricaoRota());
 	    
 	    ConsultaRoteirizacaoDTO resultado3 = resultado.get(2);
-	    Assert.assertEquals(String.format("%s - %s", rota2.getCodigoRota(), rota2.getDescricaoRota()), resultado3.getDescricaoRota());
+	    Assert.assertEquals(rota2.getDescricaoRota(), resultado3.getDescricaoRota());
 	    
 	    ConsultaRoteirizacaoDTO resultado4 = resultado.get(3);
-	    Assert.assertEquals(String.format("%s - %s", rota3.getCodigoRota(), rota3.getDescricaoRota()), resultado4.getDescricaoRota());
+	    Assert.assertEquals(rota3.getDescricaoRota(), resultado4.getDescricaoRota());
 	}
 	
 	@Test

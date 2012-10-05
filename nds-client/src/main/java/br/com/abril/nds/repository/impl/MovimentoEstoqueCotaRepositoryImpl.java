@@ -844,6 +844,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuffer hqlConfEncParcial = getSubQueryConfEncParc();
 		
+		StringBuffer hqlDesconto = getSubQueryDesconto(filtro.getIdFornecedor());
+		
 		StringBuffer hql = new StringBuffer("");
 		
 		if (indBuscaQtd) {
@@ -858,6 +860,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			hql.append(" movimento.produtoEdicao.produto.nome as nomeProduto, 		");
 			hql.append(" movimento.produtoEdicao.numeroEdicao as numeroEdicao, 		");
 			hql.append(" movimento.produtoEdicao.precoVenda as precoVenda, 			");
+			hql.append(  hqlDesconto.toString() + " as desconto, 					");
 			hql.append(" sum(movimento.qtde) as qtdDevolucao, 						");
 			
 			if(indBuscaTotalParcial) {
@@ -877,7 +880,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" ( movimento.data between :dataInicial and :dataFinal ) and 		");		
 
 		hql.append( hqlControleContagemDevolucaoConcluido.toString() + " is null and 	");
-		
+				
 		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque ");		
 		
 		if( filtro.getIdFornecedor() != null ) {
@@ -1020,6 +1023,24 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return query.list();
 		
+	}
+	
+	private StringBuffer getSubQueryDesconto(Long idFornecedor) {
+		
+		StringBuffer hqlDesconto = new StringBuffer("")
+		
+		.append(" (select viewDesconto.desconto ")
+		.append(" from ViewDesconto viewDesconto ")
+		.append(" where viewDesconto.cotaId = movimento.cota.id  ")
+		.append(" and viewDesconto.produtoEdicaoId = movimento.produtoEdicao.id ");
+
+		if (idFornecedor != null) {
+			hqlDesconto.append(" and viewDesconto.fornecedorId = :idFornecedor ");
+		}
+		
+		hqlDesconto.append(" ) ");
+		
+		return hqlDesconto;
 	}
 	
 	/**
