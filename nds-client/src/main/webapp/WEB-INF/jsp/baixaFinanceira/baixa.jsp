@@ -42,6 +42,80 @@
 		</div>
 	</form>
 	
+	<form id="formDialogBoletosBaixados">
+		<div id="dialog-boletos-baixados" title="Boletos Baixados" style="display: none;">
+			<fieldset style="width:750px!important;">
+			
+	    		<legend>Boletos Baixados - Vencimento: 10/05/2012</legend>
+	    		
+	    		<table class="boletoBaixadoGrid"></table>
+	    		
+	       		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+	       		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+	        
+	    	</fieldset>
+		</div>
+	</form>
+	
+	<form id="formDialogBaixadosRejeitados">
+		<div id="dialog-baixados-rejeitados" title="Boletos Rejeitados" style="display: none;">
+			<fieldset style="width:750px!important;">
+			
+	    		<legend>Boletos Rejeitados - Vencimento: 10/05/2012</legend>
+	    		
+	    		<table class="boletoRejeitadoGrid"></table>
+	    		
+	       		<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+	        	<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+	        
+	   	 	</fieldset>
+		</div>
+	</form>
+	
+	<form id="formDialogBaixadosDivergentes">
+		<div id="dialog-baixados-divergentes" title="Boletos Baixados Divergentes" style="display: none;">
+			<fieldset style="width:750px!important;">
+			
+	    		<legend>Boletos com Diverg&ecirc;ncia - Vencimento: 10/05/2012</legend>
+	    		
+	    		<table class="boletoDivergenciaGrid"></table>
+	    		
+	        	<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+	        	<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+	        
+	    	</fieldset>
+		</div>
+	</form>	
+	
+	<form id="formDialogInadimplentes">
+		<div id="dialog-inadimplentes" title="Inadimplentes" style="display: none;">
+			<fieldset style="width:750px!important;">
+			
+		    	<legend>Inadimplentes - Vencimento: 10/05/2012</legend>
+		    	
+		    	<table class="inadimplentesGrid"></table>
+		    	
+		        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+		        
+	    	</fieldset>
+		</div>
+	</form>
+	
+	<form id="formDialogTotalBancario">	
+		<div id="dialog-total" title="Total Banc&aacute;rio" style="display: none;">
+			<fieldset style="width:550px!important;">
+		    	<legend>Vencimento: 10/05/2012</legend>
+		    	
+		    	<table class="totalGrid"></table>
+		    	
+		        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		        <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+        
+    		</fieldset>
+		</div>
+	</form>
+	
 	<fieldset class="classFieldset">
 		
 		<legend> Baixa Financeira</legend>
