@@ -357,13 +357,31 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 				this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
 		
 		Assert.assertNotNull(boletosDivergentes);
-		Assert.assertEquals(boletosDivergentes.size(), 1);
+		Assert.assertEquals(1, boletosDivergentes.size());
 		
 		DetalheBaixaBoletoDTO resultado = boletosDivergentes.get(0);
 		
 		BigDecimal valorDiferencaCorreto = resultado.getValorBoleto().subtract(resultado.getValorPago());
 		
 		Assert.assertEquals(valorDiferencaCorreto, resultado.getValorDiferenca());
+	}
+	
+	@Test
+	public void obterBoletosRejeitados() {
+
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, null);
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.NOME_BANCO);
+		
+		List<DetalheBaixaBoletoDTO> boletosDivergentes =
+				this.boletoRepository.obterBoletosRejeitados(filtro);
+		
+		Assert.assertNotNull(boletosDivergentes);
+		Assert.assertEquals(1, boletosDivergentes.size());
 	}
 
 }
