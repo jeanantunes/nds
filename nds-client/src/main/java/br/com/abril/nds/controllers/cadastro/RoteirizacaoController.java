@@ -134,8 +134,7 @@ public class RoteirizacaoController {
 	
 	@Path("/carregarComboRota")
 	public void carregarComboRota(Long roteiroId) {
-		RoteirizacaoDTO roteirizacao = getDTO();
-		List<RotaRoteirizacaoDTO> rotas = roteirizacao.getRoteiro(roteiroId).getTodasRotas();
+		List<Rota> rotas = roteirizacaoService.buscarRotaPorRoteiro(roteiroId);
 		result.use(Results.json()).from(rotas, "result").serialize();
 	}
 	
@@ -143,6 +142,14 @@ public class RoteirizacaoController {
 	public void carregarComboRoteiroEspecial() {
 		List<Roteiro> roteiros = roteirizacaoService.buscarRoteiroEspecial();
 		result.use(Results.json()).from(roteiros, "result").serialize();
+	}
+	
+	
+	@Path("/carregarComboRotaCopiaPDV")
+	public void carregarComboRotaCopiaPDV(Long roteiroId) {
+	    RoteirizacaoDTO roteirizacao = getDTO();
+	    List<RotaRoteirizacaoDTO> rotas = roteirizacao.getRoteiro(roteiroId).getTodasRotas();
+	    result.use(Results.json()).from(rotas, "result").serialize();
 	}
 	
 	@Path("/incluirRoteiro")
