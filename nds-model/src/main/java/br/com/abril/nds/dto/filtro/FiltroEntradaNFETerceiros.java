@@ -4,19 +4,23 @@ import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
-public class FiltroConsultaNFEEncalheTratamento implements Serializable{
+public class FiltroEntradaNFETerceiros implements Serializable{
 
 	private static final long serialVersionUID = -1398883028867830199L;
 	
-	private String codigoCota;
-	private Date data;
+	private Fornecedor fornecedor;
+	private Cota cota;
+	private Date dataInicial;
+	private Date dataFinal;
 	private StatusNotaFiscalEntrada statusNotaFiscalEntrada;
-	private Long codigoNota;
+//	private Long codigoNota;
 	
 	private PaginacaoVO paginacao;
 	
@@ -46,22 +50,6 @@ public class FiltroConsultaNFEEncalheTratamento implements Serializable{
 		}
 	}
 
-	public String getCodigoCota() {
-		return codigoCota;
-	}
-
-	public void setCodigoCota(String codigoCota) {
-		this.codigoCota = codigoCota;
-	}
-
-	public Date getData() {
-		return data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
-
 	public StatusNotaFiscalEntrada getStatusNotaFiscalEntrada() {
 		return statusNotaFiscalEntrada;
 	}
@@ -87,12 +75,61 @@ public class FiltroConsultaNFEEncalheTratamento implements Serializable{
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
-	public Long getCodigoNota() {
-		return codigoNota;
+	/**
+	 * @return the dataInicial
+	 */
+	public Date getDataInicial() {
+		return dataInicial;
 	}
 
-	public void setCodigoNota(Long codigoNota) {
-		this.codigoNota = codigoNota;
+	/**
+	 * @param dataInicial the dataInicial to set
+	 */
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
 	}
-	
+
+	/**
+	 * @return the dataFinal
+	 */
+	public Date getDataFinal() {
+		return dataFinal;
+	}
+
+	/**
+	 * @param dataFinal the dataFinal to set
+	 */
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
+
+	/**
+	 * @return the fornecedor
+	 */
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+
+	/**
+	 * @return the cota
+	 */
+	public Cota getCota() {
+		return cota;
+	}
+
+	/**
+	 * @param cota the cota to set
+	 */
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
+
+
 }

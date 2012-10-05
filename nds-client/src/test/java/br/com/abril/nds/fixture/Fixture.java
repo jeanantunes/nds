@@ -1393,14 +1393,14 @@ public class Fixture {
 	}
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(CFOP cfop,
-			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = new NotaFiscalEntradaFornecedor();
+		notaFiscalFornecedor.setFornecedor(fornecedor);
 		notaFiscalFornecedor.setCfop(cfop);
 		notaFiscalFornecedor.setChaveAcesso("11111");
 		notaFiscalFornecedor.setDataEmissao(new Date());
 		notaFiscalFornecedor.setDataExpedicao(new Date());
-		notaFiscalFornecedor.setEmitente(emitente);
 		notaFiscalFornecedor.setNumero(2344242L);
 		notaFiscalFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalFornecedor.setSerie("345353543");
@@ -1415,10 +1415,10 @@ public class Fixture {
 	}
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(Long numeroNF, String serie, String chaveAcesso, CFOP cfop,
-			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		
-		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, emitente, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
 		
 		notaFiscalFornecedor.setNumero(numeroNF);
 		notaFiscalFornecedor.setSerie(serie);
@@ -1429,7 +1429,6 @@ public class Fixture {
 	
 	public static NotaFiscalEntradaCota notaFiscalEntradaCotaNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1489,7 +1488,6 @@ public class Fixture {
 		notaFiscalEntradaCota.setChaveAcesso(chaveAcesso);
 		notaFiscalEntradaCota.setDataEmissao(new Date());
 		notaFiscalEntradaCota.setDataExpedicao(new Date());
-		notaFiscalEntradaCota.setEmitente(emitente);
 		notaFiscalEntradaCota.setNumero(numero);
 		notaFiscalEntradaCota.setSerie(serie);
 		notaFiscalEntradaCota.setOrigem(Origem.INTERFACE);
@@ -1553,7 +1551,6 @@ public class Fixture {
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1609,11 +1606,11 @@ public class Fixture {
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
 		
+		notaFiscalEntradaFornecedor.setFornecedor(fornecedor);
 		notaFiscalEntradaFornecedor.setCfop(cfop);
 		notaFiscalEntradaFornecedor.setChaveAcesso(chaveAcesso);
 		notaFiscalEntradaFornecedor.setDataEmissao(new Date());
 		notaFiscalEntradaFornecedor.setDataExpedicao(new Date());
-		notaFiscalEntradaFornecedor.setEmitente(emitente);
 		notaFiscalEntradaFornecedor.setNumero(numero);
 		notaFiscalEntradaFornecedor.setSerie(serie);
 		notaFiscalEntradaFornecedor.setOrigem(Origem.INTERFACE);
@@ -1675,7 +1672,6 @@ public class Fixture {
 	
 	public static NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1735,7 +1731,6 @@ public class Fixture {
 		notaFiscalSaidaFornecedor.setChaveAcesso(chaveAcesso);
 		notaFiscalSaidaFornecedor.setDataEmissao(new Date());
 		notaFiscalSaidaFornecedor.setDataExpedicao(new Date());
-		notaFiscalSaidaFornecedor.setEmitente(emitente);
 		notaFiscalSaidaFornecedor.setNumero(numero);
 		notaFiscalSaidaFornecedor.setSerie(serie);
 		

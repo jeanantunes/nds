@@ -176,7 +176,6 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 		notaFiscalSaidaFornecedor = 
 				Fixture.notaFiscalSaidaFornecedorNFE(
 						cfop5102, 
-						fornecedorDinap.getJuridica(),
 						33300003003L,
 						"30300333330",
 						"0003303",

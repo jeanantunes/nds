@@ -32,12 +32,12 @@ import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 
 @Component
@@ -53,8 +53,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
-	
-	
+
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
+
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		tempVar.set(new ArrayList<NotaFiscalEntradaFornecedor>());
@@ -119,11 +121,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		notafiscalEntrada.setValorLiquido(BigDecimal.ZERO);
 		notafiscalEntrada.setValorDesconto(BigDecimal.ZERO);
 		
-		PessoaJuridica emitente = new PessoaJuridica();
-		emitente.setId(	Long.valueOf( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE).getValor() ) );
-
+		List<Fornecedor> listafornecedores = fornecedorRepository.obterFornecedoresPorIdPessoa(Long.valueOf( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.ID_PJ_IMPORTACAO_NRE).getValor()));
 		
-		notafiscalEntrada.setEmitente(emitente);		
+		Fornecedor fornecedor = null;
+		if (listafornecedores != null && !listafornecedores.isEmpty()) {
+			fornecedor = listafornecedores.get(0);
+		}
+		
+		notafiscalEntrada.setFornecedor(fornecedor);		
 		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
 		notafiscalEntrada.setEmitida(true);	
 				
