@@ -27,15 +27,13 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, String codigoFornecedor) {
+	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor) {	
 		
-		if (codigoFornecedor == null || codigoFornecedor.isEmpty() || codigoFornecedor.equalsIgnoreCase("Todos")) {
-			// Retorna todos os fornecedores
-			return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe, dateAte);
-		}
-		// Filtra por fornecedor específico
-		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe, dateAte, codigoFornecedor);
+		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe, dateAte, idFornecedor, null, null, null, null);
 	}
+	
+	
+	
 
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.EdicoesFechadasService#obterTotalResultadoEdicoesFechadas(java.util.Date, java.util.Date, java.lang.String)
@@ -43,13 +41,56 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 	@Override
 	@Transactional(readOnly = true)
 	public BigDecimal obterTotalResultadoEdicoesFechadas(
-			Date dataDe, Date dateAte, String codigoFornecedor) {
-		if (codigoFornecedor == null || codigoFornecedor.isEmpty() || codigoFornecedor.equalsIgnoreCase("Todos")) {
-			// Retorna todos os fornecedores
-			return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, dateAte);
-		}
+			Date dataDe, Date dateAte, Long idFornecedor) {
+		
 		// Filtra por fornecedor específico
-		return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, dateAte, codigoFornecedor);
+		return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, dateAte, idFornecedor);
+	}
+	
+	
+	
+
+
+
+
+	/**
+	 * @param dataDe
+	 * @param dateAte
+	 * @param idFornecedor
+	 * @param sortorder
+	 * @param sortname
+	 * @param firstResult
+	 * @param maxResults
+	 * @return
+	 * @see br.com.abril.nds.repository.EdicoesFechadasRepository#obterResultadoEdicoesFechadas(java.util.Date, java.util.Date, Long, java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(
+			Date dataDe, Date dateAte, Long idFornecedor,
+			String sortorder, String sortname, Integer firstResult,
+			Integer maxResults) {
+		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe,
+				dateAte, idFornecedor, sortorder, sortname, firstResult,
+				maxResults);
+	}
+
+
+
+
+	/**
+	 * @param dataDe
+	 * @param dataAte
+	 * @param idFornecedor
+	 * @return
+	 * @see br.com.abril.nds.repository.EdicoesFechadasRepository#quantidadeResultadoEdicoesFechadas(java.util.Date, java.util.Date, java.lang.Long)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Long quantidadeResultadoEdicoesFechadas(Date dataDe, Date dataAte,
+			Long idFornecedor) {
+		return edicoesFechadasRepository.quantidadeResultadoEdicoesFechadas(
+				dataDe, dataAte, idFornecedor);
 	}
 	
 }
