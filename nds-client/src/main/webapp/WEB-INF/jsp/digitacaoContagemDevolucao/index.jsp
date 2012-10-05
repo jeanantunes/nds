@@ -147,7 +147,7 @@ $(function(){
 							</span>
 							
 							<span class="bt_novos" title="Imprimir Conferência Cega">
-							<a href="javascript:;">
+							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportarCoferenciaCega?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
 							Conferência Cega
 							</a>
