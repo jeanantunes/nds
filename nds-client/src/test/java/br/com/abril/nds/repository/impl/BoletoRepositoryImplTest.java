@@ -377,11 +377,42 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		filtro.setPaginacao(paginacaoVO);
 		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.NOME_BANCO);
 		
-		List<DetalheBaixaBoletoDTO> boletosDivergentes =
+		List<DetalheBaixaBoletoDTO> boletosRejeitados =
 				this.boletoRepository.obterBoletosRejeitados(filtro);
 		
-		Assert.assertNotNull(boletosDivergentes);
-		Assert.assertEquals(1, boletosDivergentes.size());
+		Assert.assertNotNull(boletosRejeitados);
+		Assert.assertEquals(1, boletosRejeitados.size());
 	}
 
+	@Test
+	public void obterBoletosPrevistos() {
+
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 3, "asc");
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.NOSSO_NUMERO);
+
+		List<DetalheBaixaBoletoDTO> boletosPrevistos =
+				this.boletoRepository.obterBoletosPrevistos(filtro);
+		
+		Assert.assertNotNull(boletosPrevistos);
+		Assert.assertEquals(3, boletosPrevistos.size());
+		
+		DetalheBaixaBoletoDTO detalheBaixaBoleto = boletosPrevistos.get(0);
+
+		DetalheBaixaBoletoDTO detalheBaixaBoleto1 = boletosPrevistos.get(1);
+		
+		DetalheBaixaBoletoDTO detalheBaixaBoleto2 = boletosPrevistos.get(2);
+		
+		boolean ordenacaoNossoNumero = detalheBaixaBoleto.getNossoNumero().compareTo(detalheBaixaBoleto1.getNossoNumero()) < 0;
+		
+		Assert.assertTrue(ordenacaoNossoNumero);
+		
+		ordenacaoNossoNumero = detalheBaixaBoleto1.getNossoNumero().compareTo(detalheBaixaBoleto2.getNossoNumero()) < 0;
+		
+		Assert.assertTrue(ordenacaoNossoNumero);
+	}
 }

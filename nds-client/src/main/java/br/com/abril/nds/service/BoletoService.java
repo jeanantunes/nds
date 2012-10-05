@@ -69,4 +69,13 @@ public interface BoletoService {
 	 * @return List<DetalheBaixaBoletoDTO> - Boletos rejeitados.
 	 */
 	List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém os boletos previstos para baixa a partir de determinada data.
+	 * 
+	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO> - Boletos previstos.
+	 */
+	List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro);
 }
