@@ -488,10 +488,17 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		hql.append(this.obterFromWhereBoletosPrevistos());
 
+		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
+
+			hql.append(obterOrdenacaoConsultaBaixaBoletos(
+				filtro.getOrdenacaoColuna(), filtro.getPaginacao().getSortOrder())
+			);
+		}
+
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", filtro.getData());
-		
+
 		paginarConsultasBaixaBoleto(query, filtro);
 
 		return query.list();
