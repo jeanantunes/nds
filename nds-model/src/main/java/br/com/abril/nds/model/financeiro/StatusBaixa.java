@@ -24,8 +24,7 @@ public enum StatusBaixa {
 		this.descricao = descricao;
 	}
 
-	@Override
-	public String toString() {
+	public String getDescricao() {
 
 		return this.descricao;
 	}

@@ -175,10 +175,10 @@ public class BoletoServiceImpl implements BoletoService {
 		resumoBaixaBoletos.setQuantidadeBaixadosComDivergencia(
 			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(data).intValue());
 		
-		// TODO: calcular data de vencimento
+		Date dataVencimento = calendarioService.subtrairDiasUteis(data, 1);
 		
 		resumoBaixaBoletos.setQuantidadeInadimplentes(
-			this.boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
+			this.boletoRepository.obterQuantidadeBoletosInadimplentes(dataVencimento).intValue());
 		
 		resumoBaixaBoletos.setValorTotalBancario(
 			this.boletoRepository.obterValorTotalBancario(data));
@@ -1092,6 +1092,24 @@ public class BoletoServiceImpl implements BoletoService {
 	@Override
 	@Transactional
 	public List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		this.validarFiltroBaixaBoleto(filtro);
+		
+		return this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		this.validarFiltroBaixaBoleto(filtro);
+		
+		return this.boletoRepository.obterBoletosRejeitados(filtro);
+	}
+	
+	private void validarFiltroBaixaBoleto(FiltroDetalheBaixaBoletoDTO filtro) {
 		
 		if (filtro == null) {
 			
@@ -1102,9 +1120,5 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Uma data deve ser informada para a pesquisa.");
 		}
-		
-		return this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
 	}
-
-	
 }

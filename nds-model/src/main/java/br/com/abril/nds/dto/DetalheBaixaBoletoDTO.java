@@ -169,7 +169,7 @@ public class DetalheBaixaBoletoDTO implements Serializable {
 	 * @param motivoRejeitado the motivoRejeitado to set
 	 */
 	public void setMotivoRejeitado(StatusBaixa motivoRejeitado) {
-		this.motivoRejeitado = motivoRejeitado.toString();
+		this.motivoRejeitado = motivoRejeitado.getDescricao();
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class DetalheBaixaBoletoDTO implements Serializable {
 	 * @param motivoDivergencia the motivoDivergencia to set
 	 */
 	public void setMotivoDivergencia(StatusBaixa motivoDivergencia) {
-		this.motivoDivergencia = motivoDivergencia.toString();
+		this.motivoDivergencia = motivoDivergencia.getDescricao();
 	}
 	
 }
