@@ -312,6 +312,7 @@ var fecharDiaController =  $.extend(true, {
 					fecharDiaController.validacaoRecebimentoFisico(result);
 					fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
 					fecharDiaController.validacaoLancamentoFaltasESobras(result);
+					fecharDiaController.validacaoControleDeAplicao(result);
 				});
 	},
 	
@@ -437,6 +438,14 @@ var fecharDiaController =  $.extend(true, {
 				},
 			}
 		});
+	},
+	
+	validacaoControleDeAplicao : function(result){
+		if(result.controleDeAprovacao){
+			
+		}else{
+			alert("ele não vai mostrar nada");
+		}
 	}
 
 }, BaseController);

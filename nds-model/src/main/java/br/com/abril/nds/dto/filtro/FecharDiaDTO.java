@@ -18,6 +18,8 @@ public class FecharDiaDTO implements Serializable {
 	private Boolean confirmacaoDeExpedicao;	
 	
 	private Boolean lancamentoFaltasESobras;
+	
+	private Boolean controleDeAprovacao;
 
 	public Boolean getBaixaBancaria() {
 		return baixaBancaria;
@@ -57,6 +59,14 @@ public class FecharDiaDTO implements Serializable {
 
 	public void setLancamentoFaltasESobras(Boolean lancamentoFaltasESobras) {
 		this.lancamentoFaltasESobras = lancamentoFaltasESobras;
+	}
+
+	public Boolean getControleDeAprovacao() {
+		return controleDeAprovacao;
+	}
+
+	public void setControleDeAprovacao(Boolean controleDeAprovacao) {
+		this.controleDeAprovacao = controleDeAprovacao;
 	}
 	
 }

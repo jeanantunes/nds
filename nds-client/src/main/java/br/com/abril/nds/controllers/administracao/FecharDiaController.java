@@ -45,6 +45,7 @@ public class FecharDiaController {
 		result.include("dataOperacao", DateUtil.formatarData(distribuidor.getDataOperacao(), Constantes.DATE_PATTERN_PT_BR));
 	}
 	
+	@SuppressWarnings("static-access")
 	@Post
 	public void inicializarValidacoes(){		
 		FecharDiaDTO dto = new FecharDiaDTO();
@@ -52,6 +53,7 @@ public class FecharDiaController {
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
 		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(distribuidor.getDataOperacao()));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(distribuidor.getDataOperacao()));
+		dto.setControleDeAprovacao(this.distribuidor.isUtilizaControleAprovacao());
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}
