@@ -56,6 +56,18 @@ var descontoProdutoController = $.extend(true,{
 	               },
 				   null,
 				   true);
+
+	    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
+			$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoProduto",
+					   null,				   
+					   function(result) {
+					   		if (!result.ativo) {
+					   			exibirMensagem(result.validacao.tipoMensagem, result.validacao.listaMensagens, "");
+					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
+					   		}
+				   	   });
+	    }, 20000);
+		
 	},
 
 	obterParametrosNovoDescontoProduto: function() {

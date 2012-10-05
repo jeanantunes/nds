@@ -7,6 +7,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -263,6 +264,19 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param fornecedores
 	 * @return
 	 */
-	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoDistribuidor(Set<Fornecedor> fornecedores);
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorDistribuidor(Set<Fornecedor> fornecedores);
+
+	/**
+	 * Retorna os produtoEdicao de cotas que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
+	 * @param fornecedores
+	 * @return
+	 */
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorCota(Cota cota, Set<Fornecedor> fornecedores);
+
+	/**
+	 * Retorna os produtoEdicao de produtos que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
+	 * @param fornecedores
+	 * @return
+	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto);*/
 	
 }
