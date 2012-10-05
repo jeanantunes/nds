@@ -1124,6 +1124,13 @@ public class RoteirizacaoController {
 	}
 	
 	@Post
+    public void carregarRotasTransferenciaPDV(Long idRoteiro){
+	    RoteirizacaoDTO roteirizacao = getDTO();
+        RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+        this.result.use(Results.json()).from(roteiro.getRotas(), "result").serialize();
+    }
+	
+	@Post
 	public void transferirRoteiro(Long idBoxAnterior, Long idRoteiro, Long idBoxNovo){
 		
 		Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = getDTO().getRoteirosTransferidos();
@@ -1209,4 +1216,20 @@ public class RoteirizacaoController {
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
+	
+	@Post
+    public void transferirPDVs(Long idRoteiro, Long idRotaAnterior, Long idRotaNova, List<Long> pdvs){
+        RoteirizacaoDTO roteirizacao = getDTO();
+        RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+        RotaRoteirizacaoDTO rotaAnterior = roteiro.getRota(idRotaAnterior);
+        List<PdvRoteirizacaoDTO> pdvsTransferencia = new ArrayList<PdvRoteirizacaoDTO>(pdvs.size());
+        for (Long idPdv : pdvs) {
+            PdvRoteirizacaoDTO pdv = rotaAnterior.getPdv(idPdv);
+            pdvsTransferencia.add(pdv);
+            rotaAnterior.removerPdv(idPdv);
+        }
+        RotaRoteirizacaoDTO rotaNova = roteiro.getRota(idRotaNova);
+        rotaNova.addPdvsAposMaiorOrdem(pdvsTransferencia);
+	    result.nothing();
+    }
 }
