@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -26,7 +28,9 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ContagemDevolucaoService;
+import br.com.abril.nds.service.EdicoesFechadasService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -73,6 +77,9 @@ public class DigitacaoContagemDevolucaoController  {
 	private ContagemDevolucaoService contagemDevolucaoService;
 	
 	@Autowired
+	private EdicoesFechadasService edicoesFechadasService;
+	
+	@Autowired
 	private HttpServletResponse httpResponse;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
@@ -91,7 +98,7 @@ public class DigitacaoContagemDevolucaoController  {
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include(USUARIO_PERFIL_OPERADOR, isPerfilUsuarioEncarregado());
+		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
@@ -116,7 +123,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
@@ -193,6 +200,29 @@ public class DigitacaoContagemDevolucaoController  {
 		FileExporter.to("digitacao-contagem-devolucao", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), filtro, info, info.getListaContagemDevolucao(),
 				ContagemDevolucaoDTO.class, this.httpResponse);
+		
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportarCoferenciaCega(FileType fileType) throws IOException {
+
+		FiltroDigitacaoContagemDevolucaoDTO filtro = obterFiltroExportacao();
+
+		List<ContagemDevolucaoConferenciaCegaDTO> listConferenciaCega = contagemDevolucaoService
+				.obterInfoContagemDevolucaoCega(filtro, isPerfilUsuarioEncarregado());
+
+		FileExporter.to("digitacao-contagem-devolucao", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), filtro, null, listConferenciaCega,
+				ContagemDevolucaoConferenciaCegaDTO.class, this.httpResponse);
+		
+		result.nothing();
 		
 	}
 	
@@ -333,7 +363,7 @@ public class DigitacaoContagemDevolucaoController  {
 			digitacaoContagemDevolucaoVO.setNumeroEdicao(String.valueOf(dto.getNumeroEdicao()));
 			digitacaoContagemDevolucaoVO.setPrecoVenda(CurrencyUtil.formatarValor(dto.getPrecoVenda()));
 			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf( (dto.getQtdDevolucao()==null)?BigDecimal.ZERO.intValue():dto.getQtdDevolucao().intValue()));
-			digitacaoContagemDevolucaoVO.setDesconto(String.valueOf((dto.getDesconto()==null)?BigDecimal.ZERO.intValue():dto.getDesconto().intValue()));
+			
 			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
 			
 			if(dto.getQtdNota()==null) {
@@ -343,7 +373,6 @@ public class DigitacaoContagemDevolucaoController  {
 			}
 			
 			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
-			digitacaoContagemDevolucaoVO.setValorTotalComDesconto(dto.getTotalComDesconto()==null ? "" : (CurrencyUtil.formatarValor(dto.getTotalComDesconto())));
 			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
@@ -515,5 +544,24 @@ public class DigitacaoContagemDevolucaoController  {
 		} 
 		
 		return mensagens;
+	}
+	
+	
+	public void pesquisaEdicoesFechadas(String sortorder, String sortname,int page, int rp){
+		
+		
+		FiltroDigitacaoContagemDevolucaoDTO filtro = 
+				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor());
+		if(quantidade == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		
+		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
+		
+		
+		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
 	}
 }

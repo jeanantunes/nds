@@ -13,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
@@ -173,11 +175,19 @@ public class BoletoServiceImpl implements BoletoService {
 		resumoBaixaBoletos.setQuantidadeBaixadosComDivergencia(
 			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(data).intValue());
 		
+		Date dataVencimento = calendarioService.subtrairDiasUteis(data, 1);
+		
 		resumoBaixaBoletos.setQuantidadeInadimplentes(
-			this.boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
+			this.boletoRepository.obterQuantidadeBoletosInadimplentes(dataVencimento).intValue());
 		
 		resumoBaixaBoletos.setValorTotalBancario(
 			this.boletoRepository.obterValorTotalBancario(data));
+		
+		List<ControleBaixaBancaria> listaControleBaixa =
+			this.controleBaixaRepository.obterListaControleBaixaBancaria(
+				data, StatusControle.CONCLUIDO_SUCESSO);
+		
+		boolean possuiDiversasBaixas = (listaControleBaixa.size() > 1);
 		
 		return resumoBaixaBoletos;
 	}
@@ -1082,4 +1092,53 @@ public class BoletoServiceImpl implements BoletoService {
 		cobrancaRepository.incrementarVia(nossoNumero);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		this.validarFiltroBaixaBoleto(filtro);
+		
+		return this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		this.validarFiltroBaixaBoleto(filtro);
+		
+		return this.boletoRepository.obterBoletosRejeitados(filtro);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		this.validarFiltroBaixaBoleto(filtro);
+		
+		return this.boletoRepository.obterBoletosPrevistos(filtro);
+	}
+
+	private void validarFiltroBaixaBoleto(FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		if (filtro == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não pode ser nulo.");
+		}
+		
+		if (filtro.getData() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Uma data deve ser informada para a pesquisa.");
+		}
+	}
+	
 }

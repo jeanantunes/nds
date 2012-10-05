@@ -29,6 +29,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -399,7 +400,14 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		notaFiscal.setDataExpedicao(dataAtual);
 		
-		String cnpj = notaFiscal.getEmitente().getCnpj();
+		String cnpj = null;
+		if (notaFiscal instanceof NotaFiscalEntradaFornecedor
+				&& ((NotaFiscalEntradaFornecedor) notaFiscal).getFornecedor() != null
+				&& ((NotaFiscalEntradaFornecedor) notaFiscal).getFornecedor().getJuridica() != null
+				&& ((NotaFiscalEntradaFornecedor) notaFiscal).getFornecedor().getJuridica().getCnpj() != null
+				&& !((NotaFiscalEntradaFornecedor) notaFiscal).getFornecedor().getJuridica().getCnpj().isEmpty()) {
+			cnpj = ((NotaFiscalEntradaFornecedor)notaFiscal).getFornecedor().getJuridica().getCnpj();
+		}
 		
 		PessoaJuridica emitente = obterPessoaPorCNPJ(cnpj);
 				
@@ -407,13 +415,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
 		
-		List<Fornecedor> fornecedor =	fornecedorService.obterFornecedores(cnpj);
-				
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscal.setOrigem(Origem.MANUAL);
-		
-		notaFiscal.setEmitente(emitente);
 		
 		notaFiscal.setUsuario(usuarioLogado);
 		

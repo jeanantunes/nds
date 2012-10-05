@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -129,9 +130,41 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			carregarDadosAdicionais(info, listaContagemDevolucao);
 		}
 		
-		return info;
-	
+		return info;	
 	}
+	
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<ContagemDevolucaoConferenciaCegaDTO> obterInfoContagemDevolucaoCega(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
+		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
+				filtroPesquisa, 
+				tipoMovimentoEstoque, 
+				indPerfilUsuarioEncarregado);
+		
+		List<ContagemDevolucaoConferenciaCegaDTO> cegaDTOs = new ArrayList<ContagemDevolucaoConferenciaCegaDTO>(listaContagemDevolucao.size());
+		for(ContagemDevolucaoDTO contagemDevolucaoDTO : listaContagemDevolucao){
+			ContagemDevolucaoConferenciaCegaDTO cegaDTO = new ContagemDevolucaoConferenciaCegaDTO();
+			
+			cegaDTO.setCodigoProduto(contagemDevolucaoDTO.getCodigoProduto());
+			cegaDTO.setIdProdutoEdicao(contagemDevolucaoDTO.getIdProdutoEdicao());
+			cegaDTO.setNomeProduto(contagemDevolucaoDTO.getNomeProduto());
+			cegaDTO.setNumeroEdicao(contagemDevolucaoDTO.getNumeroEdicao());
+			cegaDTO.setPrecoVenda(contagemDevolucaoDTO.getPrecoVenda());
+			cegaDTOs.add(cegaDTO);
+			
+		}
+		
+		
+		return cegaDTOs;	
+	}
+	
+	
 	
 	private void calcularTotalComDesconto(
 			List<ContagemDevolucaoDTO> listaContagemDevolucao) {
@@ -682,14 +715,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			throw new IllegalStateException("TipoNotaFiscal não parametrizada");
 		}
 		
-		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();
-		
 		Long numeroNF = controleNumeracaoNotaFiscalService.obterProximoNumeroNotaFiscal(serieNF);
 		
 		nfSaidaFornecedor.setCfop(cfop);
 		nfSaidaFornecedor.setDataEmissao(dataAtual);
 		nfSaidaFornecedor.setDataExpedicao(dataAtual);
-		nfSaidaFornecedor.setEmitente(pessoaJuridica);
 		nfSaidaFornecedor.setFornecedor(fornecedor);
 
 		nfSaidaFornecedor.setNumero(numeroNF);

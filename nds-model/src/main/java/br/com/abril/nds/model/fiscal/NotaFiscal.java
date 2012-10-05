@@ -10,8 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-
 @MappedSuperclass
 public abstract class NotaFiscal implements Serializable {
 
@@ -163,10 +161,6 @@ public abstract class NotaFiscal implements Serializable {
 	protected BigDecimal valorDesconto;	
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "PJ_ID")
-	protected PessoaJuridica emitente;
-	
-	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_NF_ID")
 	protected TipoNotaFiscal tipoNotaFiscal;
 	
@@ -242,14 +236,6 @@ public abstract class NotaFiscal implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
-	public PessoaJuridica getEmitente() {
-		return emitente;
-	}
-	
-	public void setEmitente(PessoaJuridica emitente) {
-		this.emitente = emitente;
-	}
-	
 	public TipoNotaFiscal getTipoNotaFiscal() {
 		return tipoNotaFiscal;
 	}

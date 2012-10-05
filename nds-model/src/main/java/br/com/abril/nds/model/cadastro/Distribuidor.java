@@ -552,22 +552,19 @@ public class Distribuidor {
 	public void setQntDiasReutilizacaoCodigoCota(Long qntDiasReutilizacaoCodigoCota) {
 		this.qntDiasReutilizacaoCodigoCota = qntDiasReutilizacaoCodigoCota;
 	}
-	
+
 	/**
-	 * Obtém utilizaSugestaoIncrementoCodigo
-	 *
-	 * @return boolean
+	 * @return the utilizaSugestaoIncrementoCodigo
 	 */
-	public boolean isUtilizaSugestaoIncrementoCodigo() {
+	public Boolean getUtilizaSugestaoIncrementoCodigo() {
 		return utilizaSugestaoIncrementoCodigo;
 	}
 
 	/**
-	 * Atribuí utilizaSugestaoIncrementoCodigo
-	 * @param utilizaSugestaoIncrementoCodigo 
+	 * @param utilizaSugestaoIncrementoCodigo the utilizaSugestaoIncrementoCodigo to set
 	 */
 	public void setUtilizaSugestaoIncrementoCodigo(
-			boolean utilizaSugestaoIncrementoCodigo) {
+			Boolean utilizaSugestaoIncrementoCodigo) {
 		this.utilizaSugestaoIncrementoCodigo = utilizaSugestaoIncrementoCodigo;
 	}
 
