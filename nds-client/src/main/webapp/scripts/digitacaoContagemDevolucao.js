@@ -36,8 +36,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			if (digitacaoContagemDevolucaoController.isRoleOperador(userProfileOperador)){
 				
 				//Oculta os campos que não serão visíveis pelo perfil de usuário Operador
-				$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
-				$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
+				//$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
+				//$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
 			}
 			
 			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
@@ -371,27 +371,33 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 120,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoVenda',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Exemplar Devolução',
 				name : 'qtdDevolucao',
-				width : 120,
+				width : 110,
 				sortable : true,
 				align : 'center'
+			}, {
+				display : 'Total c/ Desc.R$',
+				name : 'valorTotalComDesconto',
+				width : 100,
+				sortable : false,
+				align : 'right'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotal',
@@ -401,19 +407,19 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Exemplar Nota',
 				name : 'qtdNota',
-				width : 110,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
-				width : 80,
+				width : 60,
 				sortable : false,
 				align : 'center'
 			},{
 				display : 'Replicar Qtde',
 				name : 'replicarQtde',
-				width : 80,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}];

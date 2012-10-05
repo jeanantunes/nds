@@ -36,6 +36,8 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -43,7 +45,6 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -98,7 +99,7 @@ public class DigitacaoContagemDevolucaoController  {
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
+		result.include(USUARIO_PERFIL_OPERADOR, isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
@@ -125,19 +126,57 @@ public class DigitacaoContagemDevolucaoController  {
 	@Path("/pesquisar")
 	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
 		
-		if(idFornecedor == null || idFornecedor < 0) {
-			idFornecedor = null;
+		Intervalo<Date> periodo = null;
+						
+		if ( realizarPesquisaPorSemanaCE(dataDe, dataAte, semanaConferenciaEncalhe) ) {
+			periodo = obterPeriodoSemanaConferenciaEncalhe(semanaConferenciaEncalhe);
+		
+		} else {
+			periodo =  obterPeriodoValidado(dataDe, dataAte);
 		}
-		
-		PeriodoVO periodo =  obterPeriodoValidado(dataDe, dataAte);
-		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
+
+		FiltroDigitacaoContagemDevolucaoDTO filtro = 
+				new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
 		tratarFiltro(filtro);
 		
 		efetuarPesquisa(filtro);
+	}
+	
+	
+	private boolean realizarPesquisaPorSemanaCE(String dataDe, String dataAte,
+			Integer semanaConferenciaEncalhe) {
+		
+		if (semanaConferenciaEncalhe != null) {
+			
+			if (!StringUtil.isEmpty(dataDe) || !StringUtil.isEmpty(dataAte)) {
+				throw new ValidacaoException(new  ValidacaoVO(TipoMensagem.ERROR, 
+						"A pesquisa não pode ser realizada pelo perído e pela Conferencia de Encalhe ao mesmo tempo"));
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+
+
+	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhe(Integer semanaConferenciaEncalhe) {
+		
+		Intervalo<Date> periodo = null;	
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semanaConferenciaEncalhe, 
+				distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+		
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		
+		periodo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		
+		return periodo;
 	}
 	
 	/*
@@ -374,6 +413,8 @@ public class DigitacaoContagemDevolucaoController  {
 			
 			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
 			
+			digitacaoContagemDevolucaoVO.setValorTotalComDesconto((CurrencyUtil.formatarValor(dto.getTotalComDesconto())));
+			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
 			listaResultadosVO.add(digitacaoContagemDevolucaoVO);
@@ -453,9 +494,9 @@ public class DigitacaoContagemDevolucaoController  {
 	 * Valida o periodo da consulta e retorna um objeto com os valores. 
 	 * @param dataInicial
 	 * @param dataFinal
-	 * @return PeriodoVO
+	 * @return Intervalo<Date>
 	 */
-	private PeriodoVO obterPeriodoValidado(String dataInicial, String dataFinal) {
+	private Intervalo<Date> obterPeriodoValidado(String dataInicial, String dataFinal) {
 				
 		tratarErroDatas(validarPreenchimentoObrigatorio(dataInicial, dataFinal));
 
@@ -463,8 +504,8 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		validarPeriodo(dataInicial, dataFinal);		
 		
-		PeriodoVO periodo = new PeriodoVO(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), 
-										  DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
+		Intervalo<Date> periodo = new Intervalo<Date>(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), 
+										  			  DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
 
 		return periodo; 
 	}
