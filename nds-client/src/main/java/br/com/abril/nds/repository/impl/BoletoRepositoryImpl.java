@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.BoletoRepository;
@@ -224,9 +225,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeLidos ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" select count(baixaCobranca) as quantidadeLidos ");
+		hql.append(" from BaixaCobranca baixaCobranca ");
 		hql.append(" where baixaCobranca.dataBaixa = :data ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
@@ -300,19 +300,19 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	}
 	
 	@Override
-	public Long obterQuantidadeBoletosInadimplentes(Date data) {
+	public Long obterQuantidadeBoletosInadimplentes(Date dataVencimento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		// TODO:
-		
-		hql.append(" select ");
-		hql.append(" count(cobranca) as quantidadeInadimplentes from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
+		hql.append(" select count(cobranca) as quantidadeInadimplentes ");
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :dataVencimento ");
+		hql.append(" and cobranca.statusCobranca = :statusCobranca ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("data", data);
+		query.setParameter("dataVencimento", dataVencimento);
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -322,11 +322,10 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		// TODO:
-		
-		hql.append(" select ");
-		hql.append(" sum(cobranca.valor) as valorTotalBancario from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
+		hql.append(" select sum(baixaCobranca.valorPago) as valorTotalBancario ");
+		hql.append(" from BaixaCobranca baixaCobranca ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
+		hql.append(" and baixaCobranca.banco is not null ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
