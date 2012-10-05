@@ -21,7 +21,6 @@ public class NegociacaoDividaVO implements Serializable {
 		setVlDivida(CurrencyUtil.formatarValor(negociacao.getVlDivida()));
 		setEncargos(CurrencyUtil.formatarValor(negociacao.getEncargos()));	
 		setTotal(CurrencyUtil.formatarValor(negociacao.getTotal()));
-		setIdDivida(negociacao.getIdDivida());
 		setIdCobranca(negociacao.getIdCobranca());
 	}
 	
@@ -46,8 +45,6 @@ public class NegociacaoDividaVO implements Serializable {
 	private String detalhes = "";
 	
 	private String acao = "";
-	
-	private Long idDivida;
 	
 	private Long idCobranca;
 
@@ -115,14 +112,6 @@ public class NegociacaoDividaVO implements Serializable {
 		this.acao = acao;
 	}
 
-	public Long getIdDivida() {
-		return idDivida;
-	}
-
-	public void setIdDivida(Long idDivida) {
-		this.idDivida = idDivida;
-	}
-
 	public Long getIdCobranca() {
 		return idCobranca;
 	}
@@ -130,8 +119,4 @@ public class NegociacaoDividaVO implements Serializable {
 	public void setIdCobranca(Long idCobranca) {
 		this.idCobranca = idCobranca;
 	}
-	
-	
-	
-	
 }
