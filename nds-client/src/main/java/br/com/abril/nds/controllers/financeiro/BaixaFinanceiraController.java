@@ -246,6 +246,10 @@ public class BaixaFinanceiraController {
 		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
 	}
 
+	/**
+	 * Obtém lista de baixados na data de vencimento
+	 * @param data
+	 */
 	@Post
 	public void mostrarGridBoletosBaixados(Date data, String sortorder,
 			   							   String sortname, int page, int rp) {
@@ -254,10 +258,10 @@ public class BaixaFinanceiraController {
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
 		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.boletoService.obterBaixadosPorData(filtro);
 		
 		// TODO: realizar consulta total
-		int qtdeTotalRegistros = 0;
+		int qtdeTotalRegistros = this.boletoService.obterQuantidadeBaixadosPorData(filtro).intValue();
 		
 		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
 	}
@@ -294,6 +298,10 @@ public class BaixaFinanceiraController {
 		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
 	}
 	
+	/**
+	 * Obtém lista de inadimplentes na data de vencimento
+	 * @param data
+	 */
 	@Post
 	public void mostrarGridBoletosInadimplentes(Date data, String sortorder,
 			   									String sortname, int page, int rp) {
@@ -302,10 +310,10 @@ public class BaixaFinanceiraController {
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
 		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.boletoService.obterInadimplentesPorData(filtro);
 		
 		// TODO: realizar consulta total
-		int qtdeTotalRegistros = 0;
+		int qtdeTotalRegistros = this.boletoService.obterQuantidadeInadimplentesPorData(filtro).intValue();
 		
 		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
 	}

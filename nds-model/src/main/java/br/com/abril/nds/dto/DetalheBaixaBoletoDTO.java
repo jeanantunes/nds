@@ -84,8 +84,8 @@ public class DetalheBaixaBoletoDTO implements Serializable {
 	/**
 	 * @param numeroConta the numeroConta to set
 	 */
-	public void setNumeroConta(Long numeroConta) {
-		this.numeroConta = numeroConta.toString();
+	public void setNumeroConta(String numeroConta) {
+		this.numeroConta = numeroConta;
 	}
 
 	/**

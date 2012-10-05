@@ -119,11 +119,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				tipoMovimentoEstoque, 
 				indPerfilUsuarioEncarregado);
 		
-		calcularTotalComDesconto(listaContagemDevolucao);
-		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
 		
-		BigDecimal valorTotalGeral = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(filtroPesquisa, tipoMovimentoEstoque);
+		BigDecimal valorTotalGeral = BigDecimal.ZERO;
 		info.setValorTotalGeral(valorTotalGeral);
 		
 		if(indPerfilUsuarioEncarregado) {
@@ -164,35 +162,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		return cegaDTOs;	
 	}
 	
-	
-	
-	private void calcularTotalComDesconto(
-			List<ContagemDevolucaoDTO> listaContagemDevolucao) {
-		
-		for(ContagemDevolucaoDTO contagemDevolucao : listaContagemDevolucao) {
-			
-			BigDecimal desconto = contagemDevolucao.getDesconto();
-			
-			BigDecimal precoVenda = contagemDevolucao.getPrecoVenda();
-			
-			BigDecimal quantidadeDevolucao = new BigDecimal(contagemDevolucao.getQtdDevolucao());
-				
-			BigDecimal total = precoVenda.multiply(quantidadeDevolucao);
-			
-			BigDecimal totalComDesconto = total;
-			
-			if (desconto != null) {	
-
-				totalComDesconto = total.subtract(total.multiply(desconto.divide(new BigDecimal(100))));
-			}
-
-			contagemDevolucao.setTotalComDesconto(totalComDesconto);
-			
-		}
-		
-	}
-
-
 	/**
 	 * Calcula dados adicionais.
 	 * 
@@ -206,21 +175,32 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
 			
-			BigDecimal precoVenda = (contagem.getPrecoVenda() == null) ? new BigDecimal(0.0D) : contagem.getPrecoVenda();
+			BigDecimal precoVenda = (contagem.getPrecoVenda() == null) ? BigDecimal.ZERO : contagem.getPrecoVenda();
 			
 			BigInteger qtdMovimento = (contagem.getQtdDevolucao() == null) ? BigInteger.ZERO : contagem.getQtdDevolucao();
 			
 			BigInteger qtdNota = (contagem.getQtdNota() == null) ? BigInteger.ZERO : contagem.getQtdNota();
 			
+			BigDecimal desconto = contagem.getDesconto();
 			
 			BigInteger diferenca = qtdMovimento.subtract(qtdNota);
+			
+			BigInteger quantidade = qtdNota.compareTo(BigInteger.ZERO) == 0 ? qtdMovimento : qtdNota;
+				
+			BigDecimal valorTotal = precoVenda.multiply(new BigDecimal(quantidade));
+			
+			BigDecimal totalComDesconto = valorTotal;
+			
+			if (desconto != null) {	
+
+				totalComDesconto = valorTotal.subtract(valorTotal.multiply(desconto.divide(new BigDecimal(100))));
+			}
+			
 			contagem.setDiferenca(diferenca);
-			
-			BigDecimal valorTotal = precoVenda.multiply(new BigDecimal(qtdMovimento));
 			contagem.setValorTotal(valorTotal);
-			
+			contagem.setTotalComDesconto(totalComDesconto);
+			info.setValorTotalGeral(info.getValorTotalGeral().add(valorTotal));
 		}
-		
 		
 	}
 	

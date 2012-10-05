@@ -1142,5 +1142,57 @@ public class BoletoServiceImpl implements BoletoService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Uma data deve ser informada para a pesquisa.");
 		}
 	}
+
+	/**
+	 * Obtém lista de Inadimplentes por data de vencimento
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<DetalheBaixaBoletoDTO> obterInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		return this.boletoRepository.obterInadimplentesPorData(filtro);
+	}
 	
+	/**
+	 * Obtém lista de Baixados por data de vencimento
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<DetalheBaixaBoletoDTO> obterBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		return this.boletoRepository.obterBaixadosPorData(filtro);
+	}
+
+	/**
+	 * Obtém quantidade de Inadimplentes por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return Long
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Long obterQuantidadeInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		return this.boletoRepository.obterQuantidadeBoletosInadimplentes(filtro.getData());
+	}
+
+	/**
+	 * Obtém quantidade de Baixados por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return Long
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Long obterQuantidadeBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		return this.boletoRepository.obterQuantidadeBoletosBaixados(filtro.getData());
+	}
+
 }

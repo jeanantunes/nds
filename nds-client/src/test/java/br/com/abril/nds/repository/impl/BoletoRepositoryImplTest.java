@@ -415,4 +415,53 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		Assert.assertTrue(ordenacaoNossoNumero);
 	}
+
+	@Test
+	public void obterInadimplentesPorData(){
+		
+        FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.DATA_VENCIMENTO);
+		
+		List<DetalheBaixaBoletoDTO> inadimplentes = this.boletoRepository.obterInadimplentesPorData(filtro);
+		
+		Assert.assertNotNull(inadimplentes);
+	}
+	
+	@Test
+	public void obterQuantidadeInadimplentesPorData(){
+		
+		int qtdInadimplentes = this.boletoRepository.obterQuantidadeBoletosInadimplentes(dataAtual).intValue();
+		
+		Assert.assertTrue(qtdInadimplentes > 0);
+	}
+	
+	@Test
+	public void obterBaixadosPorData(){
+		
+        FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.DATA_VENCIMENTO);
+		
+		List<DetalheBaixaBoletoDTO> inadimplentes = this.boletoRepository.obterBaixadosPorData(filtro);
+		
+		Assert.assertNotNull(inadimplentes);
+	}
+	
+	@Test
+	public void obterQuantidadeBaixadosPorData(){
+		
+        int qtdBaixados = this.boletoRepository.obterQuantidadeBoletosBaixados(dataAtual).intValue();
+		
+		Assert.assertTrue(qtdBaixados > 0);
+	}
+	
 }
