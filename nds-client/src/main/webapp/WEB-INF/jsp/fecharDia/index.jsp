@@ -242,15 +242,7 @@
 		        <tr class="header_table">
 		          <td width="205">Processo</td>
 		          <td width="48" align="center">Status</td>
-		        </tr>
-		        <tr class="class_linha_2">
-		          <td>Recebimento Físico:</td>
-		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-		        </tr>
-		        <tr class="class_linha_1">
-		          <td>Lançamento de Faltas e Sobras:</td>
-		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-		        </tr>		        
+		        </tr>		        		        
 		        <tr class="class_linha_1">
 		          <td>Fechamento de Encalhe:</td>
 		          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
@@ -268,9 +260,6 @@
 		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
 		        </tr>
 		      </table>
-		        
-		        
-		      
 		    </fieldset>
 		</div>
 	</form>
