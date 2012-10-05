@@ -110,14 +110,6 @@
 			</table>
 		</form>
 		
-		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosPrevisao();">previsto</a>
-		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosBaixados();">baixados</a>
-		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosRejeitados();">rejeitados</a>
-		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosBaixadosComDivergencia();">divergentes</a>
-		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridBoletosInadimplentes();">inadimplentes</a>
-		<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridTotalBancario();">totalBancario</a>
-		
-		
 		<!-- BAIXA MANUAL -->
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="tableBaixaManual">

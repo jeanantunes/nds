@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -129,57 +128,82 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, dataAtual, true);
 		save(movimentoFinanceiroCota);
 		
-		ConsolidadoFinanceiroCota consolidado = Fixture
-				.consolidadoFinanceiroCota(
-						Arrays.asList(movimentoFinanceiroCota), cota,
-						dataAtual, new BigDecimal(200), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
-		save(consolidado);
+		ConsolidadoFinanceiroCota consolidado1 =
+			Fixture.consolidadoFinanceiroCota(
+				Arrays.asList(movimentoFinanceiroCota), cota, dataAtual, new BigDecimal(200),
+				BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+		save(consolidado1);
 		
-		Divida divida = Fixture.divida(consolidado, cota, dataAtual,
-				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
-		save(divida);
+		ConsolidadoFinanceiroCota consolidado2 =
+			Fixture.consolidadoFinanceiroCota(
+				null, cota, dataAtual, new BigDecimal(200),
+				BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+		save(consolidado2);
+			
+			
+		ConsolidadoFinanceiroCota consolidado3 =
+			Fixture.consolidadoFinanceiroCota(
+				null, cota, dataAtual, new BigDecimal(200),
+				BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+		save(consolidado3);
 		
+		Divida divida1 =
+			Fixture.divida(consolidado1, cota, dataAtual, usuarioJoao,
+						   StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(divida1);
 		
+		Divida divida2 =
+			Fixture.divida(consolidado2, cota, dataAtual, usuarioJoao,
+						   StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(divida2);
+		
+		Divida divida3 =
+			Fixture.divida(consolidado3, cota, dataAtual, usuarioJoao,
+						   StatusDivida.EM_ABERTO, new BigDecimal(200),false);
+		save(divida3);
 		
 		//CRIA UM OBJETO BOLETO NA SESSAO PARA TESTES
 
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, dataAtual, new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
-		save(consolidado1);
+		ConsolidadoFinanceiroCota consolidado4 = Fixture.consolidadoFinanceiroCota(null, cota, dataAtual, new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+		save(consolidado4);
 		
-		Divida divida1 = Fixture.divida(consolidado1, cota, dataAtual, usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
-		save(divida1);
+		Divida divida4 = Fixture.divida(consolidado4, cota, dataAtual, usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
+		save(divida4);
 		
-	    Boleto boleto = Fixture.boleto("5", "5", "5",
-                					   dataAtual, 
-                					   dataAtual, 
-                					   dataAtual, 
-                					   BigDecimal.ZERO, 
-                					   new BigDecimal(100.00), 
-                					   "1", 
-                					   "1",
-                					   StatusCobranca.PAGO,
-                					   cota,
-                					   bancoHSBC,
-                					   divida,0);
+		Boleto boleto =
+			Fixture.boleto(
+				"5", "5", "5", dataAtual, dataAtual, dataAtual, BigDecimal.ZERO,
+				new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida1, 0);
 		save(boleto);
 		
+		Boleto boleto2 =
+			Fixture.boleto(
+				"55", "5", "55", dataAtual, dataAtual, dataAtual, BigDecimal.ZERO,
+				new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida2, 0);
+		save(boleto2);
+
+		Boleto boleto3 =
+			Fixture.boleto(
+				"555", "5", "555", dataAtual, dataAtual, dataAtual, BigDecimal.ZERO,
+				new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida3, 0);
+		save(boleto3);
 		
 		BaixaAutomatica baixa =
 			Fixture.baixaAutomatica(
 				boleto, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO, BigDecimal.TEN);
 		
-		/*BaixaAutomatica baixa2 =
+		BaixaAutomatica baixa2 =
 			Fixture.baixaAutomatica(
-				boleto, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN);
+				boleto2, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN);
 		
 		BaixaAutomatica baixa3 =
 			Fixture.baixaAutomatica(
-				boleto, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN);*/
+				boleto3, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN);
 		
-		save(baixa);
+		save(baixa, baixa2, baixa3);
 	}
 	
 	@Test
@@ -272,8 +296,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	}
 	
 	@Test
-	//TODO:
-	@Ignore
 	public void obterQuantidadeBoletosRejeitados() {
 		
 		Long quantidadeBoletosBaixados =
@@ -285,8 +307,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	}
 	
 	@Test
-	//TODO:
-	@Ignore
 	public void obterQuantidadeBoletosBaixadosComDivergencia() {
 		
 		Long quantidadeBoletosBaixados =
