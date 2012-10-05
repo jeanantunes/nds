@@ -955,9 +955,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date dataFinal = Fixture.criarData(1, Calendar.MARCH, 2012);
 		
 	
-		PeriodoVO periodo = new PeriodoVO();
-		periodo.setDataInicial(dataInicial);
-		periodo.setDataFinal(dataFinal);
+		Intervalo<Date> periodo = new Intervalo<Date>(dataInicial, dataFinal);
 		filtro.setPeriodo(periodo);
 		
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);
