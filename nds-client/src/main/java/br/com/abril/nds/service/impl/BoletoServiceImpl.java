@@ -175,6 +175,8 @@ public class BoletoServiceImpl implements BoletoService {
 		resumoBaixaBoletos.setQuantidadeBaixadosComDivergencia(
 			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(data).intValue());
 		
+		// TODO: calcular data de vencimento
+		
 		resumoBaixaBoletos.setQuantidadeInadimplentes(
 			this.boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
 		

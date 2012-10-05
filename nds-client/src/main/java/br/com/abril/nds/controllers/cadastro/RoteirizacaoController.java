@@ -848,13 +848,14 @@ public class RoteirizacaoController {
 	
 	@Post
     @Path("/ordemPdvChangeListener")
-	public void ordemPdvChangeListener(Long idRota, Long idPdv, Integer ordem) {
+	public void ordemPdvChangeListener(Long idRoteiro, Long idRota, Long idPdv, Integer ordem) {
 	    boolean ordemValida = true;
 	    if (ordem == null) {
 	        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Ordem é obrigatória!"), "result").recursive().serialize();
 	    } else {
 	        RoteirizacaoDTO roteirizacao = getDTO();
-	        RotaRoteirizacaoDTO rota = roteirizacao.getRota(idRota);
+	        RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+	        RotaRoteirizacaoDTO rota = roteiro.getRota(idRota);
 	        ordemValida = rota.alterarOrdemPdv(idPdv, ordem);
 	        if (ordemValida) {
 	            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ordem válida!"), "result").recursive().serialize(); 
@@ -1078,9 +1079,10 @@ public class RoteirizacaoController {
 	}
 	
 	@Post
-	public void copiarCotasRota(RotaRoteirizacaoDTO rotaCopia) {
+	public void copiarCotasRota(Long idRoteiro, RotaRoteirizacaoDTO rotaCopia) {
 		RoteirizacaoDTO roteirizacao = getDTO();
-		RotaRoteirizacaoDTO rota = roteirizacao.getRota(rotaCopia.getId());
+		RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+		RotaRoteirizacaoDTO rota = roteiro.getRota(rotaCopia.getId());
 		rota.addPdvsAposMaiorOrdem(rotaCopia.getPdvs());
 		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cópia realizada com sucesso.");
 		result.use(Results.json()).from(validacao, "result").recursive().serialize();

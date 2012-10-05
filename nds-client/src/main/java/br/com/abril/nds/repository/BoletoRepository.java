@@ -104,11 +104,11 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	/**
 	 * Obtém a quantidade de boletos inadimplentes.
 	 * 
-	 * @param data - data
+	 * @param dataVencimento - data de vencimento
 	 * 
 	 * @return quantidade de boletos inadimplentes
 	 */
-	Long obterQuantidadeBoletosInadimplentes(Date data);
+	Long obterQuantidadeBoletosInadimplentes(Date dataVencimento);
 	
 	/**
 	 * Obtém o valor total bancário.
