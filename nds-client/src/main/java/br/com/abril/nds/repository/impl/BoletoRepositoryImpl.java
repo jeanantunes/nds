@@ -7,12 +7,17 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.BoletoRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 
 /**
@@ -287,20 +292,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select count(cobranca) as quantidadeBaixadosComDivergencia ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
-		hql.append(" where baixaCobranca.dataBaixa = :data ");
-		hql.append(" and baixaCobranca.status in (:statusBoletosBaixadosComDivergencia) ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
-		
-		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_DATA);
-		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_VALOR);
-		
-		query.setParameter("data", data);
-		query.setParameterList("statusBoletosBaixadosComDivergencia", listaParametros);
+		hql.append(obterFromWhereConsultaBoletosBaixadosComDivergencia());
+
+		Query query = obterQueryBoletosBaixadosComDivergencia(hql.toString(), data);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -340,5 +334,91 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+	private String obterFromWhereConsultaBoletosBaixadosComDivergencia() {
+		
+		StringBuilder hql = new StringBuilder("");
+		
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
+		hql.append(" and baixaCobranca.status in (:statusBoletosBaixadosComDivergencia) ");
+		
+		return hql.toString();
+	}
+
+	private String obterOrdenacaoConsultaBaixaBoletos(OrdenacaoColunaDetalheBaixaBoleto ordenacao, String orderSort) {
+		
+		StringBuilder orderBy = new StringBuilder();
+		
+		orderBy.append(" order by ");
+		orderBy.append(ordenacao.toString());
+		orderBy.append(" ");
+		orderBy.append(orderSort == null ? "asc" : orderSort);
+
+		return orderBy.toString();
+	}
 	
+	private Query obterQueryBoletosBaixadosComDivergencia(String hql, Date data) {
+
+		Query query = super.getSession().createQuery(hql.toString());
+
+		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
+		
+		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_DATA);
+		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_VALOR);
+
+		query.setParameter("data", data);
+		query.setParameterList("statusBoletosBaixadosComDivergencia", listaParametros);
+
+		return query;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro) {
+		// TODO Auto-generated method stub
+		
+		StringBuilder hql = new StringBuilder("");
+		
+		hql.append(" select baixaCobranca.status as motivoDivergencia, ")
+		   .append(" 		cobranca.banco.nome as nomeBanco, ")
+		   .append(" 		cobranca.banco.conta as numeroConta, ")
+		   .append(" 		cobranca.valor as valorBoleto, ")
+		   .append(" 		baixaCobranca.valorPago as valorPago, ")
+		   .append(" 		cobranca.valor - baixaCobranca.valorPago as valorDiferenca ")
+		   
+		   .append(obterFromWhereConsultaBoletosBaixadosComDivergencia());
+		
+		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
+
+			hql.append(obterOrdenacaoConsultaBaixaBoletos(
+				filtro.getOrdenacaoColuna(), filtro.getPaginacao().getSortOrder())
+			);
+		}
+
+		Query query = obterQueryBoletosBaixadosComDivergencia(hql.toString(), filtro.getData());
+		
+		if (filtro.getPaginacao() != null) {
+
+			PaginacaoVO paginacao = filtro.getPaginacao();
+
+			if (paginacao.getPosicaoInicial() != null) {
+			
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+
+			if (paginacao.getQtdResultadosPorPagina() != null) {
+				
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalheBaixaBoletoDTO.class));
+		
+		return query.list();
+	}
 }
