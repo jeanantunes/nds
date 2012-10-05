@@ -61,7 +61,7 @@ public interface BoletoService {
 	 */
 	List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro);
 	
-	/**
+    /**
 	 * Obtém os boletos que foram rejeitados na baixa em determinada data.
 	 * 
 	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
@@ -78,4 +78,41 @@ public interface BoletoService {
 	 * @return List<DetalheBaixaBoletoDTO> - Boletos previstos.
 	 */
 	List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro);
+    
+    /**
+	 * Obtém lista de Inadimplentes por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	public List<DetalheBaixaBoletoDTO> obterInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém lista de Baixados por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	public List<DetalheBaixaBoletoDTO> obterBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém quantidade de Inadimplentes por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return Long
+	 */
+	public Long obterQuantidadeInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém quantidade de Baixados por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return Long
+	 */
+	public Long obterQuantidadeBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro);
+
 }

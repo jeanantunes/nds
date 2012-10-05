@@ -145,4 +145,24 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return List<DetalheBaixaBoletoDTO> - Boletos previstos.
 	 */
 	List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro);
+
+	/**
+	 * Obtém lista de Inadimplentes por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 *
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	List<DetalheBaixaBoletoDTO> obterInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém lista de Baixados por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO>
+	 * 
+	 */
+	List<DetalheBaixaBoletoDTO> obterBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
 }
