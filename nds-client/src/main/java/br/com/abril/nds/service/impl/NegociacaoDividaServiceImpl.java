@@ -225,17 +225,93 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			Integer ativarCotaAposParcela, BigDecimal comissaoParaSaldoDivida,
 			FormaCobranca formaCobranca) {
 		
-		for (MovimentoFinanceiroCota mov : parcelas){
+		if (parcelas == null || parcelas.isEmpty() && comissaoParaSaldoDivida == null){
 			
-			if (mov.getValor() == null || mov.getValor().equals(BigDecimal.ZERO)){
-				
-				msgs.add("Valor da parcela " + parcelas.indexOf(mov) + 1 + " inválido.");
-			}
+			msgs.add("Ao menos uma parcela é necessária para efetivar a negociação");
+		}
+		
+		if (parcelas != null && comissaoParaSaldoDivida == null){
 			
-			if (mov.getData() == null || mov.getData().compareTo(dataAtual) < 0){
+			for (MovimentoFinanceiroCota mov : parcelas){
 				
-				msgs.add("Data de vencimento da parcela " + parcelas.indexOf(mov) + 1 + " inválido.");
+				if (mov.getValor() == null || mov.getValor().equals(BigDecimal.ZERO)){
+					
+					msgs.add("Valor da parcela " + parcelas.indexOf(mov) + 1 + " inválido.");
+				}
+				
+				if (mov.getData() == null || mov.getData().compareTo(dataAtual) < 0){
+					
+					msgs.add("Data de vencimento da parcela " + parcelas.indexOf(mov) + 1 + " inválido.");
+				}
 			}
 		}
+		
+		if (usuarioResponsavel == null || usuarioResponsavel.getId() == null){
+			
+			msgs.add("Usuário responsável pela negociação inválido.");
+		}
+		
+		if (formaCobranca == null){
+			
+			msgs.add("Parâmetro Forma Cobrança inválido.");
+		} else {
+			
+			if (comissaoParaSaldoDivida == null){
+				
+				if (formaCobranca.getTipoCobranca() == null){
+					
+					msgs.add("Parâmetro Tipo de Cobrança inválido.");
+				} else {
+					
+					switch (formaCobranca.getTipoCobranca()){
+						case BOLETO:
+						case BOLETO_EM_BRANCO:
+						case CHEQUE:
+						case DEPOSITO:
+						case TRANSFERENCIA_BANCARIA:
+							
+							//if ()
+						break;
+					}
+				}
+				
+				if (formaCobranca.getTipoFormaCobranca() == null){
+					
+					msgs.add("Parâmetro Tipo de Forma de Cobrança inválido.");
+				}
+				
+				
+			} else {
+				
+				if (formaCobranca.getTipoCobranca() != null || formaCobranca.getTipoFormaCobranca() != null){
+					
+					msgs.add("Apenas uma forma de cobrança é permitida.");
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 }
