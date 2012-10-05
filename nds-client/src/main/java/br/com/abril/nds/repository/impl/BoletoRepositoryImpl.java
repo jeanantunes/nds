@@ -7,12 +7,18 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.BoletoRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 
 /**
@@ -203,9 +209,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadePrevisao ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
+		hql.append(" select count(boleto) as quantidadePrevisao ");
+		hql.append(" from Boleto boleto ");
+		hql.append(" where boleto.dataVencimento = :data ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -219,9 +225,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeLidos ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" select count(baixaCobranca) as quantidadeLidos ");
+		hql.append(" from BaixaCobranca baixaCobranca ");
 		hql.append(" where baixaCobranca.dataBaixa = :data ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
@@ -236,9 +241,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeBaixados ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" select count(boleto) as quantidadeBaixados ");
+		hql.append(" from Boleto boleto ");
+		hql.append(" join boleto.baixaCobranca baixaCobranca ");
 		hql.append(" where baixaCobranca.dataBaixa = :data ");
 		hql.append(" and baixaCobranca.status in (:statusBoletosBaixados) ");
 		
@@ -261,22 +266,10 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeRejeitados ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
-		hql.append(" where baixaCobranca.dataBaixa = :data ");
-		hql.append(" and baixaCobranca.status in (:statusBoletosRejeitados) ");
+		hql.append(" select count(boleto) as quantidadeRejeitados ");
+		hql.append(obterFromWhereConsultaBaixaBoletos());
 		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
-		
-		listaParametros.add(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR);
-		listaParametros.add(StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA);
-		listaParametros.add(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA);
-		
-		query.setParameter("data", data);
-		query.setParameterList("statusBoletosRejeitados", listaParametros);
+		Query query = obterQueryBoletosRejeitados(hql.toString(), data);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -286,39 +279,28 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeBaixadosComDivergencia ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
-		hql.append(" where baixaCobranca.dataBaixa = :data ");
-		hql.append(" and baixaCobranca.status in (:statusBoletosBaixadosComDivergencia) ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
-		
-		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_DATA);
-		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_VALOR);
-		
-		query.setParameter("data", data);
-		query.setParameterList("statusBoletosBaixadosComDivergencia", listaParametros);
+		hql.append(" select count(boleto) as quantidadeBaixadosComDivergencia ");
+		hql.append(obterFromWhereConsultaBaixaBoletos());
+
+		Query query = obterQueryBoletosBaixadosComDivergencia(hql.toString(), data);
 		
 		return (Long) query.uniqueResult();
 	}
 	
 	@Override
-	public Long obterQuantidadeBoletosInadimplentes(Date data) {
+	public Long obterQuantidadeBoletosInadimplentes(Date dataVencimento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		// TODO:
-		
-		hql.append(" select ");
-		hql.append(" count(cobranca) as quantidadeInadimplentes from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
+		hql.append(" select count(boleto) as quantidadeInadimplentes ");
+		hql.append(" from Boleto boleto ");
+		hql.append(" where boleto.dataVencimento = :dataVencimento ");
+		hql.append(" and boleto.statusCobranca = :statusCobranca ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("data", data);
+		query.setParameter("dataVencimento", dataVencimento);
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -328,11 +310,10 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		// TODO:
-		
-		hql.append(" select ");
-		hql.append(" sum(cobranca.valor) as valorTotalBancario from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
+		hql.append(" select sum(baixaCobranca.valorPago) as valorTotalBancario ");
+		hql.append(" from BaixaCobranca baixaCobranca ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
+		hql.append(" and baixaCobranca.banco is not null ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -340,5 +321,141 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+	private String obterFromWhereConsultaBaixaBoletos() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from Boleto boleto ");
+		hql.append(" join boleto.baixaCobranca baixaCobranca ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
+		hql.append(" and baixaCobranca.status in (:statusBoletos) ");
+		
+		return hql.toString();
+	}
+
+	private String obterOrdenacaoConsultaBaixaBoletos(OrdenacaoColunaDetalheBaixaBoleto ordenacao, String orderSort) {
+		
+		StringBuilder orderBy = new StringBuilder();
+		
+		orderBy.append(" order by ");
+		orderBy.append(ordenacao.toString());
+		orderBy.append(" ");
+		orderBy.append(orderSort == null ? "asc" : orderSort);
+
+		return orderBy.toString();
+	}
 	
+	private Query obterQueryBoletosBaixadosComDivergencia(String hql, Date data) {
+
+		Query query = super.getSession().createQuery(hql.toString());
+
+		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
+		
+		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_DATA);
+		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_VALOR);
+
+		query.setParameter("data", data);
+		query.setParameterList("statusBoletos", listaParametros);
+
+		return query;
+	}
+
+	private Query obterQueryBoletosRejeitados(String hql, Date data) {
+
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
+		
+		listaParametros.add(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR);
+		listaParametros.add(StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA);
+		listaParametros.add(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA);
+		
+		query.setParameter("data", data);
+		query.setParameterList("statusBoletos", listaParametros);
+
+		return query;
+	}
+	
+	private void paginarConsultasBaixaBoleto(Query query, FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		if (filtro.getPaginacao() != null) {
+
+			PaginacaoVO paginacao = filtro.getPaginacao();
+
+			if (paginacao.getPosicaoInicial() != null) {
+			
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+
+			if (paginacao.getQtdResultadosPorPagina() != null) {
+				
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalheBaixaBoletoDTO.class));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder("");
+		
+		hql.append(" select baixaCobranca.status as motivoDivergencia, ")
+		   .append(" 		boleto.banco.nome as nomeBanco, ")
+		   .append(" 		boleto.banco.conta as numeroConta, ")
+		   .append(" 		boleto.valor as valorBoleto, ")
+		   .append(" 		baixaCobranca.valorPago as valorPago, ")
+		   .append(" 		boleto.valor - baixaCobranca.valorPago as valorDiferenca ")
+		   
+		   .append(obterFromWhereConsultaBaixaBoletos());
+		
+		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
+
+			hql.append(obterOrdenacaoConsultaBaixaBoletos(
+				filtro.getOrdenacaoColuna(), filtro.getPaginacao().getSortOrder())
+			);
+		}
+
+		Query query = obterQueryBoletosBaixadosComDivergencia(hql.toString(), filtro.getData());
+		
+		paginarConsultasBaixaBoleto(query, filtro);
+		
+		return query.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select baixaCobranca.status as motivoRejeitado, ")
+		   .append(" 		boleto.banco.nome as nomeBanco, ")
+		   .append(" 		boleto.banco.conta as numeroConta, ")
+		   .append(" 		boleto.valor as valorBoleto ")
+		   
+		   .append(obterFromWhereConsultaBaixaBoletos());
+		
+		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
+
+			hql.append(obterOrdenacaoConsultaBaixaBoletos(
+				filtro.getOrdenacaoColuna(), filtro.getPaginacao().getSortOrder())
+			);
+		}
+
+		Query query = obterQueryBoletosRejeitados(hql.toString(), filtro.getData());
+		
+		paginarConsultasBaixaBoleto(query, filtro);
+
+		return query.list();
+	}
 }

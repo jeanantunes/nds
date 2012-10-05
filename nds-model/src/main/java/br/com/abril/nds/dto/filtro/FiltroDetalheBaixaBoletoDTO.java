@@ -64,6 +64,20 @@ public class FiltroDetalheBaixaBoletoDTO extends FiltroDTO implements Serializab
 	public void setData(Date data) {
 		this.data = data;
 	}
+	
+	/**
+	 * @return the ordenacaoColuna
+	 */
+	public OrdenacaoColunaDetalheBaixaBoleto getOrdenacaoColuna() {
+		return ordenacaoColuna;
+	}
+
+	/**
+	 * @param ordenacaoColuna the ordenacaoColuna to set
+	 */
+	public void setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto ordenacaoColuna) {
+		this.ordenacaoColuna = ordenacaoColuna;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

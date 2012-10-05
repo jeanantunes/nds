@@ -386,18 +386,23 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	@Override
 	public boolean verificarEntregador(Long idCota){
 		
-		StringBuilder hql = new StringBuilder("select e.id from Entregador e, Cota c, Rota r ");
+		StringBuilder hql = new StringBuilder(" select entregador.id from Entregador entregador ");
 		   
-		hql.append(" join c.pdvs pdv 		")
-		   .append(" join r.pdvs rotaPdv 	")
-		   .append(" where c.id = :idCota 	")
-		   .append(" and pdv.caracteristicas.pontoPrincipal = :principal ")
-		   .append(" and rotaPdv.id = pdv.id 	")
-		   .append(" and e.rota.id = r.id 		");
+		hql.append(" join entregador.rota as rota 	")
+		   .append(" join rota.rotaPDVs rotaPdv 	")
+		   .append(" join rotaPdv.pdv as pdv 		")
+		   .append(" join pdv.cota as cota 			")
+		   
+		   .append(" where	")
+		   
+		   .append(" cota.id = :idCota ")
+		   .append(" and pdv.caracteristicas.pontoPrincipal = :principal ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
 		query.setParameter("idCota", idCota);
 		query.setParameter("principal", true);
+		
 		query.setMaxResults(1);
 		
 		return ((Long)query.uniqueResult()) != null;

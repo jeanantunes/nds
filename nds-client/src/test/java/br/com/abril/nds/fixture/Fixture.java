@@ -3756,7 +3756,7 @@ public class Fixture {
     public static BaixaAutomatica baixaAutomatica(Cobranca cobranca, Date dataBaixa,
     									   		  String nomeArquivo, String nossoNumero,
     									   		  Integer numeroRegistroArquivo, StatusBaixa status,
-    									   		  BigDecimal valorPago) {
+    									   		  BigDecimal valorPago, Banco banco) {
     	
     	BaixaAutomatica baixaAutomatica = new BaixaAutomatica();
     	
@@ -3767,6 +3767,7 @@ public class Fixture {
     	baixaAutomatica.setNumeroRegistroArquivo(numeroRegistroArquivo);
     	baixaAutomatica.setStatus(status);
     	baixaAutomatica.setValorPago(valorPago);
+    	baixaAutomatica.setBanco(banco);
     	
     	return baixaAutomatica;
     }
