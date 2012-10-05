@@ -464,6 +464,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		
 		incluirProdutoDialog :function(){					
 			this.hashInserirEdicoesFechadas = {};
+			$("#dialogEdicoesFechadasSelAll", this.workspace).attr("checked",false);
+			var _this =  this;
 			$( "#dialogEdicoesFechadas", this.workspace ).dialog({
 				resizable: false,
 				height:500,
@@ -471,17 +473,27 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						//{codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao}
-						var listInserirEdicoesFechadas = new Array();
-						for(var id in digitacaoContagemDevolucaoController.hashInserirEdicoesFechadas){ 
-							listInserirEdicoesFechadas.add(digitacaoContagemDevolucaoController.hashInserirEdicoesFechadas[id]);							
+						if ($(dialogEdicoesFechadasSelAll, _this.workspace).is(":checked")) {
+							//TODO Adcionar todos.
+							console.log("todos");
+						}else{
+							//{codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao}
+							var listInserirEdicoesFechadas = new Array();
+							for ( var id in _this.hashInserirEdicoesFechadas) {
+								listInserirEdicoesFechadas
+										.push(_this.hashInserirEdicoesFechadas[id]);
+							}							
+							if(listInserirEdicoesFechadas.length > 0){
+								//TODO: adcionar listInserirEdicoesFechadas na grid
+								console.log("Lista");
+							}
+							
 						}
-						
-						//TODO: adcionar listInserirEdicoesFechadas na grid
+						$( this ).dialog( "close" );
 					},
 					
 					"Cancelar": function() {
-						delete digitacaoContagemDevolucaoController.hashInserirEdicoesFechadas;
+						delete _this.hashInserirEdicoesFechadas;
 						$( this ).dialog( "close" );
 					}
 				},
@@ -493,13 +505,21 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 			}).flexReload();
 		},
-		
+		edicoesFechadasCheckAll :function(checkbox){
+			
+			$('.consultaEdicoesFechadasGrid tr td', this.workspace).each( function(){ 
+				$('input[type="checkbox"]', this).attr("checked", $(checkbox, this.workspace).is(":checked"));
+			});
+			
+		},
 		clickEdicoesFechada : function(idProdutoEdicao,codigoProduto,edicaoProduto, parcial, checkbox){
-			if($(checkbox, digitacaoContagemDevolucaoController.workspace).is(":checked")){
+			if($(checkbox, this.workspace).is(":checked")){
 				this.hashInserirEdicoesFechadas[idProdutoEdicao] = {codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao};
 			}else{
 				delete this.hashInserirEdicoesFechadas[idProdutoEdicao];
 			}
+			
+			$("#dialogEdicoesFechadasSelAll", this.workspace).attr("checked",false);
 		},
 		montaGridEdicoesFechadas :function(){
 			$(".consultaEdicoesFechadasGrid", this.workspace).flexigrid({

@@ -20,8 +20,8 @@ $(function(){
 
 			<table class="consultaEdicoesFechadasGrid"></table>
 			<span class="bt_sellAll" style="float: right;"><input
-				type="checkbox" id="dialogEdicoesFechadasSel" name="Todos" onclick="checkAll();"
-				style="float: right; margin-right: 30px;" /> <label for="dialogEdicoesFechadasSel">Selecionar
+				type="checkbox" id="dialogEdicoesFechadasSelAll" name="Todos" onclick="digitacaoContagemDevolucaoController.edicoesFechadasCheckAll(this);"
+				style="float: right; margin-right: 30px;" /> <label for="dialogEdicoesFechadasSelAll">Selecionar
 					Todos</label></span>
 
 		</fieldset>
@@ -101,8 +101,8 @@ $(function(){
 							</a> 
 							</span> 
 							
-							<span class="bt_novos" title="Incluir Produtos">
-							<a href="javascript:;" >
+							<span class="bt_novos" title="Incluir Produtos" onclick="digitacaoContagemDevolucaoController.incluirProdutoDialog();">
+							<a href="javascript:;">
 							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0">
 									Incluir Edições
 							</a>
