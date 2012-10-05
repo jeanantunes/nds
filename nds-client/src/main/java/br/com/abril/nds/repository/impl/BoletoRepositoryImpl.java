@@ -209,9 +209,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadePrevisao ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :data ");
+		hql.append(" select count(boleto) as quantidadePrevisao ");
+		hql.append(" from Boleto boleto ");
+		hql.append(" where boleto.dataVencimento = :data ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -241,9 +241,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeBaixados ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" select count(boleto) as quantidadeBaixados ");
+		hql.append(" from Boleto boleto ");
+		hql.append(" join boleto.baixaCobranca baixaCobranca ");
 		hql.append(" where baixaCobranca.dataBaixa = :data ");
 		hql.append(" and baixaCobranca.status in (:statusBoletosBaixados) ");
 		
@@ -266,9 +266,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeRejeitados ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" select count(boleto) as quantidadeRejeitados ");
+		hql.append(" from Boleto boleto ");
+		hql.append(" join boleto.baixaCobranca baixaCobranca ");
 		hql.append(" where baixaCobranca.dataBaixa = :data ");
 		hql.append(" and baixaCobranca.status in (:statusBoletosRejeitados) ");
 		
@@ -291,7 +291,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeBaixadosComDivergencia ");
+		hql.append(" select count(boleto) as quantidadeBaixadosComDivergencia ");
 		hql.append(obterFromWhereConsultaBoletosBaixadosComDivergencia());
 
 		Query query = obterQueryBoletosBaixadosComDivergencia(hql.toString(), data);
@@ -304,10 +304,10 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cobranca) as quantidadeInadimplentes ");
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" where cobranca.dataVencimento = :dataVencimento ");
-		hql.append(" and cobranca.statusCobranca = :statusCobranca ");
+		hql.append(" select count(boleto) as quantidadeInadimplentes ");
+		hql.append(" from Boleto boleto ");
+		hql.append(" where boleto.dataVencimento = :dataVencimento ");
+		hql.append(" and boleto.statusCobranca = :statusCobranca ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -338,8 +338,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder("");
 		
-		hql.append(" from Cobranca cobranca ");
-		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" from Boleto boleto ");
+		hql.append(" join boleto.baixaCobranca baixaCobranca ");
 		hql.append(" where baixaCobranca.dataBaixa = :data ");
 		hql.append(" and baixaCobranca.status in (:statusBoletosBaixadosComDivergencia) ");
 		
@@ -384,11 +384,11 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder("");
 		
 		hql.append(" select baixaCobranca.status as motivoDivergencia, ")
-		   .append(" 		cobranca.banco.nome as nomeBanco, ")
-		   .append(" 		cobranca.banco.conta as numeroConta, ")
-		   .append(" 		cobranca.valor as valorBoleto, ")
+		   .append(" 		boleto.banco.nome as nomeBanco, ")
+		   .append(" 		boleto.banco.conta as numeroConta, ")
+		   .append(" 		boleto.valor as valorBoleto, ")
 		   .append(" 		baixaCobranca.valorPago as valorPago, ")
-		   .append(" 		cobranca.valor - baixaCobranca.valorPago as valorDiferenca ")
+		   .append(" 		boleto.valor - baixaCobranca.valorPago as valorDiferenca ")
 		   
 		   .append(obterFromWhereConsultaBoletosBaixadosComDivergencia());
 		
