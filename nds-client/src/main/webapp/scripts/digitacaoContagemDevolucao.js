@@ -470,7 +470,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				width:945,
 				modal: true,
 				buttons: {
-					"Confirmar": function() {						
+					"Confirmar": function() {
+						//{codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao}
 						var listInserirEdicoesFechadas = new Array();
 						for(var id in digitacaoContagemDevolucaoController.hashInserirEdicoesFechadas){ 
 							listInserirEdicoesFechadas.add(digitacaoContagemDevolucaoController.hashInserirEdicoesFechadas[id]);							
