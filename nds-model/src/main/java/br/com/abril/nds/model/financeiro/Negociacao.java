@@ -30,7 +30,7 @@ public class Negociacao {
 	private Cobranca cobrancaOriginaria;
 	
 	@OneToMany
-	private List<MovimentoFinanceiroCota> parcelas;
+	private List<ParcelaNegociacao> parcelas;
 	
 	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA")
 	private BigDecimal comissaoParaSaldoDivida;
@@ -64,11 +64,11 @@ public class Negociacao {
 		this.cobrancaOriginaria = cobrancaOriginaria;
 	}
 
-	public List<MovimentoFinanceiroCota> getParcelas() {
+	public List<ParcelaNegociacao> getParcelas() {
 		return parcelas;
 	}
 
-	public void setParcelas(List<MovimentoFinanceiroCota> parcelas) {
+	public void setParcelas(List<ParcelaNegociacao> parcelas) {
 		this.parcelas = parcelas;
 	}
 

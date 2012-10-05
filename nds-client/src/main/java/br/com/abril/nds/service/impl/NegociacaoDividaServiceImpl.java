@@ -17,6 +17,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -29,6 +30,7 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -36,10 +38,14 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
+import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
@@ -62,6 +68,15 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
 	
+	@Autowired
+	private ParcelaNegociacaoRepository parcelaNegociacaoRepository;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private FormaCobrancaRepository formaCobrancaRepository;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public NegociacaoDividaPaginacaoDTO obterDividasPorCotaPaginado(FiltroConsultaNegociacaoDivida filtro) {
@@ -83,7 +98,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 
 	@Override
 	@Transactional
-	public void criarNegociacao(Long idCota, List<MovimentoFinanceiroCota> parcelas, Long idCobrancaOriginaria, 
+	public void criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, Long idCobrancaOriginaria, 
 			Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
 			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca) {
 		
@@ -94,12 +109,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 				ativarCotaAposParcela, comissaoParaSaldoDivida, formaCobranca);
 		
 		Cota cota = null;
-		if (idCota == null){
+		if (numeroCota == null){
 			
 			msgs.add("Cota da negociação não encontrada.");
 		} else {
 			
-			cota = this.cotaRepository.buscarPorId(idCota);
+			cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
 			
 			if (cota == null){
 				
@@ -129,44 +144,52 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		cobrancaOriginaria.setStatusCobranca(StatusCobranca.PAGO);
 		cobrancaOriginaria.getDivida().setStatus(StatusDivida.NEGOCIADA);
 		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
+		tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		tipoMovimentoFinanceiro.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
+		tipoMovimentoFinanceiro.setDescricao("TESTE NEGOCIAÇÃO DIVIDA");
+		this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
+		
 		BigDecimal totalNegociacao = BigDecimal.ZERO;
-		for (MovimentoFinanceiroCota movimentoFinanceiroCota : parcelas){
+		for (ParcelaNegociacao parcelaNegociacao : parcelas){
 			
-			movimentoFinanceiroCota.setCota(cobrancaOriginaria.getCota());
-			movimentoFinanceiroCota.setUsuario(usuarioResponsavel);
-			movimentoFinanceiroCota.setData(dataAtual);
-			movimentoFinanceiroCota.setDataCriacao(dataAtual);
-			movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
-			movimentoFinanceiroCota.setAprovador(usuarioResponsavel);
+			parcelaNegociacao.getMovimentoFinanceiroCota().setCota(cobrancaOriginaria.getCota());
+			parcelaNegociacao.getMovimentoFinanceiroCota().setUsuario(usuarioResponsavel);
+			parcelaNegociacao.getMovimentoFinanceiroCota().setData(dataAtual);
+			parcelaNegociacao.getMovimentoFinanceiroCota().setDataCriacao(dataAtual);
+			parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(StatusAprovacao.APROVADO);
+			parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(usuarioResponsavel);
+			parcelaNegociacao.getMovimentoFinanceiroCota().setTipoMovimento(tipoMovimentoFinanceiro);
 			
-			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
-			tipoMovimentoFinanceiro.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
-			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
+			totalNegociacao = totalNegociacao.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
 			
-			totalNegociacao = totalNegociacao.add(movimentoFinanceiroCota.getValor());
-			
-			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
+			this.movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
+			this.parcelaNegociacaoRepository.adicionar(parcelaNegociacao);
 		}
 		
 		this.dividaRepository.merge(cobrancaOriginaria.getDivida());
 		this.cobrancaRepository.merge(cobrancaOriginaria);
+		this.formaCobrancaRepository.adicionar(formaCobranca);
 		
 		if (negociacaoAvulsa){
 			
-			ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
-			consolidado.setCota(cota);
-			consolidado.setDataConsolidado(dataAtual);
-			consolidado.setMovimentos(parcelas);
-			consolidado.setValorPostergado(totalNegociacao);
-			
-			for (MovimentoFinanceiroCota movimentoFinanceiroCota : parcelas){
+			for (ParcelaNegociacao parcelaNegociacao : parcelas){
+				
+				ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+				consolidado.setCota(cota);
+				consolidado.setDataConsolidado(dataAtual);
+				List<MovimentoFinanceiroCota> movs = new ArrayList<MovimentoFinanceiroCota>();
+				movs.add(parcelaNegociacao.getMovimentoFinanceiroCota());
+				consolidado.setMovimentos(movs);
+				consolidado.setTotal(totalNegociacao);
+				
+				this.consolidadoFinanceiroRepository.adicionar(consolidado);
 				
 				Divida divida = new Divida();
 				divida.setData(dataAtual);
 				divida.setResponsavel(usuarioResponsavel);
 				divida.setCota(cota);
-				divida.setValor(movimentoFinanceiroCota.getValor());
+				divida.setValor(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
 				divida.setStatus(StatusDivida.EM_ABERTO);
 				divida.setConsolidado(consolidado);
 				
@@ -200,12 +223,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 				cobranca.setDivida(divida);
 				cobranca.setDataEmissao(dataAtual);
 				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
+				cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
+				cobranca.setValor(totalNegociacao);
+				cobranca.setNossoNumero(String.valueOf((System.currentTimeMillis())));
 				
 				this.dividaRepository.adicionar(divida);
 				this.cobrancaRepository.adicionar(cobranca);
 			}
-			
-			this.consolidadoFinanceiroRepository.adicionar(consolidado);
 		}
 		
 		Negociacao negociacao = new Negociacao();
@@ -221,27 +245,35 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	}
 
 	private void validarDadosEntrada(List<String> msgs, Date dataAtual,
-			List<MovimentoFinanceiroCota> parcelas, Usuario usuarioResponsavel,
+			List<ParcelaNegociacao> parcelas, Usuario usuarioResponsavel,
 			Integer ativarCotaAposParcela, BigDecimal comissaoParaSaldoDivida,
 			FormaCobranca formaCobranca) {
 		
 		if (parcelas == null || parcelas.isEmpty() && comissaoParaSaldoDivida == null){
 			
-			msgs.add("Ao menos uma parcela é necessária para efetivar a negociação");
+			msgs.add("Forma de pagamento é obrigatória.");
 		}
 		
 		if (parcelas != null && comissaoParaSaldoDivida == null){
 			
-			for (MovimentoFinanceiroCota mov : parcelas){
+			for (ParcelaNegociacao parcelaNegociacao : parcelas){
 				
-				if (mov.getValor() == null || mov.getValor().equals(BigDecimal.ZERO)){
+				if (parcelaNegociacao.getDataVencimento() == null){
 					
-					msgs.add("Valor da parcela " + parcelas.indexOf(mov) + 1 + " inválido.");
+					msgs.add("Data de vencimento da parcela " + parcelas.indexOf(parcelaNegociacao) + 1 + " inválido.");
 				}
 				
-				if (mov.getData() == null || mov.getData().compareTo(dataAtual) < 0){
+				MovimentoFinanceiroCota mov = parcelaNegociacao.getMovimentoFinanceiroCota();
+				
+				if (mov == null){
 					
-					msgs.add("Data de vencimento da parcela " + parcelas.indexOf(mov) + 1 + " inválido.");
+					msgs.add("Valor da parcela " + parcelas.indexOf(parcelaNegociacao) + 1 + " inválido.");
+				} else {
+				
+					if (mov.getValor() == null || mov.getValor().equals(BigDecimal.ZERO)){
+						
+						msgs.add("Valor da parcela " + parcelas.indexOf(parcelaNegociacao) + 1 + " inválido.");
+					}
 				}
 			}
 		}
@@ -261,18 +293,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 				if (formaCobranca.getTipoCobranca() == null){
 					
 					msgs.add("Parâmetro Tipo de Cobrança inválido.");
-				} else {
-					
-					switch (formaCobranca.getTipoCobranca()){
-						case BOLETO:
-						case BOLETO_EM_BRANCO:
-						case CHEQUE:
-						case DEPOSITO:
-						case TRANSFERENCIA_BANCARIA:
-							
-							//if ()
-						break;
-					}
 				}
 				
 				if (formaCobranca.getTipoFormaCobranca() == null){
@@ -289,29 +309,5 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 				}
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	}
 }
