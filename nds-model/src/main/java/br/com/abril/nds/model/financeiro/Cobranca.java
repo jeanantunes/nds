@@ -87,8 +87,7 @@ public abstract class Cobranca {
 	@JoinColumn(name = "DIVIDA_ID")
 	protected Divida divida;
 	
-	@OneToOne(optional = true)
-	@JoinColumn(name = "BAIXA_COBRANCA_ID")
+	@OneToOne(mappedBy = "cobranca")
 	protected BaixaCobranca baixaCobranca;
 	
 	@Column(name="VIAS")

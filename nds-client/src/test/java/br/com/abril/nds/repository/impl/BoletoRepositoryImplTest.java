@@ -28,10 +28,12 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.NCM;
@@ -52,11 +54,15 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	private static final String  SORT_ORDER = "asc";
 	private static final Integer PAGINA = 1;
 	private static final Integer QTD_PAGINA = 15;
+	
+	private Date dataAtual;
 
 	
 	//TAREFAS ANTES DA EXECUCAO DO METODO A SER TESTADO
 	@Before
 	public void setup() {
+		
+		dataAtual = DateUtil.removerTimestamp(new Date());
 		
 		//CRIA UM OBJETO PESSOA NA SESSAO PARA TESTES
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com", "99.999-9");
@@ -119,16 +125,16 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = Fixture.movimentoFinanceiroCota(
 				cota, tipoMovimentoFinenceiroRecebimentoReparte, usuarioJoao,
-				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, new Date(), true);
+				new BigDecimal(200), Arrays.asList(mec), StatusAprovacao.APROVADO, dataAtual, true);
 		save(movimentoFinanceiroCota);
 		
 		ConsolidadoFinanceiroCota consolidado = Fixture
 				.consolidadoFinanceiroCota(
 						Arrays.asList(movimentoFinanceiroCota), cota,
-						new Date(), new BigDecimal(200), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+						dataAtual, new BigDecimal(200), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado);
 		
-		Divida divida = Fixture.divida(consolidado, cota, new Date(),
+		Divida divida = Fixture.divida(consolidado, cota, dataAtual,
 				        usuarioJoao, StatusDivida.EM_ABERTO, new BigDecimal(200),false);
 		save(divida);
 		
@@ -139,16 +145,16 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+		ConsolidadoFinanceiroCota consolidado1 = Fixture.consolidadoFinanceiroCota(null, cota, dataAtual, new BigDecimal(10), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado1);
 		
-		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(), usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
+		Divida divida1 = Fixture.divida(consolidado1, cota, dataAtual, usuario, StatusDivida.EM_ABERTO, new BigDecimal(10),false);
 		save(divida1);
 		
 	    Boleto boleto = Fixture.boleto("5", "5", "5",
-                					   new Date(), 
-                					   new Date(), 
-                					   new Date(), 
+                					   dataAtual, 
+                					   dataAtual, 
+                					   dataAtual, 
                 					   BigDecimal.ZERO, 
                 					   new BigDecimal(100.00), 
                 					   "1", 
@@ -157,7 +163,14 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
                 					   cota,
                 					   bancoHSBC,
                 					   divida,0);
-		save(boleto);		
+		save(boleto);
+		
+		
+		BaixaAutomatica baixa =
+			Fixture.baixaAutomatica(
+				boleto, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO, BigDecimal.TEN);
+		
+		save(baixa);
 	}
 	
 	@Test
@@ -220,63 +233,77 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	public void obterQuantidadePrevisaoBoletos() {
 		
 		Long quantidadeBoletosPrevistos =
-			this.boletoRepository.obterQuantidadeBoletosPrevistos(new Date());
+			this.boletoRepository.obterQuantidadeBoletosPrevistos(dataAtual);
 		
 		Assert.assertNotNull(quantidadeBoletosPrevistos);
+		
+		Assert.assertTrue(!quantidadeBoletosPrevistos.equals(0L));
 	}
 	
 	@Test
 	public void obterQuantidadeBoletosLidos() {
 		
 		Long quantidadeBoletosLidos =
-			this.boletoRepository.obterQuantidadeBoletosLidos(new Date());
+			this.boletoRepository.obterQuantidadeBoletosLidos(dataAtual);
 		
 		Assert.assertNotNull(quantidadeBoletosLidos);
+		
+		Assert.assertTrue(!quantidadeBoletosLidos.equals(0L));
 	}
 	
 	@Test
 	public void obterQuantidadeBoletosBaixados() {
 		
 		Long quantidadeBoletosBaixados =
-			this.boletoRepository.obterQuantidadeBoletosBaixados(new Date());
+			this.boletoRepository.obterQuantidadeBoletosBaixados(dataAtual);
 		
 		Assert.assertNotNull(quantidadeBoletosBaixados);
+		
+		Assert.assertTrue(!quantidadeBoletosBaixados.equals(0L));
 	}
 	
 	@Test
 	public void obterQuantidadeBoletosRejeitados() {
 		
 		Long quantidadeBoletosBaixados =
-			this.boletoRepository.obterQuantidadeBoletosRejeitados(new Date());
+			this.boletoRepository.obterQuantidadeBoletosRejeitados(dataAtual);
 		
 		Assert.assertNotNull(quantidadeBoletosBaixados);
+		
+		Assert.assertTrue(!quantidadeBoletosBaixados.equals(0L));
 	}
 	
 	@Test
 	public void obterQuantidadeBoletosBaixadosComDivergencia() {
 		
 		Long quantidadeBoletosBaixados =
-			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(new Date());
+			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(dataAtual);
 		
 		Assert.assertNotNull(quantidadeBoletosBaixados);
+		
+		Assert.assertTrue(!quantidadeBoletosBaixados.equals(0L));
 	}
 	
 	@Test
 	public void obterQuantidadeBoletosInadimplentes() {
 		
 		Long quantidadeBoletosInadimplentes =
-			this.boletoRepository.obterQuantidadeBoletosInadimplentes(new Date());
+			this.boletoRepository.obterQuantidadeBoletosInadimplentes(dataAtual);
 		
 		Assert.assertNotNull(quantidadeBoletosInadimplentes);
+		
+		Assert.assertTrue(!quantidadeBoletosInadimplentes.equals(0L));
 	}
 	
 	@Test
 	public void obterValorTotalBancario() {
 		
 		BigDecimal valorTotalBancario =
-			this.boletoRepository.obterValorTotalBancario(new Date());
+			this.boletoRepository.obterValorTotalBancario(dataAtual);
 		
 		Assert.assertNotNull(valorTotalBancario);
+		
+		Assert.assertTrue(valorTotalBancario.compareTo(BigDecimal.ZERO) == 1);
 	}
 
 }
