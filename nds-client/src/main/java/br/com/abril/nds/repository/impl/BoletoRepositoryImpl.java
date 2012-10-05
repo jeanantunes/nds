@@ -435,14 +435,13 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro) {
-		// TODO Auto-generated method stub
-		
+
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select baixaCobranca.status as motivoRejeitado, ")
-		   .append(" 		cobranca.banco.nome as nomeBanco, ")
-		   .append(" 		cobranca.banco.conta as numeroConta, ")
-		   .append(" 		cobranca.valor as valorBoleto ")
+		   .append(" 		boleto.banco.nome as nomeBanco, ")
+		   .append(" 		boleto.banco.conta as numeroConta, ")
+		   .append(" 		boleto.valor as valorBoleto ")
 		   
 		   .append(obterFromWhereConsultaBaixaBoletos());
 		
