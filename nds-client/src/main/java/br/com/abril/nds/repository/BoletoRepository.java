@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
 
 /**
@@ -116,5 +118,13 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return valor total bancário
 	 */
 	BigDecimal obterValorTotalBancario(Date data);
-	
+
+	/**
+	 * Obtém os boletos que foram baixados com divergência por data e/ou valor e determinada data.
+	 * 
+	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO> - Boletos baixados com divergência de data e/ou valor.
+	 */
+	List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro);
 }

@@ -11,7 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -337,6 +340,30 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Assert.assertNotNull(valorTotalBancario);
 		
 		Assert.assertTrue(valorTotalBancario.compareTo(BigDecimal.ZERO) == 1);
+	}
+	
+	@Test
+	public void obterBoletosBaixadosComDivergencia() {
+		
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.MOTIVO_DIVERGENCIA);
+		
+		List<DetalheBaixaBoletoDTO> boletosDivergentes =
+				this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
+		
+		Assert.assertNotNull(boletosDivergentes);
+		Assert.assertEquals(boletosDivergentes.size(), 1);
+		
+		DetalheBaixaBoletoDTO resultado = boletosDivergentes.get(0);
+		
+		BigDecimal valorDiferencaCorreto = resultado.getValorBoleto().subtract(resultado.getValorPago());
+		
+		Assert.assertEquals(valorDiferencaCorreto, resultado.getValorDiferenca());
 	}
 
 }
