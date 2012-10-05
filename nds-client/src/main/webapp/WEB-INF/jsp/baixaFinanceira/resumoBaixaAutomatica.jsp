@@ -1,11 +1,12 @@
 <head>
 	<style>
 		span {font-weight: bold;}
+		td   {font-weight: bold;}
 	</style>
 </head>
-<table border="0" align="center" cellpadding="2" cellspacing="2">
+<table border="0" align="center" cellpadding="2" cellspacing="2" width="100%" id="tableDados">
 	<tr>
-		<td valign="top">
+		<td valign="top" style="float:right">
 
 			<table id="tableDadosArquivo" width="269" border="0" align="center" cellpadding="2"
 				   cellspacing="1" style="display: inline-block; margin-right: 15px;">

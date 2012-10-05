@@ -890,9 +890,10 @@ var baixaFinanceiraController = $.extend(true, {
 			baixaFinanceiraController.resetarCamposBaixaAutomatica();
 			
 			$("#tableDadosArquivo", baixaFinanceiraController.workspace).show();
-			$("#tableDadosResumoBaixa", baixaFinanceiraController.workspace).hide();
 
 			$('#resultadoIntegracao', baixaFinanceiraController.workspace).show();
+			
+			$('#tableDados').css({"text-align": ""});
 		}
 	},
 	
@@ -1081,6 +1082,10 @@ var baixaFinanceiraController = $.extend(true, {
 			data,
 			function(result) {
 
+				$("#tableDadosArquivo", baixaFinanceiraController.workspace).hide();
+
+				$("#tableDados", baixaFinanceiraController.workspace).css("text-align", "center");
+				
 				baixaFinanceiraController.mostrarDadosResumoBaixaFinanceira(result);
 			}, 
 			function(result) {
@@ -1098,7 +1103,6 @@ var baixaFinanceiraController = $.extend(true, {
 
 	mostrarDadosResumoBaixaFinanceira: function(result) {
 
-		$("#tableDadosArquivo", baixaFinanceiraController.workspace    ).hide();
 		$("#tableDadosResumoBaixa", baixaFinanceiraController.workspace).show();
 
 		$('#resultadoIntegracao', baixaFinanceiraController.workspace  ).show();

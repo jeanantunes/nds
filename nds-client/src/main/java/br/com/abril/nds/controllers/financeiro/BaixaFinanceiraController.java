@@ -157,7 +157,7 @@ public class BaixaFinanceiraController {
 
 		result.include("bancos", bancos);
 		result.include("listaTiposCobranca",listaTiposCobranca);
-		result.include("dataOperacao", DateUtil.parseDataPTBR(getDataOperacaoDistribuidor()));
+		result.include("dataOperacao", getDataOperacaoDistribuidor());
 	}
 	
 	private String getDataOperacaoDistribuidor() {
