@@ -391,56 +391,6 @@ var recebimentoFisicoController = $.extend(true, {
 	},
 	
 	/**
-	 * CADASTRA NOVA NOTA.
-	 */
-	cadastrarNovaNota : function() {
-		
-		var cnpj 			= $("#cnpj", this.workspace).val();
-		var notaFiscal 		= $("#notaFiscal", this.workspace).val();
-		var serie 			= $("#serie", this.workspace).val();
-		var chaveAcesso 	= $("#chaveAcesso", this.workspace).val();
-		var dataEmissao 	= $("#dataEmissao", this.workspace).val();
-		var dataEntrada 	= $("#dataEntrada", this.workspace).val();
-		var valorBruto		= $("#valorBruto", this.workspace).val();
-		var valorLiquido	= $("#valorLiquido", this.workspace).val();
-		var valorDesconto 	= $("#valorDesconto", this.workspace).val();
-		var cfopId 			= $("#cfop", this.workspace).val();
-		var tipoNotaFiscal  = $("#tipoNotaFiscal", this.workspace).val();
-		var fornecedor      = $("#fornecedor", this.workspace).val();
-		
-		var dadosCadastro = 
-
-			"notaFiscalFornecedor.emitente.cnpj=" 		+ cnpj			+ "&" +
-			"notaFiscalFornecedor.numero=" 				+ notaFiscal	+ "&" +
-			"notaFiscalFornecedor.serie=" 				+ serie			+ "&" +
-			"notaFiscalFornecedor.chaveAcesso=" 		+ chaveAcesso	+ "&" +
-			"dataEmissao=" 								+ dataEmissao	+ "&" +
-			"dataEntrada=" 								+ dataEntrada	+ "&" +
-			"valorBruto=" 								+ valorBruto	+ "&" +
-			"valorLiquido=" 							+ valorLiquido	+ "&" +
-			"valorDesconto=" 							+ valorDesconto	+ "&" + 
-			"fornecedor=" 							    + fornecedor	+ "&" + 
-			"notaFiscalFornecedor.cfop.id=" 			+ cfopId		+ "&" +
-			"notaFiscalFornecedor.tipoNotaFiscal.id="   + tipoNotaFiscal;
-		
-		$.postJSON(this.path + 'incluirNovaNotaFiscal', dadosCadastro, 
-				function(result) {
-			
-			
-					if(result.tipoMensagem == "SUCCESS") {
-						
-						$("#dialog-nova-nota", this.workspace).dialog( "close" );
-						
-					} 
-					
-					recebimentoFisicoController.refreshItemNotaGrid();
-				
-		}, null, true);
-		
-		
-	},
-	
-	/**
 	* LIMPA OS CAMPOS DE PESQUISA DE NOTA FISCAL
 	*/
 	limparCamposPesquisa : function() {

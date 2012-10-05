@@ -129,7 +129,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(fornecedor);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = 
-			Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor.getJuridica(), fornecedor, tipoNotaFiscal,
+			Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal,
 										 usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		
 		save(notaFiscalFornecedor);

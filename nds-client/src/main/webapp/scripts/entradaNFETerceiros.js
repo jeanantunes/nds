@@ -1,7 +1,7 @@
-var consultaNFEEncalheTratamentoController = $.extend(true, {
+var entradaNFETerceirosController = $.extend(true, {
 	popup : function() {
 		
-		$( "#dialog-novo", consultaNFEEncalheTratamentoController.workspace ).dialog({
+		$( "#dialog-novo", entradaNFETerceirosController.workspace ).dialog({
 			resizable: 
 				 false,
 			height:'auto',
@@ -22,7 +22,7 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 	
 	popup_confirm : function() {
 	
-		$( "#dialog-confirm", consultaNFEEncalheTratamentoController.workspace ).dialog({
+		$( "#dialog-confirm", entradaNFETerceirosController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
 			width:280,
@@ -44,7 +44,7 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 	
 	popup_rejeitar : function() {
 	
-		$( "#dialog-rejeitar", consultaNFEEncalheTratamentoController.workspace ).dialog({
+		$( "#dialog-rejeitar", entradaNFETerceirosController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
 			width:280,
@@ -64,21 +64,21 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 	
 	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, vlrNota, idNotaFiscalEntrada) {
 		
-		$('#numeroNotaFiscalPopUp', consultaNFEEncalheTratamentoController.workspace).text(numeroNfe);
-		$('#dataNotaFiscalPopUp', consultaNFEEncalheTratamentoController.workspace).text(dataEncalhe);
-		$('#chaveAcessoNotaFiscalPopUp', consultaNFEEncalheTratamentoController.workspace).text(chaveAcesso);
-		$('#serieNotaFiscalPopUp', consultaNFEEncalheTratamentoController.workspace).text(serie);
-		$('#valorNotaFiscalPopUp', consultaNFEEncalheTratamentoController.workspace).text(vlrNota);
+		$('#numeroNotaFiscalPopUp', entradaNFETerceirosController.workspace).text(numeroNfe);
+		$('#dataNotaFiscalPopUp', entradaNFETerceirosController.workspace).text(dataEncalhe);
+		$('#chaveAcessoNotaFiscalPopUp', entradaNFETerceirosController.workspace).text(chaveAcesso);
+		$('#serieNotaFiscalPopUp', entradaNFETerceirosController.workspace).text(serie);
+		$('#valorNotaFiscalPopUp', entradaNFETerceirosController.workspace).text(vlrNota);
 		
-		$(".pesqProdutosNotaGrid", consultaNFEEncalheTratamentoController.workspace).flexOptions({
-			url: contextPath + "/nfe/consultaNFEEncalheTratamento/pesquisarItensPorNota",
+		$(".pesqProdutosNotaGrid", entradaNFETerceirosController.workspace).flexOptions({
+			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
 			dataType : 'json',
 			params: [{name:'filtro.codigoNota', value:idNotaFiscalEntrada}]
 		});
 
-		$(".pesqProdutosNotaGrid", consultaNFEEncalheTratamentoController.workspace).flexReload();
+		$(".pesqProdutosNotaGrid", entradaNFETerceirosController.workspace).flexReload();
 	
-		$( "#dialog-dadosNotaFiscal", consultaNFEEncalheTratamentoController.workspace ).dialog({
+		$( "#dialog-dadosNotaFiscal", entradaNFETerceirosController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
 			width:860,
@@ -102,7 +102,7 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 	
 	popup_confirmar : function() {
 	
-		$( "#dialog-confirmar-cancelamento", consultaNFEEncalheTratamentoController.workspace ).dialog({
+		$( "#dialog-confirmar-cancelamento", entradaNFETerceirosController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
 			width:280,
@@ -123,20 +123,20 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 	popup_nfe : function(numeroCota, nome){
 		
 		if(numeroCota != '0'){
-			$('#cotaCadastroNota', consultaNFEEncalheTratamentoController.workspace).val(numeroCota);
-			$('#nomeCotaCadastroNota', consultaNFEEncalheTratamentoController.workspace).val(nome);
-			$('#cotaCadastroNota', consultaNFEEncalheTratamentoController.workspace).attr('disabled', 'disabled');
-			$('#nomeCotaCadastroNota', consultaNFEEncalheTratamentoController.workspace).attr('disabled', 'disabled');
+			$('#cotaCadastroNota', entradaNFETerceirosController.workspace).val(numeroCota);
+			$('#nomeCotaCadastroNota', entradaNFETerceirosController.workspace).val(nome);
+			$('#cotaCadastroNota', entradaNFETerceirosController.workspace).attr('disabled', 'disabled');
+			$('#nomeCotaCadastroNota', entradaNFETerceirosController.workspace).attr('disabled', 'disabled');
 			}
 			
-		$( "#dialog-nfe", consultaNFEEncalheTratamentoController.workspace ).dialog({
+		$( "#dialog-nfe", entradaNFETerceirosController.workspace ).dialog({
 			resizable: false,
 			height:280,
 			width:350,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					consultaNFEEncalheTratamentoController.cadastrarNota();
+					entradaNFETerceirosController.cadastrarNota();
 					$( this ).dialog( "close" );					
 				},
 				"Cancelar": function() {
@@ -150,12 +150,12 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 	cadastrarNota : function(){		
 
 		$.postJSON(
-				contextPath + '/nfe/consultaNFEEncalheTratamento/cadastrarNota',
+				contextPath + '/nfe/entradaNFETerceiros/cadastrarNota',
 				[
-					{ name: "nota.numero", value: $('#numeroNotaCadastroNota', consultaNFEEncalheTratamentoController.workspace).val() },
-					{ name: "nota.serie", value: $('#serieNotaCadastroNota', consultaNFEEncalheTratamentoController.workspace).val() },
-					{ name: "nota.chaveAcesso", value: $('#chaveAcessoCadastroNota', consultaNFEEncalheTratamentoController.workspace).val() },
-					{ name: "numeroCota", value: $('#cotaCadastroNota', consultaNFEEncalheTratamentoController.workspace).val() },
+					{ name: "nota.numero", value: $('#numeroNotaCadastroNota', entradaNFETerceirosController.workspace).val() },
+					{ name: "nota.serie", value: $('#serieNotaCadastroNota', entradaNFETerceirosController.workspace).val() },
+					{ name: "nota.chaveAcesso", value: $('#chaveAcessoCadastroNota', entradaNFETerceirosController.workspace).val() },
+					{ name: "numeroCota", value: $('#cotaCadastroNota', entradaNFETerceirosController.workspace).val() },
 				],
 				function(result) {
 					alert(result);					
@@ -168,20 +168,20 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
   
 	callback : function() {
 			setTimeout(function() {
-				$( "#effect:visible", consultaNFEEncalheTratamentoController.workspace).removeAttr( "style" ).fadeOut();
+				$( "#effect:visible", entradaNFETerceirosController.workspace).removeAttr( "style" ).fadeOut();
 
 		}, 1000 );
 	},	
 	
 	init : function() {
-		$( "#data", consultaNFEEncalheTratamentoController.workspace ).datepicker({
+		$( "#data", entradaNFETerceirosController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$(".pesqProdutosNotaGrid", consultaNFEEncalheTratamentoController.workspace).flexigrid({
-			preProcess: consultaNFEEncalheTratamentoController.executarPreProcessamento,
+		$(".pesqProdutosNotaGrid", entradaNFETerceirosController.workspace).flexigrid({
+			preProcess: entradaNFETerceirosController.executarPreProcessamento,
 			dataType : 'json',
 				colModel : [ {
 					display : 'Código',
@@ -241,8 +241,8 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				width : 810,
 				height : 250
 			});
-		$(".notaRecebidaGrid", consultaNFEEncalheTratamentoController.workspace).flexigrid({
-			preProcess: consultaNFEEncalheTratamentoController.executarPreProcessamento,
+		$(".notaRecebidaGrid", entradaNFETerceirosController.workspace).flexigrid({
+			preProcess: entradaNFETerceirosController.executarPreProcessamento,
 				dataType : 'json',
 				colModel : [ {
 					display : 'Cota',
@@ -292,8 +292,8 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 			});
 		
 		
-		$(".encalheNfeGrid", consultaNFEEncalheTratamentoController.workspace).flexigrid({
-			preProcess: consultaNFEEncalheTratamentoController.executarPreProcessamento,
+		$(".encalheNfeGrid", entradaNFETerceirosController.workspace).flexigrid({
+			preProcess: entradaNFETerceirosController.executarPreProcessamento,
 			dataType : 'json',
 				colModel : [ {
 					display : 'Cota',
@@ -369,52 +369,52 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 	},
 	
 	confirmar : function(){
-		$(".dados", consultaNFEEncalheTratamentoController.workspace).show();
+		$(".dados", entradaNFETerceirosController.workspace).show();
 	},
 	
 	pesqEncalhe : function(){
-		$(".dadosFiltro", consultaNFEEncalheTratamentoController.workspace).show();		
-		var status = $('#situacaoNfe', consultaNFEEncalheTratamentoController.workspace).val();		
+		$(".dadosFiltro", entradaNFETerceirosController.workspace).show();		
+		var status = $('#situacaoNfe', entradaNFETerceirosController.workspace).val();		
 		if(status == 'RECEBIDA'){			
-			consultaNFEEncalheTratamentoController.pesquisarNotaRecebidas();		
+			entradaNFETerceirosController.pesquisarNotaRecebidas();		
 		}else{			
-			consultaNFEEncalheTratamentoController.pesquisarNotasPendente();
+			entradaNFETerceirosController.pesquisarNotasPendente();
 		}
 		
 	},
 	
 	pesquisarNotaRecebidas : function(){
 		
-		$(".notaRecebidaGrid", consultaNFEEncalheTratamentoController.workspace).flexOptions({
-			url: contextPath + "/nfe/consultaNFEEncalheTratamento/pesquisarNotasRecebidas",
+		$(".notaRecebidaGrid", entradaNFETerceirosController.workspace).flexOptions({
+			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarNotasRecebidas",
 			dataType : 'json',
 			params: [
-						{name:'filtro.codigoCota', value:$('#codigoCota', consultaNFEEncalheTratamentoController.workspace).val()},
-						{name:'filtro.data', value:$('#data', consultaNFEEncalheTratamentoController.workspace).val()},
-						{name:'filtro.statusNotaFiscalEntrada', value:$('#situacaoNfe', consultaNFEEncalheTratamentoController.workspace).val()}						
+						{name:'filtro.codigoCota', value:$('#codigoCota', entradaNFETerceirosController.workspace).val()},
+						{name:'filtro.data', value:$('#data', entradaNFETerceirosController.workspace).val()},
+						{name:'filtro.statusNotaFiscalEntrada', value:$('#situacaoNfe', entradaNFETerceirosController.workspace).val()}						
 						]
 		});
 
-		$(".notaRecebidaGrid", consultaNFEEncalheTratamentoController.workspace).flexReload();
+		$(".notaRecebidaGrid", entradaNFETerceirosController.workspace).flexReload();
 	},
 	
 	pesquisarNotasPendente : function(){
 		
-		$(".encalheNfeGrid", consultaNFEEncalheTratamentoController.workspace).flexOptions({
-			url: contextPath + "/nfe/consultaNFEEncalheTratamento/pesquisarNotasPendentes",
+		$(".encalheNfeGrid", entradaNFETerceirosController.workspace).flexOptions({
+			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarNotasPendentes",
 			dataType : 'json',
 			params: [
-						{name:'filtro.codigoCota', value:$('#codigoCota', consultaNFEEncalheTratamentoController.workspace).val()},
-						{name:'filtro.data', value:$('#data', consultaNFEEncalheTratamentoController.workspace).val()},
-						{name:'filtro.statusNotaFiscalEntrada', value:$('#situacaoNfe', consultaNFEEncalheTratamentoController.workspace).val()}						
+						{name:'filtro.codigoCota', value:$('#codigoCota', entradaNFETerceirosController.workspace).val()},
+						{name:'filtro.data', value:$('#data', entradaNFETerceirosController.workspace).val()},
+						{name:'filtro.statusNotaFiscalEntrada', value:$('#situacaoNfe', entradaNFETerceirosController.workspace).val()}						
 						]
 		});
 
-		$(".encalheNfeGrid", consultaNFEEncalheTratamentoController.workspace).flexReload();		
+		$(".encalheNfeGrid", entradaNFETerceirosController.workspace).flexReload();		
 	},
 	
 	mostrar_nfes : function(){
-		$(".nfes", consultaNFEEncalheTratamentoController.workspace).show();
+		$(".nfes", entradaNFETerceirosController.workspace).show();
 	},
 
 	executarPreProcessamento : function(resultado) {
@@ -426,11 +426,11 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			
-			$(".grids", consultaNFEEncalheTratamentoController.workspace).hide();
+			$(".grids", entradaNFETerceirosController.workspace).hide();
 
 			return resultado;
 		}
-		var status = $('#situacaoNfe', consultaNFEEncalheTratamentoController.workspace).val();					
+		var status = $('#situacaoNfe', entradaNFETerceirosController.workspace).val();					
 		if(status == 'RECEBIDA'){
 			$.each(resultado.rows, function(index, row) {
 				
@@ -445,10 +445,10 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 			
 			$.each(resultado.rows, function(index, row) {					
 				
-				var linkLancamento = '<a href="javascript:;"  onclick="consultaNFEEncalheTratamentoController.popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
+				var linkLancamento = '<a href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 								   '</a>';
-			   var linkCadastro = '<a href="javascript:;" onclick="consultaNFEEncalheTratamentoController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
+			   var linkCadastro = '<a href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
 					   																		+row.cell.dataEncalhe+','
 					   																		+row.cell.chaveAcesso+','
 					   																		+row.cell.serie+','
@@ -464,21 +464,21 @@ var consultaNFEEncalheTratamentoController = $.extend(true, {
 		
 		}
 		
-		$(".grids", consultaNFEEncalheTratamentoController.workspace).show();
+		$(".grids", entradaNFETerceirosController.workspace).show();
 		
 		return resultado;
 	},
 	
 	pesquisarCota : function() {
  		
-		numeroCota = $("#codigoCota", consultaNFEEncalheTratamentoController.workspace).val();
+		numeroCota = $("#codigoCota", entradaNFETerceirosController.workspace).val();
  		
  		$.postJSON(
-			contextPath + '/nfe/consultaNFEEncalheTratamento/buscarCotaPorNumero',
+			contextPath + '/nfe/entradaNFETerceiros/buscarCotaPorNumero',
 			{ "numeroCota": numeroCota },
 			function(result) {
 
-				$("#nomeCota", consultaNFEEncalheTratamentoController.workspace).html(result);
+				$("#nomeCota", entradaNFETerceirosController.workspace).html(result);
 				
 			},
 			null,
