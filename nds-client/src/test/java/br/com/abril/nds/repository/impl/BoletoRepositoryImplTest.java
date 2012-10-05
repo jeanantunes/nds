@@ -185,7 +185,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Boleto boleto2 =
 			Fixture.boleto(
 				"55", "5", "55", dataAtual, dataAtual, dataAtual, BigDecimal.ZERO,
-				new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida2, 0);
+				new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 
 		Boleto boleto3 =
@@ -196,15 +196,15 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		BaixaAutomatica baixa =
 			Fixture.baixaAutomatica(
-				boleto, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO, BigDecimal.TEN);
+				boleto, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO, BigDecimal.TEN, bancoHSBC);
 		
 		BaixaAutomatica baixa2 =
 			Fixture.baixaAutomatica(
-				boleto2, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN);
+				boleto2, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN, bancoHSBC);
 		
 		BaixaAutomatica baixa3 =
 			Fixture.baixaAutomatica(
-				boleto3, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN);
+				boleto3, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN, bancoHSBC);
 		
 		save(baixa, baixa2, baixa3);
 	}
