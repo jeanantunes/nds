@@ -463,6 +463,7 @@ var roteirizacao = $.extend(true, {
     },
 
     boxSelecionadoListener : function(idBox, nomeBox) {
+        roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
         if (!roteirizacao.boxReadonly) {
             var isBoxSelecionado = roteirizacao.idBox != "";
             var isBoxDiferente = roteirizacao.idBox != idBox;
@@ -488,7 +489,6 @@ var roteirizacao = $.extend(true, {
         roteirizacao.idRota = "";
         roteirizacao.limparInfoCotasRota();
 
-        roteirizacao.tipoInclusao = TipoInclusao.ROTEIRO;
         $.postJSON(contextPath + '/cadastro/roteirizacao/boxSelecionado',
             [{name: 'idBox', value: idBox}],
             function(result) {
@@ -1001,6 +1001,7 @@ var roteirizacao = $.extend(true, {
             url: contextPath + '/cadastro/roteirizacao/recarregarCotasRota',
             onSubmit    : function(){
                 $('.cotasRotaGrid').flexOptions({params: [
+                    {name:'idRoteiro', value: roteirizacao.idRoteiro},
                     {name:'idRota', value: roteirizacao.idRota}
                 ]});
                 return true;
@@ -1085,7 +1086,10 @@ var roteirizacao = $.extend(true, {
     },
 
     abrirTelaCotas : function () {
-
+        if (roteirizacao.idRota == "") {
+            exibirMensagemDialog("WARNING", ["Selecione uma Rota para adicionar PDV's"]);
+            return;
+        }
         roteirizacao.iniciaCotasDisponiveisGrid();
 
         $("#cepPesquisa", roteirizacao.workspace).mask("99999-999");
@@ -1399,6 +1403,7 @@ var roteirizacao = $.extend(true, {
 
         });
 
+        params.push({name: "idRoteiro", value: roteirizacao.idRoteiro});
         params.push({name: "idRota", value: roteirizacao.idRota});
 
         return params;
@@ -2676,7 +2681,7 @@ var roteirizacao = $.extend(true, {
 
     prepararPopupCopiarCotas: function () {
 
-        roteirizacao.obterDadoPDVsSelecionados();
+
 
         $("#cotasParaCopiaGrid", roteirizacao.workspace).html(
             '<tr class="header_table"><td width="85">Cota</td><td width="255">Nome</td></tr>'
@@ -2699,6 +2704,11 @@ var roteirizacao = $.extend(true, {
     },
 
     abrirPopupCopiarCotas: function() {
+        roteirizacao.obterDadoPDVsSelecionados();
+        if (roteirizacao.pdvsSelecionados.length == 0 ) {
+            exibirMensagemDialog("WARNING", ["Selecione pelo menos um PDV para copiar!"]);
+            return;
+        }
 
         this.prepararPopupCopiarCotas();
 

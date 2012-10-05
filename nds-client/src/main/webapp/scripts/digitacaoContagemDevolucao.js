@@ -367,31 +367,37 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 120,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 80,
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoVenda',
-				width : 90,
+				width : 85,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Exemplar Devolução',
 				name : 'qtdDevolucao',
-				width : 120,
+				width : 110,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotal',
-				width : 80,
+				width : 70,
+				sortable : false,
+				align : 'right'
+			}, {
+				display : 'Total c/ Desc. R$',
+				name : 'valorTotalComDesconto',
+				width : 90,
 				sortable : false,
 				align : 'right'
 			}, {
@@ -403,7 +409,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
-				width : 80,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			},{

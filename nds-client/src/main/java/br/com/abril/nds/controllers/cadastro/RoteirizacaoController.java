@@ -51,7 +51,6 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -795,9 +794,10 @@ public class RoteirizacaoController {
 
 	@Post
 	@Path("/recarregarCotasRota")
-	public void recarregarCotasRota(Long idRota, String sortname, String sortorder) {
+	public void recarregarCotasRota(Long idRoteiro, Long idRota, String sortname, String sortorder) {
 	    RoteirizacaoDTO roteirizacao = getDTO();
-	    RotaRoteirizacaoDTO rota = roteirizacao.getRota(idRota);
+	    RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+	    RotaRoteirizacaoDTO rota = roteiro.getRota(idRota);
 	    List<PdvRoteirizacaoDTO> pdvs = rota.getPdvs();
 	    
 	    if (pdvs != null){
@@ -1033,35 +1033,21 @@ public class RoteirizacaoController {
 	 */
 	@Post
 	@Path("/adicionarNovosPdvs")
-	public void adicionarNovosPdvs(Long idRota, List<PdvRoteirizacaoDTO> pdvs){
-
-		if (idRota==null){
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma [Rota] foi selecionada para a inclusão dos [PDV's] !"));
-		}
-		
+	public void adicionarNovosPdvs(Long idRoteiro, Long idRota, List<PdvRoteirizacaoDTO> pdvs){
 		RoteirizacaoDTO roteirizacaoDTO = this.getDTO();
+		RoteiroRoteirizacaoDTO roteiro = roteirizacaoDTO.getRoteiro(idRoteiro);
+		RotaRoteirizacaoDTO rota = roteiro.getRota(idRota);
 		
-		List<PdvRoteirizacaoDTO> pdvsAtual = null;
-		
-		if (roteirizacaoDTO==null || roteirizacaoDTO.getRota(idRota)==null){
-		
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cadastre [Box], [Roteiro] e [Rota] antes de cadastrar [PDV].")); 
-		}
-		else{
-			
-			pdvsAtual = roteirizacaoDTO.getRota(idRota).getPdvs();
+		List<PdvRoteirizacaoDTO> pdvsAtual = rota.getPdvs();
 				
-			pdvs = this.trataPdvsRepetidos(pdvs, pdvsAtual);
+		pdvs = this.trataPdvsRepetidos(pdvs, pdvsAtual);
+		
+		this.validaNovosPdvs(pdvs, pdvsAtual);
 			
-			this.validaNovosPdvs(pdvs, pdvsAtual);
+		rota.addAllPdv(pdvs);
 			
-			roteirizacaoDTO.getRota(idRota).addAllPdv(pdvs);
-			
-			this.setDTO(roteirizacaoDTO);
-			
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
-		}    
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
+
 	}
 	
 	/**
