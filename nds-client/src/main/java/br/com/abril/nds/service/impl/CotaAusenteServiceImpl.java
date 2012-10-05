@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -58,16 +57,19 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	@Transactional
-	public void declararCotaAusenteEnviarSuplementar(Integer numCota, Date data, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException {
+	public void declararCotaAusenteEnviarSuplementar(List<Integer> numCotas, Date data, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException {
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		for(Integer numCota : numCotas) {
 		
-		gerarCotaAusente(numCota, data, idUsuario, cota);
-				
-		List<MovimentoEstoqueCota> movimentosCota = 
-				movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-				
-		movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
+			Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+			
+			gerarCotaAusente(numCota, data, idUsuario, cota);
+					
+			List<MovimentoEstoqueCota> movimentosCota = 
+					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+					
+			movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
+		}
 	}
 		
 	private CotaAusente gerarCotaAusente(Integer numCota, Date data, Long idUsuario, Cota cota) throws TipoMovimentoEstoqueInexistenteException{

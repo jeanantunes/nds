@@ -152,21 +152,21 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	bloquearLinks : function() {
 		
-		bloquearLink("linkConfirmar", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkEditor", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkValor", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkSalvar", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkConfiguracaoInicial", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkReprogramar", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkConfirmar", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkEditor", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkValor", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkSalvar", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkConfiguracaoInicial", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkReprogramar", balanceamentoRecolhimentoController.workspace);
 	},
 	
 	habilitarLinks : function() {
 		
 		balanceamentoRecolhimentoController.habilitarLink("linkConfirmar", balanceamentoRecolhimentoController.obterConfirmacaoBalanceamento);
-		balanceamentoRecolhimentoController.habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorEditor); });
-		balanceamentoRecolhimentoController.habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorValor); });
+		balanceamentoRecolhimentoController.habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.balancearPorEditor); });
+		balanceamentoRecolhimentoController.habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.balancearPorValor); });
 		balanceamentoRecolhimentoController.habilitarLink("linkSalvar", balanceamentoRecolhimentoController.salvar);
-		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(voltarConfiguracaoInicial); });
+		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.voltarConfiguracaoInicial); });
 		balanceamentoRecolhimentoController.habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
 	},
 	

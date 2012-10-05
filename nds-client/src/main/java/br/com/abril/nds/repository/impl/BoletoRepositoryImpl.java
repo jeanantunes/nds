@@ -1,4 +1,7 @@
 package br.com.abril.nds.repository.impl;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -8,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.BoletoRepository;
 
 
@@ -193,9 +197,148 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return (Boleto) criteria.uniqueResult();
 	}
-
+	
+	@Override
+	public Long obterQuantidadeBoletosPrevistos(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(cobranca) as quantidadePrevisao ");
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosLidos(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(cobranca) as quantidadeLidos ");
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosBaixados(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(cobranca) as quantidadeBaixados ");
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
+		hql.append(" and baixaCobranca.status in (:statusBoletosBaixados) ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
+		
+		listaParametros.add(StatusBaixa.PAGO);
+		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_DATA);
+		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_VALOR);
+		
+		query.setParameter("data", data);
+		query.setParameterList("statusBoletosBaixados", listaParametros);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosRejeitados(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(cobranca) as quantidadeRejeitados ");
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
+		hql.append(" and baixaCobranca.status in (:statusBoletosRejeitados) ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
+		
+		listaParametros.add(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR);
+		listaParametros.add(StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA);
+		listaParametros.add(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA);
+		
+		query.setParameter("data", data);
+		query.setParameterList("statusBoletosRejeitados", listaParametros);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosBaixadosComDivergencia(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(cobranca) as quantidadeBaixadosComDivergencia ");
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" join cobranca.baixaCobranca baixaCobranca ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
+		hql.append(" and baixaCobranca.status in (:statusBoletosBaixadosComDivergencia) ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
+		
+		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_DATA);
+		listaParametros.add(StatusBaixa.PAGO_DIVERGENCIA_VALOR);
+		
+		query.setParameter("data", data);
+		query.setParameterList("statusBoletosBaixadosComDivergencia", listaParametros);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeBoletosInadimplentes(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		// TODO:
+		
+		hql.append(" select ");
+		hql.append(" count(cobranca) as quantidadeInadimplentes from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterValorTotalBancario(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		// TODO:
+		
+		hql.append(" select ");
+		hql.append(" sum(cobranca.valor) as valorTotalBancario from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento = :data ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 	
 }
-
-
-

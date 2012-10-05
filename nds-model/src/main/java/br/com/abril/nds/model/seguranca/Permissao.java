@@ -95,14 +95,16 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA("Follow Up do Sistema",									  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_GRUPOS_ACESSO("Grupos de Acesso",											  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CALENDARIO("Calendario",													  		   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipo da Nota",													  	   Permissao.ROLE_ADMINISTRACAO),
+
 	ROLE_ADMINISTRACAO_INICIAR_DIA("Iniciar o Dia",												  		   Permissao.ROLE_ADMINISTRACAO),	
 	ROLE_ADMINISTRACAO_SERVICO_ENTREGA("Serviço de Entrega",										  	   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO),	
-	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros do Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração / Cota",			          					 		   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros do Distribuidor", 						 	   Permissao.ROLE_ADMINISTRACAO);
 
+	ROLE_ADMINISTRACAO_GERACAO_ARQUIVO("Geracao De Arquivos",									           Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipos de NF-e",													  	   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros de Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros Distribuidor",	 						 	   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO);
 
 	private String descricao;
 	private Permissao permissaoPai;

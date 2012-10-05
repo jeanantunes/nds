@@ -26,6 +26,8 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	@Export(label="Fornecedor")
 	private String nomeFornecedor;
 	
+	private Integer semanaCE;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
@@ -42,6 +44,17 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	}	
 	
 	
+	public FiltroDigitacaoContagemDevolucaoDTO(PeriodoVO periodo,
+			Long idFornecedor, Integer semanaCE) {
+		super();
+		this.periodo = periodo;
+		this.idFornecedor = idFornecedor;
+		this.semanaCE = semanaCE;
+	}
+
+
+
+
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 
@@ -168,6 +181,22 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 
+	
+	/**
+	 * @return the semanaCE
+	 */
+	public Integer getSemanaCE() {
+		return semanaCE;
+	}
+
+
+	/**
+	 * @param semanaCE the semanaCE to set
+	 */
+	public void setSemanaCE(Integer semanaCE) {
+		this.semanaCE = semanaCE;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -183,6 +212,8 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
 		result = prime * result + ((periodo == null) ? 0 : periodo.hashCode());
+		result = prime * result
+				+ ((semanaCE == null) ? 0 : semanaCE.hashCode());
 		return result;
 	}
 
@@ -216,10 +247,13 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 				return false;
 		} else if (!periodo.equals(other.periodo))
 			return false;
+		if (semanaCE == null) {
+			if (other.semanaCE != null)
+				return false;
+		} else if (!semanaCE.equals(other.semanaCE))
+			return false;
 		return true;
 	}
 
-	
-	
 	
 }

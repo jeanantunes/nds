@@ -13,52 +13,60 @@ var VENDA_PRODUTO = {
 				colModel :[ {
 					display : 'Código de Barras',
 					name : 'codigoBarras',
-					width : 170,
+					width : 100,
 					sortable : true,
 					align : 'left'
 				}, { 
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 70,
+					width : 60,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 150,
+					width : 120,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 60,
+					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Preço c/ Desc. R$',
 					name : 'precoDesconto',
-					width : 80,
+					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Qtde Disp.',
 					name : 'qntDisponivel',
-					width : 70,
+					width : 55,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Qtde Solic.',
 					name : 'qntSolicitada',
-					width : 70,
+					width : 55,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Total R$',
 					name : 'total',
-					width : 70,
+					width : 65,
 					sortable : true,
 					align : 'center'
+				 
 				}, {
+					display : 'Tipo Venda',
+					name : 'tipoVendaEncalhe',
+					width : 135,
+					sortable : true,
+					align : 'left'
+				}, {
+				
 					display : 'Forma de Venda',
 					name : 'formaVenda',
 					width : 130,
@@ -102,6 +110,14 @@ var VENDA_PRODUTO = {
                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
                  '</a>';		 					 
 				
+				var acaoReimprimirComprovante = contextPath + "/devolucao/vendaEncalhe/reimprimirComprovanteVenda/" + row.cell.idVenda;
+				
+				
+				linkReimpressao  ='<a href="'+acaoReimprimirComprovante+'" target="_blank" style="cursor:pointer">' +
+                '<img src="'+ contextPath +'/images/ico_impressora.gif" hspace="5" border="0px" title="Reimpressão do Comprovante de Venda" />' +
+                 '</a>';	
+				
+				
 			}
 			else{
 				
@@ -111,11 +127,14 @@ var VENDA_PRODUTO = {
 			 
 				linkExclusao ='<a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
                '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
-                '</a>';		 					 
+                '</a>';		
+				linkReimpressao  ='<a href="javascript:;" yle="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+                '<img src="'+ contextPath +'/images/ico_impressora.gif" hspace="5" border="0px" title="Reimpressão do Comprovante de Venda" />' +
+                 '</a>';	
 			
 			}
 		
-           row.cell.acao = linkEdicao + linkExclusao ; 
+           row.cell.acao = linkReimpressao + linkEdicao + linkExclusao ; 
 		});
 		
 		$("#totalGeral", VENDA_PRODUTO.workspace).html(resultado.totalGeral);
@@ -123,8 +142,7 @@ var VENDA_PRODUTO = {
 		VENDA_PRODUTO.processarVisualizcaoImpressao(true);
 		
 		return resultado.tableModel;
-	},
-	
+	},	
 	editar:function(idVenda){
 		
 		VENDA_PRODUTO.limparDadosModalVenda();
@@ -135,12 +153,11 @@ var VENDA_PRODUTO = {
 		
 		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexOptions({
 			params:[{name:"idVendaEncalhe", value:idVenda}],
-			url: contextPath + "/devolucao/vendaEncalhe/prepararDadosEdicaoVenda'/>",
+			url: contextPath + "/devolucao/vendaEncalhe/prepararDadosEdicaoVenda",
 			newp: 1
 		});
-		
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();
-		
+
+		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();		
 	},
 	
 	excluir:function(idVenda){
@@ -207,6 +224,8 @@ var VENDA_PRODUTO = {
 					function(result) {
 			 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(result.box);			
 					},null,true);
+					
+		VENDA_PRODUTO.recalcularPrecoVendaItens(); 
 	},
 	
 	pesquisarCotaVendaErrorCallBack:function(){
@@ -322,7 +341,7 @@ var VENDA_PRODUTO = {
 		
 		$("#dialog-venda-encalhe", VENDA_PRODUTO.workspace).dialog({
 			resizable: false,
-			height:460,
+			height:510,
 			width:1030,
 			modal: true,
 			buttons: [
@@ -359,25 +378,29 @@ var VENDA_PRODUTO = {
 		// Monta as colunas com os inputs do grid
 		$.each(result.rows, function(index, row) {
 			
+			tipoVenda = row.cell.tipoVenda;
+			
 			var hiddenId = '<input type="hidden" name="idVendaEncalhe" value="' + row.cell.idVendaEncalhe + '" />';
 			
-			var inputCodBarras ='<input type="text" id="codBarras0" name="codBarras" style="width:160px;" disabled="disabled" value="'+row.cell.codigoBarras+'"/>';
+			var inputCodBarras ='<input type="text" id="codBarras0" name="codBarras" style="width:90px;" disabled="disabled" value="'+row.cell.codigoBarras+'"/>';
 			
-			var inputCodProduto='<input type="text" id="codProduto0" value="'+row.cell.codigoProduto+'" disabled="disabled" name="codProduto" style="width:60px; float:left; margin-right:10px;"/>';
+			var inputCodProduto='<input type="text" id="codProduto0" value="'+row.cell.codigoProduto+'" disabled="disabled" name="codProduto" style="width:55px; float:left; margin-right:10px;"/>';
 			
-			var inputNomeProduto='<input type="text" id="nmProduto0" value="'+row.cell.nomeProduto+'" name="nmProduto" style="width:140px;" disabled="disabled" maxlenght="255"/>';
+			var inputNomeProduto='<input type="text" id="nmProduto0" value="'+row.cell.nomeProduto+'" name="nmProduto" style="width:110px;" disabled="disabled" maxlenght="255"/>';
 			
-			var inputNumEdicao='<input type="text" id="numEdicao0" value="'+row.cell.numeroEdicao+'"  name="numEdicao" style="width:40px; text-align: center;" maxlenght="20" disabled="disabled" />';
+			var inputNumEdicao='<input type="text" id="numEdicao0" value="'+row.cell.numeroEdicao+'"  name="numEdicao" style="width:45px; text-align: center;" maxlenght="20" disabled="disabled" />';
 			
-			var inputPrecoDesconto='<input type="text" id="precoDesconto0" value="'+row.cell.precoDesconto+'" name="precoDesconto" style="width:65px; text-align: center;" disabled="disabled" />';
+			var inputPrecoDesconto='<input type="text" id="precoDesconto0" value="'+row.cell.precoDesconto+'" name="precoDesconto" style="width:75px; text-align: center;" disabled="disabled" />';
 			
-			var inputQntDisponivel='<input type="text" id="qntDisponivel0" name="qntDisponivel" style="width:65px; text-align: center;" maxlenght="20" value="'+row.cell.qntDisponivel+'" disabled="disabled" />';
+			var inputQntDisponivel='<input type="text" id="qntDisponivel0" name="qntDisponivel" style="width:50px; text-align: center;" maxlenght="20" value="'+row.cell.qntDisponivel+'" disabled="disabled" />';
 			
-			var inputQntSolicitada='<input type="text" id="qntSolicitada0" name="qntSolicitada" style="width:65px; text-align: center;" maxlenght="6" value="'+row.cell.qntSolicitada+'" onchange="VENDA_PRODUTO.totalizarValorProdutoSelecionado(0);" />';
+			var inputQntSolicitada='<input type="text" id="qntSolicitada0" name="qntSolicitada" style="width:50px; text-align: center;" maxlenght="6" value="'+row.cell.qntSolicitada+'" onchange="VENDA_PRODUTO.totalizarValorProdutoSelecionado(0);" />';
 			
-			var inputTotal ='<input type="text" id="totalFormatado0" name="totalFormatado" value="'+row.cell.total+'" style="width:65px; text-align: center;" disabled="disabled" />';
+			var inputTotal ='<input type="text" id="totalFormatado0" name="totalFormatado" value="'+row.cell.total+'" style="width:50px; text-align: center;" disabled="disabled" />';
 			
-			var inputHiddenTotal = '<input id="hiddenTotal'+index+'" type="hidden" value="'+row.cell.valorTotal+'">';
+			var inputHiddenTotal = '<input id="hiddenTotal'+index+'" name="hiddenTotal" type="hidden" value="'+row.cell.valorTotal+'">';
+			
+			var inputTipoVenda='<input type="text" id="tipoVenda'+index+'" name="tipoVenda" value="'+row.cell.descTipoVenda+'" disabled="disabled" />';
 			
 			var inputFormaVenda='<input type="text" id="formaVenda0" name="formaVenda" value="'+row.cell.formaVenda+'" disabled="disabled" />';
 			
@@ -395,6 +418,7 @@ var VENDA_PRODUTO = {
 			row.cell.qntDisponivel = inputQntDisponivel;
 			row.cell.qntSolicitada = inputQntSolicitada;
 			row.cell.total =inputTotal + inputHiddenTotal;
+			row.cell.tipoVendaEncalhe = inputTipoVenda;
 			row.cell.formaVenda = inputFormaVenda;
 			
 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(row.cell.codBox);
@@ -403,8 +427,6 @@ var VENDA_PRODUTO = {
 			$("#span_data_venda", VENDA_PRODUTO.workspace).html(row.cell.dataVenda);
 			$("#span_nome_cota_venda", VENDA_PRODUTO.workspace).html(row.cell.nomeCota);
 			$("#numCotaVenda", VENDA_PRODUTO.workspace).val(row.cell.numeroCota);
-			
-			tipoVenda = row.cell.tipoVenda;
 		});
 		
 		$("#numCotaVenda", VENDA_PRODUTO.workspace).attr("disabled","disabled");
@@ -412,47 +434,25 @@ var VENDA_PRODUTO = {
 		
 		VENDA_PRODUTO.renderizarNomeDialogVenda(tipoVenda);
 		
+		VENDA_PRODUTO.tipoVenda = tipoVenda;
+			
 		return result;
 	},
 	
 	processarDadosNovaVenda:function(result){
 		
-		// Monta as colunas com os inputs do grid
+		// Monta as colunas com os inputs do grid 
 		$.each(result.rows, function(index, row) {
 			
 			var funcaoError = "function(){ VENDA_PRODUTO.pesquisarDadosProdutoError("+ index + ')}';
 			
 			var parametroPesquisaProduto = '\'#codProduto' + index + '\', \'#nmProduto' + index + '\', \'#numEdicao' + index + '\', true, '+funcaoError+','+funcaoError+' ';
-			
-			var parametroAutoCompleteProduto = '\'#nmProduto' + index + '\', true';
-			
-			var funcaoSucces = "function(idCodigo, idEdicao){ VENDA_PRODUTO.pesquisarDadosProduto(idCodigo, idEdicao,"+ index + ")}";
-			
-			var parametroValidacaoEdicao = '\'#codProduto' + index + '\', \'#numEdicao' + index + '\', true, '+funcaoSucces+','+funcaoError+'';
-			
-			var parametroPesCodBarra ='\'#codBarras'+ index+ '\',' + index;
-
+		
 			var hiddenId = '<input type="hidden" name="id" value="' + index + '" />';
 			
-			var inputCodBarras ='<input type="text" id="codBarras'+index+'" name="codBarras" style="width:160px;" value="" onchange="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
+			var valorHiddenTotal = ( row.cell.valorTotal )?row.cell.valorTotal:"";
 			
-			var inputCodProduto='<input type="text" id="codProduto' + index + '" name="codProduto" style="width:60px; float:left; margin-right:10px;" maxlenght="255" onchange="pesquisaProdutoVendaEncalhe.pesquisarPorCodigoProduto(' + parametroPesquisaProduto + ');" />';
-			
-			var inputNomeProduto='<input type="text" id="nmProduto' + index + '" name="nmProduto" style="width:140px;" maxlenght="255" onkeyup="pesquisaProdutoVendaEncalhe.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onblur="pesquisaProdutoVendaEncalhe.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
-			
-			var inputNumEdicao='<input type="text" id="numEdicao' + index + '"  name="numEdicao" style="width:40px;text-align: center;" maxlenght="20" onchange="pesquisaProdutoVendaEncalhe.validarNumEdicao(' + parametroValidacaoEdicao + ');" disabled="disabled" />';
-			
-			var inputPrecoDesconto='<input type="text" id="precoDesconto'+index+'" name="precoDesconto" value="" style="width:65px;text-align: center;" disabled="disabled" />';
-			
-			var inputQntDisponivel='<input type="text" id="qntDisponivel'+index+'" name="qntDisponivel" style="width:65px;text-align: center;" maxlenght="20" value="" disabled="disabled" />';
-			
-			var inputQntSolicitada='<input type="text" id="qntSolicitada'+index+'" name="qntSolicitada" style="width:65px;text-align: center;" maxlenght="6" value="" onchange="VENDA_PRODUTO.totalizarValorProdutoSelecionado('+index+');" disabled="disabled" />';
-			
-			var inputTotal ='<input type="text" id="totalFormatado'+index+'" name="totalFormatado" value="" style="width:65px;text-align: center;" disabled="disabled" />';
-			
-			var inputHiddenTotal = '<input id="hiddenTotal'+index+'" type="hidden" value="">';
-			
-			var inputFormaVenda='<input type="text" id="formaVenda'+index+'" name="formaVenda" value="" disabled="disabled" />';
+			var inputHiddenTotal = '<input id="hiddenTotal'+index+'" name="hiddenTotal" type="hidden" value="'+valorHiddenTotal+'">';
 			
 			$("#codBarras"+index, VENDA_PRODUTO.workspace).keypress(function(e) {
 				if (e.keyCode == 13) {
@@ -467,21 +467,134 @@ var VENDA_PRODUTO = {
 				}
 			});
 			
-			row.cell.codigoBarras = inputCodBarras + hiddenId;
-			row.cell.codigoProduto = inputCodProduto;
-			row.cell.nomeProduto = inputNomeProduto;
-			row.cell.numeroEdicao = inputNumEdicao;
-			row.cell.precoDesconto = inputPrecoDesconto;
-			row.cell.qntDisponivel = inputQntDisponivel;
-			row.cell.qntSolicitada = inputQntSolicitada;
-			row.cell.total =inputTotal + inputHiddenTotal;
-			row.cell.formaVenda = inputFormaVenda;
+			row.cell.codigoBarras = VENDA_PRODUTO.getInputCodBarras(index,row.cell) + hiddenId;
+			row.cell.codigoProduto = VENDA_PRODUTO.getInputCodigoProduto(index,row.cell,parametroPesquisaProduto);
+			row.cell.nomeProduto = VENDA_PRODUTO.getInputNomeProduto(index,row.cell,parametroPesquisaProduto);
+			row.cell.numeroEdicao = VENDA_PRODUTO.getInputNumeroEdicao(index,row.cell,funcaoError);
+			row.cell.precoDesconto = VENDA_PRODUTO.getInputPrecoDesconto(index,row.cell);
+			row.cell.qntDisponivel = VENDA_PRODUTO.getInputQntdeDisponivel(index,row.cell);
+			row.cell.qntSolicitada = VENDA_PRODUTO.getInputQntdeSolicitada(index,row.cell);
+			row.cell.total = VENDA_PRODUTO.getInputTotal(index,row.cell) + inputHiddenTotal;
+			row.cell.tipoVendaEncalhe = VENDA_PRODUTO.getInputTipoVenda(index,row.cell);
+			row.cell.formaVenda = VENDA_PRODUTO.getInputFormaVenda(index,row.cell);
 		
 		});
 		
 		$("#numCotaVenda", VENDA_PRODUTO.workspace).attr("disabled",null);
 		
+		VENDA_PRODUTO.tipoVenda="";
+		if(VENDA_PRODUTO.tipoVenda == 'SUPLEMENTAR'){
+				$("input[name=qntSolicitada]", VENDA_PRODUTO.workspace).attr("class","sum_qntSolicitada_suplemtar");
+				$("input[name=hiddenTotal]", VENDA_PRODUTO.workspace).attr("class","sum_total_suplemtar");
+			}
+			else{
+				$("input[name=qntSolicitada]", VENDA_PRODUTO.workspace).attr("class","sum_qntSolicitada_encalhe");
+				$("input[name=hiddenTotal]", VENDA_PRODUTO.workspace).attr("class","sum_total_encalhe");
+		}
 		return result;
+	},
+	
+	getInputCodBarras:function(index,result){
+		var valor = "";
+		if(result && result.codigoBarras){
+			valor = result.codigoBarras;
+		}
+		var parametroPesCodBarra ='\'#codBarras'+ index+ '\',' + index;
+		
+		return '<input type="text" id="codBarras'+index+'" name="codBarras" style="width:90px;" value="'+valor+'" onchange="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
+	},
+	
+	getInputCodigoProduto:function(index,result,parametroPesquisaProduto){
+		var valor = "";
+		if(result && result.codigoProduto){
+			valor = result.codigoProduto;
+		}
+		return '<input value="'+valor+'" type="text" id="codProduto' + index + '" name="codProduto" style="width:55px; float:left; margin-right:10px;" maxlenght="255" onchange="pesquisaProdutoVendaEncalhe.pesquisarPorCodigoProduto(' + parametroPesquisaProduto + ');" />';
+	},
+	
+	getInputNomeProduto:function(index,result,parametroPesquisaProduto){
+		var valor = "";
+		if(result && result.nomeProduto){
+			valor = result.nomeProduto;
+		}
+		
+		var parametroAutoCompleteProduto = '\'#nmProduto' + index + '\', true';
+		
+		return '<input value="'+valor+'" type="text" id="nmProduto' + index + '" name="nmProduto" style="width:110px;" maxlenght="255" onkeyup="pesquisaProdutoVendaEncalhe.autoCompletarPorNomeProduto(' + parametroAutoCompleteProduto + ');" onblur="pesquisaProdutoVendaEncalhe.pesquisarPorNomeProduto(' + parametroPesquisaProduto + ')" />';
+	},
+	
+	getInputNumeroEdicao:function(index,result,funcaoError){
+		var valor = "";
+		var disabilitado = 'disabled="disabled"';
+		if(result && result.numeroEdicao){
+			valor = result.numeroEdicao;
+			disabilitado ="";
+		}
+		
+		var funcaoSucces = "function(idCodigo, idEdicao){ VENDA_PRODUTO.pesquisarDadosProduto(idCodigo, idEdicao,"+ index + ")}";
+		
+		var parametroValidacaoEdicao = '\'#codProduto' + index + '\', \'#numEdicao' + index + '\', true, '+funcaoSucces+','+funcaoError+'';
+		
+		return '<input value="'+valor+'" type="text" id="numEdicao' + index + '"  name="numEdicao" style="width:45px;text-align: center;" maxlenght="20" onchange="pesquisaProdutoVendaEncalhe.validarNumEdicao(' + parametroValidacaoEdicao + ');" '+disabilitado+' />';
+	},
+	
+	getInputPrecoDesconto:function(index,result){
+		var valor = "";
+		if(result && result.precoDesconto){
+			valor = result.precoDesconto;
+		}
+		return '<input type="text" id="precoDesconto'+index+'" name="precoDesconto" value="'+valor+'" style="width:75px;text-align: center;" disabled="disabled" />';
+	},
+	
+	getInputQntdeSolicitada:function(index,result){
+		var valor = "";
+		var disabilitado = 'disabled="disabled"';
+		var classs = "";
+		if(result && result.qntSolicitada){
+			valor = result.qntSolicitada;
+			disabilitado="";
+			
+			if( result.descTipoVenda ){
+				classs = (result.descTipoVenda == 'Suplementar')?"sum_qntSolicitada_suplemtar":"sum_qntSolicitada_encalhe";
+			}
+		}
+		return '<input class="'+classs+'" type="text" id="qntSolicitada'+index+'" name="qntSolicitada" style="width:50px;text-align: center;" maxlenght="6" value="'+valor+'" onchange="VENDA_PRODUTO.totalizarValorProdutoSelecionado('+index+');" '+disabilitado+' />';
+	},
+	
+	getInputQntdeDisponivel:function(index,result){
+		var valor = "";
+		if(result && result.qntDisponivel){
+			valor = result.qntDisponivel;
+		}
+		return '<input type="text" id="qntDisponivel'+index+'" name="qntDisponivel" style="width:50px;text-align: center;" maxlenght="20" value="'+valor+'" disabled="disabled" />';
+	},
+		
+	getInputTotal:function(index,result){
+		var valor = "";
+		var classs = "";
+		if(result && result.total){
+			valor = result.total;
+			if( result.descTipoVenda ){
+				classs = (result.descTipoVenda == 'Suplementar')?"sum_total_suplemtar":"sum_total_encalhe";
+			}
+		}
+		return '<input class="'+classs+'" type="text" id="totalFormatado'+index+'" name="totalFormatado" value="'+valor+'" style="width:50px;text-align: center;" disabled="disabled" />';
+	},
+	
+	getInputTipoVenda:function(index,result){
+		var valor = "";
+		if(result && result.descTipoVenda){
+			valor = result.descTipoVenda;
+		}
+		return '<input type="text" id="tipoVenda'+index+'" name="tipoVenda" value="'+valor+'" disabled="disabled" />';
+	},
+	
+	getInputFormaVenda:function(index,result){
+		var valor = "";	
+		if(result && result.formaVenda){
+			valor = result.formaVenda;
+		}
+		return '<input type="text" id="formaVenda'+index+'" name="formaVenda" value="'+valor+'" disabled="disabled" />';
 	},
 	
 	totalizarValorProdutoSelecionado:function(indiceLinha){
@@ -533,11 +646,25 @@ var VENDA_PRODUTO = {
 	
 	totalizarQntSolicitadaGeral:function(){
 		
+		var valorQntSuplementar = $(".sum_qntSolicitada_suplemtar", VENDA_PRODUTO.workspace).sum();
+		$("#span_qntSolicitada_suplementar_venda", VENDA_PRODUTO.workspace).text(valorQntSuplementar);
+		
+		var valorQntEncalhe = $(".sum_qntSolicitada_encalhe", VENDA_PRODUTO.workspace).sum();
+		$("#span_qntSolicitada_encalhe_venda", VENDA_PRODUTO.workspace).text(valorQntEncalhe);
+		
 		var total = $("input[id^='qntSolicitada']", VENDA_PRODUTO.workspace).sum();
 		$("#span_total_solicitado_venda", VENDA_PRODUTO.workspace).text(total); 
 	},
 	
 	totalizarQntTotalGeral:function(){
+		
+		var valorTotalSuplementar = $(".sum_total_suplemtar", VENDA_PRODUTO.workspace).sum();
+		$("#span_total_suplementar_venda", VENDA_PRODUTO.workspace).text(valorTotalSuplementar);
+		$("#span_total_suplementar_venda", VENDA_PRODUTO.workspace).formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
+		
+		var valorTotalEncalhe = $(".sum_total_encalhe", VENDA_PRODUTO.workspace).sum();
+		$("#span_total_encalhe_venda", VENDA_PRODUTO.workspace).text(valorTotalEncalhe);
+		$("#span_total_encalhe_venda", VENDA_PRODUTO.workspace).formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
 		
 		var total = $("input[id^='hiddenTotal']", VENDA_PRODUTO.workspace).sum();
 		$("#span_total_geral_venda", VENDA_PRODUTO.workspace).text(total);
@@ -546,10 +673,12 @@ var VENDA_PRODUTO = {
 	
 	obterDadosProduto:function(codigoProduto, edicaoProduto,index) {
 		
-		var data = "codigoProduto=" + codigoProduto
-		 		 + "&numeroEdicao=" + edicaoProduto
-		 		 + "&tipoVenda=" + VENDA_PRODUTO.tipoVenda;
-
+		var data = [
+			{name:"codigoProduto",value:codigoProduto},
+			{name:"numeroEdicao",value:edicaoProduto},
+			{name:"numeroCota",value: $("#numCotaVenda", VENDA_PRODUTO.workspace).val()}
+		];
+		
 		 $.postJSON(
 			contextPath + "/devolucao/vendaEncalhe/obterDadosDoProduto", 
 			data,
@@ -649,6 +778,16 @@ var VENDA_PRODUTO = {
 		$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).val(resultado.produto.valoTotalProduto);
 		$("#totalFormatado"+index, VENDA_PRODUTO.workspace).val(resultado.produto.valoTotalProduto);
 		$("#formaVenda"+index, VENDA_PRODUTO.workspace).val(resultado.produto.formaVenda);
+		$("#tipoVenda"+index,VENDA_PRODUTO.workspace).val(resultado.produto.tipoVendaEncalhe);
+		
+		if(resultado.produto.tipoVendaEncalhe == 'Suplementar'){
+			$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("class","sum_qntSolicitada_suplemtar");
+			$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).attr("class","sum_total_suplemtar");
+		}
+		else{
+			$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("class","sum_qntSolicitada_encalhe");
+			$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).attr("class","sum_total_encalhe");
+		}
  	},
  	
  	limparDadoVendaProduto:function(index){
@@ -663,8 +802,12 @@ var VENDA_PRODUTO = {
 		$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).val("");
 		$("#totalFormatado"+index, VENDA_PRODUTO.workspace).val("");
 		$("#formaVenda"+index, VENDA_PRODUTO.workspace).val("");
+		$("#tipoVenda"+index,VENDA_PRODUTO.workspace).val("");
 		
 		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("disabled","disabled");
+		
+		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).removeAttr("class");
+		$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).removeAttr("class");
 		
 		VENDA_PRODUTO.totalizarQntDisponivelGeral();
 		VENDA_PRODUTO.totalizarQntSolicitadaGeral();
@@ -672,7 +815,19 @@ var VENDA_PRODUTO = {
  	},
  	
 	formatarCampos:function(){
-		
+
+		if(VENDA_PRODUTO.vendaNova == false){
+			
+			if(VENDA_PRODUTO.tipoVenda == 'SUPLEMENTAR'){
+				$("input[name=qntSolicitada]", VENDA_PRODUTO.workspace).attr("class","sum_qntSolicitada_suplemtar");
+				$("input[name=hiddenTotal]", VENDA_PRODUTO.workspace).attr("class","sum_total_suplemtar");
+			}
+			else{
+				$("input[name=qntSolicitada]", VENDA_PRODUTO.workspace).attr("class","sum_qntSolicitada_encalhe");
+				$("input[name=hiddenTotal]", VENDA_PRODUTO.workspace).attr("class","sum_total_encalhe");
+			}
+		}
+	
 		$("input[name='codProduto']", VENDA_PRODUTO.workspace).numeric();
 		$("input[name='nmProduto']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
 		$("input[name='qntSolicitada']", VENDA_PRODUTO.workspace).numeric();
@@ -845,6 +1000,80 @@ var VENDA_PRODUTO = {
 		$("#span_total_disponivel_venda", VENDA_PRODUTO.workspace).text("0");
 		$("#span_total_solicitado_venda", VENDA_PRODUTO.workspace).text("0");
 		$("#span_total_geral_venda", VENDA_PRODUTO.workspace).text("0,00");
+		$("#span_total_suplementar_venda", VENDA_PRODUTO.workspace).text("0,00");
+		$("#span_total_encalhe_venda", VENDA_PRODUTO.workspace).text("0,00");
+		$("#span_qntSolicitada_suplementar_venda", VENDA_PRODUTO.workspace).text("0");
+		$("#span_qntSolicitada_encalhe_venda", VENDA_PRODUTO.workspace).text("0");
+	},
+	
+	recalcularPrecoVendaItens:function(){
+		
+		if( $("#numCotaVenda", VENDA_PRODUTO.workspace).val() == ""){
+			return;
+		}
+		
+		var linhasDaGrid = $("#vendaEncalhesGrid tr", VENDA_PRODUTO.workspace);
+		var listaVendas = [];
+		
+		$.each(linhasDaGrid, function(index, value) {
+			var linha = $(value);
+					
+			var codigoBarras =
+				$(linha.find("td")[0]).find("div").find('input[name="codBarras"]', VENDA_PRODUTO.workspace).val();
+			
+			var codigoProduto = 
+				$(linha.find("td")[1]).find("div").find('input[name="codProduto"]', VENDA_PRODUTO.workspace).val();
+			
+			var nomeProduto = 
+				$(linha.find("td")[2]).find("div").find('input[name="nmProduto"]', VENDA_PRODUTO.workspace).val();
+			
+			var numeroEdicao = 
+				$(linha.find("td")[3]).find("div").find('input[name="numEdicao"]', VENDA_PRODUTO.workspace).val();
+			
+			var qntDisponivel =
+				$(linha.find("td")[5]).find("div").find('input[name="qntDisponivel"]', VENDA_PRODUTO.workspace).val();
+			
+			var qtdeSolicitada = 
+				$(linha.find("td")[6]).find("div").find('input[name="qntSolicitada"]', VENDA_PRODUTO.workspace).val();
+			
+			var descTipoVenda = 
+				$(linha.find("td")[8]).find("div").find('input[name="tipoVenda"]', VENDA_PRODUTO.workspace).val();
+			
+			var tipoVenda =
+				$(linha.find("td")[8]).find("div").find('input[name="tipoVendaHidden"]', VENDA_PRODUTO.workspace).val();
+			
+			var formaVenda =
+				$(linha.find("td")[9]).find("div").find('input[name="formaVenda"]', VENDA_PRODUTO.workspace).val();
+				
+			if (VENDA_PRODUTO.isAtributosVendaVazios(codigoProduto, numeroEdicao, qtdeSolicitada)) {
+				return true;
+			}
+			
+			listaVendas.push({name: "listaVendas["+index+"].id", value: index});
+			listaVendas.push({name: "listaVendas["+index+"].codigoBarras", value: codigoBarras});
+			listaVendas.push({name: "listaVendas["+index+"].codigoProduto", value: codigoProduto});
+			listaVendas.push({name: "listaVendas["+index+"].nomeProduto", value: nomeProduto});
+			listaVendas.push({name: "listaVendas["+index+"].numeroEdicao", value: numeroEdicao});
+			listaVendas.push({name: "listaVendas["+index+"].qntDisponivel", value: qntDisponivel});
+			listaVendas.push({name: "listaVendas["+index+"].qntSolicitada", value: qtdeSolicitada});
+			listaVendas.push({name: "listaVendas["+index+"].formaVenda", value: formaVenda});
+			listaVendas.push({name: "listaVendas["+index+"].descTipoVenda", value: descTipoVenda});
+			listaVendas.push({name: "listaVendas["+index+"].tipoVenda", value: tipoVenda});			
+		});
+	
+		if(listaVendas.length > 0){
+			
+			listaVendas.push({name:"numeroCota",value:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()});
+			
+			$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexOptions({
+				url: contextPath + "/devolucao/vendaEncalhe/recalcularValorDescontoItensVenda",
+				params:listaVendas,
+				newp: 1
+			});
+			
+			$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();
+		}	
+
 	}
 };
 
@@ -942,9 +1171,15 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		}, {
+			display : 'Usuário',
+			name : 'nomeUsuario',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		}, {
 			display : 'Ação',
 			name : 'acao',
-			width : 50,
+			width : 60,
 			sortable : true,
 			align : 'center'
 		}],
@@ -958,3 +1193,5 @@ $(function() {
 		height : 220
 	});
 }, BaseController);
+
+//@ sourceURL=vendaEncahe.js

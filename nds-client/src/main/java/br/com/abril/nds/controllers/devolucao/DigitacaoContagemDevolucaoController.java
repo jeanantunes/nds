@@ -91,7 +91,7 @@ public class DigitacaoContagemDevolucaoController  {
 		/**
 		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
 		 */
-		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
+		result.include(USUARIO_PERFIL_OPERADOR, isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
@@ -116,7 +116,7 @@ public class DigitacaoContagemDevolucaoController  {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe,String dataAte,Long idFornecedor,String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, String sortorder, String sortname, int page, int rp){
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
@@ -124,7 +124,7 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		PeriodoVO periodo =  obterPeriodoValidado(dataDe, dataAte);
 		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor);
+		FiltroDigitacaoContagemDevolucaoDTO filtro = new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -333,7 +333,7 @@ public class DigitacaoContagemDevolucaoController  {
 			digitacaoContagemDevolucaoVO.setNumeroEdicao(String.valueOf(dto.getNumeroEdicao()));
 			digitacaoContagemDevolucaoVO.setPrecoVenda(CurrencyUtil.formatarValor(dto.getPrecoVenda()));
 			digitacaoContagemDevolucaoVO.setQtdDevolucao(String.valueOf( (dto.getQtdDevolucao()==null)?BigDecimal.ZERO.intValue():dto.getQtdDevolucao().intValue()));
-			
+			digitacaoContagemDevolucaoVO.setDesconto(String.valueOf((dto.getDesconto()==null)?BigDecimal.ZERO.intValue():dto.getDesconto().intValue()));
 			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
 			
 			if(dto.getQtdNota()==null) {
@@ -343,6 +343,7 @@ public class DigitacaoContagemDevolucaoController  {
 			}
 			
 			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
+			digitacaoContagemDevolucaoVO.setValorTotalComDesconto(dto.getTotalComDesconto()==null ? "" : (CurrencyUtil.formatarValor(dto.getTotalComDesconto())));
 			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
@@ -505,12 +506,12 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		if (dataInicial == null || dataInicial.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo Período de é obrigatório");
+			mensagens.add("O preenchimento do campo Período [De] é obrigatório");
 		} 
 		
 		if (dataFinal == null || dataFinal.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo Até é obrigatório");
+			mensagens.add("O preenchimento do campo [Até] é obrigatório");
 		} 
 		
 		return mensagens;

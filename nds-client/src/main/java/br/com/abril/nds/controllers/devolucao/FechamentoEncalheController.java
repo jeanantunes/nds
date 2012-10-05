@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.AnaliticoEncalheVO;
+import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
@@ -91,9 +94,7 @@ public class FechamentoEncalheController {
 		filtro.setBoxId(boxId);
 		
 		if (aplicaRegraMudancaTipo){
-			if (boxId == null) {
-				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtro);
-			} else {
+			if (boxId != null) {
 				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
 				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 				fechamentoEncalheService.removeFechamentoDetalhado(filtroRevomecao);
@@ -384,7 +385,7 @@ public class FechamentoEncalheController {
 		filtro.setBoxId(boxId);
 		if (boxId == null){
 			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
-				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Você está tentando fazer uma pesquisa em modo consolidado (soma de todos os boxes). Já existem dados salvos em modo de pesquisa por box. Se você continuar, os dados serão sumarizados e não será possível desfazer a operação. Tem certeza que deseja continuar ?"), "result").recursive().serialize();
+				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Você está tentando fazer uma pesquisa em modo consolidado (soma de todos os boxes). Já existem dados salvos em modo de pesquisa por box. Não será possível realizar a pesquisa."), "result").recursive().serialize();
 			} else {
 				this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
 			}
@@ -419,4 +420,28 @@ public class FechamentoEncalheController {
 		}
 	}
 	
+	
+	//------------------
+	// Analítico Encalhe
+	//------------------
+	
+	@Path("/analitico")
+	public void analiticoEncalhe() {
+		this.index();
+	}
+	
+	
+	@Path("/pesquisarAnalitico.json")
+	public void pesquisarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+	
+		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro);
+		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
+		
+		for (AnaliticoEncalheDTO dto : listDTO) {
+			listVO.add(new AnaliticoEncalheVO(dto));
+		}
+		
+		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
+	}
+		
 }

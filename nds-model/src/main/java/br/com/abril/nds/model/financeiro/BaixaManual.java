@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
@@ -36,6 +37,10 @@ public class BaixaManual extends BaixaCobranca {
 	
 	@Column(name = "OBSERVACAO")
 	private String observacao;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "BANCO_ID")
+	private Banco banco;
 	
 	public Usuario getResponsavel() {
 		return responsavel;
@@ -83,6 +88,14 @@ public class BaixaManual extends BaixaCobranca {
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
+	}
+
+	public Banco getBanco() {
+		return banco;
+	}
+
+	public void setBanco(Banco banco) {
+		this.banco = banco;
 	}
 
 }
