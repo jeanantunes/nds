@@ -2,23 +2,22 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class AnaliticoEncalheDTO implements Serializable {
 
 	private static final long serialVersionUID = -2784902117985504916L;
 
-	private BigInteger numeroCota;
+	private Integer numeroCota;
 	private String nomeCota;
 	private String boxEncalhe;
 	private BigDecimal total;
 	private String statusCobranca;
 	
 	
-	public BigInteger getNumeroCota() {
+	public Integer getNumeroCota() {
 		return numeroCota;
 	}
-	public void setNumeroCota(BigInteger numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 	public String getNomeCota() {

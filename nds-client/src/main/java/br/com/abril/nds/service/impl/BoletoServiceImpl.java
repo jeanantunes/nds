@@ -183,6 +183,12 @@ public class BoletoServiceImpl implements BoletoService {
 		resumoBaixaBoletos.setValorTotalBancario(
 			this.boletoRepository.obterValorTotalBancario(data));
 		
+		List<ControleBaixaBancaria> listaControleBaixa =
+			this.controleBaixaRepository.obterListaControleBaixaBancaria(
+				data, StatusControle.CONCLUIDO_SUCESSO);
+		
+		boolean possuiDiversasBaixas = (listaControleBaixa.size() > 1);
+		
 		return resumoBaixaBoletos;
 	}
 	
@@ -1102,13 +1108,26 @@ public class BoletoServiceImpl implements BoletoService {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro) {
 
 		this.validarFiltroBaixaBoleto(filtro);
 		
 		return this.boletoRepository.obterBoletosRejeitados(filtro);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		this.validarFiltroBaixaBoleto(filtro);
+		
+		return this.boletoRepository.obterBoletosPrevistos(filtro);
+	}
+
 	private void validarFiltroBaixaBoleto(FiltroDetalheBaixaBoletoDTO filtro) {
 		
 		if (filtro == null) {
@@ -1121,4 +1140,57 @@ public class BoletoServiceImpl implements BoletoService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Uma data deve ser informada para a pesquisa.");
 		}
 	}
+
+	/**
+	 * Obtém lista de Inadimplentes por data de vencimento
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<DetalheBaixaBoletoDTO> obterInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		return this.boletoRepository.obterInadimplentesPorData(filtro);
+	}
+	
+	/**
+	 * Obtém lista de Baixados por data de vencimento
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<DetalheBaixaBoletoDTO> obterBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		return this.boletoRepository.obterBaixadosPorData(filtro);
+	}
+
+	/**
+	 * Obtém quantidade de Inadimplentes por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return Long
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Long obterQuantidadeInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		return this.boletoRepository.obterQuantidadeBoletosInadimplentes(filtro.getData());
+	}
+
+	/**
+	 * Obtém quantidade de Baixados por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return Long
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Long obterQuantidadeBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro) {
+
+		return this.boletoRepository.obterQuantidadeBoletosBaixados(filtro.getData());
+	}
+
 }

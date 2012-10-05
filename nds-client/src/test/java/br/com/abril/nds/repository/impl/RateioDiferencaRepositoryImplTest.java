@@ -90,7 +90,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(cfop);
 		
 		NotaFiscalEntrada notaFiscal = 
-				Fixture.notaFiscalEntradaFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, 
+				Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, 
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal);
 				
@@ -108,7 +108,7 @@ public class RateioDiferencaRepositoryImplTest extends AbstractRepositoryImplTes
 		save(itemNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = 
-				Fixture.notaFiscalEntradaFornecedor(cfop, pessoaJuridica, fornecedor, tipoNotaFiscal, 
+				Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, 
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscalFornecedor);
 		

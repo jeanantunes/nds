@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -8,31 +7,34 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
-import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
+import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
-import br.com.abril.nds.repository.ConsultaNFEEncalheTratamentoNotasRecebidasRepository;
+import br.com.abril.nds.repository.EntradaNFETerceirosRepository;
 
 @Repository
-public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends AbstractRepositoryModel<NotaFiscalEntrada, Long> implements
-		ConsultaNFEEncalheTratamentoNotasRecebidasRepository {
+public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<NotaFiscalEntrada, Long> implements
+		EntradaNFETerceirosRepository {
 
-	public ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl() {
+	public EntradaNFETerceirosRepositoryImpl() {
 		super(NotaFiscalEntrada.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaNFENotasRecebidasDTO> buscarNFNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro, String limitar) {
+	public List<ConsultaEntradaNFETerceirosDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT cota.numeroCota as numeroCota, ");
-		hql.append("pessoa.nome as nome, ");		
-		hql.append("notaCota.numero as numeroNfe, ");
-		hql.append("notaCota.serie as serie, ");
-		hql.append("notaCota.chaveAcesso as chaveAcesso ");
+		hql.append(" SELECT nota.numero as numeroNfe, ");
+		hql.append("        nota.serie as serie, ");
+		hql.append("        nota.chaveAcesso as chaveAcesso, ");
+		hql.append("        nota.dataEmissao as dataEmissao, ");
+		hql.append("        tipoNotaFiscal.nopDescricao as tipoNotaFiscal, ");
+		hql.append("        COALESCE(emitente.razaoSocial, emitente.nome) as nome, ");		
+		hql.append("        nota.valorBruto as valorNota, ");		
+		hql.append("        false as contemDiferenca ");
 		
 		hql.append(getSqlFromEWhereNotaEntrada(filtro));
 		
@@ -40,54 +42,57 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametros(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		buscarParametros(filtro, query);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ConsultaNFENotasRecebidasDTO.class));
+				ConsultaEntradaNFETerceirosDTO.class));
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		 
 		return query.list();
 	}
 	
-	private String getSqlFromEWhereNotaEntrada(FiltroConsultaNFEEncalheTratamento filtro) {
+	private String getSqlFromEWhereNotaEntrada(FiltroEntradaNFETerceiros filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 	
-		hql.append(" from NotaFiscalEntradaCota as notaCota ");
-		hql.append(" LEFT JOIN notaCota.cota as cota ");
-		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" FROM NotaFiscalEntrada as nota ");
+		hql.append(" LEFT JOIN nota.tipoNotaFiscal as tipoNotaFiscal ");
+		hql.append(" LEFT JOIN nota.cota as cota ");
+		hql.append(" LEFT JOIN nota.fornecedor as fornecedor ");
 		
 		boolean usarAnd = false;
 		
-		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("") ) {			
-			hql.append( (usarAnd ? " and ":" where ") +" cota.numeroCota = :numeroCota ");
+		if(filtro.getCota() != null) {			
+			hql.append( (usarAnd ? " and ":" where ") +" cota.id = :idCota ");
 			usarAnd = true;
 		}
-		if(filtro.getData() != null){
-			hql.append( (usarAnd ? " and ":" where ") +" date(notaCota.dataEmissao) = :data ");
+		
+		if(filtro.getFornecedor() != null) {			
+			hql.append( (usarAnd ? " and ":" where ") +" fornecedor.id = :idFornecedor ");
+			usarAnd = true;
+		}
+		
+		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
+			hql.append( (usarAnd ? " and ":" where ") +" date(notaCota.dataEmissao) between :dataInicial and :dataFinal ");
 			usarAnd = true;			
 		}
 
 		return hql.toString();
 	}
 	
-	private String getOrderBy(FiltroConsultaNFEEncalheTratamento filtro){
+	private String getOrderBy(FiltroEntradaNFETerceiros filtro){
 		
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
 		}
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by cota.numeroCota ");
+		hql.append(" order by nota.numero ");
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());
@@ -96,25 +101,29 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		return hql.toString();
 	}
 	
-	private HashMap<String,Object> buscarParametros(FiltroConsultaNFEEncalheTratamento filtro){
+	private void buscarParametros(FiltroEntradaNFETerceiros filtro, Query query){
 		
-		HashMap<String,Object> param = new HashMap<String, Object>();
-		
-		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("")) { 
-			param.put("numeroCota", Integer.parseInt(filtro.getCodigoCota()));
+		if(filtro.getCota() != null) { 
+			query.setParameter("idCota", filtro.getCota().getPessoa().getId());
 		}
-		if(filtro.getData() != null){
-			param.put("data", filtro.getData());
+
+		if(filtro.getFornecedor() != null) { 
+			query.setParameter("idFornecedor", filtro.getFornecedor().getJuridica().getId());
+		}
+
+		if(filtro.getDataInicial() != null && filtro.getDataFinal() != null){
+			query.setParameter("dataInicial", filtro.getDataInicial());
+			query.setParameter("dataFinal", filtro.getDataFinal());
 		}		
-		return param;
+
 	}
 
 	@Override
 	public Integer buscarTotalNotasRecebidas(
-			FiltroConsultaNFEEncalheTratamento filtro) {
+			FiltroEntradaNFETerceiros filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select count(cota) ");
+		hql.append(" select count(nota) ");
 		
 		if(filtro.getStatusNotaFiscalEntrada().name().equals("RECEBIDA")){
 			hql.append(getSqlFromEWhereNotaEntrada(filtro));			
@@ -124,11 +133,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametros(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}	
+		buscarParametros(filtro, query);
 		
 		Long totalRegistros = (Long) query.uniqueResult();
 		
@@ -138,7 +143,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaNFENotasPendentesDTO> buscarNFNotasPendentes(
-			FiltroConsultaNFEEncalheTratamento filtro, String limitar) {
+			FiltroEntradaNFETerceiros filtro, boolean limitar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -160,11 +165,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametros(filtro);
-		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		buscarParametros(filtro, query);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaNFENotasPendentesDTO.class));
@@ -172,14 +173,14 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar.equals("limitar")) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
 		 
 		return query.list();
 		 
 	}
 	
-	private String getSqlFromEWhereNotaPendente(FiltroConsultaNFEEncalheTratamento filtro) {
+	private String getSqlFromEWhereNotaPendente(FiltroEntradaNFETerceiros filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 	
@@ -200,17 +201,17 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 			hql.append(" and ((conf.qtdeInformada * conf.precoCapaInformado) -  (conf.qtde * conf.precoCapaInformado)) < 0 ");
 		}
 		
-		if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("") ) {			
+		/*if(filtro.getCodigoCota() != null && !filtro.getCodigoCota().equals("") ) {			
 			hql.append( " and cota.numeroCota = :numeroCota ");
 		}
 		if(filtro.getData() != null){
 			hql.append( " and date(notaCota.dataEmissao) = :data ");
-		}
+		}*/
 
 		return hql.toString();
 	}
 	
-	private String getOrderByNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro){
+	private String getOrderByNotasPendentes(FiltroEntradaNFETerceiros filtro){
 		
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
@@ -229,7 +230,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(
-			FiltroConsultaNFEEncalheTratamento filtro) {
+			FiltroEntradaNFETerceiros filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -250,7 +251,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append(getHqlFromEWhereItensPendentes(filtro));
 		
 		Query query =  getSession().createQuery(hql.toString());
-		query.setParameter("idNota", filtro.getCodigoNota());
+//		query.setParameter("idNota", filtro.getCodigoNota());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ItemNotaFiscalPendenteDTO.class));
@@ -265,7 +266,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		
 	}
 	
-	private String getHqlFromEWhereItensPendentes(FiltroConsultaNFEEncalheTratamento filtro) {
+	private String getHqlFromEWhereItensPendentes(FiltroEntradaNFETerceiros filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -297,7 +298,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 	}
 
 	@Override
-	public Integer buscarTodasItensPorNota(FiltroConsultaNFEEncalheTratamento filtro) {
+	public Integer buscarTodasItensPorNota(FiltroEntradaNFETerceiros filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select count(produto.codigo) ");		
@@ -305,7 +306,7 @@ public class ConsultaNFEEncalheTratamentoNotasRecebidasRepositoryImpl extends Ab
 		hql.append(getHqlFromEWhereItensPendentes(filtro));
 		
 		Query query =  getSession().createQuery(hql.toString());
-		query.setParameter("idNota", filtro.getCodigoNota());
+//		query.setParameter("idNota", filtro.getCodigoNota());
 		
 		Long totalRegistros = (Long) query.uniqueResult();
 		
