@@ -183,6 +183,12 @@ public class BoletoServiceImpl implements BoletoService {
 		resumoBaixaBoletos.setValorTotalBancario(
 			this.boletoRepository.obterValorTotalBancario(data));
 		
+		List<ControleBaixaBancaria> listaControleBaixa =
+			this.controleBaixaRepository.obterListaControleBaixaBancaria(
+				data, StatusControle.CONCLUIDO_SUCESSO);
+		
+		boolean possuiDiversasBaixas = (listaControleBaixa.size() > 1);
+		
 		return resumoBaixaBoletos;
 	}
 	
