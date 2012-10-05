@@ -1023,7 +1023,8 @@ var roteirizacao = $.extend(true, {
     ordemPdvChangeListener : function(element, idPdv) {
         var ordemAntiga = element.defaultValue;
         var ordem = $(element).val();
-        var param = [{name: 'idRota', value: roteirizacao.idRota},
+        var param = [{name: 'idRoteiro', value: roteirizacao.idRoteiro},
+            {name: 'idRota', value: roteirizacao.idRota},
             {name: 'idPdv', value: idPdv},
             {name: 'ordem',  value: ordem}];
 
@@ -2793,6 +2794,7 @@ var roteirizacao = $.extend(true, {
 
         rotaCopia.push({name:"rotaCopia.id" , value: $("#selectNovasRotas").val()});
         rotaCopia.push({name:"rotaCopia.nome" , value: $("#selectNovasRotas > option:selected").html()});
+        rotaCopia.push({name:"idRoteiro" , value: roteirizacao.idRoteiro});
 
         return rotaCopia;
 

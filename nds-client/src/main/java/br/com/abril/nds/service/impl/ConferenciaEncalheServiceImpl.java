@@ -1432,19 +1432,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			CFOP cfop = parametroEmissaoNF.getCfopDentroEstado();
 			
-			Pessoa pessoa = cota.getPessoa();
-			
-			if(pessoa instanceof PessoaFisica) {
-				throw new IllegalStateException("Cota emitente de nota fiscal deve ser pessoa física");
-			}
-
-			
 			notaFiscalEntradaCota.setCfop(cfop);
 			notaFiscalEntradaCota.setStatusEmissao(statusNF);
 			notaFiscalEntradaCota.setTipoNotaFiscal(tipoNF);
 			notaFiscalEntradaCota.setDataEmissao(dataCriacao);
 			notaFiscalEntradaCota.setDataExpedicao(dataCriacao);
-			notaFiscalEntradaCota.setEmitente((PessoaJuridica)pessoa);
+			notaFiscalEntradaCota.setCota(cota);
 			notaFiscalEntradaCota.setValorDesconto(BigDecimal.ZERO);
 			notaFiscalEntradaCota.setValorLiquido(notaFiscalEntradaCota.getValorProdutos());
 			notaFiscalEntradaCota.setValorBruto(notaFiscalEntradaCota.getValorProdutos());

@@ -1,9 +1,14 @@
 package br.com.abril.nds.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class DetalheBaixaBoletoDTO {
+import br.com.abril.nds.model.financeiro.StatusBaixa;
+
+public class DetalheBaixaBoletoDTO implements Serializable {
+
+	private static final long serialVersionUID = 5030190910098228087L;
 
 	private Integer numeroCota;
 	
@@ -79,8 +84,8 @@ public class DetalheBaixaBoletoDTO {
 	/**
 	 * @param numeroConta the numeroConta to set
 	 */
-	public void setNumeroConta(String numeroConta) {
-		this.numeroConta = numeroConta;
+	public void setNumeroConta(Long numeroConta) {
+		this.numeroConta = numeroConta.toString();
 	}
 
 	/**
@@ -163,8 +168,8 @@ public class DetalheBaixaBoletoDTO {
 	/**
 	 * @param motivoRejeitado the motivoRejeitado to set
 	 */
-	public void setMotivoRejeitado(String motivoRejeitado) {
-		this.motivoRejeitado = motivoRejeitado;
+	public void setMotivoRejeitado(StatusBaixa motivoRejeitado) {
+		this.motivoRejeitado = motivoRejeitado.getDescricao();
 	}
 
 	/**
@@ -177,8 +182,8 @@ public class DetalheBaixaBoletoDTO {
 	/**
 	 * @param motivoDivergencia the motivoDivergencia to set
 	 */
-	public void setMotivoDivergencia(String motivoDivergencia) {
-		this.motivoDivergencia = motivoDivergencia;
+	public void setMotivoDivergencia(StatusBaixa motivoDivergencia) {
+		this.motivoDivergencia = motivoDivergencia.getDescricao();
 	}
 	
 }
