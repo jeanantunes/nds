@@ -118,6 +118,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				tipoMovimentoEstoque, 
 				indPerfilUsuarioEncarregado);
 		
+		calcularTotalComDesconto(listaContagemDevolucao);
+		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
 		
 		BigDecimal valorTotalGeral = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(filtroPesquisa, tipoMovimentoEstoque);
@@ -131,6 +133,33 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	}
 	
+	private void calcularTotalComDesconto(
+			List<ContagemDevolucaoDTO> listaContagemDevolucao) {
+		
+		for(ContagemDevolucaoDTO contagemDevolucao : listaContagemDevolucao) {
+			
+			BigDecimal desconto = contagemDevolucao.getDesconto();
+			
+			BigDecimal precoVenda = contagemDevolucao.getPrecoVenda();
+			
+			BigDecimal quantidadeDevolucao = new BigDecimal(contagemDevolucao.getQtdDevolucao());
+				
+			BigDecimal total = precoVenda.multiply(quantidadeDevolucao);
+			
+			BigDecimal totalComDesconto = total;
+			
+			if (desconto != null) {	
+
+				totalComDesconto = total.subtract(total.multiply(desconto.divide(new BigDecimal(100))));
+			}
+
+			contagemDevolucao.setTotalComDesconto(totalComDesconto);
+			
+		}
+		
+	}
+
+
 	/**
 	 * Calcula dados adicionais.
 	 * 
