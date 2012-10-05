@@ -2482,8 +2482,8 @@ var roteirizacao = $.extend(true, {
                                     contextPath + '/cadastro/roteirizacao/transferirPDVs',
                                      params,
                                      function(result) {
+                                    	roteirizacao.popularGridCotasRota();
                                     	$("#dialog-transfere-cotas", roteirizacao.workspace).dialog("close");
-                                        roteirizacao.popularGridCotasRota();
                                      },
                                      null,
                                     true
