@@ -1615,13 +1615,39 @@ var baixaFinanceiraController = $.extend(true, {
 
 		$('#resultadoIntegracao', baixaFinanceiraController.workspace  ).show();
 
-		$("#quantidadePrevistos", baixaFinanceiraController.workspace 			  ).html(result.quantidadePrevisao);
-		$("#quantidadeLidos", baixaFinanceiraController.workspace				  ).html(result.quantidadeLidos);
-		$("#quantidadeBaixados", baixaFinanceiraController.workspace			  ).html(result.quantidadeBaixados);
-		$("#quantidadeRejeitados", baixaFinanceiraController.workspace			  ).html(result.quantidadeRejeitados);
-		$("#quantidadeBaixadosComDivergencia", baixaFinanceiraController.workspace).html(result.quantidadeBaixadosComDivergencia);
-		$("#quantidadeInadimplentes", baixaFinanceiraController.workspace         ).html(result.quantidadeInadimplentes);
-		$("#valorTotalBancario", baixaFinanceiraController.workspace              ).html(result.valorTotalBancario);
+		$("#quantidadePrevistos", baixaFinanceiraController.workspace).html(
+			result.quantidadePrevisao ? result.quantidadePrevisao : 0
+		);
+		$("#quantidadeLidos", baixaFinanceiraController.workspace).html(
+			result.quantidadeLidos ? result.quantidadeLidos : 0
+		);
+		$("#quantidadeBaixados", baixaFinanceiraController.workspace).html(
+			result.quantidadeBaixados ? result.quantidadeBaixados : 0
+		);
+		$("#quantidadeRejeitados", baixaFinanceiraController.workspace).html(
+			result.quantidadeRejeitados ? result.quantidadeRejeitados : 0
+		);
+		$("#quantidadeBaixadosComDivergencia", baixaFinanceiraController.workspace).html(
+			result.quantidadeBaixadosComDivergencia ? result.quantidadeBaixadosComDivergencia : 0
+		);
+		$("#quantidadeInadimplentes", baixaFinanceiraController.workspace).html(
+			result.quantidadeInadimplentes ? result.quantidadeInadimplentes : 0
+		);
+
+		var valorTotalBancario = result.valorTotalBancario ? result.valorTotalBancario : 0;
+		
+		$("#tdValorTotal", baixaFinanceiraController.workspace).html(
+			'<span id="valorTotalBancario">' + 
+				valorTotalBancario + 
+			'</span>'
+		);
+
+		if (result.possuiDiversasBaixas) {
+
+			$("#valorTotalBancario", baixaFinanceiraController.workspace).wrap(
+				'<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridTotalBancario();" />'
+			);
+		} 
 	}
 
 }, BaseController);

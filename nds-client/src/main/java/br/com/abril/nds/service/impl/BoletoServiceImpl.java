@@ -189,6 +189,8 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		boolean possuiDiversasBaixas = (listaControleBaixa.size() > 1);
 		
+		resumoBaixaBoletos.setPossuiDiversasBaixas(possuiDiversasBaixas);
+
 		return resumoBaixaBoletos;
 	}
 	
