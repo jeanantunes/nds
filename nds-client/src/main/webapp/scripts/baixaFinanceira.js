@@ -39,6 +39,70 @@ var baixaFinanceiraController = $.extend(true, {
 			$("#dataBaixa", baixaFinanceiraController.workspace).datepicker("getDate");
 		
 		$("#radioBaixaManual", baixaFinanceiraController.workspace).focus();
+		
+		baixaFinanceiraController.iniciarGridPrevisao();
+	},
+	
+	iniciarGridPrevisao : function() {
+		$(".previsaoGrid").flexigrid({
+			preProcess: baixaFinanceiraController.getDataFromResult,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nomeCota',
+				width : 145,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Banco',
+				name : 'nomeBanco',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Conta-Corrente',
+				name : 'numeroConta',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nosso Número',
+				name : 'nossoNumero',
+				width : 140,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'valorBoleto',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Data Vencimento',
+				name : 'dataVencimento',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "numeroCota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 750,
+			height : 220
+		});
+	},
+	
+	getDataFromResult : function() {
+		
 	},
 	
     //BAIXA MANUAL--------------------------------------
@@ -845,10 +909,37 @@ var baixaFinanceiraController = $.extend(true, {
 		$('#formBaixaAutomatica', baixaFinanceiraController.workspace).submit();
 	},
 	
-	
-	
-	
-	
+	mostrarGridBoletosPrevisao : function() {
+		
+		var dataHidden = $("#dataHidden", baixaFinanceiraController.workspace).val();
+		
+		$(".previsaoGrid", baixaFinanceiraController.workspace).flexOptions({
+			url: contextPath + "/financeiro/mostrarGridBoletosPrevisao",
+			onSuccess: baixaFinanceiraController.executarAposProcessamento,
+			params: [
+		         {name:'data', value: dataHidden}
+		    ],
+		});
+		
+		$(".previsaoGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-previsao").dialog({
+			resizable: false,
+			height:430,
+			width:800,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogPrevisaoBtnFechar",
+			    	text: "Fechar",
+			    	click: function() {
+						$(this).dialog("close");
+			    	}
+			    }
+			],
+			form: $("#dialog-previsao", baixaFinanceiraController.workspace).parents("form")
+		});
+	},
 	
 	replaceAll : function(string, token, newtoken) {
 		while (string.indexOf(token) != -1) {

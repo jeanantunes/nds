@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -32,14 +32,14 @@ public abstract class BaixaCobranca {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_BAIXA", nullable = false)
 	private Date dataBaixa;
 	
 	@Column(name = "VALOR_PAGO", nullable = false)
 	private BigDecimal valorPago;
 	
-	@ManyToOne(optional = true)
+	@OneToOne(optional = true)
 	@JoinColumn(name = "COBRANCA_ID")
 	private Cobranca cobranca;
 	
