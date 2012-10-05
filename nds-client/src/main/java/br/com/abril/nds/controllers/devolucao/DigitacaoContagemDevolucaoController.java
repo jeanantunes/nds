@@ -16,6 +16,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.client.vo.ResultadoDigitacaoContagemDevolucaoVO;
+import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -199,6 +200,29 @@ public class DigitacaoContagemDevolucaoController  {
 		FileExporter.to("digitacao-contagem-devolucao", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), filtro, info, info.getListaContagemDevolucao(),
 				ContagemDevolucaoDTO.class, this.httpResponse);
+		
+	}
+	
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException Exceção de E/S
+	 */
+	@Get
+	public void exportarCoferenciaCega(FileType fileType) throws IOException {
+
+		FiltroDigitacaoContagemDevolucaoDTO filtro = obterFiltroExportacao();
+
+		List<ContagemDevolucaoConferenciaCegaDTO> listConferenciaCega = contagemDevolucaoService
+				.obterInfoContagemDevolucaoCega(filtro, isPerfilUsuarioEncarregado());
+
+		FileExporter.to("digitacao-contagem-devolucao", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), filtro, null, listConferenciaCega,
+				ContagemDevolucaoConferenciaCegaDTO.class, this.httpResponse);
+		
+		result.nothing();
 		
 	}
 	
