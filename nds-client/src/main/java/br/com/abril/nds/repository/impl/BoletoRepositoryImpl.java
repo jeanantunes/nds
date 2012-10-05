@@ -210,9 +210,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select count(boleto) as quantidadePrevisao ");
-		hql.append(" from Boleto boleto ");
-		hql.append(" where boleto.dataVencimento >= :data ");
 		
+		hql.append(this.obterFromWhereBoletosPrevistos());
+
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
@@ -333,6 +333,16 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return hql.toString();
 	}
+	
+	private String obterFromWhereBoletosPrevistos() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from Boleto boleto ");
+		hql.append(" where boleto.dataVencimento >= :data ");
+		
+		return hql.toString();
+	}
 
 	private String obterOrdenacaoConsultaBaixaBoletos(OrdenacaoColunaDetalheBaixaBoleto ordenacao, String orderSort) {
 		
@@ -345,7 +355,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		return orderBy.toString();
 	}
-	
+
 	private Query obterQueryBoletosBaixadosComDivergencia(String hql, Date data) {
 
 		Query query = super.getSession().createQuery(hql.toString());
@@ -453,6 +463,34 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		}
 
 		Query query = obterQueryBoletosRejeitados(hql.toString(), filtro.getData());
+		
+		paginarConsultasBaixaBoleto(query, filtro);
+
+		return query.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select boleto.cota.numeroCota as numeroCota, ")
+  		   .append(" 		boleto.cota.pessoa.nome as nomeCota, ")
+  		   .append(" 		boleto.banco.nome as nomeBanco, ")
+		   .append(" 		concat(boleto.banco.conta, '-', boleto.banco.dvConta) as numeroConta, ")
+  		   .append(" 		boleto.nossoNumeroCompleto as nossoNumero, ")
+		   .append(" 		boleto.valor as valorBoleto, ")
+		   .append(" 		boleto.dataVencimento as dataVencimento ");
+
+		hql.append(this.obterFromWhereBoletosPrevistos());
+
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", filtro.getData());
 		
 		paginarConsultasBaixaBoleto(query, filtro);
 
