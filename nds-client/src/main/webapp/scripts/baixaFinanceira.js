@@ -1173,16 +1173,18 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	mostrarGridBoletosPrevisao : function() {
 		
-		var dataHidden = $("#dataHidden", baixaFinanceiraController.workspace).val();
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".previsaoGrid", baixaFinanceiraController.workspace).flexOptions({
 			url: contextPath + "/financeiro/mostrarGridBoletosPrevisao",
 			params: [
-		         {name:'data', value: dataHidden}
+		         {name:'data', value: dataBaixa}
 		    ],
 		});
 		
 		$(".previsaoGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-previsao").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-previsao").dialog({
 			resizable: false,
@@ -1204,16 +1206,18 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	mostrarGridBoletosBaixados : function() {
 		
-		var dataHidden = $("#dataHidden", baixaFinanceiraController.workspace).val();
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".boletoBaixadoGrid").flexOptions({
 			url: contextPath + "/financeiro/mostrarGridBoletosBaixados",
 			params: [
-		         {name:'data', value: dataHidden}
+		         {name:'data', value: dataBaixa}
 		    ],
 		});
 		
 		$(".boletoBaixadoGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-boletos-baixados").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-boletos-baixados").dialog({
 			resizable: false,
@@ -1235,16 +1239,18 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	mostrarGridBoletosRejeitados : function() {
 		
-		var dataHidden = $("#dataHidden", baixaFinanceiraController.workspace).val();
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".boletoRejeitadoGrid", baixaFinanceiraController.workspace).flexOptions({
 			url: contextPath + "/financeiro/mostrarGridBoletosRejeitados",
 			params: [
-		         {name:'data', value: dataHidden}
+		         {name:'data', value: dataBaixa}
 		    ],
 		});
 		
 		$(".boletoRejeitadoGrid", baixaFinanceiraController.workspace).flexReload();
+
+		$("#dialog-baixados-rejeitados").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-baixados-rejeitados").dialog({
 			resizable: false,
@@ -1266,16 +1272,18 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	mostrarGridBoletosBaixadosComDivergencia : function() {
 		
-		var dataHidden = $("#dataHidden", baixaFinanceiraController.workspace).val();
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".boletoDivergenciaGrid", baixaFinanceiraController.workspace).flexOptions({
 			url: contextPath + "/financeiro/mostrarGridBoletosBaixadosComDivergencia",
 			params: [
-		         {name:'data', value: dataHidden}
+		         {name:'data', value: dataBaixa}
 		    ],
 		});
 		
 		$(".boletoDivergenciaGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-baixados-divergentes").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-baixados-divergentes").dialog({
 			resizable: false,
@@ -1297,16 +1305,18 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	mostrarGridBoletosInadimplentes : function() {
 		
-		var dataHidden = $("#dataHidden", baixaFinanceiraController.workspace).val();
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".inadimplentesGrid", baixaFinanceiraController.workspace).flexOptions({
 			url: contextPath + "/financeiro/mostrarGridBoletosInadimplentes",
 			params: [
-		         {name:'data', value: dataHidden}
+		         {name:'data', value: dataBaixa}
 		    ],
 		});
 		
 		$(".inadimplentesGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-inadimplentes").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-inadimplentes").dialog({
 			resizable: false,
@@ -1328,16 +1338,18 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	mostrarGridTotalBancario : function() {
 		
-		var dataHidden = $("#dataHidden", baixaFinanceiraController.workspace).val();
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".totalGrid", baixaFinanceiraController.workspace).flexOptions({
 			url: contextPath + "/financeiro/mostrarGridTotalBancario",
 			params: [
-		         {name:'data', value: dataHidden}
+		         {name:'data', value: dataBaixa}
 		    ],
 		});
 		
 		$(".totalGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-total").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-total").dialog({
 			resizable: false,
