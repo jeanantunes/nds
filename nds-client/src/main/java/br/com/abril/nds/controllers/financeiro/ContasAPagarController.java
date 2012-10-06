@@ -1,9 +1,22 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
 
 /**
  * Classe responsável pelo controle das ações referentes à tela de Follow Up do
@@ -11,14 +24,57 @@ import br.com.caelum.vraptor.Resource;
  * 
  * @author InfoA2 - Alex
  */
+
 @Resource
-@Path("/contaAPagar")
+@Path("financeiro/contasAPagar")
 public class ContasAPagarController {
+	
+	@Autowired
+	private Result result;
+
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
+	
+	
+	public ContasAPagarController(Result result) {
+		super();
+		this.result = result;
+	}
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_FINANCEIRO_CONTAS_A_PAGAR)
 	public void index() {
+		
+		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(
+				true, SituacaoCadastro.ATIVO);
+		result.include("fornecedores", fornecedores);
+		
+		
+		
 	}
+	
+	@Path("/pesquisar.json")
+	public void pesquisar(FiltroContasAPagarDTO filtro){
+		System.out.println("teste");
+		
+	}
+	
+	@Path("/pesquisarProduto.json")
+	public void pesquisarProduto(FiltroContasAPagarDTO filtro){
+		System.out.println("teste");
+		
+		List<ProdutoEdicao> produtos = produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(filtro.getProduto());
+		
+		result.use(FlexiGridJson.class).from(produtos).total(produtos.size()).serialize();
+		
+		
+	}
+	
+	
+	
 	
 }
 
