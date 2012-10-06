@@ -144,6 +144,7 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * 
 	 * @return List<DetalheBaixaBoletoDTO> - Boletos previstos.
 	 */
+	
 	List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro);
 
 	/**
@@ -164,5 +165,14 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * 
 	 */
 	List<DetalheBaixaBoletoDTO> obterBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém os valores totais de boletos baixados de cada banco a partir de determinada data.
+	 * 
+	 * @param filtro - filtro indicando data para consulta e dados para paginação.
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO> - Total bancário.
+	 */
+	List<DetalheBaixaBoletoDTO> obterTotalBancario(FiltroDetalheBaixaBoletoDTO filtro);
 	
 }

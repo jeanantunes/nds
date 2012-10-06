@@ -3,12 +3,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
@@ -304,15 +306,20 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select sum(baixaCobranca.valorPago) as valorTotalBancario ");
-		hql.append(" from BaixaCobranca baixaCobranca ");
-		hql.append(" where baixaCobranca.dataBaixa = :data ");
-		hql.append(" and baixaCobranca.banco is not null ");
+		hql.append(this.obterFromWhereConsultaTotalBancario());
+		
+		Query query = this.obterQureryTotalBancario(data, hql);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+
+	private Query obterQureryTotalBancario(Date data, StringBuilder hql) {
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
 		
-		return (BigDecimal) query.uniqueResult();
+		return query;
 	}
 
 	private String obterFromWhereConsultaBaixaBoletos() {
@@ -333,6 +340,17 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from Boleto boleto ");
 		hql.append(" where boleto.dataVencimento >= :data ");
+		
+		return hql.toString();
+	}
+	
+	private String obterFromWhereConsultaTotalBancario() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from BaixaCobranca baixaCobranca ");
+		hql.append(" join baixaCobranca.banco banco ");
+		hql.append(" where baixaCobranca.dataBaixa = :data ");
 		
 		return hql.toString();
 	}
@@ -381,6 +399,26 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	}
 	
 	private void paginarConsultasBaixaBoleto(Query query, FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		if (filtro.getPaginacao() != null) {
+
+			PaginacaoVO paginacao = filtro.getPaginacao();
+
+			if (paginacao.getPosicaoInicial() != null) {
+			
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+
+			if (paginacao.getQtdResultadosPorPagina() != null) {
+				
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalheBaixaBoletoDTO.class));
+	}
+	
+	private void paginarConsultasTotalBancario(Query query, FiltroDetalheBaixaBoletoDTO filtro) {
 		
 		if (filtro.getPaginacao() != null) {
 
@@ -481,10 +519,17 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		hql.append(this.obterFromWhereBoletosPrevistos());
 
+		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
+
+			hql.append(obterOrdenacaoConsultaBaixaBoletos(
+				filtro.getOrdenacaoColuna(), filtro.getPaginacao().getSortOrder())
+			);
+		}
+
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", filtro.getData());
-		
+
 		paginarConsultasBaixaBoleto(query, filtro);
 		
 		return query.list();
@@ -625,4 +670,33 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		return query.list();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DetalheBaixaBoletoDTO> obterTotalBancario(FiltroDetalheBaixaBoletoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select banco.nome as nomeBanco, ")
+		   .append(" 		concat(banco.conta, '-', banco.dvConta) as numeroConta, ")
+  		   .append(" 		sum(baixaCobranca.valorPago) as valorPago ")
+  		   .append(this.obterFromWhereConsultaTotalBancario());
+
+		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
+
+			hql.append(
+				this.obterOrdenacaoConsultaBaixaBoletos(
+					filtro.getOrdenacaoColuna(), filtro.getPaginacao().getSortOrder()));
+		}
+		
+		Query query = this.obterQureryTotalBancario(filtro.getData(), hql);
+		
+		this.paginarConsultasTotalBancario(query, filtro);
+
+		return query.list();
+	}
+	
 }
