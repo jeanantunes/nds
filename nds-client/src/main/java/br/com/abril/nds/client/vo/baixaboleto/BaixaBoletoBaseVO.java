@@ -26,6 +26,24 @@ public class BaixaBoletoBaseVO implements Serializable {
 	@Export(label = "Valor R$", exhibitionOrder=0)
 	private BigDecimal valorBoleto;
 
+	private TipoBaixaBoleto tipoBaixaBoleto;
+
+	/**
+	 * Enum que define o tipo de baixa que será usado na exportação
+	 * 
+	 * @author Discover Technology
+	 *
+	 */
+	public enum TipoBaixaBoleto {
+
+		PREVISTOS,
+		BAIXADOS,
+		REJEITADOS,
+		DIVERGENTES,
+		INADIMPLENTES,
+		TOTAL_BANCARIO;
+	}
+	
 	/**
 	 * @return the nomeBanco
 	 */
@@ -66,5 +84,19 @@ public class BaixaBoletoBaseVO implements Serializable {
 	 */
 	public void setValorBoleto(BigDecimal valorBoleto) {
 		this.valorBoleto = valorBoleto;
+	}
+
+	/**
+	 * @return the tipoBaixaBoleto
+	 */
+	public TipoBaixaBoleto getTipoBaixaBoleto() {
+		return tipoBaixaBoleto;
+	}
+
+	/**
+	 * @param tipoBaixaBoleto the tipoBaixaBoleto to set
+	 */
+	public void setTipoBaixaBoleto(TipoBaixaBoleto tipoBaixaBoleto) {
+		this.tipoBaixaBoleto = tipoBaixaBoleto;
 	}
 }
