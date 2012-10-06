@@ -2483,7 +2483,11 @@ var roteirizacao = $.extend(true, {
                                      params,
                                      function(result) {
                                     	roteirizacao.popularGridCotasRota();
-                                    	$("#dialog-transfere-cotas", roteirizacao.workspace).dialog("close");
+                                         $("#dialog-transfere-cotas", roteirizacao.workspace).dialog("close");
+                                         if (result.tipoMensagem) {
+                                             exibirMensagemDialog(result.tipoMensagem, result.listaMensagens,'dialog-transfere-cotas');
+                                         }
+                                      
                                      },
                                      null,
                                     true

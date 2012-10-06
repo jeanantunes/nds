@@ -1230,6 +1230,7 @@ public class RoteirizacaoController {
         }
         RotaRoteirizacaoDTO rotaNova = roteiro.getRota(idRotaNova);
         rotaNova.addPdvsAposMaiorOrdem(pdvsTransferencia);
-	    result.nothing();
+        ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência realizada com sucesso!");
+        result.use(Results.json()).from(validacao, "result").recursive().serialize();
     }
 }
