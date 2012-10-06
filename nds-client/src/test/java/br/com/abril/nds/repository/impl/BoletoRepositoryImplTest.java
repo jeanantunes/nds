@@ -301,12 +301,12 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	@Test
 	public void obterQuantidadeBoletosRejeitados() {
 		
-		Long quantidadeBoletosBaixados =
+		Long quantidadeBoletosRejeitados =
 			this.boletoRepository.obterQuantidadeBoletosRejeitados(dataAtual);
 		
-		Assert.assertNotNull(quantidadeBoletosBaixados);
+		Assert.assertNotNull(quantidadeBoletosRejeitados);
 		
-		Assert.assertTrue(!quantidadeBoletosBaixados.equals(0L));
+		Assert.assertTrue(!quantidadeBoletosRejeitados.equals(0L));
 	}
 	
 	@Test
@@ -357,7 +357,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 				this.boletoRepository.obterBoletosBaixadosComDivergencia(filtro);
 		
 		Assert.assertNotNull(boletosDivergentes);
-		Assert.assertEquals(boletosDivergentes.size(), 1);
+		Assert.assertEquals(1, boletosDivergentes.size());
 		
 		DetalheBaixaBoletoDTO resultado = boletosDivergentes.get(0);
 		
@@ -365,5 +365,121 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
 		Assert.assertEquals(valorDiferencaCorreto, resultado.getValorDiferenca());
 	}
+	
+	@Test
+	public void obterBoletosRejeitados() {
 
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, null);
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.NOME_BANCO);
+		
+		List<DetalheBaixaBoletoDTO> boletosRejeitados =
+				this.boletoRepository.obterBoletosRejeitados(filtro);
+		
+		Assert.assertNotNull(boletosRejeitados);
+		Assert.assertEquals(1, boletosRejeitados.size());
+	}
+
+	@Test
+	public void obterBoletosPrevistos() {
+
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 3, "asc");
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.NOSSO_NUMERO);
+
+		List<DetalheBaixaBoletoDTO> boletosPrevistos =
+				this.boletoRepository.obterBoletosPrevistos(filtro);
+		
+		Assert.assertNotNull(boletosPrevistos);
+		Assert.assertEquals(3, boletosPrevistos.size());
+		
+		DetalheBaixaBoletoDTO detalheBaixaBoleto = boletosPrevistos.get(0);
+
+		DetalheBaixaBoletoDTO detalheBaixaBoleto1 = boletosPrevistos.get(1);
+		
+		DetalheBaixaBoletoDTO detalheBaixaBoleto2 = boletosPrevistos.get(2);
+		
+		boolean ordenacaoNossoNumero = detalheBaixaBoleto.getNossoNumero().compareTo(detalheBaixaBoleto1.getNossoNumero()) < 0;
+		
+		Assert.assertTrue(ordenacaoNossoNumero);
+		
+		ordenacaoNossoNumero = detalheBaixaBoleto1.getNossoNumero().compareTo(detalheBaixaBoleto2.getNossoNumero()) < 0;
+		
+		Assert.assertTrue(ordenacaoNossoNumero);
+	}
+
+	@Test
+	public void obterInadimplentesPorData(){
+		
+        FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.DATA_VENCIMENTO);
+		
+		List<DetalheBaixaBoletoDTO> inadimplentes = this.boletoRepository.obterInadimplentesPorData(filtro);
+		
+		Assert.assertNotNull(inadimplentes);
+	}
+	
+	@Test
+	public void obterQuantidadeInadimplentesPorData(){
+		
+		int qtdInadimplentes = this.boletoRepository.obterQuantidadeBoletosInadimplentes(dataAtual).intValue();
+		
+		Assert.assertTrue(qtdInadimplentes > 0);
+	}
+	
+	@Test
+	public void obterBaixadosPorData(){
+		
+        FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.DATA_VENCIMENTO);
+		
+		List<DetalheBaixaBoletoDTO> inadimplentes = this.boletoRepository.obterBaixadosPorData(filtro);
+		
+		Assert.assertNotNull(inadimplentes);
+	}
+	
+	@Test
+	public void obterQuantidadeBaixadosPorData(){
+		
+        int qtdBaixados = this.boletoRepository.obterQuantidadeBoletosBaixados(dataAtual).intValue();
+		
+		Assert.assertTrue(qtdBaixados > 0);
+	}
+	
+	@Test
+	public void obterTotalBancario() {
+
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, null);
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.NOME_BANCO);
+		
+		List<DetalheBaixaBoletoDTO> detalheValorTotalBancario =
+			this.boletoRepository.obterTotalBancario(filtro);
+		
+		Assert.assertNotNull(detalheValorTotalBancario);
+		Assert.assertEquals(1, detalheValorTotalBancario.size());
+	}
+	
 }

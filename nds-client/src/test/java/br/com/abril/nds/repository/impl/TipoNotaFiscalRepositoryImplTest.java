@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
@@ -32,9 +34,10 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 	
 	@Before
 	public void setup() {
+		TipoFornecedor tipoFornecedor = Fixture.tipoFornecedorPublicacao();
 		
-		PessoaJuridica pj = Fixture.juridicaFC();
-		save(pj);
+		Fornecedor fornecedor = Fixture.fornecedorFC(tipoFornecedor);
+		save(fornecedor);
 		
 		CFOP cfop  = Fixture.cfop5102();
 		save(cfop);
@@ -49,11 +52,11 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		notaFiscal.setSerie(serie);
 		notaFiscal.setDataEmissao(new Date());
 		notaFiscal.setDataExpedicao(new Date());
-		notaFiscal.setEmitente(pj);
 		notaFiscal.setOrigem(Origem.INTERFACE);
 		notaFiscal.setValorBruto(BigDecimal.TEN);
 		notaFiscal.setValorLiquido(BigDecimal.TEN);
 		notaFiscal.setValorDesconto(BigDecimal.TEN);
+		((NotaFiscalEntradaFornecedor)notaFiscal).setFornecedor(fornecedor);
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscal.setTipoNotaFiscal(tp);

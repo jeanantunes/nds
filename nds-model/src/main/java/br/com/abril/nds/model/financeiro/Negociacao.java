@@ -25,12 +25,12 @@ public class Negociacao {
 	@Column(name = "ID")
 	private Long id;
 	
-	@OneToOne
+	@OneToMany
 	@JoinColumn(name = "COBRANCA_ORIGINARIA_ID")
-	private Cobranca cobrancaOriginaria;
+	private List<Cobranca> cobrancasOriginarias;
 	
 	@OneToMany
-	private List<MovimentoFinanceiroCota> parcelas;
+	private List<ParcelaNegociacao> parcelas;
 	
 	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA")
 	private BigDecimal comissaoParaSaldoDivida;
@@ -56,19 +56,19 @@ public class Negociacao {
 		this.id = id;
 	}
 
-	public Cobranca getCobrancaOriginaria() {
-		return cobrancaOriginaria;
+	public List<Cobranca> getCobrancasOriginarias() {
+		return cobrancasOriginarias;
 	}
 
-	public void setCobrancaOriginaria(Cobranca cobrancaOriginaria) {
-		this.cobrancaOriginaria = cobrancaOriginaria;
+	public void setCobrancasOriginarias(List<Cobranca> cobrancasOriginarias) {
+		this.cobrancasOriginarias = cobrancasOriginarias;
 	}
 
-	public List<MovimentoFinanceiroCota> getParcelas() {
+	public List<ParcelaNegociacao> getParcelas() {
 		return parcelas;
 	}
 
-	public void setParcelas(List<MovimentoFinanceiroCota> parcelas) {
+	public void setParcelas(List<ParcelaNegociacao> parcelas) {
 		this.parcelas = parcelas;
 	}
 

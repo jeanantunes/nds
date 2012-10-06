@@ -107,10 +107,7 @@
 				</tr>
 				<tr>
 					<td align="left" class="linha_borda"><strong>Total Bancário:</strong></td>
-					<td align="right" class="linha_borda">
-						<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridTotalBancario();">
-							<span id="valorTotalBancario"></span>
-						</a>
+					<td align="right" class="linha_borda" id="tdValorTotal">
 					</td>
 				</tr>
 				<tr>

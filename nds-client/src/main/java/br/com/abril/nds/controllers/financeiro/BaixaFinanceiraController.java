@@ -22,7 +22,6 @@ import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
-import br.com.abril.nds.dto.DetalheBaixaBancoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
@@ -31,7 +30,6 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
-import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBancoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
@@ -246,6 +244,10 @@ public class BaixaFinanceiraController {
 		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
 	}
 
+	/**
+	 * Obtém lista de baixados na data de vencimento
+	 * @param data
+	 */
 	@Post
 	public void mostrarGridBoletosBaixados(Date data, String sortorder,
 			   							   String sortname, int page, int rp) {
@@ -254,10 +256,10 @@ public class BaixaFinanceiraController {
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
 		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.boletoService.obterBaixadosPorData(filtro);
 		
 		// TODO: realizar consulta total
-		int qtdeTotalRegistros = 0;
+		int qtdeTotalRegistros = this.boletoService.obterQuantidadeBaixadosPorData(filtro).intValue();
 		
 		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
 	}
@@ -294,6 +296,10 @@ public class BaixaFinanceiraController {
 		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
 	}
 	
+	/**
+	 * Obtém lista de inadimplentes na data de vencimento
+	 * @param data
+	 */
 	@Post
 	public void mostrarGridBoletosInadimplentes(Date data, String sortorder,
 			   									String sortname, int page, int rp) {
@@ -302,10 +308,10 @@ public class BaixaFinanceiraController {
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
 		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.boletoService.obterInadimplentesPorData(filtro);
 		
 		// TODO: realizar consulta total
-		int qtdeTotalRegistros = 0;
+		int qtdeTotalRegistros = this.boletoService.obterQuantidadeInadimplentesPorData(filtro).intValue();
 		
 		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
 	}
@@ -314,17 +320,17 @@ public class BaixaFinanceiraController {
 	public void mostrarGridTotalBancario(Date data, String sortorder,
 										 String sortname, int page, int rp) {
 		
-		FiltroDetalheBaixaBancoDTO filtro =
-			this.carregarFiltroDetalheBanco(data, sortorder, sortname, page, rp);
+		FiltroDetalheBaixaBoletoDTO filtro =
+			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
 		// TODO: realizar consulta
-		List<DetalheBaixaBancoDTO> listaDetalheBaixaBanco = this.getListaDetalheBaixaBancoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBanco = this.getListaDetalheBaixaBoletoMock();
 		
 		// TODO: realizar consulta total
 		int qtdeTotalRegistros = 0;
 		
-		TableModel<CellModelKeyValue<DetalheBaixaBancoDTO>> tableModel =
-			new TableModel<CellModelKeyValue<DetalheBaixaBancoDTO>>();
+		TableModel<CellModelKeyValue<DetalheBaixaBoletoDTO>> tableModel =
+			new TableModel<CellModelKeyValue<DetalheBaixaBoletoDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalheBaixaBanco));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
@@ -356,23 +362,7 @@ public class BaixaFinanceiraController {
 		return null;
 	}
 	
-	private FiltroDetalheBaixaBancoDTO carregarFiltroDetalheBanco(Date data, String sortorder,
-																  String sortname, int page,
-																  int rp) {
-
-		// TODO: montarFiltro
-
-		return null;
-	}
-	
 	private List<DetalheBaixaBoletoDTO> getListaDetalheBaixaBoletoMock() {
-		
-		// TODO criar lista Mock
-		
-		return null;
-	}
-	
-	private List<DetalheBaixaBancoDTO> getListaDetalheBaixaBancoMock() {
 		
 		// TODO criar lista Mock
 		
@@ -787,8 +777,11 @@ public class BaixaFinanceiraController {
 		if (tipoPagamento==null){
 			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Forma de Recebimento].");
 		}
+		
 		if(idBanco == null){
-			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Banco].");
+			if (!TipoCobranca.DINHEIRO.equals(tipoPagamento)&&!TipoCobranca.OUTROS.equals(tipoPagamento)){
+			    throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Banco].");
+		    }
 		}
 		
 		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
@@ -802,7 +795,7 @@ public class BaixaFinanceiraController {
 		pagamento.setObservacoes(observacoes);
 		pagamento.setDataPagamento(this.distribuidorService.obter().getDataOperacao());
 		pagamento.setUsuario(this.obterUsuario());
-		pagamento.setBanco(bancoService.obterBancoPorId(idBanco));
+		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		
 		try{
 		    this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);

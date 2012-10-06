@@ -50,7 +50,7 @@ $(function(){
 				    <td >Fornecedor:</td>
 				    <td width="230">
 				    <select name="idFornecedor" id="idFornecedor" style="width:200px;">
-				      <option value="-1"  selected="selected">Todos</option>
+				      <option value=""  selected="selected">Todos</option>
 				      <c:forEach items="${listaFornecedores}" var="fornecedor">
 				      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
 				      </c:forEach>
@@ -115,10 +115,10 @@ $(function(){
 							</a>
 							</span>
 							
-							<span id="btnConfirmar" class="bt_confirmar_novo" title="Devolução Parcial"> 
+							<span id="btnConfirmar" class="bt_novos" title="Devolução Parcial"> 
 							<a href="javascript:digitacaoContagemDevolucaoController.popupConfirmar();"> 
 								<img border="0" hspace="5" alt="Confirmar"
-								src="${pageContext.request.contextPath}/images/ico_check.gif">
+								src="${pageContext.request.contextPath}//images/bt_expedicao.png" hspace="5" border="0">
 							Devolução Parcial
 							</a> 
 							</span>
@@ -147,7 +147,7 @@ $(function(){
 							</span>
 							
 							<span class="bt_novos" title="Imprimir Conferência Cega">
-							<a href="javascript:;">
+							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportarCoferenciaCega?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
 							Conferência Cega
 							</a>
@@ -163,7 +163,7 @@ $(function(){
 						</td>
 					<td width="18%">
 						<span id="bt_sellAll" class="bt_sellAll">
-							<label for="sel">Selecionar Todos</label> 
+							<label for="sel" style="margin-right:15px;">Selecionar Todos</label> 
 							<input type="checkbox" name="Todos" id="sel" onclick="digitacaoContagemDevolucaoController.checkAllReplicarValor(this, 'checkgroup');"
 							style="float: left;" /> 
 						</span>

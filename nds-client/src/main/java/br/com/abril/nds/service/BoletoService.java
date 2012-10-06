@@ -53,11 +53,66 @@ public interface BoletoService {
 	void incrementarVia(String... nossoNumero);
 	
 	/**
-	 * Obtém os boletos que foram baixados com divergência por data e/ou valor e determinada data.
+	 * Obtém os boletos que foram baixados com divergência por data e/ou valor em determinada data.
 	 * 
 	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
 	 * 
 	 * @return List<DetalheBaixaBoletoDTO> - Boletos baixados com divergência de data e/ou valor.
 	 */
 	List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro);
+	
+    /**
+	 * Obtém os boletos que foram rejeitados na baixa em determinada data.
+	 * 
+	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO> - Boletos rejeitados.
+	 */
+	List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém os boletos previstos para baixa a partir de determinada data.
+	 * 
+	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO> - Boletos previstos.
+	 */
+	List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro);
+    
+    /**
+	 * Obtém lista de Inadimplentes por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	public List<DetalheBaixaBoletoDTO> obterInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém lista de Baixados por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO>
+	 */
+	public List<DetalheBaixaBoletoDTO> obterBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém quantidade de Inadimplentes por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return Long
+	 */
+	public Long obterQuantidadeInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém quantidade de Baixados por data de vencimento
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return Long
+	 */
+	public Long obterQuantidadeBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro);
+
 }

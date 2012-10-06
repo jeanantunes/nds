@@ -51,6 +51,7 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -164,23 +165,9 @@ public class RoteirizacaoController {
 	
 	@Path("/iniciaTelaRoteiro")
 	public void iniciaTelaRoteiro() {
-		Integer ordem = roteirizacaoService.buscarMaiorOrdemRoteiro();
-		
-		if (ordem == null){
-			
-			ordem = 0;
-		}
-		
+		RoteirizacaoDTO roteirizacao = getDTO();
+	    Integer ordem = roteirizacao.getMaiorOrdemRoteiro();
 		ordem++;
-		
-		for (RoteiroRoteirizacaoDTO dto : this.getDTO().getRoteiros()){
-			
-			if (ordem <= dto.getOrdem()){
-				
-				ordem = dto.getOrdem() + 1;
-			}
-		}
-		
 		result.use(Results.json()).from(ordem).recursive().serialize();
 	}
 	
@@ -189,12 +176,12 @@ public class RoteirizacaoController {
 		List<String> mensagens = new ArrayList<String>();
 		
 		if(ordem == null){
-			
 			mensagens.add("O campo Ordem é obrigatório.");
-		}
+		} else if (ordem <= 0) {
+		    mensagens.add("O campo Ordem deve ser maior que 0");
+		} 
 		
-		if(nome == null || nome.isEmpty()){
-		
+		if(StringUtil.isEmpty(nome)){
 			mensagens.add("O campo Nome é obrigatório.");
 		}
 		
@@ -282,23 +269,10 @@ public class RoteirizacaoController {
 	
 	@Path("/iniciaTelaRota")
 	public void iniciaTelaRota(Long idRoteiro) {
-		Integer ordem = roteirizacaoService.buscarMaiorOrdemRota(idRoteiro);
-		
-		if (ordem == null){
-			
-			ordem = 0;
-		}
-		
+		RoteirizacaoDTO roteirizacao = getDTO();
+		RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+	    int ordem = roteiro.getMaiorOrdemRota();
 		ordem++;
-		
-		for (RotaRoteirizacaoDTO dto : this.getDTO().getRoteiro(idRoteiro).getRotas()){
-			
-			if (ordem <= dto.getOrdem()){
-				
-				ordem = dto.getOrdem() + 1;
-			}
-		}
-		
 		result.use(Results.json()).from(ordem).recursive().serialize();
 	}
 	
@@ -309,7 +283,9 @@ public class RoteirizacaoController {
 		if(ordem == null){
 			
 			mensagens.add("O campo Ordem é obrigatório.");
-		}
+		} else if (ordem <= 0) {
+            mensagens.add("O campo Ordem deve ser maior que 0");
+        } 
 		
 		if(nome == null || nome.isEmpty()){
 			
@@ -1105,7 +1081,7 @@ public class RoteirizacaoController {
 		this.getDTO().addRoteiro(new RoteiroRoteirizacaoDTO(novoId, ordem, nome));
 	}
 	
-	private void adicionarRota(Long roteiroId, Integer ordem, String nome){
+	private RotaRoteirizacaoDTO adicionarRota(Long roteiroId, Integer ordem, String nome){
 		
 		List<RotaRoteirizacaoDTO> rotasDto = this.getDTO().getRoteiro(roteiroId).getRotas();
 		
@@ -1119,7 +1095,9 @@ public class RoteirizacaoController {
 			}
 		}
 		
-		this.getDTO().getRoteiro(roteiroId).addRota(new RotaRoteirizacaoDTO(novoId, ordem, nome));
+		RotaRoteirizacaoDTO rota = new RotaRoteirizacaoDTO(novoId, ordem, nome);
+        this.getDTO().getRoteiro(roteiroId).addRota(rota);
+        return rota;
 	}
 	
 	@Post
@@ -1146,6 +1124,13 @@ public class RoteirizacaoController {
 		
 		this.result.use(Results.json()).from(this.getDTO().getRoteiros(), "result").serialize();
 	}
+	
+	@Post
+    public void carregarRotasTransferenciaPDV(Long idRoteiro){
+	    RoteirizacaoDTO roteirizacao = getDTO();
+        RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+        this.result.use(Results.json()).from(roteiro.getRotas(), "result").serialize();
+    }
 	
 	@Post
 	public void transferirRoteiro(Long idBoxAnterior, Long idRoteiro, Long idBoxNovo){
@@ -1226,11 +1211,28 @@ public class RoteirizacaoController {
 			roteiroDTO = this.getDTO().getRoteiro(idRoteiroNovo);
 			
 			if (roteiroDTO != null){
-				
-				roteiroDTO.addRota(rotaDTO);
+			    RotaRoteirizacaoDTO transferida = adicionarRota(idRoteiroNovo, rotaDTO.getOrdem(), rotaDTO.getNome());
+			    transferida.addAllPdv(rotaDTO.getPdvs());
 			}
 		}
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
+	
+	@Post
+    public void transferirPDVs(Long idRoteiro, Long idRotaAnterior, Long idRotaNova, List<Long> pdvs){
+        RoteirizacaoDTO roteirizacao = getDTO();
+        RoteiroRoteirizacaoDTO roteiro = roteirizacao.getRoteiro(idRoteiro);
+        RotaRoteirizacaoDTO rotaAnterior = roteiro.getRota(idRotaAnterior);
+        List<PdvRoteirizacaoDTO> pdvsTransferencia = new ArrayList<PdvRoteirizacaoDTO>(pdvs.size());
+        for (Long idPdv : pdvs) {
+            PdvRoteirizacaoDTO pdv = rotaAnterior.getPdv(idPdv);
+            pdvsTransferencia.add(pdv);
+            rotaAnterior.removerPdv(idPdv);
+        }
+        RotaRoteirizacaoDTO rotaNova = roteiro.getRota(idRotaNova);
+        rotaNova.addPdvsAposMaiorOrdem(pdvsTransferencia);
+        ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência realizada com sucesso!");
+        result.use(Results.json()).from(validacao, "result").recursive().serialize();
+    }
 }

@@ -974,9 +974,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			query = getSession().createQuery(hql.toString()).setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
 		}
 		
-		query.setParameter("dataInicial", filtro.getPeriodo().getDataInicial());
+		query.setParameter("dataInicial", filtro.getPeriodo().getDe());
 		
-		query.setParameter("dataFinal", filtro.getPeriodo().getDataFinal());
+		query.setParameter("dataFinal", filtro.getPeriodo().getAte());
 		
 		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
 		
@@ -1133,9 +1133,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		Query query = getSession().createQuery(hql.toString());
 
-		query.setParameter("dataInicial", filtro.getPeriodo().getDataInicial());
+		query.setParameter("dataInicial", filtro.getPeriodo().getDe());
 		
-		query.setParameter("dataFinal", filtro.getPeriodo().getDataFinal());
+		query.setParameter("dataFinal", filtro.getPeriodo().getAte());
 
 		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
 		

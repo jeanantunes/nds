@@ -36,8 +36,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			if (digitacaoContagemDevolucaoController.isRoleOperador(userProfileOperador)){
 				
 				//Oculta os campos que não serão visíveis pelo perfil de usuário Operador
-				$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
-				$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
+				//$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
+				//$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
 			}
 			
 			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
@@ -107,13 +107,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var idInput = "valorExemplarNota" + index ;
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
 				
 				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="ContagemDevolucao.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
 					
-					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="ContagemDevolucao.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
+					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="digitacaoContagemDevolucaoController.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
 					
 					//Altera cor do valor da quantidade, caso seja um valo negativo
 					if(row.cell.diferenca < 0){
@@ -291,12 +291,12 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			var listaDigitacaoContagemDevolucao = "";
 			
 			//Verifica o role do usuario para obter o indice da coluna com os valores do exemplar nota
-			var indexColunaExemplarNota = (digitacaoContagemDevolucaoController.isRoleOperador())?4:6;
+			var indexColunaExemplarNota = (digitacaoContagemDevolucaoController.isRoleOperador())?5:7;
 			
 			$.each(linhasDaGrid, function(index, value) {
 
 				var linha = $(value);
-				
+			
 				var colunaCodigoProduto = linha.find("td")[0];
 				var colunaNumeroEdicao = linha.find("td")[2];
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
@@ -371,27 +371,33 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 120,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoVenda',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Exemplar Devolução',
 				name : 'qtdDevolucao',
-				width : 120,
+				width : 110,
 				sortable : true,
 				align : 'center'
+			}, {
+				display : 'Total c/ Desc.R$',
+				name : 'valorTotalComDesconto',
+				width : 100,
+				sortable : false,
+				align : 'right'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotal',
@@ -401,19 +407,19 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Exemplar Nota',
 				name : 'qtdNota',
-				width : 110,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
-				width : 80,
+				width : 60,
 				sortable : false,
 				align : 'center'
 			},{
 				display : 'Replicar Qtde',
 				name : 'replicarQtde',
-				width : 80,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}];
