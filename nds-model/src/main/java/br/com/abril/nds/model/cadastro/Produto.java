@@ -64,7 +64,7 @@ public class Produto implements Serializable {
 	@Column(name = "ORIGEM")
 	private Origem origem;
 	
-	@ManyToOne(fetch=FetchType.LAZY, optional = false)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_PRODUTO_ID")
 	private TipoProduto tipoProduto;
 	
@@ -82,7 +82,7 @@ public class Produto implements Serializable {
 	/**
 	 * Editor do produto
 	 */
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "EDITOR_ID")
 	private Editor editor;
 	
@@ -137,7 +137,7 @@ public class Produto implements Serializable {
 	@Column(name = "PERC_LIMITE_REPARTE_FIXACAO", nullable = true)
 	private Double percentualLimiteReparteFixacao;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional = true)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ALGORITMO_ID")
 	private Algoritmo algoritmo;
 
