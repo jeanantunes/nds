@@ -112,6 +112,8 @@ public class TipoDescontoCotaController {
 			}
 		});
 		
+		thread.setName("Desconto Geral");
+		
 		thread.setPriority(Thread.MIN_PRIORITY);
 		
 		thread.start();
@@ -137,12 +139,14 @@ public class TipoDescontoCotaController {
 					VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
 				}
 				
-				VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
+				VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
 				VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(false);
 			
 			}
 		});
 		
+		thread.setName("Desconto Especifico (Cota)");
+
 		thread.setPriority(Thread.MIN_PRIORITY);
 		
 		thread.start();
@@ -170,7 +174,7 @@ public class TipoDescontoCotaController {
 					VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
 				}
 				
-				VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
+				VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
 				VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(false);
 			
 			}
@@ -178,14 +182,13 @@ public class TipoDescontoCotaController {
 		
 		thread.setPriority(Thread.MIN_PRIORITY);
 		
+		thread.setName("Desconto Produto");
+		
 		thread.start();
 
-		//result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
-		
-		
 
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
+		//this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
 	
 	@Path("/pesquisarDescontoGeral")

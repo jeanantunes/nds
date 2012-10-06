@@ -398,7 +398,7 @@ public class DescontoServiceImpl implements DescontoService {
 		Set<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.filtrarDescontoProdutoEdicaoPorCota(cota, fornecedores);
 
 		for (Fornecedor fornecedor : fornecedores) {
-			this.descontoComponent.persistirDesconto(TipoDesconto.GERAL, fornecedor, cota, produtosEdicao, valorDesconto, null);
+			this.descontoComponent.persistirDesconto(TipoDesconto.ESPECIFICO, fornecedor, cota, produtosEdicao, valorDesconto, null);
 		}
 
 		/*Set<Cota> cotas = new HashSet<Cota>();
@@ -439,7 +439,7 @@ public class DescontoServiceImpl implements DescontoService {
 				}
 				
 				for (Cota cota : cotas) {
-					this.descontoComponent.persistirDesconto(TipoDesconto.GERAL, fornecedor, cota, produtos, valorDesconto, null);
+					this.descontoComponent.persistirDesconto(TipoDesconto.PRODUTO, fornecedor, cota, produtos, valorDesconto, null);
 				}
 				
 			}

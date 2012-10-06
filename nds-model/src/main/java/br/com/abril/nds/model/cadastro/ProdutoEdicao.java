@@ -95,7 +95,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "BOLETIM_INFORMATIVO", nullable = true, length=2048)
 	protected String boletimInformativo;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch=FetchType.LAZY)
 	@JoinColumn(name = "PRODUTO_ID")
 	protected Produto produto;
 	

@@ -274,4 +274,4 @@ var descontoProdutoController = $.extend(true,{
 	},
 	
 }, BaseController);
-	
+//@ sourceURL=cadastroTipoDescontoProduto.js
