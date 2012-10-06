@@ -158,7 +158,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			
 		}
 		
-		
 		return cegaDTOs;	
 	}
 	
