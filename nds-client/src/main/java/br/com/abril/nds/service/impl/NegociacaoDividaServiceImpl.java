@@ -101,7 +101,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 
 	@Override
 	@Transactional
-	public byte[] criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, Long idCobrancaOriginaria, 
+	public byte[] criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancasOriginarias, 
 			Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
 			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca,
 			boolean gerarBoleto) {
@@ -130,18 +130,26 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			}
 		}
 		
+		List<Cobranca> cobrancasOriginarias = new ArrayList<Cobranca>();
+		
 		//Cobrança da onde se originou a negociação
-		Cobranca cobrancaOriginaria = null;
-		if (idCobrancaOriginaria == null){
+		for (Long idCobranca : idsCobrancasOriginarias){
 			
-			msgs.add("Cobrança originária não encontrada.");
-		} else {
-			
-			cobrancaOriginaria = this.cobrancaRepository.buscarPorId(idCobrancaOriginaria);
+			Cobranca cobrancaOriginaria = this.cobrancaRepository.buscarPorId(idCobranca);
 			
 			if (cobrancaOriginaria == null){
 				
-				msgs.add("Cobrança originária não encontrada.");
+				msgs.add("Cobrança de ID "+ idCobranca +" não encontrada.");
+			} else {
+			
+				//Cobrança original deve ter seu status modificado para pago
+				//e sua divida deve ter seus status modificado para negociada
+				cobrancaOriginaria.setStatusCobranca(StatusCobranca.PAGO);
+				cobrancaOriginaria.getDivida().setStatus(StatusDivida.NEGOCIADA);
+				this.dividaRepository.merge(cobrancaOriginaria.getDivida());
+				this.cobrancaRepository.merge(cobrancaOriginaria);
+				
+				cobrancasOriginarias.add(cobrancaOriginaria);
 			}
 		}
 		
@@ -149,11 +157,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
-		
-		//Cobrança original deve ter seu status modificado para pago
-		//e sua divida deve ter seus status modificado para negociada
-		cobrancaOriginaria.setStatusCobranca(StatusCobranca.PAGO);
-		cobrancaOriginaria.getDivida().setStatus(StatusDivida.NEGOCIADA);
 		
 		//Cria um tipo de movimento para a negociação
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
@@ -169,7 +172,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		//será insumo para próxima geração de cobrança
 		for (ParcelaNegociacao parcelaNegociacao : parcelas){
 			
-			parcelaNegociacao.getMovimentoFinanceiroCota().setCota(cobrancaOriginaria.getCota());
+			parcelaNegociacao.getMovimentoFinanceiroCota().setCota(cota);
 			parcelaNegociacao.getMovimentoFinanceiroCota().setUsuario(usuarioResponsavel);
 			parcelaNegociacao.getMovimentoFinanceiroCota().setData(dataAtual);
 			parcelaNegociacao.getMovimentoFinanceiroCota().setDataCriacao(dataAtual);
@@ -182,10 +185,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			this.movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
 			this.parcelaNegociacaoRepository.adicionar(parcelaNegociacao);
 		}
-		
-		this.dividaRepository.merge(cobrancaOriginaria.getDivida());
-		this.cobrancaRepository.merge(cobrancaOriginaria);
-		this.formaCobrancaRepository.adicionar(formaCobranca);
 		
 		String nossoNumeroPrimieroBoleto = null;
 		
@@ -240,6 +239,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 					break;
 				}
 				
+				cobranca.setCota(cota);
+				cobranca.setBanco(formaCobranca.getBanco());
 				cobranca.setDivida(divida);
 				cobranca.setDataEmissao(dataAtual);
 				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
@@ -250,7 +251,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 								numeroCota, 
 								dataAtual, 
 								formaCobranca.getBanco().getNumeroBanco(), 
-								0L, 
+								null, 
 								parcelaNegociacao.getMovimentoFinanceiroCota().getId()));
 				
 				this.dividaRepository.adicionar(divida);
@@ -263,10 +264,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			}
 		}
 		
+		this.formaCobrancaRepository.adicionar(formaCobranca);
+		
 		//cria registro da negociação
 		Negociacao negociacao = new Negociacao();
 		negociacao.setAtivarCotaAposParcela(ativarCotaAposParcela);
-		negociacao.setCobrancaOriginaria(cobrancaOriginaria);
+		negociacao.setCobrancasOriginarias(cobrancasOriginarias);
 		negociacao.setComissaoParaSaldoDivida(comissaoParaSaldoDivida);
 		negociacao.setIsentaEncargos(isentaEncargos);
 		negociacao.setNegociacaoAvulsa(negociacaoAvulsa);
