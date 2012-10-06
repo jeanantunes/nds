@@ -946,7 +946,7 @@ var roteirizacao = $.extend(true, {
                     var id = value.cell.id;
                     var selecione = '<input type="checkbox" class="checkboxCotasRota" onclick="roteirizacao.selecaoCota();" name="checkboxCotasRota" value="'+ id +'"/>';
                     value.cell.selecione = selecione;
-                    var ordem = '<input type="text" onchange="roteirizacao.ordemPdvChangeListener(this, \''+ id + '\');" class="inputGridCotasRota" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
+                    var ordem = '<input type="text"  class="inputOrdemCotasRota" onchange="roteirizacao.ordemPdvChangeListener(this, \''+ id + '\');" class="inputGridCotasRota" value="'+ value.cell.ordem  +'" style="width:30px; text-align:center;">';
                     value.cell.ordem = ordem;
                 });
                 return data;
@@ -1005,6 +1005,9 @@ var roteirizacao = $.extend(true, {
                     {name:'idRota', value: roteirizacao.idRota}
                 ]});
                 return true;
+            },
+            onSuccess : function() {
+               $('.inputOrdemCotasRota', roteirizacao.workspace).numeric();
             },
             width : 875,
             height : 150
@@ -2424,10 +2427,81 @@ var roteirizacao = $.extend(true, {
     },
 
     popup_tranferir : function(){
-
         if (roteirizacao.isTransferenciaCota()){
+            roteirizacao.obterDadoPDVsSelecionados();
+            if (roteirizacao.pdvsSelecionados.length == 0 ) {
+                exibirMensagemDialog("WARNING", ["Selecione pelo menos um PDV para transferência!"]);
+                return;
+            }
+            $.postJSON(
+                contextPath + '/cadastro/roteirizacao/carregarRotasTransferenciaPDV',
+                [{name: 'idRoteiro', value: roteirizacao.idRoteiro}],
+                function(result) {
 
+                    $("#nomeRotaAtual").val(roteirizacao.nomeRota);
 
+                    $("#cotasParaTransferenciaGrid", roteirizacao.workspace).html(
+                        '<tr class="header_table"><td width="85">Cota</td><td width="255">Nome</td></tr>'
+                    );
+
+                    $.each(roteirizacao.pdvsSelecionados, function(index, value) {
+
+                        var tdNomeCota = "<td> " + value.nome + " </td>";
+                        var tdNumeroCota = "<td> " + value.cota + "</td>";
+
+                        var trClass = index % 2 == 0 ? "<tr class='class_linha_1'>" : "<tr class='class_linha_2'>";
+                        var linha = trClass + tdNumeroCota + tdNomeCota + "</tr>";
+
+                        $("#cotasParaTransferenciaGrid", roteirizacao.workspace).append(linha);
+                    });
+
+                    var opts = '';
+                    $("#selectNovaRota", roteirizacao.workspace).html(opts);
+
+                    $.each(result, function(index, value){
+                        opts += "<option value='"+ value.id +"'>" + value.nome + "</option>";
+                    });
+
+                    $("#selectNovaRota", roteirizacao.workspace).append(opts);
+
+                    $("#dialog-transfere-cotas", roteirizacao.workspace).dialog({
+                        resizable: false,
+                        height:'auto',
+                        width:420,
+                        modal: true,
+                        buttons: {
+                            "Confirmar": function() {
+                                var params = [{name: 'idRotaAnterior', value: roteirizacao.idRota},
+                                    {name: 'idRoteiro', value: roteirizacao.idRoteiro},
+                                    {name: 'idRotaNova', value: $("#selectNovaRota", roteirizacao.workspace).val()}];
+                                $('input:checkbox[name=checkboxCotasRota]:checked', roteirizacao.workspace).each(function() {
+                                    params.push({name: 'pdvs', value: $(this).val()});
+                                });
+
+                                $.postJSON(
+                                    contextPath + '/cadastro/roteirizacao/transferirPDVs',
+                                     params,
+                                     function(result) {
+                                    	roteirizacao.popularGridCotasRota();
+                                         $("#dialog-transfere-cotas", roteirizacao.workspace).dialog("close");
+                                         if (result.tipoMensagem) {
+                                             exibirMensagemDialog(result.tipoMensagem, result.listaMensagens,'dialog-transfere-cotas');
+                                         }
+                                      
+                                     },
+                                     null,
+                                    true
+                                );
+                            },
+                            "Cancelar": function() {
+                                $("#dialog-transfere-cotas", roteirizacao.workspace).dialog("close");
+                            }
+                        },
+                        form: $("#dialog-transfere-cotas", roteirizacao.workspace).parents("form")
+                });
+              },
+              null,
+              true);
         } else if (roteirizacao.isTransferenciaRota()){
 
             $("#nomeRoteiroAtual").val(roteirizacao.nomeRoteiro);
