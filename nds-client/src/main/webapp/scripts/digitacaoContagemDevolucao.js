@@ -107,13 +107,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var idInput = "valorExemplarNota" + index ;
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
 				
 				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="ContagemDevolucao.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
 					
-					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="ContagemDevolucao.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
+					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="digitacaoContagemDevolucaoController.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
 					
 					//Altera cor do valor da quantidade, caso seja um valo negativo
 					if(row.cell.diferenca < 0){
@@ -291,12 +291,12 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			var listaDigitacaoContagemDevolucao = "";
 			
 			//Verifica o role do usuario para obter o indice da coluna com os valores do exemplar nota
-			var indexColunaExemplarNota = (digitacaoContagemDevolucaoController.isRoleOperador())?4:6;
+			var indexColunaExemplarNota = (digitacaoContagemDevolucaoController.isRoleOperador())?5:7;
 			
 			$.each(linhasDaGrid, function(index, value) {
 
 				var linha = $(value);
-				
+			
 				var colunaCodigoProduto = linha.find("td")[0];
 				var colunaNumeroEdicao = linha.find("td")[2];
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
