@@ -83,87 +83,66 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public Set<HashMap<String, String>> validarFiltro() {
+	public HashMap<String, String> validarFiltro() {
 	
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale("PT_BR"));
-		Set<HashMap<String, String>> erros = new HashSet<HashMap<String,String>>();
+		HashMap<String,String> erros = new HashMap<String,String>();
 		
-		if(	(this.getTipoNFe() != null && !this.getTipoNFe().isEmpty()) ) {
-			HashMap<String, String> erro = new HashMap<String, String>();
-			erro.put("tipoNFe", "O Tipo de NF-e é inválido.");
-			erros.add(erro);
+		if(	(this.getTipoNFe() == null || this.getTipoNFe() != null && this.getTipoNFe().isEmpty()) ) {
+			erros.put("tipoNFe", "O Tipo de NF-e é inválido.");
 		}
 		
 		if( this.getDataInicialMovimento() != null 
 				&& !DateUtil.isValidDatePTBR(sdf.format(this.getDataInicialMovimento())) ) {
-			HashMap<String, String> erro = new HashMap<String, String>();
-			erro.put("dataInicialMovimento", "A Data Inicial é inválida.");
-			erros.add(erro);
+			erros.put("dataInicialMovimento", "A Data Inicial é inválida.");
 		}
 			
 		if( this.getDataFinalMovimento() != null) {
-			HashMap<String, String> erro = new HashMap<String, String>();
 		
 			if( !DateUtil.isValidDatePTBR(sdf.format(this.getDataFinalMovimento())) ) {
-				erro.put("dataInicialMovimento", "A Data Final é inválida.");
-				erros.add(erro);
+				erros.put("dataInicialMovimento", "A Data Final é inválida.");
 			} 
 			
-			if(erro.get("dataFinalMovimento") == null) {
+			if(erros.get("dataFinalMovimento") == null) {
 				if( DateUtil.isDataInicialMaiorDataFinal(this.getDataInicialMovimento(), this.getDataFinalMovimento()) ) {
-					erro.put("dataFinalMovimento", "A Data Final é inválida por ser menor que a Data Inicial.");
-					erros.add(erro);
+					erros.put("dataFinalMovimento", "A Data Final é inválida por ser menor que a Data Inicial.");
 				}
 			}			
 		}
 				
-		
-
-		if( this.getDataEmissao() != null
-				&& !DateUtil.isValidDatePTBR(sdf.format(this.getDataEmissao())) ) {
-			HashMap<String, String> erro = new HashMap<String, String>();
-			erro.put("dataEmissao", "A Data de Emissão é inválida.");
-			erros.add(erro);
+		if( this.getDataEmissao() == null
+				|| (this.getDataEmissao() != null && !DateUtil.isValidDatePTBR(sdf.format(this.getDataEmissao()))) ) {
+			erros.put("dataEmissao", "A Data de Emissão é inválida.");
 		}
 		
 		if( this.getIdCotaInicial() != null && this.getIdCotaInicial().longValue() < 0 ) {
-			HashMap<String, String> erro = new HashMap<String, String>();
-			erro.put("idCotaInicial", "A Cota Inicial é inválida.");
-			erros.add(erro);
+			erros.put("idCotaInicial", "A Cota Inicial é inválida.");
 		}
 		
 		if( this.getIdCotaFinal() != null ) {
-			HashMap<String, String> erro = new HashMap<String, String>();
 			if( this.getIdCotaFinal().longValue() < 0 ) {
-				erro.put("idCotaFinal", "A Cota Inicial é inválida.");
-				erros.add(erro);
+				erros.put("idCotaFinal", "A Cota Inicial é inválida.");
 			}
 			
-			if(erro.get("idCotaFinal") == null) {
+			if(erros.get("idCotaFinal") == null) {
 				if(this.getIdCotaFinal().longValue() < this.getIdCotaInicial().longValue()) {
-					erro.put("idCotaFinal", "A Cota Final é inválida por ser menor que a Cota Inicial.");
-					erros.add(erro);
+					erros.put("idCotaFinal", "A Cota Final é inválida por ser menor que a Cota Inicial.");
 				}
 			}
 		}
 		
 		if( this.getIdBoxInicial() != null && this.getIdBoxInicial().longValue() < 0) {
-			HashMap<String, String> erro = new HashMap<String, String>();
-			erro.put("idBoxInicial", "O Box Inicial é inválido.");
-			erros.add(erro);
+			erros.put("idBoxInicial", "O Box Inicial é inválido.");
 		}
 		
 		if( this.getIdBoxFinal() != null ) {
-			HashMap<String, String> erro = new HashMap<String, String>();
 			if( this.getIdBoxFinal().longValue() < 0 ) {
-				erro.put("idBoxFinal", "O Box Inicial é inválido.");
-				erros.add(erro);
+				erros.put("idBoxFinal", "O Box Inicial é inválido.");
 			}
 			
-			if(erro.get("idBoxFinal") == null) {
+			if(erros.get("idBoxFinal") == null) {
 				if(this.getIdCotaFinal().longValue() < this.getIdCotaInicial().longValue()) {
-					erro.put("idBoxFinal", "O Box Final é inválido por ser menor que o Box Inicial.");
-					erros.add(erro);
+					erros.put("idBoxFinal", "O Box Final é inválido por ser menor que o Box Inicial.");
 				}
 			}
 		}

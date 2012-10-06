@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -27,6 +30,7 @@ import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -67,7 +71,7 @@ public class ImpressaoNFEController {
 
 	@Path("/")
 	@Rules(Permissao.ROLE_NFE_IMPRESSAO_NFE)
-	public void index(){
+	public void index() {
 
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
 
@@ -81,29 +85,19 @@ public class ImpressaoNFEController {
 
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Post
-	public void pesquisarImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortOrder, String sortname, int page, int rp){
-		System.out.println("ID DO ROTEIRO SELECIONADO: "+filtro.getIdRoteiro());
+	public void pesquisarImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname, int page, int rp){
 
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortOrder, sortname));
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		if(!filtro.isFiltroValido()) {
-			Set<HashMap<String, String>> erros = filtro.validarFiltro();
 			
-			List listaErros = Arrays.asList(erros);
-			
-			TableModel<CellModelKeyValue<List<HashMap<String, String>>>> tableModel = new TableModel<CellModelKeyValue<List<HashMap<String, String>>>>();
-			
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaErros));
-			
-			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			
-			tableModel.setTotal(listaErros.size());
-						
-			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-			
-			result.forwardTo("index.jsp");
+			HashMap<String, String> erros = filtro.validarFiltro();
+			for(Iterator i = erros.keySet().iterator(); i.hasNext(); ) {
+				String key = (String) i.next();
+				throw new ValidacaoException(TipoMensagem.WARNING, erros.get(key));
+			}
+									
 		}
 				
 		//notaFiscalService.obterItensNotaFiscalPor(distribuidor, cota, periodo, listaIdFornecedores, listaIdProdutos, tipoNotaFiscal)
@@ -115,7 +109,7 @@ public class ImpressaoNFEController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(listaNFe.size());
+		tableModel.setTotal(notaFiscalService.buscarNFeParaImpressaoTotalQtd(filtro));
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}

@@ -145,6 +145,14 @@ public interface NotaFiscalService {
 	List<br.com.abril.nds.dto.NfeImpressaoDTO> buscarNFeParaImpressao(FiltroImpressaoNFEDTO filtro);
 	
 	/**
+	 * Obtem o total de NFe baseado no filtro informado
+	 * 
+	 * @param filtro
+	 * @return
+	 */
+	Integer buscarNFeParaImpressaoTotalQtd(FiltroImpressaoNFEDTO filtro);
+	
+	/**
 	 * Retorna um PDF com as Notas de Envio passadas como argumento
 	 * 
 	 * @param notasEnvio

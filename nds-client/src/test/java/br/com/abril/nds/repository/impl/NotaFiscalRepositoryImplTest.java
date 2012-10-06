@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.NfeDTO;
+import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO.ColunaOrdenacaoImpressaoNFE;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
@@ -32,7 +33,6 @@ import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
-import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -498,7 +498,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		
 		FiltroImpressaoNFEDTO filtro = obterFiltroImpressaoNfeDTOOrdenadoPorCota();
 		
-		List<NotaFiscal> listaNotaFiscal = notaFiscalRepository.buscarNFeParaImpressao(filtro);
+		List<NfeImpressaoDTO> listaNotaFiscal = notaFiscalRepository.buscarNFeParaImpressao(filtro);
 		
 		Assert.assertNotNull(listaNotaFiscal);
 		
