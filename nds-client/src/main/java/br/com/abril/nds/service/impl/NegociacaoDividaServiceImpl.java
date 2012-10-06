@@ -17,7 +17,6 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -45,7 +44,6 @@ import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.util.TipoMensagem;
-import br.com.abril.nds.util.Util;
 
 @Service
 public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
@@ -102,12 +100,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
 			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca) {
 		
+		//lista para mensagens de validação
 		List<String> msgs = new ArrayList<String>();
 		Date dataAtual = new Date();
 		
+		//valida dados de entrada
 		this.validarDadosEntrada(msgs, dataAtual, parcelas, usuarioResponsavel, 
 				ativarCotaAposParcela, comissaoParaSaldoDivida, formaCobranca);
 		
+		//Cota e Cobrança originária não são validados no método acima
+		//para evitar que se faça duas vezes a mesma consulta
 		Cota cota = null;
 		if (numeroCota == null){
 			
@@ -122,6 +124,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			}
 		}
 		
+		//Cobrança da onde se originou a negociação
 		Cobranca cobrancaOriginaria = null;
 		if (idCobrancaOriginaria == null){
 			
@@ -141,9 +144,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
 		
+		//Cobrança original deve ter seu status modificado para pago
+		//e sua divida deve ter seus status modificado para negociada
 		cobrancaOriginaria.setStatusCobranca(StatusCobranca.PAGO);
 		cobrancaOriginaria.getDivida().setStatus(StatusDivida.NEGOCIADA);
 		
+		//Cria um tipo de movimento para a negociação
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
 		tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
 		tipoMovimentoFinanceiro.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
@@ -151,6 +157,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
 		
 		BigDecimal totalNegociacao = BigDecimal.ZERO;
+		//Popula o movimento financeiro de cada parcela
+		//Caso seja uma negociação avulsa o movimento financeiro servirá
+		//para rastreabilidade da negociação, caso não seja uma negociação avulsa
+		//será insumo para próxima geração de cobrança
 		for (ParcelaNegociacao parcelaNegociacao : parcelas){
 			
 			parcelaNegociacao.getMovimentoFinanceiroCota().setCota(cobrancaOriginaria.getCota());
@@ -171,6 +181,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		this.cobrancaRepository.merge(cobrancaOriginaria);
 		this.formaCobrancaRepository.adicionar(formaCobranca);
 		
+		//Caso essa seja uma negociação avulsa as parcelas não devem entrar nas próximas
+		//gerações de cobrança, para isso é necessário criar um consolidado financeiro para
+		//os movimentos financeiros das parcelas
 		if (negociacaoAvulsa){
 			
 			for (ParcelaNegociacao parcelaNegociacao : parcelas){
@@ -232,6 +245,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			}
 		}
 		
+		//cria registro da negociação
 		Negociacao negociacao = new Negociacao();
 		negociacao.setAtivarCotaAposParcela(ativarCotaAposParcela);
 		negociacao.setCobrancaOriginaria(cobrancaOriginaria);
@@ -249,13 +263,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			Integer ativarCotaAposParcela, BigDecimal comissaoParaSaldoDivida,
 			FormaCobranca formaCobranca) {
 		
+		//caso não tenha parcelas e nem comissão para saldo preenchidos
 		if (parcelas == null || parcelas.isEmpty() && comissaoParaSaldoDivida == null){
 			
 			msgs.add("Forma de pagamento é obrigatória.");
 		}
 		
+		//caso tenha parcelas
 		if (parcelas != null && comissaoParaSaldoDivida == null){
 			
+			//data de vencimento e valor são campos obrigatórios
 			for (ParcelaNegociacao parcelaNegociacao : parcelas){
 				
 				if (parcelaNegociacao.getDataVencimento() == null){
@@ -278,35 +295,32 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			}
 		}
 		
+		//usuário responsável por fazer a negociação é obrigatório
 		if (usuarioResponsavel == null || usuarioResponsavel.getId() == null){
 			
 			msgs.add("Usuário responsável pela negociação inválido.");
 		}
 		
-		if (formaCobranca == null){
+		//se a comissão não foi preenchida deve haver forma de cobrança e tipo de cobrança
+		//para as parcelas
+		if (comissaoParaSaldoDivida == null){
 			
-			msgs.add("Parâmetro Forma Cobrança inválido.");
+			if (formaCobranca.getTipoCobranca() == null){
+				
+				msgs.add("Parâmetro Tipo de Cobrança inválido.");
+			}
+			
+			if (formaCobranca.getTipoFormaCobranca() == null){
+				
+				msgs.add("Parâmetro Tipo de Forma de Cobrança inválido.");
+			}
+			
+		//se comissão e parâmetros para as parcelas forem preenchidos
 		} else {
 			
-			if (comissaoParaSaldoDivida == null){
+			if (formaCobranca.getTipoCobranca() != null || formaCobranca.getTipoFormaCobranca() != null){
 				
-				if (formaCobranca.getTipoCobranca() == null){
-					
-					msgs.add("Parâmetro Tipo de Cobrança inválido.");
-				}
-				
-				if (formaCobranca.getTipoFormaCobranca() == null){
-					
-					msgs.add("Parâmetro Tipo de Forma de Cobrança inválido.");
-				}
-				
-				
-			} else {
-				
-				if (formaCobranca.getTipoCobranca() != null || formaCobranca.getTipoFormaCobranca() != null){
-					
-					msgs.add("Apenas uma forma de cobrança é permitida.");
-				}
+				msgs.add("Apenas uma forma de cobrança é permitida.");
 			}
 		}
 	}
