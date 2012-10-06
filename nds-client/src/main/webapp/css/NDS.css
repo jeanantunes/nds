@@ -146,7 +146,7 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 .bt_confirmar_1 a:hover{color:#00649F; text-decoration:underline;}
 
 .bt_pesquisar{background:url(../images/ico_pesquisar.png) no-repeat center center; width:20px; line-height:20px; float:left;}
-.bt_pesquisar a{ color:#000; font-weight:bold; text-decoration:none; border:1px solid #fff; display:table-cell; width:20px; height:20px; }
+.bt_pesquisar a{ padding-left: 20px; color:#000; font-weight:bold; text-decoration:none; border:1px solid #fff; display:table-cell; width:20px; height:20px; }
 .bt_pesquisar a:hover{color:#00649F;  border:1px solid #06C; display:table-cell}
 
 
@@ -214,6 +214,7 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 
 .class_linha_1{background:#f0f0f0; line-height:39px;}
 .class_linha_2{background:#f8f8f8; line-height:39px;	}
+.class_linha_3 {background: #CCC;line-height: 28px;}
 
 .linha_separa_fields{height:12px; width:100%;  float:left; overflow:hidden;}
 .linha_separa_fields_2{height:12px; width:700px;  float:left; overflow:hidden;}

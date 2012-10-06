@@ -13,12 +13,12 @@ public interface CotaAusenteService {
 	/**
 	 * Gera nova cota ausente e envia seu reparte da data para Suplementar
 	 * 
-	 * @param numCota - Número da cota
+	 * @param numCotas - Número da cota
 	 * @param data - Data em que a cota será declarada ausente
 	 * @param idUsuario - Códifo do usuário
 	 * @throws TipoMovimentoEstoqueInexistenteException - Exceção para TipoMovimentoInexistente não registrado no banco
 	 */
-	void declararCotaAusenteEnviarSuplementar(Integer numCota, Date data, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException;	
+	void declararCotaAusenteEnviarSuplementar(List<Integer> numCotas, Date data, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException;	
 	
 	/**
 	 * Gera nova cota ausente e envia seu reparte da data para Suplementar e realiza o rateio deste reparte para
@@ -42,6 +42,13 @@ public interface CotaAusenteService {
 	
 	Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro);
 	
+	/**
+	 * Cancela uma Cota Ausente
+	 * 
+	 * @param idCotaAusente
+	 * @param idUsuario
+	 * @throws TipoMovimentoEstoqueInexistenteException
+	 */
 	void cancelarCotaAusente(Long idCotaAusente, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException;
 
 }

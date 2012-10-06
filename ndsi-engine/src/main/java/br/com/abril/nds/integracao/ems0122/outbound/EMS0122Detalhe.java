@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0122.outbound;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -74,7 +75,7 @@ public class EMS0122Detalhe {
 		this.codigoCota = codigoCota;
 	}
 	
-	@Field(offset=26, length=8, paddingChar='0')
+	@Field(offset=26, length=8, align=Align.RIGHT, paddingChar='0')
 	public Long getQuantidadeSuplementar() {
 		return quantidadeSuplementar;
 	}
@@ -83,7 +84,7 @@ public class EMS0122Detalhe {
 		this.quantidadeSuplementar = quantidadeSuplementar;
 	}
 
-	@Field(offset=34, length=9, paddingChar='0')
+	@Field(offset=34, length=9, align=Align.RIGHT, paddingChar='0')
 	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = false)
 	public BigDecimal getPrecoCapa() {
 		return precoCapa;

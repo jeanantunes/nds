@@ -37,6 +37,8 @@ public class BaixaManual extends BaixaCobranca {
 	@Column(name = "OBSERVACAO")
 	private String observacao;
 	
+	
+	
 	public Usuario getResponsavel() {
 		return responsavel;
 	}

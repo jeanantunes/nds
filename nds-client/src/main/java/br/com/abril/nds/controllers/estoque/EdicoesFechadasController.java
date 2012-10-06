@@ -114,19 +114,19 @@ public class EdicoesFechadasController {
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisarEdicoesFechadas(String dataDe, String dataAte, String codigoFornecedor, String sortname, String sortorder, int rp, int page) throws Exception {
+	public void pesquisarEdicoesFechadas(String dataDe, String dataAte, Long idFornecedor, String sortname, String sortorder, int rp, int page) throws Exception {
 
 		this.validarDadosPesquisa(dataDe, dataAte);
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
-		FiltroEdicoesFechadasDTO filtro = carregarFiltro(sortorder, sortname, page, rp, sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor);	
+		FiltroEdicoesFechadasDTO filtro = carregarFiltro(sortorder, sortname, page, rp, sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);	
 
 		List<RegistroEdicoesFechadasVO> resultado = null;
 		BigDecimal saldoTotal = new BigDecimal("0");
 		try {
-			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor);
-			saldoTotal = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor);
+			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);
+			saldoTotal = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
@@ -166,17 +166,17 @@ public class EdicoesFechadasController {
 	 * @param sortname
 	 * @param page
 	 * @param rp
-	 * @param codigoFornecedor 
+	 * @param idFornecedor 
 	 * @param dataAte 
 	 * @param dataDe 
 	 * @return
 	 */
-	private FiltroEdicoesFechadasDTO carregarFiltro(String sortorder, String sortname, int page, int rp, Date dataDe, Date dataAte, String codigoFornecedor) {
+	private FiltroEdicoesFechadasDTO carregarFiltro(String sortorder, String sortname, int page, int rp, Date dataDe, Date dataAte, Long idFornecedor) {
 
 		FiltroEdicoesFechadasDTO filtro = new FiltroEdicoesFechadasDTO();
 		filtro.setDataDe(dataDe);
 		filtro.setDataAte(dataAte);
-		filtro.setCodigoFornecedor(codigoFornecedor);
+		filtro.setCodigoFornecedor(idFornecedor);
 		
 		this.configurarPaginacao(filtro, sortorder, sortname, page, rp);
 

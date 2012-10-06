@@ -69,7 +69,7 @@ public enum Permissao
 	ROLE_NFE_RETORNO_NFE("Retorno NF-e",																   Permissao.ROLE_NFE),
 	ROLE_NFE_GERACAO_NFE("Geração de NF-e", 													  	   	   Permissao.ROLE_NFE),
 	ROLE_NFE_IMPRESSAO_NFE("Impressão NF-e",															   Permissao.ROLE_NFE),
-	ROLE_NFE_CONSULTA_NFE_ENCALHE_TRATAMENTO("Consulta NF-e Encalhe Tratamento",						   Permissao.ROLE_NFE),
+	ROLE_NFE_ENTRADA_NFE_TERCEIROS("Entrada de NF-e Terceiros",											   Permissao.ROLE_NFE),
 	ROLE_NFE_PAINEL_MONITOR_NFE("Painel Monitor NF-e",													   Permissao.ROLE_NFE),
 	
 	ROLE_FINANCEIRO("Financeiro", 					   				                         	  	  	   null),
@@ -94,6 +94,7 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA("Follow Up do Sistema",									  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_GRUPOS_ACESSO("Grupos de Acesso",											  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CALENDARIO("Calendario",													  		   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_GERACAO_ARQUIVO("Geracao De Arquivos",									           Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipos de NF-e",													  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros de Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros Distribuidor",	 						 	   Permissao.ROLE_ADMINISTRACAO),

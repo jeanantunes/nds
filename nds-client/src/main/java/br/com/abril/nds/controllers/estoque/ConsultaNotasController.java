@@ -5,8 +5,10 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,6 +20,7 @@ import br.com.abril.nds.client.vo.ConsultaNotaFiscalVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaDetallheNFVO;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -25,7 +28,6 @@ import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -35,6 +37,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
@@ -239,6 +242,8 @@ public class ConsultaNotasController {
 	
 	private List<ConsultaNotaFiscalVO> obterListaConsultaNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
 
+		Map<Long, String> mapaFornecedorNotaFiscal = obterMapaFornecedorNotaFiscal(listaNotasFiscais);
+		
 		List<ConsultaNotaFiscalVO> listaConsultasNF = new ArrayList<ConsultaNotaFiscalVO>();
 
 		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
@@ -250,11 +255,11 @@ public class ConsultaNotasController {
 			
 			consultaNotaFiscalVO.setDataEmissao(notaFiscal.getDataEmissao());
 			consultaNotaFiscalVO.setDataExpedicao(notaFiscal.getDataExpedicao());
-			consultaNotaFiscalVO.setNomeFornecedor(getRazaoSociais(notaFiscal));
+			consultaNotaFiscalVO.setNomeFornecedor(mapaFornecedorNotaFiscal.get(notaFiscal.getId()));
 			consultaNotaFiscalVO.setNotaRecebida(notaRecebida);
 			consultaNotaFiscalVO.setNumeroNota(notaFiscal.getNumero());
 			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getTipoNotaFiscal().getDescricao());
-			consultaNotaFiscalVO.setValor(this.obterValorTotalNota(notaFiscal.getId()));
+			consultaNotaFiscalVO.setValor(CurrencyUtil.formatarValor(this.obterValorTotalNota(notaFiscal.getId())));
 			
 			listaConsultasNF.add(consultaNotaFiscalVO);
 		}
@@ -262,8 +267,49 @@ public class ConsultaNotasController {
 		return listaConsultasNF;
 	}
 
+	/**
+	 * Obtém mapa de nomes de fornecedores de uma nota fiscal entrada.
+	 * 
+	 * @param filtroConsultaNotaFiscal
+	 * 
+	 * @return Map<Long, String>
+	 */
+	private Map<Long, String> obterMapaFornecedorNotaFiscal(List<NotaFiscalEntradaFornecedor> listaNotaFiscalEntradaFornecedor) {
+		
+		Map<Long, String> mapaFornecedorNotaFiscal = new LinkedHashMap<Long, String>();
+		
+		if(listaNotaFiscalEntradaFornecedor == null) {
+			return mapaFornecedorNotaFiscal;
+		}
+		
+		List<Long> listaIdNotaFiscal = new ArrayList<Long>();
+		
+		for(NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor : listaNotaFiscalEntradaFornecedor) {
+			listaIdNotaFiscal.add(notaFiscalEntradaFornecedor.getId());
+		}
+		
+		List<ItemDTO<Long, String>> listaFonecedorNotaFiscal = notaFiscalService.obterFornecedorNotaFiscal(listaIdNotaFiscal);
+		
+		if(listaFonecedorNotaFiscal == null || listaFonecedorNotaFiscal.isEmpty()) {
+			return mapaFornecedorNotaFiscal;
+		}
+		
+		for(ItemDTO<Long, String> item : listaFonecedorNotaFiscal) {
+			if(mapaFornecedorNotaFiscal.containsKey(item.getKey())) {
+				mapaFornecedorNotaFiscal.put(item.getKey(), "Diversos");
+			} else {
+				mapaFornecedorNotaFiscal.put(item.getKey(), item.getValue());
+			}
+		}
+		
+		return mapaFornecedorNotaFiscal;
+		
+	}
+	
 	private TableModel<CellModel> getTableModelNotasFiscais(List<NotaFiscalEntradaFornecedor> listaNotasFiscais) {
 
+		Map<Long, String> mapaFornecedorNotaFiscal = obterMapaFornecedorNotaFiscal(listaNotasFiscais);
+		
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
 
 		for (NotaFiscalEntradaFornecedor notaFiscal : listaNotasFiscais) {
@@ -280,7 +326,7 @@ public class ConsultaNotasController {
 							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataEmissao())), 
 							itemExibicaoToString(DateUtil.formatarDataPTBR(notaFiscal.getDataExpedicao())), 
 							itemExibicaoToString(notaFiscal.getTipoNotaFiscal().getDescricao()), 
-							itemExibicaoToString(getRazaoSociais(notaFiscal)),
+							itemExibicaoToString(mapaFornecedorNotaFiscal.get(notaFiscal.getId())),
 							itemExibicaoToString(decimalFormat.format(obterValorTotalNota(notaFiscal.getId()))),
 							notaRecebida, 
 							" ", 
@@ -295,16 +341,6 @@ public class ConsultaNotasController {
 
 		return tableModel;
 	}
-
-	private String getRazaoSociais(NotaFiscalEntradaFornecedor notaFiscal) {
-		String razaoSocial = "";
-		for (ItemNotaFiscalEntrada item : notaFiscal.getItens() ) {
-			for (Fornecedor f : item.getProdutoEdicao().getProduto().getFornecedores()) {
-				razaoSocial += f.getJuridica().getRazaoSocial() + " ";
-			}
-		}
-		return razaoSocial;
-	}
 	
 	private BigDecimal obterValorTotalNota(Long idNotaFiscal) {
 		
@@ -312,12 +348,15 @@ public class ConsultaNotasController {
 		
 		DetalheNotaFiscalDTO detalheNota = this.notaFiscalService.obterDetalhesNotaFical(idNotaFiscal);
 		
-		if (detalheNota != null) {
+		if (detalheNota != null && detalheNota.getValorTotalSumarizado() != null) {
 			valorTotal = detalheNota.getValorTotalSumarizado();
+		
 		}
 		
-		return valorTotal;
+		return valorTotal; 
+		
 	}
+	
 	
 	private TableModel<CellModel> getTableModelDetalhesNotaFiscal(List<DetalheItemNotaFiscalDTO> listaDetalhesNotaFiscal) {
 		

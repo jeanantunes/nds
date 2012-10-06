@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
@@ -44,14 +47,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			.add(Projections.property("p.codigo"), "codigo")
 			.add(Projections.property("p.nome"), "produto")
 			.add(Projections.property("pe.numeroEdicao"), "edicao")
-			.add(Projections.property("pe.precoVenda"), "precoCapa")
+			.add(Projections.property("pe.precoVenda"),"precoCapa")
 			.add(Projections.property("pe.id"), "produtoEdicao")
+			.add(Projections.property("pe.parcial"), "parcial")
+			.add(Projections.property("che.dataRecolhimento"), "dataRecolhimento")
 			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
 			.add(Projections.groupProperty("p.codigo"))
 			.add(Projections.groupProperty("p.nome"))
 			.add(Projections.groupProperty("pe.numeroEdicao"))
 			.add(Projections.groupProperty("pe.precoVenda"))
 			.add(Projections.groupProperty("pe.id"))
+			.add(Projections.groupProperty("pe.parcial"))
+			.add(Projections.groupProperty("che.dataRecolhimento"))
+			
 		);
 		
 		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
@@ -63,8 +71,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.createAlias("mec.produtoEdicao", "pe");
 		criteria.setFetchMode("pe", FetchMode.JOIN);
 		
+		
 		criteria.createAlias("pe.produto", "p");
 		criteria.setFetchMode("p", FetchMode.JOIN);
+		
+		criteria.createAlias("ce.chamadaEncalheCota", "cec");
+		criteria.setFetchMode("cec", FetchMode.JOIN);
+		
+		criteria.createAlias("cec.chamadaEncalhe", "che");
+		criteria.setFetchMode("che", FetchMode.JOIN);
 		
 		if (filtro.getFornecedorId() != null) {
 			criteria.createAlias("pe.fornecedores", "pf");
@@ -179,7 +194,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.createAlias("cota.box", "box");
 		criteria.createAlias("cota.pessoa", "pessoa");
 		criteria.createAlias("cota.pdvs", "pdvs");
-		criteria.createAlias("pdv.rotas", "rotas");
+		criteria.createAlias("pdvs.rotas", "rotas");
+		criteria.createAlias("rotas.rota", "rota");
 		criteria.createAlias("rota.roteiro", "roteiro");
 		
 		criteria.setFetchMode("cec", FetchMode.JOIN);
@@ -196,7 +212,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 				.add(Projections.property("pessoa.nome"), "colaboradorName")
 				.add(Projections.property("box.nome"), "boxName")
 				.add(Projections.property("roteiro.descricaoRoteiro"), "roteiroName")
-				.add(Projections.property("rotas.descricaoRota"), "rotaName")
+				.add(Projections.property("rota.descricaoRota"), "rotaName")
 				.add(Projections.property("cec.fechado"), "fechado")
 				.add(Projections.property("cec.postergado"), "postergado")
 				.add(Projections.property("ce.dataRecolhimento"), "dataEncalhe")));
@@ -345,5 +361,36 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.setProjection(Projections.max("dataEncalhe"));
 		return (Date) criteria.uniqueResult();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+
+		StringBuffer hql = new StringBuffer();
+		hql.append("   SELECT cota.numeroCota as numeroCota,");
+		hql.append("          pess.nome as nomeCota,");
+		hql.append("          box.nome as boxEncalhe,");
+		hql.append("          ce.qtdeInformada * pe.precoVenda as total");
+		//hql.append("           as statusCobranca");
+		hql.append("     FROM ConferenciaEncalhe ce");
+		hql.append("     JOIN ce.controleConferenciaEncalheCota as ccec");
+		hql.append("     JOIN ccec.cota as cota");
+		hql.append("     JOIN cota.pessoa as pess");
+		hql.append("     JOIN ccec.box as box");
+		hql.append("     JOIN ce.produtoEdicao as pe");
+		hql.append("    WHERE ce.data = :data");
+		
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliticoEncalheDTO.class));
+		
+		query.setDate("data", filtro.getDataEncalhe());
+		
+		
+		
+
+		return query.list();
+	}
+	
 	
 }

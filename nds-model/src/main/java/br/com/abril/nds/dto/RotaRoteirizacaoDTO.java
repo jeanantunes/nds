@@ -2,7 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class RotaRoteirizacaoDTO implements Serializable {
 
@@ -16,7 +20,9 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	
 	private Boolean selecionado;
 	
-	private List<PdvRoteirizacaoDTO> pdvs;
+	private List<PdvRoteirizacaoDTO> pdvs = new ArrayList<PdvRoteirizacaoDTO>();
+	
+	private Set<Long> pdvsExclusao = new HashSet<Long>();
 	
 	public RotaRoteirizacaoDTO() {
 	}
@@ -128,13 +134,17 @@ public class RotaRoteirizacaoDTO implements Serializable {
 	 * com sucesso, false caso a ordem não for válida
 	 */
 	public boolean alterarOrdemPdv(Long idPdv, Integer ordem) {
-	    PdvRoteirizacaoDTO pdvAlteracao = getPdv(idPdv);
-	    PdvRoteirizacaoDTO pdvExistente = getPdvByOrdem(ordem);
-	    if (pdvExistente != null && !pdvAlteracao.equals(pdvExistente)) {
+	    if (ordem <= 0) {
 	        return false;
+	    } else {
+	        PdvRoteirizacaoDTO pdvAlteracao = getPdv(idPdv);
+	        PdvRoteirizacaoDTO pdvExistente = getPdvByOrdem(ordem);
+	        if (pdvExistente != null && !pdvAlteracao.equals(pdvExistente)) {
+	            return false;
+	        }
+	        pdvAlteracao.setOrdem(ordem);
+	        return true;
 	    }
-	    pdvAlteracao.setOrdem(ordem);
-	    return true;
 	}
 	
 	/**
@@ -166,7 +176,70 @@ public class RotaRoteirizacaoDTO implements Serializable {
         }
         return null;
 	}
+	
+	/**
+	 * Remove o Pdv da Rota
+	 * @param idPdv identificador do PDV para remoção
+	 */
+	public void removerPdv(Long idPdv) {
+	    Iterator<PdvRoteirizacaoDTO> iterator = pdvs.iterator();
+	    while(iterator.hasNext()) {
+	        PdvRoteirizacaoDTO pdv = iterator.next();
+	        if (pdv.getId().equals(idPdv)) {
+	            iterator.remove();
+	            
+	            if (idPdv >= 0){
+	    			
+	    			this.adicionarPdvExclusao(idPdv);
+	    		}
+	        }
+	    }
+	}
 
+	/**
+     * Método que verifica se a rota é uma nova rota
+     * 
+     * @return true indicando que é uma nova rota, false indica que é uma
+     *         rota já cadastrada
+     */
+	public boolean isNovo() {
+	    return id != null && id < 0;
+	}
+	
+	
+	public Set<Long> getPdvsExclusao() {
+        return pdvsExclusao;
+    }
+
+	public void adicionarPdvExclusao(Long idPdv){
+	    
+	    if (this.pdvsExclusao == null){
+	        
+	        this.pdvsExclusao = new HashSet<Long>();
+	    }
+	    
+	    this.pdvsExclusao.add(idPdv);
+	}
+	
+	/**
+	 * Recupera a maior ordem dos pdvs da rota
+	 * @return valor da maior ordem da lista de pdvs
+	 * ou 0 caso a lista esteja vazia
+	 */
+	private int getMaiorOrdem() {
+	    int max = 0;
+	    for (PdvRoteirizacaoDTO pdv : getPdvs()) {
+	        if (pdv.getOrdem() > max) {
+	            max = pdv.getOrdem();
+	        }
+	    }
+	    return max;
+	}
+
+	public void setPdvsExclusao(Set<Long> pdvsExclusao) {
+		this.pdvsExclusao = pdvsExclusao;
+	}
+	
 	@Override
 	public int hashCode() {
 	    final int prime = 31;
@@ -192,5 +265,19 @@ public class RotaRoteirizacaoDTO implements Serializable {
 		return true;
 	}
 
-	
+    /**
+     * Adiciona a coleção de pdvs ao final dos pdvs
+     * de acordo com a maior ordem existente
+     * @param pdvs coleção de pdvs para inclusão
+     */
+	public void addPdvsAposMaiorOrdem(Collection<PdvRoteirizacaoDTO> pdvs) {
+        for (PdvRoteirizacaoDTO pdv : pdvs) {
+            PdvRoteirizacaoDTO existente = getPdv(pdv.getId());
+            if (existente == null) {
+                int ordemFinal = getMaiorOrdem();
+                pdv.setOrdem(++ordemFinal);
+                addPdv(pdv);
+            }
+        }
+    }
 }

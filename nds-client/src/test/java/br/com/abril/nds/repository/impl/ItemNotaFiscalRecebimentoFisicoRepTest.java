@@ -96,7 +96,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		
 				
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();	
-		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, dinap.getJuridica(), dinap, tipoNotaFiscal, usuario, new BigDecimal(12), new BigDecimal(33), new BigDecimal(11));
+		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, dinap, tipoNotaFiscal, usuario, new BigDecimal(12), new BigDecimal(33), new BigDecimal(11));
 		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);	
 		save(notaFiscal);
 		

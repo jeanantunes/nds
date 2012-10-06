@@ -89,9 +89,10 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
 	@SuppressWarnings("unchecked")
     @Override
     public List<Roteiro> buscarRoteiroDeBox(Long idBox, String descricaoRoteiro) {
-        Criteria criteria  = getSession().createCriteria(Roteiro.class);
+        Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
         if (idBox != null) {
-        	criteria.createAlias("roteirizacao.box", "box");
+        	criteria.createAlias("roteiro.roteirizacao", "roteirizacao");
+			criteria.createAlias("roteirizacao.box", "box");
             criteria.add(Restrictions.eq("box.id", idBox));
         }
         if (!StringUtil.isEmpty(descricaoRoteiro)) {
@@ -100,5 +101,24 @@ public class RoteiroRepositoryImpl extends AbstractRepositoryModel<Roteiro, Long
         criteria.addOrder(Order.asc("descricaoRoteiro"));
         return  criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Roteiro> obterRoteirosPorCota(Integer numeroCota) {
+		
+		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
+		
+		if(numeroCota != null) {
+			criteria.createAlias("roteiro.rotas", "rotas");
+			criteria.createAlias("rotas.rotaPDVs", "rotaPDV");
+			criteria.createAlias("rotaPDV.pdv", "pdv");
+			criteria.createAlias("pdv.cota", "cota");
+			criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
+		}
+		
+		criteria.addOrder(Order.asc("roteiro.descricaoRoteiro"));
+		
+		return  criteria.list();
+	}
 	
 }

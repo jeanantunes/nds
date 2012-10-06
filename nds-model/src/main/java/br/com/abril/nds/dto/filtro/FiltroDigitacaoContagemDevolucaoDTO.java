@@ -3,10 +3,10 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PeriodoVO;
 
 /**
  * Data Transfer Object para filtro da pesquisa de digitação contagem devolução
@@ -19,12 +19,14 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private PeriodoVO periodo;
+	private Intervalo<Date> periodo;
 	
 	private Long idFornecedor;
 	
 	@Export(label="Fornecedor")
 	private String nomeFornecedor;
+	
+	private Integer semanaCE;
 	
 	private PaginacaoVO paginacao;
 	
@@ -36,12 +38,23 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	public FiltroDigitacaoContagemDevolucaoDTO(){}	
 	
 	
-	public FiltroDigitacaoContagemDevolucaoDTO(PeriodoVO periodo, Long idFornecedor){
+	public FiltroDigitacaoContagemDevolucaoDTO(Intervalo<Date> periodo, Long idFornecedor){
 		this.idFornecedor = idFornecedor;
 		this.periodo = periodo;
 	}	
 	
 	
+	public FiltroDigitacaoContagemDevolucaoDTO(Intervalo<Date> periodo,
+			Long idFornecedor, Integer semanaCE) {
+		super();
+		this.periodo = periodo;
+		this.idFornecedor = idFornecedor;
+		this.semanaCE = semanaCE;
+	}
+
+
+
+
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 
@@ -78,7 +91,7 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		if(periodo==null) {
 			return null;
 		}
-		return periodo.getDataInicial();
+		return periodo.getDe();
 		
 	}
 
@@ -88,7 +101,7 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		if(periodo==null) {
 			return null;
 		}
-		return periodo.getDataFinal();
+		return periodo.getAte();
 		
 	}
 
@@ -138,7 +151,7 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	/**
 	 * @return the periodo
 	 */
-	public PeriodoVO getPeriodo() {
+	public Intervalo<Date> getPeriodo() {
 		return periodo;
 	}
 
@@ -146,7 +159,7 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	/**
 	 * @param periodo the periodo to set
 	 */
-	public void setPeriodo(PeriodoVO periodo) {
+	public void setPeriodo(Intervalo<Date> periodo) {
 		this.periodo = periodo;
 	}
 
@@ -168,6 +181,22 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 
+	
+	/**
+	 * @return the semanaCE
+	 */
+	public Integer getSemanaCE() {
+		return semanaCE;
+	}
+
+
+	/**
+	 * @param semanaCE the semanaCE to set
+	 */
+	public void setSemanaCE(Integer semanaCE) {
+		this.semanaCE = semanaCE;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -183,6 +212,8 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
 		result = prime * result + ((periodo == null) ? 0 : periodo.hashCode());
+		result = prime * result
+				+ ((semanaCE == null) ? 0 : semanaCE.hashCode());
 		return result;
 	}
 
@@ -216,10 +247,13 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 				return false;
 		} else if (!periodo.equals(other.periodo))
 			return false;
+		if (semanaCE == null) {
+			if (other.semanaCE != null)
+				return false;
+		} else if (!semanaCE.equals(other.semanaCE))
+			return false;
 		return true;
 	}
 
-	
-	
 	
 }

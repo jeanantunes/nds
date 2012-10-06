@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
-import br.com.abril.nds.dto.ConsultaNFENotasRecebidasDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaNFEEncalheTratamento;
+import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
@@ -28,12 +28,12 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CFOPService;
-import br.com.abril.nds.service.ConsultaNFEEncalheTratamentoNotasRecebidasService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EntradaNFETerceirosService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -52,8 +52,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
-@Path(value="/nfe/consultaNFEEncalheTratamento")
-public class ConsultaNFEEncalheTratamentoController {
+@Path(value="/nfe/entradaNFETerceiros")
+public class EntradaNFETerceirosController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_CONSULTA = "filtroConsultaNFEEncalheTratamento";
 	
@@ -64,7 +64,7 @@ public class ConsultaNFEEncalheTratamentoController {
 	private HttpSession session;
 	
 	@Autowired
-	private ConsultaNFEEncalheTratamentoNotasRecebidasService consultaNFEEncalheTratamentoNotasRecebidasService;
+	private EntradaNFETerceirosService entradaNFETerceirosService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -88,7 +88,7 @@ public class ConsultaNFEEncalheTratamentoController {
 	private CotaService cotaService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_NFE_CONSULTA_NFE_ENCALHE_TRATAMENTO)
+	@Rules(Permissao.ROLE_NFE_ENTRADA_NFE_TERCEIROS)
 	public void index(){
 		carregarComboStatusNota();
 	}
@@ -108,7 +108,7 @@ public class ConsultaNFEEncalheTratamentoController {
 	
 	@Post
 	@Path("/pesquisarNotasRecebidas")
-	public void pesquisarNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarNotasRecebidas(FiltroEntradaNFETerceiros filtro, String sortorder, String sortname, int page, int rp){
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -116,19 +116,19 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaNFENotasRecebidasDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
+		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaNFENotasRecebidasDTO>> efetuarConsultaNotasRecebidas(FiltroConsultaNFEEncalheTratamento filtro) {
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>> efetuarConsultaNotasRecebidas(FiltroEntradaNFETerceiros filtro) {
 		
-		List<ConsultaNFENotasRecebidasDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "limitar");
+		List<ConsultaEntradaNFETerceirosDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
 		
-		TableModel<CellModelKeyValue<ConsultaNFENotasRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFENotasRecebidasDTO>>();
+		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>>();
 		
-		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasNFENotasRecebidas(filtro);
+		Integer totalRegistros = this.entradaNFETerceirosService.buscarTodasNFENotasRecebidas(filtro);
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
@@ -144,7 +144,7 @@ public class ConsultaNFEEncalheTratamentoController {
 	
 	@Post
 	@Path("/pesquisarNotasPendentes")
-	public void pesquisarNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarNotasPendentes(FiltroEntradaNFETerceiros filtro, String sortorder, String sortname, int page, int rp){
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -157,13 +157,13 @@ public class ConsultaNFEEncalheTratamentoController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> efetuarConsultaNotasPendentes(FiltroConsultaNFEEncalheTratamento filtro) {
+	private TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> efetuarConsultaNotasPendentes(FiltroEntradaNFETerceiros filtro) {
 		
-		List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasPendentes(filtro, "limitar");
+		List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
 		
 		TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>>();
 		
-		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasNFENotasRecebidas(filtro);
+		Integer totalRegistros = this.entradaNFETerceirosService.buscarTodasNFENotasRecebidas(filtro);
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
@@ -179,7 +179,7 @@ public class ConsultaNFEEncalheTratamentoController {
 	
 	@Post
 	@Path("/pesquisarItensPorNota")
-	public void pesquisarItensPorNota(FiltroConsultaNFEEncalheTratamento filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarItensPorNota(FiltroEntradaNFETerceiros filtro, String sortorder, String sortname, int page, int rp){
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -191,13 +191,13 @@ public class ConsultaNFEEncalheTratamentoController {
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> efetuarConsultaItensPorNota(FiltroConsultaNFEEncalheTratamento filtro) {
+	private TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> efetuarConsultaItensPorNota(FiltroEntradaNFETerceiros filtro) {
 		
-		List<ItemNotaFiscalPendenteDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarItensPorNota(filtro);
+		List<ItemNotaFiscalPendenteDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarItensPorNota(filtro);
 		
 		TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>> tableModel = new TableModel<CellModelKeyValue<ItemNotaFiscalPendenteDTO>>();
 		
-		Integer totalRegistros = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarTodasItensPorNota(filtro);
+		Integer totalRegistros = this.entradaNFETerceirosService.buscarTodasItensPorNota(filtro);
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
@@ -230,23 +230,23 @@ public class ConsultaNFEEncalheTratamentoController {
 		nota.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		nota.setCfop(cfop);
-		nota.setEmitente(pj);
+//		nota.setEmitente(pj);
 		nota.setTipoNotaFiscal(tp);
 		
 		this.notaFiscalEntradaService.inserirNotaFiscal(nota);
 		
 	}
 	
-	private void validarEntrada(FiltroConsultaNFEEncalheTratamento filtro) {
+	private void validarEntrada(FiltroEntradaNFETerceiros filtro) {
 				
 		if(filtro.getStatusNotaFiscalEntrada() == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pelo menos um filtro deve ser preenchido!");			
 		}
 	}
 	
-	private void tratarFiltro(FiltroConsultaNFEEncalheTratamento filtroAtual) {
+	private void tratarFiltro(FiltroEntradaNFETerceiros filtroAtual) {
 
-		FiltroConsultaNFEEncalheTratamento filtroSession = (FiltroConsultaNFEEncalheTratamento) session
+		FiltroEntradaNFETerceiros filtroSession = (FiltroEntradaNFETerceiros) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA);
 		
 		if (filtroSession != null && filtroSession.equals(filtroAtual)) {
@@ -260,20 +260,20 @@ public class ConsultaNFEEncalheTratamentoController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		FiltroConsultaNFEEncalheTratamento filtro = (FiltroConsultaNFEEncalheTratamento) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA);
+		FiltroEntradaNFETerceiros filtro = (FiltroEntradaNFETerceiros) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA);
 		
 		if(filtro.getStatusNotaFiscalEntrada().name().equals("RECEBIDA")){
-			List<ConsultaNFENotasRecebidasDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasRecebidas(filtro, "naoLimitar");
+			List<ConsultaEntradaNFETerceirosDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, false);
 			
 			if(listaNotasRecebidas.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
 			FileExporter.to("consulta_notas_recebidas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listaNotasRecebidas, ConsultaNFENotasRecebidasDTO.class, this.httpResponse);			
+					listaNotasRecebidas, ConsultaEntradaNFETerceirosDTO.class, this.httpResponse);			
 		}else{
 			
-			List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = this.consultaNFEEncalheTratamentoNotasRecebidasService.buscarNFNotasPendentes(filtro, "naoLimitar");
+			List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, false);
 			
 			if(listaNotasRecebidas.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

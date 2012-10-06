@@ -143,7 +143,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	},
 	
 	this.pesquisar = function() {
-		
+				
 		var tipoConsulta = $("#tipoConsulta").val();
 		
 		var params = T.getDadosFiltro();
@@ -156,6 +156,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		$("#gridProduto", _workspace).hide();
 		$("#gridProdutoEspecifico", _workspace).hide();
 		$("#gridProdutoCota", _workspace).hide();
+		$("#gridEntregador", _workspace).hide();
 
 		switch (tipoConsulta) {
 
@@ -235,6 +236,19 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			);
 
 			break;
+		
+		case 'ENTREGADOR':
+			
+			T.preencherGrid(
+				".mapaAbastecimentoEntregadorGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarMensagens, 
+				"#gridEntregador",
+				params
+			);
+
+			break;
+			
 		default:
 			break;
 		}
@@ -290,12 +304,15 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 
 		var produto = T.produtosSelecionados[0];
 		
-		var codigoProduto = produto.id;
-		var nomeProduto = produto.nome;
+		if(produto) {
+			var codigoProduto = produto.id;
+			var nomeProduto = produto.nome;
+			$("#codigoProdutoHeader").html(codigoProduto);
+			$("#nomeProdutoHeader").html(nomeProduto);
+		}
+		
 		var edicaoProduto = T.get('edicao');
 
-		$("#codigoProdutoHeader").html(codigoProduto);
-		$("#nomeProdutoHeader").html(nomeProduto);
 		$("#edicaoProdutoHeader").html(edicaoProduto);
 		
 		return result;
@@ -360,15 +377,22 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		
 		result[1].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
 		
+		result[2].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
+		
+		
 		var comboBox =  montarComboBox(result[0], false);
 		$('#box', _workspace).html(comboBox);
 		
 		var comboRota =  montarComboBox(result[1], false);
 		$('#rota', _workspace).html(comboRota);
-				
-		if(isCotaDefined)
-			$('#rota', _workspace).enable();
 		
+		var comboRoteiro =  montarComboBox(result[2], false);
+		$('#roteiro', _workspace).html(comboRoteiro);
+		
+		if(isCotaDefined) {
+			$('#rota', _workspace).enable();
+			$('#roteiro', _workspace).enable();
+		}
 	},
 	
 	this.carregarDetalhes = function(indice) {
@@ -376,33 +400,52 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		popup_detalhe_box();
 	},
 	
-	this.mudarTipoPesquisa = function(tipo) {
+	this.displayEntregador = function(display) {
 		
+		if(display===true)
+			$('.entregador').show();
+		else
+			$('.entregador').hide();
+		
+	},
+	
+	this.mudarTipoPesquisa = function(tipo) {
+				
 		switch (tipo) {
 			
 		case 'BOX':
 			T.atualizarBoxRota();
-			T.bloquearCampos('rota','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
+			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
 			T.desbloquearCampos('box','quebraPorCota');
 			T.bloquearLinkProdutos();
+			T.displayEntregador(false);
 			T.limparProdutosSelecionados();
 			break;
 		case 'ROTA':
 			T.atualizarBoxRota();
 			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
-			T.desbloquearCampos('box','rota','quebraPorCota');
+			T.desbloquearCampos('box','rota','roteiro','quebraPorCota');
+			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':
-			T.bloquearCampos('box','rota','codigoProduto','nomeProduto','edicao','quebraPorCota');
-			T.desbloquearCampos('codigoCota','nomeCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao');
+			T.desbloquearCampos('codigoCota','nomeCota','quebraPorCota');
+			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
+		case 'PRODUTO_X_COTA' :
+			T.bloquearCampos('box','rota','roteiro');
+			T.desbloquearCampos('codigoCota','nomeCota','quebraPorCota', 'codigoProduto','nomeProduto','edicao');
+			T.desbloquearLinkProdutos();
+			T.displayEntregador(false);
+			break;
 		case 'PRODUTO':
-			T.bloquearCampos('box','rota','codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
+			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
 			break;
 		case 'PRODUTO_ESPECIFICO':
@@ -410,13 +453,16 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
 			T.desbloquearLinkProdutos();
 			break;
-		case 'PRODUTO_X_COTA':
-			T.bloquearCampos('box','rota','codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
+		case 'ENTREGADOR':
+			T.atualizarBoxRota();
+			T.bloquearCampos('quebraPorCota');
+			T.desbloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
+			T.displayEntregador(true);
+			T.bloquearLinkProdutos();
 			T.desbloquearLinkProdutos();
-			break;
+			break;			
 		default:
-			T.bloquearCampos('box','rota','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('box','rota', 'roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
 			break;
 		}
 	},	
@@ -443,7 +489,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		data.push({name:'filtro.tipoConsulta',		value: T.get("tipoConsulta")});
 		data.push({name:'filtro.box',				value: T.get("box")});
 		data.push({name:'filtro.rota',				value: T.get("rota")});
-		
+		data.push({name:'filtro.roteiro',				value: T.get("roteiro")});
 		$.each(T.produtosSelecionados, function(index, row) {
 			data.push({name:'filtro.codigosProduto[' + index + ']',	value: row.id});
 		});
@@ -453,7 +499,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		data.push({name:'filtro.codigoCota',		value: T.get("codigoCota")});
 		data.push({name:'filtro.nomeCota',			value: T.get("nomeCota")});
 		data.push({name:'filtro.quebraPorCota',	value: T.get("quebraPorCota")});
-		data.push({name:'filtro.excluirProdutoSemReparte',	value: T.get("excluirProdutoSemReparte")});
+		data.push({name:'filtro.idEntregador',	value: T.get("idEntregador")});
 		
 		return data;
 	},
@@ -938,5 +984,79 @@ $(function() {
 		width : 960,
 		height : 255
 	}));
+	
+	$(".mapaAbastecimentoEntregadorGrid").flexigrid({
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 130,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Edição',
+			name : 'numeroEdicao',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Cód. Barras',
+			name : 'codigoBarra',
+			width : 125,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Pct. Padrão',
+			name : 'pacotePadrao',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte',
+			name : 'reparte',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Preço Capa R$',
+			name : 'precoCapa',
+			width : 80,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Cota',
+			name : 'codigoCota',
+			width : 40,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Nome',
+			name : 'nomeCota',
+			width : 120,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Qtde Exml',
+			name : 'qtdeExms',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	});
+
 });
 //@ sourceURL=mapaAbastecimento.js
