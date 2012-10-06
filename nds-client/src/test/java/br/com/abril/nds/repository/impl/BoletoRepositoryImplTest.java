@@ -464,4 +464,22 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Assert.assertTrue(qtdBaixados > 0);
 	}
 	
+	@Test
+	public void obterTotalBancario() {
+
+		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
+		
+		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, null);
+
+		filtro.setData(dataAtual);
+		filtro.setPaginacao(paginacaoVO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.NOME_BANCO);
+		
+		List<DetalheBaixaBoletoDTO> detalheValorTotalBancario =
+			this.boletoRepository.obterTotalBancario(filtro);
+		
+		Assert.assertNotNull(detalheValorTotalBancario);
+		Assert.assertEquals(1, detalheValorTotalBancario.size());
+	}
+	
 }
