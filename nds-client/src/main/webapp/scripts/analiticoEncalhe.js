@@ -5,7 +5,7 @@ var analiticoEncalheController = $.extend(true, {
 
 	init : function() {
 		
-		$("#datepickerDe", analiticoEncalheController.workspace).datepicker({
+		$("#analiticoEncalhe_dataEncalhe").datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -24,7 +24,7 @@ var analiticoEncalheController = $.extend(true, {
 			newp : 1
 		});
 		
-		$(".visaoEstoqueGrid", this.workspace).flexReload();
+		$(".fechamentoAnaliticoGrid", this.workspace).flexReload();
 		$('#divAnaliticoEncalheGrid', this.workspace).show();
 	},
 	

@@ -12,7 +12,21 @@ $(function(){
 </head>
 
 <body>
-	
+	<form id="formEdicoesFechadas">
+		<div id="dialogEdicoesFechadas" title="Edi&ccedil;&otilde;es Fechadas com Saldo"
+		style="display: none;">
+		<fieldset style="width: 900px;">
+			<legend>Edi&ccedil;&otilde;es Fechadas com Saldo</legend>
+
+			<table class="consultaEdicoesFechadasGrid"></table>
+			<span class="bt_sellAll" style="float: right;"><input
+				type="checkbox" id="dialogEdicoesFechadasSelAll" name="Todos" onclick="digitacaoContagemDevolucaoController.edicoesFechadasCheckAll(this);"
+				style="float: right; margin-right: 30px;" /> <label for="dialogEdicoesFechadasSelAll">Selecionar
+					Todos</label></span>
+
+		</fieldset>
+	</div></form>
+
 	<fieldset class="classFieldset">
 		
 		  <legend> Pesquisar Fornecedor</legend>
@@ -36,7 +50,7 @@ $(function(){
 				    <td >Fornecedor:</td>
 				    <td width="230">
 				    <select name="idFornecedor" id="idFornecedor" style="width:200px;">
-				      <option value="-1"  selected="selected">Todos</option>
+				      <option value=""  selected="selected">Todos</option>
 				      <c:forEach items="${listaFornecedores}" var="fornecedor">
 				      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
 				      </c:forEach>
@@ -87,8 +101,8 @@ $(function(){
 							</a> 
 							</span> 
 							
-							<span class="bt_novos" title="Incluir Produtos">
-							<a href="javascript:;" >
+							<span class="bt_novos" title="Incluir Produtos" onclick="digitacaoContagemDevolucaoController.incluirProdutoDialog();">
+							<a href="javascript:;">
 							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0">
 									Incluir Edições
 							</a>
@@ -104,11 +118,11 @@ $(function(){
 							<span id="btnConfirmar" class="bt_novos" title="Devolução Parcial"> 
 							<a href="javascript:digitacaoContagemDevolucaoController.popupConfirmar();"> 
 								<img border="0" hspace="5" alt="Confirmar"
-								src="${pageContext.request.contextPath}/images/bt_expedicao.png">
+								src="${pageContext.request.contextPath}//images/bt_expedicao.png" hspace="5" border="0">
 							Devolução Parcial
 							</a> 
 							</span>
-												
+							
 							<span class="bt_novos" title="Replicar Quantidades">
 							<a href="javascript:;">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0">
@@ -133,7 +147,7 @@ $(function(){
 							</span>
 							
 							<span class="bt_novos" title="Imprimir Conferência Cega">
-							<a href="javascript:;">
+							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportarCoferenciaCega?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0">
 							Conferência Cega
 							</a>
@@ -147,11 +161,11 @@ $(function(){
 							</a>
 							</span>
 						</td>
-					<td>
+					<td width="18%">
 						<span id="bt_sellAll" class="bt_sellAll">
-							<label for="sel" style="margin-right: 20px;">Selecionar Todos</label> 
-							<input type="checkbox" name="Todos" id="sel" 
-								   onclick="digitacaoContagemDevolucaoController.checkAllReplicarValor(this, 'checkgroup');" /> 
+							<label for="sel" style="margin-right:15px;">Selecionar Todos</label> 
+							<input type="checkbox" name="Todos" id="sel" onclick="digitacaoContagemDevolucaoController.checkAllReplicarValor(this, 'checkgroup');"
+							style="float: left;" /> 
 						</span>
 					</td>
 				</tr>

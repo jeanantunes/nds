@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 /**
@@ -114,5 +115,11 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 */
 	public Integer obterMinCodigoInterfaceDisponivel();
 	
-
+	/**
+	 * Retorna PessoaJuridica do Fornecedor pelo IdPessoa.
+	 * 
+	 * @param idPessoa
+	 * @return
+	 */
+	public List<Fornecedor> obterFornecedoresPorIdPessoa(Long idPessoa);
 }

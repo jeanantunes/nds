@@ -175,7 +175,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
@@ -199,7 +199,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
@@ -229,7 +229,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	public void setUpForContagemDevolucao() {
 		
 		NotaFiscalEntradaFornecedor notaFiscal4Rodas= Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
@@ -955,9 +955,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date dataFinal = Fixture.criarData(1, Calendar.MARCH, 2012);
 		
 	
-		PeriodoVO periodo = new PeriodoVO();
-		periodo.setDataInicial(dataInicial);
-		periodo.setDataFinal(dataFinal);
+		Intervalo<Date> periodo = new Intervalo<Date>(dataInicial, dataFinal);
 		filtro.setPeriodo(periodo);
 		
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.CODIGO_PRODUTO);

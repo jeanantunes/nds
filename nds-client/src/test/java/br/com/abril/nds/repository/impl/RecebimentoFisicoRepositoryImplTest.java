@@ -83,7 +83,7 @@ public class RecebimentoFisicoRepositoryImplTest extends AbstractRepositoryImplT
 		usuario = Fixture.usuarioJoao();
 		save(usuario);
 		
-		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, dinap.getJuridica(), fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
+		notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(10),  new BigDecimal(10),  new BigDecimal(10));
 		notaFiscal.setOrigem(Origem.MANUAL);
 		save(notaFiscal);		
 				

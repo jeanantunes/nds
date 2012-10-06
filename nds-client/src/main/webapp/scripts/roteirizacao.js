@@ -1023,7 +1023,8 @@ var roteirizacao = $.extend(true, {
     ordemPdvChangeListener : function(element, idPdv) {
         var ordemAntiga = element.defaultValue;
         var ordem = $(element).val();
-        var param = [{name: 'idRota', value: roteirizacao.idRota},
+        var param = [{name: 'idRoteiro', value: roteirizacao.idRoteiro},
+            {name: 'idRota', value: roteirizacao.idRota},
             {name: 'idPdv', value: idPdv},
             {name: 'ordem',  value: ordem}];
 
@@ -1788,7 +1789,7 @@ var roteirizacao = $.extend(true, {
             ,
             function(result) {
                 $.each(result, function(index, row){
-                        $(idComboRota, roteirizacao.workspace).append('<option value="'+row.id+'">'+row.nome+'</option>');
+                        $(idComboRota, roteirizacao.workspace).append('<option value="'+row.id+'">'+row.descricaoRota+'</option>');
                     }
                 );
 
@@ -2028,7 +2029,10 @@ var roteirizacao = $.extend(true, {
 
             var qntCotas = value.cell.qntCotas;
 
-            var idBox       = value.cell.idBox;
+            var idBox       = "-1";
+            if (value.cell.idBox) {
+               idBox = value.cell.idBox;
+            }
             var idRota      = value.cell.idRota;
             var idRoteiro   = value.cell.idRoteiro;
 
@@ -2059,8 +2063,9 @@ var roteirizacao = $.extend(true, {
     detalharRotaRoteiroCotasSumarizadas : function(title, idBox, idRota, idRoteiro) {
 
         var data = [];
-
-        data.push({name:'idBox',        value: idBox });
+        if (idBox != -1) {
+            data.push({name:'idBox',        value: idBox });
+        }
         data.push({name:'idRota',       value: idRota });
         data.push({name:'idRoteiro',    value: idRoteiro });
 
@@ -2700,7 +2705,30 @@ var roteirizacao = $.extend(true, {
 
         $("#rotaAtual").val(roteirizacao.idRota + " - " + roteirizacao.nomeRota);
 
-        roteirizacao.carregarComboRota('selectNovasRotas', roteirizacao.idRoteiro);
+        roteirizacao.carregarComboRotaCopiaPDV(roteirizacao.idRoteiro);
+    },
+    
+    
+    carregarComboRotaCopiaPDV : function (idRoteiro) {
+        roteirizacao.resetComboRotaPesquisa('selectNovasRotas');
+        idComboRota = "#selectNovasRotas";
+        if (!idRoteiro) {
+            idRoteiro = $('#roteiroPesquisa', roteirizacao.workspace).val();
+        }
+
+        $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRotaCopiaPDV',
+            {'roteiroId' : idRoteiro},
+            function(result) {
+                $.each(result, function(index, row){
+                        $(idComboRota, roteirizacao.workspace).append('<option value="'+row.id+'">'+row.nome+'</option>');
+                    }
+                );
+
+            },
+            null,
+            true
+        );
+
     },
 
     abrirPopupCopiarCotas: function() {
@@ -2766,6 +2794,7 @@ var roteirizacao = $.extend(true, {
 
         rotaCopia.push({name:"rotaCopia.id" , value: $("#selectNovasRotas").val()});
         rotaCopia.push({name:"rotaCopia.nome" , value: $("#selectNovasRotas > option:selected").html()});
+        rotaCopia.push({name:"idRoteiro" , value: roteirizacao.idRoteiro});
 
         return rotaCopia;
 

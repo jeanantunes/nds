@@ -83,6 +83,9 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
 
+	@Column(name = "NOSSO_NUMERO")
+	private String nossoNumero;
+	
 	/**
 	 * Obtém id
 	 *

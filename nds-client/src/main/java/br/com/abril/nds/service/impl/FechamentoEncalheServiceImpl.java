@@ -602,6 +602,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 
 	@Override
+	@Transactional
 	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
 		return fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro);
 	}

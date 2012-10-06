@@ -30,7 +30,7 @@ public class Negociacao {
 	private Cobranca cobrancaOriginaria;
 	
 	@OneToMany
-	private List<Cobranca> parcelas;
+	private List<ParcelaNegociacao> parcelas;
 	
 	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA")
 	private BigDecimal comissaoParaSaldoDivida;
@@ -46,7 +46,7 @@ public class Negociacao {
 	private FormaCobranca formaCobranca;
 	
 	@Column(name = "ATIVAR_PAGAMENTO_APOS_PARCELA")
-	private Integer ativarPagamentoAposParcela;
+	private Integer ativarCotaAposParcela;
 
 	public Long getId() {
 		return id;
@@ -64,11 +64,11 @@ public class Negociacao {
 		this.cobrancaOriginaria = cobrancaOriginaria;
 	}
 
-	public List<Cobranca> getParcelas() {
+	public List<ParcelaNegociacao> getParcelas() {
 		return parcelas;
 	}
 
-	public void setParcelas(List<Cobranca> parcelas) {
+	public void setParcelas(List<ParcelaNegociacao> parcelas) {
 		this.parcelas = parcelas;
 	}
 
@@ -104,11 +104,11 @@ public class Negociacao {
 		this.formaCobranca = formaCobranca;
 	}
 
-	public Integer getAtivarPagamentoAposParcela() {
-		return ativarPagamentoAposParcela;
+	public Integer getAtivarCotaAposParcela() {
+		return ativarCotaAposParcela;
 	}
 
-	public void setAtivarPagamentoAposParcela(Integer ativarPagamentoAposParcela) {
-		this.ativarPagamentoAposParcela = ativarPagamentoAposParcela;
+	public void setAtivarCotaAposParcela(Integer ativarCotaAposParcela) {
+		this.ativarCotaAposParcela = ativarCotaAposParcela;
 	}
 }

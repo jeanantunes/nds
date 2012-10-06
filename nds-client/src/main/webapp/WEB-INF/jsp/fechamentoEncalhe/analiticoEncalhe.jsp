@@ -17,7 +17,7 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="75">Data Encalhe:</td>
-				<td width="114"><input name="filtro.dataEncalhe" type="text" id="datepickerDe" style="width:80px;" value="${dataOperacao}" onchange="analiticoEncalheController.limpaGridPesquisa()" /></td>
+				<td width="114"><input name="filtro.dataEncalhe" type="text" id="analiticoEncalhe_dataEncalhe" style="width:80px;" value="${dataOperacao}" onchange="analiticoEncalheController.limpaGridPesquisa()" /></td>
 				<td width="67">Fornecedor:</td>
 				<td width="216">
 					<select name="filtro.fornecedorId" id="selectFornecedor" style="width:200px;" onchange="analiticoEncalheController.limpaGridPesquisa()">

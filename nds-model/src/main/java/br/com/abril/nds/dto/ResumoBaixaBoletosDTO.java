@@ -24,6 +24,8 @@ public class ResumoBaixaBoletosDTO {
 	private Integer quantidadeInadimplentes;
 	
 	private BigDecimal valorTotalBancario;
+	
+	private boolean possuiDiversasBaixas;
 
 	/**
 	 * @return the nomeArquivo
@@ -165,5 +167,18 @@ public class ResumoBaixaBoletosDTO {
 	public void setValorTotalBancario(BigDecimal valorTotalBancario) {
 		this.valorTotalBancario = valorTotalBancario;
 	}
-	
+
+	/**
+	 * @return the possuiDiversasBaixas
+	 */
+	public boolean isPossuiDiversasBaixas() {
+		return possuiDiversasBaixas;
+	}
+
+	/**
+	 * @param possuiDiversasBaixas the possuiDiversasBaixas to set
+	 */
+	public void setPossuiDiversasBaixas(boolean possuiDiversasBaixas) {
+		this.possuiDiversasBaixas = possuiDiversasBaixas;
+	}
 }

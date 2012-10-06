@@ -17,6 +17,7 @@ import br.com.abril.nds.util.export.Exportable;
 public class RegistroEdicoesFechadasVO implements Serializable {
 
 	private static final long serialVersionUID = -2136529530131643372L;
+	private Long idProdutoEdicao;
 
 	@Export(label = "Código", exhibitionOrder = 1)
 	private String codigoProduto;
@@ -40,6 +41,9 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 
 	@Export(label = "Saldo", exhibitionOrder = 8)
 	private BigInteger saldo;
+	
+	public RegistroEdicoesFechadasVO() {
+	}
 
 	public RegistroEdicoesFechadasVO(String codigoProduto, String nomeProduto,
 			Long edicaoProduto, String nomeFornecedor, Date dataLancamento,
@@ -121,6 +125,20 @@ public class RegistroEdicoesFechadasVO implements Serializable {
 	@Export(label = "Parcial", exhibitionOrder = 7)
 	public String getParcialString() {
 		return (this.parcial ? "S" : "N"); 
+	}
+
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 	
 }
