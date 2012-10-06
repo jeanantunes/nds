@@ -37,12 +37,9 @@
 		<fieldset>
     		<legend>Transferir Cotas</legend>
     			
+            <table id="cotasParaTransferenciaGrid" width="347" border="0" cellspacing="1" cellpadding="1"></table>
+            <br clear="all" />
    			<table width="347" border="0" cellspacing="1" cellpadding="1">
-				<tr class="header_table">
-					<td width="85">Cota</td>
-					<td width="255">Nome</td>
-				</tr>
-         		<tr id="trDadosCotaNome" class="class_linha_1"></tr>
          		<tr>
 			    	<td>Rota Atual:</td>
 			        <td>
