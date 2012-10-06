@@ -12,8 +12,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosDTO;
+import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
@@ -88,7 +88,7 @@ public class EntradaNFETerceirosController {
 	private CotaService cotaService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_NFE_ENTRADA_NFE_TERCEIROS)
+	@Rules(Permissao.ROLE_NFE_ENTRADA_NFE_TERCEIROS)	
 	public void index(){
 		carregarComboStatusNota();
 	}
