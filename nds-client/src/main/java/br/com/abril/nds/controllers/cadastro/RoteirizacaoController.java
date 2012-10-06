@@ -1134,8 +1134,19 @@ public class RoteirizacaoController {
 	
 	@Post
 	public void transferirRoteiro(Long idBoxAnterior, Long idRoteiro, Long idBoxNovo){
-		
-		Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = getDTO().getRoteirosTransferidos();
+		RoteirizacaoDTO roteirizacaoDTO = getDTO();
+		RoteiroRoteirizacaoDTO roteiro = roteirizacaoDTO.getRoteiro(idRoteiro);
+		for (RotaRoteirizacaoDTO rota : roteiro.getRotas()) {
+		    for (PdvRoteirizacaoDTO pdv : rota.getPdvs()) {
+		        if (!roteirizacaoService.verificaDisponibilidadePdv(pdv.getId(), idBoxNovo)) {
+		            throw new ValidacaoException(TipoMensagem.ERROR, 
+		                    String.format("O PDV [%s] já pertence a uma Roteirização associada a um Box!",
+                            pdv.getNome()));
+		        }
+		    }
+		}
+	    
+		Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = roteirizacaoDTO.getRoteirosTransferidos();
 		Set<RoteiroRoteirizacaoDTO> roteiros = roteirosTransferidos.get(idBoxNovo);
 		
 		if (roteiros == null){
@@ -1159,7 +1170,7 @@ public class RoteirizacaoController {
 			}
 		}
 		
-		RoteiroRoteirizacaoDTO novoDTO = new RoteiroRoteirizacaoDTO(novoId, novaOrdem, this.getDTO().getRoteiro(idRoteiro).getNome());
+		RoteiroRoteirizacaoDTO novoDTO = new RoteiroRoteirizacaoDTO(novoId, novaOrdem, roteirizacaoDTO.getRoteiro(idRoteiro).getNome());
 		novoDTO.addAllRota(this.getDTO().getRoteiro(idRoteiro).getRotas());
 		
 		roteiros.add(novoDTO);

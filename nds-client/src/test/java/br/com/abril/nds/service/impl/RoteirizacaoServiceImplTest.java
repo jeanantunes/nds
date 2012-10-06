@@ -527,7 +527,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
         } catch (ValidacaoException ex) {
             Assert.assertEquals(TipoMensagem.ERROR, ex.getValidacao().getTipoMensagem());
             String mensagem = ex.getValidacao().getListaMensagens().get(0);
-            Assert.assertEquals(mensagem, "O PDV ["+ pdvManoel.getNome() +"] já pertence a uma roteirização associada a um Box!");
+            Assert.assertEquals(mensagem, "O PDV ["+ pdvManoel.getNome() +"] já pertence a uma Roteirização associada a um Box!");
         }
     }
 	
