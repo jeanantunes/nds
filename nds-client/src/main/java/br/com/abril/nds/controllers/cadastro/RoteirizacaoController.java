@@ -1081,7 +1081,7 @@ public class RoteirizacaoController {
 		this.getDTO().addRoteiro(new RoteiroRoteirizacaoDTO(novoId, ordem, nome));
 	}
 	
-	private void adicionarRota(Long roteiroId, Integer ordem, String nome){
+	private RotaRoteirizacaoDTO adicionarRota(Long roteiroId, Integer ordem, String nome){
 		
 		List<RotaRoteirizacaoDTO> rotasDto = this.getDTO().getRoteiro(roteiroId).getRotas();
 		
@@ -1095,7 +1095,9 @@ public class RoteirizacaoController {
 			}
 		}
 		
-		this.getDTO().getRoteiro(roteiroId).addRota(new RotaRoteirizacaoDTO(novoId, ordem, nome));
+		RotaRoteirizacaoDTO rota = new RotaRoteirizacaoDTO(novoId, ordem, nome);
+        this.getDTO().getRoteiro(roteiroId).addRota(rota);
+        return rota;
 	}
 	
 	@Post
@@ -1209,8 +1211,8 @@ public class RoteirizacaoController {
 			roteiroDTO = this.getDTO().getRoteiro(idRoteiroNovo);
 			
 			if (roteiroDTO != null){
-				
-				roteiroDTO.addRota(rotaDTO);
+			    RotaRoteirizacaoDTO transferida = adicionarRota(idRoteiroNovo, rotaDTO.getOrdem(), rotaDTO.getNome());
+			    transferida.addAllPdv(rotaDTO.getPdvs());
 			}
 		}
 		

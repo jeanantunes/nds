@@ -554,7 +554,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Transactional(readOnly = true)
 	public boolean verificaDisponibilidadePdv(Long idPdv, Long idBox) {
 		Box box = this.roteirizacaoRepository.obterBoxDoPDV(idPdv);
-		return box == null || box.getId().equals(idBox);
+		return box == null || idBox == null || box.getId().equals(idBox);
 	}
 	
 	/**
@@ -661,18 +661,19 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 roteiro.desassociarRotas(roteiroDTO.getRotasExclusao());
             }
             for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getTodasRotas()) {
+                Rota rota;
                 if (rotaDTO.isNovo()) {
-                    novaRotaRoteiro(roteiro, rotaDTO);
+                    rota = novaRotaRoteiro(roteiro, rotaDTO);
                 } else {
-                    Rota rotaExistente = roteiro.getRota(rotaDTO.getId());
-                    rotaExistente.desassociarPDVs(rotaDTO.getPdvsExclusao());
-                    for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
-                        RotaPDV rotaPDVExistente = rotaExistente.getRotaPDVPorPDV(pdvDTO.getId());
-                        if (rotaPDVExistente == null) {
-                            novoPDVRota(rotaExistente, pdvDTO, roteirizacao.getBox());
-                        } else {
-                            rotaExistente.alterarOrdemPdv(pdvDTO.getId(), pdvDTO.getOrdem());
-                        }
+                    rota = roteiro.getRota(rotaDTO.getId());
+                    rota.desassociarPDVs(rotaDTO.getPdvsExclusao());
+                }
+                for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
+                    RotaPDV rotaPDVExistente = rota.getRotaPDVPorPDV(pdvDTO.getId());
+                    if (rotaPDVExistente == null) {
+                        novoPDVRota(rota, pdvDTO, roteirizacao.getBox());
+                    } else {
+                        rota.alterarOrdemPdv(pdvDTO.getId(), pdvDTO.getOrdem());
                     }
                 }
             }
