@@ -42,8 +42,10 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
@@ -75,6 +77,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	@Autowired
 	private FormaCobrancaRepository formaCobrancaRepository;
 	
+	@Autowired
+	private DocumentoCobrancaService documentoCobrancaService;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public NegociacaoDividaPaginacaoDTO obterDividasPorCotaPaginado(FiltroConsultaNegociacaoDivida filtro) {
@@ -96,9 +101,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 
 	@Override
 	@Transactional
-	public void criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, Long idCobrancaOriginaria, 
+	public byte[] criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, Long idCobrancaOriginaria, 
 			Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
-			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca) {
+			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca,
+			boolean gerarBoleto) {
 		
 		//lista para mensagens de validação
 		List<String> msgs = new ArrayList<String>();
@@ -181,6 +187,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		this.cobrancaRepository.merge(cobrancaOriginaria);
 		this.formaCobrancaRepository.adicionar(formaCobranca);
 		
+		String nossoNumeroPrimieroBoleto = null;
+		
 		//Caso essa seja uma negociação avulsa as parcelas não devem entrar nas próximas
 		//gerações de cobrança, para isso é necessário criar um consolidado financeiro para
 		//os movimentos financeiros das parcelas
@@ -225,7 +233,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 						cobranca = new CobrancaDinheiro();
 					break;
 					case OUTROS:
-						//TODO vixi...
 						cobranca = new CobrancaDinheiro();
 					break;
 					case TRANSFERENCIA_BANCARIA:
@@ -238,10 +245,21 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 				cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
 				cobranca.setValor(totalNegociacao);
-				cobranca.setNossoNumero(String.valueOf((System.currentTimeMillis())));
+				cobranca.setNossoNumero(
+						Util.gerarNossoNumero(
+								numeroCota, 
+								dataAtual, 
+								formaCobranca.getBanco().getNumeroBanco(), 
+								0L, 
+								parcelaNegociacao.getMovimentoFinanceiroCota().getId()));
 				
 				this.dividaRepository.adicionar(divida);
 				this.cobrancaRepository.adicionar(cobranca);
+				
+				if (nossoNumeroPrimieroBoleto == null){
+					
+					nossoNumeroPrimieroBoleto = cobranca.getNossoNumero();
+				}
 			}
 		}
 		
@@ -256,6 +274,14 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		negociacao.setParcelas(parcelas);
 		
 		this.negociacaoDividaRepository.adicionar(negociacao);
+		
+		if (gerarBoleto && nossoNumeroPrimieroBoleto != null){
+			
+			return this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumeroPrimieroBoleto);
+		} else {
+			
+			return null;
+		}
 	}
 
 	private void validarDadosEntrada(List<String> msgs, Date dataAtual,
@@ -303,24 +329,29 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		
 		//se a comissão não foi preenchida deve haver forma de cobrança e tipo de cobrança
 		//para as parcelas
-		if (comissaoParaSaldoDivida == null){
+		if ((comissaoParaSaldoDivida == null && formaCobranca == null) ||
+				(comissaoParaSaldoDivida != null && formaCobranca != null)){
 			
-			if (formaCobranca.getTipoCobranca() == null){
-				
-				msgs.add("Parâmetro Tipo de Cobrança inválido.");
-			}
-			
-			if (formaCobranca.getTipoFormaCobranca() == null){
-				
-				msgs.add("Parâmetro Tipo de Forma de Cobrança inválido.");
-			}
-			
-		//se comissão e parâmetros para as parcelas forem preenchidos
+			msgs.add("A negociação deve ter saldo ou parcelas.");
 		} else {
 			
-			if (formaCobranca.getTipoCobranca() != null || formaCobranca.getTipoFormaCobranca() != null){
+			if (formaCobranca != null){
 				
-				msgs.add("Apenas uma forma de cobrança é permitida.");
+				if (formaCobranca.getTipoCobranca() == null){
+					
+					msgs.add("Parâmetro Tipo de Cobrança inválido.");
+				}
+				
+				if (formaCobranca.getTipoFormaCobranca() == null){
+					
+					msgs.add("Parâmetro Tipo de Forma de Cobrança inválido.");
+				}
+				
+				if (formaCobranca.getBanco() == null || 
+						formaCobranca.getBanco().getId() == null){
+					
+					msgs.add("Banco é obrigatório.");
+				}
 			}
 		}
 	}
