@@ -118,6 +118,18 @@ public class FecharDiaController {
 					|| dto.getDescricaoTipoMovimento().equals("Sobra DE") || dto.getDescricaoTipoMovimento().equals("Sobra EM")) {
 				pendencia = true;
 			}
+			if(dto.getDescricaoTipoMovimento().equals("Crédito") || dto.getDescricaoTipoMovimento().equals("Débito")){
+				pendencia = true;
+			}
+			if(dto.getDescricaoTipoMovimento().equals("Negociação")){
+				pendencia = true;
+			}
+			if(dto.getDescricaoTipoMovimento().equals("Ajuste de estoque")){
+				pendencia = true;
+			}
+			if(dto.getDescricaoTipoMovimento().equals("Postergação de cobrança")){
+				pendencia = true;
+			}
 		}
 		
 		result.use(Results.json()).from(pendencia).recursive().serialize();
