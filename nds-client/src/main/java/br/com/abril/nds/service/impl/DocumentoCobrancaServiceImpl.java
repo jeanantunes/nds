@@ -341,7 +341,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 						
 						Rota rota = roteirizacaoService.obterRotaDeRoteiroPorOrdem(roteiro.getId());
 					
-					    impressaoDTO.setRota( (rota!= null)? rota.getCodigoRota():"");
+					    impressaoDTO.setRota( (rota!= null)? rota.getDescricaoRota():"");
 					}
 				}
 			}

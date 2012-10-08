@@ -433,6 +433,18 @@ public class RoteirizacaoDTO implements Serializable{
         }
         return max;
     }
+    
+    /**
+     * Adiciona o roteiro aos roteiros da roteirização
+     * de acordo com a maior ordem existente
+     * @param roteiro roteiro para inclusão
+     */
+    public void addRoteiroAposMaiorOrdem(RoteiroRoteirizacaoDTO roteiro) {
+       int maiorOrdem = getMaiorOrdemRoteiro();
+       maiorOrdem++;
+       roteiro.setOrdem(maiorOrdem);
+       addRoteiro(roteiro);
+    }
 
     /**
      * Tipo da edição tela
