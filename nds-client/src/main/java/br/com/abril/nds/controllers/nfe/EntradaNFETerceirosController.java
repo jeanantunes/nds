@@ -12,8 +12,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosDTO;
-import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
@@ -125,40 +125,17 @@ public class EntradaNFETerceirosController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
+		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>> efetuarConsultaNotasRecebidas(FiltroEntradaNFETerceiros filtro) {
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> efetuarConsultaNotasRecebidas(FiltroEntradaNFETerceiros filtro) {
 		
-		List<ConsultaEntradaNFETerceirosDTO> listaNotasRecebidas = new ArrayList<ConsultaEntradaNFETerceirosDTO>();
+		List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
 		
-		ConsultaEntradaNFETerceirosDTO  c1 = new ConsultaEntradaNFETerceirosDTO();
-		c1.setNumeroNota(new Long(12345));
-		c1.setSerie("999");
-		c1.setChaveAcesso("987654321");
-		c1.setDataEmissao(new Date());
-		c1.setTipoNotaFiscal("Entrada");
-		c1.setNome("Fornecedor ABC");
-		c1.setValorNota(new BigDecimal(741.00));
-		
-		ConsultaEntradaNFETerceirosDTO  c2 = new ConsultaEntradaNFETerceirosDTO();
-		c2.setNumeroNota(new Long(54321));
-		c2.setSerie("88");
-		c2.setChaveAcesso("123456789");
-		c2.setDataEmissao(new Date());
-		c2.setTipoNotaFiscal("Entrada");
-		c2.setNome("Fornecedor CBA");
-		c2.setValorNota(new BigDecimal(549.00));
-		
-		listaNotasRecebidas.add(c1);
-		listaNotasRecebidas.add(c2);
-
-		//List<ConsultaEntradaNFETerceirosDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
-		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>>();
+		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>>();
 		
 		/*Integer totalRegistros = this.entradaNFETerceirosService.buscarTodasNFENotasRecebidas(filtro);
 		if(totalRegistros == 0){
@@ -184,41 +161,20 @@ public class EntradaNFETerceirosController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> tableModel = efetuarConsultaNotasPendentes(filtro);
+		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = efetuarConsultaNotasPendentes(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> efetuarConsultaNotasPendentes(FiltroEntradaNFETerceiros filtro) {
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentes(FiltroEntradaNFETerceiros filtro) {
 		
+<<<<<<< .mine
 		List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = new ArrayList<ConsultaNFENotasPendentesDTO>();
+=======
+		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
+>>>>>>> .theirs
 		
-		ConsultaNFENotasPendentesDTO c = new ConsultaNFENotasPendentesDTO();
-		c.setNumeroCota(1234);
-		c.setNome("Victor Montanher");
-		c.setDataEncalhe(new Date());
-		c.setTipoNota(TipoOperacao.ENTRADA);
-		c.setVlrNota(new BigDecimal(333));
-		c.setVlrReal(new BigDecimal(333));
-		c.setDiferenca(new BigDecimal(0));
-		c.setStatus("Pendente");
-		
-		ConsultaNFENotasPendentesDTO c1 = new ConsultaNFENotasPendentesDTO();
-		c1.setNumeroCota(1234);
-		c1.setNome("Victor Montanher");
-		c1.setDataEncalhe(new Date());
-		c1.setTipoNota(TipoOperacao.ENTRADA);
-		c1.setVlrNota(new BigDecimal(333));
-		c1.setVlrReal(new BigDecimal(333));
-		c1.setDiferenca(new BigDecimal(0));
-		c1.setStatus("Pendente");
-		
-		listaNotasRecebidas.add(c);
-		listaNotasRecebidas.add(c1);
-		
-		//List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
-		
-		TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaNFENotasPendentesDTO>>();
+		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
 		
 		/*Integer totalRegistros = this.entradaNFETerceirosService.buscarTodasNFENotasRecebidas(filtro);
 		if(totalRegistros == 0){
@@ -287,7 +243,6 @@ public class EntradaNFETerceirosController {
 		nota.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		nota.setCfop(cfop);
-//		nota.setEmitente(pj);
 		nota.setTipoNotaFiscal(tp);
 		
 		this.notaFiscalEntradaService.inserirNotaFiscal(nota);
@@ -320,24 +275,24 @@ public class EntradaNFETerceirosController {
 		FiltroEntradaNFETerceiros filtro = (FiltroEntradaNFETerceiros) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA);
 		
 		if(filtro.getStatusNotaFiscalEntrada().name().equals("RECEBIDA")){
-			List<ConsultaEntradaNFETerceirosDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, false);
+			List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, false);
 			
 			if(listaNotasRecebidas.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
 			FileExporter.to("consulta_notas_recebidas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listaNotasRecebidas, ConsultaEntradaNFETerceirosDTO.class, this.httpResponse);			
+					listaNotasRecebidas, ConsultaEntradaNFETerceirosRecebidasDTO.class, this.httpResponse);			
 		}else{
 			
-			List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, false);
+			List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, false);
 			
 			if(listaNotasRecebidas.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
 			FileExporter.to("consulta_notas_pendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listaNotasRecebidas, ConsultaNFENotasPendentesDTO.class, this.httpResponse);
+					listaNotasRecebidas, ConsultaEntradaNFETerceirosPendentesDTO.class, this.httpResponse);
 			
 		}
 			
