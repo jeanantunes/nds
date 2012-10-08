@@ -906,6 +906,10 @@ public class DataLoader {
 	private static ProdutoEdicao produtoEdicaoSuper2;
 	private static ProdutoEdicao produtoEdicaoCapricho2;
 
+	private static Object tipoMovimentoCompraEncalhe;
+
+	private static Object tipoMovimentoEstornoCompraEncalhe;
+
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"classpath:/applicationContext-dataLoader.xml");
@@ -5099,7 +5103,9 @@ public class DataLoader {
 
 		tipoMovimentoNivelamentoEntrada = Fixture.tipoMovimentoNivelamentoEntrada();
 		tipoMovimentoNivelamentoSaida = Fixture.tipoMovimentoNivelamentoSaida();
-
+		
+		tipoMovimentoCompraEncalhe = Fixture.tipoMovimentoCompraEncalhe();
+		tipoMovimentoEstornoCompraEncalhe = Fixture.tipoMovimentoEstornoCompraEncalhe();
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
@@ -5113,7 +5119,8 @@ public class DataLoader {
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
-					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, tipoMovimentoEncalheAntecipado);
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
+					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();

@@ -47,6 +47,9 @@ public class Negociacao {
 	
 	@Column(name = "ATIVAR_PAGAMENTO_APOS_PARCELA")
 	private Integer ativarCotaAposParcela;
+	
+	@Column(name = "VALOR_DIVIDA_PAGA_COMISSAO")
+	private BigDecimal valorDividaPagaComissao;
 
 	public Long getId() {
 		return id;
@@ -110,5 +113,13 @@ public class Negociacao {
 
 	public void setAtivarCotaAposParcela(Integer ativarCotaAposParcela) {
 		this.ativarCotaAposParcela = ativarCotaAposParcela;
+	}
+
+	public BigDecimal getValorDividaPagaComissao() {
+		return valorDividaPagaComissao;
+	}
+
+	public void setValorDividaPagaComissao(BigDecimal valorDividaPagaComissao) {
+		this.valorDividaPagaComissao = valorDividaPagaComissao;
 	}
 }

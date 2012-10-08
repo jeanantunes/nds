@@ -1,5 +1,5 @@
 <form id="form-venda-encalhe">
-<div id="dialog-venda-encalhe" style="display: none;" title="Venda de Encalhe">
+<div id="dialog-venda-encalhe" style="display: none;" title="Venda de Encalhe / Suplementar">
 <jsp:include page="../messagesDialog.jsp" />     
 <table width="720" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
