@@ -7,7 +7,9 @@ import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
@@ -15,10 +17,18 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 
 	private static final long serialVersionUID = -1398883028867830199L;
 	
+	@Export(label = "Fornecedor", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private Fornecedor fornecedor;
+
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private Cota cota;
+
+	@Export(label = "Perído", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private Date dataInicial;
+
+	@Export(label = "Até", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private Date dataFinal;
+
 	private StatusNotaFiscalEntrada statusNotaFiscalEntrada;
 //	private Long codigoNota;
 	
@@ -52,6 +62,11 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 
 	public StatusNotaFiscalEntrada getStatusNotaFiscalEntrada() {
 		return statusNotaFiscalEntrada;
+	}
+
+	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 5)
+	public String getStatusNotaFiscalEntradaDescricao() {
+		return statusNotaFiscalEntrada.getDescricao();
 	}
 
 	public void setStatusNotaFiscalEntrada(
