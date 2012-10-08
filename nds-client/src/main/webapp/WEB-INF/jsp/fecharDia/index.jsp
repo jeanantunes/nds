@@ -246,11 +246,7 @@
 		        <tr class="class_linha_1">
 		          <td>Fechamento de Encalhe:</td>
 		          <td align="center"><img src="../images/ico_bloquear.gif" width="16" height="16" alt="Com Diferença" /></td>
-		        </tr>
-		        <tr class="class_linha_2">
-		          <td>Controle de Aprovações:</td>
-		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>
-		        </tr>
+		        </tr>		       
 		        <tr class="class_linha_1">
 		          <td>Manutenção Status da Cota:</td>
 		          <td align="center"><img src="../images/ico_check.gif" alt="Processo Efetuado" width="16" height="16" /></td>

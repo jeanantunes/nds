@@ -9,10 +9,12 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.FecharDiaRepository;
@@ -145,6 +147,28 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoLancamentoFaltaESobraFecharDiaDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao statusAprovacao) {
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append("SELECT movimento.tipoMovimento.descricao as descricaoTipoMovimento ");
+		
+		jpql.append("FROM Movimento movimento ");
+		jpql.append("WHERE  movimento.dataCriacao = :dataOperacao ");
+		jpql.append("AND  movimento.status = :statusAprovacao");
+		
+		Query query = getSession().createQuery(jpql.toString());
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameter("statusAprovacao", statusAprovacao);
+		
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoControleDeAprovacaoFecharDiaDTO.class));
 		
 		return query.list();
 	}

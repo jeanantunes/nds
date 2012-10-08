@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.filtro.FecharDiaDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FecharDiaService;
@@ -53,7 +55,7 @@ public class FecharDiaController {
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(distribuidor.getDataOperacao()));
 		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(distribuidor.getDataOperacao()));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(distribuidor.getDataOperacao()));
-		dto.setControleDeAprovacao(this.distribuidor.isUtilizaControleAprovacao());
+		dto.setControleDeAprovacao(this.distribuidor.isUtilizaControleAprovacao());		
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}
@@ -102,6 +104,23 @@ public class FecharDiaController {
 		tableModel.setTotal(listaLancamentoFaltaESobra.size());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("validacoesDoCotroleDeAprovacao")
+	public void validacoesDoCotroleDeAprovacao(){
+		
+		List<ValidacaoControleDeAprovacaoFecharDiaDTO> listaLancamentoFaltaESobra = this.fecharDiaService.obterPendenciasDeAprovacao(distribuidor.getDataOperacao(), StatusAprovacao.PENDENTE);
+		Boolean pendencia = false;
+		for (ValidacaoControleDeAprovacaoFecharDiaDTO dto : listaLancamentoFaltaESobra) {
+			if(dto.getDescricaoTipoMovimento().equals("Falta DE") || dto.getDescricaoTipoMovimento().equals("Falta EM") 
+					|| dto.getDescricaoTipoMovimento().equals("Sobra DE") || dto.getDescricaoTipoMovimento().equals("Sobra EM")) {
+				pendencia = true;
+			}
+		}
+		
+		result.use(Results.json()).from(pendencia).recursive().serialize();
 		
 	}
 

@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
-import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.util.DateUtil;
@@ -63,6 +64,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Transactional
 	public List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> obterLancamentoFaltasESobras(Date dataOperacaoDistribuidor) {
 		return this.fecharDiaRepository.existeLancamentoFaltasESobrasPendentes(dataOperacaoDistribuidor);
+	}
+
+	@Override
+	@Transactional
+	public List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao pendente) {
+		 
+		return this.fecharDiaRepository.obterPendenciasDeAprovacao(dataOperacao,pendente);
 	}
 
 }

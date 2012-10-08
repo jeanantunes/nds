@@ -4,9 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
+import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
-import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 
 public interface FecharDiaService {
 	
@@ -71,5 +72,14 @@ public interface FecharDiaService {
 	 * @return List<ValidacaoLancamentoFaltaESobraFecharDiaDTO>
 	 */
 	List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> obterLancamentoFaltasESobras(Date dataOperacaoDistribuidor);
+	
+	/**
+	 * Retorna uma lista com movimento pendentes de aprovacao
+	 * @param dataOperacaoDistribuidor 
+	 * 
+	 * 
+	 * @return List<ValidacaoLancamentoFaltaESobraFecharDiaDTO>
+	 */
+	List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao pendente);
 
 }

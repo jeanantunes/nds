@@ -442,9 +442,18 @@ var fecharDiaController =  $.extend(true, {
 	
 	validacaoControleDeAplicao : function(result){
 		if(result.controleDeAprovacao){
-			
+			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoCotroleDeAprovacao", null,
+					function(result){
+						if(result){
+							var conferenciaDeAprovacao = "<tr class='class_linha_1'><td>Controle de Aprovações:</td>";
+							var imagem = "<td align='center'><img src='"+ contextPath +"/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+							$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
+						}
+						
+					}
+				);
 		}else{
-			alert("ele não vai mostrar nada");
+			alert("Entrou no else");
 		}
 	}
 
