@@ -155,7 +155,7 @@ public class EntradaNFETerceirosController {
 		
 		listaNotasRecebidas.add(c1);
 		listaNotasRecebidas.add(c2);
-		
+
 		//List<ConsultaEntradaNFETerceirosDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
 		
 		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosDTO>>();

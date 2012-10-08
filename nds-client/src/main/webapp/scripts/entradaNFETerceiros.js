@@ -170,6 +170,24 @@ var entradaNFETerceirosController = $.extend(true, {
 		);
  	},
  	
+ 	//***OK***//
+	pesquisarCotaCadastroNota : function() {
+ 		
+		numeroCota = $("#cotaCadastroNota", this.workspace).val();
+ 		
+ 		$.postJSON(
+			contextPath + '/nfe/entradaNFETerceiros/buscarCotaPorNumero',
+			{ "numeroCota": numeroCota },
+			function(result) {
+				
+				$("#nomeCotaCadastroNota", this.workspace).val(result);
+				
+			},
+			null,
+			true
+		);
+ 	},
+ 	
  	popup : function() {
 		
 		$( "#dialog-novo", this.workspace ).dialog({
@@ -235,19 +253,19 @@ var entradaNFETerceirosController = $.extend(true, {
 	
 	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, vlrNota, idNotaFiscalEntrada) {
 		
-		$('#numeroNotaFiscalPopUp', this.workspace).text(numeroNfe);
+		/*$('#numeroNotaFiscalPopUp', this.workspace).text(numeroNfe);
 		$('#dataNotaFiscalPopUp', this.workspace).text(dataEncalhe);
 		$('#chaveAcessoNotaFiscalPopUp', this.workspace).text(chaveAcesso);
 		$('#serieNotaFiscalPopUp', this.workspace).text(serie);
 		$('#valorNotaFiscalPopUp', this.workspace).text(vlrNota);
 		
-		$(".pesqProdutosNotaGrid", this.workspace).flexOptions({
+		$(".pesquisarProdutosNotaGrid", this.workspace).flexOptions({
 			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
 			dataType : 'json',
 			params: [{name:'filtro.codigoNota', value:idNotaFiscalEntrada}]
 		});
 
-		$(".pesqProdutosNotaGrid", this.workspace).flexReload();
+		$(".pesquisarProdutosNotaGrid", this.workspace).flexReload();*/
 	
 		$( "#dialog-dadosNotaFiscal", this.workspace ).dialog({
 			resizable: false,
@@ -264,7 +282,7 @@ var entradaNFETerceirosController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-dadosNotaFiscal", this.workspace).dialog("close")
+			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form")
 		
 		
 		});	
@@ -295,11 +313,13 @@ var entradaNFETerceirosController = $.extend(true, {
 		
 		if(numeroCota != '0'){
 			$('#cotaCadastroNota', this.workspace).val(numeroCota);
-			$('#nomeCotaCadastroNota', this.workspace).val(nome);
-			$('#cotaCadastroNota', this.workspace).attr('disabled', 'disabled');
-			$('#nomeCotaCadastroNota', this.workspace).attr('disabled', 'disabled');
-			}
-			
+			$('#nomeCotaCadastroNota', this.workspace).val(nome);			
+		}else{
+			$('#cotaCadastroNota', this.workspace).val('');
+			$('#nomeCotaCadastroNota', this.workspace).val('');
+		}
+		$('#nomeCotaCadastroNota', this.workspace).attr('readonly', true);
+		
 		$( "#dialog-nfe", this.workspace ).dialog({
 			resizable: false,
 			height:280,

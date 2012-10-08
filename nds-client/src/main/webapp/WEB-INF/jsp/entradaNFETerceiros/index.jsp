@@ -9,7 +9,7 @@
 	});
 </script>
 <style type="text/css">
-#dialog-nfe {
+#dialog-nfe, #dialog-dadosNotaFiscal {
 	display: none;
 }
 
@@ -36,8 +36,7 @@ fieldset label {
 
 <body>
 	<form id="form-dadosNotaFiscal">
-		<div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal"
-			style="display: none;">
+		<div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal">
 			<fieldset>
 				<legend>Nota Fiscal</legend>
 				<table width="670" border="0" cellspacing="1" cellpadding="1"
@@ -64,7 +63,7 @@ fieldset label {
 
 			<fieldset>
 				<legend>Produtos Nota Fiscal</legend>
-				<table class="pesqProdutosNotaGrid"></table>
+				<table class="pesquisarProdutosNotaGrid"></table>
 
 			</fieldset>
 
@@ -81,7 +80,7 @@ fieldset label {
 							name="cotaCadastroNota"
 							style="width: 80px; float: left; margin-right: 5px;" /> <span
 							class="classPesquisar"><a href="javascript:;"
-								onclick="entradaNFETerceirosController.pesqEncalhe();">&nbsp;</a></span></td>
+								onclick="entradaNFETerceirosController.pesquisarCotaCadastroNota();">&nbsp;</a></span></td>
 					</tr>
 					<tr>
 						<td>Nome:</td>
@@ -194,7 +193,7 @@ fieldset label {
 					<td width="155"><input type="text" id="numeroCota"
 						name="filtro.cota.numeroCota"
 						style="width: 80px; float: left; margin-right: 5px;"
-						onblur="entradaNFETerceirosController.pesquisarCota();" /></td>
+						onchange="entradaNFETerceirosController.pesquisarCota();" /></td>
 					<td colspan="3">Nome: <span id="nomeCota"></span></td>
 				</tr>
 				<tr>
