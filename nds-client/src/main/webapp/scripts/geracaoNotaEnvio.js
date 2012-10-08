@@ -324,18 +324,14 @@ var geracaoNotaEnvioController = $.extend({
 			}
 			
 			var params = serializeArrayToPost("listaIdCotas", cotasSelecionadas);
-			
-			$.postJSON(this.path + 'gerarNotaEnvio', params, function(data) {
-				
-				if (!data) return;
-				
-				var tipoMensagem = data.tipoMensagem;
-				var listaMensagens = data.listaMensagens;
-		
-				if (tipoMensagem && listaMensagens) {
-					exibirMensagem(tipoMensagem, listaMensagens, "");
-				} 
-			});
+
+            var path = this.path + 'gerarNotaEnvio';
+
+            $.fileDownload(path, {
+                httpMethod : "POST",
+                data : params
+            });
+
 		},
 		
 		/**
