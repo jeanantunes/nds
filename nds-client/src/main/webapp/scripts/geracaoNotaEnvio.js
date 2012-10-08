@@ -329,7 +329,10 @@ var geracaoNotaEnvioController = $.extend({
 
             $.fileDownload(path, {
                 httpMethod : "POST",
-                data : params
+                data : params,
+                failCallback : function() {
+                    exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA!"]);
+                }
             });
 
 		},
