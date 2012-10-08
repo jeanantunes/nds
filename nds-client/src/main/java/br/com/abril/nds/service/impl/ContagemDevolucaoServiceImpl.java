@@ -595,7 +595,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	 * 
 	 * @param listaContagemDevolucaoAprovada
 	 */
-	private void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) {
+	@Override
+	@Transactional
+	public void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) {
 		
 		Map<Fornecedor, List<ContagemDevolucaoDTO>> mapaFornecedorListaContagemDevolucao = new HashMap<Fornecedor, List<ContagemDevolucaoDTO>>();
 		
@@ -782,7 +784,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
 			
-			if(contagem.getIdProdutoEdicao() == null || contagem.getQtdNota() != null || contagem.getQtdNota().doubleValue() > 0.0D) {
+			if(contagem.getIdProdutoEdicao() != null && contagem.getQtdNota() != null && contagem.getQtdNota().doubleValue() > 0.0D) {
 				
 				if(contagem.getPrecoVenda()!=null) {
 					valorTotal = valorTotal.add( contagem.getPrecoVenda().multiply( new BigDecimal(contagem.getQtdNota()) ) );
