@@ -57,10 +57,17 @@ var entradaNFETerceirosController = $.extend(true, {
 		$(".dadosFiltro", this.workspace).show();		
 		var status = $('#situacaoNfe', this.workspace).val();		
 		
-		if(status == 'RECEBIDA'){			
-			this.pesquisarNotaRecebidas();		
-		}else{			
-			this.pesquisarNotasPendente();
+		if(status != ''){
+			if(status == 'RECEBIDA'){			
+				this.pesquisarNotaRecebidas();		
+			}else{			
+				this.pesquisarNotasPendente();
+			}
+		}else{
+			$(".ui-state-highlight ui-corner-all").show();
+			$(".ui-icon ui-icon-info").html("teste");
+			$(".ui-icon ui-icon-info").show();
+			
 		}
 		
 	},
@@ -78,6 +85,8 @@ var entradaNFETerceirosController = $.extend(true, {
 	},
 	
 	pesquisarNotasPendente : function(){
+		
+		var params = $("#form-pesquisa-nfe").serialize();
 		
 		$(".encalheNfeGrid", this.workspace).flexOptions({
 			url: this.path +"pesquisarNotasPendentes?" + params,
@@ -119,10 +128,10 @@ var entradaNFETerceirosController = $.extend(true, {
 			
 			$.each(resultado.rows, function(index, row) {					
 				
-				var linkLancamento = '<a href="javascript:;"  onclick="this.popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
+				var linkLancamento = '<a href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 								   '</a>';
-			   var linkCadastro = '<a href="javascript:;" onclick="this.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
+			   var linkCadastro = '<a href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
 					   																		+row.cell.dataEncalhe+','
 					   																		+row.cell.chaveAcesso+','
 					   																		+row.cell.serie+','

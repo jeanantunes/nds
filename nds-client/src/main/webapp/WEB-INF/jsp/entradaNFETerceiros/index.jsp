@@ -66,17 +66,6 @@ fieldset label {
 				<legend>Produtos Nota Fiscal</legend>
 				<table class="pesqProdutosNotaGrid"></table>
 
-
-
-				<table width="800" border="0" cellspacing="1" cellpadding="1">
-					<tr>
-						<td width="352" align="right"><strong>Total:</strong>&nbsp;&nbsp;</td>
-						<td width="83">09</td>
-						<td width="82">06</td>
-						<td width="182">&nbsp;</td>
-						<td width="85">43,00</td>
-					</tr>
-				</table>
 			</fieldset>
 
 		</div>
@@ -194,7 +183,13 @@ fieldset label {
 				class="filtro">
 				<tr>
 					<td width="75">Fornecedor:</td>
-					<td width="216"><input name="filtro.fornecedor" id="fornecedor" type="text" style="width: 150px;" /></td>
+					<td width="216"><select name="filtro.fornecedor.id" id="fornecedor" type="text" style="width: 150px;">
+							<option selected="selected" value="-1"></option>
+								<c:forEach items="${listFornecedores}" var="fornecedor">
+									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
+								</c:forEach>
+						</select>
+					</td>
 					<td width="50">Cota:</td>
 					<td width="155"><input type="text" id="numeroCota"
 						name="filtro.cota.numeroCota"

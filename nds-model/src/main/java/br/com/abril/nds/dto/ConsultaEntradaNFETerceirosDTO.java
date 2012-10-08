@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -12,14 +13,17 @@ public class ConsultaEntradaNFETerceirosDTO implements Serializable {
 
 	private static final long serialVersionUID = 8366815250237375585L;
 
-	@Export(label = "NF- e", alignment = Alignment.LEFT)
-	private Long numeroNfe;
+	@Export(label = "Nº Nota", alignment = Alignment.LEFT)
+	private Long numeroNota;
 
 	@Export(label = "Serie", alignment = Alignment.LEFT)
 	private String serie;
 
 	@Export(label = "Chave Acesso", alignment = Alignment.LEFT)
 	private String chaveAcesso;
+	
+	@Export(label = "Dt. Emissão", alignment = Alignment.LEFT)
+	private Date dataEmissao;
 
 	@Export(label = "Tipo Nota", alignment = Alignment.LEFT)
 	private String tipoNotaFiscal;
@@ -33,18 +37,18 @@ public class ConsultaEntradaNFETerceirosDTO implements Serializable {
 	private boolean contemDiferenca;
 
 	/**
-	 * @return the numeroNfe
+	 * @return the numeroNota
 	 */
-	public Long getNumeroNfe() {
-		return numeroNfe;
+	public Long getNumeroNota() {
+		return numeroNota;
 	}
 
 	/**
-	 * @param numeroNfe
-	 *            the numeroNfe to set
+	 * @param numeroNota
+	 *            the numeroNota to set
 	 */
-	public void setNumeroNfe(Long numeroNfe) {
-		this.numeroNfe = numeroNfe;
+	public void setNumeroNota(Long numeroNota) {
+		this.numeroNota = numeroNota;
 	}
 
 	/**
@@ -75,6 +79,14 @@ public class ConsultaEntradaNFETerceirosDTO implements Serializable {
 	 */
 	public void setChaveAcesso(String chaveAcesso) {
 		this.chaveAcesso = chaveAcesso;
+	}
+
+	public Date getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = dataEmissao;
 	}
 
 	/**
