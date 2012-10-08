@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 
 public class VendaProdutoVO implements Serializable{
@@ -51,6 +52,24 @@ public class VendaProdutoVO implements Serializable{
 	
 	private String descTipoVenda;
 	
+	private FormaComercializacao formaComercializacao;
+	
+	
+	
+
+	/**
+	 * @return the formaComercializacao
+	 */
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	/**
+	 * @param formaComercializacao the formaComercializacao to set
+	 */
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
 
 	/**
 	 * @return the descTipoVenda
