@@ -26,6 +26,7 @@ import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoDivergenteVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoRejeitadoVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoBaseVO.TipoBaixaBoleto;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoCotaVO;
+import br.com.abril.nds.client.vo.baixaboleto.BaixaTotalBancarioVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -237,71 +238,83 @@ public class BaixaFinanceiraController {
 	}
 	
 	@Post
+	@SuppressWarnings("unchecked")
 	public void mostrarGridBoletosPrevisao(Date data, String sortorder,
 										   String sortname, int page, int rp) {
 		
 		FiltroDetalheBaixaBoletoDTO filtro =
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
-		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto =
+			this.boletoService.obterBoletosPrevistos(filtro);
 		
-		// TODO: realizar consulta total
-		int qtdeTotalRegistros = 0;
+		int qtdeTotalRegistros =
+			this.boletoService.obterQuantidadeBoletosPrevistos(filtro).intValue();
+
+		List<BaixaBoletoBaseVO> listaBaixaBoletoVO =
+			(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.PREVISTOS);
 		
-		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+		this.criarTableModel(filtro, listaBaixaBoletoVO, qtdeTotalRegistros);
 	}
 
-	/**
-	 * Obtém lista de baixados na data de vencimento
-	 * @param data
-	 */
 	@Post
+	@SuppressWarnings("unchecked")
 	public void mostrarGridBoletosBaixados(Date data, String sortorder,
 			   							   String sortname, int page, int rp) {
 		
 		FiltroDetalheBaixaBoletoDTO filtro =
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
-		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.boletoService.obterBaixadosPorData(filtro);
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto =
+			this.boletoService.obterBoletosBaixados(filtro);
 		
-		// TODO: realizar consulta total
-		int qtdeTotalRegistros = this.boletoService.obterQuantidadeBaixadosPorData(filtro).intValue();
+		int qtdeTotalRegistros =
+			this.boletoService.obterQuantidadeBoletosBaixados(filtro).intValue();
 		
-		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+		List<BaixaBoletoBaseVO> listaBaixaBoletoVO =
+			(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.BAIXADOS);
+		
+		this.criarTableModel(filtro, listaBaixaBoletoVO, qtdeTotalRegistros);
 	}
 	
 	@Post
+	@SuppressWarnings("unchecked")
 	public void mostrarGridBoletosRejeitados(Date data, String sortorder,
 			   								 String sortname, int page, int rp) {
 		
 		FiltroDetalheBaixaBoletoDTO filtro =
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
-		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto =
+			this.boletoService.obterBoletosRejeitados(filtro);
 		
-		// TODO: realizar consulta total
-		int qtdeTotalRegistros = 0;
+		int qtdeTotalRegistros =
+			this.boletoService.obterQuantidadeBoletosRejeitados(filtro).intValue();
 		
-		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+		List<BaixaBoletoBaseVO> listaBaixaBoletoVO =
+			(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.REJEITADOS);
+		
+		this.criarTableModel(filtro, listaBaixaBoletoVO, qtdeTotalRegistros);
 	}
 	
 	@Post
+	@SuppressWarnings("unchecked")
 	public void mostrarGridBoletosBaixadosComDivergencia(Date data, String sortorder,
 			   											 String sortname, int page, int rp) {
 		
 		FiltroDetalheBaixaBoletoDTO filtro =
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
-		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.getListaDetalheBaixaBoletoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto =
+			this.boletoService.obterBoletosBaixadosComDivergencia(filtro);
 		
-		// TODO: realizar consulta total
-		int qtdeTotalRegistros = 0;
+		int qtdeTotalRegistros =
+			this.boletoService.obterQuantidadeBoletosBaixadosComDivergencia(filtro).intValue();
 		
-		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+		List<BaixaBoletoBaseVO> listaBaixaBoletoVO =
+			(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.DIVERGENTES);
+		
+		this.criarTableModel(filtro, listaBaixaBoletoVO, qtdeTotalRegistros);
 	}
 	
 	/**
@@ -309,50 +322,51 @@ public class BaixaFinanceiraController {
 	 * @param data
 	 */
 	@Post
+	@SuppressWarnings("unchecked")
 	public void mostrarGridBoletosInadimplentes(Date data, String sortorder,
 			   									String sortname, int page, int rp) {
 		
 		FiltroDetalheBaixaBoletoDTO filtro =
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
+
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto =
+			this.boletoService.obterBoletosInadimplentes(filtro);
 		
-		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.boletoService.obterInadimplentesPorData(filtro);
+		int qtdeTotalRegistros =
+			this.boletoService.obterQuantidadeBoletosInadimplentes(filtro).intValue();
 		
-		// TODO: realizar consulta total
-		int qtdeTotalRegistros = this.boletoService.obterQuantidadeInadimplentesPorData(filtro).intValue();
+		List<BaixaBoletoBaseVO> listaBaixaBoletoVO =
+			(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.INADIMPLENTES);
 		
-		this.criarTableModel(filtro, listaDetalheBaixaBoleto, qtdeTotalRegistros);
+		this.criarTableModel(filtro, listaBaixaBoletoVO, qtdeTotalRegistros);
 	}
 	
 	@Post
+	@SuppressWarnings("unchecked")
 	public void mostrarGridTotalBancario(Date data, String sortorder,
 										 String sortname, int page, int rp) {
 		
 		FiltroDetalheBaixaBoletoDTO filtro =
 			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
-		// TODO: realizar consulta
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBanco = this.getListaDetalheBaixaBoletoMock();
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto =
+			this.boletoService.obterTotalBancario(filtro);
 		
-		// TODO: realizar consulta total
-		int qtdeTotalRegistros = 0;
+		int qtdeTotalRegistros =
+			this.boletoService.obterQuantidadeTotalBancario(filtro).intValue();
 		
-		TableModel<CellModelKeyValue<DetalheBaixaBoletoDTO>> tableModel =
-			new TableModel<CellModelKeyValue<DetalheBaixaBoletoDTO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalheBaixaBanco));
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		tableModel.setTotal(qtdeTotalRegistros);
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		List<BaixaBoletoBaseVO> listaBaixaBoletoVO =
+			(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.TOTAL_BANCARIO);
+		
+		this.criarTableModel(filtro, listaBaixaBoletoVO, qtdeTotalRegistros);
 	}
 	
 	private void criarTableModel(FiltroDetalheBaixaBoletoDTO filtro,
-								 List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto,
+								 List<BaixaBoletoBaseVO> listaDetalheBaixaBoleto,
 								 int qtdeTotalRegistros) {
 
-		TableModel<CellModelKeyValue<DetalheBaixaBoletoDTO>> tableModel =
-			new TableModel<CellModelKeyValue<DetalheBaixaBoletoDTO>>();
+		TableModel<CellModelKeyValue<BaixaBoletoBaseVO>> tableModel =
+			new TableModel<CellModelKeyValue<BaixaBoletoBaseVO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDetalheBaixaBoleto));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
@@ -372,20 +386,16 @@ public class BaixaFinanceiraController {
 
 		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
 
+		Date dataVencimento = this.calendarioService.subtrairDiasUteis(data, 1);
+		
 		filtro.setData(data);
 		filtro.setPaginacao(paginacao);
 		filtro.setOrdenacaoColuna(ordenacao);
+		filtro.setDataVencimento(dataVencimento);
 		
 		httpSession.setAttribute(FILTRO_DETALHE_BOLETO_SESSION_ATTRIBUTE, filtro);
 		
 		return filtro;
-	}
-	
-	private List<DetalheBaixaBoletoDTO> getListaDetalheBaixaBoletoMock() {
-		
-		// TODO criar lista Mock
-		
-		return null;
 	}
 	
 	private File gravarArquivoTemporario(UploadedFile uploadedFile) {
@@ -578,7 +588,7 @@ public class BaixaFinanceiraController {
 
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, obterUsuario(),
 								   null,politicaPrincipal , distribuidor,
-								   dataNovoMovimento, null);
+								   dataNovoMovimento, null, null);
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
@@ -1017,9 +1027,39 @@ public class BaixaFinanceiraController {
 		return filtro;
 	}
 	
-	/*
-	 * Obtém a Baixa necessária para a devida exportação.
-	 */
+	private List<? extends BaixaBoletoBaseVO> obterBaixaBoletoExportacaoVO(List<DetalheBaixaBoletoDTO> listaDetalhesBaixaBoleto, TipoBaixaBoleto tipoBaixaBoleto) {
+		
+		switch(tipoBaixaBoleto) {
+			
+			case BAIXADOS:
+				
+				return this.toBaixasBoletoCota(listaDetalhesBaixaBoleto);
+				
+			case DIVERGENTES:
+				
+				return this.toBaixasBoletoDivergentes(listaDetalhesBaixaBoleto);
+			
+			case INADIMPLENTES:
+				
+				return this.toBaixasBoletoCota(listaDetalhesBaixaBoleto);
+				
+			case PREVISTOS:
+				
+				return this.toBaixasBoletoCota(listaDetalhesBaixaBoleto);
+	
+			case REJEITADOS:
+				
+				return this.toBaixasBoletoRejeitados(listaDetalhesBaixaBoleto);
+	
+			case TOTAL_BANCARIO:
+				
+				return this.toTotalBancario(listaDetalhesBaixaBoleto);
+				
+			default:
+				return null;
+		}
+	}
+	
 	private List<? extends BaixaBoletoBaseVO> obterBaixaBoletoExportacaoVO(FiltroDetalheBaixaBoletoDTO filtro, TipoBaixaBoleto tipoBaixaBoleto) {
 
 		List<DetalheBaixaBoletoDTO> listaDetalhesBaixaBoleto = null;
@@ -1028,7 +1068,7 @@ public class BaixaFinanceiraController {
 		
 		case BAIXADOS:
 			
-			listaDetalhesBaixaBoleto = this.boletoService.obterBaixadosPorData(filtro);
+			listaDetalhesBaixaBoleto = this.boletoService.obterBoletosBaixados(filtro);
 			
 			return this.toBaixasBoletoCota(listaDetalhesBaixaBoleto);
 			
@@ -1040,7 +1080,7 @@ public class BaixaFinanceiraController {
 		
 		case INADIMPLENTES:
 			
-			listaDetalhesBaixaBoleto = this.boletoService.obterInadimplentesPorData(filtro);
+			listaDetalhesBaixaBoleto = this.boletoService.obterBoletosInadimplentes(filtro);
 			
 			return this.toBaixasBoletoCota(listaDetalhesBaixaBoleto);
 			
@@ -1058,7 +1098,7 @@ public class BaixaFinanceiraController {
 
 		case TOTAL_BANCARIO:
 			
-//			TODO: alterar Tipo retorno da consulta para Total bancário.
+			listaDetalhesBaixaBoleto = this.boletoService.obterTotalBancario(filtro);
 			
 			return this.toTotalBancario(listaDetalhesBaixaBoleto);
 			
@@ -1080,7 +1120,7 @@ public class BaixaFinanceiraController {
 			
 			BaixaBoletoCotaVO baixa = new BaixaBoletoCotaVO();
 			
-			baixa.setDataVencimento(detalhe.getDataVencimento());
+			baixa.setDataVencimento(DateUtil.formatarDataPTBR(detalhe.getDataVencimento()));
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNomeCota(detalhe.getNomeCota());
 			baixa.setNossoNumero(detalhe.getNossoNumero());
@@ -1141,19 +1181,19 @@ public class BaixaFinanceiraController {
 	}
 	
 	/*
-	 * Transforma um objeto DetalheBaixaBoletoDTO em um BaixaBoletoBaseVO
+	 * Transforma um objeto DetalheBaixaBoletoDTO em um BaixaTotalBancarioVO
 	 */
-	private List<BaixaBoletoBaseVO> toTotalBancario(List<DetalheBaixaBoletoDTO> detalhes) {
+	private List<BaixaTotalBancarioVO> toTotalBancario(List<DetalheBaixaBoletoDTO> detalhes) {
 		
-		List<BaixaBoletoBaseVO> lista = new ArrayList<BaixaBoletoBaseVO>();
+		List<BaixaTotalBancarioVO> lista = new ArrayList<BaixaTotalBancarioVO>();
 
 		for (DetalheBaixaBoletoDTO detalhe : detalhes) {
 			
-			BaixaBoletoBaseVO baixa = new BaixaBoletoBaseVO();
+			BaixaTotalBancarioVO baixa = new BaixaTotalBancarioVO();
 			
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
-			baixa.setValorBoleto(detalhe.getValorBoleto());
+			baixa.setValorPago(detalhe.getValorPago());
 			
 			lista.add(baixa);
 		}
@@ -1173,10 +1213,10 @@ public class BaixaFinanceiraController {
 	public void exportarResumoBaixaAutomatica(FileType fileType, TipoBaixaBoleto tipoBaixaBoleto) throws IOException {
 
 		FiltroDetalheBaixaBoletoDTO filtro = this.obterFiltroExportacaoDetalhe();
-		List<BaixaBoletoBaseVO> lista = (List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(filtro, tipoBaixaBoleto);
-		FileExporter.to("dividas-cota", fileType)
+		List<BaixaBoletoBaseVO> lista = (List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(filtro, tipoBaixaBoleto);		
+		FileExporter.to(tipoBaixaBoleto.getNomeArquivo(), fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					lista, BaixaBoletoBaseVO.class, this.httpResponse);
+					lista, tipoBaixaBoleto.getTipoImpressaoVO(), this.httpResponse);
 	}
 	
 }

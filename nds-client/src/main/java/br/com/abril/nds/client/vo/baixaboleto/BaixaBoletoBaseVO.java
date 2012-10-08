@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.vo.baixaboleto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -23,8 +22,7 @@ public class BaixaBoletoBaseVO implements Serializable {
 	@Export(label = "Conta-corrente", exhibitionOrder=0)
 	private String numeroConta;
 	
-	@Export(label = "Valor R$", exhibitionOrder=0)
-	private BigDecimal valorBoleto;
+	
 
 	private TipoBaixaBoleto tipoBaixaBoleto;
 
@@ -34,14 +32,41 @@ public class BaixaBoletoBaseVO implements Serializable {
 	 * @author Discover Technology
 	 *
 	 */
+	@SuppressWarnings("rawtypes")
 	public enum TipoBaixaBoleto {
 
-		PREVISTOS,
-		BAIXADOS,
-		REJEITADOS,
-		DIVERGENTES,
-		INADIMPLENTES,
-		TOTAL_BANCARIO;
+		PREVISTOS(BaixaBoletoCotaVO.class, "baixa-boleto-previsto"),
+		BAIXADOS(BaixaBoletoCotaVO.class, "baixa-boleto-baixados"),
+		REJEITADOS(BaixaBoletoRejeitadoVO.class, "baixa-boleto-rejeitados"),
+		DIVERGENTES(BaixaBoletoDivergenteVO.class, "baixa-boleto-divergentes"),
+		INADIMPLENTES(BaixaBoletoCotaVO.class, "baixa-boleto-inadimplentes"),
+		TOTAL_BANCARIO(BaixaTotalBancarioVO.class, "baixa-total-bancario");
+		
+		private Class tipoImpressaoVO;
+		
+		private String nomeArquivo;
+		
+		private TipoBaixaBoleto(Class tipoImpressaoVO, String nomeArquivo) {
+			
+			this.tipoImpressaoVO = tipoImpressaoVO;
+			this.nomeArquivo = nomeArquivo;
+		}
+
+		/**
+		 * @return the tipoImpressaoVO
+		 */
+		public Class getTipoImpressaoVO() {
+			return tipoImpressaoVO;
+		}
+
+
+
+		/**
+		 * @return the nomeArquivo
+		 */
+		public String getNomeArquivo() {
+			return nomeArquivo;
+		}
 	}
 	
 	/**
@@ -70,20 +95,6 @@ public class BaixaBoletoBaseVO implements Serializable {
 	 */
 	public void setNumeroConta(String numeroConta) {
 		this.numeroConta = numeroConta;
-	}
-
-	/**
-	 * @return the valorBoleto
-	 */
-	public BigDecimal getValorBoleto() {
-		return valorBoleto;
-	}
-
-	/**
-	 * @param valorBoleto the valorBoleto to set
-	 */
-	public void setValorBoleto(BigDecimal valorBoleto) {
-		this.valorBoleto = valorBoleto;
 	}
 
 	/**

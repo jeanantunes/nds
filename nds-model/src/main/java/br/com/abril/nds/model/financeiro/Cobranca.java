@@ -2,6 +2,7 @@ package br.com.abril.nds.model.financeiro;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -14,12 +15,13 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.ManyToOne;
 
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -87,8 +89,8 @@ public abstract class Cobranca {
 	@JoinColumn(name = "DIVIDA_ID")
 	protected Divida divida;
 	
-	@OneToOne(mappedBy = "cobranca")
-	protected BaixaCobranca baixaCobranca;
+	@OneToMany(mappedBy = "cobranca")
+	protected List<BaixaCobranca> baixasCobranca;
 	
 	@Column(name="VIAS")
 	protected Integer vias;
@@ -205,12 +207,12 @@ public abstract class Cobranca {
 		this.divida = divida;
 	}
 	
-	public BaixaCobranca getBaixaCobranca() {
-		return baixaCobranca;
+	public List<BaixaCobranca> getBaixasCobranca() {
+		return baixasCobranca;
 	}
 	
-	public void setBaixaCobranca(BaixaCobranca baixaCobranca) {
-		this.baixaCobranca = baixaCobranca;
+	public void setBaixasCobranca(List<BaixaCobranca> baixasCobranca) {
+		this.baixasCobranca = baixasCobranca;
 	}
 
 	public Integer getVias() {

@@ -1,6 +1,6 @@
 package br.com.abril.nds.client.vo.baixaboleto;
 
-import java.util.Date;
+import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -22,18 +22,21 @@ public class BaixaBoletoCotaVO extends BaixaBoletoBaseVO {
 
 	private static final long serialVersionUID = -8543728277437275653L;
 
-	@Export(label="Cota", exhibitionOrder=1)
+	@Export(label="Cota", exhibitionOrder=-2)
 	private Integer numeroCota;
 	
-	@Export(label="Nome", exhibitionOrder=2)
+	@Export(label="Nome", exhibitionOrder=-1)
 	private String nomeCota;
 	
-	@Export(label="Nosso Número", exhibitionOrder=5)
+	@Export(label="Nosso Número", exhibitionOrder=1)
 	private String nossoNumero;
 	
-	@Export(label="Data de Vencimento", exhibitionOrder=7)
-	private Date dataVencimento;
-
+	@Export(label = "Valor R$", exhibitionOrder=2)
+	private BigDecimal valorBoleto;
+	
+	@Export(label="Data de Vencimento", exhibitionOrder=3)
+	private String dataVencimento;
+	
 	/**
 	 * @return the numeroCota
 	 */
@@ -79,14 +82,29 @@ public class BaixaBoletoCotaVO extends BaixaBoletoBaseVO {
 	/**
 	 * @return the dataVencimento
 	 */
-	public Date getDataVencimento() {
+	public String getDataVencimento() {
 		return dataVencimento;
 	}
 
 	/**
 	 * @param dataVencimento the dataVencimento to set
 	 */
-	public void setDataVencimento(Date dataVencimento) {
+	public void setDataVencimento(String dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
+
+	/**
+	 * @return the valorBoleto
+	 */
+	public BigDecimal getValorBoleto() {
+		return valorBoleto;
+	}
+
+	/**
+	 * @param valorBoleto the valorBoleto to set
+	 */
+	public void setValorBoleto(BigDecimal valorBoleto) {
+		this.valorBoleto = valorBoleto;
+	}
+	
 }
