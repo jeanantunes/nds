@@ -923,6 +923,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					periodo, listaIdFornecedores, listaIdProdutos,
 					tipoNotaFiscal);
 			break;
+		case NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO:
+			itensNotaFiscal = this.obterItensNFeSaisaDevolucaoMercadoriaRecebidaConsignacao(distribuidor, idCota, periodo, listaIdFornecedores, listaIdProdutos, tipoNotaFiscal);
+			break;
 		}
 
 		return itensNotaFiscal;
@@ -988,6 +991,40 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque
 				.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaService
+				.obterMovimentoEstoqueCotaPor(distribuidor, idCota,
+						tipoNotaFiscal, listaGrupoMovimentoEstoque, periodo,
+						listaIdFornecedores, listaIdProduto);
+
+		if (listaMovimentoEstoqueCota != null
+				&& !listaMovimentoEstoqueCota.isEmpty()) {
+			listaItemNotaFiscal = this.gerarItensNotaFiscal(
+					listaMovimentoEstoqueCota, tipoNotaFiscal, idCota);
+		}
+
+		return listaItemNotaFiscal;
+	}
+	
+	
+	/**
+	 * Obtém Itens para NFes de Devolução de Mercadoria Recebida em Consignação.
+	 * 
+	 * @param cota
+	 * @param periodo
+	 *            intervalo do periodo de lançamento
+	 * 
+	 * @return lista de itens nota fiscal
+	 */
+	private List<ItemNotaFiscal> obterItensNFeSaisaDevolucaoMercadoriaRecebidaConsignacao(
+			Distribuidor distribuidor, Long idCota, Intervalo<Date> periodo,
+			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
+			TipoNotaFiscal tipoNotaFiscal) {
+
+		List<ItemNotaFiscal> listaItemNotaFiscal = null;
+
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaService
