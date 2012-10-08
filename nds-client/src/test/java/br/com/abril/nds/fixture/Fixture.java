@@ -2446,9 +2446,8 @@ public class Fixture {
 		return parametro;
 	}
 	
-	public static Rota rota(String codigoRota, String descricaoRota, Roteiro roteiro){
+	public static Rota rota(String descricaoRota, Roteiro roteiro){
 		Rota rota = new Rota();
-		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
 		rota.setOrdem(ORDEM_ROTA.getAndIncrement());
 		rota.setRoteiro(roteiro);

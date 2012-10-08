@@ -216,7 +216,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 				
 		hql.append("       when 'J' then pessoa.razaoSocial end  as nomeCota,");
 		
-		hql.append(" rota.codigoRota ||' - '|| rota.descricaoRota as rota,");
+		hql.append(" rota.descricaoRota as rota,");
 		
 		hql.append(" roteiro.descricaoRoteiro as roteiro ");
 

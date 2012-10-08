@@ -2617,31 +2617,31 @@ public class DataLoader {
         pdvOrlando.setSegmentacao(segmentacaoPDV2);
         session.save(pdvOrlando);
 		
-		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
+		Rota rota1 = Fixture.rota("Rota 001",roteiroPinheiros);
 		rota1.addPDV(pdvcotaJose2, 1);
 		rota1.addPDV(pdvcotaManoel2, 2);
 		session.save(rota1);
 		
-		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
+		Rota rota2 = Fixture.rota("Rota 002",roteiroInterlagos);
 	    rota2.addPDV(pdvcotaJose2, 1);
 	    rota2.addPDV(pdvcotaManoel2, 2);
 		session.save(rota2);
 		
-		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
+		Rota rota10 = Fixture.rota("Rota 010",roteiroTCD);
 	    rota10.addPDV(pdvcotaJose2, 1);
 	    rota10.addPDV(pdvcotaManoel2, 2);
 		session.save(rota10);
  
 		
-		Rota rotaRoteiroCentro1 = Fixture.rota("999", "Rota 999", roteiroCentro);
+		Rota rotaRoteiroCentro1 = Fixture.rota("Rota 999", roteiroCentro);
 		rotaRoteiroCentro1.addPDV(pdvJoao, 1);
 		session.save(rotaRoteiroCentro1);
 		
-		Rota rotaRoteiroCentro2 = Fixture.rota("990", "Rota 990", roteiroCentro);
+		Rota rotaRoteiroCentro2 = Fixture.rota("Rota 990", roteiroCentro);
         rotaRoteiroCentro2.addPDV(pdvMariana, 1);
         session.save(rotaRoteiroCentro2);
         
-        Rota rotaRoteiroBairro = Fixture.rota("998", "Rota 998", roteiroBairro);
+        Rota rotaRoteiroBairro = Fixture.rota("Rota 998", roteiroBairro);
         rotaRoteiroBairro.addPDV(pdvJoana, 1);
         rotaRoteiroBairro.addPDV(pdvOrlando, 2);
         session.save(rotaRoteiroBairro);
