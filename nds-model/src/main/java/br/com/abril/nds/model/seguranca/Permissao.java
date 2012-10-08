@@ -69,7 +69,7 @@ public enum Permissao
 	ROLE_NFE_RETORNO_NFE("Retorno NF-e",																   Permissao.ROLE_NFE),
 	ROLE_NFE_GERACAO_NFE("Geração de NF-e", 													  	   	   Permissao.ROLE_NFE),
 	ROLE_NFE_IMPRESSAO_NFE("Impressão NF-e",															   Permissao.ROLE_NFE),
-	ROLE_NFE_CONSULTA_NFE_ENCALHE_TRATAMENTO("Consulta NF-e Encalhe Tratamento",						   Permissao.ROLE_NFE),
+	ROLE_NFE_ENTRADA_NFE_TERCEIROS("Entrada de NF-e Terceiros",											   Permissao.ROLE_NFE),
 	ROLE_NFE_PAINEL_MONITOR_NFE("Painel Monitor NF-e",													   Permissao.ROLE_NFE),
 	
 	ROLE_FINANCEIRO("Financeiro", 					   				                         	  	  	   null),

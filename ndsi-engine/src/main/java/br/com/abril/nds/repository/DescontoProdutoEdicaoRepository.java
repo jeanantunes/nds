@@ -133,4 +133,10 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
      */
 	BigDecimal obterDescontoPorCotaProdutoEdicao(Long idCota, Long idProdutoEdicao, Long idFornecedor);
 	
+	/**
+	 * Salva uma lista de descontosProdutoEdicao
+	 * @param lista
+	 */
+	public void salvarListaDescontoProdutoEdicao(List<DescontoProdutoEdicao> lista);
+	
 }
