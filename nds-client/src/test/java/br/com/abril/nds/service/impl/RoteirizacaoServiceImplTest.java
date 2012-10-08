@@ -198,34 +198,34 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
 		roteiro3 = Fixture.criarRoteiro("Roteiro 3", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiro1, roteiro2, roteiro3);
 			
-		rota1Roteiro1 = Fixture.rota("1", "Rota 1 - Roteiro 1", roteiro1);
+		rota1Roteiro1 = Fixture.rota("Rota 1 - Roteiro 1", roteiro1);
 		rota1Roteiro1.addPDV(pdvManoel, 1);
 		rota1Roteiro1.addPDV(pdvJose, 2);
 		save(rota1Roteiro1);
 		
-		rota2Roteiro1 = Fixture.rota("2", "Rota 2", roteiro1);
+		rota2Roteiro1 = Fixture.rota("Rota 2", roteiro1);
 		rota2Roteiro1.addPDV(pdvMaria, 1);
 	    rota2Roteiro1.addPDV(pdvMariana, 2);
 		save(rota2Roteiro1);
 		
-		rota3roteiro1 = Fixture.rota("3", "Rota 3", roteiro1);
+		rota3roteiro1 = Fixture.rota("Rota 3", roteiro1);
   	    rota3roteiro1.addPDV(pdvOrlando, 1);
 		save(rota3roteiro1);
 
-		rota1Roteiro2 = Fixture.rota("4", "Rota 4", roteiro2);
+		rota1Roteiro2 = Fixture.rota("Rota 4", roteiro2);
 	    rota1Roteiro2.addPDV(pdvLuis, 1);
 	    rota1Roteiro2.addPDV(pdvJoao, 2);
 		save(rota1Roteiro2);
 		
-		rota2Roteiro2 = Fixture.rota("5", "Rota 5", roteiro2);
+		rota2Roteiro2 = Fixture.rota("Rota 5", roteiro2);
 	    rota2Roteiro2.addPDV(pdvGuilherme, 1);
 		save(rota2Roteiro2);
 		
-		rota3Roteiro2 = Fixture.rota("6", "Rota 6", roteiro2);
+		rota3Roteiro2 = Fixture.rota("Rota 6", roteiro2);
 	    rota3Roteiro2.addPDV(pdvMurilo, 1);
 		save(rota3Roteiro2);
 
-		rota1Roteiro3 = Fixture.rota("7", "Rota 7", roteiro3);
+		rota1Roteiro3 = Fixture.rota("Rota 7", roteiro3);
 	    rota1Roteiro3.addPDV(pdvJoana, 1);
 		save(rota1Roteiro3);
 				
@@ -527,7 +527,7 @@ public class RoteirizacaoServiceImplTest extends AbstractRepositoryImplTest {
         } catch (ValidacaoException ex) {
             Assert.assertEquals(TipoMensagem.ERROR, ex.getValidacao().getTipoMensagem());
             String mensagem = ex.getValidacao().getListaMensagens().get(0);
-            Assert.assertEquals(mensagem, "O PDV ["+ pdvManoel.getNome() +"] já pertence a uma roteirização associada a um Box!");
+            Assert.assertEquals(mensagem, "O PDV ["+ pdvManoel.getNome() +"] já pertence a uma Roteirização associada a um Box!");
         }
     }
 	

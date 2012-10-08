@@ -7,7 +7,6 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -19,13 +18,11 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
-import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
@@ -148,108 +145,66 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(
-		Date dataEncalhe, String sortorder, String sortname, int page, int rp) {
+	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, String sortorder, String sortname, int page, int rp) {
 		
-		try {
-
-			Criteria criteria = super.getSession().createCriteria(ChamadaEncalhe.class, "ce");
-			
-			this.criarCriteriaCotasAusentesEncalhe(criteria, dataEncalhe);
-
-			criteria.setFirstResult(page);
-			
-			if (rp >= 0) {
-				criteria.setMaxResults(rp);
-			}
-			
-			if (sortname != null && sortorder != null) {
-				this.addOrderCriteria(criteria, sortorder, sortname);
-			}
-			
-			criteria.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
-				
-			return criteria.list();
+		Query query = this.criarQueryCotasAusentesEncalhe(dataEncalhe, sortorder, sortname);
 		
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		query.setFirstResult(page);
+		if (rp >= 0) {
+			query.setMaxResults(rp);
 		}
+		
+		return query.list();
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe) {
 		
-		try {
-			
-			Criteria criteria = super.getSession().createCriteria(ChamadaEncalhe.class, "ce");
-			
-			this.criarCriteriaCotasAusentesEncalhe(criteria, dataEncalhe);
-
-			criteria.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
-			
-			List<CotaAusenteEncalheDTO> listaCotasAusentes = criteria.list();
-			
-			if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()) {
-				return 0;
-			}
-			
-			return listaCotasAusentes.size();
-			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		Query query = this.criarQueryCotasAusentesEncalhe(dataEncalhe, null, null);
+		
+		List<CotaAusenteEncalheDTO> listaCotasAusentes = query.list();
+		
+		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()) {
+			return 0;
 		}
+		
+		return listaCotasAusentes.size();		
 	}
 	
-	private void criarCriteriaCotasAusentesEncalhe(Criteria criteria, Date dataEncalhe) {
+	
+	private Query criarQueryCotasAusentesEncalhe(Date dataEncalhe, String sortorder, String sortname) {
 		
-		criteria.createAlias("ce.chamadaEncalheCotas", "cec");
-		criteria.createAlias("cec.cota", "cota");
-		criteria.createAlias("cota.box", "box");
-		criteria.createAlias("cota.pessoa", "pessoa");
-		criteria.createAlias("cota.pdvs", "pdvs");
-		criteria.createAlias("pdvs.rotas", "rotas");
-		criteria.createAlias("rotas.rota", "rota");
-		criteria.createAlias("rota.roteiro", "roteiro");
+		StringBuffer hql = new StringBuffer();
 		
-		criteria.setFetchMode("cec", FetchMode.JOIN);
-		criteria.setFetchMode("cota", FetchMode.JOIN);
-		criteria.setFetchMode("box", FetchMode.JOIN);
-		criteria.setFetchMode("pessoa", FetchMode.JOIN);
-		criteria.setFetchMode("pdvs", FetchMode.JOIN);
-		criteria.setFetchMode("rotas", FetchMode.JOIN);
-		criteria.setFetchMode("roteiro", FetchMode.JOIN);
-
-		criteria.setProjection(Projections.distinct(Projections.projectionList()
-				.add(Projections.property("cota.id"), "idCota")
-				.add(Projections.property("cota.numeroCota"), "numeroCota")
-				.add(Projections.property("pessoa.nome"), "colaboradorName")
-				.add(Projections.property("box.nome"), "boxName")
-				.add(Projections.property("roteiro.descricaoRoteiro"), "roteiroName")
-				.add(Projections.property("rota.descricaoRota"), "rotaName")
-				.add(Projections.property("cec.fechado"), "fechado")
-				.add(Projections.property("cec.postergado"), "postergado")
-				.add(Projections.property("ce.dataRecolhimento"), "dataEncalhe")));
-				
-		criteria.add(Restrictions.eq("ce.dataRecolhimento", dataEncalhe));
-		criteria.add(Restrictions.eq("roteiro.tipoRoteiro", TipoRoteiro.NORMAL));
-
-		DetachedCriteria subQuery = DetachedCriteria.forClass(ControleConferenciaEncalheCota.class, "ccec");
-		subQuery.add(Restrictions.eq("ccec.dataOperacao", dataEncalhe));
-		subQuery.setFetchMode("ccec.cota", FetchMode.JOIN);
-		subQuery.setProjection(Property.forName("ccec.cota.id"));
-
-		criteria.add(Property.forName("cec.cota.id").notIn(subQuery));
+		hql.append("    SELECT cec.cota.id as idCota");
+		hql.append("          ,cec.cota.numeroCota as numeroCota");
+		hql.append("          ,cec.cota.pessoa.nome as colaboradorName");
+		hql.append("          ,cec.cota.box.nome as boxName");
+		//hql.append("          ,cec.cota.pdvs.rotas.rota.roteiro.descricaoRoteiro as roteiroName");
+		//hql.append("          ,cec.cota.pdvs.rotas.rota.descricaoRota as rotaName");
+		hql.append("          ,cec.fechado as fechado");
+		hql.append("          ,cec.postergado as postergado");
+		hql.append("          ,cec.chamadaEncalhe.dataRecolhimento as dataEncalhe");
+		hql.append("      FROM ChamadaEncalheCota cec");
+		hql.append("     WHERE cec.chamadaEncalhe.dataRecolhimento = :dataEncalhe");
+		hql.append("       AND cec NOT IN (");
+		hql.append("              SELECT ce.chamadaEncalheCota");
+		hql.append("                FROM ConferenciaEncalhe ce");
+		hql.append("               WHERE ce.data = :dataEncalhe");
+		hql.append("       )");
+		if (sortname != null && sortorder != null) {
+			hql.append("  ORDER BY " + sortname + " " + sortorder);
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
+		
+		query.setDate("dataEncalhe", dataEncalhe);
+		
+		return query;
 	}
 	
-	private void addOrderCriteria(Criteria criteria, String sortorder, String sortname) {
-		
-		if (("asc").equalsIgnoreCase(sortorder)) {
-			criteria.addOrder(Order.asc(sortname));
-		} else if (("desc").equalsIgnoreCase(sortorder)) {
-			criteria.addOrder(Order.desc(sortname));
-		}
-	}
 	
 	@Override
 	@SuppressWarnings("unchecked")

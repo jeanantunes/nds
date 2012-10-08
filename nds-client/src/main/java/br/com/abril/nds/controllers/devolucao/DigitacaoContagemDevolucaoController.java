@@ -381,6 +381,27 @@ public class DigitacaoContagemDevolucaoController  {
 		
 	}
 	
+	
+	
+	@Post
+	@Path("/geraNota")
+	public void geraNota(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
+		
+		if (listaDigitacaoContagemDevolucao == null 
+				|| listaDigitacaoContagemDevolucao.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
+		}
+		
+		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+		
+		contagemDevolucaoService.gerarNotasFiscaisPorFornecedor(listaContagemDevolucaoDTO);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+										Constantes.PARAM_MSGS).recursive().serialize();
+		
+	}
+	
 	/**
 	 * Retorna uma lista de objetos ContagemDevolucaoDTO convertidos em DigitacaoContagemDevolucaoVO, 
 	 * para renderização das informações no grid da tela.

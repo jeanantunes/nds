@@ -2,13 +2,17 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ConsultaEntradaNFETerceirosDTO implements Serializable {
+public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 
 	private static final long serialVersionUID = 8366815250237375585L;
 
@@ -20,9 +24,12 @@ public class ConsultaEntradaNFETerceirosDTO implements Serializable {
 
 	@Export(label = "Chave Acesso", alignment = Alignment.LEFT)
 	private String chaveAcesso;
+	
+	@Export(label = "Data Emissao", alignment = Alignment.LEFT)
+	private String dataEmissao;
 
 	@Export(label = "Tipo Nota", alignment = Alignment.LEFT)
-	private String tipoNotaFiscal;
+	private TipoOperacao tipoNotaFiscal;
 
 	@Export(label = "Fornecedor/Cota", alignment = Alignment.LEFT)
 	private String nome;
@@ -78,21 +85,6 @@ public class ConsultaEntradaNFETerceirosDTO implements Serializable {
 	}
 
 	/**
-	 * @return the tipoNotaFiscal
-	 */
-	public String getTipoNotaFiscal() {
-		return tipoNotaFiscal;
-	}
-
-	/**
-	 * @param tipoNotaFiscal
-	 *            the tipoNotaFiscal to set
-	 */
-	public void setTipoNotaFiscal(String tipoNotaFiscal) {
-		this.tipoNotaFiscal = tipoNotaFiscal;
-	}
-
-	/**
 	 * @return the nome
 	 */
 	public String getNome() {
@@ -133,8 +125,36 @@ public class ConsultaEntradaNFETerceirosDTO implements Serializable {
 	 * @param contemDiferenca
 	 *            the contemDiferenca to set
 	 */
-	public void setContemDiferenca(boolean contemDiferenca) {
-		this.contemDiferenca = contemDiferenca;
+	public void setContemDiferenca(Integer contemDiferenca) {
+		this.contemDiferenca = (contemDiferenca.equals(0)) ? false : true;
+	}
+
+	/**
+	 * @return the tipoNotaFiscal
+	 */
+	public TipoOperacao getTipoNotaFiscal() {
+		return tipoNotaFiscal;
+	}
+
+	/**
+	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+	 */
+	public void setTipoNotaFiscal(TipoOperacao tipoNotaFiscal) {
+		this.tipoNotaFiscal = tipoNotaFiscal;
+	}
+
+	/**
+	 * @return the dataEmissao
+	 */
+	public String getDataEmissao() {
+		return dataEmissao;
+	}
+
+	/**
+	 * @param dataEmissao the dataEmissao to set
+	 */
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = DateUtil.formatarData(dataEmissao, Constantes.DATE_PATTERN_PT_BR);
 	}
 
 }

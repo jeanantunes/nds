@@ -121,7 +121,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		Rota rota = Fixture.rota("005", "Rota 005", roteiro);
+		Rota rota = Fixture.rota("Rota 005", roteiro);
 		rota.setRoteiro(roteiro);
 		rota.addPDV(pdv, 1);
 		save(rota);
@@ -135,7 +135,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao1,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		rota = Fixture.rota("005", "Rota 005", roteiro);
+		rota = Fixture.rota("Rota 005", roteiro);
 		rota.setRoteiro(roteiro);
 		rota.addPDV(pdv, 1);
 		

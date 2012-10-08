@@ -1346,7 +1346,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				nome = " codigoCota ";
 				break;
 			case CODIGO_ROTA:
-				nome = " codigoRota ";
+				nome = " descricaoRota ";
 				break;
 			case NOME_COTA:
 				nome = " nomeCota ";
@@ -1595,7 +1595,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select box.codigo as codigoBox, ");
-		hql.append(" 		rota.codigoRota as codigoRota, ");
+		hql.append(" 		rota.descricaoRota as codigoRota, ");
 		hql.append(" 		cota.numeroCota as codigoCota, ");
 		hql.append(" 		pessoa.nome as nomeCota, ");
 		hql.append(" 		produto.codigo as codigoProduto, ");
@@ -1609,7 +1609,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
-		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
+		hql.append(" group by produtoEdicao.id, box.id, rota.id ");
 		
 		if (filtro.getExcluirProdutoSemReparte()!=null && filtro.getExcluirProdutoSemReparte()) {
 
@@ -1652,7 +1652,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 
-		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
+		hql.append(" group by produtoEdicao.id, box.id, rota.descricaoRota ");
 		
 		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
@@ -1687,7 +1687,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select box.codigo as codigoBox, ");
-		hql.append(" 		rota.codigoRota as codigoRota, ");
+		hql.append(" 		rota.descricaoRota as codigoRota, ");
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
@@ -1699,7 +1699,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
-		hql.append(" group by box.id, rota.codigoRota ");
+		hql.append(" group by box.id, rota.descricaoRota ");
 		
 		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
@@ -1745,7 +1745,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
-		hql.append(" group by box.id, rota.codigoRota ");
+		hql.append(" group by box.id, rota.descricaoRota ");
 
 		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 

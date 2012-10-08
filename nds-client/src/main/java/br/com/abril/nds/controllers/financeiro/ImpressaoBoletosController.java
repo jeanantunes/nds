@@ -174,7 +174,7 @@ public class ImpressaoBoletosController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota() + " - " + rota.getDescricaoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;
@@ -342,7 +342,7 @@ public class ImpressaoBoletosController {
 			if(filtro.getIdRota()!= null){
 				Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getIdRota());
 				if(rota!= null){
-					filtro.setRota(rota.getCodigoRota() + "-" + rota.getDescricaoRota());
+					filtro.setRota(rota.getDescricaoRota());
 				}
 			}
 			

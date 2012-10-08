@@ -2,19 +2,19 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
-import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
-import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 
 public interface EntradaNFETerceirosRepository extends Repository<NotaFiscalEntrada, Long> {
 	
-	List<ConsultaEntradaNFETerceirosDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar);
+	List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
 	Integer buscarTotalNotasRecebidas(FiltroEntradaNFETerceiros filtro);
 	
-	List<ConsultaNFENotasPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar);
+	List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar);
 	
 	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(FiltroEntradaNFETerceiros filtro);
 	

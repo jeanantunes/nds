@@ -24,8 +24,8 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	
 	private static final int POSICAO_CODIGO_PRODUTO = 3;
 	private static final int POSICAO_NUMERO_COTA = 2;
-	private static final int POSICAO_QNT_RECEBIDA_PRODUTO = 7;
-	private static final int POSICAO_QNT_DEVOLVIDA_PRODUTO = 11;
+	private static final int POSICAO_QNT_RECEBIDA_PRODUTO = 11;
+	private static final int POSICAO_QNT_DEVOLVIDA_PRODUTO = 7;
 	
 
 	@Autowired
@@ -108,7 +108,7 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 			throw new ImportacaoException(MENSAGEM_ERRO_FORMATO_DADOS);
 		}
 		
-		historicoVenda.setCodigoProduto(codigoProduto);
+		historicoVenda.setCodigoProduto(codigoPublicacao.trim().substring(0,8));
 	}
 	
 	/**
