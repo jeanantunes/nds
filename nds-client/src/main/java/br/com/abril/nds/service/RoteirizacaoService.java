@@ -193,7 +193,7 @@ public interface RoteirizacaoService {
 	 * @param idPdv
 	 * @return boolean - true:disponivel
 	 */
-	public boolean verificaDisponibilidadePdv(Long idPdv);
+	 public boolean verificaDisponibilidadePdv(Long idPdv, Long idBox);
 	
 	/**
 	 * Inclui Cota Pdv na Roteirização

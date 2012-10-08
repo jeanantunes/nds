@@ -61,7 +61,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		rota = Fixture.rota("005", "Rota 005", roteiro);
+		rota = Fixture.rota("Rota 005", roteiro);
 		rota.addPDV(pdvManoel, 1);
 		rota.setRoteiro(roteiro);
 		save(rota);
@@ -72,7 +72,7 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 		roteiroTCD = Fixture.criarRoteiro("TCD", roteirizacao, TipoRoteiro.NORMAL);
 		save(roteiroTCD);
 		
-		rota10 = Fixture.rota("001", "Rota 001", roteiroTCD);
+		rota10 = Fixture.rota("Rota 001", roteiroTCD);
 		rota10.addPDV(pdvManoel, 1);
 		rota10.setRoteiro(roteiroTCD);
 		save(rota10);
@@ -91,11 +91,12 @@ public class RotaRepositoryImplTest extends AbstractRepositoryImplTest  {
 
 	@Test
 	public void obterCotasPorBoxRotaRoteiro() {
-		
 		List<ConsultaRoteirizacaoDTO> rotas = roteirizacaoRepository.obterCotasParaBoxRotaRoteiro(box1.getId(), rota10.getId(), roteiroTCD.getId());
-		
-		Assert.assertTrue(rotas!=null);
-		
+
+		Assert.assertEquals(1, rotas.size());
+		ConsultaRoteirizacaoDTO dto = rotas.get(0);
+		Assert.assertEquals(cotaManoel.getNumeroCota(), dto.getNumeroCota());
+		Assert.assertEquals(cotaManoel.getPessoa().getNome(), dto.getNome());
 	}
 
 	

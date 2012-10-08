@@ -85,7 +85,7 @@ public class EMS0120Detalhe {
 		this.quantidadeReparte = quantidadeReparte;
 	}
 
-	@Field(offset=34, length=9, paddingChar='0')
+	@Field(offset=34, length=9, align=Align.RIGHT, paddingChar='0')
 	public BigDecimal getPrecoCapa() {
 		return precoCapa;
 	}

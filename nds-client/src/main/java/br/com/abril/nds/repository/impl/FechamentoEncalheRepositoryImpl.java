@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
@@ -20,6 +23,7 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
+import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -37,64 +41,88 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	@Override
 	public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortorder, String sortname, Integer page, Integer rp) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		StringBuilder subquery = new StringBuilder();
+		subquery.append(" select sum( vp.qntProduto ) ");
+		subquery.append(" from VendaProduto vp ");
+		subquery.append(" where vp.produtoEdicao = pe  and vp.dataVenda = :dataEncalhe and  vp.tipoVenda= :tipoVenda ");
+	
+		hql.append("SELECT distinct  p.codigo as  codigo ");
+		hql.append(" , p.nome as produto ");
+		hql.append(" , pe.numeroEdicao as edicao");
+		hql.append(" , pe.precoVenda as precoCapa ");
+		hql.append(" , pe.id as produtoEdicao ");
+		hql.append(" , pe.parcial as parcial ");
+		hql.append(" , che.dataRecolhimento as dataRecolhimento ");
+		hql.append(" , sum (mec.qtde - ("+ subquery.toString()  +")  ) as exemplaresDevolucao ");
+		hql.append(" from ConferenciaEncalhe as ce ");
+		hql.append("  JOIN ce.movimentoEstoqueCota as mec ");
+		hql.append("  JOIN ce.controleConferenciaEncalheCota as ccec ");
+		hql.append("  JOIN mec.produtoEdicao as pe ");		
+		hql.append("  JOIN pe.produto as p ");
+		hql.append("  JOIN ce.chamadaEncalheCota as cec ");
+		hql.append("  JOIN cec.chamadaEncalhe as che ");
 
-		Criteria criteria = this.getSession().createCriteria(ConferenciaEncalhe.class, "ce");
-		
-		criteria.setProjection(Projections.projectionList()
-			.add(Projections.property("p.codigo"), "codigo")
-			.add(Projections.property("p.nome"), "produto")
-			.add(Projections.property("pe.numeroEdicao"), "edicao")
-			.add(Projections.property("pe.precoVenda"), "precoCapa")
-			.add(Projections.property("pe.id"), "produtoEdicao")
-			.add(Projections.sum("mec.qtde"), "exemplaresDevolucao")
-			.add(Projections.groupProperty("p.codigo"))
-			.add(Projections.groupProperty("p.nome"))
-			.add(Projections.groupProperty("pe.numeroEdicao"))
-			.add(Projections.groupProperty("pe.precoVenda"))
-			.add(Projections.groupProperty("pe.id"))
-		);
-		
-		criteria.createAlias("ce.movimentoEstoqueCota", "mec");
-		criteria.setFetchMode("mec", FetchMode.JOIN);
-		
-		criteria.createAlias("ce.controleConferenciaEncalheCota", "ccec");
-		criteria.setFetchMode("ccec", FetchMode.JOIN);
-		
-		criteria.createAlias("mec.produtoEdicao", "pe");
-		criteria.setFetchMode("pe", FetchMode.JOIN);
-		
-		criteria.createAlias("pe.produto", "p");
-		criteria.setFetchMode("p", FetchMode.JOIN);
 		
 		if (filtro.getFornecedorId() != null) {
-			criteria.createAlias("pe.fornecedores", "pf");
-			criteria.setFetchMode("pf", FetchMode.JOIN);
+			hql.append("  JOIN pe.fornecedores as pf ");
 		}
 		
-		criteria.add(Restrictions.eq("ccec.dataOperacao", filtro.getDataEncalhe()));		
+		hql.append(" WHERE ccec.dataOperacao =:dataEncalhe ");
+
+		if (filtro.getBoxId() != null) {
+			hql.append("  and ccec.box.id = :boxId ");
+		}
+		
+		if (filtro.getFornecedorId() != null) {
+			hql.append("  and pf.id = :fornecedorId ");
+		}
+		
+		
+		hql.append(" group by p.codigo,  p.nome, pe.numeroEdicao, pe.precoVenda, pe.id , pe.parcial, che.dataRecolhimento");
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setDate("dataEncalhe", filtro.getDataEncalhe());
+		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
+		
+		
+		
+		
 		
 		if (filtro.getBoxId() != null) {
-			criteria.add(Restrictions.eq("ccec.box.id", filtro.getBoxId()));
+			query.setLong("boxId", filtro.getBoxId());
 		}
 		
 		if (filtro.getFornecedorId() != null) {
-			criteria.add(Restrictions.eq("pf.id", filtro.getFornecedorId()));
+			query.setLong("fornecedorId", filtro.getFornecedorId());
 		}
 		
+		
+		
 		if (page != null){
-			criteria.setFirstResult(page);
+			query.setFirstResult(page);
 		}
 		
 		if (rp != null){
-			criteria.setMaxResults(rp);
+			query.setMaxResults(rp);
 		}
 		
 		if (sortname != null) {
-			this.addOrderCriteria(criteria, sortorder, sortname);
-		}
-		criteria.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+			hql.append(" order by ");
+			if (("asc").equalsIgnoreCase(sortorder)) {
+				hql.append(sortname+" asc ");	
+			} else if (("desc").equalsIgnoreCase(sortorder)) {
+				hql.append(sortname+" desc ");
+			}
 			
-		return criteria.list();
+		//	this.addOrderCriteria(criteria, sortorder, sortname);
+		}
+		query.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+			
+		return query.list();
 	}
 
 	@Override
@@ -346,5 +374,36 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.setProjection(Projections.max("dataEncalhe"));
 		return (Date) criteria.uniqueResult();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+
+		StringBuffer hql = new StringBuffer();
+		hql.append("   SELECT cota.numeroCota as numeroCota,");
+		hql.append("          pess.nome as nomeCota,");
+		hql.append("          box.nome as boxEncalhe,");
+		hql.append("          ce.qtdeInformada * pe.precoVenda as total");
+		//hql.append("           as statusCobranca");
+		hql.append("     FROM ConferenciaEncalhe ce");
+		hql.append("     JOIN ce.controleConferenciaEncalheCota as ccec");
+		hql.append("     JOIN ccec.cota as cota");
+		hql.append("     JOIN cota.pessoa as pess");
+		hql.append("     JOIN ccec.box as box");
+		hql.append("     JOIN ce.produtoEdicao as pe");
+		hql.append("    WHERE ce.data = :data");
+		
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliticoEncalheDTO.class));
+		
+		query.setDate("data", filtro.getDataEncalhe());
+		
+		
+		
+
+		return query.list();
+	}
+	
 	
 }

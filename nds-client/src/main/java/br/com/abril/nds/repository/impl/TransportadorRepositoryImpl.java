@@ -136,7 +136,7 @@ public class TransportadorRepositoryImpl extends
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(CotaAtendidaTransportadorVO.class.getCanonicalName())
 		   .append("(roteirizacao.pdv.cota.numeroCota, roteirizacao.pdv.cota.pessoa.nome, roteirizacao.pdv.cota.box.nome || '-' || roteirizacao.pdv.cota.box.codigo, ")
-		   .append(" assoc.rota.roteiro.descricaoRoteiro, assoc.rota.codigoRota || '-' || assoc.rota.descricaoRota, ")
+		   .append(" assoc.rota.roteiro.descricaoRoteiro, assoc.rota.descricaoRota, ")
 		   .append(" coalesce(roteirizacao.pdv.cota.parametroDistribuicao.taxaFixa, roteirizacao.pdv.cota.parametroDistribuicao.percentualFaturamento || '%'))")
 		   .append(" from AssociacaoVeiculoMotoristaRota assoc ")
 		   .append(" join assoc.rota.roteirizacao roteirizacao ")
@@ -156,7 +156,7 @@ public class TransportadorRepositoryImpl extends
 			hql.append(" order by assoc.rota.roteiro.descricaoRoteiro ");
 		} else if ("rota".equals(sortname)){
 			
-			hql.append(" order by assoc.rota.codigoRota ");
+			hql.append(" order by assoc.rota.descricaoRota ");
 		} else {
 			
 			hql.append(" order by roteirizacao.pdv.cota.numeroCota ");

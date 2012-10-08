@@ -1,8 +1,9 @@
 var cotaAusenteController = $.extend(true, {
 	
-	numCotaAusente : null,
+	numCotasAusente : null,
 	mov : null,
 	indiceAtual : null,
+	cotasOrigem : null,
 
 	init : function() {
 		$("#idNovaCota", cotaAusenteController.workspace).numeric();
@@ -185,33 +186,38 @@ var cotaAusenteController = $.extend(true, {
 
 	popupNovaCotaAusente : function() {
 		
+		cotaAusenteController.cotasOrigem = [];
+		
+		cotaAusenteController.gerarLinhaCota(0,'','');
+		
 		$( "#dialog-novo", cotaAusenteController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
-			width:540,
+			width:530,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
 					
-					var numCota = $("#idNovaCota", cotaAusenteController.workspace).attr("value");
-					var nomeCota = $("#idNomeNovaCota", cotaAusenteController.workspace).attr("value");
+					//TODO
 					
-					if($.trim(numCota) == "" || $.trim(nomeCota) == "") {
-						exibirMensagemDialog("WARNING",["O campo \"Cota\" &eacute obrigat&oacuterio."]);	
+					var cotas = [];
+					$('.cotaOrigem').each(function() {if(this.value.length>0)cotas.push(this.value);});
+					
+					if(cotas.length === 0) {
+						exibirMensagemDialog("WARNING",["Selecione uma ou mais cotas."]);	
 						return;
 					}
 					
-					cotaAusenteController.popupConfirmaAusenciaCota(numCota);
+					cotaAusenteController.popupConfirmaAusenciaCota(cotas);
 					
-					$("#idNovaCota", cotaAusenteController.workspace).attr("value","");
-					$("#idNomeNovaCota", cotaAusenteController.workspace).attr("value",""); 
+					$('#idCotas tr').remove();
+					
 					$( this ).dialog( "close" );
 					
 				},
 				"Cancelar": function() {
 					
-					$("#idNovaCota", cotaAusenteController.workspace).attr("value","");
-					$("#idNomeNovaCota", cotaAusenteController.workspace).attr("value","");
+					$('#idCotas tr').remove();
 					
 					$( this ).dialog( "close" );
 				}				
@@ -221,36 +227,42 @@ var cotaAusenteController = $.extend(true, {
 		});
 	},
 
-	popupConfirmaAusenciaCota : function(numcota) {
+	popupConfirmaAusenciaCota : function(cotas) {
 		
-		numCotaAusente = numcota;
+		cotaAusenteController.numCotasAusente = cotas;
 		
-			$( "#dialog-confirm", cotaAusenteController.workspace ).dialog({
-				resizable: false,
-				height:'auto',
-				width:350,
-				modal: true,
-				buttons: {
-					"Suplementar": function() {
-						
-						$.postJSON(contextPath + "/cotaAusente/enviarParaSuplementar", 
-								"numCota="+numcota, 
-								cotaAusenteController.retornoEnvioSuplementar);
+		var parametros = [];
+		
+		$.each(cotas, function(index, num) {			
+			parametros.push({name:'numCotas['+ index +']', value: num});
+	  	});
+		
+		$( "#dialog-confirm", cotaAusenteController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:350,
+			modal: true,
+			buttons: {
+				"Suplementar": function() {
 					
-						$( "#dialog-confirm", cotaAusenteController.workspace ).dialog("close");
-						
-					},
-					"Redistribuir": function() {
-						
-						$.postJSON(contextPath + "/cotaAusente/carregarDadosRateio", 
-								"numCota="+numcota, 
-								cotaAusenteController.popupRateio);
-						
-						$( this ).dialog( "close" );
-					}
+					$.postJSON(contextPath + "/cotaAusente/enviarParaSuplementar", 
+							parametros, 
+							cotaAusenteController.retornoEnvioSuplementar);
+				
+					$( "#dialog-confirm", cotaAusenteController.workspace ).dialog("close");
+					
 				},
-				form: $("#dialog-confirm", cotaAusenteController.workspace ).parents("form")
-			});
+				"Redistribuir": function() {
+					
+					$.postJSON(contextPath + "/cotaAusente/carregarDadosRateio", 
+							parametros, 
+							cotaAusenteController.popupRateio);
+					
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-confirm", cotaAusenteController.workspace ).parents("form")
+		});
 	},
 
 	retornoEnvioSuplementar : function(result) {
@@ -473,8 +485,79 @@ var cotaAusenteController = $.extend(true, {
 		$("#idQtde"+indice, cotaAusenteController.workspace).numeric();
 		$("#idNom"+indice, cotaAusenteController.workspace).autocomplete({source: ""});
 	},
+			
+	addCota : function(indice) {
+				
+		var nome = $('#idNomeCotaOrigem'+indice).val().length === 0;
 
-	getInput : function(value,id, width,textAlign,onblur,onchange,onkeyup) {
+		if(nome) {
+			if($('.cotaOrigem').length>1)
+				$('#idLinhaCota' + indice).remove();
+			else
+				$('.cotaOrigem').focus();
+		} else {
+		
+			cotaAusenteController.gerarLinhaCota((indice+1) ,'','');
+			
+			$('#idNumCotaOrigem' + (indice+1)).focus();
+		}
+	},
+		
+	gerarLinhaCota : function(indice,num, nome) {		
+		
+		//TODO
+		
+		var tabRateios = $("#idCotas", cotaAusenteController.workspace);	
+		
+		var novaLinha = $(document.createElement("TR"));
+		
+		novaLinha.attr('id','idLinhaCota' + indice);
+		
+		var labelNum = $(document.createElement("TD"));
+		var labelNome = $(document.createElement("TD"));
+				
+		var numCota = $(document.createElement("TD"));
+		var nomeCota = $(document.createElement("TD"));
+		
+		labelNum.text('Cota:');
+						
+		numCota.append(cotaAusenteController.getInput(
+				num,
+				"idNumCotaOrigem"+indice ,
+				"80px",
+				null,
+				null,
+				"pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNumCotaOrigem"+indice+"', '#idNomeCotaOrigem"+indice+"',true)",
+				null,
+				"cotaOrigem"));
+		
+		labelNome.text('Nome:');
+				
+		nomeCota.append(cotaAusenteController.getInput(
+				nome,
+				"idNomeCotaOrigem"+indice ,
+				"280px",
+				null,
+				"pesquisaCotaCotaAusente.pesquisarPorNomeCota('#idNumCotaOrigem"+indice+"', '#idNomeCotaOrigem"+indice+"',true); cotaAusenteController.addCota("+indice+")", 
+				null,
+				"pesquisaCotaCotaAusente.autoCompletarPorNome('#idNomeCotaOrigem"+indice+"')"));
+				
+		
+		novaLinha.append(labelNum);
+		novaLinha.append(numCota);
+		novaLinha.append(labelNome);
+		novaLinha.append(nomeCota);
+		novaLinha.append("<td><input type=\"hidden\" value=\""+indice+"\"></td>");
+		
+		tabRateios.append(novaLinha);
+		
+		$("#idNumCotaOrigem"+indice, cotaAusenteController.workspace).numeric();
+		$("#idNomeCotaOrigem"+indice, cotaAusenteController.workspace).autocomplete({source: ""});
+		
+	},
+
+	getInput : function(value,id, width,textAlign,onblur,onchange,onkeyup, classe) {
+		
 		
 		var input = document.createElement("INPUT");
 		input.type="text";
@@ -482,6 +565,9 @@ var cotaAusenteController = $.extend(true, {
 		input.id=id;
 		input.value=value;
 		input.style.setProperty("width",width);
+				
+		if(classe)
+			input.setAttribute("class",classe);
 		
 		if(textAlign) {
 			input.style.setProperty("text-align",textAlign);
@@ -520,7 +606,7 @@ var cotaAusenteController = $.extend(true, {
 				"Suplementar": function() {
 					
 					$.postJSON(contextPath + "/cotaAusente/enviarParaSuplementar", 
-							"numCota=" + numCotaAusente, 
+							"numCota=" + cotaAusenteController.numCotasAusente, 
 							cotaAusenteController.retornoEnvioSuplementar);
 					
 					$( this ).dialog( "close" );
@@ -567,37 +653,11 @@ var cotaAusenteController = $.extend(true, {
 			}
 	  	});
 		
-		parametros.push({name:'numCota', value: numCotaAusente});
+		parametros.push({name:'numCota', value: cotaAusenteController.numCotasAusente});
 		
 		return parametros;
 	},
-			
-	popup_alterar : function() {
-			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-		
-			$( "#dialog-novo", cotaAusenteController.workspace ).dialog({
-				resizable: false,
-				height:220,
-				width:540,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						
-						
-						
-						$( this ).dialog( "close" );
-						$("#effect", cotaAusenteController.workspace).show("highlight", {}, 1000, callback);
-						$(".grids", cotaAusenteController.workspace).show();
-						
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				},
-				form: $( "#dialog-novo", cotaAusenteController.workspace ).parents("form")
-			});
-	},	
-
+	
 	retornoExlusaoCotaAusente : function(result) {
 		
 		var mensagens = result[0];
@@ -646,60 +706,6 @@ var cotaAusenteController = $.extend(true, {
 		});
 		
 		$("#flexiGridProdutoEstoqueSuplementar", cotaAusenteController.workspace).flexReload();
-	},
-	
-	abre_linha_1 : function(){
-		$( '.linha_1', cotaAusenteController.workspace ).show();
-		textfield5.focus();
-	},
-	
-	abre_linha_2 : function(){
-		$( '.linha_2', cotaAusenteController.workspace ).show();
-		textfield8.focus();
-	},
-	
-	abre_linha_3 : function(){
-		$( '.linha_3', cotaAusenteController.workspace ).show();
-		textfield11.focus();
-	},
-	
-	abre_linha_4 : function(){
-		$( '.linha_4', cotaAusenteController.workspace ).show();
-		textfield11.focus();
-	},
-	
-	abre_linha_4 : function(){
-		$( '.linha_5', cotaAusenteController.workspace ).show();
-		textfield17.focus();
-	},
-	
-	abre_linha_5 : function(){
-		$( '.linha_6', cotaAusenteController.workspace).show();
-		textfield20.focus();
-	},
-	
-	abre_linha_21 : function(){
-		$( '.linha_21', cotaAusenteController.workspace ).show();
-		textfield24.focus();
-	},
-	
-	abre_linha_22 : function(){
-		$( '.linha_22', cotaAusenteController.workspace ).show();
-		textfield27.focus();
-	},
-
-	abre_linha_31 : function(){
-		$( '.linha_31', cotaAusenteController.workspace ).show();
-		textfield34.focus();
-	},
-	
-	abre_linha_32 : function(){
-		$( '.linha_32', cotaAusenteController.workspace ).show();
-		textfield37.focus();
-	},
-
-	mostra_grid : function(){
-		$( '#grid_1', cotaAusenteController.workspace ).show();
 	}
-
+	
 }, BaseController);

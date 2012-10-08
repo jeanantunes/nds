@@ -34,8 +34,7 @@ public class EMS0198Route extends FileOutputRoute{
 	}
 	
 	public void execute(String userName, Date data) {
-		
-		getParameters().put("DATA_LCTO_DISTRIB", data);
+		messageProcessor.setDataLctoDistrib(data);
 		execute(userName);
 	}
 	

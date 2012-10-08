@@ -1,17 +1,17 @@
 var baixaFinanceiraController = $.extend(true, {
-
+	
 	dataOperacaoDistribuidor: null,
-
+	
 	init : function() {
 		$("#filtroNumCota", baixaFinanceiraController.workspace).numeric();
 		$("#descricaoCota", baixaFinanceiraController.workspace).autocomplete({source: ""});
+		$("filtroNossoNumero", baixaFinanceiraController.workspace).numeric();
 		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
 			dateFormat : 'dd/mm/yy',
 		});
-		$("filtroNossoNumero", baixaFinanceiraController.workspace).numeric();
 		this.initGradeDividas();
 		this.initGridDadosDivida();
 
@@ -34,12 +34,19 @@ var baixaFinanceiraController = $.extend(true, {
 			centsSeparator: ',',
 		    thousandsSeparator: '.'
 		});
-
+		
+		baixaFinanceiraController.dataOperacaoDistribuidor = 
+			$("#dataBaixa", baixaFinanceiraController.workspace).datepicker("getDate");
+		
 		$("#radioBaixaManual", baixaFinanceiraController.workspace).focus();
-
-		baixaFinanceiraController.dataOperacaoDistribuidor = $("#dataBaixa").datepicker( "getDate" );
 		
 		baixaFinanceiraController.iniciarGridPrevisao();
+		baixaFinanceiraController.iniciarGriBoletosBaixados();
+		baixaFinanceiraController.iniciarGridBaixadosRejeitados();
+		baixaFinanceiraController.iniciarGridBaixadosDivergentes();
+		baixaFinanceiraController.iniciarGridInadimplentes();
+		baixaFinanceiraController.iniciarGridTotalBancario();
+		
 	},
 	
 	iniciarGridPrevisao : function() {
@@ -99,6 +106,262 @@ var baixaFinanceiraController = $.extend(true, {
 			height : 220
 		});
 	},
+
+	iniciarGriBoletosBaixados : function() {
+		$(".boletoBaixadoGrid").flexigrid({
+			preProcess: baixaFinanceiraController.getDataFromResult,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'cota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 135,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Banco',
+				name : 'banco',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Conta-Corrente',
+				name : 'cCorrente',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nosso Número',
+				name : 'nossoNumero',
+				width : 140,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'vlr',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Data Vencimento',
+				name : 'dtVencimento',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "cota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 750,
+			height : 220
+		});
+		
+	},
+	
+	iniciarGridBaixadosRejeitados : function() {
+		$(".boletoRejeitadoGrid").flexigrid({
+			preProcess: baixaFinanceiraController.getDataFromResult,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Histórico',
+				name : 'historico',
+				width : 420,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Banco',
+				name : 'banco',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Conta-Corrente',
+				name : 'cCorrente',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Valor Boleto R$',
+				name : 'vlrBoleto',
+				width : 120,
+				sortable : true,
+				align : 'right'
+			}],
+			sortname : "historico",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 750,
+			height : 220
+		});
+	},
+	
+	iniciarGridBaixadosDivergentes : function() {
+		$(".boletoDivergenciaGrid").flexigrid({
+			preProcess: baixaFinanceiraController.getDataFromResult,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Motivo',
+				name : 'motivo',
+				width : 255,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Banco',
+				name : 'banco',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Conta-Corrente',
+				name : 'cCorrente',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Boleto R$',
+				name : 'boleto',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Pago R$',
+				name : 'pago',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Diferença R$',
+				name : 'vlrDiferenca',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Baixado?',
+				name : 'baixado',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "motivo",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 750,
+			height : 220
+		});
+	},
+	
+	iniciarGridInadimplentes : function() {
+		$(".inadimplentesGrid").flexigrid({
+			preProcess: baixaFinanceiraController.getDataFromResult,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'cota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'nome',
+				width : 135,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Banco',
+				name : 'banco',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Conta-Corrente',
+				name : 'cCorrente',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nosso Número',
+				name : 'nossoNumero',
+				width : 140,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'vlr',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Data Vencimento',
+				name : 'dtVencimento',
+				width : 90,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "cota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 750,
+			height : 220
+		});
+		
+	},
+	
+	iniciarGridTotalBancario : function() {
+		$(".totalGrid").flexigrid({
+			preProcess: baixaFinanceiraController.getDataFromResult,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Banco',
+				name : 'banco',
+				width : 130,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'C.Corrente',
+				name : 'cCorrente',
+				width : 145,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'vlr',
+				width : 100,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Data Vencímento',
+				name : 'dtVencimento',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "banco",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 550,
+			height : 220
+		});
+	},
 	
 	getDataFromResult : function() {
 		
@@ -131,6 +394,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
     popup_baixa_dividas : function() {
+    	baixaFinanceiraController.mostrarBancos($("#formaRecebimentoDividas").val());
 		$( "#dialog-baixa-dividas", baixaFinanceiraController.workspace ).dialog({
 			resizable: false,
 			height:430,
@@ -143,6 +407,7 @@ var baixaFinanceiraController = $.extend(true, {
 				           click: function() {
 				        	   
 				        	   baixaFinanceiraController.popup_confirma_baixa_dividas();
+				        	   
 				           }
 			           },
 			           {
@@ -530,13 +795,20 @@ var baixaFinanceiraController = $.extend(true, {
 		var nossoNumero = $("#filtroNossoNumero", baixaFinanceiraController.workspace).val();
 		var numCota = $("#filtroNumCota", baixaFinanceiraController.workspace).val();
 		
-		if (nossoNumero==''){
-			
-			/*BAIXA MANUAL DE DÍVIDAS*/
+		var btAVista =$("#bt_aVista");
+		var btNegociar =$("#bt_negociar");
+		var btPostergar =$("#bt_postergar");
+	
+		if($("#checkCobrancasBaixadas", baixaFinanceiraController.workspace).is(':checked')){
+			btAVista.hide();
+			btNegociar.hide();
+			btPostergar.hide();
+			/*BAIXA MANUAL DE DIVIDAS BAIXADAS*/
 			$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexOptions({
-				url: contextPath + "/financeiro/buscaDividas",
+				url: contextPath + "/financeiro/buscaDividasBaixadas",
 				params: [
-				         {name:'numCota', value: numCota}
+				         {name:'numCota', value: numCota},
+				         {name:'nossoNumero', value: nossoNumero}
 				        ] ,
 				        newp: 1
 			});
@@ -546,18 +818,40 @@ var baixaFinanceiraController = $.extend(true, {
 			$(".grids", baixaFinanceiraController.workspace).show();
 			
 			baixaFinanceiraController.dividaManualCota();
+			
+		}else{
+			btAVista.show();
+			btNegociar.show();
+			btPostergar.show();
+			if (nossoNumero==''){
+				
+				/*BAIXA MANUAL DE DIVIDAS*/
+				$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexOptions({
+					url: contextPath + "/financeiro/buscaDividas",
+					params: [
+					         {name:'numCota', value: numCota}
+					        ] ,
+					        newp: 1
+				});
+				
+				$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexReload();
+				
+				$(".grids", baixaFinanceiraController.workspace).show();
+				
+				baixaFinanceiraController.dividaManualCota();
+			}
+			
+			else{
+				
+				/*BAIXA INDIVIDUAL DE COBRANÇA(BOLETO)*/
+				var data = [{name: 'nossoNumero', value: nossoNumero}];
+				$.postJSON(contextPath + "/financeiro/buscaBoleto",
+						   data,
+						   baixaFinanceiraController.sucessCallbackPesquisarBoleto, 
+						   baixaFinanceiraController.errorCallbackPesquisarBoleto);
+				
+			}
 		}
-		
-		else{
-			
-			/*BAIXA INDIVIDUAL DE COBRANÇA(BOLETO)*/
-			var data = [{name: 'nossoNumero', value: nossoNumero}];
-			$.postJSON(contextPath + "/financeiro/buscaBoleto",
-					   data,
-					   baixaFinanceiraController.sucessCallbackPesquisarBoleto, 
-					   baixaFinanceiraController.errorCallbackPesquisarBoleto);
-			
-		}	
 	},
 	
 	sucessCallbackPesquisarBoleto : function(resultado) {
@@ -819,7 +1113,7 @@ var baixaFinanceiraController = $.extend(true, {
     	var valorSaldoDividas = $("#valorSaldoDividas", baixaFinanceiraController.workspace).html();
     	var formaRecebimentoDividas = $("#formaRecebimentoDividas", baixaFinanceiraController.workspace).val();
     	var observacoesDividas = $("#observacoesDividas", baixaFinanceiraController.workspace).val();
-
+    	var idBanco = $("#bancoDividas", baixaFinanceiraController.workspace).val();
 		$.postJSON(contextPath + "/financeiro/baixaManualDividas",
 				   "manterPendente="+manterPendente+
 				   "&valorDividas="+valorDividas+
@@ -830,6 +1124,7 @@ var baixaFinanceiraController = $.extend(true, {
 				   "&valorSaldo="+ valorSaldoDividas+
 				   "&tipoPagamento="+ formaRecebimentoDividas+
 				   "&observacoes="+ observacoesDividas +
+				   "&idBanco="+ idBanco +
 				   "&"+baixaFinanceiraController.obterCobrancasDividasMarcadas(),
 				   function(mensagens) {
 					   
@@ -860,11 +1155,11 @@ var baixaFinanceiraController = $.extend(true, {
 	//-----------------------------------------------------
 	
 
-	//BAIXA AUTOMÁTICA-------------------------------------
+	//BAIXA AUTOMATICA-------------------------------------
 
 	mostrarBaixaAuto : function() {
 		
-		baixaFinanceiraController.limparCamposBaixaAutomatica();
+		baixaFinanceiraController.resetarCamposBaixaAutomatica();
 		
 		$('#tableBaixaManual', baixaFinanceiraController.workspace).hide();
 		$('#extratoBaixaManual', baixaFinanceiraController.workspace).hide();
@@ -878,17 +1173,18 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	mostrarGridBoletosPrevisao : function() {
 		
-		var dataHidden = $("#dataHidden", baixaFinanceiraController.workspace).val();
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".previsaoGrid", baixaFinanceiraController.workspace).flexOptions({
 			url: contextPath + "/financeiro/mostrarGridBoletosPrevisao",
-			onSuccess: baixaFinanceiraController.executarAposProcessamento,
 			params: [
-		         {name:'data', value: dataHidden}
+		         {name:'data', value: dataBaixa}
 		    ],
 		});
 		
 		$(".previsaoGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-previsao").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-previsao").dialog({
 			resizable: false,
@@ -907,6 +1203,172 @@ var baixaFinanceiraController = $.extend(true, {
 			form: $("#dialog-previsao", baixaFinanceiraController.workspace).parents("form")
 		});
 	},
+	
+	mostrarGridBoletosBaixados : function() {
+		
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
+		
+		$(".boletoBaixadoGrid").flexOptions({
+			url: contextPath + "/financeiro/mostrarGridBoletosBaixados",
+			params: [
+		         {name:'data', value: dataBaixa}
+		    ],
+		});
+		
+		$(".boletoBaixadoGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-boletos-baixados").find("legend > span").html(dataBaixa);
+		
+		$("#dialog-boletos-baixados").dialog({
+			resizable: false,
+			height:430,
+			width:800,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogBoletosBaixadosBtnFechar",
+			    	text: "Fechar",
+			    	click: function() {
+						$(this).dialog("close");
+			    	}
+			    }
+			],
+			form: $("#dialog-boletos-baixados", baixaFinanceiraController.workspace).parents("form")
+		});
+	},
+	
+	mostrarGridBoletosRejeitados : function() {
+		
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
+		
+		$(".boletoRejeitadoGrid", baixaFinanceiraController.workspace).flexOptions({
+			url: contextPath + "/financeiro/mostrarGridBoletosRejeitados",
+			params: [
+		         {name:'data', value: dataBaixa}
+		    ],
+		});
+		
+		$(".boletoRejeitadoGrid", baixaFinanceiraController.workspace).flexReload();
+
+		$("#dialog-baixados-rejeitados").find("legend > span").html(dataBaixa);
+		
+		$("#dialog-baixados-rejeitados").dialog({
+			resizable: false,
+			height:430,
+			width:800,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogBaixadosRejeitadosBtnFechar",
+			    	text: "Fechar",
+			    	click: function() {
+						$(this).dialog("close");
+			    	}
+			    }
+			],
+			form: $("#dialog-baixados-rejeitados", baixaFinanceiraController.workspace).parents("form")
+		});
+	},
+	
+	mostrarGridBoletosBaixadosComDivergencia : function() {
+		
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
+		
+		$(".boletoDivergenciaGrid", baixaFinanceiraController.workspace).flexOptions({
+			url: contextPath + "/financeiro/mostrarGridBoletosBaixadosComDivergencia",
+			params: [
+		         {name:'data', value: dataBaixa}
+		    ],
+		});
+		
+		$(".boletoDivergenciaGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-baixados-divergentes").find("legend > span").html(dataBaixa);
+		
+		$("#dialog-baixados-divergentes").dialog({
+			resizable: false,
+			height:430,
+			width:800,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogBaixadosDivergentesBtnFechar",
+			    	text: "Fechar",
+			    	click: function() {
+						$(this).dialog("close");
+			    	}
+			    }
+			],
+			form: $("#dialog-baixados-divergentes", baixaFinanceiraController.workspace).parents("form")
+		});
+	},
+	
+	mostrarGridBoletosInadimplentes : function() {
+		
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
+		
+		$(".inadimplentesGrid", baixaFinanceiraController.workspace).flexOptions({
+			url: contextPath + "/financeiro/mostrarGridBoletosInadimplentes",
+			params: [
+		         {name:'data', value: dataBaixa}
+		    ],
+		});
+		
+		$(".inadimplentesGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-inadimplentes").find("legend > span").html(dataBaixa);
+		
+		$("#dialog-inadimplentes").dialog({
+			resizable: false,
+			height:430,
+			width:800,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogIsnadimplentesBtnFechar",
+			    	text: "Fechar",
+			    	click: function() {
+						$(this).dialog("close");
+			    	}
+			    }
+			],
+			form: $("#dialog-inadimplentes", baixaFinanceiraController.workspace).parents("form")
+		});
+	},
+	
+	mostrarGridTotalBancario : function() {
+		
+		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
+		
+		$(".totalGrid", baixaFinanceiraController.workspace).flexOptions({
+			url: contextPath + "/financeiro/mostrarGridTotalBancario",
+			params: [
+		         {name:'data', value: dataBaixa}
+		    ],
+		});
+		
+		$(".totalGrid", baixaFinanceiraController.workspace).flexReload();
+		
+		$("#dialog-total").find("legend > span").html(dataBaixa);
+		
+		$("#dialog-total").dialog({
+			resizable: false,
+			height:430,
+			width:600,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogTotalBtnFechar",
+			    	text: "Fechar",
+			    	click: function() {
+						$(this).dialog("close");
+			    	}
+			    }
+			],
+			form: $("#dialog-total", baixaFinanceiraController.workspace).parents("form")
+		});
+	},
+
 	
 	replaceAll : function(string, token, newtoken) {
 		while (string.indexOf(token) != -1) {
@@ -943,15 +1405,30 @@ var baixaFinanceiraController = $.extend(true, {
 			$("#dataCompetencia", baixaFinanceiraController.workspace).html(responseJson.result.dataCompetencia);
 			$("#somaPagamentos", baixaFinanceiraController.workspace).html(responseJson.result.somaPagamentos);
 			
-			$("#quantidadeLidos", baixaFinanceiraController.workspace).html(responseJson.result.quantidadeLidos);
-			$("#quantidadeBaixados", baixaFinanceiraController.workspace).html(responseJson.result.quantidadeBaixados);
-			$("#quantidadeRejeitados", baixaFinanceiraController.workspace).html(responseJson.result.quantidadeRejeitados);
-			$("#quantidadeBaixadosComDivergencia", baixaFinanceiraController.workspace).html(responseJson.result.quantidadeBaixadosComDivergencia);
+			baixaFinanceiraController.mostrarDadosResumoBaixaFinanceira(responseJson.result);
 			
-			baixaFinanceiraController.limparCamposBaixaAutomatica();
+			baixaFinanceiraController.resetarCamposBaixaAutomatica();
 			
+			$("#tableDadosArquivo", baixaFinanceiraController.workspace).show();
+
 			$('#resultadoIntegracao', baixaFinanceiraController.workspace).show();
+			
+			$('#tableDados').css({"text-align": ""});
 		}
+	},
+	
+	resetarCamposBaixaAutomatica: function() {
+		
+		baixaFinanceiraController.limparCamposBaixaAutomatica();
+		
+		baixaFinanceiraController.habilitarBaixaAutomatica(true);
+
+		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
+			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
+		);
+
+		$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "none");
+		$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
 	},
 	
 	limparCamposBaixaAutomatica : function() {
@@ -962,15 +1439,6 @@ var baixaFinanceiraController = $.extend(true, {
 		);
 		
 		$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
-
-		baixaFinanceiraController.habilitarBaixaAutomatica(true);
-
-		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
-			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
-		);
-
-		$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "none");
-		$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
 	},
 	
 	//-----------------------------------------------------
@@ -1072,6 +1540,16 @@ var baixaFinanceiraController = $.extend(true, {
 		return $("#"+checkName, baixaFinanceiraController.workspace).is(":checked");
 	},
 	
+	mostrarBancos : function(value) {
+		$("#bancoDividas", baixaFinanceiraController.workspace).prop("selectedIndex",0);
+		if(value == 'DEPOSITO' || value == 'TRANSFERENCIA_BANCARIA'){
+			$("#bancoDividas", baixaFinanceiraController.workspace).show();
+			$("#labelBanco", baixaFinanceiraController.workspace).show();
+		}else{
+			$("#bancoDividas", baixaFinanceiraController.workspace).hide();
+			$("#labelBanco", baixaFinanceiraController.workspace).hide();
+		}
+	},
 	alterarEstadoInputsBaixaAutomatica: function() {
 		
 		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
@@ -1081,38 +1559,109 @@ var baixaFinanceiraController = $.extend(true, {
 		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
 				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
 
+			baixaFinanceiraController.limparCamposBaixaAutomatica();
 			baixaFinanceiraController.habilitarBaixaAutomatica(false);
 		
 		} else {
 			
-			baixaFinanceiraController.limparCamposBaixaAutomatica();
+			baixaFinanceiraController.resetarCamposBaixaAutomatica();
+		}
+		
+	},
+	
+	habilitarIntegracao: function() {
+		
+		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
+		
+		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
+				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
+
+			$("#btnIntegrar", baixaFinanceiraController.workspace).hide();
+			$("#btnExibirResumos", baixaFinanceiraController.workspace).show();
+			
+		} else {
+
+			$("#btnIntegrar", baixaFinanceiraController.workspace).show();
+			$("#btnExibirResumos", baixaFinanceiraController.workspace).hide();
 		}
 	},
-
+	
 	habilitarBaixaAutomatica: function(habilitar) {
-
+		
 		$("#uploadedFile", baixaFinanceiraController.workspace).enable(habilitar);
 		$("#valorFinanceiro", baixaFinanceiraController.workspace).enable(habilitar);
 	},
 
-	habilitarIntegracao: function() {
+	obterResumoBaixaFinanceira: function() {
 
-		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
+		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 
-		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
-				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
+		var data = [{name:'data', value: dataSelecionada}];
+		
+		$.postJSON(contextPath + "/financeiro/mostrarResumoBaixaFinanceira",
+			data,
+			function(result) {
 
-			$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "none");
-			$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
+				$("#tableDadosArquivo", baixaFinanceiraController.workspace).hide();
 
-		} else {
+				$("#tableDados", baixaFinanceiraController.workspace).css("text-align", "center");
+				
+				baixaFinanceiraController.mostrarDadosResumoBaixaFinanceira(result);
+			}, 
+			function(result) {
 
-			$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "block");
-			$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "none");
-		}
+				if (result.mensagens) {
+
+					exibirMensagem(
+						resultado.mensagens.tipoMensagem, 
+						resultado.mensagens.listaMensagens
+					);
+				}
+			}
+		);	
+	},
+
+	mostrarDadosResumoBaixaFinanceira: function(result) {
+
+		$("#tableDadosResumoBaixa", baixaFinanceiraController.workspace).show();
+
+		$('#resultadoIntegracao', baixaFinanceiraController.workspace  ).show();
+
+		$("#quantidadePrevistos", baixaFinanceiraController.workspace).html(
+			result.quantidadePrevisao ? result.quantidadePrevisao : 0
+		);
+		$("#quantidadeLidos", baixaFinanceiraController.workspace).html(
+			result.quantidadeLidos ? result.quantidadeLidos : 0
+		);
+		$("#quantidadeBaixados", baixaFinanceiraController.workspace).html(
+			result.quantidadeBaixados ? result.quantidadeBaixados : 0
+		);
+		$("#quantidadeRejeitados", baixaFinanceiraController.workspace).html(
+			result.quantidadeRejeitados ? result.quantidadeRejeitados : 0
+		);
+		$("#quantidadeBaixadosComDivergencia", baixaFinanceiraController.workspace).html(
+			result.quantidadeBaixadosComDivergencia ? result.quantidadeBaixadosComDivergencia : 0
+		);
+		$("#quantidadeInadimplentes", baixaFinanceiraController.workspace).html(
+			result.quantidadeInadimplentes ? result.quantidadeInadimplentes : 0
+		);
+
+		var valorTotalBancario = result.valorTotalBancario ? result.valorTotalBancario : 0;
+		
+		$("#tdValorTotal", baixaFinanceiraController.workspace).html(
+			'<span id="valorTotalBancario">' + 
+				valorTotalBancario + 
+			'</span>'
+		);
+
+		if (result.possuiDiversasBaixas) {
+
+			$("#valorTotalBancario", baixaFinanceiraController.workspace).wrap(
+				'<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridTotalBancario();" />'
+			);
+		} 
 	}
 
-	
 }, BaseController);
 
 //@ sourceURL=baixaFinanceira.js

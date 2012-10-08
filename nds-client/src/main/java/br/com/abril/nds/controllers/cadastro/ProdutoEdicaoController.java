@@ -384,6 +384,21 @@ public class ProdutoEdicaoController {
 			
 			BigDecimal precoComDesconto = precoVenda.subtract(valorDesconto);
 
+			String razaoSocial = "";
+			
+			if(	produtoEdicao!=null && 
+				produtoEdicao.getProduto()!=null &&
+				produtoEdicao.getProduto().getEditor() != null &&
+				produtoEdicao.getProduto().getEditor().getPessoaJuridica() != null ) {
+				
+				razaoSocial = produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome();
+				
+				razaoSocial = (razaoSocial == null) ? "" : razaoSocial;
+				
+			}
+			
+			
+			
 			produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
 													   produtoEdicao.getProduto().getNome(),
 													   produtoEdicao.getCodigo(),
@@ -391,7 +406,7 @@ public class ProdutoEdicaoController {
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
-										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome():""):""),
+										               razaoSocial,
 										               produtoEdicao.getChamadaCapa(),
 										               (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
 										               Integer.toString(produtoEdicao.getPacotePadrao())

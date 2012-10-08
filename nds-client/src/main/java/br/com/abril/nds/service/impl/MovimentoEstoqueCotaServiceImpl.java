@@ -82,14 +82,15 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 	@Override
 	@Transactional
-	public List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date data, Integer numCota, GrupoMovimentoEstoque grupoMovimentoEstoque) {
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque) {
 	
-		List<MovimentoEstoqueCota> movimentos = this.obterMovimentoCotaPorTipoMovimento(data, numCota, grupoMovimentoEstoque);
-		
-		
+		//TODO - Remover get(0)
+		List<MovimentoEstoqueCota> movimentos = this.obterMovimentoCotaPorTipoMovimento(data, numCotas.get(0), grupoMovimentoEstoque);
+				
 		List<MovimentoEstoqueCotaDTO> movimentosDTO = new ArrayList<MovimentoEstoqueCotaDTO>();
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		//TODO - Remover get(0)
+		Cota cota = cotaRepository.obterPorNumerDaCota(numCotas.get(0));
 		
 		for(MovimentoEstoqueCota movimento : movimentos) {
 			

@@ -1951,7 +1951,7 @@ public class DataLoader {
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(session,tipoFornecedorPublicacao);
 
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaFc, fornecedorFc, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, fornecedorFc, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(session,notaFiscal);
 
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -2077,7 +2077,7 @@ public class DataLoader {
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(session, tipoFornecedorPublicacao);
 
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, juridicaDinap, fornecedorAcme, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop5102, fornecedorAcme, tipoNotaFiscalRecebimento, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(session, notaFiscal);
 
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -2617,31 +2617,31 @@ public class DataLoader {
         pdvOrlando.setSegmentacao(segmentacaoPDV2);
         session.save(pdvOrlando);
 		
-		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
+		Rota rota1 = Fixture.rota("Rota 001",roteiroPinheiros);
 		rota1.addPDV(pdvcotaJose2, 1);
 		rota1.addPDV(pdvcotaManoel2, 2);
 		session.save(rota1);
 		
-		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
+		Rota rota2 = Fixture.rota("Rota 002",roteiroInterlagos);
 	    rota2.addPDV(pdvcotaJose2, 1);
 	    rota2.addPDV(pdvcotaManoel2, 2);
 		session.save(rota2);
 		
-		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
+		Rota rota10 = Fixture.rota("Rota 010",roteiroTCD);
 	    rota10.addPDV(pdvcotaJose2, 1);
 	    rota10.addPDV(pdvcotaManoel2, 2);
 		session.save(rota10);
  
 		
-		Rota rotaRoteiroCentro1 = Fixture.rota("999", "Rota 999", roteiroCentro);
+		Rota rotaRoteiroCentro1 = Fixture.rota("Rota 999", roteiroCentro);
 		rotaRoteiroCentro1.addPDV(pdvJoao, 1);
 		session.save(rotaRoteiroCentro1);
 		
-		Rota rotaRoteiroCentro2 = Fixture.rota("990", "Rota 990", roteiroCentro);
+		Rota rotaRoteiroCentro2 = Fixture.rota("Rota 990", roteiroCentro);
         rotaRoteiroCentro2.addPDV(pdvMariana, 1);
         session.save(rotaRoteiroCentro2);
         
-        Rota rotaRoteiroBairro = Fixture.rota("998", "Rota 998", roteiroBairro);
+        Rota rotaRoteiroBairro = Fixture.rota("Rota 998", roteiroBairro);
         rotaRoteiroBairro.addPDV(pdvJoana, 1);
         rotaRoteiroBairro.addPDV(pdvOrlando, 2);
         session.save(rotaRoteiroBairro);
@@ -3627,12 +3627,12 @@ public class DataLoader {
 	private static void criarNotasFiscais(Session session) {
 
 		notaFiscal10 = Fixture
-				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(50), new BigDecimal(10), BigDecimal.TEN);
 		session.save(notaFiscal10);
 
 		notaFiscalFornecedor = Fixture
-				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 		session.save(notaFiscalFornecedor);
 
@@ -5385,7 +5385,7 @@ public class DataLoader {
 			for(int x= 1; x< 3 ;x++){
 
 				NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-						.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscalDevolucao,
+						.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscalDevolucao,
 								usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 				session.save(notaFiscalFornecedor);
 
@@ -6084,7 +6084,7 @@ public class DataLoader {
 			save(session,produtoEdicao);
 
 			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscalRecebimento,
+					.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscalRecebimento,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(session,notaFiscalFornecedor);
 
@@ -6146,8 +6146,8 @@ public class DataLoader {
 
 	private static void criarBanco(Session session) {
 
-		bancoHSBC = Fixture.banco(10L, true, 1, "1010",
-							  123456L, "1", "1", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
+		bancoHSBC = Fixture.banco(454L, true, 1, "1010",
+							  1646L, "1", "1", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
 		bancoITAU = Fixture.banco(10L, true, 1, "1010",
 				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "184", BigDecimal.TEN, BigDecimal.ONE);
@@ -6351,7 +6351,6 @@ public class DataLoader {
 
 			notaFiscalEntradaFornecedorNFE = Fixture.notaFiscalEntradaFornecedorNFE(
 					cfop5102,
-					fornecedorDinap.getJuridica(),
 					11011110L+contador,
 					"11111000"+contador,
 					"11101011101"+contador,
@@ -6447,7 +6446,6 @@ public class DataLoader {
 			notaFiscalEntradaCotaNFE =
 					Fixture.notaFiscalEntradaCotaNFE(
 							cfop5102,
-							fornecedorDinap.getJuridica(),
 							222220000202L+contador,
 							"220202022220"+contador,
 							"2000022"+contador,
@@ -6537,7 +6535,6 @@ public class DataLoader {
 
 			notaFiscalSaidaFornecedorNFE = Fixture.notaFiscalSaidaFornecedorNFE(
 					cfop5102,
-					fornecedorDinap.getJuridica(),
 					33300003003L+contador,
 					"30300333330"+contador,
 					"0003303"+contador,
@@ -6864,7 +6861,6 @@ public class DataLoader {
 						serie,
 						chaveAcesso,
 						cfop5102,
-						fornecedorFc.getJuridica(),
 						fornecedorFc,
 						tipoNotaFiscalRecebimento,
 						usuarioJoao,
@@ -7008,7 +7004,6 @@ public class DataLoader {
 		NotaFiscalEntradaFornecedor notaFiscalProdutoCE =
 				Fixture.notaFiscalEntradaFornecedor(
 						cfop5102,
-						fornecedorFc.getJuridica(),
 						fornecedorFc,
 						tipoNotaFiscalRecebimento,
 						usuarioJoao,
@@ -7953,7 +7948,6 @@ public class DataLoader {
 				serie,
 				chaveAcesso,
 				cfop5102,
-				fornecedorDinap.getJuridica(),
 				fornecedorDinap,
 				tipoNotaFiscalRecebimento,
 				usuarioJoao,
@@ -7973,7 +7967,6 @@ public class DataLoader {
 				serie,
 				chaveAcesso,
 				cfop5102,
-				fornecedorDinap.getJuridica(),
 				fornecedorDinap,
 				tipoNotaFiscalRecebimento,
 				usuarioJoao,
@@ -8015,7 +8008,6 @@ public class DataLoader {
 				serie,
 				chaveAcesso,
 				cfop5102,
-				fornecedorDinap.getJuridica(),
 				fornecedorDinap,
 				tipoNotaFiscalRecebimento,
 				usuarioJoao,
@@ -8065,7 +8057,6 @@ public class DataLoader {
 
 			notaFiscalFornecedor = Fixture.notaFiscalEntradaFornecedor(
 					cfop5102,
-					fornecedorDinap.getJuridica(),
 					fornecedorDinap,
 					tipoNotaFiscal,
 					usuarioJoao,
@@ -8579,7 +8570,7 @@ public class DataLoader {
 		Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, 15);
 
 		NotaFiscalEntradaFornecedor notaFiscal =
-			Fixture.notaFiscalEntradaFornecedor(cfop5102, fornecedorFc.getJuridica(), fornecedorFc,
+			Fixture.notaFiscalEntradaFornecedor(cfop5102, fornecedorFc,
 												tipoNotaFiscalRecebimento, usuarioJoao, BigDecimal.TEN,
 												BigDecimal.ZERO, BigDecimal.TEN);
 

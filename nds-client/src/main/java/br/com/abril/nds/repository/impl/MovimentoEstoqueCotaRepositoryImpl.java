@@ -844,6 +844,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuffer hqlConfEncParcial = getSubQueryConfEncParc();
 		
+		StringBuffer hqlDesconto = getSubQueryDesconto(filtro.getIdFornecedor());
+		
 		StringBuffer hql = new StringBuffer("");
 		
 		if (indBuscaQtd) {
@@ -858,6 +860,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			hql.append(" movimento.produtoEdicao.produto.nome as nomeProduto, 		");
 			hql.append(" movimento.produtoEdicao.numeroEdicao as numeroEdicao, 		");
 			hql.append(" movimento.produtoEdicao.precoVenda as precoVenda, 			");
+			hql.append(  hqlDesconto.toString() + " as desconto, 					");
 			hql.append(" sum(movimento.qtde) as qtdDevolucao, 						");
 			
 			if(indBuscaTotalParcial) {
@@ -877,7 +880,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" ( movimento.data between :dataInicial and :dataFinal ) and 		");		
 
 		hql.append( hqlControleContagemDevolucaoConcluido.toString() + " is null and 	");
-		
+				
 		hql.append(" movimento.tipoMovimento = :tipoMovimentoEstoque ");		
 		
 		if( filtro.getIdFornecedor() != null ) {
@@ -971,9 +974,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			query = getSession().createQuery(hql.toString()).setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
 		}
 		
-		query.setParameter("dataInicial", filtro.getPeriodo().getDataInicial());
+		query.setParameter("dataInicial", filtro.getPeriodo().getDe());
 		
-		query.setParameter("dataFinal", filtro.getPeriodo().getDataFinal());
+		query.setParameter("dataFinal", filtro.getPeriodo().getAte());
 		
 		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
 		
@@ -1020,6 +1023,24 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return query.list();
 		
+	}
+	
+	private StringBuffer getSubQueryDesconto(Long idFornecedor) {
+		
+		StringBuffer hqlDesconto = new StringBuffer("")
+		
+		.append(" (select viewDesconto.desconto ")
+		.append(" from ViewDesconto viewDesconto ")
+		.append(" where viewDesconto.cotaId = movimento.cota.id  ")
+		.append(" and viewDesconto.produtoEdicaoId = movimento.produtoEdicao.id ");
+
+		if (idFornecedor != null) {
+			hqlDesconto.append(" and viewDesconto.fornecedorId = :idFornecedor ");
+		}
+		
+		hqlDesconto.append(" ) ");
+		
+		return hqlDesconto;
 	}
 	
 	/**
@@ -1112,9 +1133,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		Query query = getSession().createQuery(hql.toString());
 
-		query.setParameter("dataInicial", filtro.getPeriodo().getDataInicial());
+		query.setParameter("dataInicial", filtro.getPeriodo().getDe());
 		
-		query.setParameter("dataFinal", filtro.getPeriodo().getDataFinal());
+		query.setParameter("dataFinal", filtro.getPeriodo().getAte());
 
 		query.setParameter("tipoMovimentoEstoque", tipoMovimentoEstoque);
 		
@@ -1198,7 +1219,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1325,7 +1346,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				nome = " codigoCota ";
 				break;
 			case CODIGO_ROTA:
-				nome = " codigoRota ";
+				nome = " descricaoRota ";
 				break;
 			case NOME_COTA:
 				nome = " nomeCota ";
@@ -1418,7 +1439,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1463,7 +1484,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1541,7 +1562,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id, box.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1574,7 +1595,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select box.codigo as codigoBox, ");
-		hql.append(" 		rota.codigoRota as codigoRota, ");
+		hql.append(" 		rota.descricaoRota as codigoRota, ");
 		hql.append(" 		cota.numeroCota as codigoCota, ");
 		hql.append(" 		pessoa.nome as nomeCota, ");
 		hql.append(" 		produto.codigo as codigoProduto, ");
@@ -1588,9 +1609,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
-		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
+		hql.append(" group by produtoEdicao.id, box.id, rota.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!=null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1631,9 +1652,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 
-		hql.append(" group by produtoEdicao.id, box.id, rota.codigoRota ");
+		hql.append(" group by produtoEdicao.id, box.id, rota.descricaoRota ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1666,7 +1687,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select box.codigo as codigoBox, ");
-		hql.append(" 		rota.codigoRota as codigoRota, ");
+		hql.append(" 		rota.descricaoRota as codigoRota, ");
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
@@ -1678,9 +1699,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
-		hql.append(" group by box.id, rota.codigoRota ");
+		hql.append(" group by box.id, rota.descricaoRota ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1724,9 +1745,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList);
 		
-		hql.append(" group by box.id, rota.codigoRota ");
+		hql.append(" group by box.id, rota.descricaoRota ");
 
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1866,7 +1887,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by cota.id ");
 		
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}
@@ -1912,7 +1933,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by cota.id ");
 
-		if (filtro.getExcluirProdutoSemReparte()) {
+		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(movimentoCota.qtde) > 0 ");
 		}

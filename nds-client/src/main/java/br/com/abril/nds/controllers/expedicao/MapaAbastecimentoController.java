@@ -151,7 +151,7 @@ public class MapaAbastecimentoController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota() + " " + rota.getDescricaoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;
@@ -355,11 +355,15 @@ public class MapaAbastecimentoController {
 					else 
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
 					break;
-				
+				case PRODUTO_ESPECIFICO:
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(filtro);
+					break;
+				case PRODUTO_X_COTA:
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
+					break;					
 				case ENTREGADOR:				
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
 					break;
-					
 				default:
 					throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 			}
