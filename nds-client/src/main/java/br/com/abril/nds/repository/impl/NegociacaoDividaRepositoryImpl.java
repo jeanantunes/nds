@@ -87,4 +87,10 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		query.setParameter("numCota", filtro.getNumeroCota());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
 	}
+
+	@Override
+	public Negociacao obterNegociacaoPorCobranca(Long id) {
+		Query query = getSession().createQuery("select o from Negociacao o join o.cobrancasOriginarias c where c.id = " + id);
+		return (Negociacao) query.uniqueResult();
+	}
 }

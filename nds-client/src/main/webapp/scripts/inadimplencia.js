@@ -167,27 +167,25 @@ var inadimplenciaController = $.extend(true, {
 		}
 		
 		$.each(grid.rows, function(index, row) {
+			var negociada = row.cell.situacao == "Negociada";
+			var comissao = (row.cell.comissaoSaldoDivida) && negociada; 
 			
-			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome) + "," + inadimplenciaController.gerarBotaoDetalhesComissaCota(row.cell.idDivida,row.cell.nome);		
+			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome, comissao);		
 			
 	  	});
 		
-		/*document.getElementById("idQtde").innerHTML  = qtde;
-		document.getElementById("idTotal").innerHTML  = total;*/
 		$("#idQtde", inadimplenciaController.workspace).html(qtde);
 		$("#idTotal", inadimplenciaController.workspace).html(total);
 		
 		return grid;
 	},
 
-	gerarBotaoDetalhes : function(idDivida, nome) {
+	gerarBotaoDetalhes : function(idDivida, nome, comissao) {
+		if(comissao) {
+			return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhesComissaoCota("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+		}
+		
 		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
-		
-	},
-	
-	gerarBotaoDetalhesComissaCota : function(idDivida, nome) {
-		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhesComissaoCota("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
-		
 	},
 
 	getDetalhes : function(idDivida, nome) {
@@ -199,7 +197,7 @@ var inadimplenciaController = $.extend(true, {
 	
 	getDetalhesComissaoCota : function(idDivida, nome) {
 		nomeCota = nome;
-		$.postJSON(contextPath + "/inadimplencia/getDetalhesDivida", 
+		$.postJSON(contextPath + "/inadimplencia/getDividaComissao", 
 				"idDivida="+idDivida+"&method='get'", 
 				inadimplenciaController.popupDetalhesComissaoCota);	
 	},
@@ -369,7 +367,7 @@ var inadimplenciaController = $.extend(true, {
 	 	tdValorPago.align="right";
 	 	tdValorPago.innerHTML="Valor Pago R$".bold();		 	
 	 	cabecalho.appendChild(tdValorPago);
-	 	
+
 	 	var tdSaldoResidual = document.createElement("TD");
 	 	tdSaldoResidual.width="100";
 	 	tdSaldoResidual.align="right";

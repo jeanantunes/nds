@@ -11,4 +11,6 @@ public interface NegociacaoDividaRepository extends Repository<Negociacao, Long>
 	List<NegociacaoDividaDTO> obterCotaPorNumero(FiltroConsultaNegociacaoDivida filtro);
 
 	Long obterCotaPorNumeroCount(FiltroConsultaNegociacaoDivida filtro);
+
+	Negociacao obterNegociacaoPorCobranca(Long id);
 }
