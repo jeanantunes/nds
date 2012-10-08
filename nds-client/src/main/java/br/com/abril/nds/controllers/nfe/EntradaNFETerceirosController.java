@@ -30,7 +30,6 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CFOPService;
@@ -167,12 +166,10 @@ public class EntradaNFETerceirosController {
 	}
 	
 	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentes(FiltroEntradaNFETerceiros filtro) {
-		
-<<<<<<< .mine
-		List<ConsultaNFENotasPendentesDTO> listaNotasRecebidas = new ArrayList<ConsultaNFENotasPendentesDTO>();
-=======
+
+
 		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
->>>>>>> .theirs
+
 		
 		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
 		

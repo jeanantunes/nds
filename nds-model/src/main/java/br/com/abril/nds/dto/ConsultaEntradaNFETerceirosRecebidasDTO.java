@@ -16,7 +16,7 @@ public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 
 	private static final long serialVersionUID = 8366815250237375585L;
 
-	@Export(label = "Nº Nota", alignment = Alignment.LEFT)
+	@Export(label = "Nï¿½ Nota", alignment = Alignment.LEFT)
 	private Long numeroNota;
 
 	@Export(label = "Serie", alignment = Alignment.LEFT)
@@ -84,13 +84,6 @@ public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
-	public Date getDataEmissao() {
-		return dataEmissao;
-	}
-
-	public void setDataEmissao(Date dataEmissao) {
-		this.dataEmissao = dataEmissao;
-	}
 
 	/**
 	 * @return the nome
