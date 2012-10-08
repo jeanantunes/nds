@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.ConsultaNFENotasPendentesDTO;
-import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
+import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.repository.EntradaNFETerceirosRepository;
@@ -24,7 +24,7 @@ public class EntradaNFETerceirosServiceImpl implements
 
 	@Override
 	@Transactional
-	public List<ConsultaEntradaNFETerceirosDTO> buscarNFNotasRecebidas(
+	public List<ConsultaEntradaNFETerceirosRecebidasDTO> buscarNFNotasRecebidas(
 			FiltroEntradaNFETerceiros filtro, boolean limitar) {		 
 		return this.entradaNFETerceirosRepository.buscarNFNotasRecebidas(filtro, limitar);
 	}
@@ -38,10 +38,10 @@ public class EntradaNFETerceirosServiceImpl implements
 
 	@Override
 	@Transactional
-	public List<ConsultaNFENotasPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar) {
-		List<ConsultaNFENotasPendentesDTO> listaAux = this.entradaNFETerceirosRepository.buscarNFNotasPendentes(filtro, limitar);
-		List<ConsultaNFENotasPendentesDTO> listaRetorno = new ArrayList<ConsultaNFENotasPendentesDTO>(); 
-		for(ConsultaNFENotasPendentesDTO dto: listaAux){
+	public List<ConsultaEntradaNFETerceirosPendentesDTO> buscarNFNotasPendentes(FiltroEntradaNFETerceiros filtro, boolean limitar) {
+		List<ConsultaEntradaNFETerceirosPendentesDTO> listaAux = this.entradaNFETerceirosRepository.buscarNFNotasPendentes(filtro, limitar);
+		List<ConsultaEntradaNFETerceirosPendentesDTO> listaRetorno = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>(); 
+		for(ConsultaEntradaNFETerceirosPendentesDTO dto: listaAux){
 			dto.setStatus("Pendente");
 			listaRetorno.add(dto);
 		}
