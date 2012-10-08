@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
@@ -288,11 +289,24 @@ public class DividaServiceImpl implements DividaService {
 	public DividaComissaoDTO obterDadosDividaComissao(Long idDivida) {
 		Divida divida = dividaRepository.buscarPorId(idDivida);
 		Cobranca cobranca = divida.getCobranca();
-		
+
 		Negociacao negociacao = negociacaoRepository.obterNegociacaoPorCobranca(cobranca.getId());
+		
+		BigDecimal valorPago = negociacao.getValorDividaPagaComissao();
+		if(valorPago == null) {
+			valorPago = BigDecimal.ZERO;
+		}
+		BigDecimal valorOriginal = BigDecimal.ZERO;
+		for(Cobranca c : negociacao.getCobrancasOriginarias()) {
+			valorOriginal = valorOriginal.add(c.getValor());
+		}
+		
 		
 		DividaComissaoDTO resultado = new DividaComissaoDTO();
 		resultado.setPorcentagem(negociacao.getComissaoParaSaldoDivida());
+		resultado.setValorPago(valorPago);
+		resultado.setValorDivida(valorOriginal);
+		resultado.setValorResidual(valorOriginal.add(valorPago.multiply(new BigDecimal(-1))));
 		
 		return resultado;
 	}

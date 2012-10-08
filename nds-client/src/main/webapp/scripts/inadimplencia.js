@@ -294,11 +294,11 @@ var inadimplenciaController = $.extend(true, {
 		
 		 $(dividas).each(function (index, divida) {
 			 
-			 var linha = document.createElement("TR");
+			var linha = document.createElement("TR");
 			 
-			 var lin = (index%2==0) ? 1:2;
+			var lin = (index%2==0) ? 1:2;
 			 
-			 linha.className="class_linha_" + lin ;
+			linha.className="class_linha_" + lin ;
 	 	 
 		 	var cel = document.createElement("TD");
 		 	cel.align="left";
@@ -317,7 +317,7 @@ var inadimplenciaController = $.extend(true, {
 		 });		 		
 	},
 	
-	gerarTabelaDetalhesComissaoCota : function(dividas, nome) {
+	gerarTabelaDetalhesComissaoCota : function(dividaComissao, nome) {
 		
 		var div = $("#dialog-detalhes-comissao", inadimplenciaController.workspace);
 
@@ -348,6 +348,8 @@ var inadimplenciaController = $.extend(true, {
 		table.appendChild(tbody);
 		
 	 	var cabecalho = document.createElement("TR");
+	 	var linha = document.createElement("TR");
+
 	 	cabecalho.className="header_table";
 	 	
 	 	var tdPercentual = document.createElement("TD");
@@ -356,17 +358,35 @@ var inadimplenciaController = $.extend(true, {
 	 	tdPercentual.innerHTML="Percentual Utilizado".bold();
 	 	cabecalho.appendChild(tdPercentual);
 	 	
+	 	var celPercentual = document.createElement("TD");
+	 	celPercentual.align="right";
+	 	var celPercentualText = document.createTextNode(dividaComissao.porcentagem + "%");
+	 	celPercentual.appendChild(celPercentualText);			 	
+	 	linha.appendChild(celPercentual);
+
 	 	var tdSaldoDivida = document.createElement("TD");
 	 	tdSaldoDivida.width="100";
 	 	tdSaldoDivida.align="right";
 	 	tdSaldoDivida.innerHTML="Valor da Dívida R$".bold();		 	
 	 	cabecalho.appendChild(tdSaldoDivida);
 	 	
+	 	var celSaldoDivida = document.createElement("TD");
+	 	celSaldoDivida.align="right";
+	 	var celSaldoDividaText = document.createTextNode(dividaComissao.valorDivida);
+	 	celSaldoDivida.appendChild(celSaldoDividaText);			 	
+	 	linha.appendChild(celSaldoDivida);
+	 	
 	 	var tdValorPago = document.createElement("TD");
 	 	tdValorPago.width="100";
 	 	tdValorPago.align="right";
 	 	tdValorPago.innerHTML="Valor Pago R$".bold();		 	
 	 	cabecalho.appendChild(tdValorPago);
+	 	
+	 	var celValorPago = document.createElement("TD");
+	 	celValorPago.align="right";
+	 	var celValorPagoText = document.createTextNode(dividaComissao.valorPago);
+	 	celValorPago.appendChild(celValorPagoText);			 	
+	 	linha.appendChild(celValorPago);
 
 	 	var tdSaldoResidual = document.createElement("TD");
 	 	tdSaldoResidual.width="100";
@@ -374,7 +394,14 @@ var inadimplenciaController = $.extend(true, {
 	 	tdSaldoResidual.innerHTML="Saldo Residual R$".bold();		 	
 	 	cabecalho.appendChild(tdSaldoResidual);
 	 	
+	 	var celValorResidual = document.createElement("TD");
+	 	celValorResidual.align="right";
+	 	var celValorResidualText = document.createTextNode(dividaComissao.valorResidual);
+	 	celValorResidual.appendChild(celValorResidualText);			 	
+	 	linha.appendChild(celValorResidual);
+	 	
 	 	tbody.appendChild(cabecalho);
+	 	tbody.appendChild(linha);
 				 		
 	}
 	
