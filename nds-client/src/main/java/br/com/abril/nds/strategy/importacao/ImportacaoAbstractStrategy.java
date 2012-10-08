@@ -87,7 +87,7 @@ public abstract class ImportacaoAbstractStrategy {
 
 				RetornoImportacaoArquivoVO retorno = new RetornoImportacaoArquivoVO(new String[]{e.getMessage()},linhaArquivo,linha,false);
 				logger.error(retorno.toString());
-				return retorno;
+				//return retorno;
 			}
 		}
 

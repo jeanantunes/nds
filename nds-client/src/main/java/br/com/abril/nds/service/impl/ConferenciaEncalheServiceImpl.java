@@ -52,6 +52,7 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -63,6 +64,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -86,6 +88,8 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
+import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
+import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
@@ -223,7 +227,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
-		
+	
+	@Autowired
+	private CobrancaControleConferenciaEncalheCotaRepository cobrancaControleConferenciaEncalheCotaRepository;
+	
+	@Autowired
+	private CobrancaRepository cobrancaRepository;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#obterListaBoxEncalhe()
@@ -850,6 +860,46 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
+	/**
+	 * Associa a Cobrança relativa a uma operação 
+	 * ControleConferenciaEncalheCota.
+	 */
+	private void associarCobrancaConferenciaEncalheCota(Long idControleConferenciaEncalheCota, String nossoNumero) {
+		
+		CobrancaControleConferenciaEncalheCota cobrancaControleConferenciaEncalheCota = 
+				new CobrancaControleConferenciaEncalheCota();
+		
+		Cobranca cobranca = cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
+				controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota); 
+		
+		cobrancaControleConferenciaEncalheCota.setCobranca(cobranca);
+		
+		cobrancaControleConferenciaEncalheCota.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
+		
+		cobrancaControleConferenciaEncalheCotaRepository.adicionar(cobrancaControleConferenciaEncalheCota);
+		
+	}
+	
+	private void removerAssociacoesCobrancaConferenciaEncalheCota(Long idControleConferenciaEncalheCota) {
+		
+		List<CobrancaControleConferenciaEncalheCota> listaCobrancaControleConferenciaEncalheCota = 
+				cobrancaControleConferenciaEncalheCotaRepository.obterCobrancaControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
+		
+		if(listaCobrancaControleConferenciaEncalheCota!=null && !listaCobrancaControleConferenciaEncalheCota.isEmpty()) {
+			
+			for(CobrancaControleConferenciaEncalheCota cobrancaControleConfEncCota :  listaCobrancaControleConferenciaEncalheCota) {
+				
+				cobrancaControleConferenciaEncalheCotaRepository.alterar(cobrancaControleConfEncCota);
+				
+			}
+			
+		}
+		
+	}
+	
 	@Transactional
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
@@ -863,6 +913,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					controleConferenciaEncalheCotaRepository.buscarPorId(controleConfEncalheCota.getId());
 			
 			if(StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCotaFromBD.getStatus())) {
+				
+				removerAssociacoesCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId());
+				
 				resetarDadosFinanceirosConferenciaEncalheCota(controleConferenciaEncalheCotaFromBD);
 			}
 			
@@ -877,6 +930,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(nossoNumeroCollection!=null && !nossoNumeroCollection.isEmpty()) {
 			
 			nossoNumero = nossoNumeroCollection.iterator().next();
+			
+			if(nossoNumero!=null && !nossoNumero.trim().isEmpty()) {
+				associarCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId(), nossoNumero);
+			}
 			
 		}
 		
@@ -1375,19 +1432,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			CFOP cfop = parametroEmissaoNF.getCfopDentroEstado();
 			
-			Pessoa pessoa = cota.getPessoa();
-			
-			if(pessoa instanceof PessoaFisica) {
-				throw new IllegalStateException("Cota emitente de nota fiscal deve ser pessoa física");
-			}
-
-			
 			notaFiscalEntradaCota.setCfop(cfop);
 			notaFiscalEntradaCota.setStatusEmissao(statusNF);
 			notaFiscalEntradaCota.setTipoNotaFiscal(tipoNF);
 			notaFiscalEntradaCota.setDataEmissao(dataCriacao);
 			notaFiscalEntradaCota.setDataExpedicao(dataCriacao);
-			notaFiscalEntradaCota.setEmitente((PessoaJuridica)pessoa);
+			notaFiscalEntradaCota.setCota(cota);
 			notaFiscalEntradaCota.setValorDesconto(BigDecimal.ZERO);
 			notaFiscalEntradaCota.setValorLiquido(notaFiscalEntradaCota.getValorProdutos());
 			notaFiscalEntradaCota.setValorBruto(notaFiscalEntradaCota.getValorProdutos());

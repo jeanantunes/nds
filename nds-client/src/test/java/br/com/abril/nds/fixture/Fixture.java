@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
 
@@ -134,7 +135,9 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -145,6 +148,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -229,6 +233,10 @@ import br.com.abril.nds.util.DateUtil;
 
 
 public class Fixture {
+    
+    private static final AtomicInteger ORDEM_ROTA = new AtomicInteger(1);
+    
+    private static final AtomicInteger ORDEM_ROTEIRO = new AtomicInteger(1);
 	
 	public static PessoaJuridica juridicaAbril() {
 		return pessoaJuridica("Editora Abril", "00000000000200", "010000000000",
@@ -1385,14 +1393,14 @@ public class Fixture {
 	}
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(CFOP cfop,
-			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = new NotaFiscalEntradaFornecedor();
+		notaFiscalFornecedor.setFornecedor(fornecedor);
 		notaFiscalFornecedor.setCfop(cfop);
 		notaFiscalFornecedor.setChaveAcesso("11111");
 		notaFiscalFornecedor.setDataEmissao(new Date());
 		notaFiscalFornecedor.setDataExpedicao(new Date());
-		notaFiscalFornecedor.setEmitente(emitente);
 		notaFiscalFornecedor.setNumero(2344242L);
 		notaFiscalFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalFornecedor.setSerie("345353543");
@@ -1407,10 +1415,10 @@ public class Fixture {
 	}
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(Long numeroNF, String serie, String chaveAcesso, CFOP cfop,
-			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		
-		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, emitente, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
 		
 		notaFiscalFornecedor.setNumero(numeroNF);
 		notaFiscalFornecedor.setSerie(serie);
@@ -1421,7 +1429,6 @@ public class Fixture {
 	
 	public static NotaFiscalEntradaCota notaFiscalEntradaCotaNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1481,7 +1488,6 @@ public class Fixture {
 		notaFiscalEntradaCota.setChaveAcesso(chaveAcesso);
 		notaFiscalEntradaCota.setDataEmissao(new Date());
 		notaFiscalEntradaCota.setDataExpedicao(new Date());
-		notaFiscalEntradaCota.setEmitente(emitente);
 		notaFiscalEntradaCota.setNumero(numero);
 		notaFiscalEntradaCota.setSerie(serie);
 		notaFiscalEntradaCota.setOrigem(Origem.INTERFACE);
@@ -1545,7 +1551,6 @@ public class Fixture {
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1601,11 +1606,11 @@ public class Fixture {
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
 		
+		notaFiscalEntradaFornecedor.setFornecedor(fornecedor);
 		notaFiscalEntradaFornecedor.setCfop(cfop);
 		notaFiscalEntradaFornecedor.setChaveAcesso(chaveAcesso);
 		notaFiscalEntradaFornecedor.setDataEmissao(new Date());
 		notaFiscalEntradaFornecedor.setDataExpedicao(new Date());
-		notaFiscalEntradaFornecedor.setEmitente(emitente);
 		notaFiscalEntradaFornecedor.setNumero(numero);
 		notaFiscalEntradaFornecedor.setSerie(serie);
 		notaFiscalEntradaFornecedor.setOrigem(Origem.INTERFACE);
@@ -1667,7 +1672,6 @@ public class Fixture {
 	
 	public static NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1727,7 +1731,6 @@ public class Fixture {
 		notaFiscalSaidaFornecedor.setChaveAcesso(chaveAcesso);
 		notaFiscalSaidaFornecedor.setDataEmissao(new Date());
 		notaFiscalSaidaFornecedor.setDataExpedicao(new Date());
-		notaFiscalSaidaFornecedor.setEmitente(emitente);
 		notaFiscalSaidaFornecedor.setNumero(numero);
 		notaFiscalSaidaFornecedor.setSerie(serie);
 		
@@ -2443,11 +2446,10 @@ public class Fixture {
 		return parametro;
 	}
 	
-	public static Rota rota(String codigoRota, String descricaoRota, Roteiro roteiro){
+	public static Rota rota(String descricaoRota, Roteiro roteiro){
 		Rota rota = new Rota();
-		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
-		rota.setOrdem(0);
+		rota.setOrdem(ORDEM_ROTA.getAndIncrement());
 		rota.setRoteiro(roteiro);
 		roteiro.addRota(rota);
 		return rota;
@@ -3008,7 +3010,7 @@ public class Fixture {
 		
 		Roteiro roteiro = new Roteiro();
 		roteiro.setDescricaoRoteiro(descricaoRoteiro);
-		roteiro.setOrdem(0);
+		roteiro.setOrdem(ORDEM_ROTEIRO.getAndIncrement());
 		roteiro.setTipoRoteiro(tipoRoteiro);
 		roteiro.setRoteirizacao(roteirizacao);
 		roteirizacao.addRoteiro(roteiro);
@@ -3744,5 +3746,48 @@ public class Fixture {
     	
     	return rateio;
     }
+
+    
+    public static BaixaAutomatica baixaAutomatica(Cobranca cobranca, Date dataBaixa,
+    									   		  String nomeArquivo, String nossoNumero,
+    									   		  Integer numeroRegistroArquivo, StatusBaixa status,
+    									   		  BigDecimal valorPago, Banco banco) {
+    	
+    	BaixaAutomatica baixaAutomatica = new BaixaAutomatica();
+    	
+    	baixaAutomatica.setCobranca(cobranca);
+    	baixaAutomatica.setDataBaixa(dataBaixa);
+    	baixaAutomatica.setNomeArquivo(nomeArquivo);
+    	baixaAutomatica.setNossoNumero(nossoNumero);
+    	baixaAutomatica.setNumeroRegistroArquivo(numeroRegistroArquivo);
+    	baixaAutomatica.setStatus(status);
+    	baixaAutomatica.setValorPago(valorPago);
+    	baixaAutomatica.setBanco(banco);
+    	
+    	return baixaAutomatica;
+    }
+
+
+	public static TipoMovimentoEstoque tipoMovimentoCompraEncalhe() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Compra Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.COMPRA_ENCALHE);
+		
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCompraEncalhe() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Compra Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE);
+		
+		return tipoMovimento;
+	}
 
 }

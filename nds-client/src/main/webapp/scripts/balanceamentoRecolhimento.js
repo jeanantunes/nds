@@ -163,10 +163,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	habilitarLinks : function() {
 		
 		balanceamentoRecolhimentoController.habilitarLink("linkConfirmar", balanceamentoRecolhimentoController.obterConfirmacaoBalanceamento);
-		balanceamentoRecolhimentoController.habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorEditor); });
-		balanceamentoRecolhimentoController.habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorValor); });
+		balanceamentoRecolhimentoController.habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.balancearPorEditor); });
+		balanceamentoRecolhimentoController.habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.balancearPorValor); });
 		balanceamentoRecolhimentoController.habilitarLink("linkSalvar", balanceamentoRecolhimentoController.salvar);
-		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(voltarConfiguracaoInicial); });
+		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.voltarConfiguracaoInicial); });
 		balanceamentoRecolhimentoController.habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
 	},
 	

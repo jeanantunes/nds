@@ -15,10 +15,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.com.abril.nds.model.cadastro.Banco;
 
 @Entity
 @Table(name = "BAIXA_COBRANCA")
@@ -32,20 +35,24 @@ public abstract class BaixaCobranca {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_BAIXA", nullable = false)
 	private Date dataBaixa;
 	
 	@Column(name = "VALOR_PAGO", nullable = false)
 	private BigDecimal valorPago;
 	
-	@ManyToOne(optional = true)
+	@OneToOne(optional = true)
 	@JoinColumn(name = "COBRANCA_ID")
 	private Cobranca cobranca;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = true)
 	private StatusBaixa status;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "BANCO_ID")
+	private Banco banco;
 
 	public Long getId() {
 		return id;
@@ -79,18 +86,20 @@ public abstract class BaixaCobranca {
 		this.cobranca = cobranca;
 	}
 	
-	/**
-	 * @return the status
-	 */
 	public StatusBaixa getStatus() {
 		return status;
 	}
-
-	/**
-	 * @param status the status to set
-	 */
+	
 	public void setStatus(StatusBaixa status) {
 		this.status = status;
+	}
+	
+	public Banco getBanco() {
+		return banco;
+	}
+	
+	public void setBanco(Banco banco) {
+		this.banco = banco;
 	}
 	
 }

@@ -1,7 +1,10 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.criterion.MatchMode;
@@ -553,7 +556,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Override
 	@Transactional(readOnly = true)
 	public boolean verificaDisponibilidadePdv(Long idPdv, Long idBox) {
-		Box box = this.roteirizacaoRepository.obterBoxDoPDV(idPdv);
+		if (idBox == null) {
+		    return true;
+		}
+	    Box box = this.roteirizacaoRepository.obterBoxDoPDV(idPdv);
 		return box == null || box.getId().equals(idBox);
 	}
 	
@@ -623,20 +629,31 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	    if (!TipoMensagem.SUCCESS.equals(validacao.getTipoMensagem())) {
 	        throw new ValidacaoException(validacao);  
 	    }
+	    Roteirizacao roteirizacao;
 	    if (dto.isNovo()) {
-	        return processarNovaRoteirizacao(dto);
+	        roteirizacao = processarNovaRoteirizacao(dto);
 	    } else {
-	        return processarRoteirizacaoExistente(dto);
+	        roteirizacao = processarRoteirizacaoExistente(dto);
 	    }
+	    processarTransferenciaRoteiros(dto);
+	    return roteirizacao;
     }
 
-    private Roteirizacao processarNovaRoteirizacao(RoteirizacaoDTO dto) {
+
+    /**
+     * Processa as informações de uma nova roteirização
+     * 
+     * @param dto
+     *            dto com as informações da nova roteirização
+     * @return Roteirizacao criada com as informações do DTO
+     */
+	private Roteirizacao processarNovaRoteirizacao(RoteirizacaoDTO dto) {
         Roteirizacao roteirizacao = new Roteirizacao();
         TipoRoteiro tipoRoteiro = dto.isBoxEspecial() ? TipoRoteiro.ESPECIAL : TipoRoteiro.NORMAL;
         processarBoxRoteirizacao(dto, roteirizacao); 
         for (RoteiroRoteirizacaoDTO roteiroDTO : dto.getTodosRoteiros()) {
             Roteiro roteiro = novoRoteiroRoteirizacao(roteirizacao, tipoRoteiro, roteiroDTO);
-            for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getRotas()) {
+            for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getTodasRotas()) {
                 Rota rota = novaRotaRoteiro(roteiro, rotaDTO);
                 for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
                     novoPDVRota(rota, pdvDTO, roteirizacao.getBox());
@@ -647,7 +664,14 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         return roteirizacao;
     }
 
-    private Roteirizacao processarRoteirizacaoExistente(RoteirizacaoDTO dto) {
+	 /**
+     * Processa as informações de uma roteirização existente
+     * 
+     * @param dto
+     *            dto com as informações da roteirização existente
+     * @return Roteirizacao alterada com as informações do DTO
+     */
+	private Roteirizacao processarRoteirizacaoExistente(RoteirizacaoDTO dto) {
         Roteirizacao roteirizacao = roteirizacaoRepository.buscarPorId(dto.getId());
         TipoRoteiro tipoRoteiro = dto.isBoxEspecial() ? TipoRoteiro.ESPECIAL : TipoRoteiro.NORMAL;
         Set<Long> roteirosExclusao = dto.getRoteirosExclusao();
@@ -660,19 +684,20 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 roteiro = roteirizacao.getRoteiro(roteiroDTO.getId());
                 roteiro.desassociarRotas(roteiroDTO.getRotasExclusao());
             }
-            for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getRotas()) {
+            for (RotaRoteirizacaoDTO rotaDTO : roteiroDTO.getTodasRotas()) {
+                Rota rota;
                 if (rotaDTO.isNovo()) {
-                    novaRotaRoteiro(roteiro, rotaDTO);
+                    rota = novaRotaRoteiro(roteiro, rotaDTO);
                 } else {
-                    Rota rotaExistente = roteiro.getRota(rotaDTO.getId());
-                    rotaExistente.desassociarPDVs(rotaDTO.getPdvsExclusao());
-                    for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
-                        RotaPDV rotaPDVExistente = rotaExistente.getRotaPDVPorPDV(pdvDTO.getId());
-                        if (rotaPDVExistente == null) {
-                            novoPDVRota(rotaExistente, pdvDTO, roteirizacao.getBox());
-                        } else {
-                            rotaPDVExistente.setOrdem(pdvDTO.getOrdem());
-                        }
+                    rota = roteiro.getRota(rotaDTO.getId());
+                    rota.desassociarPDVs(rotaDTO.getPdvsExclusao());
+                }
+                for (PdvRoteirizacaoDTO pdvDTO : rotaDTO.getPdvs()) {
+                    RotaPDV rotaPDVExistente = rota.getRotaPDVPorPDV(pdvDTO.getId());
+                    if (rotaPDVExistente == null) {
+                        novoPDVRota(rota, pdvDTO, roteirizacao.getBox());
+                    } else {
+                        rota.alterarOrdemPdv(pdvDTO.getId(), pdvDTO.getOrdem());
                     }
                 }
             }
@@ -681,6 +706,44 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         return roteirizacao;
     }
 	
+    /**
+     * Processa as transferências de roteiro da roteirização
+     * 
+     * @param dto
+     *            dto com as informações de transferência de roteiro
+     */
+    private void processarTransferenciaRoteiros(RoteirizacaoDTO dto) {
+        Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = dto.getRoteirosTransferidos();
+        for (Entry<Long, Set<RoteiroRoteirizacaoDTO>> entry : roteirosTransferidos.entrySet()) {
+            Long idBox = entry.getKey();
+            Box box = boxRepository.buscarPorId(idBox);
+            Set<RoteiroRoteirizacaoDTO> roteirosTransferencia = entry.getValue();
+            RoteirizacaoDTO dtoTransferencia = null;
+            Roteirizacao existente = roteirizacaoRepository.obterRoteirizacaoPorBox(idBox);
+            if (existente != null) {
+                dtoTransferencia = RoteirizacaoDTO.toDTO(existente, Arrays.asList(box), false);
+            } else {
+                BoxRoteirizacaoDTO boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
+                dtoTransferencia = RoteirizacaoDTO.novaRoteirizacao(Arrays.asList(boxDTO));
+                dtoTransferencia.setBox(boxDTO);
+            }
+            for (RoteiroRoteirizacaoDTO roteiro : roteirosTransferencia) {
+                RoteiroRoteirizacaoDTO roteiroTransferido = new RoteiroRoteirizacaoDTO(Long.valueOf(-1), roteiro.getOrdem(), roteiro.getNome());
+                dtoTransferencia.addRoteiroAposMaiorOrdem(roteiroTransferido);
+                for (RotaRoteirizacaoDTO rota : roteiro.getTodasRotas()) {
+                    RotaRoteirizacaoDTO rotaTransferida = new RotaRoteirizacaoDTO(Long.valueOf(-1), rota.getOrdem(), rota.getNome());
+                    rotaTransferida.addAllPdv(rota.getPdvs());
+                    roteiroTransferido.addRota(rotaTransferida);
+                }
+            }
+            if (dtoTransferencia.isNovo()) {
+                processarNovaRoteirizacao(dtoTransferencia);
+            } else {
+                processarRoteirizacaoExistente(dtoTransferencia);
+            }
+        }
+    }
+ 
     /**
      * Associa o box a uma nova roteirização
      * 
@@ -719,7 +782,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 throw new ValidacaoException(
                         TipoMensagem.ERROR,
                         String.format(
-                                "O PDV [%s] já pertence a uma roteirização associada a um Box",
+                                "O PDV [%s] já pertence a uma Roteirização associada a um Box!",
                                 pdvDTO.getPdv()));
             }
         }

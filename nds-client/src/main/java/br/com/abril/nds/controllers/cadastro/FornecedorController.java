@@ -238,7 +238,12 @@ public class FornecedorController {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
 		
-		boolean utilizaSugestaoIncrementoCodigo = distribuidor.isUtilizaSugestaoIncrementoCodigo();
+		boolean utilizaSugestaoIncrementoCodigo = false;
+		
+		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
+			
+			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
+		}
 		
 		Integer novoCodigoInterface = null;
 		
@@ -261,6 +266,10 @@ public class FornecedorController {
 		List<String> mensagens = new ArrayList<String>();
 		
 		Origem origemFornecedor = fornecedorDTO.getOrigem() == null ? Origem.MANUAL : fornecedorDTO.getOrigem(); 
+		
+		if(fornecedorDTO.getInscricaoEstadual() == null || fornecedorDTO.getInscricaoEstadual().isEmpty()) {
+			mensagens.add("O preenchimento do campo [Inscrição Estadual] é obrigatório.");
+		}
 		
 		if (fornecedorDTO.getCodigoInterface() == null) {
 			
@@ -305,11 +314,6 @@ public class FornecedorController {
 				
 				mensagens.add("CNPJ inválido.");
 			}
-		}
-		
-		if (fornecedorDTO.getTipoFornecedor() == null) {
-			
-			mensagens.add("O preenchimento do campo [Tipo Fornecedor] é obrigatório.");
 		}
 		
 		if (!StringUtil.isEmpty(fornecedorDTO.getEmailNfe())) {
@@ -537,8 +541,15 @@ public class FornecedorController {
 			fornecedor.setInicioAtividade(new Date());
 		}
 		
-		TipoFornecedor tipoFornecedor = 
-				this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
+		TipoFornecedor tipoFornecedor = null;
+		
+		if(fornecedorDTO.getTipoFornecedor()!=null) {
+
+			tipoFornecedor = this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
+			
+		}
+		
+		 
 
 		fornecedor.setTipoFornecedor(tipoFornecedor);
 		
@@ -587,7 +598,11 @@ public class FornecedorController {
 		
 		fornecedorDTO.setResponsavel(fornecedor.getResponsavel());
 		
-		fornecedorDTO.setTipoFornecedor(fornecedor.getTipoFornecedor().getId());
+		if(fornecedor.getTipoFornecedor() != null) {
+
+			fornecedorDTO.setTipoFornecedor(fornecedor.getTipoFornecedor().getId());
+
+		}
 		
 		fornecedorDTO.setValidadeContrato(DateUtil.formatarDataPTBR(fornecedor.getValidadeContrato()));
 		

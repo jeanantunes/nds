@@ -34,6 +34,11 @@ public class ContagemDevolucaoDTO implements Serializable {
 	@Export(label="Exemplar Devolução")
 	private BigInteger qtdDevolucao;
 	
+	@Export(label="Desconto")
+	private BigDecimal totalComDesconto;
+	
+	private BigDecimal desconto;
+	
 	@Export(label="Total R$")
 	private BigDecimal valorTotal;
 	
@@ -53,83 +58,125 @@ public class ContagemDevolucaoDTO implements Serializable {
 	
 	public ContagemDevolucaoDTO(){}
 	
+	
 	public Long getIdProdutoEdicao() {
 		return idProdutoEdicao;
 	}
+	
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
+	
 	public BigInteger getDiferenca() {
 		return diferenca;
 	}
+	
 	public void setDiferenca(BigInteger diferenca) {
 		this.diferenca = diferenca;
 	}
+	
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
+	
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
+	
 	public String getNomeProduto() {
 		return nomeProduto;
 	}
+	
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
 	}
+	
 	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
+	
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
+	
 	public BigDecimal getPrecoVenda() {
 		return precoVenda;
 	}
+	
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
 	}
+	
 	public BigInteger getQtdDevolucao() {
 		return qtdDevolucao;
 	}
+	
 	public void setQtdDevolucao(BigInteger qtdDevolucao) {
 		this.qtdDevolucao = qtdDevolucao;
 	}
+	
 	public BigInteger getQtdNota() {
 		return qtdNota;
 	}
+	
 	public void setQtdNota(BigInteger qtdNota) {
 		this.qtdNota = qtdNota;
 	}
+	
 	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
+	
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
+	
 	public Date getDataMovimento() {
 		return dataMovimento;
 	}
+	
 	public void setDataMovimento(Date dataMovimento) {
 		this.dataMovimento = dataMovimento;
 	}
+	
 	public Date getDataConfEncalheParcial() {
 		return dataConfEncalheParcial;
 	}
+	
 	public void setDataConfEncalheParcial(Date dataConfEncalheParcial) {
 		this.dataConfEncalheParcial = dataConfEncalheParcial;
 	}
+	
 	public Date getDataAprovacao() {
 		return dataAprovacao;
 	}
+	
 	public void setDataAprovacao(Date dataAprovacao) {
 		this.dataAprovacao = dataAprovacao;
 	}
+	
 	public StatusAprovacao getStatusAprovacao() {
 		return statusAprovacao;
 	}
+
 	public void setStatusAprovacao(StatusAprovacao statusAprovacao) {
 		this.statusAprovacao = statusAprovacao;
+	}
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+
+	public BigDecimal getTotalComDesconto() {
+		return totalComDesconto;
+	}
+
+	public void setTotalComDesconto(BigDecimal totalComDesconto) {
+		this.totalComDesconto = totalComDesconto;
 	}
 	
 }

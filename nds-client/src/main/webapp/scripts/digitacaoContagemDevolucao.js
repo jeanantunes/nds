@@ -1,6 +1,8 @@
 var digitacaoContagemDevolucaoController = $.extend(true, {
 
 		init : function(userProfileOperador) {
+			
+			this.hashInserirEdicoesFechadas = {};
 			/**
 			 * Renderiza componente de Data(período) da tela
 			 */
@@ -39,6 +41,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}
 			
 			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
+			
+			this.montaGridEdicoesFechadas();
 			
 		},
 		
@@ -103,13 +107,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var idInput = "valorExemplarNota" + index ;
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
 				
 				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="ContagemDevolucao.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
 					
-					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="ContagemDevolucao.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
+					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="digitacaoContagemDevolucaoController.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
 					
 					//Altera cor do valor da quantidade, caso seja um valo negativo
 					if(row.cell.diferenca < 0){
@@ -252,6 +256,21 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			);
 		},
 		
+		
+		geraNota :function(){
+			
+			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
+			
+			$.postJSON(
+				contextPath + "/devolucao/digitacao/contagem/geraNota", 
+				param,
+				function(result) {
+					digitacaoContagemDevolucaoController.pesquisar();
+				},
+				digitacaoContagemDevolucaoController.tratarErro, false
+			);
+		},
+		
 		/**
 	 		Monta o componente de confiramção da ação de Confirmar contagem de devolução
 		**/
@@ -287,12 +306,12 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			var listaDigitacaoContagemDevolucao = "";
 			
 			//Verifica o role do usuario para obter o indice da coluna com os valores do exemplar nota
-			var indexColunaExemplarNota = (digitacaoContagemDevolucaoController.isRoleOperador())?4:6;
+			var indexColunaExemplarNota = (digitacaoContagemDevolucaoController.isRoleOperador())?5:7;
 			
 			$.each(linhasDaGrid, function(index, value) {
 
 				var linha = $(value);
-				
+			
 				var colunaCodigoProduto = linha.find("td")[0];
 				var colunaNumeroEdicao = linha.find("td")[2];
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
@@ -367,27 +386,33 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 120,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoVenda',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Exemplar Devolução',
 				name : 'qtdDevolucao',
-				width : 120,
+				width : 110,
 				sortable : true,
 				align : 'center'
+			}, {
+				display : 'Total c/ Desc.R$',
+				name : 'valorTotalComDesconto',
+				width : 100,
+				sortable : false,
+				align : 'right'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotal',
@@ -397,19 +422,19 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}, {
 				display : 'Exemplar Nota',
 				name : 'qtdNota',
-				width : 110,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
-				width : 80,
+				width : 60,
 				sortable : false,
 				align : 'center'
 			},{
 				display : 'Replicar Qtde',
 				name : 'replicarQtde',
-				width : 80,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}];
@@ -455,11 +480,155 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			}];
 			
 			return colModel;
+		},
+		
+		
+		incluirProdutoDialog :function(){					
+			this.hashInserirEdicoesFechadas = {};
+			$("#dialogEdicoesFechadasSelAll", this.workspace).attr("checked",false);
+			var _this =  this;
+			$( "#dialogEdicoesFechadas", this.workspace ).dialog({
+				resizable: false,
+				height:500,
+				width:945,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						if ($(dialogEdicoesFechadasSelAll, _this.workspace).is(":checked")) {
+							//TODO Adcionar todos.
+							console.log("todos");
+						}else{
+							//{codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao}
+							var listInserirEdicoesFechadas = new Array();
+							for ( var id in _this.hashInserirEdicoesFechadas) {
+								listInserirEdicoesFechadas
+										.push(_this.hashInserirEdicoesFechadas[id]);
+							}							
+							if(listInserirEdicoesFechadas.length > 0){
+								//TODO: adcionar listInserirEdicoesFechadas na grid
+								console.log("Lista");
+							}
+							
+						}
+						$( this ).dialog( "close" );
+					},
+					
+					"Cancelar": function() {
+						delete _this.hashInserirEdicoesFechadas;
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialogEdicoesFechadas", this.workspace).parents("form")
+			});
+			
+			$(".consultaEdicoesFechadasGrid", this.workspace).flexOptions({
+				"url" : contextPath + '/devolucao/digitacao/contagem/pesquisaEdicoesFechadas',
+				
+			}).flexReload();
+		},
+		edicoesFechadasCheckAll :function(checkbox){
+			
+			$('.consultaEdicoesFechadasGrid tr td', this.workspace).each( function(){ 
+				$('input[type="checkbox"]', this).attr("checked", $(checkbox, this.workspace).is(":checked"));
+			});
+			
+		},
+		clickEdicoesFechada : function(idProdutoEdicao,codigoProduto,edicaoProduto, parcial, checkbox){
+			if($(checkbox, this.workspace).is(":checked")){
+				this.hashInserirEdicoesFechadas[idProdutoEdicao] = {codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao};
+			}else{
+				delete this.hashInserirEdicoesFechadas[idProdutoEdicao];
+			}
+			
+			$("#dialogEdicoesFechadasSelAll", this.workspace).attr("checked",false);
+		},
+		montaGridEdicoesFechadas :function(){
+			$(".consultaEdicoesFechadasGrid", this.workspace).flexigrid({
+				
+				preProcess: function(data) {
+					if( typeof data.mensagens == "object") {
+
+						exibirMensagemDialog(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+
+					} else {
+						$.each(data.rows, function(index, value) {
+							
+							var onClick = 'digitacaoContagemDevolucaoController.clickEdicoesFechada('+value.cell.idProdutoEdicao+','+value.cell.codigoProduto+', ' +value.cell.edicaoProduto+','+value.cell.parcial+',this )';
+							var sel = '<input type="checkbox" name="checkbox" id="checkbox" onclick="'+onClick+'" />';
+							value.cell.parcial = (value.cell.parcial)?"Sim":"Não";				
+							
+							value.cell.sel = sel;
+						});
+
+						return data;
+					}
+				},
+				dataType : 'json',
+				colModel : [ {
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 70,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 140,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'edicaoProduto',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Fornecedor',
+					name : 'nomeFornecedor',
+					width : 180,
+					sortable : true,
+					align : 'left'
+				},  {
+					display : 'Lançamento',
+					name : 'dataLancamento',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Recolhimento',
+					name : 'dataRecolhimento',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Parcial',
+					name : 'parcial',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Saldo',
+					name : 'saldo',
+					width : 50,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : '',
+					name : 'sel',
+					width : 30,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "nomeFornecedor",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 900,
+				height : 280
+			});
+
 		}
 		
 }, BaseController);
-
-
-
-//@ sourceURL=digitacaoContagemDevolucao.js
-

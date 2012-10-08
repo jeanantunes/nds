@@ -17,6 +17,7 @@ import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
+import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
@@ -36,6 +37,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -102,15 +104,22 @@ public class NegociacaoDividaController {
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaNegociacaoDivida filtro, String sortname, String sortorder, int rp, int page) {
 		
+		filtro.setPaginacaoVO(new PaginacaoVO(page, rp, sortorder, sortname));
+		
 		this.session.setAttribute(FILTRO_NEGOCIACAO_DIVIDA, filtro);
 		
-		List<NegociacaoDividaDTO> list = negociacaoDividaService.obterDividasPorCota(filtro);	
+		NegociacaoDividaPaginacaoDTO dto = this.negociacaoDividaService.obterDividasPorCotaPaginado(filtro);
+		
+		List<NegociacaoDividaDTO> list = dto.getListaNegociacaoDividaDTO();
 		List<NegociacaoDividaVO> listDividas = new ArrayList<NegociacaoDividaVO>();
 		for (NegociacaoDividaDTO negociacao : list) {
 			listDividas.add(new NegociacaoDividaVO(negociacao));
 		}
 		
-		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(page).serialize();
+		result.use(
+				FlexiGridJson.class).from(
+						listDividas).total(
+								dto.getQuantidadeRegistros().intValue()).page(page).serialize();
 	}
 	
 	

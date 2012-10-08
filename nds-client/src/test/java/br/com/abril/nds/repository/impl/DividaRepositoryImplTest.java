@@ -132,7 +132,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Roteiro roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
 		save(roteiro);
 
-		Rota rota = Fixture.rota("005", "Rota 005",roteiro);
+		Rota rota = Fixture.rota("Rota 005",roteiro);
 		rota.addPDV(pdv, 1);
 		rota.setRoteiro(roteiro);
 		save(rota);
@@ -199,10 +199,10 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		divida1.setAcumulada(false);
 		save(divida1);
 		
-	    Boleto boleto = Fixture.boleto("5", "5", "5",
-                					   new Date(), 
-                					   new Date(), 
-                					   new Date(), 
+	    Boleto boleto = Fixture.boleto("5557884985445", "5", "5",
+	    		                       Fixture.criarData(2, 2, 2010), 
+	    		                       Fixture.criarData(2, 5, 2010), 
+                					   null, 
                 					   BigDecimal.ZERO, 
                 					   new BigDecimal(100.00), 
                 					   "1", 
@@ -338,4 +338,5 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId()));
 	}
+	
 }

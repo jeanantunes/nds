@@ -319,6 +319,8 @@ public class RoteirizacaoDTO implements Serializable{
 	        }
 	    }
 	    this.roteiros.clear();
+	    this.todosRoteiros.clear();
+	    this.roteirosExclusao.clear();
 	}
 	
     /**
@@ -378,20 +380,6 @@ public class RoteirizacaoDTO implements Serializable{
         return null;
     }
     
-	/**
-     * Tipo da edição tela
-     * 
-     */
-    public static enum TipoEdicaoRoteirizacao {
-        /**
-         * Nova Roteirização
-         */
-        NOVO,
-        /**
-         * Alteração Roteirzação existente
-         */
-        ALTERACAO;
-    }
 
 
 	public void removerRoteiro(Long roteiroId) {
@@ -430,4 +418,47 @@ public class RoteirizacaoDTO implements Serializable{
 			Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos) {
 		this.roteirosTransferidos = roteirosTransferidos;
 	}
+	
+	/**
+     * Recupera a maior ordem dos roteiros da roteirização
+     * @return valor da maior ordem da lista de roteiro
+     * ou 0 caso a lista esteja vazia
+     */
+    public int getMaiorOrdemRoteiro() {
+        int max = 0;
+        for (RoteiroRoteirizacaoDTO roteiro : todosRoteiros) {
+            if (roteiro.getOrdem() > max) {
+                max = roteiro.getOrdem();
+            }
+        }
+        return max;
+    }
+    
+    /**
+     * Adiciona o roteiro aos roteiros da roteirização
+     * de acordo com a maior ordem existente
+     * @param roteiro roteiro para inclusão
+     */
+    public void addRoteiroAposMaiorOrdem(RoteiroRoteirizacaoDTO roteiro) {
+       int maiorOrdem = getMaiorOrdemRoteiro();
+       maiorOrdem++;
+       roteiro.setOrdem(maiorOrdem);
+       addRoteiro(roteiro);
+    }
+
+    /**
+     * Tipo da edição tela
+     * 
+     */
+    public static enum TipoEdicaoRoteirizacao {
+        /**
+         * Nova Roteirização
+         */
+        NOVO,
+        /**
+         * Alteração Roteirzação existente
+         */
+        ALTERACAO;
+    }
+
 }
