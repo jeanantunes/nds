@@ -67,7 +67,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 
 		
 		if (filtro.getFornecedorId() != null) {
-			hql.append("  JOIN pe.fornecedores as pf ");
+			hql.append("  JOIN p.fornecedores as pf ");
+			
 		}
 		
 		hql.append(" WHERE ccec.dataOperacao =:dataEncalhe ");
@@ -82,6 +83,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		
 		hql.append(" group by p.codigo,  p.nome, pe.numeroEdicao, pe.precoVenda, pe.id , pe.parcial, che.dataRecolhimento");
+		
+		if (sortname != null) {
+			hql.append(" order by ");
+			if (("asc").equalsIgnoreCase(sortorder)) {
+				hql.append(sortname+" asc ");	
+			} else if (("desc").equalsIgnoreCase(sortorder)) {
+				hql.append(sortname+" desc ");
+			}
+		}
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -110,16 +120,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			query.setMaxResults(rp);
 		}
 		
-		if (sortname != null) {
-			hql.append(" order by ");
-			if (("asc").equalsIgnoreCase(sortorder)) {
-				hql.append(sortname+" asc ");	
-			} else if (("desc").equalsIgnoreCase(sortorder)) {
-				hql.append(sortname+" desc ");
-			}
-			
-		//	this.addOrderCriteria(criteria, sortorder, sortname);
-		}
+	
 		query.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
 			
 		return query.list();
@@ -377,32 +378,107 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro,
+			String sortorder, String sortname, Integer page, Integer rp ) {
 
 		StringBuffer hql = new StringBuffer();
-		hql.append("   SELECT cota.numeroCota as numeroCota,");
-		hql.append("          pess.nome as nomeCota,");
-		hql.append("          box.nome as boxEncalhe,");
-		hql.append("          ce.qtdeInformada * pe.precoVenda as total");
-		//hql.append("           as statusCobranca");
-		hql.append("     FROM ConferenciaEncalhe ce");
-		hql.append("     JOIN ce.controleConferenciaEncalheCota as ccec");
-		hql.append("     JOIN ccec.cota as cota");
-		hql.append("     JOIN cota.pessoa as pess");
-		hql.append("     JOIN ccec.box as box");
-		hql.append("     JOIN ce.produtoEdicao as pe");
-		hql.append("    WHERE ce.data = :data");
+		hql.append("   SELECT cota.numeroCota as numeroCota ");
+		hql.append("       , pess.nome as nomeCota");
+		hql.append("       , box.nome as boxEncalhe");
+		hql.append("       ,  cob.valor as total ");
+		hql.append("       ,  div.status  as statusCobranca");
+		
+		getQueryAnalitico(filtro, hql);
+	
+		
+		if (sortname != null) {
+			hql.append(" order by ");
+			if (("asc").equalsIgnoreCase(sortorder)) {
+				hql.append(sortname+" asc ");	
+			} else if (("desc").equalsIgnoreCase(sortorder)) {
+				hql.append(sortname+" desc ");
+			}
+			
+		}
+		
 		
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliticoEncalheDTO.class));
+		query.setDate("dataEncalhe", filtro.getDataEncalhe());
 		
-		query.setDate("data", filtro.getDataEncalhe());
+		if (filtro.getBoxId() != null) {
+			query.setLong("boxId", filtro.getBoxId());
+		}	
 		
+		if (filtro.getFornecedorId() != null) {
+			query.setLong("fornecedorId", filtro.getFornecedorId());
+		}
+		
+		if (page != null){
+			query.setFirstResult(page);
+		}
+		
+		if (rp != null){
+			query.setMaxResults(rp);
+		}
+	
+
 		
 		
 
 		return query.list();
+	}
+
+	@Override
+	public Integer buscarTotalAnaliticoEncalhe(	FiltroFechamentoEncalheDTO filtro) {
+		StringBuffer hql = new StringBuffer();
+		hql.append("   SELECT count(*)  ");
+		
+		getQueryAnalitico(filtro, hql);
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setDate("dataEncalhe", filtro.getDataEncalhe());
+		
+		if (filtro.getBoxId() != null) {
+			query.setLong("boxId", filtro.getBoxId());
+		}	
+		
+		if (filtro.getFornecedorId() != null) {
+			query.setLong("fornecedorId", filtro.getFornecedorId());
+		}
+			
+
+		return ((Long)query.uniqueResult()).intValue();
+	}
+
+	private void getQueryAnalitico(FiltroFechamentoEncalheDTO filtro,
+			StringBuffer hql) {
+		hql.append("     FROM CobrancaControleConferenciaEncalheCota  ce");
+		hql.append("     JOIN ce.cobranca as cob");
+		hql.append("     JOIN cob.divida as div");
+		hql.append("     JOIN ce.controleConferenciaEncalheCota as ccec");
+		
+		hql.append("     JOIN ccec.cota as cota");
+		hql.append("     JOIN cota.pessoa as pess");
+		hql.append("     JOIN ccec.box as  box ");
+		
+		if (filtro.getFornecedorId() != null) {
+			
+			hql.append("     JOIN ccec.conferenciasEncalhe as  confEnc ");
+			hql.append("     JOIN confEnc.produtoEdicao as  pe ");
+			hql.append("     JOIN pe.produto as  pro ");
+			hql.append("     JOIN  pro.fornecedores as  for ");
+		}
+		
+		hql.append("    WHERE ccec.dataOperacao = :dataEncalhe ");
+		if (filtro.getBoxId() != null) {
+			hql.append("     and  box.id = :boxId ");
+		}	
+		
+		if (filtro.getFornecedorId() != null) {
+			hql.append("     and for.id =:fornecedorId ");
+		}
 	}
 	
 	
