@@ -124,6 +124,12 @@ public enum GrupoMovimentoEstoque  {
 	 */
 	ESTORNO_COMPRA_SUPLEMENTAR(OperacaoEstoque.SAIDA,Dominio.COTA),
 	
+	
+	/**
+	 * Estorno da compra de encalhe da cota no distribuidor.
+	 */
+	ESTORNO_COMPRA_ENCALHE(OperacaoEstoque.SAIDA, Dominio.COTA),
+	
 	/**
 	 *
 	 */
