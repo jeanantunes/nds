@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.dto.DividaComissaoDTO;
 import br.com.abril.nds.dto.DividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -68,6 +70,9 @@ public class InadimplenciaController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private CobrancaService cobrancaService;
 	
 	private final Result result;
 	private final HttpSession session;
@@ -176,7 +181,7 @@ public class InadimplenciaController {
 		if (listaInadimplencias == null || listaInadimplencias.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);
 		}
-		
+			
 		Long totalRegistros = dividaService.obterTotalInadimplenciasCota(filtro);
 		
 		TableModel<CellModelKeyValue<StatusDividaDTO>> tableModel = new TableModel<CellModelKeyValue<StatusDividaDTO>>();
@@ -270,6 +275,18 @@ public class InadimplenciaController {
 					CurrencyUtil.formatarValor(divida.getCobranca().getValor())));
 		}
 		result.use(Results.json()).from(dividasDTO, "result").serialize();
+	}
+	
+	/**
+	 * Obtém a divida
+	 * 
+	 * @param idDivida
+	 */
+	public void getDividaComissao(Long idDivida) {
+		
+		DividaComissaoDTO resultado = dividaService.obterDadosDividaComissao(idDivida);
+		
+		result.use(Results.json()).from(resultado, "result").serialize();
 	}	
 	
 	/**
