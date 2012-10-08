@@ -20,14 +20,18 @@ public class BaixaBoletoDivergenteVO extends BaixaBoletoBaseVO {
 
 	private static final long serialVersionUID = -9188939992448279466L;
 
-	@Export(label = "Motivo", exhibitionOrder=1)
+	@Export(label = "Motivo", exhibitionOrder=-1)
 	private String motivoDivergencia;
+
+	@Export(label = "Valor R$", exhibitionOrder=1)
+	private BigDecimal valorBoleto;
 	
-	@Export(label = "Pago R$", exhibitionOrder=5)
+	@Export(label = "Pago R$", exhibitionOrder=2)
 	private BigDecimal valorPago;
 	
-	@Export(label = "Diferença R$", exhibitionOrder=6)
+	@Export(label = "Diferença R$", exhibitionOrder=3)
 	private BigDecimal diferencaValor;
+	
 
 	/**
 	 * @return the motivoDivergencia
@@ -70,4 +74,19 @@ public class BaixaBoletoDivergenteVO extends BaixaBoletoBaseVO {
 	public void setDiferencaValor(BigDecimal diferencaValor) {
 		this.diferencaValor = diferencaValor;
 	}
+
+	/**
+	 * @return the valorBoleto
+	 */
+	public BigDecimal getValorBoleto() {
+		return valorBoleto;
+	}
+
+	/**
+	 * @param valorBoleto the valorBoleto to set
+	 */
+	public void setValorBoleto(BigDecimal valorBoleto) {
+		this.valorBoleto = valorBoleto;
+	}
+	
 }

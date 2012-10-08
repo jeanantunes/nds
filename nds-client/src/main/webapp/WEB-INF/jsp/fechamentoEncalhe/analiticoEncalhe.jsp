@@ -54,10 +54,10 @@
 	        <table width="950" border="0" cellspacing="2" cellpadding="2">
 	        	<tr>
 	            	<td width="626">&nbsp;</td>
-		            <td width="50"><strong>Total R$:</strong></td>
-		            <td width="81">12.690,00</td>
+		            <td width="50"><strong >Total R$:</strong></td>
+		            <td width="81" id="valorTotal" >0,00</td>
 		            <td width="69"><strong>Qtde Cotas:</strong></td>
-		            <td width="92">4</td>
+		            <td width="92" id="totalCota">0</td>
 	          	</tr>
 	        </table>
 		</div>
