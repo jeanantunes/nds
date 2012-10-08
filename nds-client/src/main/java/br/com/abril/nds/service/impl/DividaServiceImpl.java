@@ -154,24 +154,14 @@ public class DividaServiceImpl implements DividaService {
 				cobranca.setDataPagamento(dataAtual);
 				cobranca.setDataVencimento(dataPostergacao);
 	
-				if (cobranca.getBaixaCobranca() == null) {
-					
-					BaixaCobranca baixaCobranca = new BaixaManual();
-					
-					baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
-					baixaCobranca.setDataBaixa(dataAtual);
-					baixaCobranca.setValorPago(cobranca.getValor());
-					
-					baixaCobranca = this.baixaCobrancaRepository.merge(baixaCobranca);
-					
-					cobranca.setBaixaCobranca(baixaCobranca);
-					
-				} else {
+				BaixaCobranca baixaCobranca = new BaixaManual();
 				
-					cobranca.getBaixaCobranca().setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
-					cobranca.getBaixaCobranca().setDataBaixa(dataAtual);
-					cobranca.getBaixaCobranca().setValorPago(cobranca.getValor());
-				}
+				baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
+				baixaCobranca.setDataBaixa(dataAtual);
+				baixaCobranca.setValorPago(cobranca.getValor());
+				baixaCobranca.setCobranca(cobranca);
+				
+				baixaCobranca = this.baixaCobrancaRepository.merge(baixaCobranca);
 				
 				Cobranca cobrancaAtualizada = this.cobrancaRepository.merge(cobranca);
 				
@@ -179,7 +169,7 @@ public class DividaServiceImpl implements DividaService {
 				
 				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(false);
 				movimentoFinanceiroCotaDTO.setCota(cobrancaAtualizada.getCota());
-				movimentoFinanceiroCotaDTO.setBaixaCobranca(cobrancaAtualizada.getBaixaCobranca());
+				movimentoFinanceiroCotaDTO.setBaixaCobranca(baixaCobranca);
 				movimentoFinanceiroCotaDTO.setDataCriacao(dataAtual);
 				movimentoFinanceiroCotaDTO.setDataVencimento(dataPostergacao);
 				movimentoFinanceiroCotaDTO.setValor(cobrancaAtualizada.getValor());

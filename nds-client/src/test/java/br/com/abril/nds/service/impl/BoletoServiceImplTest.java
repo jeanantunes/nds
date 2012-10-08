@@ -75,7 +75,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		MockitoAnnotations.initMocks(this);
 				
 		Banco bancoHSBC = Fixture.banco(454L, true, 30, "1010",
-			  							1646L, "1", "1", "Instruções.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+			  							164L, "1", "6", "Instruções.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com", "99.999-9");
@@ -283,7 +283,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		boletoServiceImpl.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, usuarioJoao,
 									   null, politicaPrincipal, distribuidor,
-									   DateUtil.adicionarDias(new Date(), 1), null);
+									   DateUtil.adicionarDias(new Date(), 1), null, null);
 	}
 	
 	private ArquivoPagamentoBancoDTO criarArquivoPagamentoBanco() {
