@@ -1,5 +1,7 @@
 package br.com.abril.nds.client.vo.baixaboleto;
 
+import java.math.BigDecimal;
+
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -18,8 +20,11 @@ public class BaixaBoletoRejeitadoVO extends BaixaBoletoBaseVO {
 
 	private static final long serialVersionUID = 5156198122887009066L;
 
-	@Export(label = "Histórico", exhibitionOrder=1)
+	@Export(label = "Histórico", exhibitionOrder=-1)
 	private String motivoRejeitado;
+	
+	@Export(label = "Valor R$", exhibitionOrder=1)
+	private BigDecimal valorBoleto;
 
 	/**
 	 * @return the motivoRejeitado
@@ -34,4 +39,19 @@ public class BaixaBoletoRejeitadoVO extends BaixaBoletoBaseVO {
 	public void setMotivoRejeitado(String motivoRejeitado) {
 		this.motivoRejeitado = motivoRejeitado;
 	}
+
+	/**
+	 * @return the valorBoleto
+	 */
+	public BigDecimal getValorBoleto() {
+		return valorBoleto;
+	}
+
+	/**
+	 * @param valorBoleto the valorBoleto to set
+	 */
+	public void setValorBoleto(BigDecimal valorBoleto) {
+		this.valorBoleto = valorBoleto;
+	}
+	
 }

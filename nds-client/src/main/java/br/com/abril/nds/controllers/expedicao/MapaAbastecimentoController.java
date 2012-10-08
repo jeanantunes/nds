@@ -151,7 +151,7 @@ public class MapaAbastecimentoController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota() + " " + rota.getDescricaoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;

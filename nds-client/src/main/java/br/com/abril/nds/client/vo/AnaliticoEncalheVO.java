@@ -13,10 +13,10 @@ public class AnaliticoEncalheVO implements Serializable {
 	private static final long serialVersionUID = -6737419809956273600L;
 	
 	@Export(label="Cota", alignment=Export.Alignment.LEFT, exhibitionOrder=1)
-	private String cota;
+	private String numeroCota;
 	
 	@Export(label="Nome", alignment=Export.Alignment.LEFT, exhibitionOrder=2)
-	private String nome;
+	private String nomeCota;
 	
 	@Export(label="Box Encalhe", alignment=Export.Alignment.LEFT, exhibitionOrder=3)
 	private String boxEncalhe;
@@ -25,7 +25,7 @@ public class AnaliticoEncalheVO implements Serializable {
 	private String total;
 	
 	@Export(label="Cobrança", alignment=Export.Alignment.LEFT, exhibitionOrder=5)
-	private String cobranca;
+	private String statusCobranca;
 	
 	
 	public AnaliticoEncalheVO()
@@ -33,42 +33,63 @@ public class AnaliticoEncalheVO implements Serializable {
 	
 	
 	public AnaliticoEncalheVO(AnaliticoEncalheDTO dto) {
-		this.setCota(dto.getNumeroCota().toString());
-		this.setNome(dto.getNomeCota());
+		this.setNumeroCota(dto.getNumeroCota().toString());
+		this.setNomeCota(dto.getNomeCota());
 		this.setBoxEncalhe(dto.getBoxEncalhe());
 		this.setTotal(CurrencyUtil.formatarValor(dto.getTotal()));
-		this.setCobranca(dto.getStatusCobranca());
+		this.setStatusCobranca(dto.getStatusCobranca().toString());
 	}
-	
-	
-	public String getCota() {
-		return cota;
+
+
+	public String getNumeroCota() {
+		return numeroCota;
 	}
-	public void setCota(String cota) {
-		this.cota = cota;
+
+
+	public void setNumeroCota(String numeroCota) {
+		this.numeroCota = numeroCota;
 	}
-	public String getNome() {
-		return nome;
+
+
+	public String getNomeCota() {
+		return nomeCota;
 	}
-	public void setNome(String nome) {
-		this.nome = nome;
+
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
 	}
+
+
 	public String getBoxEncalhe() {
 		return boxEncalhe;
 	}
+
+
 	public void setBoxEncalhe(String boxEncalhe) {
 		this.boxEncalhe = boxEncalhe;
 	}
+
+
 	public String getTotal() {
 		return total;
 	}
+
+
 	public void setTotal(String total) {
 		this.total = total;
 	}
-	public String getCobranca() {
-		return cobranca;
+
+
+	public String getStatusCobranca() {
+		return statusCobranca;
 	}
-	public void setCobranca(String cobranca) {
-		this.cobranca = cobranca;
+
+
+	public void setStatusCobranca(String statusCobranca) {
+		this.statusCobranca = statusCobranca;
 	}
+	
+	
+
 }

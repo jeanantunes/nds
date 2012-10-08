@@ -432,16 +432,54 @@ public class FechamentoEncalheController {
 	
 	
 	@Path("/pesquisarAnalitico.json")
-	public void pesquisarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+	public void pesquisarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder, int rp, int page) {
 	
-		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro);
+		
+		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		
+		Integer totalRegistro = fechamentoEncalheService.buscarTotalAnaliticoEncalhe(filtro);
+		
 		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
 		
 		for (AnaliticoEncalheDTO dto : listDTO) {
 			listVO.add(new AnaliticoEncalheVO(dto));
 		}
 		
-		result.use(FlexiGridJson.class).from(listVO).total(listVO.size()).serialize();
+		
+		this.result.use(FlexiGridJson.class).from(listVO).total(totalRegistro).page(page).serialize();
 	}
+	
+
+	@Get
+	@Path("/imprimirArquivoAnaliticoEncalhe")
+	public void imprimirArquivoAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro,
+			String sortname, String sortorder, int rp, int page, FileType fileType) {
+		
+		
+		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
+		for (AnaliticoEncalheDTO dto : listDTO) {
+			listVO.add(new AnaliticoEncalheVO(dto));
+		}
+		
+		
+		if (listVO != null && !listVO.isEmpty()) {
+		
+			try {
+				
+				FileExporter.to("analitico-encalhe", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), null, null, listVO, 
+					AnaliticoEncalheVO.class, this.response);
+				
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
+			}
+		}
+		
+		this.result.use(Results.nothing());
+	}
+	
+	
+	
 		
 }

@@ -17,8 +17,8 @@ public interface NegociacaoDividaService {
 
 	List<NegociacaoDividaDTO> obterDividasPorCota(FiltroConsultaNegociacaoDivida filtro);
 	
-	byte[] criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancasOriginarias, 
-			Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
+	byte[] criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, BigDecimal valorDividaPagaComissao, 
+			List<Long> idsCobrancasOriginarias, Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
 			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca,
 			boolean gerarBoleto);
 }

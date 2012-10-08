@@ -256,6 +256,21 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			);
 		},
 		
+		
+		geraNota :function(){
+			
+			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
+			
+			$.postJSON(
+				contextPath + "/devolucao/digitacao/contagem/geraNota", 
+				param,
+				function(result) {
+					digitacaoContagemDevolucaoController.pesquisar();
+				},
+				digitacaoContagemDevolucaoController.tratarErro, false
+			);
+		},
+		
 		/**
 	 		Monta o componente de confiramção da ação de Confirmar contagem de devolução
 		**/
