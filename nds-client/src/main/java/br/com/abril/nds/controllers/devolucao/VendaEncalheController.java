@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ResultadoVendaEncalheVO;
 import br.com.abril.nds.client.vo.VendaEncalheVO;
 import br.com.abril.nds.client.vo.VendaProdutoVO;
-import br.com.abril.nds.controllers.cadastro.CotaController;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -114,56 +112,24 @@ public class VendaEncalheController {
 	 * @param dataFim
 	 * @throws Exception
 	 */
-	@Get
-	@Path("/imprimeSlipVendaEncalhe")
-	public void imprimeSlipVendaEncalhe(TipoVendaEncalhe tipoVenda) throws Exception{
+	@Get("/imprimeSlipVendaEncalhe")
+	public Download imprimeSlipVendaEncalhe() throws Exception{
 		
-		String nomeArquivo = null;
-		
-		if(TipoVendaEncalhe.ENCALHE.equals(tipoVenda)){
-			nomeArquivo = "SlipVendaEncalhe.pdf";
-		}
-		else{
-			nomeArquivo = "SlipVendaEncalheSuplementar.pdf";
-		}
-		
-		byte[]b = (byte[]) session.getAttribute("COMPROVANTE_VENDA");
+		byte[]comprovante = (byte[]) session.getAttribute("COMPROVANTE_VENDA");
 
-		this.httpServletResponse.setContentType("application/pdf");
-		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo);
-
-		OutputStream output = this.httpServletResponse.getOutputStream();
-		output.write(b);
-
-		httpServletResponse.flushBuffer();
-		
 		session.removeAttribute("COMPROVANTE_VENDA");
+		
+		return new ByteArrayDownload(comprovante,"application/pdf", "comprovanteVenda.pdf",true);
 	}
 	
-	@Get
-	@Path("/imprimirSlipVenda")
-	public void imprimirSlipVenda() throws Exception{
+	@Get("/imprimirSlipVenda")
+	public Download imprimirSlipVenda() throws Exception{
 		
 		FiltroVendaEncalheDTO filtro = this.obterFiltroExportacao();
 		
-		String nomeArquivo = null;
+		byte[] comprovate = this.vendaEncalheService.geraImpressaoVenda(filtro);
 		
-		if(TipoVendaEncalhe.ENCALHE.equals(filtro.getTipoVendaEncalhe())){
-			nomeArquivo = "SlipVendaEncalhe.pdf";
-		}
-		else{
-			nomeArquivo = "SlipVendaEncalheSuplementar.pdf";
-		}
-		
-		byte[] b = this.vendaEncalheService.geraImpressaoVenda(filtro);
-
-		this.httpServletResponse.setContentType("application/pdf");
-		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo);
-
-		OutputStream output = this.httpServletResponse.getOutputStream();
-		output.write(b);
-
-		httpServletResponse.flushBuffer();
+		return new ByteArrayDownload(comprovate,"application/pdf", "slipVenda.pdf", true);
 	}
 	
 	@Post
@@ -331,6 +297,8 @@ public class VendaEncalheController {
 		produtoVO.setTipoVenda(venda.getTipoVendaEncalhe());
 		produtoVO.setValorTotal(venda.getValoTotalProduto());
 		produtoVO.setDescTipoVenda(venda.getTipoVendaEncalhe().getVenda());
+		produtoVO.setTipoVenda(venda.getTipoVendaEncalhe());
+		produtoVO.setFormaComercializacao(venda.getFormaVenda());
 		
 		BigInteger qntDisponivel = venda.getQntDisponivelProduto();
 		
@@ -485,6 +453,8 @@ public class VendaEncalheController {
 		vendaEncalheVO.setQntDisponivelProduto(tratarValor(dto.getQntDisponivelProduto()));
 		vendaEncalheVO.setFormaVenda(tratarValor(dto.getFormaVenda()));		
 		vendaEncalheVO.setNomeUsuario((dto.getUsuario()!= null)? dto.getUsuario().getNome():"");
+		vendaEncalheVO.setTipoVenda(dto.getTipoVendaEncalhe());
+		vendaEncalheVO.setFormaComercializacao(dto.getFormaVenda());
 	
 		return vendaEncalheVO;
 	}
@@ -704,7 +674,7 @@ public class VendaEncalheController {
 	@Get("/reimprimirComprovanteVenda/{idVenda}")
 	public Download reimprimirComprovanteVenda(Long idVenda){		
 		byte[] relatorio =  vendaEncalheService.geraImpressaoComprovanteVenda(idVenda);		
-		return new ByteArrayDownload(relatorio,"application/pdf", "comprovanteVenda.pdf");
+		return new ByteArrayDownload(relatorio,"application/pdf", "comprovanteVenda.pdf",true);
 	}
 }
 	

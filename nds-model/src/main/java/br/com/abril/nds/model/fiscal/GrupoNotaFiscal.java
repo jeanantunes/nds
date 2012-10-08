@@ -29,7 +29,16 @@ public enum GrupoNotaFiscal {
 	 * Notas de Venda a vista e Notas Fiscais referente ao que foi vendido da para o consumidor final dos
 	 * itens vendidos na Nota Fiscal de Remessa e Consignação.
 	 */
-	NF_VENDA(TipoOperacao.SAIDA);
+	NF_VENDA(TipoOperacao.SAIDA),
+	
+	
+	/**
+	 * Devolução de Mercadoria Recebida em Consignação (Distribuidor -> TREELOG)
+	 */
+	NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO(TipoOperacao.SAIDA)
+	
+	
+	;
 	
 	
 	

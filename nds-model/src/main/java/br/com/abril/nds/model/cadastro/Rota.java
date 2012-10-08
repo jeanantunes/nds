@@ -38,9 +38,6 @@ public class Rota implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "CODIGO_ROTA")
-    private String codigoRota;
-
     @Column(name = "DESCRICAO_ROTA")
     private String descricaoRota;
 
@@ -72,14 +69,6 @@ public class Rota implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCodigoRota() {
-        return codigoRota;
-    }
-
-    public void setCodigoRota(String codigoRota) {
-        this.codigoRota = codigoRota;
     }
 
     public String getDescricaoRota() {

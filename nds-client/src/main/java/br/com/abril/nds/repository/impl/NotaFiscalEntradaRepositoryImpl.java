@@ -312,7 +312,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		hql.append("from NotaFiscalEntrada nf where nf.numero = :numero ");		
 		hql.append("and nf.serie = :serie ");
 		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
-			hql.append("and nf.emitente.cnpj = :cnpj ");	
+			hql.append("and nf.fornecedor.juridica.cnpj = :cnpj ");	
 		}
 			
 		if(filtroConsultaNotaFiscal.getChave() == null){

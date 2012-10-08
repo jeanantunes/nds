@@ -193,7 +193,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
 			.append("(")
 				.append(" box.codigo || '-'|| box.nome,")
-				.append(" rota.codigoRota || '-'|| rota.descricaoRota,")
+				.append(" rota.descricaoRota,")
 				.append(" roteiro.descricaoRoteiro,")
 				.append(" cota.numeroCota,")
 				.append(" pessoa.nome,")
@@ -298,7 +298,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 					break;
 				case ROTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " rota.codigoRota ";
+						orderByColumn += " rota.descricaoRota ";
 					break;
 				case ROTEIRO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";

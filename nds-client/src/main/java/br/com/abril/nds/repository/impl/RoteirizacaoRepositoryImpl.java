@@ -415,7 +415,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			
 		hql.append( getHqlWhere(filtro));
 	
-		hql.append(" group by box.codigo, box.id, rota.codigoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
+		hql.append(" group by box.codigo, box.id, rota.descricaoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
 		
 		hql.append(getOrdenacaoConsulta(filtro));
 		

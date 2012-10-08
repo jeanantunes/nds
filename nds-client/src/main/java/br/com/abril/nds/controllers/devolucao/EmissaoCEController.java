@@ -159,7 +159,7 @@ public class EmissaoCEController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;
