@@ -237,6 +237,11 @@ public class DataLoader {
 	private static PessoaFisica orlando;
 	private static PessoaFisica joao;
 	private static PessoaFisica luis;
+	
+	private static Rota rota1;
+	private static Rota rota2;
+	private static Rota rota3;
+	private static Rota rota10;
 
 	private static TipoMovimentoEstoque tipoMovimentoFaltaEm;
 	private static TipoMovimentoEstoque tipoMovimentoFaltaDe;
@@ -2617,17 +2622,17 @@ public class DataLoader {
         pdvOrlando.setSegmentacao(segmentacaoPDV2);
         session.save(pdvOrlando);
 		
-		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
+		rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
 		rota1.addPDV(pdvcotaJose2, 1);
 		rota1.addPDV(pdvcotaManoel2, 2);
 		session.save(rota1);
 		
-		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
+		rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
 	    rota2.addPDV(pdvcotaJose2, 1);
 	    rota2.addPDV(pdvcotaManoel2, 2);
 		session.save(rota2);
 		
-		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
+		rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
 	    rota10.addPDV(pdvcotaJose2, 1);
 	    rota10.addPDV(pdvcotaManoel2, 2);
 		session.save(rota10);
@@ -8108,12 +8113,13 @@ public class DataLoader {
 		Entregador entregador = Fixture.criarEntregador(
 				234L, true, new Date(),
 				BigDecimal.TEN, juridicaAcme, false, null);
-
+		entregador.setRota(rota2);
 		save(session, juridicaAcme, entregador);
 
 		entregador = Fixture.criarEntregador(
 				123L, false, new Date(),
 				null, juridicaFc, false, null);
+		entregador.setRota(rota10);
 		save(session, juridicaFc, entregador);
 
 		Endereco endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "13131313", "Rua Marechal deodoro", "50", "Centro", "Mococa", "SP",3530508);
@@ -8131,6 +8137,7 @@ public class DataLoader {
 		entregador = Fixture.criarEntregador(
 				345L, false, new Date(),
 				null, jose, false, null);
+		entregador.setRota(rota3);
 		save(session, jose, entregador);
 
 		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Avenida Brasil", "10", "Centro", "Ribeirão Preto", "SP",3543402);
@@ -8150,7 +8157,9 @@ public class DataLoader {
 		entregador = Fixture.criarEntregador(
 				456L, false, new Date(),
 				null, maria, false, null);
-
+		
+		entregador.setRota(rota1);
+		
 		endereco = Fixture.criarEndereco(TipoEndereco.COBRANCA, "8766650", "Itaquera", "10", "Centro", "São Paulo", "SP",3550308);
 
 		enderecoEntregador = Fixture.enderecoEntregador(entregador, endereco, true, TipoEndereco.RESIDENCIAL);

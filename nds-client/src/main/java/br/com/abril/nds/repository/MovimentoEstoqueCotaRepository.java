@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
@@ -326,4 +327,15 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return
 	 */
 	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro);
+	
+	/**
+	 * Obtém o Movimento de Estoque das cotas pelo Tipo de Movimento.
+	 * 
+	 * @param data
+	 * @param idCota
+	 * @param grupoMovimentoEstoque
+	 * 
+	 * @return List - MovimentoEstoqueCota
+	 */
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque);
 }

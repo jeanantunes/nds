@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
@@ -1175,6 +1176,52 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque){
+		
+		StringBuffer hql = new StringBuffer();
+				
+		hql.append(" select  cota.id as idCota, ");
+		
+		hql.append(" 		 produtoEdicao.id as idProdEd, ");
+		
+		hql.append(" 		 produtoEdicao.codigo as codigoProd, ");
+		
+		hql.append(" 		 produtoEdicao.numeroEdicao as edicaoProd, ");
+		
+		hql.append(" 		 produtoEdicao.nomeComercial as nomeProd, ");
+		
+		hql.append(" 		 sum(movimento.qtde) as qtdeReparte ");
+		
+		hql.append(" from MovimentoEstoqueCota movimento");	
+		
+		hql.append(" join movimento.produtoEdicao produtoEdicao ");
+		
+		hql.append(" join movimento.cota cota ");
+		
+		hql.append(" join movimento.tipoMovimento tipoMovimento ");
+				
+		hql.append(" where cota.numeroCota in (:numCotas) ");
+		
+		hql.append(" and movimento.data = :data ");
+		
+		hql.append(" and tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		
+		hql.append(" group by produtoEdicao.id ");
+				
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		query.setParameterList("numCotas", numCotas);
+		
+		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		
+		query.setResultTransformer(Transformers.aliasToBean(MovimentoEstoqueCotaDTO.class));
+		
+		return query.list();
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<AbastecimentoDTO> obterDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro) {
@@ -1239,7 +1286,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("    join pdv.rotas rotaPDV  ");
 		hql.append("    join rotaPDV.rota rota ");
 		hql.append("    join rota.roteiro roteiro ");
-		hql.append("    join rota.entregador entregador ");
+		
+		if(filtro.getIdEntregador() != null)
+			hql.append("    join rota.entregador entregador ");
+		
 		hql.append("    join roteiro.roteirizacao roteirizacao ");
 		
 		hql.append("    join cota.box box ");
