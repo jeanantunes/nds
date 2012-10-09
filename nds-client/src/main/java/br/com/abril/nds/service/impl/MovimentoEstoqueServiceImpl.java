@@ -21,6 +21,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
@@ -245,60 +246,81 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			BigInteger novaQuantidade;
 			
-			if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
+			boolean isOperacaoEntrada = OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque());			
 				
-				 if( GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
-					 GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())||
-					 GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
-					 
-					 BigInteger qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
-					 
-					 novaQuantidade = qtdeSuplementar.add(movimentoEstoque.getQtde());
-					 
-					 estoqueProduto.setQtdeSuplementar(novaQuantidade);
-					 
-				 } else if(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())){
+			TipoEstoque tipoEstoque = tipoMovimentoEstoque.getGrupoMovimentoEstoque().getTipoEstoque();
+			
+			switch(tipoEstoque) {
+			 
+			case LANCAMENTO:
+				 
+				 novaQuantidade = isOperacaoEntrada ? estoqueProduto.getQtde().add(movimentoEstoque.getQtde()) :
+					 								  estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
+
+				 estoqueProduto.setQtde(novaQuantidade);
+				 
+				 break;
+				 
+			case PRODUTOS_DANIFICADOS:
+
+				 BigInteger qtdeDanificado = estoqueProduto.getQtdeDanificado() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDanificado();
 					
-					 BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
-						
-					 novaQuantidade = qtdeEncalhe.add(movimentoEstoque.getQtde());
-						
-					 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
-				 } 				 
-				 else {
-					 
-					 novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());
-					 
-					 estoqueProduto.setQtde(novaQuantidade);
-				 }
+				 novaQuantidade = isOperacaoEntrada ? qtdeDanificado.add(movimentoEstoque.getQtde()) :
+					 							      qtdeDanificado.subtract(movimentoEstoque.getQtde());
+
+				 estoqueProduto.setQtdeDanificado(novaQuantidade);
+				 
+				 break;
+
+			case DEVOLUCAO_ENCALHE: 
+
+				 BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+					
+				 novaQuantidade = isOperacaoEntrada ? qtdeEncalhe.add(movimentoEstoque.getQtde()) :
+					 								  qtdeEncalhe.subtract(movimentoEstoque.getQtde());
+
+				 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+				 
+				 break;
+
+			case DEVOLUCAO_FORNECEDOR: 
+
+				 BigInteger qtdeFornecedor = estoqueProduto.getQtdeDevolucaoFornecedor() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoFornecedor();
+					
+				 novaQuantidade = isOperacaoEntrada ? qtdeFornecedor.add(movimentoEstoque.getQtde()) : 
+					 							      qtdeFornecedor.subtract(movimentoEstoque.getQtde());
+
+				 estoqueProduto.setQtdeDevolucaoFornecedor(novaQuantidade);
+				 
+				 break;
+				 
+			case SUPLEMENTAR:
 				
-			} else {
+				 BigInteger qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+				 
+				 novaQuantidade = isOperacaoEntrada ? qtdeSuplementar.add(movimentoEstoque.getQtde()) :
+					 								  qtdeSuplementar.subtract(movimentoEstoque.getQtde());
+				 
+				 estoqueProduto.setQtdeSuplementar(novaQuantidade);
+				 
+				 break;
+				 
+			case RECOLHIMENTO:
 				
-				if(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())
-						|| GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
-					
-					BigInteger qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
-					
-					novaQuantidade = qtdeSuplementar.subtract(movimentoEstoque.getQtde());
-					
-					estoqueProduto.setQtdeSuplementar(novaQuantidade);
-					 
-				 }else if (GrupoMovimentoEstoque.VENDA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())){
-					
-					 BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
-						
-					 novaQuantidade = qtdeEncalhe.subtract(movimentoEstoque.getQtde());
-						
-					 estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
-				 }
-				 else {
-					 
-					 novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
-						
-					 estoqueProduto.setQtde(novaQuantidade);
-				 }
+				BigInteger qtdeRecolhimento = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+
+				novaQuantidade = isOperacaoEntrada ? qtdeRecolhimento.add(movimentoEstoque.getQtde()) :
+													 qtdeRecolhimento.subtract(movimentoEstoque.getQtde());
+				
+				estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+
+				break;
+
+			default:
+				 
+				 throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");
 			}
-		
+				
 			estoqueProdutoRespository.alterar(estoqueProduto);
 		}
 		

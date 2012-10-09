@@ -423,6 +423,10 @@ var transportadorController = $.extend(true, {
 			});			
 			$("#inputQuinzenalDiaInicio", transportadorController.workspace).numeric();
 			$("#inputCobrancaMensal", transportadorController.workspace).numeric();
+			
+			$.mask.definitions['#']='[\-\.0-9]';
+			
+			$("#inscEstadual", transportadorController.workspace).mask("?##################",{placeholder:" "});
 	},
 	
 	popup_novo_transportador : function() {
@@ -1282,10 +1286,5 @@ var transportadorController = $.extend(true, {
 
 }, BaseController);
 
-$(function() {
-	transportadorController.init();
-	//ENDERECO_TRANSPORTADOR.init(transportadorController.workspace);
-	//TRANSPORTADOR.init(transportadorController.workspace);
-	
-	
-} );
+
+//@ sourceURL=transportador.js

@@ -126,20 +126,37 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		return list;
 	}
 
-
 	@Override
+	@Transactional
 	public void transferirEstoque(FiltroConsultaVisaoEstoque filtro, Usuario usuario) {
-		
-		for (VisaoEstoqueTransferenciaDTO dto : filtro.getListaTransferencia()) {
+
+		if (filtro.getListaTransferencia() == null) {
 			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum estoque escolhido para transferência.");
+		}
+		
+		TipoMovimentoEstoque tipoMovimentoEntrada = 
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(filtro.getGrupoMovimentoEntrada());
+
+		TipoMovimentoEstoque tipoMovimentoSaida = 
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(filtro.getGrupoMovimentoSaida());
+
+		for (VisaoEstoqueTransferenciaDTO dto : filtro.getListaTransferencia()) {
+
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					dto.getProdutoEdicaoId(), 
 					usuario.getId(), 
 					new BigInteger(dto.getQtde().toString()), 
-					null);
+					tipoMovimentoEntrada);
+
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					dto.getProdutoEdicaoId(), 
+					usuario.getId(), 
+					new BigInteger(dto.getQtde().toString()), 
+					tipoMovimentoSaida);
 		}
 	}
-	
+
 	@Override
 	@Transactional
 	public void atualizarInventarioEstoque(Map<Long, BigInteger> mapaDiferencaProduto, Usuario usuario) {

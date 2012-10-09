@@ -291,6 +291,15 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe;
 
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaLancamento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaLancamento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaRecolhimento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaRecolhimento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDanificados;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDanificados;
+	
 	private static MovimentoEstoqueCota movimentoEstoqueCota1;
 	private static MovimentoEstoqueCota movimentoEstoqueCota2;
 	private static MovimentoEstoqueCota movimentoEstoqueCota3;
@@ -5169,6 +5178,15 @@ public class DataLoader {
 		tipoMovimentoCancelamentoNFDevolucaoConsignado = Fixture.tipoMovimentoCancelamentoNFDevolucaoConsignado();
 		tipoMovimentoCancelamentoNFEnvioConsignado = Fixture.tipoMovimentoCancelamentoNFEnvioConsignado();
 		
+		tipoMovimentoTransferenciaEntradaLancamento = Fixture.tipoMovimentoTransferenciaEntradaLancamento();
+		tipoMovimentoTransferenciaSaidaLancamento = Fixture.tipoMovimentoTransferenciaSaidaLancamento();
+		tipoMovimentoTransferenciaEntradaSuplementar = Fixture.tipoMovimentoTransferenciaEntradaSuplementar();
+		tipoMovimentoTransferenciaSaidaSuplementar = Fixture.tipoMovimentoTransferenciaSaidaSuplementar();
+		tipoMovimentoTransferenciaEntradaRecolhimento = Fixture.tipoMovimentoTransferenciaEntradaRecolhimento();
+		tipoMovimentoTransferenciaSaidaRecolhimento = Fixture.tipoMovimentoTransferenciaSaidaRecolhimento();
+		tipoMovimentoTransferenciaEntradaProdutosDanificados = Fixture.tipoMovimentoTransferenciaEntradaProdutosDanificados();
+		tipoMovimentoTransferenciaSaidaProdutosDanificados = Fixture.tipoMovimentoTransferenciaSaidaProdutosDanificados();
+		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
@@ -5178,7 +5196,11 @@ public class DataLoader {
 				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoRecebimentoEncalhe, tipoMovimentoRecebimentoEncalheJuramentado,
 				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao, 
-				tipoMovimentoCancelamentoNFDevolucaoConsignado, tipoMovimentoCancelamentoNFEnvioConsignado);
+				tipoMovimentoCancelamentoNFDevolucaoConsignado, tipoMovimentoCancelamentoNFEnvioConsignado, 
+				tipoMovimentoTransferenciaEntradaLancamento, tipoMovimentoTransferenciaSaidaLancamento, 
+				tipoMovimentoTransferenciaEntradaSuplementar, tipoMovimentoTransferenciaSaidaSuplementar,
+				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
+				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados);
 
 	}
 
