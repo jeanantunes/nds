@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -37,12 +38,13 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.AbstractMovimentoFinanceiro;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -67,10 +69,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Autowired
 	protected DistribuidorService distribuidorService;
-	
-	@Autowired
-	private BancoService bancoService;
-	
+
 	@Autowired
 	protected CalendarioService calendarioService;
 	
@@ -532,7 +531,6 @@ public class CobrancaServiceImpl implements CobrancaService {
 		}
 	}
 	
-	
 	private void lancamentoBaixaParcial(Cobranca cobrancaParcial,PagamentoDividasDTO pagamento,BigDecimal valor, StatusBaixa status, StatusAprovacao statusAprovacao){
 
 		//BAIXA COBRANCA
@@ -552,28 +550,91 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		baixaCobrancaRepository.adicionar(baixaManual);
 
-		
 		//MOVIMENTO FINANCEIRO
 		if (status == StatusBaixa.PAGAMENTO_PARCIAL){
-			TipoMovimentoFinanceiro tipoMovimento = this.tipoMovimentoFinanceiroRepository
-					.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.CREDITO);
-			
-			MovimentoFinanceiroCotaDTO movimento = new MovimentoFinanceiroCotaDTO();
-			movimento.setCota(cobrancaParcial.getCota());
-			movimento.setTipoMovimentoFinanceiro(tipoMovimento);
-			movimento.setUsuario(pagamento.getUsuario());
-			movimento.setDataOperacao(pagamento.getDataPagamento());
-			movimento.setBaixaCobranca(baixaManual);
-	        movimento.setValor(valor);
-	        movimento.setDataCriacao(Calendar.getInstance().getTime());
-			movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
-			movimento.setDataVencimento(cobrancaParcial.getDataVencimento());
-			movimento.setObservacao(pagamento.getObservacoes());
-			
-			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimento);
+
+			gerarMovimentoFinanceiroCota(
+				baixaManual, cobrancaParcial.getCota(), pagamento.getUsuario(), valor, 
+				cobrancaParcial.getDataVencimento(), pagamento.getDataPagamento(), 
+				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO
+			);
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void reverterBaixaManualDividas(List<Long> idCobrancas) {
+
+		List<Cobranca> cobrancasOrdenadas = this.cobrancaRepository.obterCobrancasOrdenadasPorVencimento(idCobrancas);
+
+		for (Cobranca itemCobranca : cobrancasOrdenadas) {
+
+	    	itemCobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
+	    	itemCobranca.getDivida().setStatus(StatusDivida.EM_ABERTO);
+	    	itemCobranca.setDataPagamento(null);
+
+	    	this.cobrancaRepository.merge(itemCobranca);
+
+	    	BaixaCobranca baixaCobranca = this.baixaCobrancaRepository.obterUltimaBaixaCobranca(itemCobranca.getId());
+
+	    	this.processarReversaoUltimaBaixaCobranca(baixaCobranca);
+		}
+	}
+	
+	private void processarReversaoUltimaBaixaCobranca(BaixaCobranca baixaCobranca) {
+		
+		if (baixaCobranca.getStatus() == StatusBaixa.PAGAMENTO_PARCIAL) {
+
+			processarReversaoMovimentosFinanceirosBaixaCobranca(baixaCobranca.getMovimentosFinanceiros());
+		}
+
+		baixaCobrancaRepository.remover(baixaCobranca);
+	}
+	
+	private void processarReversaoMovimentosFinanceirosBaixaCobranca(List<AbstractMovimentoFinanceiro> movimentosFinanceiros) {
+
+		for (AbstractMovimentoFinanceiro movimento : movimentosFinanceiros) {
+			
+			if (!(movimento instanceof MovimentoFinanceiroCota)) {
+				
+				continue;
+			}
+
+			MovimentoFinanceiroCota movimentoFinanceiroCota = (MovimentoFinanceiroCota) movimento;
+
+			gerarMovimentoFinanceiroCota(
+				movimentoFinanceiroCota.getBaixaCobranca(), movimentoFinanceiroCota.getCota(), 
+				movimentoFinanceiroCota.getUsuario(), movimentoFinanceiroCota.getValor(), 
+				movimentoFinanceiroCota.getData(), null, 
+				movimentoFinanceiroCota.getObservacao(), GrupoMovimentoFinaceiro.DEBITO
+			);
+		}
+	}
+
+	private void gerarMovimentoFinanceiroCota(BaixaCobranca baixaCobranca, Cota cota, Usuario usuario,
+											  BigDecimal valor, Date dataVencimento, Date dataPagamento,
+											  String observacoes, GrupoMovimentoFinaceiro grupoMovimentoFinaceiro) {
+
+		TipoMovimentoFinanceiro tipoMovimento = 
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
+		
+		MovimentoFinanceiroCotaDTO movimento = new MovimentoFinanceiroCotaDTO();
+		movimento.setCota(cota);
+		movimento.setTipoMovimentoFinanceiro(tipoMovimento);
+		movimento.setUsuario(usuario);
+		movimento.setDataOperacao(dataPagamento);
+		movimento.setBaixaCobranca(baixaCobranca);
+        movimento.setValor(valor);
+        movimento.setDataCriacao(Calendar.getInstance().getTime());
+		movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
+		movimento.setDataVencimento(dataVencimento);
+		movimento.setObservacao(observacoes);
+		
+		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimento);
+	}
 	
 	/**
 	 *Método responsável por validar baixa de dividas, verificando se existem boletos envolvidos 
