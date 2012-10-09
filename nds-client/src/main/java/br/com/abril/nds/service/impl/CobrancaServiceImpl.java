@@ -38,7 +38,6 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.movimentacao.AbstractMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -588,22 +587,15 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		if (baixaCobranca.getStatus() == StatusBaixa.PAGAMENTO_PARCIAL) {
 
-			//processarReversaoMovimentosFinanceirosBaixaCobranca(baixaCobranca.getMovimentosFinanceiros());
+			processarReversaoMovimentosFinanceirosBaixaCobranca(baixaCobranca.getMovimentosFinanceiros());
 		}
 
 		baixaCobrancaRepository.remover(baixaCobranca);
 	}
 	
-	private void processarReversaoMovimentosFinanceirosBaixaCobranca(List<AbstractMovimentoFinanceiro> movimentosFinanceiros) {
+	private void processarReversaoMovimentosFinanceirosBaixaCobranca(List<MovimentoFinanceiroCota> movimentosFinanceiros) {
 
-		for (AbstractMovimentoFinanceiro movimento : movimentosFinanceiros) {
-			
-			if (!(movimento instanceof MovimentoFinanceiroCota)) {
-				
-				continue;
-			}
-
-			MovimentoFinanceiroCota movimentoFinanceiroCota = (MovimentoFinanceiroCota) movimento;
+		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentosFinanceiros) {
 
 			gerarMovimentoFinanceiroCota(
 				movimentoFinanceiroCota.getBaixaCobranca(), movimentoFinanceiroCota.getCota(), 
