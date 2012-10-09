@@ -490,6 +490,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setCota(cota);
 		consolidadoFinanceiroCota.setDataConsolidado(distribuidor.getDataOperacao());
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
+		consolidadoFinanceiroCota.setPendente(this.obterValorPendenteCobrancaConsolidado(cota.getNumeroCota()));
 		
 		BigDecimal vlMovFinanTotal = BigDecimal.ZERO;
 		BigDecimal vlMovFinanDebitoCredito = BigDecimal.ZERO;
@@ -886,5 +887,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 * Retorna o valor de cobrança em aberto que a cota não pagou até a presente data de geração do novo consolidado em questão.
+	 * 
+	 * @param numeroCota - número da cota
+	 * 
+	 * @return BigDecimal - valor pendente de cobrança do sonsolidado
+	 */
+	private BigDecimal obterValorPendenteCobrancaConsolidado(Integer numeroCota){
+		
+		return cobrancaRepository.obterValorCobrancaNaoPagoDaCota(numeroCota);
 	}
 }
