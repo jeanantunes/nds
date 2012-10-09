@@ -16,8 +16,8 @@ public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 
 	private static final long serialVersionUID = 8366815250237375585L;
 
-	@Export(label = "NF- e", alignment = Alignment.LEFT)
-	private Long numeroNfe;
+	@Export(label = "N� Nota", alignment = Alignment.LEFT)
+	private Long numeroNota;
 
 	@Export(label = "Serie", alignment = Alignment.LEFT)
 	private String serie;
@@ -40,18 +40,18 @@ public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 	private boolean contemDiferenca;
 
 	/**
-	 * @return the numeroNfe
+	 * @return the numeroNota
 	 */
-	public Long getNumeroNfe() {
-		return numeroNfe;
+	public Long getNumeroNota() {
+		return numeroNota;
 	}
 
 	/**
-	 * @param numeroNfe
-	 *            the numeroNfe to set
+	 * @param numeroNota
+	 *            the numeroNota to set
 	 */
-	public void setNumeroNfe(Long numeroNfe) {
-		this.numeroNfe = numeroNfe;
+	public void setNumeroNota(Long numeroNota) {
+		this.numeroNota = numeroNota;
 	}
 
 	/**
@@ -83,6 +83,7 @@ public class ConsultaEntradaNFETerceirosRecebidasDTO implements Serializable {
 	public void setChaveAcesso(String chaveAcesso) {
 		this.chaveAcesso = chaveAcesso;
 	}
+
 
 	/**
 	 * @return the nome
