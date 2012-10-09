@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FecharDiaService;
+import br.com.abril.nds.service.ResumoFecharDiaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -31,6 +34,9 @@ public class FecharDiaController {
 	
 	@Autowired
 	private FecharDiaService fecharDiaService;
+	
+	@Autowired
+	private ResumoFecharDiaService resumoFecharDiaService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -133,6 +139,19 @@ public class FecharDiaController {
 		}
 		
 		result.use(Results.json()).from(pendencia).recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("obterResumoQuadroReparte")
+	public void obterResumoQuadroReparte(){
+		
+		BigDecimal totalReparte = this.resumoFecharDiaService.obterValorReparte(distribuidor.getDataOperacao());
+		
+		List<BigDecimal> listaTeste = new ArrayList<>();
+		listaTeste.add(totalReparte);
+		
+		result.use(Results.json()).from(listaTeste, "result").serialize();
 		
 	}
 

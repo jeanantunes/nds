@@ -295,7 +295,7 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 					$(".grids").show();
-					
+					fecharDiaController.iniciarResumo();
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
@@ -444,7 +444,7 @@ var fecharDiaController =  $.extend(true, {
 		if(result.controleDeAprovacao){
 			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoCotroleDeAprovacao", null,
 					function(result){
-						if(result){
+						if(result){							
 							var conferenciaDeAprovacao = "<tr class='class_linha_1'><td>Controle de Aprovações:</td>";
 							var imagem = "<td align='center'><img src='"+ contextPath +"/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 							$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
@@ -453,6 +453,14 @@ var fecharDiaController =  $.extend(true, {
 					}
 				);
 		}
+	},
+	
+	iniciarResumo : function(){
+		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
+				function(result){					
+					$("#totalReparte").html(result[0]);
+				}
+			);
 	}
 
 }, BaseController);

@@ -309,7 +309,7 @@
       </tr>
       <tr>
         <td width="109" align="left" style="border-bottom:1px solid #ccc;">(+) Reparte R$</td>
-        <td width="103" align="right" style="border-bottom:1px solid #ccc;">135.371,10</td>
+        <td width="103" align="right" style="border-bottom:1px solid #ccc;"><div id="totalReparte"></div> </td>
       </tr>
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(+) Sobras</td>
