@@ -1,20 +1,18 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.IOException;
+
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
-import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
-
-public class GeradorArquivoCobrancaBancoServiceImplTest extends AbstractRepositoryImplTest {
+public class GeradorArquivoCobrancaBancoServiceImplTest {
 	
-	@Autowired
-	private GeradorArquivoCobrancaBancoService geradorArquivoCobrancaBancoService;
+	private GeradorArquivoCobrancaBancoServiceImpl service =
+		new GeradorArquivoCobrancaBancoServiceImpl();
 	
 	@Test
-	public void gerarArquivoRemessa() {
+	public void gerarArquivoCobranca() throws IOException {
 		
-		this.geradorArquivoCobrancaBancoService.gerarArquivoCobranca(null);
+		this.service.gerarArquivoCobranca();
 	}
 		
 }
