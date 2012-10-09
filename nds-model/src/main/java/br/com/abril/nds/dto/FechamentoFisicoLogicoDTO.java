@@ -109,8 +109,13 @@ public class FechamentoFisicoLogicoDTO {
 		return exemplaresDevolucao;
 	}
 	public void setExemplaresDevolucao(BigInteger exemplaresDevolucao) {
-		this.exemplaresDevolucao = exemplaresDevolucao;
+		if (exemplaresDevolucao == null) {
+			this.exemplaresDevolucao = BigInteger.ZERO;
+		} else {
+			this.exemplaresDevolucao = exemplaresDevolucao;
+		}
 		this.exemplaresDevolucaoFormatado = CurrencyUtil.formatarValorTruncado(this.exemplaresDevolucao).replaceAll("\\D", "");
+		
 	}
 	public BigDecimal getTotal() {
 		return total;
