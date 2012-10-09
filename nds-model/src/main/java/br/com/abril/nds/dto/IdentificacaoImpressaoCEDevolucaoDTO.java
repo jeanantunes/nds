@@ -19,6 +19,14 @@ public class IdentificacaoImpressaoCEDevolucaoDTO implements Serializable {
     private String cnpj;
     
     private String inscricaoEstadual;
+ 
+    public IdentificacaoImpressaoCEDevolucaoDTO(String nome,
+            EnderecoDTO endereco, String cnpj, String inscricaoEstadual) {
+        this.nome = nome;
+        this.endereco = endereco;
+        this.cnpj = cnpj;
+        this.inscricaoEstadual = inscricaoEstadual;
+    }
 
     /**
      * @return the nome

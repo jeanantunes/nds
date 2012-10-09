@@ -21,4 +21,12 @@ public interface ContagemDevolucaoService {
 
 	public abstract void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada);
 	
+	/**
+	 * Gera a CE de Devolução
+	 * @param listaContagemDevolucaoAprovada lista de contagens parciais aprovadas
+	 * @return PDF com a CE de Devolução gerada
+	 */
+	public byte[] gerarCEDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada);
+	
+	
 }

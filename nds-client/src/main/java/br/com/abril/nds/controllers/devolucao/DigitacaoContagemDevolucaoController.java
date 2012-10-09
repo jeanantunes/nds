@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -51,6 +53,8 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -625,5 +629,17 @@ public class DigitacaoContagemDevolucaoController  {
 		
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
+	}
+	
+	@Get
+	public Download gerarCEDevolucao() {
+        byte[] ceGerada = contagemDevolucaoService.gerarCEDevolucao(null); 
+            
+        if (ceGerada != null) {
+            long size = ceGerada.length;
+            InputStream inputStream = new ByteArrayInputStream(ceGerada);
+            return new InputStreamDownload(inputStream, FileType.PDF.getContentType(), "ce-devolucao.pdf", true, size);
+        }
+        return null;
 	}
 }

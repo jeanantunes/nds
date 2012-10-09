@@ -2,33 +2,39 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JasperRunManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.report.ImpressaoCEDataSource;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.IdentificacaoImpressaoCEDevolucaoDTO;
+import br.com.abril.nds.dto.ImpressaoCEDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
+import br.com.abril.nds.dto.ProdutoImpressaoCEDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.integracao.service.DistribuidorService;
-import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
-import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
@@ -100,6 +106,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private ControleNumeracaoNotaFiscalService controleNumeracaoNotaFiscalService;
+	
+	 private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 	
 	
 	@Transactional
@@ -828,7 +836,72 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		}
 		
 	}
-	
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public byte[] gerarCEDevolucao(
+            List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) {
+        ImpressaoCEDevolucaoDTO dto = new ImpressaoCEDevolucaoDTO();
+        dto.setDataEmissao(new Date());
+        dto.setDataRecolhimento(new Date());
+        EnderecoDTO enderecoDistribuidor = new EnderecoDTO(null, "Centro",
+                "13720-000", null, "São José do Rio Pardo", null, "Rua",
+                "Treze de Maio ", "150", "SP", null);
+
+        dto.setDistribuidor(new IdentificacaoImpressaoCEDevolucaoDTO(
+                "Acme Distribuidora", enderecoDistribuidor,
+                "07.564.178/0001-04", "646.123.456.789"));
+        
+        EnderecoDTO enderecoFornecedor = new EnderecoDTO(null, "",
+                "60842-395", null, "Fortaleza", null, "Rodovia",
+                "BR 116 ", "3200", "CE", null);
+        
+        dto.setFornecedor(new IdentificacaoImpressaoCEDevolucaoDTO(
+                "Treelog S/A Logística e Distribuição", enderecoFornecedor,
+                "61.438.248/0062-45", "060084472"));
+
+        dto.setNumero(Long.MAX_VALUE);
+     
+        BigDecimal totalBruto = BigDecimal.ZERO;
+        BigDecimal totalDesconto = BigDecimal.ZERO;
+        BigDecimal totalLiquido = BigDecimal.ZERO;
+        for (int i = 1; i <= 20; i++) {
+            ProdutoImpressaoCEDevolucaoDTO produto = new ProdutoImpressaoCEDevolucaoDTO();
+            produto.setCodigo(String.valueOf(i));
+            produto.setDataLancamento(new Date());
+            produto.setDesconto(BigDecimal.ONE);
+            produto.setDevolucao(BigInteger.TEN);
+            produto.setEdicao(Long.valueOf(i + 100));
+            produto.setPrecoDesconto(BigDecimal.TEN);
+            produto.setProduto("Caras " + i);
+            produto.setReparte(BigInteger.valueOf(100));
+            produto.setSequenciaMatriz(i);
+            produto.setValorVenda(BigDecimal.valueOf(810));
+            produto.setVenda(BigInteger.valueOf(90));
+            produto.setTipoRecolhimento("P");
+            totalDesconto = totalDesconto.multiply(produto.getDesconto().multiply(new BigDecimal(produto.getVenda())));
+            totalLiquido = totalLiquido.add(produto.getValorVenda());
+            totalBruto = totalBruto.add(totalLiquido.add(totalDesconto));
+            dto.addProduto(produto);
+        }
+        dto.setTotalBruto(totalBruto);
+        dto.setTotalDesconto(totalDesconto);
+        dto.setTotalLiquido(totalLiquido);
+        
+        URL url = 
+            Thread.currentThread().getContextClassLoader().getResource("/reports/CEDevolucao.jasper");
+        
+        try {
+            String path = url.toURI().getPath();
+            return JasperRunManager.runReportToPdf(path,
+                    new HashMap<String, Object>(), new ImpressaoCEDataSource(dto));
+        } catch (Exception ex) {
+            LOG.error("Erro gerando arquivo CE Devolução!", ex);
+            throw new RuntimeException("Erro gerando arquivo CE Devolução!", ex);
+        }
+    }
 	
 }

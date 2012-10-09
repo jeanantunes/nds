@@ -159,4 +159,11 @@ public class ImpressaoCEDevolucaoDTO implements Serializable {
     public void setTotalLiquido(BigDecimal totalLiquido) {
         this.totalLiquido = totalLiquido;
     }
+    
+    public void addProduto(ProdutoImpressaoCEDevolucaoDTO produto) {
+        if(produtos == null) {
+            produtos = new ArrayList<ProdutoImpressaoCEDevolucaoDTO>();
+        }
+        produtos.add(produto);
+    }
 }

@@ -27,9 +27,7 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
     
     private Date dataLancamento;
     
-    private Long notaEnvio;
-    
-    private String tr;
+    private String tipoRecolhimento;
     
     private BigInteger reparte;
     
@@ -126,31 +124,17 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
     }
 
     /**
-     * @return the notaEnvio
+     * @return the tipoRecolhimento
      */
-    public Long getNotaEnvio() {
-        return notaEnvio;
+    public String getTipoRecolhimento() {
+        return tipoRecolhimento;
     }
 
     /**
-     * @param notaEnvio the notaEnvio to set
+     * @param tipoRecolhimento the tipoRecolhimento to set
      */
-    public void setNotaEnvio(Long notaEnvio) {
-        this.notaEnvio = notaEnvio;
-    }
-
-    /**
-     * @return the tr
-     */
-    public String getTr() {
-        return tr;
-    }
-
-    /**
-     * @param tr the tr to set
-     */
-    public void setTr(String tr) {
-        this.tr = tr;
+    public void setTipoRecolhimento(String tipoRecolhimento) {
+        this.tipoRecolhimento = tipoRecolhimento;
     }
 
     /**
