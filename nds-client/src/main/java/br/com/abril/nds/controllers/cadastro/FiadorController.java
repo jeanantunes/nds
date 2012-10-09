@@ -736,6 +736,13 @@ public class FiadorController {
 			
 		}
 		
+		if(pessoa.getOrgaoEmissor() == null || pessoa.getOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[Orgão Emissor] é obrigatório.");
+		}
+		
+		if(pessoa.getUfOrgaoEmissor() == null || pessoa.getUfOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[UF do Orgão Emissor] é obrigatório.");
+		}
 		
 		
 		if (pessoa.getDataNascimento() == null){
@@ -787,6 +794,15 @@ public class FiadorController {
 				msgsValidacao.add("Quantidade de caracteres do campo [RG] do conjuge excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
 				
 			}
+			
+			if(pessoa.getOrgaoEmissor() == null || pessoa.getOrgaoEmissor().isEmpty()) {
+				msgsValidacao.add("Orgão Emissor do conjuge é obrigatório.");
+			}
+			
+			if(pessoa.getUfOrgaoEmissor() == null || pessoa.getUfOrgaoEmissor().isEmpty()) {
+				msgsValidacao.add("UF do Orgão Emissor do conjuge é obrigatório.");
+			}
+
 			
 			if (pessoa.getDataNascimento() == null){
 				msgsValidacao.add("Data Nascimento do conjuge é obrigatório.");

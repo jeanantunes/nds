@@ -1112,10 +1112,17 @@ var roteirizacao = $.extend(true, {
                     modal: true,
                     buttons: {
                         "Confirmar": function() {
+                            var pdvs = [];
+                            $('input:checkbox[name=pdvCheckbox]:checked', roteirizacao.workspace).each(function() {
+                                pdvs.push({name: 'pdvs', value: $(this).val()});
+                            });
+                            if (pdvs.length > 0) {
+                                roteirizacao.adicionaPdvs();
+                                $( this ).dialog( "close" );
+                            } else {
+                                exibirMensagem('WARNING', ['Selecione pelo menos um PDV!']);
+                            }
 
-                            roteirizacao.adicionaPdvs();
-
-                            $( this ).dialog( "close" );
 
                         },
                         "Cancelar": function() {

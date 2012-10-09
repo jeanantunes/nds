@@ -99,13 +99,15 @@ public class FechamentoEncalheController {
 				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 				fechamentoEncalheService.removeFechamentoDetalhado(filtroRevomecao);
 			}
-			
 		} 
 		
-		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
-		
-		this.result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+			
+		if (listaEncalhe.isEmpty()) {
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
+		} else {
+			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+		}
 	}
 	
 	

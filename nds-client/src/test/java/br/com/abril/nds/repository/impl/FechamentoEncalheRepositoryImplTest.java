@@ -127,7 +127,6 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR("28/02/2012"));
 
 		List<AnaliticoEncalheDTO> list = fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro, "ASC", "numeroCota", 0, 15);
-		
 		Assert.assertNotNull(list);
 
 	}
