@@ -57,9 +57,8 @@ public abstract class BaixaCobranca {
 	@JoinColumn(name = "BANCO_ID")
 	private Banco banco;
 
-	@OneToMany(mappedBy="baixaCobranca")
-	@Transient
-	private List<AbstractMovimentoFinanceiro> movimentosFinanceiros;
+	/*@OneToMany(mappedBy="baixaCobranca")
+	private List<AbstractMovimentoFinanceiro> movimentosFinanceiros;*/
 	
 	public Long getId() {
 		return id;
@@ -112,14 +111,14 @@ public abstract class BaixaCobranca {
 	/**
 	 * @return the movimentosFinanceiros
 	 */
-	public List<AbstractMovimentoFinanceiro> getMovimentosFinanceiros() {
+	/*public List<AbstractMovimentoFinanceiro> getMovimentosFinanceiros() {
 		return movimentosFinanceiros;
-	}
+	}*/
 
 	/**
 	 * @param movimentosFinanceiros the movimentosFinanceiros to set
 	 */
-	public void setMovimentosFinanceiros(List<AbstractMovimentoFinanceiro> movimentosFinanceiros) {
+	/*public void setMovimentosFinanceiros(List<AbstractMovimentoFinanceiro> movimentosFinanceiros) {
 		this.movimentosFinanceiros = movimentosFinanceiros;
-	}
+	}*/
 }
