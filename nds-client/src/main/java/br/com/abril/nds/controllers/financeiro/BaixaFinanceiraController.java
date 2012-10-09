@@ -59,6 +59,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
+import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -125,6 +126,9 @@ public class BaixaFinanceiraController {
 	
 	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
+	
+	@Autowired
+	private GeradorArquivoCobrancaBancoService geradorArquivoCobrancaBancoService;
 	
 	@Autowired
 	private DividaService dividaService;
