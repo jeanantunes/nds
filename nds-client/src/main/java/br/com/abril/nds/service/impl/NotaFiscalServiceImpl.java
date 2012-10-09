@@ -56,6 +56,7 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
+import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
@@ -308,18 +309,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		TipoNotaFiscal tipoNotaFiscal = notaFiscalCancelada.getIdentificacao()
 				.getTipoNotaFiscal();
 
-		// TODO: Implementar as condições para cancelar notas fiscal Devolução de Mercadoria Recebida em Consignação(Distribuidor/TREELOG).
-
 		if (isRemessaMercadoriaConsignacao(tipoNotaFiscal)) {
 			movimentoEstoqueService.devolucaoConsignadoNotaCancelada(notaFiscalCancelada);
 			movimentoEstoqueCotaService.envioConsignadoNotaCancelada(notaFiscalCancelada);
 			
 		}else if(isDevolucaoMerdadoriaRecebiaConsignacao(tipoNotaFiscal)){			
-			if(isSobraMercadoria(tipoNotaFiscal) || isDevolucaoEncalhe(tipoNotaFiscal) ){
+			if(isSobraMercadoria(notaFiscalCancelada) || isDevolucaoEncalhe(notaFiscalCancelada) ){
 				movimentoEstoqueService.devolucaoRecolhimentoNotaCancelada(notaFiscalCancelada);
 				
-			}else{
-				//Falta de mercadoria
+			}else if(isFaltaMercadoria(notaFiscalCancelada)){
 				movimentoEstoqueService.devolucaoConsignadoNotaCancelada(notaFiscalCancelada);
 				
 			}
@@ -327,27 +325,35 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		atualizaRetornoNFe(dadosRetornoNFE);
 	}
 
-	
 	/**
-	 * TODO indetificar se a nota foi gerada com a condição de devolução de encalhe.
+	 * indetifica se a nota foi gerada com a condição de falta de mercadoria.
 	 * @param tipoNotaFiscal
 	 * @return
 	 */
-	private boolean isDevolucaoEncalhe(TipoNotaFiscal tipoNotaFiscal) {
-		return false;
+	private boolean isFaltaMercadoria(NotaFiscal notaFiscal) {
+		return Condicao.FALTA_MERCADORIA == notaFiscal.getCondicao();
+	}
+
+	/**
+	 * indetifica se a nota foi gerada com a condição de devolução de encalhe.
+	 * @param tipoNotaFiscal
+	 * @return
+	 */
+	private boolean isDevolucaoEncalhe(NotaFiscal notaFiscal) {		
+		return Condicao.DEVOLUCAO_ENCALHE == notaFiscal.getCondicao();
 	}
 	
 	/**
-	 * TODO indentificar se a nota foi gerada com a condição de sobra de mercadoria.
+	 * indentifica se a nota foi gerada com a condição de sobra de mercadoria.
 	 * @param tipoNotaFiscal
 	 * @return
 	 */
-	private boolean isSobraMercadoria(TipoNotaFiscal tipoNotaFiscal) {
-		return false;
+	private boolean isSobraMercadoria(NotaFiscal notaFiscal) {
+		return Condicao.SOBRA_MERCADORIA == notaFiscal.getCondicao();
 	}
 
 		/**
-		 * TODO Identifica se é um nota de Devolução de Mercadoria Recebida em Consignação.
+		 * Identifica se é um nota de Devolução de Mercadoria Recebida em Consignação.
 		 * @param tipoNotaFiscal
 		 * @return
 		 */
@@ -733,7 +739,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return produtoServico;
 	}
-
 	@Override
 	@Transactional
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
@@ -742,6 +747,19 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			InformacaoAdicional informacaoAdicional,
 			List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
 			Set<Processo> processos) {
+		return this.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, idCota, listItemNotaFiscal, transporte, informacaoAdicional, listNotaFiscalReferenciada, processos, null);
+	}
+	
+	
+	
+	@Override
+	@Transactional
+	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
+			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal,
+			InformacaoTransporte transporte,
+			InformacaoAdicional informacaoAdicional,
+			List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Set<Processo> processos, Condicao condicao) {
 
 		NotaFiscal notaFiscal = new NotaFiscal();
 
