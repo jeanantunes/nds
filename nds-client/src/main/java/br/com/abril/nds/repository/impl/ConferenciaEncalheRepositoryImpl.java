@@ -439,7 +439,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 //	}
 	
 	
-	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor) {
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe) {
 		
 		StringBuilder hql = new StringBuilder();
 		

@@ -93,4 +93,22 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		Query query = getSession().createQuery("select o from Negociacao o join o.cobrancasOriginarias c where c.id = " + id);
 		return (Negociacao) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Negociacao> obterNegociacaoPorComissaoCota(Long idCota){
+		
+		StringBuilder hql = new StringBuilder("select ne from Negociacao ne ");
+		hql.append(" join ne.cobrancasOriginarias co ")
+		   .append(" join co.cota cota ")
+		   .append(" where cota.id = :idCota ")
+		   .append(" and ne.comissaoParaSaldoDivida is not null ")
+		   .append(" and ne.valorDividaPagaComissao is not null ")
+		   .append(" and ne.valorDividaPagaComissao > 0 ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
+	}
 }

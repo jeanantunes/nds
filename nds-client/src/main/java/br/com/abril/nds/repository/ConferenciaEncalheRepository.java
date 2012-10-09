@@ -52,14 +52,13 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	/**
 	 * Obtém o valorTotal de uma operação de conferência de encalhe. Para o calculo do valor
 	 * é levado em conta o preco com desconto de acordo com a regra de comissão que verifica 
-	 * desconto no níveis de produtoedicao, cota e distribuidor.
+	 * desconto no níveis de produtoedicao, cota.
 	 * 
 	 * @param idControleConferenciaEncalhe
-	 * @param idDistribuidor
 	 * 
 	 * @return BigDecimal
 	 */
-	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor);
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe);
 	
 	/**
 	 * Obtem dados relativos a uma slip de acordo com ControleConferenciaEncalheCota 
