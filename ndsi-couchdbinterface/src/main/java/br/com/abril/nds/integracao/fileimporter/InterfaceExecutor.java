@@ -412,6 +412,9 @@ public class InterfaceExecutor {
 		
 		File dir = new File(diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator);
 		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo(), IOCase.INSENSITIVE));
+		
+		Arrays.sort(files, 0, files.length);
+		
 		if (null != files) {
 			listaArquivos.addAll(Arrays.asList(files));
 		}
