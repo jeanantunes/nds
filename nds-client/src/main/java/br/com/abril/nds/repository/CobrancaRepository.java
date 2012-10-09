@@ -78,4 +78,14 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * @return BigDecimal
 	 */
 	BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota);
+	
+	
+	/**
+	 * Retorna as cobranças efetuadas na data de operação do distribuidor.
+	 * 
+	 * @param dataOperacao - data operação do distribuidor
+	 * 
+	 * @return List<Cobranca>
+	 */
+	List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacao);
 }
