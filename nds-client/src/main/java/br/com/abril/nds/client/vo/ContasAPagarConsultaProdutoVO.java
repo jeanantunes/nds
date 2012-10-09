@@ -1,13 +1,13 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
-import br.com.abril.nds.dto.ContasAPAgarConsultaProdutoDTO;
+import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 
-public class ContasAPagarVO implements Serializable{
+public class ContasAPagarConsultaProdutoVO implements Serializable{
 
 	private static final long serialVersionUID = 164081271878814255L;
 
@@ -21,7 +21,7 @@ public class ContasAPagarVO implements Serializable{
 		private String edicao;
 		
 		@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
-		private BigDecimal precoCapa;
+		private String precoCapa;
 
 		@Export(label = "Fornecedor", alignment=Alignment.CENTER, exhibitionOrder = 5)
 		private String fornecedor;
@@ -29,16 +29,19 @@ public class ContasAPagarVO implements Serializable{
 		@Export(label = "Editor", alignment=Alignment.CENTER, exhibitionOrder = 6)
 		private String editor;
 		
+		private String produtoEdicaoID;
+		
 		
 		
 
 
-		public ContasAPagarVO(ContasAPAgarConsultaProdutoDTO dto) {
+		public ContasAPagarConsultaProdutoVO(ContasAPagarConsultaProdutoDTO dto) {
 			this.codigo=dto.getCodigo();
 			this.editor=dto.getEditor();
 			this.fornecedor=dto.getFornecedor();
-			this.precoCapa=dto.getPrecoCapa();
+			this.precoCapa = CurrencyUtil.formatarValor(dto.getPrecoCapa());
 			this.produto=dto.getProduto();
+			this.edicao=dto.getEdicao().toString();
 			
 		}
 
@@ -66,14 +69,6 @@ public class ContasAPagarVO implements Serializable{
 			this.edicao = edicao;
 		}
 
-		public BigDecimal getPrecoCapa() {
-			return precoCapa;
-		}
-
-		public void setPrecoCapa(BigDecimal precoCapa) {
-			this.precoCapa = precoCapa;
-		}
-
 		public String getFornecedor() {
 			return fornecedor;
 		}
@@ -89,6 +84,23 @@ public class ContasAPagarVO implements Serializable{
 		public void setEditor(String editor) {
 			this.editor = editor;
 		}
+
+		public String getProdutoEdicaoID() {
+			return produtoEdicaoID;
+		}
+
+		public void setProdutoEdicaoID(String produtoEdicaoID) {
+			this.produtoEdicaoID = produtoEdicaoID;
+		}
+
+		public void setPrecoCapa(String precoCapa) {
+			this.precoCapa = precoCapa;
+		}
+
+		public String getPrecoCapa() {
+			return precoCapa;
+		}
+		
 		
 		
 

@@ -85,7 +85,8 @@ var contasAPagarController = $.extend(true, {
 	pesquisarProdutoEdicao : function(){
 		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
 		
-		alert(params);
+	
+		
 		$(".contasAPagarListaProdutosGrid").flexOptions({
 			url : this.path + 'pesquisarProduto.json?' + params, 
 			preProcess : contasAPagarController.montaColunaCheckProdutoEdicao,
@@ -94,7 +95,6 @@ var contasAPagarController = $.extend(true, {
 
 		$(".contasAPagarListaProdutosGrid").flexReload();
 		
-		alert($(".contasAPagarListaProdutosGrid").get(0));
 		
 	},
 	
@@ -104,6 +104,20 @@ var contasAPagarController = $.extend(true, {
 	 * Pre Carregamento FlexGrid
 	 * *************************
 	 * */
+	
+	/*mantemSelecaoColunaCheckProdutoEdicao : function (data){
+		
+		
+		$.each(data.rows, function(index, value) {
+			
+			if(value.cell.sel.checked)
+			var selecionados;
+
+		}
+		 
+		return data;
+		
+	}*/
 	
 	montaColunaCheckProdutoEdicao : function(data) {
 		

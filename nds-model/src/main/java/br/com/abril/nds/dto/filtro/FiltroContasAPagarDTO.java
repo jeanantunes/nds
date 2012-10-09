@@ -10,6 +10,7 @@ public class FiltroContasAPagarDTO implements Serializable {
 	private Date dataAte;
 	private Integer ce;
 	private String produto;
+	private Long edicao;
 	
 	
 	
@@ -36,6 +37,12 @@ public class FiltroContasAPagarDTO implements Serializable {
 	}
 	public void setProduto(String produto) {
 		this.produto = produto;
+	}
+	public Long getEdicao() {
+		return edicao;
+	}
+	public void setEdicao(Long edicao) {
+		this.edicao = edicao;
 	}
 	
 	
