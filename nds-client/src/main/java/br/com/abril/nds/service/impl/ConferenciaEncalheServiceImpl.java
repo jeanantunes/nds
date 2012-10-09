@@ -45,9 +45,6 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
-import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.PessoaFisica;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -67,6 +64,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -103,6 +101,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -233,6 +232,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
+	
+	@Autowired
+	private NegociacaoDividaRepository negociacaoDividaRepository;
 	
 	/*
 	 * (non-Javadoc)
@@ -923,7 +925,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		controleConfEncalheCota = inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
 		
-		Set<String> nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
+		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
+				conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
+		
+		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
+		
+		Set<String> nossoNumeroCollection = gerarCobranca(controleConfEncalheCota, valorTotalEncalheOperacaoConferenciaEncalhe);
 		
 		String nossoNumero = "";
 		
@@ -953,6 +960,57 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	//caso haja negociação por comissão da cota será abatida aqui
+	private void abaterNegociacaoPorComissao(Long idCota,
+			BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe) {
+		
+		//verifica se existe valor para abater das negociações
+		if (valorTotalEncalheOperacaoConferenciaEncalhe != null &&
+				valorTotalEncalheOperacaoConferenciaEncalhe.compareTo(BigDecimal.ZERO) > 0){
+			
+			//busca negociações por comissão ainda não quitadas
+			List<Negociacao> negociacoes = 
+					this.negociacaoDividaRepository.obterNegociacaoPorComissaoCota(idCota);
+			
+			BigDecimal valorCem = new BigDecimal(100);
+			
+			for (Negociacao negociacao : negociacoes){
+				
+				//caso todo o valor da conferencia tenha sido usado para quitação das negociações
+				if  (valorTotalEncalheOperacaoConferenciaEncalhe.compareTo(BigDecimal.ZERO) <= 0){
+					
+					valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
+					break;
+				}
+				
+				BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
+				
+				BigDecimal valorDescontar = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(comissao).divide(valorCem);
+				
+				valorTotalEncalheOperacaoConferenciaEncalhe = 
+						valorTotalEncalheOperacaoConferenciaEncalhe.subtract(valorDescontar);
+				
+				BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
+				
+				//se o valor resultante não quita a negociação
+				if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0){
+					
+					negociacao.setValorDividaPagaComissao(valorRestanteNegociacao);
+					
+				} else {
+					
+					negociacao.setValorDividaPagaComissao(BigDecimal.ZERO);
+					
+					//gera crédito para cota caso a comissão gere sobra na quitação
+					valorTotalEncalheOperacaoConferenciaEncalhe = 
+							valorTotalEncalheOperacaoConferenciaEncalhe.add(valorRestanteNegociacao.negate());
+				}
+				
+				this.negociacaoDividaRepository.alterar(negociacao);
+			}
+		}
+	}
+
 	/**
 	 * Gera o movimento financeiro referente a operação de conferência de encalhe e
 	 * em seguida dispara componentes responsáveis pela geração da cobrança.
@@ -961,17 +1019,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @return Set - String
 	 */
-	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
-		
-		Distribuidor distribuidor = distribuidorService.obter();
+	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+			BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe) {
 		
 		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
 		
 		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
 				movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
-		
-		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
-				conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota, distribuidor.getId());
 		
 		if(valorTotalEncalheOperacaoConferenciaEncalhe == null) {
 			valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
