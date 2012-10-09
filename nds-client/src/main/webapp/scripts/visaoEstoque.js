@@ -229,7 +229,9 @@ var visaoEstoqueController = $.extend(true, {
 				}
 					
 				var produtoEdicaoId = element.id.substring(element.id.lastIndexOf("_")+1);
-				var qtde = element.value;
+
+				var tr = element.parentNode.parentNode.parentNode;
+				var qtde = $('td[abbr="estoque"] >div', tr).html();
 				
 				dados+='{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"filtro.listaTransferencia['+index+'].qtde",value:'+qtde+'}';
 				index++;
