@@ -18,10 +18,13 @@ import br.com.abril.nds.export.cnab.cobranca.Header;
 import br.com.abril.nds.export.cnab.cobranca.Trailer;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametroSistema;
+import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -29,7 +32,12 @@ import br.com.abril.nds.util.DateUtil;
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
 
-
+/**
+ * Classe de implementação de serviços referentes 
+ * a geração de arquivo de cobrança para o banco.
+ * 
+ * @author Discover Technology
+ */
 @Service
 public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCobrancaBancoService {
 	
@@ -42,55 +50,104 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	@Autowired
 	private BoletoRepository boletoRepository;
 	
+	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;
+	
 	@Override
-	public void gerarArquivoCobranca() throws IOException {
-
-		Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca =
-			this.prepararDadosCobrancaMock();
+	public void prepararGerarArquivoCobrancaCnab() throws IOException {
 		
-		this.gerarArquivo(mapaArquivoCobranca);
+		// TODO: chamar o metodo prepararGerarArquivoCobrancaCnab após o processo de geração de cobrança
+		
+		Map<Banco, List<DetalheSegmentoP>> mapaDadosArquivoCobranca =
+			this.prepararDadosArquivoCobranca();
+		
+		this.gerarArquivo(mapaDadosArquivoCobranca);
 	}
 	
+	/**
+	 * Gera arquivo de cobrança de acordo com os dados informados.
+	 * 
+	 * @param mapaArquivoCobranca - mapa contendo os dados para geração do arquivo.
+	 * 
+	 * @throws IOException
+	 */
 	private void gerarArquivo(Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca) throws IOException {
 		
-		if (mapaArquivoCobranca == null) {
-			
+		if (mapaArquivoCobranca == null || mapaArquivoCobranca.isEmpty()) {
 			return;
 		}
 		
+		File diretorioArquivoCobranca = this.getFilePathParametroSistema();
+		
 		FixedFormatManager manager = new FixedFormatManagerImpl();
 		
-		File file = null;
-		List<String> lines = null;
+		List<String> conteudoLinhas = null;
 		Header header = null;
 		Trailer trailer = null;
 		
 		for (Map.Entry<Banco, List<DetalheSegmentoP>> entry : mapaArquivoCobranca.entrySet()) {
 		
-			lines = new ArrayList<String>();
+			conteudoLinhas = new ArrayList<String>();
 		
 			header = this.getHeader();
 			
-			lines.add(manager.export(header));
+			conteudoLinhas.add(manager.export(header));
 			
 			//Banco banco = entry.getKey();
 			List<DetalheSegmentoP> listaDetalheSegmentoP = entry.getValue();
 			
 			for (DetalheSegmentoP detalheSegmentoP : listaDetalheSegmentoP) {
 				
-				lines.add(manager.export(detalheSegmentoP));
+				conteudoLinhas.add(manager.export(detalheSegmentoP));
 			}
 		
 			trailer = this.getTrailer();
 			
-			lines.add(manager.export(trailer));
+			conteudoLinhas.add(manager.export(trailer));
 			
-			file = new File("/aaa.txt");
-			
-			FileUtils.writeLines(file, "UTF8", lines);
+			this.criarArquivo(conteudoLinhas, diretorioArquivoCobranca);
 		}
 	}
 
+	/**
+	 * Cria o arquivo informado de acordo com o conteúdo informado.
+	 */
+	private void criarArquivo(List<String> conteudoLinhas, File diretorioArquivoCobranca) throws IOException {
+		
+		File file =
+			new File(diretorioArquivoCobranca, this.getNomeArquivoCobranca());
+		
+		if (file != null) {
+		
+			FileUtils.writeLines(file, "UTF8", conteudoLinhas);
+		}
+	}
+	
+	/**
+	 * Obtém o nome do arquivo de cobrança.
+	 */
+	private String getNomeArquivoCobranca() {
+		
+		return "cnab_" + new Date().getTime() + ".dat";
+	}
+
+	/**
+	 * Obtém o file contendo o diretório parametrizada para geração do arquivo de cobrança.
+	 */
+	protected File getFilePathParametroSistema() {
+		
+		ParametroSistema parametroSistema =
+			this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+				TipoParametroSistema.PATH_GERACAO_ARQUIVO_COBRANCA);
+		
+		if (parametroSistema != null) {
+			
+			new File(parametroSistema.getValor());
+		}
+		
+		return null;
+	}
+	
 	private Header getHeader() {
 		
 		Header header = new Header();
@@ -109,33 +166,13 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		return trailer;
 	}
 	
-	private Map<Banco, List<DetalheSegmentoP>> prepararDadosCobrancaMock() {
-		
-		DetalheSegmentoP detalheSegmentoP = new DetalheSegmentoP();
-		
-		List<DetalheSegmentoP> lista = new ArrayList<DetalheSegmentoP>();
-		
-		lista.add(detalheSegmentoP);
-		lista.add(detalheSegmentoP);
-		lista.add(detalheSegmentoP);
-		lista.add(detalheSegmentoP);
-		lista.add(detalheSegmentoP);
-		
-		Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca =
-			new HashMap<Banco, List<DetalheSegmentoP>>();
-		
-		mapaArquivoCobranca.put(new Banco(), lista);
-		
-		return mapaArquivoCobranca;
-	}
-	
 	/**
 	 * 
 	 * Retorna um map com a estrutura do arquivo preenchida para geração.
 	 * 
 	 * @return Map<Banco, List<DetalheSegmentoP>> 
 	 */
-	private Map<Banco, List<DetalheSegmentoP>> prepararDadosCobranca(){
+	protected Map<Banco, List<DetalheSegmentoP>> prepararDadosArquivoCobranca() {
 		
 		Map<Banco, List<DetalheSegmentoP>> inputDados = new HashMap<Banco, List<DetalheSegmentoP>>();
 		
