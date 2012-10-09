@@ -337,4 +337,17 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	
 		return criteria.list();
 	}
+
+	@Override
+	public String obterNossoNumeroPorMovimentoFinanceiroCota(Long idMovimentoFinanceiro) {
+		
+		StringBuilder hql = new StringBuilder("select cob.nossoNumero from Cobranca cob ");
+		hql.append(" join cob.divida.consolidado.movimentos mov ")
+		   .append(" where mov.id = :idMovimentoFinanceiro");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro);
+		
+		return (String) query.uniqueResult();
+	}
 }
