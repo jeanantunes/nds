@@ -53,7 +53,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append(" , pe.id as produtoEdicao ");
 		hql.append(" , pe.parcial as parcial ");
 		hql.append(" , che.dataRecolhimento as dataRecolhimento ");
-		hql.append(" , sum (mec.qtde - ("+ subquery.toString()  +")  ) as exemplaresDevolucao ");
+		hql.append(" , nullif ( sum (mec.qtde - ("+ subquery.toString()  +")  ), 0 ) as exemplaresDevolucao ");
 		hql.append(" from ConferenciaEncalhe as ce ");
 		hql.append("  JOIN ce.movimentoEstoqueCota as mec ");
 		hql.append("  JOIN ce.controleConferenciaEncalheCota as ccec ");
