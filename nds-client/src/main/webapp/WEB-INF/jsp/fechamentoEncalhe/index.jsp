@@ -63,13 +63,13 @@
 				<table class="cotasGrid" id="tabelaGridCotas" ></table>
 			</form>
 			<span class="bt_novos" title="Gerar Arquivo" >
-				<a href="javascript:gerarArquivoCotasAusentes('XLS');">
+				<a href="javascript:;" onclick="fechamentoEncalheController.gerarArquivoCotasAusentes('XLS');">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					Arquivo
 				</a>
 			</span>
 			<span class="bt_novos" title="Imprimir">
-				<a href="javascript:gerarArquivoCotasAusentes('PDF');">
+				<a href="javascript:;" onclick="fechamentoEncalheController.gerarArquivoCotasAusentes('PDF');">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 					Imprimir 
 				</a>
