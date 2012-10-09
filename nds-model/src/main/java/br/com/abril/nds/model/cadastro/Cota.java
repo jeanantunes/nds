@@ -151,7 +151,7 @@ public class Cota implements Serializable {
 	 * Histórico de titulares da cota
 	 */
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
-	private Set<HistoricoTitularidadeCota> titularesCota;
+	private Set<HistoricoTitularidadeCota> titularesCota =new HashSet<HistoricoTitularidadeCota>();
 	
 	/**
 	 * Referente a garantias da cota.

@@ -19,7 +19,7 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="${testDataSourceURL}" />
+		<property name="url" value="${dataSourceURL}" />
 		<property name="username" value="${testDataSourceUsername}" />
 		<property name="password" value="${testDataSourcePassword}" />
     </bean>
