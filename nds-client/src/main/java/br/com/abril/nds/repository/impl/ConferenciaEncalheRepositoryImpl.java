@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -438,8 +439,25 @@ public class ConferenciaEncalheRepositoryImpl extends
 //		
 //	}
 	
-	
-	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe) {
+
+	/**
+	 * Obtém o valorTotal de uma operação de conferência de encalhe. Para o calculo do valor
+	 * é levado em conta o preco com desconto de acordo com a regra de comissão que verifica 
+	 * desconto no níveis de produtoedicao, cota.
+	 * 
+	 * @param idControleConferenciaEncalhe
+	 * 
+	 * @param formaComercializacao
+	 * 
+	 * @param idDistribuidor
+	 * 
+	 * @param consideraFormaComercializacaoNula
+	 * 
+	 * @return BigDecimal
+	 */
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor, FormaComercializacao formaComercializacao, boolean consideraFormaComercializacaoNula) {
+		
+		String j = " WHERE ";
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -457,11 +475,36 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append("  join produto.fornecedores fornecedor ");
 		
-		hql.append(" where conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
+		if (formaComercializacao!=null){
+		    
+            if(consideraFormaComercializacaoNula){
+	    		
+	    		hql.append(j+" ((produto.formaComercializacao is null) ");
+	    		
+	    		j="OR";
+	    	}
+	    	else{
+	    		
+		    	hql.append(j+" ((produto.formaComercializacao is not null) ");
+	    		
+	    		j="AND";
+	    	}
+	    	
+	    	hql.append(j+" (produto.formaComercializacao = :formaComercializacao)) ");
+		    
+		    j = " AND ";
+		}
+		
+		hql.append(j+" conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
 		
 		Query query =  this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idControleConferenciaEncalhe", idControleConferenciaEncalhe);
+		
+		if (formaComercializacao!=null){
+			
+			query.setParameter("formaComercializacao", formaComercializacao);
+		}
 		
 		return (BigDecimal) query.uniqueResult();
 		

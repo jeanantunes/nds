@@ -8,6 +8,7 @@ import java.util.Set;
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -48,7 +49,6 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao);
 	
-	
 	/**
 	 * Obtém o valorTotal de uma operação de conferência de encalhe. Para o calculo do valor
 	 * é levado em conta o preco com desconto de acordo com a regra de comissão que verifica 
@@ -56,10 +56,16 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * 
 	 * @param idControleConferenciaEncalhe
 	 * 
+	 * @param formaComercializacao
+	 * 
+	 * @param idDistribuidor
+	 * 
+	 * @param consideraFormaComercializacaoNula
+	 * 
 	 * @return BigDecimal
 	 */
-	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe);
-	
+	public BigDecimal obterValorTotalEncalheOperacaoConferenciaEncalhe(Long idControleConferenciaEncalhe, Long idDistribuidor, FormaComercializacao formaComercializacao, boolean consideraFormaComercializacaoNula);
+
 	/**
 	 * Obtem dados relativos a uma slip de acordo com ControleConferenciaEncalheCota 
 	 * a que estes pertencem.
