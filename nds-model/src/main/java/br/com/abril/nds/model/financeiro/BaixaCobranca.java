@@ -21,6 +21,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoFinanceiro;
@@ -57,6 +58,7 @@ public abstract class BaixaCobranca {
 	private Banco banco;
 
 	@OneToMany(mappedBy="baixaCobranca")
+	@Transient
 	private List<AbstractMovimentoFinanceiro> movimentosFinanceiros;
 	
 	public Long getId() {
