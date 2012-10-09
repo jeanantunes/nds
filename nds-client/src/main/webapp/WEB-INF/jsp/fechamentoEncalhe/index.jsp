@@ -34,6 +34,7 @@
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialogMensagemPostergarCotas" name="messageDialog"/>
 		</jsp:include> 
+
 		
 		<fieldset style="width:270px!important;">
 	    	<legend>Postergar Encalhe</legend>
@@ -44,6 +45,8 @@
 	          </tr>
 	        </table>
 	    </fieldset>
+	    
+	    
 	</div>
 	</form>
 	
