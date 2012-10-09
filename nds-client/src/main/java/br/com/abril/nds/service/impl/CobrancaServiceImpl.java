@@ -588,7 +588,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		if (baixaCobranca.getStatus() == StatusBaixa.PAGAMENTO_PARCIAL) {
 
-			processarReversaoMovimentosFinanceirosBaixaCobranca(baixaCobranca.getMovimentosFinanceiros());
+			//processarReversaoMovimentosFinanceirosBaixaCobranca(baixaCobranca.getMovimentosFinanceiros());
 		}
 
 		baixaCobrancaRepository.remover(baixaCobranca);
