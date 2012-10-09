@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,22 +43,90 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 	private BoletoRepository boletoRepository;
 	
 	@Override
-	public void gerarArquivoCobranca(Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca) {
+	public void gerarArquivoCobranca() throws IOException {
+
+		Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca =
+			this.prepararDadosCobrancaMock();
+		
+		this.gerarArquivo(mapaArquivoCobranca);
+	}
+	
+	private void gerarArquivo(Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca) throws IOException {
+		
+		if (mapaArquivoCobranca == null) {
+			
+			return;
+		}
 		
 		FixedFormatManager manager = new FixedFormatManagerImpl();
 		
+		File file = null;
+		List<String> lines = null;
+		Header header = null;
+		Trailer trailer = null;
+		
+		for (Map.Entry<Banco, List<DetalheSegmentoP>> entry : mapaArquivoCobranca.entrySet()) {
+		
+			lines = new ArrayList<String>();
+		
+			header = this.getHeader();
+			
+			lines.add(manager.export(header));
+			
+			//Banco banco = entry.getKey();
+			List<DetalheSegmentoP> listaDetalheSegmentoP = entry.getValue();
+			
+			for (DetalheSegmentoP detalheSegmentoP : listaDetalheSegmentoP) {
+				
+				lines.add(manager.export(detalheSegmentoP));
+			}
+		
+			trailer = this.getTrailer();
+			
+			lines.add(manager.export(trailer));
+			
+			file = new File("/aaa.txt");
+			
+			FileUtils.writeLines(file, "UTF8", lines);
+		}
+	}
+
+	private Header getHeader() {
+		
 		Header header = new Header();
 		
-		header.setCodigoBanco(11L);
-		header.setLote(22L);
+		// TODO: Popular Header
 		
-		String retornoHeader = manager.export(header);
+		return header;
+	}
+	
+	private Trailer getTrailer() {
 		
 		Trailer trailer = new Trailer();
 		
-		trailer.setCodigoBanco(3L);
+		// TODO: Popular Trailer
 		
-		String retornoTrailer = manager.export(trailer);
+		return trailer;
+	}
+	
+	private Map<Banco, List<DetalheSegmentoP>> prepararDadosCobrancaMock() {
+		
+		DetalheSegmentoP detalheSegmentoP = new DetalheSegmentoP();
+		
+		List<DetalheSegmentoP> lista = new ArrayList<DetalheSegmentoP>();
+		
+		lista.add(detalheSegmentoP);
+		lista.add(detalheSegmentoP);
+		lista.add(detalheSegmentoP);
+		lista.add(detalheSegmentoP);
+		lista.add(detalheSegmentoP);
+		
+		Map<Banco, List<DetalheSegmentoP>> mapaArquivoCobranca =
+			new HashMap<Banco, List<DetalheSegmentoP>>();
+		
+		mapaArquivoCobranca.put(new Banco(), lista);
+		
+		return mapaArquivoCobranca;
 	}
 	
 	/**
