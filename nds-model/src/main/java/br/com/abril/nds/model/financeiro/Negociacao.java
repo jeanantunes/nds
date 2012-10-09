@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -26,7 +27,9 @@ public class Negociacao {
 	private Long id;
 	
 	@OneToMany
-	@JoinColumn(name = "COBRANCA_ORIGINARIA_ID")
+	@JoinTable(name = "NEGOCIACAO_COBRANCA_ORIGINARIA", 
+		joinColumns = {@JoinColumn(name = "NEGOCIACAO_ID")}, 
+		inverseJoinColumns = {@JoinColumn(name = "COBRANCA_ID")})
 	private List<Cobranca> cobrancasOriginarias;
 	
 	@OneToMany
