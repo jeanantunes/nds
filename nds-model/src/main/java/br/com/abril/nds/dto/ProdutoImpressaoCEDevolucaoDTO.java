@@ -3,7 +3,9 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Produto na impressão CE Devolução
@@ -26,6 +28,8 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
     private BigDecimal desconto;
     
     private Date dataLancamento;
+    
+    private List<Long> notasEnvio;
     
     private String tipoRecolhimento;
     
@@ -124,6 +128,20 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
     }
 
     /**
+     * @return the notasEnvio
+     */
+    public List<Long> getNotasEnvio() {
+        return notasEnvio;
+    }
+
+    /**
+     * @param notasEnvio the notasEnvio to set
+     */
+    public void setNotasEnvio(List<Long> notasEnvio) {
+        this.notasEnvio = notasEnvio;
+    }
+
+    /**
      * @return the tipoRecolhimento
      */
     public String getTipoRecolhimento() {
@@ -205,6 +223,13 @@ public class ProdutoImpressaoCEDevolucaoDTO implements Serializable {
      */
     public void setValorVenda(BigDecimal valorVenda) {
         this.valorVenda = valorVenda;
+    }
+    
+    public void addNotaEnvio(Long notaEnvio) {
+        if (notasEnvio == null) {
+            notasEnvio = new ArrayList<Long>();
+        }
+        notasEnvio.add(notaEnvio);
     }
     
 }

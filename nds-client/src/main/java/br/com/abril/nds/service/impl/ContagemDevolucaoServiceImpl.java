@@ -882,14 +882,16 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
             produto.setValorVenda(BigDecimal.valueOf(810));
             produto.setVenda(BigInteger.valueOf(90));
             produto.setTipoRecolhimento("P");
+            produto.addNotaEnvio(1210L);
+            produto.addNotaEnvio(1220L);
+            produto.addNotaEnvio(1310L);
             totalDesconto = totalDesconto.multiply(produto.getDesconto().multiply(new BigDecimal(produto.getVenda())));
-            totalLiquido = totalLiquido.add(produto.getValorVenda());
             totalBruto = totalBruto.add(totalLiquido.add(totalDesconto));
             dto.addProduto(produto);
         }
         dto.setTotalBruto(totalBruto);
         dto.setTotalDesconto(totalDesconto);
-        dto.setTotalLiquido(totalLiquido);
+        dto.setTotalLiquido(totalBruto.subtract(totalDesconto));
         
         URL url = 
             Thread.currentThread().getContextClassLoader().getResource("/reports/CEDevolucao.jasper");
