@@ -59,44 +59,45 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 				"joao@gmail.com", "João da Silva");
 		save(pessoaFisica);
 
-		Cota cota = Fixture
+		Cota cotaF = Fixture
 				.cota(1, pessoaFisica, SituacaoCadastro.ATIVO, box);
-		cota.setSugereSuspensao(true);
-		save(cota);
+		cotaF.setSugereSuspensao(true);
+		save(cotaF);
 		
-		roteiro = Fixture.criarRoteiro("Pinheiros", box,TipoRoteiro.NORMAL);
-		save(roteiro);
-		
-		rota = Fixture.rota("005", "Rota 005");
-		rota.setRoteiro(roteiro);
-		save(rota);
-		
-		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
+		PDV pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaF);
 		save(pdv);
 		
-		roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
-		save(roteirizacao);
-		
-		cota = Fixture
+		Cota cotaJ = Fixture
 				.cota(2, pessoaJuridica, SituacaoCadastro.ATIVO, box);
-		cota.setSugereSuspensao(true);
+		cotaJ.setSugereSuspensao(true);
 		
-		save(cota);
+		save(cotaJ);
 		
-		roteiro = Fixture.criarRoteiro("Interlagos",box,TipoRoteiro.NORMAL);
-		save(roteiro);
+		Box boxLancamento = Fixture.criarBox(9999, "Box 9999", TipoBox.LANCAMENTO);
+		save(boxLancamento);
 		
-		rota = Fixture.rota("004", "Rota 004");
-		rota.setRoteiro(roteiro);
-		save(rota);
-		
-		pdv = Fixture.criarPDVPrincipal("Pdv 1", cota);
-		save(pdv);
-		
-		roteirizacao = Fixture.criarRoteirizacao(pdv, rota, 1);
+		roteirizacao = Fixture.criarRoteirizacao(boxLancamento);
 		save(roteirizacao);
 		
-
+		roteiro = Fixture.criarRoteiro("Pinheiros",roteirizacao,TipoRoteiro.NORMAL);
+		save(roteiro);
+		
+		
+		rota = Fixture.rota("Rota 005",roteiro);
+		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1);
+		save(rota);
+		
+		roteiro = Fixture.criarRoteiro("Interlagos",roteirizacao, TipoRoteiro.NORMAL);
+		save(roteiro);
+		
+		rota = Fixture.rota("Rota 004", roteiro);
+		rota.setRoteiro(roteiro);
+		rota.addPDV(pdv, 1);
+		save(rota);
+		
+		pdv = Fixture.criarPDVPrincipal("Pdv 1", cotaJ);
+		save(pdv);
 	}
 
 	@Test
@@ -123,7 +124,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testQuantidade() {
 		long quantidade = boxRepository.quantidade(null, TipoBox.LANCAMENTO);
 
-		Assert.assertEquals(quantidade, 100l);
+		Assert.assertEquals(101, quantidade);
 
 	}
 
@@ -131,7 +132,7 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testObtemCotaRotaRoteiro() {
 		List<CotaRotaRoteiroDTO> list = boxRepository.obtemCotaRotaRoteiro(box.getId());
 		
-		Assert.assertEquals(list.size(), 2);
+		Assert.assertEquals(list.size(), 4);
 	}
 
 	@Test
@@ -147,8 +148,8 @@ public class BoxRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testObterCotasPorBoxRoteiroRota() {
 	    List<Cota> cotas = boxRepository.obterCotasPorBoxRoteiroRota(box.getId(), roteiro.getId(), rota.getId());
-	    Assert.assertEquals(cotas.size(), 1);
-	    Assert.assertEquals(cotas.get(0).getNumeroCota(), new Integer(2));
+	    Assert.assertEquals(cotas.size(), 2);
+	    Assert.assertEquals(cotas.get(0).getNumeroCota(), new Integer(1));
 	}
 	
 }

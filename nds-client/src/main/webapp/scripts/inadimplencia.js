@@ -101,7 +101,7 @@ var inadimplenciaController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 960,
-				height : 180
+				height : 'auto'
 			}));
 	
 		$(".grids", inadimplenciaController.workspace).show();	
@@ -167,22 +167,25 @@ var inadimplenciaController = $.extend(true, {
 		}
 		
 		$.each(grid.rows, function(index, row) {
+			var negociada = row.cell.situacao == "Negociada";
+			var comissao = (row.cell.comissaoSaldoDivida) && negociada; 
 			
-			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome);		
+			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome, comissao);		
 			
 	  	});
 		
-		/*document.getElementById("idQtde").innerHTML  = qtde;
-		document.getElementById("idTotal").innerHTML  = total;*/
 		$("#idQtde", inadimplenciaController.workspace).html(qtde);
 		$("#idTotal", inadimplenciaController.workspace).html(total);
 		
 		return grid;
 	},
 
-	gerarBotaoDetalhes : function(idDivida, nome) {
-		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+	gerarBotaoDetalhes : function(idDivida, nome, comissao) {
+		if(comissao) {
+			return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhesComissaoCota("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+		}
 		
+		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 	},
 
 	getDetalhes : function(idDivida, nome) {
@@ -190,6 +193,13 @@ var inadimplenciaController = $.extend(true, {
 		$.postJSON(contextPath + "/inadimplencia/getDetalhesDivida", 
 				"idDivida="+idDivida+"&method='get'", 
 				inadimplenciaController.popupDetalhes);	
+	},
+	
+	getDetalhesComissaoCota : function(idDivida, nome) {
+		nomeCota = nome;
+		$.postJSON(contextPath + "/inadimplencia/getDividaComissao", 
+				"idDivida="+idDivida+"&method='get'", 
+				inadimplenciaController.popupDetalhesComissaoCota);	
 	},
 
 	popupDetalhes : function(result) {
@@ -210,6 +220,26 @@ var inadimplenciaController = $.extend(true, {
 				},
 				form: $("#dialog-detalhes", this.workspace).parents("form")
 			});
+	},
+	
+	popupDetalhesComissaoCota : function(result) {
+		
+		inadimplenciaController.gerarTabelaDetalhesComissaoCota(result, nomeCota);
+	
+		$( "#dialog-detalhes-comissao", inadimplenciaController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:480,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+					
+					
+				},
+			},
+			form: $("#dialog-detalhes-comissao", this.workspace).parents("form")
+		});
 	},
 		
 	gerarTabelaDetalhes : function(dividas, nome) {
@@ -264,11 +294,11 @@ var inadimplenciaController = $.extend(true, {
 		
 		 $(dividas).each(function (index, divida) {
 			 
-			 var linha = document.createElement("TR");
+			var linha = document.createElement("TR");
 			 
-			 var lin = (index%2==0) ? 1:2;
+			var lin = (index%2==0) ? 1:2;
 			 
-			 linha.className="class_linha_" + lin ;
+			linha.className="class_linha_" + lin ;
 	 	 
 		 	var cel = document.createElement("TD");
 		 	cel.align="left";
@@ -285,6 +315,94 @@ var inadimplenciaController = $.extend(true, {
 		 	tbody.appendChild(linha);
 			 
 		 });		 		
+	},
+	
+	gerarTabelaDetalhesComissaoCota : function(dividaComissao, nome) {
+		
+		var div = $("#dialog-detalhes-comissao", inadimplenciaController.workspace);
+
+		$(div).html("");
+		
+		var fieldset  = document.createElement("FIELDSET");
+		
+		fieldset.style.cssText = "width:450px;" + fieldset.style.cssText;
+
+		$(div).append(fieldset);
+		
+		var legend = document.createElement("LEGEND");
+		legend.innerHTML = "Comissão Cota: ".bold() + " - " + nome;
+		
+		fieldset.appendChild(legend);
+		
+		var table = document.createElement("TABLE");
+		table.id = "tabelaDetalhesComissaoId";
+		table.width = "430";
+		table.border = "0";
+		table.cellspacing = "1";
+		table.cellpadding = "1";
+		
+		fieldset.appendChild(table);
+		
+		var tbody = document.createElement("TBODY");
+		
+		table.appendChild(tbody);
+		
+	 	var cabecalho = document.createElement("TR");
+	 	var linha = document.createElement("TR");
+
+	 	cabecalho.className="header_table";
+	 	
+	 	var tdPercentual = document.createElement("TD");
+	 	tdPercentual.width="125";
+	 	tdPercentual.align="left";
+	 	tdPercentual.innerHTML="Percentual Utilizado".bold();
+	 	cabecalho.appendChild(tdPercentual);
+	 	
+	 	var celPercentual = document.createElement("TD");
+	 	celPercentual.align="right";
+	 	var celPercentualText = document.createTextNode(dividaComissao.porcentagem + "%");
+	 	celPercentual.appendChild(celPercentualText);			 	
+	 	linha.appendChild(celPercentual);
+
+	 	var tdSaldoDivida = document.createElement("TD");
+	 	tdSaldoDivida.width="100";
+	 	tdSaldoDivida.align="right";
+	 	tdSaldoDivida.innerHTML="Valor da Dívida R$".bold();		 	
+	 	cabecalho.appendChild(tdSaldoDivida);
+	 	
+	 	var celSaldoDivida = document.createElement("TD");
+	 	celSaldoDivida.align="right";
+	 	var celSaldoDividaText = document.createTextNode(dividaComissao.valorDivida);
+	 	celSaldoDivida.appendChild(celSaldoDividaText);			 	
+	 	linha.appendChild(celSaldoDivida);
+	 	
+	 	var tdValorPago = document.createElement("TD");
+	 	tdValorPago.width="100";
+	 	tdValorPago.align="right";
+	 	tdValorPago.innerHTML="Valor Pago R$".bold();		 	
+	 	cabecalho.appendChild(tdValorPago);
+	 	
+	 	var celValorPago = document.createElement("TD");
+	 	celValorPago.align="right";
+	 	var celValorPagoText = document.createTextNode(dividaComissao.valorPago);
+	 	celValorPago.appendChild(celValorPagoText);			 	
+	 	linha.appendChild(celValorPago);
+
+	 	var tdSaldoResidual = document.createElement("TD");
+	 	tdSaldoResidual.width="100";
+	 	tdSaldoResidual.align="right";
+	 	tdSaldoResidual.innerHTML="Saldo Residual R$".bold();		 	
+	 	cabecalho.appendChild(tdSaldoResidual);
+	 	
+	 	var celValorResidual = document.createElement("TD");
+	 	celValorResidual.align="right";
+	 	var celValorResidualText = document.createTextNode(dividaComissao.valorResidual);
+	 	celValorResidual.appendChild(celValorResidualText);			 	
+	 	linha.appendChild(celValorResidual);
+	 	
+	 	tbody.appendChild(cabecalho);
+	 	tbody.appendChild(linha);
+				 		
 	}
 	
 }, BaseController);

@@ -78,22 +78,28 @@ var fechamentoEncalheController = $.extend(true, {
 			colModel : [ {
 				display : 'C&oacute;digo',
 				name : 'codigo',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'produto',
-				width : 220,
+				width : 190,
 				sortable : true,
 				align : 'left'
-			}, {
+			},{
 				display : 'Edi&ccedil;&atilde;o',
 				name : 'edicao',
-				width : 80,
+				width : 40,
 				sortable : true,
 				align : 'left'
 			}, {
+				display : 'Tipo',
+				name : 'tipo',
+				width : 23,
+				sortable : false,
+				align : 'left'
+			},{
 				display : 'Pre&ccedil;o Capa R$',
 				name : 'precoCapaFormatado',
 				width : 80,
@@ -114,7 +120,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}, {
 				display : 'F&iacute;sico',
 				name : 'fisico',
-				width : 80,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}, {
@@ -123,7 +129,13 @@ var fechamentoEncalheController = $.extend(true, {
 				width : 50,
 				sortable : false,
 				align : 'right'
-			}, {
+			},{
+			display : 'Estoque',
+			name : 'estoque',
+			width : 60,
+			sortable : false,
+			align : 'right'
+			},{
 				display : 'Replicar Qtde.',
 				name : 'replicar',
 				width : 80,
@@ -137,7 +149,7 @@ var fechamentoEncalheController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180,
+			height : 'auto',
 			singleSelect : true
 		});
 		
@@ -179,6 +191,11 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	preprocessamentoGridFechamento : function(resultado) {
+		
+		if (typeof resultado.mensagens == "object") {
+            exibirMensagemDialog(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens, "");
+            return;
+        } 
 		
 		$.each(resultado.rows, function(index, row) {
 			
@@ -418,7 +435,7 @@ var fechamentoEncalheController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Postergar": function() {
-					postergarCotas();
+					fechamentoEncalheController.postergarCotas();
 				},
 				"Cobrar": function() {
 					cobrarCotas();
@@ -469,25 +486,24 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	postergarCotas : function() {
 
-		var cotasSelecionadas = obterCotasMarcadas();
+		var cotasSelecionadas = fechamentoEncalheController.obterCotasMarcadas();
 
 		if (cotasSelecionadas.length > 0) {
 			
 			$("#dialog-postergar", fechamentoEncalheController.workspace).dialog({
 				resizable: false,
 				height:'auto',
-				width:250,
+				width:300,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						
 						var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
 						var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 						
 						$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/postergarCotas",
 									{ 'dataPostergacao' : dataPostergacao, 
 									  'dataEncalhe' : dataEncalhe, 
-									  'idsCotas' : obterCotasMarcadas() },
+									  'idsCotas' : cotasSelecionadas },
 									function (result) {
 	
 										$("#dialog-postergar", fechamentoEncalheController.workspace).dialog("close");
@@ -622,8 +638,13 @@ var fechamentoEncalheController = $.extend(true, {
 				var listaMensagens = result.listaMensagens;
 				
 				if (tipoMensagem && listaMensagens) {
-					$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0])
-					fechamentoEncalheController.popup_mensagem_consistencia_dados();
+					if (tipoMensagem == "ERROR"  ){
+						exibirMensagem(tipoMensagem, listaMensagens);
+					//	fechamentoEncalheController.pesquisar(false);
+					} else {
+						$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0])
+						fechamentoEncalheController.popup_mensagem_consistencia_dados();
+					}
 				} else {
 					fechamentoEncalheController.pesquisar(false);
 				}
@@ -710,6 +731,10 @@ var fechamentoEncalheController = $.extend(true, {
 			   	false
 			);
 			
-	}
-
+	},
+	
+	analiticoEncalhe : function() {
+		$('#workspace').tabs('addTab', "Anal&iacute;tico Encalhe", "/nds-client/devolucao/fechamentoEncalhe/analitico");
+	},
+	
 }, BaseController);

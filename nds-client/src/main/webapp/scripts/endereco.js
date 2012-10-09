@@ -181,7 +181,7 @@ function Endereco(paramTela, paramMessage) {
 	this.editarEndereco = function(idEndereco) {
 		
 		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("");
-		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> Salvar");
+		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> ");
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).removeClass("bt_add");
 		$("#"+paramTela+"btnIncluirNovoEndereco", Endereco.workspace).addClass("bt_novos");
 		
@@ -316,6 +316,11 @@ function Endereco(paramTela, paramMessage) {
 	
 		var cep = $("#"+paramTela+"cep").val();
 
+		$("#"+paramTela+"numero", Endereco.workspace).val("");
+		
+		$("#"+paramTela+"complemento", Endereco.workspace).val("");
+
+		
 		$.postJSON(
 			contextPath+'/cadastro/endereco/obterEnderecoPorCep',
 			{ "cep": cep },			 

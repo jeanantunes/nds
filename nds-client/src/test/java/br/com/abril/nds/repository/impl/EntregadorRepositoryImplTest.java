@@ -15,11 +15,15 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador;
 import br.com.abril.nds.fixture.Fixture;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoEntregador;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -42,11 +46,33 @@ public class EntregadorRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Entregador entregadorJose;
 	private Entregador entregadorMaria;
 	
+	private static Cota cota;
+	
+	private static final Integer NUMERO_COTA = 1;
+	
 	@Before
 	public void setup() {
+		
+		Editor abril = Fixture.editoraAbril();
+		save(abril);
+		
+		PessoaJuridica pessoaJuridica = 
+			Fixture.pessoaJuridica("FC", "01.001.001/001-00", "000.000.000.00", "fc@mail.com", "99.999-9");
+
+		save(pessoaJuridica);
+
+		PessoaFisica pessoaFisica = Fixture.pessoaFisica("100.955.356-39", "joao@gmail.com", "João da Silva");
+		save(pessoaFisica);
+		
+		Box box = Fixture.boxReparte300();
+		save(box);
+		
+		cota = Fixture.cota(NUMERO_COTA, pessoaFisica, SituacaoCadastro.ATIVO, box);
+		cota.setSugereSuspensao(true);
+		save(cota);
+		
 		acme = Fixture.juridicaAcme();
 
-		
 
 		entregadorAcme = Fixture.criarEntregador(
 				234L, true, new Date(), 
@@ -311,4 +337,14 @@ public class EntregadorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertTrue(condition);
 	}
+	
+	@Test
+	public void verificarEntregador(){
+
+		boolean indCotaPossuiEntregador = entregadorRepository.verificarEntregador(cota.getId());
+		
+		Assert.assertFalse(indCotaPossuiEntregador);
+		
+	}
+	
 }

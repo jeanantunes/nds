@@ -76,7 +76,7 @@ import br.com.abril.nds.util.Util;
  * @author francisco.garcia
  *
  */
-public class HistoricoTitularidadeCotaDTOAssembler {
+public final class HistoricoTitularidadeCotaDTOAssembler {
     
     private static final String FORMATO_ENDERECO = "%s,%s-%s-%s";
     private static final String FORMATO_TELEFONE = "%s-%s";

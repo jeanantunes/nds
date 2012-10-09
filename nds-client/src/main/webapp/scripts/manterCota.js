@@ -46,7 +46,7 @@ var MANTER_COTA = $.extend(true, {
                 sortable : true,
                 align : 'left'
             },{
-                display : 'Nome / Razação Social',
+                display : 'Nome / Razão Social',
                 name : 'nome',
                 width : 130,
                 sortable : true,
@@ -226,7 +226,7 @@ var MANTER_COTA = $.extend(true, {
 
             var paramCota =  "'" +row.cell.numero +"'," + "'"+ row.cell.idCota + "'" ;
 
-            var linkEdicao = '<a href="javascript:;" onclick="MANTER_COTA.editar('+ paramCota +');" style="cursor:pointer">' +
+            var linkEdicao = '<a href="javascript:;" onclick="MANTER_COTA.editar('+ paramCota +');" style="cursor:pointer; margin-right:10px;">' +
                 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar Cota" />' +
                 '</a>';
 
@@ -759,7 +759,7 @@ var COTA_DESCONTO = $.extend(true,
                 }, {
                     display : 'Produto',
                     name : 'nomeProduto',
-                    width : 350,
+                    width : 395,
                     sortable : true,
                     align : 'left'
                 }, {
@@ -783,7 +783,7 @@ var COTA_DESCONTO = $.extend(true,
                 }],
                 sortname : "dataAlteracao",
                 sortorder : "asc",
-                width : 810,
+                width : 860,
                 height : 150
             });
         },
@@ -807,7 +807,7 @@ var COTA_DESCONTO = $.extend(true,
                 }, {
                     display : 'Tipo',
                     name : 'descTipoDesconto',
-                    width : 120,
+                    width : 165,
                     sortable : true,
                     align : 'left'
                 }, {
@@ -819,7 +819,7 @@ var COTA_DESCONTO = $.extend(true,
                 }],
                 sortname : "dataAlteracao",
                 sortorder : "asc",
-                width : 810,
+                width : 860,
                 height : 150
             });
         },
@@ -1000,8 +1000,6 @@ var COTA_CNPJ = $.extend(true, {
 
         COTA_CNPJ.carregarDadosCadastraisCnpj(result);
 
-        COTA_CNPJ.gridAntigosProprietarios.init(result);
-
         MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CNPJ;
 
         MANTER_COTA.popupCota(false);
@@ -1040,6 +1038,8 @@ var COTA_CNPJ = $.extend(true, {
         if(result.fimPeriodo){
             $("#periodoCotaAte", this.workspace).val(result.fimPeriodo.$);
         }
+        
+        COTA_CNPJ.gridAntigosProprietarios.init(result);
 
         if (result.status == "ATIVO") {
 
@@ -1061,6 +1061,11 @@ var COTA_CNPJ = $.extend(true, {
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
 
+        var numeroCota = {name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota};
+        if ($('#numeroCota').is(':disabled')) {
+            formData.push(numeroCota);
+        }
+
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCNPJ",
             formData ,
             function(result){
@@ -1072,6 +1077,10 @@ var COTA_CNPJ = $.extend(true, {
                 COTA_CNPJ.carregarDadosCadastraisCnpj(result);
 
                 exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
+
+                if (MANTER_COTA.isAlteracaoTitularidade) {
+                    MANTER_COTA.isAlteracaoTitularidade = false;
+                }
 
             },
             null,
@@ -1185,8 +1194,6 @@ var COTA_CPF = $.extend(true, {
 
         COTA_CPF.carregarDadosCpf(result);
 
-        COTA_CPF.gridAntigosProprietarios.init(result);
-
         MANTER_COTA.tipoCotaSelecionada = MANTER_COTA.tipoCota_CPF;
 
         MANTER_COTA.popupCota(false);
@@ -1235,6 +1242,8 @@ var COTA_CPF = $.extend(true, {
             $("#periodoCotaAteCPF", this.workspace).val(result.fimPeriodo.$);
         }
 
+        COTA_CPF.gridAntigosProprietarios.init(result);
+
         if (result.status == "ATIVO") {
 
             var linkTitularidade = $("#btnAlterarTitularidadeCPF", this.workspace).find("a");
@@ -1255,9 +1264,9 @@ var COTA_CPF = $.extend(true, {
         formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
 
-        if (MANTER_COTA.isAlteracaoTitularidade) {
-
-            formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
+        var numeroCota = {name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota};
+        if ($('#numeroCotaCPF').is(':disabled')) {
+            formData.push(numeroCota);
         }
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCPF",
@@ -1272,6 +1281,10 @@ var COTA_CPF = $.extend(true, {
                 COTA_CPF.carregarDadosCpf(result);
 
                 exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
+
+                if (MANTER_COTA.isAlteracaoTitularidade) {
+                    MANTER_COTA.isAlteracaoTitularidade = false;
+                }
 
             },
             null,
@@ -1792,7 +1805,7 @@ function GridAntigosProprietarios(element, workspace) {
             preProcess: function(data) {
                 if (data.rows) {
                     $.each(data.rows, function(index, row) {
-                        row.cell.periodo = row.cell.inicio.$ + ' a ' + row.cell.fim.$;
+                        row.cell.periodo = row.cell.inicio + ' a ' + row.cell.fim;
                         var acao = '<a href="javascript:;" onclick="MANTER_COTA.visualizarHistoricoTitularidade('+ row.cell.id +');" style="cursor:pointer">';
                         acao += '<img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>';
                         row.cell.acao = acao;

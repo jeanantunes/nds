@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
-import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -50,6 +49,7 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.util.DateUtil;
@@ -63,6 +63,9 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	@Mock
 	private PoliticaCobrancaRepository politicaCobrancaRepository;
 	
+	@Autowired
+	private BoletoRepository boletoRepository;
+	
 	private Usuario usuarioJoao;
 	private Distribuidor distribuidor;
 	
@@ -71,8 +74,8 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		MockitoAnnotations.initMocks(this);
 				
-		Banco bancoHSBC = Fixture.banco(10L, true, 30, "1010",
-			  							123456L, "1", "1", "Instruções.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
+		Banco bancoHSBC = Fixture.banco(454L, true, 30, "1010",
+			  							164L, "1", "6", "Instruções.", "HSBC","BANCO HSBC", "399", BigDecimal.ZERO, BigDecimal.ZERO);
 		save(bancoHSBC);
 		
 		PessoaJuridica pessoaJuridica = Fixture.pessoaJuridica("LH", "01.001.001/001-00", "000.000.000.00", "lh@mail.com", "99.999-9");
@@ -152,27 +155,27 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		ConsolidadoFinanceiroCota consolidado1 =
 			Fixture.consolidadoFinanceiroCota(Arrays.asList(movimentoFinanceiroCota),
 										      cota, new Date(), new BigDecimal(200),
-										      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+										      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado1);
 		
 		ConsolidadoFinanceiroCota consolidado2 =
 			Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200),
-				      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+				      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado2);
 		
 		ConsolidadoFinanceiroCota consolidado3 =
 				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200),
-					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 			save(consolidado3);
 		
 		ConsolidadoFinanceiroCota consolidado4 =
 				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200),
-					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado4);
 		
 		ConsolidadoFinanceiroCota consolidado5 =
 				Fixture.consolidadoFinanceiroCota(null, cota, new Date(), new BigDecimal(200),
-					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+					      new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidado5);
 			
 		Divida divida1 = Fixture.divida(consolidado1, cota, new Date(),
@@ -237,16 +240,12 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		ArquivoPagamentoBancoDTO arquivo = criarArquivoPagamentoBanco();
 		
-		ResumoBaixaBoletosDTO resumo = 
-			boletoServiceImpl.baixarBoletosAutomatico(arquivo, new BigDecimal(200), usuarioJoao);
+		this.boletoServiceImpl.baixarBoletosAutomatico(arquivo, new BigDecimal(200), usuarioJoao);
 		
-		Assert.assertTrue(resumo.getQuantidadeLidos() == 6);
+		Long quantidadeBoletosBaixadosComDivergencia =
+			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(new Date());
 		
-		Assert.assertTrue(resumo.getQuantidadeBaixados() == 2);
-		
-		Assert.assertTrue(resumo.getQuantidadeRejeitados() == 1);
-		
-		Assert.assertTrue(resumo.getQuantidadeBaixadosComDivergencia() == 3);
+		Assert.assertEquals(quantidadeBoletosBaixadosComDivergencia.longValue(), 3L);
 	}
 	
 	@Test
@@ -262,16 +261,12 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		boletoServiceImpl.politicaCobrancaRepository = politicaCobrancaRepository;
 		
-		ResumoBaixaBoletosDTO resumo = 
-			boletoServiceImpl.baixarBoletosAutomatico(arquivo, new BigDecimal(200), usuarioJoao);
+		boletoServiceImpl.baixarBoletosAutomatico(arquivo, new BigDecimal(200), usuarioJoao);
 		
-		Assert.assertTrue(resumo.getQuantidadeLidos() == 6);
-		
-		Assert.assertTrue(resumo.getQuantidadeBaixados() == 2);
-		
-		Assert.assertTrue(resumo.getQuantidadeRejeitados() == 4);
-		
-		Assert.assertTrue(resumo.getQuantidadeBaixadosComDivergencia() == 0);
+		Long quantidadeBoletosRejeitados =
+			this.boletoRepository.obterQuantidadeBoletosRejeitados(new Date());
+			
+		Assert.assertEquals(quantidadeBoletosRejeitados.longValue(), 4L);
 	}
 	
 	@Test
@@ -281,14 +276,14 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		pagamento.setDataPagamento(DateUtil.adicionarDias(new Date(), 1));
 		pagamento.setNossoNumero("1234567890127");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
 		PoliticaCobranca politicaPrincipal = this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
 		
 		boletoServiceImpl.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, usuarioJoao,
 									   null, politicaPrincipal, distribuidor,
-									   DateUtil.adicionarDias(new Date(), 1), null);
+									   DateUtil.adicionarDias(new Date(), 1), null, null);
 	}
 	
 	private ArquivoPagamentoBancoDTO criarArquivoPagamentoBanco() {
@@ -299,7 +294,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		PagamentoDTO pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1234567890123456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(10.0));
 		
 		listaPagemento.add(pagamento);
@@ -308,7 +303,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1234567890124456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
 		listaPagemento.add(pagamento);
@@ -317,7 +312,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1234567890125456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(200.00));
 		
 		listaPagemento.add(pagamento);
@@ -326,7 +321,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1234567890126456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(10.00));
 		
 		listaPagemento.add(pagamento);
@@ -335,7 +330,7 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(DateUtil.adicionarDias(new Date(), 1));
 		pagamento.setNossoNumero("1234567890127456");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(10.00));
 		
 		listaPagemento.add(pagamento);
@@ -344,13 +339,16 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento = new PagamentoDTO();
 		pagamento.setDataPagamento(new Date());
 		pagamento.setNossoNumero("1111111111111111");
-		pagamento.setNumeroRegistro(1);
+		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(10.0));
 		
 		listaPagemento.add(pagamento);
 		
 		ArquivoPagamentoBancoDTO arquivo = new ArquivoPagamentoBancoDTO();
 		
+		arquivo.setNumeroAgencia(454L);
+		arquivo.setNumeroConta(1646L);
+		arquivo.setCodigoBanco("399");
 		arquivo.setSomaPagamentos(new BigDecimal(200));
 		arquivo.setNomeArquivo("arquivo.dat");
 		arquivo.setListaPagemento(listaPagemento);

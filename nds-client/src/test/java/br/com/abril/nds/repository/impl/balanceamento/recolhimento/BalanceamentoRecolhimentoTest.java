@@ -28,6 +28,10 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
@@ -154,7 +158,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal1Veja);
 
@@ -178,7 +182,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal2Veja = Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal2Veja);
 
@@ -204,7 +208,7 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		
 		
 		NotaFiscalEntradaFornecedor notaFiscal4Rodas= Fixture
-				.notaFiscalEntradaFornecedor(cfop, fornecedorFC.getJuridica(), fornecedorFC, tipoNotaFiscal,
+				.notaFiscalEntradaFornecedor(cfop, fornecedorFC, tipoNotaFiscal,
 						usuario, BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.TEN);
 		save(notaFiscal4Rodas);
 
@@ -306,12 +310,25 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		
 		Box box = Fixture.boxReparte300();
 		
+		save(box);
+		
 		Cota cotaDinap = Fixture.cota(50, fornecedorDinap.getJuridica(), SituacaoCadastro.ATIVO, box);
 		
 		EstoqueProdutoCota estoqueProdutoCotaCapricho = Fixture.estoqueProdutoCota(capricho1, cotaDinap, BigInteger.valueOf(110), BigInteger.TEN);
 		
-		save(box, cotaDinap, estoqueProdutoCotaCapricho);
+		save(cotaDinap, estoqueProdutoCotaCapricho);
 
+		TipoPontoPDV tipoPontoPDVBanca  = Fixture.criarTipoPontoPDV(1L, "Banca");
+		
+		save(tipoPontoPDVBanca);
+		
+		SegmentacaoPDV segmentacaoPDV = Fixture.criarSegmentacaoPdv(null, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, tipoPontoPDVBanca, null);
+		
+		PDV pdvDinap = Fixture.criarPDVPrincipal("PDV Dinap", cotaDinap);
+		pdvDinap.setSegmentacao(segmentacaoPDV);
+        
+		save(pdvDinap);
+		
 		LancamentoParcial lancamentoParcialCapricho = Fixture.criarLancamentoParcial(capricho1,
 																			 lancamentoCapricho.getDataLancamentoPrevista(), 
 																			 lancamentoCapricho.getDataRecolhimentoPrevista(),
@@ -339,6 +356,11 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		
 		save(box301, cotaFC, estoqueProdutoCotaQuatroRodas);
 		
+		PDV pdvFC = Fixture.criarPDVPrincipal("PDV FC", cotaFC);
+		pdvFC.setSegmentacao(segmentacaoPDV);
+        
+		save(pdvFC);
+		
 		LancamentoParcial lancamentoParcialQuatroRodas = Fixture.criarLancamentoParcial(quatroRoda2,
 																					    lancamentoQuatroRodas.getDataLancamentoPrevista(), 
 																					    lancamentoQuatroRodas.getDataRecolhimentoPrevista(),
@@ -364,6 +386,11 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		
 		save(cotaManoel, estoqueProdutoCotaVeja);
 
+		PDV pdvManoel = Fixture.criarPDVPrincipal("PDV Manoel", cotaManoel);
+		pdvManoel.setSegmentacao(segmentacaoPDV);
+        
+		save(pdvManoel);
+		
 		LancamentoParcial lancamentoParcialVeja = Fixture.criarLancamentoParcial(veja1,
 																				 lancamentoVeja.getDataLancamentoPrevista(), 
 																				 lancamentoVeja.getDataRecolhimentoPrevista(),
@@ -390,6 +417,11 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 		EstoqueProdutoCota estoqueProdutoCotaInfoExame = Fixture.estoqueProdutoCota(infoExame3, cotaJurandir, BigInteger.valueOf(110), BigInteger.TEN);
 		
 		save(box303, cotaJurandir, estoqueProdutoCotaInfoExame);
+		
+		PDV pdvJurandir = Fixture.criarPDVPrincipal("PDV Jurandir", cotaJurandir);
+		pdvJurandir.setSegmentacao(segmentacaoPDV);
+        
+		save(pdvJurandir);
 		
 		LancamentoParcial lancamentoParcialInfoExame = Fixture.criarLancamentoParcial(infoExame3,
 																					  lancamentoInfoExame.getDataLancamentoPrevista(), 

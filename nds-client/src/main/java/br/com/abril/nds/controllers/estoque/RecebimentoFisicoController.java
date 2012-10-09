@@ -1013,68 +1013,6 @@ public class RecebimentoFisicoController {
 		
 	}
 
-	/**
-	 * Valida os dados de uma nota fiscal.
-	 * 
-	 * @param notaFiscalFornecedor
-	 * @param dataEmissao
-	 * @param dataEntrada
-	 * @param valorLiquido
-	 * @param valorBruto
-	 * @param valoDesconto
-	 * 
-	 * @throws ValidacaoException
-	 */
-	private void validarNovaNotaFiscal(
-			NotaFiscalEntradaFornecedor notaFiscalFornecedor, String dataEmissao,
-			String dataEntrada, String valorLiquido, String valorBruto,
-			String valorDesconto, String fornecedor) throws ValidacaoException {
-
-		List<String> msgs = new ArrayList<String>();
-
-		if(notaFiscalFornecedor == null) {
-			
-			msgs.add("Os campos da Nota Fiscal devem ser informados");
-			
-		} else {
-			if(!fornecedor.equals("-1")){
-				if (	notaFiscalFornecedor.getEmitente() == null || 
-						notaFiscalFornecedor.getEmitente().getCnpj() == null || 
-						notaFiscalFornecedor.getEmitente().getCnpj().isEmpty()) {
-					
-					msgs.add("O campo Emitente dever ser informado");
-					
-				}
-			}	
-
-			if ( notaFiscalFornecedor.getNumero() == null ) {
-				
-				msgs.add("O campo Nota Fiscal dever ser informado");
-				
-			}
-
-			if (	notaFiscalFornecedor.getSerie() == null || 
-					notaFiscalFornecedor.getSerie().isEmpty()) {
-				msgs.add("O campo Série dever ser informado");
-			}
-
-			validarCampoMonetario("Valor Bruto", valorBruto, msgs);
-			
-			validarCampoMonetario("Valor Líquido", valorLiquido, msgs);
-
-			validarCampoMonetario("Valor Desconto", valorDesconto, msgs);
-
-			validarCampoData("Data Emissão", dataEmissao, msgs);
-
-			validarCampoData("Data Entrada", dataEntrada, msgs);			
-		}
-
-		if(!msgs.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
-		}
-		
-	}
-	
 	private void validarNovoItemRecebimentoFisico(RecebimentoFisicoDTO itemRecebimento,
 			String numeroEdicao,
 			String dataLancamento, 
@@ -1168,60 +1106,6 @@ public class RecebimentoFisicoController {
 		
 	}
 	
-	/**
-	 * Inclui os dados de uma nova nota fiscal em session.
-	 * 
-	 * @param notaFiscalFornecedor
-	 * @param dataEmissao
-	 * @param dataEntrada
-	 * @param valorLiquido
-	 * @param valorBruto
-	 * @param valorDesconto
-	 */
-	@Post
-	public void incluirNovaNotaFiscal(NotaFiscalEntradaFornecedor notaFiscalFornecedor, 
-			String dataEmissao,
-			String dataEntrada,
-			String valorLiquido,
-			String valorBruto,
-			String valorDesconto,
-			String fornecedor)  {
-		
-		validarNovaNotaFiscal(
-				notaFiscalFornecedor, 
-				dataEmissao,
-				dataEntrada,
-				valorLiquido,
-				valorBruto,
-				valorDesconto,
-				fornecedor);
-	
-		if(notaFiscalFornecedor.getChaveAcesso() == null || notaFiscalFornecedor.getChaveAcesso().trim().isEmpty()) {
-			notaFiscalFornecedor.setChaveAcesso(null);
-		}
-		
-		try {
-			notaFiscalFornecedor.setDataEmissao(sdf.parse(dataEmissao));
-			notaFiscalFornecedor.setDataExpedicao(sdf.parse(dataEntrada));
-		} catch(ParseException e) {
-			notaFiscalFornecedor.setDataEmissao(null);
-			notaFiscalFornecedor.setDataExpedicao(null);
-		}
-		
-		notaFiscalFornecedor.setValorLiquido(getBigDecimalFromValor(valorLiquido));
-		notaFiscalFornecedor.setValorBruto(getBigDecimalFromValor(valorBruto));
-		notaFiscalFornecedor.setValorDesconto(getBigDecimalFromValor(valorDesconto));
-		
-		setNotaFiscalToSession(notaFiscalFornecedor);
-		
-		List<String> msgs = new ArrayList<String>();
-		msgs.add("Nova nota fiscal cadastrada com sucesso.");
-		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, msgs);
-		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
-	
-	}
-	
-		
 	/**
 	 * confirmaçao de recebimento fisico
 	 * @param notaFiscal
@@ -1477,7 +1361,6 @@ public class RecebimentoFisicoController {
 		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
 		
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
-		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setNumero(nota.getNumero());
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());
@@ -1486,7 +1369,7 @@ public class RecebimentoFisicoController {
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
 		
 		
-		notaFiscal.setEmitente(fornecedor.getJuridica());
+		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
 		notaFiscal.setValorBruto(CurrencyUtil.converterValor(nota.getValorTotal()));
         notaFiscal.setValorDesconto(notaFiscal.getValorBruto().subtract(notaFiscal.getValorLiquido()));

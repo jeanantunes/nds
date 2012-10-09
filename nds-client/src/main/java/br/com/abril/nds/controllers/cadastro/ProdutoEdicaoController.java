@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -125,99 +127,7 @@ public class ProdutoEdicaoController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
-		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
-		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-		dto.setNomeProduto(produto.getNome());
-		
-		String nomeFornecedor = "";
-		if (produto.getFornecedor() != null 
-				&& produto.getFornecedor().getJuridica() != null) {
-			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
-		}
-		dto.setNomeFornecedor(nomeFornecedor);
-		dto.setFase(produto.getFase());
-		dto.setPacotePadrao(produto.getPacotePadrao());
-		dto.setPeso(produto.getPeso());
-		dto.setDescricaoDesconto("");
-		dto.setDescricaoProduto(produto.getDescricao());
-		dto.setDesconto(produto.getDescontoLogistica() == null 
-				? BigDecimal.ZERO : BigDecimal.valueOf(
-						produto.getDescontoLogistica().getPercentualDesconto()));
-		
-		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
-			
-			Long id = Long.valueOf(idProdutoEdicao);
-			ProdutoEdicao pe = peService.obterProdutoEdicao(id);
-			dto.setId(id);
-			dto.setCodigoProduto(pe.getCodigo());
-			dto.setNomeComercialProduto(pe.getNomeComercial());
-			dto.setNumeroEdicao(pe.getNumeroEdicao());
-			dto.setPacotePadrao(pe.getPacotePadrao());
-			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
-			BigDecimal precoVenda = pe.getPrecoVenda();
-            dto.setPrecoVenda(precoVenda);
-			dto.setExpectativaVenda(pe.getExpectativaVenda());
-			dto.setCodigoDeBarras(pe.getCodigoDeBarras());
-			dto.setCodigoDeBarrasCorporativo(pe.getCodigoDeBarraCorporativo());
-			dto.setChamadaCapa(pe.getChamadaCapa());
-			dto.setParcial(pe.isParcial());
-			dto.setPossuiBrinde(pe.isPossuiBrinde());
-			
-			BigDecimal percentualDesconto = Util.nvl(pe.getProduto().getDesconto(), BigDecimal.ZERO);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			dto.setDesconto(valorDesconto);
-
-			dto.setPeso(pe.getPeso());
-			dto.setBoletimInformativo(pe.getBoletimInformativo());
-			dto.setOrigemInterface(pe.getOrigemInterface());
-			dto.setNumeroLancamento(pe.getNumeroLancamento());
-			dto.setPeb(pe.getPeb());
-			dto.setEditor(pe.getProduto().getEditor().getPessoaJuridica().getNome());
-			if (pe.getBrinde() !=null) {
-				dto.setDescricaoBrinde(pe.getBrinde().getDescricao());
-			}
-			Dimensao dimEdicao = pe.getDimensao();
-			if (dimEdicao == null) {
-				dto.setComprimento(0);
-				dto.setEspessura(0);
-				dto.setLargura(0);
-			} else {
-				dto.setComprimento(dimEdicao.getComprimento());
-				dto.setEspessura(dimEdicao.getEspessura());
-				dto.setLargura(dimEdicao.getLargura());
-			}
-			
-			Lancamento uLancamento = lService.obterUltimoLancamentoDaEdicao(pe.getId());
-			if (uLancamento != null) {
-				dto.setSituacaoLancamento(uLancamento.getStatus());
-				dto.setTipoLancamento(uLancamento.getTipoLancamento());
-				if(uLancamento.getStatus() != StatusLancamento.EXCLUIDO){					
-					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
-				}				
-				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
-				dto.setRepartePrevisto(uLancamento.getReparte());
-				dto.setRepartePromocional(uLancamento.getRepartePromocional());
-				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
-				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
-				dto.setSemanaRecolhimento(DateUtil.obterNumeroSemanaNoAno(uLancamento.getDataRecolhimentoDistribuidor()));
-			}
-		} else {
-			
-			// Edição criada pelo Distribuidor:
-			dto.setOrigemInterface(false);
-			
-			dto.setPeb(produto.getPeb());
-		}
-		
-		/* 
-		 * Regra: Se não houver edições já cadatradas para este produto, deve-se
-		 * obrigar a cadastrar o número 1. 
-		 */
-		
-		Long qtdEdicoes = peService.countPesquisarEdicoes(codigoProduto, null, null, null, null, null, false);
-		if (qtdEdicoes == 0 || Long.valueOf(0).equals(qtdEdicoes)) {
-			dto.setNumeroEdicao(1L);
-		}
+		ProdutoEdicaoDTO dto = peService.obterProdutoEdicaoDTO(codigoProduto, idProdutoEdicao);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
@@ -249,10 +159,11 @@ public class ProdutoEdicaoController {
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+		
 		dto.setId(idProdutoEdicao);
-		dto.setCodigoProduto(codigoProdutoEdicao);
 		dto.setNomeComercialProduto(nomeComercialProduto);
 		dto.setNumeroEdicao(numeroEdicao);
+		dto.setCodigoProduto(codigoProdutoEdicao);
 		dto.setPacotePadrao(pacotePadrao);
 		dto.setTipoLancamento(tipoLancamento);
 		dto.setPrecoPrevisto(precoPrevisto);
@@ -277,26 +188,33 @@ public class ProdutoEdicaoController {
 		dto.setDescricaoProduto(descricaoProduto);
 		
 		ValidacaoVO vo = null;
+		 
 		try {
-			this.validarProdutoEdicao(dto, codigoProduto);
 			
+			this.validarProdutoEdicao(dto, codigoProduto);
 			
 			// Dados da Imagem:
 			String contentType = null;
+			
 			InputStream imgInputStream = null;
+			
 			if (imagemCapa != null) {
 				contentType = imagemCapa.getContentType();
 				imgInputStream = imagemCapa.getFile();
 			}
 			
 			peService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
+			
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
+			
 		} catch (ValidacaoException e) {
 			
 			vo = e.getValidacao();
+
 		} catch (Throwable e) {
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
+		
 		} finally {
 			
 			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
@@ -311,16 +229,27 @@ public class ProdutoEdicaoController {
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
-		boolean origemInterface = false;
+		
+		boolean origemManual = false;
+		
 		ProdutoEdicao pe = null;
-		try {
-			pe = peService.obterProdutoEdicao(dto.getId());
-			origemInterface = pe.getOrigemInterface().booleanValue();
-		} catch (Exception e) {
-			origemInterface = false;
+		
+		if(codigoProduto == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Código do produto inválido!"));
 		}
 		
-		if (pe == null || !origemInterface) {
+		if(dto.getId()!=null) {
+
+			pe = peService.obterProdutoEdicao(dto.getId());
+			
+			if(pe == null) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
+			}
+			
+			origemManual = (pe.getOrigemInterface() == null) ? true : pe.getOrigemInterface().booleanValue();
+		}
+		
+		if (pe == null || origemManual) {
 			
 			// Distribuidor:
 			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {
@@ -329,7 +258,7 @@ public class ProdutoEdicaoController {
 			if (dto.getNomeComercialProduto() == null || dto.getNomeComercialProduto().trim().length() <= 0) {
 				listaMensagens.add("Campo 'Nome Comercial Produto' deve ser preenchido!");
 			}
-			if (dto.getNumeroEdicao() == null || Long.valueOf(0).equals(dto.getNumeroEdicao())) {
+			if (dto.getNumeroEdicao() == null || dto.getNumeroEdicao() == 0L) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Número de Edição'!");
 			}
 			if (dto.getPacotePadrao() <= 0) {
@@ -356,29 +285,28 @@ public class ProdutoEdicaoController {
 			if (dto.getCodigoDeBarrasCorporativo() == null || dto.getCodigoDeBarrasCorporativo().trim().length() <= 0) {
 				listaMensagens.add("Campo 'Código de Barras Corporativo' deve ser preenchido!");
 			}
+			
 		} else {
 			
 			// Interface:
 			if (dto.getPrecoVenda() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Preço Real'!");
 			}
+			
 		}
 		
 		if (dto.getCodigoDeBarras() == null || dto.getCodigoDeBarras().trim().length() <= 0) {
 			listaMensagens.add("Campo 'Código de Barras' deve ser preenchido!");
 		}
 		
-		if (codigoProduto != null
-				&& codigoProduto.trim().length() > 0
-				&& dto.getNumeroEdicao() != null
-				&& !Long.valueOf(0).equals(dto.getNumeroEdicao())) {
+		if (dto.getNumeroEdicao() != null && dto.getNumeroEdicao() != 0L) {
 			
-			ProdutoEdicao produtoEdicao = 
-					peService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
+			ProdutoEdicao produtoEdicao = peService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
 		
 			if (produtoEdicao != null && !produtoEdicao.getId().equals(dto.getId())) {
 				listaMensagens.add("O 'Número de Edição' deve ser unico para esse Produto!");
 			}
+			
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -456,6 +384,21 @@ public class ProdutoEdicaoController {
 			
 			BigDecimal precoComDesconto = precoVenda.subtract(valorDesconto);
 
+			String razaoSocial = "";
+			
+			if(	produtoEdicao!=null && 
+				produtoEdicao.getProduto()!=null &&
+				produtoEdicao.getProduto().getEditor() != null &&
+				produtoEdicao.getProduto().getEditor().getPessoaJuridica() != null ) {
+				
+				razaoSocial = produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome();
+				
+				razaoSocial = (razaoSocial == null) ? "" : razaoSocial;
+				
+			}
+			
+			
+			
 			produtoLancamentoVO = new DetalheProdutoVO(produtoEdicao.getId(),
 													   produtoEdicao.getProduto().getNome(),
 													   produtoEdicao.getCodigo(),
@@ -463,7 +406,7 @@ public class ProdutoEdicaoController {
 										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
-										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getPessoaJuridica().getNome():""):""),
+										               razaoSocial,
 										               produtoEdicao.getChamadaCapa(),
 										               (produtoEdicao.isPossuiBrinde()?"Sim":"Não"),
 										               Integer.toString(produtoEdicao.getPacotePadrao())

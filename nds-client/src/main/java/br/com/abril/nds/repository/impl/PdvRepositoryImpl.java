@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.repository.PdvRepository;
 
@@ -175,7 +177,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		
 		return (PDV) criteria.uniqueResult();
 	}
-	
+
 	public void setarPDVPrincipal(boolean principal, Long idCota){
 		
 		Query query = 
@@ -188,12 +190,28 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 	}
 	
 	public PDV obterPDVPrincipal(Long idCota) {
+		
 		Criteria criteria = getSession().createCriteria(PDV.class);
 		criteria.createAlias("cota", "cota");
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
 		criteria.setMaxResults(1);
 		return (PDV) criteria.uniqueResult();
+	}
+	
+	/**
+	 * Obtém PDV's por Rota
+	 * @param idRota
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PDV> obterPDVPorRota(Long idRota) {
+		
+		Criteria criteria = getSession().createCriteria(RotaPDV.class);
+		criteria.createAlias("rota", "rota");
+		criteria.add(Restrictions.eq("rota.id", idRota));
+		return criteria.list();
 	}
 
     /**
@@ -272,4 +290,47 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
         query.setParameter("idPdv", idPdv);
         return (HistoricoTitularidadeCotaPDV) query.uniqueResult();
     }
+
+    /**
+     * Obtem PDV's por Cota e informações de Endereço
+     * @param numCota
+     * @param municipio
+     * @param uf
+     * @param bairro
+     * @param cep
+     * @return List<PDV>
+     */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PDV> obterPDVPorCotaEEndereco(Integer numCota, String municipio, String uf, String bairro, String cep) {
+
+		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
+		criteria.setFetchMode("cota", FetchMode.JOIN);
+		criteria.createAlias("cota", "cota") ;
+		criteria.createAlias("enderecos", "enderecos") ;
+		criteria.createAlias("enderecos.endereco", "endereco") ;
+		
+		if (numCota != null && !numCota.equals("") ) {
+			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
+		}
+		
+		if (cep != null && !cep.equals("") ) {
+			criteria.add(Restrictions.eq("endereco.cep", cep));
+		} else {
+			if (uf != null && !uf.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.uf", uf));
+			}
+			
+			if (municipio != null && !municipio.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.municipio", municipio));
+			}
+			
+			if (bairro != null && !bairro.equals("") ) {
+				criteria.add(Restrictions.eq("endereco.bairro", bairro));
+			}
+			
+		}
+
+		return  (List<PDV>)criteria.list();  
+	}
 }

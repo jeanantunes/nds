@@ -18,7 +18,7 @@
 
 		#resultadoIntegracao{display:none;}
         #tableBaixaManual, #tableBaixaAuto, #extratoBaixaManual, #porNossoNumero, #porCota, #dialog-divida{display:none;}
-        #dialog-baixa-dividas,#dialog-detalhes-divida{display:none;}
+        #dialog-baixa-dividas,#dialog-detalhes-divida, #bancoDividas, #labelBanco{display:none;}
         #dialog-confirma-baixa-numero,#dialog-confirma-baixa,#dialog-confirma-pendente,#dialog-postergar{display:none;}
         
 	</style>
@@ -26,6 +26,8 @@
     </head>
 
 <body>
+
+	<jsp:include page="dialogsResumoBaixaAutomatica.jsp"></jsp:include>
 
 	<fieldset class="classFieldset">
 		
@@ -57,32 +59,43 @@
 			  method="post" enctype="multipart/form-data" >
 		
 			<input type="hidden" name="formUploadAjax" value="true" />
+			<input type="hidden" id="dataHidden" value="10/10/2012" />
 		
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				   class="filtro" id="tableBaixaAuto">
 				
 					<tr>
+						<td width="100">Data:</td>
+						<td width="200">
+							<input type="text" name="data" id="dataBaixa" 
+								   onchange="baixaFinanceiraController.alterarEstadoInputsBaixaAutomatica();"
+								   style="width: 90px; text-align: right;" value="${dataOperacao}" />
+						</td>
 						<td width="65">Arquivo:</td>
 						<td colspan="3">
-							<input name="uploadedFile" type="file" id="uploadedFile" size="25" />
+							
+							<input name="uploadedFile" type="file" id="uploadedFile" size="25" 
+								   onchange="baixaFinanceiraController.habilitarIntegracao();" />
+							
 						</td>
 						
-						<td width="133">Valor Financeiro R$:</td>
+						<td width="200">Valor Financeiro R$:</td>
 						<td width="288">
 							<input type="text" name="valorFinanceiro"
 								   id="valorFinanceiro" style="width: 90px; text-align: right;" />
 						</td>
 						
 						<td width="111">
-							<span class="bt_integrar" title="Integrar">
+							<span class="bt_integrar" title="Integrar" id="btnIntegrar" style="display:none">
 								<a href="javascript:;" onclick="baixaFinanceiraController.integrar();">Integrar</a>
+							</span>
+							<span class="bt_pesquisar" title="Exibir Resumo" id="btnExibirResumos">
+								<a href="javascript:;" onclick="baixaFinanceiraController.obterResumoBaixaFinanceira();" id="btnPesquisar"></a>
 							</span>
 						</td>
 					</tr>			
 			</table>
 		</form>
-		<!--  -->
-		
 		
 		<!-- BAIXA MANUAL -->
 		
@@ -103,7 +116,7 @@
 				
 				<td width="39">Nome:</td>
              	
-             	<td width="210">
+             	<td width="185">
 		        	<input name="descricaoCota" 
 		      		 	   id="descricaoCota" 
 		      		 	   type="text"
@@ -114,9 +127,11 @@
 		      		 	   onblur="pesquisaCotaBaixaFinanceira.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
 		        </td>
 			  
-				<td width="97">Nosso Número:</td>
-				<td width="333"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 300px;" /></td>
-				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();">Pesquisar</a></span></td>
+				<td width="100">Nosso Número:</td>
+				<td width="240"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 200px;" /></td>
+				<td width="240">Exibir apenas Cobran&ccedil;as Baixadas:</td>
+				<td width="50"><input type="checkbox" id="checkCobrancasBaixadas"/></td>
+				<td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a></span></td>
 			</tr>
         </table>
         
@@ -134,72 +149,7 @@
 		<legend> Baixa Financeira Integrada</legend>
 		<br />
 
-		<table border="0" align="center" cellpadding="2" cellspacing="2">
-			<tr>
-				<td valign="top">
-					<table width="269" border="0" align="center" cellpadding="2"
-						cellspacing="1" style="display: inline; margin-right: 15px;">
-						<tr>
-							<td colspan="2" align="center" class="header_table">Dados do
-								Arquivo</td>
-						</tr>
-						<tr>
-							<td width="121" align="left" class="linha_borda"><strong>Nome
-									do Arquivo:</strong></td>
-							<td id="nomeArquivo" width="137" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Data
-									Competência:</strong></td>
-							<td id="dataCompetencia" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Valor
-									R$:</strong></td>
-							<td id="somaPagamentos" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda">&nbsp;</td>
-							<td align="right" class="linha_borda">&nbsp;</td>
-						</tr>
-						<tr>
-							<td colspan="2" align="left"
-								style="line-height: 28px; border: 1px solid #0C0;"><img
-								src="${pageContext.request.contextPath}/images/bt_check.gif" width="22" height="22"
-								alt="Arquivo Integrado com Sucesso" align="left" /> <span><strong>Arquivo
-										Integrado com Sucesso!</strong></span></td>
-						</tr>
-					</table>
-				</td>
-				<td valign="top"><table width="275" border="0" align="center"
-						cellpadding="2" cellspacing="1" style="display: inline;">
-						<tr>
-							<td colspan="2" align="center" class="header_table"
-								class="linha_borda">Baixa Automática</td>
-						</tr>
-						<tr>
-							<td width="162" align="left" class="linha_borda"><strong>Registros
-									Lidos:</strong></td>
-							<td id="quantidadeLidos" width="102" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Registros
-									Baixados:</strong></td>
-							<td id="quantidadeBaixados" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Registros
-									Rejeitados:</strong></td>
-							<td id="quantidadeRejeitados" align="right" class="linha_borda"></td>
-						</tr>
-						<tr>
-							<td align="left" class="linha_borda"><strong>Baixados
-									com Divergência:</strong></td>
-							<td id="quantidadeBaixadosComDivergencia" align="right" class="linha_borda"></td>
-						</tr>
-					</table></td>
-			</tr>
-		</table>
+		<jsp:include page="resumoBaixaAutomatica.jsp"></jsp:include>
 		
 		<br /> <br />
 		
@@ -327,9 +277,9 @@
 		                </td>
 
 		                <td width="30%">   
-		                    <span class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
-		                    <span class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
-		                    <span class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
+		                    <span id="bt_aVista" class="bt_confirmar_novo" title="Pagar Dívida"><a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">À Vista</a></span>
+		                    <span id="bt_negociar" class="bt_confirmar_novo" title="Negociar Dívida"><a onclick="baixaFinanceiraController.obterNegociacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Negociar</a></span>
+		                    <span id="bt_postergar" class="bt_confirmar_novo" title="Postergar Dívida"><a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;"><img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Postergar</a></span>
 		                </td>
 		                
 		                <td width="14%">
@@ -362,69 +312,83 @@
 			    <p>Deseja confirmar Baixa Manual ?</p>
 		    </div>
 		
-			<div id="dialog-baixa-dividas" title="Baixa Bancária">
-			
-			    
-			    <jsp:include page="../messagesDialog.jsp"></jsp:include>
-			    
-			
-				<table width="433" border="0" cellpadding="2" cellspacing="2">
-				  <tr>
-				    <td width="153"><strong>Valor Dívida R$:</strong>
+			<div id="div-baixa-dividas">
+				
+				<div id="dialog-baixa-dividas" title="Baixa Bancária">
+				
 				    
-				    </td>
-				    <td width="266" id="valorDividas" ></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Multa R$:</strong></td>
-				    <td><input  maxlength="16" id="multaDividas" name="multaDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Juros R$:</strong></td>
-				    <td><input maxlength="16" id="jurosDividas" name="jurosDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Desconto R$:</strong></td>
-				    <td><input maxlength="16" id="descontoDividas" name="descontoDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Valor pago R$:</strong></td>
-				    <td><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" onblur="baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
-				  </tr>
-				  <tr>
-				    <td>&nbsp;</td>
-				    <td style="border-bottom:1px solid #000;">&nbsp;</td>
-				  </tr>
-				  <tr>
-				    <td><strong>Saldo R$:</strong></td>
-				    <td id="valorSaldoDividas" ></td>
-				  </tr>
-				  
-				  
-				  <tr>
-				    <td><strong>Forma Recebimento:</strong></td>
-				    <td>
-				        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas" style="width:150px;">
-	                        <option value="">Selecione</option>
-	                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
-			                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
-			                </c:forEach>
-	                    </select> 
-				    </td>
-				  </tr>
-				  
-				  
-				  <tr>
-				    <td>&nbsp;</td>
-				    <td align="right"></td>
-				  </tr>
-				  <tr>
-				    <td><strong>Observação:</strong></td>
-				    <td><textarea maxlength="150" name="observacoesDividas" id="observacoesDividas" cols="45" rows="3" style="width:260px;"></textarea></td>
-				  </tr>
-				</table>
-			</div>
-
+				    <jsp:include page="../messagesDialog.jsp"></jsp:include>
+				    
+				
+					<table width="433" border="0" cellpadding="2" cellspacing="2">
+					  <tr>
+					    <td width="153"><strong>Valor Dívida R$:</strong>
+					    
+					    </td>
+					    <td width="266" id="valorDividas" ></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Multa R$:</strong></td>
+					    <td><input  maxlength="16" id="multaDividas" name="multaDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Juros R$:</strong></td>
+					    <td><input maxlength="16" id="jurosDividas" name="jurosDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Desconto R$:</strong></td>
+					    <td><input maxlength="16" id="descontoDividas" name="descontoDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Valor pago R$:</strong></td>
+					    <td><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" onblur="baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					  </tr>
+					  <tr>
+					    <td>&nbsp;</td>
+					    <td style="border-bottom:1px solid #000;">&nbsp;</td>
+					  </tr>
+					  <tr>
+					    <td><strong>Saldo R$:</strong></td>
+					    <td id="valorSaldoDividas" ></td>
+					  </tr>
+					  
+					  
+					  <tr>
+					    <td><strong>Forma Recebimento:</strong></td>
+					    <td>
+					        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas"  onchange="baixaFinanceiraController.mostrarBancos(this.value);" style="width:150px;">
+		                        <option value="">Selecione</option>
+		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
+				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
+				                </c:forEach>
+		                    </select> 
+					    </td>
+					  </tr>
+					  
+					   <tr>
+					    <td><strong><span id="labelBanco">Banco:</span></strong></td>
+					    <td>
+					        <select name="idBanco" id="bancoDividas" style="width:150px;">
+		                        <option value="">Selecione</option>
+		                        <c:forEach items="${bancos}" var="banco">
+									<option value="${banco.id}" >${banco.nome}</option>
+								</c:forEach>
+		                    </select> 
+					    </td>
+					  </tr>
+					  
+					  
+					  <tr>
+					    <td>&nbsp;</td>
+					    <td align="right"></td>
+					  </tr>
+					  <tr>
+					    <td><strong>Observação:</strong></td>
+					    <td><textarea maxlength="150" name="observacoesDividas" id="observacoesDividas" cols="45" rows="3" style="width:260px;"></textarea></td>
+					  </tr>
+					</table>
+				</div>
+           </div>  
 
 
 			<div id="dialog-detalhes-divida" title="Detalhes da Dívida">

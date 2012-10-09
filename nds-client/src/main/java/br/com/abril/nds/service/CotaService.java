@@ -350,6 +350,5 @@ public interface CotaService {
      *         titularidade da cota
      */
 	DistribuicaoDTO obterDistribuicaoHistoricoTitularidade(Long idCota, Long idHistorico);
-
-	void cancelarChamadao(Integer numeroCota);
+	
 }

@@ -15,7 +15,7 @@ public class MovimentoEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 	
 	@Test
 	public void testarChamada() {
-		List<ExtratoEdicaoDTO> lista = movimentoEstoqueRepositoryImpl.obterListaExtratoEdicao("1", 1L, StatusAprovacao.APROVADO);
+		List<ExtratoEdicaoDTO> lista = movimentoEstoqueRepositoryImpl.obterListaExtratoEdicao(null, StatusAprovacao.APROVADO);
 	}
 
 }

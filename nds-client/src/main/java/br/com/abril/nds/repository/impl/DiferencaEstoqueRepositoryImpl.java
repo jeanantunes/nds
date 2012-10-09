@@ -12,9 +12,10 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
 /**
@@ -91,8 +92,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
-		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
-		
 		if (filtro != null) {
 		
 			if (filtro.getDataMovimento() != null) {
@@ -143,8 +142,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
 		
-		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
-		
 		if (filtro.getDataMovimento() != null) {
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
@@ -189,16 +186,14 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		}
 
 		hql += " from Diferenca diferenca " 
-			+  " join diferenca.lancamentoDiferenca.movimentoEstoque movimentoEstoque "
 			+  " left join diferenca.produtoEdicao.produto.fornecedores fornecedor "
-			+  " where diferenca.statusConfirmacao = :statusConfirmacao "
-			+  " and movimentoEstoque.status = :statusAprovacao ";
+			+  " where diferenca.statusConfirmacao = :statusConfirmacao ";
 		
 		if (filtro != null) {
 			
 			if (filtro.getDataMovimento() != null) {
-	
-				hql += " and movimentoEstoque.data = :dataMovimento ";
+
+				hql += " and diferenca.dataMovimento = :dataMovimento ";
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
@@ -243,11 +238,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			switch (filtro.getOrdenacaoColuna()) {
 			
 				case DATA_LANCAMENTO_NUMERO_EDICAO:
-					hql += "order by diferenca.lancamentoDiferenca.movimentoEstoque.data, "
+					hql += "order by diferenca.dataMovimento, "
 						 + " diferenca.produtoEdicao.numeroEdicao ";
 					break;
 				case DATA_LANCAMENTO:
-					hql += "order by diferenca.lancamentoDiferenca.movimentoEstoque.data ";
+					hql += "order by diferenca.dataMovimento";
 					break;
 				case CODIGO_PRODUTO:
 					hql += "order by diferenca.produtoEdicao.produto.codigo ";
@@ -384,7 +379,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 				 hql += " join diferenca.rateios rateios ";
 			}
 			
-			hql += " where diferenca.lancamentoDiferenca.movimentoEstoque is not null "
+			hql += " where diferenca.lancamentoDiferenca is not null "
 				+ " and diferenca.statusConfirmacao = :statusConfirmacao ";
 			
 			if (dataLimiteLancamentoPesquisa != null) {
@@ -409,7 +404,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					&& filtro.getPeriodoVO().getDataInicial() != null
 					&& filtro.getPeriodoVO().getDataFinal() != null) {
 				
-				hql += " and diferenca.lancamentoDiferenca.movimentoEstoque.data between :dataInicial and :dataFinal ";
+				hql += " and diferenca.dataMovimento between :dataInicial and :dataFinal ";
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
@@ -493,4 +488,72 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+	
+	@Override
+	public BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
+									  				 TipoEstoque tipoEstoque, Date dataMovimento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select sum( ")
+			
+			.append(" case when (diferenca.tipoDiferenca = 'FALTA_DE') then ")
+			.append(" (- diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then ")
+			.append(" (- diferenca.qtde) ")
+			
+			.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then ")
+			.append(" (diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then ")
+			.append(" (diferenca.qtde) ")
+			
+			.append(" else 0 end")
+			.append(" )")
+			
+			.append(" from Diferenca diferenca ")
+			.append(" join diferenca.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
+			.append(" where produto.codigo = :codigoProduto ")
+			.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ")
+			.append(" and diferenca.tipoEstoque = :tipoEstoque ")
+			.append(" and diferenca.dataMovimento = :dataMovimento ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+		query.setParameter("tipoEstoque", tipoEstoque);
+		query.setParameter("dataMovimento", dataMovimento);
+		
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	@Override
+	public boolean existeDiferencaPorNota(Long idProdutoEdicao, Date dataNotaEnvio,
+										  Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select diferenca.id ")
+			.append(" from Diferenca diferenca ")
+			.append(" join diferenca.produtoEdicao produtoEdicao ")
+			.append(" join diferenca.rateios rateio ")
+			.append(" join rateio.cota cota ")
+			.append(" where produtoEdicao.id = :idProdutoEdicao ")
+			.append(" and diferenca.tipoDirecionamento = :tipoDirecionamento ")
+			.append(" and rateio.dataNotaEnvio = :dataNotaEnvio ")
+			.append(" and cota.numeroCota = :numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("tipoDirecionamento", TipoDirecionamentoDiferenca.NOTA);
+		query.setParameter("dataNotaEnvio", dataNotaEnvio);
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setMaxResults(1);
+		
+		return ((Long) query.uniqueResult() != null);
+	}
+	
 }

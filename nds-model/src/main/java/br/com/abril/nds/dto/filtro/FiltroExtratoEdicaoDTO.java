@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
  * Data Transfer Object para filtro do extrato de edição.
@@ -34,6 +35,8 @@ public class FiltroExtratoEdicaoDTO implements Serializable {
 	
 	@Export(label = "Fornecedor")
 	private String nomeFornecedor;
+	
+	private PaginacaoVO paginacao;
 	
 	/**
 	 * Construtor padrão.
@@ -111,6 +114,14 @@ public class FiltroExtratoEdicaoDTO implements Serializable {
 	 */
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
 	}
 
 }

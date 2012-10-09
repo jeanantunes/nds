@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,16 +23,24 @@ import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.EntregadorService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -43,6 +53,8 @@ public class MapaAbastecimentoController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
 	
+	protected static final String MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO = "Não há matriz de lancamento confirmada para esta data.";
+	
 	@Autowired
 	private HttpSession session;
 	
@@ -53,10 +65,22 @@ public class MapaAbastecimentoController {
 	private MapaAbastecimentoService mapaAbastecimentoService;
 	
 	@Autowired
+	private LancamentoService lancamentoService;
+	
+	@Autowired
 	private BoxService boxService;
 	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ProdutoService produtoService;
+	
+	@Autowired
+	private EntregadorService entregadorService;
 	
 	public void mapaAbastecimento() {
 		
@@ -77,9 +101,27 @@ public class MapaAbastecimentoController {
 		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));
 		result.include("listaRotas",carregarRota(roteirizacaoService.buscarRotas()));
 		
+		result.include("listaProdutos", this.carregarProdutos());
+		
 		result.forwardTo(MapaAbastecimentoController.class).mapaAbastecimento();
 	}
 	
+	/**
+	 * Carrega a lista de Produtos.
+	 */
+	private List<ItemDTO<String, String>> carregarProdutos() {
+		
+		List<Produto> listaProdutos = produtoService.obterProdutos();
+		
+		List<ItemDTO<String, String>> listaProdutosCombo = new ArrayList<ItemDTO<String,String>>();
+				
+		for(Produto produto : listaProdutos) {
+			
+			listaProdutosCombo.add(new ItemDTO<String, String>(produto.getCodigo(), produto.getNome()));
+		}
+		
+		return listaProdutosCombo;			
+	}	
 
 	/**
 	 * Carrega a lista de Boxes
@@ -109,16 +151,44 @@ public class MapaAbastecimentoController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota() + " " + rota.getDescricaoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;
 	}
 	
+	/**
+	 * Retorna uma lista de Rota no formato ItemDTO
+	 * @param rotas
+	 * @return 
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> carregarRoteiro(List<Roteiro> roteiros){
+		
+		List<ItemDTO<Long, String>> listaRoteiros = new ArrayList<ItemDTO<Long,String>>();
+		
+		for(Roteiro rota : roteiros){
+			
+			listaRoteiros.add(new ItemDTO<Long, String>(rota.getId(),rota.getId() + " " + rota.getDescricaoRoteiro()));
+		}
+		
+		return listaRoteiros;
+	}
+		
+	/**
+	 * Válida
+	 * 
+	 * @param dataLancamento
+	 */
+	private void validarExistenciaMatriz(Date dataLancamento) {
+		if(!lancamentoService.existeMatrizBalanceamentoConfirmado(dataLancamento)){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_MATRIZ_BALANCEAMENTO_NAO_CONFIRMADO ));
+		}
+	}	
 	
 	@Post
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
-				
+		
 		if(filtro.getTipoConsulta() == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
 				
@@ -128,17 +198,39 @@ public class MapaAbastecimentoController {
 		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
 		
+		validarExistenciaMatriz(filtro.getDataDate());
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		tratarFiltro(filtro);
-		
-		List<AbastecimentoDTO> lista = mapaAbastecimentoService.obterDadosAbastecimento(filtro);
-		
-		Long totalRegistros = mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
 
-		result.use(FlexiGridJson.class).from(lista).page(1).total(totalRegistros.intValue()).serialize();
+		switch(filtro.getTipoConsulta()) {
+
+		case BOX:
+			this.popularGridPorBox(filtro);
+			break;
+		case COTA:
+			this.popularGridPorCota(filtro);
+			break;
+		case ROTA:
+			this.popularGridPorRota(filtro);
+			break;
+		case PRODUTO:
+			this.popularGridPorProduto(filtro);
+			break;
+		case PRODUTO_ESPECIFICO:
+			this.popularGridPorProdutoEspecifico(filtro);
+			break;
+		case PRODUTO_X_COTA:
+			this.popularGridPorProdutoCota(filtro);
+			break;
+		case ENTREGADOR:
+			this.popularGridPorEntregador(filtro);
+		default:
+			break;
+		}
 	}
-		
+
 	@Post
 	public void pesquisarDetalhes(Long idBox, String data, String sortname, String sortorder) {
 				
@@ -168,12 +260,33 @@ public class MapaAbastecimentoController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Cota' não foi preenchida.");
 				break;
 			case PRODUTO:
-				if(filtroAtual.getCodigoProduto()==null)
+				if(filtroAtual.getCodigosProduto()==null)
+					throw new ValidacaoException(TipoMensagem.WARNING, "'Produto' não foi preenchido.");
+				break;
+			case PRODUTO_ESPECIFICO:
+
+				List<String> mensagens = new ArrayList<String>();
+
+				if (filtroAtual.getCodigosProduto()==null)
+					mensagens.add("'Produto' não foi preenchido.");
+				else if (filtroAtual.getCodigosProduto().size() > 1)
+					mensagens.add("Deve ser escolhido apenas um 'Produto'.");
+				if (filtroAtual.getEdicaoProduto()==null)
+					mensagens.add("'Edição' não foi preenchida.");
+				if (!mensagens.isEmpty())
+					throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+				break;
+			case PRODUTO_X_COTA:
+				if(filtroAtual.getCodigosProduto()==null)
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Produto' não foi preenchido.");
 				break;
 			case ROTA:
 				if(filtroAtual.getRota()==null)
 					throw new ValidacaoException(TipoMensagem.WARNING, "'Rota' não foi preenchida.");
+				break;
+			case ENTREGADOR:
+				if(filtroAtual.getIdEntregador()==null)
+					throw new ValidacaoException(TipoMensagem.WARNING, "'Entregador' não foi preenchido.");
 				break;
 			default:
 				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
@@ -193,7 +306,7 @@ public class MapaAbastecimentoController {
 	@Post
 	public void buscarBoxRotaPorCota(Integer numeroCota) {
 				
-		Object[] combos = new Object[2];
+		Object[] combos = new Object[3];
 		
 		
 		
@@ -202,9 +315,11 @@ public class MapaAbastecimentoController {
 			boxes.add(boxService.obterBoxPorCota(numeroCota));
 			combos[0] = carregarBoxes(boxes);
 			combos[1] = carregarRota(roteirizacaoService.obterRotasPorCota(numeroCota));
+			combos[2] = carregarRoteiro(roteirizacaoService.obterRoteirosPorCota(numeroCota));
 		} else {
 			combos[0] = carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO));
 			combos[1] = carregarRota(roteirizacaoService.buscarRotas());
+			combos[2] = carregarRoteiro(roteirizacaoService.obterRoteirosPorCota(null));
 		}
 		
 		
@@ -240,6 +355,15 @@ public class MapaAbastecimentoController {
 					else 
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
 					break;
+				case PRODUTO_ESPECIFICO:
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(filtro);
+					break;
+				case PRODUTO_X_COTA:
+					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
+					break;					
+				case ENTREGADOR:				
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
+					break;
 				default:
 					throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 			}
@@ -273,6 +397,24 @@ public class MapaAbastecimentoController {
 		
 	}
 	
+	public void impressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
+		
+		HashMap<Long, MapaProdutoCotasDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro);
+		
+		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
+				
+		result.include("distribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+		
+		result.include("entregador", entregador);
+		
+		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		
+		result.include("data",data);
+		
+		result.include("mapa", mapa);
+		
+	}
+
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 				
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
@@ -300,4 +442,69 @@ public class MapaAbastecimentoController {
 	public void impressaoFalha(String mensagemErro){
 		result.include(mensagemErro);					
 	}
+	
+	private void popularGridPorBox(FiltroMapaAbastecimentoDTO filtro) {
+		
+		List<AbastecimentoDTO> lista = this.mapaAbastecimentoService.obterDadosAbastecimento(filtro);
+		
+		Long totalRegistros = this.mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+	}
+
+	private void popularGridPorCota(FiltroMapaAbastecimentoDTO filtro) {
+
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
+		
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorCota(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+	}
+	
+	private void popularGridPorRota(FiltroMapaAbastecimentoDTO filtro) {
+
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorBoxRota(filtro);
+		
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorBoxRota(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+	}
+
+	private void popularGridPorProduto(FiltroMapaAbastecimentoDTO filtro) {
+
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
+		
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorCota(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+	}
+	
+	private void popularGridPorProdutoEspecifico(FiltroMapaAbastecimentoDTO filtro) {
+
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorProdutoEdicao(filtro);
+		
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+	}
+	
+	private void popularGridPorProdutoCota(FiltroMapaAbastecimentoDTO filtro) {
+
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(filtro);
+		
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+	}
+	
+	private void popularGridPorEntregador(FiltroMapaAbastecimentoDTO filtro) {
+		
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaDeAbastecimentoPorEntregador(filtro);
+		
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaDeAbastecimentoPorEntregador(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+		
+	}
+
 }

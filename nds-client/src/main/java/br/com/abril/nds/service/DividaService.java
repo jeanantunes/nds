@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DividaComissaoDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -86,4 +87,7 @@ public interface DividaService {
      * @return BigDecimal
      */
 	BigDecimal obterTotalDividasAbertoCota(Long idCota);
+
+
+	DividaComissaoDTO obterDadosDividaComissao(Long idDivida);
 }

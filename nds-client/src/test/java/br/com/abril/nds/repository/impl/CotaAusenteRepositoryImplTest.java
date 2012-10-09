@@ -84,7 +84,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void buscarCotaAusente(){
 
-		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(data, null, cotaManoel.getNumeroCota(),
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(data, null, cotaManoel.getNumeroCota(),  null, null,
 				new PaginacaoVO(1, 15, "ASC"), 
 				ColunaOrdenacao.valueOf("data"));
 		
@@ -97,7 +97,7 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterCountCotasAusentes(){
 
-		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(data, null, cotaManoel.getNumeroCota(),
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO(data, null, cotaManoel.getNumeroCota(), null, null,
 				new PaginacaoVO(0, 15, "ASC"), 
 				ColunaOrdenacao.valueOf("data"));		
 				
@@ -107,4 +107,11 @@ public class CotaAusenteRepositoryImplTest extends AbstractRepositoryImplTest {
 				
 	}
 
+	
+	@Test
+	public void obterCotaAusentePor() {
+		CotaAusente cotaAusente = this.cotaAusenteRepository.obterCotaAusentePor(cotaManoel.getId(), data);
+		
+		Assert.assertNotNull(cotaAusente);
+	}
 }

@@ -79,9 +79,22 @@ var recebimentoFisicoController = $.extend(true, {
 
 		$("#produto", this.workspace).autocomplete({source: ""});
 		
+		recebimentoFisicoController.ocultarBtns();
+		
 		this.formatItemNota();
 
 		this.inicializarGridPopUpNota();
+		
+	},
+	
+	ocultarBtns : function() {
+
+		$('#botoesNormais', this.workspace).hide();
+		$('#botaoNovoProdutoOpaco', this.workspace).hide();
+		$('#botaoNovoProduto', this.workspace).hide();
+		$('#botaoAdicionarOpaco', this.workspace).hide();
+		//$('#botaoAdicionar', this.workspace).hide();
+		$('#botoesOpacos', this.workspace).hide();
 		
 	},
 	
@@ -202,8 +215,12 @@ var recebimentoFisicoController = $.extend(true, {
 			recebimentoFisicoController.pesquisarItemNotaGrid();
 
 		} else {
+
+			exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
 			
 			$(".grids", this.workspace).hide();
+			
+			recebimentoFisicoController.ocultarBtns();
 			
 			recebimentoFisicoController.popup_adicionar();
 		
@@ -369,56 +386,6 @@ var recebimentoFisicoController = $.extend(true, {
 				
 		}, null, true);
 		
-		
-		
-	},
-	
-	/**
-	 * CADASTRA NOVA NOTA.
-	 */
-	cadastrarNovaNota : function() {
-		
-		var cnpj 			= $("#cnpj", this.workspace).val();
-		var notaFiscal 		= $("#notaFiscal", this.workspace).val();
-		var serie 			= $("#serie", this.workspace).val();
-		var chaveAcesso 	= $("#chaveAcesso", this.workspace).val();
-		var dataEmissao 	= $("#dataEmissao", this.workspace).val();
-		var dataEntrada 	= $("#dataEntrada", this.workspace).val();
-		var valorBruto		= $("#valorBruto", this.workspace).val();
-		var valorLiquido	= $("#valorLiquido", this.workspace).val();
-		var valorDesconto 	= $("#valorDesconto", this.workspace).val();
-		var cfopId 			= $("#cfop", this.workspace).val();
-		var tipoNotaFiscal  = $("#tipoNotaFiscal", this.workspace).val();
-		var fornecedor      = $("#fornecedor", this.workspace).val();
-		
-		var dadosCadastro = 
-
-			"notaFiscalFornecedor.emitente.cnpj=" 		+ cnpj			+ "&" +
-			"notaFiscalFornecedor.numero=" 				+ notaFiscal	+ "&" +
-			"notaFiscalFornecedor.serie=" 				+ serie			+ "&" +
-			"notaFiscalFornecedor.chaveAcesso=" 		+ chaveAcesso	+ "&" +
-			"dataEmissao=" 								+ dataEmissao	+ "&" +
-			"dataEntrada=" 								+ dataEntrada	+ "&" +
-			"valorBruto=" 								+ valorBruto	+ "&" +
-			"valorLiquido=" 							+ valorLiquido	+ "&" +
-			"valorDesconto=" 							+ valorDesconto	+ "&" + 
-			"fornecedor=" 							    + fornecedor	+ "&" + 
-			"notaFiscalFornecedor.cfop.id=" 			+ cfopId		+ "&" +
-			"notaFiscalFornecedor.tipoNotaFiscal.id="   + tipoNotaFiscal;
-		
-		$.postJSON(this.path + 'incluirNovaNotaFiscal', dadosCadastro, 
-				function(result) {
-			
-			
-					if(result.tipoMensagem == "SUCCESS") {
-						
-						$("#dialog-nova-nota", this.workspace).dialog( "close" );
-						
-					} 
-					
-					recebimentoFisicoController.refreshItemNotaGrid();
-				
-		}, null, true);
 		
 		
 	},
@@ -706,6 +673,8 @@ var recebimentoFisicoController = $.extend(true, {
 				
 	    		$(".grids", this.workspace).hide();
 	    		
+	    		recebimentoFisicoController.ocultarBtns();
+	    		
 	    		recebimentoFisicoController.limparCamposPesquisa();
 	        	
 	    		recebimentoFisicoController.limparCamposNovoItem();
@@ -713,6 +682,8 @@ var recebimentoFisicoController = $.extend(true, {
 	    		recebimentoFisicoController.limparCampos();
 	        	
 	        	exibirMensagem(result.tipoMensagem, result.listaMensagens);
+	        	
+	        	
 	        	
 			} 
 	    	
@@ -1069,7 +1040,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$('#botaoAdicionarOpaco', this.workspace).hide();
 			
-			$('#botaoAdicionar', this.workspace).show();
+			//$('#botaoAdicionar', this.workspace).show();
 			
 			$('#botoesOpacos', this.workspace).hide();
 			
@@ -1086,7 +1057,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$('#botaoAdicionarOpaco', this.workspace).show();
 			
-			$('#botaoAdicionar', this.workspace).hide();
+			//$('#botaoAdicionar', this.workspace).hide();
 			
 		}	
 		
@@ -1390,7 +1361,11 @@ var recebimentoFisicoController = $.extend(true, {
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
 			);
+			
 			$(".grids", this.workspace).hide();
+			
+			recebimentoFisicoController.ocultarBtns();
+			
 			return resultado;
 		}
 		

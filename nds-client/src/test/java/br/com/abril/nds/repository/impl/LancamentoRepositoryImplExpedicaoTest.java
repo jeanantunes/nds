@@ -98,7 +98,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			save(tipoNotaFiscal);
 
 			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-					.notaFiscalEntradaFornecedor(cfop, juridica, fornecedor, tipoNotaFiscal,
+					.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal,
 							usuario, new BigDecimal(1),new BigDecimal(1),new BigDecimal(1));
 			save(notaFiscalFornecedor);
 			

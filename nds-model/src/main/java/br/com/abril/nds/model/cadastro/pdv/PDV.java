@@ -2,8 +2,10 @@ package br.com.abril.nds.model.cadastro.pdv;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -28,7 +30,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
-import br.com.abril.nds.model.cadastro.Roteirizacao;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 
 /**
  * Entidade que representa o PDV associado
@@ -188,9 +190,8 @@ public class PDV implements Serializable {
 	@OneToOne(mappedBy = "pdv",cascade=CascadeType.REMOVE)	  	
 	private GeradorFluxoPDV geradorFluxoPDV;
 	
-	@OneToMany
-	@JoinColumn( name="PDV_ID")
-	private Set<Roteirizacao> roteirizacao;
+	@OneToMany(mappedBy = "pdv")
+	private List<RotaPDV> rotas =  new ArrayList<RotaPDV>();
 	
 	public Long getId() {
 		return id;
@@ -416,26 +417,49 @@ public class PDV implements Serializable {
 	public void setDataInclusao(Date dataInclusao) {
 		this.dataInclusao = dataInclusao;
 	}
-
-	/**
-	 * @return the roteirizacao
-	 */
-	public Set<Roteirizacao> getRoteirizacao() {
-		return roteirizacao;
-	}
-
-	/**
-	 * @param roteirizacao the roteirizacao to set
-	 */
-	public void setRoteirizacao(Set<Roteirizacao> roteirizacao) {
-		this.roteirizacao = roteirizacao;
-	}
-
+	
 	/**
 	 * @return the expositor
 	 */
 	public Boolean getExpositor() {
 		return expositor;
+	}
+	
+	/**
+	 * @return the arrendatario
+	 */
+	public boolean isArrendatario() {
+		return arrendatario;
+	}
+
+	/**
+	 * @param arrendatario the arrendatario to set
+	 */
+	public void setArrendatario(boolean arrendatario) {
+		this.arrendatario = arrendatario;
+	}
+	
+	/**
+     * @return the rotas
+     */
+    public List<RotaPDV> getRotas() {
+        return rotas;
+    }
+
+    /**
+     * @param rotas the rotas to set
+     */
+    public void setRotas(List<RotaPDV> rotas) {
+        this.rotas = rotas;
+    }
+
+    public EnderecoPDV getEnderecoEntrega(){
+		for(EnderecoPDV item:this.getEnderecos()){
+			if(item.getTipoEndereco()==TipoEndereco.LOCAL_ENTREGA){
+				return item;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -462,19 +486,10 @@ public class PDV implements Serializable {
 			return false;
 		return true;
 	}
-
-	/**
-	 * @return the arrendatario
-	 */
-	public boolean isArrendatario() {
-		return arrendatario;
-	}
-
-	/**
-	 * @param arrendatario the arrendatario to set
-	 */
-	public void setArrendatario(boolean arrendatario) {
-		this.arrendatario = arrendatario;
+	
+	@Override
+	public String toString() {
+	    return nome;
 	}
 
 }

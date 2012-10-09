@@ -11,13 +11,21 @@ public class ResumoBaixaBoletosDTO {
 	
 	private BigDecimal somaPagamentos;
 	
-	private Integer quantidadeLidos = 0;
+	private Integer quantidadePrevisao;
 	
-	private Integer quantidadeBaixados = 0;
+	private Integer quantidadeLidos;
 	
-	private Integer quantidadeRejeitados = 0;
+	private Integer quantidadeBaixados;
+	
+	private Integer quantidadeRejeitados;
 
-	private Integer quantidadeBaixadosComDivergencia = 0;
+	private Integer quantidadeBaixadosComDivergencia;
+	
+	private Integer quantidadeInadimplentes;
+	
+	private BigDecimal valorTotalBancario;
+	
+	private boolean possuiDiversasBaixas;
 
 	/**
 	 * @return the nomeArquivo
@@ -59,6 +67,20 @@ public class ResumoBaixaBoletosDTO {
 	 */
 	public void setSomaPagamentos(BigDecimal somaPagamentos) {
 		this.somaPagamentos = somaPagamentos;
+	}
+
+	/**
+	 * @return the quantidadePrevisao
+	 */
+	public Integer getQuantidadePrevisao() {
+		return quantidadePrevisao;
+	}
+
+	/**
+	 * @param quantidadePrevisao the quantidadePrevisao to set
+	 */
+	public void setQuantidadePrevisao(Integer quantidadePrevisao) {
+		this.quantidadePrevisao = quantidadePrevisao;
 	}
 
 	/**
@@ -118,4 +140,45 @@ public class ResumoBaixaBoletosDTO {
 		this.quantidadeBaixadosComDivergencia = quantidadeBaixadosComDivergencia;
 	}
 
+	/**
+	 * @return the quantidadeInadimplentes
+	 */
+	public Integer getQuantidadeInadimplentes() {
+		return quantidadeInadimplentes;
+	}
+
+	/**
+	 * @param quantidadeInadimplentes the quantidadeInadimplentes to set
+	 */
+	public void setQuantidadeInadimplentes(Integer quantidadeInadimplentes) {
+		this.quantidadeInadimplentes = quantidadeInadimplentes;
+	}
+
+	/**
+	 * @return the valorTotalBancario
+	 */
+	public BigDecimal getValorTotalBancario() {
+		return valorTotalBancario;
+	}
+
+	/**
+	 * @param valorTotalBancario the valorTotalBancario to set
+	 */
+	public void setValorTotalBancario(BigDecimal valorTotalBancario) {
+		this.valorTotalBancario = valorTotalBancario;
+	}
+
+	/**
+	 * @return the possuiDiversasBaixas
+	 */
+	public boolean isPossuiDiversasBaixas() {
+		return possuiDiversasBaixas;
+	}
+
+	/**
+	 * @param possuiDiversasBaixas the possuiDiversasBaixas to set
+	 */
+	public void setPossuiDiversasBaixas(boolean possuiDiversasBaixas) {
+		this.possuiDiversasBaixas = possuiDiversasBaixas;
+	}
 }

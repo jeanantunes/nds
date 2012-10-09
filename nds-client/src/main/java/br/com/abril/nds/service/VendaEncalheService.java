@@ -57,15 +57,23 @@ public interface VendaEncalheService {
 	 * 
 	 * @param codigoProduto - código do produto
 	 * @param numeroEdicao - número da edição do produto
-	 * @param tipoVendaEncalhe - tipo de venda referente ao produto em estoque
+	 * @param numeroCota - número da cota
+	 * 
 	 * @return VendaEncalheDTO
 	 */
-	VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, TipoVendaEncalhe tipoVendaEncalhe);
+	VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, Long numeroCota);
 	
 	List<VendaEncalheDTO> buscarVendasProduto(FiltroVendaEncalheDTO filtro);
 	
 	Long buscarQntVendasProduto(FiltroVendaEncalheDTO filtro);
 	
 	byte[] geraImpressaoVenda(FiltroVendaEncalheDTO filtro);
+	
+	/**
+	 * Gera a compravante de impressão apartir do id da venda.
+	 * @param idVenda
+	 * @return
+	 */
+	public abstract byte[] geraImpressaoComprovanteVenda(Long idVenda);
 	
 }

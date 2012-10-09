@@ -10,6 +10,8 @@ public abstract class Constantes {
 	
 	public static final String DATE_PATTERN_PT_BR = "dd/MM/yyyy";
 	
+	public static final String FORMATO_DATA_ARQUIVO_CNAB = "ddMMyy";
+	
 	public static final String DATE_TIME_PATTERN_PT_BR = "dd/MM/yyyy HH:mm:ss";
 	
 	public static final String DATE_PATTERN_PT_BR_FOR_FILE = "dd-MM-yyyy";
@@ -33,6 +35,8 @@ public abstract class Constantes {
 	public static final Integer NUMERO_REPROGRAMACOES_LIMITE = 2;
 	
 	public static final String DATA_FMT_PESQUISA_MYSQL = "YYYY-MM-DD";
+	
+	public static final Integer MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL = 9999;
 	
 }
 

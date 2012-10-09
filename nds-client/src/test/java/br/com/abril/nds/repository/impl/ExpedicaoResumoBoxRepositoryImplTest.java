@@ -41,11 +41,13 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -202,7 +204,7 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		save(tipoNotaFiscalRecebimento);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture
-				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap.getJuridica(), fornecedorDinap, tipoNotaFiscalRecebimento,
+				.notaFiscalEntradaFornecedor(cfop5102, fornecedorDinap, tipoNotaFiscalRecebimento,
 						usuarioJoao, new BigDecimal(15), new BigDecimal(5), BigDecimal.TEN);
 		save(notaFiscalFornecedor);
 
@@ -355,39 +357,39 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 
 		Diferenca diferenca =
 			Fixture.diferenca(BigInteger.valueOf(1), usuarioJoao, produtoEdicaoVeja1, TipoDiferenca.FALTA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.COTA, new Date());
 		save(diferenca);
 		
 		Diferenca diferenca2 =
 			Fixture.diferenca(BigInteger.valueOf(2), usuarioJoao, produtoEdicaoVeja2, TipoDiferenca.FALTA_DE,
-							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca2, true, TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico,  true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE, new Date());
 		save(diferenca2);
 		
 		Diferenca diferenca3 =
 			Fixture.diferenca(BigInteger.valueOf(3), usuarioJoao, produtoEdicaoSuper1, TipoDiferenca.SOBRA_EM,
-							  StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca3, true, TipoEstoque.LANCAMENTO);
+							  StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE, new Date());
 		save(diferenca3);
 		
 		Diferenca diferenca4 =
 			Fixture.diferenca(BigInteger.valueOf(4), usuarioJoao, produtoEdicaoCapricho1, TipoDiferenca.SOBRA_DE,
-					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoqueDiferenca4, true, TipoEstoque.LANCAMENTO);
+					          StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, true, TipoEstoque.LANCAMENTO,TipoDirecionamentoDiferenca.ESTOQUE,new Date());
 		save(diferenca4);
 						
 		gerarCargaDiferencaEstoque(
 			50, produtoEdicaoVeja1, tipoMovimentoFaltaEm, 
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_EM, TipoDirecionamentoDiferenca.COTA);
 		
 		gerarCargaDiferencaEstoque(
 			 50, produtoEdicaoVeja2, tipoMovimentoFaltaDe, 
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.FALTA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 		
 		gerarCargaDiferencaEstoque(
 			 50, produtoEdicaoSuper1, tipoMovimentoSobraDe, 
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_DE,TipoDirecionamentoDiferenca.ESTOQUE);
 		
 		gerarCargaDiferencaEstoque(
 			 50, produtoEdicaoCapricho1, tipoMovimentoSobraEm, 
-				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM);
+				usuarioJoao, estoqueProdutoVeja1, TipoDiferenca.SOBRA_EM,TipoDirecionamentoDiferenca.ESTOQUE);
 		
 		RateioDiferenca rateioDiferencaCotaManoel = Fixture.rateioDiferenca(BigInteger.valueOf(10), cotaManoel, diferenca3, estudoCotaSuper1Manoel, new Date());
 		save(rateioDiferencaCotaManoel);
@@ -456,20 +458,15 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 											TipoMovimentoEstoque tipoMovimento, 
 											Usuario usuario,
 											EstoqueProduto estoqueProduto,
-											TipoDiferenca tipoDiferenca) {
+											TipoDiferenca tipoDiferenca,
+											TipoDirecionamentoDiferenca tipoDirecionamento) {
 
 		for (int i = 1; i <= quantidadeRegistros; i++) {
-		
-			MovimentoEstoque movimentoEstoqueDiferenca = 
-			Fixture.movimentoEstoque(
-			null, produtoEdicao, tipoMovimento, usuario, estoqueProduto, new Date(), BigInteger.valueOf(i), StatusAprovacao.APROVADO, "motivo");
-			
-			save(movimentoEstoqueDiferenca);
-			
+					
 			Diferenca diferenca = 
 			Fixture.diferenca(
 			BigInteger.valueOf(i), usuario, produtoEdicao, tipoDiferenca, 
-			StatusConfirmacao.CONFIRMADO, null, movimentoEstoqueDiferenca, true, TipoEstoque.LANCAMENTO);
+			StatusConfirmacao.CONFIRMADO, null, true, TipoEstoque.LANCAMENTO,tipoDirecionamento, new Date());
 			
 			save(diferenca);
 		}

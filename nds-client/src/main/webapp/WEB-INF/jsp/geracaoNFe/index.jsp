@@ -38,8 +38,17 @@ $(function(){
 		</fieldset>
 	</form>
 </div>
+<div class="areaBts">
+	<div class="area">
+		<span class="bt_novos"><a href="javascript:;" id="btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a></span>
 
-<fieldset class="classFieldset">
+        <span class="bt_arq"><a href="javascript:;" id="btnImprimirXLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+
+        <span class="bt_arq"><a href="javascript:;" id="btnImprimirPDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>	
+	</div>
+</div>
+<div class="linha_separa_fields">&nbsp;</div>
+<fieldset class="fieldFiltro">
 	<legend> Pesquisar NF-e</legend>
 		<form>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -110,24 +119,17 @@ $(function(){
 				    <td>&nbsp;</td>
 				    <td>&nbsp;</td>
 				    <td>
-				    	<span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar" onclick="mostrar();">Pesquisar</a></span>
+				    	<span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar" onclick="mostrar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
 				    </td>
   				</tr>
   				<td colspan="3"></td>
   			</table>
 		</fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-       <fieldset class="classFieldset">
+       <fieldset class="fieldGrid">
        	  <legend>Gera&ccedil;&atilde;o NF-e</legend>
           <div class="grids" style="display:none;">
 		  <table id="gridNFe"></table>
-          <span class="bt_confirmar_novo" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?"><a href="javascript:;" id="btnGerar" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" />Gerar</a></span>
-
-          <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="btnImprimirXLS"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-          <span class="bt_novos" title="Imprimir"><a href="javascript:;" id="btnImprimirPDF"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>	
 		</div>
 		</form>
       </fieldset>
-
-      <div class="linha_separa_fields">&nbsp;</div>

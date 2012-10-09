@@ -1,7 +1,5 @@
 package br.com.abril.nds.integracao.fileimporter;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,9 +7,6 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -19,7 +14,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
@@ -28,7 +23,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
+import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
+import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.integracao.persistence.dao.InterfaceExecucaoHibernateDAO;
 import br.com.abril.nds.integracao.persistence.dao.LogExecucaoArquivoHibernateDAO;
 import br.com.abril.nds.integracao.persistence.dao.LogExecucaoHibernateDAO;
@@ -134,19 +132,20 @@ public class InterfaceExecutor {
 		
 		// Recupera distribuidores
 		String diretorio = parametroSistemaDAO.getParametro("INBOUND_DIR");
+		String pastaInterna = parametroSistemaDAO.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(diretorio, interfaceExecucao, codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 		
-			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, interfaceExecucao, distribuidor);
+			List<File> arquivos = this.recuperaArquivosProcessar(diretorio, pastaInterna, interfaceExecucao, distribuidor);
 			
 			if (arquivos == null || arquivos.isEmpty()) {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
 			}
 			
-			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 7, "0"));
+			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
 			
 			for (File arquivo: arquivos) {
 				
@@ -315,8 +314,14 @@ public class InterfaceExecutor {
 		
 		if (codigoDistribuidor == null) {
 			
+			FilenameFilter numericFilter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					 return name.matches("\\d+");  
+				}
+			};
+			
 			File dirDistribs = new File(diretorio);
-			distribuidores.addAll(Arrays.asList(dirDistribs.list()));
+			distribuidores.addAll(Arrays.asList(dirDistribs.list( numericFilter )));
 			
 		} else {
 			
@@ -334,7 +339,8 @@ public class InterfaceExecutor {
 		FileReader in = new FileReader(arquivo);
 		Scanner scanner = new Scanner(in);
 		int linhaArquivo = 0;
-
+		IntegracaoDocumentMaster<?> docM = null;
+		
 		while (scanner.hasNextLine()) {
 
 			String linha = scanner.nextLine();
@@ -350,15 +356,44 @@ public class InterfaceExecutor {
 //				throw new ValidacaoException(TAMANHO_LINHA);
 //			}
 			
-			IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
-			
-			doc.setTipoDocumento(interfaceEnum.name());
-			doc.setNomeArquivo(arquivo.getName());
-			doc.setLinhaArquivo(linhaArquivo);
-			doc.setDataHoraExtracao(dataInicio);
-			doc.setNomeUsuarioExtracao(nomeUsuario);
+			if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
+				IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
+				
+				doc.setTipoDocumento(interfaceEnum.name());
+				doc.setNomeArquivo(arquivo.getName());
+				doc.setLinhaArquivo(linhaArquivo);
+				doc.setDataHoraExtracao(dataInicio);
+				doc.setNomeUsuarioExtracao(nomeUsuario);
+	
+				couchDbClient.save(doc);
+			} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
 
-			couchDbClient.save(doc);
+				IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
+				
+				if (((IntegracaoDocumentMaster<?>) this.ffm.load(interfaceEnum.getClasseMaster(), linha)).sameObject(docM)) {
+					docM.addItem(docD);				
+				} else {
+					if (docM != null) {
+						couchDbClient.save(docM);							
+					}
+					
+					docM = (IntegracaoDocumentMaster<IntegracaoDocumentDetail>) this.ffm.load(interfaceEnum.getClasseMaster(), linha);
+					
+					docM.setTipoDocumento(interfaceEnum.name());
+					docM.setNomeArquivo(arquivo.getName());
+					docM.setLinhaArquivo(linhaArquivo);
+					docM.setDataHoraExtracao(dataInicio);
+					docM.setNomeUsuarioExtracao(nomeUsuario);
+					docM.addItem(docD);				
+		
+					
+				}
+			}
+			
+			
+		}
+		if (docM != null) {
+			couchDbClient.save(docM);							
 		}
 		
 		in.close();
@@ -371,13 +406,17 @@ public class InterfaceExecutor {
 	 * @param codigoDistribuidor código do distribuidor
 	 * @return lista de arquivos a serem processados
 	 */
-	private List<File> recuperaArquivosProcessar(String diretorio, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
+	private List<File> recuperaArquivosProcessar(String diretorio, String pastaInterna, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
 		
 		List<File> listaArquivos = new ArrayList<File>();
 		
-		File dir = new File(diretorio + codigoDistribuidor + File.separator);
-		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo()));
-		listaArquivos.addAll(Arrays.asList(files));
+		File dir = new File(diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator);
+		File[] files = dir.listFiles((FilenameFilter) new RegexFileFilter(interfaceExecucao.getMascaraArquivo(), IOCase.INSENSITIVE));
+				
+		if (null != files) {
+			Arrays.sort(files, 0, files.length);
+			listaArquivos.addAll(Arrays.asList(files));
+		}
 		
 		return listaArquivos;
 	}

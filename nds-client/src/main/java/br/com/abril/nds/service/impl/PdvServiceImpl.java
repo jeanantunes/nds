@@ -297,6 +297,20 @@ public class PdvServiceImpl implements PdvService {
 
         return pdvDTO;
     }
+    
+    /**
+     * Obtem PDV por id
+     * @param idPdv
+     * @return PDV
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public PDV obterPDVporId(Long idPdv) {
+
+        PDV pdv = pdvRepository.buscarPorId(idPdv);
+
+        return pdv;
+    }
 
     @Transactional
     @Override

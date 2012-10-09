@@ -1,25 +1,27 @@
-var ContagemDevolucao = $.extend(true, {
+var digitacaoContagemDevolucaoController = $.extend(true, {
 
 		init : function(userProfileOperador) {
+			
+			this.hashInserirEdicoesFechadas = {};
 			/**
 			 * Renderiza componente de Data(período) da tela
 			 */
-			$('input[id^="data"]', ContagemDevolucao.workspace).datepicker({
+			$('input[id^="data"]', digitacaoContagemDevolucaoController.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			
-			$('input[id^="data"]', ContagemDevolucao.workspace).mask("99/99/9999");
+			$('input[id^="data"]', digitacaoContagemDevolucaoController.workspace).mask("99/99/9999");
 
-			var colunas = ContagemDevolucao.montarColunas();
+			var colunas = digitacaoContagemDevolucaoController.montarColunas();
 			
-			$("#contagemDevolucaoGrid", ContagemDevolucao.workspace).flexigrid({
+			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexigrid({
 				
 				dataType : 'json',
-				preProcess:ContagemDevolucao.executarPreProcessamento,
-				onSuccess:function(){$('input[id^="valorExemplarNota"]', ContagemDevolucao.workspace).numeric();},
+				preProcess:digitacaoContagemDevolucaoController.executarPreProcessamento,
+				onSuccess:function(){$('input[id^="valorExemplarNota"]', digitacaoContagemDevolucaoController.workspace).numeric();},
 				colModel : colunas,
 				sortname : "codigoProduto",
 				sortorder : "asc",
@@ -31,14 +33,16 @@ var ContagemDevolucao = $.extend(true, {
 				height : 180
 			});
 			
-			if (ContagemDevolucao.isRoleOperador(userProfileOperador)){
+			if (digitacaoContagemDevolucaoController.isRoleOperador(userProfileOperador)){
 				
 				//Oculta os campos que não serão visíveis pelo perfil de usuário Operador
-				$("#btnConfirmar", ContagemDevolucao.workspace).hide();
-				$("#bt_sellAll", ContagemDevolucao.workspace).hide();
+				//$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
+				//$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
 			}
 			
-			$("#dataDe", ContagemDevolucao.workspace).focus();
+			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
+			
+			this.montaGridEdicoesFechadas();
 			
 		},
 		
@@ -57,11 +61,11 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		montarColunas: function (){
 			
-			if(ContagemDevolucao.isRoleOperador()){
-				return ContagemDevolucao.montarColunasPerfilOperador();
+			if(digitacaoContagemDevolucaoController.isRoleOperador()){
+				return digitacaoContagemDevolucaoController.montarColunasPerfilOperador();
 			}
 			
-			return ContagemDevolucao.montarColunasPerfilAdmin();
+			return digitacaoContagemDevolucaoController.montarColunasPerfilAdmin();
 		},
 		
 		/**
@@ -69,14 +73,14 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		pesquisar: function (){
 			
-			var formData = $('#pesquisaContagemDevolucaoForm', ContagemDevolucao.workspace).serializeArray();
+			var formData = $('#pesquisaContagemDevolucaoForm', digitacaoContagemDevolucaoController.workspace).serializeArray();
 			
-			$("#contagemDevolucaoGrid", ContagemDevolucao.workspace).flexOptions({
-				url: contexPath + "/devolucao/digitacao/contagem/pesquisar",
+			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexOptions({
+				url: contextPath + "/devolucao/digitacao/contagem/pesquisar",
 				params: formData
 			});
 			
-			$("#contagemDevolucaoGrid", ContagemDevolucao.workspace).flexReload();
+			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexReload();
 
 		},
 		
@@ -93,7 +97,7 @@ var ContagemDevolucao = $.extend(true, {
 					resultado.mensagens.listaMensagens
 				);
 				
-				$("#grids", ContagemDevolucao.workspace).hide();
+				$("#grids", digitacaoContagemDevolucaoController.workspace).hide();
 
 				return resultado.tableModel;
 			}
@@ -103,13 +107,13 @@ var ContagemDevolucao = $.extend(true, {
 				
 				var idInput = "valorExemplarNota" + index ;
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
 				
-				if(!ContagemDevolucao.isRoleOperador()){
+				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="ContagemDevolucao.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota" type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onchange="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
 					
-					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="ContagemDevolucao.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
+					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" name="checkgroup" onclick="digitacaoContagemDevolucaoController.replicarValor(this,\''+idInput+'\','+row.cell.qtdDevolucao+');"/>';
 					
 					//Altera cor do valor da quantidade, caso seja um valo negativo
 					if(row.cell.diferenca < 0){
@@ -127,28 +131,28 @@ var ContagemDevolucao = $.extend(true, {
 				
 			});
 			
-			$("#totalGeral", ContagemDevolucao.workspace).html(resultado.valorTotal);
+			$("#totalGeral", digitacaoContagemDevolucaoController.workspace).html(resultado.valorTotal);
 			
-			$("#grids", ContagemDevolucao.workspace).show();
+			$("#grids", digitacaoContagemDevolucaoController.workspace).show();
 			
-			ContagemDevolucao.limparCheck('sel');
+			digitacaoContagemDevolucaoController.limparCheck('sel');
 				
 			return resultado.tableModel;
 		},
 		
 		/**
-			Replica o valor do campo exemplar devolução para o campo exemplares de nota. 
+		*	Replica o valor do campo exemplar devolução para o campo exemplares de nota. 
 		**/	
 		replicarValor: function (input,id,valor){
 			
 			valor = (input.checked == false)?"":valor;
 			
-			$('#'+id, ContagemDevolucao.workspace).val(valor);
+			$('#'+id, digitacaoContagemDevolucaoController.workspace).val(valor);
 			
 			if(input.checked == false) {
-				$('#'+id, ContagemDevolucao.workspace).prop('disabled', false);
+				$('#'+id, digitacaoContagemDevolucaoController.workspace).prop('disabled', false);
 			} else {
-				$('#'+id,ContagemDevolucao.workspace).prop('disabled', true);
+				$('#'+id,digitacaoContagemDevolucaoController.workspace).prop('disabled', true);
 			}
 			
 		},
@@ -158,7 +162,7 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		limparCheck:function (id){
 			
-			$('#'+id, ContagemDevolucao.workspace).attr("checked",false);	
+			$('#'+id, digitacaoContagemDevolucaoController.workspace).attr("checked",false);	
 		},
 		
 		/**
@@ -166,7 +170,7 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		replicarValorAll: function(){
 			
-			var linhasDaGrid = $("#contagemDevolucaoGrid tr", ContagemDevolucao.workspace);
+			var linhasDaGrid = $("#contagemDevolucaoGrid tr", digitacaoContagemDevolucaoController.workspace);
 			
 			$.each(linhasDaGrid, function(index, value) {
 
@@ -178,11 +182,11 @@ var ContagemDevolucao = $.extend(true, {
 				
 				var vlQntDevolucao = $(colunaExemplarDevolucao).find("div").html();
 				
-				$(colunaExemplarNota, ContagemDevolucao.workspace).find("div").find('input[name="qtdNota"]').val(vlQntDevolucao);
+				$(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val(vlQntDevolucao);
 				
-				$(colunaExemplarNota, ContagemDevolucao.workspace).find("div").find('input[name="qtdNota"]').prop('disabled', true);
+				$(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').prop('disabled', true);
 				
-				$(colunaReplicarValor, ContagemDevolucao.workspace).find("div").find('input[name="checkgroup"]').attr("checked",true);
+				$(colunaReplicarValor, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="checkgroup"]').attr("checked",true);
 				
 			});
 		},
@@ -196,11 +200,11 @@ var ContagemDevolucao = $.extend(true, {
 			
 			if(todos.checked == false) {
 				
-				ContagemDevolucao.limparValorAll();
+				digitacaoContagemDevolucaoController.limparValorAll();
 			}		
 			else {										
 				
-				ContagemDevolucao.replicarValorAll();
+				digitacaoContagemDevolucaoController.replicarValorAll();
 			}	
 		},
 		
@@ -209,15 +213,15 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		salvar:function(){
 			
-			var param = ContagemDevolucao.obterListaDigitacaoContagemDevolucao();
+			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
 			
 			$.postJSON(
 				contextPath + "/devolucao/digitacao/contagem/salvar", 
 				param,
 				function(result) {
-					ContagemDevolucao.pesquisar();
+					digitacaoContagemDevolucaoController.pesquisar();
 				},
-				ContagemDevolucao.tratarErro, false
+				digitacaoContagemDevolucaoController.tratarErro, false
 			);
 		},
 		
@@ -240,15 +244,30 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		confirmarOperacao: function (){
 			
-			var param = ContagemDevolucao.obterListaDigitacaoContagemDevolucao();
+			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
 			
 			$.postJSON(
 				contextPath + "/devolucao/digitacao/contagem/confirmar", 
 				param,
 				function(result) {
-					ContagemDevolucao.pesquisar();
+					digitacaoContagemDevolucaoController.pesquisar();
 				},
-				ContagemDevolucao.tratarErro, false
+				digitacaoContagemDevolucaoController.tratarErro, false
+			);
+		},
+		
+		
+		geraNota :function(){
+			
+			var param = digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao();
+			
+			$.postJSON(
+				contextPath + "/devolucao/digitacao/contagem/geraNota", 
+				param,
+				function(result) {
+					digitacaoContagemDevolucaoController.pesquisar();
+				},
+				digitacaoContagemDevolucaoController.tratarErro, false
 			);
 		},
 		
@@ -257,7 +276,7 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		popupConfirmar: function () {
 
-			$("#dialog-confirmar", ContagemDevolucao.workspace).dialog({
+			$("#dialog-confirmar", digitacaoContagemDevolucaoController.workspace).dialog({
 				resizable : false,
 				height : 140,
 				width : 320,
@@ -265,7 +284,7 @@ var ContagemDevolucao = $.extend(true, {
 				buttons : {
 					"Confirmar" : function() {
 						
-						ContagemDevolucao.confirmarOperacao();
+						digitacaoContagemDevolucaoController.confirmarOperacao();
 						
 						$(this).dialog("close");
 					},
@@ -282,28 +301,28 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		obterListaDigitacaoContagemDevolucao: function () {
 
-			var linhasDaGrid = $("#contagemDevolucaoGrid tr", ContagemDevolucao.workspace);
+			var linhasDaGrid = $("#contagemDevolucaoGrid tr", digitacaoContagemDevolucaoController.workspace);
 
 			var listaDigitacaoContagemDevolucao = "";
 			
 			//Verifica o role do usuario para obter o indice da coluna com os valores do exemplar nota
-			var indexColunaExemplarNota = (ContagemDevolucao.isRoleOperador())?4:6;
+			var indexColunaExemplarNota = (digitacaoContagemDevolucaoController.isRoleOperador())?5:7;
 			
 			$.each(linhasDaGrid, function(index, value) {
 
 				var linha = $(value);
-				
+			
 				var colunaCodigoProduto = linha.find("td")[0];
 				var colunaNumeroEdicao = linha.find("td")[2];
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
 				
-				var codigoProduto = $(colunaCodigoProduto, ContagemDevolucao.workspace).find("div").html();
+				var codigoProduto = $(colunaCodigoProduto, digitacaoContagemDevolucaoController.workspace).find("div").html();
 				
-				var numeroEdicao = $(colunaNumeroEdicao, ContagemDevolucao.workspace).find("div").html();
+				var numeroEdicao = $(colunaNumeroEdicao, digitacaoContagemDevolucaoController.workspace).find("div").html();
 
-				var qtdNota = $(colunaExemplarNota, ContagemDevolucao.workspace).find("div").find('input[name="qtdNota"]').val();
+				var qtdNota = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val();
 				
-				var dataRecolhimentoDistribuidor = $(colunaExemplarNota, ContagemDevolucao.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
+				var dataRecolhimentoDistribuidor = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
 				
 				if (!$.trim(qtdNota)) {
 
@@ -329,7 +348,7 @@ var ContagemDevolucao = $.extend(true, {
 		**/
 		limparValorAll: function (){
 			
-			var linhasDaGrid = $("#contagemDevolucaoGrid tr", ContagemDevolucao.workspace);
+			var linhasDaGrid = $("#contagemDevolucaoGrid tr", digitacaoContagemDevolucaoController.workspace);
 			
 			$.each(linhasDaGrid, function(index, value) {
 
@@ -338,17 +357,17 @@ var ContagemDevolucao = $.extend(true, {
 				var colunaExemplarNota = linha.find("td")[6];
 				var colunaReplicarValor = linha.find("td")[8];
 				
-				var inputReplicarValor = $(colunaReplicarValor, ContagemDevolucao.workspace).find("div").find('input[name="checkgroup"]');
+				var inputReplicarValor = $(colunaReplicarValor, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="checkgroup"]');
 				
 				if(inputReplicarValor.attr('checked')){
 					
-					$(colunaExemplarNota, ContagemDevolucao.workspace).find("div").find('input[name="qtdNota"]').val("");
+					$(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val("");
 					
-					$(colunaExemplarNota, ContagemDevolucao.workspace).find("div").find('input[name="qtdNota"]').prop('disabled', false);
+					$(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').prop('disabled', false);
 					
 				}
 				
-				$(colunaReplicarValor, ContagemDevolucao.workspace).find("div").find('input[name="checkgroup"]').attr("checked",false);
+				$(colunaReplicarValor, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="checkgroup"]').attr("checked",false);
 				
 			});
 		},
@@ -367,27 +386,33 @@ var ContagemDevolucao = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 120,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoVenda',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Exemplar Devolução',
 				name : 'qtdDevolucao',
-				width : 120,
+				width : 110,
 				sortable : true,
 				align : 'center'
+			}, {
+				display : 'Total c/ Desc.R$',
+				name : 'valorTotalComDesconto',
+				width : 100,
+				sortable : false,
+				align : 'right'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotal',
@@ -397,19 +422,19 @@ var ContagemDevolucao = $.extend(true, {
 			}, {
 				display : 'Exemplar Nota',
 				name : 'qtdNota',
-				width : 110,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
-				width : 80,
+				width : 60,
 				sortable : false,
 				align : 'center'
 			},{
 				display : 'Replicar Qtde',
 				name : 'replicarQtde',
-				width : 80,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}];
@@ -455,6 +480,155 @@ var ContagemDevolucao = $.extend(true, {
 			}];
 			
 			return colModel;
+		},
+		
+		
+		incluirProdutoDialog :function(){					
+			this.hashInserirEdicoesFechadas = {};
+			$("#dialogEdicoesFechadasSelAll", this.workspace).attr("checked",false);
+			var _this =  this;
+			$( "#dialogEdicoesFechadas", this.workspace ).dialog({
+				resizable: false,
+				height:500,
+				width:945,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						if ($(dialogEdicoesFechadasSelAll, _this.workspace).is(":checked")) {
+							//TODO Adcionar todos.
+							console.log("todos");
+						}else{
+							//{codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao}
+							var listInserirEdicoesFechadas = new Array();
+							for ( var id in _this.hashInserirEdicoesFechadas) {
+								listInserirEdicoesFechadas
+										.push(_this.hashInserirEdicoesFechadas[id]);
+							}							
+							if(listInserirEdicoesFechadas.length > 0){
+								//TODO: adcionar listInserirEdicoesFechadas na grid
+								console.log("Lista");
+							}
+							
+						}
+						$( this ).dialog( "close" );
+					},
+					
+					"Cancelar": function() {
+						delete _this.hashInserirEdicoesFechadas;
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialogEdicoesFechadas", this.workspace).parents("form")
+			});
+			
+			$(".consultaEdicoesFechadasGrid", this.workspace).flexOptions({
+				"url" : contextPath + '/devolucao/digitacao/contagem/pesquisaEdicoesFechadas',
+				
+			}).flexReload();
+		},
+		edicoesFechadasCheckAll :function(checkbox){
+			
+			$('.consultaEdicoesFechadasGrid tr td', this.workspace).each( function(){ 
+				$('input[type="checkbox"]', this).attr("checked", $(checkbox, this.workspace).is(":checked"));
+			});
+			
+		},
+		clickEdicoesFechada : function(idProdutoEdicao,codigoProduto,edicaoProduto, parcial, checkbox){
+			if($(checkbox, this.workspace).is(":checked")){
+				this.hashInserirEdicoesFechadas[idProdutoEdicao] = {codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao};
+			}else{
+				delete this.hashInserirEdicoesFechadas[idProdutoEdicao];
+			}
+			
+			$("#dialogEdicoesFechadasSelAll", this.workspace).attr("checked",false);
+		},
+		montaGridEdicoesFechadas :function(){
+			$(".consultaEdicoesFechadasGrid", this.workspace).flexigrid({
+				
+				preProcess: function(data) {
+					if( typeof data.mensagens == "object") {
+
+						exibirMensagemDialog(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+
+					} else {
+						$.each(data.rows, function(index, value) {
+							
+							var onClick = 'digitacaoContagemDevolucaoController.clickEdicoesFechada('+value.cell.idProdutoEdicao+','+value.cell.codigoProduto+', ' +value.cell.edicaoProduto+','+value.cell.parcial+',this )';
+							var sel = '<input type="checkbox" name="checkbox" id="checkbox" onclick="'+onClick+'" />';
+							value.cell.parcial = (value.cell.parcial)?"Sim":"Não";				
+							
+							value.cell.sel = sel;
+						});
+
+						return data;
+					}
+				},
+				dataType : 'json',
+				colModel : [ {
+					display : 'Código',
+					name : 'codigoProduto',
+					width : 70,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 140,
+					sortable : true,
+					align : 'left'
+				}, {
+					display : 'Edição',
+					name : 'edicaoProduto',
+					width : 60,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Fornecedor',
+					name : 'nomeFornecedor',
+					width : 180,
+					sortable : true,
+					align : 'left'
+				},  {
+					display : 'Lançamento',
+					name : 'dataLancamento',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Recolhimento',
+					name : 'dataRecolhimento',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Parcial',
+					name : 'parcial',
+					width : 80,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Saldo',
+					name : 'saldo',
+					width : 50,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : '',
+					name : 'sel',
+					width : 30,
+					sortable : true,
+					align : 'center'
+				}],
+				sortname : "nomeFornecedor",
+				sortorder : "asc",
+				usepager : true,
+				useRp : true,
+				rp : 15,
+				showTableToggleBtn : true,
+				width : 900,
+				height : 280
+			});
+
 		}
 		
 }, BaseController);

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -65,13 +67,13 @@ public interface DiferencaEstoqueService {
 	void efetuarAlteracoes(Set<Diferenca> listaNovasDiferencas,
 			 			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
 						   FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
-						   Long idUsuario);
+						   Long idUsuario,Boolean isDiferencaNova);
 
 	boolean validarDataLancamentoDiferenca(Date dataLancamentoDiferenca, Long idProdutoEdicao, TipoDiferenca tipoDiferenca);
 	
 	Diferenca obterDiferenca(Long id);
 	
-	Diferenca lancarDiferenca(Diferenca diferenca);
+	Diferenca lancarDiferencaAutomatica(Diferenca diferenca);
 
 	/**
 	 * Método que retorna os detalhes de diferença por cota.
@@ -81,4 +83,26 @@ public interface DiferencaEstoqueService {
 	 * @return DetalheDiferencaCotaDTO
 	 */
 	DetalheDiferencaCotaDTO obterDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro);
+	
+	List<RateioCotaVO> obterRateiosCotaPorIdDiferenca(Long idDiferenca);
+	
+	void salvarLancamentosDiferenca(Set<Diferenca> listaNovasDiferencas,
+			   Map<Long, List<RateioCotaVO>> mapaRateioCotas,
+			   Long idUsuario,Boolean isDiferencaNova);
+	
+	/**
+	 * Cancela as diferenças obtidas de acordo com o filtro informado.
+	 * 
+	 * @param filtro - filtro de pesquisa
+	 * @param idUsuario - identificador do usuário
+	 */
+	void cancelarDiferencas(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa, Long idUsuario);
+
+	void excluirLancamentoDiferenca(Long idDiferenca);
+	
+	BigInteger obterQuantidadeTotalDiferencas(String codigoProduto, Long numeroEdicao,
+				 							  TipoEstoque tipoEstoque, Date dataMovimento);
+	
+	boolean existeDiferencaPorNota(Long idProdutoEdicao, Date dataNotaEnvio, Integer numeroCota);
+	
 }

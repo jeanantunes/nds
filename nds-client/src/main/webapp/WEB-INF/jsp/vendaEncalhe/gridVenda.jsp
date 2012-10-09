@@ -1,5 +1,5 @@
 <form id="form-venda-encalhe">
-<div id="dialog-venda-encalhe" style="display: none;" title="Venda de Encalhe">
+<div id="dialog-venda-encalhe" style="display: none;" title="Venda de Encalhe / Suplementar">
 <jsp:include page="../messagesDialog.jsp" />     
 <table width="720" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
@@ -33,19 +33,42 @@
 
 <br />
 
-<table width="837" border="0" cellspacing="2" cellpadding="2">
+<table width="796" border="0" cellspacing="2" cellpadding="2">
   <tr>
-  	<td width="160" align="left"><strong>Data Vencimento:</strong></td>
-  	<td width="150" align="left">
-  		<div style="display: none;" id="div_data_inclusao"><input type="text" style="width:80px;" name="dataVencimento" id="dataVencimento" /></div>
-  		<div style="display: none;" id="div_data_edicao"><input disabled="disabled" type="text" style="width:80px;" name="dataVencimentoEdicao" id="dataVencimentoEdicao" /></div>
+  	<td width="100"><strong>Data Vencimento:</strong></td>
+  	<td>
+  		<div style="display: none;" id="div_data_inclusao">
+			<input type="text" style="width:80px;" name="dataVencimento" id="dataVencimento" />
+		</div>
+		<div style="display: none;" id="div_data_edicao">
+			<input disabled="disabled" type="text" style="width:80px;" name="dataVencimentoEdicao" id="dataVencimentoEdicao" />
+		</div>
   	</td>
-    <td width="500" align="right"><strong>Total R$</strong></td>
-    <td width="110" align="center"><span style="display: inline; width:80px"id="span_total_disponivel_venda">0</span></td>
-    <td width="124" align="center"><span style="display: inline; width:80px" id="span_total_solicitado_venda">0</span></td>
-    <td width="106" align="center"><span  style="display: inline; width:80px"  id="span_total_geral_venda">0,00</span></td>
+	<td vAlign="bottom" width="254" align="right"><strong>Venda Encalhe:</strong></td>
+    <td vAlign="bottom" width="71" align="right" id="span_qntSolicitada_encalhe_venda">0</td>
+    <td vAlign="bottom" width="65" align="right" id="span_total_encalhe_venda">0,00</td>
+    <td width="119" align="right">&nbsp;</td>
   </tr>
+  
+  <tr>
+    <td height="18">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td vAlign="top" align="right"><strong>Venda Suplementar:</strong></td>
+    <td vAlign="top" align="right" id="span_qntSolicitada_suplementar_venda">0</td>
+    <td vAlign="top" align="right" id="span_total_suplementar_venda">0,00</td>
+    <td align="right">&nbsp;</td>
+  </tr>
+  
+  <tr>
+	
+	<td>&nbsp;</td>
+    <td>&nbsp;</td>
+	<td vAlign="top" align="right"><strong>Total R$</strong></td>
+    <td vAlign="top" align="right" id="span_total_solicitado_venda">0</td>
+    <td vAlign="top" align="right" id="span_total_geral_venda">0,00</td>
+	<td align="right">&nbsp;</td>
+  </tr>
+  
 </table>
-
 </div>
 </form>

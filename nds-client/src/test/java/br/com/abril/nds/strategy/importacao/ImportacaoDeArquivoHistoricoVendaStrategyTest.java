@@ -107,7 +107,7 @@ public class ImportacaoDeArquivoHistoricoVendaStrategyTest extends AbstractRepos
 		
 		HistoricoVendaInput input = new HistoricoVendaInput();
 		
-		input.setCodigoProduto(Integer.parseInt(produtoVeja.getCodigo()));
+		input.setCodigoProduto(produtoVeja.getCodigo());
 		input.setNumeroCota(cotaManoel.getNumeroCota());
 		input.setNumeroEdicao(produtoEdicaoVeja1.getNumeroEdicao().intValue());
 		input.setQuantidadeDevolvidaProduto(10);

@@ -3,8 +3,11 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaEntregador.js"></script>
 	<script language="javascript" type="text/javascript">
-		
+	
+		var pesquisaEntregadorMapaAbastecimento = new PesquisaEntregador();
+	
 		var pesquisaCotaMapaAbastecimento = new PesquisaCota();
 		
 		var pesquisaProdutoMapaAbastecimento = new PesquisaProduto();
@@ -37,6 +40,20 @@
 
 <body>
 	
+<form id="idEmissaoCEfornecedor">
+	<div id="dialog-pesq-produtos" title="Selecionar Produtos" style="display: none;">
+		<fieldset>
+			<legend>Selecione um ou mais Produtos</legend>
+			<select id="selectProdutos" name="selectProdutos"
+					size="1" multiple="multiple" style="width:440px; height:150px;" >
+					
+			    <c:forEach items="${listaProdutos}" var="produto">
+			    	<option value="${produto.key}_${produto.value}">${produto.value}</option>
+		      	</c:forEach>
+	      	</select>
+		</fieldset>
+	</div>
+</form>
 	
 <form id="form-detalhesAbastecimento">
 <div id="dialog-detalhesAbastecimento" title="Produtos do Box" style="display:none;">
@@ -54,125 +71,212 @@
     	
       <fieldset class="classFieldset">
    	    <legend> Pesquisar Mapa de Abastecimento</legend>
-        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+        <table width="980" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td>Data Lançamento:</td>
               <td>
-              
+			  
+			  
 <!-- Data Lançamento -->              
-<input value="${data}" id="dataLancamento" type="text"  style="width:100px;"/></td>
+<input value="${data}" id="dataLancamento" type="text"  style="width:100px;"/>
 
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
+			</td>
               <td>Tipo Consulta:</td>
               <td>
-
+			  
 <!-- Tipo Consulta -->
 <select id="tipoConsulta" onchange="MA.mudarTipoPesquisa(this.value)" style="width:120px;">
       <option value="" selected="selected">Selecione...</option>
       <option value="BOX">Box</option>
       <option value="ROTA">Rota</option>
+      <option value="PRODUTO_ESPECIFICO">Produto Específico</option>
       <option value="COTA">Cota</option>
+      <option value="PRODUTO_X_COTA">Produto X Cota</option>
       <option value="PRODUTO">Produto</option>
+      <option value="ENTREGADOR">Entregador</option>
 </select>
-			
-			</td>
+			  
+			  </td>
+              <td>
+              	<div class="entregador"style="display:none">
+					Entregador:               
+              	</div>
+              	
+              </td>
+              <td colspan="3">
+              
+              <div class="entregador" style="display:none">
+              
+<input id="entregador"  type="text" style="width:112px;"
+	   onkeyup="pesquisaEntregadorMapaAbastecimento.autoCompletarPorNome('#entregador');" 
+		 	   onblur="pesquisaEntregadorMapaAbastecimento.pesquisarPorNomeEntregador('#idEntregador', '#entregador');" />
+
+<input id="idEntregador"  type="hidden" />
+		 	   
+	   	
+	   		   </div>
+              
+              </td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
               <td>Box:</td>
               <td>
-              
+			  
 <!-- Box -->
-<select id="box" disabled="disabled" name="select" style="width:120px;">
+<select id="box" name="select" style="width:120px;">
        <option selected="selected" value="">Selecione...</option>
 	        
 </select>
-				</td>
-              <td>Rota:</td>
+			
+			  
+			  
+			  </td>
+              <td>Roteiro:</td>
               <td>
-              
+			  
+<select id="roteiro" disabled="disabled" name="select" style="width:140px;">
+       <option selected="selected" value="">Selecione...</option>
+	        
+</select>	  			  
+			  
+			  </td>
+              <td>Rota:</td>
+              <td colspan="3">
+			  
 <!-- Rota -->              
 <select id="rota" disabled="disabled" name="select2" style="width:120px;">
 	 <option selected="selected" value="">Selecione...</option>
 	 
 </select>
-			
-			</td>
+			  
+			  </td>
               <td>&nbsp;</td>
             </tr>
             <tr>
-              <td width="106">Código:</td>
+              <td width="103">Código:</td>
               <td>
-              
+			  
+			  
 <!-- Código Produto -->              
 <input id="codigoProduto" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
-		 onchange="pesquisaProdutoMapaAbastecimento.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', null , false);" />
+	   onchange="MA.pesquisarPorCodigoProduto('#codigoProduto', '#nomeProduto', null , false);" />
+	
+			  </td>
+              <td width="81">Produto:</td>              
+              <td width="155">
+              	<a id="linkProdutos" href="javascript:;" onclick="MA.carregarProdutos();">Selecione Produto:</a>
+			  </td>
+              <td width="43">Edição:</td>
+              <td colspan="3">
+			  
+<!-- EdiçãoProduto -->              
+<input id="edicao" disabled="disabled" type="text" style="width:112px; float:left; margin-right:5px;"/>
+
 			  
 			  </td>
-              <td width="73">Produto:</td>              
-              <td width="236">
-         
-<!-- Nome Produto -->              
-<input id= "nomeProduto" disabled="disabled" type="text" class="nome_jornaleiro" style="width:220px;"
-		 onkeyup="pesquisaProdutoMapaAbastecimento.autoCompletarPorNomeProduto('#nomeProduto', false);"
-		 onblur="pesquisaProdutoMapaAbastecimento.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
-
-			  </td>
-			  <td width="45">Edição:</td>
-              <td width="173">
-              
-<!-- EdiçãoProduto -->              
-<input id="edicao" disabled="disabled" type="text" style="width:112px; float:left; margin-right:5px;"/></td>
-
               <td width="104">&nbsp;</td>
             </tr>
             <tr>
+              <td colspan="9">
+				<div id="produtosSelecionados" class="produto" style="float:left; width:980px;"></div>
+              </td>
+            </tr>
+            <tr>
               <td>Cota:</td>
-              <td width="177">
-              
+              <td width="181">
+			  
 <!-- Código Cota -->              
 <input id="codigoCota" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
 			onchange="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
 
+			  
 			  </td>
               <td>Nome:</td>
               <td>
-              
+			  
+			  
 <!-- Nome Cota -->              
-<input id="nomeCota" disabled="disabled" type="text" class="nome_jornaleiro" style="width:220px;"
+<input id="nomeCota" disabled="disabled" type="text" class="nome_jornaleiro" style="width:150px;"
 		onkeyup="pesquisaCotaMapaAbastecimento.autoCompletarPorNome('#nomeCota');" 
 		 	   onblur="pesquisaCotaMapaAbastecimento.pesquisarPorNomeCota('#codigoCota', '#nomeCota');"/>
 
-			 </td>
-
+				</td>
               <td align="right">
-              
-<!-- Quebra por Cota -->              
-<input id="quebraPorCota" disabled="disabled" type="checkbox" name="checkbox"/></td>
+			  
+<!-- Quebra por Cota -->
+<input id="quebraPorCota" disabled="disabled" type="checkbox" name="checkbox"/>
 
-              <td>Quebra por Cota</td>
+				</td>
+              <td width="101">Quebra por Cota</td>
+              <td width="20">
+			  
+<!-- Excluir Produto Sem Reparte -->              
+<input id="excluirProdutoSemReparte" type="checkbox" name="checkbox"/>
+
+			</td>
+              <td width="156">Excluir Produtos s/Reparte</td>
               <td><span class="bt_pesquisar">
-              
+			  
 <!-- Pesquisar -->
-<a id="btnPesquisar" href="javascript:;" onclick="MA.pesquisar();">Pesquisar</a></span></td>
-
+<a id="btnPesquisar" href="javascript:;" onclick="MA.pesquisar();">Pesquisar</a>
+			  
+			  </span></td>
             </tr>
           </table>
 
-      </fieldset>
+      </fieldset>     
+     
+      
       <div class="linha_separa_fields">&nbsp;</div>
       <fieldset class="classFieldset">
        	  <legend>Mapas de Abastecimentos</legend>
         <div class="grids" style="display:none;">
-       	  <table class="mapaAbastecimentoGrid"></table>
+			<div id="gridBox" style="display:none;">
+				<table class="mapaAbastecimentoGrid"></table>
+			</div>
+			<div id="gridRota" style="display:none;">
+				<table class="mapaAbastecimentoRotaGrid"></table>				
+			</div>
+			<div id="gridBoxQuebraCota" style="display:none;">
+				<table class="mapaAbastecimentoGridQuebraCota"></table>
+			</div>
+			<div id="gridRotaQuebraCota" style="display:none;">
+				<table class="mapaAbastecimentoRotaGridQuebraCota"></table>				
+			</div>
+			<div id="gridCota" style="display:none;">
+				<span>
+					<strong>Cota:</strong>  <span id="codigoCotaHeader">  </span> - 
+					<strong>Nome:</strong> <span id="nomeCotaHeader">  </span>
+				</span>
+				<table class="mapaAbastecimentoCotaEspGrid"></table>
+			</div>
+			<div id="gridProduto" style="display:none;">
+				<table class="mapaAbastecimentoProdutoGrid"></table>
+			</div>
+			<div id="gridProdutoEspecifico" style="display:none;">
+				<span>
+					<strong>Código:</strong>  <span id="codigoProdutoHeader">  </span> - 
+					<strong>Produto:</strong> <span id="nomeProdutoHeader">  </span> - 
+					<strong>Edição:</strong>  <span id="edicaoProdutoHeader">  </span>
+				</span>
+				<table class="mapaAbastecimentoProdEspGrid"></table>
+
+		   </div>
+		   <div id="gridProdutoCota" style="display:none;">
+				<table class="mapaAbastecimentoProdCotaGrid"></table>
+			</div>
+			
+			 <div id="gridEntregador" style="display:none;">
+            	<span><strong>Nome:</strong> Nome do Entregador</span>
+            	<table class="mapaAbastecimentoEntregadorGrid"></table>
+            </div>
+			
           <br />
    		  <span class="bt_novos" id="map_1" title="Imprimir">
 
 <!-- IMPRIMIR MAPA -->   		  
-<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="blank">
+<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="_blank">
 
 		
 		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Mapa</a>
@@ -190,101 +294,5 @@
     
     </div>
 </div> 
-<script>
-
-
-$(function() {	
-	
-	$(".mapaAbastecimentoGrid", BaseController.workspace).flexigrid($.extend({},{
-		colModel : [ {
-				display : 'Box',
-				name : 'box',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Total de Produtos',
-				name : 'totalProduto',
-				width : 250,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Total Reparte',
-				name : 'totalReparte',
-				width : 250,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Total Box R$',
-				name : 'totalBox',
-				width : 250,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : false,
-				align : 'center'
-			}],
-			sortname : "box",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255
-	})); 
-	
-	$(".grids", BaseController.workspace).show();	
-	
-	$(".mapaAbastecimentoDetalheGrid", BaseController.workspace).flexigrid($.extend({},{
-		colModel : [ {	
-				display : 'Código',
-				name : 'codigoProduto',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 150,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'numeroEdicao',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Total R$',
-				name : 'total',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}],
-			sortname : "nomeProduto",
-			sortorder : "asc",
-			width : 650,
-			height : 255
-	})); 	
-});
-
-</script>
 </body>
 
-</body>

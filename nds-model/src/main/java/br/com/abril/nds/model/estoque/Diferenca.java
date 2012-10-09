@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -80,6 +83,15 @@ public class Diferenca implements Serializable {
 	
 	@Transient
 	private boolean existemRateios;
+
+	@Column(name="DATA_MOVIMENTACAO")
+	@Temporal(TemporalType.DATE)
+	private Date dataMovimento;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_DIRECIONAMENTO", nullable = true)
+	private TipoDirecionamentoDiferenca tipoDirecionamento;
+
 	
 	public Diferenca() {
 		
@@ -99,6 +111,8 @@ public class Diferenca implements Serializable {
 		this.lancamentoDiferenca = diferenca.lancamentoDiferenca;
 		this.valorTotalDiferenca = valorTotalDiferenca;
 		this.existemRateios = existemRateios;
+		this.dataMovimento = diferenca.getDataMovimento();
+		this.tipoDirecionamento = diferenca.getTipoDirecionamento();
 	}
 	
 	public Long getId() {
@@ -125,6 +139,20 @@ public class Diferenca implements Serializable {
 		this.responsavel = responsavel;
 	}
 	
+	/**
+	 * @return the tipoDirecionamento
+	 */
+	public TipoDirecionamentoDiferenca getTipoDirecionamento() {
+		return tipoDirecionamento;
+	}
+
+	/**
+	 * @param tipoDirecionamento the tipoDirecionamento to set
+	 */
+	public void setTipoDirecionamento(TipoDirecionamentoDiferenca tipoDirecionamento) {
+		this.tipoDirecionamento = tipoDirecionamento;
+	}
+
 	public ItemRecebimentoFisico getItemRecebimentoFisico() {
 		return itemRecebimentoFisico;
 	}
@@ -187,6 +215,22 @@ public class Diferenca implements Serializable {
 
 	public void setLancamentoDiferenca(LancamentoDiferenca lancamentoDiferenca) {
 		this.lancamentoDiferenca = lancamentoDiferenca;
+	}
+	
+	
+
+	/**
+	 * @return the dataMovimento
+	 */
+	public Date getDataMovimento() {
+		return dataMovimento;
+	}
+
+	/**
+	 * @param dataMovimento the dataMovimento to set
+	 */
+	public void setDataMovimento(Date dataMovimento) {
+		this.dataMovimento = dataMovimento;
 	}
 
 	/* (non-Javadoc)

@@ -394,4 +394,36 @@ public class EntregadorServiceImpl implements EntregadorService {
 		
 		return this.entregadorRepository.verificarEntregador(idCota);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Entregador obterEntregadorPorCodigo(Long codigo) {
+		
+		return this.entregadorRepository.obterEntregadorPorCodigo(codigo);
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterMinCodigoEntregadorDisponivel() {
+		
+		return entregadorRepository.obterMinCodigoEntregadorDisponivel();
+		
+	}
+	
+	
+
+	@Override
+	@Transactional
+	public List<Entregador> obterEntregadoresPorNome(String nome) {
+		return entregadorRepository.obterEntregadoresPorNome(nome);
+	}
+
+	@Override
+	@Transactional
+	public Entregador obterPorNome(String nome) {
+		return entregadorRepository.obterPorNome(nome);
+	}
+	
+	
 }

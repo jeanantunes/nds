@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -13,6 +15,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.NfeDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO.ColunaOrdenacaoImpressaoNFE;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO.OrdenacaoColuna;
 import br.com.abril.nds.fixture.Fixture;
@@ -20,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -31,6 +36,8 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
+import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroServico;
+import br.com.abril.nds.model.fiscal.nota.ISSQN;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
@@ -73,7 +80,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		fornecedorFC = Fixture.fornecedorFC(tipoFornecedorPublicacao);
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		save(fornecedorFC, fornecedorDinap);
+		save(tipoFornecedorPublicacao, fornecedorFC, fornecedorDinap);
 
 		NCM ncmRevistas = Fixture.ncm(49029000l,"REVISTAS","KG");
 		save(ncmRevistas);
@@ -291,6 +298,11 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		notaFiscal.setInformacaoValoresTotais(informacaoValoresTotais);
 		notaFiscal.setStatusProcessamentoInterno(statusProcessamentoInterno);
 		
+		Set<Processo> processos = new HashSet<Processo>();
+		processos.add(Processo.GERACAO_NF_E);
+
+		notaFiscal.setProcessos(processos);
+		
 		save(notaFiscal);
 		
 		criarProdutosServicos(notaFiscal);
@@ -388,6 +400,17 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 			BigDecimal expectativaVenda = BigDecimal.ZERO;
 			boolean parcial = false;
 			
+			ISSQN issqn = new ISSQN();
+			issqn.setCst("0");
+			issqn.setCodigoMunicipio(1111111);
+			issqn.setAliquota(BigDecimal.ZERO);
+			issqn.setValor(BigDecimal.ZERO);
+			issqn.setValorBaseCalculo(BigDecimal.ZERO);
+			issqn.setItemListaServico(1111);
+
+			encargoFinanceiro = new EncargoFinanceiroServico();
+			((EncargoFinanceiroServico)encargoFinanceiro).setIssqn(issqn);
+			
 			produtoEdicao = criarProdutoEdicao(
 					codigoProduto, 
 					nomeProduto, 
@@ -429,22 +452,25 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 					valorTotalBruto, 
 					valorUnitario);
 			
-			save(produtoServico);
+			save(encargoFinanceiro, produtoServico);
 			
 		}
 		
 		
 	}
 	
-	@SuppressWarnings("unused")
 	@Test
-	public void teste_pesquisar_nota_fiscal() {
+	public void testePesquisarNotaFiscal() {
 		
 		FiltroMonitorNfeDTO filtro = obterFiltroMonitorNfeDTO();
 		
 		List<NfeDTO> listaNotaFiscal = notaFiscalRepository.pesquisarNotaFiscal(filtro);
 		
 		Assert.assertNotNull(listaNotaFiscal);
+		
+		int tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, listaNotaFiscal.size());
 		
 	}
 	
@@ -461,6 +487,39 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		filtro.setPaginacao(paginacao);
 	
 		filtro.setOrdenacaoColuna(OrdenacaoColuna.EMISSAO);
+		
+		return filtro;
+		
+	}
+	
+	@Test
+	public void buscarNFeParaImpressao() {
+		
+		FiltroImpressaoNFEDTO filtro = obterFiltroImpressaoNfeDTOOrdenadoPorCota();
+		
+		List<NotaFiscal> listaNotaFiscal = notaFiscalRepository.buscarNFeParaImpressao(filtro);
+		
+		Assert.assertNotNull(listaNotaFiscal);
+		
+		int tamanhoEsperado = 1;
+		
+		Assert.assertEquals(tamanhoEsperado, listaNotaFiscal.size());
+		
+	}
+	
+	private FiltroImpressaoNFEDTO obterFiltroImpressaoNfeDTOOrdenadoPorCota() {
+		
+		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
+		
+		PaginacaoVO paginacao = new PaginacaoVO();
+
+		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
+		paginacao.setPaginaAtual(1);
+		paginacao.setQtdResultadosPorPagina(5);
+
+		filtro.setPaginacao(paginacao);
+	
+		filtro.setOrdenacaoColuna(ColunaOrdenacaoImpressaoNFE.COTA);
 		
 		return filtro;
 		

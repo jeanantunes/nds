@@ -69,10 +69,14 @@ var entregadorController = $.extend(true, {
 		$("#idEntregadorPJ", this.workspace).val("");
 		
 		var idCampoInicioAtividade = "#inicioAtividade";
+		
+		var idCampoCodigoEntregador = "#codigoEntregador";
 
 		if (isCadastroPF) {
 			
 			idCampoInicioAtividade += "PF";
+			
+			idCampoCodigoEntregador += "PF";
 			
 			$("#formDadosEntregadorPF", this.workspace)[0].reset();
 			$("#idEntregadorPF", this.workspace).val("");
@@ -82,6 +86,8 @@ var entregadorController = $.extend(true, {
 		} else {
 
 			idCampoInicioAtividade += "PJ";
+
+			idCampoCodigoEntregador += "PJ";
 			
 			$("#formDadosEntregadorPJ", this.workspace)[0].reset();
 			$("#idEntregadorPJ", this.workspace).val("");
@@ -96,7 +102,9 @@ var entregadorController = $.extend(true, {
 
 				$("#linkDadosCadastrais", this.workspace).click();
 				
-				$(idCampoInicioAtividade).html(result);
+				$(idCampoInicioAtividade, this.workspace).html(result.data);
+
+				$(idCampoCodigoEntregador, this.workspace).val(result.nextCodigo);
 
 				entregadorController.popup_novoEntregador(isCadastroPF);		
 			}
@@ -119,7 +127,7 @@ var entregadorController = $.extend(true, {
 		$( "#dialog-novoEntregador", this.workspace ).dialog({
 			resizable: false,
 			height:570,
-			width:840,
+			width:950,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -150,12 +158,12 @@ var entregadorController = $.extend(true, {
 			data.push({name: 'codigoEntregador', value: $("#codigoEntregadorPF", this.workspace).val()});
 			data.push({name: 'isComissionado', value: $("#comissionadoPF", this.workspace).is(":checked")});
 			data.push({name: 'percentualComissao', value: $("#percentualComissaoPF", this.workspace).val()});
-
+			data.push({name: 'dataNascimento', value: $("#dataNascimento", this.workspace).val()});
+			
 			data.push({name: 'pessoaFisica.cpf', value: $("#cpf", this.workspace).val()});
 			data.push({name: 'pessoaFisica.nome', value: $("#nomeEntregador", this.workspace).val()});
 			data.push({name: 'pessoaFisica.apelido', value: $("#apelido", this.workspace).val()});
 			data.push({name: 'pessoaFisica.rg', value: $("#rg", this.workspace).val()});
-			data.push({name: 'pessoaFisica.dataNascimento', value: $("#dataNascimento", this.workspace).val()});
 			data.push({name: 'pessoaFisica.orgaoEmissor', value: $("#orgaoEmissor", this.workspace).val()});
 			data.push({name: 'pessoaFisica.ufOrgaoEmissor', value: $("#ufOrgaoEmissor", this.workspace).val()});
 			data.push({name: 'pessoaFisica.estadoCivil', value: $("#estadoCivil", this.workspace).val()});
@@ -203,16 +211,7 @@ var entregadorController = $.extend(true, {
 						result.listaMensagens
 					);
 				}
-			},
-			function(result) {
-		
-				exibirMensagemDialog(
-					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens, ""
-				);
-			},
-			true
-		);
+			});
 	},
 	
 	editarEntregador: function(idEntregador) {

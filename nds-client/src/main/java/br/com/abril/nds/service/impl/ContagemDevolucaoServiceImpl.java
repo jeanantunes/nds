@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -26,6 +27,8 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
@@ -118,15 +121,44 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
 		
-		BigDecimal valorTotalGeral = movimentoEstoqueCotaRepository.obterValorTotalGeralContagemDevolucao(filtroPesquisa, tipoMovimentoEstoque);
+		BigDecimal valorTotalGeral = BigDecimal.ZERO;
 		info.setValorTotalGeral(valorTotalGeral);
 		
 		if(indPerfilUsuarioEncarregado) {
 			carregarDadosAdicionais(info, listaContagemDevolucao);
 		}
 		
-		return info;
+		return info;	
+	}
 	
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<ContagemDevolucaoConferenciaCegaDTO> obterInfoContagemDevolucaoCega(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
+		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
+				filtroPesquisa, 
+				tipoMovimentoEstoque, 
+				indPerfilUsuarioEncarregado);
+		
+		List<ContagemDevolucaoConferenciaCegaDTO> cegaDTOs = new ArrayList<ContagemDevolucaoConferenciaCegaDTO>(listaContagemDevolucao.size());
+		for(ContagemDevolucaoDTO contagemDevolucaoDTO : listaContagemDevolucao){
+			ContagemDevolucaoConferenciaCegaDTO cegaDTO = new ContagemDevolucaoConferenciaCegaDTO();
+			
+			cegaDTO.setCodigoProduto(contagemDevolucaoDTO.getCodigoProduto());
+			cegaDTO.setIdProdutoEdicao(contagemDevolucaoDTO.getIdProdutoEdicao());
+			cegaDTO.setNomeProduto(contagemDevolucaoDTO.getNomeProduto());
+			cegaDTO.setNumeroEdicao(contagemDevolucaoDTO.getNumeroEdicao());
+			cegaDTO.setPrecoVenda(contagemDevolucaoDTO.getPrecoVenda());
+			cegaDTOs.add(cegaDTO);
+			
+		}
+		
+		return cegaDTOs;	
 	}
 	
 	/**
@@ -142,21 +174,32 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
 			
-			BigDecimal precoVenda = (contagem.getPrecoVenda() == null) ? new BigDecimal(0.0D) : contagem.getPrecoVenda();
+			BigDecimal precoVenda = (contagem.getPrecoVenda() == null) ? BigDecimal.ZERO : contagem.getPrecoVenda();
 			
 			BigInteger qtdMovimento = (contagem.getQtdDevolucao() == null) ? BigInteger.ZERO : contagem.getQtdDevolucao();
 			
 			BigInteger qtdNota = (contagem.getQtdNota() == null) ? BigInteger.ZERO : contagem.getQtdNota();
 			
+			BigDecimal desconto = contagem.getDesconto();
 			
 			BigInteger diferenca = qtdMovimento.subtract(qtdNota);
+			
+			BigInteger quantidade = qtdNota.compareTo(BigInteger.ZERO) == 0 ? qtdMovimento : qtdNota;
+				
+			BigDecimal valorTotal = precoVenda.multiply(new BigDecimal(quantidade));
+			
+			BigDecimal totalComDesconto = valorTotal;
+			
+			if (desconto != null) {	
+
+				totalComDesconto = valorTotal.subtract(valorTotal.multiply(desconto.divide(new BigDecimal(100))));
+			}
+			
 			contagem.setDiferenca(diferenca);
-			
-			BigDecimal valorTotal = precoVenda.multiply(new BigDecimal(qtdMovimento));
 			contagem.setValorTotal(valorTotal);
-			
+			contagem.setTotalComDesconto(totalComDesconto);
+			info.setValorTotalGeral(info.getValorTotalGeral().add(valorTotal));
 		}
-		
 		
 	}
 	
@@ -419,11 +462,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		diferenca.setQtde(calculoQdeDiferenca.abs());
 		diferenca.setResponsavel(usuario);
 		diferenca.setProdutoEdicao(produtoEdicao);
-		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
 		
-		
-		
-		diferencaEstoqueService.lancarDiferenca(diferenca);
+		diferencaEstoqueService.lancarDiferencaAutomatica(diferenca);
 		
 		sinalizarDiferencaApurada(contagem);
 		
@@ -555,7 +595,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	 * 
 	 * @param listaContagemDevolucaoAprovada
 	 */
-	private void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) {
+	@Override
+	@Transactional
+	public void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) {
 		
 		Map<Fornecedor, List<ContagemDevolucaoDTO>> mapaFornecedorListaContagemDevolucao = new HashMap<Fornecedor, List<ContagemDevolucaoDTO>>();
 		
@@ -654,14 +696,11 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			throw new IllegalStateException("TipoNotaFiscal não parametrizada");
 		}
 		
-		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();
-		
 		Long numeroNF = controleNumeracaoNotaFiscalService.obterProximoNumeroNotaFiscal(serieNF);
 		
 		nfSaidaFornecedor.setCfop(cfop);
 		nfSaidaFornecedor.setDataEmissao(dataAtual);
 		nfSaidaFornecedor.setDataExpedicao(dataAtual);
-		nfSaidaFornecedor.setEmitente(pessoaJuridica);
 		nfSaidaFornecedor.setFornecedor(fornecedor);
 
 		nfSaidaFornecedor.setNumero(numeroNF);
@@ -745,7 +784,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
 			
-			if(contagem.getIdProdutoEdicao() == null || contagem.getQtdNota() != null || contagem.getQtdNota().doubleValue() > 0.0D) {
+			if(contagem.getIdProdutoEdicao() != null && contagem.getQtdNota() != null && contagem.getQtdNota().doubleValue() > 0.0D) {
 				
 				if(contagem.getPrecoVenda()!=null) {
 					valorTotal = valorTotal.add( contagem.getPrecoVenda().multiply( new BigDecimal(contagem.getQtdNota()) ) );

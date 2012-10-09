@@ -1,5 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.util.Date;
+
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -13,34 +15,15 @@ public class FiltroViewContaCorrenteCotaDTO {
 	@Export(label = "Nome")
 	private String nomeCota;
 	
+	private Date inicioPeriodo;
+	
+	private Date fimPeriodo;
+	
 	private PaginacaoVO paginacao = new PaginacaoVO();
 	
-	private	ColunaOrdenacao colunaOrdenacao;
+	private	String colunaOrdenacao;
 	
-	public enum ColunaOrdenacao {
-
-		DT_CONSOLIDADO("data"),
-		VALOR_POSTERGADO("vlrpostergado"),
-		NUMERO_ATRASADOS("na"),
-		CONSIGNADO("consignadoaVencer"),
-		ENCALHE("encalhe"),
-		VENDA_ENCALHE("vendaEncalhe"),
-		DEBITO_CREDITO("debCred"),	
-		ENCARGOS("encargos"),
-		PENDENTE("pendente"),
-		TOTAL("total");
-
-		private String nomeColuna;
-		
-		private ColunaOrdenacao(String nomeColuna) {
-			this.nomeColuna = nomeColuna;
-		}
-		
-		@Override
-		public String toString() {
-			return this.nomeColuna;
-		}
-	}
+	
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -58,14 +41,42 @@ public class FiltroViewContaCorrenteCotaDTO {
 		this.paginacao = paginacao;
 	}
 
-	public ColunaOrdenacao getColunaOrdenacao() {
+	public String getColunaOrdenacao() {
 		return colunaOrdenacao;
 	}
 
-	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
+	public void setColunaOrdenacao(String colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
 	}
 	
+	/**
+	 * @return the inicioPeriodo
+	 */
+	public Date getInicioPeriodo() {
+		return inicioPeriodo;
+	}
+
+	/**
+	 * @param inicioPeriodo the inicioPeriodo to set
+	 */
+	public void setInicioPeriodo(Date inicioPeriodo) {
+		this.inicioPeriodo = inicioPeriodo;
+	}
+
+	/**
+	 * @return the fimPeriodo
+	 */
+	public Date getFimPeriodo() {
+		return fimPeriodo;
+	}
+
+	/**
+	 * @param fimPeriodo the fimPeriodo to set
+	 */
+	public void setFimPeriodo(Date fimPeriodo) {
+		this.fimPeriodo = fimPeriodo;
+	}
+
 	/**
 	 * @return the nomeCota
 	 */

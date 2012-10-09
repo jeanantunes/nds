@@ -8,10 +8,12 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> 
@@ -30,8 +32,11 @@ implements MovimentoEstoqueRepository {
 	 */
 	//@Override
 	@SuppressWarnings("unchecked")
-	public List<ExtratoEdicaoDTO> obterListaExtratoEdicao(String codigoProduto, Long numeroEdicao, StatusAprovacao statusAprovacao) {
+	public List<ExtratoEdicaoDTO> obterListaExtratoEdicao(FiltroExtratoEdicaoDTO filtro, StatusAprovacao statusAprovacao) {
 
+		String codigoProduto = filtro.getCodigoProduto();
+		Long numeroEdicao = filtro.getNumeroEdicao();
+		
 		StringBuilder hql = new StringBuilder("");
 		
 		hql.append(" select new " + ExtratoEdicaoDTO.class.getCanonicalName() );		
@@ -70,6 +75,17 @@ implements MovimentoEstoqueRepository {
 		query.setParameter("codigoProduto", codigoProduto);
 		
 		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		if (filtro != null && filtro.getPaginacao() != null) {
+			
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
 		
 		return query.list();
 				

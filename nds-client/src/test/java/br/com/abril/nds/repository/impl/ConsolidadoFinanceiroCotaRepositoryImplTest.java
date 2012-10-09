@@ -41,6 +41,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
@@ -122,16 +123,13 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 				
-		PessoaJuridica pj = Fixture.juridicaDinap();		
-		save(pj);
-		
 		CFOP cfop = Fixture.cfop5102();		
 		save(cfop);
 				
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
 					
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -197,7 +195,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCompra);
 		
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidadoFinanceiroCota);
 		
 	}
@@ -253,16 +251,13 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 		save(tipoFornecedorPublicacao);
 				
-		PessoaJuridica pj = Fixture.juridicaDinap();		
-		save(pj);
-		
 		CFOP cfop = Fixture.cfop5102();		
 		save(cfop);
 				
 		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento();
 		save(tipoNotaFiscal);
 					
-		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, pj, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
+		NotaFiscalEntradaFornecedor notaFiscal = Fixture.notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, new BigDecimal(145),  new BigDecimal(10),  new BigDecimal(10));
 		save(notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = Fixture.recebimentoFisico(notaFiscal, usuario, new Date(), new Date(), StatusConfirmacao.PENDENTE);
@@ -310,7 +305,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		MovimentoEstoque movimentoEstoque = Fixture.movimentoEstoque(itemRecebimentoFisico, produtoEdicao, tipoMovimentoEstoque, usuario, estoqueProduto, dataAtual, BigInteger.valueOf(12), StatusAprovacao.APROVADO , "MOTIVO B");
 		save(movimentoEstoque);
 			
-		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, movimentoEstoque, true, TipoEstoque.LANCAMENTO);
+		Diferenca diferenca = Fixture.diferenca(BigInteger.valueOf(32), usuario, produtoEdicao, TipoDiferenca.FALTA_DE, StatusConfirmacao.CONFIRMADO, itemRecebimentoFisico, true, TipoEstoque.LANCAMENTO, TipoDirecionamentoDiferenca.COTA, new Date());
 		save(diferenca);
 		
 		RateioDiferenca rateioDiferenca = Fixture.rateioDiferenca(BigInteger.TEN , cotaManoel, diferenca, estudoCota, new Date());
@@ -347,7 +342,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = new ArrayList<MovimentoFinanceiroCota>();
  		listaMovimentoFinanceiroCota.add(movimentoFinanceiroCota);
 				
- 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+ 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = Fixture.consolidadoFinanceiroCota(listaMovimentoFinanceiroCota, cotaManoel, dataAtual, new BigDecimal(230), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
 		save(consolidadoFinanceiroCota);
 		
 	}

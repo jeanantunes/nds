@@ -485,9 +485,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				.append(" JOIN produtoEdicao.produto produto ")
 				.append(" JOIN produtoEdicao.lancamentos lancamento ")
 				.append(" JOIN cota.pdvs pdv ")
-				.append(" LEFT JOIN pdv.roteirizacao roteirizacao ")
-				.append(" LEFT JOIN roteirizacao.rota rota  ")
-				.append(" LEFT JOIN rota.roteiro roteiro ");
+				.append(" LEFT JOIN pdv.rotas rotaPdv  ")
+				.append(" LEFT JOIN rotaPdv.rota rota  ")
+				.append(" LEFT JOIN rota.roteiro roteiro ")
+				.append(" LEFT JOIN roteiro.roteirizacao roteirizacao ");
 
 		if (filtro.getFornecedor() != null) {
 			hql.append(" JOIN produto.fornecedores fornecedor ");
@@ -778,8 +779,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		StringBuilder hql = new StringBuilder();
 
+		int colunaRazaoSocNomePessoa = 3;
+		int colunaNumeroCpfCnpj 	 = 4;
+		int colunaContato  = 5;
+		int colunaTelefone = 6;
+		
 		if (isCount) {
-			hql.append(" select count ( cota.numeroCota ) ");
+			
+			hql.append(" select count(distinct cota.numeroCota) ");
+			
+			
+			
 		} else {
 
 			hql.append(
@@ -886,6 +896,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			hql.append(" ( upper(endereco.cidade) like upper(:municipio) )");
 		}
 
+		
+		if (!isCount) {
+
+			hql.append("group by ");
+			hql.append("cota.id, ");
+			hql.append("cota.numeroCota, ");
+			hql.append(colunaRazaoSocNomePessoa + ", ");
+			hql.append(colunaNumeroCpfCnpj 		+ ", ");
+			hql.append(colunaContato 			+ ", ");
+			hql.append(colunaTelefone 			+ ", ");
+			hql.append("pessoa.email, ");
+			hql.append("cota.situacaoCadastro, ");
+			hql.append("box.nome  ");
+			
+		} 
+		
+
+		
 		return hql.toString();
 	}
 
@@ -1258,8 +1286,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if(situacao != null){
 			criteria.add(Restrictions.eq("situacaoCadastro", situacao));
 		}
-		
-		criteria.createAlias("box.roteiros", "roteiro");
+		if(idRoteiro != null || idRoteiro != null){
+			criteria.createAlias("pdvs.rotas", "rotaPdv");
+		    criteria.createAlias("rotaPdv.rota", "rota");
+			criteria.createAlias("rota.roteiro", "roteiro");
+		}		
 		
 		if (idRoteiro != null){
 			

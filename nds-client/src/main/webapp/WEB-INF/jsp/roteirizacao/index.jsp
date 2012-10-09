@@ -2,6 +2,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/roteirizacao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 
 <style>
 label{ vertical-align:super;}
@@ -26,7 +27,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
 	
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos" title="Roteiriza&ccedil;&atilde;o"><a href="javascript:;" onclick="roteirizacao.popupRoteirizacao();" rel="tipsy" title="Incluir Nova Roteirização"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0"/></a></span>
+			<span class="bt_novos" title="Roteiriza&ccedil;&atilde;o"><a href="javascript:;" onclick="roteirizacao.novaRoteirizacao();" rel="tipsy" title="Incluir Nova Roteirização"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0"/></a></span>
 			<div id="botoesExportacao" style="display:none;">
 				<span class="bt_arq" title="Gerar Arquivo"><a href="javascript:;" onclick="roteirizacao.exportar('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 	    		<span class="bt_arq" title="Imprimir"><a href="javascript:;" onclick="roteirizacao.exportar('PDF');" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
@@ -50,7 +51,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(roteirizacao.workspace);
               </td>
                 <td width="54">Roteiro:</td>
                 <td width="209">
-                	<select name="roteiroPesquisa" id="roteiroPesquisa"  onchange="roteirizacao.carregarComboRota()" style="width: 200px;">
+                	<select name="roteiroPesquisa" id="roteiroPesquisa"  onchange="roteirizacao.carregarComboRota('rotaPesquisa')" style="width: 200px;">
 						<option value="" selected="selected">Selecione...</option>
 						<c:forEach var="roteiro" items="${listaRoteiro}">
 							<option value="${roteiro.key}">${roteiro.value}</option>

@@ -53,6 +53,9 @@ public class ControleConferenciaEncalheCota {
 	@Column(name = "DATA_OPERACAO", nullable = false)
 	private Date dataOperacao;
 	
+	@Column(name = "NUMERO_SLIP")
+	private Long numeroSlip; 
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private StatusOperacao status;
@@ -80,8 +83,8 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
 
-	
-	
+	@Column(name = "NOSSO_NUMERO")
+	private String nossoNumero;
 	
 	/**
 	 * Obtém id
@@ -260,6 +263,20 @@ public class ControleConferenciaEncalheCota {
 	 */
 	public void setBox(Box box) {
 		this.box = box;
+	}
+
+	/**
+	 * @return the numeroSlip
+	 */
+	public Long getNumeroSlip() {
+		return numeroSlip;
+	}
+
+	/**
+	 * @param numeroSlip the numeroSlip to set
+	 */
+	public void setNumeroSlip(Long numeroSlip) {
+		this.numeroSlip = numeroSlip;
 	}
 	
 }

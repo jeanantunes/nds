@@ -193,7 +193,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
 			.append("(")
 				.append(" box.codigo || '-'|| box.nome,")
-				.append(" rota.codigoRota || '-'|| rota.descricaoRota,")
+				.append(" rota.descricaoRota,")
 				.append(" roteiro.descricaoRoteiro,")
 				.append(" cota.numeroCota,")
 				.append(" pessoa.nome,")
@@ -217,10 +217,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" JOIN cota.pdvs pdv ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" JOIN cota.parametroCobranca parametroCobranca ")
-		.append(" LEFT JOIN pdv.roteirizacao roteirizacao ")
-		.append(" LEFT JOIN roteirizacao.rota rota  ")
+		.append(" LEFT JOIN pdv.rotas rotaPdv  ")
+		.append(" LEFT JOIN rotaPdv.rota rota  ")
 		.append(" LEFT JOIN rota.roteiro roteiro ")
-		.append(" LEFT JOIN cota.box box")
+		.append(" LEFT JOIN roteiro.roteirizacao roteirizacao ")
+		.append(" LEFT JOIN roteirizacao.box box")
 		
 		.append(" WHERE ")
 		
@@ -297,7 +298,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 					break;
 				case ROTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " rota.codigoRota ";
+						orderByColumn += " rota.descricaoRota ";
 					break;
 				case ROTEIRO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
@@ -350,6 +351,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		Query query = getSession().createSQLQuery(sql.toString())
 				.addScalar("idDivida")
 				.addScalar("idCota")
+				.addScalar("idCobranca")
+				.addScalar("idNegociacao")
+				.addScalar("comissaoSaldoDivida")
 				.addScalar("numCota")
 				.addScalar("nome")
 				.addScalar("status")

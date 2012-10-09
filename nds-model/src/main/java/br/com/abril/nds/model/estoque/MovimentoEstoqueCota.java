@@ -29,6 +29,10 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	@JoinColumn(name = "ESTOQUE_PROD_COTA_ID")
 	private EstoqueProdutoCota estoqueProdutoCota;
 	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ESTOQUE_PROD_COTA_JURAMENTADO_ID")
+	private EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado;
+	
 	/**
 	 * Estudo cota que originou o movimento, 
 	 * caso o movimento seja de reparte
@@ -46,11 +50,9 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
-	
-	
-	
+
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
-	private List<ItemNotaEnvio> listaProduto;
+	private List<ItemNotaEnvio> listaItemNotaEnvio;
 	
 	public Cota getCota() {
 		return cota;
@@ -123,6 +125,29 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque {
 	 */
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
+	}
+
+	/**
+	 * @return the listaItemNotaEnvio
+	 */
+	public List<ItemNotaEnvio> getListaItemNotaEnvio() {
+		return listaItemNotaEnvio;
+	}
+
+	/**
+	 * @param listaItemNotaEnvio the listaItemNotaEnvio to set
+	 */
+	public void setListaItemNotaEnvio(List<ItemNotaEnvio> listaItemNotaEnvio) {
+		this.listaItemNotaEnvio = listaItemNotaEnvio;
+	}
+
+	public EstoqueProdutoCotaJuramentado getEstoqueProdutoCotaJuramentado() {
+		return estoqueProdutoCotaJuramentado;
+	}
+
+	public void setEstoqueProdutoCotaJuramentado(
+			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado) {
+		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
 	}
 
 }

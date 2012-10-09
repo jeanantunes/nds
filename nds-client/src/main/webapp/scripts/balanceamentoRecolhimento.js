@@ -85,7 +85,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			if (resumo.excedeCapacidadeDistribuidor) {
 				
 				rows += '<span class="span_1">Qtde. Exempl.:</span>';
-				rows += '<span name="qtdeExemplares" class="span_2 redLabel"'
+				rows += '<span name="qtdeExemplares" class="span_2 redLabel"';
 				rows += 'title="A quantidade de exemplares excede a capacidade de manuseio ';
 				rows += result.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
 				rows += resumo.qtdeExemplaresFormatada + '</span>';
@@ -152,21 +152,21 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	bloquearLinks : function() {
 		
-		bloquearLink("linkConfirmar", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkEditor", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkValor", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkSalvar", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkConfiguracaoInicial", balanceamentoRecolhimentoController.workspace);
-		bloquearLink("linkReprogramar", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkConfirmar", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkEditor", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkValor", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkSalvar", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkConfiguracaoInicial", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkReprogramar", balanceamentoRecolhimentoController.workspace);
 	},
 	
 	habilitarLinks : function() {
 		
 		balanceamentoRecolhimentoController.habilitarLink("linkConfirmar", balanceamentoRecolhimentoController.obterConfirmacaoBalanceamento);
-		balanceamentoRecolhimentoController.habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorEditor); });
-		balanceamentoRecolhimentoController.habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balancearPorValor); });
+		balanceamentoRecolhimentoController.habilitarLink("linkEditor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.balancearPorEditor); });
+		balanceamentoRecolhimentoController.habilitarLink("linkValor", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.balancearPorValor); });
 		balanceamentoRecolhimentoController.habilitarLink("linkSalvar", balanceamentoRecolhimentoController.salvar);
-		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(voltarConfiguracaoInicial); });
+		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.voltarConfiguracaoInicial); });
 		balanceamentoRecolhimentoController.habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
 	},
 	
@@ -227,7 +227,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
-
+			
 			var idProdutoEdicao = row.cell.idProdutoEdicao;
 			var nomeProduto = row.cell.nomeProduto;
 			
@@ -235,6 +235,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			row.cell.sequencia = balanceamentoRecolhimentoController.gerarInputSequencia(row);
 			row.cell.novaData = balanceamentoRecolhimentoController.gerarHTMLNovaData(row);
 			row.cell.reprogramar = balanceamentoRecolhimentoController.gerarCheckReprogramar(row);
+			row.cell.acao = balanceamentoRecolhimentoController.gerarBtnAcoes(row);
 		});
 			
 		$(".grids", balanceamentoRecolhimentoController.workspace).show();
@@ -244,6 +245,23 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		return resultado;
 	},
 
+	gerarBtnAcoes : function(row) {
+		
+		var idLancamento = row.cell.idLancamento;
+		var btnExcluir;
+		
+		if (row.cell.bloqueioAlteracaoBalanceamento) {
+			btnExcluir = '<img src="' + contextPath + '/images/ico_excluir.gif" border="0" disabled="disabled" class="linkDisabled" />';
+		
+		} else {
+			btnExcluir = '<a href="javascript:;" class="btn_excluir" '+
+		    'onclick="balanceamentoRecolhimentoController.excluirBalanceamento(' + idLancamento + ');">'+
+		    '<img src="' + contextPath + '/images/ico_excluir.gif" border="0"  /></a>';
+		}
+		
+		return btnExcluir;
+	},
+	
 	gerarInputSequencia : function(row) {
 		
 		var retornoHTML;
@@ -295,7 +313,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			retornoHTML = '<input type="checkbox" id="ch' + row.id + '"'
 	   		   			+       ' name="balanceamentoRecolhimentoController.checkReprogramar"'
-	   		   			+       ' value="' + row.id + '" disabled="disabled" />';
+	   		   			+       ' value="' + row.id + '" disabled="disabled"  />';
 		} else {
 			
 			retornoHTML = '<input type="checkbox" id="checkReprogramar' + row.id + '"'
@@ -341,7 +359,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		var bloqueioAlteracaoBalanceamento = $(divNovaData, balanceamentoRecolhimentoController.workspace).find("input[name='hiddenBloqueioAlteracaoBalanceamento']").val();
 		
 		if (inputCheck.attr("checked") == "checked"
-				|| eval(bloqueioAlteracaoBalanceamento)) {
+				|| eval(bloqueioAlteracaoBalanceamento)) {	
 		
 			$(inputNovaData, balanceamentoRecolhimentoController.workspace).disable();
 			
@@ -604,6 +622,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
+				display : 'Alternativo',
+				name : 'encalheAlternativo',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Exemplar',
 				name : 'encalhe',
 				width : 60,
@@ -625,6 +649,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				display : 'Reprog.',
 				name : 'reprogramar',
 				width : 45,
+				sortable : false,
+				align : 'center'
+			}, {
+				display: 'Ação',
+				name : 'acao',
+				width : 50,
 				sortable : false,
 				align : 'center'
 			}],
@@ -716,8 +746,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
 			url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
-			preProcess: executarPreProcessamento,
-			onSuccess: executarAposProcessamento,
+			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
+			onSuccess: balanceamentoRecolhimentoController.executarAposProcessamento,
 			params: null,
 		    newp: 1,
 		});
@@ -854,8 +884,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
 		
-		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
-				   linhaSelecionada
+		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",   linhaSelecionada
 				   		+ "&dataAntigaFormatada=" + dataAntiga,
 				   function(result) {
 				   
@@ -953,6 +982,17 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		    },
 		    form: $("#dialog-confirm-balanceamento", this.workspace).parents("form")
 		});
+	},
+	
+	excluirBalanceamento : function(idLancamento) {
+		
+		var params = {"idLancamento":idLancamento};
+		
+		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/excluirBalanceamento", params, null);
+				
 	}
 
 }, BaseController);
+
+
+//@ sourceURL=balanceamentoRecolhimento.js

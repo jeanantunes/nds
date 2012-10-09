@@ -21,15 +21,33 @@
 <body>
 <input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
 <input type="hidden" value="${dataCotaFollowUp}" id="dataCotaFollowUp" name="dataCotaFollowUp">
+
 	<form id="form-confirm">
-	<div id="dialog-confirm" title="Chamadão">
-		
-		<jsp:include page="../messagesDialog.jsp" />
-		
-		<br />
-		<strong>Confirma a Programação do Chamadão?</strong>
-		<br />
-	</div>
+		<div id="dialog-confirm" title="Chamadão">
+			
+			<jsp:include page="../messagesDialog.jsp" />
+			
+			<br/>
+			
+			<strong>Confirma a Programação do Chamadão?</strong>
+			
+			<br/>
+			
+			<div id="divNovaDataChamadao">
+			
+				<br/>
+			
+				<p>
+				    <strong>Nova Data Chamadão:</strong>
+				    <input name="novaDataChamadao" id="novaDataChamadao" type="text"
+				    	   style="width:70px; margin-right:5px;" />
+			    </p>
+			    
+			    <br/>
+			    
+		    </div>
+		    
+		</div>
 	</form>
 	
 	<fieldset class="classFieldset">
@@ -65,7 +83,7 @@
     				</select>
     			</td>
 			    <td align="right">
-			   		<input type="checkbox" name="checkbox" id="checkbox" />
+			   		<input type="checkbox" name="comChamadaEncalhe" id="comChamadaEncalhe" />
 			   	</td>
 			    <td>Com CE</td>
 			    <td>Editor:</td>
@@ -96,18 +114,36 @@
 	        
 	        <table width="949" border="0" cellspacing="1" cellpadding="1">
 	   			<tr>
-	   				<td width="318" valign="top">
-	    				<span class="bt_confirmar_novo" title="Confirmar"><a onclick="chamadaoController.confirmar();" href="javascript:;"><img
-							  border="0" hspace="5"
-							  src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
-						</span>
+	   				<td width="442" valign="top">
+	    			
+	    				<div id="divBotaoConfirmarChamadao">
+	    			
+		    				<span class="bt_confirmar_novo" title="Confirmar">
+		    					<a onclick="chamadaoController.confirmar();" href="javascript:;">
+		    						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+		    						Confirmar
+		    					</a>
+							</span>
 						
-						<span class="bt_novos" title="Cancelar">
-							<a href="javascript:;" onclick="chamadaoController.cancelarChamadao();">
-								<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" hspace="5" border="0" />
-								Cancelar
-							</a>
-						</span>
+						</div>
+						
+						<div id="divBotoesChamadaEncalhe">
+							
+							<span class="bt_novos" title="Reprogramar">
+								<a onclick="chamadaoController.confirmar();" href="javascript:;">
+									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
+									Reprogramar
+								</a>
+							</span>
+							
+							<span class="bt_novos" title="Cancelar">
+								<a href="javascript:;" onclick="chamadaoController.cancelarChamadao();">
+									<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" hspace="5" border="0" />
+									Cancelar
+								</a>
+							</span>
+							
+						</div>
 						
 						<br clear="all" />
 						

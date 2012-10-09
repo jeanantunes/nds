@@ -55,13 +55,36 @@ function Balanceamento(pathTela, descInstancia) {
 	 * @param result
 	 */
 	this.popularDetalheProduto = function(result){
+		
 		$("#produtoEdicaoController-detalheNome").html(result.nomeProduto);
 		$("#produtoEdicaoController-detalhePreco").html(result.precoCapa);
 		$("#produtoEdicaoController-detalheCCapa").html(result.chamadaCapa);
 		$("#produtoEdicaoController-detalhePrecoDesc").html(result.precoComDesconto);
 		$("#produtoEdicaoController-detalheFornecedor").html(result.fornecedor);
 		$("#produtoEdicaoController-detalheBrinde").html(result.possuiBrinde);
-		$("#produtoEdicaoController-detalheEditor").html(result.codigoEditor+"-"+result.nomeEditor);
+		
+		var codigoEditor = ((typeof result.codigoEditor == 'undefined') || result.codigoEditor == null) ? "" : result.codigoEditor;
+		
+		var nomeEditor = ((typeof result.nomeEditor == 'undefined') || result.nomeEditor == null) ? "" : result.nomeEditor;
+		
+		var codigo_nome = "";
+		
+		if(	codigoEditor != "" && nomeEditor != ""	) {
+			codigo_nome = codigoEditor + "-" + nomeEditor;
+		} else {
+			
+			if(codigoEditor!="") {
+				codigo_nome = codigoEditor;
+			}
+			
+			if(nomeEditor!="") {
+				codigo_nome = codigoEditor;
+			}
+			
+		}
+			
+		$("#produtoEdicaoController-detalheEditor").html(codigo_nome);
+		
 		$("#produtoEdicaoController-detalhePacote").html(result.pacotePadrao);
 
 		T.carregarImagemCapa(result.idProdutoEdicao,'129','170','Capa',"produtoEdicaoController-td_imagem_capa");
@@ -74,7 +97,7 @@ function Balanceamento(pathTela, descInstancia) {
 	this.popup_detalhes_prod = function(dialog){
 		$( dialog ).dialog({
 			resizable: false,
-			height:300,
+			height:400,
 			width:760,
 			modal: true,
 			buttons: [
@@ -199,3 +222,4 @@ function Balanceamento(pathTela, descInstancia) {
 	};
 	
 }
+//@ sourceURL=balanceamento.js

@@ -1,12 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -331,6 +332,17 @@ public class FornecedorRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Fornecedor> obterFornecedoresPorIdPessoa(Long idPessoa) {
+
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.add(Restrictions.eq("juridica.id", idPessoa));
+		
+		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Fornecedor> obterFornecedorLikeNomeFantasia(String nomeFantasia) {
 		
 		try {
@@ -377,6 +389,27 @@ public class FornecedorRepositoryImpl extends
 		criteria.setMaxResults(1);
 
 		return (Fornecedor) criteria.uniqueResult();
+	}
+	
+	@Override
+	public Integer obterMinCodigoInterfaceDisponivel() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+				hql.append(" select min(codInterface) from (											");
+				hql.append(" select min(COD_INTERFACE + 1) as codInterface from FORNECEDOR           	");
+				hql.append(" where (COD_INTERFACE + 1) not in (select COD_INTERFACE from FORNECEDOR) 	"); 
+				hql.append(" UNION															  			");
+				hql.append(" SELECT 1 AS codInteface from dual WHERE  1 not in				  			");
+				hql.append(" ( select COD_INTERFACE from FORNECEDOR where COD_INTERFACE = 1 ) 			"); 
+				hql.append(" ) as TBL_COD_INTEFACE 														");
+		
+		Query query = super.getSession().createSQLQuery(hql.toString());
+		
+		BigInteger codInterface = (BigInteger) query.uniqueResult();
+		
+		return codInterface.intValue();
+		
 	}
 	
 	@Override

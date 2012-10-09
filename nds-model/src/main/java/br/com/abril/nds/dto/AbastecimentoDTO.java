@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 
@@ -12,8 +13,11 @@ public class AbastecimentoDTO implements Serializable {
 	private String data;
 	private Long idBox;
 	private String box;
+	private Integer codigoCota;
+	private String nomeCota;
 	private Integer totalProduto;
 	private Integer totalReparte;
+	private Integer materialPromocional;
 	private String totalBox;
 	
 	public AbastecimentoDTO() {
@@ -68,6 +72,34 @@ public class AbastecimentoDTO implements Serializable {
 		this.box = box;
 	}
 	/**
+	 * @return the codigoCota
+	 */
+	public Integer getCodigoCota() {
+		return codigoCota;
+	}
+
+	/**
+	 * @param codigoCota the codigoCota to set
+	 */
+	public void setCodigoCota(Integer codigoCota) {
+		this.codigoCota = codigoCota;
+	}
+
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	/**
 	 * @return the totalProduto
 	 */
 	public Integer getTotalProduto() {
@@ -88,9 +120,23 @@ public class AbastecimentoDTO implements Serializable {
 	/**
 	 * @param totalReparte the totalReparte to set
 	 */
-	public void setTotalReparte(BigDecimal totalReparte) {
+	public void setTotalReparte(BigInteger totalReparte) {
 		this.totalReparte = totalReparte.intValue();
 	}
+	/**
+	 * @return the materialPromocional
+	 */
+	public Integer getMaterialPromocional() {
+		return materialPromocional;
+	}
+
+	/**
+	 * @param materialPromocional the materialPromocional to set
+	 */
+	public void setMaterialPromocional(BigInteger materialPromocional) {
+		this.materialPromocional = materialPromocional == null ? 0 : materialPromocional.intValue();
+	}
+
 	/**
 	 * @return the totalBox
 	 */

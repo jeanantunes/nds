@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
 
@@ -122,6 +123,7 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -130,9 +132,12 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
@@ -143,6 +148,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -227,6 +233,10 @@ import br.com.abril.nds.util.DateUtil;
 
 
 public class Fixture {
+    
+    private static final AtomicInteger ORDEM_ROTA = new AtomicInteger(1);
+    
+    private static final AtomicInteger ORDEM_ROTEIRO = new AtomicInteger(1);
 	
 	public static PessoaJuridica juridicaAbril() {
 		return pessoaJuridica("Editora Abril", "00000000000200", "010000000000",
@@ -1104,6 +1114,113 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCotaEstornoEnvioReparte() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Envio Reparte");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_ENVIO_REPARTE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoEntradaSuplementarEnvioReparte() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada Suplementar de Envio Reparte Distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoCancelamentoNFEnvioConsignado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saida de mercadorias das NFs canceladas para o estoque da Cota");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO);
+		return tipoMovimento;
+	}
+	
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaLancamento() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada por transferência de estoque do tipo Lançamento, do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaLancamento() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saída por transferência de estoque do tipo Lançamento, do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaSuplementar() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada por transferência de estoque do tipo Suplementar, do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaSuplementar() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saída por transferência de estoque do tipo Suplementar, do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaRecolhimento() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada por transferência de estoque do tipo Recolhimento, do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaRecolhimento() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saída por transferência de estoque do tipo Recolhimento, do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDanificados() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada por transferência de estoque do tipo 'Produtos danificados', do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDanificados() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saída por transferência de estoque do tipo 'Produtos danificados', do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS);
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada de mercadorias das NFs canceladas para o estoque do distribuidor");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_CONSIGNADO);
+		return tipoMovimento;
+	}
 	public static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito() {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
@@ -1151,7 +1268,7 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.MULTA);
 		return tipoMovimento;
 	}
-	
+		
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigInteger qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
@@ -1347,21 +1464,20 @@ public class Fixture {
 	}
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(CFOP cfop,
-			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = new NotaFiscalEntradaFornecedor();
+		notaFiscalFornecedor.setFornecedor(fornecedor);
 		notaFiscalFornecedor.setCfop(cfop);
 		notaFiscalFornecedor.setChaveAcesso("11111");
 		notaFiscalFornecedor.setDataEmissao(new Date());
 		notaFiscalFornecedor.setDataExpedicao(new Date());
-		notaFiscalFornecedor.setEmitente(emitente);
 		notaFiscalFornecedor.setNumero(2344242L);
 		notaFiscalFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalFornecedor.setSerie("345353543");
 		notaFiscalFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscalFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalFornecedor.setUsuario(usuario);
-		notaFiscalFornecedor.setFornecedor(fornecedor);
 		notaFiscalFornecedor.setValorBruto(valorBruto);
 		notaFiscalFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalFornecedor.setValorLiquido(valorLiquido);
@@ -1370,10 +1486,10 @@ public class Fixture {
 	}
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(Long numeroNF, String serie, String chaveAcesso, CFOP cfop,
-			PessoaJuridica emitente, Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		
-		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, emitente, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
+		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
 		
 		notaFiscalFornecedor.setNumero(numeroNF);
 		notaFiscalFornecedor.setSerie(serie);
@@ -1384,7 +1500,6 @@ public class Fixture {
 	
 	public static NotaFiscalEntradaCota notaFiscalEntradaCotaNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1444,7 +1559,6 @@ public class Fixture {
 		notaFiscalEntradaCota.setChaveAcesso(chaveAcesso);
 		notaFiscalEntradaCota.setDataEmissao(new Date());
 		notaFiscalEntradaCota.setDataExpedicao(new Date());
-		notaFiscalEntradaCota.setEmitente(emitente);
 		notaFiscalEntradaCota.setNumero(numero);
 		notaFiscalEntradaCota.setSerie(serie);
 		notaFiscalEntradaCota.setOrigem(Origem.INTERFACE);
@@ -1508,7 +1622,6 @@ public class Fixture {
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedorNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1564,18 +1677,17 @@ public class Fixture {
 		
 		NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor = new NotaFiscalEntradaFornecedor();
 		
+		notaFiscalEntradaFornecedor.setFornecedor(fornecedor);
 		notaFiscalEntradaFornecedor.setCfop(cfop);
 		notaFiscalEntradaFornecedor.setChaveAcesso(chaveAcesso);
 		notaFiscalEntradaFornecedor.setDataEmissao(new Date());
 		notaFiscalEntradaFornecedor.setDataExpedicao(new Date());
-		notaFiscalEntradaFornecedor.setEmitente(emitente);
 		notaFiscalEntradaFornecedor.setNumero(numero);
 		notaFiscalEntradaFornecedor.setSerie(serie);
 		notaFiscalEntradaFornecedor.setOrigem(Origem.INTERFACE);
 		notaFiscalEntradaFornecedor.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE);
 		notaFiscalEntradaFornecedor.setTipoNotaFiscal(tipoNotaFiscal);
 		notaFiscalEntradaFornecedor.setUsuario(usuario);
-		notaFiscalEntradaFornecedor.setFornecedor(fornecedor);
 		notaFiscalEntradaFornecedor.setValorBruto(valorBruto);
 		notaFiscalEntradaFornecedor.setValorDesconto(valorDesconto);
 		notaFiscalEntradaFornecedor.setValorLiquido(valorLiquido);
@@ -1631,7 +1743,6 @@ public class Fixture {
 	
 	public static NotaFiscalSaidaFornecedor notaFiscalSaidaFornecedorNFE(
 			CFOP cfop,
-			PessoaJuridica emitente, 
 			Long numero,
 			String serie,
 			String chaveAcesso,
@@ -1691,7 +1802,6 @@ public class Fixture {
 		notaFiscalSaidaFornecedor.setChaveAcesso(chaveAcesso);
 		notaFiscalSaidaFornecedor.setDataEmissao(new Date());
 		notaFiscalSaidaFornecedor.setDataExpedicao(new Date());
-		notaFiscalSaidaFornecedor.setEmitente(emitente);
 		notaFiscalSaidaFornecedor.setNumero(numero);
 		notaFiscalSaidaFornecedor.setSerie(serie);
 		
@@ -1791,10 +1901,19 @@ public class Fixture {
 		EstoqueProduto estoqueProduto = new EstoqueProduto();
 		estoqueProduto.setProdutoEdicao(produtoEdicao);
 		estoqueProduto.setQtde(qtde);
-		estoqueProduto.setQtdeSuplementar(qtde);
+		estoqueProduto.setQtdeSuplementar(qtde.add(BigInteger.TEN));
 		estoqueProduto.setQtdeDevolucaoEncalhe(qtde);
-		estoqueProduto.setQtdeDevolucaoFornecedor(qtde);
+		estoqueProduto.setQtdeDevolucaoFornecedor(qtde.add(BigInteger.TEN));
 		return estoqueProduto;
+	}
+	
+	public static EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado(Date data, ProdutoEdicao produtoEdicao, Cota cota, BigInteger qtde) {
+		EstoqueProdutoCotaJuramentado ep = new EstoqueProdutoCotaJuramentado();
+		ep.setCota(cota);
+		ep.setData(data);
+		ep.setProdutoEdicao(produtoEdicao);
+		ep.setQtde(qtde);
+		return ep;
 	}
 	
 	public static EstoqueProdutoCota estoqueProdutoCota(ProdutoEdicao produtoEdicao, BigInteger qtde,
@@ -1855,8 +1974,9 @@ public class Fixture {
 									  TipoDiferenca tipoDiferenca,
 									  StatusConfirmacao statusConfirmacao,
 									  ItemRecebimentoFisico itemRecebimentoFisico,
-									  MovimentoEstoque movimentoEstoque,
-									  Boolean automatica, TipoEstoque tipoEstoque) {
+									  Boolean automatica, TipoEstoque tipoEstoque, 
+									  TipoDirecionamentoDiferenca tipoDirecionamento,
+									  Date dataLancamentoDiferenca) {
 		
 		Diferenca diferenca = new Diferenca();
 		
@@ -1868,6 +1988,8 @@ public class Fixture {
 		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
 		diferenca.setAutomatica(automatica);
 		diferenca.setTipoEstoque(tipoEstoque);
+		diferenca.setTipoDirecionamento(tipoDirecionamento);
+		diferenca.setDataMovimento(dataLancamentoDiferenca);
 		
 		return diferenca;
 	}
@@ -2163,13 +2285,14 @@ public class Fixture {
 		return banco;
 	}
 	
-	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel) {
+	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel, Banco banco) {
 	
 		ControleBaixaBancaria controleBaixaBancaria = new ControleBaixaBancaria();
 		
 		controleBaixaBancaria.setData(data);
 		controleBaixaBancaria.setStatus(status);
 		controleBaixaBancaria.setResponsavel(responsavel);
+		controleBaixaBancaria.setBanco(banco);
 		
 		return controleBaixaBancaria;
 	}
@@ -2209,7 +2332,7 @@ public class Fixture {
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
 			BigDecimal valorConsignado,BigDecimal valorVendaEncalhe,
 			BigDecimal encalhe, BigDecimal debitoCredito, BigDecimal encargos, 
-			BigDecimal valorPostergado, BigDecimal atrasados, BigDecimal pendente) {
+			BigDecimal valorPostergado, BigDecimal pendente) {
 		
 		ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
 		consolidado.setMovimentos(movimentos);
@@ -2222,10 +2345,9 @@ public class Fixture {
 		consolidado.setDebitoCredito(debitoCredito);
 		consolidado.setEncargos(encargos);
 		consolidado.setValorPostergado(valorPostergado);
-		consolidado.setNumeroAtrasados(atrasados);
 		consolidado.setPendente(pendente);
 		
-		consolidado.setTotal(valorConsignado.subtract(encalhe).add(valorVendaEncalhe).add(debitoCredito).add(encargos).add(valorPostergado).add(atrasados).add(pendente));
+		consolidado.setTotal(valorConsignado.subtract(encalhe).add(valorVendaEncalhe).add(debitoCredito).add(encargos).add(valorPostergado).add(pendente));
 		
 		consolidado.setVendaEncalhe(valorVendaEncalhe);
 		
@@ -2394,11 +2516,13 @@ public class Fixture {
 		
 		return parametro;
 	}
-	public static Rota rota(String codigoRota, String descricaoRota){
+	
+	public static Rota rota(String descricaoRota, Roteiro roteiro){
 		Rota rota = new Rota();
-		rota.setCodigoRota(codigoRota);
 		rota.setDescricaoRota(descricaoRota);
-		rota.setOrdem(0);
+		rota.setOrdem(ORDEM_ROTA.getAndIncrement());
+		rota.setRoteiro(roteiro);
+		roteiro.addRota(rota);
 		return rota;
 	}
 	
@@ -2712,7 +2836,6 @@ public class Fixture {
 		pdv.setLicencaMunicipal(licencaMunicipal);
 		
 		pdv.setSegmentacao(segmentacao);
-		
 		return pdv;
 	}
 	
@@ -2876,7 +2999,7 @@ public class Fixture {
 	}
 
 	public static ParametroDistribuicaoCota criarParametroDistribuidor(Integer qtdePDV,
-			String assistenteComercial, TipoEntrega tipoEntrega,
+			String assistenteComercial, DescricaoTipoEntrega descricaoTipoEntrega,
 			String observacao,
 			Boolean repartePorPontoVenda, Boolean solicitaNumAtras,
 			Boolean recebeRecolheParcias, Boolean notaEnvioImpresso,
@@ -2887,7 +3010,7 @@ public class Fixture {
 		
 		parametroDistribuicaoCota.setQtdePDV(qtdePDV);
 		parametroDistribuicaoCota.setAssistenteComercial(assistenteComercial);
-		parametroDistribuicaoCota.setTipoEntrega(tipoEntrega);
+		parametroDistribuicaoCota.setDescricaoTipoEntrega(descricaoTipoEntrega);
 		parametroDistribuicaoCota.setObservacao(observacao);
 		parametroDistribuicaoCota.setRepartePorPontoVenda(repartePorPontoVenda);
 		parametroDistribuicaoCota.setSolicitaNumAtras(solicitaNumAtras);
@@ -2946,33 +3069,32 @@ public class Fixture {
 		return parcial;
 	}
 	
-	public static Roteirizacao criarRoteirizacao(PDV pdv, Rota rota,Integer ordem ){
+	public static Roteirizacao criarRoteirizacao(Box box ){
 		
 		Roteirizacao roteirizacao = new Roteirizacao();
-		roteirizacao.setPdv(pdv);
-		roteirizacao.setRota(rota);
-		roteirizacao.setOrdem(ordem);
-		
+		roteirizacao.setBox(box);
+
 		return roteirizacao;
 	}
 	
-	public static Roteiro criarRoteiro(String descricaoRoteiro,Box box, TipoRoteiro tipoRoteiro ){
-		Roteiro rota = new Roteiro();
-		rota.setDescricaoRoteiro(descricaoRoteiro);
-		rota.setOrdem(0);
-		rota.setTipoRoteiro(tipoRoteiro);
-		rota.setBox(box);
-		return rota;
+	public static Roteiro criarRoteiro(String descricaoRoteiro, Roteirizacao roteirizacao, TipoRoteiro tipoRoteiro ){
+		
+		Roteiro roteiro = new Roteiro();
+		roteiro.setDescricaoRoteiro(descricaoRoteiro);
+		roteiro.setOrdem(ORDEM_ROTEIRO.getAndIncrement());
+		roteiro.setTipoRoteiro(tipoRoteiro);
+		roteiro.setRoteirizacao(roteirizacao);
+		roteirizacao.addRoteiro(roteiro);
+		
+		return roteiro;
 	}
 	
 	public static  PDV criarPDVPrincipal(String nome, Cota cota){
-		
 		PDV pdv = new PDV();
 		pdv.setNome(nome);
 		pdv.setCota(cota);
 		pdv.setCaracteristicas(new CaracteristicasPDV());
 		pdv.getCaracteristicas().setPontoPrincipal(true);
-		
 		return pdv;
 	}
 
@@ -3695,5 +3817,48 @@ public class Fixture {
     	
     	return rateio;
     }
+
+    
+    public static BaixaAutomatica baixaAutomatica(Cobranca cobranca, Date dataBaixa,
+    									   		  String nomeArquivo, String nossoNumero,
+    									   		  Integer numeroRegistroArquivo, StatusBaixa status,
+    									   		  BigDecimal valorPago, Banco banco) {
+    	
+    	BaixaAutomatica baixaAutomatica = new BaixaAutomatica();
+    	
+    	baixaAutomatica.setCobranca(cobranca);
+    	baixaAutomatica.setDataBaixa(dataBaixa);
+    	baixaAutomatica.setNomeArquivo(nomeArquivo);
+    	baixaAutomatica.setNossoNumero(nossoNumero);
+    	baixaAutomatica.setNumeroRegistroArquivo(numeroRegistroArquivo);
+    	baixaAutomatica.setStatus(status);
+    	baixaAutomatica.setValorPago(valorPago);
+    	baixaAutomatica.setBanco(banco);
+    	
+    	return baixaAutomatica;
+    }
+
+
+	public static TipoMovimentoEstoque tipoMovimentoCompraEncalhe() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Compra Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.COMPRA_ENCALHE);
+		
+		return tipoMovimento;
+	}
+
+	public static TipoMovimentoEstoque tipoMovimentoEstornoCompraEncalhe() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Estorno Compra Encalhe");
+		tipoMovimento.setIncideDivida(true);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE);
+		
+		return tipoMovimento;
+	}
 
 }

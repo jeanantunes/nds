@@ -1,3 +1,5 @@
+var verificadorProgressoGravacaoDescontoGeral = null;
+
 var descontoDistribuidorController = $.extend(true,{
 		
 		popup_geral:function () {
@@ -35,26 +37,38 @@ var descontoDistribuidorController = $.extend(true,{
 			
 			var fornecedores ="";
 			
-			 $("#selectFornecedorSelecionado_option option",this.workspace).each(function (index) {
-				 fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
-			 });
-			
+		    $("#selectFornecedorSelecionado_option option",this.workspace).each(function (index) {
+		    	fornecedores = fornecedores + "fornecedores["+index+"]="+ $(this).val() +"&";
+		    });
+
 			$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoGeral",
-						"desconto="+descontoGeral + "&" + fornecedores,				   
-					   function(result) {
-				        
-						   if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
-							   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
-					       }
-						   else{
-							   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
-							   tipoDescontoController.fecharDialogs();
-							   tipoDescontoController.pesquisar();
-							   $(".tiposDescGeralGrid",this.workspace).flexReload();
-						   }
-		               },
-					   null,
-					   true,"idModalDescontoGeral");
+					"desconto="+descontoGeral + "&" + fornecedores,				   
+				   function(result) {
+			        
+					   if (result.tipoMensagem && result.tipoMensagem !="SUCCESS" && result.listaMensagens) {			      
+						   exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
+				       }
+					   else{
+						   exibirMensagem(result.tipoMensagem, result.listaMensagens, "");
+						   tipoDescontoController.fecharDialogs();
+						   tipoDescontoController.pesquisar();
+						   $(".tiposDescGeralGrid",this.workspace).flexReload();
+					   }
+		           },
+				   null,
+				   true,"idModalDescontoGeral");	
+
+		    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
+				$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoGeral",
+						   null,				   
+						   function(result) {
+						   		if (!result.ativo) {
+						   			exibirMensagem(result.validacao.tipoMensagem, result.validacao.listaMensagens, "");
+						   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
+						   		}
+					   	   });
+		    }, 20000);
+			
 		}, 
 		
 		init:function(){
@@ -117,4 +131,4 @@ var descontoDistribuidorController = $.extend(true,{
 				
 		}
 	}, BaseController);
-	
+//@ sourceURL=cadastroTipoDescontoDistribuidor.js	

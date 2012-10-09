@@ -15,13 +15,21 @@ public class NotaFiscalEntradaFornecedor extends NotaFiscalEntrada {
 	@ManyToOne
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
-	
+
+	/**
+	 * @return the fornecedor
+	 */
 	public Fornecedor getFornecedor() {
 		return fornecedor;
 	}
-	
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
+	
+
 
 }

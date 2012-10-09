@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
 
@@ -19,7 +20,14 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Integer codigoBox;
 	private Long idProdutoEdicao;
 	private Integer codigoCota;
+	private String nomeCota;
+	private Integer materialPromocional;
 	private Integer sequenciaMatriz;
+	private String totalBox;
+	private Integer totalProduto;
+	private String codigoBarra;
+	private Integer pacotePadrao;
+	private Long qtdeExms;
 	
 	public ProdutoAbastecimentoDTO() {
 		
@@ -81,7 +89,7 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	/**
 	 * @param reparte the reparte to set
 	 */
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		if(reparte!=null)
 			this.reparte = reparte.intValue();
 	}
@@ -133,6 +141,19 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
+	/**
+	 * @return the materialPromocional
+	 */
+	public Integer getMaterialPromocional() {
+		return materialPromocional;
+	}
+
+	/**
+	 * @param materialPromocional the materialPromocional to set
+	 */
+	public void setMaterialPromocional(BigInteger materialPromocional) {
+		this.materialPromocional = materialPromocional == null ? 0 : materialPromocional.intValue();
+	}
 
 	public Integer getSequenciaMatriz() {
 		return sequenciaMatriz;
@@ -149,6 +170,88 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	public void setCodigoCota(Integer codigoCota) {
 		this.codigoCota = codigoCota;
 	}
-	
-	
+
+	/**
+	 * @return the nomeCota
+	 */
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	/**
+	 * @param nomeCota the nomeCota to set
+	 */
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	/**
+	 * @return the totalBox
+	 */
+	public String getTotalBox() {
+		return totalBox;
+	}
+
+	/**
+	 * @param totalBox the totalBox to set
+	 */
+	public void setTotalBox(BigDecimal totalBox) {
+		this.totalBox = CurrencyUtil.formatarValor(totalBox);
+	}
+
+	/**
+	 * @return the totalProduto
+	 */
+	public Integer getTotalProduto() {
+		return totalProduto;
+	}
+
+	/**
+	 * @param totalProduto the totalProduto to set
+	 */
+	public void setTotalProduto(Long totalProduto) {
+		this.totalProduto = totalProduto.intValue();
+	}
+
+	/**
+	 * @return the codigoBarra
+	 */
+	public String getCodigoBarra() {
+		return codigoBarra;
+	}
+
+	/**
+	 * @param codigoBarra the codigoBarra to set
+	 */
+	public void setCodigoBarra(String codigoBarra) {
+		this.codigoBarra = codigoBarra;
+	}
+
+	/**
+	 * @return the pacotePadrao
+	 */
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	/**
+	 * @param pacotePadrao the pacotePadrao to set
+	 */
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	/**
+	 * @return the qtdeExms
+	 */
+	public Long getQtdeExms() {
+		return qtdeExms;
+	}
+
+	/**
+	 * @param qtdeExms the qtdeExms to set
+	 */
+	public void setQtdeExms(Long qtdeExms) {
+		this.qtdeExms = qtdeExms;
+	}
 }

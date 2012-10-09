@@ -61,7 +61,7 @@ public class AlteracaoCotaController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_ALTERACAO_COTA)
+	@Rules(Permissao.ROLE_CADASTRO_ALTERACAO_COTA)
 	public void index()
 	{
 		result.include("listFornecedores", fornecedorService.obterFornecedoresAtivos());
