@@ -25,8 +25,6 @@ public class FechamentoFisicoLogicoDTO {
 	
 	private Long produtoEdicao;
 	
-	private Boolean parcial;
-	
 	private String tipo;
 	
 	private Date dataRecolhimento;
@@ -143,19 +141,7 @@ public class FechamentoFisicoLogicoDTO {
 		this.fechado = fechado;
 	}
 
-	public Boolean getParcial() {
-		return parcial;
-	}
-
-	public void setParcial(Boolean parcial) {
-		if (parcial){
-			this.tipo = "P";	
-		} else {
-			this.tipo ="N";
-		}
-		this.parcial = parcial;
-	}
-
+	
 	public Date getDataRecolhimento() {
 		return dataRecolhimento;
 	}
@@ -163,7 +149,7 @@ public class FechamentoFisicoLogicoDTO {
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		
 		  Date dataAtual = DateUtil.removerTimestamp(new Date());
-		  if (parcial ){
+		  if ("P".equals(this.getTipo())){
 			  estoque= TipoEstoque.LANCAMENTO.getDescricao();
 		  }else if ( dataAtual.compareTo(DateUtil.removerTimestamp(dataRecolhimento)) > 0 ){
 			  estoque= TipoEstoque.SUPLEMENTAR.getDescricao();
@@ -174,6 +160,13 @@ public class FechamentoFisicoLogicoDTO {
 		this.dataRecolhimento = dataRecolhimento;
 	}
 
+	
+	
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
+	
 	public String getTipo() {
 		return tipo;
 	}
@@ -183,4 +176,6 @@ public class FechamentoFisicoLogicoDTO {
 	public String getEstoque() {
 		return estoque;
 	}
+
+	
 }

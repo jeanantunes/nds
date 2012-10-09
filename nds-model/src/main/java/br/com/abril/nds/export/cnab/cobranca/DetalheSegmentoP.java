@@ -1,5 +1,6 @@
 package br.com.abril.nds.export.cnab.cobranca;
 
+import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
@@ -9,11 +10,11 @@ public class DetalheSegmentoP {
 	// Controle
 	private Long codigoBanco;
 	private Long lote;
-	private Long tipoRegistro;
+	private Long tipoRegistro = 3L;
 	
 	// Serviço
 	private Long numeroRegistro;
-	private String segmento;
+	private String segmento = "P";
 	private String cnab1;
 	private Long codigoMovimento;
 	
@@ -66,7 +67,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoBanco
 	 */
-	@Field(offset=1, length=3)
+	@Field(offset=1, length=3, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoBanco() {
 		return codigoBanco;
 	}
@@ -79,7 +80,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the lote
 	 */
-	@Field(offset=4, length=4)
+	@Field(offset=4, length=4, align=Align.RIGHT, paddingChar='0')
 	public Long getLote() {
 		return lote;
 	}
@@ -92,7 +93,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the tipoRegistro
 	 */
-	@Field(offset=8, length=1)
+	@Field(offset=8, length=1, align=Align.RIGHT, paddingChar='0')
 	public Long getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -105,7 +106,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the numeroRegistro
 	 */
-	@Field(offset=9, length=5)
+	@Field(offset=9, length=5, align=Align.RIGHT, paddingChar='0')
 	public Long getNumeroRegistro() {
 		return numeroRegistro;
 	}
@@ -118,7 +119,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the segmento
 	 */
-	@Field(offset=14, length=1)
+	@Field(offset=14, length=1, align=Align.LEFT, paddingChar='0')
 	public String getSegmento() {
 		return segmento;
 	}
@@ -131,7 +132,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the cnab1
 	 */
-	@Field(offset=15, length=1)
+	@Field(offset=15, length=1, align=Align.LEFT, paddingChar=' ')
 	public String getCnab1() {
 		return cnab1;
 	}
@@ -144,7 +145,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoMovimento
 	 */
-	@Field(offset=16, length=2)
+	@Field(offset=16, length=2, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoMovimento() {
 		return codigoMovimento;
 	}
@@ -157,7 +158,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoAgencia
 	 */
-	@Field(offset=15, length=5)
+	@Field(offset=18, length=5, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoAgencia() {
 		return codigoAgencia;
 	}
@@ -170,7 +171,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the dvAgencia
 	 */
-	@Field(offset=23, length=1)
+	@Field(offset=23, length=1, align=Align.LEFT, paddingChar='0')
 	public String getDvAgencia() {
 		return dvAgencia;
 	}
@@ -183,7 +184,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the numeroConta
 	 */
-	@Field(offset=24, length=12)
+	@Field(offset=24, length=12, align=Align.RIGHT, paddingChar='0')
 	public Long getNumeroConta() {
 		return numeroConta;
 	}
@@ -196,7 +197,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the dvConta
 	 */
-	@Field(offset=36, length=1)
+	@Field(offset=36, length=1, align=Align.LEFT, paddingChar='0')
 	public String getDvConta() {
 		return dvConta;
 	}
@@ -209,7 +210,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the dvAgenciaConta
 	 */
-	@Field(offset=37, length=1)
+	@Field(offset=37, length=1, align=Align.LEFT, paddingChar='0')
 	public String getDvAgenciaConta() {
 		return dvAgenciaConta;
 	}
@@ -222,7 +223,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the nossoNumero
 	 */
-	@Field(offset=38, length=20)
+	@Field(offset=38, length=20, align=Align.LEFT, paddingChar='0')
 	public String getNossoNumero() {
 		return nossoNumero;
 	}
@@ -235,7 +236,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoCarteira
 	 */
-	@Field(offset=58, length=1)
+	@Field(offset=58, length=1, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoCarteira() {
 		return codigoCarteira;
 	}
@@ -248,7 +249,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the cadastramento
 	 */
-	@Field(offset=59, length=1)
+	@Field(offset=59, length=1, align=Align.RIGHT, paddingChar='0')
 	public Long getCadastramento() {
 		return cadastramento;
 	}
@@ -261,7 +262,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the tipoDocumento
 	 */
-	@Field(offset=60, length=1)
+	@Field(offset=60, length=1, align=Align.LEFT, paddingChar='0')
 	public String getTipoDocumento() {
 		return tipoDocumento;
 	}
@@ -274,7 +275,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the emissaoBloqueto
 	 */
-	@Field(offset=61, length=1)
+	@Field(offset=61, length=1, align=Align.RIGHT, paddingChar='0')
 	public Long getEmissaoBloqueto() {
 		return emissaoBloqueto;
 	}
@@ -287,7 +288,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the distribuicaoBloqueto
 	 */
-	@Field(offset=62, length=1)
+	@Field(offset=62, length=1, align=Align.LEFT, paddingChar='0')
 	public String getDistribuicaoBloqueto() {
 		return distribuicaoBloqueto;
 	}
@@ -300,7 +301,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the numeroDocumento
 	 */
-	@Field(offset=63, length=15)
+	@Field(offset=63, length=15, align=Align.LEFT, paddingChar='0')
 	public String getNumeroDocumento() {
 		return numeroDocumento;
 	}
@@ -313,7 +314,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the dataVencimento
 	 */
-	@Field(offset=78, length=8)
+	@Field(offset=78, length=8, align=Align.RIGHT, paddingChar='0')
 	public Long getDataVencimento() {
 		return dataVencimento;
 	}
@@ -326,7 +327,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the valorTitulo
 	 */
-	@Field(offset=86, length=13)
+	@Field(offset=86, length=13, align=Align.RIGHT, paddingChar='0')
 	public Long getValorTitulo() {
 		return valorTitulo;
 	}
@@ -339,7 +340,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the agenciaCobradora
 	 */
-	@Field(offset=101, length=5)
+	@Field(offset=101, length=5, align=Align.RIGHT, paddingChar='0')
 	public Long getAgenciaCobradora() {
 		return agenciaCobradora;
 	}
@@ -352,7 +353,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the dvAgenciaCobradora
 	 */
-	@Field(offset=106, length=1)
+	@Field(offset=106, length=1, align=Align.LEFT, paddingChar='0')
 	public String getDvAgenciaCobradora() {
 		return dvAgenciaCobradora;
 	}
@@ -365,7 +366,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the especieTitulo
 	 */
-	@Field(offset=107, length=2)
+	@Field(offset=107, length=2, align=Align.RIGHT, paddingChar='0')
 	public Long getEspecieTitulo() {
 		return especieTitulo;
 	}
@@ -378,7 +379,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the aceite
 	 */
-	@Field(offset=109, length=1)
+	@Field(offset=109, length=1, align=Align.LEFT, paddingChar='0')
 	public String getAceite() {
 		return aceite;
 	}
@@ -391,7 +392,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the dataEmissaoTitulo
 	 */
-	@Field(offset=110, length=8)
+	@Field(offset=110, length=8, align=Align.RIGHT, paddingChar='0')
 	public Long getDataEmissaoTitulo() {
 		return dataEmissaoTitulo;
 	}
@@ -404,7 +405,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoJurosMora
 	 */
-	@Field(offset=108, length=1)
+	@Field(offset=118, length=1, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoJurosMora() {
 		return codigoJurosMora;
 	}
@@ -417,7 +418,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the dataJurosMora
 	 */
-	@Field(offset=119, length=8)
+	@Field(offset=119, length=8, align=Align.RIGHT, paddingChar='0')
 	public Long getDataJurosMora() {
 		return dataJurosMora;
 	}
@@ -430,7 +431,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the jurosMora
 	 */
-	@Field(offset=127, length=13)
+	@Field(offset=127, length=13, align=Align.RIGHT, paddingChar='0')
 	public Long getJurosMora() {
 		return jurosMora;
 	}
@@ -443,7 +444,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoDesconto
 	 */
-	@Field(offset=142, length=1)
+	@Field(offset=142, length=1, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoDesconto() {
 		return codigoDesconto;
 	}
@@ -456,7 +457,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the dataDesconto
 	 */
-	@Field(offset=143, length=8)
+	@Field(offset=143, length=8, align=Align.RIGHT, paddingChar='0')
 	public Long getDataDesconto() {
 		return dataDesconto;
 	}
@@ -469,7 +470,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the desconto
 	 */
-	@Field(offset=151, length=13)
+	@Field(offset=151, length=13, align=Align.RIGHT, paddingChar='0')
 	public Long getDesconto() {
 		return desconto;
 	}
@@ -482,7 +483,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the valorIOF
 	 */
-	@Field(offset=166, length=13)
+	@Field(offset=166, length=13, align=Align.RIGHT, paddingChar='0')
 	public Long getValorIOF() {
 		return valorIOF;
 	}
@@ -495,7 +496,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the valorAbatimento
 	 */
-	@Field(offset=181, length=2)
+	@Field(offset=181, length=13, align=Align.RIGHT, paddingChar='0')
 	public Long getValorAbatimento() {
 		return valorAbatimento;
 	}
@@ -508,7 +509,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the identificacaoTituloEmpresa
 	 */
-	@Field(offset=196, length=25)
+	@Field(offset=196, length=25, align=Align.LEFT, paddingChar='0')
 	public String getIdentificacaoTituloEmpresa() {
 		return identificacaoTituloEmpresa;
 	}
@@ -521,7 +522,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoProtesto
 	 */
-	@Field(offset=221, length=1)
+	@Field(offset=221, length=1, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoProtesto() {
 		return codigoProtesto;
 	}
@@ -534,7 +535,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the prazoProtesto
 	 */
-	@Field(offset=222, length=2)
+	@Field(offset=222, length=2, align=Align.RIGHT, paddingChar='0')
 	public Long getPrazoProtesto() {
 		return prazoProtesto;
 	}
@@ -547,7 +548,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoBaixaDevolucao
 	 */
-	@Field(offset=224, length=1)
+	@Field(offset=224, length=1, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoBaixaDevolucao() {
 		return codigoBaixaDevolucao;
 	}
@@ -560,7 +561,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the prazoBaixaDevolucao
 	 */
-	@Field(offset=225, length=1)
+	@Field(offset=225, length=3, align=Align.LEFT, paddingChar='0')
 	public String getPrazoBaixaDevolucao() {
 		return prazoBaixaDevolucao;
 	}
@@ -573,7 +574,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the codigoMoeda
 	 */
-	@Field(offset=228, length=2)
+	@Field(offset=228, length=2, align=Align.RIGHT, paddingChar='0')
 	public Long getCodigoMoeda() {
 		return codigoMoeda;
 	}
@@ -586,7 +587,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the numeroContrato
 	 */
-	@Field(offset=230, length=10)
+	@Field(offset=230, length=10, align=Align.RIGHT, paddingChar='0')
 	public Long getNumeroContrato() {
 		return numeroContrato;
 	}
@@ -599,7 +600,7 @@ public class DetalheSegmentoP {
 	/**
 	 * @return the usoLivre
 	 */
-	@Field(offset=240, length=1)
+	@Field(offset=240, length=1, align=Align.LEFT, paddingChar='0')
 	public String getUsoLivre() {
 		return usoLivre;
 	}
