@@ -492,7 +492,6 @@ var fechamentoEncalheController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						
 						var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
 						var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 						
