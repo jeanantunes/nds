@@ -21,10 +21,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.movimentacao.AbstractMovimentoFinanceiro;
 
 @Entity
 @Table(name = "BAIXA_COBRANCA")
@@ -57,9 +55,8 @@ public abstract class BaixaCobranca {
 	@JoinColumn(name = "BANCO_ID")
 	private Banco banco;
 
-//	@OneToMany(mappedBy="baixaCobranca")
-//	@Transient
-//	private List<AbstractMovimentoFinanceiro> movimentosFinanceiros;
+	@OneToMany(mappedBy="baixaCobranca")
+	private List<MovimentoFinanceiroCota> movimentosFinanceiros;
 	
 	public Long getId() {
 		return id;
@@ -109,17 +106,17 @@ public abstract class BaixaCobranca {
 		this.banco = banco;
 	}
 
-//	/**
-//	 * @return the movimentosFinanceiros
-//	 */
-//	public List<AbstractMovimentoFinanceiro> getMovimentosFinanceiros() {
-//		return movimentosFinanceiros;
-//	}
-//
-//	/**
-//	 * @param movimentosFinanceiros the movimentosFinanceiros to set
-//	 */
-//	public void setMovimentosFinanceiros(List<AbstractMovimentoFinanceiro> movimentosFinanceiros) {
-//		this.movimentosFinanceiros = movimentosFinanceiros;
-//	}
+	/**
+	 * @return the movimentosFinanceiros
+	 */
+	public List<MovimentoFinanceiroCota> getMovimentosFinanceiros() {
+		return movimentosFinanceiros;
+	}
+
+	/**
+	 * @param movimentosFinanceiros the movimentosFinanceiros to set
+	 */
+	public void setMovimentosFinanceiros(List<MovimentoFinanceiroCota> movimentosFinanceiros) {
+		this.movimentosFinanceiros = movimentosFinanceiros;
+	}
 }
