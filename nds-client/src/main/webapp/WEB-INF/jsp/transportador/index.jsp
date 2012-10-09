@@ -1,6 +1,7 @@
 <head>
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 	<script type="text/javascript" src="scripts/transportador.js"></script>
+
 	<style>
 		.diasFunc label,.finceiro label {
 			vertical-align: super;
@@ -160,7 +161,7 @@
 							<td>CNPJ:</td>
 							<td><input type="text" style="width: 150px" id="cnpj" onblur="transportadorController.buscarPessoaCNPJ(this.value);" /></td>
 							<td>Insc. Estadual:</td>
-							<td><input type="text" style="width: 150px" id="inscEstadual" maxlength="255" /></td>
+							<td><input type="text" style="width: 150px" id="inscEstadual" /></td>
 						</tr>
 					</table>
 					<table width="850" cellpadding="3" cellspacing="2">
@@ -388,5 +389,21 @@
 			<table class="transportadoraGrid"></table>
 		</div>
 	</fieldset>
+	
+	<script>
+	
+	$(function() {
+		
+		transportadorController.init();
+		
+		ENDERECO_TRANSPORTADOR.init(transportadorController.workspace);
+		
+		TRANSPORTADOR.init(transportadorController.workspace);
+		
+		
+	});
+	
+	</script>
+	
 			
 </body>

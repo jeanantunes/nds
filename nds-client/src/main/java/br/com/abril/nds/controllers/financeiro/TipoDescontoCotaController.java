@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.singleton.VerificadorProgressoGravacaoDescontoEspecificoSingleton;
@@ -91,105 +92,85 @@ public class TipoDescontoCotaController {
 	
 	@Post
 	@Path("/novoDescontoGeral")
-	public void novoDescontoGeral(final BigDecimal desconto, final List<Long> fornecedores){
-		
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
+	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 
-				VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(true);
-				
-				try {
-					descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
-				} catch(ValidacaoException e) {
-					VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(false);
-					VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
-				}
-
-				VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
-				VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(false);
-			
-			}
-		});
-		
-		thread.setName("Desconto Geral");
-		
-		thread.setPriority(Thread.MIN_PRIORITY);
-		
-		thread.start();
+		this.executarDescontoGeral(desconto, fornecedores);
 		
 		//result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 	}
 
+	@Async
+	private void executarDescontoGeral(BigDecimal desconto, List<Long> fornecedores) {
+		VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(true);
+		try {
+			descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuario());
+		} catch(ValidacaoException e) {
+			VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(false);
+			VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
+		}
+
+		VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
+		VerificadorProgressoGravacaoDescontoGeralSingleton.getInstance().setAtivo(false);
+	}
+	
 	@Post
 	@Path("/novoDescontoEspecifico")
-	public void novoDescontoEspecifico(final Integer numeroCota, final BigDecimal desconto, final List<Long> fornecedores) {
+	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-
-				VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(true);
-				
-				try {
-					descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuario());
-				} catch(ValidacaoException e) {
-					VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(false);
-					VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
-				}
-				
-				VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
-				VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(false);
-			
-			}
-		});
+		executarDescontoEspecifico(numeroCota, desconto, fornecedores);
 		
-		thread.setName("Desconto Especifico (Cota)");
-
-		thread.setPriority(Thread.MIN_PRIORITY);
-		
-		thread.start();
-
 		//result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 		
 	}
 	
+	@Async	
+	private void executarDescontoEspecifico(final Integer numeroCota, final BigDecimal desconto, final List<Long> fornecedores) {
+		
+		VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(true);
+		
+		try {
+			descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuario());
+		} catch(ValidacaoException e) {
+			VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(false);
+			VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
+		}
+		
+		VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
+		VerificadorProgressoGravacaoDescontoEspecificoSingleton.getInstance().setAtivo(false);		
+		
+	}
+	
 	@Post
 	@Path("/novoDescontoProduto")
-	public void novoDescontoProduto(final DescontoProdutoDTO desconto, final List<Integer> cotas) {		
+	public void novoDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas) {		
 
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-
-				VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(true);
-				
-				try {
-					desconto.setCotas(cotas);
-					descontoService.incluirDescontoProduto(desconto, getUsuario());
-				} catch(ValidacaoException e) {
-					VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(false);
-					VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
-				}
-				
-				VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
-				VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(false);
-			
-			}
-		});
-		
-		thread.setPriority(Thread.MIN_PRIORITY);
-		
-		thread.setName("Desconto Produto");
-		
-		thread.start();
+		executarDescontoProduto(desconto, cotas);
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
 
 		//this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"),"result").recursive().serialize();
 	}
+	
+	@Async	
+	private void executarDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas) {
+		
+		VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(true);
+		
+		try {
+			desconto.setCotas(cotas);
+			descontoService.incluirDescontoProduto(desconto, getUsuario());
+		} catch(ValidacaoException e) {
+			VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(false);
+			VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()));
+		}
+		
+		VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setValidacao(new ValidacaoVO(TipoMensagem.SUCCESS, "Desconto cadastrado com sucesso"));
+		VerificadorProgressoGravacaoDescontoProdutoSingleton.getInstance().setAtivo(false);
+
+		
+	}	
 	
 	@Path("/pesquisarDescontoGeral")
 	public void pesquisarDescontoGeral(String sortorder, String sortname, int page, int rp) throws Exception {

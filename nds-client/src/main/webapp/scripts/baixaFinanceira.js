@@ -113,25 +113,25 @@ var baixaFinanceiraController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 135,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Banco',
-				name : 'banco',
+				name : 'nomeBanco',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Conta-Corrente',
-				name : 'cCorrente',
+				name : 'numeroConta',
 				width : 80,
 				sortable : true,
 				align : 'left'
@@ -143,18 +143,18 @@ var baixaFinanceiraController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Valor R$',
-				name : 'vlr',
+				name : 'valorBoleto',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Data Vencimento',
-				name : 'dtVencimento',
+				name : 'dataVencimento',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -163,7 +163,6 @@ var baixaFinanceiraController = $.extend(true, {
 			width : 750,
 			height : 220
 		});
-		
 	},
 	
 	iniciarGridBaixadosRejeitados : function() {
@@ -171,31 +170,31 @@ var baixaFinanceiraController = $.extend(true, {
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
-				display : 'Histórico',
-				name : 'historico',
+				display : 'Motivo',
+				name : 'motivoRejeitado',
 				width : 420,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Banco',
-				name : 'banco',
+				name : 'nomeBanco',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Conta-Corrente',
-				name : 'cCorrente',
+				name : 'numeroConta',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Valor Boleto R$',
-				name : 'vlrBoleto',
+				name : 'valorBoleto',
 				width : 120,
 				sortable : true,
 				align : 'right'
 			}],
-			sortname : "historico",
+			sortname : "motivoRejeitado",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -212,48 +211,42 @@ var baixaFinanceiraController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Motivo',
-				name : 'motivo',
+				name : 'motivoDivergencia',
 				width : 255,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Banco',
-				name : 'banco',
+				name : 'nomeBanco',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Conta-Corrente',
-				name : 'cCorrente',
-				width : 80,
+				name : 'numeroConta',
+				width : 100,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Boleto R$',
-				name : 'boleto',
-				width : 60,
+				name : 'valorBoleto',
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Pago R$',
-				name : 'pago',
-				width : 60,
+				name : 'valorPago',
+				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Diferença R$',
-				name : 'vlrDiferenca',
+				name : 'diferencaValor',
 				width : 70,
 				sortable : true,
 				align : 'right'
-			}, {
-				display : 'Baixado?',
-				name : 'baixado',
-				width : 60,
-				sortable : true,
-				align : 'center'
 			}],
-			sortname : "motivo",
+			sortname : "motivoDivergencia",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -270,25 +263,25 @@ var baixaFinanceiraController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 135,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Banco',
-				name : 'banco',
+				name : 'nomeBanco',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Conta-Corrente',
-				name : 'cCorrente',
+				name : 'numeroConta',
 				width : 80,
 				sortable : true,
 				align : 'left'
@@ -300,18 +293,18 @@ var baixaFinanceiraController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Valor R$',
-				name : 'vlr',
+				name : 'valorBoleto',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Data Vencimento',
-				name : 'dtVencimento',
+				name : 'dataVencimento',
 				width : 90,
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -320,7 +313,6 @@ var baixaFinanceiraController = $.extend(true, {
 			width : 750,
 			height : 220
 		});
-		
 	},
 	
 	iniciarGridTotalBancario : function() {
@@ -329,30 +321,24 @@ var baixaFinanceiraController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Banco',
-				name : 'banco',
-				width : 130,
+				name : 'nomeBanco',
+				width : 163,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'C.Corrente',
-				name : 'cCorrente',
-				width : 145,
+				name : 'numeroConta',
+				width : 178,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Valor R$',
-				name : 'vlr',
-				width : 100,
+				name : 'valorPago',
+				width : 134,
 				sortable : true,
 				align : 'right'
-			}, {
-				display : 'Data Vencímento',
-				name : 'dtVencimento',
-				width : 100,
-				sortable : true,
-				align : 'center'
 			}],
-			sortname : "banco",
+			sortname : "nomeBanco",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -363,8 +349,38 @@ var baixaFinanceiraController = $.extend(true, {
 		});
 	},
 	
-	getDataFromResult : function() {
+	getDataFromResult : function(resultado) {
 		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+		}
+		
+		var hasRows = resultado.rows.length > 0;
+		
+		if (hasRows) {
+			
+			baixaFinanceiraController.mostrarBotoes();
+			
+		} else {
+			
+			baixaFinanceiraController.esconderBotoes();
+		}
+		
+		return resultado;
+	},
+	
+	mostrarBotoes : function() {
+		
+		$("#botoesExportacao", baixaFinanceiraController.workspace).show();
+	},
+	
+	esconderBotoes : function() {
+		
+		$("#botoesExportacao", baixaFinanceiraController.workspace).hide();
 	},
 	
     //BAIXA MANUAL--------------------------------------
@@ -1184,8 +1200,6 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		$(".previsaoGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-previsao").find("legend > span").html(dataBaixa);
-		
 		$("#dialog-previsao").dialog({
 			resizable: false,
 			height:430,
@@ -1217,8 +1231,6 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		$(".boletoBaixadoGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-boletos-baixados").find("legend > span").html(dataBaixa);
-		
 		$("#dialog-boletos-baixados").dialog({
 			resizable: false,
 			height:430,
@@ -1249,8 +1261,6 @@ var baixaFinanceiraController = $.extend(true, {
 		});
 		
 		$(".boletoRejeitadoGrid", baixaFinanceiraController.workspace).flexReload();
-
-		$("#dialog-baixados-rejeitados").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-baixados-rejeitados").dialog({
 			resizable: false,
@@ -1283,8 +1293,6 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		$(".boletoDivergenciaGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-baixados-divergentes").find("legend > span").html(dataBaixa);
-		
 		$("#dialog-baixados-divergentes").dialog({
 			resizable: false,
 			height:430,
@@ -1316,8 +1324,6 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		$(".inadimplentesGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-inadimplentes").find("legend > span").html(dataBaixa);
-		
 		$("#dialog-inadimplentes").dialog({
 			resizable: false,
 			height:430,
@@ -1348,8 +1354,6 @@ var baixaFinanceiraController = $.extend(true, {
 		});
 		
 		$(".totalGrid", baixaFinanceiraController.workspace).flexReload();
-		
-		$("#dialog-total").find("legend > span").html(dataBaixa);
 		
 		$("#dialog-total").dialog({
 			resizable: false,

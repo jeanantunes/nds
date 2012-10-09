@@ -40,5 +40,7 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 
 	Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe);
 	
-	List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
+	List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, Integer page, Integer rp);
+	
+	Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 }
