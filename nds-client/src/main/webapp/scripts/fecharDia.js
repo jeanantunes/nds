@@ -452,8 +452,6 @@ var fecharDiaController =  $.extend(true, {
 						
 					}
 				);
-		}else{
-			alert("Entrou no else");
 		}
 	}
 
