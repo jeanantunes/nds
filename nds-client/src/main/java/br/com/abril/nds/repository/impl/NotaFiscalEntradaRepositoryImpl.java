@@ -264,9 +264,9 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				   + " itemNotaFiscal.produtoEdicao.produto.codigo as codigoProduto,"
 				   + " itemNotaFiscal.produtoEdicao.produto.nome as nomeProduto, " 
 				   + " itemNotaFiscal.produtoEdicao.numeroEdicao as numeroEdicao, "
-				   + " itemNotaFiscal.produtoEdicao.precoVenda as precoVenda, "
+				   + " itemNotaFiscal.preco as precoVenda, "
 				   + " itemNotaFiscal.qtde as quantidadeExemplares, " 
-				   + " (itemNotaFiscal.qtde * itemNotaFiscal.produtoEdicao.precoVenda) as valorTotal, "
+				   + " (itemNotaFiscal.qtde * itemNotaFiscal.preco) as valorTotal, "
 				   + " diferenca.qtde as sobrasFaltas, " 
 				   + " diferenca.tipoDiferenca as tipoDiferenca " 
 				   + " from ItemNotaFiscalEntrada itemNotaFiscal "
@@ -280,7 +280,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 
 		query.setResultTransformer(resultTransformer);
 		query.setParameter("idNotaFiscal", idNotaFiscal);
-
+ 
 		return query.list();
 	}
 

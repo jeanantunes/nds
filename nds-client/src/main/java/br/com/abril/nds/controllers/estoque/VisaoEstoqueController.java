@@ -20,12 +20,15 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.VisaoEstoqueService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
@@ -97,10 +100,37 @@ public class VisaoEstoqueController {
 	
 	@Path("/transferir")
 	public void transferir(FiltroConsultaVisaoEstoque filtro) {
-	
+		
+		TipoEstoque entrada  = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoqueSelecionado());
+		TipoEstoque saida = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoque());
+
+		filtro.setGrupoMovimentoEntrada(this.getGrupoMovimentoTransferencia(entrada, true));
+		filtro.setGrupoMovimentoSaida(this.getGrupoMovimentoTransferencia(saida, false));
+
 		visaoEstoqueService.transferirEstoque(filtro, this.getUsuario());
 		
 		this.pesquisar(filtro);
+	}
+	
+	private GrupoMovimentoEstoque getGrupoMovimentoTransferencia(TipoEstoque tipoEstoque, boolean isEntrada) {
+		
+		switch(tipoEstoque) {
+		
+		case LANCAMENTO:
+			return isEntrada ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO : 
+							   GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO;
+		case SUPLEMENTAR:
+			return isEntrada ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR :
+							   GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR;
+		case RECOLHIMENTO:
+			return isEntrada ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO :
+							   GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO;
+		case PRODUTOS_DANIFICADOS:
+			return isEntrada ? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS :
+							   GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS;
+		default:
+			return null;
+		}
 	}
 	
 	
