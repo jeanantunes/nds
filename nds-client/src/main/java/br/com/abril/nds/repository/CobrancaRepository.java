@@ -68,4 +68,14 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	List<Cobranca> obterCobrancasPorIDS(List<Long> listaCobrancas);
 
 	BigDecimal obterValorCobrancasQuitadasPorData(Date data);
+	
+	/**
+	 * Retorna o valor de cobrança não pago pela cota.
+	 * 
+	 * @param numeroCota - número da cota
+	 * 
+	 * 
+	 * @return BigDecimal
+	 */
+	BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota);
 }
