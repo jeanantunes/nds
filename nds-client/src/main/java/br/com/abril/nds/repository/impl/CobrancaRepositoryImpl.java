@@ -327,4 +327,14 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacao) {
+		
+		Criteria criteria = this.getSession().createCriteria(Cobranca.class);
+		criteria.add(Restrictions.eq("dataEmissao", dataOperacao));
+	
+		return criteria.list();
+	}
 }
