@@ -22,10 +22,10 @@ import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoBaseVO;
-import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoDivergenteVO;
-import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoRejeitadoVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoBaseVO.TipoBaixaBoleto;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoCotaVO;
+import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoDivergenteVO;
+import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoRejeitadoVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaTotalBancarioVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
@@ -59,7 +59,6 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
-import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -126,9 +125,6 @@ public class BaixaFinanceiraController {
 	
 	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
-	
-	@Autowired
-	private GeradorArquivoCobrancaBancoService geradorArquivoCobrancaBancoService;
 	
 	@Autowired
 	private DividaService dividaService;
