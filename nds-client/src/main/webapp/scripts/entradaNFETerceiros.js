@@ -25,7 +25,7 @@ var entradaNFETerceirosController = $.extend(true, {
 	cadastrarNota : function(){		
 
 		$.postJSON(
-				contextPath + '/nfe/entradaNFETerceiros/cadastrarNota',
+				this.path +'cadastrarNota',
 				[
 					{ name: "nota.numero", value: $('#numeroNotaCadastroNota', this.workspace).val() },
 					{ name: "nota.serie", value: $('#serieNotaCadastroNota', this.workspace).val() },
@@ -64,9 +64,7 @@ var entradaNFETerceirosController = $.extend(true, {
 				this.pesquisarNotasPendente();
 			}
 		}else{
-			$(".ui-state-highlight ui-corner-all").show();
-			$(".ui-icon ui-icon-info").html("teste");
-			$(".ui-icon ui-icon-info").show();
+			exibirMensagem("WARNING", "[Escolha o status da nota]");
 			
 		}
 		
@@ -98,6 +96,27 @@ var entradaNFETerceirosController = $.extend(true, {
 	
 	mostrar_nfes : function(){
 		$(".nfes", this.workspace).show();
+	},
+	
+	checkAll : function (check) {
+		
+		$(".checkNota").each(function(index, element) {
+			element.checked = check.checked;
+		});
+		entradaNFETerceirosController.verificarCheck();
+	},
+	
+	verificarCheck : function() {
+		
+		var todosChecados = true;
+
+		$(".checkNota", this.workspace).each(function(index, element) {	
+			if (!element.checked) {
+				todosChecados = false;
+			}
+		});
+		
+		$("#checkAll").get(0).checked = todosChecados;
 	},
 
 	executarPreProcessamento : function(resultado) {
@@ -135,11 +154,11 @@ var entradaNFETerceirosController = $.extend(true, {
 					   																		+row.cell.dataEncalhe+','
 					   																		+row.cell.chaveAcesso+','
 					   																		+row.cell.serie+','
-					   																		+row.cell.vlrNota+','
+					   																		+row.cell.valorNota+','
 					   																		+row.cell.idNotaFiscalEntrada+');" style="cursor:pointer">' +
 							   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 		                         '</a>';
-               var checkBox = '<input type="checkbox" id="checkNota" name="checkNota" />';
+               var checkBox = '<input type="checkbox" class="checkNota" name="checkNota" onclick="entradaNFETerceirosController.verificarCheck()" />';
 				
 				row.cell.acao = linkLancamento + linkCadastro;
 				row.cell.sel = checkBox;
@@ -251,21 +270,20 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 	},
 	
-	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, vlrNota, idNotaFiscalEntrada) {
+	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, valorNota, statusNotaFiscalEntrada) {
 		
-		/*$('#numeroNotaFiscalPopUp', this.workspace).text(numeroNfe);
+		$('#numeroNotaFiscalPopUp', this.workspace).text(numeroNfe);
 		$('#dataNotaFiscalPopUp', this.workspace).text(dataEncalhe);
 		$('#chaveAcessoNotaFiscalPopUp', this.workspace).text(chaveAcesso);
 		$('#serieNotaFiscalPopUp', this.workspace).text(serie);
-		$('#valorNotaFiscalPopUp', this.workspace).text(vlrNota);
+		$('#valorNotaFiscalPopUp', this.workspace).text(valorNota);
 		
-		$(".pesquisarProdutosNotaGrid", this.workspace).flexOptions({
+		$(".pesquisarProdutosNotaGrid", entradaNFETerceirosController.workspace).flexOptions({
 			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
-			dataType : 'json',
-			params: [{name:'filtro.codigoNota', value:idNotaFiscalEntrada}]
+			dataType : 'json'
 		});
 
-		$(".pesquisarProdutosNotaGrid", this.workspace).flexReload();*/
+		$(".pesquisarProdutosNotaGrid", entradaNFETerceirosController.workspace).flexReload();
 	
 		$( "#dialog-dadosNotaFiscal", this.workspace ).dialog({
 			resizable: false,
@@ -310,6 +328,10 @@ var entradaNFETerceirosController = $.extend(true, {
 	},
 	
 	popup_nfe : function(numeroCota, nome){
+		
+		$('#serieNotaCadastroNota', this.workspace).val('');
+		$('#chaveAcessoCadastroNota', this.workspace).val('');
+		$('#valorNotaCadastroNota', this.workspace).val('');
 		
 		if(numeroCota != '0'){
 			$('#cotaCadastroNota', this.workspace).val(numeroCota);
@@ -362,25 +384,25 @@ var entradaNFETerceirosController = $.extend(true, {
 					align : 'center'
 				}, {
 					display : 'Tipo de Nota',
-					name : 'tipoNota',
+					name : 'tipoNotaFiscal',
 					width : 100,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Valor Nota R$',
-					name : 'vlrNotaFormatado',
+					name : 'valorNota',
 					width : 90,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Valor Real R$',
-					name : 'vlrRealFormatado',
+					name : 'valorReal',
 					width : 90,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Diferença',
-					name : 'diferencaFormatado',
+					name : 'diferenca',
 					width : 60,
 					sortable : true,
 					align : 'right'
@@ -420,7 +442,7 @@ var entradaNFETerceirosController = $.extend(true, {
 			dataType : 'json',
 				colModel : [ {
 					display : 'Nº Nota',
-					name : 'numNota',
+					name : 'numeroNota',
 					width : 100,
 					sortable : true,
 					align : 'left'
@@ -438,25 +460,25 @@ var entradaNFETerceirosController = $.extend(true, {
 					align : 'left'
 				}, {
 					display : 'Dt. Emissão',
-					name : 'dtEmissao',
+					name : 'dataEmissao',
 					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Tipo Nota',
-					name : 'tipoNota',
+					name : 'tipoNotaFiscal',
 					width : 100,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Fornecedor/Cota',
-					name : 'fornecedorCota',
+					name : 'nome',
 					width : 210,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Vlr. Nota R$',
-					name : 'vlrNota',
+					name : 'valorNota',
 					width : 90,
 					sortable : true,
 					align : 'right'

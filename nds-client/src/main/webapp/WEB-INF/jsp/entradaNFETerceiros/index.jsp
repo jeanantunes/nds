@@ -159,13 +159,13 @@ fieldset label {
 				rel="tipsy" title="Gerar"> <img border="0" hspace="5"
 					src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif"></a>
 			</span> <span class="bt_arq"> <a
-				href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=XLS"
+				href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=XLS"
 				rel="tipsy" title="Gerar Arquivo"> <img
 					src="${pageContext.request.contextPath}/images/ico_excel.png"
 					hspace="5" border="0" />
 			</a>
 			</span> <span class="bt_arq"> <a
-				href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=PDF"
+				href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=PDF"
 				rel="tipsy" title="Imprimir"> <img
 					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 					alt="Imprimir" hspace="5" border="0" />
@@ -203,7 +203,7 @@ fieldset label {
 						type="text" id="dataFinal" style="width: 70px;" /></td>
 					<td width="34">Status:</td>
 					<td width="165"><select name="filtro.statusNotaFiscalEntrada" id="situacaoNfe"
-						style="width: 160px;" onchange="mostra_status(this.value);">
+						style="width: 160px;" onchange="mostra_status(this.value); entradaNFETerceirosController.pesquisarEncalhe();">
 							<option value="" selected="selected"></option>
 							<c:forEach items="${comboStatusNota}" var="comboStatusNota">
 								<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>
@@ -238,8 +238,8 @@ fieldset label {
 				<table class="encalheNfeGrid"></table>
 			</div>
 			<span class="bt_sellAll" style="float: right;"><label
-				for="sel">Selecionar Todos</label><input type="checkbox" id="sel"
-				name="Todos" onclick="entradaNFETerceirosController.checkAll();"
+				for="sel">Selecionar Todos</label><input type="checkbox" id="checkAll"
+				name="todos" onclick="entradaNFETerceirosController.checkAll(this);"
 				style="float: left; margin-right: 25px;" /></span>
 
 		</div>
