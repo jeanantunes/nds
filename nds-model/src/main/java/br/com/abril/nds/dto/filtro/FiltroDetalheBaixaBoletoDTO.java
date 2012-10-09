@@ -14,6 +14,8 @@ public class FiltroDetalheBaixaBoletoDTO extends FiltroDTO implements Serializab
 	@Export(label = "Data da operação")
 	private Date data;
 	
+	private Date dataVencimento;
+	
 	private OrdenacaoColunaDetalheBaixaBoleto ordenacaoColuna;
 	
 	/**
@@ -71,6 +73,20 @@ public class FiltroDetalheBaixaBoletoDTO extends FiltroDTO implements Serializab
 	}
 	
 	/**
+	 * @return the dataVencimento
+	 */
+	public Date getDataVencimento() {
+		return dataVencimento;
+	}
+
+	/**
+	 * @param dataVencimento the dataVencimento to set
+	 */
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}
+
+	/**
 	 * @return the ordenacaoColuna
 	 */
 	public OrdenacaoColunaDetalheBaixaBoleto getOrdenacaoColuna() {
@@ -93,6 +109,8 @@ public class FiltroDetalheBaixaBoletoDTO extends FiltroDTO implements Serializab
 		int result = super.hashCode();
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		result = prime * result
+				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
+		result = prime * result
 				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
 		return result;
 	}
@@ -114,9 +132,14 @@ public class FiltroDetalheBaixaBoletoDTO extends FiltroDTO implements Serializab
 				return false;
 		} else if (!data.equals(other.data))
 			return false;
+		if (dataVencimento == null) {
+			if (other.dataVencimento != null)
+				return false;
+		} else if (!dataVencimento.equals(other.dataVencimento))
+			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;
 		return true;
 	}
-
+	
 }

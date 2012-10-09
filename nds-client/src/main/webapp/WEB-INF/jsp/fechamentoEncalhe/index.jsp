@@ -34,16 +34,19 @@
 		<jsp:include page="../messagesDialog.jsp">
 			<jsp:param value="dialogMensagemPostergarCotas" name="messageDialog"/>
 		</jsp:include> 
+
 		
-		<fieldset style="width:200px!important;">
+		<fieldset style="width:270px!important;">
 	    	<legend>Postergar Encalhe</legend>
 			<table border="0" cellspacing="2" cellpadding="0">
 	          <tr>
-	            <td width="70">Nova Data:</td>
-	            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="fechamentoEncalheController.carregarDataPostergacao();" /></td>
+	            <td width="60">Nova Data:</td>
+	            <td width="120"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="fechamentoEncalheController.carregarDataPostergacao();" /></td>
 	          </tr>
 	        </table>
 	    </fieldset>
+	    
+	    
 	</div>
 	</form>
 	

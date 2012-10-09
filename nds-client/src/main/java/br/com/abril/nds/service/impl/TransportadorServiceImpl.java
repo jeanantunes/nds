@@ -553,21 +553,6 @@ public class TransportadorServiceImpl implements TransportadorService {
 			msgs.add("Razão Social é obrigatório.");
 		}
 		
-		if (pessoaJuridica.getNomeFantasia() == null || pessoaJuridica.getNomeFantasia().trim().isEmpty()){
-			
-			msgs.add("Nome Fantasia é obrigatório.");
-		}
-		
-		if (pessoaJuridica.getEmail() == null || pessoaJuridica.getEmail().trim().isEmpty()){
-			
-			msgs.add("Email é obrigatório");
-		}
-		
-		if (transportador.getResponsavel() == null || transportador.getResponsavel().trim().isEmpty()){
-			
-			msgs.add("Responsável é obrigatório.");
-		}
-		
 		if (pessoaJuridica.getCnpj() == null || pessoaJuridica.getCnpj().trim().isEmpty()){
 			
 			msgs.add("CNPJ é obrigatório");

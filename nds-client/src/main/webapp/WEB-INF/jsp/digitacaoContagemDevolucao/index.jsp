@@ -108,7 +108,7 @@ $(function(){
 							</a>
 							</span>
 							
-							<span class="bt_novos" title="Gerar NF-e de Dev. ao Fornecedor">
+							<span class="bt_novos" title="Gerar NF-e de Dev. ao Fornecedor" onclick="digitacaoContagemDevolucaoController.geraNota();">
 							<a href="javascript:;">
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
 								Gerar NF-e

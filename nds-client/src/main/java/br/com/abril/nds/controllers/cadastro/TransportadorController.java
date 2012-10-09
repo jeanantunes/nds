@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,8 @@ import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -344,24 +347,24 @@ public class TransportadorController {
 			msgs.add("Razão social é obrigatório.");
 		}
 		
-		if (pessoaJuridica.getNomeFantasia() == null || pessoaJuridica.getNomeFantasia().trim().isEmpty()){
-			
-			msgs.add("Nome fantasia é obrigatório.");
-		}
-		
-		if (pessoaJuridica.getEmail() == null || pessoaJuridica.getEmail().trim().isEmpty()){
-			
-			msgs.add("Email é obrigatório.");
-		}
-		
-		if (transportador.getResponsavel() == null || transportador.getResponsavel().trim().isEmpty()){
-			
-			msgs.add("Responsável é obrigatório.");
-		}
-		
 		if (pessoaJuridica.getCnpj() == null || pessoaJuridica.getCnpj().trim().isEmpty()){
 			
 			msgs.add("CNPJ é obrigatório.");
+
+		} else {
+			
+			CNPJValidator cnpjValidator = new CNPJValidator(true);
+			
+			try {
+
+				cnpjValidator.assertValid(pessoaJuridica.getCnpj());
+				
+			} catch(InvalidStateException e) {
+			
+				msgs.add("CNPJ inválido.");
+			}			
+			
+			
 		}
 		
 		if (pessoaJuridica.getInscricaoEstadual() == null || pessoaJuridica.getInscricaoEstadual().trim().isEmpty()){
@@ -385,12 +388,100 @@ public class TransportadorController {
 			}
 		}
 		
+		validarEndereco(msgs);
+		
+		validarTelefone(msgs);
+		
 		if (!msgs.isEmpty()){
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgs));
 		}
 	}
 
+	private void validarEndereco(List<String> listaMensagens) {
+		
+		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
+				(List<EnderecoAssociacaoDTO>) this.httpSession.getAttribute(
+						LISTA_ENDERECOS_SALVAR_SESSAO);
+		
+		
+		if (listaEnderecoAssociacaoSalvar == null || listaEnderecoAssociacaoSalvar.isEmpty()) {
+			
+			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecoAssociacaoSalvar) {
+				
+				if (enderecoAssociacao.isEnderecoPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+
+			if (!temPrincipal) {
+				
+				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
+			}
+		}
+		
+	}
+	
+	private void validarTelefone(List<String> listaMensagens) {
+	
+		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
+		
+		if (map.keySet().isEmpty()) {
+			
+			listaMensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
+		
+		} else {
+			
+			boolean temPrincipal = false;
+			
+			for (Integer key : map.keySet()){
+
+				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+				
+				if (telefoneAssociacaoDTO.isPrincipal()) {
+					
+					temPrincipal = true;
+					
+					break;
+				}
+			}
+			
+			if (!temPrincipal) {
+				
+				listaMensagens.add("Deve haver ao menos um telefone principal para o entregador.");
+			}
+		}
+
+		
+	}
+	
+	/*
+	 * Método que obtém os telefones a serem salvos, que estão na sessão.
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<Integer, TelefoneAssociacaoDTO> obterTelefonesSalvarSessao(){
+		
+		Map<Integer, TelefoneAssociacaoDTO> telefonesSessao = (Map<Integer, TelefoneAssociacaoDTO>) 
+				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
+		
+		if (telefonesSessao == null){
+
+			telefonesSessao = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
+		}
+		
+		return telefonesSessao;
+	}
+
+	
 	@Post
 	public void editarTransportador(Long referencia){
 		
@@ -400,7 +491,7 @@ public class TransportadorController {
 		
 		List<String> dados = new ArrayList<String>();
 		
-		if (transportador != null){
+		if (transportador != null) {
 			
 			dados.add(transportador.getPessoaJuridica().getRazaoSocial());
 			dados.add(transportador.getPessoaJuridica().getNomeFantasia());

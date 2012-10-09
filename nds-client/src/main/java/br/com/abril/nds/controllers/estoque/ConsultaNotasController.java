@@ -171,7 +171,7 @@ public class ConsultaNotasController {
 		ResultadoConsultaDetallheNFVO resultadoConsultaDetallheNF = 
 			new ResultadoConsultaDetallheNFVO(
 				tableModelDetalhesNota, String.valueOf(detalheNotaFiscal.getTotalExemplares().intValue()), 
-					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizado().intValue()));
+					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizado()));
 
 		this.result.use(Results.json()).withoutRoot().from(resultadoConsultaDetallheNF).recursive().serialize();
 	}

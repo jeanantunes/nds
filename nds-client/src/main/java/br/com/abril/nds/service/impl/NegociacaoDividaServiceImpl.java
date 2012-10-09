@@ -101,8 +101,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 
 	@Override
 	@Transactional
-	public byte[] criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancasOriginarias, 
-			Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
+	public byte[] criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, BigDecimal valorDividaParaComissao, 
+			List<Long> idsCobrancasOriginarias, Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
 			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca,
 			boolean gerarBoleto) {
 		
@@ -111,7 +111,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		Date dataAtual = new Date();
 		
 		//valida dados de entrada
-		this.validarDadosEntrada(msgs, dataAtual, parcelas, usuarioResponsavel, 
+		this.validarDadosEntrada(msgs, dataAtual, parcelas, valorDividaParaComissao, usuarioResponsavel, 
 				ativarCotaAposParcela, comissaoParaSaldoDivida, formaCobranca);
 		
 		//Cota e Cobrança originária não são validados no método acima
@@ -275,6 +275,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		negociacao.setNegociacaoAvulsa(negociacaoAvulsa);
 		negociacao.setFormaCobranca(formaCobranca);
 		negociacao.setParcelas(parcelas);
+		negociacao.setValorDividaPagaComissao(valorDividaParaComissao);
 		
 		this.negociacaoDividaRepository.adicionar(negociacao);
 		
@@ -288,7 +289,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	}
 
 	private void validarDadosEntrada(List<String> msgs, Date dataAtual,
-			List<ParcelaNegociacao> parcelas, Usuario usuarioResponsavel,
+			List<ParcelaNegociacao> parcelas, BigDecimal valorDividaParaComissao, Usuario usuarioResponsavel,
 			Integer ativarCotaAposParcela, BigDecimal comissaoParaSaldoDivida,
 			FormaCobranca formaCobranca) {
 		
@@ -321,6 +322,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 						msgs.add("Valor da parcela " + parcelas.indexOf(parcelaNegociacao) + 1 + " inválido.");
 					}
 				}
+			}
+		} else {
+			
+			if (valorDividaParaComissao == null){
+				
+				msgs.add("Valor total da negociação inválido.");
 			}
 		}
 		

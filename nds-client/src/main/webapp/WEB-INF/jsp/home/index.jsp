@@ -186,13 +186,13 @@
 	
 	$(document).ready(function() {
 		
-		/*$("#ajaxLoading").ajaxStart(function() {
+		$("#ajaxLoading").ajaxStart(function() {
 			$(this).fadeIn(200);
 		});
 		$("#ajaxLoading").ajaxStop(function() {
 			$(this).fadeOut(200);
 			redimensionarWorkspace();
-		});*/
+		});
 		
 		redimensionarWorkspace();
 

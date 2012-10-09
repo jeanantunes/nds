@@ -430,7 +430,7 @@ var fechamentoEncalheController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Postergar": function() {
-					postergarCotas();
+					fechamentoEncalheController.postergarCotas();
 				},
 				"Cobrar": function() {
 					cobrarCotas();
@@ -481,25 +481,24 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	postergarCotas : function() {
 
-		var cotasSelecionadas = obterCotasMarcadas();
+		var cotasSelecionadas = fechamentoEncalheController.obterCotasMarcadas();
 
 		if (cotasSelecionadas.length > 0) {
 			
 			$("#dialog-postergar", fechamentoEncalheController.workspace).dialog({
 				resizable: false,
 				height:'auto',
-				width:250,
+				width:300,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						
 						var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
 						var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 						
 						$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/postergarCotas",
 									{ 'dataPostergacao' : dataPostergacao, 
 									  'dataEncalhe' : dataEncalhe, 
-									  'idsCotas' : obterCotasMarcadas() },
+									  'idsCotas' : cotasSelecionadas },
 									function (result) {
 	
 										$("#dialog-postergar", fechamentoEncalheController.workspace).dialog("close");
