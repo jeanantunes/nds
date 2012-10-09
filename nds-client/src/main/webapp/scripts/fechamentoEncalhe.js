@@ -192,6 +192,11 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	preprocessamentoGridFechamento : function(resultado) {
 		
+		if (typeof resultado.mensagens == "object") {
+            exibirMensagemDialog(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens, "");
+            return;
+        } 
+		
 		$.each(resultado.rows, function(index, row) {
 			
 			if (row.cell.diferenca == "0") {
@@ -492,7 +497,6 @@ var fechamentoEncalheController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						
 						var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
 						var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 						
