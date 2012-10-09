@@ -286,6 +286,15 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe;
 
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaLancamento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaLancamento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaSuplementar;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaRecolhimento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaRecolhimento;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaEntradaProdutosDanificados;
+	private static TipoMovimentoEstoque tipoMovimentoTransferenciaSaidaProdutosDanificados;
+	
 	private static MovimentoEstoqueCota movimentoEstoqueCota1;
 	private static MovimentoEstoqueCota movimentoEstoqueCota2;
 	private static MovimentoEstoqueCota movimentoEstoqueCota3;
@@ -905,6 +914,10 @@ public class DataLoader {
 	private static ProdutoEdicao produtoEdicaoVeja5;
 	private static ProdutoEdicao produtoEdicaoSuper2;
 	private static ProdutoEdicao produtoEdicaoCapricho2;
+
+	private static Object tipoMovimentoCompraEncalhe;
+
+	private static Object tipoMovimentoEstornoCompraEncalhe;
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -2617,31 +2630,31 @@ public class DataLoader {
         pdvOrlando.setSegmentacao(segmentacaoPDV2);
         session.save(pdvOrlando);
 		
-		Rota rota1 = Fixture.rota("005", "Rota 001",roteiroPinheiros);
+		Rota rota1 = Fixture.rota("Rota 001",roteiroPinheiros);
 		rota1.addPDV(pdvcotaJose2, 1);
 		rota1.addPDV(pdvcotaManoel2, 2);
 		session.save(rota1);
 		
-		Rota rota2 = Fixture.rota("004", "Rota 002",roteiroInterlagos);
+		Rota rota2 = Fixture.rota("Rota 002",roteiroInterlagos);
 	    rota2.addPDV(pdvcotaJose2, 1);
 	    rota2.addPDV(pdvcotaManoel2, 2);
 		session.save(rota2);
 		
-		Rota rota10 = Fixture.rota("001", "Rota 010",roteiroTCD);
+		Rota rota10 = Fixture.rota("Rota 010",roteiroTCD);
 	    rota10.addPDV(pdvcotaJose2, 1);
 	    rota10.addPDV(pdvcotaManoel2, 2);
 		session.save(rota10);
  
 		
-		Rota rotaRoteiroCentro1 = Fixture.rota("999", "Rota 999", roteiroCentro);
+		Rota rotaRoteiroCentro1 = Fixture.rota("Rota 999", roteiroCentro);
 		rotaRoteiroCentro1.addPDV(pdvJoao, 1);
 		session.save(rotaRoteiroCentro1);
 		
-		Rota rotaRoteiroCentro2 = Fixture.rota("990", "Rota 990", roteiroCentro);
+		Rota rotaRoteiroCentro2 = Fixture.rota("Rota 990", roteiroCentro);
         rotaRoteiroCentro2.addPDV(pdvMariana, 1);
         session.save(rotaRoteiroCentro2);
         
-        Rota rotaRoteiroBairro = Fixture.rota("998", "Rota 998", roteiroBairro);
+        Rota rotaRoteiroBairro = Fixture.rota("Rota 998", roteiroBairro);
         rotaRoteiroBairro.addPDV(pdvJoana, 1);
         rotaRoteiroBairro.addPDV(pdvOrlando, 2);
         session.save(rotaRoteiroBairro);
@@ -5099,7 +5112,9 @@ public class DataLoader {
 
 		tipoMovimentoNivelamentoEntrada = Fixture.tipoMovimentoNivelamentoEntrada();
 		tipoMovimentoNivelamentoSaida = Fixture.tipoMovimentoNivelamentoSaida();
-
+		
+		tipoMovimentoCompraEncalhe = Fixture.tipoMovimentoCompraEncalhe();
+		tipoMovimentoEstornoCompraEncalhe = Fixture.tipoMovimentoEstornoCompraEncalhe();
 
 		tipoMovimentoVendaEncalhe = Fixture.tipoMovimentoVendaEncalhe();
 		tipoMovimentoEstornoVendaEncalhe = Fixture.tipoMovimentoEstornoVendaEncalhe();
@@ -5113,7 +5128,8 @@ public class DataLoader {
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
-					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, tipoMovimentoEncalheAntecipado);
+					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
+					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe);
 
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
@@ -5157,6 +5173,15 @@ public class DataLoader {
 		tipoMovimentoCancelamentoNFDevolucaoConsignado = Fixture.tipoMovimentoCancelamentoNFDevolucaoConsignado();
 		tipoMovimentoCancelamentoNFEnvioConsignado = Fixture.tipoMovimentoCancelamentoNFEnvioConsignado();
 		
+		tipoMovimentoTransferenciaEntradaLancamento = Fixture.tipoMovimentoTransferenciaEntradaLancamento();
+		tipoMovimentoTransferenciaSaidaLancamento = Fixture.tipoMovimentoTransferenciaSaidaLancamento();
+		tipoMovimentoTransferenciaEntradaSuplementar = Fixture.tipoMovimentoTransferenciaEntradaSuplementar();
+		tipoMovimentoTransferenciaSaidaSuplementar = Fixture.tipoMovimentoTransferenciaSaidaSuplementar();
+		tipoMovimentoTransferenciaEntradaRecolhimento = Fixture.tipoMovimentoTransferenciaEntradaRecolhimento();
+		tipoMovimentoTransferenciaSaidaRecolhimento = Fixture.tipoMovimentoTransferenciaSaidaRecolhimento();
+		tipoMovimentoTransferenciaEntradaProdutosDanificados = Fixture.tipoMovimentoTransferenciaEntradaProdutosDanificados();
+		tipoMovimentoTransferenciaSaidaProdutosDanificados = Fixture.tipoMovimentoTransferenciaSaidaProdutosDanificados();
+		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,
 				tipoMovimentoRecFisico, tipoMovimentoRecReparte,
@@ -5166,7 +5191,11 @@ public class DataLoader {
 				tipoMovimentoFinanceiroEnvioEncalhe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoRecebimentoEncalhe, tipoMovimentoRecebimentoEncalheJuramentado,
 				tipoMovimentoSuplementarEnvioEncalheAnteriroProgramacao, 
-				tipoMovimentoCancelamentoNFDevolucaoConsignado, tipoMovimentoCancelamentoNFEnvioConsignado);
+				tipoMovimentoCancelamentoNFDevolucaoConsignado, tipoMovimentoCancelamentoNFEnvioConsignado, 
+				tipoMovimentoTransferenciaEntradaLancamento, tipoMovimentoTransferenciaSaidaLancamento, 
+				tipoMovimentoTransferenciaEntradaSuplementar, tipoMovimentoTransferenciaSaidaSuplementar,
+				tipoMovimentoTransferenciaEntradaRecolhimento, tipoMovimentoTransferenciaSaidaRecolhimento,
+				tipoMovimentoTransferenciaEntradaProdutosDanificados, tipoMovimentoTransferenciaSaidaProdutosDanificados);
 
 	}
 
@@ -6147,7 +6176,7 @@ public class DataLoader {
 	private static void criarBanco(Session session) {
 
 		bancoHSBC = Fixture.banco(454L, true, 1, "1010",
-							  1646L, "1", "1", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
+							  164L, "1", "6", "Instrucoes HSBC.", "HSBC","BANCO HSBC S/A", "399", BigDecimal.ONE, BigDecimal.ZERO);
 
 		bancoITAU = Fixture.banco(10L, true, 1, "1010",
 				  12345L, "1", "1", "Instrucoes ITAU.", "ITAU", "BANCO ITAU S/A", "184", BigDecimal.TEN, BigDecimal.ONE);

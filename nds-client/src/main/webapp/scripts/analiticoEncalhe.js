@@ -26,29 +26,32 @@ var analiticoEncalheController = $.extend(true, {
 		
 		$(".fechamentoAnaliticoGrid", this.workspace).flexReload();
 		$('#divAnaliticoEncalheGrid', this.workspace).show();
+		
+		analiticoDataEncalhe = $('#analiticoEncalhe_dataEncalhe',this.workspace).val();
+		analiticoFornecedorId = $('#selectFornecedor', this.workspace).val();
+		analiticoBoxId = $('#selectBoxEncalhe', this.workspace).val();
+		
 	},
 	
 	
 	limpaGridPesquisa : function() {
 
-		$(".fechamentoAnaliticoGrid", analiticoEncalheController.workspace).clear();
-		$('#divAnaliticoEncalheGrid', analiticoEncalheController.workspace).css("display", "none");
+		$(".fechamentoAnaliticoGrid", this.workspace).clear();
+		$('#divAnaliticoEncalheGrid', this.workspace).css("display", "none");
 	},
 	
 	
 	// TODO: rever
 	imprimirArquivo : function(fileType) {
-
-		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		
-		window.location = contextPath + "/devolucao/fechamentoEncalhe/imprimirArquivo?"
-			+ "dataEncalhe=" + vDataEncalhe
-			+ "&fornecedorId="+ vFornecedorId
-			+ "&boxId=" + vBoxId
-			+ "&sortname=" + $(".fechamentoGrid", fechamentoEncalheController.workspace).flexGetSortName()
-			+ "&sortorder=" + $(".fechamentoGrid", fechamentoEncalheController.workspace).getSortOrder()
-			+ "&rp=" + $(".fechamentoGrid", fechamentoEncalheController.workspace).flexGetRowsPerPage()
-			+ "&page=" + $(".fechamentoGrid", fechamentoEncalheController.workspace).flexGetPageNumber()
+		window.location = contextPath + "/devolucao/fechamentoEncalhe/imprimirArquivoAnaliticoEncalhe?"
+			+ "filtro.dataEncalhe=" + analiticoDataEncalhe
+			+ "&filtro.fornecedorId="+ analiticoFornecedorId
+			+ "&filtro.boxId=" + analiticoBoxId
+			+ "&sortname=" + $(".fechamentoAnaliticoGrid", this.workspace).flexGetSortName()
+			+ "&sortorder=" + $(".fechamentoAnaliticoGrid", this.workspace).getSortOrder()
+			+ "&rp=" + $(".fechamentoAnaliticoGrid", this.workspace).flexGetRowsPerPage()
+			+ "&page=" + $(".fechamentoAnaliticoGrid", this.workspace).flexGetPageNumber()
 			+ "&fileType=" + fileType;
 
 		return false;
@@ -58,16 +61,17 @@ var analiticoEncalheController = $.extend(true, {
 	initGridFechamentoAnalitico : function() {
 		
 		$(".fechamentoAnaliticoGrid").flexigrid({
+			preProcess: analiticoEncalheController.preprocessamentoGrid,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomeCota',
 				width : 400,
 				sortable : true,
 				align : 'left'
@@ -85,7 +89,7 @@ var analiticoEncalheController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Cobrança',
-				name : 'cobranca',
+				name : 'statusCobranca',
 				width : 180,
 				sortable : true,
 				align : 'left'
@@ -102,4 +106,29 @@ var analiticoEncalheController = $.extend(true, {
 	},
 	
 	
+	
+	preprocessamentoGrid : function(resultado) {
+		
+
+		var total = "0,00";
+		$.each(resultado.rows, function(index, row) {
+			total = sumPrice(total,row.cell.total );
+			
+		});
+		
+		if (resultado.rows.length == 0){
+			$('#valorTotal').html("0,00");
+			$('#totalCota').html("0");
+		} else {
+			$('#valorTotal').html(total);
+			$('#totalCota').html(resultado.rows.length);
+		}
+		
+		return resultado;
+	},
+	
+	
+	
 }, BaseController);
+
+//@ sourceURL=analiticoEncalhe.js

@@ -250,12 +250,12 @@ var visaoEstoqueController = $.extend(true, {
 			div = 'dialog-visaoEstoque-detalhe-juramentado';
 			grid = 'visaoEstoqueDetalheJuramentadoGrid';
 		} else {
-			$("#visaoEstoque_detalhe_estoque").html(estoque);
+			$("#visaoEstoque_detalhe_estoque", this.workspace).html(estoque);
 		}
 		
-		$("#visaoEstoque_filtro_tipoEstoque").val(tipoEstoque);
+		$("#visaoEstoque_filtro_tipoEstoque", this.workspace).val(tipoEstoque);
 		
-		var params = $("#pesquisarVisaoEstoqueForm").serialize();
+		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
 		$("." + grid).flexOptions({
 			url : this.path + 'pesquisarDetalhe.json?' + params, 
@@ -264,7 +264,9 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$("." + grid).flexReload();
 		
-		$("#" + div).dialog({
+		var idDiv = "#" + div;
+		
+		$(idDiv).dialog({
 			resizable: false,
 			height:380,
 			width:850,
@@ -273,7 +275,8 @@ var visaoEstoqueController = $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $(idDiv, visaoEstoqueController.workspace).parents("form")
 		});
 	},
 	
@@ -282,10 +285,10 @@ var visaoEstoqueController = $.extend(true, {
 		
 		visaoEstoqueController.montaSelectIncluirEstoque(tipoEstoque);
 		
-		$("#visaoEstoque_transferencia_estoqueSelecionado").html(estoque);
-		$("#visaoEstoque_transferencia_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
+		$("#visaoEstoque_transferencia_estoqueSelecionado", this.workspace).html(estoque);
+		$("#visaoEstoque_transferencia_dataMovimentacao", this.workspace).html($("#visaoEstoque_filtro_dataMovimentacao").val());
 		
-		$("#visaoEstoque_filtro_tipoEstoque").val(tipoEstoque);
+		$("#visaoEstoque_filtro_tipoEstoque", this.workspace).val(tipoEstoque);
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
@@ -295,9 +298,9 @@ var visaoEstoqueController = $.extend(true, {
 			newp:1
 		});
 		
-		$(".visaoEstoqueTransferenciaGrid").flexReload();
+		$(".visaoEstoqueTransferenciaGrid", this.workspace).flexReload();
 		
-		$("#dialog-visaoEstoque-transferencia").dialog({
+		$("#dialog-visaoEstoque-transferencia", this.workspace).dialog({
 			resizable: false,
 			height:480,
 			width:930,
@@ -312,16 +315,17 @@ var visaoEstoqueController = $.extend(true, {
 					$(this).dialog("close");
 				},
 			},
+			form: $("#dialog-visaoEstoque-transferencia", visaoEstoqueController.workspace).parents("form")
 		});
 	},
 	
 	
 	popup_inventario : function(tipoEstoque, estoque) {
 		
-		$("#visaoEstoque_inventario_estoqueSelecionado").html(estoque);
-		$("#visaoEstoque_inventario_dataMovimentacao").html($("#visaoEstoque_filtro_dataMovimentacao").val());
+		$("#visaoEstoque_inventario_estoqueSelecionado", this.workspace).html(estoque);
+		$("#visaoEstoque_inventario_dataMovimentacao", this.workspace).html($("#visaoEstoque_filtro_dataMovimentacao").val());
 		
-		$("#visaoEstoque_filtro_tipoEstoque").val(tipoEstoque);
+		$("#visaoEstoque_filtro_tipoEstoque", this.workspace).val(tipoEstoque);
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
@@ -331,9 +335,9 @@ var visaoEstoqueController = $.extend(true, {
 			newp:1
 		});
 		
-		$(".visaoEstoqueInventarioGrid").flexReload();
+		$(".visaoEstoqueInventarioGrid", this.workspace).flexReload();
 		
-		$( "#dialog-visaoEstoque-inventario").dialog({
+		$( "#dialog-visaoEstoque-inventario", this.workspace).dialog({
 			resizable: false,
 			height:480,
 			width:930,
@@ -348,14 +352,14 @@ var visaoEstoqueController = $.extend(true, {
 					$( this ).dialog( "close" );
 				},
 			},
-			
+			form: $("#dialog-visaoEstoque-inventario", visaoEstoqueController.workspace).parents("form")
 		});
 	},
 	
 	
 	popupConfirmaInventario : function() {
 		
-		$("#dialog-visaoEstoque-inventario-confirm").dialog({
+		$("#dialog-visaoEstoque-inventario-confirm", this.workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:340,
@@ -369,6 +373,7 @@ var visaoEstoqueController = $.extend(true, {
 					$( this ).dialog( "close" );
 				},
 			},
+			form: $("#dialog-visaoEstoque-inventario-confirm", visaoEstoqueController.workspace).parents("form")
 		});
 	},
 	

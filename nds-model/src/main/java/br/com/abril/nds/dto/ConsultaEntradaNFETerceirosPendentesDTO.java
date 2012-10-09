@@ -13,7 +13,7 @@ import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ConsultaNFENotasPendentesDTO implements Serializable {
+public class ConsultaEntradaNFETerceirosPendentesDTO implements Serializable {
 
 	private static final long serialVersionUID = 8366815250237375585L;
 	
@@ -27,11 +27,11 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 	private String dataEncalhe;
 	
 	@Export(label = "Tipo de Nota", alignment=Alignment.LEFT, exhibitionOrder = 4)
-	private TipoOperacao tipoNota;
+	private TipoOperacao tipoNotaFiscal;
 	
-	private BigDecimal vlrNota;
+	private BigDecimal valorNota;
 	
-	private BigDecimal vlrReal;
+	private BigDecimal valorReal;
 	
 	private BigDecimal diferenca;
 	
@@ -46,32 +46,11 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 	
 	private Long idNotaFiscalEntrada;
 	
-	private String vlrNotaFormatado;
-	private String vlrRealFormatado;
+	private String valorNotaFormatado;
+	private String valorRealFormatado;
 	private String diferencaFormatado;
 	
 	
-	public ConsultaNFENotasPendentesDTO() {}
-	
-	public ConsultaNFENotasPendentesDTO(Integer numeroCota, String nome,
-			String dataEncalhe, TipoOperacao tipoNota, BigDecimal vlrNota,
-			BigDecimal vlrReal, BigDecimal diferenca, String status,
-			Long numeroNfe, String serie, String chaveAcesso, Long idNotaFiscalEntrada) {
-		super();
-		this.numeroCota = numeroCota;
-		this.nome = nome;
-		this.dataEncalhe = dataEncalhe;
-		this.tipoNota = tipoNota;
-		this.vlrNota = vlrNota;
-		this.vlrReal = vlrReal;
-		this.diferenca = diferenca;
-		this.status = status;
-		this.numeroNfe = numeroNfe;
-		this.serie = serie;
-		this.chaveAcesso = chaveAcesso;
-		this.idNotaFiscalEntrada = idNotaFiscalEntrada;
-	}
-
 	public Long getNumeroNfe() {
 		return numeroNfe;
 	}
@@ -117,47 +96,39 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 	}
 
 	public void setDataEncalhe(Date dataEncalhe) {
-		this.dataEncalhe = DateUtil.formatarData(dataEncalhe, Constantes.DATE_PATTERN_PT_BR);;
+		this.dataEncalhe = DateUtil.formatarData(dataEncalhe, Constantes.DATE_PATTERN_PT_BR);
 	}
 
-	public TipoOperacao getTipoNota() {
-		return tipoNota;
-	}
-
-	public void setTipoNota(TipoOperacao tipoNota) {
-		this.tipoNota = tipoNota;
-	}
-
-	public BigDecimal getVlrNota() {
-		return vlrNota;		
+	public BigDecimal getValorNota() {
+		return valorNota;		
 	}
 	
-	public void setVlrNota(BigDecimal vlrNota) {
-		this.vlrNota = vlrNota;
-		if(vlrNota != null){
-			vlrNotaFormatado = CurrencyUtil.formatarValor(vlrNota);
+	public void setValorNota(BigDecimal valorNota) {
+		this.valorNota = valorNota;
+		if(valorNota != null){
+			valorNotaFormatado = CurrencyUtil.formatarValor(valorNota);
 		}
 	}
 	
 	@Export(label = "Valor Nota R$", alignment=Alignment.RIGHT, exhibitionOrder = 5)
-	public String getVlrNotaFormatado() {
-		return vlrNotaFormatado;
+	public String getValorNotaFormatado() {
+		return valorNotaFormatado;
 	}
 
-	public BigDecimal getVlrReal() {
-		return vlrReal;
+	public BigDecimal getValorReal() {
+		return valorReal;
 	}
 
-	public void setVlrReal(BigDecimal vlrReal) {
-		this.vlrReal = vlrReal;
-		if(vlrReal != null){
-			vlrRealFormatado = CurrencyUtil.formatarValor(vlrReal);
+	public void setValorReal(BigDecimal valorReal) {
+		this.valorReal = valorReal;
+		if(valorReal != null){
+			valorRealFormatado = CurrencyUtil.formatarValor(valorReal);
 		}
 	}
 	
 	@Export(label = "Valor Real R$", alignment=Alignment.RIGHT, exhibitionOrder = 6)
-	public String getVlrRealFormatado() {
-		return vlrRealFormatado;
+	public String getValorRealFormatado() {
+		return valorRealFormatado;
 	}
 
 	public BigDecimal getDiferenca() {
@@ -190,6 +161,20 @@ public class ConsultaNFENotasPendentesDTO implements Serializable {
 
 	public void setIdNotaFiscalEntrada(Long idNotaFiscalEntrada) {
 		this.idNotaFiscalEntrada = idNotaFiscalEntrada;
+	}
+
+	/**
+	 * @return the tipoNotaFiscal
+	 */
+	public TipoOperacao getTipoNotaFiscal() {
+		return tipoNotaFiscal;
+	}
+
+	/**
+	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+	 */
+	public void setTipoNotaFiscal(TipoOperacao tipoNotaFiscal) {
+		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 	
 }
