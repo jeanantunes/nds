@@ -1664,7 +1664,23 @@ var baixaFinanceiraController = $.extend(true, {
 				'<a href="javascript:;" onclick="baixaFinanceiraController.mostrarGridTotalBancario();" />'
 			);
 		} 
-	}
+	},
+	
+    confirmarBaixa : function() {
+		
+    	$.postJSON(contextPath + "/financeiro/confirmarBaixaDividas",
+				   baixaFinanceiraController.obterCobrancasDividasMarcadas(),
+				   function() { baixaFinanceiraController.buscaManual(); }
+    	);
+	},
+	
+	cancelarBaixa : function() {
+		
+		$.postJSON(contextPath + "/financeiro/cancelarBaixaDividas",
+				   baixaFinanceiraController.obterCobrancasDividasMarcadas(),
+				   function() { baixaFinanceiraController.buscaManual(); }
+		);
+	},
 
 }, BaseController);
 
