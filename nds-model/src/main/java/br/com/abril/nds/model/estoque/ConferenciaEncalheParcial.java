@@ -1,6 +1,5 @@
 package br.com.abril.nds.model.estoque;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -18,7 +17,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 /**
- * Entidade que abstrai informações "inputadas" na funcionalidade 
+ * Entidade que abstrai informações digitadas na funcionalidade 
  * digitação contagem devolução.
  * 
  * @author Discover Technology
