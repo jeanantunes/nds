@@ -57,7 +57,7 @@ public class AlteracaoCotaRepositoryImpl extends AbstractRepositoryModel<Cota, L
 //		hql.append(" titularesCota.numeroCota = cota.numeroCota ");
 		
 		if (filtroAlteracaoCotaDTO.getNumeroCota() != null && filtroAlteracaoCotaDTO.getNumeroCota()>0) {
-			hql.append("and cota.numeroCota = :numeroCota ");
+			hql.append(" cota.numeroCota = :numeroCota ");
 			addedAnd = true;
 		}
 		
