@@ -25,7 +25,7 @@ public class ResumoFecharDiaRepositoryImpl  extends AbstractRepository implement
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		List<StatusLancamento> listaStatus = new ArrayList<>();
+		List<StatusLancamento> listaStatus = new ArrayList<StatusLancamento>();
 		
 		listaStatus.add(StatusLancamento.CONFIRMADO);
 		listaStatus.add(StatusLancamento.BALANCEADO);

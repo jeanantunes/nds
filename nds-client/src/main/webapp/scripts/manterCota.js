@@ -33,7 +33,7 @@ var MANTER_COTA = $.extend(true, {
 
         this.initCotaGridPrincipal();
     },
-
+    
     initCotaGridPrincipal: function() {
 
         $(".pessoasGrid", this.workspace).flexigrid({
@@ -470,6 +470,9 @@ var MANTER_COTA = $.extend(true, {
                 form: $("#workspaceCota", this.workspace)
             });
         }
+        
+        MANTER_COTA.verificarAlteracoesCadastroCota();
+        
     },
 
     recarregarCadastroCota : function() {
@@ -478,7 +481,24 @@ var MANTER_COTA = $.extend(true, {
     },
 
     cancelarCadastro:function(acaoPosCancelar){
+    	
+    	if(!MANTER_COTA._indCadastroCotaAlterado){
+    		
+            MANTER_COTA.fecharModalCadastroCota = true;
 
+            $("#dialog-close", this.workspace).dialog("close");
+            
+            $("#dialog-cancelar-cadastro-cota", this.workspace).dialog("close");
+            
+            $("#dialog-cota", this.workspace).dialog("close");
+           
+            if (acaoPosCancelar) {
+                acaoPosCancelar();
+            }
+
+            return;
+    	}
+    	
         $("#dialog-cancelar-cadastro-cota", this.workspace).dialog({
             resizable: false,
             height:150,
@@ -570,6 +590,57 @@ var MANTER_COTA = $.extend(true, {
         }
     },
 
+    /**
+     * Flag que indica alterações no cadastro da cota.
+     */
+    _indCadastroCotaAlterado : false,
+    
+    /**
+     * Detecta que se houveram quaisquer alterações no cadastro de cota.
+     */
+    verificarAlteracoesCadastroCota : function() {
+    	
+    	MANTER_COTA._indCadastroCotaAlterado = false;
+    	
+    	var inputs_aba_dados_cadastrais = 'div[id=tabCota-1] :input';
+    	var inputs_aba_enderecos 		= 'div[id=tabCota-2] :input';
+    	var inputs_aba_telefones 		= 'div[id=tabCota-3] :input';
+    	var inputs_aba_pdv 				= 'div[id=tabCota-4] :input';
+    	var inputs_aba_garantia 		= 'div[id=tabCota-5] :input';
+    	var inputs_aba_fornecedores 	= 'div[id=tabCota-6] :input';
+    	var inputs_aba_desconto 		= 'div[id=tabCota-7] :input';
+    	var inputs_aba_financeiro 		= 'div[id=tabCota-8] :input';
+    	var inputs_aba_distribuicao 	= 'div[id=tabCota-9] :input';
+    	var inputs_aba_socios 			= 'div[id=tabCota-10] :input';
+    	
+    	var inputAbas = new Array();
+    	
+    	inputAbas.push(inputs_aba_dados_cadastrais);
+    	inputAbas.push(inputs_aba_enderecos);
+    	inputAbas.push(inputs_aba_telefones);
+    	inputAbas.push(inputs_aba_pdv);
+    	inputAbas.push(inputs_aba_garantia);
+    	inputAbas.push(inputs_aba_fornecedores);
+    	inputAbas.push(inputs_aba_desconto);
+    	inputAbas.push(inputs_aba_financeiro);
+    	inputAbas.push(inputs_aba_distribuicao);
+    	inputAbas.push(inputs_aba_socios);
+    	
+    	$.each(inputAbas, function(index, value){
+    		
+        	$(value).change(function() {
+        		
+        		MANTER_COTA._indCadastroCotaAlterado = true;
+
+        	});
+    		
+    		
+    	});
+    	
+    	
+    },
+    
+    
     pesquisarMunicipios: function(idCampoPesquisa) {
 
         var nomeMunicipio = $(idCampoPesquisa, this.workspace).val();
