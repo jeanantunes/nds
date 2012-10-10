@@ -50,4 +50,6 @@ public interface FechamentoEncalheService {
 	List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, Integer page, Integer rp);
 	
 	Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
+	
+	Date buscarUtimoDiaDaSemanaRecolhimento();
 }

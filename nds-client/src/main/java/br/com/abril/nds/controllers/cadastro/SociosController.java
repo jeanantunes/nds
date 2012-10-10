@@ -212,14 +212,20 @@ public class SociosController {
 		}
 		
 		
-		
-		
 		if (pessoa.getRg() == null || pessoa.getRg().trim().isEmpty()){
 			msgsValidacao.add("R.G. do conjuge é obrigatório.");
 		} else if (pessoa.getRg().length() >  PessoaUtil.RG_QUANTIDADE_DIGITOS) {
 			
 			msgsValidacao.add("Quantidade de caracteres do campo [RG] do conjuge excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
 			
+		}
+		
+		if(pessoa.getOrgaoEmissor() == null || pessoa.getOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[Orgão Emissor] do RG do conjuge é obrigatório.");
+		}
+		
+		if(pessoa.getUfOrgaoEmissor() == null || pessoa.getUfOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[UF do Orgão Emissor] do RG do conjuge é obrigatório.");
 		}
 		
 		if (pessoa.getDataNascimento() == null){
@@ -300,6 +306,15 @@ public class SociosController {
 			msgsValidacao.add("Quantidade de caracteres do campo [RG] excede o maximo de " + PessoaUtil.RG_QUANTIDADE_DIGITOS + " dígitos");
 			
 		}
+		
+		if(pessoa.getOrgaoEmissor() == null || pessoa.getOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[Orgão Emissor] do RG é obrigatório.");
+		}
+		
+		if(pessoa.getUfOrgaoEmissor() == null || pessoa.getUfOrgaoEmissor().isEmpty()) {
+			msgsValidacao.add("[UF do Orgão Emissor] do RG é obrigatório.");
+		}
+
 		
 		if (pessoa.getDataNascimento() == null){
 			msgsValidacao.add("Data Nascimento é obrigatório.");

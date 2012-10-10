@@ -41,7 +41,7 @@ var relatorioTiposProdutosController = $.extend(true, {
 			url : this.path + 'pesquisar.json?' + params, 
 			newp : 1,
 			preProcess: relatorioTiposProdutosController.processarRetornoPesquisa
-		}); 
+		});
 		
 		$(".tiposProdutosGrid", this.workspace).flexReload();
 	},
@@ -119,3 +119,5 @@ var relatorioTiposProdutosController = $.extend(true, {
 	
 	
 }, BaseController);
+
+//@ sourceURL=relatorioTiposProdutos.js

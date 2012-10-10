@@ -1,9 +1,12 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,10 +31,12 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.VisaoEstoqueService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.export.NDSFileHeader;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
@@ -107,7 +112,7 @@ public class VisaoEstoqueController {
 		filtro.setGrupoMovimentoEntrada(this.getGrupoMovimentoTransferencia(entrada, true));
 		filtro.setGrupoMovimentoSaida(this.getGrupoMovimentoTransferencia(saida, false));
 
-		visaoEstoqueService.transferirEstoque(filtro, this.getUsuario());
+		this.visaoEstoqueService.transferirEstoque(filtro, this.getUsuario());
 		
 		this.pesquisar(filtro);
 	}
@@ -136,14 +141,18 @@ public class VisaoEstoqueController {
 	
 	@Path("/inventario")
 	public void inventario(FiltroConsultaVisaoEstoque filtro) {
-	
+
+		TipoEstoque tipoEstoque = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoque());
 		
+		this.visaoEstoqueService.atualizarInventarioEstoque(
+			filtro.getListaTransferencia(), tipoEstoque, this.getUsuario()
+		);
+
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Atualização de inventário concluída com sucesso.");
 		
-		
-		result.use(Results.json()).from(filtro, "result").serialize();
+		this.result.use(Results.json()).from(validacao, "result").serialize();
 	}
-	
-	
+
 	@Path("/exportar")
 	public void exportar(FileType fileType) throws IOException {
 		

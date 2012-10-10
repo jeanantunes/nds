@@ -670,10 +670,12 @@ public class ConferenciaEncalheController {
 				dadosDocumentacaoConfEncalheCota.getNossoNumero()!= null && 
 				!dadosDocumentacaoConfEncalheCota.getNossoNumero().isEmpty()) {
 			
-			byte[] slip =  conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP);
-			byte[] boletoOuRecibo = conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO);
+			List<byte[]> arquivos = new ArrayList<byte[]>();
+			
+			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.SLIP));
+			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(dadosDocumentacaoConfEncalheCota, TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
 						
-			retorno = PDFUtil.mergePDFs(slip, boletoOuRecibo);
+			retorno = PDFUtil.mergePDFs(arquivos);
 			
 			escreverArquivoParaResponse(retorno, "slipBoleto");
 		} else {

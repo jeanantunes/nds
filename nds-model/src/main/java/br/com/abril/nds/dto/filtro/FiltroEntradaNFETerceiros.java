@@ -23,7 +23,7 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private Cota cota;
 
-	@Export(label = "Perído", alignment=Alignment.LEFT, exhibitionOrder = 3)
+	@Export(label = "Período", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private Date dataInicial;
 
 	@Export(label = "Até", alignment=Alignment.LEFT, exhibitionOrder = 4)
