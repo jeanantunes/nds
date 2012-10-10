@@ -576,8 +576,10 @@ public class ConferenciaEncalheController {
 			
 		}
 		
-		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscal);
-		
+		List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+		notaFiscalEntradaCotas.add(notaFiscal);
+		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
+				
 		Box boxEncalhe = new Box();
 		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
 		
@@ -736,7 +738,9 @@ public class ConferenciaEncalheController {
 				
 			}
 			
-			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscal);
+			List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
+			notaFiscalEntradaCotas.add(notaFiscal);
+			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 			
 			Box boxEncalhe = new Box();
 			boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
