@@ -673,5 +673,5 @@ public class CobrancaServiceImpl implements CobrancaService {
 	    }
 		return res;
 	}
-	
+
 }
