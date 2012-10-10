@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -85,4 +87,17 @@ public class TelefoneFornecedorRepositoryImpl extends AbstractRepositoryModel<Te
 		
 		return (TelefoneFornecedor) query.uniqueResult();
 	}
+	
+	@Override
+	public TelefoneFornecedor obterTelefonePrincipal(long idFornecedor){
+		Criteria criteria = getSession().createCriteria(TelefoneFornecedor.class );
+		criteria.add(Restrictions.eq("fornecedor.id", idFornecedor));
+
+		criteria.add(Restrictions.eq("principal", true));
+		criteria.setMaxResults(1);
+		
+		return (TelefoneFornecedor) criteria.uniqueResult();
+		
+	}
+	
 }

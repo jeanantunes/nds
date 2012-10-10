@@ -89,11 +89,17 @@ public enum Permissao
 	ROLE_FINANCEIRO_HELP("Help",           															 	   Permissao.ROLE_FINANCEIRO),
 	
 	ROLE_ADMINISTRACAO("Administração",														  			   null),
+	ROLE_ADMINISTRACAO_FECHAR_DIA("Fechamento Diário",												  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CONTROLE_APROVACAO("Controle Aprovação",									  		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO("Painel Processamento	",							  		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA("Follow Up do Sistema",									  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_GRUPOS_ACESSO("Grupos de Acesso",											  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CALENDARIO("Calendario",													  		   Permissao.ROLE_ADMINISTRACAO),
+
+	ROLE_ADMINISTRACAO_INICIAR_DIA("Iniciar o Dia",												  		   Permissao.ROLE_ADMINISTRACAO),	
+	ROLE_ADMINISTRACAO_SERVICO_ENTREGA("Serviço de Entrega",										  	   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração / Cota",			          					 		   Permissao.ROLE_ADMINISTRACAO),
+
 	ROLE_ADMINISTRACAO_GERACAO_ARQUIVO("Geracao De Arquivos",									           Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipos de NF-e",													  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros de Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
