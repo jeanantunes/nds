@@ -88,4 +88,6 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * @return List<Cobranca>
 	 */
 	List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacao);
+
+	String obterNossoNumeroPorMovimentoFinanceiroCota(Long idMovimentoFinanceiro);
 }
