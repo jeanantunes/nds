@@ -225,7 +225,7 @@ var followUpSistemaController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Negociação',
-				name : 'descricaoNegociacao',
+				name : 'valorParcelaFormatado',
 				width : 120,
 				sortable : true,
 				align : 'left'

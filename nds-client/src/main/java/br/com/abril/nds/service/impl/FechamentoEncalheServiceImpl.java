@@ -407,7 +407,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	}
 	
-	public void gerarNotaFiscal(Date dataEncalhe) throws FileNotFoundException, IOException {
+	public void gerarNotaFiscal(Date dataEncalhe) throws Exception {
 		
 
 		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
