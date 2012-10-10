@@ -158,113 +158,117 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
 		
-		//Cria um tipo de movimento para a negociação
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-		tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
-		tipoMovimentoFinanceiro.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
-		tipoMovimentoFinanceiro.setDescricao("TESTE NEGOCIAÇÃO DIVIDA");
-		this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
-		
-		BigDecimal totalNegociacao = BigDecimal.ZERO;
-		//Popula o movimento financeiro de cada parcela
-		//Caso seja uma negociação avulsa o movimento financeiro servirá
-		//para rastreabilidade da negociação, caso não seja uma negociação avulsa
-		//será insumo para próxima geração de cobrança
-		for (ParcelaNegociacao parcelaNegociacao : parcelas){
-			
-			parcelaNegociacao.getMovimentoFinanceiroCota().setCota(cota);
-			parcelaNegociacao.getMovimentoFinanceiroCota().setUsuario(usuarioResponsavel);
-			parcelaNegociacao.getMovimentoFinanceiroCota().setData(dataAtual);
-			parcelaNegociacao.getMovimentoFinanceiroCota().setDataCriacao(dataAtual);
-			parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(StatusAprovacao.APROVADO);
-			parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(usuarioResponsavel);
-			parcelaNegociacao.getMovimentoFinanceiroCota().setTipoMovimento(tipoMovimentoFinanceiro);
-			
-			totalNegociacao = totalNegociacao.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
-			
-			this.movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
-			this.parcelaNegociacaoRepository.adicionar(parcelaNegociacao);
-		}
-		
 		String nossoNumeroPrimieroBoleto = null;
 		
-		//Caso essa seja uma negociação avulsa as parcelas não devem entrar nas próximas
-		//gerações de cobrança, para isso é necessário criar um consolidado financeiro para
-		//os movimentos financeiros das parcelas
-		if (negociacaoAvulsa){
+		//caso a negociacão seja feita em parcelas
+		if (parcelas != null){
 			
+			//Cria um tipo de movimento para a negociação
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
+			tipoMovimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+			tipoMovimentoFinanceiro.setOperacaoFinaceira(OperacaoFinaceira.DEBITO);
+			tipoMovimentoFinanceiro.setDescricao("TESTE NEGOCIAÇÃO DIVIDA");
+			this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
+			
+			BigDecimal totalNegociacao = BigDecimal.ZERO;
+			//Popula o movimento financeiro de cada parcela
+			//Caso seja uma negociação avulsa o movimento financeiro servirá
+			//para rastreabilidade da negociação, caso não seja uma negociação avulsa
+			//será insumo para próxima geração de cobrança
 			for (ParcelaNegociacao parcelaNegociacao : parcelas){
 				
-				ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
-				consolidado.setCota(cota);
-				consolidado.setDataConsolidado(dataAtual);
-				List<MovimentoFinanceiroCota> movs = new ArrayList<MovimentoFinanceiroCota>();
-				movs.add(parcelaNegociacao.getMovimentoFinanceiroCota());
-				consolidado.setMovimentos(movs);
-				consolidado.setTotal(totalNegociacao);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setCota(cota);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setUsuario(usuarioResponsavel);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setData(dataAtual);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setDataCriacao(dataAtual);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(StatusAprovacao.APROVADO);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(usuarioResponsavel);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setTipoMovimento(tipoMovimentoFinanceiro);
 				
-				this.consolidadoFinanceiroRepository.adicionar(consolidado);
+				totalNegociacao = totalNegociacao.add(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
 				
-				Divida divida = new Divida();
-				divida.setData(dataAtual);
-				divida.setResponsavel(usuarioResponsavel);
-				divida.setCota(cota);
-				divida.setValor(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
-				divida.setStatus(StatusDivida.EM_ABERTO);
-				divida.setConsolidado(consolidado);
+				this.movimentoFinanceiroCotaRepository.adicionar(parcelaNegociacao.getMovimentoFinanceiroCota());
+				this.parcelaNegociacaoRepository.adicionar(parcelaNegociacao);
+			}
+			
+			//Caso essa seja uma negociação avulsa as parcelas não devem entrar nas próximas
+			//gerações de cobrança, para isso é necessário criar um consolidado financeiro para
+			//os movimentos financeiros das parcelas
+			if (negociacaoAvulsa){
 				
-				Cobranca cobranca = null;
-				
-				switch(formaCobranca.getTipoCobranca()){
-					case BOLETO:
-						cobranca = new Boleto();
-					break;
-					case BOLETO_EM_BRANCO:
-						cobranca = new Boleto();
-					break;
-					case CHEQUE:
-						cobranca = new CobrancaCheque();
-					break;
-					case DEPOSITO:
-						cobranca = new CobrancaDeposito();
-					break;
-					case DINHEIRO:
-						cobranca = new CobrancaDinheiro();
-					break;
-					case OUTROS:
-						cobranca = new CobrancaDinheiro();
-					break;
-					case TRANSFERENCIA_BANCARIA:
-						cobranca = new CobrancaTransferenciaBancaria();
-					break;
-				}
-				
-				cobranca.setCota(cota);
-				cobranca.setBanco(formaCobranca.getBanco());
-				cobranca.setDivida(divida);
-				cobranca.setDataEmissao(dataAtual);
-				cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
-				cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
-				cobranca.setValor(totalNegociacao);
-				cobranca.setNossoNumero(
-						Util.gerarNossoNumero(
-								numeroCota, 
-								dataAtual, 
-								formaCobranca.getBanco().getNumeroBanco(), 
-								null, 
-								parcelaNegociacao.getMovimentoFinanceiroCota().getId()));
-				
-				this.dividaRepository.adicionar(divida);
-				this.cobrancaRepository.adicionar(cobranca);
-				
-				if (nossoNumeroPrimieroBoleto == null){
+				for (ParcelaNegociacao parcelaNegociacao : parcelas){
 					
-					nossoNumeroPrimieroBoleto = cobranca.getNossoNumero();
+					ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+					consolidado.setCota(cota);
+					consolidado.setDataConsolidado(dataAtual);
+					List<MovimentoFinanceiroCota> movs = new ArrayList<MovimentoFinanceiroCota>();
+					movs.add(parcelaNegociacao.getMovimentoFinanceiroCota());
+					consolidado.setMovimentos(movs);
+					consolidado.setTotal(totalNegociacao);
+					
+					this.consolidadoFinanceiroRepository.adicionar(consolidado);
+					
+					Divida divida = new Divida();
+					divida.setData(dataAtual);
+					divida.setResponsavel(usuarioResponsavel);
+					divida.setCota(cota);
+					divida.setValor(parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
+					divida.setStatus(StatusDivida.EM_ABERTO);
+					divida.setConsolidado(consolidado);
+					
+					Cobranca cobranca = null;
+					
+					switch(formaCobranca.getTipoCobranca()){
+						case BOLETO:
+							cobranca = new Boleto();
+						break;
+						case BOLETO_EM_BRANCO:
+							cobranca = new Boleto();
+						break;
+						case CHEQUE:
+							cobranca = new CobrancaCheque();
+						break;
+						case DEPOSITO:
+							cobranca = new CobrancaDeposito();
+						break;
+						case DINHEIRO:
+							cobranca = new CobrancaDinheiro();
+						break;
+						case OUTROS:
+							cobranca = new CobrancaDinheiro();
+						break;
+						case TRANSFERENCIA_BANCARIA:
+							cobranca = new CobrancaTransferenciaBancaria();
+						break;
+					}
+					
+					cobranca.setCota(cota);
+					cobranca.setBanco(formaCobranca.getBanco());
+					cobranca.setDivida(divida);
+					cobranca.setDataEmissao(dataAtual);
+					cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
+					cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
+					cobranca.setValor(totalNegociacao);
+					cobranca.setNossoNumero(
+							Util.gerarNossoNumero(
+									numeroCota, 
+									dataAtual, 
+									formaCobranca.getBanco().getNumeroBanco(), 
+									null, 
+									parcelaNegociacao.getMovimentoFinanceiroCota().getId()));
+					
+					this.dividaRepository.adicionar(divida);
+					this.cobrancaRepository.adicionar(cobranca);
+					
+					if (nossoNumeroPrimieroBoleto == null){
+						
+						nossoNumeroPrimieroBoleto = cobranca.getNossoNumero();
+					}
 				}
 			}
+			
+			this.formaCobrancaRepository.adicionar(formaCobranca);
 		}
-		
-		this.formaCobrancaRepository.adicionar(formaCobranca);
 		
 		//cria registro da negociação
 		Negociacao negociacao = new Negociacao();
@@ -294,7 +298,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			FormaCobranca formaCobranca) {
 		
 		//caso não tenha parcelas e nem comissão para saldo preenchidos
-		if (parcelas == null || parcelas.isEmpty() && comissaoParaSaldoDivida == null){
+		if ((parcelas == null || parcelas.isEmpty()) && comissaoParaSaldoDivida == null){
 			
 			msgs.add("Forma de pagamento é obrigatória.");
 		}

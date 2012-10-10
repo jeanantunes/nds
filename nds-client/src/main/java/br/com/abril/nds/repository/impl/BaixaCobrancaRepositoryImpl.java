@@ -99,4 +99,15 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		return query.list();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca) {
+
+		Criteria criteria = getSession().createCriteria(BaixaCobranca.class);
+		criteria.setProjection(Projections.max("dataBaixa"));
+		criteria.add(Restrictions.eq("cobranca.id", idCobranca));
+		return (BaixaCobranca) criteria.uniqueResult();
+	}
 }

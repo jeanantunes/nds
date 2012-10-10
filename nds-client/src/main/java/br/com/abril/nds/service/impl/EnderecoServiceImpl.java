@@ -276,6 +276,13 @@ public class EnderecoServiceImpl implements EnderecoService {
 	
 	@Override
 	@Transactional(readOnly = true)
+	public List<Bairro> pesquisarTodosBairros() {
+		
+		return this.bairroRepository.pesquisarTodosBairros();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public List<Localidade> pesquisarLocalidades(String nomeLocalidade) {
 		
 		return this.localidadeRepository.pesquisarLocalidades(nomeLocalidade);

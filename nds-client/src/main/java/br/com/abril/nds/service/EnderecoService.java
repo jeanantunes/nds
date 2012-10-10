@@ -43,6 +43,8 @@ public interface EnderecoService {
 	List<Logradouro> pesquisarLogradouros(String nomeLogradouro);
 
 	List<Bairro> pesquisarBairros(String nomeBairro);
+	
+	List<Bairro> pesquisarTodosBairros(); 
 
 	List<Localidade> pesquisarLocalidades(String nomeLocalidade);
 }

@@ -42,7 +42,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		StringBuilder hql = new StringBuilder();
 		
 		StringBuilder subquery = new StringBuilder();
-		subquery.append(" select sum( vp.qntProduto ) ");
+		subquery.append(" select COALESCE(sum( vp.qntProduto ),0) ");
 		subquery.append(" from VendaProduto vp ");
 		subquery.append(" where vp.produtoEdicao = pe  and vp.dataVenda = :dataEncalhe and  vp.tipoVenda= :tipoVenda ");
 	
@@ -51,9 +51,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append(" , pe.numeroEdicao as edicao");
 		hql.append(" , pe.precoVenda as precoCapa ");
 		hql.append(" , pe.id as produtoEdicao ");
-		hql.append(" , pe.parcial as parcial ");
+		hql.append(" ,  case when  pe.parcial  = true  then 'P' else 'N' end  as tipo ");
 		hql.append(" , che.dataRecolhimento as dataRecolhimento ");
-		hql.append(" , sum (mec.qtde - ("+ subquery.toString()  +")  ) as exemplaresDevolucao ");
+		hql.append(" ,   sum (mec.qtde - ("+ subquery.toString()  +") )   as exemplaresDevolucao ");
 		hql.append(" from ConferenciaEncalhe as ce ");
 		hql.append("  JOIN ce.movimentoEstoqueCota as mec ");
 		hql.append("  JOIN ce.controleConferenciaEncalheCota as ccec ");
