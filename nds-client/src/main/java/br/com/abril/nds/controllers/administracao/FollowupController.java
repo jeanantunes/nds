@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupStatusCotaDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -96,6 +97,8 @@ public class FollowupController {
 	private static final String FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE = "filtroFollowupCadastro";
 	private static final String FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE = "filtroFollowupCadastroParcial";
 	private static final String FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE = "filtroFollowupStatusCota";
+	private static final String FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE = "filtroFollowupNegociacao";
+	
 	//private static final String QTD_REGISTROS_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosFollowupConsignados";
 
 	private BigDecimal valorConsignadoSuspensaoCotas;
@@ -146,21 +149,28 @@ public class FollowupController {
 	@Post
 	@Path("/pesquisaDadosNegociacao")
 	public void pesquisaDadosNegociacao( String sortorder, String sortname, int page, int rp ) {
-		/**
-		 * EMS 179 = SEM DEFINICAO em 2012-06-18.
-		 * 
+				
 		FiltroFollowupNegociacaoDTO filtroNegociacao = 
     		new FiltroFollowupNegociacaoDTO(Calendar.getInstance().getTime());
 		
-		TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> tableModel = efetuarConsultaDadosNegociacao(filtroNegociacao);
-		 * 
-		 */
+		filtroNegociacao.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		//TODO implementar consulta
 		
 		List<ConsultaFollowupNegociacaoDTO> negociacoes = getMockNegociacao();
 		
 		result.use(FlexiGridJson.class).from(negociacoes).page(page).total(negociacoes.size()).serialize();
+	}
+	
+	private void tratarFiltroNegociacao(FiltroFollowupNegociacaoDTO filtroNegociacao) {
+		
+		FiltroFollowupNegociacaoDTO filtroSession = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && filtroSession.equals(filtroNegociacao)) {
+			
+			filtroNegociacao.getPaginacao().setPaginaAtual(1);
+		}
+		session.setAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE, filtroNegociacao);
 	}
 	
 	//TODO Remover Mock	
@@ -185,8 +195,7 @@ public class FollowupController {
 		System.out.println("IMPLEMENTAR EXCLUSÃO DE CANCELAMENTO - ID = " + idNegociacao);
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();	
-	}
-
+	}	
 	@Path("/pesquisaDadosStatusCota")
 	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {
 		FiltroFollowupStatusCotaDTO filtroStatusCota = new FiltroFollowupStatusCotaDTO();

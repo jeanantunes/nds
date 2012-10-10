@@ -32,7 +32,7 @@ public class Negociacao {
 		inverseJoinColumns = {@JoinColumn(name = "COBRANCA_ID")})
 	private List<Cobranca> cobrancasOriginarias;
 	
-	@OneToMany
+	@OneToMany(mappedBy="negociacao")
 	private List<ParcelaNegociacao> parcelas;
 	
 	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA")

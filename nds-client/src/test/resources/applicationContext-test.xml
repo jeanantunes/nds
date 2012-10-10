@@ -22,7 +22,7 @@
 		<property name="url" value="${dataSourceURL}" />
 		<property name="username" value="${testDataSourceUsername}" />
 		<property name="password" value="${testDataSourcePassword}" />
-    </bean>
+    </bean> 
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -51,9 +51,9 @@
 		<property name="password" value=""/>
 		<property name="bachSize" value="500"/>
 	</bean>
-	
-	<!-- 
 
+		
+	<!-- 
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
@@ -62,6 +62,8 @@
 		<property name="password" value="" />
 		<property name="suppressClose" value="true" />
 	</bean>
+
+		
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">

@@ -476,7 +476,7 @@ public class NotaFiscalServiceImplTest extends AbstractRepositoryImplTest {
 		Set<Processo> processos = new HashSet<Processo>();
 		processos.add(Processo.GERACAO_NF_E);
 
-		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel, listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos);
+		notaFiscalService.emitiNotaFiscal(tipoNotaFiscalDevolucao.getId(), new Date(), cotaManoel, listItemNotaFiscal, informacaoTransporte, informacaoAdicional, null, processos, null);
 	}
 	
 	

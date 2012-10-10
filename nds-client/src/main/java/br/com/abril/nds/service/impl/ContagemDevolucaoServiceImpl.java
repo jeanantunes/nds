@@ -801,9 +801,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
 		
-		
-		
-		
 		List<ItemNotaFiscal> listItemNotaFiscal = carregarDadosNFSaida(listaAgrupadaContagemDevolucao);
 		InformacaoTransporte transporte = new InformacaoTransporte();
 		transporte.setModalidadeFrente(0);

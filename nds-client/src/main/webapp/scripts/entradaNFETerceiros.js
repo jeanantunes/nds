@@ -22,7 +22,7 @@ var entradaNFETerceirosController = $.extend(true, {
 	
 	
 
-	cadastrarNota : function(){		
+	cadastrarNota : function(idControleConferenciaEncalheCota){		
 
 		$.postJSON(
 				this.path +'cadastrarNota',
@@ -30,16 +30,23 @@ var entradaNFETerceirosController = $.extend(true, {
 					{ name: "nota.numero", value: $('#numeroNotaCadastroNota', this.workspace).val() },
 					{ name: "nota.serie", value: $('#serieNotaCadastroNota', this.workspace).val() },
 					{ name: "nota.chaveAcesso", value: $('#chaveAcessoCadastroNota', this.workspace).val() },
+					{ name: "nota.valorNF", value: $('#valorNotaCadastroNota', this.workspace).val() },
 					{ name: "numeroCota", value: $('#cotaCadastroNota', this.workspace).val() },
-					{ name: "idControleConferenciaEncalheCota", value: $('#idControleConferenciaEncalheCota', this.workspace).val() }
+					{ name: "idControleConferenciaEncalheCota", value: idControleConferenciaEncalheCota }
 				],
 				function(result) {
-					alert(result);					
+
+					if (result.listaMensagens) {
+
+						exibirMensagem(
+							result.tipoMensagem, 
+							result.listaMensagens
+						);
+					}
 				},
 				null,
 				true
 			);
-	
 	},
   
 	callback : function() {
@@ -130,16 +137,17 @@ var entradaNFETerceirosController = $.extend(true, {
 			
 			$.each(resultado.rows, function(index, row) {					
 				
-				$("#idControleConferenciaEncalheCota").val(row.cell.idControleConferenciaEncalheCota);
-				
-				var linkLancamento = '<a href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+row.cell.numeroCota+'\',\''+row.cell.nome+'\');" style="cursor:pointer">' +
+				var linkLancamento = '<a href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+
+									 row.cell.numeroCota+'\',\''+row.cell.nome+'\',\''+row.cell.idControleConferenciaEncalheCota+
+									 '\');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 								   '</a>';
-			   var linkCadastro = '<a href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
+				var linkCadastro = '<a href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
 					   																		+row.cell.dataEncalhe+','
 					   																		+row.cell.chaveAcesso+','
 					   																		+row.cell.serie+','
 					   																		+row.cell.valorNota+','
+					   																		+row.cell.idControleConferenciaEncalheCota+','
 					   																		+row.cell.idNotaFiscalEntrada+');" style="cursor:pointer">' +
 							   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 		                         '</a>';
@@ -277,7 +285,7 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 	},
 	
-	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, valorNota, statusNotaFiscalEntrada,idNotaFiscalEntrada) {
+	popup_dadosNotaFiscal : function(numeroNfe, dataEncalhe, chaveAcesso, serie, valorNota, idControleConferenciaEncalheCota, statusNotaFiscalEntrada) {
 		
 		$('#numeroNotaFiscalPopUp', this.workspace).text(numeroNfe);
 		$('#dataNotaFiscalPopUp', this.workspace).text(dataEncalhe);
@@ -285,6 +293,8 @@ var entradaNFETerceirosController = $.extend(true, {
 		$('#serieNotaFiscalPopUp', this.workspace).text(serie);
 		$('#valorNotaFiscalPopUp', this.workspace).text(valorNota);
 		
+		
+		params.push({name: 'idControleConferenciaEncalheCota', value: idControleConferenciaEncalheCota});
 		
 		$(".pesquisarProdutosNotaGrid", entradaNFETerceirosController.workspace).flexOptions({
 			url: contextPath + "/nfe/entradaNFETerceiros/pesquisarItensPorNota",
@@ -334,7 +344,7 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 	},
 	
-	popup_nfe : function(numeroCota, nome){
+	popup_nfe : function(numeroCota, nome, idControleConferenciaEncalheCota){
 		
 		$('#serieNotaCadastroNota', this.workspace).val('');
 		$('#chaveAcessoCadastroNota', this.workspace).val('');
@@ -351,6 +361,11 @@ var entradaNFETerceirosController = $.extend(true, {
 		}
 		$('#nomeCotaCadastroNota', this.workspace).attr('readonly', true);
 		
+		$('#valorNotaCadastroNota', this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.'
+		});
+
 		$( "#dialog-nfe", this.workspace ).dialog({
 			resizable: false,
 			height:280,
@@ -358,7 +373,7 @@ var entradaNFETerceirosController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					entradaNFETerceirosController.cadastrarNota();
+					entradaNFETerceirosController.cadastrarNota(idControleConferenciaEncalheCota);
 					$( this ).dialog( "close" );					
 				},
 				"Cancelar": function() {

@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
@@ -41,6 +42,9 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	
 	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
 	private List<HistoricoMovimentoFinanceiroCota> historicos = new ArrayList<HistoricoMovimentoFinanceiroCota>();
+	
+	@OneToOne(mappedBy="movimentoFinanceiroCota")
+	private ParcelaNegociacao parcelaNegociacao;
 	
 	public Cota getCota() {
 		return cota;
@@ -80,6 +84,20 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	
 	public void setHistoricos(List<HistoricoMovimentoFinanceiroCota> historicos) {
 		this.historicos = historicos;
+	}
+
+	/**
+	 * @return the parcelaNegociacao
+	 */
+	public ParcelaNegociacao getParcelaNegociacao() {
+		return parcelaNegociacao;
+	}
+
+	/**
+	 * @param parcelaNegociacao the parcelaNegociacao to set
+	 */
+	public void setParcelaNegociacao(ParcelaNegociacao parcelaNegociacao) {
+		this.parcelaNegociacao = parcelaNegociacao;
 	}
 	
 	

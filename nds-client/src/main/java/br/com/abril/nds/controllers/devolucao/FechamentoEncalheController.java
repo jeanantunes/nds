@@ -215,7 +215,7 @@ public class FechamentoEncalheController {
 		try {
 			
 			this.fechamentoEncalheService.cobrarCotas(dataOperacao, obterUsuario(), idsCotas);
-			
+
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
 			throw new ValidacaoException();

@@ -46,7 +46,7 @@ var alteracaoCotaController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Desconto',
-				name : 'valorDesconto',
+				name : 'tipoDesconto',
 				width : 110,
 				sortable : true,
 				align : 'left'
@@ -64,7 +64,7 @@ var alteracaoCotaController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Tipo Entrega',
-				name : 'tpEntrega',
+				name : 'tipoEntrega',
 				width : 65,
 				sortable : true,
 				align : 'center'
@@ -99,10 +99,14 @@ var alteracaoCotaController = $.extend(true, {
 		
 		$(".alteracaoGrid", this.workspace).flexOptions({
 			url: contextPath + "/administracao/alteracaoCota/pesquisarAlteracaoCota.json?"+params,
-			newp: 1,
+			newp: 1
 		});
+	
 		
-		$(".alteracaoGrid").flexReload();
+		$(".alteracaoGrid", this.workspace).flexReload();
+		$(".grids", this.workspace).show();
+				
+
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -121,7 +125,7 @@ var alteracaoCotaController = $.extend(true, {
 	
 	callBackSuccess:function () {
 		
-		pesquisaCotaAlteracaoCota.obterPorNumeroCota($("#numeroCota",alteracaoCotaController.workspace).val(), false, function(result) {
+		pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota($("#numeroCota", "#nomeCota",alteracaoCotaController.workspace).val(), false, function(result) {
 
 			if (!result) {
 
@@ -137,28 +141,39 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	carregarAlteracao : function() {
-		$("#dialog-novo", this.workspace).dialog({
-			resizable: false,
-			height:550,
-			width:850,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					alteracaoCotaController.salvarAlteracao();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
+		var linhasSelecionadas = 0;
+		$(".selectLine", this.workspace).each(function(index, element) {	
+			if(element.checked){
+				linhasSelecionadas++;
+			}
 			
-			form: $("#dialog-novo", this.workspace).parents("form")
 		});
-		this.carregarCamposAlteracao();
+		if(linhasSelecionadas > 0){
+			$("#dialog-novo", this.workspace).dialog({
+				resizable: false,
+				height:550,
+				width:850,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						alteracaoCotaController.salvarAlteracao();
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				
+				form: $("#dialog-novo", this.workspace).parents("form")
+			});
+			this.carregarCamposAlteracao();
+		}else{
+			exibirMensagem("WARNING", ["Selecione ao menos uma cota."]);
+		}
 	},
 	
 	carregarCamposAlteracao : function() {
 		
-		//Criar funcao limpar campos Abas
+		alteracaoCotaController.limparCamposAbas();
 		
 		$.postJSON(contextPath + "/administracao/alteracaoCota/carregarCamposAlteracao",
 				$("#pesquisarForm", this.workspace).serialize(),
@@ -167,41 +182,78 @@ var alteracaoCotaController = $.extend(true, {
 					alteracaoCotaController.popularComboFornecedor(filtro.filtroModalFornecedor.listFornecedores, $("#idListFornecedores", this.workspace));
 					alteracaoCotaController.popularComboFornecedor(filtro.filtroModalFornecedor.listaFornecedorAssociado, $("#idListaFornecedorAssociado", this.workspace));
 
-					//Set vals Aba Financeiro
-					$("#idVencimentoModal").val(filtro.filtroModalFinanceiro.idVencimento);
-					$("#idVrMinimoModal").val(filtro.filtroModalFinanceiro.vrMinimo);
-					$("#idIsSugereSuspensaoModal").attr("checked", filtro.filtroModalFinanceiro.isSugereSuspensao);
-					showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
-					$("#idQtdDividaEmAbertoModal").val(filtro.filtroModalFinanceiro.qtdDividaEmAberto);
-					$("#idVrDividaEmAbertoModal").val(filtro.filtroModalFinanceiro.vrDividaEmAberto);
-					
-					//Set vals Aba Distribuicao
-					$("#idModalNmAssitPromoComercial").val(filtro.filtroModalDistribuicao.nmAssitPromoComercial);
-					$("#idModalNmGerenteComercial").val(filtro.filtroModalDistribuicao.nmGerenteComercial);
-					$("#idModalObservacao").val(filtro.filtroModalDistribuicao.observacao);
-					$("#idModalIsRepartePontoVenda").attr("checked", filtro.filtroModalDistribuicao.isRepartePontoVenda);
-					$("#idModalIsSolicitacaoNumAtrasoInternet").attr("checked", filtro.filtroModalDistribuicao.isSolicitacaoNumAtrasoInternet);
-					$("#idModalIsRecebeRecolheProdutosParciais").attr("checked", filtro.filtroModalDistribuicao.isRecebeRecolheProdutosParciais);
-					$("#idModalIdTipoEntrega").val(filtro.filtroModalDistribuicao.idTipoEntrega);
-
-					//Checks Emissao Documento
-					$("#isSkipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSkipImpresso);
-					$("#isSkipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSkipEmail);
-					$("#isBoletoImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoImpresso);
-					$("#isBoletoEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoEmail);
-					$("#isBoletoSkipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSkipImpresso);
-					$("#isBoletoSkipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSkipEmail);
-					$("#isReciboImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isReciboImpresso);
-					$("#isReciboEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isReciboEmail);
-					$("#isNoteEnvioImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNoteEnvioImpresso);
-					$("#isNoteEnvioEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNoteEnvioEmail);
-					$("#isChamdaEncalheImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheImpresso);
-					$("#isChamdaEncalheEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheEmail);
+					if(filtro.listaLinhaSelecao.length == 1){
+						//Set vals Aba Financeiro
+						$("#idVencimentoModal").val(filtro.filtroModalFinanceiro.idVencimento);
+						$("#idVrMinimoModal").val(filtro.filtroModalFinanceiro.vrMinimo);
+						$("#idIsSugereSuspensaoModal").attr("checked", filtro.filtroModalFinanceiro.isSugereSuspensao);
+						showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
+						$("#idQtdDividaEmAbertoModal").val(filtro.filtroModalFinanceiro.qtdDividaEmAberto);
+						$("#idVrDividaEmAbertoModal").val(filtro.filtroModalFinanceiro.vrDividaEmAberto);
+						
+						//Set vals Aba Distribuicao
+						$("#idModalNmAssitPromoComercial").val(filtro.filtroModalDistribuicao.nmAssitPromoComercial);
+						$("#idModalNmGerenteComercial").val(filtro.filtroModalDistribuicao.nmGerenteComercial);
+						$("#idModalObservacao").val(filtro.filtroModalDistribuicao.observacao);
+						$("#idModalIsRepartePontoVenda").attr("checked", filtro.filtroModalDistribuicao.isRepartePontoVenda);
+						$("#idModalIsSolicitacaoNumAtrasoInternet").attr("checked", filtro.filtroModalDistribuicao.isSolicitacaoNumAtrasoInternet);
+						$("#idModalIsRecebeRecolheProdutosParciais").attr("checked", filtro.filtroModalDistribuicao.isRecebeRecolheProdutosParciais);
+						$("#idModalIdTipoEntrega").val(filtro.filtroModalDistribuicao.idTipoEntrega);
+	
+						//Checks Emissao Documento
+						$("#isSkipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSkipImpresso);
+						$("#isSkipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isSkipEmail);
+						$("#isBoletoImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoImpresso);
+						$("#isBoletoEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoEmail);
+						$("#isBoletoSkipImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSkipImpresso);
+						$("#isBoletoSkipEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isBoletoSkipEmail);
+						$("#isReciboImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isReciboImpresso);
+						$("#isReciboEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isReciboEmail);
+						$("#isNoteEnvioImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNoteEnvioImpresso);
+						$("#isNoteEnvioEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isNoteEnvioEmail);
+						$("#isChamdaEncalheImpresso").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheImpresso);
+						$("#isChamdaEncalheEmail").attr("checked", filtro.filtroModalDistribuicao.filtroCheckDistribEmisDoc.isChamdaEncalheEmail);
+					}else{
+						alteracaoCotaController.limparCamposAbas();
+					}
 					
 				},
 			  	null,
 			   	true
 		);
+	},
+	
+	limparCamposAbas : function(){
+		
+		//Set vals Aba Financeiro
+		$("#idVencimentoModal").val("");
+		$("#idVrMinimoModal").val("");
+		$("#idIsSugereSuspensaoModal").attr("checked", false);
+		$("#idQtdDividaEmAbertoModal").val("");
+		$("#idVrDividaEmAbertoModal").val("");
+		
+		//Set vals Aba Distribuicao
+		$("#idModalNmAssitPromoComercial").val("");
+		$("#idModalNmGerenteComercial").val("");
+		$("#idModalObservacao").val("");
+		$("#idModalIsRepartePontoVenda").attr("checked", false);
+		$("#idModalIsSolicitacaoNumAtrasoInternet").attr("checked", false);
+		$("#idModalIsRecebeRecolheProdutosParciais").attr("checked", false);
+		$("#idModalIdTipoEntrega").val("");
+
+		//Checks Emissao Documento
+		$("#isSkipImpresso").attr("checked", false);
+		$("#isSkipEmail").attr("checked", false);
+		$("#isBoletoImpresso").attr("checked", false);
+		$("#isBoletoEmail").attr("checked", false);
+		$("#isBoletoSkipImpresso").attr("checked", false);
+		$("#isBoletoSkipEmail").attr("checked", false);
+		$("#isReciboImpresso").attr("checked", false);
+		$("#isReciboEmail").attr("checked", false);
+		$("#isNoteEnvioImpresso").attr("checked", false);
+		$("#isNoteEnvioEmail").attr("checked", false);
+		$("#isChamdaEncalheImpresso").attr("checked", false);
+		$("#isChamdaEncalheEmail").attr("checked", false);
 	},
 	
 	popularComboFornecedor : function(data, combo) {
