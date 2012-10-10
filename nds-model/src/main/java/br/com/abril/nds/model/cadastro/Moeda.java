@@ -9,12 +9,12 @@ package br.com.abril.nds.model.cadastro;
  */
 public enum Moeda {
 	
-	REAL(9,"Real");
+	REAL(9L,"Real");
 	
-	private int codigo;
+	private Long codigo;
 	private String descricao;
 	
-	private Moeda(int codigo, String descricao) {
+	private Moeda(Long codigo, String descricao) {
 		this.codigo = codigo;
 		this.descricao = descricao;
 	}
@@ -30,7 +30,7 @@ public enum Moeda {
 	/**
 	 * @return Codigo da moeda
 	 */
-	public int getCodigo() {
+	public Long getCodigo() {
 		return this.codigo;
 	}
 

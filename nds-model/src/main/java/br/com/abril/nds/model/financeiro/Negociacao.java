@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -25,9 +26,11 @@ public class Negociacao {
 	@Column(name = "ID")
 	private Long id;
 	
-	@OneToOne
-	@JoinColumn(name = "COBRANCA_ORIGINARIA_ID")
-	private Cobranca cobrancaOriginaria;
+	@OneToMany
+	@JoinTable(name = "NEGOCIACAO_COBRANCA_ORIGINARIA", 
+		joinColumns = {@JoinColumn(name = "NEGOCIACAO_ID")}, 
+		inverseJoinColumns = {@JoinColumn(name = "COBRANCA_ID")})
+	private List<Cobranca> cobrancasOriginarias;
 	
 	@OneToMany
 	private List<ParcelaNegociacao> parcelas;
@@ -47,6 +50,9 @@ public class Negociacao {
 	
 	@Column(name = "ATIVAR_PAGAMENTO_APOS_PARCELA")
 	private Integer ativarCotaAposParcela;
+	
+	@Column(name = "VALOR_DIVIDA_PAGA_COMISSAO")
+	private BigDecimal valorDividaPagaComissao;
 
 	public Long getId() {
 		return id;
@@ -56,12 +62,12 @@ public class Negociacao {
 		this.id = id;
 	}
 
-	public Cobranca getCobrancaOriginaria() {
-		return cobrancaOriginaria;
+	public List<Cobranca> getCobrancasOriginarias() {
+		return cobrancasOriginarias;
 	}
 
-	public void setCobrancaOriginaria(Cobranca cobrancaOriginaria) {
-		this.cobrancaOriginaria = cobrancaOriginaria;
+	public void setCobrancasOriginarias(List<Cobranca> cobrancasOriginarias) {
+		this.cobrancasOriginarias = cobrancasOriginarias;
 	}
 
 	public List<ParcelaNegociacao> getParcelas() {
@@ -110,5 +116,13 @@ public class Negociacao {
 
 	public void setAtivarCotaAposParcela(Integer ativarCotaAposParcela) {
 		this.ativarCotaAposParcela = ativarCotaAposParcela;
+	}
+
+	public BigDecimal getValorDividaPagaComissao() {
+		return valorDividaPagaComissao;
+	}
+
+	public void setValorDividaPagaComissao(BigDecimal valorDividaPagaComissao) {
+		this.valorDividaPagaComissao = valorDividaPagaComissao;
 	}
 }

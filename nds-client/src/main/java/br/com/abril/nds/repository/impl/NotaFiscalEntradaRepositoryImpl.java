@@ -264,9 +264,9 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				   + " itemNotaFiscal.produtoEdicao.produto.codigo as codigoProduto,"
 				   + " itemNotaFiscal.produtoEdicao.produto.nome as nomeProduto, " 
 				   + " itemNotaFiscal.produtoEdicao.numeroEdicao as numeroEdicao, "
-				   + " itemNotaFiscal.produtoEdicao.precoVenda as precoVenda, "
+				   + " itemNotaFiscal.preco as precoVenda, "
 				   + " itemNotaFiscal.qtde as quantidadeExemplares, " 
-				   + " (itemNotaFiscal.qtde * itemNotaFiscal.produtoEdicao.precoVenda) as valorTotal, "
+				   + " (itemNotaFiscal.qtde * itemNotaFiscal.preco) as valorTotal, "
 				   + " diferenca.qtde as sobrasFaltas, " 
 				   + " diferenca.tipoDiferenca as tipoDiferenca " 
 				   + " from ItemNotaFiscalEntrada itemNotaFiscal "
@@ -280,7 +280,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 
 		query.setResultTransformer(resultTransformer);
 		query.setParameter("idNotaFiscal", idNotaFiscal);
-
+ 
 		return query.list();
 	}
 
@@ -312,7 +312,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		hql.append("from NotaFiscalEntrada nf where nf.numero = :numero ");		
 		hql.append("and nf.serie = :serie ");
 		if(filtroConsultaNotaFiscal.getNomeFornecedor() != null && !filtroConsultaNotaFiscal.getNomeFornecedor().equals("-1")){
-			hql.append("and nf.emitente.cnpj = :cnpj ");	
+			hql.append("and nf.fornecedor.juridica.cnpj = :cnpj ");	
 		}
 			
 		if(filtroConsultaNotaFiscal.getChave() == null){

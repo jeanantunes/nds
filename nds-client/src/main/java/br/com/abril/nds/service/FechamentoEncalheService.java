@@ -47,5 +47,9 @@ public interface FechamentoEncalheService {
 	
 	Date buscarUltimoFechamentoEncalheDia(Date dataFechamentoEncalhe);
 
-	List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
+	List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, Integer page, Integer rp);
+	
+	Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
+	
+	Date buscarUtimoDiaDaSemanaRecolhimento();
 }

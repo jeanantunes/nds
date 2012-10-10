@@ -968,7 +968,7 @@ public class ChamadaEncalheAntecipadaController {
 		if(filtro.getRota()!= null){
 			Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getRota());
 			if(rota!= null){
-				filtro.setDescRota(rota.getCodigoRota());
+				filtro.setDescRota(rota.getDescricaoRota());
 			}
 		}
 		
@@ -1098,7 +1098,7 @@ public class ChamadaEncalheAntecipadaController {
 		
 		for(Rota rota : rotas){
 			
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(),rota.getCodigoRota()+" - "+ rota.getDescricaoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 		}
 		
 		return listaRotas;

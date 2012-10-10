@@ -118,15 +118,34 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return valor total bancário
 	 */
 	BigDecimal obterValorTotalBancario(Date data);
-
+	
 	/**
-	 * Obtém os boletos que foram baixados com divergência por data e/ou valor e determinada data.
+	 * Obtém a quantidade do total bancário.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return quantidade do total bancário
+	 */
+	Long obterQuantidadeTotalBancario(Date data);
+	
+	/**
+	 * Obtém os boletos previstos para baixa a partir de determinada data.
 	 * 
 	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
 	 * 
-	 * @return List<DetalheBaixaBoletoDTO> - Boletos baixados com divergência de data e/ou valor.
+	 * @return List<DetalheBaixaBoletoDTO> - Boletos previstos.
 	 */
-	List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro);
+	List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém lista de Baixados por data de vencimento.
+	 * 
+	 * @param FiltroDetalheBaixaBoletoDTO filtro
+	 * 
+	 * @return List<DetalheBaixaBoletoDTO>
+	 * 
+	 */
+	List<DetalheBaixaBoletoDTO> obterBoletosBaixados(FiltroDetalheBaixaBoletoDTO filtro);
 	
 	/**
 	 * Obtém os boletos que foram rejeitados na baixa em determinada data.
@@ -138,33 +157,22 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	List<DetalheBaixaBoletoDTO> obterBoletosRejeitados(FiltroDetalheBaixaBoletoDTO filtro);
 	
 	/**
-	 * Obtém os boletos previstos para baixa a partir de determinada data.
+	 * Obtém os boletos que foram baixados com divergência por data e/ou valor e determinada data.
 	 * 
 	 * @param filtro - FiltroDetalheBaixaBoletoDTO - filtro indicando data para consulta e dados para paginação.
 	 * 
-	 * @return List<DetalheBaixaBoletoDTO> - Boletos previstos.
+	 * @return List<DetalheBaixaBoletoDTO> - Boletos baixados com divergência de data e/ou valor.
 	 */
+	List<DetalheBaixaBoletoDTO> obterBoletosBaixadosComDivergencia(FiltroDetalheBaixaBoletoDTO filtro);
 	
-	List<DetalheBaixaBoletoDTO> obterBoletosPrevistos(FiltroDetalheBaixaBoletoDTO filtro);
-
 	/**
-	 * Obtém lista de Inadimplentes por data de vencimento
+	 * Obtém lista de Inadimplentes por data de vencimento.
 	 * 
 	 * @param FiltroDetalheBaixaBoletoDTO filtro
 	 *
 	 * @return List<DetalheBaixaBoletoDTO>
 	 */
-	List<DetalheBaixaBoletoDTO> obterInadimplentesPorData(FiltroDetalheBaixaBoletoDTO filtro);
-	
-	/**
-	 * Obtém lista de Baixados por data de vencimento
-	 * 
-	 * @param FiltroDetalheBaixaBoletoDTO filtro
-	 * 
-	 * @return List<DetalheBaixaBoletoDTO>
-	 * 
-	 */
-	List<DetalheBaixaBoletoDTO> obterBaixadosPorData(FiltroDetalheBaixaBoletoDTO filtro);
+	List<DetalheBaixaBoletoDTO> obterBoletosInadimplentes(FiltroDetalheBaixaBoletoDTO filtro);
 	
 	/**
 	 * Obtém os valores totais de boletos baixados de cada banco a partir de determinada data.
@@ -174,5 +182,14 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return List<DetalheBaixaBoletoDTO> - Total bancário.
 	 */
 	List<DetalheBaixaBoletoDTO> obterTotalBancario(FiltroDetalheBaixaBoletoDTO filtro);
+	
+	/**
+	 * Obtém os boletos que foram gerados na data de operação do distribuidor.
+	 * 
+	 * @param dataOperacao - data de operação do distribuidor
+	 * 
+	 * @return List<Boleto>
+	 */
+	List<Boleto> obterBoletosGeradosNaDataOperacaoDistribuidor(Date dataOperacao);
 	
 }

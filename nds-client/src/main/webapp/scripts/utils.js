@@ -228,8 +228,10 @@ function newOption(value, label) {
 }
 
 function replaceAll(string, token, newtoken) {
-	while (string.indexOf(token) != -1) {
- 		string = string.replace(token, newtoken);
+	if (string){
+		while (string.indexOf(token) != -1) {
+	 		string = string.replace(token, newtoken);
+		}
 	}
 	return string;
 }
@@ -320,5 +322,4 @@ function Cnpj(v){
 	v=v.replace(/(\d{4})(\d)/,"$1-$2")     ;                   
 	return v;
 }
-
 

@@ -112,19 +112,19 @@ public class RoteirizacaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(roteiro3);
 		
 		
-		rota = Fixture.rota("0", "ROTA00", roteiro);
+		rota = Fixture.rota("ROTA00", roteiro);
 		rota.addPDV(pdvManoel, 1);
 		save(rota);
 		
-		rota1 = Fixture.rota("1", "ROTA01", roteiro);
+		rota1 = Fixture.rota("ROTA01", roteiro);
 		rota1.addPDV(pdvManoel, 1);
 		save(rota1);
 		
-		rota2 = Fixture.rota("2", "ROTA02", roteiro);
+		rota2 = Fixture.rota("ROTA02", roteiro);
 		rota2.addPDV(pdvManoel, 1);
 		save(rota2);
 		
-		rota3 = Fixture.rota("3", "ROTA03", roteiro1);
+		rota3 = Fixture.rota("ROTA03", roteiro1);
 		rota3.addPDV(pdvManoel, 1);
 		rota3.setRoteiro(roteiro1);
 		save(rota3);

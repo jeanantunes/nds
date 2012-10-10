@@ -167,12 +167,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				  rows+='<span name="qtdeExemplares" class="span_2 redLabel"';
 				  rows+='title="A quantidade de exemplares excede a capacidade de manuseio ';
 				  rows+=data.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
-				  rows+=resumo.qtdeExemplaresFormatada + '</span>';
+				  rows+=resumo.qtdeExemplaresFormatado + '</span>';
 			  
 			  } else {
 				  
 				  rows+='<span class="span_1">Qtde. Exempl.:</span>';	
-				  rows+='<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
+				  rows+='<span class="span_2">' + resumo.qtdeExemplaresFormatado + '</span>';
 			  }
 			  
 			  rows+='<span class="span_1">Qtde. Parciais:</span>';

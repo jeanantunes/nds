@@ -18,5 +18,7 @@ public interface ContagemDevolucaoService {
 
 	public abstract List<ContagemDevolucaoConferenciaCegaDTO> obterInfoContagemDevolucaoCega(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa,
 			boolean indPerfilUsuarioEncarregado);
+
+	public abstract void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada);
 	
 }

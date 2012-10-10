@@ -13,9 +13,11 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscal;
@@ -91,9 +93,9 @@ public interface NotaFiscalService {
 	 * @throws IOException caso ocarra erros durante a gravação do arquivo no diretório
 	 */
 	void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException; 
-
+	
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
-			Long idCota, List<ItemNotaFiscal> listItemNotaFiscal,
+			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal,
 			InformacaoTransporte transporte,
 			InformacaoAdicional informacaoAdicional,
 			List<NotaFiscalReferenciada> listNotaFiscalReferenciada, 
@@ -151,5 +153,15 @@ public interface NotaFiscalService {
 	 * @return
 	 */
 	byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio);
+
+	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
+			Cota cota, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Set<Processo> processos, Condicao condicao);
+
+	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
+			Fornecedor fornecedor, List<ItemNotaFiscal> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
+			Set<Processo> processos, Condicao condicao);
+
+
 		
 }

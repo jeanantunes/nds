@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.financeiro.StatusDivida;
+
 public class AnaliticoEncalheDTO implements Serializable {
 
 	private static final long serialVersionUID = -2784902117985504916L;
@@ -11,7 +13,7 @@ public class AnaliticoEncalheDTO implements Serializable {
 	private String nomeCota;
 	private String boxEncalhe;
 	private BigDecimal total;
-	private String statusCobranca;
+	private StatusDivida statusCobranca;
 	
 	
 	public Integer getNumeroCota() {
@@ -38,10 +40,10 @@ public class AnaliticoEncalheDTO implements Serializable {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-	public String getStatusCobranca() {
+	public StatusDivida getStatusCobranca() {
 		return statusCobranca;
 	}
-	public void setStatusCobranca(String statusCobranca) {
+	public void setStatusCobranca(StatusDivida statusCobranca) {
 		this.statusCobranca = statusCobranca;
 	}
 }

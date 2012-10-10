@@ -113,7 +113,7 @@
 				<tr>
 					<td valign="top" colspan="2">
 						<span class="bt_novos" title="Suspender Cota">
-							<a href="suspensao_jornaleiro.htm">
+							<a href="javascript:;" onclick="$('#workspace').tabs('addTab', 'Suspensão Cota', 'suspensaoCota/index')">
 								<img src="${pageContext.request.contextPath}/images/ico_suspender.gif" hspace="5" border="0"/>
 								<strong>Suspender Cota</strong>
 							</a>

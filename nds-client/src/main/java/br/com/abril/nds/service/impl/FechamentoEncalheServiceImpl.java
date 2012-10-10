@@ -603,8 +603,36 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional
-	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
-		return fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro);
+	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, Integer page, Integer rp) {
+		
+		Integer startSearch = null;
+		if ( page != null || rp != null ){
+			startSearch = page * rp - rp;
+		}
+		
+		return fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro,  sortorder,  sortname,  startSearch,  rp);
+	}
+	
+	@Override
+	@Transactional
+	public Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+
+		return fechamentoEncalheRepository.buscarTotalAnaliticoEncalhe(filtro);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public Date buscarUtimoDiaDaSemanaRecolhimento() {
+		Distribuidor  distribuidor =  distribuidorService.obter();
+		
+		Integer numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date());
+		Date dataInicioSemana = 
+				DateUtil.obterDataDaSemanaNoAno(
+					numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			
+			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+
+		return dataFimSemana;
 	}
 
 }

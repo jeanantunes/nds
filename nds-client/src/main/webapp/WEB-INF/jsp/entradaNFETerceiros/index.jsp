@@ -1,196 +1,242 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/entradaNFETerceiros.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/entradaNFETerceiros.js"></script>
 <script language="javascript" type="text/javascript">
-$(function(){
-	entradaNFETerceirosController.init();
-});
+	$(function() {
+		entradaNFETerceirosController.init();
+	});
 </script>
 <style type="text/css">
-#dialog-nfe{display:none;}
-  .dados, .dadosFiltro, .nfes{display:none;}
-  #dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-rejeitar, #dialog-confirm{display:none; font-size:12px;}
-  fieldset label {width: auto; margin-bottom: 0px!important;
+#dialog-nfe, #dialog-dadosNotaFiscal {
+	display: none;
 }
-#dialog-dadosNotaFiscal fieldset{width:810px!important;}
-  </style>
+
+.dados,.dadosFiltro,.nfes {
+	display: none;
+}
+
+#dialog-novo,#dialog-alterar,#dialog-excluir,#dialog-rejeitar,#dialog-confirm
+	{
+	display: none;
+	font-size: 12px;
+}
+
+fieldset label {
+	width: auto;
+	margin-bottom: 0px !important;
+}
+
+#dialog-dadosNotaFiscal fieldset {
+	width: 810px !important;
+}
+</style>
 </head>
 
 <body>
-<form id="form-dadosNotaFiscal">
-<div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal" style="display:none;">
-	<fieldset>
-        <legend>Nota Fiscal</legend>
-        <table width="670" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
-          <tr>
-            <td width="133">Núm. Nota Fiscal:</td>
-            <td width="307" id="numeroNotaFiscalPopUp"></td>
-            <td width="106">Série:</td>
-            <td width="111" id="serieNotaFiscalPopUp"></td>
-          </tr>
-          <tr>
-            <td>Data:</td>
-            <td id="dataNotaFiscalPopUp"></td>
-            <td>Valor Total R$:</td>
-            <td id="valorNotaFiscalPopUp"></td>
-          </tr>
-          <tr>
-            <td>Chave de Acesso:</td>
-            <td colspan="3" id="chaveAcessoNotaFiscalPopUp"></td>
-          </tr>
-        </table>
-     </fieldset>
-	<br clear="all" />
-    <br />
+	<form id="form-dadosNotaFiscal">
+		<div id="dialog-dadosNotaFiscal" title="Dados da Nota Fiscal">
+			<fieldset>
+				<legend>Nota Fiscal</legend>
+				<table width="670" border="0" cellspacing="1" cellpadding="1"
+					style="color: #666;">
+					<tr>
+						<td width="133">Núm. Nota Fiscal:</td>
+						<td width="307" id="numeroNotaFiscalPopUp"></td>
+						<td width="106">Série:</td>
+						<td width="111" id="serieNotaFiscalPopUp"></td>
+					</tr>
+					<tr>
+						<td>Data:</td>
+						<td id="dataNotaFiscalPopUp"></td>
+						<td>Valor Total R$:</td>
+						<td id="valorNotaFiscalPopUp"></td>
+					</tr>
+					<tr>
+						<td>Chave de Acesso:</td>
+						<td colspan="3" id="chaveAcessoNotaFiscalPopUp"></td>
+					</tr>
+				</table>
+			</fieldset>
+			<br clear="all" /> <br />
 
-	<fieldset>
-        <legend>Produtos Nota Fiscal</legend>
-        <table class="pesqProdutosNotaGrid"></table>
-    
+			<fieldset>
+				<legend>Produtos Nota Fiscal</legend>
+				<table class="pesquisarProdutosNotaGrid"></table>
 
+			</fieldset>
 
-    <table width="800" border="0" cellspacing="1" cellpadding="1">
-      <tr>
-        <td width="352" align="right"><strong>Total:</strong>&nbsp;&nbsp;</td>
-        <td width="83">09</td>
-        <td width="82">06</td>
-        <td width="182">&nbsp;</td>
-        <td width="85">43,00</td>
-      </tr>
-    </table>
-</fieldset>
-
-</div>
-</form>
-<form id="form-nfe">
-<div id="dialog-nfe" title="NF-e">
-	<fieldset style="width:310px!important;">
-    <legend>Incluir NF-e</legend>
-    <table width="280" border="0" cellspacing="1" cellpadding="0">
-  <tr>
-    <td width="84">Cota:</td>
-    <td width="193"><input type="text" id="cotaCadastroNota" name="cotaCadastroNota" style="width:80px; float:left; margin-right:5px;"/>
-      <span class="classPesquisar"><a href="javascript:;" onclick="entradaNFETerceirosController.pesqEncalhe();">&nbsp;</a></span></td>
-  </tr>
-  <tr>
-    <td>Nome:</td>
-    <td><input type="text" name="nomeCotaCadastroNota" id="nomeCotaCadastroNota" /></td>
-  </tr>
-  <tr>
-    <td>NF-e:</td>
-    <td><input type="text" name="numeroNotaCadastroNota" id="numeroNotaCadastroNota" /></td>
-  </tr>
-  <tr>
-    <td>Série:</td>
-    <td><input type="text" name="serieNotaCadastroNota" id="serieNotaCadastroNota" /></td>
-  </tr>
-  <tr>
-    <td>Chave-Acesso:</td>
-    <td><input type="text" name="chaveAcessoCadastroNota" id="chaveAcessoCadastroNota" /></td>
-  </tr>
-</table>
-    </fieldset>
- 
-
-</div>
-</form>
+		</div>
+	</form>
+	<form id="form-nfe">
+		<div id="dialog-nfe" title="NF-e">
+			<input type="hidden" id="idControleConferenciaEncalheCota" />
+			<fieldset style="width: 310px !important;">
+				<legend>Incluir NF-e</legend>
+				<table width="280" border="0" cellspacing="1" cellpadding="0">
+					<tr>
+						<td width="84">Cota:</td>
+						<td width="193"><input type="text" id="cotaCadastroNota"
+							name="cotaCadastroNota"
+							style="width: 80px; float: left; margin-right: 5px;" /> <span
+							class="classPesquisar"><a href="javascript:;"
+								onclick="entradaNFETerceirosController.pesquisarCotaCadastroNota();">&nbsp;</a></span></td>
+					</tr>
+					<tr>
+						<td>Nome:</td>
+						<td><input type="text" name="nomeCotaCadastroNota"
+							id="nomeCotaCadastroNota" /></td>
+					</tr>
+					<tr>
+						<td>NF-e:</td>
+						<td><input type="text" name="numeroNotaCadastroNota"
+							id="numeroNotaCadastroNota" /></td>
+					</tr>
+					<tr>
+						<td>Série:</td>
+						<td><input type="text" name="serieNotaCadastroNota"
+							id="serieNotaCadastroNota" /></td>
+					</tr>
+					<tr>
+						<td>Chave-Acesso:</td>
+						<td><input type="text" name="chaveAcessoCadastroNota"
+							id="chaveAcessoCadastroNota" /></td>
+					</tr>
+					<tr>
+						<td>Valor Nota R$:</td>
+						<td><input type="text" name="valorNotaCadastroNota"
+							id="valorNotaCadastroNota" /></td>
+					</tr>
+				</table>
+			</fieldset>
 
 
-<form id="form-confirmar-cancelamento">
-<div id="dialog-confirmar-cancelamento" title="Cancelamento de NF-e" style="display:none;">
-	<p>Confirma o cancelamento da NF-e?</p>
- 
-
-</div>
-</form>
-
-<form id="form-confirm">
-<div id="dialog-confirm" title="Aprovar Solicitação">
-	<p>Você esta Aprovando uma Solicitação, tem certeza?</p>
- 
-
-</div>
-</form>
-
-<form id="form-rejeitar">
-<div id="dialog-rejeitar" title="Rejeitar Solicitação">
-	<p>Tem certeza que deseja Rejeitar esta Solicitação?</p>
- 
-
-</div>
-</form>
+		</div>
+	</form>
 
 
-<form id="form-novo">
-<div id="dialog-novo" title="Geração arquivos Nf-e">
-     <p>Confirma a Geração arquivos Nf-e?</p>
-</div>
-</form>
+	<form id="form-confirmar-cancelamento">
+		<div id="dialog-confirmar-cancelamento" title="Cancelamento de NF-e"
+			style="display: none;">
+			<p>Confirma o cancelamento da NF-e?</p>
+
+
+		</div>
+	</form>
+
+	<form id="form-confirm">
+		<div id="dialog-confirm" title="Aprovar Solicitação">
+			<p>Você esta Aprovando uma Solicitação, tem certeza?</p>
+
+
+		</div>
+	</form>
+
+	<form id="form-rejeitar">
+		<div id="dialog-rejeitar" title="Rejeitar Solicitação">
+			<p>Tem certeza que deseja Rejeitar esta Solicitação?</p>
+
+
+		</div>
+	</form>
+
+
+	<form id="form-novo">
+		<div id="dialog-novo" title="Geração arquivos Nf-e">
+			<p>Confirma a Geração arquivos Nf-e?</p>
+		</div>
+	</form>
+
 	<div class="areaBts">
 		<div class="area">
-			
-			<span class="bt_novos"><a href="javascript:;" onclick="entradaNFETerceirosController.popup_nfe('0','0');" rel="tipsy" title="Registrar NF-e">
-           		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif"></a>
-            </span>
-           
-           <span class="bt_novos">
-           	<a href="javascript:;" onclick="entradaNFETerceirosController.popup_confirmar();" rel="tipsy" title="Gerar">
-           	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif"></a>
-           </span>
-			
-			<span class="bt_arq">
-			<a href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+
+			<span class="bt_novos" id="btnRegistrarNFe" style="display:none"><a href="javascript:;"
+				onclick="entradaNFETerceirosController.popup_nfe('0','0');"
+				rel="tipsy" title="Registrar NF-e"> <img border="0" hspace="5"
+					src="${pageContext.request.contextPath}/images/ico_add_novo.gif"></a>
+			</span> 
+			<span class="bt_arq"> <a
+				href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=XLS"
+				rel="tipsy" title="Gerar Arquivo"> <img
+					src="${pageContext.request.contextPath}/images/ico_excel.png"
+					hspace="5" border="0" />
 			</a>
-			</span>
-			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/nfe/consultaNFEEncalheTratamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-				</a>
+			</span> <span class="bt_arq"> <a
+				href="${pageContext.request.contextPath}/nfe/entradaNFETerceiros/exportar?fileType=PDF"
+				rel="tipsy" title="Imprimir"> <img
+					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+					alt="Imprimir" hspace="5" border="0" />
+			</a>
 			</span>
 		</div>
 	</div>
-    <div class="linha_separa_fields">&nbsp;</div>
-    <fieldset class="fieldFiltro">
- 	    <legend> Pesquisa NF-e Encalhe para Tratamento</legend>
-      <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-	  <tr>
-	    <td width="29">Cota:</td>
-	    <td width="89"><input type="text" id="codigoCota" name="codigoCota" style="width:80px; float:left; margin-right:5px;" onblur="entradaNFETerceirosController.pesquisarCota();"/></td>
-	    <td width="41">Nome:</td>    
-	    <td width="241"><span name="nomeCota" id="nomeCota"></span></td>
-	    <td width="25">Data:</td>
-	    <td width="121"><input name="data" type="text" id="data" style="width:80px;"/></td>
-	    <td width="34">Status:</td>
-	    <td width="165">    
-			<select name="situacaoNfe" id="situacaoNfe" style="width:160px;" onchange="mostra_status(this.value);">
-			    <option value=""  selected="selected"></option>
-			    <c:forEach items="${comboStatusNota}" var="comboStatusNota">
-			      		<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>	
-			    </c:forEach>
-		    </select>
-	    </td><td width="159"><span class="bt_pesquisar"><a href="javascript:;" onclick="entradaNFETerceirosController.pesqEncalhe();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td></tr>
-	  </table>
- </fieldset>
- <div class="linha_separa_fields">&nbsp;</div>
-     
-      <fieldset class="fieldGrid">
-      	  <legend>NF-e Encalhe para Tratamento</legend>
-       <div class="grids" style="display:none;">
-	  
-         
-         <div id="notaRecebida" style="display:none;">
-         	<table class="notaRecebidaGrid"></table>
-         </div>
-         
-         <div id="pendenteRecEmissao" style="display:none;">
-         	<table class="encalheNfeGrid"></table>
-         </div>        
-         <span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="sel" name="Todos" onclick="entradaNFETerceirosController.checkAll();" style="float:left; margin-right:25px;"/></span>
-            
-	</div>
-             
-     </fieldset>
- </body>
+	<div class="linha_separa_fields">&nbsp;</div>
+
+	<form id="form-pesquisa-nfe">
+		<fieldset class="fieldFiltro">
+			<legend> Pesquisa NF-e</legend>
+			<table width="950" border="0" cellpadding="2" cellspacing="1"
+				class="filtro">
+				<tr>
+					<td width="75">Fornecedor:</td>
+					<td width="216"><select name="filtro.fornecedor.id" id="fornecedor" type="text" style="width: 150px;">
+							<option selected="selected" value="-1"></option>
+								<c:forEach items="${listFornecedores}" var="fornecedor">
+									<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
+								</c:forEach>
+						</select>
+					</td>
+					<td width="50">Cota:</td>
+					<td width="155"><input type="text" id="numeroCota"
+						name="filtro.cota.numeroCota"
+						style="width: 80px; float: left; margin-right: 5px;"
+						onchange="entradaNFETerceirosController.pesquisarCota();" /></td>
+					<td colspan="3">Nome: <span id="nomeCota"></span></td>
+				</tr>
+				<tr>
+					<td>Per&iacute;odo:</td>
+					<td><input name="filtro.dataInicial" type="text" id="dataInicial"
+						style="width: 70px;" /> At&eacute;: <input name="filtro.dataFinal"
+						type="text" id="dataFinal" style="width: 70px;" /></td>
+					<td width="34">Status:</td>
+					<td width="165"><select name="filtro.statusNotaFiscalEntrada" id="situacaoNfe"
+						style="width: 160px;" onchange="mostra_status(this.value); entradaNFETerceirosController.pesquisarEncalhe();">
+							<option value="" selected="selected"></option>
+							<c:forEach items="${comboStatusNota}" var="comboStatusNota">
+								<option value="${comboStatusNota.key}">${comboStatusNota.value}</option>
+							</c:forEach>
+					</select>
+					<td width="76">Tipo de Nota:</td>
+					<td width="211"><select id="select2"
+						style="width: 130px;">
+							<option value=""selected="selected">Selecione...</option>
+							<option value="1">Todas</option>
+							<option value="2">Entrada</option>
+							<option value="3">Complementar</option>
+					</select></td>
+					<td width="131"><span class="bt_pesquisar"><a
+							href="javascript:;" onclick="entradaNFETerceirosController.pesquisarEncalhe();"></a></span></td>
+				</tr>
+			</table>
+		</fieldset>
+	</form>
+	<div class="linha_separa_fields">&nbsp;</div>
+
+	<fieldset class="fieldGrid">
+		<legend>NF-e</legend>
+		<div class="grids" style="display: none;">
+
+
+			<div id="notaRecebida" style="display: none;">
+				<table class="notaRecebidaGrid"></table>
+			</div>
+
+			<div id="pendenteRecEmissao" style="display: none;">
+				<table class="encalheNfeGrid"></table>
+			</div>
+		</div>
+
+	</fieldset>
+</body>
 </html>

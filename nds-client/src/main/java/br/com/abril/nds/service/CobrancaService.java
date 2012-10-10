@@ -112,6 +112,8 @@ public interface CobrancaService {
 	void baixaManualDividas(PagamentoDividasDTO pagamento, List<Long> idCobrancas, Boolean manterPendente);
 	
 	
+	void reverterBaixaManualDividas(List<Long> idCobrancas);
+	
 	/**
 	 * Obtém saldo financeiro da cota
 	 * @param idCota
@@ -136,4 +138,5 @@ public interface CobrancaService {
 	 * @return
 	 */
 	BigDecimal obterSaldoDivida(Long idCobranca);
+	
 }

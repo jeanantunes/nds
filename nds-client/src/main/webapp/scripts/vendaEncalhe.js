@@ -102,18 +102,18 @@ var VENDA_PRODUTO = {
 			
 			if(row.cell.edicaoExclusaoItem){
 				
-				linkEdicao = '<a href="javascript:;" onclick="VENDA_PRODUTO.editar('+ row.cell.idVenda +');" style="cursor:pointer">' +
+				linkEdicao = '<a href="javascript:;" onclick="VENDA_PRODUTO.editar('+ row.cell.idVenda +');" style="margin-right: 5px;cursor:pointer">' +
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar Venda" />' +
 				 '</a>';			
 			 
-				linkExclusao ='<a href="javascript:;" onclick="VENDA_PRODUTO.exibirDialogExclusao('+ row.cell.idVenda +' );" style="cursor:pointer">' +
+				linkExclusao ='<a href="javascript:;" onclick="VENDA_PRODUTO.exibirDialogExclusao('+ row.cell.idVenda +' );" style="margin-right: 5px;cursor:pointer">' +
                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
                  '</a>';		 					 
 				
 				var acaoReimprimirComprovante = contextPath + "/devolucao/vendaEncalhe/reimprimirComprovanteVenda/" + row.cell.idVenda;
 				
 				
-				linkReimpressao  ='<a href="'+acaoReimprimirComprovante+'" target="_blank" style="cursor:pointer">' +
+				linkReimpressao  ='<a href="'+acaoReimprimirComprovante+'" target="_blank" style="margin-right: 5px;cursor:pointer">' +
                 '<img src="'+ contextPath +'/images/ico_impressora.gif" hspace="5" border="0px" title="Reimpressão do Comprovante de Venda" />' +
                  '</a>';	
 				
@@ -121,14 +121,14 @@ var VENDA_PRODUTO = {
 			}
 			else{
 				
-				linkEdicao = '<a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+				linkEdicao = '<a href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar Venda" />' +
 				 '</a>';			
 			 
-				linkExclusao ='<a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+				linkExclusao ='<a href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
                '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
                 '</a>';		
-				linkReimpressao  ='<a href="javascript:;" yle="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+				linkReimpressao  ='<a href="javascript:;" style="margin-right: 5px;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
                 '<img src="'+ contextPath +'/images/ico_impressora.gif" hspace="5" border="0px" title="Reimpressão do Comprovante de Venda" />' +
                  '</a>';	
 			
@@ -299,25 +299,11 @@ var VENDA_PRODUTO = {
 			contextPath + "/devolucao/vendaEncalhe/exportar?fileType=" + fileType;
 	},
 	
-	renderizarNomeDialogVenda:function(tipoVenda){
-		
-		if(tipoVenda == "ENCALHE"){
-			$("#ui-dialog-title-dialog-venda-encalhe", VENDA_PRODUTO.workspace).html("Venda Encalhe");	
-		}
-		else{
-			$("#ui-dialog-title-dialog-venda-encalhe", VENDA_PRODUTO.workspace).html("Venda Suplementar");
-		}
-	},
-	
-	novaVenda:function(tipoVenda){
-		
-		VENDA_PRODUTO.renderizarNomeDialogVenda(tipoVenda);
+	novaVenda:function(){
 		
 		VENDA_PRODUTO.limparDadosModalVenda();
 		
 		VENDA_PRODUTO.vendaNova = true;
-		
-		VENDA_PRODUTO.tipoVenda = tipoVenda;
 		
 		 $.postJSON(contextPath + "/devolucao/vendaEncalhe/obterDatavenda", 
 					null,
@@ -432,8 +418,6 @@ var VENDA_PRODUTO = {
 		$("#numCotaVenda", VENDA_PRODUTO.workspace).attr("disabled","disabled");
 		$("#qntSolicitada0", VENDA_PRODUTO.workspace).focus();
 		
-		VENDA_PRODUTO.renderizarNomeDialogVenda(tipoVenda);
-		
 		VENDA_PRODUTO.tipoVenda = tipoVenda;
 			
 		return result;
@@ -453,6 +437,10 @@ var VENDA_PRODUTO = {
 			var valorHiddenTotal = ( row.cell.valorTotal )?row.cell.valorTotal:"";
 			
 			var inputHiddenTotal = '<input id="hiddenTotal'+index+'" name="hiddenTotal" type="hidden" value="'+valorHiddenTotal+'">';
+			
+			var inputHiddenTipoVenda = '<input id="hiddenTipoVenda'+index+'" name="hiddenTipoVenda" type="hidden" value="'+row.cell.tipoVenda+'">';
+			
+			var inputHiddenTipoComercailizacao = '<input id="hiddenComercializacao'+index+'" name="hiddenComercializacao" type="hidden" value="'+row.cell.formaComercializacao+'">';
 			
 			$("#codBarras"+index, VENDA_PRODUTO.workspace).keypress(function(e) {
 				if (e.keyCode == 13) {
@@ -475,8 +463,8 @@ var VENDA_PRODUTO = {
 			row.cell.qntDisponivel = VENDA_PRODUTO.getInputQntdeDisponivel(index,row.cell);
 			row.cell.qntSolicitada = VENDA_PRODUTO.getInputQntdeSolicitada(index,row.cell);
 			row.cell.total = VENDA_PRODUTO.getInputTotal(index,row.cell) + inputHiddenTotal;
-			row.cell.tipoVendaEncalhe = VENDA_PRODUTO.getInputTipoVenda(index,row.cell);
-			row.cell.formaVenda = VENDA_PRODUTO.getInputFormaVenda(index,row.cell);
+			row.cell.tipoVendaEncalhe = VENDA_PRODUTO.getInputTipoVenda(index,row.cell) + inputHiddenTipoVenda;
+			row.cell.formaVenda = VENDA_PRODUTO.getInputFormaVenda(index,row.cell) + inputHiddenTipoComercailizacao;
 		
 		});
 		
@@ -718,6 +706,8 @@ var VENDA_PRODUTO = {
 		$("#hiddenTotal" + indiceLinha, VENDA_PRODUTO.workspace).val("");
 		$("#totalFormatado" + indiceLinha, VENDA_PRODUTO.workspace).val("");
 		$("#formaVenda"+indiceLinha, VENDA_PRODUTO.workspace).val("");
+		$("#hiddenComercializacao" + indiceLinha, VENDA_PRODUTO.workspace).val("");
+		$("#hiddenTipoVenda" + indiceLinha, VENDA_PRODUTO.workspace).val("");
 		
 		$("#qntSolicitada"+indiceLinha, VENDA_PRODUTO.workspace).attr("disabled","disabled");
 		
@@ -779,6 +769,8 @@ var VENDA_PRODUTO = {
 		$("#totalFormatado"+index, VENDA_PRODUTO.workspace).val(resultado.produto.valoTotalProduto);
 		$("#formaVenda"+index, VENDA_PRODUTO.workspace).val(resultado.produto.formaVenda);
 		$("#tipoVenda"+index,VENDA_PRODUTO.workspace).val(resultado.produto.tipoVendaEncalhe);
+		$("#hiddenComercializacao" + index, VENDA_PRODUTO.workspace).val(resultado.produto.formaComercializacao);
+		$("#hiddenTipoVenda" + index, VENDA_PRODUTO.workspace).val(resultado.produto.tipoVenda);
 		
 		if(resultado.produto.tipoVendaEncalhe == 'Suplementar'){
 			$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("class","sum_qntSolicitada_suplemtar");
@@ -803,6 +795,8 @@ var VENDA_PRODUTO = {
 		$("#totalFormatado"+index, VENDA_PRODUTO.workspace).val("");
 		$("#formaVenda"+index, VENDA_PRODUTO.workspace).val("");
 		$("#tipoVenda"+index,VENDA_PRODUTO.workspace).val("");
+		$("#hiddenComercializacao" + index, VENDA_PRODUTO.workspace).val("");
+		$("#hiddenTipoVenda" + index, VENDA_PRODUTO.workspace).val("");
 		
 		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("disabled","disabled");
 		
@@ -875,7 +869,7 @@ var VENDA_PRODUTO = {
 		
 		var linhasDaGrid = $("#vendaEncalhesGrid tr", VENDA_PRODUTO.workspace);
 
-		var listaVendas= "";
+		var listaVendas= [];
 		
 		$.each(linhasDaGrid, function(index, value) {
 
@@ -898,22 +892,24 @@ var VENDA_PRODUTO = {
 			var qtdeSolicitada = 
 				$(colunaQtdeSolicitada).find("div").find('input[name="qntSolicitada"]', VENDA_PRODUTO.workspace).val();
 			
+			var tipoVenda =
+				$(linha.find("td")[8]).find("div").find('input[name="hiddenTipoVenda"]', VENDA_PRODUTO.workspace).val();
+			
+			var formaVenda =
+				$(linha.find("td")[9]).find("div").find('input[name="hiddenComercializacao"]', VENDA_PRODUTO.workspace).val();
+		
+			
 			if (VENDA_PRODUTO.isAtributosVendaVazios(codigoProduto, numeroEdicao, qtdeSolicitada)) {
 
 				return true;
 			}
-						
-			var venda = 'listaVendas[' + index + '].idVenda=' + id + '&';
 			
-			venda += 'listaVendas[' + index + '].codigoProduto=' + codigoProduto + '&';
-
-			venda += 'listaVendas[' + index + '].numeroEdicao=' + numeroEdicao + '&';
-
-			venda += 'listaVendas[' + index + '].qntProduto=' + qtdeSolicitada  + '&';
-			
-			venda += 'listaVendas[' + index + '].tipoVendaEncalhe=' + VENDA_PRODUTO.tipoVenda  + '&';
-			
-			listaVendas = (listaVendas + venda);
+			listaVendas.push({name:"listaVendas[" + index + "].idVenda",value:id});
+			listaVendas.push({name:"listaVendas[" + index + "].codigoProduto",value:codigoProduto});
+			listaVendas.push({name:"listaVendas[" + index + "].numeroEdicao",value:numeroEdicao});
+			listaVendas.push({name:"listaVendas[" + index + "].qntProduto",value:qtdeSolicitada});
+			listaVendas.push({name:"listaVendas[" + index + "].tipoVendaEncalhe",value:tipoVenda});
+			listaVendas.push({name:"listaVendas[" + index + "].formaVenda",value:formaVenda});
 
 		});
 		
@@ -934,10 +930,10 @@ var VENDA_PRODUTO = {
 		
 		var metodo = (VENDA_PRODUTO.vendaNova == true)?"confirmaNovaVenda":"confirmaEdicaoVenda";
 		
-		var data = VENDA_PRODUTO.getListaProduto()  
-				   + "&numeroCota=" + $("#numCotaVenda", VENDA_PRODUTO.workspace).val()
-				   + "&dataDebito=" + $("#dataVencimento", VENDA_PRODUTO.workspace).val();
-				     
+		var data = VENDA_PRODUTO.getListaProduto();
+		data.push({name:"numeroCota",value:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()});	
+		data.push({name:"dataDebito", value:$("#dataVencimento", VENDA_PRODUTO.workspace).val()});		   
+     
 		 $.postJSON(
 			contextPath + "/devolucao/vendaEncalhe/"+metodo, 
 			data,
@@ -955,13 +951,13 @@ var VENDA_PRODUTO = {
 					$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexOptions({
 						url: contextPath + "/devolucao/vendaEncalhe/pesquisarVendas",
 						params: VENDA_PRODUTO.params(),newp: 1,
-						onSuccess:VENDA_PRODUTO.imprimeSlipVendaEncalhe(VENDA_PRODUTO.tipoVenda)
+						onSuccess:VENDA_PRODUTO.imprimeSlipVendaEncalhe()
 					});
 					
 					$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexReload();
 				}
 				else{
-					VENDA_PRODUTO.imprimeSlipVendaEncalhe(VENDA_PRODUTO.tipoVenda);	
+					VENDA_PRODUTO.imprimeSlipVendaEncalhe();	
 				}
 			},
 			null, 
@@ -978,12 +974,12 @@ var VENDA_PRODUTO = {
 			
 			return true;
 		}
-		return false;
+		return false; 
 	},
 	
-	imprimeSlipVendaEncalhe:function(tipoVenda){
+	imprimeSlipVendaEncalhe:function(){
 		
-		window.open(contextPath + "/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe?tipoVenda="+tipoVenda,'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
+		window.open(contextPath + "/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
 	},
 	
 	imprimirSlipVenda:function(){
@@ -1040,10 +1036,14 @@ var VENDA_PRODUTO = {
 				$(linha.find("td")[8]).find("div").find('input[name="tipoVenda"]', VENDA_PRODUTO.workspace).val();
 			
 			var tipoVenda =
-				$(linha.find("td")[8]).find("div").find('input[name="tipoVendaHidden"]', VENDA_PRODUTO.workspace).val();
+				$(linha.find("td")[8]).find("div").find('input[name="hiddenTipoVenda"]', VENDA_PRODUTO.workspace).val();
+			
+			var formaVendaDesc =
+				$(linha.find("td")[9]).find("div").find('input[name="formaVenda"]', VENDA_PRODUTO.workspace).val();
 			
 			var formaVenda =
-				$(linha.find("td")[9]).find("div").find('input[name="formaVenda"]', VENDA_PRODUTO.workspace).val();
+				$(linha.find("td")[9]).find("div").find('input[name="hiddenComercializacao"]', VENDA_PRODUTO.workspace).val();
+			
 				
 			if (VENDA_PRODUTO.isAtributosVendaVazios(codigoProduto, numeroEdicao, qtdeSolicitada)) {
 				return true;
@@ -1056,9 +1056,10 @@ var VENDA_PRODUTO = {
 			listaVendas.push({name: "listaVendas["+index+"].numeroEdicao", value: numeroEdicao});
 			listaVendas.push({name: "listaVendas["+index+"].qntDisponivel", value: qntDisponivel});
 			listaVendas.push({name: "listaVendas["+index+"].qntSolicitada", value: qtdeSolicitada});
-			listaVendas.push({name: "listaVendas["+index+"].formaVenda", value: formaVenda});
+			listaVendas.push({name: "listaVendas["+index+"].formaVenda", value: formaVendaDesc});
 			listaVendas.push({name: "listaVendas["+index+"].descTipoVenda", value: descTipoVenda});
-			listaVendas.push({name: "listaVendas["+index+"].tipoVenda", value: tipoVenda});			
+			listaVendas.push({name: "listaVendas["+index+"].tipoVenda", value: tipoVenda});
+			listaVendas.push({name: "listaVendas["+index+"].formaComercializacao", value: formaVenda});
 		});
 	
 		if(listaVendas.length > 0){

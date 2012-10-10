@@ -26,7 +26,7 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 	public void testarBuscarConferenciaEncalhe() {
 		
 		Calendar dataEncalhe = Calendar.getInstance();
-		dataEncalhe.set(2012, 1, 28);
+		dataEncalhe.set(2012, 9, 6);
 		
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(dataEncalhe.getTime());
@@ -125,10 +125,10 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR("28/02/2012"));
-		
-		List<AnaliticoEncalheDTO> list = fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro);
-		
+
+		List<AnaliticoEncalheDTO> list = fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro, "ASC", "numeroCota", 0, 15);
 		Assert.assertNotNull(list);
+
 	}
 
 }
