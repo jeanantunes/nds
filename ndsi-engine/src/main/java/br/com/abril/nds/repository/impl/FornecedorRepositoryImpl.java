@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -418,6 +420,18 @@ public class FornecedorRepositoryImpl extends
 		
 		criteria.setProjection(Projections.max("codigoInterface"));
 		return (Integer) criteria.uniqueResult();
+	}
+	
+	
+	@Override
+	public EnderecoFornecedor obterEnderecoPrincipal(long idFornecedor) {
+		Criteria criteria = getSession().createCriteria(EnderecoFornecedor.class);
+		criteria.add(Restrictions.eq("fornecedor.id", idFornecedor));
+
+		criteria.add(Restrictions.eq("principal", true));
+		criteria.setMaxResults(1);
+
+		return (EnderecoFornecedor) criteria.uniqueResult();
 	}
 	
 }
